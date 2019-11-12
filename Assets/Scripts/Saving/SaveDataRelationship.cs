@@ -29,14 +29,15 @@ public class SaveDataRelationship {
     public void Load(AlterEgoData ownerAlterEgo) {
         Character targetCharacter = CharacterManager.Instance.GetCharacterByID(targetCharacterID);
         AlterEgoData targetAlterEgoData = targetCharacter.GetAlterEgoData(targetCharacterAlterEgo);
-        CharacterRelationshipData relationshipData = new CharacterRelationshipData(ownerAlterEgo.owner, targetCharacter, targetAlterEgoData);
-        relationshipData.SetIsDisabled(isDisabled);
-        relationshipData.SetFlirtationCount(flirtationCount);
-        for (int i = 0; i < rels.Count; i++) {
-            RelationshipTrait relTrait = CharacterManager.Instance.CreateRelationshipTrait(rels[i], targetCharacter);
-            relationshipData.AddRelationship(relTrait);
-        }
+        //TODO:
+        //CharacterRelationshipData relationshipData = new CharacterRelationshipData(ownerAlterEgo.owner, targetCharacter, targetAlterEgoData);
+        //relationshipData.SetIsDisabled(isDisabled);
+        //relationshipData.SetFlirtationCount(flirtationCount);
+        //for (int i = 0; i < rels.Count; i++) {
+        //    RelationshipTrait relTrait = CharacterManager.Instance.CreateRelationshipTrait(rels[i], targetCharacter);
+        //    relationshipData.AddRelationship(relTrait);
+        //}
 
-        ownerAlterEgo.AddRelationship(relationshipData);
+        //ownerAlterEgo.AddRelationship(relationshipData);
     }
 }

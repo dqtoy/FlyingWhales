@@ -53,7 +53,7 @@ public class PlayGuitar : GoapAction {
                     if (dwelling.residents.Count > 0) {
                         for (int i = 0; i < dwelling.residents.Count; i++) {
                             Character currResident = dwelling.residents[i];
-                            if (currResident.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE)) {
+                            if (currResident.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
                                 //- Actor is not a resident but has a positive relationship with the Guitar's Dwelling resident: 20-36 (If music lover 10 - 26)
                                 if (musicLover != null) {
                                     return Utilities.rng.Next(10, 27);
@@ -130,7 +130,7 @@ public class PlayGuitar : GoapAction {
                 if (dwelling.residents.Count > 0) {
                     for (int i = 0; i < dwelling.residents.Count; i++) {
                         Character currResident = dwelling.residents[i];
-                        if (currResident.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE)) {
+                        if (currResident.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
                             return true;
                         }
                     }
@@ -154,7 +154,7 @@ public class PlayGuitar : GoapAction {
 
         if(status == SHARE_INTEL_STATUS.WITNESSED && recipient.traitContainer.GetNormalTrait("Music Hater") != null) {
             recipient.traitContainer.AddTrait(recipient, "Annoyed");
-            if (recipient.HasRelationshipOfTypeWith(actor, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+            if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) || recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
                 if (recipient.CreateBreakupJob(actor) != null) {
                     Log log = new Log(GameManager.Instance.Today(), "Trait", "MusicHater", "break_up");
                     log.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -162,14 +162,14 @@ public class PlayGuitar : GoapAction {
                     log.AddLogToInvolvedObjects();
                     PlayerManager.Instance.player.ShowNotificationFrom(recipient, log);
                 }
-            } else if (!recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
+            } else if (!recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
                 //Otherwise, if the Actor does not yet consider the Target an Enemy, relationship degradation will occur, log:
                 Log log = new Log(GameManager.Instance.Today(), "Trait", "MusicHater", "degradation");
                 log.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 log.AddLogToInvolvedObjects();
                 PlayerManager.Instance.player.ShowNotificationFrom(recipient, log);
-                CharacterManager.Instance.RelationshipDegradation(actor, recipient);
+                RelationshipManager.Instance.RelationshipDegradation(actor, recipient);
             }
         }
         return reactions;
@@ -206,7 +206,7 @@ public class PlayGuitarData : GoapActionData {
                 if (dwelling.residents.Count > 0) {
                     for (int i = 0; i < dwelling.residents.Count; i++) {
                         Character currResident = dwelling.residents[i];
-                        if (currResident.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE)) {
+                        if (currResident.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
                             return true;
                         }
                     }

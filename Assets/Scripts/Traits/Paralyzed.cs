@@ -79,7 +79,7 @@ namespace Traits {
                             }
                         }
                     } else {
-                        if (characterThatWillDoJob.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE) {
+                        if (characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.NEGATIVE) {
                             if (character.CanPlanGoap() && !character.HasJobTargettingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
                                 if (!PlanFullnessRecovery(characterThatWillDoJob)) {
                                     if (!CreateDropJobForTirednessRecovery(characterThatWillDoJob)) {

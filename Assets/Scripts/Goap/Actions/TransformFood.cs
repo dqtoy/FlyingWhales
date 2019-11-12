@@ -155,8 +155,8 @@ public class TransformFood : GoapAction {
         List<string> reactions = new List<string>();
         Character targetCharacter = poiTarget as Character;
 
-        RELATIONSHIP_EFFECT relWithActor = recipient.GetRelationshipEffectWith(actor);
-        RELATIONSHIP_EFFECT relWithTarget = recipient.GetRelationshipEffectWith(targetCharacter);
+        RELATIONSHIP_EFFECT relWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
+        RELATIONSHIP_EFFECT relWithTarget = recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo);
 
         if (isOldNews) {
             //Old News

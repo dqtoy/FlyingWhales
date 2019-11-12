@@ -47,9 +47,9 @@ public class Nap : GoapAction {
                 for (int i = 0; i < dwelling.residents.Count; i++) {
                     Character resident = dwelling.residents[i];
                     if (resident != actor) {
-                        CharacterRelationshipData characterRelationshipData = actor.GetCharacterRelationshipData(resident);
+                        IRelationshipData characterRelationshipData = actor.relationshipContainer.GetRelationshipDataWith(resident);
                         if (characterRelationshipData != null) {
-                            if (characterRelationshipData.HasRelationshipOfEffect(TRAIT_EFFECT.POSITIVE)) {
+                            if (characterRelationshipData.relationshipStatus == RELATIONSHIP_EFFECT.POSITIVE) {
                                 return 25;
                             }
                         }
@@ -146,7 +146,7 @@ public class Nap : GoapAction {
     private bool CanSleepInBed(Character character, TileObject tileObject) {
         for (int i = 0; i < tileObject.users.Length; i++) {
             if (tileObject.users[i] != null) {
-                RELATIONSHIP_EFFECT relEffect = character.GetRelationshipEffectWith(tileObject.users[i]);
+                RELATIONSHIP_EFFECT relEffect = character.relationshipContainer.GetRelationshipEffectWith(tileObject.users[i]);
                 if (relEffect == RELATIONSHIP_EFFECT.NEGATIVE || relEffect == RELATIONSHIP_EFFECT.NONE) {
                     return false;
                 }

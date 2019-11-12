@@ -96,7 +96,7 @@ public class BuryCharacter : GoapAction {
         tombstone.SetCharacter(targetCharacter);
         actor.currentStructure.AddPOI(tombstone, chosenLocation);
         targetCharacter.CancelAllJobsTargettingThisCharacter(JOB_TYPE.BURY, except:parentPlan.job);
-        List<Character> characters = targetCharacter.GetAllCharactersThatHasRelationship();
+        List<Character> characters = targetCharacter.relationshipContainer.relationships.Keys.Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList();
         if(characters != null) {
             for (int i = 0; i < characters.Count; i++) {
                 characters[i].AddAwareness(tombstone);
@@ -137,8 +137,8 @@ public class BuryCharacter : GoapAction {
         List<string> reactions = new List<string>();
         Character targetCharacter = poiTarget as Character;
 
-        RELATIONSHIP_EFFECT relWithActor = recipient.GetRelationshipEffectWith(actor);
-        RELATIONSHIP_EFFECT relWithTarget = recipient.GetRelationshipEffectWith(targetCharacter);
+        RELATIONSHIP_EFFECT relWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
+        RELATIONSHIP_EFFECT relWithTarget = recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo);
 
         if (isOldNews) {
             //Old News
@@ -192,7 +192,7 @@ public class BuryCharacter : GoapAction {
                     reactions.Add(string.Format("Is it terrible to think that {0} deserved that?", targetCharacter.name));
                 }
                 //-  Positive or No Relationship with Actor, Actor has a positive relationship with Target
-                else if ((relWithActor == RELATIONSHIP_EFFECT.POSITIVE || relWithActor == RELATIONSHIP_EFFECT.NONE) && actor.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
+                else if ((relWithActor == RELATIONSHIP_EFFECT.POSITIVE || relWithActor == RELATIONSHIP_EFFECT.NONE) && actor.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
                     reactions.Add(string.Format("Burying someone close to you is probably the worst feeling ever. I feel for {0}.", actor.name));
                 }
                 //- Others
@@ -207,8 +207,8 @@ public class BuryCharacter : GoapAction {
         List<string> reactions = new List<string>();
         Character targetCharacter = poiTarget as Character;
 
-        RELATIONSHIP_EFFECT relWithActor = recipient.GetRelationshipEffectWith(actor);
-        RELATIONSHIP_EFFECT relWithTarget = recipient.GetRelationshipEffectWith(targetCharacter);
+        RELATIONSHIP_EFFECT relWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
+        RELATIONSHIP_EFFECT relWithTarget = recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo);
 
         if (isOldNews) {
             //Old News

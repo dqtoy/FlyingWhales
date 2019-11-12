@@ -60,25 +60,25 @@ public class ArgueCharacter : GoapAction {
             //Target is a different race: -1
             cost -= 1;
         }
-        CharacterRelationshipData relData = actor.GetCharacterRelationshipData(targetCharacter);
+        IRelationshipData relData = actor.relationshipContainer.GetRelationshipDataWith(targetCharacter.currentAlterEgo);
         if (relData != null) {
-            if (relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.ENEMY)) {
+            if (relData.HasRelationship(RELATIONSHIP_TRAIT.ENEMY)) {
                 //Target is an Enemy: -2
                 cost -= 2;
             }
-            if (relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.LOVER)) {
+            if (relData.HasRelationship(RELATIONSHIP_TRAIT.LOVER)) {
                 //Target is a Lover: +2
                 cost += 2;
             }
-            if (relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.RELATIVE)) {
+            if (relData.HasRelationship(RELATIONSHIP_TRAIT.RELATIVE)) {
                 //Target is a Relative: +2
                 cost += 2;
             }
-            if (relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.FRIEND)) {
+            if (relData.HasRelationship(RELATIONSHIP_TRAIT.FRIEND)) {
                 //Target is a Friend: +3
                 cost += 3;
             }
-            if (relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.PARAMOUR)) {
+            if (relData.HasRelationship(RELATIONSHIP_TRAIT.PARAMOUR)) {
                 //Target is a Paramour: +3
                 cost += 3;
             }

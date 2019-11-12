@@ -90,11 +90,11 @@ public class CureCharacter : GoapAction {
                     reactions.Add(string.Format("I am grateful for {0}'s help.", actor.name));
                 }
                 //- Recipient Has Positive Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
                     reactions.Add(string.Format("I am grateful that {0} helped {1}.", actor.name, targetCharacter.name));
                 }
                 //- Recipient Has Negative Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
                     reactions.Add(string.Format("{0} is such a chore.", targetCharacter.name));
                 }
                 //- Recipient Has No Relationship with Target

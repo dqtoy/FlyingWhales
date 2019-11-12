@@ -189,7 +189,7 @@ public class AssaultCharacter : GoapAction {
         //AddTraitTo(winner, "Combat Recovery", loser);
         //Injured injured = new Injured();
         //AddTraitTo(loser, injured, winner);
-        CharacterManager.Instance.RelationshipDegradation(actor, poiTarget as Character, this);
+        RelationshipManager.Instance.RelationshipDegradation(actor, poiTarget as Character, this);
         currentState.SetIntelReaction(TargetInjuredKnockOutReactions);
     }
     public void AfterTargetInjured() {
@@ -212,7 +212,7 @@ public class AssaultCharacter : GoapAction {
         }
         currentState.AddLogFiller(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
         //AddTraitTo(winner, "Combat Recovery", loser);
-        CharacterManager.Instance.RelationshipDegradation(actor, poiTarget as Character, this);
+        RelationshipManager.Instance.RelationshipDegradation(actor, poiTarget as Character, this);
         currentState.SetIntelReaction(TargetInjuredKnockOutReactions);
     }
     public void AfterTargetKnockedOut() {
@@ -314,18 +314,18 @@ public class AssaultCharacter : GoapAction {
                 }
                 //- Recipient is Target
                 else if (recipient == targetCharacter) {
-                    if (!recipient.HasRelationshipWith(actor)) {
+                    if (!recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo)) {
                         reactions.Add("Please don't remind me of that altercation.");
                         AddTraitTo(recipient, "Annoyed");
-                    } else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    } else if (recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
                         //- Has Negative Relationship
                         reactions.Add(string.Format("Now that you've reminded me about that, I think I should get back at {0}.", actor.name));
                         recipient.CreateUndermineJobOnly(actor, "informed", status);
-                    } else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
+                    } else if (recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
                         //- Has Positive Relationship
                         if (recipientMood == CHARACTER_MOOD.BAD || recipientMood == CHARACTER_MOOD.DARK) {
                             //- No Relationship (Negative Mood)
-                            if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                            if (RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                                 reactions.Add(string.Format("Now that you've reminded me about that, I think I really should start avoiding {0}!", actor.name));
                             } else {
                                 reactions.Add("Past is past.");
@@ -337,11 +337,11 @@ public class AssaultCharacter : GoapAction {
                     }
                 }
                 //- Recipient Has Positive Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
                     if (committedCrime == CRIME.NONE) {
                         reactions.Add(string.Format("There's a reason {0} did that.", actor.name));
                     } else {
-                        RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
+                        RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
                         bool hasRelationshipDegraded = false;
                         if (!hasCrimeBeenReported) {
                             hasRelationshipDegraded = recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
@@ -360,8 +360,8 @@ public class AssaultCharacter : GoapAction {
                     }
                 }
                 //- Recipient Has Negative Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
-                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
                     if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
                         reactions.Add(string.Format("{0} deserves to be beaten.", targetCharacter.name));
                         AddTraitTo(recipient, "Satisfied");
@@ -387,7 +387,7 @@ public class AssaultCharacter : GoapAction {
                     if (committedCrime == CRIME.NONE) {
                         reactions.Add(string.Format("There's a reason {0} did that.", actor.name));
                     } else {
-                        RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
+                        RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
                         bool hasRelationshipDegraded = false;
                         if (!hasCrimeBeenReported) {
                             hasRelationshipDegraded = recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
@@ -432,11 +432,11 @@ public class AssaultCharacter : GoapAction {
                     AddTraitTo(recipient, "Heartbroken");
                 }
                 //- Recipient Has Positive Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
                     if (committedCrime == CRIME.NONE) {
                         reactions.Add(string.Format("There's a reason {0} did that.", actor.name));
                     } else {
-                        RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
+                        RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
                         bool hasRelationshipDegraded = false;
                         if (!hasCrimeBeenReported) {
                             hasRelationshipDegraded = recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
@@ -455,8 +455,8 @@ public class AssaultCharacter : GoapAction {
                     }
                 }
                 //- Recipient Has Negative Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
-                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
                     if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
                         reactions.Add(string.Format("Suits {0} right.", Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.OBJECTIVE, false)));
                         AddTraitTo(recipient, "Satisfied");
@@ -473,7 +473,7 @@ public class AssaultCharacter : GoapAction {
                         //    }
                         //}
                     } else {
-                        if (CharacterManager.Instance.RelationshipImprovement(actor, recipient, this)) {
+                        if (RelationshipManager.Instance.RelationshipImprovement(actor, recipient, this)) {
                             reactions.Add(string.Format("I am happy {0} was able to do what I cannot.", actor.name));
                             //if (status == SHARE_INTEL_STATUS.WITNESSED) {
                             //    if (recipient.marker.inVisionPOIs.Contains(actor)) {
@@ -499,7 +499,7 @@ public class AssaultCharacter : GoapAction {
                     if (committedCrime == CRIME.NONE) {
                         reactions.Add(string.Format("There's a reason {0} did that.", actor.name));
                     } else {
-                        RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
+                        RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
                         bool hasRelationshipDegraded = false;
                         if (!hasCrimeBeenReported) {
                             hasRelationshipDegraded = recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);

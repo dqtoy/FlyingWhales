@@ -90,7 +90,7 @@ public class JudgeCharacter : GoapAction {
                 }
             }
 
-            List<RELATIONSHIP_TRAIT> rels = actor.GetAllRelationshipTraitTypesWith(targetCharacter);
+            List<RELATIONSHIP_TRAIT> rels = actor.relationshipContainer.GetRelationshipDataWith(targetCharacter.currentAlterEgo)?.relationships ?? null;
             if (rels != null) {
                 for (int i = 0; i < rels.Count; i++) {
                     switch (rels[i]) {
@@ -211,7 +211,7 @@ public class JudgeCharacter : GoapAction {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
 
-        RELATIONSHIP_EFFECT relWithTarget = recipient.GetRelationshipEffectWith(poiTargetAlterEgo);
+        RELATIONSHIP_EFFECT relWithTarget = recipient.relationshipContainer.GetRelationshipEffectWith(poiTargetAlterEgo);
 
         //Recipient and Actor are the same
         if (recipient == actor) {
@@ -220,24 +220,24 @@ public class JudgeCharacter : GoapAction {
             //-**Recipient Effect**:  no effect
         }
         //Recipient considers Target a personal Enemy:
-        else if (recipient.HasRelationshipOfTypeWith(poiTargetAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
+        else if (recipient.relationshipContainer.HasRelationshipWith(poiTargetAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
             //- **Recipient Response Text**: "[Target Name] deserves that!"
             reactions.Add(string.Format("{0} deserves that!", target.name));
             //-**Recipient Effect * *: no effect
         }
         //Recipient considers Actor a personal Enemy:
-         else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
+         else if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
             //- **Recipient Response Text**: "[Actor Name] is truly ruthless."
             reactions.Add(string.Format("{0} is truly ruthless.", actor.name));
             //-**Recipient Effect * *: no effect
         }
         //Recipient considers Target a personal Friend, Paramour, Lover or Relative:
-        else if (recipient.HasAnyRelationshipOfTypeWith(poiTargetAlterEgo, false, RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.PARAMOUR, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.RELATIVE)) {
+        else if (recipient.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.PARAMOUR, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.RELATIVE).Contains(poiTargetAlterEgo)) {
             //- **Recipient Response Text**: "I cannot forgive [Actor Name] for executing [Target Name]!"
             reactions.Add(string.Format("I cannot forgive {0} for executing {1}!", actor.name, target.name));
             //-**Recipient Effect * *:  Recipient will consider Actor an Enemy
-            if (!recipient.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
-                CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
+            if (!recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
+                RelationshipManager.Instance.RemoveOneWayRelationship(recipient, actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
             }
         }
         //Recipient and Target have no relationship but are from the same faction:
@@ -252,7 +252,7 @@ public class JudgeCharacter : GoapAction {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
 
-        RELATIONSHIP_EFFECT relWithTarget = recipient.GetRelationshipEffectWith(poiTargetAlterEgo);
+        RELATIONSHIP_EFFECT relWithTarget = recipient.relationshipContainer.GetRelationshipEffectWith(poiTargetAlterEgo);
 
         //Recipient and Actor are the same
         if (recipient == actor) {
@@ -267,27 +267,27 @@ public class JudgeCharacter : GoapAction {
             //-**Recipient Effect**:  no effect
         }
         //Recipient considers Target a personal Enemy:
-        else if (recipient.HasRelationshipOfTypeWith(poiTargetAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
+        else if (recipient.relationshipContainer.HasRelationshipWith(poiTargetAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
             //- **Recipient Response Text**: "[Target Name] shouldn't have been let go so easily!"
             reactions.Add(string.Format("{0} shouldn't have been let go so easily!", target.name));
             //- **Recipient Effect**: If they don't have any relationship yet, Recipient will consider Actor an Enemy
-            if (!recipient.HasRelationshipWith(actorAlterEgo, true)) {
-                CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
+            if (!recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo)) {
+                RelationshipManager.Instance.RemoveOneWayRelationship(recipient, actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
             }
         }
         //Recipient considers Actor a personal Enemy:
-         else if (recipient.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
+         else if (recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
             //- **Recipient Response Text**: "[Actor Name] is simply naive."
             reactions.Add(string.Format("{0} is simply naive.", actor.name));
             //-**Recipient Effect * *: no effect
         }
         //Recipient considers Target a personal Friend, Paramour, Lover or Relative:
-        else if (recipient.HasAnyRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.PARAMOUR, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.RELATIVE)) {
+        else if (recipient.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.PARAMOUR, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.RELATIVE).Contains(target.currentAlterEgo)) {
             //- **Recipient Response Text**: "I am grateful that [Actor Name] released [Target Name] unharmed."
             reactions.Add(string.Format("I am grateful that {0} released {1} unharmed.", actor.name, target.name));
             //- **Recipient Effect**:  If they don't have any relationship yet, Recipient will consider Actor a Friend
-            if (!recipient.HasRelationshipWith(actorAlterEgo, true)) {
-                CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND);
+            if (!recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo)) {
+                RelationshipManager.Instance.RemoveOneWayRelationship(recipient, actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND);
             }
         }
         //Recipient and Target have no relationship but are from the same faction:
@@ -302,7 +302,7 @@ public class JudgeCharacter : GoapAction {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
 
-        RELATIONSHIP_EFFECT relWithTarget = recipient.GetRelationshipEffectWith(poiTargetAlterEgo);
+        RELATIONSHIP_EFFECT relWithTarget = recipient.relationshipContainer.GetRelationshipEffectWith(poiTargetAlterEgo);
 
         //Recipient and Actor are the same
         if (recipient == actor) {
@@ -317,19 +317,19 @@ public class JudgeCharacter : GoapAction {
             //-**Recipient Effect**:  no effect
         }
         //Recipient considers Target a personal Enemy:
-        else if (recipient.HasRelationshipOfTypeWith(poiTargetAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
+        else if (recipient.relationshipContainer.HasRelationshipWith(poiTargetAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
             //- **Recipient Response Text**: "[Target Name] shouldn't have been let go so easily!"
             reactions.Add(string.Format("{0} shouldn't have been let go so easily!", target.name));
             //- **Recipient Effect**: no effect
         }
         //Recipient considers Actor a personal Enemy:
-         else if (recipient.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
+         else if (recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
             //- **Recipient Response Text**: "[Actor Name] is simply naive."
             reactions.Add(string.Format("{0} is irrational.", actor.name));
             //-**Recipient Effect * *: no effect
         }
         //Recipient considers Target a personal Friend, Paramour, Lover or Relative:
-        else if (recipient.HasAnyRelationshipOfTypeWith(poiTargetAlterEgo, false, RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.PARAMOUR, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.RELATIVE)) {
+        else if (recipient.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.PARAMOUR, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.RELATIVE).Contains(poiTargetAlterEgo)) {
             //- **Recipient Response Text**: "I am grateful that [Actor Name] exiled [Target Name] unharmed."
             reactions.Add(string.Format("I am grateful that {0} exiled {1} unharmed.", actor.name, target.name));
             //- **Recipient Effect**:  no effect

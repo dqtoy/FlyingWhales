@@ -42,7 +42,7 @@ public class EatCharacter : GoapAction {
     protected override int GetCost() {
         if (poiTarget is Character) {
             Character target = poiTarget as Character;
-            RELATIONSHIP_EFFECT relEffect = actor.GetRelationshipEffectWith(target);
+            RELATIONSHIP_EFFECT relEffect = actor.relationshipContainer.GetRelationshipEffectWith(target.currentAlterEgo);
             if (relEffect == RELATIONSHIP_EFFECT.NEGATIVE) {
                 return 15;
             }else if (relEffect == RELATIONSHIP_EFFECT.NONE) {
@@ -67,7 +67,7 @@ public class EatCharacter : GoapAction {
             if (poiTarget is Character) {
                 Character target = poiTarget as Character;
                 if (actor.race == target.race) {
-                    RELATIONSHIP_EFFECT relEffect = actor.GetRelationshipEffectWith(target);
+                    RELATIONSHIP_EFFECT relEffect = actor.relationshipContainer.GetRelationshipEffectWith(target.currentAlterEgo);
                     if (relEffect == RELATIONSHIP_EFFECT.NONE || relEffect == RELATIONSHIP_EFFECT.NEGATIVE) {
                         return true;
                     }
@@ -138,7 +138,7 @@ public class EatCharacterData : GoapActionData {
             if (poiTarget is Character) {
                 Character target = poiTarget as Character;
                 if (actor.race == target.race) {
-                    RELATIONSHIP_EFFECT relEffect = actor.GetRelationshipEffectWith(target);
+                    RELATIONSHIP_EFFECT relEffect = actor.relationshipContainer.GetRelationshipEffectWith(target.currentAlterEgo);
                     if (relEffect == RELATIONSHIP_EFFECT.NONE || relEffect == RELATIONSHIP_EFFECT.NEGATIVE) {
                         return true;
                     }

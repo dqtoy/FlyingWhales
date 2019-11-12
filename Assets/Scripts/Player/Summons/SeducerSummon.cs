@@ -64,7 +64,7 @@ public class SeducerSummon : Summon {
             //pick a random character that is sexually compatible with this character, to seduce. Exclude characters that this succubus has already invited.
             List<Character> choices = specificLocation.charactersAtLocation.Where(x => x.faction != this.faction
             && !doneCharacters.Contains(x)
-            && CharacterManager.Instance.IsSexuallyCompatibleOneSided(x, this)
+            && RelationshipManager.Instance.IsSexuallyCompatibleOneSided(x, this)
             && !x.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)).ToList();
             List<TileObject> validBeds = specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.INN).GetTileObjectsOfType(TILE_OBJECT_TYPE.BED);
             if (choices.Count > 0 && validBeds.Count > 0) {

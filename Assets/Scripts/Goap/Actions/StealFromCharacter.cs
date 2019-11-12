@@ -63,7 +63,7 @@ public class StealFromCharacter : GoapAction {
         //    if (poiTarget is Character) {
         //        Character targetCharacter = poiTarget as Character;
         //        if (!targetCharacter.ReactToCrime(committedCrime, this, actorAlterEgo, SHARE_INTEL_STATUS.WITNESSED)) {
-        //            CharacterManager.Instance.RelationshipDegradation(actor, targetCharacter, this);
+        //            RelationshipManager.Instance.RelationshipDegradation(actor, targetCharacter, this);
         //        }
         //        targetCharacter.marker.AddHostileInRange(actor, false);
         //    }
@@ -109,7 +109,7 @@ public class StealFromCharacter : GoapAction {
         if (poiTarget is Character) {
             Character targetCharacter = poiTarget as Character;
             if (!targetCharacter.ReactToCrime(committedCrime, this, actorAlterEgo, SHARE_INTEL_STATUS.WITNESSED)) {
-                CharacterManager.Instance.RelationshipDegradation(actor, targetCharacter, this);
+                RelationshipManager.Instance.RelationshipDegradation(actor, targetCharacter, this);
             }
             targetCharacter.marker.AddHostileInRange(actor, false);
         }
@@ -149,7 +149,7 @@ public class StealFromCharacter : GoapAction {
                 else if (recipient == targetCharacter) {
                     if(recipient.faction == actor.faction) {
                         //- Same Faction
-                        if (!recipient.HasRelationshipWith(actor)){
+                        if (!recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo)){
                             if (recipientMood == CHARACTER_MOOD.BAD || recipientMood == CHARACTER_MOOD.DARK) {
                                 //- No Relationship (Negative Mood)
                                 reactions.Add(string.Format("{0} stole from me?! {1} will get what {2} deserves!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
@@ -164,14 +164,14 @@ public class StealFromCharacter : GoapAction {
                                 }
                                 recipient.CreateUndermineJobOnly(actor, "informed", status);
                             }
-                        } else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.NEGATIVE){
+                        } else if (recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE){
                             //- Has Negative Relationship
                             reactions.Add(string.Format("That stupid {0} stole from me?! {1} will get what {2} deserves!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
                             if (!hasCrimeBeenReported) {
                                 recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
                             }
                             recipient.CreateUndermineJobOnly(actor, "informed", status);
-                        } else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
+                        } else if (recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
                             //- Has Positive Relationship
                             if (!hasCrimeBeenReported) {
                                 if(recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status)) {
@@ -183,9 +183,9 @@ public class StealFromCharacter : GoapAction {
                         }
                     } else {
                         //- Not Same Faction
-                        if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
+                        if (recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
                             //- Has Positive Relationship
-                            if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                            if (RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                                 reactions.Add(string.Format("I should have never trusted {0}! {1} will not get away with this!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true)));
                                 recipient.CreateUndermineJobOnly(actor, "informed", status);
                             } else {
@@ -199,8 +199,8 @@ public class StealFromCharacter : GoapAction {
                     }
                 }
                 //- Recipient Has Positive Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
-                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
+                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
                     if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
                         if (!hasCrimeBeenReported) {
                             if (recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status)) {
@@ -222,8 +222,8 @@ public class StealFromCharacter : GoapAction {
                     }
                 }
                 //- Recipient Has Negative Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
-                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
                     if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
                         reactions.Add(string.Format("It's {0}'s fault for not taking care of {1} possessions.", targetCharacter.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.POSSESSIVE, false)));
                     } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
@@ -238,7 +238,7 @@ public class StealFromCharacter : GoapAction {
                 }
                 //- Recipient Has No Relationship with Target
                 else {
-                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
                     if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
                         if (!hasCrimeBeenReported) {
                             if (recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status)) {
@@ -287,19 +287,19 @@ public class StealFromCharacter : GoapAction {
             else if (recipient == targetCharacter) {
                 if (recipient.faction == actor.faction) {
                     //- Same Faction
-                    if (!recipient.HasRelationshipWith(actor)) {
-                        if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                    if (!recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo)) {
+                        if (RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                             reactions.Add(string.Format("{0} tried to steal from me?! What a horrible person!", actor.name));
                         } else {
                             reactions.Add("Good thing I wasn't carrying any item at that time.");
                         }
-                    } else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    } else if (recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
                         //- Has Negative Relationship
                         reactions.Add(string.Format("That stupid {0} attempted to steal from me?! {1} will get what {2} deserves!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
                         recipient.CreateUndermineJobOnly(actor, "informed", status);
-                    } else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
+                    } else if (recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
                         //- Has Positive Relationship
-                        if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                        if (RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                             reactions.Add(string.Format("I should have never trusted {0}!", actor.name));
                         } else {
                             reactions.Add("Relax. Nothing was stolen.");
@@ -307,9 +307,9 @@ public class StealFromCharacter : GoapAction {
                     }
                 } else {
                     //- Not Same Faction
-                    if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
+                    if (recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
                         //- Has Positive Relationship
-                        if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                        if (RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                             reactions.Add(string.Format("I should have never trusted {0}!", actor.name));
                         } else {
                             reactions.Add("Relax. Nothing was stolen.");
@@ -322,10 +322,10 @@ public class StealFromCharacter : GoapAction {
                 }
             }
             //- Recipient Has Positive Relationship with Target
-            else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
-                RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+            else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
+                RELATIONSHIP_EFFECT relationshipWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
                 if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
-                    if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                    if (RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                         reactions.Add(string.Format("{0} is a thief?! I regret that I ever liked {1}.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
                     } else {
                         reactions.Add(string.Format("{0} is a thief? I don't believe that.", actor.name));
@@ -337,8 +337,8 @@ public class StealFromCharacter : GoapAction {
                 }
             }
             //- Recipient Has Negative Relationship with Target
-            else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
-                RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+            else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                RELATIONSHIP_EFFECT relationshipWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
                 if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
                     reactions.Add(string.Format("Nothing was taken from {0}? Too bad.", targetCharacter.name));
                 } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
@@ -349,9 +349,9 @@ public class StealFromCharacter : GoapAction {
             }
             //- Recipient Has No Relationship with Target
             else {
-                RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                RELATIONSHIP_EFFECT relationshipWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
                 if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
-                    if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                    if (RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                         reactions.Add(string.Format("{0} is a thief?! I regret that I ever liked {1}.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
                     } else {
                         reactions.Add(string.Format("{0} is a thief? I don't believe that.", actor.name));

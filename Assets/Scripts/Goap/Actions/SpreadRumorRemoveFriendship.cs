@@ -61,7 +61,7 @@ public class SpreadRumorRemoveFriendship : GoapAction {
     protected bool Requirement() {
         if(rumoredCharacter != null) {
             Character target = poiTarget as Character;
-            if (target.HasRelationshipOfTypeWith(rumoredCharacter, RELATIONSHIP_TRAIT.FRIEND)) {
+            if (target.relationshipContainer.HasRelationshipWith(rumoredCharacter, RELATIONSHIP_TRAIT.FRIEND)) {
                 return actor != poiTarget && actor != rumoredCharacter && crimeMemoriesInvolvingRumoredCharacter.Count > 0;
             }
             return false;
@@ -87,7 +87,7 @@ public class SpreadRumorRemoveFriendship : GoapAction {
         }
         //Character target = poiTarget as Character;
         ////**Effect 1**: Target - Remove Friend relationship with Character 2
-        //CharacterManager.Instance.RemoveOneWayRelationship(target, rumoredCharacter, RELATIONSHIP_TRAIT.FRIEND);
+        //RelationshipManager.Instance.RemoveOneWayRelationship(target, rumoredCharacter, RELATIONSHIP_TRAIT.FRIEND);
         ////**Effect 2**: Target - Add shared event to Target's memory
         //target.CreateInformedEventLog(chosenMemory.goapAction);
     }
@@ -128,7 +128,7 @@ public class SpreadRumorRemoveFriendshipData : GoapActionData {
         }
         if (rumoredCharacter != null) {
             Character target = poiTarget as Character;
-            if (target.HasRelationshipOfTypeWith(rumoredCharacter, RELATIONSHIP_TRAIT.FRIEND)) {
+            if (target.relationshipContainer.HasRelationshipWith(rumoredCharacter, RELATIONSHIP_TRAIT.FRIEND)) {
                 return actor != poiTarget && actor != rumoredCharacter 
                     && crimeMemoriesInvolvingRumoredCharacter != null && crimeMemoriesInvolvingRumoredCharacter.Count > 0;
             }

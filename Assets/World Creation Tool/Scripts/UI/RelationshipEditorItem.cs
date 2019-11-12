@@ -36,16 +36,16 @@ public class RelationshipEditorItem : MonoBehaviour, IPointerEnterHandler, IPoin
         }
     }
     public void RemoveRelationship() {
-        CharacterManager.Instance.RemoveRelationshipBetween(_relationship.owner, _relationship.targetCharacter);
+        //RelationshipManager.Instance.RemoveRelationshipBetween(_relationship.owner, _relationship.targetCharacter);
     }
 
     public void AddRelationshipOfType() {
         RELATIONSHIP_TRAIT relType = (RELATIONSHIP_TRAIT) Enum.Parse(typeof(RELATIONSHIP_TRAIT), relationshipsDropdown.options[relationshipsDropdown.value].text);
-        CharacterManager.Instance.CreateNewRelationshipBetween(_relationship.owner, _relationship.targetCharacter, relType);
+        RelationshipManager.Instance.RemoveOneWayRelationship(_relationship.owner, _relationship.targetCharacter, relType);
     }
     public void RemoveRelationshipOfType() {
         RELATIONSHIP_TRAIT relType = (RELATIONSHIP_TRAIT)Enum.Parse(typeof(RELATIONSHIP_TRAIT), relationshipsDropdown.options[relationshipsDropdown.value].text);
-        CharacterManager.Instance.RemoveRelationshipBetween(_relationship.owner, _relationship.targetCharacter, relType);
+        RelationshipManager.Instance.RemoveRelationshipBetween(_relationship.owner, _relationship.targetCharacter, relType);
     }
 
     #region Events

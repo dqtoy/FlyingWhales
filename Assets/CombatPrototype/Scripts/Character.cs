@@ -65,11 +65,11 @@ public class Character : ILeader, IPointOfInterest {
     public Dwelling homeStructure { get; protected set; }
     public Area defendingArea { get; private set; }
     public MORALITY morality { get; private set; }
-
-    public Dictionary<AlterEgoData, CharacterRelationshipData> relationships {
-        get {
-            return currentAlterEgo?.relationships ?? null;
-        }
+    public IRelationshipContainer relationshipContainer {
+        get { return currentAlterEgo.relationshipContainer; }
+    }
+    public IRelationshipValidator relationshipValidator {
+        get { return currentAlterEgo.relationshipValidator; }
     }
     public List<INTERACTION_TYPE> currentInteractionTypes { get; private set; }
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
@@ -1496,7 +1496,7 @@ public class Character : ILeader, IPointOfInterest {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character currCharacter = CharacterManager.Instance.allCharacters[i];
             if (currCharacter != targetCharacter && currCharacter != this) {
-                if (currCharacter.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.FRIEND)) {
+                if (currCharacter.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.FRIEND)) {
                     hasFriend = true;
                     break;
                 }
@@ -1519,14 +1519,15 @@ public class Character : ILeader, IPointOfInterest {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character currCharacter = CharacterManager.Instance.allCharacters[i];
             if (currCharacter != targetCharacter && currCharacter != this) {
-                if (currCharacter.HasRelationshipOfTypeWith(targetCharacter, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                if (currCharacter.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) 
+                    || currCharacter.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
                     hasLoverOrParamour = true;
                     break;
                 }
             }
         }
         if (hasLoverOrParamour) {
-            List<Character> loversOrParamours = targetCharacter.GetCharactersWithRelationship(RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR);
+            List<Character> loversOrParamours = targetCharacter.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR).Select(x => (x as AlterEgoData).owner).ToList(); //TODO: Revise this
             Character chosenLoverOrParamour = loversOrParamours[UnityEngine.Random.Range(0, loversOrParamours.Count)];
             if(chosenLoverOrParamour != null) {
                 int dayTo = GameManager.days;
@@ -1718,7 +1719,8 @@ public class Character : ILeader, IPointOfInterest {
         }
 
         //Undermine Enemy Job
-        if (!hasCreatedJob && HasRelationshipTraitOf(RELATIONSHIP_TRAIT.ENEMY)) {
+        List<Character> enemyCharacters = relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.ENEMY).Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList();
+        if (!hasCreatedJob && enemyCharacters.Count > 0) {
             int chance = UnityEngine.Random.Range(0, 100);
             int value = 3;
             CHARACTER_MOOD currentMood = currentMoodType;
@@ -1730,7 +1732,6 @@ public class Character : ILeader, IPointOfInterest {
                 value -= 3;
             }
             if (chance < value) {
-                List<Character> enemyCharacters = GetCharactersWithRelationship(RELATIONSHIP_TRAIT.ENEMY);
                 Character chosenCharacter = null;
                 while (chosenCharacter == null && enemyCharacters.Count > 0) {
                     int index = UnityEngine.Random.Range(0, enemyCharacters.Count);
@@ -1760,12 +1761,14 @@ public class Character : ILeader, IPointOfInterest {
         if (troubledCharacter != null) {
             this.troubledCharacter = troubledCharacter;
             Character targetCharacter = null;
-            List<Character> positiveCharacters = GetCharactersWithRelationship(TRAIT_EFFECT.POSITIVE);
+            List<Character> positiveCharacters = relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_EFFECT.POSITIVE)
+                .Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList(); //TODO: Improve this
             positiveCharacters.Remove(troubledCharacter);
             if (positiveCharacters.Count > 0) {
                 targetCharacter = positiveCharacters[UnityEngine.Random.Range(0, positiveCharacters.Count)];
             } else {
-                List<Character> nonEnemyCharacters = GetCharactersWithoutRelationship(RELATIONSHIP_TRAIT.ENEMY).Where(x => x.faction.id == faction.id).ToList();
+                List<Character> nonEnemyCharacters = relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_EFFECT.NEUTRAL)
+                    .Where(x => x is AlterEgoData && (x as AlterEgoData).owner.faction.id == faction.id).Select(x => (x as AlterEgoData).owner).ToList(); //TODO: Improve this
                 nonEnemyCharacters.Remove(troubledCharacter);
                 if (nonEnemyCharacters.Count > 0) {
                     targetCharacter = nonEnemyCharacters[UnityEngine.Random.Range(0, nonEnemyCharacters.Count)];
@@ -1793,12 +1796,14 @@ public class Character : ILeader, IPointOfInterest {
         if (troubledCharacter != null && troubledCharacter != this) {
             this.troubledCharacter = troubledCharacter;
             Character targetCharacter = null;
-            List<Character> positiveCharacters = GetCharactersWithRelationship(TRAIT_EFFECT.POSITIVE);
+            List<Character> positiveCharacters = relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_EFFECT.POSITIVE)
+                .Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList(); //TODO: Improve this
             positiveCharacters.Remove(troubledCharacter);
             if (positiveCharacters.Count > 0) {
                 targetCharacter = positiveCharacters[UnityEngine.Random.Range(0, positiveCharacters.Count)];
             } else {
-                List<Character> nonEnemyCharacters = GetCharactersWithoutRelationship(RELATIONSHIP_TRAIT.ENEMY).Where(x => x.faction.id == faction.id).ToList();
+                List<Character> nonEnemyCharacters = relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_EFFECT.NEUTRAL)
+                    .Where(x => x is AlterEgoData && (x as AlterEgoData).owner.faction.id == faction.id).Select(x => (x as AlterEgoData).owner).ToList(); //TODO: Improve this
                 nonEnemyCharacters.Remove(troubledCharacter);
                 if (nonEnemyCharacters.Count > 0) {
                     targetCharacter = nonEnemyCharacters[UnityEngine.Random.Range(0, nonEnemyCharacters.Count)];
@@ -2613,441 +2618,7 @@ public class Character : ILeader, IPointOfInterest {
     public virtual bool IsValidCombatTarget() {
         return traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) == false;
     }
-    #endregion
-
-    #region Relationships
-    public void AddRelationship(Character character, RelationshipTrait newRel) {
-        AddRelationship(character.currentAlterEgo, newRel);
-    }
-    public void AddRelationship(AlterEgoData alterEgo, RelationshipTrait newRel) {
-        currentAlterEgo.AddRelationship(alterEgo, newRel);
-
-        //if (!relationships.ContainsKey(alterEgo)) {
-        //    relationships.Add(alterEgo, new CharacterRelationshipData(this, alterEgo.owner, alterEgo));
-        //}
-        //relationships[alterEgo].AddRelationship(newRel);
-        //OnRelationshipWithCharacterAdded(alterEgo.owner, newRel);
-        //Messenger.Broadcast(Signals.RELATIONSHIP_ADDED, this, newRel);
-    }
-    //public void RemoveRelationship(Character character) {
-    //    if (relationships.ContainsKey(character.currentAlterEgo)) {
-    //        List<Trait> traits = relationships[character.currentAlterEgo].rels.Select(x => x as Trait).ToList();
-    //        relationships[character.currentAlterEgo].RemoveListeners();
-    //        relationships.Remove(character.currentAlterEgo);
-    //        RemoveTrait(traits);
-    //    }
-    //}
-    //public bool RemoveRelationship(Character character, RelationshipTrait rel) {
-    //    if (relationships.ContainsKey(character.currentAlterEgo)) {
-    //        return relationships[character.currentAlterEgo].RemoveRelationship(rel);
-    //        //not removing relationship data now when rel count is 0. Because relationship data can contain other data that is still valid even without relationships
-    //        //if (relationships[character].rels.Count == 0) {
-    //        //    RemoveRelationship(character);
-    //        //}
-    //    }
-    //    return false;
-    //}
-    public void RemoveRelationshipWith(Character character, RELATIONSHIP_TRAIT rel) {
-        //if (relationships.ContainsKey(character.currentAlterEgo)) {
-        //    relationships[character.currentAlterEgo].RemoveRelationship(rel);
-        //}
-        RemoveRelationshipWith(character.currentAlterEgo, rel);
-    }
-    public void RemoveRelationshipWith(AlterEgoData alterEgo, RELATIONSHIP_TRAIT rel) {
-        //if (relationships.ContainsKey(alterEgo)) {
-        //    relationships[alterEgo].RemoveRelationship(rel);
-        //}
-        currentAlterEgo.RemoveRelationship(alterEgo, rel);
-    }
-    //public void RemoveAllRelationships(bool triggerOnRemove = true) {
-    //    List<Character> targetCharacters = relationships.Keys.Select(x => x.owner).ToList();
-    //    while (targetCharacters.Count > 0) {
-    //        CharacterManager.Instance.RemoveRelationshipBetween(this, targetCharacters[0], triggerOnRemove);
-    //        targetCharacters.RemoveAt(0);
-    //    }
-    //}
-    public RelationshipTrait GetRelationshipTraitWith(Character character, RELATIONSHIP_TRAIT type, bool useDisabled = false) {
-        return GetRelationshipTraitWith(character.currentAlterEgo, type, useDisabled);
-    }
-    public RelationshipTrait GetRelationshipTraitWith(AlterEgoData alterEgo, RELATIONSHIP_TRAIT type, bool useDisabled = false) {
-        if (HasRelationshipWith(alterEgo, useDisabled)) {
-            return relationships[alterEgo].GetRelationshipTrait(type);
-        }
-        return null;
-    }
-    public List<RelationshipTrait> GetAllRelationshipTraitWith(Character character) {
-        return GetAllRelationshipTraitWith(character.currentAlterEgo);
-    }
-    public List<RelationshipTrait> GetAllRelationshipTraitWith(AlterEgoData alterEgo) {
-        if (HasRelationshipWith(alterEgo)) {
-            return relationships[alterEgo].GetAllRelationshipTraits();
-        }
-        return null;
-    }
-    public List<RelationshipTrait> GetAllRelationshipOfEffectWith(Character character, TRAIT_EFFECT effect) {
-        return GetAllRelationshipOfEffectWith(character.currentAlterEgo, effect);
-    }
-    public List<RelationshipTrait> GetAllRelationshipOfEffectWith(AlterEgoData alterEgo, TRAIT_EFFECT effect) {
-        List<RelationshipTrait> rels = new List<RelationshipTrait>();
-        if (HasRelationshipWith(alterEgo)) {
-            for (int i = 0; i < relationships[alterEgo].rels.Count; i++) {
-                RelationshipTrait currTrait = relationships[alterEgo].rels[i];
-                if (currTrait.effect == effect && !currTrait.isDisabled) {
-                    rels.Add(currTrait);
-                }
-            }
-        }
-        return rels;
-    }
-    public List<RELATIONSHIP_TRAIT> GetAllRelationshipTraitTypesWith(Character character) {
-        return GetAllRelationshipTraitTypesWith(character.currentAlterEgo);
-    }
-    public List<RELATIONSHIP_TRAIT> GetAllRelationshipTraitTypesWith(AlterEgoData alterEgo) {
-        if (HasRelationshipWith(alterEgo)) {
-            return new List<RELATIONSHIP_TRAIT>(relationships[alterEgo].rels.Where(x => !x.isDisabled).Select(x => x.relType));
-        }
-        return null;
-    }
-    public List<RelationshipTrait> GetAllRelationshipsOfType(Character except, params RELATIONSHIP_TRAIT[] type) {
-        List<RelationshipTrait> relationshipTraits = new List<RelationshipTrait>();
-        foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in relationships) {
-            if(except != null && kvp.Key.owner == except) {
-                continue;
-            }
-            for (int i = 0; i < type.Length; i++) {
-                if (!kvp.Value.isDisabled) {
-                    RelationshipTrait relTrait = kvp.Value.GetRelationshipTrait(type[i]);
-                    if (relTrait != null) {
-                        relationshipTraits.Add(relTrait);
-                    }
-                }
-            }
-        }
-        return relationshipTraits;
-    }
-    public List<Character> GetCharactersWithRelationship(params RELATIONSHIP_TRAIT[] type) {
-        List<Character> characters = new List<Character>();
-        foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in relationships) {
-            for (int i = 0; i < type.Length; i++) {
-                if (!kvp.Value.isDisabled && kvp.Value.HasRelationshipTrait(type[i])) {
-                    if (characters.Contains(kvp.Key.owner)) {
-                        continue;
-                    }
-                    characters.Add(kvp.Key.owner);
-                }
-            }
-        }
-        return characters;
-    }
-    public List<Character> GetViableCharactersWithRelationship(GENDER gender, params RELATIONSHIP_TRAIT[] type) {
-        List<Character> characters = new List<Character>();
-        foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in relationships) {
-            for (int i = 0; i < type.Length; i++) {
-                if (!kvp.Value.isDisabled && kvp.Value.HasRelationshipTrait(type[i])) {
-                    if (kvp.Key.owner.isDead ||  kvp.Key.owner.gender != gender || kvp.Key.owner.faction.IsHostileWith(faction) || kvp.Key.owner.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) || kvp.Key.owner.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL) || characters.Contains(kvp.Key.owner)) {
-                        continue;
-                    }
-                    characters.Add(kvp.Key.owner);
-                }
-            }
-        }
-        return characters;
-    }
-    public List<Character> GetCharactersWithoutRelationship(RELATIONSHIP_TRAIT type) {
-        List<Character> characters = new List<Character>();
-        foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in relationships) {
-            if (!kvp.Value.isDisabled && !kvp.Value.HasRelationshipTrait(type)) {
-                if (characters.Contains(kvp.Key.owner)) {
-                    continue;
-                }
-                characters.Add(kvp.Key.owner);
-            }
-        }
-        return characters;
-    }
-    public List<Character> GetCharactersWithRelationship(TRAIT_EFFECT effect) {
-        List<Character> characters = new List<Character>();
-        foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in relationships) {
-            if (!kvp.Value.isDisabled && kvp.Value.HasRelationshipOfEffect(effect)) {
-                if (characters.Contains(kvp.Key.owner)) {
-                    continue;
-                }
-                characters.Add(kvp.Key.owner);
-            }
-        }
-        return characters;
-    }
-    public Character GetCharacterWithRelationship(params RELATIONSHIP_TRAIT[] type) {
-        foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in relationships) {
-            for (int i = 0; i < type.Length; i++) {
-                if (!kvp.Value.isDisabled && kvp.Value.HasRelationshipTrait(type[i])) {
-                    return kvp.Key.owner;
-                }
-            }
-        }
-        return null;
-    }
-    public List<Character> GetAllCharactersThatHasRelationship() {
-        List<Character> characters = new List<Character>();
-        foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in relationships) {
-            if (!kvp.Value.isDisabled) {
-                if (characters.Contains(kvp.Key.owner)) {
-                    continue;
-                }
-                characters.Add(kvp.Key.owner);
-            }
-        }
-        return characters;
-    }
-    public bool CanHaveRelationshipWith(RELATIONSHIP_TRAIT type, Character target) {
-        //NOTE: This is only one way checking. This character will only check itself, if he/she meets the requirements of a given relationship
-        if (target.characterClass.className == "Zombie" || this.characterClass.className == "Zombie") {
-            return false; //Zombies cannot create relationships
-        }
-        List<RELATIONSHIP_TRAIT> relationshipsWithTarget = GetAllRelationshipTraitTypesWith(target);
-        //if(relationshipsWithTarget == null) { return true; }
-        switch (type) {
-            case RELATIONSHIP_TRAIT.ENEMY:
-                return relationshipsWithTarget == null || (!relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.ENEMY) && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.FRIEND) && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.LOVER)); //check that the target character is not already this characters enemy and that this character is also not his friend or his lover
-            case RELATIONSHIP_TRAIT.FRIEND:
-                return relationshipsWithTarget == null || (!relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.FRIEND) && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.ENEMY)); //check that the target character is not already this characters friend and that this character is also not his enemy
-            case RELATIONSHIP_TRAIT.LOVER:
-                //- **Lover:** Positive, Permanent (Can only have 1)
-                //check if this character already has a lover and that the target character is not his/her paramour
-                if (GetCharacterWithRelationship(type) != null) {
-                    return false;
-                }
-                if (relationshipsWithTarget != null && 
-                    (relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.PARAMOUR) || relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.ENEMY))) {
-                    return false;
-                }
-                return true;
-
-                //if (GetCharacterWithRelationship(type) == null
-                //    && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.PARAMOUR)) {
-                //    return true;
-                //}
-                //return false;
-            case RELATIONSHIP_TRAIT.PARAMOUR:
-                //- **Paramour:** Positive, Transient (Can only have 1)
-                //check if this character already has a paramour and that the target character is not his/her lover
-                //Comment Reason: Allowed multiple paramours
-                //if (GetCharacterWithRelationship(type) != null) {
-                //    return false;
-                //}
-                if (relationshipsWithTarget != null && relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.LOVER)) {
-                    return false;
-                }
-                //one of the characters must have a lover
-                if (!target.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.LOVER) && !HasRelationshipTraitOf(RELATIONSHIP_TRAIT.LOVER)) {
-                    return false;
-                }
-
-                return true;
-            //if (GetCharacterWithRelationship(type) == null 
-            //    && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.LOVER)) { 
-            //    return true;
-            //}
-            //return false;
-            case RELATIONSHIP_TRAIT.MASTER:
-                //this means that the target character will be this characters master, therefore making this character his/her servant
-                //so check if this character isn't already serving a master, or that this character is not a master himself
-                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MASTER) == null
-                    && GetCharacterWithRelationship(RELATIONSHIP_TRAIT.SERVANT) == null) {
-                    return true;
-                }
-                return false;
-            case RELATIONSHIP_TRAIT.SERVANT:
-                //this means that the target character will be this characters servant, therefore making this character his/her master
-                //so check that this character is not a servant
-                if (GetCharacterWithRelationship(RELATIONSHIP_TRAIT.MASTER) == null) {
-                    return true;
-                }
-                return false;
-        }
-        return true;
-    }
-    internal void OnRelationshipWithCharacterAdded(Character targetCharacter, RelationshipTrait newRel) {
-#if !WORLD_CREATION_TOOL
-         //check if they share the same home, then migrate them accordingly
-        if (newRel.relType == RELATIONSHIP_TRAIT.LOVER
-            && this.homeArea != null && targetCharacter.homeArea != null && this.homeArea.id == targetCharacter.homeArea.id
-            && this.homeStructure != targetCharacter.homeStructure) {
-            //Lover conquers all, even if one character is factionless they will be together, meaning the factionless character will still have home structure
-            homeArea.AssignCharacterToDwellingInArea(this, targetCharacter.homeStructure);
-        }
-#endif
-    }
-    /// <summary>
-    /// Does this character have a relationship of effect with the provided character?
-    /// </summary>
-    /// <param name="character">Other character.</param>
-    /// <param name="effect">Relationship effect (Positive, Negative, Neutral)</param>
-    /// <param name="include">Relationship type to exclude from checking</param>
-    /// <returns></returns>
-    public bool HasRelationshipOfEffectWith(Character character, TRAIT_EFFECT effect, RELATIONSHIP_TRAIT include = RELATIONSHIP_TRAIT.NONE) {
-        return HasRelationshipOfEffectWith(character.currentAlterEgo, effect, include);
-    }
-    public bool HasRelationshipOfEffectWith(AlterEgoData alterEgo, TRAIT_EFFECT effect, RELATIONSHIP_TRAIT include = RELATIONSHIP_TRAIT.NONE) {
-        if (HasRelationshipWith(alterEgo)) {
-            for (int i = 0; i < relationships[alterEgo].rels.Count; i++) {
-                RelationshipTrait currTrait = relationships[alterEgo].rels[i];
-                if ((currTrait.effect == effect || currTrait.relType == include) && !currTrait.isDisabled) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    /// <summary>
-    /// Does this character have any relationship type with a target character among the given relationship types.
-    /// </summary>
-    /// <param name="character">The target character.</param>
-    /// <param name="useDisabled">Use disabled relationships?</param>
-    /// <param name="objs">The list of relationships.</param>
-    /// <returns>true or false.</returns>
-    public bool HasAnyRelationshipOfTypeWith(Character character, bool useDisabled = false, params RELATIONSHIP_TRAIT[] objs) {
-        return HasAnyRelationshipOfTypeWith(character.currentAlterEgo, useDisabled, objs);
-    }
-    public bool HasAnyRelationshipOfTypeWith(AlterEgoData alterEgo, bool useDisabled = false, params RELATIONSHIP_TRAIT[] objs) {
-        if (HasRelationshipWith(alterEgo, useDisabled)) {
-            List<RELATIONSHIP_TRAIT> rels = objs.ToList();
-            for (int i = 0; i < relationships[alterEgo].rels.Count; i++) {
-                RelationshipTrait currTrait = relationships[alterEgo].rels[i];
-                if (rels.Contains(currTrait.relType)) {
-                    if (!currTrait.isDisabled || (currTrait.isDisabled && useDisabled)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    public bool HasRelationshipOfTypeWith(Character character, RELATIONSHIP_TRAIT relType, bool useDisabled = false) {
-        return HasRelationshipOfTypeWith(character.currentAlterEgo, relType, useDisabled);
-    }
-    public bool HasRelationshipOfTypeWith(AlterEgoData alterEgo, RELATIONSHIP_TRAIT relType, bool useDisabled = false) {
-        if (HasRelationshipWith(alterEgo, useDisabled)) {
-            for (int i = 0; i < relationships[alterEgo].rels.Count; i++) {
-                RelationshipTrait currTrait = relationships[alterEgo].rels[i];
-                if (currTrait.relType == relType && !currTrait.isDisabled) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public bool HasRelationshipOfTypeWith(Character character, bool useDisabled = false, params RELATIONSHIP_TRAIT[] rels) {
-        return HasRelationshipOfTypeWith(character.currentAlterEgo, useDisabled, rels);
-    }
-    public bool HasRelationshipOfTypeWith(AlterEgoData alterEgo, bool useDisabled = false, params RELATIONSHIP_TRAIT[] rels) {
-        if (HasRelationshipWith(alterEgo)) {
-            for (int i = 0; i < relationships[alterEgo].rels.Count; i++) {
-                RelationshipTrait currTrait = relationships[alterEgo].rels[i];
-                if (!useDisabled && currTrait.isDisabled) {
-                    continue; //skip
-                }
-                for (int j = 0; j < rels.Length; j++) {
-                    if (rels[j] == currTrait.relType) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    public CharacterRelationshipData GetCharacterRelationshipData(Character character) {
-        return GetCharacterRelationshipData(character.currentAlterEgo);
-    }
-    public CharacterRelationshipData GetCharacterRelationshipData(AlterEgoData alterEgo) {
-        if (HasRelationshipWith(alterEgo)) {
-            return relationships[alterEgo];
-        }
-        return null;
-    }
-    public bool HasRelationshipWith(Character character, bool useDisabled = false) {
-        return HasRelationshipWith(character.currentAlterEgo, useDisabled);
-    }
-    public bool HasRelationshipWith(AlterEgoData alterEgo, bool useDisabled = false) {
-        return currentAlterEgo.HasRelationshipWith(alterEgo, useDisabled);
-    }
-    public bool HasTwoWayRelationshipWith(Character character, bool useDisabled = false) {
-        return HasRelationshipWith(character.currentAlterEgo, useDisabled) && character.HasRelationshipWith(this.currentAlterEgo, useDisabled);
-    }
-    public int GetAllRelationshipCountExcept(List<RELATIONSHIP_TRAIT> except = null) {
-        int count = 0;
-        for (int i = 0; i < relationshipTraits.Count; i++) {
-            if (relationshipTraits[i] is RelationshipTrait) {
-                RelationshipTrait relTrait = relationshipTraits[i] as RelationshipTrait;
-                if (except != null) {
-                    if (except.Contains(relTrait.relType)) {
-                        continue; //skip
-                    }
-                }
-                count++;
-            }
-        }
-        return count;
-    }
-    public void FlirtWith(Character otherCharacter) {
-        if (!relationships.ContainsKey(otherCharacter.currentAlterEgo)) {
-            relationships.Add(otherCharacter.currentAlterEgo, new CharacterRelationshipData(this, otherCharacter, otherCharacter.currentAlterEgo));
-        }
-        relationships[otherCharacter.currentAlterEgo].IncreaseFlirtationCount();
-    }
-    /// <summary>
-    /// Get the type of relationship that this character has with the other character.
-    /// </summary>
-    /// <param name="otherCharacter">Character to check</param>
-    /// <param name="useDisabled">Should this checking use disabled relationships?</param>
-    /// <returns>POSITIVE, NEGATIVE, NONE</returns>
-    public RELATIONSHIP_EFFECT GetRelationshipEffectWith(Character otherCharacter, bool useDisabled = false) {
-        return GetRelationshipEffectWith(otherCharacter.currentAlterEgo, useDisabled);
-    }
-    public RELATIONSHIP_EFFECT GetRelationshipEffectWith(AlterEgoData alterEgo, bool useDisabled = false) {
-        if (HasRelationshipWith(alterEgo, useDisabled)) {
-            for (int i = 0; i < relationships[alterEgo].rels.Count; i++) {
-                RelationshipTrait currTrait = relationships[alterEgo].rels[i];
-                if(currTrait.relType == RELATIONSHIP_TRAIT.LOVER || currTrait.relType == RELATIONSHIP_TRAIT.PARAMOUR) {
-                    if(jobQueue.HasJob(JOB_TYPE.BREAK_UP, alterEgo.owner)) {
-                        continue;
-                    }
-                }
-                if (currTrait.effect == TRAIT_EFFECT.NEGATIVE) {
-                    return RELATIONSHIP_EFFECT.NEGATIVE;
-                }
-            }
-            return RELATIONSHIP_EFFECT.POSITIVE;
-        }
-        return RELATIONSHIP_EFFECT.NONE;
-    }
-    public bool HasRelationshipTraitOf(RELATIONSHIP_TRAIT relType, bool includeDead = true) {
-        for (int i = 0; i < relationshipTraits.Count; i++) {
-            if (!relationshipTraits[i].isDisabled) {
-                RelationshipTrait currTrait = relationshipTraits[i];
-                if (currTrait.targetCharacter.isDead && !includeDead) {
-                    continue; //skip dead characters
-                }
-                if (currTrait.relType == relType) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public bool HasRelationshipTraitOf(RELATIONSHIP_TRAIT relType, Faction except) {
-        for (int i = 0; i < relationshipTraits.Count; i++) {
-            if (!relationshipTraits[i].isDisabled) {
-                RelationshipTrait currTrait = relationshipTraits[i];
-                if (currTrait.relType == relType
-                    && currTrait.targetCharacter.faction.id != except.id) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    #endregion
+    #endregion    
 
     #region History/Logs
     public bool AddHistory(Log log) {
@@ -3291,21 +2862,21 @@ public class Character : ILeader, IPointOfInterest {
         //        if (HasRelationshipOfTypeWith(eventToBeInformed.actor, RELATIONSHIP_TRAIT.LOVER) || HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
         //            Betrayed betrayed = new Betrayed();
         //            AddTrait(betrayed);
-        //            CharacterManager.Instance.RelationshipDegradation(eventToBeInformed.actor, this, eventToBeInformed);
-        //            CharacterManager.Instance.RelationshipDegradation(target, this, eventToBeInformed);
+        //            RelationshipManager.Instance.RelationshipDegradation(eventToBeInformed.actor, this, eventToBeInformed);
+        //            RelationshipManager.Instance.RelationshipDegradation(target, this, eventToBeInformed);
         //        }
         //    } else if (eventToBeInformed.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE) {
         //        if (HasRelationshipOfTypeWith(eventToBeInformed.actor, RELATIONSHIP_TRAIT.LOVER)) {
         //            Betrayed betrayed = new Betrayed();
         //            AddTrait(betrayed);
-        //            CharacterManager.Instance.RelationshipDegradation(eventToBeInformed.actor, this, eventToBeInformed);
-        //            CharacterManager.Instance.RelationshipDegradation(target, this, eventToBeInformed);
+        //            RelationshipManager.Instance.RelationshipDegradation(eventToBeInformed.actor, this, eventToBeInformed);
+        //            RelationshipManager.Instance.RelationshipDegradation(target, this, eventToBeInformed);
         //        } else if (HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
         //            if (eventToBeInformed.currentState.name == "Invite Success") {
         //                Betrayed betrayed = new Betrayed();
         //                AddTrait(betrayed);
-        //                CharacterManager.Instance.RelationshipDegradation(eventToBeInformed.actor, this, eventToBeInformed);
-        //                CharacterManager.Instance.RelationshipDegradation(target, this, eventToBeInformed);
+        //                RelationshipManager.Instance.RelationshipDegradation(eventToBeInformed.actor, this, eventToBeInformed);
+        //                RelationshipManager.Instance.RelationshipDegradation(target, this, eventToBeInformed);
         //            }
         //        }
         //    }
@@ -3356,24 +2927,24 @@ public class Character : ILeader, IPointOfInterest {
             Character target = witnessedEvent.poiTarget as Character;
             if (witnessedEvent.goapType == INTERACTION_TYPE.MAKE_LOVE) {
                 target = (witnessedEvent as MakeLove).targetCharacter;
-                if (HasRelationshipOfTypeWith(witnessedEvent.actor, RELATIONSHIP_TRAIT.LOVER) || HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
+                if (relationshipContainer.HasRelationshipWith(witnessedEvent.actor.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) || relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
                     Betrayed betrayed = new Betrayed();
                     traitContainer.AddTrait(this, betrayed);
-                    //CharacterManager.Instance.RelationshipDegradation(witnessedEvent.actor, this, witnessedEvent);
-                    //CharacterManager.Instance.RelationshipDegradation(target, this, witnessedEvent);
+                    //RelationshipManager.Instance.RelationshipDegradation(witnessedEvent.actor, this, witnessedEvent);
+                    //RelationshipManager.Instance.RelationshipDegradation(target, this, witnessedEvent);
                 } 
             } else if (witnessedEvent.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE) {
-                if (HasRelationshipOfTypeWith(witnessedEvent.actor, RELATIONSHIP_TRAIT.LOVER)) {
+                if (relationshipContainer.HasRelationshipWith(witnessedEvent.actor.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
                     Betrayed betrayed = new Betrayed();
                     traitContainer.AddTrait(this, betrayed);
-                    //CharacterManager.Instance.RelationshipDegradation(witnessedEvent.actor, this, witnessedEvent);
-                    //CharacterManager.Instance.RelationshipDegradation(target, this, witnessedEvent);
-                } else if (HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
+                    //RelationshipManager.Instance.RelationshipDegradation(witnessedEvent.actor, this, witnessedEvent);
+                    //RelationshipManager.Instance.RelationshipDegradation(target, this, witnessedEvent);
+                } else if (relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
                     if (witnessedEvent.currentState.name == "Invite Success") {
                         Betrayed betrayed = new Betrayed();
                         traitContainer.AddTrait(this, betrayed);
-                        //CharacterManager.Instance.RelationshipDegradation(witnessedEvent.actor, this, witnessedEvent);
-                        //CharacterManager.Instance.RelationshipDegradation(target, this, witnessedEvent);
+                        //RelationshipManager.Instance.RelationshipDegradation(witnessedEvent.actor, this, witnessedEvent);
+                        //RelationshipManager.Instance.RelationshipDegradation(target, this, witnessedEvent);
                     }
                 }
             }
@@ -3416,8 +2987,8 @@ public class Character : ILeader, IPointOfInterest {
                             CreateWatchEvent(null, targetCombatState, targetCharacter);
                         } else {
                             if (currentHostileOfTargetCharacter.faction == faction) {
-                                RELATIONSHIP_EFFECT relEffectTowardsTarget = GetRelationshipEffectWith(targetCharacter);
-                                RELATIONSHIP_EFFECT relEffectTowardsTargetOfCombat = GetRelationshipEffectWith(currentHostileOfTargetCharacter);
+                                RELATIONSHIP_EFFECT relEffectTowardsTarget = relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo);
+                                RELATIONSHIP_EFFECT relEffectTowardsTargetOfCombat = relationshipContainer.GetRelationshipEffectWith(currentHostileOfTargetCharacter.currentAlterEgo);
 
                                 if (relEffectTowardsTarget == RELATIONSHIP_EFFECT.POSITIVE) {
                                     if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
@@ -3430,7 +3001,7 @@ public class Character : ILeader, IPointOfInterest {
                                                 //Then that's only when we apply the join combat log and notif
                                                 //Because if not, it means that this character is already in combat with someone else, and thus
                                                 //should not product join combat log anymore
-                                                List<RELATIONSHIP_TRAIT> rels = GetAllRelationshipTraitTypesWith(targetCharacter).OrderByDescending(x => (int)x).ToList(); //so that the first relationship to be returned is the one with higher importance.
+                                                List<RELATIONSHIP_TRAIT> rels = relationshipContainer.GetRelationshipDataWith(targetCharacter.currentAlterEgo)?.relationships.OrderByDescending(x => (int)x).ToList() ?? null; //so that the first relationship to be returned is the one with higher importance.
                                                 Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
                                                 joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                                                 joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -3451,7 +3022,7 @@ public class Character : ILeader, IPointOfInterest {
                                                 //Then that's only when we apply the join combat log and notif
                                                 //Because if not, it means that this character is already in combat with someone else, and thus
                                                 //should not product join combat log anymore
-                                                List<RELATIONSHIP_TRAIT> rels = GetAllRelationshipTraitTypesWith(currentHostileOfTargetCharacter).OrderByDescending(x => (int)x).ToList(); //so that the first relationship to be returned is the one with higher importance.
+                                                List<RELATIONSHIP_TRAIT> rels = relationshipContainer.GetRelationshipDataWith(currentHostileOfTargetCharacter.currentAlterEgo)?.relationships.OrderByDescending(x => (int)x).ToList() ?? null; //so that the first relationship to be returned is the one with higher importance.
                                                 Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
                                                 joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                                                 joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -3644,7 +3215,7 @@ public class Character : ILeader, IPointOfInterest {
                 //So, only set responsible character if currentClosestHostile is this character, meaning, this character is really the target
                 responsibleCharacter = characterThatAttacked;
                 if (!state.allCharactersThatDegradedRel.Contains(this)) {
-                    CharacterManager.Instance.RelationshipDegradation(characterThatAttacked, this);
+                    RelationshipManager.Instance.RelationshipDegradation(characterThatAttacked, this);
                     state.AddCharacterThatDegradedRel(this);
                 }
             }
@@ -4139,15 +3710,6 @@ public class Character : ILeader, IPointOfInterest {
     public void SetHomeStructure(Dwelling homeStructure) {
         this.homeStructure = homeStructure;
         currentAlterEgo.SetHomeStructure(homeStructure);
-    }
-    public bool IsLivingWith(RELATIONSHIP_TRAIT type) {
-        if (homeStructure != null && homeStructure.residents.Count > 1) {
-            Character relTarget = GetCharacterWithRelationship(type);
-            if (homeStructure.residents.Contains(relTarget)) {
-                return true;
-            }
-        }
-        return false;
     }
     public bool MigrateHomeTo(Region newHomeRegion, Dwelling homeStructure = null, bool broadcast = true) {
         Region previousHome = null;
@@ -5225,7 +4787,7 @@ public class Character : ILeader, IPointOfInterest {
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += "\n  -RNG roll: " + chance;
                     if (chance < 25) {
-                        List<Character> positiveCharacters = GetCharactersWithRelationship(TRAIT_EFFECT.POSITIVE);
+                        List<Character> positiveCharacters = relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_EFFECT.POSITIVE).Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList(); //TODO: Improve this.
                         if(positiveCharacters.Count > 0) {
                             Character chosenCharacter = positiveCharacters[UnityEngine.Random.Range(0, positiveCharacters.Count)];
                             if (chosenCharacter.homeStructure != null) {
@@ -5451,17 +5013,18 @@ public class Character : ILeader, IPointOfInterest {
         //PlanGoapActions(goapAction);
     }
     private Character GetParalyzedOrCatatonicCharacterToCheckOut() {
-        List<Character> charactersWithRel = GetAllCharactersThatHasRelationship();
+        List<Character> charactersWithRel = relationshipContainer.relationships.Keys.Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList();
         if (charactersWithRel.Count > 0) {
             List<Character> positiveCharactersWithParalyzedOrCatatonic = new List<Character>();
             for (int i = 0; i < charactersWithRel.Count; i++) {
-                if (GetRelationshipEffectWith(charactersWithRel[i]) == RELATIONSHIP_EFFECT.POSITIVE) {
-                    Trait trait = charactersWithRel[i].traitContainer.GetNormalTrait("Paralyzed", "Catatonic");
+                Character character = charactersWithRel[i];
+                if (relationshipContainer.GetRelationshipEffectWith(character.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
+                    Trait trait = character.traitContainer.GetNormalTrait("Paralyzed", "Catatonic");
                     if (trait != null) {
                         if (trait is Paralyzed && (trait as Paralyzed).charactersThatKnow.Contains(this)) {
-                            positiveCharactersWithParalyzedOrCatatonic.Add(charactersWithRel[i]);
+                            positiveCharactersWithParalyzedOrCatatonic.Add(character);
                         } else if (trait is Catatonic && (trait as Catatonic).charactersThatKnow.Contains(this)) {
-                            positiveCharactersWithParalyzedOrCatatonic.Add(charactersWithRel[i]);
+                            positiveCharactersWithParalyzedOrCatatonic.Add(character);
                         }
                     }
                 }
@@ -5489,7 +5052,7 @@ public class Character : ILeader, IPointOfInterest {
         ChatCharacter chatAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CHAT_CHARACTER, this, targetCharacter) as ChatCharacter;
         chatAction.PerformActualAction();
     }
-    public float GetFlirtationWeightWith(Character targetCharacter, CharacterRelationshipData relData, params CHARACTER_MOOD[] moods) {
+    public float GetFlirtationWeightWith(Character targetCharacter, IRelationshipData relData, params CHARACTER_MOOD[] moods) {
         float positiveFlirtationWeight = 0;
         float negativeFlirtationWeight = 0;
         for (int i = 0; i < moods.Length; i++) {
@@ -5515,7 +5078,7 @@ public class Character : ILeader, IPointOfInterest {
         }
         if (relData != null) {
             //+10 Weight per previous flirtation
-            positiveFlirtationWeight += 10 * relData.flirtationCount;
+            //positiveFlirtationWeight += 10 * relData.flirtationCount; //TODO
         }
         //x2 all positive modifiers per Drunk
         if (traitContainer.GetNormalTrait("Drunk") != null) {
@@ -5527,22 +5090,22 @@ public class Character : ILeader, IPointOfInterest {
 
         Unfaithful unfaithful = traitContainer.GetNormalTrait("Unfaithful") as Unfaithful;
         //x0.5 all positive modifiers per negative relationship
-        if (GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
+        if (relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
             positiveFlirtationWeight *= 0.5f;
         }
-        if (targetCharacter.GetRelationshipEffectWith(this) == RELATIONSHIP_EFFECT.NEGATIVE) {
+        if (targetCharacter.relationshipContainer.GetRelationshipEffectWith(this.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
             positiveFlirtationWeight *= 0.5f;
         }
         //x0.1 all positive modifiers per sexually incompatible
-        if (!CharacterManager.Instance.IsSexuallyCompatibleOneSided(this, targetCharacter)) {
+        if (!RelationshipManager.Instance.IsSexuallyCompatibleOneSided(this, targetCharacter)) {
             positiveFlirtationWeight *= 0.1f;
         }
         // x6 if initiator is Unfaithful and already has a lover
-        else if (unfaithful != null && (relData == null || !relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.LOVER))) {
+        else if (unfaithful != null && (relData == null || !relData.HasRelationship(RELATIONSHIP_TRAIT.LOVER))) {
             positiveFlirtationWeight *= 6f;
             positiveFlirtationWeight *= unfaithful.affairChanceMultiplier;
         }
-        if (!CharacterManager.Instance.IsSexuallyCompatibleOneSided(targetCharacter, this)) {
+        if (!RelationshipManager.Instance.IsSexuallyCompatibleOneSided(targetCharacter, this)) {
             positiveFlirtationWeight *= 0.1f;
         }
         bool thisIsUgly = traitContainer.GetNormalTrait("Ugly") != null;
@@ -5552,11 +5115,11 @@ public class Character : ILeader, IPointOfInterest {
         }
         return positiveFlirtationWeight + negativeFlirtationWeight;
     }
-    public float GetBecomeLoversWeightWith(Character targetCharacter, CharacterRelationshipData relData, params CHARACTER_MOOD[] moods) {
+    public float GetBecomeLoversWeightWith(Character targetCharacter, IRelationshipData relData, params CHARACTER_MOOD[] moods) {
         float positiveWeight = 0;
         float negativeWeight = 0;
-        if (GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE
-            && CanHaveRelationshipWith(RELATIONSHIP_TRAIT.LOVER, targetCharacter) && targetCharacter.CanHaveRelationshipWith(RELATIONSHIP_TRAIT.LOVER, this)
+        if (relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.relationshipContainer.GetRelationshipEffectWith(this.currentAlterEgo) != RELATIONSHIP_EFFECT.NEGATIVE
+            && relationshipValidator.CanHaveRelationship(this.currentAlterEgo, targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) && targetCharacter.relationshipValidator.CanHaveRelationship(targetCharacter.currentAlterEgo, this.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)
             && role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
             for (int i = 0; i < moods.Length; i++) {
                 CHARACTER_MOOD mood = moods[i];
@@ -5581,7 +5144,7 @@ public class Character : ILeader, IPointOfInterest {
             }
             if (relData != null) {
                 //+30 Weight per previous flirtation
-                positiveWeight += 30 * relData.flirtationCount;
+                //positiveWeight += 30 * relData.flirtationCount;//TODO
             }
             //x2 all positive modifiers per Drunk
             if (traitContainer.GetNormalTrait("Drunk") != null) {
@@ -5591,10 +5154,10 @@ public class Character : ILeader, IPointOfInterest {
                 positiveWeight *= 2;
             }
             //x0.1 all positive modifiers per sexually incompatible
-            if (!CharacterManager.Instance.IsSexuallyCompatibleOneSided(this, targetCharacter)) {
+            if (!RelationshipManager.Instance.IsSexuallyCompatibleOneSided(this, targetCharacter)) {
                 positiveWeight *= 0.1f;
             }
-            if (!CharacterManager.Instance.IsSexuallyCompatibleOneSided(targetCharacter, this)) {
+            if (!RelationshipManager.Instance.IsSexuallyCompatibleOneSided(targetCharacter, this)) {
                 positiveWeight *= 0.1f;
             }
             //x0 if a character is a beast
@@ -5608,12 +5171,12 @@ public class Character : ILeader, IPointOfInterest {
         }
         return positiveWeight + negativeWeight;
     }
-    public float GetBecomeParamoursWeightWith(Character targetCharacter, CharacterRelationshipData relData, params CHARACTER_MOOD[] moods) {
+    public float GetBecomeParamoursWeightWith(Character targetCharacter, IRelationshipData relData, params CHARACTER_MOOD[] moods) {
         //**if they dont have a negative relationship and at least one of them has a lover, they may become paramours**
         float positiveWeight = 0;
         float negativeWeight = 0;
-        if (GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.GetRelationshipEffectWith(this) != RELATIONSHIP_EFFECT.NEGATIVE
-            && CanHaveRelationshipWith(RELATIONSHIP_TRAIT.PARAMOUR, targetCharacter) && targetCharacter.CanHaveRelationshipWith(RELATIONSHIP_TRAIT.PARAMOUR, this)
+        if (relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.relationshipContainer.GetRelationshipEffectWith(this.currentAlterEgo) != RELATIONSHIP_EFFECT.NEGATIVE
+            && relationshipValidator.CanHaveRelationship(this.currentAlterEgo, targetCharacter.currentAlterEgo,  RELATIONSHIP_TRAIT.PARAMOUR) && targetCharacter.relationshipValidator.CanHaveRelationship(targetCharacter.currentAlterEgo, this.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)
             && role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
             for (int i = 0; i < moods.Length; i++) {
                 CHARACTER_MOOD mood = moods[i];
@@ -5638,7 +5201,7 @@ public class Character : ILeader, IPointOfInterest {
             }
             if (relData != null) {
                 //+30 Weight per previous flirtation
-                positiveWeight += 50 * relData.flirtationCount;
+                //positiveWeight += 50 * relData.flirtationCount; //TODO
             }
             Unfaithful unfaithful = traitContainer.GetNormalTrait("Unfaithful") as Unfaithful;
             //x2 all positive modifiers per Drunk
@@ -5649,32 +5212,32 @@ public class Character : ILeader, IPointOfInterest {
                 positiveWeight *= 2.5f;
             }
             //x0.1 all positive modifiers per sexually incompatible
-            if (!CharacterManager.Instance.IsSexuallyCompatibleOneSided(this, targetCharacter)) {
+            if (!RelationshipManager.Instance.IsSexuallyCompatibleOneSided(this, targetCharacter)) {
                 positiveWeight *= 0.1f;
             }
             // x4 if initiator is Unfaithful and already has a lover
-            else if (unfaithful != null && (relData == null || !relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.LOVER))) {
+            else if (unfaithful != null && (relData == null || !relData.HasRelationship(RELATIONSHIP_TRAIT.LOVER))) {
                 positiveWeight *= 4f;
                 positiveWeight *= unfaithful.affairChanceMultiplier;
             }
 
-            if (!CharacterManager.Instance.IsSexuallyCompatibleOneSided(targetCharacter, this)) {
+            if (!RelationshipManager.Instance.IsSexuallyCompatibleOneSided(targetCharacter, this)) {
                 positiveWeight *= 0.1f;
             }
-            Character lover = GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
+            Relatable lover = relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.LOVER).FirstOrDefault();
             //x3 all positive modifiers if character considers lover as Enemy
-            if (lover != null && HasRelationshipOfTypeWith(lover, RELATIONSHIP_TRAIT.ENEMY)) {
+            if (lover != null && relationshipContainer.HasRelationshipWith(lover, RELATIONSHIP_TRAIT.ENEMY)) {
                 positiveWeight *= 3f;
             }
-            if (HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.RELATIVE)) {
+            if (relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.RELATIVE)) {
                 positiveWeight *= 0.01f;
             }
-            if (lover != null && lover.traitContainer.GetNormalTrait("Ugly") != null) { //if lover is ugly
+            if (lover != null && lover is ITraitable && (lover as ITraitable).traitContainer.GetNormalTrait("Ugly") != null) { //if lover is ugly
                 positiveWeight += positiveWeight * 0.75f;
             }
             //x0 if a character has a lover and does not have the Unfaithful trait
-            if ((HasRelationshipTraitOf(RELATIONSHIP_TRAIT.LOVER, false) && traitContainer.GetNormalTrait("Unfaithful") == null) 
-                || (targetCharacter.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.LOVER, false) && targetCharacter.traitContainer.GetNormalTrait("Unfaithful") == null)) {
+            if ((relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.LOVER).Count > 0 && traitContainer.GetNormalTrait("Unfaithful") == null) 
+                || (targetCharacter.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.LOVER).Count > 0 && targetCharacter.traitContainer.GetNormalTrait("Unfaithful") == null)) {
                 positiveWeight *= 0;
                 negativeWeight *= 0;
             }
@@ -6312,11 +5875,11 @@ public class Character : ILeader, IPointOfInterest {
                 bool doesNotConcernMe = false;
                 //If the event's actor and target do not have any relationship with the recipient and are not part of his faction, 
                 //and if no item involved is owned by the recipient: "This does not concern me."
-                if (!this.HasRelationshipWith(ei.action.actor)
+                if (!this.relationshipContainer.HasRelationshipWith(ei.action.actorAlterEgo)
                     && ei.action.actor.faction != this.faction) {
                     if (ei.action.poiTarget is Character) {
                         Character otherCharacter = ei.action.poiTarget as Character;
-                        if (!this.HasRelationshipWith(otherCharacter)
+                        if (!this.relationshipContainer.HasRelationshipWith(ei.action.poiTargetAlterEgo)
                             && otherCharacter.faction != this.faction) {
                             doesNotConcernMe = true;
                         }
@@ -7817,7 +7380,7 @@ public class Character : ILeader, IPointOfInterest {
         }
         //Log witnessLog = null;
         //Log reportLog = null;
-        RELATIONSHIP_EFFECT relationshipEfffectWithCriminal = GetRelationshipEffectWith(criminal);
+        RELATIONSHIP_EFFECT relationshipEfffectWithCriminal = relationshipContainer.GetRelationshipEffectWith(criminal);
         CRIME_CATEGORY category = committedCrime.GetCategory();
 
         //If character witnessed an Infraction crime:
@@ -7844,7 +7407,7 @@ public class Character : ILeader, IPointOfInterest {
             else if (category.IsGreaterThanOrEqual(CRIME_CATEGORY.SERIOUS)) {
                 reactSummary += "\nCrime committed is serious or worse. Removing positive relationships.";
                 //- Relationship Degradation between Character and Criminal
-                hasRelationshipDegraded = CharacterManager.Instance.RelationshipDegradation(criminal.owner, this, witnessedCrime);
+                hasRelationshipDegraded = RelationshipManager.Instance.RelationshipDegradation(criminal.owner, this, witnessedCrime);
                 if (hasRelationshipDegraded) {
                     //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed_degraded");
                     //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed_degraded");
@@ -7862,11 +7425,11 @@ public class Character : ILeader, IPointOfInterest {
             }
         }
         //If character has no relationships with the criminal or they are enemies and the crime is a Misdemeanor or worse:
-        else if ((!this.HasRelationshipWith(criminal) || this.HasRelationshipOfTypeWith(criminal, RELATIONSHIP_TRAIT.ENEMY)) 
+        else if ((!this.relationshipContainer.HasRelationshipWith(criminal) || this.relationshipContainer.HasRelationshipWith(criminal, RELATIONSHIP_TRAIT.ENEMY)) 
             && category.IsGreaterThanOrEqual(CRIME_CATEGORY.MISDEMEANOR)) {
             reactSummary += "\n" + this.name + " does not have a relationship with or is an enemy of " + criminal.name + " and the committed crime is misdemeanor or worse";
             //- Relationship Degradation between Character and Criminal
-            hasRelationshipDegraded = CharacterManager.Instance.RelationshipDegradation(criminal.owner, this, witnessedCrime);
+            hasRelationshipDegraded = RelationshipManager.Instance.RelationshipDegradation(criminal.owner, this, witnessedCrime);
             //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]!"
             if (hasRelationshipDegraded) {
                 //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed_degraded");
@@ -8133,7 +7696,7 @@ public class Character : ILeader, IPointOfInterest {
                 }
                 //Debug.Log(this.name + " distance with " + characterThatStartedState.name + " is " + distance.ToString());
                 if (targetCharacter != null && this.isPartOfHomeFaction && characterThatStartedState.isAtHomeRegion && characterThatStartedState.isPartOfHomeFaction && this.IsCombatReady()
-                    && this.IsHostileOutsider(targetCharacter) && (this.GetRelationshipEffectWith(characterThatStartedState) == RELATIONSHIP_EFFECT.POSITIVE || characterThatStartedState.role.roleType == CHARACTER_ROLE.SOLDIER)
+                    && this.IsHostileOutsider(targetCharacter) && (this.relationshipContainer.GetRelationshipEffectWith(characterThatStartedState.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE || characterThatStartedState.role.roleType == CHARACTER_ROLE.SOLDIER)
                     && distance <= Combat_Signalled_Distance) {
                     if (marker.AddHostileInRange(targetCharacter, processCombatBehavior: false)) {
                         if (!marker.avoidInRange.Contains(targetCharacter)) {
@@ -8205,7 +7768,6 @@ public class Character : ILeader, IPointOfInterest {
         }
     }
     public bool isSwitchingAlterEgo { get; private set; } //is this character in the process of switching alter egos?
-
     public void SwitchAlterEgo(string alterEgoName) {
         if (currentAlterEgoName == alterEgoName) {
             return; //ignore change
@@ -8276,4 +7838,15 @@ public class Character : ILeader, IPointOfInterest {
         return null;
     }
     #endregion
+
+    #region Converters
+    public static implicit operator Relatable(Character d) => d.currentAlterEgo;
+    //public static bool operator ==(Character character, Relatable relatable) {
+    //    return relatable == (Relatable)character;
+    //}
+    //public static bool operator !=(Character character, Relatable relatable) {
+    //    return relatable != (Relatable)character;
+    //}
+    #endregion
+
 }

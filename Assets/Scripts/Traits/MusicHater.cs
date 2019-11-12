@@ -64,7 +64,7 @@ namespace Traits {
         //        log.AddToFillers(guitarPlayer, guitarPlayer.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         //        log.AddLogToInvolvedObjects();
         //        PlayerManager.Instance.player.ShowNotification(log);
-        //        CharacterManager.Instance.RelationshipDegradation(guitarPlayer, owner);
+        //        RelationshipManager.Instance.RelationshipDegradation(guitarPlayer, owner);
         //    }
         //    //Debug.Log(GameManager.Instance.TodayLogString() + owner.name + " heard " + guitarPlayer.name + " playing a guitar, and became annoyed.");
 

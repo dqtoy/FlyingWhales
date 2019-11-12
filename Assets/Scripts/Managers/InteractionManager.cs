@@ -389,9 +389,9 @@ public class InteractionManager : MonoBehaviour {
                 }
             }
             if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
-                return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.HasRelationshipOfTypeWith(character, RELATIONSHIP_TRAIT.ENEMY);
+                return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.relationshipContainer.HasRelationshipWith(character, RELATIONSHIP_TRAIT.ENEMY);
             }
-            return !character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY);
+            return !character.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
         }
         return false;
     }
@@ -408,9 +408,9 @@ public class InteractionManager : MonoBehaviour {
                 //}
             }
             if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
-                return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.HasRelationshipOfTypeWith(character, RELATIONSHIP_TRAIT.ENEMY);
+                return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.relationshipContainer.HasRelationshipWith(character, RELATIONSHIP_TRAIT.ENEMY);
             }
-            return !character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY); //&& character.traitContainer.GetNormalTrait("Doctor") != null;
+            return !character.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY); //&& character.traitContainer.GetNormalTrait("Doctor") != null;
         }
         return false;
     }
@@ -429,22 +429,22 @@ public class InteractionManager : MonoBehaviour {
                 
             }
             if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
-                return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.HasRelationshipOfTypeWith(character, RELATIONSHIP_TRAIT.ENEMY);
+                return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.relationshipContainer.HasRelationshipWith(character, RELATIONSHIP_TRAIT.ENEMY);
             }
-            return !character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY) && character.traitContainer.GetNormalTrait("Doctor") != null;
+            return !character.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY) && character.traitContainer.GetNormalTrait("Doctor") != null;
         }
         return false;
     }
     public bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter, JobQueueItem job) {
         if (character.isAtHomeRegion && !character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL) && character.traitContainer.GetNormalTrait("Coward") == null) {
-            return character.role.roleType == CHARACTER_ROLE.SOLDIER && character.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE;
+            return character.role.roleType == CHARACTER_ROLE.SOLDIER && character.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.POSITIVE;
         }
         return false;
     }
     public bool CanCharacterTakeRestrainJob(Character character, Character targetCharacter, JobQueueItem job) {
         return targetCharacter.faction != character.faction && character.isAtHomeRegion && character.isPartOfHomeFaction
             && (character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN || character.role.roleType == CHARACTER_ROLE.ADVENTURER)
-            && character.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE && !character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL);
+            && character.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.POSITIVE && !character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL);
     }
     public bool CanCharacterTakeRepairJob(Character character, JobQueueItem job) {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN || character.role.roleType == CHARACTER_ROLE.ADVENTURER;
@@ -455,7 +455,7 @@ public class InteractionManager : MonoBehaviour {
         return removedObj.tileObjectType.CanBeCraftedBy(character);
     }
     public bool CanCharacterTakeParalyzedFeedJob(Character sourceCharacter, Character character, JobQueueItem job) {
-        return sourceCharacter != character && sourceCharacter.faction == character.faction && sourceCharacter.GetRelationshipEffectWith(character) != RELATIONSHIP_EFFECT.NEGATIVE;
+        return sourceCharacter != character && sourceCharacter.faction == character.faction && sourceCharacter.relationshipContainer.GetRelationshipEffectWith(character.currentAlterEgo) != RELATIONSHIP_EFFECT.NEGATIVE;
     }
     public bool CanCharacterTakeRestrainedFeedJob(Character sourceCharacter, Character character, JobQueueItem job) {
         if (sourceCharacter.specificLocation.region.IsResident(character)) {
@@ -468,7 +468,7 @@ public class InteractionManager : MonoBehaviour {
         return false;
     }
     public bool CanCharacterTakeDropJob(Character sourceCharacter, Character character, JobQueueItem job) {
-        return sourceCharacter != character && sourceCharacter.faction == character.faction && character.GetRelationshipEffectWith(sourceCharacter) != RELATIONSHIP_EFFECT.NEGATIVE;
+        return sourceCharacter != character && sourceCharacter.faction == character.faction && character.relationshipContainer.GetRelationshipEffectWith(sourceCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.NEGATIVE;
     }
     public bool CanCharacterTakeKnockoutJob(Character character, Character targetCharacter, JobQueueItem job) {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.ADVENTURER; // && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE)

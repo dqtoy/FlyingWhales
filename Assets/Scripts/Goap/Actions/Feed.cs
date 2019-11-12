@@ -103,7 +103,7 @@ public class Feed : GoapAction {
                     }
                 }
                 //- Recipient Has Positive Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
                     if (targetCharacter.isAtHomeRegion) {
                         reactions.Add(string.Format("{0} is paying for {1} mistakes.", targetCharacter.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.POSSESSIVE, false)));
                     } else {
@@ -112,7 +112,7 @@ public class Feed : GoapAction {
                     }
                 }
                 //- Recipient Has Negative Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
                     //if (targetCharacter.isAtHomeArea) {
                     //    reactions.Add(string.Format("I hope {0} rots in there!", targetCharacter.name));
                     //    AddTraitTo(recipient, "Satisfied");

@@ -26,8 +26,8 @@ public class HaveAffair : GoapAction {
     protected override int GetCost() {
         Character otherCharacter = poiTarget as Character;
         Character currCharacter = actor;
-        List<RELATIONSHIP_TRAIT> existingRelsOfCurrentCharacter = currCharacter.GetAllRelationshipTraitTypesWith(otherCharacter);
-        List<RELATIONSHIP_TRAIT> existingRelsOfOtherCharacter = otherCharacter.GetAllRelationshipTraitTypesWith(currCharacter);
+        List<RELATIONSHIP_TRAIT> existingRelsOfCurrentCharacter = currCharacter.relationshipContainer.GetRelationshipDataWith(otherCharacter.currentAlterEgo)?.relationships ?? null;
+        List<RELATIONSHIP_TRAIT> existingRelsOfOtherCharacter = otherCharacter.relationshipContainer.GetRelationshipDataWith(currCharacter.currentAlterEgo)?.relationships ?? null;
         int cost = 1;
         if (existingRelsOfCurrentCharacter != null) {
             if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.RELATIVE)) {
@@ -54,7 +54,7 @@ public class HaveAffair : GoapAction {
         currentState.SetIntelReaction(AffairSuccessReactions);
     }
     private void AfterAffairSuccess() {
-        CharacterManager.Instance.CreateNewRelationshipBetween(actor, poiTarget as Character, RELATIONSHIP_TRAIT.PARAMOUR);
+        RelationshipManager.Instance.RemoveOneWayRelationship(actor, poiTarget as Character, RELATIONSHIP_TRAIT.PARAMOUR);
     }
     #endregion
 
@@ -67,7 +67,7 @@ public class HaveAffair : GoapAction {
             return false;
         }
         Character targetCharacter = poiTarget as Character;
-        if (CharacterManager.Instance.IsSexuallyCompatible(actor, targetCharacter) && actor.CanHaveRelationshipWith(RELATIONSHIP_TRAIT.PARAMOUR, targetCharacter)) {
+        if (RelationshipManager.Instance.IsSexuallyCompatible(actor, targetCharacter) && RelationshipManager.Instance.GetValidator(actor.currentAlterEgo).CanHaveRelationship(actor.currentAlterEgo, targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
             return true;
         }
         return false;
@@ -80,10 +80,10 @@ public class HaveAffair : GoapAction {
         Character target = poiTarget as Character;
         //RELATIONSHIP_EFFECT recipientRelationshipWithActor = recipient.GetRelationshipEffectWith(actor);
         //RELATIONSHIP_EFFECT recipientRelationshipWithTarget = recipient.GetRelationshipEffectWith(target);
-        Character actorLover = actor.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
-        Character targetLover = target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
-        Character actorParamour = actor.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
-        Character targetParamour = target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
+        Character actorLover = (actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.LOVER) as AlterEgoData)?.owner ?? null;
+        Character targetLover = (target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.LOVER) as AlterEgoData)?.owner ?? null;
+        Character actorParamour = (actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR) as AlterEgoData)?.owner ?? null;
+        Character targetParamour = (target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR) as AlterEgoData)?.owner ?? null;
 
 
         bool hasFled = false;
@@ -113,7 +113,7 @@ public class HaveAffair : GoapAction {
             //- Recipient is Actor's Lover
             else if (recipient == actorLover) {
                 string response = string.Empty;
-                if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                if (RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                     response = string.Format("I've had enough of {0}'s shenanigans!", actor.name);
                     recipient.CreateUndermineJobOnly(actor, "informed", status);
                 } else {
@@ -123,8 +123,8 @@ public class HaveAffair : GoapAction {
                         recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
                     }
                 }
-                if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.PARAMOUR)) {
-                    if (CharacterManager.Instance.RelationshipDegradation(target, recipient, this)) {
+                if (recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                    if (RelationshipManager.Instance.RelationshipDegradation(target, recipient, this)) {
                         response += string.Format(" {0} seduced both of us. {1} must pay for this.", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.SUBJECTIVE, true));
                         recipient.CreateUndermineJobOnly(target, "informed", status);
                     } else {
@@ -134,8 +134,8 @@ public class HaveAffair : GoapAction {
                             recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
                         }
                     }
-                } else if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.RELATIVE)) {
-                    if (CharacterManager.Instance.RelationshipDegradation(target, recipient, this)) {
+                } else if (recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.RELATIVE)) {
+                    if (RelationshipManager.Instance.RelationshipDegradation(target, recipient, this)) {
                         response += string.Format(" {0} is a snake! I can't believe {1} would do this to me.", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.SUBJECTIVE, false));
                         recipient.CreateUndermineJobOnly(target, "informed", status);
                     } else {
@@ -145,8 +145,8 @@ public class HaveAffair : GoapAction {
                             recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
                         }
                     }
-                } else if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.FRIEND)) {
-                    if (CharacterManager.Instance.RelationshipDegradation(target, recipient, this)) {
+                } else if (recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.FRIEND)) {
+                    if (RelationshipManager.Instance.RelationshipDegradation(target, recipient, this)) {
                         response += string.Format(" {0} is a snake! I can't believe {1} would do this to me.", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.SUBJECTIVE, false));
                         recipient.CreateUndermineJobOnly(target, "informed", status);
                     } else {
@@ -156,11 +156,11 @@ public class HaveAffair : GoapAction {
                             recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
                         }
                     }
-                } else if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.ENEMY)) {
+                } else if (recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
                     response += string.Format(" I always knew that {0} is a snake. {1} must pay for this!", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.SUBJECTIVE, true));
                     recipient.CreateUndermineJobOnly(target, "informed", status);
-                } else if (!recipient.HasRelationshipWith(target)) {
-                    if (CharacterManager.Instance.RelationshipDegradation(target, recipient, this)) {
+                } else if (!recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo)) {
+                    if (RelationshipManager.Instance.RelationshipDegradation(target, recipient, this)) {
                         response += string.Format(" {0} is a snake. {1} must pay for this!", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.SUBJECTIVE, true));
                         recipient.CreateUndermineJobOnly(target, "informed", status);
                     } else {
@@ -176,7 +176,7 @@ public class HaveAffair : GoapAction {
             //- Recipient is Target's Lover
             else if (recipient == targetLover) {
                 string response = string.Empty;
-                if (CharacterManager.Instance.RelationshipDegradation(target, recipient, this)) {
+                if (RelationshipManager.Instance.RelationshipDegradation(target, recipient, this)) {
                     response = string.Format("I've had enough of {0}'s shenanigans!", target.name);
                     recipient.CreateUndermineJobOnly(target, "informed", status);
                 } else {
@@ -186,8 +186,8 @@ public class HaveAffair : GoapAction {
                         recipient.marker.AddAvoidInRange(target, reason: "saw something shameful");
                     }
                 }
-                if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.PARAMOUR)) {
-                    if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                    if (RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                         response += string.Format(" {0} seduced both of us. {1} must pay for this.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true));
                         recipient.CreateUndermineJobOnly(actor, "informed", status);
                     } else {
@@ -197,8 +197,8 @@ public class HaveAffair : GoapAction {
                             recipient.marker.AddAvoidInRange(target, reason: "saw something shameful");
                         }
                     }
-                } else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.RELATIVE)) {
-                    if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                } else if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.RELATIVE)) {
+                    if (RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                         response += string.Format(" {0} is a snake! I can't believe {1} would do this to me.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false));
                         recipient.CreateUndermineJobOnly(actor, "informed", status);
                     } else {
@@ -208,8 +208,8 @@ public class HaveAffair : GoapAction {
                             recipient.marker.AddAvoidInRange(target, reason: "saw something shameful");
                         }
                     }
-                } else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.FRIEND)) {
-                    if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                } else if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.FRIEND)) {
+                    if (RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                         response += string.Format(" {0} is a snake! I can't believe {1} would do this to me.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false));
                         recipient.CreateUndermineJobOnly(actor, "informed", status);
                     } else {
@@ -219,11 +219,11 @@ public class HaveAffair : GoapAction {
                             recipient.marker.AddAvoidInRange(target, reason: "saw something shameful");
                         }
                     }
-                } else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
+                } else if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
                     response += string.Format(" I always knew that {0} is a snake. {1} must pay for this!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true));
                     recipient.CreateUndermineJobOnly(actor, "informed", status);
-                } else if (!recipient.HasRelationshipWith(actor)) {
-                    if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                } else if (!recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo)) {
+                    if (RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                         response += string.Format(" {0} is a snake. {1} must pay for this!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true));
                         recipient.CreateUndermineJobOnly(actor, "informed", status);
                     } else {
@@ -242,8 +242,8 @@ public class HaveAffair : GoapAction {
                 AddTraitTo(recipient, "Heartbroken");
             }
             //- Recipient has a positive relationship with Actor's Lover and Actor's Lover is not the Target
-            else if (actorLover != null && recipient.GetRelationshipEffectWith(actorLover) == RELATIONSHIP_EFFECT.POSITIVE && actorLover != target) {
-                if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+            else if (actorLover != null && recipient.relationshipContainer.GetRelationshipEffectWith(actorLover.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE && actorLover != target) {
+                if (RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                     reactions.Add(string.Format("{0} is cheating on {1}?! I must let {2} know.", actor.name, actorLover.name, Utilities.GetPronounString(actorLover.gender, PRONOUN_TYPE.OBJECTIVE, false)));
                     recipient.CreateShareInformationJob(actorLover, this);
                 } else {
@@ -255,8 +255,8 @@ public class HaveAffair : GoapAction {
                 }
             }
             //- Recipient has a positive relationship with Target's Lover and Target's Lover is not the Actor
-            else if (targetLover != null && recipient.GetRelationshipEffectWith(targetLover) == RELATIONSHIP_EFFECT.POSITIVE && targetLover != actor) {
-                if (CharacterManager.Instance.RelationshipDegradation(target, recipient, this)) {
+            else if (targetLover != null && recipient.relationshipContainer.GetRelationshipEffectWith(targetLover.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE && targetLover != actor) {
+                if (RelationshipManager.Instance.RelationshipDegradation(target, recipient, this)) {
                     reactions.Add(string.Format("{0} is cheating on {1}?! I must let {2} know.", target.name, targetLover.name, Utilities.GetPronounString(targetLover.gender, PRONOUN_TYPE.OBJECTIVE, false)));
                     recipient.CreateShareInformationJob(targetLover, this);
                 } else {
@@ -268,7 +268,7 @@ public class HaveAffair : GoapAction {
                 }
             }
             //- Recipient has a negative relationship with Actor's Lover and Actor's Lover is not the Target
-            else if (actorLover != null && recipient.GetRelationshipEffectWith(actorLover) == RELATIONSHIP_EFFECT.NEGATIVE && actorLover != target) {
+            else if (actorLover != null && recipient.relationshipContainer.GetRelationshipEffectWith(actorLover.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE && actorLover != target) {
                 reactions.Add(string.Format("{0} is cheating on {1}? {2} got what {3} deserves.", actor.name, actorLover.name, Utilities.GetPronounString(actorLover.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(actorLover.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
                 if (status == SHARE_INTEL_STATUS.WITNESSED) {
                     hasFled = true;
@@ -276,7 +276,7 @@ public class HaveAffair : GoapAction {
                 }
             }
             //- Recipient has a negative relationship with Target's Lover and Target's Lover is not the Actor
-            else if (targetLover != null && recipient.GetRelationshipEffectWith(targetLover) == RELATIONSHIP_EFFECT.NEGATIVE && targetLover != actor) {
+            else if (targetLover != null && recipient.relationshipContainer.GetRelationshipEffectWith(targetLover.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE && targetLover != actor) {
                 reactions.Add(string.Format("{0} is cheating on {1}? {2} got what {3} deserves.", target.name, targetLover.name, Utilities.GetPronounString(targetLover.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(targetLover.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
                 if (status == SHARE_INTEL_STATUS.WITNESSED) {
                     hasFled = true;
@@ -284,14 +284,14 @@ public class HaveAffair : GoapAction {
                 }
             }
             //- Recipient has a no relationship with Actor's Lover and Actor's Lover is not the Target
-            else if (actorLover != null && recipient.GetRelationshipEffectWith(actorLover) == RELATIONSHIP_EFFECT.NONE && actorLover != target) {
+            else if (actorLover != null && recipient.relationshipContainer.GetRelationshipEffectWith(actorLover.currentAlterEgo) == RELATIONSHIP_EFFECT.NONE && actorLover != target) {
                 reactions.Add(string.Format("{0} is cheating on {1}? I don't want to get involved.", actor.name, actorLover.name));
-                CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
+                RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);
             }
             //- Recipient has no relationship with Target's Lover and Target's Lover is not the Actor
-            else if (targetLover != null && recipient.GetRelationshipEffectWith(targetLover) == RELATIONSHIP_EFFECT.NONE && targetLover != actor) {
+            else if (targetLover != null && recipient.relationshipContainer.GetRelationshipEffectWith(targetLover.currentAlterEgo) == RELATIONSHIP_EFFECT.NONE && targetLover != actor) {
                 reactions.Add(string.Format("{0} is cheating on {1}? I don't want to get involved.", target.name, targetLover.name));
-                CharacterManager.Instance.RelationshipDegradation(target, recipient, this);
+                RelationshipManager.Instance.RelationshipDegradation(target, recipient, this);
             }
             //- Else Catcher
             else {
@@ -304,9 +304,11 @@ public class HaveAffair : GoapAction {
         }
 
         if (status == SHARE_INTEL_STATUS.WITNESSED && !hasFled) {
-            if (recipient.HasRelationshipOfTypeWith(actor, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+            if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)
+                || recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
                 recipient.CreateWatchEvent(this, null, actor);
-            } else if (recipient.HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+            } else if (recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)
+                || recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
                 recipient.CreateWatchEvent(this, null, target);
             }
         }
@@ -329,7 +331,7 @@ public class HaveAffairData : GoapActionData {
             return false;
         }
         Character targetCharacter = poiTarget as Character;
-        if (CharacterManager.Instance.IsSexuallyCompatible(actor, targetCharacter) && actor.CanHaveRelationshipWith(RELATIONSHIP_TRAIT.PARAMOUR, targetCharacter)) {
+        if (RelationshipManager.Instance.IsSexuallyCompatible(actor, targetCharacter) && RelationshipManager.Instance.GetValidator(actor.currentAlterEgo).CanHaveRelationship(actor.currentAlterEgo, targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
             return true;
         }
         return false;

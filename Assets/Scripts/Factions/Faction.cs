@@ -273,7 +273,7 @@ public class Faction {
             string log = GameManager.Instance.TodayLogString() + name + " faction is deciding a new leader...";
 
             log += "\nChecking male relatives of the king...";
-            List<Character> maleRelatives = previousRuler.GetViableCharactersWithRelationship(GENDER.MALE, RELATIONSHIP_TRAIT.RELATIVE);
+            List<Character> maleRelatives = FactionManager.Instance.GetViableRulers(previousRuler, GENDER.MALE, RELATIONSHIP_TRAIT.RELATIVE);
             if(maleRelatives.Count > 0) {
                 newRuler = maleRelatives[UnityEngine.Random.Range(0, maleRelatives.Count)];
                 log += "\nNew Ruler: " + newRuler.name;
@@ -285,7 +285,7 @@ public class Faction {
                     log += "\nNew Ruler: " + newRuler.name;
                 } else {
                     log += "\nChecking female relatives of the king...";
-                    List<Character> femaleRelatives = previousRuler.GetViableCharactersWithRelationship(GENDER.FEMALE, RELATIONSHIP_TRAIT.RELATIVE);
+                    List<Character> femaleRelatives = FactionManager.Instance.GetViableRulers(previousRuler, GENDER.FEMALE, RELATIONSHIP_TRAIT.RELATIVE);
                     if (femaleRelatives.Count > 0) {
                         newRuler = femaleRelatives[UnityEngine.Random.Range(0, femaleRelatives.Count)];
                         log += "\nNew Ruler: " + newRuler.name;
@@ -465,7 +465,7 @@ public class Faction {
                 Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.ELVES, Utilities.GetRandomGender(),
                     this, mainRegion);
                 createdCharacter.LevelUp(citizensLevel - 1);
-                //CharacterManager.Instance.CreateNewRelationshipBetween(leader, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
+                //RelationshipManager.Instance.RemoveOneWayRelationship(leader, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
             }
             //**3 Human Adventurers**
             for (int i = 0; i < adventurerCount; i++) {
@@ -485,7 +485,7 @@ public class Faction {
                 Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.ELVES, Utilities.GetRandomGender(),
                     this, mainRegion);
                 createdCharacter.LevelUp(citizensLevel - 1);
-                //CharacterManager.Instance.CreateNewRelationshipBetween(leader, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
+                //RelationshipManager.Instance.RemoveOneWayRelationship(leader, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
             }
 
             //**2 Elven Nobles**
@@ -515,13 +515,13 @@ public class Faction {
                 Character skeletonSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.SKELETON, Utilities.GetRandomGender(),
                     this, mainRegion);
                 skeletonSoldier.LevelUp(citizensLevel - 1);
-                //CharacterManager.Instance.CreateNewRelationshipBetween(leader, skeletonSoldier, RELATIONSHIP_TRAIT.SERVANT);
+                //RelationshipManager.Instance.RemoveOneWayRelationship(leader, skeletonSoldier, RELATIONSHIP_TRAIT.SERVANT);
 
                 if (i == 0) {
                     Character goblinSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.GOBLIN, Utilities.GetRandomGender(),
                    this, mainRegion);
                     goblinSoldier.LevelUp(citizensLevel - 1);
-                    //CharacterManager.Instance.CreateNewRelationshipBetween(leader, goblinSoldier, RELATIONSHIP_TRAIT.SERVANT);
+                    //RelationshipManager.Instance.RemoveOneWayRelationship(leader, goblinSoldier, RELATIONSHIP_TRAIT.SERVANT);
                 }
             }
         } else if (name == "Rikitik") {
@@ -530,7 +530,7 @@ public class Faction {
                 Character goblinSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.GOBLIN, Utilities.GetRandomGender(),
                     this, mainRegion);
                 goblinSoldier.LevelUp(citizensLevel - 1);
-                //CharacterManager.Instance.CreateNewRelationshipBetween(leader, goblinSoldier, RELATIONSHIP_TRAIT.SERVANT);
+                //RelationshipManager.Instance.RemoveOneWayRelationship(leader, goblinSoldier, RELATIONSHIP_TRAIT.SERVANT);
             }
 
             //**1 Goblin Noble** with **3 Goblin Soldiers** as servants
@@ -543,7 +543,7 @@ public class Faction {
                     Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.GOBLIN, Utilities.GetRandomGender(),
                    this, mainRegion);
                     createdCharacter.LevelUp(citizensLevel - 1);
-                    //CharacterManager.Instance.CreateNewRelationshipBetween(noble, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
+                    //RelationshipManager.Instance.RemoveOneWayRelationship(noble, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
                 }
             }
 
@@ -559,7 +559,7 @@ public class Faction {
                 Character faerySoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.FAERY, Utilities.GetRandomGender(),
                     this, mainRegion);
                 faerySoldier.LevelUp(citizensLevel - 1);
-                //CharacterManager.Instance.CreateNewRelationshipBetween(leader, faerySoldier, RELATIONSHIP_TRAIT.SERVANT);
+                //RelationshipManager.Instance.RemoveOneWayRelationship(leader, faerySoldier, RELATIONSHIP_TRAIT.SERVANT);
             }
 
             //**1 Faery Adventurers**
@@ -581,7 +581,7 @@ public class Faction {
                 Character spiderSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.SPIDER, Utilities.GetRandomGender(),
                     this, mainRegion);
                 spiderSoldier.LevelUp(citizensLevel - 1);
-                //CharacterManager.Instance.CreateNewRelationshipBetween(leader, spiderSoldier, RELATIONSHIP_TRAIT.SERVANT);
+                //RelationshipManager.Instance.RemoveOneWayRelationship(leader, spiderSoldier, RELATIONSHIP_TRAIT.SERVANT);
             }
 
             //**3 Faery Nobles** with **3 Spider Soldiers** each as their servants
@@ -594,7 +594,7 @@ public class Faction {
                     Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.SPIDER, Utilities.GetRandomGender(),
                    this, mainRegion);
                     createdCharacter.LevelUp(citizensLevel - 1);
-                    //CharacterManager.Instance.CreateNewRelationshipBetween(noble, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
+                    //RelationshipManager.Instance.RemoveOneWayRelationship(noble, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
                 }
             }
 
@@ -615,12 +615,12 @@ public class Faction {
                 Character elfSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.ELVES, Utilities.GetRandomGender(),
                     this, mainRegion);
                 elfSoldier.LevelUp(citizensLevel - 1);
-                //CharacterManager.Instance.CreateNewRelationshipBetween(leader, elfSoldier, RELATIONSHIP_TRAIT.SERVANT);
+                //RelationshipManager.Instance.RemoveOneWayRelationship(leader, elfSoldier, RELATIONSHIP_TRAIT.SERVANT);
 
                 Character humanSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.HUMANS, Utilities.GetRandomGender(),
                    this, mainRegion);
                 humanSoldier.LevelUp(citizensLevel - 1);
-                //CharacterManager.Instance.CreateNewRelationshipBetween(leader, humanSoldier, RELATIONSHIP_TRAIT.SERVANT);
+                //RelationshipManager.Instance.RemoveOneWayRelationship(leader, humanSoldier, RELATIONSHIP_TRAIT.SERVANT);
             }
 
             //**2 Human Adventurers** and **2 Elven Adventurers**

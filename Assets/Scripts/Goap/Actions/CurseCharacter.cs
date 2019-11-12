@@ -115,7 +115,7 @@ public class CurseCharacter : GoapAction {
                 }
                 //- Recipient is Target
                 else if (recipient == targetCharacter) {
-                    RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
+                    RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
                     bool hasRelationshipDegraded = false;
                     if (!hasCrimeBeenReported) {
                         hasRelationshipDegraded = recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
@@ -137,8 +137,8 @@ public class CurseCharacter : GoapAction {
                     }
                 }
                 //- Recipient Has Positive Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
-                    RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
+                    RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
                     bool hasRelationshipDegraded = false;
                     if (!hasCrimeBeenReported) {
                         hasRelationshipDegraded = recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
@@ -159,12 +159,12 @@ public class CurseCharacter : GoapAction {
                     }
                 }
                 //- Recipient Has Negative Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
                     reactions.Add(string.Format("Serves {0} right.", targetCharacter.name));
                 }
                 //- Recipient Has No Relationship with Target
                 else {
-                    RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
+                    RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
                     bool hasRelationshipDegraded = false;
                     if (!hasCrimeBeenReported) {
                         hasRelationshipDegraded = recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);

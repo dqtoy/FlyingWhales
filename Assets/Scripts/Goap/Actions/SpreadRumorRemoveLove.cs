@@ -56,7 +56,8 @@ public class SpreadRumorRemoveLove : GoapAction {
     protected bool Requirement() {
         if (rumoredCharacter != null) {
             Character target = poiTarget as Character;
-            if (target.HasRelationshipOfTypeWith(rumoredCharacter, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+            if (target.relationshipContainer.HasRelationshipWith(rumoredCharacter, RELATIONSHIP_TRAIT.LOVER)
+                || target.relationshipContainer.HasRelationshipWith(rumoredCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
                 return actor != poiTarget && actor != rumoredCharacter && affairMemoriesInvolvingRumoredCharacter.Count > 0;
             }
             return false;
@@ -82,8 +83,8 @@ public class SpreadRumorRemoveLove : GoapAction {
         }
         //Character target = poiTarget as Character;
         ////**Effect 1**: Target - Remove Love relationship with Character 2 
-        //CharacterManager.Instance.RemoveRelationshipBetween(target, rumoredCharacter, RELATIONSHIP_TRAIT.LOVER);
-        //CharacterManager.Instance.RemoveRelationshipBetween(target, rumoredCharacter, RELATIONSHIP_TRAIT.PARAMOUR);
+        //RelationshipManager.Instance.RemoveRelationshipBetween(target, rumoredCharacter, RELATIONSHIP_TRAIT.LOVER);
+        //RelationshipManager.Instance.RemoveRelationshipBetween(target, rumoredCharacter, RELATIONSHIP_TRAIT.PARAMOUR);
         ////**Effect 2**: Target - Add shared event to Target's memory
         //target.CreateInformedEventLog(chosenMemory.goapAction);
     }
@@ -124,7 +125,8 @@ public class SpreadRumorRemoveLoveData : GoapActionData {
         }
         if (rumoredCharacter != null) {
             Character target = poiTarget as Character;
-            if (target.HasRelationshipOfTypeWith(rumoredCharacter, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+            if (target.relationshipContainer.HasRelationshipWith(rumoredCharacter, RELATIONSHIP_TRAIT.LOVER)
+                || target.relationshipContainer.HasRelationshipWith(rumoredCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
                 return actor != poiTarget && actor != rumoredCharacter
                     && affairMemoriesInvolvingRumoredCharacter != null && affairMemoriesInvolvingRumoredCharacter.Count > 0;
             }

@@ -246,7 +246,7 @@ namespace Traits {
         //public void SetRelationshipData(Character character) {
         //    this.relationships = new List<RelationshipLycanthropyData>();
         //    foreach (KeyValuePair<Character, CharacterRelationshipData> kvp in character.relationships) {
-        //        this.relationships.Add(new RelationshipLycanthropyData(kvp.Key, kvp.Value, kvp.Key.GetCharacterRelationshipData(character)));
+        //        this.relationships.Add(new RelationshipLycanthropyData(kvp.Key, kvp.Value, kvp.Key.relationshipContainer.GetRelationshipDataWith(character)));
         //    }
         //}
         //public void SetTraits(Character character) {

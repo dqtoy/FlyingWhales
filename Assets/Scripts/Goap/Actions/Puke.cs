@@ -68,7 +68,7 @@ public class Puke : GoapAction {
     #region Intel Reactions
     private List<string> SuccessReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
-        RELATIONSHIP_EFFECT relWithActor = recipient.GetRelationshipEffectWith(actor);
+        RELATIONSHIP_EFFECT relWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
         //- Is Actor
         if (recipient == actor) {
             //  - If Informed: "That was embarrassing."
@@ -146,7 +146,7 @@ public class Puke : GoapAction {
                     }                    
                 }
                 #region Check Up
-                if (recipient.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
+                if (recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
                     CreateLaughAtJob(recipient, actor);
                 }
                 #endregion

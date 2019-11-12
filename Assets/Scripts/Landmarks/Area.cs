@@ -447,7 +447,7 @@ public class Area {
             if (PlayerManager.Instance != null && PlayerManager.Instance.player != null && this.id == PlayerManager.Instance.player.playerArea.id) {
                 chosenDwelling = structures[STRUCTURE_TYPE.DWELLING][0] as Dwelling; //to avoid errors, residents in player area will all share the same dwelling
             } else {
-                Character lover = character.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
+                Character lover = (character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.LOVER) as AlterEgoData)?.owner ?? null;
                 if (lover != null && lover.faction.id == character.faction.id && region.residents.Contains(lover)) { //check if the character has a lover that lives in the area
                     chosenDwelling = lover.homeStructure;
                 }

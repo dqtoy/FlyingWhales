@@ -117,17 +117,17 @@ public class ImprisonCharacter : GoapAction {
                     }
                 }
                 //- Recipient Has Positive Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
                     if (recipient.faction.id != actor.faction.id) {
                         reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to free {0}!", targetCharacter.name));
                         recipient.CreateSaveCharacterJob(targetCharacter);
                     } else {
                         reactions.Add(string.Format("I am grateful that {0} saved {1}.", actor.name, targetCharacter.name));
-                        CharacterManager.Instance.RelationshipImprovement(actor, recipient, this);
+                        RelationshipManager.Instance.RelationshipImprovement(actor, recipient, this);
                     }
                 }
                 //- Recipient Has Negative Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
                     if (recipient.faction.id != actor.faction.id) {
                         reactions.Add("This news is music to my ears!");
                         AddTraitTo(recipient, "Satisfied");

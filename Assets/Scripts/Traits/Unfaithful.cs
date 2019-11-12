@@ -46,8 +46,8 @@ namespace Traits {
         //}
         public override string TriggerFlaw(Character character) {
             string successLogKey = base.TriggerFlaw(character);
-            if (character.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.LOVER)) {
-                Character paramour = character.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
+            if (character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.LOVER) != null) {
+                Character paramour = (character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR) as AlterEgoData)?.owner ?? null;
                 if (paramour == null) {
                     if (!character.jobQueue.HasJob(JOB_TYPE.HAVE_AFFAIR)) {
                         //If no paramour yet, the character will create a Have Affair Job which will attempt to have an affair with a viable target.

@@ -231,21 +231,21 @@ namespace worldcreator {
             for (int i = 0; i < children.Length; i++) {
                 GameObject.Destroy(children[i].gameObject);
             }
-            foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in _character.relationships) {
-                GameObject relItemGO = GameObject.Instantiate(relationshipItemPrefab, relationshipScrollView.content);
-                RelationshipEditorItem relItem = relItemGO.GetComponent<RelationshipEditorItem>();
-                relItem.SetRelationship(kvp.Value);
-            }
+            //foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in _character.relationshipContainer.relationships) {
+            //    GameObject relItemGO = GameObject.Instantiate(relationshipItemPrefab, relationshipScrollView.content);
+            //    RelationshipEditorItem relItem = relItemGO.GetComponent<RelationshipEditorItem>();
+            //    relItem.SetRelationship(kvp.Value);
+            //}
         }
         public void LoadRelationshipDropdowns() {
             List<string> options = new List<string>();
             charactersRelationshipDropdown.ClearOptions();
-            for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-                Character currCharacter = CharacterManager.Instance.allCharacters[i];
-                if (currCharacter.id != _character.id && !_character.HasRelationshipWith(currCharacter)) {
-                    options.Add(currCharacter.name);
-                }
-            }
+            //for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            //    Character currCharacter = CharacterManager.Instance.allCharacters[i];
+            //    if (currCharacter.id != _character.id && !_character.HasRelationshipWith(currCharacter)) {
+            //        options.Add(currCharacter.name);
+            //    }
+            //}
             charactersRelationshipDropdown.AddOptions(options);
             if (charactersRelationshipDropdown.options.Count == 0) {
                 createRelationshipBtn.interactable = false;
@@ -261,41 +261,41 @@ namespace worldcreator {
             string chosenRelType = relationshipTypesDropdown.options[relationshipTypesDropdown.value].text;
             Character chosenCharacter = CharacterManager.Instance.GetCharacterByName(chosenCharacterName);
             RELATIONSHIP_TRAIT rel = (RELATIONSHIP_TRAIT)Enum.Parse(typeof(RELATIONSHIP_TRAIT), chosenRelType);
-            CharacterManager.Instance.CreateNewRelationshipBetween(_character, chosenCharacter, rel);
+            RelationshipManager.Instance.RemoveOneWayRelationship(_character, chosenCharacter, rel);
         }
         private void OnRelationshipCreated(Character character, RelationshipTrait gainedRel) {
             if (_character == null || character != _character) {
                 return;
             }
-            RelationshipEditorItem existingItem = GetRelationshipItem(character.GetCharacterRelationshipData(gainedRel.targetCharacter));
-            if (existingItem != null) {
-                existingItem.UpdateInfo();
-            } else {
-                GameObject relItemGO = GameObject.Instantiate(relationshipItemPrefab, relationshipScrollView.content);
-                RelationshipEditorItem relItem = relItemGO.GetComponent<RelationshipEditorItem>();
-                relItem.SetRelationship(character.GetCharacterRelationshipData(gainedRel.targetCharacter));
-            }
+            //RelationshipEditorItem existingItem = GetRelationshipItem(character.relationshipContainer.GetRelationshipDataWith(gainedRel.targetCharacter));
+            //if (existingItem != null) {
+            //    existingItem.UpdateInfo();
+            //} else {
+            //    GameObject relItemGO = GameObject.Instantiate(relationshipItemPrefab, relationshipScrollView.content);
+            //    RelationshipEditorItem relItem = relItemGO.GetComponent<RelationshipEditorItem>();
+            //    relItem.SetRelationship(character.relationshipContainer.GetRelationshipDataWith(gainedRel.targetCharacter));
+            //}
             LoadRelationshipDropdowns();
         }
         private void OnRelationshipRemoved(Character character, RELATIONSHIP_TRAIT rel, AlterEgoData target) {
             if (_character == null || character != _character) {
                 return;
             }
-            RelationshipEditorItem existingItem = GetRelationshipItem(character.GetCharacterRelationshipData(target));
-            if (existingItem != null) {
-                existingItem.UpdateInfo();
-            }
+            //RelationshipEditorItem existingItem = GetRelationshipItem(character.relationshipContainer.GetRelationshipDataWith(target));
+            //if (existingItem != null) {
+            //    existingItem.UpdateInfo();
+            //}
             LoadRelationshipDropdowns();
         }
         public void OnAllRelationshipRemoved(Character character, Character target) {
             if (_character == null || !this.gameObject.activeSelf) {
                 return;
             }
-            RelationshipEditorItem itemToRemove = GetRelationshipItem(character.GetCharacterRelationshipData(target));
-            if (itemToRemove != null) {
-                GameObject.Destroy(itemToRemove.gameObject);
-                LoadRelationshipDropdowns();
-            }
+            //RelationshipEditorItem itemToRemove = GetRelationshipItem(character.relationshipContainer.GetRelationshipDataWith(target));
+            //if (itemToRemove != null) {
+            //    GameObject.Destroy(itemToRemove.gameObject);
+            //    LoadRelationshipDropdowns();
+            //}
         }
         private RelationshipEditorItem GetRelationshipItem(CharacterRelationshipData rel) {
             RelationshipEditorItem[] children = Utilities.GetComponentsInDirectChildren<RelationshipEditorItem>(relationshipScrollView.content.gameObject);

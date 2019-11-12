@@ -4,7 +4,10 @@ using System.Linq;
 using UnityEngine;
 using Traits;
 
-public class AlterEgoData : IRelatable{
+public class AlterEgoData : Relatable{
+
+    //relatable
+    public override string relatableName { get { return owner.name; } }
 
     //Basic Data
     public Character owner { get; private set; }
@@ -25,9 +28,6 @@ public class AlterEgoData : IRelatable{
     //Awareness
     public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; private set; }
 
-    //Relationships
-	public Dictionary<AlterEgoData, CharacterRelationshipData> relationships { get; private set; }
-
     //Traits
     public List<Trait> traits { get; private set; }
 
@@ -40,7 +40,6 @@ public class AlterEgoData : IRelatable{
         characterClass = null;
         homeStructure = null;
         awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>>();
-        relationships = new Dictionary<AlterEgoData, CharacterRelationshipData>();
         traits = new List<Trait>();
         level = 1;
     }
@@ -203,61 +202,52 @@ public class AlterEgoData : IRelatable{
     }
     #endregion
 
-    #region Relationships
-    public void SetRelationships(Dictionary<AlterEgoData, CharacterRelationshipData> relationships) {
-        if (owner.isSwitchingAlterEgo) {
-            return; //ignore any changes while the owner is switching alter egos
-        }
-        this.relationships = relationships;
-    }
-    public void AddRelationship(AlterEgoData alterEgo, RelationshipTrait newRel) {
-        if (!relationships.ContainsKey(alterEgo)) {
-            relationships.Add(alterEgo, new CharacterRelationshipData(owner, alterEgo.owner, alterEgo));
-        }
-        relationships[alterEgo].AddRelationship(newRel);
-        owner.OnRelationshipWithCharacterAdded(alterEgo.owner, newRel);
-        Messenger.Broadcast(Signals.RELATIONSHIP_ADDED, this.owner, newRel);
-    }
-    public void AddRelationship(CharacterRelationshipData relData) {
-        if (!relationships.ContainsKey(relData.targetCharacterAlterEgo)) {
-            relationships.Add(relData.targetCharacterAlterEgo, relData);
-        }
-    }
-    public void RemoveRelationship(AlterEgoData alterEgo, RELATIONSHIP_TRAIT rel) {
-        if (relationships.ContainsKey(alterEgo)) {
-            if (relationships[alterEgo].RemoveRelationship(rel)) {
-                Messenger.Broadcast(Signals.RELATIONSHIP_REMOVED, this, rel, alterEgo);
-            }
-        }
-    }
-    public RelationshipTrait GetRelationshipTraitWith(AlterEgoData alterEgo, RELATIONSHIP_TRAIT type, bool useDisabled = false) {
-        if (HasRelationshipWith(alterEgo, useDisabled)) {
-            return relationships[alterEgo].GetRelationshipTrait(type);
-        }
-        return null;
-    }
-    public bool HasRelationshipWith(AlterEgoData alterEgo, bool useDisabled = false) {
-        if (useDisabled) {
-            if (relationships.ContainsKey(alterEgo)) {
-                //if there is relationship data present, check if there are actual relationships in their data
-                return relationships[alterEgo].rels.Count > 0;
-            }
-            return false;
-        }
-        return relationships.ContainsKey(alterEgo) && relationships[alterEgo].rels.Count > 0 && !relationships[alterEgo].isDisabled;
-    }
-    #endregion
-
-    #region Traits
-    //public void CopySpecialTraits() {
-    //    //this.traits = new List<Trait>();
-    //    for (int i = 0; i < owner.normalTraits.Count; i++) {
-    //        Trait currTrait = owner.normalTraits[i];
-    //        if (!currTrait.isPersistent && currTrait.type == TRAIT_TYPE.SPECIAL) {
-    //            traits.Add(currTrait);
+    //#region Relationships
+    //public void SetRelationships(Dictionary<AlterEgoData, CharacterRelationshipData> relationships) {
+    //    if (owner.isSwitchingAlterEgo) {
+    //        return; //ignore any changes while the owner is switching alter egos
+    //    }
+    //    this.relationships = relationships;
+    //}
+    //public void AddRelationship(AlterEgoData alterEgo, RelationshipTrait newRel) {
+    //    if (!relationships.ContainsKey(alterEgo)) {
+    //        relationships.Add(alterEgo, new CharacterRelationshipData(owner, alterEgo.owner, alterEgo));
+    //    }
+    //    relationships[alterEgo].AddRelationship(newRel);
+    //    owner.OnRelationshipWithCharacterAdded(alterEgo.owner, newRel);
+    //    Messenger.Broadcast(Signals.RELATIONSHIP_ADDED, this.owner, newRel);
+    //}
+    //public void AddRelationship(CharacterRelationshipData relData) {
+    //    if (!relationships.ContainsKey(relData.targetCharacterAlterEgo)) {
+    //        relationships.Add(relData.targetCharacterAlterEgo, relData);
+    //    }
+    //}
+    //public void RemoveRelationship(AlterEgoData alterEgo, RELATIONSHIP_TRAIT rel) {
+    //    if (relationships.ContainsKey(alterEgo)) {
+    //        if (relationships[alterEgo].RemoveRelationship(rel)) {
+    //            Messenger.Broadcast(Signals.RELATIONSHIP_REMOVED, this, rel, alterEgo);
     //        }
     //    }
     //}
+    //public RelationshipTrait GetRelationshipTraitWith(AlterEgoData alterEgo, RELATIONSHIP_TRAIT type, bool useDisabled = false) {
+    //    if (HasRelationshipWith(alterEgo, useDisabled)) {
+    //        return relationships[alterEgo].GetRelationshipTrait(type);
+    //    }
+    //    return null;
+    //}
+    //public bool HasRelationshipWith(AlterEgoData alterEgo, bool useDisabled = false) {
+    //    if (useDisabled) {
+    //        if (relationships.ContainsKey(alterEgo)) {
+    //            //if there is relationship data present, check if there are actual relationships in their data
+    //            return relationships[alterEgo].rels.Count > 0;
+    //        }
+    //        return false;
+    //    }
+    //    return relationships.ContainsKey(alterEgo) && relationships[alterEgo].rels.Count > 0 && !relationships[alterEgo].isDisabled;
+    //}
+    //#endregion
+
+    #region Traits
     public void AddTrait(Trait trait) {
         if (owner.isSwitchingAlterEgo) {
             return; //ignore any changes while the owner is switching alter egos

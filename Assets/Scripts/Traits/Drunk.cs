@@ -23,7 +23,7 @@ namespace Traits {
                 Character targetCharacter = targetPOI as Character;
                 if (!targetCharacter.isDead) {
                     int value = 1;
-                    RELATIONSHIP_EFFECT relEffect = characterThatWillDoJob.GetRelationshipEffectWith(targetCharacter);
+                    RELATIONSHIP_EFFECT relEffect = characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo);
                     if (relEffect == RELATIONSHIP_EFFECT.NEGATIVE) {
                         value = 3;
                     } else if (relEffect == RELATIONSHIP_EFFECT.NONE) {

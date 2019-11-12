@@ -99,67 +99,6 @@ public class FactionManager : MonoBehaviour {
     public void SetDisguisedFaction(Faction faction) {
         disguisedFaction = faction;
     }
-    //public void RandomizeStartingFactions(WorldSaveData data) {
-    //    string log = "Starting Factions are: ";
-    //    /*
-    //     Upon startup:
-    //    1 Good Major Faction
-    //    1 Evil Major Faction
-    //    2 Minor Factions
-    //     */
-    //    List<Faction> goodMajorChoices = GetFactionsOfMoralityAndSize(MORALITY.GOOD, FACTION_SIZE.MAJOR);
-    //    //List<Faction> evilMajorChoices = GetFactionsOfMoralityAndSize(MORALITY.EVIL, FACTION_SIZE.MAJOR);
-    //    //List<Faction> minorChoices = GetFactionsOfSize(FACTION_SIZE.MINOR);
-
-    //    Faction goodMajor = goodMajorChoices[Random.Range(0, goodMajorChoices.Count)];
-    //    //Faction evilMajor = evilMajorChoices[Random.Range(0, evilMajorChoices.Count)];
-    //    List<Faction> startFactions = new List<Faction>() { goodMajor }; //
-
-    //    log += "\nGood Major: " + goodMajor.name;
-    //    //log += "\nEvil Major: " + evilMajor.name;
-
-    //    //for (int i = 0; i < 1; i++) {
-    //    //    Faction chosenMinorFaction = minorChoices[Random.Range(0, minorChoices.Count)];
-    //    //    minorChoices.Remove(chosenMinorFaction);
-    //    //    startFactions.Add(chosenMinorFaction);
-    //    //    log += "\nMinor Faction: " + chosenMinorFaction.name;
-    //    //}
-
-    //    for (int i = 0; i < startFactions.Count; i++) {
-    //        Faction faction = startFactions[i];
-    //        if (!faction.isActive) {
-    //            OwnInitialAreasOfFaction(data.areaData, faction);
-    //            //faction.GenerateStartingCitizens(9, 7);
-    //            faction.SetFactionActiveState(true);
-    //        }
-    //    }
-
-    //    //Debug.Log(log);
-
-
-
-    //    ////First random faction
-    //    //int index1 = UnityEngine.Random.Range(0, factions.Count);
-    //    //Faction firstRandomFaction = factions[index1];
-    //    //if (!firstRandomFaction.isActive) {
-    //    //    OwnInitialAreasOfFaction(data.areaData, firstRandomFaction);
-    //    //    firstRandomFaction.GenerateStartingLeader(6);
-    //    //    firstRandomFaction.ownedAreas[0].GenerateStartingFollowers(4);
-    //    //    firstRandomFaction.SetFactionActiveState(true);
-    //    //    factions.RemoveAt(index1);
-    //    //}
-
-    //    ////Second random faction
-    //    //int index2 = UnityEngine.Random.Range(0, factions.Count);
-    //    //Faction secondRandomFaction = factions[index2];
-    //    //if (!secondRandomFaction.isActive) {
-    //    //    OwnInitialAreasOfFaction(data.areaData, secondRandomFaction);
-    //    //    secondRandomFaction.GenerateStartingLeader(5);
-    //    //    secondRandomFaction.ownedAreas[0].GenerateStartingFollowers(3);
-    //    //    secondRandomFaction.SetFactionActiveState(true);
-    //    //}
-    //}
-
     public void GenerateStartingFactionData() {
         Faction[] startingFactions = allFactions.Where(x => x.isActive).ToArray();
         for (int i = 0; i < startingFactions.Length; i++) {
@@ -190,31 +129,6 @@ public class FactionManager : MonoBehaviour {
                 }
             }
         }
-    }
-    private List<Faction> GetFactionsOfMoralityAndSize(MORALITY morality, FACTION_SIZE size) {
-        List<Faction> factions = new List<Faction>();
-        for (int i = 0; i < allFactions.Count; i++) {
-            Faction currFaction = allFactions[i];
-            if (currFaction.name != "Neutral") {
-                if (currFaction.morality == morality 
-                    && currFaction.size == size) {
-                    factions.Add(currFaction);
-                }
-            }
-        }
-        return factions;
-    }
-    private List<Faction> GetFactionsOfSize(FACTION_SIZE size) {
-        List<Faction> factions = new List<Faction>();
-        for (int i = 0; i < allFactions.Count; i++) {
-            Faction currFaction = allFactions[i];
-            if (currFaction.name != "Neutral") {
-                if (currFaction.size == size) {
-                    factions.Add(currFaction);
-                }
-            }
-        }
-        return factions;
     }
     //private void OwnInitialAreasOfFaction(List<AreaSaveData> areaSaveData, Faction faction) {
     //    if (areaSaveData != null) {
@@ -301,39 +215,6 @@ public class FactionManager : MonoBehaviour {
         //Messenger.Broadcast(Signals.FACTION_DELETED, faction);
         //allFactions.Remove(faction);
     }
-    private int GetFactionTaskTickTrigger() {
-        if(factionTaskTriggerTicks.Count <= 0) {
-            for (int i = 1; i <= GameManager.ticksPerTimeInWords; i++) {
-                factionTaskTriggerTicks.Add(i);
-            }
-        }
-        int index = UnityEngine.Random.Range(0, factionTaskTriggerTicks.Count);
-        int tick = factionTaskTriggerTicks[index];
-        factionTaskTriggerTicks.RemoveAt(index);
-        return tick;
-    }
-    //public void OccupyLandmarksInFactionRegions() {
-    //    for (int i = 0; i < allFactions.Count; i++) {
-    //        Faction currFaction = allFactions[i];
-    //        for (int j = 0; j < currFaction.ownedRegions.Count; j++) {
-    //            Region currRegion = currFaction.ownedRegions[j];
-    //            for (int k = 0; k < currRegion.landmarks.Count; k++) {
-    //                BaseLandmark currLandmark = currRegion.landmarks[k];
-    //                if (!currLandmark.isOccupied) { //currLandmark is Settlement &&
-    //                    currLandmark.OccupyLandmark(currFaction);
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
-    //public void LoadAdditionalFactionInfo(WorldSaveData data) {
-    //    for (int i = 0; i < data.factionsData.Count; i++) {
-    //        FactionSaveData currData = data.factionsData[i];
-    //        Faction faction = GetFactionBasedOnID(currData.factionID);
-    //        //LoadRelationshipsForFaction(faction, currData);
-    //        //LoadFavorsForFaction(faction, currData);
-    //    }
-    //}
     #endregion
 
     #region Emblem
@@ -354,9 +235,6 @@ public class FactionManager : MonoBehaviour {
         return _factionEmblems[Random.Range(0, _factionEmblems.Count)];
         //throw new System.Exception("There are no more emblems for kingdom: " + faction.name);
     }
-    //internal Sprite GenerateFactionEmblemBG() {
-    //    return _emblemBGs[Random.Range(0, _emblemBGs.Count)];
-    //}
     public FactionEmblemSetting GetFactionEmblem(int emblemIndex) {
         return _factionEmblems[emblemIndex];
         //for (int i = 0; i < _emblemBGs.Count; i++) {
@@ -380,51 +258,6 @@ public class FactionManager : MonoBehaviour {
             //}
         }
         return -1;
-    }
-    //internal void AddEmblemAsUsed(Sprite emblem) {
-    //    if (!usedEmblems.Contains(emblem)) {
-    //        usedEmblems.Add(emblem);
-    //    } else {
-    //        throw new System.Exception("Emblem " + emblem.name + " is already being used!");
-    //    }
-    //}
-    //internal void RemoveEmblemAsUsed(Sprite emblem) {
-    //    usedEmblems.Remove(emblem);
-    //}
-    //public int GetEmblemSymbolIndex(Sprite symbol) {
-    //    if (symbol != null) {
-    //        for (int i = 0; i < _emblemSymbols.Count; i++) {
-    //            Sprite currSymbol = _emblemSymbols[i];
-    //            if (currSymbol == symbol) {
-    //                return i;
-    //            }
-    //        }
-    //    }
-    //    return -1;
-    //}
-    //public Sprite GetFactionEmblemSymbol(int index) {
-    //    return _emblemSymbols[index];
-    //}
-    #endregion
-
-    #region Characters
-    public List<Character> GetAllCharactersOfType(CHARACTER_ROLE role) {
-        List<Character> characters = new List<Character>();
-        for (int i = 0; i < allFactions.Count; i++) {
-            Faction currFaction = allFactions[i];
-            characters.AddRange(currFaction.GetCharactersOfType(role));
-        }
-        return characters;
-    }
-    public Character GetCharacterByID(int id) {
-        for (int i = 0; i < allFactions.Count; i++) {
-            Faction currFaction = allFactions[i];
-            Character charInFaction = currFaction.GetCharacterByID(id);
-            if(charInFaction != null) {
-                return charInFaction;
-            }
-        }
-        return null;
     }
     #endregion
 
@@ -459,6 +292,21 @@ public class FactionManager : MonoBehaviour {
     public int GetRandomInventoryTaskWeight() {
         return _inventoryTaskWeights[UnityEngine.Random.Range(0, _inventoryTaskWeights.Length)];
     }
+    public List<Character> GetViableRulers(Character previousRuler, GENDER gender, params RELATIONSHIP_TRAIT[] type) {
+        List<Character> characters = new List<Character>();
+        List<Relatable> relatables = previousRuler.relationshipContainer.GetRelatablesWithRelationship(type);
+        for (int i = 0; i < relatables.Count; i++) {
+            Relatable r = relatables[i];
+            if (r is AlterEgoData) {
+                Character character = (r as AlterEgoData).owner;
+                if (character.isDead || character.gender != gender || character.faction.IsHostileWith(previousRuler.faction) || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) || character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL) || characters.Contains(character)) {
+                    continue;
+                }
+                characters.Add(character);
+            }
+        }
+        return characters;
+    }
     #endregion
 
     #region Relationships
@@ -467,15 +315,6 @@ public class FactionManager : MonoBehaviour {
             Faction otherFaction = allFactions[i];
             if(otherFaction.id != faction.id) {
                 CreateNewRelationshipBetween(otherFaction, faction);
-            }
-        }
-    }
-    public void CreateFavorsForFaction(Faction faction) {
-        for (int i = 0; i < allFactions.Count; i++) {
-            Faction otherFaction = allFactions[i];
-            if (otherFaction.id != faction.id) {
-                //faction.AddNewFactionFavor(otherFaction);
-                //otherFaction.AddNewFactionFavor(faction);
             }
         }
     }
@@ -490,21 +329,6 @@ public class FactionManager : MonoBehaviour {
             }
         }
     }
-    
-    //public void LoadFavorsForFaction(Faction faction, FactionSaveData data) {
-    //    if (data.favor == null) {
-    //        CreateFavorsForFaction(faction);
-    //    } else {
-    //        for (int i = 0; i < allFactions.Count; i++) {
-    //            Faction otherFaction = allFactions[i];
-    //            if (otherFaction.id != faction.id) {
-    //                if (data.favor.ContainsKey(otherFaction.id)) {
-    //                    //faction.AddNewFactionFavor(otherFaction, data.favor[otherFaction.id]);
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
     public void RemoveRelationshipsWith(Faction faction) {
         for (int i = 0; i < allFactions.Count; i++) {
             Faction otherFaction = allFactions[i];
@@ -543,32 +367,6 @@ public class FactionManager : MonoBehaviour {
             return faction1Rel;
         }
         throw new System.Exception(faction1.name + " does not have the same relationship object as " + faction2.name + "!");
-    }
-    public FACTION_RELATIONSHIP_STATUS GetRelationshipStatusBetween(Faction faction1, Faction faction2) {
-        FactionRelationship rel = GetRelationshipBetween(faction1, faction2);
-        return rel.relationshipStatus;
-    }
-    public List<Faction> GetFactionsWithByStatus(Faction faction, FACTION_RELATIONSHIP_STATUS status) {
-        List<Faction> factions = new List<Faction>();
-        foreach (KeyValuePair<Faction, FactionRelationship> kvp in faction.relationships) {
-            if (kvp.Value.relationshipStatus == status) {
-                factions.Add(kvp.Key);
-            }
-        }
-        return factions;
-    }
-    public void DeclareWarBetween(Faction faction1, Faction faction2) {
-        FactionRelationship rel = GetRelationshipBetween(faction1, faction2);
-        rel.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.HOSTILE);
-        Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, "<color=\"green\"><b> " + faction1.name + "</b></color> declares war on <color=\"green\"><b>" + faction2.name + "</b></color>.", 5, null);
-    }
-    public void DeclarePeaceBetween(Faction faction1, Faction faction2) {
-        //faction1.SetFavorFor(faction2, -4);
-        //faction2.SetFavorFor(faction1, -4);
-
-        FactionRelationship rel = GetRelationshipBetween(faction1, faction2);
-        rel.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.FRIENDLY);
-        Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, "<color=\"green\"><b> " + faction1.name + "</b></color> declares peace on <color=\"green\"><b>" + faction2.name + "</b></color>.", 5, null);
     }
     public int GetAverageFactionLevel() {
         int activeFactionsCount = allFactions.Where(x => x.isActive).Count();

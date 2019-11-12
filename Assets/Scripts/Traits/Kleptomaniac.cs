@@ -82,7 +82,7 @@ namespace Traits {
             } else if (targetPOI is Character) {
                 Character targetCharacter = targetPOI as Character;
                 if (characterThatWillDoJob.currentAction != null && characterThatWillDoJob.currentAction.goapType == INTERACTION_TYPE.ROAMING_TO_STEAL && !characterThatWillDoJob.currentAction.isDone) {
-                    if (characterThatWillDoJob.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetCharacter)) {
+                    if (characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.POSITIVE && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetCharacter)) {
                         GoapPlanJob job = new GoapPlanJob(characterThatWillDoJob.currentAction.parentPlan.job.jobType, INTERACTION_TYPE.STEAL_FROM_CHARACTER, targetCharacter);
                         job.SetIsStealth(true);
                         characterThatWillDoJob.currentAction.parentPlan.job.jobQueueParent.CancelJob(characterThatWillDoJob.currentAction.parentPlan.job);

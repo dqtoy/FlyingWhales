@@ -68,17 +68,18 @@ public class Stumble : GoapAction {
     private List<string> SuccessReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         if (status == SHARE_INTEL_STATUS.WITNESSED) {
-            RELATIONSHIP_EFFECT relWithActor = recipient.GetRelationshipEffectWith(actor);
+            RELATIONSHIP_EFFECT relWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
             if (relWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
-                if (recipient.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
+                if (recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
                     CreateLaughAtJob(recipient, actor);
                 }
             } else if (relWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
-                if (recipient.HasRelationshipOfTypeWith(actorAlterEgo, false, RELATIONSHIP_TRAIT.PARAMOUR, RELATIONSHIP_TRAIT.LOVER)) {
+                if (recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)
+                    || recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
                     //If they are lovers, paramours or relatives and they saw the other: -stumbled
                     //They will trigger a personal https://trello.com/c/iDsfwQ7d/2845-character-feeling-concerned job
                     CreateFeelingConcernedJob(recipient, actor);
-                } else if (recipient.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND)) {
+                } else if (recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND)) {
                     //50% they will trigger a personal https://trello.com/c/iDsfwQ7d/2845-character-feeling-concerned job
                     if (Random.Range(0, 100) < 50) {
                         CreateFeelingConcernedJob(recipient, actor);

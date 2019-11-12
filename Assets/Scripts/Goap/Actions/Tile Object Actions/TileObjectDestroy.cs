@@ -118,7 +118,7 @@ public class TileObjectDestroy : GoapAction {
         List<string> reactions = new List<string>();
         TileObject tileObj = poiTarget as TileObject;
 
-        RELATIONSHIP_EFFECT relWithActor = recipient.GetRelationshipEffectWith(actor);
+        RELATIONSHIP_EFFECT relWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
         if (recipient == actor) {
             // - If informed: "I am embarrassed by my own actions."
             if (status == SHARE_INTEL_STATUS.INFORMED) {
@@ -129,7 +129,7 @@ public class TileObjectDestroy : GoapAction {
         else if (tileObj.IsOwnedBy(recipient)) {
             if (relWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
                 //-Witnesser has a negative relationship with Actor
-                CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);  //-Relationship degradation with Actor
+                RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);  //-Relationship degradation with Actor
                 if (status == SHARE_INTEL_STATUS.WITNESSED) {
                     //- If witnessed: Create an Assault job targeting the Actor
                     recipient.CreateKnockoutJob(actor);
@@ -139,7 +139,7 @@ public class TileObjectDestroy : GoapAction {
                 }
             } else if (relWithActor == RELATIONSHIP_EFFECT.POSITIVE || relWithActor == RELATIONSHIP_EFFECT.NONE) {
                 //- Witnesser has a positive or neutral relationship with Actor
-                CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);  //-Relationship degradation with Actor
+                RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);  //-Relationship degradation with Actor
                 if (status == SHARE_INTEL_STATUS.INFORMED) {
                     //- If informed: "Perhaps it's best if I avoid [Actor Name] for now."
                     reactions.Add(string.Format("Perhaps it's best if I avoid {0} for now.", actor.name));

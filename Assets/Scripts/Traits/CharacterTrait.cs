@@ -126,17 +126,17 @@ namespace Traits {
                         PlayerManager.Instance.player.ShowNotificationFrom(sawDeadLog, characterThatWillDoJob, false);
 
 
-                        if (characterThatWillDoJob.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER)) {
+                        if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
                             characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Heartbroken");
                             bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
                             characterThatWillDoJob.AdjustHappiness(-6000);
                             return hasCreatedJob;
-                        } else if (characterThatWillDoJob.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.RELATIVE)) {
+                        } else if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.RELATIVE)) {
                             characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Griefstricken");
                             bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
                             characterThatWillDoJob.AdjustHappiness(-4000);
                             return hasCreatedJob;
-                        } else if (characterThatWillDoJob.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.FRIEND)) {
+                        } else if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.FRIEND)) {
                             characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Griefstricken");
                             bool hasCreatedJob = CreatePrioritizedShockJob(characterThatWillDoJob);
                             characterThatWillDoJob.AdjustHappiness(-2000);
@@ -162,7 +162,7 @@ namespace Traits {
                     //- unconscious, catatonic, restrained, puked, stumbled
                     ///NOTE: Puke and Stumble Reactions can be found at <see cref="Puke.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/> and <see cref="Stumble.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/> respectively
                     //They will trigger a personal https://trello.com/c/uCbLBXsF/2846-character-laugh-at job
-                    if (characterThatWillDoJob.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY) && targetCharacter.traitContainer.GetNormalTrait("Unconscious", "Catatonic", "Restrained") != null && characterThatWillDoJob.faction == targetCharacter.faction
+                    if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY) && targetCharacter.traitContainer.GetNormalTrait("Unconscious", "Catatonic", "Restrained") != null && characterThatWillDoJob.faction == targetCharacter.faction
                         && (characterThatWillDoJob.currentAction == null || !characterThatWillDoJob.currentAction.isPerformingActualAction)) {
                         return CreateLaughAtJob(characterThatWillDoJob, targetCharacter);
                     }
@@ -171,7 +171,7 @@ namespace Traits {
                     //catatonic, unconscious, restrained, puked
                     ///NOTE: Puke Reactions can be found at <see cref="Puke.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/>
                     //They will trigger a personal https://trello.com/c/iDsfwQ7d/2845-character-feeling-concerned job
-                    else if (characterThatWillDoJob.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE && targetCharacter.traitContainer.GetNormalTrait("Unconscious", "Catatonic", "Restrained") != null
+                    else if (characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE && targetCharacter.traitContainer.GetNormalTrait("Unconscious", "Catatonic", "Restrained") != null
                         && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.REMOVE_TRAIT, targetCharacter) && characterThatWillDoJob.faction == targetCharacter.faction
                          && (characterThatWillDoJob.currentAction == null || !characterThatWillDoJob.currentAction.isPerformingActualAction)) {
                         return CreateFeelingConcernedJob(characterThatWillDoJob, targetCharacter);

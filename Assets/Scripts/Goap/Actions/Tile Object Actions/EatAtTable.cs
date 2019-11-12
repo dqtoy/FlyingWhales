@@ -56,9 +56,9 @@ public class EatAtTable : GoapAction {
                 } else {
                     for (int i = 0; i < dwelling.residents.Count; i++) {
                         Character owner = dwelling.residents[i];
-                        CharacterRelationshipData characterRelationshipData = actor.GetCharacterRelationshipData(owner);
+                        IRelationshipData characterRelationshipData = actor.relationshipContainer.GetRelationshipDataWith(owner);
                         if (characterRelationshipData != null) {
-                            if (characterRelationshipData.HasRelationshipOfEffect(TRAIT_EFFECT.POSITIVE)) {
+                            if (characterRelationshipData.relationshipStatus == RELATIONSHIP_EFFECT.POSITIVE) {
                                 return 18;
                             }
                         }
@@ -251,15 +251,15 @@ public class EatAtTable : GoapAction {
                 reactions.Add("Yes! I ate poisoned food but thankfully, I survived. Do you know who did it?!");
             } 
             else if (poisonedTrait.IsResponsibleForTrait(recipient)) {
-                if(recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                if(recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
                     reactions.Add("Yes I did that and it worked! Muahahaha!");
                     AddTraitTo(recipient, "Satisfied");
                 } else {
                     reactions.Add(string.Format("{0} wasn't my target when I poisoned the food.", actor.name));
                 }
             } 
-            else if ((recipient.faction == actor.faction && !recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) 
-                || (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE)) {
+            else if ((recipient.faction == actor.faction && !recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) 
+                || (recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE)) {
 
                 Trait sickTrait = actor.traitContainer.GetNormalTrait("Sick");
                 if (actor.isDead) {
@@ -271,7 +271,7 @@ public class EatAtTable : GoapAction {
                     sickTrait.CreateJobsOnEnterVisionBasedOnTrait(actor, recipient);
                 }
             } 
-            else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
+            else if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
                 reactions.Add(string.Format("{0} deserves that.", actor.name));
                 AddTraitTo(recipient, "Satisfied");
             }

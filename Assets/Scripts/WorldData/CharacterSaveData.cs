@@ -70,9 +70,10 @@ public class CharacterSaveData {
         //}
 
         relationshipsData = new List<RelationshipSaveData>();
-        foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in character.relationships) {
-            relationshipsData.Add(new RelationshipSaveData(kvp.Value));
-        }
+        //TODO:
+        //foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in character.relationshipContainer.relationships) {
+        //    relationshipsData.Add(new RelationshipSaveData(kvp.Value));
+        //}
 
         //attributes = new List<ATTRIBUTE>();
         //for (int i = 0; i < character.attributes.Count; i++) {

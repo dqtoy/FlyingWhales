@@ -295,7 +295,7 @@ public class CharacterRelationshipData {
     //private void SaverCheck() {
     //    if (trouble == null || trouble.Count == 0) {
     //        if (HasRelationshipTrait(RELATIONSHIP_TRAIT.SAVE_TARGET)) {
-    //            CharacterManager.Instance.RemoveRelationshipBetween(owner, targetCharacter, RELATIONSHIP_TRAIT.SAVE_TARGET);
+    //            RelationshipManager.Instance.RemoveRelationshipBetween(owner, targetCharacter, RELATIONSHIP_TRAIT.SAVE_TARGET);
     //        }
     //    }
     //}

@@ -147,7 +147,7 @@ public class DrinkBlood : GoapAction {
                         reactions.Add(string.Format("{0} must be the one that turned me into this...", actor.name));
                     } else {
                         //- Recipient is NOT a Vampire
-                        RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
+                        RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
                         bool hasRelationshipDegraded = false;
                         if (!hasCrimeBeenReported) {
                             hasRelationshipDegraded = recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
@@ -166,11 +166,11 @@ public class DrinkBlood : GoapAction {
                     }
                 }
                 //- Recipient Has Positive Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
                     if (isRecipientVampire) {
                         //- Recipient is a Vampire
-                        RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
-                        bool hasRelationshipDegraded = CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
+                        RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
+                        bool hasRelationshipDegraded = RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);
                         if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.POSITIVE) {
                             if (hasRelationshipDegraded) {
                                 reactions.Add(string.Format("I am also a vampire so I understand {0}'s unique needs but {1} shouldn't have hurt {2}!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false), targetCharacter.name));
@@ -193,7 +193,7 @@ public class DrinkBlood : GoapAction {
                         }
                     } else {
                         //- Recipient is NOT a Vampire
-                        RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
+                        RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
                         bool hasRelationshipDegraded = false;
                         if (!hasCrimeBeenReported) {
                             hasRelationshipDegraded = recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
@@ -212,7 +212,7 @@ public class DrinkBlood : GoapAction {
                     }
                 }
                 //- Recipient Has Negative Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
                     if (isRecipientVampire) {
                         //- Recipient is a Vampire
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -220,7 +220,7 @@ public class DrinkBlood : GoapAction {
                                 recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
                             }
                         }
-                        RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                        RELATIONSHIP_EFFECT relationshipWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
                         if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
                             reactions.Add(string.Format("I am also a vampire so I understand {0}'s unique needs.", actor.name));
                         } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
@@ -230,7 +230,7 @@ public class DrinkBlood : GoapAction {
                         }
                     } else {
                         //- Recipient is NOT a Vampire
-                        RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
+                        RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
                         bool hasRelationshipDegraded = false;
                         if (!hasCrimeBeenReported) {
                             hasRelationshipDegraded = recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
@@ -252,7 +252,7 @@ public class DrinkBlood : GoapAction {
                 else {
                     if (isRecipientVampire) {
                         //- Recipient is a Vampire
-                        RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                        RELATIONSHIP_EFFECT relationshipWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
                         if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
                             reactions.Add(string.Format("I am also a vampire so I understand {0}'s unique needs.", actor.name));
                         } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
@@ -262,7 +262,7 @@ public class DrinkBlood : GoapAction {
                         }
                     } else {
                         //- Recipient is NOT a Vampire
-                        RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
+                        RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
                         bool hasRelationshipDegraded = false;
                         if (!hasCrimeBeenReported) {
                             hasRelationshipDegraded = recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);

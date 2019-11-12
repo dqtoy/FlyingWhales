@@ -102,8 +102,10 @@ public class Steal : GoapAction {
             reactions.Add(string.Format("{0} stole from me? What a horrible person.", actor.name));
             //- **Recipient Effect**: Remove Friend/Lover/Paramour relationship between Actor and Recipient.Apply Crime System handling as if the Recipient witnessed Actor commit Theft.
             recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
-            List<RelationshipTrait> traitsToRemove = recipient.GetAllRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE);
-            CharacterManager.Instance.RemoveRelationshipBetween(recipient, actor, traitsToRemove);
+            List<RELATIONSHIP_TRAIT> traitsToRemove = recipient.relationshipContainer.GetRelationshipDataWith(actor).GetAllRelationshipOfEffect(RELATIONSHIP_EFFECT.POSITIVE);
+            for (int i = 0; i < traitsToRemove.Count; i++) {
+                RelationshipManager.Instance.RemoveRelationshipBetween(recipient, actor, traitsToRemove[i]);
+            }
         }
 
         //Recipient and Actor is the same:
@@ -114,20 +116,20 @@ public class Steal : GoapAction {
         }
 
         //Recipient and Actor have a positive relationship:
-        else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
+        else if (recipient.relationshipContainer.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
             //- **Recipient Response Text**: "[Actor Name] may have committed theft but I know that [he/she] is a good person."
             reactions.Add(string.Format("{0} may have committed theft but I know that {1} is a good person.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
             //-**Recipient Effect**: no effect
         }
         //Recipient and Actor have a negative relationship:
-        else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.NEGATIVE)) {
+        else if (recipient.relationshipContainer.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.NEGATIVE) {
             //- **Recipient Response Text**: "[Actor Name] committed theft!? Why am I not surprised."
             reactions.Add(string.Format("{0} committed theft!? Why am I not surprised.", actor.name));
             //-**Recipient Effect**: Apply Crime System handling as if the Recipient witnessed Actor commit Theft.
             recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
         }
         //Recipient and Actor have no relationship but are from the same faction:
-        else if (!recipient.HasRelationshipWith(actor) && recipient.faction == actor.faction) {
+        else if (!recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo) && recipient.faction == actor.faction) {
             //- **Recipient Response Text**: "[Actor Name] committed theft!? That's illegal."
             reactions.Add(string.Format("{0} committed theft!? That's illegal.", actor.name));
             //- **Recipient Effect**: Apply Crime System handling as if the Recipient witnessed Actor commit Theft.

@@ -38,8 +38,8 @@ public class ChatCharacter : GoapAction {
         WeightedFloatDictionary<string> weights = new WeightedFloatDictionary<string>();
         weights.AddElement("Quick Chat", 250);
 
-        CharacterRelationshipData relData = actor.GetCharacterRelationshipData(targetCharacter);
-        RELATIONSHIP_EFFECT relationshipEffectWithTarget = actor.GetRelationshipEffectWith(targetCharacter);
+        IRelationshipData relData = actor.relationshipContainer.GetRelationshipDataWith(targetCharacter.currentAlterEgo);
+        RELATIONSHIP_EFFECT relationshipEffectWithTarget = actor.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo);
         //**if no relationship yet, may become friends**
         if (relData == null) {
             if (actor.traitContainer.GetNormalTrait("Serial Killer") == null && targetCharacter.traitContainer.GetNormalTrait("Serial Killer") == null) {
@@ -68,8 +68,8 @@ public class ChatCharacter : GoapAction {
             }
         } else {
             //**if no relationship other than relative, may become enemies**
-            List<RelationshipTrait> relTraits = actor.GetAllRelationshipTraitWith(targetCharacter);
-            if (relTraits.Count == 1 && relTraits[0] is Relative) {
+            List<RELATIONSHIP_TRAIT> relTraits = actor.relationshipContainer.GetRelationshipDataWith(targetCharacter.currentAlterEgo)?.relationships ?? null;
+            if (relTraits != null && relTraits.Count == 1 && relTraits[0] == RELATIONSHIP_TRAIT.RELATIVE) {
                 int weight = 0;
                 if (thisCharacterMood == CHARACTER_MOOD.DARK) {
                     weight += 30;
@@ -204,27 +204,27 @@ public class ChatCharacter : GoapAction {
 
         if (chatResult == "Become Friends") {
             //may become friends
-            CharacterManager.Instance.CreateNewRelationshipBetween(actor, targetCharacter, RELATIONSHIP_TRAIT.FRIEND);
+            RelationshipManager.Instance.RemoveOneWayRelationship(actor, targetCharacter, RELATIONSHIP_TRAIT.FRIEND);
         } else if (chatResult == "Become Enemies") {
             //may become enemies
-            CharacterManager.Instance.CreateNewRelationshipBetween(actor, targetCharacter, RELATIONSHIP_TRAIT.ENEMY);
+            RelationshipManager.Instance.RemoveOneWayRelationship(actor, targetCharacter, RELATIONSHIP_TRAIT.ENEMY);
         } else if (chatResult == "Share Information") {
             //TODO: mechanics to be added later
         } else if (chatResult == "Resolve Enmity") {
             //relationship may be resolved
-            List<RelationshipTrait> negativeTraits = actor.GetAllRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.NEGATIVE);
-            RelationshipTrait chosenTrait = negativeTraits[UnityEngine.Random.Range(0, negativeTraits.Count)];
-            CharacterManager.Instance.RemoveOneWayRelationship(actor, targetCharacter, chosenTrait.relType);
+            List<RELATIONSHIP_TRAIT> negativeTraits = actor.relationshipContainer.GetRelationshipDataWith(targetCharacter.currentAlterEgo).GetAllRelationshipOfEffect(RELATIONSHIP_EFFECT.NEGATIVE);
+            RELATIONSHIP_TRAIT chosenTrait = negativeTraits[UnityEngine.Random.Range(0, negativeTraits.Count)];
+            RelationshipManager.Instance.RemoveOneWayRelationship(actor, targetCharacter, chosenTrait);
         } else if (chatResult == "Flirt") {
             //store flirtation count in both characters
             //Log: "[Character Name 1] and [Character Name 2] flirted."
-            actor.FlirtWith(targetCharacter);
+            FlirtWith(actor, targetCharacter);
         } else if (chatResult == "Become Lovers") {
             //Log: "[Character Name 1] and [Character Name 2] have become lovers."
-            CharacterManager.Instance.CreateNewRelationshipBetween(actor, targetCharacter, RELATIONSHIP_TRAIT.LOVER);
+            RelationshipManager.Instance.RemoveOneWayRelationship(actor, targetCharacter, RELATIONSHIP_TRAIT.LOVER);
         } else if (chatResult == "Become Paramours") {
             //Log: "[Character Name 1] and [Character Name 2] have developed an affair!"
-            CharacterManager.Instance.CreateNewRelationshipBetween(actor, targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR);
+            RelationshipManager.Instance.RemoveOneWayRelationship(actor, targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR);
         } else if (chatResult == "Argument") {
             if(actor.traitContainer.GetNormalTrait("Angry") != null) {
                 Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_chat");
@@ -347,10 +347,10 @@ public class ChatCharacter : GoapAction {
             reactions.Add("I know what I did.");
             //-**Recipient Effect * *: no effect
         } 
-        else if(recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.PARAMOUR) || recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.PARAMOUR)) {
+        else if(recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR) || recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
             reactions.Add("Wait what?! What were they talking about?!");
         } 
-        else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.LOVER) || recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
+        else if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) || recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
             reactions.Add("Huh? What were they talking about?");
         } 
         else {
@@ -383,13 +383,13 @@ public class ChatCharacter : GoapAction {
             reactions.Add("I know what I did.");
             //-**Recipient Effect * *: no effect
         } 
-        else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY) && recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.ENEMY)) {
+        else if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY) && recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
             reactions.Add("Are they conspiring against me?!");
         } 
-        else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
+        else if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
             reactions.Add(string.Format("So {0} is gathering allies, huh?", actor.name));
         } 
-        else if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.ENEMY)) {
+        else if (recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
             reactions.Add(string.Format("So {0} is gathering allies, huh?", target.name));
         }
         else {
@@ -415,10 +415,10 @@ public class ChatCharacter : GoapAction {
     private List<string> FlirtIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
-        Character actorLover = actor.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
-        Character actorParamour = actor.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
-        Character targetLover = target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
-        Character targetParamour = target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
+        Relatable actorLover = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.LOVER);
+        Relatable actorParamour = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
+        Relatable targetLover = target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.LOVER);
+        Relatable targetParamour = target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
 
 #if TRAILER_BUILD
         if (recipient.name == "Audrey" && actor.name == "Jamie" && target.name == "Fiona") {
@@ -431,34 +431,34 @@ public class ChatCharacter : GoapAction {
 
         //Recipient and Actor is the same:
         if (recipient == actor) {
-            if (recipient == targetLover) {
+            if (recipient.currentAlterEgo == targetLover) {
                 reactions.Add("Hey! That's private!");
-            } else if (recipient == targetParamour) {
+            } else if (recipient.currentAlterEgo == targetParamour) {
                 reactions.Add("Don't tell anyone. *wink**wink*");
             }
         } 
         else if (recipient == target) {
-            if (recipient == actorLover) {
+            if (recipient.currentAlterEgo == actorLover) {
                 reactions.Add("Hey! That's private!");
-            } else if (recipient == actorParamour) {
+            } else if (recipient.currentAlterEgo == actorParamour) {
                 reactions.Add("Don't you dare judge me!");
             }
         } 
-        else if (recipient == actorLover) {
-            if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+        else if (recipient.currentAlterEgo == actorLover) {
+            if (RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                 reactions.Add(string.Format("I've had enough of {0}'s shenanigans!", actor.name));
             } else {
                 reactions.Add("It's just harmless flirtation.");
             }
         } 
-        else if (recipient == targetLover) {
-            if (CharacterManager.Instance.RelationshipDegradation(target, recipient, this)) {
+        else if (recipient.currentAlterEgo == targetLover) {
+            if (RelationshipManager.Instance.RelationshipDegradation(target, recipient, this)) {
                 reactions.Add(string.Format("I've had enough of {0}'s shenanigans!", target.name));
             } else {
                 reactions.Add("It's just harmless flirtation.");
             }
         } 
-        else if (recipient == actorParamour || recipient == targetParamour) {
+        else if (recipient.currentAlterEgo == actorParamour || recipient.currentAlterEgo == targetParamour) {
             reactions.Add("I thought I was the only snake in town.");
             AddTraitTo(recipient, "Annoyed");
         } 
@@ -470,39 +470,39 @@ public class ChatCharacter : GoapAction {
     private List<string> BecomeLoversIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
-        Character actorParamour = actor.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
-        Character targetParamour = target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
+        Relatable actorParamour = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
+        Relatable targetParamour = target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
         if (recipient == actor) {
-            if(recipient == targetParamour) {
+            if(recipient.currentAlterEgo == targetParamour) {
                 reactions.Add(string.Format("Yes that's true! I am so happy {0} finally chose me. This is what I've been dreaming for and at last, it came true!", target.name));
             } else {
                 reactions.Add("Yes that's true and I am very happy. I hope we can be happy together, forever.");
             }
         }
         else if (recipient == target) {
-            if (recipient == actorParamour) {
+            if (recipient.currentAlterEgo == actorParamour) {
                 reactions.Add(string.Format("Yes that's true! I am so happy {0} finally chose me. This is what I've been dreaming for and at last, it came true!", actor.name));
             } else {
                 reactions.Add("Yes that's true and I am very happy. I hope we can be happy together, forever.");
             }
         } 
-        else if (recipient == actorParamour) {
-            if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+        else if (recipient.currentAlterEgo == actorParamour) {
+            if (RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                 reactions.Add(string.Format("I'm done being the appetizer in {0}'s full course meal!", actor.name));
             } else {
                 reactions.Add(string.Format("Why can't I let {0} go? Perhaps, I'm truly, madly, deeply in love with {0}.", Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
             }
             AddTraitTo(recipient, "Heartbroken");
         } 
-        else if (recipient == targetParamour) {
-            if (CharacterManager.Instance.RelationshipDegradation(target, recipient, this)) {
+        else if (recipient.currentAlterEgo == targetParamour) {
+            if (RelationshipManager.Instance.RelationshipDegradation(target, recipient, this)) {
                 reactions.Add(string.Format("I'm done being the appetizer in {0}'s full course meal!", target.name));
             } else {
                 reactions.Add(string.Format("Why can't I let {0} go? Perhaps, I'm truly, madly, deeply in love with {0}.", Utilities.GetPronounString(target.gender, PRONOUN_TYPE.OBJECTIVE, false)));
             }
             AddTraitTo(recipient, "Heartbroken");
         } 
-        else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY) || recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.ENEMY)) {
+        else if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY) || recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
             reactions.Add("That won't last. Mark my words!");
             AddTraitTo(recipient, "Annoyed");
         }
@@ -515,8 +515,8 @@ public class ChatCharacter : GoapAction {
     private List<string> BecomeParamoursIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
-        Character actorLover = actor.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
-        Character targetLover = target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
+        Relatable actorLover = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.LOVER);
+        Relatable targetLover = target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.LOVER);
 
         //Recipient and Actor is the same or Recipient and Target is the same:
         if (recipient == actor || recipient == target) {
@@ -525,55 +525,55 @@ public class ChatCharacter : GoapAction {
             //-**Recipient Effect * *: no effect
         }
         //Recipient considers Actor as a Lover:
-        else if (recipient.HasRelationshipOfTypeWith(actor, false, RELATIONSHIP_TRAIT.LOVER)) {
+        else if (recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
             //- **Recipient Response Text**: [Actor Name] is cheating on me!?
             reactions.Add(string.Format("{0} is cheating on me!?", actor.name));
             //- **Recipient Effect**: https://trello.com/c/mqor1Ddv/1884-relationship-degradation between and Recipient and Target.
             //Add an Undermine Job to Recipient versus Target (choose at random). Add a Breakup Job to Recipient versus Actor.
-            CharacterManager.Instance.RelationshipDegradation(target, recipient, this);
+            RelationshipManager.Instance.RelationshipDegradation(target, recipient, this);
             recipient.ForceCreateUndermineJob(target, "snake");
             //recipient.CreateBreakupJob(actor);
         }
         //Recipient considers Target as a Lover:
-        else if (recipient.HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER)) {
+        else if (recipient.relationshipContainer.HasRelationshipWith(poiTargetAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
             //- **Recipient Response Text**: [Target Name] is cheating on me!?
             reactions.Add(string.Format("{0} is cheating on me!?", target.name));
             //- **Recipient Effect**: https://trello.com/c/mqor1Ddv/1884-relationship-degradation between and Recipient and Actor.
             //Add an Undermine Job to Recipient versus Actor (choose at random). Add a Breakup Job to Recipient versus Target.
-            CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
+            RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);
             recipient.ForceCreateUndermineJob(actor, "snake");
             //recipient.CreateBreakupJob(target);
         }
         //Actor has a Lover. Actor's Lover is not the Target. Recipient does not have a positive relationship with Actor. Recipient has a relationship (positive or negative) with Actor's Lover.
-        else if (recipient != actor && recipient != target && actorLover != null && actorLover != target
-            && recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.NEGATIVE && recipient.HasRelationshipWith(actorLover)) {
+        else if (recipient != actor && recipient != target && actorLover != null && target.currentAlterEgo != actorLover
+            && recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE && recipient.relationshipContainer.HasRelationshipWith(actorLover)) {
             //- **Recipient Response Text**: I should let [Actor's Lover's Name] know about this.
-            reactions.Add(string.Format("I should let {0} know about this.", actorLover.name));
+            reactions.Add(string.Format("I should let {0} know about this.", actorLover.relatableName));
             //- **Recipient Effect**: Recipient will perform Share Information Job targeting Actor's Lover using this event as the information.
             //Recipient will have https://trello.com/c/mqor1Ddv/1884-relationship-degradation with Actor.
 
-            recipient.CreateShareInformationJob(actorLover, this);
+            recipient.CreateShareInformationJob((actorLover as AlterEgoData).owner, this);
 
-            //CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
+            //RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);
         }
         //Target has a Lover. Target's Lover is not the Actor. Recipient does not have a positive relationship with Target. Recipient has a positive relationship with Target's Lover.
-        else if (recipient != actor && recipient != target && targetLover != null && targetLover != actor
-            && recipient.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.NEGATIVE && recipient.GetRelationshipEffectWith(targetLover) == RELATIONSHIP_EFFECT.POSITIVE) {
+        else if (recipient != actor && recipient != target && targetLover != null && actor.currentAlterEgo != targetLover
+            && recipient.relationshipContainer.GetRelationshipEffectWith(poiTargetAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE && recipient.relationshipContainer.GetRelationshipEffectWith(targetLover) == RELATIONSHIP_EFFECT.POSITIVE) {
             //- **Recipient Response Text**: I should let [Target's Lover's Name] know about this.
-            reactions.Add(string.Format("I should let {0} know about this.", targetLover.name));
+            reactions.Add(string.Format("I should let {0} know about this.", targetLover.relatableName));
             //- **Recipient Effect**: Recipient will perform Share Information Job targeting Target's Lover using this event as the information.
             //Recipient will have https://trello.com/c/mqor1Ddv/1884-relationship-degradation with Actor.
 
-            recipient.CreateShareInformationJob(targetLover, this);
+            recipient.CreateShareInformationJob((targetLover as AlterEgoData).owner, this);
 
-            CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
+            RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);
         }
         //Recipient and Actor are from the same faction and Actor has a Lover. Actor's Lover is not the Target.
-        else if (recipient.faction == actor.faction && actorLover != null && actorLover != target) {
+        else if (recipient.faction == actor.faction && actorLover != null && actorLover != target.currentAlterEgo) {
             //- **Recipient Response Text**: [Actor Name] is playing with fire.
             reactions.Add(string.Format("{0} is playing with fire.", actor.name));
             //- **Recipient Effect**: Recipient will have https://trello.com/c/mqor1Ddv/1884-relationship-degradation with Actor.
-            CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
+            RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);
         }
         //Else Catcher:
         else {
@@ -595,13 +595,13 @@ public class ChatCharacter : GoapAction {
             reactions.Add("I'm thankful we cleared that out.");
             //-**Recipient Effect * *: no effect
         } 
-        else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE || recipient.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.POSITIVE) {
+        else if (recipient.relationshipContainer.GetRelationshipEffectWith(actorAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE || recipient.relationshipContainer.GetRelationshipEffectWith(poiTargetAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
             reactions.Add("I'm glad they cleared things out.");
         } 
-        else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.NEGATIVE) {
+        else if (recipient.relationshipContainer.GetRelationshipEffectWith(actorAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
             reactions.Add(string.Format("{0} has tricked another one.", actor.name));
         } 
-        else if (recipient.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.NEGATIVE) {
+        else if (recipient.relationshipContainer.GetRelationshipEffectWith(poiTargetAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
             reactions.Add(string.Format("{0} has tricked another one.", target.name));
         } 
         else {
@@ -610,6 +610,14 @@ public class ChatCharacter : GoapAction {
         return reactions;
     }
     #endregion
+
+    public void FlirtWith(Character actor, Character otherCharacter) {
+        //TODO:
+        //if (!actor.Re.ContainsKey(otherCharacter.currentAlterEgo)) {
+        //    relationships.Add(otherCharacter.currentAlterEgo, new CharacterRelationshipData(this, otherCharacter, otherCharacter.currentAlterEgo));
+        //}
+        //relationships[otherCharacter.currentAlterEgo].IncreaseFlirtationCount();
+    }
 }
 
 public class ChatCharacterData : GoapActionData {

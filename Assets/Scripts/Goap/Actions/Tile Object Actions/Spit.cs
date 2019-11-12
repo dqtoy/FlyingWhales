@@ -42,7 +42,7 @@ public class Spit : GoapAction {
         if (poiTarget is Tombstone) {
             Tombstone tombstone = poiTarget as Tombstone;
             Character target = tombstone.character;
-            return actor.HasRelationshipOfEffectWith(target, TRAIT_EFFECT.NEGATIVE);
+            return actor.relationshipContainer.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.NEGATIVE;
         }
         return false;
     }
@@ -84,7 +84,7 @@ public class Spit : GoapAction {
                 }
                 //- Recipient is Target
                 else if (recipient == targetCharacter) {
-                    if(CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                    if(RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                         reactions.Add(string.Format("{0} does not respect me.", actor.name));
                         AddTraitTo(recipient, "Annoyed");
                     } else {
@@ -92,8 +92,8 @@ public class Spit : GoapAction {
                     }
                 }
                 //- Recipient Has Positive Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
-                    if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
+                    if (RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                         reactions.Add("That was very rude!");
                         AddTraitTo(recipient, "Annoyed");
                     } else {
@@ -101,7 +101,7 @@ public class Spit : GoapAction {
                     }
                 }
                 //- Recipient Has Negative Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
                     reactions.Add("That was not nice.");
                 }
                 //- Recipient Has No Relationship with Target
@@ -131,7 +131,7 @@ public class SpitData : GoapActionData {
         if (poiTarget is Tombstone) {
             Tombstone tombstone = poiTarget as Tombstone;
             Character target = tombstone.character;
-            return actor.HasRelationshipOfEffectWith(target, TRAIT_EFFECT.NEGATIVE);
+            return actor.relationshipContainer.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.NEGATIVE;
         }
         return false;
     }

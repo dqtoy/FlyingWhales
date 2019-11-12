@@ -56,7 +56,7 @@ public class SaveDataAlterEgo {
         }
 
         relationships = new List<SaveDataRelationship>();
-        foreach (CharacterRelationshipData relData in alterEgo.relationships.Values) {
+        foreach (CharacterRelationshipData relData in alterEgo.relationshipContainer.relationships.Values) {
             SaveDataRelationship saveDataRelationship = new SaveDataRelationship();
             saveDataRelationship.Save(relData);
             relationships.Add(saveDataRelationship);

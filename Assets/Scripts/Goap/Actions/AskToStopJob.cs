@@ -38,7 +38,7 @@ public class AskToStopJob : GoapAction {
     protected override int GetCost() {
         if (poiTarget is Character) {
             Character targetCharacter = poiTarget as Character;
-            if(targetCharacter.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
+            if(targetCharacter.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
                 return Utilities.rng.Next(15, 25);
             }
         }
@@ -66,7 +66,7 @@ public class AskToStopJob : GoapAction {
             //    && targetCharacter.currentAction.parentPlan.job == jobToStop) {
             //    canDoAction = true;
             //}
-            targetDoesNotConsiderActorEnemy = !targetCharacter.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY);
+            targetDoesNotConsiderActorEnemy = !targetCharacter.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
         }
         return actor != poiTarget && targetDoesNotConsiderActorEnemy; //&& canDoAction
     }
@@ -106,7 +106,7 @@ public class AskToStopJobData : GoapActionData {
         bool targetDoesNotConsiderActorEnemy = true;
         if (poiTarget is Character) {
             Character targetCharacter = poiTarget as Character;
-            targetDoesNotConsiderActorEnemy = !targetCharacter.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY);
+            targetDoesNotConsiderActorEnemy = !targetCharacter.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
         }
         return actor != poiTarget && targetDoesNotConsiderActorEnemy;
     }

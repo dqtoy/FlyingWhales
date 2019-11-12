@@ -68,7 +68,7 @@ public class MapGenerator : MonoBehaviour {
         yield return null;
         UIManager.Instance.InitializeUI();
 
-        CharacterManager.Instance.GenerateRelationships();
+        RelationshipManager.Instance.GenerateRelationships();
         //CharacterManager.Instance.PlaceInitialCharacters();
         CharacterManager.Instance.GiveInitialItems();
         //CharacterManager.Instance.GenerateInitialAwareness();
@@ -245,12 +245,9 @@ public class MapGenerator : MonoBehaviour {
         CharacterManager.Instance.LoadCharacters(data);
         FactionManager.Instance.GenerateStartingFactionData();
 
-        CharacterManager.Instance.LoadRelationships(data);
-        CharacterManager.Instance.GenerateRelationships();
+        RelationshipManager.Instance.LoadRelationships(data);
+        RelationshipManager.Instance.GenerateRelationships();
         CharacterManager.Instance.GiveInitialItems();
-#if TRAILER_BUILD
-        CharacterManager.Instance.GenerateInitialLogs();
-#endif
 
         AudioManager.Instance.TransitionTo("World Music", 10);
 

@@ -142,7 +142,7 @@ namespace worldcreator {
             LandmarkManager.Instance.LoadLandmarks(data);
             GenerateOuterGrid(data);
             CharacterManager.Instance.LoadCharacters(data);
-            CharacterManager.Instance.LoadRelationships(data);
+            //CharacterManager.Instance.LoadRelationships(data);
             //MonsterManager.Instance.LoadMonsters(data);
             TokenManager.Instance.Initialize();
             //CharacterManager.Instance.LoadSquads(data);

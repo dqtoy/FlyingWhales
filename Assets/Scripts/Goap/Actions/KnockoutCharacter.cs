@@ -74,7 +74,7 @@ public class KnockoutCharacter : GoapAction {
         if(poiTarget is Character) {
             Character targetCharacter = poiTarget as Character;
             if (!targetCharacter.ReactToCrime(committedCrime, this, actorAlterEgo, SHARE_INTEL_STATUS.WITNESSED)) {
-                CharacterManager.Instance.RelationshipDegradation(actor, targetCharacter, this);
+                RelationshipManager.Instance.RelationshipDegradation(actor, targetCharacter, this);
                 targetCharacter.marker.AddHostileInRange(actor, false);
                 //NOTE: Adding hostile in range is done after the action is done processing fully, See OnResultReturnedToActor
             }
@@ -105,8 +105,8 @@ public class KnockoutCharacter : GoapAction {
                     reactions.Add(string.Format("I'm embarrassed that {0} was able to do that to me!", actor.name));
                 }
                 //- Recipient Has Positive Relationship with Actor
-                else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
-                    RELATIONSHIP_EFFECT relationshipWithTarget = recipient.GetRelationshipEffectWith(targetCharacter);
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
+                    RELATIONSHIP_EFFECT relationshipWithTarget = recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo);
                     if (relationshipWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
                         recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -120,8 +120,8 @@ public class KnockoutCharacter : GoapAction {
                     }
                 }
                 //- Recipient Has Negative Relationship with Actor
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
-                    RELATIONSHIP_EFFECT relationshipWithTarget = recipient.GetRelationshipEffectWith(targetCharacter);
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    RELATIONSHIP_EFFECT relationshipWithTarget = recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo);
                     if (relationshipWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
                         recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -148,7 +148,7 @@ public class KnockoutCharacter : GoapAction {
                 }
                 //- Recipient Has No Relationship with Actor
                 else {
-                    RELATIONSHIP_EFFECT relationshipWithTarget = recipient.GetRelationshipEffectWith(targetCharacter);
+                    RELATIONSHIP_EFFECT relationshipWithTarget = recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo);
                     if (relationshipWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
                         recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -194,8 +194,8 @@ public class KnockoutCharacter : GoapAction {
                     reactions.Add(string.Format("{0} failed. Anyone that tries to do that will also fail.", actor.name));
                 }
                 //- Recipient Has Positive Relationship with Actor
-                else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
-                    RELATIONSHIP_EFFECT relationshipWithTarget = recipient.GetRelationshipEffectWith(targetCharacter);
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
+                    RELATIONSHIP_EFFECT relationshipWithTarget = recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo);
                     if (relationshipWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
                         recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -210,8 +210,8 @@ public class KnockoutCharacter : GoapAction {
                     }
                 }
                 //- Recipient Has Negative Relationship with Actor
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
-                    RELATIONSHIP_EFFECT relationshipWithTarget = recipient.GetRelationshipEffectWith(targetCharacter);
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    RELATIONSHIP_EFFECT relationshipWithTarget = recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo);
                     if (relationshipWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
                         recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -238,7 +238,7 @@ public class KnockoutCharacter : GoapAction {
                 }
                 //- Recipient Has No Relationship with Actor
                 else {
-                    RELATIONSHIP_EFFECT relationshipWithTarget = recipient.GetRelationshipEffectWith(targetCharacter);
+                    RELATIONSHIP_EFFECT relationshipWithTarget = recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo);
                     if (relationshipWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
                         recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {

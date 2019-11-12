@@ -92,8 +92,8 @@ public class RestrainCharacter : GoapAction {
         }
         //Otherwise (usually criminal stuff like Serial Killing):
         else {
-            RELATIONSHIP_EFFECT relWithActor = recipient.GetRelationshipEffectWith(actor);
-            RELATIONSHIP_EFFECT relWithTarget = recipient.GetRelationshipEffectWith(target);
+            RELATIONSHIP_EFFECT relWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
+            RELATIONSHIP_EFFECT relWithTarget = recipient.relationshipContainer.GetRelationshipEffectWith(target.currentAlterEgo);
             if (recipient == actor) {
                 if (status == SHARE_INTEL_STATUS.INFORMED) {
                     //- If Informed: "Do not tell anybody, please!"
@@ -106,7 +106,7 @@ public class RestrainCharacter : GoapAction {
                 }
             } else if (relWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
                 if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
-                    CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
+                    RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);
                     //- Considers it an Assault
                     recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
                     if (status == SHARE_INTEL_STATUS.WITNESSED && actor.currentAction != null && actor.currentAction.parentPlan != null && actor.currentAction.parentPlan.job != null) {
@@ -130,7 +130,7 @@ public class RestrainCharacter : GoapAction {
                 }
             } else if (relWithActor == RELATIONSHIP_EFFECT.NONE) {
                 if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
-                    CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
+                    RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);
                     //- Considers it an Assault
                     recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
                     if (status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -141,7 +141,7 @@ public class RestrainCharacter : GoapAction {
                         reactions.Add(string.Format("{0} shouldn't have done that to {1}!", actor.name, target.name));
                     }
                 } else if (relWithTarget == RELATIONSHIP_EFFECT.NONE) {
-                    CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
+                    RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);
                     //- Considers it an Assault
                     recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
                     if (status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -162,7 +162,7 @@ public class RestrainCharacter : GoapAction {
                 }
             } else if (relWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
                 if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
-                    CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
+                    RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);
                     //- Considers it an Assault
                     recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
                     if (status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -175,7 +175,7 @@ public class RestrainCharacter : GoapAction {
                         reactions.Add(string.Format("{0} is such a vile creature!", actor.name));
                     }
                 } else if (relWithTarget == RELATIONSHIP_EFFECT.NONE) {
-                    CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
+                    RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);
                     //- Considers it Aberration
                     recipient.ReactToCrime(CRIME.ABERRATION, this, actorAlterEgo, status);
                     if (status == SHARE_INTEL_STATUS.WITNESSED) {

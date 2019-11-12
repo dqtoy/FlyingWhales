@@ -18,7 +18,7 @@ public class Tease : GoapAction {
     }
     protected override int GetCost() {
         Character targetCharacter = poiTarget as Character;
-        List<RELATIONSHIP_TRAIT> rels = actor.GetAllRelationshipTraitTypesWith(targetCharacter);
+        List<RELATIONSHIP_TRAIT> rels = actor.relationshipContainer.GetRelationshipDataWith(targetCharacter).relationships;
         if (rels.Contains(RELATIONSHIP_TRAIT.FRIEND)) {
             return Utilities.rng.Next(40, 61);
         } else {

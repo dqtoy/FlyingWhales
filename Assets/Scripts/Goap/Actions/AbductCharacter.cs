@@ -113,7 +113,7 @@ public class AbductCharacter : GoapAction {
                 //- If Recipient is Aware
                 reactions.Add("I know that already.");
             } else {
-                if (recipient != actor && recipient != targetCharacter && recipient.GetRelationshipEffectWith(actor) != RELATIONSHIP_EFFECT.POSITIVE) {
+                if (recipient != actor && recipient != targetCharacter && recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) != RELATIONSHIP_EFFECT.POSITIVE) {
                     reactions.Add(string.Format("I think {0} is going to do something bad to {1}. I must stop this!", actor.name, targetCharacter.name));
                     recipient.ReactToCrime(committedCrime, this, actor.currentAlterEgo, status);
                 }
