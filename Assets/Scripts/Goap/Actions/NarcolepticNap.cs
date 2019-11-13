@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
-using Traits;
 public class NarcolepticNap : GoapAction {
 
     public Resting restingTrait { get; private set; }

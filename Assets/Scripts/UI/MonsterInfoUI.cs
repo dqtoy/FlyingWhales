@@ -397,48 +397,48 @@ public class MonsterInfoUI : UIMenu {
     }
     #endregion
 
-    #region Relationships
-    List<CharacterRelationshipItem> shownRelationships = new List<CharacterRelationshipItem>();
-    private void UpdateRelationshipInfo(List<Relationship> relationships) {
-        if(relationships == null) {
-            return;
-        }
-        List<Relationship> relationshipsToShow = new List<Relationship>(relationships);
-        List<CharacterRelationshipItem> relationshipsToRemove = new List<CharacterRelationshipItem>();
-        for (int i = 0; i < shownRelationships.Count; i++) {
-            CharacterRelationshipItem currRelItem = shownRelationships[i];
-            if (relationshipsToShow.Contains(currRelItem.rel)) {
-                relationshipsToShow.Remove(currRelItem.rel);
-            } else {
-                relationshipsToRemove.Add(currRelItem);
-            }
-        }
+    //#region Relationships
+    //List<CharacterRelationshipItem> shownRelationships = new List<CharacterRelationshipItem>();
+    //private void UpdateRelationshipInfo(List<Relationship> relationships) {
+    //    if(relationships == null) {
+    //        return;
+    //    }
+    //    List<Relationship> relationshipsToShow = new List<Relationship>(relationships);
+    //    List<CharacterRelationshipItem> relationshipsToRemove = new List<CharacterRelationshipItem>();
+    //    for (int i = 0; i < shownRelationships.Count; i++) {
+    //        CharacterRelationshipItem currRelItem = shownRelationships[i];
+    //        if (relationshipsToShow.Contains(currRelItem.rel)) {
+    //            relationshipsToShow.Remove(currRelItem.rel);
+    //        } else {
+    //            relationshipsToRemove.Add(currRelItem);
+    //        }
+    //    }
 
-        for (int i = 0; i < relationshipsToRemove.Count; i++) {
-            RemoveRelationship(relationshipsToRemove[i]);
-        }
+    //    for (int i = 0; i < relationshipsToRemove.Count; i++) {
+    //        RemoveRelationship(relationshipsToRemove[i]);
+    //    }
 
-        //Utilities.DestroyChildren(relationsScrollView.content);
-        for (int i = 0; i < relationshipsToShow.Count; i++) {
-            AddRelationship(relationshipsToShow[i], i);
-        }
-    }
-    private void AddRelationship(Relationship rel, int index) {
-        GameObject relItemGO = UIManager.Instance.InstantiateUIObject(relationshipItemPrefab.name, relationsScrollView.content);
-        CharacterRelationshipItem relItem = relItemGO.GetComponent<CharacterRelationshipItem>();
-        Relationship currRel = rel;
-        relItem.Initialize();
-        if (Utilities.IsEven(index)) {
-            relItem.SetBGColor(evenRelationshipColor, oddRelationshipColor);
-        } else {
-            relItem.SetBGColor(oddRelationshipColor, evenRelationshipColor);
-        }
-        relItem.SetRelationship(currRel);
-        shownRelationships.Add(relItem);
-    }
-    private void RemoveRelationship(CharacterRelationshipItem item) {
-        ObjectPoolManager.Instance.DestroyObject(item.gameObject);
-        shownRelationships.Remove(item);
-    }
-    #endregion
+    //    //Utilities.DestroyChildren(relationsScrollView.content);
+    //    for (int i = 0; i < relationshipsToShow.Count; i++) {
+    //        AddRelationship(relationshipsToShow[i], i);
+    //    }
+    //}
+    //private void AddRelationship(Relationship rel, int index) {
+    //    GameObject relItemGO = UIManager.Instance.InstantiateUIObject(relationshipItemPrefab.name, relationsScrollView.content);
+    //    CharacterRelationshipItem relItem = relItemGO.GetComponent<CharacterRelationshipItem>();
+    //    Relationship currRel = rel;
+    //    relItem.Initialize();
+    //    if (Utilities.IsEven(index)) {
+    //        relItem.SetBGColor(evenRelationshipColor, oddRelationshipColor);
+    //    } else {
+    //        relItem.SetBGColor(oddRelationshipColor, evenRelationshipColor);
+    //    }
+    //    relItem.SetRelationship(currRel);
+    //    shownRelationships.Add(relItem);
+    //}
+    //private void RemoveRelationship(CharacterRelationshipItem item) {
+    //    ObjectPoolManager.Instance.DestroyObject(item.gameObject);
+    //    shownRelationships.Remove(item);
+    //}
+    //#endregion
 }

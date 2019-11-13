@@ -7,55 +7,31 @@ using UnityEngine.UI;
 
 public class CharacterRelationshipItem : PooledObject {
 
-    public Relationship rel { get; private set; }
-    private Color relStatItemBGColor;
-
-    [SerializeField] private Image bg;
     [SerializeField] private CharacterPortrait portrait;
-    [SerializeField] private TextMeshProUGUI characterNameLbl;
-    [SerializeField] private AffiliationsObject affiliations;
-    [SerializeField] private ScrollRect relationshipStatusScrollView;
-    [SerializeField] private GameObject relStatItemPrefab;
 
-    public void Initialize() {
-        affiliations.Initialize();
+    private AlterEgoData alterEgo;
+    private IRelationshipData data;
+
+    public void Initialize(AlterEgoData alterEgo, IRelationshipData data) {
+        this.alterEgo = alterEgo;
+        this.data = data;
+
+        portrait.GeneratePortrait(alterEgo.owner);
     }
+
     public override void Reset() {
         base.Reset();
-        affiliations.Reset();
-        rel = null;
     }
 
-    public void SetRelationship(Relationship rel) {
-        this.rel = rel;
-        UpdateInfo();
-    }
-    public void SetBGColor(Color color, Color relStatColor) {
-        bg.color = color;
-        relStatItemBGColor = relStatColor;
-    }
-
-    public void UpdateInfo() {
-        //portrait.SetDimensions(42f);
-        portrait.GeneratePortrait(rel.targetCharacter);
-        characterNameLbl.text = rel.targetCharacter.name;
-        affiliations.SetCharacter(rel.targetCharacter);
-        affiliations.UpdateAffiliations();
-        LoadRelationshipStatuses();
-    }
-
-    private void LoadRelationshipStatuses() {
-        RelationshipStatusItem[] items = Utilities.GetComponentsInDirectChildren<RelationshipStatusItem>(relationshipStatusScrollView.content.gameObject);
-        for (int i = 0; i < items.Length; i++) {
-            ObjectPoolManager.Instance.DestroyObject(items[i].gameObject);
+    public void ShowRelationshipData() {
+        string summary = $"Relationships with {alterEgo.owner.name} ({alterEgo.name})";
+        summary += $"\nStatus: {data.relationshipStatus.ToString()}";
+        for (int i = 0; i < data.relationships.Count; i++) {
+            summary += $"\n- {data.relationships[i].ToString()}";
         }
-        for (int i = 0; i < rel.relationshipStatuses.Count; i++) {
-            CHARACTER_RELATIONSHIP relStat = rel.relationshipStatuses[i];
-            GameObject newRelStatGO = UIManager.Instance.InstantiateUIObject(relStatItemPrefab.name, relationshipStatusScrollView.content);
-            RelationshipStatusItem item = newRelStatGO.GetComponent<RelationshipStatusItem>();
-            item.SetStatus(relStat);
-            item.SetBGColor(relStatItemBGColor);
-        }
-        
+        UIManager.Instance.ShowSmallInfo(summary);
+    }
+    public void HideSmallInfo() {
+        UIManager.Instance.HideSmallInfo();
     }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
-using Traits;
 
 public class Sleep : GoapAction {
     protected override string failActionState { get { return "Rest Fail"; } }

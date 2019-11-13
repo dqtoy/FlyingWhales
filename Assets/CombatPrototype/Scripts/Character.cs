@@ -30,15 +30,10 @@ public class Character : ILeader, IPointOfInterest {
     protected Faction _faction;
     protected CharacterParty _ownParty;
     protected CharacterParty _currentParty;
-    protected Weapon _equippedWeapon;
-    protected Armor _equippedArmor;
-    protected Item _equippedAccessory;
-    protected Item _equippedConsumable;
     protected PortraitSettings _portraitSettings;
     protected Color _characterColor;
     protected Minion _minion;
     protected CombatCharacter _currentCombatCharacter;
-    protected List<Skill> _skills;
     protected List<Log> _history;
     protected PlayerCharacterItem _playerCharacterItem;
     private LocationStructure _currentStructure; //what structure is this character currently in.
@@ -47,7 +42,6 @@ public class Character : ILeader, IPointOfInterest {
     protected SIDES _currentSide;
     protected int _currentHP;
     protected int _maxHP;
-    protected int _currentRow;
     protected int _level;
     protected int _experience;
     protected int _maxExperience;
@@ -265,12 +259,6 @@ public class Character : ILeader, IPointOfInterest {
     public int level {
         get { return _level; }
     }
-    public int currentSP {
-        get { return _sp; }
-    }
-    public int maxSP {
-        get { return _maxSP; }
-    }
     public int experience {
         get { return _experience; }
     }
@@ -306,18 +294,6 @@ public class Character : ILeader, IPointOfInterest {
     public int attackSpeed {
         get { return _characterClass.baseAttackSpeed; } //in milliseconds, The lower the amount the faster the attack rate
     }
-    public Weapon equippedWeapon {
-        get { return _equippedWeapon; }
-    }
-    public Armor equippedArmor {
-        get { return _equippedArmor; }
-    }
-    public Item equippedAccessory {
-        get { return _equippedAccessory; }
-    }
-    public Item equippedConsumable {
-        get { return _equippedConsumable; }
-    }
     public float computedPower {
         get { return GetComputedPower(); }
     }
@@ -338,9 +314,6 @@ public class Character : ILeader, IPointOfInterest {
     }
     public bool isDefender {
         get { return defendingArea != null; }
-    }
-    public List<RelationshipTrait> relationshipTraits {
-        get { return traitContainer.relationshipTraits; }
     }
     public CombatCharacter currentCombatCharacter {
         get { return _currentCombatCharacter; }
@@ -1381,18 +1354,18 @@ public class Character : ILeader, IPointOfInterest {
                 log += ": did not create a job!";
             }
         }
-        log += "\nChecking relationship traits...";
-        for (int i = 0; i < relationshipTraits.Count; i++) {
-            if (relationshipTraits[i].targetCharacter == targetCharacter) {
-                log += "\n- " + relationshipTraits[i].name;
-                if (relationshipTraits[i].CreateJobsOnEnterVisionBasedOnTrait(this, this)) {
-                    hasCreatedJob = true;
-                    log += ": created a job!";
-                } else {
-                    log += ": did not create a job!";
-                }
-            }
-        }
+        //log += "\nChecking relationship traits...";
+        //for (int i = 0; i < relationshipTraits.Count; i++) {
+        //    if (relationshipTraits[i].targetCharacter == targetCharacter) {
+        //        log += "\n- " + relationshipTraits[i].name;
+        //        if (relationshipTraits[i].CreateJobsOnEnterVisionBasedOnTrait(this, this)) {
+        //            hasCreatedJob = true;
+        //            log += ": created a job!";
+        //        } else {
+        //            log += ": did not create a job!";
+        //        }
+        //    }
+        //}
         PrintLogIfActive(log);
         return hasCreatedJob;
     }

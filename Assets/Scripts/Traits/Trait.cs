@@ -111,7 +111,7 @@ namespace Traits {
             int manaCost = GetTriggerFlawManaCost(character);
 
             return PlayerManager.Instance.player.mana >= manaCost
-                && character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER) //disabled characters cannot be triggered
+                && !character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER) //disabled characters cannot be triggered
                 && character.traitContainer.GetNormalTrait("Blessed") == null
                 && !character.currentParty.icon.isTravellingOutside; //characters travelling outside cannot be triggered
         }

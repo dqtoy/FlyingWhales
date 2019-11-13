@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
-using Traits;
 
 public class ChatCharacter : GoapAction {
     public string chatResult { get; private set; }

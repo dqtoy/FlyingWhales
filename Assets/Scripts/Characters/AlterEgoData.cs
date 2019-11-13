@@ -202,51 +202,6 @@ public class AlterEgoData : Relatable{
     }
     #endregion
 
-    //#region Relationships
-    //public void SetRelationships(Dictionary<AlterEgoData, CharacterRelationshipData> relationships) {
-    //    if (owner.isSwitchingAlterEgo) {
-    //        return; //ignore any changes while the owner is switching alter egos
-    //    }
-    //    this.relationships = relationships;
-    //}
-    //public void AddRelationship(AlterEgoData alterEgo, RelationshipTrait newRel) {
-    //    if (!relationships.ContainsKey(alterEgo)) {
-    //        relationships.Add(alterEgo, new CharacterRelationshipData(owner, alterEgo.owner, alterEgo));
-    //    }
-    //    relationships[alterEgo].AddRelationship(newRel);
-    //    owner.OnRelationshipWithCharacterAdded(alterEgo.owner, newRel);
-    //    Messenger.Broadcast(Signals.RELATIONSHIP_ADDED, this.owner, newRel);
-    //}
-    //public void AddRelationship(CharacterRelationshipData relData) {
-    //    if (!relationships.ContainsKey(relData.targetCharacterAlterEgo)) {
-    //        relationships.Add(relData.targetCharacterAlterEgo, relData);
-    //    }
-    //}
-    //public void RemoveRelationship(AlterEgoData alterEgo, RELATIONSHIP_TRAIT rel) {
-    //    if (relationships.ContainsKey(alterEgo)) {
-    //        if (relationships[alterEgo].RemoveRelationship(rel)) {
-    //            Messenger.Broadcast(Signals.RELATIONSHIP_REMOVED, this, rel, alterEgo);
-    //        }
-    //    }
-    //}
-    //public RelationshipTrait GetRelationshipTraitWith(AlterEgoData alterEgo, RELATIONSHIP_TRAIT type, bool useDisabled = false) {
-    //    if (HasRelationshipWith(alterEgo, useDisabled)) {
-    //        return relationships[alterEgo].GetRelationshipTrait(type);
-    //    }
-    //    return null;
-    //}
-    //public bool HasRelationshipWith(AlterEgoData alterEgo, bool useDisabled = false) {
-    //    if (useDisabled) {
-    //        if (relationships.ContainsKey(alterEgo)) {
-    //            //if there is relationship data present, check if there are actual relationships in their data
-    //            return relationships[alterEgo].rels.Count > 0;
-    //        }
-    //        return false;
-    //    }
-    //    return relationships.ContainsKey(alterEgo) && relationships[alterEgo].rels.Count > 0 && !relationships[alterEgo].isDisabled;
-    //}
-    //#endregion
-
     #region Traits
     public void AddTrait(Trait trait) {
         if (owner.isSwitchingAlterEgo) {

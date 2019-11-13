@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
-using Traits;
 
 public class Drink : GoapAction {
     public Poisoned poisonedTrait { get; private set; }

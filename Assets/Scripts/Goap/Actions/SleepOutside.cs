@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
 using System.Linq;
-using Traits;
 
 public class SleepOutside : GoapAction {
     private Resting _restingTrait;

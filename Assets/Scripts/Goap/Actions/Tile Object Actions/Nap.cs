@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
-using Traits;
 
 public class Nap : GoapAction {
     protected override string failActionState { get { return "Nap Fail"; } }

@@ -533,63 +533,56 @@ public class RelationshipManager : MonoBehaviour {
     }
 
     #region Adding
-    public IRelationshipData CreateNewOneWayRelationship(Character currCharacter, Character targetCharacter, RELATIONSHIP_TRAIT rel) {
-        if (!currCharacter.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, rel)) {
-            if (rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.traitContainer.GetNormalTrait("Diplomatic") != null) {
-                return currCharacter.relationshipContainer.GetRelationshipDataWith(targetCharacter);
-            }
-            if (rel == RELATIONSHIP_TRAIT.FRIEND && currCharacter.traitContainer.GetNormalTrait("Serial Killer") != null) {
-                return currCharacter.relationshipContainer.GetRelationshipDataWith(targetCharacter);
-            }
-            currCharacter.relationshipContainer.AddRelationship(targetCharacter, rel);
+    public IRelationshipData CreateNewOneWayRelationship(Relatable rel1, Relatable rel2, RELATIONSHIP_TRAIT rel) {
+        if (!rel1.relationshipContainer.HasRelationshipWith(rel2, rel)) {
+            //TODO: Move this somewhere else
+            //if (rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.traitContainer.GetNormalTrait("Diplomatic") != null) {
+            //    return currCharacter.relationshipContainer.GetRelationshipDataWith(alterEgo.owner);
+            //}
+            //if (rel == RELATIONSHIP_TRAIT.FRIEND && currCharacter.traitContainer.GetNormalTrait("Serial Killer") != null) {
+            //    return currCharacter.relationshipContainer.GetRelationshipDataWith(alterEgo.owner);
+            //}
+            rel1.relationshipContainer.AddRelationship(rel2, rel);
+            Messenger.Broadcast(Signals.RELATIONSHIP_ADDED, rel1, rel2);
         }
-        return currCharacter.relationshipContainer.GetRelationshipDataWith(targetCharacter);
+        return rel1.relationshipContainer.GetRelationshipDataWith(rel2);
     }
-    public IRelationshipData CreateNewOneWayRelationship(Character currCharacter, AlterEgoData alterEgo, RELATIONSHIP_TRAIT rel) {
-        if (!currCharacter.relationshipContainer.HasRelationshipWith(alterEgo, rel)) {
-            if (rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.traitContainer.GetNormalTrait("Diplomatic") != null) {
-                return currCharacter.relationshipContainer.GetRelationshipDataWith(alterEgo.owner);
-            }
-            if (rel == RELATIONSHIP_TRAIT.FRIEND && currCharacter.traitContainer.GetNormalTrait("Serial Killer") != null) {
-                return currCharacter.relationshipContainer.GetRelationshipDataWith(alterEgo.owner);
-            }
-            currCharacter.relationshipContainer.AddRelationship(alterEgo, rel);
-        }
-        return currCharacter.relationshipContainer.GetRelationshipDataWith(alterEgo);
-    }
-    public IRelationshipData CreateNewRelationshipBetween(Relatable currCharacter, Relatable targetCharacter, RELATIONSHIP_TRAIT rel) {
+    public IRelationshipData CreateNewRelationshipBetween(Relatable rel1, Relatable rel2, RELATIONSHIP_TRAIT rel) {
         RELATIONSHIP_TRAIT pair = GetPairedRelationship(rel);
         //TODO: Move this somewhere else
         //!(rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.traitContainer.GetNormalTrait("Diplomatic") != null)
         //&& !(rel == RELATIONSHIP_TRAIT.FRIEND && currCharacter.traitContainer.GetNormalTrait("Serial Killer") != null)
-        if (CanHaveRelationship(currCharacter, targetCharacter, rel)) {
-            currCharacter.relationshipContainer.AddRelationship(targetCharacter, rel);
+        if (CanHaveRelationship(rel1, rel2, rel)) {
+            rel1.relationshipContainer.AddRelationship(rel2, rel);
         }
         //TODO:Move this somewhere else
         //!(rel == RELATIONSHIP_TRAIT.ENEMY && targetCharacter.traitContainer.GetNormalTrait("Diplomatic") != null)
         //&& !(rel == RELATIONSHIP_TRAIT.FRIEND && targetCharacter.traitContainer.GetNormalTrait("Serial Killer") != null)
-        if (CanHaveRelationship(targetCharacter, currCharacter, rel)) {
-            targetCharacter.relationshipContainer.AddRelationship(currCharacter, pair);
+        if (CanHaveRelationship(rel2, rel1, rel)) {
+            rel2.relationshipContainer.AddRelationship(rel1, pair);
         }
-        return currCharacter.relationshipContainer.GetRelationshipDataWith(targetCharacter);
+        Messenger.Broadcast(Signals.RELATIONSHIP_ADDED, rel1, rel2);
+        return rel1.relationshipContainer.GetRelationshipDataWith(rel2);
     }
     #endregion
 
     #region Removing
-    public void RemoveOneWayRelationship(Relatable currCharacter, Relatable targetCharacter, RELATIONSHIP_TRAIT rel) {
-        currCharacter.relationshipContainer.RemoveRelationship(targetCharacter, rel);
+    public void RemoveOneWayRelationship(Relatable rel1, Relatable rel2, RELATIONSHIP_TRAIT rel) {
+        rel1.relationshipContainer.RemoveRelationship(rel2, rel);
+        Messenger.Broadcast(Signals.RELATIONSHIP_REMOVED, rel1, rel, rel2);
     }
-    public void RemoveRelationshipBetween(Relatable character, Relatable alterEgo, RELATIONSHIP_TRAIT rel) {
-        if (!character.relationshipContainer.relationships.ContainsKey(alterEgo)
-            || !alterEgo.relationshipContainer.relationships.ContainsKey(character)) {
+    public void RemoveRelationshipBetween(Relatable rel1, Relatable rel2, RELATIONSHIP_TRAIT rel) {
+        if (!rel1.relationshipContainer.relationships.ContainsKey(rel2)
+            || !rel2.relationshipContainer.relationships.ContainsKey(rel1)) {
             return;
         }
         RELATIONSHIP_TRAIT pair = GetPairedRelationship(rel);
-        if (character.relationshipContainer.relationships[alterEgo].HasRelationship(rel)
-            && alterEgo.relationshipContainer.relationships[character].HasRelationship(pair)) {
+        if (rel1.relationshipContainer.relationships[rel2].HasRelationship(rel)
+            && rel2.relationshipContainer.relationships[rel1].HasRelationship(pair)) {
 
-            character.relationshipContainer.RemoveRelationship(alterEgo, rel);
-            alterEgo.relationshipContainer.RemoveRelationship(character, pair);
+            rel1.relationshipContainer.RemoveRelationship(rel2, rel);
+            rel2.relationshipContainer.RemoveRelationship(rel1, pair);
+            Messenger.Broadcast(Signals.RELATIONSHIP_REMOVED, rel1, rel, rel2);
         }
     }
     #endregion

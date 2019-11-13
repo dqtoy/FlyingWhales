@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;  
 using Traits;
-using Traits;
 public class BuryCharacter : GoapAction {
     public override LocationStructure targetStructure { get { return _targetStructure; } }
 
