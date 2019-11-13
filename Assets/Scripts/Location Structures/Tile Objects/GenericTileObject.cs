@@ -14,21 +14,6 @@ public class GenericTileObject : TileObject {
         poiGoapActions = new List<INTERACTION_TYPE>();
         Initialize(data);
     }
-    //TODO:
-    //public override List<Trait> RemoveAllTraitsByType(TRAIT_TYPE traitType) {
-    //    return gridTileLocation.RemoveAllTraitsByType(traitType);
-    //}
-    //public override bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null, bool includeAlterEgo = true) {
-    //    return gridTileLocation.RemoveTrait(trait, triggerOnRemove, removedBy);
-    //}
-    //public override bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
-    //    if (gridTileLocation != null) {
-    //        return gridTileLocation.AddTrait(trait, characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd);
-    //    } else {
-    //        return false;
-    //    }
-        
-    //}
     protected override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom) {
         Messenger.Broadcast(Signals.TILE_OBJECT_REMOVED, this as TileObject, removedBy, removedFrom);
         if (hasCreatedSlots) {

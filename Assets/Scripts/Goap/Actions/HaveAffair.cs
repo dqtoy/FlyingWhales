@@ -54,7 +54,7 @@ public class HaveAffair : GoapAction {
         currentState.SetIntelReaction(AffairSuccessReactions);
     }
     private void AfterAffairSuccess() {
-        RelationshipManager.Instance.RemoveOneWayRelationship(actor, poiTarget as Character, RELATIONSHIP_TRAIT.PARAMOUR);
+        RelationshipManager.Instance.CreateNewRelationshipBetween(actor, poiTarget as Character, RELATIONSHIP_TRAIT.PARAMOUR);
     }
     #endregion
 

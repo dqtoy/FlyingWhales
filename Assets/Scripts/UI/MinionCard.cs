@@ -80,7 +80,6 @@ public class MinionCard : MonoBehaviour {
             } else {
                 portraitImg.gameObject.SetActive(false);
             }
-            //TODO: trait1 and trait2
 
             string actions = string.Empty;
             for (int i = 0; i < minion.deadlySin.assignments.Length; i++) {

@@ -271,13 +271,8 @@ public class Player : ILeader {
         return minion;
     }
     public void InitializeMinion(Minion minion) {
-        //minion.SetLevel(30);
-        //minion.SetUnlockedInterventionSlots(3);
-        //minion.GainNewInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
-        //minion.GainNewInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
         minion.SetRandomResearchInterventionAbilities(CharacterManager.Instance.Get3RandomResearchInterventionAbilities(minion.deadlySin));
         minion.SetCombatAbility(PlayerManager.Instance.CreateNewCombatAbility(PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)]));
-        //TODO: Add one positive and one negative trait
     }
     public void InitializeMinion(SaveDataMinion data, Minion minion) {
         //for (int i = 0; i < data.interventionAbilities.Count; i++) {
@@ -1684,7 +1679,6 @@ public class Player : ILeader {
         if(currentDivineInterventionTick <= 0) {
             currentDivineInterventionTick = 0;
             Messenger.RemoveListener(Signals.TICK_STARTED, PerTickDivineIntervention);
-            //TODO: What happens if divine intervention happens
             PlayerUI.Instance.GameOver("The gods have arrived and wiped you off from the face of this planet!");
         }
     }

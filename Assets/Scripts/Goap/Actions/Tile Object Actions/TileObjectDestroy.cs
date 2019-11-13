@@ -78,7 +78,6 @@ public class TileObjectDestroy : GoapAction {
         }
     }
     private void OnFinishCombatState() {
-        //TODO: Add Checking if the actor of this action was the one that removed the tile object
         TileObject target = poiTarget as TileObject;
         if (target.removedBy == actor) {
             SetState("Destroy Success");

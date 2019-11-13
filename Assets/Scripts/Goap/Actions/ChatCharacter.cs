@@ -203,10 +203,10 @@ public class ChatCharacter : GoapAction {
 
         if (chatResult == "Become Friends") {
             //may become friends
-            RelationshipManager.Instance.RemoveOneWayRelationship(actor, targetCharacter, RELATIONSHIP_TRAIT.FRIEND);
+            RelationshipManager.Instance.CreateNewOneWayRelationship(actor, targetCharacter, RELATIONSHIP_TRAIT.FRIEND);
         } else if (chatResult == "Become Enemies") {
             //may become enemies
-            RelationshipManager.Instance.RemoveOneWayRelationship(actor, targetCharacter, RELATIONSHIP_TRAIT.ENEMY);
+            RelationshipManager.Instance.CreateNewOneWayRelationship(actor, targetCharacter, RELATIONSHIP_TRAIT.ENEMY);
         } else if (chatResult == "Share Information") {
             //TODO: mechanics to be added later
         } else if (chatResult == "Resolve Enmity") {
@@ -220,10 +220,10 @@ public class ChatCharacter : GoapAction {
             FlirtWith(actor, targetCharacter);
         } else if (chatResult == "Become Lovers") {
             //Log: "[Character Name 1] and [Character Name 2] have become lovers."
-            RelationshipManager.Instance.RemoveOneWayRelationship(actor, targetCharacter, RELATIONSHIP_TRAIT.LOVER);
+            RelationshipManager.Instance.CreateNewRelationshipBetween(actor, targetCharacter, RELATIONSHIP_TRAIT.LOVER);
         } else if (chatResult == "Become Paramours") {
             //Log: "[Character Name 1] and [Character Name 2] have developed an affair!"
-            RelationshipManager.Instance.RemoveOneWayRelationship(actor, targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR);
+            RelationshipManager.Instance.CreateNewRelationshipBetween(actor, targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR);
         } else if (chatResult == "Argument") {
             if(actor.traitContainer.GetNormalTrait("Angry") != null) {
                 Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_chat");
@@ -611,11 +611,10 @@ public class ChatCharacter : GoapAction {
     #endregion
 
     public void FlirtWith(Character actor, Character otherCharacter) {
-        //TODO:
-        //if (!actor.Re.ContainsKey(otherCharacter.currentAlterEgo)) {
-        //    relationships.Add(otherCharacter.currentAlterEgo, new CharacterRelationshipData(this, otherCharacter, otherCharacter.currentAlterEgo));
-        //}
-        //relationships[otherCharacter.currentAlterEgo].IncreaseFlirtationCount();
+        if (!actor.relationshipContainer.HasRelationshipWith(otherCharacter)) {
+            actor.relationshipContainer.CreateNewRelationship(otherCharacter);
+        }
+        (actor.relationshipContainer.GetRelationshipDataWith(otherCharacter) as POIRelationshipData).IncreaseFlirtationCount();
     }
 }
 

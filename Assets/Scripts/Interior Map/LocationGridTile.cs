@@ -794,7 +794,6 @@ public class SaveDataLocationGridTile {
         tile.parentAreaMap.structureTilemap.SetTransformMatrix(tile.localPlace, structureTileMapMatrix);
         tile.parentAreaMap.objectsTilemap.SetTransformMatrix(tile.localPlace, objectTileMapMatrix);
 
-        //TODO: hasDetail
         return tile;
     }
 

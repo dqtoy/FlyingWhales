@@ -44,28 +44,33 @@ public class JudgeCharacter : GoapAction {
                 //criminal traits
                 CRIME_CATEGORY crime;
                 //TODO:
-                //if (targetCharacter.TryGetMostSeriousCrime(out crime)) {
-                //    switch (crime) {
-                //        case CRIME_CATEGORY.MISDEMEANOR:
-                //            absolve = 50f;
-                //            whip = 100f;
-                //            break;
-                //        case CRIME_CATEGORY.SERIOUS:
-                //            absolve = 5f;
-                //            whip = 20f;
-                //            kill = 50f;
-                //            exile = 50f;
-                //            break;
-                //        case CRIME_CATEGORY.HEINOUS:
-                //            whip = 5f;
-                //            kill = 100f;
-                //            exile = 50f;
-                //            break;
-                //    }
-                //} else {
-                //    kill = 100f;
-                //    Debug.LogWarning(actor.name + " is trying to judge " + targetCharacter.name + " but has no crime, and is not part of a hostile faction.");
-                //}
+                List<Trait> crimes = targetCharacter.traitContainer.GetAllTraitsOf(TRAIT_TYPE.CRIMINAL);
+
+                if (crimes.Count > 0) {
+                    for (int i = 0; i < crimes.Count; i++) {
+                        Trait trait = crimes[i];
+                        switch (trait.crimeSeverity) {
+                            case CRIME_CATEGORY.MISDEMEANOR:
+                                absolve += 50f;
+                                whip += 100f;
+                                break;
+                            case CRIME_CATEGORY.SERIOUS:
+                                absolve += 5f;
+                                whip += 20f;
+                                kill += 50f;
+                                exile += 50f;
+                                break;
+                            case CRIME_CATEGORY.HEINOUS:
+                                whip += 5f;
+                                kill += 100f;
+                                exile += 50f;
+                                break;
+                        }
+                    }
+                } else {
+                    kill = 100f;
+                    Debug.LogWarning(actor.name + " is trying to judge " + targetCharacter.name + " but has no crime, and is not part of a hostile faction.");
+                }
             }
 
             //modifiers
@@ -237,7 +242,7 @@ public class JudgeCharacter : GoapAction {
             reactions.Add(string.Format("I cannot forgive {0} for executing {1}!", actor.name, target.name));
             //-**Recipient Effect * *:  Recipient will consider Actor an Enemy
             if (!recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
-                RelationshipManager.Instance.RemoveOneWayRelationship(recipient, actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
+                RelationshipManager.Instance.CreateNewOneWayRelationship(recipient, actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
             }
         }
         //Recipient and Target have no relationship but are from the same faction:
@@ -272,7 +277,7 @@ public class JudgeCharacter : GoapAction {
             reactions.Add(string.Format("{0} shouldn't have been let go so easily!", target.name));
             //- **Recipient Effect**: If they don't have any relationship yet, Recipient will consider Actor an Enemy
             if (!recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo)) {
-                RelationshipManager.Instance.RemoveOneWayRelationship(recipient, actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
+                RelationshipManager.Instance.CreateNewOneWayRelationship(recipient, actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
             }
         }
         //Recipient considers Actor a personal Enemy:
@@ -287,7 +292,7 @@ public class JudgeCharacter : GoapAction {
             reactions.Add(string.Format("I am grateful that {0} released {1} unharmed.", actor.name, target.name));
             //- **Recipient Effect**:  If they don't have any relationship yet, Recipient will consider Actor a Friend
             if (!recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo)) {
-                RelationshipManager.Instance.RemoveOneWayRelationship(recipient, actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND);
+                RelationshipManager.Instance.CreateNewOneWayRelationship(recipient, actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND);
             }
         }
         //Recipient and Target have no relationship but are from the same faction:

@@ -9,11 +9,6 @@ namespace Traits {
     public class CharacterTraitProcessor : TraitProcessor {
         public override void OnTraitAdded(ITraitable traitable, Trait trait, Character characterResponsible = null, GoapAction gainedFromDoing = null) {
             Character character = traitable as Character;
-            //TODO:
-            //if (trait is CharacterTrait) {
-            //    //This is trait is default for all characters that's why it has a special field
-            //    defaultCharacterTrait = trait as CharacterTrait;
-            //}
             character.ApplyTraitEffects(trait);
             character.ApplyPOITraitInteractions(trait);
             character.currentAlterEgo.AddTrait(trait);

@@ -5,6 +5,7 @@ using UnityEngine;
 public class POIRelationshipData : IRelationshipData {
     public int relationshipValue { get; private set; }
     public List<RELATIONSHIP_TRAIT> relationships { get; private set; }
+    public int flirtationCount { get; private set; }
 
     public RELATIONSHIP_EFFECT relationshipStatus {
         get { return GetRelationshipStatus(); }
@@ -61,6 +62,12 @@ public class POIRelationshipData : IRelationshipData {
             }
         }
         return rels;
+    }
+    #endregion
+
+    #region Flirting
+    public void IncreaseFlirtationCount() {
+        flirtationCount++;
     }
     #endregion
 
