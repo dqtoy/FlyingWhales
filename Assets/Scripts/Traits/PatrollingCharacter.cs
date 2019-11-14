@@ -11,7 +11,7 @@ namespace Traits {
             description = "This character is a placeholder trait ";
             type = TRAIT_TYPE.ABILITY;
             effect = TRAIT_EFFECT.POSITIVE;
-            associatedInteraction = INTERACTION_TYPE.NONE;
+            
             daysDuration = 0;
             //effects = new List<TraitEffect>();
         }
@@ -22,7 +22,7 @@ namespace Traits {
             description = "This character is guarding " + _targetCharacter.name;
             type = TRAIT_TYPE.ABILITY;
             effect = TRAIT_EFFECT.POSITIVE;
-            associatedInteraction = INTERACTION_TYPE.NONE;
+            
             daysDuration = 0;
             //effects = new List<TraitEffect>();
         }

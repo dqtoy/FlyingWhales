@@ -18,8 +18,8 @@ namespace Traits {
             thoughtText = "[Character] is resting.";
             type = TRAIT_TYPE.DISABLER;
             effect = TRAIT_EFFECT.NEUTRAL;
-            trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
-            associatedInteraction = INTERACTION_TYPE.NONE;
+            
+            
             crimeSeverity = CRIME_CATEGORY.NONE;
             daysDuration = 0;
             //effects = new List<TraitEffect>();

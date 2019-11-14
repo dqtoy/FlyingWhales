@@ -11,7 +11,7 @@ namespace Traits {
             description = "This character is heartbroken and may refuse entertainment.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            associatedInteraction = INTERACTION_TYPE.NONE;
+            
             daysDuration = GameManager.Instance.GetTicksBasedOnHour(24);
         }
 

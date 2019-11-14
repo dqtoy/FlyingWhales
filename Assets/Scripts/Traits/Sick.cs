@@ -16,8 +16,8 @@ namespace Traits {
             description = "This character has caught a mild illness.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
-            associatedInteraction = INTERACTION_TYPE.NONE;
+            
+            
             crimeSeverity = CRIME_CATEGORY.NONE;
             daysDuration = 480;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CURE_CHARACTER, };

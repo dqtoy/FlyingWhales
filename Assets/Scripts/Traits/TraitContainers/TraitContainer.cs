@@ -28,11 +28,11 @@ namespace Traits {
                 if (trait.IsUnique()) {
                     Trait oldTrait = GetNormalTrait(trait.name);
                     if (oldTrait != null) {
-                        oldTrait.SetCharacterResponsibleForTrait(characterResponsible);
                         oldTrait.AddCharacterResponsibleForTrait(characterResponsible);
-                        if (oldTrait.broadcastDuplicates) {
-                            Messenger.Broadcast(Signals.TRAIT_ADDED, this, oldTrait);
-                        }
+                        oldTrait.AddCharacterResponsibleForTrait(characterResponsible);
+                        //if (oldTrait.broadcastDuplicates) {
+                        //    Messenger.Broadcast(Signals.TRAIT_ADDED, this, oldTrait);
+                        //}
                     }
                 }
                 return false;
@@ -124,7 +124,7 @@ namespace Traits {
             for (int i = 0; i < allTraits.Count; i++) {
                 Trait trait = allTraits[i];
                 for (int j = 0; j < traitNames.Length; j++) {
-                    if ((trait.name == traitNames[j] || trait.GetType().ToString() == traitNames[j]) && !trait.isDisabled) {
+                    if (trait.name == traitNames[j] || trait.GetType().ToString() == traitNames[j]) {
                         return trait;
                     }
                 }
@@ -133,7 +133,7 @@ namespace Traits {
         }
         public bool HasTraitOf(TRAIT_TYPE traitType) {
             for (int i = 0; i < allTraits.Count; i++) {
-                if (allTraits[i].type == traitType && !allTraits[i].isDisabled) {
+                if (allTraits[i].type == traitType) {
                     return true;
                 }
             }
@@ -142,7 +142,7 @@ namespace Traits {
         public bool HasTraitOf(TRAIT_TYPE type, TRAIT_EFFECT effect) {
             for (int i = 0; i < allTraits.Count; i++) {
                 Trait currTrait = allTraits[i];
-                if (currTrait.effect == effect && currTrait.type == type && !currTrait.isDisabled) {
+                if (currTrait.effect == effect && currTrait.type == type) {
                     return true;
                 }
             }
@@ -152,7 +152,7 @@ namespace Traits {
             List<Trait> traits = new List<Trait>();
             for (int i = 0; i < allTraits.Count; i++) {
                 Trait currTrait = allTraits[i];
-                if (currTrait.type == type && !currTrait.isDisabled) {
+                if (currTrait.type == type) {
                     traits.Add(currTrait);
                 }
             }
@@ -162,7 +162,7 @@ namespace Traits {
             List<Trait> traits = new List<Trait>();
             for (int i = 0; i < allTraits.Count; i++) {
                 Trait currTrait = allTraits[i];
-                if (currTrait.effect == effect && currTrait.type == type && !currTrait.isDisabled) {
+                if (currTrait.effect == effect && currTrait.type == type) {
                     traits.Add(currTrait);
                 }
             }

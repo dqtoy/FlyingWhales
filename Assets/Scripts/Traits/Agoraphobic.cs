@@ -10,8 +10,7 @@ namespace Traits {
             description = "Agoraphobics avoid crowds.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
-            trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
-            associatedInteraction = INTERACTION_TYPE.NONE;
+            
             crimeSeverity = CRIME_CATEGORY.NONE;
             daysDuration = 0;
             canBeTriggered = true;

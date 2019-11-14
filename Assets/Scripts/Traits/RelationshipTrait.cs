@@ -18,7 +18,7 @@ namespace Traits {
             description = "This character has a relationship with " + targetCharacter.name;
             type = TRAIT_TYPE.RELATIONSHIP;
             effect = TRAIT_EFFECT.POSITIVE;
-            associatedInteraction = INTERACTION_TYPE.NONE;
+            
             daysDuration = 0;
             //effects = new List<TraitEffect>();
             severity = MIN_SEVERITY;

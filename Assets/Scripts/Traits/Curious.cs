@@ -11,8 +11,7 @@ namespace Traits {
             description = "This character is curious.";
             type = TRAIT_TYPE.PERSONALITY;
             effect = TRAIT_EFFECT.NEUTRAL;
-            trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
-            associatedInteraction = INTERACTION_TYPE.NONE;
+            
             crimeSeverity = CRIME_CATEGORY.NONE;
             daysDuration = 0;
             //alreadyInspectedTileObjects = new List<TileObject>();

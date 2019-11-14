@@ -13,8 +13,8 @@ namespace Traits {
             description = "Unfaithful characters are prone to having illicit love affairs.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEGATIVE;
-            trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
-            associatedInteraction = INTERACTION_TYPE.NONE;
+            
+            
             crimeSeverity = CRIME_CATEGORY.NONE;
             daysDuration = 0;
             canBeTriggered = true;

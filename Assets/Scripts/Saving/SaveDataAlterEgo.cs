@@ -56,11 +56,11 @@ public class SaveDataAlterEgo {
         }
 
         relationships = new List<SaveDataRelationship>();
-        foreach (CharacterRelationshipData relData in alterEgo.relationshipContainer.relationships.Values) {
-            SaveDataRelationship saveDataRelationship = new SaveDataRelationship();
-            saveDataRelationship.Save(relData);
-            relationships.Add(saveDataRelationship);
-        }
+        //foreach (CharacterRelationshipData relData in alterEgo.relationshipContainer.relationships.Values) {
+        //    SaveDataRelationship saveDataRelationship = new SaveDataRelationship();
+        //    saveDataRelationship.Save(relData);
+        //    relationships.Add(saveDataRelationship);
+        //}
     }
 
     public void Load(Character character) {

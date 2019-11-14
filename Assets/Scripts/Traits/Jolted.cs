@@ -9,7 +9,7 @@ namespace Traits {
             description = "This character is pumped.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
-            associatedInteraction = INTERACTION_TYPE.NONE;
+            
             daysDuration = GameManager.Instance.GetTicksBasedOnMinutes(30);
             //effects = new List<TraitEffect>();
         }

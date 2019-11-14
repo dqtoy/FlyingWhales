@@ -80,7 +80,6 @@ public class CharacterSaveData {
         //    attributes.Add(character.attributes[i].attribute);
         //}
 
-        morality = character.morality;
         level = character.level;
     }
 }

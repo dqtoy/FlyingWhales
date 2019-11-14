@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Traits {
-    //ONLY HAS ONE INSTANCE IN THE WORLD, DO NOT PUT ANYTHING THAT WILL HAVE DIFFERENT VALUES IN DIFFERENT INSTANCES
     [System.Serializable]
     public class Trait {
         public virtual string nameInUI {
@@ -12,15 +12,11 @@ namespace Traits {
         public virtual bool isNotSavable {
             get { return false; }
         }
-        public Character responsibleCharacter { get; protected set; }
-        public List<Character> responsibleCharacters { get; protected set; }
         public string name;
         public string description;
         public string thoughtText;
         public TRAIT_TYPE type;
         public TRAIT_EFFECT effect;
-        public TRAIT_TRIGGER trigger;
-        public INTERACTION_TYPE associatedInteraction;
         public List<INTERACTION_TYPE> advertisedInteractions;
         public CRIME_CATEGORY crimeSeverity;
         public int daysDuration; //Zero (0) means Permanent
@@ -30,18 +26,13 @@ namespace Traits {
         public string[] mutuallyExclusive; //list of traits that this trait cannot be with.
         public bool canBeTriggered;
 
+        public Character responsibleCharacter { get { return responsibleCharacters.FirstOrDefault(); } }
+        public List<Character> responsibleCharacters { get; protected set; }
         public Dictionary<ITraitable, string> expiryTickets { get; private set; } //this is the key for the scheduled removal of this trait for each object
         public GoapAction gainedFromDoing { get; private set; } //what action was this poi involved in that gave it this trait.
-        public bool isDisabled { get; private set; }
         public GameDate dateEstablished { get; protected set; }
-
-        public virtual bool broadcastDuplicates { get { return false; } }
         public virtual bool isPersistent { get { return false; } } //should this trait persist through all a character's alter egos
         public virtual bool isRemovedOnSwitchAlterEgo { get { return false; } }
-
-        //private Character _responsibleCharacter;
-
-        private System.Action onRemoveAction;
 
         #region Virtuals
         public virtual void OnAddTrait(ITraitable addedTo) {
@@ -52,14 +43,9 @@ namespace Traits {
             if (level == 0) {
                 SetLevel(1);
             }
-#if !WORLD_CREATION_TOOL
             SetDateEstablished(GameManager.Instance.Today());
-#endif
         }
         public virtual void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
-            if (onRemoveAction != null) {
-                onRemoveAction();
-            }
             if (type == TRAIT_TYPE.CRIMINAL && removedFrom is Character) {
                 Character character = removedFrom as Character;
                 if (!character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
@@ -90,7 +76,7 @@ namespace Traits {
         public virtual bool IsTangible() { return false; } //is this trait tangible? Only used for traits on tiles, so that the tile's tile object will be activated when it has a tangible trait
         public virtual bool PerTickOwnerMovement() { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
         public virtual bool OnStartPerformGoapAction(GoapAction action, ref bool willStillContinueAction) { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
-                                                                                                                            //Returns the string of the log key that's supposed to be logged
+        //Returns the string of the log key that's supposed to be logged
         public virtual string TriggerFlaw(Character character) {
             int manaCost = GetTriggerFlawManaCost(character); ;
             PlayerManager.Instance.player.AdjustMana(-manaCost);
@@ -153,20 +139,11 @@ namespace Traits {
             }
             return string.Empty;
         }
-        public void SetOnRemoveAction(System.Action onRemoveAction) {
-            this.onRemoveAction = onRemoveAction;
-        }
         public void SetGainedFromDoing(GoapAction action) {
             gainedFromDoing = action;
         }
-        public void SetIsDisabled(bool state) {
-            isDisabled = state;
-        }
         public void OverrideDuration(int newDuration) {
             daysDuration = newDuration;
-        }
-        public void SetCharacterResponsibleForTrait(Character character) {
-            responsibleCharacter = character;
         }
         public void AddCharacterResponsibleForTrait(Character character) {
             if (responsibleCharacters == null) {
@@ -215,19 +192,27 @@ namespace Traits {
         public void SetTraitEffects(List<TraitEffect> effects) {
             this.effects = effects;
         }
+        #endregion
+
+        #region Actions
+        protected INTERACTION_TYPE[] canStopActions; //list of actions that this trait can stop
         /// <summary>
-        /// Is this trait mutually exclusive with the given trait? (Can they both exist in one object)
+        /// If this trait modifies any costs of an action, put it here.
         /// </summary>
-        /// <param name="otherTrait">The trait to compare with</param>
-        /// <returns>True or false</returns>
-        public bool IsMutuallyExclusiveWith(string otherTrait) {
-            for (int i = 0; i < mutuallyExclusive.Length; i++) {
-                if (mutuallyExclusive[i].ToLower() == otherTrait.ToLower()) {
+        /// <param name="action">The type of action.</param>
+        /// <param name="cost">The cost to be modified.</param>
+        public virtual void ExecuteCostModification(INTERACTION_TYPE action, ref int cost) { }
+        public bool CanStopAction(INTERACTION_TYPE type) {
+            for (int i = 0; i < canStopActions.Length; i++) {
+                if (type == canStopActions[i]) {
                     return true;
                 }
             }
             return false;
         }
+        public virtual void ExecuteActionPreEffects(INTERACTION_TYPE action) { }
+        public virtual void ExecuteActionPerTickEffects(INTERACTION_TYPE action) { }
+        public virtual void ExecuteActionAfterEffects(INTERACTION_TYPE action) { }
         #endregion
     }
 }

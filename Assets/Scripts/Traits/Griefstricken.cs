@@ -11,7 +11,6 @@ namespace Traits {
             description = "This character is grieving and may refuse to eat.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            associatedInteraction = INTERACTION_TYPE.NONE;
             daysDuration = GameManager.Instance.GetTicksBasedOnHour(24);
         }
 

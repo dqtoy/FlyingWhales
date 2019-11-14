@@ -15,7 +15,6 @@ namespace Traits {
             description = "This character has been bewitched!";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            associatedInteraction = INTERACTION_TYPE.NONE;
             daysDuration = 0;
             //effects = new List<TraitEffect>();
         }

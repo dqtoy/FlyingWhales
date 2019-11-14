@@ -10,7 +10,6 @@ namespace Traits {
             description = "This object is disabled.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            associatedInteraction = INTERACTION_TYPE.NONE;
             daysDuration = GameManager.Instance.GetTicksBasedOnHour(4);
             //effects = new List<TraitEffect>();
         }

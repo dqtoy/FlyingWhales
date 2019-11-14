@@ -24,7 +24,6 @@ public class SaveDataTrait {
         name = trait.name;
         level = trait.level;
         daysDuration = trait.daysDuration;
-        isDisabled = trait.isDisabled;
         
         if(trait.responsibleCharacter == null) {
             responsibleCharacterID = -1;
@@ -59,7 +58,6 @@ public class SaveDataTrait {
         }
         trait.SetLevel(level);
         trait.OverrideDuration(daysDuration);
-        trait.SetIsDisabled(isDisabled);
         trait.SetTraitEffects(effects);
         trait.SetDateEstablished(new GameDate(month, day, year, tick));
         for (int i = 0; i < responsibleCharacterIDs.Count; i++) {
@@ -87,14 +85,13 @@ public class SaveDataTrait {
         }
         trait.SetLevel(level);
         trait.OverrideDuration(daysDuration);
-        trait.SetIsDisabled(isDisabled);
         trait.SetTraitEffects(effects);
         trait.SetDateEstablished(new GameDate(month, day, year, tick));
         for (int i = 0; i < responsibleCharacterIDs.Count; i++) {
             Character currChar = CharacterManager.Instance.GetCharacterByID(responsibleCharacterIDs[i]);
             trait.AddCharacterResponsibleForTrait(currChar);
         }
-        trait.SetCharacterResponsibleForTrait(responsibleCharacter);
+        trait.AddCharacterResponsibleForTrait(responsibleCharacter);
         //alterEgo.AddTrait(trait);
         return trait;
     }

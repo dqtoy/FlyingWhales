@@ -15,7 +15,6 @@ namespace Traits {
             description = "Craftsmen can create a variety of objects.";
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.POSITIVE;
-            associatedInteraction = INTERACTION_TYPE.NONE;
             daysDuration = 0;
             //effects = new List<TraitEffect>();
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CRAFT_ITEM, INTERACTION_TYPE.CRAFT_FURNITURE };

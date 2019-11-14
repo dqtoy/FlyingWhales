@@ -8,9 +8,6 @@ namespace Traits {
         //private GoapPlanJob _removeTraitJob;
 
         #region getters/setters
-        public override bool broadcastDuplicates {
-            get { return true; }
-        }
         public override bool isRemovedOnSwitchAlterEgo {
             get { return true; }
         }
@@ -21,8 +18,8 @@ namespace Traits {
             description = "This character is badly hurt.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
-            associatedInteraction = INTERACTION_TYPE.NONE;
+            
+            
             crimeSeverity = CRIME_CATEGORY.NONE;
             daysDuration = 480;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FIRST_AID_CHARACTER, };

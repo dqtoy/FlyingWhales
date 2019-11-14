@@ -9,9 +9,9 @@ public class RelationshipSaveData {
     public int targetCharacterID;
     public List<RELATIONSHIP_TRAIT> rels;
 
-    public RelationshipSaveData(CharacterRelationshipData rel) {
-        sourceCharacterID = rel.owner.id;
-        targetCharacterID = rel.targetCharacter.id;
-        rels = new List<RELATIONSHIP_TRAIT>(rel.rels.Select(x => x.relType).ToList());
-    }
+    //public RelationshipSaveData(CharacterRelationshipData rel) {
+    //    sourceCharacterID = rel.owner.id;
+    //    targetCharacterID = rel.targetCharacter.id;
+    //    rels = new List<RELATIONSHIP_TRAIT>(rel.rels.Select(x => x.relType).ToList());
+    //}
 }

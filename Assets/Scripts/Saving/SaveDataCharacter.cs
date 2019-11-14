@@ -185,8 +185,6 @@ public class SaveDataCharacter {
         speedPercentMod = character.speedPercentMod;
         maxHPPercentMod = character.maxHPPercentMod;
 
-        morality = character.morality;
-
         currentInteractionTypes = character.currentInteractionTypes;
         supply = character.supply;
         moodValue = character.moodValue;

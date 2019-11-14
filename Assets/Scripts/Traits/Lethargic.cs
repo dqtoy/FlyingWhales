@@ -10,8 +10,8 @@ namespace Traits {
             thoughtText = "[Character] lost a lot of blood.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
-            associatedInteraction = INTERACTION_TYPE.NONE;
+            
+            
             crimeSeverity = CRIME_CATEGORY.NONE;
             daysDuration = GameManager.ticksPerDay;
             //effects = new List<TraitEffect>();

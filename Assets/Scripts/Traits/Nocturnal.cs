@@ -10,8 +10,8 @@ namespace Traits {
             description = "Nocturnals are awake at night and asleep during the day.";
             type = TRAIT_TYPE.PERSONALITY;
             effect = TRAIT_EFFECT.NEUTRAL;
-            trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
-            associatedInteraction = INTERACTION_TYPE.NONE;
+            
+            
             crimeSeverity = CRIME_CATEGORY.NONE;
             daysDuration = 0;
             //effects = new List<TraitEffect>();

@@ -13,18 +13,18 @@ public class SaveDataRelationship {
     public int flirtationCount;
     
 
-    public void Save(CharacterRelationshipData relationship) {
-        targetCharacterID = relationship.targetCharacter.id;
-        targetCharacterAlterEgo = relationship.targetCharacterAlterEgo.name;
+    //public void Save(CharacterRelationshipData relationship) {
+    //    targetCharacterID = relationship.targetCharacter.id;
+    //    targetCharacterAlterEgo = relationship.targetCharacterAlterEgo.name;
 
-        rels = new List<RELATIONSHIP_TRAIT>();
-        for (int i = 0; i < relationship.rels.Count; i++) {
-            rels.Add(relationship.rels[i].relType);
-        }
+    //    rels = new List<RELATIONSHIP_TRAIT>();
+    //    for (int i = 0; i < relationship.rels.Count; i++) {
+    //        rels.Add(relationship.rels[i].relType);
+    //    }
 
-        isDisabled = relationship.isDisabled;
-        flirtationCount = relationship.flirtationCount;
-    }
+    //    isDisabled = relationship.isDisabled;
+    //    flirtationCount = relationship.flirtationCount;
+    //}
 
     public void Load(AlterEgoData ownerAlterEgo) {
         Character targetCharacter = CharacterManager.Instance.GetCharacterByID(targetCharacterID);

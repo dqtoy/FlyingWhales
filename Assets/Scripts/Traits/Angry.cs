@@ -9,8 +9,7 @@ namespace Traits {
             description = "This character will often argue with others and may destroy objects.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
-            trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
-            associatedInteraction = INTERACTION_TYPE.NONE;
+            
             crimeSeverity = CRIME_CATEGORY.NONE;
             daysDuration = GameManager.Instance.GetTicksBasedOnHour(4);
             //effects = new List<TraitEffect>();

@@ -17,8 +17,8 @@ namespace Traits {
             thoughtText = "[Character] is unconscious.";
             type = TRAIT_TYPE.DISABLER;
             effect = TRAIT_EFFECT.NEGATIVE;
-            associatedInteraction = INTERACTION_TYPE.NONE;
-            trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
+            
+            
             crimeSeverity = CRIME_CATEGORY.NONE;
             daysDuration = 24; //144
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FIRST_AID_CHARACTER }; //, INTERACTION_TYPE.DRINK_BLOOD

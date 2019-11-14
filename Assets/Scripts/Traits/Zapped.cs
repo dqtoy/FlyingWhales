@@ -10,7 +10,7 @@ namespace Traits {
             description = "This character cannot move.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
-            associatedInteraction = INTERACTION_TYPE.NONE;
+            
             daysDuration = 3;
             //effects = new List<TraitEffect>();
         }

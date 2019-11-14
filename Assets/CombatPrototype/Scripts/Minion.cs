@@ -161,7 +161,7 @@ public class Minion {
             character.marker?.OnDeath(deathTile, wasOutsideSettlement);
             character.SetNumWaitingForGoapThread(0); //for raise dead
             Dead dead = new Dead();
-            dead.SetCharacterResponsibleForTrait(responsibleCharacter);
+            dead.AddCharacterResponsibleForTrait(responsibleCharacter);
             character.traitContainer.AddTrait(character, dead, gainedFromDoing: deathFromAction);
             PlayerManager.Instance.player.RemoveMinion(this);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, character);

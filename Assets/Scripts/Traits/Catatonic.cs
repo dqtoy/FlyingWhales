@@ -13,7 +13,7 @@ namespace Traits {
             description = "This character is catatonic.";
             type = TRAIT_TYPE.DISABLER;
             effect = TRAIT_EFFECT.NEGATIVE;
-            trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
+            
             daysDuration = GameManager.ticksPerDay;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED };
             charactersThatKnow = new List<Character>();

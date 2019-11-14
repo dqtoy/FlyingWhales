@@ -58,7 +58,6 @@ public class Character : ILeader, IPointOfInterest {
     public Area homeArea { get { return homeRegion.area; } }
     public Dwelling homeStructure { get; protected set; }
     public Area defendingArea { get; private set; }
-    public MORALITY morality { get; private set; }
     public IRelationshipContainer relationshipContainer {
         get { return currentAlterEgo.relationshipContainer; }
     }
@@ -405,7 +404,6 @@ public class Character : ILeader, IPointOfInterest {
         _characterClass = CharacterManager.Instance.CreateNewCharacterClass(GetClassForRole(role));
         originalClassName = _characterClass.className;
         SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
-        SetMorality(MORALITY.GOOD);
         GenerateSexuality();
         ResetToFullHP();
         InitializeAlterEgos();
@@ -419,7 +417,6 @@ public class Character : ILeader, IPointOfInterest {
         _characterClass = CharacterManager.Instance.CreateNewCharacterClass(className);
         originalClassName = _characterClass.className;
         SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
-        SetMorality(MORALITY.GOOD);
         GenerateSexuality();
         ResetToFullHP();
         InitializeAlterEgos();
@@ -433,7 +430,6 @@ public class Character : ILeader, IPointOfInterest {
         _characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
         originalClassName = _characterClass.className;
         SetName(data.name);
-        SetMorality(data.morality);
         GenerateSexuality();
         ResetToFullHP();
         InitializeAlterEgos();
@@ -550,7 +546,6 @@ public class Character : ILeader, IPointOfInterest {
         attackPowerPercentMod = data.attackPowerPercentMod;
         speedPercentMod = data.speedPercentMod;
         maxHPPercentMod = data.maxHPPercentMod;
-        morality = data.morality;
 
         currentInteractionTypes = data.currentInteractionTypes;
         supply = data.supply;
@@ -810,10 +805,8 @@ public class Character : ILeader, IPointOfInterest {
     public void PerTickDuringMovement() {
         for (int i = 0; i  < traitContainer.allTraits.Count; i++) {
             Trait trait = traitContainer.allTraits[i];
-            if (!trait.isDisabled) {
-                if (trait.PerTickOwnerMovement()) {
-                    break;
-                }
+            if (trait.PerTickOwnerMovement()) {
+                break;
             }
         }
     }
@@ -4084,12 +4077,6 @@ public class Character : ILeader, IPointOfInterest {
     }
     #endregion
 
-    #region Morality
-    public void SetMorality(MORALITY morality) {
-        this.morality = morality;
-    }
-    #endregion
-
     #region Minion
     public void SetMinion(Minion minion) {
         _minion = minion;
@@ -7117,13 +7104,11 @@ public class Character : ILeader, IPointOfInterest {
         bool stillContinueCurrentAction = true;
         for (int i = 0; i < traitContainer.allTraits.Count; i++) {
             Trait trait = traitContainer.allTraits[i];
-            if (!trait.isDisabled) {
-                if (trait.OnStartPerformGoapAction(action, ref stillContinueCurrentAction)) {
-                    willStillContinueAction = stillContinueCurrentAction;
-                    break;
-                } else {
-                    stillContinueCurrentAction = true;
-                }
+            if (trait.OnStartPerformGoapAction(action, ref stillContinueCurrentAction)) {
+                willStillContinueAction = stillContinueCurrentAction;
+                break;
+            } else {
+                stillContinueCurrentAction = true;
             }
         }
     }

@@ -155,7 +155,6 @@ namespace worldcreator {
             genderField.value = Utilities.GetOptionIndex(genderField, _character.gender.ToString());
             sexualityField.value = Utilities.GetOptionIndex(sexualityField, _character.sexuality.ToString());
             roleField.value = Utilities.GetOptionIndex(roleField, _character.role.roleType.ToString());
-            moralityField.value = Utilities.GetOptionIndex(moralityField, _character.morality.ToString());
 
             classField.value = Utilities.GetOptionIndex(classField, _character.characterClass.className);
             string factionName = "Factionless";
@@ -215,7 +214,6 @@ namespace worldcreator {
         public void SetMorality(int choice) {
             string moralityStr = moralityField.options[choice].text;
             MORALITY morality = (MORALITY)Enum.Parse(typeof(MORALITY), moralityStr);
-            _character.SetMorality(morality);
         }
         public void SetLevel(string levelStr) {
             int newLevel;
@@ -297,16 +295,16 @@ namespace worldcreator {
             //    LoadRelationshipDropdowns();
             //}
         }
-        private RelationshipEditorItem GetRelationshipItem(CharacterRelationshipData rel) {
-            RelationshipEditorItem[] children = Utilities.GetComponentsInDirectChildren<RelationshipEditorItem>(relationshipScrollView.content.gameObject);
-            for (int i = 0; i < children.Length; i++) {
-                RelationshipEditorItem currItem = children[i];
-                if (currItem.relationship == rel) {
-                    return currItem;
-                }
-            }
-            return null;
-        }
+        //private RelationshipEditorItem GetRelationshipItem(CharacterRelationshipData rel) {
+        //    RelationshipEditorItem[] children = Utilities.GetComponentsInDirectChildren<RelationshipEditorItem>(relationshipScrollView.content.gameObject);
+        //    for (int i = 0; i < children.Length; i++) {
+        //        RelationshipEditorItem currItem = children[i];
+        //        if (currItem.relationship == rel) {
+        //            return currItem;
+        //        }
+        //    }
+        //    return null;
+        //}
         #endregion
 
         #region Equipment Info

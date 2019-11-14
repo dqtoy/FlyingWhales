@@ -12,8 +12,7 @@ namespace Traits {
             description = "Cultists are secret followers of the Ruinarch.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEGATIVE;
-            associatedInteraction = INTERACTION_TYPE.NONE;
-            trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
+            
             crimeSeverity = CRIME_CATEGORY.NONE;
             daysDuration = 0;
 

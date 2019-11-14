@@ -12,8 +12,8 @@ namespace Traits {
             description = "Narcoleptics may sometimes suddenly fall asleep.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
-            trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
-            associatedInteraction = INTERACTION_TYPE.NONE;
+            
+            
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.NARCOLEPTIC_NAP };
             crimeSeverity = CRIME_CATEGORY.NONE;
             daysDuration = 0;

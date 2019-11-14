@@ -10,7 +10,7 @@ namespace Traits {
         protected void DefaultProcessOnAddTrait(ITraitable traitable, Trait trait, Character characterResponsible, GoapAction gainedFromDoing) {
             trait.SetGainedFromDoing(gainedFromDoing);
             //trait.SetOnRemoveAction(onRemoveAction);
-            trait.SetCharacterResponsibleForTrait(characterResponsible);
+            trait.AddCharacterResponsibleForTrait(characterResponsible);
             trait.AddCharacterResponsibleForTrait(characterResponsible);
             if (trait.daysDuration > 0) {
                 GameDate removeDate = GameManager.Instance.Today();

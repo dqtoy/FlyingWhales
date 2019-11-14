@@ -12,8 +12,8 @@ namespace Traits {
             description = "Hardworking characters enjoy taking on settlement tasks.";
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.NEUTRAL;
-            trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
-            associatedInteraction = INTERACTION_TYPE.NONE;
+            
+            
             crimeSeverity = CRIME_CATEGORY.NONE;
             daysDuration = 0;
             SetJobIDReplacementForHappinessRecovery(0);

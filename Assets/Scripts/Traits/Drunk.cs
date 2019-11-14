@@ -10,8 +10,7 @@ namespace Traits {
             description = "This character is intoxicated and may lash out at nearby characters.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
-            trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
-            associatedInteraction = INTERACTION_TYPE.NONE;
+            
             crimeSeverity = CRIME_CATEGORY.NONE;
             daysDuration = 24;
             //effects = new List<TraitEffect>();
