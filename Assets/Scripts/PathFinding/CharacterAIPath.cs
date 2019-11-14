@@ -6,7 +6,6 @@ using System.Linq;
 
 public class CharacterAIPath : AILerp {
     public CharacterMarker marker;
-    public int doNotMove { get; private set; }
     public bool isStopMovement { get; private set; }
     public Path currentPath { get; private set; }
     public bool hasReachedTarget { get; private set; }
@@ -15,7 +14,6 @@ public class CharacterAIPath : AILerp {
     public int spread = 5000;
     public float aimStrength = 1f;
 
-    //private float _originalRepathRate;
     private BlockerTraversalProvider blockerTraversalProvider;
     private bool _hasReachedTarget;
 
@@ -146,7 +144,7 @@ public class CharacterAIPath : AILerp {
             return;
         }
         marker.UpdatePosition();
-        if (doNotMove > 0 || isStopMovement) { return; }
+        if (marker.character.canMove == false || isStopMovement || GameManager.Instance.isPaused) { return; }
         UpdateRotation();
         base.UpdateMe();
     }
@@ -173,25 +171,8 @@ public class CharacterAIPath : AILerp {
     #endregion
 
     #region Utilities
-    public string lastAdjustNegativeDoNotMoveST { get; private set; }
-    public string lastAdjustPositiveDoNotMoveST { get; private set; }
-    public string stopMovementST { get; private set; }
-    public void AdjustDoNotMove(int amount) {
-        doNotMove += amount;
-        doNotMove = Mathf.Max(0, doNotMove);
-        //if (!StackTraceUtility.ExtractStackTrace().Contains("Pause")) {
-        //    if (amount < 0) {
-        //        lastAdjustNegativeDoNotMoveST = "Adjustment: " + amount.ToString() + "\n" + StackTraceUtility.ExtractStackTrace();
-        //    } else {
-        //        lastAdjustPositiveDoNotMoveST = "Adjustment: " + amount.ToString() + "\n" + StackTraceUtility.ExtractStackTrace();
-        //    }
-        //}
-    }
     public void SetIsStopMovement(bool state) {
         isStopMovement = state;
-        //if (isStopMovement) {
-        //    stopMovementST = StackTraceUtility.ExtractStackTrace();
-        //}
     }
     public void ClearAllCurrentPathData() {
         currentPath = null;
@@ -202,12 +183,10 @@ public class CharacterAIPath : AILerp {
         marker.ClearArrivalAction();
         interpolator.SetPath(null);
         marker.StopMovement();
-        //Debug.Log(GameManager.Instance.TodayLogString() + marker.name + " cleared all current path data.");
     }
     public void ResetThis() {
         ResetEndReachedDistance();
         ClearAllCurrentPathData();
-        doNotMove = 0;
         blockerTraversalProvider = null;
         onlyAllowedStructures = null;
         notAllowedStructures = null;
@@ -374,17 +353,6 @@ public class CharacterAIPath : AILerp {
     }
     public void ResetEndReachedDistance() {
         endReachDistance = Default_End_Reached_Distance;
-    }
-    /// <summary>
-    /// Is this character no allowed to move? Disregards pause conditions.
-    /// </summary>
-    /// <returns></returns>
-    public bool IsNotAllowedToMove() {
-        if (GameManager.Instance.isPaused) {
-            return doNotMove > 1;
-        } else {
-            return doNotMove > 0;
-        }
     }
     #endregion
 }

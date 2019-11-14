@@ -153,13 +153,7 @@ public class ConsoleMenu : UIMenu {
             text += "\n<b>MARKER DETAILS:</b>";
             text += "\n<b>Target POI:</b> " + character.marker.targetPOI?.name ?? "None";
             text += "\n<b>Destination Tile:</b> " + character.marker.destinationTile?.ToString() ?? "None";
-            text += "\n<b>Do not move:</b> " + character.marker.pathfindingAI.doNotMove.ToString();
-            text += "\n<b>Last Negative do not move:</b> " + character.marker.pathfindingAI.lastAdjustNegativeDoNotMoveST;
-            text += "\n<b>Last Positive do not move:</b> " + character.marker.pathfindingAI.lastAdjustPositiveDoNotMoveST;
             text += "\n<b>Stop Movement?:</b> " + character.marker.pathfindingAI.isStopMovement.ToString();
-            if (character.marker.pathfindingAI.isStopMovement) {
-                text += "\n<b>Stop Movement Set by:</b> " + character.marker.pathfindingAI.stopMovementST;
-            }
         }
 
         text += "\n<b>All Plans:</b> ";
@@ -756,10 +750,10 @@ public class ConsoleMenu : UIMenu {
             return;
         }
 
-        if (character.marker.pathfindingAI.doNotMove == 0) {
-            character.marker.pathfindingAI.AdjustDoNotMove(1);
+        if (character.canMove) {
+            character.DecreaseCanMove();
         } else {
-            character.marker.pathfindingAI.AdjustDoNotMove(-1);
+            character.IncreaseCanMove();
         }
         AddSuccessMessage("Adjusted " + character.name + " do not disturb to " + character.doNotDisturb);
     }

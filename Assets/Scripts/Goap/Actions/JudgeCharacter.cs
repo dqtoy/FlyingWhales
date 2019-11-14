@@ -42,13 +42,11 @@ public class JudgeCharacter : GoapAction {
                 exile = 10f;
             } else {
                 //criminal traits
-                CRIME_CATEGORY crime;
-                //TODO:
-                List<Trait> crimes = targetCharacter.traitContainer.GetAllTraitsOf(TRAIT_TYPE.CRIMINAL);
+                List<Criminal> crimes = targetCharacter.traitContainer.GetAllTraitsOf(TRAIT_TYPE.CRIMINAL).Select(x => x as Criminal).ToList();
 
                 if (crimes.Count > 0) {
                     for (int i = 0; i < crimes.Count; i++) {
-                        Trait trait = crimes[i];
+                        Criminal trait = crimes[i];
                         switch (trait.crimeSeverity) {
                             case CRIME_CATEGORY.MISDEMEANOR:
                                 absolve += 50f;

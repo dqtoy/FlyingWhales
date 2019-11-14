@@ -41,7 +41,6 @@ public class CharacterMarker : PooledObject {
     [Header("Combat")]
     public GameObject hpBarGO;
     public Image hpFill;
-    //public GameObject aspeedGO;
     public Image aspeedFill;
     public Transform projectileParent;
 
@@ -192,33 +191,6 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Listeners
-    ///Moved listener for action state set to CharacterManager for optimization <see cref="CharacterManager.OnActionStateSet(GoapAction, GoapActionState)">
-    //private void OnActionStateSet(GoapAction goapAction, GoapActionState goapState) {
-    //    if (character == goapAction.actor) {
-    //        UpdateAnimation();
-    //    }
-    //}
-
-    ///Moved  listener for action state set to CharacterManager for optimization <see cref="CharacterManager.OnCharacterFinishedAction(Character, GoapAction, string)"/>
-    //private void OnCharacterFinishedAction(Character character, GoapAction action, string result) {
-    //    if (this.character == character) {
-    //        //action icon
-    //        UpdateActionIcon();
-    //        UpdateAnimation();
-    //    } else {
-    //        //crime system:
-    //        //if the other character committed a crime,
-    //        //check if that character is in this characters vision 
-    //        //and that this character can react to a crime (not in flee or engage mode)
-    //        if (inVisionCharacters.Contains(character)
-    //            && action.IsConsideredACrimeBy(this.character)
-    //            && action.CanReactToThisCrime(this.character)
-    //            && this.character.CanReactToCrime()) {
-    //            bool hasRelationshipDegraded = false;
-    //            this.character.ReactToCrime(action, ref hasRelationshipDegraded);
-    //        }
-    //    }
-    //}
     public void OnCharacterGainedTrait(Character characterThatGainedTrait, Trait trait) {
         //this will make this character flee when he/she gains an injured trait
         if (characterThatGainedTrait == this.character) {
@@ -233,10 +205,6 @@ public class CharacterMarker : PooledObject {
     public void OnCharacterLostTrait(Character character, Trait trait) {
         if (character == this.character) {
             string lostTraitSummary = GameManager.Instance.TodayLogString() + character.name + " has lost trait " + trait.name;
-            if (trait.type == TRAIT_TYPE.DISABLER) { //if the character lost a disabler trait, adjust hinder movement value
-                pathfindingAI.AdjustDoNotMove(-1);
-                lostTraitSummary += "\nLost trait is a disabler trait, adjusting do not move value.";
-            }
             //if the character does not have any other negative disabler trait
             //check for reactions.
             switch (trait.name) {
@@ -297,12 +265,12 @@ public class CharacterMarker : PooledObject {
     }
     private void SelfGainedTrait(Character characterThatGainedTrait, Trait trait) {
         string gainTraitSummary = GameManager.Instance.TodayLogString() + characterThatGainedTrait.name + " has gained trait " + trait.name;
-        if (trait.type == TRAIT_TYPE.DISABLER) { //if the character gained a disabler trait, hinder movement
-            pathfindingAI.ClearAllCurrentPathData();
-            pathfindingAI.canSearch = false;
-            pathfindingAI.AdjustDoNotMove(1);
-            gainTraitSummary += "\nGained trait is a disabler trait, adjusting do not move value.";
-        }
+        //if (trait.type == TRAIT_TYPE.DISABLER) { //if the character gained a disabler trait, hinder movement
+        //    pathfindingAI.ClearAllCurrentPathData();
+        //    pathfindingAI.canSearch = false;
+        //    pathfindingAI.AdjustDoNotMove(1);
+        //    gainTraitSummary += "\nGained trait is a disabler trait, adjusting do not move value.";
+        //}
         if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
             //if the character gained an unconscious trait, exit current state if it is flee
             if (characterThatGainedTrait.stateComponent.currentState != null && characterThatGainedTrait.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
@@ -1051,13 +1019,6 @@ public class CharacterMarker : PooledObject {
             if (poi is Character) {
                 inVisionCharacters.Add(poi as Character);
             }
-            //if (poi is Character) {
-            //    //Debug.Log(character.name + " saw " + (poi as Character).name);
-            //    Character character = poi as Character;
-            //    if (Vector2.Distance(this.transform.position, character.marker.transform.position) > 6f) {
-            //        Debug.LogError(this.name + " is trying to add a character to it's vision that is actually far (" + character.marker.name + ")");
-            //    }
-            //}
             character.AddAwareness(poi);
             OnAddPOIAsInVisionRange(poi);
         }
@@ -1161,8 +1122,8 @@ public class CharacterMarker : PooledObject {
     #region Hosility Collision
     public bool AddHostileInRange(IPointOfInterest poi, bool checkHostility = true, bool processCombatBehavior = true, bool isLethal = true) {
         if (!hostilesInRange.Contains(poi)) {
-            if (this.character.traitContainer.GetNormalTrait("Zapped") == null && !this.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) 
-                && !this.character.isFollowingPlayerInstruction && CanAddPOIAsHostile(poi, checkHostility)) {
+            //&& !this.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) 
+            if (this.character.traitContainer.GetNormalTrait("Zapped") == null && !this.character.isFollowingPlayerInstruction && CanAddPOIAsHostile(poi, checkHostility, isLethal)) {
                 string transferReason = string.Empty;
                 if (!WillCharacterTransferEngageToFleeList(isLethal, ref transferReason)) {
                     hostilesInRange.Add(poi);
@@ -1184,9 +1145,14 @@ public class CharacterMarker : PooledObject {
         }
         return false;
     }
-    private bool CanAddPOIAsHostile(IPointOfInterest poi, bool checkHostility) {
+    private bool CanAddPOIAsHostile(IPointOfInterest poi, bool checkHostility, bool isLethal) {
         if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character character = poi as Character;
+            if (isLethal == false && character.canBeAtttacked == false) {
+                //if combat intent is not lethal and the target cannot be attacked, then do not allow target to be added as a hostile,
+                //otherwise ignore canBeAttacked value
+                return false;
+            }
             return !character.isDead && !this.character.isFollowingPlayerInstruction &&
                 (!checkHostility || this.character.IsHostileWith(character));
         } else {

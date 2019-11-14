@@ -193,7 +193,7 @@ public class Summon : Character, IWorldObject {
         Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseNeeds); //do not make summons decrease needs
         //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration); //do not make summons plan goap actions by default
         if (GameManager.Instance.isPaused) {
-            marker.pathfindingAI.AdjustDoNotMove(1);
+            DecreaseCanMove(); //TODO: Handle this somehwere better?
             marker.PauseAnimation();
         }
         marker.UpdateSpeed();

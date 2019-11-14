@@ -9,8 +9,8 @@ namespace Traits {
     public class CharacterTraitProcessor : TraitProcessor {
         public override void OnTraitAdded(ITraitable traitable, Trait trait, Character characterResponsible = null, GoapAction gainedFromDoing = null) {
             Character character = traitable as Character;
-            character.ApplyTraitEffects(trait);
-            character.ApplyPOITraitInteractions(trait);
+            ApplyTraitEffects(character, trait);
+            ApplyPOITraitInteractions(character, trait);
             character.currentAlterEgo.AddTrait(trait);
 
             if (GameManager.Instance.gameHasStarted) {
@@ -22,23 +22,251 @@ namespace Traits {
                     character.PlanTirednessRecoveryActions(true);
                 }
             }
-            if (trait.type == TRAIT_TYPE.CRIMINAL
-                || (trait.effect == TRAIT_EFFECT.NEGATIVE && trait.type == TRAIT_TYPE.DISABLER)) {
-                //when a character gains a criminal trait, drop all location jobs that this character is assigned to
+            if (trait.effect == TRAIT_EFFECT.NEGATIVE && trait.type == TRAIT_TYPE.DISABLER) {
+                //when a character gains a negative disabler trait, drop all location jobs that this character is assigned to
                 character.homeArea.jobQueue.UnassignAllJobsTakenBy(character);
             }
             DefaultProcessOnAddTrait(traitable, trait, characterResponsible, gainedFromDoing);
             Messenger.Broadcast(Signals.TRAIT_ADDED, character, trait);
         }
-
         public override void OnTraitRemoved(ITraitable traitable, Trait trait, Character removedBy) {
             Character character = traitable as Character;
-            character.UnapplyTraitEffects(trait);
-            character.UnapplyPOITraitInteractions(trait);
+            UnapplyTraitEffects(character, trait);
+            UnapplyPOITraitInteractions(character, trait);
             character.currentAlterEgo.traits.Remove(trait);
 
             DefaultProcessOnRemoveTrait(traitable, trait, removedBy);
             Messenger.Broadcast(Signals.TRAIT_REMOVED, character, trait);
+        }
+
+        private void ApplyTraitEffects(Character character, Trait trait) {
+            if (trait.hindersWitness) {
+                character.DecreaseCanWitness();
+            }
+            if (trait.hindersMovement) {
+                character.DecreaseCanMove();
+            }
+            if (trait.hindersAttackTarget) {
+                character.DecreaseCanBeAttacked();
+            }
+            if (trait.type == TRAIT_TYPE.DISABLER) {
+                character.AdjustDoNotDisturb(1);
+                if (trait.effect == TRAIT_EFFECT.NEGATIVE) {
+                    character.AdjustIgnoreHostilities(1);
+                    character.CancelAllJobsAndPlansExceptNeedsRecovery();
+                }
+                character.ownParty.RemoveAllOtherCharacters();
+                character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
+            }
+            if (trait.name == "Abducted" || trait.name == "Restrained") {
+                character.AdjustDoNotGetTired(1);
+            } else if (trait.name == "Packaged" || trait.name == "Hibernating" || trait.name == "Reanimated") {
+                character.AdjustDoNotGetTired(1);
+                character.AdjustDoNotGetHungry(1);
+                character.AdjustDoNotGetLonely(1);
+            } else if (trait.name == "Eating") {
+                character.AdjustDoNotGetHungry(1);
+            } else if (trait.name == "Resting") {
+                character.AdjustDoNotGetTired(1);
+                character.AdjustDoNotGetHungry(1);
+                character.AdjustDoNotGetLonely(1);
+            } else if (trait.name == "Charmed") {
+                character.AdjustDoNotGetLonely(1);
+            } else if (trait.name == "Daydreaming") {
+                character.AdjustDoNotGetTired(1);
+                character.AdjustDoNotGetLonely(1);
+            } else if (trait.name == "Forlorn") {
+                character.AdjustMoodValue(-35, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Lonely") {
+                character.AdjustMoodValue(-20, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Exhausted") {
+                character.marker.AdjustUseWalkSpeed(1);
+                character.AdjustMoodValue(-35, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Tired") {
+                character.AdjustSpeedModifier(-0.2f);
+                character.AdjustMoodValue(-10, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Starving") {
+                character.AdjustMoodValue(-25, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Hungry") {
+                character.AdjustMoodValue(-10, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Injured") {
+                character.AdjustMoodValue(-15, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Cursed") {
+                character.AdjustMoodValue(-25, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Sick") {
+                character.AdjustMoodValue(-15, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Satisfied") {
+                character.AdjustMoodValue(15, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Annoyed") {
+                character.AdjustMoodValue(-15, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Lethargic") {
+                character.AdjustMoodValue(-20, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Heartbroken") {
+                character.AdjustMoodValue(-25, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Griefstricken") {
+                character.AdjustMoodValue(-20, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Encumbered") {
+                character.AdjustSpeedModifier(-0.5f);
+            } else if (trait.name == "Vampiric") {
+                character.AdjustDoNotGetTired(1);
+            } else if (trait.name == "Unconscious") {
+                character.AdjustDoNotGetTired(1);
+                character.AdjustDoNotGetHungry(1);
+                character.AdjustDoNotGetLonely(1);
+            } else if (trait.name == "Optimist") {
+                character.AdjustHappinessDecreaseRate(-320); //Reference: https://trello.com/c/Aw8kIbB1/2654-optimist
+            } else if (trait.name == "Pessimist") {
+                character.AdjustHappinessDecreaseRate(320); //Reference: https://trello.com/c/lcen0P9l/2653-pessimist
+            } else if (trait.name == "Fast") {
+                character.AdjustSpeedModifier(0.25f); //Reference: https://trello.com/c/Gb3kfZEm/2658-fast
+            } else if (trait.name == "Shellshocked") {
+                character.AdjustMoodValue(-30, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Ashamed") {
+                character.AdjustMoodValue(-5, trait, trait.gainedFromDoing);
+            }
+            if (trait.effects != null) {
+                for (int i = 0; i < trait.effects.Count; i++) {
+                    TraitEffect traitEffect = trait.effects[i];
+                    if (!traitEffect.hasRequirement && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
+                        if (traitEffect.isPercentage) {
+                            if (traitEffect.stat == STAT.ATTACK) {
+                                character.AdjustAttackPercentMod((int)traitEffect.amount);
+                            } else if (traitEffect.stat == STAT.HP) {
+                                character.AdjustMaxHPPercentMod((int)traitEffect.amount);
+                            } else if (traitEffect.stat == STAT.SPEED) {
+                                character.AdjustSpeedPercentMod((int)traitEffect.amount);
+                            }
+                        } else {
+                            if (traitEffect.stat == STAT.ATTACK) {
+                                character.AdjustAttackMod((int)traitEffect.amount);
+                            } else if (traitEffect.stat == STAT.HP) {
+                                character.AdjustMaxHPMod((int)traitEffect.amount);
+                            } else if (traitEffect.stat == STAT.SPEED) {
+                                character.AdjustSpeedMod((int)traitEffect.amount);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        public void UnapplyTraitEffects(Character character, Trait trait) {
+            if (trait.hindersWitness) {
+                character.IncreaseCanWitness();
+            }
+            if (trait.hindersMovement) {
+                character.IncreaseCanMove();
+            }
+            if (trait.hindersAttackTarget) {
+                character.IncreaseCanBeAttacked();
+            }
+            if (trait.type == TRAIT_TYPE.DISABLER) {
+                character.AdjustDoNotDisturb(-1);
+                if (trait.effect == TRAIT_EFFECT.NEGATIVE) {
+                    character.AdjustIgnoreHostilities(-1);
+                }
+            }
+            if (trait.name == "Abducted" || trait.name == "Restrained") {
+                character.AdjustDoNotGetTired(-1);
+            } else if (trait.name == "Packaged" || trait.name == "Hibernating" || trait.name == "Reanimated") {
+                character.AdjustDoNotGetTired(-1);
+                character.AdjustDoNotGetHungry(-1);
+                character.AdjustDoNotGetLonely(-1);
+            } else if (trait.name == "Eating") {
+                character.AdjustDoNotGetHungry(-1);
+            } else if (trait.name == "Resting") {
+                character.AdjustDoNotGetTired(-1);
+                character.AdjustDoNotGetHungry(-1);
+                character.AdjustDoNotGetLonely(-1);
+            } else if (trait.name == "Charmed") {
+                character.AdjustDoNotGetLonely(-1);
+            } else if (trait.name == "Daydreaming") {
+                character.AdjustDoNotGetTired(-1);
+                character.AdjustDoNotGetLonely(-1);
+            } else if (trait.name == "Forlorn") {
+                character.AdjustMoodValue(35, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Lonely") {
+                character.AdjustMoodValue(20, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Exhausted") {
+                character.marker.AdjustUseWalkSpeed(-1);
+                character.AdjustMoodValue(35, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Tired") {
+                character.AdjustSpeedModifier(0.2f);
+                character.AdjustMoodValue(10, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Starving") {
+                character.AdjustMoodValue(25, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Hungry") {
+                character.AdjustMoodValue(10, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Injured") {
+                character.AdjustMoodValue(15, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Cursed") {
+                character.AdjustMoodValue(25, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Sick") {
+                character.AdjustMoodValue(15, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Satisfied") {
+                character.AdjustMoodValue(-15, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Annoyed") {
+                character.AdjustMoodValue(15, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Lethargic") {
+                character.AdjustMoodValue(20, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Encumbered") {
+                character.AdjustSpeedModifier(0.5f);
+            } else if (trait.name == "Vampiric") {
+                character.AdjustDoNotGetTired(-1);
+            } else if (trait.name == "Unconscious") {
+                character.AdjustDoNotGetTired(-1);
+                character.AdjustDoNotGetHungry(-1);
+                character.AdjustDoNotGetLonely(-1);
+            } else if (trait.name == "Optimist") {
+                character.AdjustHappinessDecreaseRate(320); //Reference: https://trello.com/c/Aw8kIbB1/2654-optimist
+            } else if (trait.name == "Pessimist") {
+                character.AdjustHappinessDecreaseRate(-320); //Reference: https://trello.com/c/lcen0P9l/2653-pessimist
+            } else if (trait.name == "Fast") {
+                character.AdjustSpeedModifier(-0.25f); //Reference: https://trello.com/c/Gb3kfZEm/2658-fast
+            } else if (trait.name == "Shellshocked") {
+                character.AdjustMoodValue(30, trait, trait.gainedFromDoing);
+            } else if (trait.name == "Ashamed") {
+                character.AdjustMoodValue(5, trait, trait.gainedFromDoing);
+            }
+
+            if (trait.effects != null) {
+                for (int i = 0; i < trait.effects.Count; i++) {
+                    TraitEffect traitEffect = trait.effects[i];
+                    if (!traitEffect.hasRequirement && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
+                        if (traitEffect.isPercentage) {
+                            if (traitEffect.stat == STAT.ATTACK) {
+                                character.AdjustAttackPercentMod(-(int)traitEffect.amount);
+                            } else if (traitEffect.stat == STAT.HP) {
+                                character.AdjustMaxHPPercentMod(-(int)traitEffect.amount);
+                            } else if (traitEffect.stat == STAT.SPEED) {
+                                character.AdjustSpeedPercentMod(-(int)traitEffect.amount);
+                            }
+                        } else {
+                            if (traitEffect.stat == STAT.ATTACK) {
+                                character.AdjustAttackMod(-(int)traitEffect.amount);
+                            } else if (traitEffect.stat == STAT.HP) {
+                                character.AdjustMaxHPMod(-(int)traitEffect.amount);
+                            } else if (traitEffect.stat == STAT.SPEED) {
+                                character.AdjustSpeedMod(-(int)traitEffect.amount);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public void ApplyPOITraitInteractions(Character character, Trait trait) {
+            if (trait.advertisedInteractions != null) {
+                for (int i = 0; i < trait.advertisedInteractions.Count; i++) {
+                    character.AddAdvertisedAction(trait.advertisedInteractions[i]);
+                }
+            }
+        }
+        public void UnapplyPOITraitInteractions(Character character, Trait trait) {
+            if (trait.advertisedInteractions != null) {
+                for (int i = 0; i < trait.advertisedInteractions.Count; i++) {
+                    character.RemoveAdvertisedAction(trait.advertisedInteractions[i]);
+                }
+            }
         }
     }
 }

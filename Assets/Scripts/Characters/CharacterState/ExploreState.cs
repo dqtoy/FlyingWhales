@@ -25,7 +25,6 @@ public class ExploreState : CharacterState {
     protected override void StartState() {
         base.StartState();
         hasStateStarted = true;
-        stateComponent.character.SetLastExploreState(null);
     }
     protected override void DoMovementBehavior() {
         base.DoMovementBehavior();
@@ -68,7 +67,6 @@ public class ExploreState : CharacterState {
     }
     public override void OnExitThisState() {
         base.OnExitThisState();
-        stateComponent.character.SetLastExploreState(this);
         if (!stateComponent.character.isDead) {
             //Force deposit items in character home location warehouse
             //Stroll goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.DROP_ITEM, this, this) as Stroll;

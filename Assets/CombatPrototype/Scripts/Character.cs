@@ -53,7 +53,6 @@ public class Character : ILeader, IPointOfInterest {
     public int attackPowerPercentMod { get; protected set; }
     public int speedPercentMod { get; protected set; }
     public int maxHPPercentMod { get; protected set; }
-
     public Region homeRegion { get; protected set; }
     public Area homeArea { get { return homeRegion.area; } }
     public Dwelling homeStructure { get; protected set; }
@@ -95,10 +94,17 @@ public class Character : ILeader, IPointOfInterest {
 
     private List<System.Action> onLeaveAreaActions;
     private POI_STATE _state;
-
     public Dictionary<int, Combat> combatHistory;
 
-    //Needs
+    //limiters
+    private int canWitnessValue; //if this is >= 0 then character can witness events
+    private int canMoveValue; //if this is >= 0 then character can move
+    private int canBeAtttackedValue; //if this is >= 0 then character can be attacked
+    public bool canWitness { get { return canWitnessValue >= 0; } }
+    public bool canMove { get { return canMoveValue >= 0; } }
+    public bool canBeAtttacked { get { return canBeAtttackedValue >= 0; } }
+
+
     //Tiredness
     public int tiredness { get; protected set; }
     public int tirednessDecreaseRate { get; protected set; }
@@ -1298,7 +1304,7 @@ public class Character : ILeader, IPointOfInterest {
             }
         }
     }
-    private void CancelOrUnassignRemoveTraitRelatedJobs() {
+    public void CancelOrUnassignRemoveTraitRelatedJobs() {
         CancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT);
 
         //All remove trait jobs that are being done by this character must be unassigned
@@ -1310,7 +1316,7 @@ public class Character : ILeader, IPointOfInterest {
             }
         }
     }
-    private bool CreateJobsOnEnterVisionWith(Character targetCharacter, bool bypassInvisibilityCheck = false) {
+    private bool CreateJobsOnEnterVisionWithCharacter(Character targetCharacter, bool bypassInvisibilityCheck = false) {
         string log = name + " saw " + targetCharacter.name + ", will try to create jobs on enter vision...";
         if (!CanCharacterReact(targetCharacter)) {
             log += "\nCharacter cannot react!";
@@ -1364,7 +1370,7 @@ public class Character : ILeader, IPointOfInterest {
     }
     public bool CreateJobsOnEnterVisionWith(IPointOfInterest targetPOI, bool bypassInvisibilityCheck = false) {
         if(targetPOI is Character) {
-            return CreateJobsOnEnterVisionWith(targetPOI as Character, bypassInvisibilityCheck);
+            return CreateJobsOnEnterVisionWithCharacter(targetPOI as Character, bypassInvisibilityCheck);
         }
         string log = name + " saw " + targetPOI.name + ", will try to create jobs on enter vision...";
         if (!CanCharacterReact(targetPOI)) {
@@ -1563,7 +1569,7 @@ public class Character : ILeader, IPointOfInterest {
         return false;
     }
     public void CreateLocationKnockoutJobs(Character targetCharacter, int amount) {
-        if (homeArea != null && isAtHomeRegion && isPartOfHomeFaction && !targetCharacter.isDead && !targetCharacter.isAtHomeRegion && !traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {//&& !targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")
+        if (homeArea != null && isAtHomeRegion && isPartOfHomeFaction && !targetCharacter.isDead && !targetCharacter.isAtHomeRegion && !traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
             for (int i = 0; i < amount; i++) {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.KNOCKOUT, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", targetPOI = targetCharacter });
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeKnockoutJob);
@@ -2507,6 +2513,9 @@ public class Character : ILeader, IPointOfInterest {
         }
     }
     public bool CanCharacterReact(IPointOfInterest targetPOI = null) {
+        if (this.canWitness == false) {
+            return false; //this character cannot witness
+        }
         if (this is Summon || minion != null) {
             //Cannot react if summon or minion
             return false;
@@ -2849,7 +2858,7 @@ public class Character : ILeader, IPointOfInterest {
         //}
     }
     public void ThisCharacterWitnessedEvent(GoapAction witnessedEvent) {
-        if (isDead || traitContainer.GetNormalTrait("Unconscious", "Resting", "Catatonic") != null) {
+        if (isDead || this.canWitness == false) {
             return;
         }
         if (faction != witnessedEvent.actor.faction && //only check faction relationship if involved characters are of different factions
@@ -3840,235 +3849,6 @@ public class Character : ILeader, IPointOfInterest {
         traitContainer.AddTrait(this, "Flammable");
         defaultCharacterTrait = traitContainer.GetNormalTrait("Character Trait") as CharacterTrait;
     }
-    public void ApplyTraitEffects(Trait trait) {
-        if (trait.type == TRAIT_TYPE.DISABLER) {
-            AdjustDoNotDisturb(1);
-            if (trait.effect == TRAIT_EFFECT.NEGATIVE) {
-                AdjustIgnoreHostilities(1);
-                CancelAllJobsAndPlansExceptNeedsRecovery();
-            }
-            if (trait.name != "Combat Recovery") {
-                _ownParty.RemoveAllOtherCharacters();
-                CancelAllJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
-            }
-        } else if (trait.type == TRAIT_TYPE.CRIMINAL) {
-            CancelOrUnassignRemoveTraitRelatedJobs();
-        }
-        if (trait.name == "Abducted" || trait.name == "Restrained") {
-            AdjustDoNotGetTired(1);
-        } else if (trait.name == "Packaged" || trait.name == "Hibernating" || trait.name == "Reanimated") {
-            AdjustDoNotGetTired(1);
-            AdjustDoNotGetHungry(1);
-            AdjustDoNotGetLonely(1);
-        } else if (trait.name == "Eating") {
-            AdjustDoNotGetHungry(1);
-        } else if (trait.name == "Resting") {
-            AdjustDoNotGetTired(1);
-            AdjustDoNotGetHungry(1);
-            AdjustDoNotGetLonely(1);
-        } else if (trait.name == "Charmed") {
-            AdjustDoNotGetLonely(1);
-        } else if (trait.name == "Daydreaming") {
-            AdjustDoNotGetTired(1);
-            AdjustDoNotGetLonely(1);
-        } else if (trait.name == "Forlorn") {
-            AdjustMoodValue(-35, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Lonely") {
-            AdjustMoodValue(-20, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Exhausted") {
-            marker.AdjustUseWalkSpeed(1);
-            AdjustMoodValue(-35, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Tired") {
-            AdjustSpeedModifier(-0.2f);
-            AdjustMoodValue(-10, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Starving") {
-            AdjustMoodValue(-25, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Hungry") {
-            AdjustMoodValue(-10, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Injured") {
-            AdjustMoodValue(-15, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Cursed") {
-            AdjustMoodValue(-25, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Sick") {
-            AdjustMoodValue(-15, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Satisfied") {
-            AdjustMoodValue(15, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Annoyed") {
-            AdjustMoodValue(-15, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Lethargic") {
-            AdjustMoodValue(-20, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Heartbroken") {
-            AdjustMoodValue(-25, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Griefstricken") {
-            AdjustMoodValue(-20, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Encumbered") {
-            AdjustSpeedModifier(-0.5f);
-        } else if (trait.name == "Vampiric") {
-            AdjustDoNotGetTired(1);
-        } else if (trait.name == "Unconscious") {
-            AdjustDoNotGetTired(1);
-            AdjustDoNotGetHungry(1);
-            AdjustDoNotGetLonely(1);
-        } else if (trait.name == "Optimist") {
-            AdjustHappinessDecreaseRate(-320); //Reference: https://trello.com/c/Aw8kIbB1/2654-optimist
-        } else if (trait.name == "Pessimist") {
-            AdjustHappinessDecreaseRate(320); //Reference: https://trello.com/c/lcen0P9l/2653-pessimist
-        } else if (trait.name == "Fast") {
-            AdjustSpeedModifier(0.25f); //Reference: https://trello.com/c/Gb3kfZEm/2658-fast
-        } else if (trait.name == "Shellshocked") {
-            AdjustMoodValue(-30, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Ashamed") {
-            AdjustMoodValue(-5, trait, trait.gainedFromDoing);
-        }
-        //else if (trait.name == "Hungry") {
-        //    CreateFeedJob();
-        //} else if (trait.name == "Starving") {
-        //    MoveFeedJobToTopPriority();
-        //}
-        if (trait.effects != null) {
-            for (int i = 0; i < trait.effects.Count; i++) {
-                TraitEffect traitEffect = trait.effects[i];
-                if (!traitEffect.hasRequirement && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
-                    if (traitEffect.isPercentage) {
-                        if (traitEffect.stat == STAT.ATTACK) {
-                            AdjustAttackPercentMod((int)traitEffect.amount);
-                        } else if (traitEffect.stat == STAT.HP) {
-                            AdjustMaxHPPercentMod((int)traitEffect.amount);
-                        } else if (traitEffect.stat == STAT.SPEED) {
-                            AdjustSpeedPercentMod((int)traitEffect.amount);
-                        }
-                    } else {
-                        if (traitEffect.stat == STAT.ATTACK) {
-                            AdjustAttackMod((int)traitEffect.amount);
-                        } else if (traitEffect.stat == STAT.HP) {
-                            AdjustMaxHPMod((int)traitEffect.amount);
-                        } else if (traitEffect.stat == STAT.SPEED) {
-                            AdjustSpeedMod((int)traitEffect.amount);
-                        }
-                    }
-                }
-            }
-        }
-    }
-    public void UnapplyTraitEffects(Trait trait) {
-        if (trait.type == TRAIT_TYPE.DISABLER) {
-            AdjustDoNotDisturb(-1);
-            if (trait.effect == TRAIT_EFFECT.NEGATIVE) {
-                AdjustIgnoreHostilities(-1);
-            }
-        }
-        //else if(trait.type == TRAIT_TYPE.CRIMINAL) {
-        //    if(GetTraitOf(TRAIT_TYPE.CRIMINAL) == null) {
-        //        for (int i = 0; i < traits.Count; i++) {
-        //            if (traits[i].name == "Cursed" || traits[i].name == "Sick"
-        //                || traits[i].name == "Injured" || traits[i].name == "Unconscious") {
-        //                CreateRemoveTraitJob(traits[i].name);
-        //            }
-        //        }
-        //    }
-        //}
-        if (trait.name == "Abducted" || trait.name == "Restrained") {
-            AdjustDoNotGetTired(-1);
-        } else if (trait.name == "Packaged" || trait.name == "Hibernating" || trait.name == "Reanimated") {
-            AdjustDoNotGetTired(-1);
-            AdjustDoNotGetHungry(-1);
-            AdjustDoNotGetLonely(-1);
-        } else if (trait.name == "Eating") {
-            AdjustDoNotGetHungry(-1);
-        } else if (trait.name == "Resting") {
-            AdjustDoNotGetTired(-1);
-            AdjustDoNotGetHungry(-1);
-            AdjustDoNotGetLonely(-1);
-        } else if (trait.name == "Charmed") {
-            AdjustDoNotGetLonely(-1);
-        } else if (trait.name == "Daydreaming") {
-            AdjustDoNotGetTired(-1);
-            AdjustDoNotGetLonely(-1);
-        } else if (trait.name == "Forlorn") {
-            AdjustMoodValue(35, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Lonely") {
-            AdjustMoodValue(20, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Exhausted") {
-            marker.AdjustUseWalkSpeed(-1);
-            AdjustMoodValue(35, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Tired") {
-            AdjustSpeedModifier(0.2f);
-            AdjustMoodValue(10, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Starving") {
-            AdjustMoodValue(25, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Hungry") {
-            AdjustMoodValue(10, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Injured") {
-            AdjustMoodValue(15, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Cursed") {
-            AdjustMoodValue(25, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Sick") {
-            AdjustMoodValue(15, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Satisfied") {
-            AdjustMoodValue(-15, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Annoyed") {
-            AdjustMoodValue(15, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Lethargic") {
-            AdjustMoodValue(20, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Encumbered") {
-            AdjustSpeedModifier(0.5f);
-        } else if (trait.name == "Vampiric") {
-            AdjustDoNotGetTired(-1);
-        } else if (trait.name == "Unconscious") {
-            AdjustDoNotGetTired(-1);
-            AdjustDoNotGetHungry(-1);
-            AdjustDoNotGetLonely(-1);
-        } else if (trait.name == "Optimist") {
-            AdjustHappinessDecreaseRate(320); //Reference: https://trello.com/c/Aw8kIbB1/2654-optimist
-        } else if (trait.name == "Pessimist") {
-            AdjustHappinessDecreaseRate(-320); //Reference: https://trello.com/c/lcen0P9l/2653-pessimist
-        } else if (trait.name == "Fast") {
-            AdjustSpeedModifier(-0.25f); //Reference: https://trello.com/c/Gb3kfZEm/2658-fast
-        } else if (trait.name == "Shellshocked") {
-            AdjustMoodValue(30, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Ashamed") {
-            AdjustMoodValue(5, trait, trait.gainedFromDoing);
-        }
-
-        if (trait.effects != null) {
-            for (int i = 0; i < trait.effects.Count; i++) {
-                TraitEffect traitEffect = trait.effects[i];
-                if (!traitEffect.hasRequirement && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
-                    if (traitEffect.isPercentage) {
-                        if (traitEffect.stat == STAT.ATTACK) {
-                            AdjustAttackPercentMod(-(int)traitEffect.amount);
-                        } else if (traitEffect.stat == STAT.HP) {
-                            AdjustMaxHPPercentMod(-(int)traitEffect.amount);
-                        } else if (traitEffect.stat == STAT.SPEED) {
-                            AdjustSpeedPercentMod(-(int)traitEffect.amount);
-                        }
-                    } else {
-                        if (traitEffect.stat == STAT.ATTACK) {
-                            AdjustAttackMod(-(int)traitEffect.amount);
-                        } else if (traitEffect.stat == STAT.HP) {
-                            AdjustMaxHPMod(-(int)traitEffect.amount);
-                        } else if (traitEffect.stat == STAT.SPEED) {
-                            AdjustSpeedMod(-(int)traitEffect.amount);
-                        }
-                    }
-                }
-            }
-        }
-    }
-    public void ApplyPOITraitInteractions(Trait trait) {
-        if (trait.advertisedInteractions != null) {
-            for (int i = 0; i < trait.advertisedInteractions.Count; i++) {
-                poiGoapActions.Add(trait.advertisedInteractions[i]);
-            }
-        }
-    }
-    public void UnapplyPOITraitInteractions(Trait trait) {
-        if (trait.advertisedInteractions != null) {
-            for (int i = 0; i < trait.advertisedInteractions.Count; i++) {
-                poiGoapActions.Remove(trait.advertisedInteractions[i]);
-            }
-        }
-    }
     public void AddTraitNeededToBeRemoved(Trait trait) {
         traitsNeededToBeRemoved.Add(trait);
     }
@@ -4148,6 +3928,9 @@ public class Character : ILeader, IPointOfInterest {
         }
         if(homeRegion.area == null) {
             return; //If there is no area, it means that there is no inner map, so character must not do goap actions, jobs, and plans
+        }
+        if (canWitness == false) {
+            return; //characters that cannot witness, cannot plan actions.
         }
         //Out of combat hp recovery
         if(stateComponent.currentState == null || stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT) {
@@ -5224,7 +5007,7 @@ public class Character : ILeader, IPointOfInterest {
         poiGoapActions.Add(type);
     }
     public void RemoveAdvertisedAction(INTERACTION_TYPE type) {
-        poiGoapActions.Add(type);
+        poiGoapActions.Remove(type);
     }
     #endregion
 
@@ -5328,21 +5111,6 @@ public class Character : ILeader, IPointOfInterest {
             token.gridTileLocation.structure.location.RemoveSpecialTokenFromLocation(token);
         }
     }
-    //public void PickUpRandomToken(Area location) {
-    //    WeightedDictionary<SpecialToken> pickWeights = new WeightedDictionary<SpecialToken>();
-    //    for (int i = 0; i < location.possibleSpecialTokenSpawns.Count; i++) {
-    //        SpecialToken token = location.possibleSpecialTokenSpawns[i];
-    //        if (token.npcAssociatedInteractionType != INTERACTION_TYPE.USE_ITEM_ON_SELF) {
-    //            pickWeights.AddElement(token, 60);
-    //        } else if (token.CanBeUsedBy(this)) {
-    //            pickWeights.AddElement(token, 100);
-    //        }
-    //    }
-    //    if (pickWeights.Count > 0) {
-    //        SpecialToken chosenToken = pickWeights.PickRandomElementGivenWeights();
-    //        PickUpToken(chosenToken);
-    //    }
-    //}
     public void DestroyToken(SpecialToken token) {
         token.gridTileLocation.structure.location.RemoveSpecialTokenFromLocation(token);
     }
@@ -5514,15 +5282,6 @@ public class Character : ILeader, IPointOfInterest {
     public void AdjustHappinessDecreaseRate(int amount) {
         happinessDecreaseRate += amount;
     }
-    //public void SetFullnessDecreaseRate(int amount) {
-    //    fullnessDecreaseRate = amount;
-    //}
-    //public void SetTirednessDecreaseRate(int amount) {
-    //    tirednessDecreaseRate = amount;
-    //}
-    //public void SetHappinessDecreaseRate(int amount) {
-    //    happinessDecreaseRate = amount;
-    //}
     private void SetTirednessLowerBound(int amount) {
         tirednessLowerBound = amount;
     }
@@ -5566,28 +5325,6 @@ public class Character : ILeader, IPointOfInterest {
         if (!isExhausted) {
             int diff = tiredness - TIREDNESS_THRESHOLD_2;
             AdjustTiredness(-diff);
-        }
-    }
-    public void DecreaseTirednessMeter() { //this is used for when tiredness is only decreased by 1 (I did this for optimization, so as not to check for traits everytime)
-        tiredness -= 1;
-        tiredness = Mathf.Clamp(tiredness, tirednessLowerBound, TIREDNESS_DEFAULT);
-        if (tiredness == 0) {
-            Death("exhaustion");
-        } else if (isExhausted) {
-            if (tiredness == TIREDNESS_THRESHOLD_2) {
-                traitContainer.RemoveTrait(this, "Tired");
-                if (traitContainer.AddTrait(this, "Exhausted")) {
-                    //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "exhausted");
-                }
-            }
-            //PlanTirednessRecoveryActions();
-        } else if (isTired) {
-            if (tiredness == TIREDNESS_THRESHOLD_1) {
-                if (traitContainer.AddTrait(this, "Tired")) {
-                    //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "tired");
-                }
-            }
-            //PlanTirednessRecoveryActions();
         }
     }
     public void SetTiredness(int amount) {
@@ -5677,28 +5414,6 @@ public class Character : ILeader, IPointOfInterest {
         } else {
             //fullness is higher than both thresholds
             RemoveHungryOrStarving();
-        }
-    }
-    public void DecreaseFullnessMeter() { //this is used for when fullness is only decreased by 1 (I did this for optimization, so as not to check for traits everytime)
-        fullness -= 1;
-        fullness = Mathf.Clamp(fullness, fullnessLowerBound, FULLNESS_DEFAULT);
-        if (fullness == 0) {
-            Death("starvation");
-        } else if (isStarving) {
-            if (fullness == FULLNESS_THRESHOLD_2) {
-                traitContainer.RemoveTrait(this, "Hungry");
-                if (traitContainer.AddTrait(this, "Starving")) {
-                    //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "starving");
-                }
-            }
-            //PlanFullnessRecoveryActions();
-        } else if (isHungry) {
-            if (fullness == FULLNESS_THRESHOLD_1) {
-                if (traitContainer.AddTrait(this, "Hungry")) {
-                    //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "hungry");
-                }
-            }
-            //PlanFullnessRecoveryActions();
         }
     }
     public void SetFullness(int amount) {
@@ -5951,16 +5666,6 @@ public class Character : ILeader, IPointOfInterest {
         //}
         //return null;
     }
-    //private IAwareness CreateNewAwareness(IPointOfInterest poi) {
-    //    if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-    //        return new CharacterAwareness(poi as Character);
-    //    } else if (poi.poiType == POINT_OF_INTEREST_TYPE.ITEM) {
-    //        return new ItemAwareness(poi as SpecialToken);
-    //    } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-    //        return new TileObjectAwareness(poi);
-    //    }//TODO: Structure Awareness
-    //    return null;
-    //}
     public void AddInitialAwareness() {
         AddAwareness(this);
         if (faction == FactionManager.Instance.neutralFaction) {
@@ -7578,23 +7283,6 @@ public class Character : ILeader, IPointOfInterest {
     }
     #endregion
 
-    #region Explore Items
-    public ExploreState lastExploreState { get; private set; }
-    /// <summary>
-    /// Set the last explore state that ths character did.
-    /// </summary>
-    /// <param name="es">The explore state.</param>
-    public void SetLastExploreState(ExploreState es) {
-        lastExploreState = es;
-    }
-    public void OnReturnHome() {
-        if (lastExploreState != null && lastExploreState.itemsCollected.Count > 0 && role.roleType == CHARACTER_ROLE.ADVENTURER) {
-            //create deliver treasure job that will deposit the items that the character collected during his/her last explore action.
-            lastExploreState.CreateDeliverTreasureJob();
-        }
-    }
-    #endregion
-
     #region Pathfinding
     public List<LocationGridTile> GetTilesInRadius(int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
         List<LocationGridTile> tiles = new List<LocationGridTile>();
@@ -7799,12 +7487,27 @@ public class Character : ILeader, IPointOfInterest {
 
     #region Converters
     public static implicit operator Relatable(Character d) => d.currentAlterEgo;
-    //public static bool operator ==(Character character, Relatable relatable) {
-    //    return relatable == (Relatable)character;
-    //}
-    //public static bool operator !=(Character character, Relatable relatable) {
-    //    return relatable != (Relatable)character;
-    //}
+    #endregion
+
+    #region Limiters
+    public void IncreaseCanWitness() {
+        canWitnessValue++;
+    }
+    public void DecreaseCanWitness() {
+        canWitnessValue--;
+    }
+    public void IncreaseCanMove() {
+        canMoveValue++;
+    }
+    public void DecreaseCanMove() {
+        canMoveValue--;
+    }
+    public void IncreaseCanBeAttacked() {
+        canBeAtttackedValue++;
+    }
+    public void DecreaseCanBeAttacked() {
+        canBeAtttackedValue--;
+    }
     #endregion
 
 }

@@ -45,7 +45,6 @@ public class TraitManager : MonoBehaviour {
     private void AddInstancedTraits() {
         instancedTraits = new Trait[] {
             new Craftsman(),
-            new Criminal(),
             new Grudge(),
             new PatrollingCharacter(),
             new Reanimated(),

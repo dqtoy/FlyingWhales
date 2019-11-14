@@ -250,7 +250,7 @@ public class GoapAction {
                     } else if (targetCharacter.stateComponent.stateToDo != null) {
                         targetCharacter.stateComponent.SetStateToDo(null, false, false);
                     }
-                    targetCharacter.marker.pathfindingAI.AdjustDoNotMove(1);
+                    targetCharacter.DecreaseCanMove();
                     targetCharacter.AdjustIsStoppedByOtherCharacter(1);
                     targetCharacter.FaceTarget(actor);
                 }
@@ -524,7 +524,7 @@ public class GoapAction {
                                 targetCharacter.stateComponent.currentState.ResumeState();
                             }
                         }
-                        targetCharacter.marker.pathfindingAI.AdjustDoNotMove(-1);
+                        targetCharacter.IncreaseCanMove();
                         targetCharacter.AdjustIsStoppedByOtherCharacter(-1);
                     }
                 }

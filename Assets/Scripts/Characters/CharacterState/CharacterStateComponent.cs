@@ -176,23 +176,6 @@ public class CharacterStateComponent {
                     previousMajorState.ExitState();
                     SetCurrentState(null);
                     currState.endStateAction?.Invoke();
-                    //if (previousMajorState.characterState == CHARACTER_STATE.BERSERKED && character.doNotDisturb == 1 && character.traitContainer.GetNormalTrait("Combat Recovery") != null) { //Quick fix only for build, MUST REDO
-                    //    if (previousMajorState.hasStarted) {
-                    //        //Resumes previous major state
-                    //        if (previousMajorState.CanResumeState()) {
-                    //            SetCurrentState(previousMajorState);
-                    //            currentState.ResumeState();
-                    //        } else {
-                    //            previousMajorState = null;
-                    //            SetCurrentState(null);
-                    //        }
-                    //    } else {
-                    //        previousMajorState.EnterState(previousMajorState.targetArea);
-                    //    }
-                    //} else {
-                    //    previousMajorState.ExitState();
-                    //    SetCurrentState(null);
-                    //}
                 } else {
                     bool resumeState = true;
                     if(currState.characterState == CHARACTER_STATE.COMBAT && previousMajorState.characterState == CHARACTER_STATE.BERSERKED) {

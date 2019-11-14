@@ -118,7 +118,6 @@ public class Hunt : GoapAction {
         Character target = poiTarget as Character;
         Injured injured = new Injured();
         AddTraitTo(target, injured, actor);
-        AddTraitTo(actor, "Combat Recovery", target);
     }
     public void PreTargetKilled() {
         Character target = poiTarget as Character;
@@ -134,7 +133,6 @@ public class Hunt : GoapAction {
     }
     public void PreTargetWon() {
         //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        AddTraitTo(actor, "Combat Recovery", poiTarget as Character);
     }
     //public void PreTargetMissing() {
     //    currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
