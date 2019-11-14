@@ -71,4 +71,23 @@ public class POIRelationshipData : IRelationshipData {
     }
     #endregion
 
+    #region Reaction
+    public bool OnSeeCharacter(Character targetCharacter, Character characterThatWillDoJob) {
+        if (!targetCharacter.isDead && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.UNDERMINE_ENEMY, targetCharacter)) {
+            int chance = UnityEngine.Random.Range(0, 100);
+            int value = 0;
+            CHARACTER_MOOD currentMood = characterThatWillDoJob.currentMoodType;
+            if (currentMood == CHARACTER_MOOD.DARK) {
+                value = 20;
+            } else if (currentMood == CHARACTER_MOOD.BAD) {
+                value = 10;
+            }
+            if (chance < value) {
+                return characterThatWillDoJob.CreateUndermineJobOnly(targetCharacter, "saw");
+            }
+        }
+        return false;
+    }
+    #endregion
+
 }

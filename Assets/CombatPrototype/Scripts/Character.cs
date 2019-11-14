@@ -1353,6 +1353,12 @@ public class Character : ILeader, IPointOfInterest {
                 log += ": did not create a job!";
             }
         }
+
+        POIRelationshipData relData = relationshipContainer.GetRelationshipDataWith(targetCharacter) as POIRelationshipData;
+        if (relData != null) {
+            relData.OnSeeCharacter(targetCharacter, this);
+        }
+
         //log += "\nChecking relationship traits...";
         //for (int i = 0; i < relationshipTraits.Count; i++) {
         //    if (relationshipTraits[i].targetCharacter == targetCharacter) {

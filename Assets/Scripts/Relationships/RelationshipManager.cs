@@ -9,7 +9,11 @@ public class RelationshipManager : MonoBehaviour {
 
     void Awake() {
         Instance = this;
+        //TODO: Use Reflection.
+        //validators
         new CharacterRelationshipValidator();
+        //processors
+        new CharacterRelationshipProcessor();
     }
 
     #region Containers
@@ -74,29 +78,6 @@ public class RelationshipManager : MonoBehaviour {
             }
         }
     }
-    //public RelationshipTrait CreateRelationshipTrait(RELATIONSHIP_TRAIT type, Character targetCharacter) {
-    //    switch (type) {
-    //        case RELATIONSHIP_TRAIT.ENEMY:
-    //            return new Enemy(targetCharacter);
-    //        case RELATIONSHIP_TRAIT.FRIEND:
-    //            return new Friend(targetCharacter);
-    //        case RELATIONSHIP_TRAIT.RELATIVE:
-    //            return new Relative(targetCharacter);
-    //        case RELATIONSHIP_TRAIT.LOVER:
-    //            return new Lover(targetCharacter);
-    //        case RELATIONSHIP_TRAIT.PARAMOUR:
-    //            return new Paramour(targetCharacter);
-    //        case RELATIONSHIP_TRAIT.MASTER:
-    //            return new Master(targetCharacter);
-    //        case RELATIONSHIP_TRAIT.SERVANT:
-    //            return new Servant(targetCharacter);
-    //        case RELATIONSHIP_TRAIT.SAVER:
-    //            return new Saver(targetCharacter);
-    //        case RELATIONSHIP_TRAIT.SAVE_TARGET:
-    //            return new SaveTarget(targetCharacter);
-    //    }
-    //    return null;
-    //}
     /// <summary>
     /// Add a one way relationship to a character.
     /// </summary>
@@ -543,6 +524,7 @@ public class RelationshipManager : MonoBehaviour {
             //    return currCharacter.relationshipContainer.GetRelationshipDataWith(alterEgo.owner);
             //}
             rel1.relationshipContainer.AddRelationship(rel2, rel);
+            rel1.relationshipProcessor?.OnRelationshipAdded(rel1, rel2, rel);
             Messenger.Broadcast(Signals.RELATIONSHIP_ADDED, rel1, rel2);
         }
         return rel1.relationshipContainer.GetRelationshipDataWith(rel2);
@@ -554,12 +536,14 @@ public class RelationshipManager : MonoBehaviour {
         //&& !(rel == RELATIONSHIP_TRAIT.FRIEND && currCharacter.traitContainer.GetNormalTrait("Serial Killer") != null)
         if (CanHaveRelationship(rel1, rel2, rel)) {
             rel1.relationshipContainer.AddRelationship(rel2, rel);
+            rel1.relationshipProcessor?.OnRelationshipAdded(rel1, rel2, rel);
         }
         //TODO:Move this somewhere else
         //!(rel == RELATIONSHIP_TRAIT.ENEMY && targetCharacter.traitContainer.GetNormalTrait("Diplomatic") != null)
         //&& !(rel == RELATIONSHIP_TRAIT.FRIEND && targetCharacter.traitContainer.GetNormalTrait("Serial Killer") != null)
         if (CanHaveRelationship(rel2, rel1, rel)) {
             rel2.relationshipContainer.AddRelationship(rel1, pair);
+            rel2.relationshipProcessor?.OnRelationshipAdded(rel2, rel1, pair);
         }
         Messenger.Broadcast(Signals.RELATIONSHIP_ADDED, rel1, rel2);
         return rel1.relationshipContainer.GetRelationshipDataWith(rel2);
@@ -569,6 +553,7 @@ public class RelationshipManager : MonoBehaviour {
     #region Removing
     public void RemoveOneWayRelationship(Relatable rel1, Relatable rel2, RELATIONSHIP_TRAIT rel) {
         rel1.relationshipContainer.RemoveRelationship(rel2, rel);
+        rel1.relationshipProcessor?.OnRelationshipRemoved(rel1, rel2, rel);
         Messenger.Broadcast(Signals.RELATIONSHIP_REMOVED, rel1, rel, rel2);
     }
     public void RemoveRelationshipBetween(Relatable rel1, Relatable rel2, RELATIONSHIP_TRAIT rel) {
@@ -581,7 +566,9 @@ public class RelationshipManager : MonoBehaviour {
             && rel2.relationshipContainer.relationships[rel1].HasRelationship(pair)) {
 
             rel1.relationshipContainer.RemoveRelationship(rel2, rel);
+            rel1.relationshipProcessor?.OnRelationshipRemoved(rel1, rel2, rel);
             rel2.relationshipContainer.RemoveRelationship(rel1, pair);
+            rel2.relationshipProcessor?.OnRelationshipRemoved(rel2, rel1, pair);
             Messenger.Broadcast(Signals.RELATIONSHIP_REMOVED, rel1, rel, rel2);
         }
     }
@@ -744,6 +731,15 @@ public class RelationshipManager : MonoBehaviour {
 
         Debug.Log(summary);
         return hasDegraded;
+    }
+    #endregion
+
+    #region Processors
+    public IRelationshipProcessor GetProcessor(Relatable relatable) {
+        if (relatable is AlterEgoData) {
+            return CharacterRelationshipProcessor.Instance;
+        }
+        return null;
     }
     #endregion
 }
