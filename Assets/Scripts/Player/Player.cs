@@ -640,13 +640,6 @@ public class Player : ILeader {
                     return;
                 }
             }
-            if (currentActiveIntel is PlanIntel) {
-                if ((currentActiveIntel as PlanIntel).plan == null) {
-                    //If intel has no plan, do not execute intel, just remove it instead
-                    PlayerManager.Instance.player.RemoveIntel(currentActiveIntel);
-                    return;
-                }
-            }
             UIManager.Instance.OpenShareIntelMenu(targetCharacter, currentMinionLeader.character, currentActiveIntel);
         }
     }

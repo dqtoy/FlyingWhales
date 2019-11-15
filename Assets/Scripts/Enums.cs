@@ -99,18 +99,6 @@ public enum MONTH{
 	NOV,
 	DEC,
 }
-public enum RESOURCE {
-    NONE,
-    //OAK,
-    //ELF_CIVILIAN,
-    //HUMAN_CIVILIAN,
-    //IRON,
-    WOOD,
-    IRON,
-    GOLD,
-    FOOD,
-
-}
 public enum MATERIAL{
 	NONE, //0
 	CLAY, //11
@@ -559,51 +547,6 @@ public enum MODE {
     ALERT,
     STEALTH
 }
-public enum STORYLINE {
-    THE_DYING_KING,
-}
-public enum CHARACTER_RELATIONSHIP{
-	FRIEND,
-    MENTOR,
-    STUDENT,
-    FATHER,
-    MOTHER,
-    BROTHER,
-    SISTER,
-    SON,
-    DAUGHTER,
-    LOVER,
-    HUSBAND,
-    WIFE,
-    ENEMY,
-    RIVAL,
-    STALKER,
-    //RIVAL,
-	//FRIEND,
-	//ENEMY,
-	//SIBLING,
-	//PARENT,
-	//CHILD,
-	//LOVER,
-	//EX_LOVER,
-	//APPRENTICE,
-	//MENTOR,
-	//ACQUAINTANCE,
-}
-
-public enum CHARACTER_RELATIONSHIP_CATEGORY{
-	NEGATIVE,
-	POSITIVE,
-	FAMILIAL,
-	NEUTRAL,
-}
-
-public enum COMBAT_INTENT{
-	KILL,
-	IMPRISON,
-	DEFEAT,
-}
-
 public enum ACTION_TYPE {
     REST,
     MOVE_TO,
@@ -1229,30 +1172,29 @@ public enum POINT_OF_INTEREST_TYPE {
     TILE_OBJECT,
 }
 public enum TILE_OBJECT_TYPE {
-    SUPPLY_PILE,
-    CORPSE,
-    SMALL_ANIMAL,
-    EDIBLE_PLANT,
-    GUITAR,
-    MAGIC_CIRCLE,
-    TABLE,
-    BED,
-    ORE,
-    TREE_OBJECT,
-    FOOD,
-    DESK,
-    TOMBSTONE,
-    NONE,
-    MUSHROOM,
-    NECRONOMICON,
-    CHAOS_ORB,
-    HERMES_STATUE,
-    ANKH_OF_ANUBIS,
-    MIASMA_EMITTER,
-    WATER_WELL,
-    GENERIC_TILE_OBJECT,
-    FOOD_PILE,
-    GODDESS_STATUE,
+    SUPPLY_PILE = 0,
+    SMALL_ANIMAL = 2,
+    EDIBLE_PLANT = 3,
+    GUITAR = 4,
+    MAGIC_CIRCLE = 5,
+    TABLE = 6,
+    BED = 7,
+    ORE = 8,
+    TREE_OBJECT = 9,
+    FOOD = 10,
+    DESK = 11,
+    TOMBSTONE = 12,
+    NONE = 13,
+    MUSHROOM = 14,
+    NECRONOMICON = 15,
+    CHAOS_ORB = 16,
+    HERMES_STATUE = 17,
+    ANKH_OF_ANUBIS = 18,
+    MIASMA_EMITTER = 19,
+    WATER_WELL = 20,
+    GENERIC_TILE_OBJECT = 21,
+    FOOD_PILE = 22,
+    GODDESS_STATUE = 23,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -1545,8 +1487,8 @@ public static class Extensions {
 
     #region Tokens
     public static bool CanBeCraftedBy(this SPECIAL_TOKEN type, Character character) {
-        if (ItemManager.Instance.itemData.ContainsKey(type)) {
-            ItemData data = ItemManager.Instance.itemData[type];
+        if (TokenManager.Instance.itemData.ContainsKey(type)) {
+            ItemData data = TokenManager.Instance.itemData[type];
             if (data.canBeCraftedBy == null) {
                 return true;
             }

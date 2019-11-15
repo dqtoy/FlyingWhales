@@ -107,86 +107,17 @@ public class SkillPanelUI : MonoBehaviour {
 #endif
     }
     private void SaveSkillJson(string path) {
-        Skill newSkill = new Skill();
-
-        SetCommonData(newSkill);
-
-        //newSkill.power = int.Parse(powerInput.text);
-        //newSkill.spCost = int.Parse(spCostInput.text);
-        //newSkill.attackCategory = (ATTACK_CATEGORY) System.Enum.Parse(typeof(ATTACK_CATEGORY), attackTypeOptions.options[attackTypeOptions.value].text);
-        //newSkill.element = (ELEMENT) System.Enum.Parse(typeof(ELEMENT), elementOptions.options[elementOptions.value].text);
-
-        string jsonString = JsonUtility.ToJson(newSkill);
-
-        System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
-        writer.WriteLine(jsonString);
-        writer.Close();
-
-#if UNITY_EDITOR
-        //Re-import the file to update the reference in the editor
-        UnityEditor.AssetDatabase.ImportAsset(path);
-#endif
-        Debug.Log("Successfully saved skill at " + path);
-
-        UpdateSkillList();
+        
     }
-
-    private void SetCommonData(Skill newSkill) {
-        newSkill.skillName = skillNameInput.text;
-        //newSkill.skillCategory = SKILL_CATEGORY.CLASS;
-        newSkill.description = skillDescInput.text;
-        //newSkill.activationWeight = int.Parse(actWeightInput.text);
-        //newSkill.range = int.Parse(rangeInput.text);
-        newSkill.targetType = (TARGET_TYPE) System.Enum.Parse(typeof(TARGET_TYPE), targetTypeOptions.options[targetTypeOptions.value].text);
-        newSkill.element = (ELEMENT) System.Enum.Parse(typeof(ELEMENT), elementOptions.options[elementOptions.value].text);
-        newSkill.skillType = (SKILL_TYPE) System.Enum.Parse(typeof(SKILL_TYPE), skillTypeOptions.options[skillTypeOptions.value].text);
-
-        //newSkill.numOfRowsHit = int.Parse(cellAmountInput.text);
-        //if (newSkill.numOfRowsHit <= 0) {
-        //    newSkill.numOfRowsHit = 1;
-        //}
-        //newSkill.skillRequirements = skillComponent.skillRequirements;
-        //newSkill.allowedWeaponTypes = new WEAPON_TYPE[_allowedWeaponTypes.Count];
-        //for (int i = 0; i < _allowedWeaponTypes.Count; i++) {
-        //    newSkill.allowedWeaponTypes[i] = (WEAPON_TYPE) System.Enum.Parse(typeof(WEAPON_TYPE), _allowedWeaponTypes[i]);
-        //}
-    }
-
     public void LoadSkill() {
 #if UNITY_EDITOR
         string filePath = EditorUtility.OpenFilePanel("Select Skill", Utilities.dataPath + "Skills/", "json");
 
         if (!string.IsNullOrEmpty(filePath)) {
             string dataAsJson = File.ReadAllText(filePath);
-
-            Skill skill = JsonUtility.FromJson<Skill>(dataAsJson);
-            ClearData();
-            LoadSkillDataToUI(skill);
+          
         }
 #endif
-    }
-
-    private void LoadSkillDataToUI(Skill skill) {
-        skillNameInput.text = skill.skillName;
-        skillDescInput.text = skill.description;
-        //powerInput.text = skill.power.ToString();
-        //spCostInput.text = skill.spCost.ToString();
-        //actWeightInput.text = skill.activationWeight.ToString();
-        //rangeInput.text = skill.range.ToString();
-        //cellAmountInput.text = skill.numOfRowsHit.ToString();
-
-        //attackTypeOptions.value = GetAttackTypeIndex(skill.attackCategory);
-        elementOptions.value = GetOptionIndex(skill.element.ToString(), elementOptions);
-        targetTypeOptions.value = GetOptionIndex(skill.targetType.ToString(), targetTypeOptions);
-        skillTypeOptions.value = GetOptionIndex(skill.skillType.ToString(), skillTypeOptions);
-
-        //for (int i = 0; i < skill.allowedWeaponTypes.Length; i++) {
-        //    string weaponType = skill.allowedWeaponTypes[i].ToString();
-        //    _allowedWeaponTypes.Add(weaponType);
-        //    GameObject go = GameObject.Instantiate(weaponTypeBtnGO, contentTransform);
-        //    go.GetComponent<WeaponTypeButton>().buttonText.text = weaponType;
-        //    go.GetComponent<WeaponTypeButton>().panelName = "skill";
-        //}
     }
     private int GetOptionIndex(string name, Dropdown ddOptions) {
         for (int i = 0; i < ddOptions.options.Count; i++) {

@@ -13,9 +13,9 @@ public class SpecialToken : IPointOfInterest {
     public Character characterOwner { get; private set; }
     public LocationStructure structureLocation { get; private set; }
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
-    public int supplyValue { get { return ItemManager.Instance.itemData[specialTokenType].supplyValue; } }
-    public int craftCost { get { return ItemManager.Instance.itemData[specialTokenType].craftCost; } }
-    public int purchaseCost { get { return ItemManager.Instance.itemData[specialTokenType].purchaseCost; } }
+    public int supplyValue { get { return TokenManager.Instance.itemData[specialTokenType].supplyValue; } }
+    public int craftCost { get { return TokenManager.Instance.itemData[specialTokenType].craftCost; } }
+    public int purchaseCost { get { return TokenManager.Instance.itemData[specialTokenType].purchaseCost; } }
     public Area specificLocation { get { return gridTileLocation.structure.location; } }
     public bool isDisabledByPlayer { get; protected set; }
     public POI_STATE state { get; protected set; }

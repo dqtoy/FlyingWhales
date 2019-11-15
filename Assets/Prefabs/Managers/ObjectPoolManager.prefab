@@ -54,7 +54,6 @@ MonoBehaviour:
   UIPrefabs:
   - {fileID: 1169224389995412, guid: 098b2e337fdaee74d8c8e6db791778ce, type: 2}
   - {fileID: 1995387493181358, guid: cdfed07929227104599994075478446b, type: 2}
-  - {fileID: 1404552397919108, guid: 44606a74032cb404ca32744b5b0b1489, type: 2}
   - {fileID: 1635049517752946, guid: dd80f663ef5751843b3ef77c38facc41, type: 2}
   - {fileID: 1668576898731800, guid: e2d243a395fd9384a8973709eb9bc9b9, type: 2}
   - {fileID: 1618945397602768, guid: 2975c486214c95b4ab5eed6af62fba90, type: 2}

@@ -24,7 +24,7 @@ public class CraftItem : GoapAction {
     }
     protected override void ConstructPreconditionsAndEffects() {
         if (hasSetCraftedItem) {
-            AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = ItemManager.Instance.itemData[craftedItem].craftCost, targetPOI = actor }, HasSupply);
+            AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = TokenManager.Instance.itemData[craftedItem].craftCost, targetPOI = actor }, HasSupply);
             AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = craftedItem.ToString(), targetPOI = actor });
         }
     }
@@ -63,7 +63,7 @@ public class CraftItem : GoapAction {
 
     #region Preconditions
     private bool HasSupply() {
-        return actor.supply >= ItemManager.Instance.itemData[craftedItem].craftCost;
+        return actor.supply >= TokenManager.Instance.itemData[craftedItem].craftCost;
     }
     #endregion
 
@@ -91,7 +91,7 @@ public class CraftItem : GoapAction {
         currentState.AddLogFiller(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
         currentState.AddLogFiller(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
 
-        actor.AdjustSupply(-ItemManager.Instance.itemData[craftedItem].craftCost);
+        actor.AdjustSupply(-TokenManager.Instance.itemData[craftedItem].craftCost);
     }
     private void AfterCraftSuccess() {
         SpecialToken tool = TokenManager.Instance.CreateSpecialToken(craftedItem);

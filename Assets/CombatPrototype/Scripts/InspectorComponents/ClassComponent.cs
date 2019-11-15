@@ -19,7 +19,6 @@ public class ClassComponent : MonoBehaviour {
     //public int parryRate;
     //public int blockRate;
 
-    public List<RESOURCE> harvestResources;
     public List<TextAsset> weaponTiers;
     public List<TextAsset> armorTiers;
     public List<TextAsset> accessoryTiers;

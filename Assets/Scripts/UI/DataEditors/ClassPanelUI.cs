@@ -274,7 +274,6 @@ public class ClassPanelUI : MonoBehaviour {
         //armyCountInput.text = characterClass.armyCount.ToString();
         baseHPInput.text = characterClass.baseHP.ToString();
         hpPerLevelInput.text = characterClass.hpPerLevel.ToString();
-        recruitmentCostInput.text = characterClass.recruitmentCost.amount.ToString();
         baseAttackSpeedInput.text = characterClass.baseAttackSpeed.ToString();
         attackRangeInput.text = characterClass.attackRange.ToString();
         runSpeedModInput.text = characterClass.runSpeedMod.ToString();
@@ -290,7 +289,6 @@ public class ClassPanelUI : MonoBehaviour {
         //roleOptions.value = GetDropdownIndex(roleOptions, characterClass.roleType.ToString());
         //skillOptions.value = GetDropdownIndex(skillOptions, characterClass.skillName.ToString());
         jobTypeOptions.value = GetDropdownIndex(jobTypeOptions, characterClass.jobType.ToString());
-        recruitmentCostOptions.value = GetDropdownIndex(recruitmentCostOptions, characterClass.recruitmentCost.currency.ToString());
         for (int i = 0; i < characterClass.traitNames.Length; i++) {
             string traitName = characterClass.traitNames[i];
             _traitNames.Add(traitName);

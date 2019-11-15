@@ -70,19 +70,8 @@ public class InteractionManager : MonoBehaviour {
     }
 
     #region Intel
-    public Intel CreateNewIntel(IPointOfInterest poi) {
-        switch (poi.poiType) {
-            case POINT_OF_INTEREST_TYPE.ITEM:
-            case POINT_OF_INTEREST_TYPE.TILE_OBJECT:
-                return new TileObjectIntel(poi);
-            default:
-                return new Intel();
-        }
-    }
     public Intel CreateNewIntel(params object[] obj) {
-        if (obj[0] is GoapPlan) {
-            return new PlanIntel(obj[1] as Character, obj[0] as GoapPlan);
-        } else if (obj[0] is GoapAction) {
+        if (obj[0] is GoapAction) {
             GoapAction action = obj[0] as GoapAction;
             switch (action.goapType) {
                 case INTERACTION_TYPE.TABLE_POISON:

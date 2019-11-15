@@ -48,11 +48,6 @@ public class CharacterSim : ICharacterSim {
     private CharacterClass _characterClass;
     private CharacterBattleTracker _battleTracker;
     private CharacterBattleOnlyTracker _battleOnlyTracker;
-    private Weapon _equippedWeapon;
-    private Armor _equippedArmor;
-    private Item _equippedAccessory;
-    private Item _equippedConsumable;
-    private List<Skill> _skills;
     private List<Trait> _combatAttributes;
     //private List<CharacterAttribute> _attributes;
     //private List<BodyPart> _bodyParts;
@@ -158,14 +153,8 @@ public class CharacterSim : ICharacterSim {
     public CharacterBattleTracker battleTracker {
         get { return _battleTracker; }
     }
-    public Weapon equippedWeapon {
-        get { return _equippedWeapon; }
-    }
     public string skillName {
         get { return _skillName; }
-    }
-    public List<Skill> skills {
-        get { return _skills; }
     }
     public List<Trait> normalTraits {
         get { return _combatAttributes; }
@@ -181,7 +170,6 @@ public class CharacterSim : ICharacterSim {
     public void InitializeSim() {
         _id = Utilities.SetID(this);
         ConstructClass();
-        ConstructSkills();
         _raceSetting = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText(Utilities.dataPath + "RaceSettings/" + _raceName + ".json"));
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
         _battleTracker = new CharacterBattleTracker();
@@ -195,7 +183,6 @@ public class CharacterSim : ICharacterSim {
         //ArmyModifier();
         ResetToFullHP();
         ResetToFullSP();
-        EquipWeaponArmors();
     }
     public void SetDataFromCharacterPanelUI() {
         _name = CharacterPanelUI.Instance.nameInput.text;
@@ -218,24 +205,6 @@ public class CharacterSim : ICharacterSim {
         //_defLegs = int.Parse(CharacterPanelUI.Instance.dLegsInput.text);
         //_defHands = int.Parse(CharacterPanelUI.Instance.dHandsInput.text);
         //_defFeet = int.Parse(CharacterPanelUI.Instance.dFeetInput.text);
-    }
-    private void EquipWeaponArmors() {
-        if(!string.IsNullOrEmpty(_weaponName)) {
-            Weapon weapon = JsonUtility.FromJson<Weapon>(System.IO.File.ReadAllText(Utilities.dataPath + "Items/WEAPON/" + _weaponName + ".json"));
-            EquipItem(weapon);
-        }
-        if (!string.IsNullOrEmpty(_armorName)) {
-            Armor armor = JsonUtility.FromJson<Armor>(System.IO.File.ReadAllText(Utilities.dataPath + "Items/ARMOR/" + _armorName + ".json"));
-            EquipItem(armor);
-        }
-        if (!string.IsNullOrEmpty(_accessoryName)) {
-            Item item = JsonUtility.FromJson<Item>(System.IO.File.ReadAllText(Utilities.dataPath + "Items/ACCESSORY/" + _accessoryName + ".json"));
-            EquipItem(item);
-        }
-        if (!string.IsNullOrEmpty(_consumableName)) {
-            Item item = JsonUtility.FromJson<Item>(System.IO.File.ReadAllText(Utilities.dataPath + "Items/CONSUMABLE/" + _consumableName + ".json"));
-            EquipItem(item);
-        }
     }
 
     #region Interface
@@ -281,59 +250,12 @@ public class CharacterSim : ICharacterSim {
         _isDead = true;
         CombatSimManager.Instance.currentCombat.CharacterDeath(this);
     }
-    public void EnableDisableSkills(CombatSim combatSim) {
-        //Body part skills / general skills
-        for (int i = 0; i < this._skills.Count; i++) {
-            Skill skill = this._skills[i];
-            skill.isEnabled = true;
-            if (skill is FleeSkill) {
-                skill.isEnabled = false;
-            }
-        }
-    }
     #endregion
 
     #region Utilities
     private void ConstructClass() {
         string path = Utilities.dataPath + "CharacterClasses/" + _className + ".json";
         _characterClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText(path));
-    }
-    private void ConstructSkills() {
-        _skills = new List<Skill>();
-        string path = Utilities.dataPath + "Skills/" + _skillName + ".json";
-        Skill skill = JsonUtility.FromJson<Skill>(System.IO.File.ReadAllText(path));
-        _skills.Add(skill);
-        //string path = string.Empty;
-        //path = Utilities.dataPath + "Skills/GENERAL/";
-        //string[] directories = Directory.GetDirectories(path);
-        //for (int i = 0; i < directories.Length; i++) {
-        //    string skillType = new DirectoryInfo(directories[i]).Name;
-        //    SKILL_TYPE currSkillType = (SKILL_TYPE) System.Enum.Parse(typeof(SKILL_TYPE), skillType);
-        //    string[] files = Directory.GetFiles(directories[i], "*.json");
-        //    for (int j = 0; j < files.Length; j++) {
-        //        string dataAsJson = File.ReadAllText(files[j]);
-        //        switch (currSkillType) {
-        //            case SKILL_TYPE.ATTACK:
-        //            AttackSkill attackSkill = JsonUtility.FromJson<AttackSkill>(dataAsJson);
-        //            _skills.Add(attackSkill);
-        //            break;
-        //            case SKILL_TYPE.HEAL:
-        //            HealSkill healSkill = JsonUtility.FromJson<HealSkill>(dataAsJson);
-        //            _skills.Add(healSkill);
-        //            break;
-        //            case SKILL_TYPE.OBTAIN_ITEM:
-        //            ObtainSkill obtainSkill = JsonUtility.FromJson<ObtainSkill>(dataAsJson);
-        //            _skills.Add(obtainSkill);
-        //            break;
-        //            case SKILL_TYPE.FLEE:
-        //            break;
-        //            case SKILL_TYPE.MOVE:
-        //            MoveSkill moveSkill = JsonUtility.FromJson<MoveSkill>(dataAsJson);
-        //            _skills.Add(moveSkill);
-        //            break;
-        //        }
-        //    }
-        //}
     }
     private void AllocateStats() {
         //_attackPower = _raceSetting.attackPowerModifier;
@@ -377,90 +299,6 @@ public class CharacterSim : ICharacterSim {
     //    }
     //    _currentHP = _maxHP;
     //}
-    #endregion
-
-    #region Equipment
-    public bool EquipItem(Item item) {
-        bool hasEquipped = false;
-        if (item.itemType == ITEM_TYPE.WEAPON) {
-            Weapon weapon = item as Weapon;
-            hasEquipped = TryEquipWeapon(weapon);
-        } else if (item.itemType == ITEM_TYPE.ARMOR) {
-            Armor armor = item as Armor;
-            hasEquipped = TryEquipArmor(armor);
-        } else if (item.itemType == ITEM_TYPE.ACCESSORY) {
-            hasEquipped = TryEquipAccessory(item);
-        } else if (item.itemType == ITEM_TYPE.CONSUMABLE) {
-            hasEquipped = TryEquipConsumable(item);
-        }
-        if (hasEquipped) {
-            if (item.attributeNames != null) {
-                for (int i = 0; i < item.attributeNames.Count; i++) {
-                    Trait newCombatAttribute = TraitManager.Instance.allTraits[item.attributeNames[i]];
-                    AddCombatAttribute(newCombatAttribute);
-                }
-            }
-        }
-        return hasEquipped;
-    }
-    //Unequips an item of a character, whether it's a weapon, armor, etc.
-    public void UnequipItem(Item item) {
-        if (item.itemType == ITEM_TYPE.WEAPON) {
-            UnequipWeapon(item as Weapon);
-        } else if (item.itemType == ITEM_TYPE.ARMOR) {
-            UnequipArmor(item as Armor);
-        } else if (item.itemType == ITEM_TYPE.ACCESSORY) {
-            UnequipAccessory(item);
-        } else if (item.itemType == ITEM_TYPE.CONSUMABLE) {
-            UnequipConsumable(item);
-        }
-        if (item.attributeNames != null) {
-            for (int i = 0; i < item.attributeNames.Count; i++) {
-                Trait newCombatAttribute = TraitManager.Instance.allTraits[item.attributeNames[i]];
-                RemoveCombatAttribute(newCombatAttribute);
-            }
-        }
-    }
-    public bool TryEquipWeapon(Weapon weapon) {
-        _equippedWeapon = weapon;
-        weapon.SetEquipped(true);
-        return true;
-    }
-    public bool TryEquipArmor(Armor armor) {
-        _equippedArmor = armor;
-        armor.SetEquipped(true);
-        return true;
-    }
-    //Try to equip an accessory
-    internal bool TryEquipAccessory(Item accessory) {
-        accessory.SetEquipped(true);
-        _equippedAccessory = accessory;
-        return true;
-    }
-    //Try to equip an consumable
-    internal bool TryEquipConsumable(Item consumable) {
-        consumable.SetEquipped(true);
-        _equippedConsumable = consumable;
-        return true;
-    }
-    private void UnequipWeapon(Weapon weapon) {
-        _equippedWeapon = null;
-        weapon.SetEquipped(false);
-    }
-    private void UnequipArmor(Armor armor) {
-        _equippedArmor = null;
-        armor.SetEquipped(false);
-    }
-    //Unequips accessory of a character
-    private void UnequipAccessory(Item accessory) {
-        accessory.SetEquipped(false);
-        _equippedAccessory = null;
-    }
-    //Unequips consumable of a character
-    private void UnequipConsumable(Item consumable) {
-        consumable.SetEquipped(false);
-        _equippedConsumable = null;
-    }
     #endregion
 
     #region Attributes

@@ -32,7 +32,6 @@ public class Faction {
     public MORALITY morality { get; private set; }
     public FACTION_SIZE size { get; private set; }
     public FACTION_TYPE factionType { get; private set; }
-    public WeightedDictionary<AreaCharacterClass> additionalClassWeights { get; private set; }
     public bool isActive { get; private set; }
     public List<Log> history { get; private set; }
     public Region mainRegion { get { return ownedRegions[0]; } }
@@ -69,60 +68,8 @@ public class Faction {
         recruitableRaces = new List<RACE>();
         startingFollowers = new List<RACE>();
         history = new List<Log>();
-        //favor = new Dictionary<Faction, int>();
-        //defenderWeights = new WeightedDictionary<AreaCharacterClass>();
-        additionalClassWeights = new WeightedDictionary<AreaCharacterClass>();
         GenerateFactionRequirementForJoining();
-        //InitializeInteractions();
-#if !WORLD_CREATION_TOOL
-        //SetDailyInteractionGenerationTick();
         AddListeners();
-#endif
-    }
-
-    public Faction(FactionSaveData data) {
-        id = Utilities.SetID(this, data.factionID);
-        SetName(data.factionName);
-        SetDescription(data.factionDescription);
-        SetFactionColor(data.factionColor);
-        SetEmblem(FactionManager.Instance.GetFactionEmblem(data.emblemIndex));
-        SetMorality(data.morality);
-        SetSize(data.size);
-        SetRace(data.race.race);
-        SetLevel(data.level);
-        SetFactionActiveState(data.isActive);
-        initialLeaderClass = data.initialLeaderClass;
-        initialLeaderRace = data.initialLeaderRace;
-        initialLeaderGender = data.initialLeaderGender;
-        recruitableRaces = data.recruitableRaces;
-        startingFollowers = data.startingFollowers;
-
-        inventoryTaskWeight = FactionManager.Instance.GetRandomInventoryTaskWeight();
-        factionType = Utilities.GetRandomEnumValue<FACTION_TYPE>();
-        characters = new List<Character>();
-        ownedLandmarks = new List<BaseLandmark>();
-        relationships = new Dictionary<Faction, FactionRelationship>();
-        ownedRegions = new List<Region>();
-        if (recruitableRaces == null) {
-            recruitableRaces = new List<RACE>();
-        }
-        if (startingFollowers == null) {
-            startingFollowers = new List<RACE>();
-        }
-        history = new List<Log>();
-        //favor = new Dictionary<Faction, int>();
-        //if (data.defenderWeights != null) {
-        //    defenderWeights = new WeightedDictionary<AreaCharacterClass>(data.defenderWeights);
-        //} else {
-        //    defenderWeights = new WeightedDictionary<AreaCharacterClass>();
-        //}
-        additionalClassWeights = new WeightedDictionary<AreaCharacterClass>();
-        GenerateFactionRequirementForJoining();
-        //InitializeInteractions();
-#if !WORLD_CREATION_TOOL
-        //SetDailyInteractionGenerationTick();
-        AddListeners();
-#endif
     }
     public Faction(SaveDataFaction data) {
         this.isPlayerFaction = data.isPlayerFaction;
@@ -150,14 +97,7 @@ public class Faction {
         recruitableRaces = new List<RACE>();
         startingFollowers = new List<RACE>();
         history = new List<Log>();
-        //favor = new Dictionary<Faction, int>();
-        //defenderWeights = new WeightedDictionary<AreaCharacterClass>();
-        additionalClassWeights = new WeightedDictionary<AreaCharacterClass>();
-        //InitializeInteractions();
-#if !WORLD_CREATION_TOOL
-        //SetDailyInteractionGenerationTick();
         AddListeners();
-#endif
     }
 
     #region Virtuals
@@ -791,12 +731,6 @@ public class Faction {
     #region Morality
     public void SetMorality(MORALITY morality) {
         this.morality = morality;
-    }
-    #endregion
-
-    #region Class Weights
-    public void AddClassWeight(string className, int weight) {
-        additionalClassWeights.AddElement(new AreaCharacterClass(className), weight);
     }
     #endregion
 

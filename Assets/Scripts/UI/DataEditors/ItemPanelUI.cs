@@ -201,110 +201,13 @@ public class ItemPanelUI : MonoBehaviour {
         }
     }
     private void SaveWeapon(string path) {
-        Weapon weapon = new Weapon();
-
-        SetCommonData(weapon);
-
-        weapon.weaponType = (WEAPON_TYPE) System.Enum.Parse(typeof(WEAPON_TYPE), weaponTypeOptions.options[weaponTypeOptions.value].text);
-        weapon.SetPrefix((WEAPON_PREFIX) System.Enum.Parse(typeof(WEAPON_PREFIX), weaponPrefixOptions.options[weaponPrefixOptions.value].text));
-        weapon.SetSuffix((WEAPON_SUFFIX) System.Enum.Parse(typeof(WEAPON_SUFFIX), weaponSuffixOptions.options[weaponSuffixOptions.value].text));
-        weapon.element = (ELEMENT) System.Enum.Parse(typeof(ELEMENT), elementOptions.options[elementOptions.value].text);
-        weapon.weaponPower = float.Parse(powerInput.text);
-
-        SaveJson(weapon, path);
+        
     }
     private void SaveArmor(string path) {
-        Armor armor = new Armor();
-
-        SetCommonData(armor);
-
-        armor.armorType = (ARMOR_TYPE) System.Enum.Parse(typeof(ARMOR_TYPE), armorTypeOptions.options[armorTypeOptions.value].text);
-        armor.SetPrefix((ARMOR_PREFIX) System.Enum.Parse(typeof(ARMOR_PREFIX), armorPrefixOptions.options[armorPrefixOptions.value].text));
-        armor.SetSuffix((ARMOR_SUFFIX) System.Enum.Parse(typeof(ARMOR_SUFFIX), armorSuffixOptions.options[armorSuffixOptions.value].text));
-        armor.def = int.Parse(defInput.text);
-
-        SaveJson(armor, path);
+       
     }
     private void Save(string path) {
-        Item item = new Item();
-        SetCommonData(item);
-        SaveJson(item, path);
-    }
-    private void SetCommonData(Item newItem) {
-        newItem.itemType = (ITEM_TYPE) System.Enum.Parse(typeof(ITEM_TYPE), itemTypeOptions.options[itemTypeOptions.value].text);
-        newItem.itemName = nameInput.text;
-        newItem.description = descriptionInput.text;
-        newItem.interactString = interactionInput.text;
-        newItem.iconName = iconOptions.options[iconOptions.value].text;
-        newItem.goldCost = int.Parse(goldCostInput.text);
-        newItem.isStackable = stackableToggle.isOn;
-        newItem.attributeNames = _attributes;
-    }
-    private void SaveJson(Item item, string path) {
-        string jsonString = JsonUtility.ToJson(item);
-
-        System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
-        writer.WriteLine(jsonString);
-        writer.Close();
-
-#if UNITY_EDITOR
-        //Re-import the file to update the reference in the editor
-        UnityEditor.AssetDatabase.ImportAsset(path);
-#endif
-
-        Debug.Log("Successfully saved item at " + path);
-        UpdateAllItems();
-    }
-    private void LoadItem() {
-#if UNITY_EDITOR
-        string filePath = EditorUtility.OpenFilePanel("Select Item", Utilities.dataPath + "Items/", "json");
-
-        if (!string.IsNullOrEmpty(filePath)) {
-            ClearData();
-            string dataAsJson = File.ReadAllText(filePath);
-
-            Item item = JsonUtility.FromJson<Item>(dataAsJson);
-            if(item.itemType == ITEM_TYPE.WEAPON) {
-                Weapon weapon = JsonUtility.FromJson<Weapon>(dataAsJson);
-                LoadItemDataToUI(weapon);
-            } else if (item.itemType == ITEM_TYPE.ARMOR) {
-                Armor armor = JsonUtility.FromJson<Armor>(dataAsJson);
-                LoadItemDataToUI(armor);
-            } else {
-                LoadItemDataToUI(item);
-            }
-        }
-#endif
-    }
-    private void LoadItemDataToUI(Item item) {
-        itemTypeOptions.value = GetItemTypeIndex(item.itemType.ToString());
-        iconOptions.value = GetIconIndex(item.iconName);
-        nameInput.text = item.itemName;
-        descriptionInput.text = item.description;
-        interactionInput.text = item.interactString;
-        goldCostInput.text = item.goldCost.ToString();
-        stackableToggle.isOn = item.isStackable;
-        for (int i = 0; i < item.attributeNames.Count; i++) {
-            string attribute = item.attributeNames[i];
-            _attributes.Add(attribute);
-            GameObject go = GameObject.Instantiate(attributeBtnPrefab, attributeContentTransform);
-            go.GetComponent<AttributeBtn>().buttonText.text = attribute;
-        }
-
-        if (item.itemType == ITEM_TYPE.WEAPON) {
-            Weapon weapon = item as Weapon;
-            weaponTypeOptions.value = GetWeaponTypeIndex(weapon.weaponType.ToString());
-            weaponPrefixOptions.value = GetWeaponPrefixIndex(weapon.prefixType.ToString());
-            weaponSuffixOptions.value = GetWeaponSuffixIndex(weapon.suffixType.ToString());
-            elementOptions.value = GetElementIndex(weapon.element.ToString());
-            powerInput.text = weapon.weaponPower.ToString();
-        }else if (item.itemType == ITEM_TYPE.ARMOR) {
-            Armor armor = item as Armor;
-            armorTypeOptions.value = GetArmorTypeIndex(armor.armorType.ToString());
-            armorPrefixOptions.value = GetArmorPrefixIndex(armor.prefixType.ToString());
-            armorSuffixOptions.value = GetArmorSuffixIndex(armor.suffixType.ToString());
-            defInput.text = armor.def.ToString();
-        }
+        
     }
     private int GetItemTypeIndex(string name) {
         for (int i = 0; i < itemTypeOptions.options.Count; i++) {
@@ -411,7 +314,6 @@ public class ItemPanelUI : MonoBehaviour {
         ClearData();
     }
     public void OnClickEditItem() {
-        LoadItem();
     }
     public void OnClickSaveItem() {
         SaveItem();

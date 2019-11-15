@@ -88,9 +88,6 @@ public class PlayerUI : MonoBehaviour {
     public GameObject combatAbilityButtonPrefab;
     public List<CombatAbilityButton> currentCombatAbilityButtons { get; private set; }
 
-    [Header("Story Events")]
-    public StoryEventUI storyEventUI;
-
     [Header("Replace UI")]
     public ReplaceUI replaceUI;
 
@@ -182,8 +179,6 @@ public class PlayerUI : MonoBehaviour {
         minionLeaderPickers = new List<MinionLeaderPicker>();
         currentCombatAbilityButtons = new List<CombatAbilityButton>();
         pendingUIToShow = new List<Action>();
-
-        storyEventUI.Initialize();
 
         //LoadRoleSlots();
         LoadAttackSlot();

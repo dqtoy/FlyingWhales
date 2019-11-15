@@ -15,7 +15,6 @@ public class CombatManager : MonoBehaviour {
 
     public CharacterSetup[] baseCharacters;
 	public Color[] characterColors;
-	public Dictionary<WEAPON_TYPE, List<Skill>> weaponTypeSkills;
 
 	private List<Color> unusedColors;
 	private List<Color> usedColors;
@@ -26,7 +25,6 @@ public class CombatManager : MonoBehaviour {
         Instance = this;
     }
 	internal void Initialize(){
-        weaponTypeSkills = new Dictionary<WEAPON_TYPE, List<Skill>>();
         unusedColors = new List<Color>();
         usedColors = new List<Color>();
         newCombat.Initialize();

@@ -106,27 +106,6 @@ public class Area {
         //AddTile(coreTile);
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
     }
-    public Area(AreaSaveData data) {
-        id = Utilities.SetID(this, data.areaID);
-        //charactersAtLocation = new List<Character>();
-        SetAreaType(data.areaType);
-        itemsInArea = new List<SpecialToken>();
-        jobQueue = new JobQueue(null);
-        LoadStructures(data);
-        AssignPrison();
-
-//#if WORLD_CREATION_TOOL
-//        SetCoreTile(worldcreator.WorldCreatorManager.Instance.GetHexTile(data.coreTileID));
-//#else
-//        SetCoreTile(GridMap.Instance.GetHexTile(data.coreTileID));
-//#endif
-
-        //AddTile(Utilities.GetTilesFromIDs(data.tileData));
-        //UpdateBorderColors();
-        //GenerateDefaultRace();
-        nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
-    }
-
     public Area(SaveDataArea saveDataArea) {
         region = GridMap.Instance.GetRegionByID(saveDataArea.regionID);
         id = Utilities.SetID(this, saveDataArea.id);
@@ -753,18 +732,6 @@ public class Area {
             LandmarkManager.Instance.LoadStructureAt(this, data.structures[i]);
         }
         AssignPrison();
-    }
-    private void LoadStructures(AreaSaveData data) {
-        structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
-        if (data.structures == null) {
-            return;
-        }
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in data.structures) {
-            for (int i = 0; i < kvp.Value.Count; i++) {
-                LocationStructure currStructure = kvp.Value[i];
-                LandmarkManager.Instance.CreateNewStructureAt(this, currStructure.structureType, currStructure.isInside);
-            }
-        }
     }
     public void AddStructure(LocationStructure structure) {
         if (!structures.ContainsKey(structure.structureType)) {

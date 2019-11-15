@@ -51,26 +51,6 @@ public class FactionManager : MonoBehaviour {
     }
 
     #region Faction Generation
-    public void LoadFactions(WorldSaveData data) {
-        if (data.factionsData != null) {
-            for (int i = 0; i < data.factionsData.Count; i++) {
-                FactionSaveData currData = data.factionsData[i];
-                Faction currFaction = CreateNewFaction(currData);
-#if WORLD_CREATION_TOOL
-                worldcreator.WorldCreatorUI.Instance.editFactionsMenu.OnFactionCreated(currFaction);
-            }
-            worldcreator.WorldCreatorUI.Instance.editCharactersMenu.characterInfoEditor.LoadFactionDropdownOptions();
-#else
-            }
-#endif
-            //LoadAdditionalFactionInfo(data);
-        }
-#if !WORLD_CREATION_TOOL
-        //if (data.HasFactionlessCharacter()) {
-            CreateNeutralFaction();
-        //}
-#endif
-    }
     public void CreateNeutralFaction() {
         Faction newFaction = new Faction();
         newFaction.SetName("Neutral");
@@ -185,14 +165,6 @@ public class FactionManager : MonoBehaviour {
         if (!isPlayerFaction) {
             Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
         }
-        return newFaction;
-    }
-    public Faction CreateNewFaction(FactionSaveData data) {
-        Faction newFaction = new Faction(data);
-        allFactions.Add(newFaction);
-        LoadRelationshipsForFaction(newFaction, data);
-        //LoadFavorsForFaction(newFaction, data);
-        Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
         return newFaction;
     }
     public Faction CreateNewFaction(SaveDataFaction data) {
@@ -315,17 +287,6 @@ public class FactionManager : MonoBehaviour {
             Faction otherFaction = allFactions[i];
             if(otherFaction.id != faction.id) {
                 CreateNewRelationshipBetween(otherFaction, faction);
-            }
-        }
-    }
-    public void LoadRelationshipsForFaction(Faction faction, FactionSaveData data) {
-        for (int i = 0; i < allFactions.Count; i++) {
-            Faction otherFaction = allFactions[i];
-            if (otherFaction.id != faction.id) {
-                FactionRelationship rel = CreateNewRelationshipBetween(otherFaction, faction);
-                if (data.relationships.ContainsKey(otherFaction.id)) {
-                    rel.SetRelationshipStatus(data.relationships[otherFaction.id]);
-                }
             }
         }
     }

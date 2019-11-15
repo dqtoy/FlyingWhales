@@ -372,51 +372,6 @@ public class CharacterPanelUI : MonoBehaviour {
                 combatAttributesLbl.text +=  ", " + _allCombatAttributeNames[i];
             }
         }
-        if (!string.IsNullOrEmpty(_weaponName)) {
-            Weapon weapon = JsonUtility.FromJson<Weapon>(System.IO.File.ReadAllText(Utilities.dataPath + "Items/WEAPON/" + _weaponName + ".json"));
-            if(weapon.attributeNames != null && weapon.attributeNames.Count > 0) {
-                if(string.IsNullOrEmpty(combatAttributesLbl.text)) {
-                    combatAttributesLbl.text += weapon.attributeNames[0];
-                    for (int i = 1; i < weapon.attributeNames.Count; i++) {
-                        combatAttributesLbl.text += ", " + weapon.attributeNames[i];
-                    }
-                } else {
-                    for (int i = 0; i < weapon.attributeNames.Count; i++) {
-                        combatAttributesLbl.text += ", " + weapon.attributeNames[i];
-                    }
-                }
-            }
-        }
-        if (!string.IsNullOrEmpty(_armorName)) {
-            Armor armor = JsonUtility.FromJson<Armor>(System.IO.File.ReadAllText(Utilities.dataPath + "Items/ARMOR/" + _armorName + ".json"));
-            if (armor.attributeNames != null && armor.attributeNames.Count > 0) {
-                if (string.IsNullOrEmpty(combatAttributesLbl.text)) {
-                    combatAttributesLbl.text += armor.attributeNames[0];
-                    for (int i = 1; i < armor.attributeNames.Count; i++) {
-                        combatAttributesLbl.text += ", " + armor.attributeNames[i];
-                    }
-                } else {
-                    for (int i = 0; i < armor.attributeNames.Count; i++) {
-                        combatAttributesLbl.text += ", " + armor.attributeNames[i];
-                    }
-                }
-            }
-        }
-        if (!string.IsNullOrEmpty(_accessoryName)) {
-            Item item = JsonUtility.FromJson<Item>(System.IO.File.ReadAllText(Utilities.dataPath + "Items/ACCESSORY/" + _accessoryName + ".json"));
-            if (item.attributeNames != null && item.attributeNames.Count > 0) {
-                if (string.IsNullOrEmpty(combatAttributesLbl.text)) {
-                    combatAttributesLbl.text += item.attributeNames[0];
-                    for (int i = 1; i < item.attributeNames.Count; i++) {
-                        combatAttributesLbl.text += ", " + item.attributeNames[i];
-                    }
-                } else {
-                    for (int i = 0; i < item.attributeNames.Count; i++) {
-                        combatAttributesLbl.text += ", " + item.attributeNames[i];
-                    }
-                }
-            }
-        }
         if(string.IsNullOrEmpty(combatAttributesLbl.text)) {
             combatAttributesLbl.text = "None";
         }

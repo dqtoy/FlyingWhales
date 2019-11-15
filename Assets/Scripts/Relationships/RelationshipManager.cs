@@ -60,24 +60,6 @@ public class RelationshipManager : MonoBehaviour {
     }
     #endregion
 
-    public void LoadRelationships(WorldSaveData data) {
-        if (data.charactersData != null) {
-            for (int i = 0; i < data.charactersData.Count; i++) {
-                CharacterSaveData currData = data.charactersData[i];
-                Character currCharacter = CharacterManager.Instance.GetCharacterByID(currData.id);
-                for (int j = 0; j < currData.relationshipsData.Count; j++) {
-                    RelationshipSaveData relData = currData.relationshipsData[j];
-                    for (int k = 0; k < relData.rels.Count; k++) {
-                        RELATIONSHIP_TRAIT currRel = relData.rels[k];
-                        Character target = CharacterManager.Instance.GetCharacterByID(relData.targetCharacterID);
-                        if (!currCharacter.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, currRel)) {
-                            CreateNewRelationshipBetween(currCharacter, target, currRel);
-                        }
-                    }
-                }
-            }
-        }
-    }
     /// <summary>
     /// Add a one way relationship to a character.
     /// </summary>

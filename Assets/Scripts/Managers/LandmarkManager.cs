@@ -74,14 +74,6 @@ public class LandmarkManager : MonoBehaviour {
             landmarkDataDict.Add(data.landmarkType, data);
         }
     }
-    public void LoadLandmarks(WorldSaveData data) {
-        if (data.landmarksData != null) {
-            for (int i = 0; i < data.landmarksData.Count; i++) {
-                LandmarkSaveData landmarkData = data.landmarksData[i];
-                CreateNewLandmarkOnTile(landmarkData);
-            }
-        }
-    }
     public BaseLandmark CreateNewLandmarkOnTile(HexTile location, LANDMARK_TYPE landmarkType, bool addFeatures) {
         if (location.landmarkOnTile != null) {
             //Destroy landmark on tile
@@ -90,19 +82,6 @@ public class LandmarkManager : MonoBehaviour {
         BaseLandmark newLandmark = location.CreateLandmarkOfType(landmarkType, addFeatures);
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
         location.UpdateBuildSprites();
-        Messenger.Broadcast(Signals.LANDMARK_CREATED, newLandmark);
-        return newLandmark;
-    }
-    public BaseLandmark CreateNewLandmarkOnTile(LandmarkSaveData saveData) {
-        HexTile location = GridMap.Instance.map[saveData.locationCoordinates.X, saveData.locationCoordinates.Y];
-        if (location.landmarkOnTile != null) {
-            //Destroy landmark on tile
-            DestroyLandmarkOnTile(location);
-        }
-        BaseLandmark newLandmark = location.CreateLandmarkOfType(saveData);
-
-        newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
-        newLandmark.tileLocation.UpdateBuildSprites();
         Messenger.Broadcast(Signals.LANDMARK_CREATED, newLandmark);
         return newLandmark;
     }
@@ -143,18 +122,6 @@ public class LandmarkManager : MonoBehaviour {
             return null;
         } else {
             return new BaseLandmark(location, type);
-        }
-    }
-    public BaseLandmark CreateNewLandmarkInstance(HexTile location, LandmarkSaveData data) {
-        if (data.landmarkType.IsPlayerLandmark()) {
-            var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(data.landmarkType.ToString());
-            System.Type systemType = System.Type.GetType(typeName);
-            if (systemType != null) {
-                return System.Activator.CreateInstance(systemType, location, data) as BaseLandmark;
-            }
-            return null;
-        } else {
-            return new BaseLandmark(location, data);
         }
     }
     public BaseLandmark CreateNewLandmarkInstance(HexTile location, SaveDataLandmark data) {
@@ -708,44 +675,6 @@ public class LandmarkManager : MonoBehaviour {
     #endregion
 
     #region Areas
-    public void LoadAreas(WorldSaveData data) {
-        if (data.areaData != null) {
-            for (int i = 0; i < data.areaData.Count; i++) {
-                AreaSaveData areaData = data.areaData[i];
-                Area newArea = CreateNewArea(areaData);
-                if (newArea.areaType == AREA_TYPE.DEMONIC_INTRUSION) {
-                    continue; //player area should not be owned by any saved faction, owning of that area is done during player generation.
-                }
-                if (areaData.ownerID != -1) {
-                    Faction owner = FactionManager.Instance.GetFactionBasedOnID(areaData.ownerID);
-                    if (owner != null) {
-#if WORLD_CREATION_TOOL
-                        OwnArea(owner, owner.raceType, newArea);
-#endif
-#if !WORLD_CREATION_TOOL
-                        if (owner.isActive) {
-                            //OwnRegion(owner, owner.race, newArea);
-                        }
-                        else {
-                            Faction neutralFaction = FactionManager.Instance.neutralFaction;
-                            if (neutralFaction != null) {
-                                //neutralFaction.AddToOwnedRegions(newArea); //this will add area to the neutral factions owned area list, but the area's owner will still be null
-                            }
-                        }
-#endif
-                    }
-                }
-#if !WORLD_CREATION_TOOL
-                else {
-                    Faction neutralFaction = FactionManager.Instance.neutralFaction;
-                    if (neutralFaction != null) {
-                        //neutralFaction.AddToOwnedRegions(newArea); //this will add area to the neutral factions owned area list, but the area's owner will still be null
-                    }
-                }
-#endif
-            }
-        }
-    }
     public AreaData GetAreaData(AREA_TYPE areaType) {
         for (int i = 0; i < areaData.Count; i++) {
             AreaData currData = areaData[i];
@@ -774,18 +703,6 @@ public class LandmarkManager : MonoBehaviour {
         allAreas.Remove(area);
         //Messenger.Broadcast(Signals.AREA_DELETED, area);
     }
-    public Area CreateNewArea(AreaSaveData data) {
-        Area newArea = new Area(data);
-        if (locationPortraits.ContainsKey(newArea.areaType)) {
-            newArea.SetLocationPortrait(locationPortraits[newArea.areaType]);
-        }
-#if !WORLD_CREATION_TOOL
-        GenerateAreaMap(newArea);
-#endif
-        Messenger.Broadcast(Signals.AREA_CREATED, newArea);
-        allAreas.Add(newArea);
-        return newArea;
-    }
     public Area CreateNewArea(SaveDataArea saveDataArea) {
         Area newArea = new Area(saveDataArea);
 
@@ -808,9 +725,6 @@ public class LandmarkManager : MonoBehaviour {
         allAreas.Add(newArea);
         return newArea;
     }
-    //private bool hasPendingMapGenerationJob = false;
-    //private Area pendingAreaMap;
-    //private JobHandle pendingJob;
     public void GenerateAreaMap(Area area, bool doMultiThread = true) {
         GameObject areaMapGO = GameObject.Instantiate(innerStructurePrefab, areaMapsParent);
         AreaInnerTileMap areaMap = areaMapGO.GetComponent<AreaInnerTileMap>();

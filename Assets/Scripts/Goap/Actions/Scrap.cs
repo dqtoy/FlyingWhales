@@ -25,7 +25,7 @@ public class Scrap : GoapAction {
     }
     protected override void ConstructPreconditionsAndEffects() {
         SpecialToken item = poiTarget as SpecialToken;
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = ItemManager.Instance.itemData[item.specialTokenType].supplyValue, targetPOI = actor });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = TokenManager.Instance.itemData[item.specialTokenType].supplyValue, targetPOI = actor });
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
@@ -76,11 +76,11 @@ public class Scrap : GoapAction {
         SpecialToken item = poiTarget as SpecialToken;
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         currentState.AddLogFiller(item, item.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        currentState.AddLogFiller(null, ItemManager.Instance.itemData[item.specialTokenType].supplyValue.ToString(), LOG_IDENTIFIER.STRING_1);
+        currentState.AddLogFiller(null, TokenManager.Instance.itemData[item.specialTokenType].supplyValue.ToString(), LOG_IDENTIFIER.STRING_1);
     }
     private void AfterScrapSuccess() {
         SpecialToken item = poiTarget as SpecialToken;
-        actor.AdjustSupply(ItemManager.Instance.itemData[item.specialTokenType].supplyValue);
+        actor.AdjustSupply(TokenManager.Instance.itemData[item.specialTokenType].supplyValue);
         actor.DestroyToken(item);
     }
     private void PreTargetMissing() {

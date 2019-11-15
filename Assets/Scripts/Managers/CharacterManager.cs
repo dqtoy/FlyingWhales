@@ -88,74 +88,6 @@ public class CharacterManager : MonoBehaviour {
     }
 
     #region Characters
-    public void LoadCharacters(WorldSaveData data) {
-        if (data.charactersData != null) {
-            for (int i = 0; i < data.charactersData.Count; i++) {
-                CharacterSaveData currData = data.charactersData[i];
-                Character currCharacter = CreateNewCharacter(currData);
-                Faction characterFaction = FactionManager.Instance.GetFactionBasedOnID(currData.factionID);
-                if (characterFaction != null) {
-                    //currCharacter.SetFaction(characterFaction);
-                    characterFaction.JoinFaction(currCharacter);
-                    //FactionSaveData factionData = data.GetFactionData(characterFaction.id);
-                    //if (factionData.leaderID != -1 && factionData.leaderID == currCharacter.id) {
-                    //    characterFaction.SetLeader(currCharacter);
-                    //}
-                }
-#if !WORLD_CREATION_TOOL
-                else {
-                    characterFaction = FactionManager.Instance.neutralFaction;
-                    //currCharacter.SetFaction(characterFaction);
-                    characterFaction.JoinFaction(currCharacter);
-                }
-#endif
-            }
-#if WORLD_CREATION_TOOL
-            worldcreator.WorldCreatorUI.Instance.editFactionsMenu.UpdateItems();
-#endif
-        }
-    }
-    //public void LoadCharactersInfo() {
-    //    for (int i = 0; i < allCharacters.Count; i++) {
-    //        Character currCharacter = allCharacters[i];
-    //        //CheckForHiddenDesire(currCharacter);
-    //        //CheckForIntelActions(currCharacter);
-    //        //CheckForIntelReactions(currCharacter);
-    //        //CheckForSecrets(currCharacter);
-    //    }
-    //}
-    //public void LoadCharactersInfo(WorldSaveData data) {
-    //    for (int i = 0; i < allCharacters.Count; i++) {
-    //        Character currCharacter = allCharacters[i];
-    //        CharacterSaveData saveData = data.GetCharacterSaveData(currCharacter.id);
-    //        //if (saveData != null) {
-    //        //    SetHiddenDesireForCharacter(saveData.hiddenDesire, currCharacter); //hidden desire
-    //        //    if (saveData.secrets != null) { //secrets
-    //        //        for (int j = 0; j < saveData.secrets.Count; j++) {
-    //        //            int secretID = saveData.secrets[j];
-    //        //            currCharacter.AddSecret(secretID);
-    //        //        }
-    //        //    }
-    //        //}
-    //    }
-    //}
-    //public void LoadRelationships(WorldSaveData data) {
-    //    if (data.charactersData != null) {
-    //        for (int i = 0; i < data.charactersData.Count; i++) {
-    //            CharacterSaveData currData = data.charactersData[i];
-    //            Character currCharacter = CharacterManager.Instance.GetCharacterByID(currData.id);
-    //            currCharacter.LoadRelationships(currData.relationshipsData);
-    //        }
-    //    }
-    //}
-    //public void LoadSquads(WorldSaveData data) {
-    //    if (data.squadData != null) {
-    //        for (int i = 0; i < data.squadData.Count; i++) {
-    //            SquadSaveData currData = data.squadData[i];
-    //            CreateNewSquad(currData);
-    //        }
-    //    }
-    //}
     /*
      Create a new character, given a role, class and race.
          */
@@ -200,42 +132,13 @@ public class CharacterManager : MonoBehaviour {
         } else {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
         }
-#if !WORLD_CREATION_TOOL
         newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
             newCharacter.ownParty.icon.SetPosition(homeLocation.coreTile.transform.position);
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
             homeLocation.AddCharacterToLocation(newCharacter.ownParty.owner);
         }
-        //newCharacter.AddAwareness(newCharacter);
-#endif
         newCharacter.CreateInitialTraitsByClass();
-        //newCharacter.CreateInitialTraitsByRace();
-        _allCharacters.Add(newCharacter);
-        Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
-        return newCharacter;
-    }
-    public Character CreateNewCharacter(CharacterSaveData data) {
-        Character newCharacter = new Character(data);
-        newCharacter.Initialize();
-        allCharacterLogs.Add(newCharacter, new List<string>());
-        if (data.homeRegionID != -1) {
-            Region homeRegion = GridMap.Instance.GetRegionByID(data.homeRegionID);
-            if (homeRegion != null) {
-#if !WORLD_CREATION_TOOL
-                newCharacter.ownParty.CreateIcon();
-                newCharacter.ownParty.icon.SetPosition(homeRegion.coreTile.transform.position);
-                newCharacter.MigrateHomeTo(homeRegion, null, false);
-                homeRegion.AddCharacterToLocation(newCharacter.ownParty.owner);
-#endif
-            }
-        }
-        //newCharacter.AddAwareness(newCharacter);
-
-        if (data.level != 0) {
-            newCharacter.SetLevel(data.level);
-        }
-
         _allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
