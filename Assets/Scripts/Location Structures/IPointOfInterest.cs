@@ -32,7 +32,9 @@ public interface IPointOfInterest : ITraitable{
     bool IsAvailable();
     bool RemoveJobTargettingThis(JobQueueItem job);
     LocationGridTile GetNearestUnoccupiedTileFromThis();
-    List<GoapAction> AdvertiseActionsToActor(Character actor, Dictionary<INTERACTION_TYPE, object[]> otherData);
+    GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost);
+    List<GoapNode> AdvertiseActionsToActor(Character actor, GoapEffect precondition, Dictionary<INTERACTION_TYPE, object[]> otherData, int level);
+    bool CanAdvertiseActionsToActor(Character actor, GoapAction action, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost);
     void AdjustHP(int amount, bool triggerDeath = false, object source = null);
     void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary);
     bool IsValidCombatTarget();

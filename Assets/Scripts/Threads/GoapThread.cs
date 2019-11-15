@@ -12,9 +12,9 @@ public class GoapThread : Multithread {
     public bool isPriority { get; private set; }
     public bool isPersonalPlan { get; private set; }
     public GOAP_CATEGORY category { get; private set; }
-    public List<IPointOfInterest> characterTargetsAwareness { get; private set; }
+    //public List<IPointOfInterest> characterTargetsAwareness { get; private set; }
     public GoapPlanJob job { get; private set; }
-    public bool allowDeadTargets { get; private set; }
+    //public bool allowDeadTargets { get; private set; }
     //public List<INTERACTION_TYPE> actorAllowedActions { get; private set; }
     //public List<GoapAction> usableActions { get; private set; }
     public string log { get; private set; }
@@ -23,84 +23,84 @@ public class GoapThread : Multithread {
     //For recalculation
     public GoapPlan recalculationPlan;
 
-    public GoapThread(Character actor, IPointOfInterest target, GoapEffect goalEffect, GOAP_CATEGORY category, bool isPriority, List<IPointOfInterest> characterTargetsAwareness
-        , bool isPersonalPlan, GoapPlanJob job, bool allowDeadTargets) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
+    public GoapThread(Character actor, IPointOfInterest target, GoapEffect goalEffect, GOAP_CATEGORY category, bool isPriority
+        , bool isPersonalPlan, GoapPlanJob job) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
         this.recalculationPlan = null;
         this.actor = actor;
         this.target = target;
         this.goalEffect = goalEffect;
         this.isPriority = isPriority;
-        this.characterTargetsAwareness = characterTargetsAwareness;
+        //this.characterTargetsAwareness = characterTargetsAwareness;
         //this.actorAllowedActions = actorAllowedActions;
         //this.usableActions = usableActions;
         this.isPersonalPlan = isPersonalPlan;
         this.category = category;
         this.job = job;
-        this.allowDeadTargets = allowDeadTargets;
+        //this.allowDeadTargets = allowDeadTargets;
     }
-    public GoapThread(Character actor, IPointOfInterest target, GoapEffect goalEffect, GOAP_CATEGORY category, bool isPriority, List<IPointOfInterest> characterTargetsAwareness
-        , bool isPersonalPlan, GoapPlanJob job, bool allowDeadTargets, Dictionary<INTERACTION_TYPE, object[]> otherData = null) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
+    public GoapThread(Character actor, IPointOfInterest target, GoapEffect goalEffect, GOAP_CATEGORY category, bool isPriority
+        , bool isPersonalPlan, GoapPlanJob job, Dictionary<INTERACTION_TYPE, object[]> otherData = null) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
         this.recalculationPlan = null;
         this.actor = actor;
         this.target = target;
         this.goalEffect = goalEffect;
         this.isPriority = isPriority;
-        this.characterTargetsAwareness = characterTargetsAwareness;
+        //this.characterTargetsAwareness = characterTargetsAwareness;
         //this.actorAllowedActions = actorAllowedActions;
         //this.usableActions = usableActions;
         this.isPersonalPlan = isPersonalPlan;
         this.category = category;
         this.job = job;
-        this.allowDeadTargets = allowDeadTargets;
+        //this.allowDeadTargets = allowDeadTargets;
         this.otherData = otherData;
     }
-    public GoapThread(Character actor, IPointOfInterest target, GoapAction goalAction, GOAP_CATEGORY category, bool isPriority, List<IPointOfInterest> characterTargetsAwareness
-        , bool isPersonalPlan, GoapPlanJob job, bool allowDeadTargets) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
+    public GoapThread(Character actor, IPointOfInterest target, GoapAction goalAction, GOAP_CATEGORY category, bool isPriority
+        , bool isPersonalPlan, GoapPlanJob job) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
         this.recalculationPlan = null;
         this.actor = actor;
         this.target = target;
         this.goalAction = goalAction;
         this.isPriority = isPriority;
-        this.characterTargetsAwareness = characterTargetsAwareness;
+        //this.characterTargetsAwareness = characterTargetsAwareness;
         //this.actorAllowedActions = actorAllowedActions;
         //this.usableActions = usableActions;
         this.isPersonalPlan = isPersonalPlan;
         this.category = category;
         this.job = job;
-        this.allowDeadTargets = allowDeadTargets;
+        //this.allowDeadTargets = allowDeadTargets;
     }
-    public GoapThread(Character actor, INTERACTION_TYPE goalType, GOAP_CATEGORY category, bool isPriority, List<IPointOfInterest> characterTargetsAwareness
-        , bool isPersonalPlan, GoapPlanJob job, bool allowDeadTargets, Dictionary<INTERACTION_TYPE, object[]> otherData = null) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
+    public GoapThread(Character actor, INTERACTION_TYPE goalType, GOAP_CATEGORY category, bool isPriority
+        , bool isPersonalPlan, GoapPlanJob job, Dictionary<INTERACTION_TYPE, object[]> otherData = null) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
         this.recalculationPlan = null;
         this.actor = actor;
         this.goalType = goalType;
         this.isPriority = isPriority;
-        this.characterTargetsAwareness = characterTargetsAwareness;
+        //this.characterTargetsAwareness = characterTargetsAwareness;
         //this.actorAllowedActions = actorAllowedActions;
         //this.usableActions = usableActions;
         this.isPersonalPlan = isPersonalPlan;
         this.category = category;
         this.job = job;
-        this.allowDeadTargets = allowDeadTargets;
+        //this.allowDeadTargets = allowDeadTargets;
         this.otherData = otherData;
     }
-    public GoapThread(Character actor, INTERACTION_TYPE goalType, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority, List<IPointOfInterest> characterTargetsAwareness
-        , bool isPersonalPlan, GoapPlanJob job, bool allowDeadTargets, Dictionary<INTERACTION_TYPE, object[]> otherData = null) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
+    public GoapThread(Character actor, INTERACTION_TYPE goalType, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority
+        , bool isPersonalPlan, GoapPlanJob job, Dictionary<INTERACTION_TYPE, object[]> otherData = null) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
         this.recalculationPlan = null;
         this.actor = actor;
         this.target = target;
         this.goalType = goalType;
         this.isPriority = isPriority;
-        this.characterTargetsAwareness = characterTargetsAwareness;
+        //this.characterTargetsAwareness = characterTargetsAwareness;
         this.isPersonalPlan = isPersonalPlan;
         this.category = category;
         this.job = job;
-        this.allowDeadTargets = allowDeadTargets;
+        //this.allowDeadTargets = allowDeadTargets;
         this.otherData = otherData;
     }
     public GoapThread(Character actor, GoapPlan currentPlan) {//, List<GoapAction> usableActions
@@ -134,62 +134,93 @@ public class GoapThread : Multithread {
         }
     }
     private void CreateNewPlan() {
+        //TODO: Can be further optimized? No longer pool usable actions, instead check requirements upon building plan?
         log = "-----------------RECEIVING NEW PLAN FROM OTHER THREAD OF " + actor.name + " WITH TARGET " + target?.name ?? "None" + " (" + actor.specificLocation.name + ")-----------------------";
         if (goalType != INTERACTION_TYPE.NONE) {
             log += "\nGOAL: "  + goalType.ToString();
         } else {
-            log += "\nGOAL: " + goalEffect.conditionType.ToString() + " - " + goalEffect.conditionString() + ", target: " + goalEffect.targetPOI.ToString();
+            log += "\nGOAL: " + goalEffect.conditionType.ToString() + " - " + goalEffect.conditionKey + ", target: " + goalEffect.target.ToString();
         }
-       
 
-        //List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfCharacter(actor);
-        List<GoapAction> usableActions = new List<GoapAction>();
-
-        //Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> orderedAwareness = actor.OrderAwarenessByStructure();
-        Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = actor.awareness;
-        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> kvp in awareness) {
-            if (kvp.Key == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                for (int i = 0; i < kvp.Value.Count; i++) {
-                    Character character = kvp.Value[i] as Character;
-                    if (character.isDead) {
-                        //kvp.Value.RemoveAt(i);
-                        //i--;
-                        if (allowDeadTargets) {
-                            //if dead targets are allowed, advertise actions from dead targets
-                            List<GoapAction> awarenessActions = character.AdvertiseActionsToActorFromDeadCharacter(actor, otherData);
-                            if (awarenessActions != null && awarenessActions.Count > 0) {
-                                usableActions.AddRange(awarenessActions);
-                            }
+        string planLog = string.Empty;
+        GoapPlan plan = null;
+        if (goalType != INTERACTION_TYPE.NONE) {
+            //provided goal type
+            plan = actor.planner.PlanActions(target, InteractionManager.Instance.goapActionData[goalType], category, isPersonalPlan, ref planLog, job);
+        } else if (goalAction != null) {
+            //provided goal action
+            plan = actor.planner.PlanActions(target, goalAction, category, isPersonalPlan, ref planLog, job);
+        } else {
+            //default
+            plan = actor.planner.PlanActions(target, goalEffect, category, isPersonalPlan, ref planLog, job);
+        }
+        if(plan != null) {
+            log += "\nGENERATED PLAN: ";
+            for (int i = 0; i < plan.allNodes.Count; i++) {
+                JobNode jobNode = plan.allNodes[i];
+                log += "\n" + (i + 1) + ".";
+                if(jobNode.singleNode != null) {
+                    ActualGoapNode node = jobNode.singleNode;
+                    log += " (" + node.cost + ") " + node.action.goapName + " - " + node.poiTarget.name;
+                } else {
+                    for (int j = 0; j < jobNode.multiNode.Length; j++) {
+                        ActualGoapNode node = jobNode.multiNode[j];
+                        if(j > 0) {
+                            log += ",";
                         }
-                    } else {
-                        if (character.specificLocation == actor.specificLocation || character == actor || actor.IsPOIInCharacterAwarenessList(character, characterTargetsAwareness)) {
-                            List<GoapAction> awarenessActions = character.AdvertiseActionsToActor(actor, otherData);
-                            if (awarenessActions != null && awarenessActions.Count > 0) {
-                                usableActions.AddRange(awarenessActions);
-                            }
-                        }
-                    }
-                }
-            } else if (kvp.Key == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-                List<IPointOfInterest> shuffledPOIs = Utilities.Shuffle(kvp.Value);
-                for (int i = 0; i < shuffledPOIs.Count; i++) {
-                    IPointOfInterest currAwareness = shuffledPOIs[i];
-                    if (currAwareness.gridTileLocation != null && currAwareness.gridTileLocation.structure != null) {
-                        List<GoapAction> awarenessActions = currAwareness.AdvertiseActionsToActor(actor, otherData);
-                        if (awarenessActions != null && awarenessActions.Count > 0) {
-                            usableActions.AddRange(awarenessActions);
-                        }
-                    }
-                }
-            } else {
-                for (int i = 0; i < kvp.Value.Count; i++) {
-                    List<GoapAction> awarenessActions = kvp.Value[i].AdvertiseActionsToActor(actor, otherData);
-                    if (awarenessActions != null && awarenessActions.Count > 0) {
-                        usableActions.AddRange(awarenessActions);
+                        log += " (" + node.cost + ") " + node.action.goapName + " - " + node.poiTarget.name;
                     }
                 }
             }
+            createdPlan = plan;
+        } else {
+            log += "\nNO PLAN WAS GENERATED! End goap...";
         }
+        //Dictionary<IPointOfInterest, List<GoapAction>> usableActions = new Dictionary<IPointOfInterest, List<GoapAction>>();
+        //Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = actor.awareness;
+        //foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> kvp in awareness) {
+        //    if (kvp.Key == POINT_OF_INTEREST_TYPE.CHARACTER) {
+        //        for (int i = 0; i < kvp.Value.Count; i++) {
+        //            Character character = kvp.Value[i] as Character;
+        //            if (character.isDead) {
+        //                //kvp.Value.RemoveAt(i);
+        //                //i--;
+        //                if (allowDeadTargets) {
+        //                    //if dead targets are allowed, advertise actions from dead targets
+        //                    List<GoapAction> awarenessActions = character.AdvertiseActionsToActorFromDeadCharacter(actor, otherData);
+        //                    if (awarenessActions != null && awarenessActions.Count > 0) {
+        //                        usableActions.AddRange(awarenessActions);
+        //                    }
+        //                }
+        //            } else {
+        //                if (character.specificLocation == actor.specificLocation || character == actor) { //|| actor.IsPOIInCharacterAwarenessList(character, characterTargetsAwareness)
+        //                    List<GoapAction> awarenessActions = character.AdvertiseActionsToActor(actor, otherData);
+        //                    if (awarenessActions != null && awarenessActions.Count > 0) {
+        //                        usableActions.AddRange(awarenessActions);
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    } else if (kvp.Key == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+        //        List<IPointOfInterest> shuffledPOIs = Utilities.Shuffle(kvp.Value);
+        //        for (int i = 0; i < shuffledPOIs.Count; i++) {
+        //            IPointOfInterest currAwareness = shuffledPOIs[i];
+        //            if (currAwareness.gridTileLocation != null && currAwareness.gridTileLocation.structure != null) {
+        //                List<GoapAction> awarenessActions = currAwareness.AdvertiseActionsToActor(actor, otherData);
+        //                if (awarenessActions != null && awarenessActions.Count > 0) {
+        //                    usableActions.AddRange(awarenessActions);
+        //                }
+        //            }
+        //        }
+        //    } else {
+        //        for (int i = 0; i < kvp.Value.Count; i++) {
+        //            List<GoapAction> awarenessActions = kvp.Value[i].AdvertiseActionsToActor(actor, otherData);
+        //            if (awarenessActions != null && awarenessActions.Count > 0) {
+        //                AddToListOfActionsToUsable(target, awarenessActions, usableActions);
+        //            }
+        //        }
+        //    }
+        //}
 
         ////other data handling
         //if (otherData != null) {
@@ -230,134 +261,205 @@ public class GoapThread : Multithread {
         //    log += "\nNO OTHER DATA";
         //}
 
-        string usableLog = "\nUSABLE ACTIONS: ";
-        List<GoapPlan> allPlans = new List<GoapPlan>();
-        if (job != null && job.planConstructor != null) {
-            GoapPlan plan = job.planConstructor.Invoke();
-            if (plan != null) {
-                allPlans.Add(plan);
-                plan.SetListOfCharacterAwareness(characterTargetsAwareness);
-            }
-        } else if (goalType != INTERACTION_TYPE.NONE) {
-            //provided goal type
-            if (target == null) {
-                for (int i = 0; i < usableActions.Count; i++) {
-                    if (i > 0) {
-                        usableLog += ", ";
-                    }
-                    usableLog += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
-                    string planLog = string.Empty;
-                    if (usableActions[i].goapType == goalType) {
-                        GoapPlan plan = actor.planner.PlanActions(usableActions[i].poiTarget, usableActions[i], usableActions, category, isPersonalPlan, ref planLog, job);
-                        if (plan != null) {
-                            allPlans.Add(plan);
-                            plan.SetListOfCharacterAwareness(characterTargetsAwareness);
-                        }
-                    }
-                    //log += planLog;
-                }
-            } else {
-                for (int i = 0; i < usableActions.Count; i++) {
-                    if (i > 0) {
-                        usableLog += ", ";
-                    }
-                    usableLog += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
-                    if (usableActions[i].goapType == goalType && usableActions[i].poiTarget == target) {
-                        string planLog = string.Empty;
-                        GoapPlan plan = actor.planner.PlanActions(usableActions[i].poiTarget, usableActions[i], usableActions, category, isPersonalPlan, ref planLog, job);
-                        if (plan != null) {
-                            allPlans.Add(plan);
-                            plan.SetListOfCharacterAwareness(characterTargetsAwareness);
-                        }
-                        //log += planLog;
-                    }
-                }
-            }
-        } else if (goalAction != null) {
-            //provided goal action
-            for (int i = 0; i < usableActions.Count; i++) {
-                if (i > 0) {
-                    usableLog += ", ";
-                }
-                usableLog += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
-            }
-            string planLog = string.Empty;
-            GoapPlan plan = actor.planner.PlanActions(target, goalAction, usableActions, category, isPersonalPlan, ref planLog, job);
-            if (plan != null) {
-                allPlans.Add(plan);
-                plan.SetListOfCharacterAwareness(characterTargetsAwareness);
-            }
-            //log += planLog;
-        } else {
-            //default
-            for (int i = 0; i < usableActions.Count; i++) {
-                if (i > 0) {
-                    usableLog += ", ";
-                }
-                usableLog += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
-                if (usableActions[i].WillEffectsSatisfyPrecondition(goalEffect)) {
-                    usableLog += "(GOAL EFFECT SATISFIED!)";
-                    if (job != null && job.forcedActions.Count > 0) {
-                        bool satisfiedForcedActions = true;
-                        ForcedActionsComparer comparer = new ForcedActionsComparer();
-                        foreach (KeyValuePair<GoapEffect, INTERACTION_TYPE> kvp in job.forcedActions) {
-                            if (comparer.Equals(kvp.Key, goalEffect)) {
-                                if (kvp.Value != usableActions[i].goapType) {
-                                    satisfiedForcedActions = false;
-                                    break;
-                                }
-                            }
-                        }
-                        if (satisfiedForcedActions) {
-                            string planLog = string.Empty;
-                            GoapPlan plan = actor.planner.PlanActions(target, usableActions[i], usableActions, category, isPersonalPlan, ref planLog, job);
-                            if (plan != null) {
-                                allPlans.Add(plan);
-                                plan.SetListOfCharacterAwareness(characterTargetsAwareness);
-                            }
-                            //log += planLog;
-                        }
-                    } else {
-                        string planLog = string.Empty;
-                        GoapPlan plan = actor.planner.PlanActions(target, usableActions[i], usableActions, category, isPersonalPlan, ref planLog, job);
-                        if (plan != null) {
-                            allPlans.Add(plan);
-                            plan.SetListOfCharacterAwareness(characterTargetsAwareness);
-                        }
-                        //log += planLog;
-                        //Debug.Log(planLog);
-                    }
-                }
-            }
-        }
+        //string usableLog = "\nUSABLE ACTIONS: ";
+        //List<GoapPlan> allPlans = new List<GoapPlan>();
+        ////if (job != null && job.planConstructor != null) {
+        ////    GoapPlan plan = job.planConstructor.Invoke();
+        ////    if (plan != null) {
+        ////        allPlans.Add(plan);
+        ////        plan.SetListOfCharacterAwareness(characterTargetsAwareness);
+        ////    }
+        ////} else 
+        //if (goalType != INTERACTION_TYPE.NONE) {
+        //    //provided goal type
+        //    if (target == null) {
+        //        foreach (KeyValuePair<IPointOfInterest, List<GoapAction>> kvp in usableActions) {
+        //            IPointOfInterest poiTarget = kvp.Key;
+        //            for (int i = 0; i < kvp.Value.Count; i++) {
+        //                GoapAction action = kvp.Value[i];
+        //                if (i > 0) {
+        //                    usableLog += ", ";
+        //                }
+        //                usableLog += action.goapName + " (" + poiTarget.name + ")";
+        //                string planLog = string.Empty;
+        //                if (action.goapType == goalType) {
+        //                    GoapPlan plan = actor.planner.PlanActions(poiTarget, action, usableActions, category, isPersonalPlan, ref planLog, job);
+        //                    if (plan != null) {
+        //                        allPlans.Add(plan);
+        //                        //plan.SetListOfCharacterAwareness(characterTargetsAwareness);
+        //                    }
+        //                }
+        //                //log += planLog;
+        //            }
+        //        }
+        //        //for (int i = 0; i < usableActions.Count; i++) {
+        //        //    if (i > 0) {
+        //        //        usableLog += ", ";
+        //        //    }
+        //        //    usableLog += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
+        //        //    string planLog = string.Empty;
+        //        //    if (usableActions[i].goapType == goalType) {
+        //        //        GoapPlan plan = actor.planner.PlanActions(usableActions[i].poiTarget, usableActions[i], usableActions, category, isPersonalPlan, ref planLog, job);
+        //        //        if (plan != null) {
+        //        //            allPlans.Add(plan);
+        //        //            //plan.SetListOfCharacterAwareness(characterTargetsAwareness);
+        //        //        }
+        //        //    }
+        //        //    //log += planLog;
+        //        //}
+        //    } else {
+        //        foreach (KeyValuePair<IPointOfInterest, List<GoapAction>> kvp in usableActions) {
+        //            IPointOfInterest poiTarget = kvp.Key;
+        //            if(target == poiTarget) {
+        //                for (int i = 0; i < kvp.Value.Count; i++) {
+        //                    GoapAction action = kvp.Value[i];
+        //                    if (i > 0) {
+        //                        usableLog += ", ";
+        //                    }
+        //                    usableLog += action.goapName + " (" + poiTarget.name + ")";
+        //                    string planLog = string.Empty;
+        //                    if (action.goapType == goalType) {
+        //                        GoapPlan plan = actor.planner.PlanActions(target, action, usableActions, category, isPersonalPlan, ref planLog, job);
+        //                        if (plan != null) {
+        //                            allPlans.Add(plan);
+        //                            //plan.SetListOfCharacterAwareness(characterTargetsAwareness);
+        //                        }
+        //                    }
+        //                    //log += planLog;
+        //                }
+        //            }
+        //        }
+        //        //for (int i = 0; i < usableActions.Count; i++) {
+        //        //    if (i > 0) {
+        //        //        usableLog += ", ";
+        //        //    }
+        //        //    usableLog += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
+        //        //    if (usableActions[i].goapType == goalType && usableActions[i].poiTarget == target) {
+        //        //        string planLog = string.Empty;
+        //        //        GoapPlan plan = actor.planner.PlanActions(usableActions[i].poiTarget, usableActions[i], usableActions, category, isPersonalPlan, ref planLog, job);
+        //        //        if (plan != null) {
+        //        //            allPlans.Add(plan);
+        //        //            //plan.SetListOfCharacterAwareness(characterTargetsAwareness);
+        //        //        }
+        //        //        //log += planLog;
+        //        //    }
+        //        //}
+        //    }
+        //} else if (goalAction != null) {
+        //    //provided goal action
+        //    foreach (KeyValuePair<IPointOfInterest, List<GoapAction>> kvp in usableActions) { //For testing only, remove this
+        //        IPointOfInterest poiTarget = kvp.Key;
+        //        for (int i = 0; i < kvp.Value.Count; i++) {
+        //            GoapAction action = kvp.Value[i];
+        //            if (i > 0) {
+        //                usableLog += ", ";
 
-        log += "\nALL GENERATED PLANS: ";
-        if (allPlans.Count > 0) {
-            GoapPlan shortestPathToGoal = null;
-            for (int i = 0; i < allPlans.Count; i++) {
-                log += "\n" + (i + 1) + ". (" + allPlans[i].startingNode.runningCost + ") " + allPlans[i].startingNode.action.goapName + " - " + allPlans[i].startingNode.action.poiTarget.name + "[number of nodes = " + allPlans[i].GetNumOfNodes() + "]";
-                //for (int j = 0; j < allPlans[i].allNodes.Count; j++) {
-                //    if (j > 0) {
-                //        log += ", ";
-                //    }
-                //    log += allPlans[i].allNodes[j].action.goapName + " - " + allPlans[i].allNodes[j].action.poiTarget.name;
-                //}
-                if (shortestPathToGoal == null) {
-                    shortestPathToGoal = allPlans[i];
-                } else {
-                    if (allPlans[i].startingNode.runningCost < shortestPathToGoal.startingNode.runningCost) {
-                        shortestPathToGoal = allPlans[i];
-                    }
-                }
-            }
-            //shortestPathToGoal.SetListOfCharacterAwareness(characterTargetsAwareness);
-            shortestPathToGoal.ConstructAllNodes();
-            log += shortestPathToGoal.LogPlan();
-            createdPlan = shortestPathToGoal;
-        } else {
-            log += "\nNO PLAN WAS GENERATED! End goap...";
-        }
-        log += usableLog;
+        //            }
+        //            usableLog += action.goapName + " (" + poiTarget.name + ")";
+        //        }
+        //    }
+        //    //for (int i = 0; i < usableActions.Count; i++) {
+        //    //    if (i > 0) {
+        //    //        usableLog += ", ";
+        //    //    }
+        //    //    usableLog += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
+        //    //}
+        //    string planLog = string.Empty;
+        //    GoapPlan plan = actor.planner.PlanActions(target, goalAction, usableActions, category, isPersonalPlan, ref planLog, job);
+        //    if (plan != null) {
+        //        allPlans.Add(plan);
+        //        //plan.SetListOfCharacterAwareness(characterTargetsAwareness);
+        //    }
+        //    //log += planLog;
+        //} else {
+        //    //default
+        //    foreach (KeyValuePair<IPointOfInterest, List<GoapAction>> kvp in usableActions) {
+        //        IPointOfInterest poiTarget = kvp.Key;
+        //        for (int i = 0; i < kvp.Value.Count; i++) {
+        //            GoapAction action = kvp.Value[i];
+        //            if (i > 0) {
+        //                usableLog += ", ";
+        //            }
+        //            usableLog += action.goapName + " (" + poiTarget.name + ")";
+        //            if (action.WillEffectsSatisfyPrecondition(goalEffect)) {
+        //                usableLog += "(GOAL EFFECT SATISFIED!)";
+        //                string planLog = string.Empty;
+        //                GoapPlan plan = actor.planner.PlanActions(target, action, usableActions, category, isPersonalPlan, ref planLog, job);
+        //                if (plan != null) {
+        //                    allPlans.Add(plan);
+        //                    //plan.SetListOfCharacterAwareness(characterTargetsAwareness);
+        //                }
+        //            }
+        //        }
+        //    }
+        //    //for (int i = 0; i < usableActions.Count; i++) {
+        //    //    if (i > 0) {
+        //    //        usableLog += ", ";
+        //    //    }
+        //    //    usableLog += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
+        //    //    if (usableActions[i].WillEffectsSatisfyPrecondition(goalEffects)) {
+        //    //        usableLog += "(GOAL EFFECT SATISFIED!)";
+        //    //        if (job != null && job.forcedActions.Count > 0) {
+        //    //            bool satisfiedForcedActions = true;
+        //    //            ForcedActionsComparer comparer = new ForcedActionsComparer();
+        //    //            foreach (KeyValuePair<GoapEffect, INTERACTION_TYPE> kvp in job.forcedActions) {
+        //    //                if (comparer.Equals(kvp.Key, goalEffects)) {
+        //    //                    if (kvp.Value != usableActions[i].goapType) {
+        //    //                        satisfiedForcedActions = false;
+        //    //                        break;
+        //    //                    }
+        //    //                }
+        //    //            }
+        //    //            if (satisfiedForcedActions) {
+        //    //                string planLog = string.Empty;
+        //    //                GoapPlan plan = actor.planner.PlanActions(target, usableActions[i], usableActions, category, isPersonalPlan, ref planLog, job);
+        //    //                if (plan != null) {
+        //    //                    allPlans.Add(plan);
+        //    //                    plan.SetListOfCharacterAwareness(characterTargetsAwareness);
+        //    //                }
+        //    //                //log += planLog;
+        //    //            }
+        //    //        } else {
+        //    //            string planLog = string.Empty;
+        //    //            GoapPlan plan = actor.planner.PlanActions(target, usableActions[i], usableActions, category, isPersonalPlan, ref planLog, job);
+        //    //            if (plan != null) {
+        //    //                allPlans.Add(plan);
+        //    //                plan.SetListOfCharacterAwareness(characterTargetsAwareness);
+        //    //            }
+        //    //            //log += planLog;
+        //    //            //Debug.Log(planLog);
+        //    //        }
+        //    //    }
+        //    //}
+        //}
+
+        //log += "\nALL GENERATED PLANS: ";
+        //if (allPlans.Count > 0) {
+        //    GoapPlan shortestPathToGoal = null;
+        //    for (int i = 0; i < allPlans.Count; i++) {
+        //        log += "\n" + (i + 1) + ". (" + allPlans[i].startingNode.runningCost + ") " + allPlans[i].startingNode.action.goapName + " - " + allPlans[i].startingNode.action.poiTarget.name + "[number of nodes = " + allPlans[i].GetNumOfNodes() + "]";
+        //        //for (int j = 0; j < allPlans[i].allNodes.Count; j++) {
+        //        //    if (j > 0) {
+        //        //        log += ", ";
+        //        //    }
+        //        //    log += allPlans[i].allNodes[j].action.goapName + " - " + allPlans[i].allNodes[j].action.poiTarget.name;
+        //        //}
+        //        if (shortestPathToGoal == null) {
+        //            shortestPathToGoal = allPlans[i];
+        //        } else {
+        //            if (allPlans[i].startingNode.runningCost < shortestPathToGoal.startingNode.runningCost) {
+        //                shortestPathToGoal = allPlans[i];
+        //            }
+        //        }
+        //    }
+        //    //shortestPathToGoal.SetListOfCharacterAwareness(characterTargetsAwareness);
+        //    shortestPathToGoal.ConstructAllNodes();
+        //    log += shortestPathToGoal.LogPlan();
+        //    createdPlan = shortestPathToGoal;
+        //} else {
+        //    log += "\nNO PLAN WAS GENERATED! End goap...";
+        //}
+        //log += usableLog;
     }
     private void RecalculatePlan() {
         if (recalculationPlan.isEnd) {
@@ -439,27 +541,26 @@ public class GoapThread : Multithread {
             log += "\nNO USABLE ACTIONS! FAILED TO RECALCULATE PLAN!";
         }
     }
-    private GoapAction CreateGoapActionAndInitializeOtherData(INTERACTION_TYPE type, IPointOfInterest poiTarget) {
-        object[] data = null;
-        if (otherData != null) {
-            if (otherData.ContainsKey(type)) {
-                data = otherData[type];
-            } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-                data = otherData[INTERACTION_TYPE.NONE];
-            }
-        }
+    //private GoapAction CreateGoapActionAndInitializeOtherData(INTERACTION_TYPE type, IPointOfInterest poiTarget) {
+    //    object[] data = null;
+    //    if (otherData != null) {
+    //        if (otherData.ContainsKey(type)) {
+    //            data = otherData[type];
+    //        } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+    //            data = otherData[INTERACTION_TYPE.NONE];
+    //        }
+    //    }
 
-        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(type, actor, poiTarget);
-        if(goapAction != null) {
-            if(data != null) {
-                goapAction.InitializeOtherData(data);
-            }
-            return goapAction;
-        } else {
-            throw new System.Exception("Goap action " + type.ToString() + " is null!");
-        }
-    }
-
+    //    GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(type, actor, poiTarget);
+    //    if(goapAction != null) {
+    //        if(data != null) {
+    //            goapAction.InitializeOtherData(data);
+    //        }
+    //        return goapAction;
+    //    } else {
+    //        throw new System.Exception("Goap action " + type.ToString() + " is null!");
+    //    }
+    //}
 
     public void ReturnPlanFromGoapThread() {
         actor.ReceivePlanFromGoapThread(this);

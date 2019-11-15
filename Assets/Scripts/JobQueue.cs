@@ -177,7 +177,7 @@ public class JobQueue {
                 if (goapPlanJob.targetInteractionType != INTERACTION_TYPE.NONE) {
                     characterToDoJob.StartGOAP(goapPlanJob.targetInteractionType, goapPlanJob.targetPOI, GOAP_CATEGORY.WORK, false, null, true, goapPlanJob, goapPlanJob.otherData, goapPlanJob.allowDeadTargets);
                 } else {
-                    characterToDoJob.StartGOAP(goapPlanJob.targetEffect, goapPlanJob.targetPOI, GOAP_CATEGORY.WORK, false, null, true, goapPlanJob, goapPlanJob.otherData, goapPlanJob.allowDeadTargets);
+                    characterToDoJob.StartGOAP(goapPlanJob.goals, goapPlanJob.targetPOI, GOAP_CATEGORY.WORK, false, null, true, goapPlanJob, goapPlanJob.otherData, goapPlanJob.allowDeadTargets);
                 }
                 //if (goapPlanJob.targetPlan != null) {
                 //    characterToDoJob.AddPlan(goapPlanJob.targetPlan);
@@ -223,7 +223,7 @@ public class JobQueue {
                 if (goapPlanJob.targetInteractionType != INTERACTION_TYPE.NONE) {
                     characterToDoJob.StartGOAP(goapPlanJob.targetInteractionType, goapPlanJob.targetPOI, GOAP_CATEGORY.WORK, false, null, true, goapPlanJob, goapPlanJob.otherData, goapPlanJob.allowDeadTargets);
                 } else {
-                    characterToDoJob.StartGOAP(goapPlanJob.targetEffect, goapPlanJob.targetPOI, GOAP_CATEGORY.WORK, false, null, true, goapPlanJob, goapPlanJob.otherData, goapPlanJob.allowDeadTargets);
+                    characterToDoJob.StartGOAP(goapPlanJob.goals, goapPlanJob.targetPOI, GOAP_CATEGORY.WORK, false, null, true, goapPlanJob, goapPlanJob.otherData, goapPlanJob.allowDeadTargets);
                 }
             } else if (job is CharacterStateJob) {
                 CharacterStateJob stateJob = job as CharacterStateJob;
@@ -241,7 +241,7 @@ public class JobQueue {
         for (int i = 0; i < jobsInQueue.Count; i++) {
             if(jobsInQueue[i] is GoapPlanJob) {
                 GoapPlanJob job = jobsInQueue[i] as GoapPlanJob;
-                if (job.targetEffect.conditionType == conditionType && job.targetEffect.targetPOI == poi) {
+                if (job.goals.conditionType == conditionType && job.goals.targetPOI == poi) {
                     if (CancelJob(job)) {
                         i--;
                     }
@@ -321,7 +321,7 @@ public class JobQueue {
         for (int i = 0; i < jobsInQueue.Count; i++) {
             if (jobsInQueue[i] is GoapPlanJob) {
                 GoapPlanJob job = jobsInQueue[i] as GoapPlanJob;
-                if (job.targetEffect.conditionType == conditionType && job.targetEffect.targetPOI == poi) {
+                if (job.goals.conditionType == conditionType && job.goals.targetPOI == poi) {
                     return true;
                 }
             }
@@ -332,7 +332,7 @@ public class JobQueue {
         for (int i = 0; i < jobsInQueue.Count; i++) {
             if (jobsInQueue[i] is GoapPlanJob) {
                 GoapPlanJob job = jobsInQueue[i] as GoapPlanJob;
-                if (job.targetEffect.conditionType == conditionType && job.targetEffect.conditionKey == conditionKey && job.targetEffect.targetPOI == poi) {
+                if (job.goals.conditionType == conditionType && job.goals.conditionKey == conditionKey && job.goals.targetPOI == poi) {
                     return true;
                 }
             }

@@ -15,7 +15,7 @@ public class Character : ILeader, IPointOfInterest {
     protected int _doNotGetTired;
     protected int _doNotGetLonely;
     public int doNotRecoverHP { get; protected set; }
-    protected int _numOfWaitingForGoapThread;
+    //protected int _numOfWaitingForGoapThread;
     protected float _actRate;
     protected bool _isDead;
     protected bool _hasAlreadyAskedForPlan;
@@ -1467,7 +1467,7 @@ public class Character : ILeader, IPointOfInterest {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             if (allJobsTargettingThis[i] is GoapPlanJob) {
                 GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
-                if (job.jobType == jobType && job.targetEffect.conditionKey == conditionKey && job.assignedCharacter != otherCharacter) {
+                if (job.jobType == jobType && job.goals.conditionKey == conditionKey && job.assignedCharacter != otherCharacter) {
                     if (job.jobQueueParent.CancelJob(job, forceRemove: forceRemove)) {
                         i--;
                     }
@@ -1489,7 +1489,7 @@ public class Character : ILeader, IPointOfInterest {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             if (allJobsTargettingThis[i] is GoapPlanJob) {
                 GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
-                if (job.jobType == jobType && job.targetEffect.conditionKey == conditionKey) {
+                if (job.jobType == jobType && job.goals.conditionKey == conditionKey) {
                     if (job.jobQueueParent.CancelJob(job, forceRemove: forceRemove)) {
                         i--;
                     }
@@ -1561,7 +1561,7 @@ public class Character : ILeader, IPointOfInterest {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             if (allJobsTargettingThis[i] is GoapPlanJob) {
                 GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
-                if (job.jobType == jobType && job.targetEffect.conditionKey == conditionKey) {
+                if (job.jobType == jobType && job.goals.conditionKey == conditionKey) {
                     return true;
                 }
             }
@@ -1572,7 +1572,7 @@ public class Character : ILeader, IPointOfInterest {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             if (allJobsTargettingThis[i] is GoapPlanJob) {
                 GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
-                if (job.jobType == jobType && job.targetEffect.conditionKey == conditionKey) {
+                if (job.jobType == jobType && job.goals.conditionKey == conditionKey) {
                     return job;
                 }
             }
@@ -1595,7 +1595,7 @@ public class Character : ILeader, IPointOfInterest {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             if (allJobsTargettingThis[i] is GoapPlanJob) {
                 GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
-                if (job.jobType == jobType && job.targetEffect.conditionKey == conditionKey) {
+                if (job.jobType == jobType && job.goals.conditionKey == conditionKey) {
                     jobs.Add(job);
                 }
             }
@@ -3443,7 +3443,7 @@ public class Character : ILeader, IPointOfInterest {
                     if(target.allJobsTargettingThis[i] is GoapPlanJob) {
                         GoapPlanJob job = target.allJobsTargettingThis[i] as GoapPlanJob;
                         if(job.assignedPlan != null) {
-                            actionsToWitness.Add(job.assignedPlan.currentActualNode);
+                            actionsToWitness.Add(job.assignedPlan.currentNode);
                         }
                     }
                 }
@@ -7281,65 +7281,60 @@ public class Character : ILeader, IPointOfInterest {
     #endregion
 
     #region Point Of Interest
-    public List<GoapAction> AdvertiseActionsToActor(Character actor, Dictionary<INTERACTION_TYPE, object[]> otherData) {
-        if (poiGoapActions != null && poiGoapActions.Count > 0 && !isDead) {//&& IsAvailable()
-            bool isCharacterAvailable = IsAvailable();
-            List<GoapAction> usableActions = new List<GoapAction>();
-            for (int i = 0; i < poiGoapActions.Count; i++) {
-                INTERACTION_TYPE currType = poiGoapActions[i];
-                if (!isCharacterAvailable && !InteractionManager.Instance.CanBeAdvertisedWhileCharacterIsUnavailable(currType)) {
-                    //if this character is not available, check if the current action type can be advertised even when the character is inactive.
-                    continue; //skip
-                }
-                if (RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
-                    object[] data = null;
-                    if(otherData != null) {
-                        if (otherData.ContainsKey(currType)) {
-                            data = otherData[currType];
-                        } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-                            data = otherData[INTERACTION_TYPE.NONE];
-                        }
-                    }
+    //Returns the chosen action for the plan
+    public INTERACTION_TYPE AdvertiseActionsToActor(Character actor, GoapEffect precondition, Dictionary<INTERACTION_TYPE, object[]> otherData) {
+        INTERACTION_TYPE chosenAction = INTERACTION_TYPE.NONE;
+        if (isDead) {
 
-                    if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currType, actor, this, data)
-                        && InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)) {
-                        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
-                        if (goapAction != null) {
-                            if (data != null) {
-                                goapAction.InitializeOtherData(data);
+        } else {
+            if (poiGoapActions != null && poiGoapActions.Count > 0) {//&& IsAvailable()
+                bool isCharacterAvailable = IsAvailable();
+                //List<GoapAction> usableActions = new List<GoapAction>();
+                INTERACTION_TYPE lowestCostAction = INTERACTION_TYPE.NONE;
+                int currentLowestCost = 0;
+                for (int i = 0; i < poiGoapActions.Count; i++) {
+                    INTERACTION_TYPE currType = poiGoapActions[i];
+                    if (!isCharacterAvailable && !InteractionManager.Instance.CanBeAdvertisedWhileCharacterIsUnavailable(currType)) {
+                        //if this character is not available, check if the current action type can be advertised even when the character is inactive.
+                        continue; //skip
+                    }
+                    if (RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
+                        object[] data = null;
+                        if (otherData != null) {
+                            if (otherData.ContainsKey(currType)) {
+                                data = otherData[currType];
+                            } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+                                data = otherData[INTERACTION_TYPE.NONE];
                             }
-                            usableActions.Add(goapAction);
-                        } else {
-                            throw new System.Exception("Goap action " + currType.ToString() + " is null!");
+                        }
+                        GoapAction action = InteractionManager.Instance.goapActionData[currType];
+                        if (action.CanSatisfyRequirements(actor, this, data)
+                            && action.WillEffectsSatisfyPrecondition(precondition)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
+                            int actionCost = action.GetCost(actor, this, data);
+                            if (lowestCostAction == INTERACTION_TYPE.NONE || actionCost < currentLowestCost) {
+                                lowestCostAction = action.goapType;
+                                currentLowestCost = actionCost;
+                            }
+                            //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
+                            //if (goapAction != null) {
+                            //    if (data != null) {
+                            //        goapAction.InitializeOtherData(data);
+                            //    }
+                            //    usableActions.Add(goapAction);
+                            //} else {
+                            //    throw new System.Exception("Goap action " + currType.ToString() + " is null!");
+                            //}
                         }
                     }
-                    //if (currType == INTERACTION_TYPE.CRAFT_ITEM) {
-                    //    Craftsman craftsman = GetNormalTrait("Craftsman") as Craftsman;
-                    //    for (int j = 0; j < craftsman.craftedItemNames.Length; j++) {
-                    //        //CraftItemGoap goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this, false) as CraftItemGoap;
-                    //        //goapAction.SetCraftedItem(craftsman.craftedItemNames[j]);
-                    //        //goapAction.Initialize();
-                    //        object[] otherData = new object[] { craftsman.craftedItemNames[j] };
-                    //        if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currType, actor, this, otherData)
-                    //            && InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, otherData) {
-                    //            usableActions.Add(currType);
-                    //        }
-                    //    }
-                    //} else {
-                    //    GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
-                    //    if (goapAction == null) {
-                    //        throw new Exception("Goap action " + currType.ToString() + " is null!");
-                    //    }
-                    //    if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currType, actor, this, null)
-                    //            && InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, null)) {
-                    //        usableActions.Add(goapAction);
-                    //    }
-                    //}
                 }
+                if(lowestCostAction != INTERACTION_TYPE.NONE) {
+                    chosenAction = lowestCostAction;
+                }
+                //return usableActions;
             }
-            return usableActions;
         }
-        return null;
+        
+        return chosenAction;
     }
     public List<GoapAction> AdvertiseActionsToActorFromDeadCharacter(Character actor, Dictionary<INTERACTION_TYPE, object[]> otherData) {
         if (poiGoapActions != null && poiGoapActions.Count > 0) {
@@ -8142,7 +8137,7 @@ public class Character : ILeader, IPointOfInterest {
     public GoapPlan GetPlanWithAction(GoapAction action) {
         for (int i = 0; i < allGoapPlans.Count; i++) {
             for (int j = 0; j < allGoapPlans[i].allNodes.Count; j++) {
-                if (allGoapPlans[i].allNodes[j].action == action) {
+                if (allGoapPlans[i].allNodes[j].actionType == action) {
                     return allGoapPlans[i];
                 }
             }
