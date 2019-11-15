@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Character : ILeader, IPointOfInterest {
+public class Character : ILeader, IPointOfInterest, IJobQueueOwner {
 
     protected string _name;
     protected string _firstName;
@@ -996,16 +996,17 @@ public class Character : ILeader, IPointOfInterest {
             //else if (stateComponent.stateToDo != null) {
             //    stateComponent.SetStateToDo(null);
             //}
-            if (deathFromAction != null) { //if this character died from an action, do not cancel the action that he/she died from. so that the action will just end as normal.
-                CancelAllJobsTargettingThisCharacterExcept(deathFromAction, "target is already dead", false);
-            } else {
-                CancelAllJobsTargettingThisCharacter("target is already dead", false);
+            //if (deathFromAction != null) { //if this character died from an action, do not cancel the action that he/she died from. so that the action will just end as normal.
+            //    CancelAllJobsTargettingThisCharacterExcept(deathFromAction, "target is already dead", false);
+            //} else {
+            //    CancelAllJobsTargettingThisCharacter("target is already dead", false);
+            //}
+            CancelAllJobsTargettingThisCharacter("target is already dead", false);
+            //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target is already dead");
+            if (currentActionNode != null) {
+                currentActionNode.StopActionNode();
             }
-            Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target is already dead");
-            if (currentActionNode != null && !currentActionNode.cannotCancelAction) {
-                currentActionNode.StopAction();
-            }
-            if(jobQueue.jobsInQueue.Count > 0) {
+            if (jobQueue.jobsInQueue.Count > 0) {
                 jobQueue.CancelAllJobs();
             }
             if (currentRegion == null) {
@@ -1442,7 +1443,7 @@ public class Character : ILeader, IPointOfInterest {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
             if (job.jobType == jobType) {
-                if (job.jobQueueParent.CancelJob(job, forceRemove: forceRemove)) {
+                if (job.currentOwner.CancelJob(job, forceRemove: forceRemove)) {
                     i--;
                 }
             }
@@ -1457,18 +1458,18 @@ public class Character : ILeader, IPointOfInterest {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
             if (job.jobType == jobType && job.assignedCharacter != otherCharacter) {
-                if (job.jobQueueParent.CancelJob(job, forceRemove: forceRemove)) {
+                if (job.currentOwner.CancelJob(job, forceRemove: forceRemove)) {
                     i--;
                 }
             }
         }
     }
-    public void CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE jobType, object conditionKey, Character otherCharacter, bool forceRemove = true) {
+    public void CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE jobType, string conditionKey, Character otherCharacter, bool forceRemove = true) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             if (allJobsTargettingThis[i] is GoapPlanJob) {
                 GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
-                if (job.jobType == jobType && job.goals.conditionKey == conditionKey && job.assignedCharacter != otherCharacter) {
-                    if (job.jobQueueParent.CancelJob(job, forceRemove: forceRemove)) {
+                if (job.jobType == jobType && job.assignedCharacter != otherCharacter && job.HasGoalConditionKey(conditionKey)) {
+                    if (job.currentOwner.CancelJob(job, forceRemove: forceRemove)) {
                         i--;
                     }
                 }
@@ -1479,28 +1480,28 @@ public class Character : ILeader, IPointOfInterest {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
             if (job.jobType == jobType && job != except) {
-                if (job.jobQueueParent.CancelJob(job, forceRemove: forceRemove)) {
+                if (job.currentOwner.CancelJob(job, forceRemove: forceRemove)) {
                     i--;
                 }
             }
         }
     }
-    public void CancelAllJobsTargettingThisCharacter(JOB_TYPE jobType, object conditionKey, bool forceRemove = true) {
-        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
-            if (allJobsTargettingThis[i] is GoapPlanJob) {
-                GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
-                if (job.jobType == jobType && job.goals.conditionKey == conditionKey) {
-                    if (job.jobQueueParent.CancelJob(job, forceRemove: forceRemove)) {
-                        i--;
-                    }
-                }
-            }
-        }
-    }
+    //public void CancelAllJobsTargettingThisCharacter(JOB_TYPE jobType, object conditionKey, bool forceRemove = true) {
+    //    for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+    //        if (allJobsTargettingThis[i] is GoapPlanJob) {
+    //            GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
+    //            if (job.jobType == jobType && job.goals.conditionKey == conditionKey) {
+    //                if (job.jobQueueParent.CancelJob(job, forceRemove: forceRemove)) {
+    //                    i--;
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
     public void CancelAllJobsTargettingThisCharacter(string cause = "", bool shouldDoAfterEffect = true, bool forceRemove = true) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
-            if (job.jobQueueParent.CancelJob(job, cause, shouldDoAfterEffect, forceRemove)) {
+            if (job.currentOwner.CancelJob(job, cause, shouldDoAfterEffect, forceRemove)) {
                 i--;
             }
         }
@@ -1511,17 +1512,17 @@ public class Character : ILeader, IPointOfInterest {
     /// <param name="except">The exception.</param>
     /// <param name="cause">The cause for cancelling</param>
     /// <param name="shouldDoAfterEffect">Should the effect of the cancelled action be executed.</param>
-    public void CancelAllJobsTargettingThisCharacterExcept(GoapAction except, string cause = "", bool shouldDoAfterEffect = true, bool forceRemove = true) {
-        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
-            JobQueueItem job = allJobsTargettingThis[i];
-            if (except.parentPlan != null && except.parentPlan.job == job) {
-                continue; //skip
-            }
-            if (job.jobQueueParent.CancelJob(job, cause, shouldDoAfterEffect, forceRemove)) {
-                i--;
-            }
-        }
-    }
+    //public void CancelAllJobsTargettingThisCharacterExcept(GoapAction except, string cause = "", bool shouldDoAfterEffect = true, bool forceRemove = true) {
+    //    for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+    //        JobQueueItem job = allJobsTargettingThis[i];
+    //        if (except.parentPlan != null && except.parentPlan.job == job) {
+    //            continue; //skip
+    //        }
+    //        if (job.jobQueueParent.CancelJob(job, cause, shouldDoAfterEffect, forceRemove)) {
+    //            i--;
+    //        }
+    //    }
+    //}
     public bool HasJobTargettingThis(params JOB_TYPE[] jobTypes) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
@@ -1557,22 +1558,22 @@ public class Character : ILeader, IPointOfInterest {
         }
         return count;
     }
-    public bool HasJobTargettingThisCharacter(JOB_TYPE jobType, object conditionKey) {
+    public bool HasJobTargettingThisCharacter(JOB_TYPE jobType, string conditionKey) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             if (allJobsTargettingThis[i] is GoapPlanJob) {
                 GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
-                if (job.jobType == jobType && job.goals.conditionKey == conditionKey) {
+                if (job.jobType == jobType && job.HasGoalConditionKey(conditionKey)) {
                     return true;
                 }
             }
         }
         return false;
     }
-    public GoapPlanJob GetJobTargettingThisCharacter(JOB_TYPE jobType, object conditionKey) {
+    public GoapPlanJob GetJobTargettingThisCharacter(JOB_TYPE jobType, string conditionKey) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             if (allJobsTargettingThis[i] is GoapPlanJob) {
                 GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
-                if (job.jobType == jobType && job.goals.conditionKey == conditionKey) {
+                if (job.jobType == jobType && job.HasGoalConditionKey(conditionKey)) {
                     return job;
                 }
             }
@@ -1590,12 +1591,12 @@ public class Character : ILeader, IPointOfInterest {
         }
         return null;
     }
-    public List<GoapPlanJob> GetJobsTargettingThisCharacter(JOB_TYPE jobType, object conditionKey) {
+    public List<GoapPlanJob> GetJobsTargettingThisCharacter(JOB_TYPE jobType, string conditionKey) {
         List<GoapPlanJob> jobs = new List<GoapPlanJob>();
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             if (allJobsTargettingThis[i] is GoapPlanJob) {
                 GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
-                if (job.jobType == jobType && job.goals.conditionKey == conditionKey) {
+                if (job.jobType == jobType && job.HasGoalConditionKey(conditionKey)) {
                     jobs.Add(job);
                 }
             }
@@ -7415,7 +7416,7 @@ public class Character : ILeader, IPointOfInterest {
         //poiGoapActions.Add(INTERACTION_TYPE.EXPLORE);
         //poiGoapActions.Add(INTERACTION_TYPE.PATROL);
         //poiGoapActions.Add(INTERACTION_TYPE.TRAVEL);
-        poiGoapActions.Add(INTERACTION_TYPE.RETURN_HOME_LOCATION);
+        //poiGoapActions.Add(INTERACTION_TYPE.RETURN_HOME_LOCATION);
         //poiGoapActions.Add(INTERACTION_TYPE.HUNT_ACTION);
         poiGoapActions.Add(INTERACTION_TYPE.PLAY);
         poiGoapActions.Add(INTERACTION_TYPE.REPORT_CRIME);
@@ -7556,8 +7557,8 @@ public class Character : ILeader, IPointOfInterest {
                             goapThread.job.SetAssignedCharacter(null);
                             goapThread.job.SetAssignedPlan(null);
                             //Only remove job in queue if it is a personal job, cause if it is not, it must be returned to the queue
-                            if (!goapThread.job.jobQueueParent.isAreaOrQuestJobQueue) {
-                                goapThread.job.jobQueueParent.RemoveJobInQueue(goapThread.job);
+                            if (!goapThread.job.currentOwner.isAreaOrQuestJobQueue) {
+                                goapThread.job.currentOwner.RemoveJobInQueue(goapThread.job);
                             }
                         }
                     }
@@ -7642,9 +7643,9 @@ public class Character : ILeader, IPointOfInterest {
             } else {
                 if (goapThread.job != null) {
                     goapThread.job.SetAssignedCharacter(null);
-                    if (!goapThread.job.jobQueueParent.isAreaOrQuestJobQueue) {
+                    if (!goapThread.job.currentOwner.isAreaOrQuestJobQueue) {
                         //If no plan was generated, automatically remove job from queue if it is a personal job
-                        goapThread.job.jobQueueParent.RemoveJobInQueue(goapThread.job);
+                        goapThread.job.currentOwner.RemoveJobInQueue(goapThread.job);
                         if (goapThread.job.jobType == JOB_TYPE.REMOVE_FIRE) {
                             if (goapThread.job.targetPOI.gridTileLocation != null) { //this happens because sometimes the target that was burning is now put out.
                                 Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan");
@@ -8215,7 +8216,7 @@ public class Character : ILeader, IPointOfInterest {
     //    }
     //}
     private void CancelCurrentAction(Character target, string cause) {
-        if (this != target && !isDead && currentActionNode != null && currentActionNode.poiTarget == target && !currentActionNode.cannotCancelAction && currentActionNode.goapType != INTERACTION_TYPE.WATCH) {
+        if (this != target && !isDead && currentActionNode != null && currentActionNode.poiTarget == target && currentActionNode.goapType != INTERACTION_TYPE.WATCH) {
             RegisterLogAndShowNotifToThisCharacterOnly("Generic", "action_cancelled_cause", null, cause);
             currentActionNode.StopAction();
         }
@@ -8320,7 +8321,7 @@ public class Character : ILeader, IPointOfInterest {
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REACT_TO_SCREAM, INTERACTION_TYPE.GO_TO, characterThatScreamed);
             if (CanCurrentJobBeOverriddenByJob(job)) {
                 jobQueue.AddJobInQueue(job, false);
-                jobQueue.AssignCharacterToJobAndCancelCurrentAction(job, this);
+                jobQueue.CurrentTopPriorityIsPushedBackBy(job, this);
                 log += "\n" + name + " will go to " + characterThatScreamed.name;
             } else {
                 log += "\n" + name + " cannot react because there is still something important that he/she will do.";

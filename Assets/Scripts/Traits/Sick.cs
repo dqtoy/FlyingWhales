@@ -105,7 +105,7 @@ public class Sick : Trait {
                 JobQueue currentJobQueue = null;
                 if (owner.currentActionNode.isRoamingAction && owner.currentActionNode.parentPlan != null && owner.currentActionNode.parentPlan.job != null) {
                     currentJob = owner.currentActionNode.parentPlan.job;
-                    currentJobQueue = currentJob.jobQueueParent;
+                    currentJobQueue = currentJob.currentOwner;
                 }
                 owner.StopCurrentAction(false);
                 if (currentJob != null) {

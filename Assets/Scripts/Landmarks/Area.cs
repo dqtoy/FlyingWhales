@@ -4,7 +4,7 @@ using System.Linq;
 using System;
 using UnityEngine;
 
-public class Area {
+public class Area : IJobQueueOwner {
 
     public int id { get; private set; }
     //public bool isDead { get; private set; }
@@ -101,7 +101,7 @@ public class Area {
         //defaultRace = new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL);
         itemsInArea = new List<SpecialToken>();
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
-        jobQueue = new JobQueue(null);
+        jobQueue = new JobQueue(this);
         SetAreaType(areaType);
         //AddTile(coreTile);
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
@@ -111,7 +111,7 @@ public class Area {
         //charactersAtLocation = new List<Character>();
         SetAreaType(data.areaType);
         itemsInArea = new List<SpecialToken>();
-        jobQueue = new JobQueue(null);
+        jobQueue = new JobQueue(this);
         LoadStructures(data);
         AssignPrison();
 
@@ -1329,7 +1329,7 @@ public class Area {
     private void CheckIfJobWillExpire(JobQueueItem item) {
         if (item.assignedCharacter == null) {
             Debug.Log(GameManager.Instance.TodayLogString() + item.jobType.ToString() + " expired.");
-            item.jobQueueParent.RemoveJobInQueue(item);
+            item.currentOwner.RemoveJobInQueue(item);
         }
     }
     #endregion

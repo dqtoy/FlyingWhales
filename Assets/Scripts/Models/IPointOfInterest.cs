@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IPointOfInterest : ITraitable{
+public interface IPointOfInterest : ITraitable {
 
     int id { get; } //Be careful with how you handle this since this can duplicate depending on its poiType
     POINT_OF_INTEREST_TYPE poiType { get; }

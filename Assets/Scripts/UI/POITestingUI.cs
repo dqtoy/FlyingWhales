@@ -99,7 +99,7 @@ public class POITestingUI : MonoBehaviour {
     #region Tile Object Testing
     public void PoisonTable() {
         if (poi is Table) {
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.UNDERMINE_ENEMY, INTERACTION_TYPE.TABLE_POISON, poi);
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.UNDERMINE_ENEMY, INTERACTION_TYPE.POISON_TABLE, poi);
             UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
             Debug.LogError(poi.name + " is not a table!");

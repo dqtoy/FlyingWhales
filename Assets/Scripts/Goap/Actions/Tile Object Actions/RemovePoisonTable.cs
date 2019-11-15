@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TableRemovePoison : GoapAction {
+public class RemovePoisonTable : GoapAction {
     protected override string failActionState { get { return "Remove Poison Fail"; } }
 
-    public TableRemovePoison(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.TABLE_REMOVE_POISON, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        this.goapName = "Remove Poison";
+    public RemovePoisonTable(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.REMOVE_POISON_TABLE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+        //this.goapName = "Remove Poison";
         actionIconString = GoapActionStateDB.Work_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
     }
@@ -71,8 +71,8 @@ public class TableRemovePoison : GoapAction {
     #endregion
 }
 
-public class TableRemovePoisonData : GoapActionData {
-    public TableRemovePoisonData() : base(INTERACTION_TYPE.TABLE_REMOVE_POISON) {
+public class RemovePoisonTableData : GoapActionData {
+    public RemovePoisonTableData() : base(INTERACTION_TYPE.REMOVE_POISON_TABLE) {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Quest {
+public class Quest : IJobQueueOwner {
     public string name { get; protected set; }
     public string description { get; protected set; }
     public Faction factionOwner { get; protected set; }
@@ -14,7 +14,7 @@ public class Quest {
         this.factionOwner = factionOwner;
         this.region = region;
         name = "Quest";
-        jobQueue = new JobQueue(null);
+        jobQueue = new JobQueue(this);
         jobQueue.SetQuest(this);
     }
     public Quest(SaveDataQuest data) {
@@ -22,7 +22,7 @@ public class Quest {
         description = data.description;
         region = GridMap.Instance.GetRegionByID(data.regionID);
         factionOwner = FactionManager.Instance.GetFactionBasedOnID(data.factionOwnerID);
-        jobQueue = new JobQueue(null);
+        jobQueue = new JobQueue(this);
         jobQueue.SetQuest(this);
     }
 

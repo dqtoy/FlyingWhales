@@ -84,7 +84,7 @@ public class Vampiric : Trait {
                     job.SetIsStealth(true);
                     characterThatWillDoJob.currentActionNode.parentPlan.job.jobQueueParent.CancelJob(characterThatWillDoJob.currentActionNode.parentPlan.job);
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job, false);
-                    characterThatWillDoJob.jobQueue.AssignCharacterToJobAndCancelCurrentAction(job, characterThatWillDoJob);
+                    characterThatWillDoJob.jobQueue.CurrentTopPriorityIsPushedBackBy(job, characterThatWillDoJob);
                     return true;
                 }
             }

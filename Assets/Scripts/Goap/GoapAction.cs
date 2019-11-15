@@ -421,7 +421,7 @@ public class GoapAction {
 
     #region Utilities
     public int GetCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return (GetBaseCost(actor, target, otherData) * CostMultiplier(actor)) + GetDistanceCost(actor, target);
+        return (GetBaseCost(actor, target, otherData) * TimeOfDaysCostMultiplier(actor) * PreconditionCostMultiplier()) + GetDistanceCost(actor, target);
     }
     protected bool IsTargetMissing(Character actor, IPointOfInterest target, object[] otherData) {
         return !target.IsAvailable() || target.gridTileLocation == null || actor.specificLocation != target.specificLocation
@@ -655,11 +655,14 @@ public class GoapAction {
     //public bool IsActorAtTargetTile() {
     //    return actor.gridTileLocation == targetTile;
     //}
-    public int CostMultiplier(Character actor) {
+    public int TimeOfDaysCostMultiplier(Character actor) {
         if (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick(actor))) {
             return 1;
         }
         return 3;
+    }
+    public int PreconditionCostMultiplier() {
+        return preconditions.Count * 2;
     }
     //public void AddAwareCharacter(Character character) {
     //    if (!awareCharactersOfThisAction.Contains(character)) {
@@ -881,6 +884,9 @@ public struct GoapEffect {
         this.target = target;
     }
 
+    public override string ToString() {
+        return conditionType.ToString() + " - " + conditionKey + " - " + target.ToString();
+    }
     //public string conditionString() {
     //    if(conditionKey is string) {
     //        return conditionKey.ToString();

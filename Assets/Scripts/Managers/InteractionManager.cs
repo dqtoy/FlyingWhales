@@ -29,21 +29,21 @@ public class InteractionManager : MonoBehaviour {
         ConstructGoapActionData();
     }
 
-    public GoapAction CreateNewGoapInteraction(INTERACTION_TYPE type, Character actor, IPointOfInterest target, bool willInitialize = true) {
-        var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(type.ToString());
-        System.Type systemType = System.Type.GetType(typeName);
-        GoapAction goapAction = null;
-        if (systemType != null) {
-            goapAction = System.Activator.CreateInstance(systemType, actor, target) as GoapAction;
-        }
-        if (goapAction == null) {
-            throw new Exception("There is no goap action: " + type.ToString());
-        }
-        if (goapAction != null && willInitialize) {
-            goapAction.Initialize();
-        }
-        return goapAction;
-    }
+    //public GoapAction CreateNewGoapInteraction(INTERACTION_TYPE type, Character actor, IPointOfInterest target, bool willInitialize = true) {
+    //    var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(type.ToString());
+    //    System.Type systemType = System.Type.GetType(typeName);
+    //    GoapAction goapAction = null;
+    //    if (systemType != null) {
+    //        goapAction = System.Activator.CreateInstance(systemType, actor, target) as GoapAction;
+    //    }
+    //    if (goapAction == null) {
+    //        throw new Exception("There is no goap action: " + type.ToString());
+    //    }
+    //    if (goapAction != null && willInitialize) {
+    //        goapAction.Initialize();
+    //    }
+    //    return goapAction;
+    //}
     private void ConstructGoapActionData() {
         goapActionData = new Dictionary<INTERACTION_TYPE, GoapAction>();
         INTERACTION_TYPE[] allGoapActions = Utilities.GetEnumValues<INTERACTION_TYPE>();
@@ -86,7 +86,7 @@ public class InteractionManager : MonoBehaviour {
         } else if (obj[0] is GoapAction) {
             GoapAction action = obj[0] as GoapAction;
             switch (action.goapType) {
-                case INTERACTION_TYPE.TABLE_POISON:
+                case INTERACTION_TYPE.POISON_TABLE:
                     return new PoisonTableIntel(obj[1] as Character, obj[0] as GoapAction);
                 default:
                     return new EventIntel(obj[1] as Character, obj[0] as GoapAction);

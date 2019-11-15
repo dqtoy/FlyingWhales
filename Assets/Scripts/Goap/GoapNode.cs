@@ -4,7 +4,6 @@ using System.Linq;
 using UnityEngine;
 
 public struct GoapNode {
-
     //public GoapNode parent;
     //public int index;
     public int cost;
@@ -20,40 +19,52 @@ public struct GoapNode {
     }
 }
 public class MultiJobNode : JobNode{
-    public override ActualGoapNode singleNode {
-        get {
-            return null;
-        }
-    }
-    public override ActualGoapNode[] multiNode {
-        get {
-            return nodes;
-        }
-    }
-    public ActualGoapNode[] nodes { get; private set; }
+    public override ActualGoapNode singleNode { get { return null; } }
+    public override ActualGoapNode[] multiNode { get { return nodes; } }
+    public override int currentNodeIndex { get { return currentIndex; } }
+
+    private ActualGoapNode[] nodes;
+    private int currentIndex;
     public MultiJobNode(ActualGoapNode[] nodes) {
         this.nodes = nodes;
     }
+
+    #region Overrides
+    public override void OnAttachPlanToJob(GoapPlanJob job) {
+        for (int i = 0; i < nodes.Length; i++) {
+            nodes[i].OnAttachPlanToJob(job);
+        }
+    }
+    public override void SetNextActualNode() {
+        currentIndex += 1;
+    }
+    #endregion
 }
 public class SingleJobNode : JobNode {
-    public override ActualGoapNode singleNode {
-        get {
-            return node;
-        }
-    }
-    public override ActualGoapNode[] multiNode {
-        get {
-            return null;
-        }
-    }
-    public ActualGoapNode node { get; private set; }
+    public override ActualGoapNode singleNode { get { return node; } }
+    public override ActualGoapNode[] multiNode { get { return null;} }
+    public override int currentNodeIndex { get { return -1; } }
+
+    private ActualGoapNode node;
     public SingleJobNode(ActualGoapNode node) {
         this.node = node;
     }
+
+    #region Overrides
+    public override void OnAttachPlanToJob(GoapPlanJob job) {
+        node.OnAttachPlanToJob(job);
+    }
+    public override void SetNextActualNode() {
+        //Not Applicable
+    }
+    #endregion
 }
 public abstract class JobNode {
     public abstract ActualGoapNode singleNode { get; }
     public abstract ActualGoapNode[] multiNode { get; }
+    public abstract int currentNodeIndex { get; }
+    public abstract void OnAttachPlanToJob(GoapPlanJob job);
+    public abstract void SetNextActualNode();
 }
 
 //actual nodes located in a finished plan that is going to be executed by a character
@@ -64,7 +75,7 @@ public class ActualGoapNode {
     public AlterEgoData actorAlterEgo { get; private set; } //The alter ego the character was using while doing this action.
     public bool isStealth { get; private set; }
     public object[] otherData { get; private set; }
-    public int cost; //TODO: Remove this! For testing only
+    public int cost { get; private set; }
 
     public GoapAction action { get; private set; }
     public ACTION_STATUS actionStatus { get; private set; }
@@ -76,11 +87,12 @@ public class ActualGoapNode {
     public string currentStateName { get; private set; }
     public int currentStateDuration { get; private set; }
 
-    public ActualGoapNode(GoapAction action, Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    public ActualGoapNode(GoapAction action, Character actor, IPointOfInterest poiTarget, object[] otherData, int cost) {
         this.action = action;
         this.actor = actor;
         this.poiTarget = poiTarget;
         this.otherData = otherData;
+        this.cost = cost;
         actionStatus = ACTION_STATUS.NONE;
         Messenger.AddListener<string, ActualGoapNode>(Signals.ACTION_STATE_SET, OnActionStateSet);
     }
@@ -477,6 +489,12 @@ public class ActualGoapNode {
         //        }
         //    }
         //}
+    }
+    #endregion
+
+    #region Jobs
+    public void OnAttachPlanToJob(GoapPlanJob job) {
+        isStealth = job.isStealth;
     }
     #endregion
 }

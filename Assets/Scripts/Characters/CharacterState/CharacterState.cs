@@ -79,7 +79,7 @@ public class CharacterState {
         StopStatePerTick();
         RemoveDefaultListeners();
         if(job != null) {
-            job.jobQueueParent.RemoveJobInQueue(job);
+            job.currentOwner.RemoveJobInQueue(job);
             job.SetAssignedCharacter(null);
             job.SetAssignedState(null);
         }

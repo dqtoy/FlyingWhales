@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class TablePoison : GoapAction {
+public class PoisonTable : GoapAction {
     protected override string failActionState { get { return "Poison Fail"; } }
 
     public Character targetCharacter { get; private set; }
 
-    public TablePoison(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.TABLE_POISON, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        this.goapName = "Poison Table";
+    public PoisonTable(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.POISON_TABLE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+        //this.goapName = "Poison Table";
         actionIconString = GoapActionStateDB.Hostile_Icon;
         //_isStealthAction = true;
         SetIsStealth(true);
@@ -582,13 +582,13 @@ public class TablePoison : GoapAction {
         }
         //If Civilian, Noble or Faction Leader, create an Ask for Help Remove Poison Job.
         else if (recipient.role.roleType == CHARACTER_ROLE.NOBLE || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
-            recipient.CreateAskForHelpJob(troubledCharacter, INTERACTION_TYPE.TABLE_REMOVE_POISON, poiTarget);
+            recipient.CreateAskForHelpJob(troubledCharacter, INTERACTION_TYPE.REMOVE_POISON_TABLE, poiTarget);
         }
     }
 }
 
-public class TablePoisonData : GoapActionData {
-    public TablePoisonData() : base(INTERACTION_TYPE.TABLE_POISON) {
+public class PoisonTableData : GoapActionData {
+    public PoisonTableData() : base(INTERACTION_TYPE.POISON_TABLE) {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }

@@ -30,6 +30,16 @@ public class CharacterStateJob : JobQueueItem {
     }
 
     #region Overrides
+    public override void ProcessJob() {
+        base.ProcessJob();
+        Character characterOwner = currentOwner as Character;
+        CharacterState newState = characterOwner.stateComponent.SwitchToState(targetState);
+        if (newState != null) {
+            SetAssignedState(newState);
+        } else {
+            throw new System.Exception(characterOwner.name + " tried doing state " + targetState.ToString() + " but was unable to do so! This must not happen!");
+        }
+    }
     public override void UnassignJob(bool shouldDoAfterEffect = true, string reason = "") {
         base.UnassignJob(shouldDoAfterEffect);
         if(assignedState != null && assignedCharacter != null) {

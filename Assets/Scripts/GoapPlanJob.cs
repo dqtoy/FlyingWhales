@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GoapPlanJob : JobQueueItem {
-    public GoapEffect[] goals { get; protected set; }
+    public Precondition[] goals { get; protected set; }
     public GoapPlan assignedPlan { get; protected set; }
     //public GoapPlan targetPlan { get; protected set; }
     public IPointOfInterest targetPOI { get; protected set; }
@@ -26,13 +26,13 @@ public class GoapPlanJob : JobQueueItem {
 
     public List<object> allOtherData { get; private set; }
 
-    public GoapPlanJob(JOB_TYPE jobType, IPointOfInterest targetPOI, params GoapEffect[] goals) : base(jobType) {
+    public GoapPlanJob(JOB_TYPE jobType, IPointOfInterest targetPOI, params Precondition[] goals) : base(jobType) {
         this.goals = goals;
         this.targetPOI = targetPOI;
         //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         //allowDeadTargets = false;
     }
-    public GoapPlanJob(JOB_TYPE jobType, IPointOfInterest targetPOI, Dictionary<INTERACTION_TYPE, object[]> otherData, params GoapEffect[] goals) : base(jobType) {
+    public GoapPlanJob(JOB_TYPE jobType, IPointOfInterest targetPOI, Dictionary<INTERACTION_TYPE, object[]> otherData, params Precondition[] goals) : base(jobType) {
         this.goals = goals;
         this.targetPOI = targetPOI;
         //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
@@ -134,6 +134,21 @@ public class GoapPlanJob : JobQueueItem {
     }
 
     #region Overrides 
+    public override void ProcessJob() {
+        base.ProcessJob();
+        Character characterOwner = currentOwner as Character;
+        bool isPersonal = originalOwner.ownerType == JOB_QUEUE_OWNER.CHARACTER;
+        if (targetInteractionType != INTERACTION_TYPE.NONE) {
+            characterOwner.planner.StartGOAP(targetInteractionType, targetPOI, GOAP_CATEGORY.WORK, this, isPersonal);
+        } else {
+            for (int i = 0; i < goals.Length; i++) {
+                Precondition goal = goals[i];
+                if(!goal.CanSatisfyCondition(characterOwner, targetPOI)) {
+                    characterOwner.planner.StartGOAP(goal.goapEffect, targetPOI, GOAP_CATEGORY.WORK, this, isPersonal);
+                }
+            }
+        }
+    }
     public override void UnassignJob(bool shouldDoAfterEffect = true, string reason = "") {
         base.UnassignJob(shouldDoAfterEffect);
         if (assignedPlan != null && assignedCharacter != null) {
@@ -171,9 +186,9 @@ public class GoapPlanJob : JobQueueItem {
         }
     }
     public override bool OnRemoveJobFromQueue() {
-        if (!jobQueueParent.isAreaOrQuestJobQueue && id == jobQueueParent.character.sleepScheduleJobID && (assignedCharacter == null && assignedPlan == null)) { //|| jobQueueParent.character.currentSleepTicks == CharacterManager.Instance.defaultSleepTicks
+        if (!currentOwner.isAreaOrQuestJobQueue && id == currentOwner.owner.sleepScheduleJobID && (assignedCharacter == null && assignedPlan == null)) { //|| jobQueueParent.character.currentSleepTicks == CharacterManager.Instance.defaultSleepTicks
             //If a character's scheduled sleep job is removed from queue before even doing it, consider it as cancelled 
-            jobQueueParent.character.SetHasCancelledSleepSchedule(true);
+            currentOwner.owner.SetHasCancelledSleepSchedule(true);
         }
         if (targetPOI != null) {
             return targetPOI.RemoveJobTargettingThis(this);
@@ -203,7 +218,7 @@ public class GoapPlanJob : JobQueueItem {
     }
     public override bool CanCharacterTakeThisJob(Character character) {
         //All jobs that are personal will bypass _canTakeThisJob/_canTakeThisJobWithTarget function checkers if the character parameter is the owner of the job queue
-        if(character == jobQueueParent.character) {
+        if(character == currentOwner.owner) {
             return CanTakeJob(character);
         }
         if (canTakeThisJob != null) {
@@ -224,24 +239,6 @@ public class GoapPlanJob : JobQueueItem {
         
     }
     #endregion
-
-    public void SetAssignedPlan(GoapPlan plan) {
-        if (assignedPlan != null) {
-            assignedPlan.SetJob(null);
-        }
-        if (plan != null) {
-            plan.SetJob(this);
-        }
-        assignedPlan = plan;
-    }
-    private void OnArriveAtLocationStopMovement() {
-        if(assignedCharacter != null) {
-            assignedCharacter.OnArriveAtAreaStopMovement();
-        }
-    }
-    //public void SetWillImmediatelyBeDoneAfterReceivingPlan(bool state) {
-    //    willImmediatelyBeDoneAfterReceivingPlan = state;
-    //}
 
     #region Forced Actions
     /// <summary>
@@ -268,6 +265,23 @@ public class GoapPlanJob : JobQueueItem {
     #endregion
 
     #region Misc
+    public void SetAssignedPlan(GoapPlan plan) {
+        //if (assignedPlan != null) {
+        //    assignedPlan.SetJob(null);
+        //}
+        //if (plan != null) {
+        //    plan.SetJob(this);
+        //}
+        assignedPlan = plan;
+    }
+    private void OnArriveAtLocationStopMovement() {
+        if (assignedCharacter != null) {
+            assignedCharacter.OnArriveAtAreaStopMovement();
+        }
+    }
+    //public void SetWillImmediatelyBeDoneAfterReceivingPlan(bool state) {
+    //    willImmediatelyBeDoneAfterReceivingPlan = state;
+    //}
     public void AllowDeadTargets() {
         allowDeadTargets = true;
     }
@@ -297,6 +311,20 @@ public class GoapPlanJob : JobQueueItem {
                     return name;
                 }
         }
+    }
+    #endregion
+
+    #region Goap Effects
+    public bool HasGoalConditionKey(string key) {
+        bool hasMatchedConditionKey = false;
+        for (int i = 0; i < goals.Length; i++) {
+            GoapEffect goalEffect = goals[i];
+            if (goalEffect.conditionKey == key) {
+                hasMatchedConditionKey = true;
+                break;
+            }
+        }
+        return hasMatchedConditionKey;
     }
     #endregion
 }

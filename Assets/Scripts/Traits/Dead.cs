@@ -50,7 +50,7 @@ public class Dead : Trait {
                     //    return false;
                     //}
                 } else {
-                    if (currentJob.jobQueueParent.isAreaOrQuestJobQueue && InteractionManager.Instance.CanTakeBuryJob(characterThatWillDoJob, currentJob)) {
+                    if (currentJob.currentOwner.isAreaOrQuestJobQueue && InteractionManager.Instance.CanTakeBuryJob(characterThatWillDoJob, currentJob)) {
                         bool canBeTransfered = false;
                         if(currentJob.assignedCharacter != null && currentJob.assignedCharacter.currentActionNode != null 
                             && currentJob.assignedCharacter.currentActionNode.parentPlan != null && currentJob.assignedCharacter.currentActionNode.parentPlan.job == currentJob) {
@@ -61,9 +61,9 @@ public class Dead : Trait {
                             canBeTransfered = true;
                         }
                         if (canBeTransfered && characterThatWillDoJob.CanCurrentJobBeOverriddenByJob(currentJob)) {
-                            currentJob.jobQueueParent.CancelJob(currentJob, shouldDoAfterEffect: false, forceRemove: true);
+                            currentJob.currentOwner.CancelJob(currentJob, shouldDoAfterEffect: false, forceRemove: true);
                             characterThatWillDoJob.jobQueue.AddJobInQueue(currentJob, false);
-                            characterThatWillDoJob.jobQueue.AssignCharacterToJobAndCancelCurrentAction(currentJob, characterThatWillDoJob);
+                            characterThatWillDoJob.jobQueue.CurrentTopPriorityIsPushedBackBy(currentJob, characterThatWillDoJob);
                         }
                         return true;
                     }

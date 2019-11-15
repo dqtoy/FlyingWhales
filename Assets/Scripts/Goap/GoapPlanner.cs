@@ -10,7 +10,7 @@ public class GoapPlanner {
     public GoapPlanner(Character actor) {
         this.actor = actor;
     }
-    public void StartGOAP(GoapEffect[] goals, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, bool isPersonalPlan = true, GoapPlanJob job = null, Dictionary<INTERACTION_TYPE, object[]> otherData = null) {
+    public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, GoapPlanJob job, bool isPersonalPlan = true) {
         //List<IPointOfInterest> characterTargetsAwareness = new List<IPointOfInterest>();
         if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             actor.AddAwareness(target);
@@ -29,9 +29,9 @@ public class GoapPlanner {
         status = GOAP_PLANNING_STATUS.RUNNING;
         //_numOfWaitingForGoapThread++;
         //Debug.LogWarning(name + " sent a plan to other thread(" + _numOfWaitingForGoapThread + ")");
-        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(actor, target, goals, category, isPriority, isPersonalPlan, job, otherData));
+        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(actor, target, goal, category, isPersonalPlan, job));
     }
-    public void StartGOAP(GoapAction goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, bool isPersonalPlan = true, GoapPlanJob job = null) {
+    public void StartGOAP(GoapAction goal, IPointOfInterest target, GOAP_CATEGORY category, GoapPlanJob job, bool isPersonalPlan = true) {
         //List<IPointOfInterest> characterTargetsAwareness = new List<IPointOfInterest>();
         if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             actor.AddAwareness(target);
@@ -49,9 +49,9 @@ public class GoapPlanner {
         }
         //_numOfWaitingForGoapThread++;
         status = GOAP_PLANNING_STATUS.RUNNING;
-        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(actor, target, goal, category, isPriority, isPersonalPlan, job));
+        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(actor, target, goal, category, isPersonalPlan, job));
     }
-    public void StartGOAP(INTERACTION_TYPE goalType, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, bool isPersonalPlan = true, GoapPlanJob job = null, Dictionary<INTERACTION_TYPE, object[]> otherData = null) {
+    public void StartGOAP(INTERACTION_TYPE goalType, IPointOfInterest target, GOAP_CATEGORY category, GoapPlanJob job, bool isPersonalPlan = true) {
         //List<IPointOfInterest> characterTargetsAwareness = new List<IPointOfInterest>();
         if (target != null && target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             actor.AddAwareness(target);
@@ -62,7 +62,7 @@ public class GoapPlanner {
         }
         //_numOfWaitingForGoapThread++;
         status = GOAP_PLANNING_STATUS.RUNNING;
-        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(actor, goalType, target, category, isPriority, isPersonalPlan, job, otherData));
+        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(actor, goalType, target, category, isPersonalPlan, job));
     }
     //public GoapPlan PlanActions(IPointOfInterest target, GoapAction goalAction, List<GoapAction> usableActions, GOAP_CATEGORY category, bool isPersonalPlan, ref string log, GoapPlanJob job = null) {
     //    //List of all starting nodes that can do the goal
@@ -92,24 +92,29 @@ public class GoapPlanner {
     //    return plan;
     //}
     public GoapPlan PlanActions(IPointOfInterest target, GoapEffect goalEffect, GOAP_CATEGORY category, bool isPersonalPlan, ref string log, GoapPlanJob job) {
+        //Cache all needed data
         Dictionary<POINT_OF_INTEREST_TYPE, List<GoapAction>> allGoapActionAdvertisements = InteractionManager.Instance.allGoapActionAdvertisements;
         Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = actor.awareness;
         Dictionary<INTERACTION_TYPE, object[]> otherData = job.otherData;
-        List<GoapNode> rawPlan = null;
+        List<GoapNode> rawPlan = null; //The plan that will be created will be stored here
         if (goalEffect.target == GOAP_EFFECT_TARGET.TARGET) {
-            //if preconditions target is the target, then the one who will advertise must be the target only
+            //if precondition's target is TARGET, then the one who will advertise must be the target only
             int cost = 0;
+            //Get action with the lowest cost that the actor can do that satisfies the goal effect
             GoapAction currentAction = target.AdvertiseActionsToActor(actor, goalEffect, otherData, ref cost);
             if (currentAction != null) {
-                GoapNode leafNode = new GoapNode(cost, 0, currentAction, target);
+                //If an action is found, make it the goal node and start building the plan
+                GoapNode goalNode = new GoapNode(cost, 0, currentAction, target);
                 rawPlan = new List<GoapNode>();
-                BuildGoapTree(leafNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness, ref log);
+                BuildGoapTree(goalNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness); //, ref log
             }
         } else if (goalEffect.target == GOAP_EFFECT_TARGET.ACTOR) {
+            //If precondition's target is ACTOR, get the lowest action that the actor can do that will satisfy the goal effect
             GoapAction lowestCostAction = null;
             IPointOfInterest lowestCostTarget = null;
             int lowestCost = 0;
             foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<GoapAction>> kvp in allGoapActionAdvertisements) {
+                //First loop through all actions that can be advertised (it is grouped by the poi type that can advertise the actions)
                 if (awareness.ContainsKey(kvp.Key)) {
                     List<GoapAction> actionList = kvp.Value;
                     for (int j = 0; j < actionList.Count; j++) {
@@ -136,13 +141,13 @@ public class GoapPlanner {
             if (lowestCostAction != null) {
                 GoapNode leafNode = new GoapNode(lowestCost, 0, lowestCostAction, lowestCostTarget);
                 rawPlan = new List<GoapNode>();
-                BuildGoapTree(leafNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness, ref log);
+                BuildGoapTree(leafNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness); //, ref log
             }
         }
         if(rawPlan != null && rawPlan.Count > 0) {
             //has a created plan
             List<JobNode> actualNodes = TransformRawPlanToActualNodes(rawPlan, otherData);
-            GoapPlan plan = new GoapPlan(actualNodes, isPersonalPlan);
+            GoapPlan plan = new GoapPlan(actualNodes, target, isPersonalPlan);
             return plan;
         }
         return null;
@@ -161,75 +166,114 @@ public class GoapPlanner {
             }
         }
         int cost = goalAction.GetCost(actor, target, data);
-        GoapNode leafNode = new GoapNode(cost, 0, goalAction, target);
-        BuildGoapTree(leafNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness, ref log);
+        GoapNode goalNode = new GoapNode(cost, 0, goalAction, target);
+        BuildGoapTree(goalNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness); //, ref log
         if (rawPlan != null && rawPlan.Count > 0) {
             //has a created plan
             List<JobNode> actualNodes = TransformRawPlanToActualNodes(rawPlan, job.otherData);
-            GoapPlan plan = new GoapPlan(actualNodes, isPersonalPlan);
+            GoapPlan plan = new GoapPlan(actualNodes, target, isPersonalPlan);
             return plan;
         }
         return null;
     }
-    public bool RecalculatePathForPlan(GoapPlan currentPlan, List<GoapAction> usableActions) {
-        //List of all starting nodes that can do the goal
-        List<GoapNode> startingNodes = new List<GoapNode>();
-        bool success = false;
-        if (currentPlan.isPersonalPlan) {
-            string log = string.Empty;
-            success = BuildGoapTree(currentPlan.endNode, startingNodes, usableActions, ref log, currentPlan.job);
+    public bool RecalculatePathForPlan(GoapPlan currentPlan, GoapPlanJob job) {
+        //In plan recalculation, only recalculate nodes starting from the previous node, because this means that the current node does not satisfy all preconditions, which in turn, means that somewhere in the previous nodes, the character failed to do the action
+        //That is why we recalculate from the previous node up to the starting node
+        Dictionary<POINT_OF_INTEREST_TYPE, List<GoapAction>> allGoapActionAdvertisements = InteractionManager.Instance.allGoapActionAdvertisements;
+        Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = actor.awareness;
+        List<GoapNode> rawPlan = new List<GoapNode>();
+        JobNode currentJobNode = currentPlan.currentNode;
+        if (currentJobNode.singleNode != null) {
+            //Recalculate for single node
+            ActualGoapNode actualNode = currentJobNode.singleNode;
+            GoapAction goalAction = actualNode.action;
+            IPointOfInterest target = actualNode.poiTarget;
+            object[] otherData = actualNode.otherData;
+            GoapNode goalNode = new GoapNode(actualNode.cost, currentPlan.currentNodeIndex, goalAction, target);
+            BuildGoapTree(goalNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness); //, ref log
+            if (rawPlan.Count > 0) {
+                //has a created plan
+                List<JobNode> plannedNodes = TransformRawPlanToActualNodes(rawPlan, job.otherData, currentPlan);
+                currentPlan.Reset(plannedNodes);
+                return true;
+            }
         } else {
-            GoapNode currentLeafNode = null;
-            bool hasUsableAction = false;
-            success = true;
-            for (int i = currentPlan.endNode.index; i >= 0; i--) {
-                GoapNode failedNode = currentPlan.allNodes[i];
-                hasUsableAction = false;
-                for (int j = 0; j < usableActions.Count; j++) {
-                    GoapAction currentUsableAction = usableActions[j];
-                    if(failedNode.action.goapType == currentUsableAction.goapType && failedNode.action.poiTarget == currentUsableAction.poiTarget) {
-                        hasUsableAction = true;
-                        if(currentLeafNode == null) {
-                            currentLeafNode = new GoapNode(failedNode.parent, failedNode.parent.runningCost + currentUsableAction.cost, currentUsableAction);
-                        } else {
-                            GoapNode leafNode = new GoapNode(currentLeafNode.parent, currentLeafNode.parent.runningCost + currentUsableAction.cost, currentUsableAction);
-                            currentLeafNode = leafNode;
-                        }
-                        break;
-                    }
-                }
-                if (!hasUsableAction) {
-                    //No usable action for the current failed node, fail recalculation
-                    success = false;
-                    break;
-                }
+            //Recalculate for multi node
+            ActualGoapNode[] actualNodes = currentJobNode.multiNode;
+            for (int i = 0; i < actualNodes.Length; i++) {
+                ActualGoapNode actualNode = actualNodes[i];
+                GoapAction goalAction = actualNode.action;
+                IPointOfInterest target = actualNode.poiTarget;
+                object[] otherData = actualNode.otherData;
+                GoapNode goalNode = new GoapNode(actualNode.cost, currentPlan.currentNodeIndex, goalAction, target);
+                BuildGoapTree(goalNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness); //, ref log
             }
-            if(currentLeafNode != null) {
-                startingNodes.Add(currentLeafNode);
-            } else {
-                success = false;
+            if (rawPlan.Count > 0) {
+                //has a created plan
+                List<JobNode> plannedNodes = TransformRawPlanToActualNodes(rawPlan, job.otherData, currentPlan);
+                currentPlan.Reset(plannedNodes);
+                return true;
             }
         }
-        if (!success) {
-            return false;
-        }
+        return false;
+        //List of all starting nodes that can do the goal
+        //List<GoapNode> startingNodes = new List<GoapNode>();
+        //bool success = false;
+        //if (currentPlan.isPersonalPlan) {
+        //    string log = string.Empty;
+        //    success = BuildGoapTree(currentPlan.endNode, startingNodes, usableActions, ref log, currentPlan.job);
+        //} else {
+        //    GoapNode currentLeafNode = null;
+        //    bool hasUsableAction = false;
+        //    success = true;
+        //    for (int i = currentPlan.endNode.index; i >= 0; i--) {
+        //        GoapNode failedNode = currentPlan.allNodes[i];
+        //        hasUsableAction = false;
+        //        for (int j = 0; j < usableActions.Count; j++) {
+        //            GoapAction currentUsableAction = usableActions[j];
+        //            if(failedNode.action.goapType == currentUsableAction.goapType && failedNode.action.poiTarget == currentUsableAction.poiTarget) {
+        //                hasUsableAction = true;
+        //                if(currentLeafNode == null) {
+        //                    currentLeafNode = new GoapNode(failedNode.parent, failedNode.parent.runningCost + currentUsableAction.cost, currentUsableAction);
+        //                } else {
+        //                    GoapNode leafNode = new GoapNode(currentLeafNode.parent, currentLeafNode.parent.runningCost + currentUsableAction.cost, currentUsableAction);
+        //                    currentLeafNode = leafNode;
+        //                }
+        //                break;
+        //            }
+        //        }
+        //        if (!hasUsableAction) {
+        //            //No usable action for the current failed node, fail recalculation
+        //            success = false;
+        //            break;
+        //        }
+        //    }
+        //    if(currentLeafNode != null) {
+        //        startingNodes.Add(currentLeafNode);
+        //    } else {
+        //        success = false;
+        //    }
+        //}
+        //if (!success) {
+        //    return false;
+        //}
 
-        GoapNode cheapestStartingNode = null;
-        for (int i = 0; i < startingNodes.Count; i++) {
-            if (cheapestStartingNode == null) {
-                cheapestStartingNode = startingNodes[i];
-            } else {
-                if (startingNodes[i].cost < cheapestStartingNode.cost) {
-                    cheapestStartingNode = startingNodes[i];
-                }
-            }
-        }
-        currentPlan.Reset(cheapestStartingNode);
-        return true;
+        //GoapNode cheapestStartingNode = null;
+        //for (int i = 0; i < startingNodes.Count; i++) {
+        //    if (cheapestStartingNode == null) {
+        //        cheapestStartingNode = startingNodes[i];
+        //    } else {
+        //        if (startingNodes[i].cost < cheapestStartingNode.cost) {
+        //            cheapestStartingNode = startingNodes[i];
+        //        }
+        //    }
+        //}
+        //currentPlan.Reset(cheapestStartingNode);
+        //return true;
     }
     //Note: The target specified here is the target for the precondition not the job itself
     private void BuildGoapTree(GoapNode node, Character actor, GoapPlanJob job, List<GoapNode> rawPlan, Dictionary<POINT_OF_INTEREST_TYPE, List<GoapAction>> allGoapActionAdvertisements
-        , Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness, ref string log) {
+        , Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness) { //, ref string log
         GoapAction action = node.action;
         IPointOfInterest target = node.target;
         rawPlan.Add(node);
@@ -244,7 +288,7 @@ public class GoapPlanner {
                         GoapAction currentAction = target.AdvertiseActionsToActor(actor, preconditionEffect, job.otherData, ref cost);
                         if (currentAction != null) {
                             GoapNode leafNode = new GoapNode(cost, node.level + 1, currentAction, target);
-                            BuildGoapTree(leafNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness, ref log);
+                            BuildGoapTree(leafNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness); //, ref log
                         }
                     } else if (preconditionEffect.target == GOAP_EFFECT_TARGET.ACTOR) {
                         GoapAction lowestCostAction = null;
@@ -276,7 +320,7 @@ public class GoapPlanner {
                         }
                         if(lowestCostAction != null) {
                             GoapNode leafNode = new GoapNode(lowestCost, node.level + 1, lowestCostAction, lowestCostTarget);
-                            BuildGoapTree(leafNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness, ref log);
+                            BuildGoapTree(leafNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness); //, ref log
                         }
                         //foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness in actor.awareness) {
                         //    List<IPointOfInterest> awarenessList = awareness.Value;
@@ -370,8 +414,14 @@ public class GoapPlanner {
         //return false;
     }
 
-    private List<JobNode> TransformRawPlanToActualNodes(List<GoapNode> rawPlan, Dictionary<INTERACTION_TYPE, object[]> otherData) {
-        List<JobNode> actualPlan = new List<JobNode>();
+    private List<JobNode> TransformRawPlanToActualNodes(List<GoapNode> rawPlan, Dictionary<INTERACTION_TYPE, object[]> otherData, GoapPlan currentPlan = null) { //actualPlan is for recalculation only, so that it will no longer create a new list, since in recalculation we already have a list of job nodes
+        List<JobNode> actualPlan = null;
+        if (currentPlan == null) {
+            actualPlan = new List<JobNode>();
+        } else {
+            actualPlan = currentPlan.allNodes;
+            actualPlan.RemoveRange(0, currentPlan.currentNodeIndex + 1); //It's +1 because we want to remove also the current node of the actual plan since it is already in the rawPlan
+        }
         List<int> tempNodeIndexHolder = new List<int>();
         while (rawPlan.Count > 0) {
             int index = actualPlan.Count;
@@ -395,8 +445,7 @@ public class GoapPlanner {
                             data = otherData[INTERACTION_TYPE.NONE];
                         }
                     }
-                    ActualGoapNode actualNode = new ActualGoapNode(rawNode.action, actor, rawNode.target, data);
-                    actualNode.cost = rawNode.cost;
+                    ActualGoapNode actualNode = new ActualGoapNode(rawNode.action, actor, rawNode.target, data, rawNode.cost);
                     SingleJobNode singleJobNode = new SingleJobNode(actualNode);
                     actualPlan.Insert(0, singleJobNode);
                     rawPlan.RemoveAt(nodeIndex);
@@ -414,8 +463,7 @@ public class GoapPlanner {
                                 data = otherData[INTERACTION_TYPE.NONE];
                             }
                         }
-                        ActualGoapNode actualNode = new ActualGoapNode(rawNode.action, actor, rawNode.target, data);
-                        actualNode.cost = rawNode.cost;
+                        ActualGoapNode actualNode = new ActualGoapNode(rawNode.action, actor, rawNode.target, data, rawNode.cost);
                         actualNodes[i] = actualNode;
                         rawPlan.RemoveAt(nodeIndex);
                     }
