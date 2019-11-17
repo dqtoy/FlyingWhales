@@ -32,7 +32,7 @@ public class CharacterStateJob : JobQueueItem {
     #region Overrides
     public override void ProcessJob() {
         base.ProcessJob();
-        Character characterOwner = currentOwner as Character;
+        Character characterOwner = assignedCharacter as Character;
         CharacterState newState = characterOwner.stateComponent.SwitchToState(targetState);
         if (newState != null) {
             SetAssignedState(newState);

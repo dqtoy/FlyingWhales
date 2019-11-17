@@ -4,13 +4,13 @@ using System.Linq;
 using System;
 using UnityEngine;
 
-public class Area : IJobQueueOwner {
+public class Area : IJobOwner {
 
     public int id { get; private set; }
     //public bool isDead { get; private set; }
     public AREA_TYPE areaType { get; private set; }
     public Region region { get; private set; }
-    public JobQueue jobQueue { get; private set; }
+    //public JobQueue jobQueue { get; private set; }
     public LocationStructure prison { get; private set; }
     public int citizenCount { get; private set; }
 
@@ -36,6 +36,8 @@ public class Area : IJobQueueOwner {
     public Sprite locationPortrait { get; private set; }
     public Vector2 nameplatePos { get; private set; }
 
+    public List<JobQueueItem> availableJobs { get; protected set; }
+    public JOB_OWNER ownerType { get { return JOB_OWNER.QUEST; } }
     //public Race defaultRace { get; private set; }
     //private RACE _raceType;
 
@@ -101,17 +103,18 @@ public class Area : IJobQueueOwner {
         //defaultRace = new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL);
         itemsInArea = new List<SpecialToken>();
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
-        jobQueue = new JobQueue(this);
+        //jobQueue = new JobQueue(this);
         SetAreaType(areaType);
         //AddTile(coreTile);
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
+        availableJobs = new List<JobQueueItem>();
     }
     public Area(AreaSaveData data) {
         id = Utilities.SetID(this, data.areaID);
         //charactersAtLocation = new List<Character>();
         SetAreaType(data.areaType);
         itemsInArea = new List<SpecialToken>();
-        jobQueue = new JobQueue(this);
+        //jobQueue = new JobQueue(this);
         LoadStructures(data);
         AssignPrison();
 
@@ -134,7 +137,7 @@ public class Area : IJobQueueOwner {
         //charactersAtLocation = new List<Character>();
         itemsInArea = new List<SpecialToken>();
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
-        jobQueue = new JobQueue(null);
+        //jobQueue = new JobQueue(null);
 
         SetAreaType(saveDataArea.areaType);
 
@@ -1106,6 +1109,62 @@ public class Area : IJobQueueOwner {
     #endregion
 
     #region Jobs
+    public void AddToAvailableJobs(JobQueueItem job) {
+        availableJobs.Add(job);
+    }
+    public bool RemoveFromAvailableJobs(JobQueueItem job) {
+        return availableJobs.Remove(job);
+    }
+    public bool RemoveFromAvailableJobs(JOB_TYPE jobType) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            if(availableJobs[i].jobType == jobType) {
+                availableJobs.RemoveAt(i);
+                return true;
+            }
+        }
+        return false;
+    }
+    public int GetNumberOfJobsWith(CHARACTER_STATE state) {
+        int count = 0;
+        for (int i = 0; i < availableJobs.Count; i++) {
+            if (availableJobs[i] is CharacterStateJob) {
+                CharacterStateJob job = availableJobs[i] as CharacterStateJob;
+                if (job.targetState == state) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+    public bool HasJob(JobQueueItem job) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            if (job == availableJobs[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasJob(params JOB_TYPE[] jobTypes) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            for (int j = 0; j < jobTypes.Length; j++) {
+                if (availableJobs[i].jobType == jobTypes[j]) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public JobQueueItem GetJob(params JOB_TYPE[] jobTypes) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            for (int j = 0; j < jobTypes.Length; j++) {
+                JobQueueItem job = availableJobs[i];
+                if (job.jobType == jobTypes[j]) {
+                    return job;
+                }
+            }
+        }
+        return null;
+    }
     private void HourlyJobActions() {
         CreatePatrolJobs();
         //if (UnityEngine.Random.Range(0, 100) < 5 && currentMoveOutJobs < maxMoveOutJobs) {
@@ -1114,10 +1173,10 @@ public class Area : IJobQueueOwner {
     }
     private void CreatePatrolJobs() {
         int patrolChance = UnityEngine.Random.Range(0, 100);
-        if (patrolChance < 25 && jobQueue.GetNumberOfJobsWith(CHARACTER_STATE.PATROL) < 2) {
+        if (patrolChance < 25 && GetNumberOfJobsWith(CHARACTER_STATE.PATROL) < 2) {
             CharacterStateJob stateJob = new CharacterStateJob(JOB_TYPE.PATROL, CHARACTER_STATE.PATROL, null);
             stateJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoPatrolAndExplore);
-            jobQueue.AddJobInQueue(stateJob);
+            AddToAvailableJobs(stateJob);
         }
     }
     public void CheckAreaInventoryJobs(LocationStructure affectedStructure) {
@@ -1128,7 +1187,7 @@ public class Area : IJobQueueOwner {
             //- any character that can produce this item may take this Job
             //- cancel Brew Potion job whenever inventory check occurs and it specified that there are enough Healing Potions already
             if (affectedStructure.GetItemsOfTypeCount(SPECIAL_TOKEN.HEALING_POTION) < 2) {
-                if (!jobQueue.HasJob(JOB_TYPE.BREW_POTION)) {
+                if (!HasJob(JOB_TYPE.BREW_POTION)) {
                     GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BREW_POTION, INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new Dictionary<INTERACTION_TYPE, object[]>() {
                         { INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
                         { INTERACTION_TYPE.CRAFT_ITEM, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
@@ -1136,15 +1195,19 @@ public class Area : IJobQueueOwner {
                     job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanBrewPotion);
                     job.SetOnTakeJobAction(InteractionManager.Instance.OnTakeBrewPotion);
                     //job.SetCannotOverrideJob(false);
-                    jobQueue.AddJobInQueue(job);
+                    AddToAvailableJobs(job);
                 }
             } else {
-                CancelBrewPotion();
+                //warehouse has 2 or more healing potions
+                JobQueueItem brewJob = GetJob(JOB_TYPE.BREW_POTION);
+                if(brewJob != null) {
+                    ForceCancelJob(brewJob);
+                }
             }
 
             //craft tool
             if (affectedStructure.GetItemsOfTypeCount(SPECIAL_TOKEN.TOOL) < 2) {
-                if (!jobQueue.HasJob(JOB_TYPE.CRAFT_TOOL)) {
+                if (!HasJob(JOB_TYPE.CRAFT_TOOL)) {
                     GoapPlanJob job = new GoapPlanJob(JOB_TYPE.CRAFT_TOOL, INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new Dictionary<INTERACTION_TYPE, object[]>() {
                         { INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new object[]{ SPECIAL_TOKEN.TOOL } },
                         { INTERACTION_TYPE.CRAFT_ITEM, new object[]{ SPECIAL_TOKEN.TOOL } },
@@ -1152,25 +1215,14 @@ public class Area : IJobQueueOwner {
                     job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCraftTool);
                     job.SetOnTakeJobAction(InteractionManager.Instance.OnTakeCraftTool);
                     //job.SetCannotOverrideJob(false);
-                    jobQueue.AddJobInQueue(job);
+                    AddToAvailableJobs(job);
                 }
             } else {
-                CancelCraftTool();
+                JobQueueItem craftToolJob = GetJob(JOB_TYPE.CRAFT_TOOL);
+                if (craftToolJob != null) {
+                    ForceCancelJob(craftToolJob);
+                }
             }
-        }
-    }
-    private void CancelBrewPotion() {
-        //warehouse has 2 or more healing potions
-        if (jobQueue.HasJob(JOB_TYPE.BREW_POTION)) {
-            JobQueueItem brewJob = jobQueue.GetJob(JOB_TYPE.BREW_POTION);
-            jobQueue.CancelJob(brewJob, forceRemove: true);
-        }
-    }
-    private void CancelCraftTool() {
-        //warehouse has 2 or more healing potions
-        if (jobQueue.HasJob(JOB_TYPE.CRAFT_TOOL)) {
-            JobQueueItem craftTool = jobQueue.GetJob(JOB_TYPE.CRAFT_TOOL);
-            jobQueue.CancelJob(craftTool, forceRemove: true);
         }
     }
     private void CreateReplaceTileObjectJob(TileObject removedObj, LocationGridTile removedFrom) {
@@ -1181,6 +1233,20 @@ public class Area : IJobQueueOwner {
         job.SetCancelOnFail(false);
         job.SetCancelJobOnDropPlan(false);
         jobQueue.AddJobInQueue(job);
+    }
+    #endregion
+
+    #region IJobOwner
+    public void OnJobAddedToCharacterJobQueue(JobQueueItem job, Character character) {
+        RemoveFromAvailableJobs(job);
+    }
+    public void OnJobRemovedFromCharacterJobQueue(JobQueueItem job, Character character) {
+        if (job.IsJobStillApplicable()) {
+            AddToAvailableJobs(job);
+        }
+    }
+    public bool ForceCancelJob(JobQueueItem job) {
+        return RemoveFromAvailableJobs(job);
     }
     #endregion
 
@@ -1329,7 +1395,7 @@ public class Area : IJobQueueOwner {
     private void CheckIfJobWillExpire(JobQueueItem item) {
         if (item.assignedCharacter == null) {
             Debug.Log(GameManager.Instance.TodayLogString() + item.jobType.ToString() + " expired.");
-            item.currentOwner.RemoveJobInQueue(item);
+            item.assignedCharacter.RemoveJobInQueue(item);
         }
     }
     #endregion

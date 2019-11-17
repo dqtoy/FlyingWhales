@@ -199,9 +199,9 @@ public class DivineInterventionQuest : Quest {
 
     #region Utilities
     private void CheckIfJobWillExpire(JobQueueItem item) {
-        if (item.assignedCharacter == null && item.currentOwner != null && item.currentOwner.jobsInQueue.Contains(item)) {
+        if (item.assignedCharacter == null && item.assignedCharacter != null && item.assignedCharacter.jobsInQueue.Contains(item)) {
             Debug.Log(GameManager.Instance.TodayLogString() + item.jobType.ToString() + " expired.");
-            item.currentOwner.RemoveJobInQueue(item);
+            item.assignedCharacter.RemoveJobInQueue(item);
         }
     }
     #endregion

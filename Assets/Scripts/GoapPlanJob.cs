@@ -134,10 +134,9 @@ public class GoapPlanJob : JobQueueItem {
     }
 
     #region Overrides 
-    public override void ProcessJob() {
-        base.ProcessJob();
-        Character characterOwner = currentOwner as Character;
-        bool isPersonal = originalOwner.ownerType == JOB_QUEUE_OWNER.CHARACTER;
+    public override bool ProcessJob() {
+        Character characterOwner = assignedCharacter as Character;
+        bool isPersonal = originalOwner.ownerType == JOB_OWNER.CHARACTER;
         if (targetInteractionType != INTERACTION_TYPE.NONE) {
             characterOwner.planner.StartGOAP(targetInteractionType, targetPOI, GOAP_CATEGORY.WORK, this, isPersonal);
         } else {
@@ -148,6 +147,26 @@ public class GoapPlanJob : JobQueueItem {
                 }
             }
         }
+        return base.ProcessJob();
+    }
+    public override bool CancelJob(bool shouldDoAfterEffect = true, string cause = "", string reason = "") {
+        if (assignedCharacter == null) {
+            //Can only cancel jobs that are in character job queue
+            return false;
+        }
+        if (assignedCharacter.jobQueue.RemoveJobInQueue(this)) {
+            assignedCharacter.RegisterLogAndShowNotifToThisCharacterOnly("Generic", "job_cancelled_cause", null, cause);
+            return true;
+        }
+        return false;
+    }
+    public override bool ForceCancelJob(bool shouldDoAfterEffect = true, string cause = "", string reason = "") {
+        if (assignedCharacter != null) {
+            if (assignedCharacter.jobQueue.RemoveJobInQueue(this)) {
+                assignedCharacter.RegisterLogAndShowNotifToThisCharacterOnly("Generic", "job_cancelled_cause", null, cause);
+            }
+        }
+        return originalOwner.ForceCancelJob(this);
     }
     public override void UnassignJob(bool shouldDoAfterEffect = true, string reason = "") {
         base.UnassignJob(shouldDoAfterEffect);
@@ -186,9 +205,9 @@ public class GoapPlanJob : JobQueueItem {
         }
     }
     public override bool OnRemoveJobFromQueue() {
-        if (!currentOwner.isAreaOrQuestJobQueue && id == currentOwner.owner.sleepScheduleJobID && (assignedCharacter == null && assignedPlan == null)) { //|| jobQueueParent.character.currentSleepTicks == CharacterManager.Instance.defaultSleepTicks
+        if (!assignedCharacter.isAreaOrQuestJobQueue && id == assignedCharacter.owner.sleepScheduleJobID && (assignedCharacter == null && assignedPlan == null)) { //|| jobQueueParent.character.currentSleepTicks == CharacterManager.Instance.defaultSleepTicks
             //If a character's scheduled sleep job is removed from queue before even doing it, consider it as cancelled 
-            currentOwner.owner.SetHasCancelledSleepSchedule(true);
+            assignedCharacter.owner.SetHasCancelledSleepSchedule(true);
         }
         if (targetPOI != null) {
             return targetPOI.RemoveJobTargettingThis(this);
@@ -218,7 +237,7 @@ public class GoapPlanJob : JobQueueItem {
     }
     public override bool CanCharacterTakeThisJob(Character character) {
         //All jobs that are personal will bypass _canTakeThisJob/_canTakeThisJobWithTarget function checkers if the character parameter is the owner of the job queue
-        if(character == currentOwner.owner) {
+        if(character == assignedCharacter.owner) {
             return CanTakeJob(character);
         }
         if (canTakeThisJob != null) {
@@ -316,15 +335,20 @@ public class GoapPlanJob : JobQueueItem {
 
     #region Goap Effects
     public bool HasGoalConditionKey(string key) {
-        bool hasMatchedConditionKey = false;
         for (int i = 0; i < goals.Length; i++) {
-            GoapEffect goalEffect = goals[i];
-            if (goalEffect.conditionKey == key) {
-                hasMatchedConditionKey = true;
-                break;
+            if (goals[i].goapEffect.conditionKey == key) {
+                return true;
             }
         }
-        return hasMatchedConditionKey;
+        return false;
+    }
+    public bool HasGoalConditionType(GOAP_EFFECT_CONDITION conditionType) {
+        for (int i = 0; i < goals.Length; i++) {
+            if (goals[i].goapEffect.conditionType == conditionType) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 }

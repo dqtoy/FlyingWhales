@@ -94,7 +94,7 @@ public class MoveOutState : CharacterState {
             return;
         }
         if (GetRegionToDoJob(stateComponent.character) == null) {
-            job.currentOwner.CancelJob(job, "no valid regions", false);
+            job.assignedCharacter.CancelJob(job, "no valid regions", false);
             return;
         }
         hasSceduledArriveAtRandomRegion = true;
@@ -127,7 +127,7 @@ public class MoveOutState : CharacterState {
             chosenRegion.AddCharacterToLocation(stateComponent.character);
             OnArriveAtRegion();
         } else {
-            job.currentOwner.CancelJob(job, "no valid regions", false);
+            job.assignedCharacter.CancelJob(job, "no valid regions", false);
         }
     }
 

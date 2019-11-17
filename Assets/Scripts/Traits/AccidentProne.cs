@@ -91,7 +91,7 @@ public class AccidentProne : Trait {
             JobQueue currentJobQueue = null;
             if (owner.currentActionNode.isRoamingAction && owner.currentActionNode.parentPlan != null && owner.currentActionNode.parentPlan.job != null) {
                 currentJob = owner.currentActionNode.parentPlan.job;
-                currentJobQueue = currentJob.currentOwner;
+                currentJobQueue = currentJob.assignedCharacter;
             }
             owner.StopCurrentAction(false);
             if (currentJob != null) {

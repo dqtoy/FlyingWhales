@@ -6,9 +6,8 @@ using System.Reflection;
 
 public class JobQueueItem {
     public int id { get; protected set; }
-    public IJobQueueOwner originalOwner { get; protected set; } //The true original owner of this job
-    public IJobQueueOwner currentOwner { get; protected set; } //The current owner of this job
-    //public Character assignedCharacter { get; protected set; }
+    public IJobOwner originalOwner { get; protected set; } //The true original owner of this job
+    public Character assignedCharacter { get; protected set; } //Only has value if job is inside character's job queue
     public string name { get; private set; }
     public JOB_TYPE jobType { get; protected set; }
     public bool cannotCancelJob { get; private set; }
@@ -52,9 +51,9 @@ public class JobQueueItem {
     }
 
     #region Virtuals
-    public virtual void UnassignJob(bool shouldDoAfterEffect = true, string reason = "") { }
+    public virtual void UnassignJob(bool shouldDoAfterEffect, string reason) { }
     protected virtual bool CanTakeJob(Character character) {
-        if (currentOwner.isAreaOrQuestJobQueue) {
+        if (assignedCharacter.isAreaOrQuestJobQueue) {
             //Criminals and Characters with Negative Disabler Traits should no longer create and take Location Jobs
             return !character.HasTraitOf(TRAIT_TYPE.CRIMINAL) && !character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
         }
@@ -64,7 +63,7 @@ public class JobQueueItem {
     public virtual bool OnRemoveJobFromQueue() { return true; }
     public virtual bool CanCharacterTakeThisJob(Character character) {
         //All jobs that are personal will bypass _canTakeThisJob/_canTakeThisJobWithTarget function checkers if the character parameter is the owner of the job queue
-        if (character == currentOwner.character) {
+        if (character == assignedCharacter.character) {
             return CanTakeJob(character);
         }
         if (canTakeThisJob != null) {
@@ -79,21 +78,54 @@ public class JobQueueItem {
         onTakeJobAction?.Invoke(character, this);
     }
     public virtual void OnCharacterUnassignedToJob(Character character) { }
-    public virtual void ProcessJob() { }
+    public virtual bool ProcessJob() { return false; }
+
+    //Returns true or false if job was really removed in queue
+    public virtual bool CancelJob(bool shouldDoAfterEffect = true, string cause = "", string reason = "") {
+        //When cancelling a job, we must check if it's personal or not because if it is a faction/settlement job it cannot be removed from queue
+        //The only way for a faction/settlement job to be removed is if it is forced or it is actually finished
+        if(assignedCharacter == null) {
+            //Can only cancel jobs that are in character job queue
+            return false;
+        }
+        return assignedCharacter.jobQueue.RemoveJobInQueue(this);
+        //if (process) {
+        //    if (job is GoapPlanJob && cause != "") {
+        //        GoapPlanJob planJob = job as GoapPlanJob;
+        //        Character actor = null;
+        //        if (!isAreaOrQuestJobQueue) {
+        //            actor = this.owner;
+        //        } else if (job.assignedCharacter != null) {
+        //            actor = job.assignedCharacter;
+        //        }
+        //        if (actor != null && actor != planJob.targetPOI) { //only log if the actor is not the same as the target poi.
+        //            actor.RegisterLogAndShowNotifToThisCharacterOnly("Generic", "job_cancelled_cause", null, cause);
+        //        }
+        //    }
+        //    UnassignJob(shouldDoAfterEffect, reason);
+        //}
+        //return hasBeenRemovedInJobQueue;
+    }
+    public virtual bool ForceCancelJob(bool shouldDoAfterEffect = true, string cause = "", string reason = "") {
+        if (assignedCharacter != null) {
+            return assignedCharacter.jobQueue.RemoveJobInQueue(this);
+        }
+        return originalOwner.ForceCancelJob(this);
+    }
+    public virtual bool IsJobStillApplicable() {
+        return true;
+    }
     #endregion
 
-    public void SetCurrentOwner(IJobQueueOwner parent) {
-        currentOwner = parent;
-    }
     public void SetAssignedCharacter(Character character) {
         Character previousAssignedCharacter = null;
         if (assignedCharacter != null) {
             previousAssignedCharacter = assignedCharacter;
-            assignedCharacter.SetCurrentJob(null);
+            //assignedCharacter.SetCurrentJob(null);
             assignedCharacter.PrintLogIfActive(GameManager.Instance.TodayLogString() + assignedCharacter.name + " quit job " + name);
         }
         if (character != null) {
-            character.SetCurrentJob(this);
+            //character.SetCurrentJob(this);
             character.PrintLogIfActive(GameManager.Instance.TodayLogString() + character.name + " took job " + name);
         }
         

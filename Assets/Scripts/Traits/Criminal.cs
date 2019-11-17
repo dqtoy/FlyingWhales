@@ -62,7 +62,7 @@ public class Criminal : Trait {
                     //    return false;
                     //}
                 } else {
-                    if (currentJob.currentOwner.isAreaOrQuestJobQueue && InteractionManager.Instance.CanCharacterTakeApprehendJob(characterThatWillDoJob, targetCharacter, currentJob)) {
+                    if (currentJob.assignedCharacter.isAreaOrQuestJobQueue && InteractionManager.Instance.CanCharacterTakeApprehendJob(characterThatWillDoJob, targetCharacter, currentJob)) {
                         bool canBeTransfered = false;
                         if (currentJob.assignedCharacter != null && currentJob.assignedCharacter.currentActionNode != null
                             && currentJob.assignedCharacter.currentActionNode.parentPlan != null && currentJob.assignedCharacter.currentActionNode.parentPlan.job == currentJob) {
@@ -73,7 +73,7 @@ public class Criminal : Trait {
                             canBeTransfered = true;
                         }
                         if (canBeTransfered && characterThatWillDoJob.CanCurrentJobBeOverriddenByJob(currentJob)) {
-                            currentJob.currentOwner.CancelJob(currentJob, shouldDoAfterEffect: false, forceRemove: true);
+                            currentJob.assignedCharacter.CancelJob(currentJob, shouldDoAfterEffect: false, forceRemove: true);
                             characterThatWillDoJob.jobQueue.AddJobInQueue(currentJob, false);
                             characterThatWillDoJob.jobQueue.CurrentTopPriorityIsPushedBackBy(currentJob, characterThatWillDoJob);
                             return true;

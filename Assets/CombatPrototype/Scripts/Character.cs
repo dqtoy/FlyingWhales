@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Character : ILeader, IPointOfInterest, IJobQueueOwner {
+public class Character : ILeader, IPointOfInterest, IJobOwner {
 
     protected string _name;
     protected string _firstName;
@@ -136,7 +136,7 @@ public class Character : ILeader, IPointOfInterest, IJobQueueOwner {
     public const int HAPPINESS_DEFAULT = 15000;
     public const int HAPPINESS_THRESHOLD_1 = 10000;
     public const int HAPPINESS_THRESHOLD_2 = 5000;
-   
+
     public bool hasForcedFullness { get; protected set; }
     public bool hasForcedTiredness { get; protected set; }
     public TIME_IN_WORDS forcedFullnessRecoveryTimeInWords { get; protected set; }
@@ -216,7 +216,7 @@ public class Character : ILeader, IPointOfInterest, IJobQueueOwner {
     }
     public bool isAtHomeRegion {
         //TODO: REDO THIS! REMOVE CURRENT REGION
-        get { return (currentRegion != null && currentRegion == homeRegion) 
+        get { return (currentRegion != null && currentRegion == homeRegion)
                 || (currentRegion == null && specificLocation.region.id == homeRegion.id && !currentParty.icon.isTravellingOutside); }
     }
     public bool isPartOfHomeFaction { //is this character part of the faction that owns his home area
@@ -299,7 +299,7 @@ public class Character : ILeader, IPointOfInterest, IJobQueueOwner {
     }
     public int speed {
         get {
-            int total = (int)((_characterClass.baseSpeed + speedMod) * (1f + ((_raceSetting.speedModifier + speedPercentMod) / 100f)));
+            int total = (int) ((_characterClass.baseSpeed + speedMod) * (1f + ((_raceSetting.speedModifier + speedPercentMod) / 100f)));
             if (total < 0) {
                 return 1;
             }
@@ -308,7 +308,7 @@ public class Character : ILeader, IPointOfInterest, IJobQueueOwner {
     }
     public int attackPower {
         get {
-            int total = (int)((_characterClass.baseAttackPower + attackPowerMod) * (1f + ((_raceSetting.attackPowerModifier + attackPowerPercentMod) / 100f)));
+            int total = (int) ((_characterClass.baseAttackPower + attackPowerMod) * (1f + ((_raceSetting.attackPowerModifier + attackPowerPercentMod) / 100f)));
             if (total < 0) {
                 return 1;
             }
@@ -391,7 +391,7 @@ public class Character : ILeader, IPointOfInterest, IJobQueueOwner {
     }
     public LocationGridTile gridTileLocation {
         get {
-            if(marker == null) {
+            if (marker == null) {
                 return null;
             }
             if (!IsInOwnParty()) {
@@ -464,6 +464,9 @@ public class Character : ILeader, IPointOfInterest, IJobQueueOwner {
     }
     public ProjectileReceiver projectileReciever {
         get { return marker.collisionTrigger.projectileReciever; }
+    }
+    public JOB_OWNER ownerType {
+        get { return JOB_OWNER.CHARACTER; }
     }
     #endregion
 
@@ -1430,9 +1433,9 @@ public class Character : ILeader, IPointOfInterest, IJobQueueOwner {
     #endregion
 
     #region Jobs
-    public void SetCurrentJob(JobQueueItem job) {
-        currentJob = job;
-    }
+    //public void SetCurrentJob(JobQueueItem job) {
+    //    currentJob = job;
+    //}
     public void AddJobTargettingThis(JobQueueItem job) {
         allJobsTargettingThis.Add(job);
     }
@@ -1443,7 +1446,7 @@ public class Character : ILeader, IPointOfInterest, IJobQueueOwner {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
             if (job.jobType == jobType) {
-                if (job.currentOwner.CancelJob(job, forceRemove: forceRemove)) {
+                if (job.assignedCharacter.CancelJob(job, forceRemove: forceRemove)) {
                     i--;
                 }
             }
@@ -1458,7 +1461,7 @@ public class Character : ILeader, IPointOfInterest, IJobQueueOwner {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
             if (job.jobType == jobType && job.assignedCharacter != otherCharacter) {
-                if (job.currentOwner.CancelJob(job, forceRemove: forceRemove)) {
+                if (job.assignedCharacter.CancelJob(job, forceRemove: forceRemove)) {
                     i--;
                 }
             }
@@ -1469,7 +1472,7 @@ public class Character : ILeader, IPointOfInterest, IJobQueueOwner {
             if (allJobsTargettingThis[i] is GoapPlanJob) {
                 GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
                 if (job.jobType == jobType && job.assignedCharacter != otherCharacter && job.HasGoalConditionKey(conditionKey)) {
-                    if (job.currentOwner.CancelJob(job, forceRemove: forceRemove)) {
+                    if (job.assignedCharacter.CancelJob(job, forceRemove: forceRemove)) {
                         i--;
                     }
                 }
@@ -1480,7 +1483,7 @@ public class Character : ILeader, IPointOfInterest, IJobQueueOwner {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
             if (job.jobType == jobType && job != except) {
-                if (job.currentOwner.CancelJob(job, forceRemove: forceRemove)) {
+                if (job.assignedCharacter.CancelJob(job, forceRemove: forceRemove)) {
                     i--;
                 }
             }
@@ -1501,7 +1504,7 @@ public class Character : ILeader, IPointOfInterest, IJobQueueOwner {
     public void CancelAllJobsTargettingThisCharacter(string cause = "", bool shouldDoAfterEffect = true, bool forceRemove = true) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
-            if (job.currentOwner.CancelJob(job, cause, shouldDoAfterEffect, forceRemove)) {
+            if (job.assignedCharacter.CancelJob(job, cause, shouldDoAfterEffect, forceRemove)) {
                 i--;
             }
         }
@@ -7557,8 +7560,8 @@ public class Character : ILeader, IPointOfInterest, IJobQueueOwner {
                             goapThread.job.SetAssignedCharacter(null);
                             goapThread.job.SetAssignedPlan(null);
                             //Only remove job in queue if it is a personal job, cause if it is not, it must be returned to the queue
-                            if (!goapThread.job.currentOwner.isAreaOrQuestJobQueue) {
-                                goapThread.job.currentOwner.RemoveJobInQueue(goapThread.job);
+                            if (!goapThread.job.assignedCharacter.isAreaOrQuestJobQueue) {
+                                goapThread.job.assignedCharacter.RemoveJobInQueue(goapThread.job);
                             }
                         }
                     }
@@ -7643,9 +7646,9 @@ public class Character : ILeader, IPointOfInterest, IJobQueueOwner {
             } else {
                 if (goapThread.job != null) {
                     goapThread.job.SetAssignedCharacter(null);
-                    if (!goapThread.job.currentOwner.isAreaOrQuestJobQueue) {
+                    if (!goapThread.job.assignedCharacter.isAreaOrQuestJobQueue) {
                         //If no plan was generated, automatically remove job from queue if it is a personal job
-                        goapThread.job.currentOwner.RemoveJobInQueue(goapThread.job);
+                        goapThread.job.assignedCharacter.RemoveJobInQueue(goapThread.job);
                         if (goapThread.job.jobType == JOB_TYPE.REMOVE_FIRE) {
                             if (goapThread.job.targetPOI.gridTileLocation != null) { //this happens because sometimes the target that was burning is now put out.
                                 Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan");
@@ -8953,6 +8956,19 @@ public class Character : ILeader, IPointOfInterest, IJobQueueOwner {
             return alterEgos[alterEgoName];
         }
         return null;
+    }
+    #endregion
+
+    #region IJobOwner
+    public void OnJobAddedToCharacterJobQueue(JobQueueItem job, Character character) {
+        
+    }
+    public void OnJobRemovedFromCharacterJobQueue(JobQueueItem job, Character character) {
+
+    }
+    public bool CancelJob(JobQueueItem job) {
+        //Not applicable
+        return false;
     }
     #endregion
 }
