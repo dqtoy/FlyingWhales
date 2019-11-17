@@ -169,34 +169,34 @@ public class GoapPlanJob : JobQueueItem {
         return originalOwner.ForceCancelJob(this);
     }
     public override void UnassignJob(bool shouldDoAfterEffect = true, string reason = "") {
-        base.UnassignJob(shouldDoAfterEffect);
-        if (assignedPlan != null && assignedCharacter != null) {
-            Character character = assignedCharacter;
-            character.AdjustIsWaitingForInteraction(1);
-            if (character.currentActionNode != null && character.currentActionNode.parentPlan == assignedPlan) {
-                if (character.currentParty.icon.isTravelling) {
-                    if (character.currentParty.icon.travelLine == null) {
-                        character.marker.StopMovement();
-                    } else {
-                        character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
-                    }
+        base.UnassignJob(shouldDoAfterEffect, reason);
+        if (assignedCharacter != null) {
+            if(assignedPlan != null) {
+                //assignedCharacter.AdjustIsWaitingForInteraction(1);
+                if (assignedCharacter.currentActionNode != null && assignedCharacter.currentActionNode == assignedPlan.currentActualNode) {
+                    //if (assignedCharacter.currentParty.icon.isTravelling) {
+                    //    if (assignedCharacter.currentParty.icon.travelLine == null) {
+                    //        assignedCharacter.marker.StopMovement();
+                    //    } else {
+                    //        assignedCharacter.currentParty.icon.SetOnArriveAction(() => assignedCharacter.OnArriveAtAreaStopMovement());
+                    //    }
+                    //}
+                    assignedCharacter.currentActionNode.StopActionNode(shouldDoAfterEffect, reason);
+                    //if (character.currentActionNode != null) {
+                    //    character.SetCurrentActionNode(null);
+                    //}
+                    //character.DropPlan(assignedPlan);
                 }
-                character.StopCurrentAction(shouldDoAfterEffect, reason);
-                if (character.currentActionNode != null) {
-                    character.SetCurrentActionNode(null);
-                }
-                character.DropPlan(assignedPlan);
-            } else {
-                character.DropPlan(assignedPlan);
+                //else {
+                //    character.DropPlan(assignedPlan);
+                //}
+                //assignedCharacter.AdjustIsWaitingForInteraction(-1);
+                SetAssignedPlan(null);
             }
-            character.AdjustIsWaitingForInteraction(-1);
-            //SetAssignedCharacter(null);
-            //SetAssignedPlan(null);
-        } else if (assignedCharacter != null) {
-            //Has assigned character but has no plan yet, the assumption for this is that the assigned character is still processing the plan for this job
+            //If has assignedCharacter but has no plan yet, the assumption for this is that the assigned character is still processing the plan for this job
             /*Just remove the assigned character and when the plan is received from goap thread, there is a checker there that will check if the assigned character is no longer he/she,
             /that character will scrap the plan that was made*/
-            SetAssignedCharacter(null);
+            SetAssignedCharacter(null); ;
         }
     }
     public override void OnAddJobToQueue() {
@@ -205,9 +205,13 @@ public class GoapPlanJob : JobQueueItem {
         }
     }
     public override bool OnRemoveJobFromQueue() {
-        if (!assignedCharacter.isAreaOrQuestJobQueue && id == assignedCharacter.owner.sleepScheduleJobID && (assignedCharacter == null && assignedPlan == null)) { //|| jobQueueParent.character.currentSleepTicks == CharacterManager.Instance.defaultSleepTicks
-            //If a character's scheduled sleep job is removed from queue before even doing it, consider it as cancelled 
-            assignedCharacter.owner.SetHasCancelledSleepSchedule(true);
+        if (originalOwner.ownerType == JOB_OWNER.CHARACTER && assignedPlan == null) { //|| jobQueueParent.character.currentSleepTicks == CharacterManager.Instance.defaultSleepTicks
+            //If original owner is character just get the assignedCharacter because for personal jobs, the assignedCharacter is always the owner
+            //No need to cast the owner anymore
+            if (id == assignedCharacter.sleepScheduleJobID) {
+                //If a character's scheduled sleep job is removed from queue before even doing it, consider it as cancelled 
+                assignedCharacter.SetHasCancelledSleepSchedule(true);
+            }
         }
         if (targetPOI != null) {
             return targetPOI.RemoveJobTargettingThis(this);
@@ -221,14 +225,15 @@ public class GoapPlanJob : JobQueueItem {
         }
         if(targetPOI.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character target = targetPOI as Character;
-            if (target.IsInOwnParty()) {
-                if (!allowDeadTargets && target.isDead) {
-                    return false;
-                }
-            } else {
-                //Must not take job if the target is in another party
-                return false;
-            }
+            return target.IsInOwnParty();
+            //if (target.IsInOwnParty()) {
+            //    if (!allowDeadTargets && target.isDead) {
+            //        return false;
+            //    }
+            //} else {
+            //    //Must not take job if the target is in another party
+            //    return false;
+            //}
         }
         //if(character.HasTraitOf(TRAIT_TYPE.CRIMINAL) || character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
         //    return false;
@@ -236,8 +241,11 @@ public class GoapPlanJob : JobQueueItem {
         return base.CanTakeJob(character);
     }
     public override bool CanCharacterTakeThisJob(Character character) {
-        //All jobs that are personal will bypass _canTakeThisJob/_canTakeThisJobWithTarget function checkers if the character parameter is the owner of the job queue
-        if(character == assignedCharacter.owner) {
+        //if(character == assignedCharacter.owner) {
+        //    return CanTakeJob(character);
+        //}
+        if(originalOwner.ownerType == JOB_OWNER.CHARACTER) {
+            //All jobs that are personal will bypass _canTakeThisJob/_canTakeThisJobWithTarget function checkers
             return CanTakeJob(character);
         }
         if (canTakeThisJob != null) {
@@ -301,9 +309,9 @@ public class GoapPlanJob : JobQueueItem {
     //public void SetWillImmediatelyBeDoneAfterReceivingPlan(bool state) {
     //    willImmediatelyBeDoneAfterReceivingPlan = state;
     //}
-    public void AllowDeadTargets() {
-        allowDeadTargets = true;
-    }
+    //public void AllowDeadTargets() {
+    //    allowDeadTargets = true;
+    //}
     /// <summary>
     /// Helper function to get what this job is trying to do.
     /// eg: Specify specific trait when it is Remove Trait job, specify specific item when it is Obtain Item job.
@@ -313,7 +321,7 @@ public class GoapPlanJob : JobQueueItem {
         switch (jobType) {
             case JOB_TYPE.OBTAIN_ITEM:
             case JOB_TYPE.REMOVE_TRAIT:
-                return Utilities.NormalizeStringUpperCaseFirstLetters(jobType.ToString()) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(goals.conditionKey.ToString());
+                return Utilities.NormalizeStringUpperCaseFirstLetters(jobType.ToString()); // + " " + Utilities.NormalizeStringUpperCaseFirstLetters(goals.conditionKey.ToString());
             case JOB_TYPE.HUNGER_RECOVERY:
             case JOB_TYPE.HUNGER_RECOVERY_STARVING:
                 return "Hunger Recovery";
@@ -381,7 +389,7 @@ public class GoapPlanJob : JobQueueItem {
 //}
 
 public class SaveDataGoapPlanJob : SaveDataJobQueueItem {
-    public SaveDataGoapEffect targetEffect;
+    public SaveDataGoapEffect[] goalEffects;
     public int targetPOIID;
     public POINT_OF_INTEREST_TYPE targetPOIType;
     public TILE_OBJECT_TYPE targetPOITileObjectType;
@@ -394,7 +402,7 @@ public class SaveDataGoapPlanJob : SaveDataJobQueueItem {
     public override void Save(JobQueueItem job) {
         base.Save(job);
         GoapPlanJob goapJob = job as GoapPlanJob;
-        allowDeadTargets = goapJob.allowDeadTargets;
+        //allowDeadTargets = goapJob.allowDeadTargets;
         targetInteractionType = goapJob.targetInteractionType;
         if (goapJob.targetPOI != null) {
             targetPOIID = goapJob.targetPOI.id;
@@ -405,18 +413,24 @@ public class SaveDataGoapPlanJob : SaveDataJobQueueItem {
         } else {
             targetPOIID = -1;
         }
-        targetEffect = new SaveDataGoapEffect();
-        targetEffect.Save(goapJob.goals);
-
-        forcedActionsGoapEffect = new List<SaveDataGoapEffect>();
-        forcedActionsType = new List<INTERACTION_TYPE>();
-        foreach (KeyValuePair<GoapEffect, INTERACTION_TYPE> kvp in goapJob.forcedActions) {
-            SaveDataGoapEffect goapEffect = new SaveDataGoapEffect();
-            goapEffect.Save(kvp.Key);
-            forcedActionsGoapEffect.Add(goapEffect);
-
-            forcedActionsType.Add(kvp.Value);
+        goalEffects = new SaveDataGoapEffect[goapJob.goals.Length];
+        for (int i = 0; i < goapJob.goals.Length; i++) {
+            GoapEffect goalEffect = goapJob.goals[i].goapEffect;
+            SaveDataGoapEffect saveEffect = new SaveDataGoapEffect();
+            saveEffect.Save(goalEffect);
+            goalEffects[i] = saveEffect;
         }
+
+
+        //forcedActionsGoapEffect = new List<SaveDataGoapEffect>();
+        //forcedActionsType = new List<INTERACTION_TYPE>();
+        //foreach (KeyValuePair<GoapEffect, INTERACTION_TYPE> kvp in goapJob.forcedActions) {
+        //    SaveDataGoapEffect goapEffect = new SaveDataGoapEffect();
+        //    goapEffect.Save(kvp.Key);
+        //    forcedActionsGoapEffect.Add(goapEffect);
+
+        //    forcedActionsType.Add(kvp.Value);
+        //}
     }
 
     //public override JobQueueItem Load() {

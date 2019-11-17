@@ -1136,6 +1136,24 @@ public class Area : IJobOwner {
         }
         return count;
     }
+    public int GetNumberOfJobsWith(JOB_TYPE type) {
+        int count = 0;
+        for (int i = 0; i < availableJobs.Count; i++) {
+            if (availableJobs[i].jobType == type) {
+                count++;
+            }
+        }
+        return count;
+    }
+    public int GetNumberOfJobsWith(System.Func<JobQueueItem, bool> checker) {
+        int count = 0;
+        for (int i = 0; i < availableJobs.Count; i++) {
+            if (checker.Invoke(availableJobs[i])) {
+                count++;
+            }
+        }
+        return count;
+    }
     public bool HasJob(JobQueueItem job) {
         for (int i = 0; i < availableJobs.Count; i++) {
             if (job == availableJobs[i]) {
@@ -1232,7 +1250,7 @@ public class Area : IJobOwner {
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeReplaceTileObjectJob);
         job.SetCancelOnFail(false);
         job.SetCancelJobOnDropPlan(false);
-        jobQueue.AddJobInQueue(job);
+        AddToAvailableJobs(job);
     }
     #endregion
 
@@ -1255,7 +1273,7 @@ public class Area : IJobOwner {
         get { return region.residents.Count / 5; } //There should be at most 1 Move Out Job per 5 residents
     }
     private int currentHeroEventJobs {
-        get { return jobQueue.GetNumberOfJobsWith(IsJobTypeAHeroEventJob); }
+        get { return GetNumberOfJobsWith(IsJobTypeAHeroEventJob); }
     }
     private bool IsJobTypeAHeroEventJob(JobQueueItem item) {
         switch (item.jobType) {
@@ -1275,7 +1293,7 @@ public class Area : IJobOwner {
     private void CreateMoveOutJobs() {
         CharacterStateJob job = new CharacterStateJob(JOB_TYPE.MOVE_OUT, CHARACTER_STATE.MOVE_OUT);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanMoveOut);
-        jobQueue.AddJobInQueue(job);
+        AddToAvailableJobs(job);
     }
     /// <summary>
     /// Check if this area should create an obtain food outside job.
@@ -1285,7 +1303,7 @@ public class Area : IJobOwner {
         if (!CanStillCreateHeroEventJob()) {
             return; //hero events are maxed.
         }
-        int obtainFoodOutsideJobs = jobQueue.GetNumberOfJobsWith(JOB_TYPE.OBTAIN_FOOD_OUTSIDE);
+        int obtainFoodOutsideJobs = GetNumberOfJobsWith(JOB_TYPE.OBTAIN_FOOD_OUTSIDE);
         if (obtainFoodOutsideJobs == 0 && foodPile.foodInPile < 1000) {
             CreateObtainFoodOutsideJob();
         } else  if (obtainFoodOutsideJobs == 1 && foodPile.foodInPile < 500) { //there is at least 1 existing obtain food outside job.
@@ -1296,7 +1314,7 @@ public class Area : IJobOwner {
     private void CreateObtainFoodOutsideJob() {
         CharacterStateJob job = new CharacterStateJob(JOB_TYPE.OBTAIN_FOOD_OUTSIDE, CHARACTER_STATE.MOVE_OUT);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainFoodOutsideJob);
-        jobQueue.AddJobInQueue(job);
+        AddToAvailableJobs(job);
     }
     /// <summary>
     /// Check if this area should create an obtain supply outside job.
@@ -1306,7 +1324,7 @@ public class Area : IJobOwner {
         if (!CanStillCreateHeroEventJob()) {
             return; //hero events are maxed.
         }
-        int obtainSupplyOutsideJobs = jobQueue.GetNumberOfJobsWith(JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE);
+        int obtainSupplyOutsideJobs = GetNumberOfJobsWith(JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE);
         if (obtainSupplyOutsideJobs == 0 && supplyPile.suppliesInPile < 1000) {
             CreateObtainSupplyOutsideJob();
         } else if (obtainSupplyOutsideJobs == 1 && supplyPile.suppliesInPile < 500) { //there is at least 1 existing obtain supply outside job.
@@ -1317,7 +1335,7 @@ public class Area : IJobOwner {
     private void CreateObtainSupplyOutsideJob() {
         CharacterStateJob job = new CharacterStateJob(JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE, CHARACTER_STATE.MOVE_OUT);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainSupplyOutsideJob);
-        jobQueue.AddJobInQueue(job);
+        AddToAvailableJobs(job);
     }
     private void PerDayHeroEventCreation() {
         //improve job at 8 am
@@ -1346,7 +1364,7 @@ public class Area : IJobOwner {
         }
         if (UnityEngine.Random.Range(0, 100) < 15) {//15
             CharacterStateJob job = new CharacterStateJob(JOB_TYPE.IMPROVE, CHARACTER_STATE.MOVE_OUT);
-            jobQueue.AddJobInQueue(job);
+            AddToAvailableJobs(job);
             //expires at midnight
             GameDate expiry = GameManager.Instance.Today();
             expiry.SetTicks(GameManager.Instance.GetTicksBasedOnHour(24));
@@ -1365,8 +1383,8 @@ public class Area : IJobOwner {
         if (UnityEngine.Random.Range(0, 100) < 15) {//15
             CharacterStateJob job = new CharacterStateJob(JOB_TYPE.EXPLORE, CHARACTER_STATE.MOVE_OUT);
             //Used lambda expression instead of new function. Reference: https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/lambda-expressions
-            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoExploreJob); 
-            jobQueue.AddJobInQueue(job);
+            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoExploreJob);
+            AddToAvailableJobs(job);
             //expires at midnight
             GameDate expiry = GameManager.Instance.Today();
             expiry.SetTicks(GameManager.Instance.GetTicksBasedOnHour(24));
@@ -1385,7 +1403,7 @@ public class Area : IJobOwner {
         if (UnityEngine.Random.Range(0, 100) < 15) {//15
             CharacterStateJob job = new CharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.MOVE_OUT);
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCombatJob);
-            jobQueue.AddJobInQueue(job);
+            AddToAvailableJobs(job);
             //expires at midnight
             GameDate expiry = GameManager.Instance.Today();
             expiry.SetTicks(GameManager.Instance.GetTicksBasedOnHour(24));
@@ -1395,7 +1413,7 @@ public class Area : IJobOwner {
     private void CheckIfJobWillExpire(JobQueueItem item) {
         if (item.assignedCharacter == null) {
             Debug.Log(GameManager.Instance.TodayLogString() + item.jobType.ToString() + " expired.");
-            item.assignedCharacter.RemoveJobInQueue(item);
+            item.CancelJob();
         }
     }
     #endregion

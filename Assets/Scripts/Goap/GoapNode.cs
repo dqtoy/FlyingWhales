@@ -38,6 +38,15 @@ public class MultiJobNode : JobNode{
     public override void SetNextActualNode() {
         currentIndex += 1;
     }
+    public override bool IsCurrentActionNode(ActualGoapNode node) {
+        for (int i = 0; i < nodes.Length; i++) {
+            ActualGoapNode currNode = nodes[i];
+            if(currNode == node) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 }
 public class SingleJobNode : JobNode {
@@ -57,6 +66,9 @@ public class SingleJobNode : JobNode {
     public override void SetNextActualNode() {
         //Not Applicable
     }
+    public override bool IsCurrentActionNode(ActualGoapNode node) {
+        return this.node == node;
+    }
     #endregion
 }
 public abstract class JobNode {
@@ -65,6 +77,7 @@ public abstract class JobNode {
     public abstract int currentNodeIndex { get; }
     public abstract void OnAttachPlanToJob(GoapPlanJob job);
     public abstract void SetNextActualNode();
+    public abstract bool IsCurrentActionNode(ActualGoapNode node);
 }
 
 //actual nodes located in a finished plan that is going to be executed by a character
@@ -246,7 +259,7 @@ public class ActualGoapNode {
     }
 
     //Only stop an action node if it is the current action node
-    public void StopActionNode(string reason = "") {
+    public void StopActionNode(bool shouldDoAfterEffect = false, string reason = "") {
         if(actor.currentActionNode != this) {
             return;
         }
@@ -289,7 +302,7 @@ public class ActualGoapNode {
             OnCancelActionTowardsTarget();
             //ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
             action.OnStopWhilePerforming(actor, poiTarget, otherData);
-            EndPerTickEffect(false);
+            EndPerTickEffect(shouldDoAfterEffect);
 
             ////when the action is ended prematurely, make sure to readjust the target character's do not move values
             //if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {

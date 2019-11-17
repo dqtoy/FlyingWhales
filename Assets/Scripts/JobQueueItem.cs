@@ -53,17 +53,13 @@ public class JobQueueItem {
     #region Virtuals
     public virtual void UnassignJob(bool shouldDoAfterEffect, string reason) { }
     protected virtual bool CanTakeJob(Character character) {
-        if (assignedCharacter.isAreaOrQuestJobQueue) {
-            //Criminals and Characters with Negative Disabler Traits should no longer create and take Location Jobs
-            return !character.HasTraitOf(TRAIT_TYPE.CRIMINAL) && !character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
-        }
-        return true;
+        return !character.HasTraitOf(TRAIT_TYPE.CRIMINAL) && !character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
     }
     public virtual void OnAddJobToQueue() { }
     public virtual bool OnRemoveJobFromQueue() { return true; }
     public virtual bool CanCharacterTakeThisJob(Character character) {
-        //All jobs that are personal will bypass _canTakeThisJob/_canTakeThisJobWithTarget function checkers if the character parameter is the owner of the job queue
-        if (character == assignedCharacter.character) {
+        if (originalOwner.ownerType == JOB_OWNER.CHARACTER) {
+            //All jobs that are personal will bypass _canTakeThisJob/_canTakeThisJobWithTarget function checkers
             return CanTakeJob(character);
         }
         if (canTakeThisJob != null) {

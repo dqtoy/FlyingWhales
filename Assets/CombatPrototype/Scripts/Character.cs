@@ -79,7 +79,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public GoapPlanner planner { get; set; }
     public int supply { get; set; }
     public int food { get; set; }
-    public int isWaitingForInteraction { get; private set; }
+    //public int isWaitingForInteraction { get; private set; }
     public CharacterMarker marker { get; private set; }
     public ActualGoapNode currentActionNode { get; private set; }
     public ActualGoapNode previousCurrentActionNode { get; private set; }
