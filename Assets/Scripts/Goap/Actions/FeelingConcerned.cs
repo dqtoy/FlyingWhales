@@ -5,7 +5,7 @@ using Traits;
 
 public class FeelingConcerned : GoapAction {
 
-    public FeelingConcerned(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.FEELING_CONCERNED, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public FeelingConcerned() : base(INTERACTION_TYPE.FEELING_CONCERNED, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Flirt_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         doesNotStopTargetCharacter = true;

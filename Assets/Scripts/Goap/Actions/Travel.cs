@@ -11,7 +11,7 @@ public class Travel : GoapAction {
     }
     protected override string failActionState { get { return "Travel Failed"; } }
 
-    public Travel(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.TRAVEL, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public Travel() : base(INTERACTION_TYPE.TRAVEL, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         this.goapName = "Travel";
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
         actionIconString = GoapActionStateDB.No_Icon;

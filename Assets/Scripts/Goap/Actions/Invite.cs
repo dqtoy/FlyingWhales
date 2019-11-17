@@ -6,7 +6,7 @@ using Traits;
 
 public class Invite : GoapAction {
 
-    public Invite(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.INVITE) {
+    public Invite() : base(INTERACTION_TYPE.INVITE) {
         actionIconString = GoapActionStateDB.Flirt_Icon;
     }
 

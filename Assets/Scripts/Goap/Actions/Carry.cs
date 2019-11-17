@@ -5,7 +5,7 @@ using Traits;
 
 public class Carry : GoapAction {
 
-    public Carry(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CARRY) {
+    public Carry() : base(INTERACTION_TYPE.CARRY) {
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
     }

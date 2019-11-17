@@ -5,7 +5,7 @@ using Traits;
 
 public class Shock : GoapAction {
 
-    public Shock(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.SHOCK) {
+    public Shock() : base(INTERACTION_TYPE.SHOCK) {
         actionIconString = GoapActionStateDB.Entertain_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         isNotificationAnIntel = false;

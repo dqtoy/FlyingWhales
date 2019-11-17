@@ -6,7 +6,7 @@ public class NarcolepticNap : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
-    public NarcolepticNap(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.NARCOLEPTIC_NAP) {
+    public NarcolepticNap() : base(INTERACTION_TYPE.NARCOLEPTIC_NAP) {
         actionIconString = GoapActionStateDB.Sleep_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         isNotificationAnIntel = false;

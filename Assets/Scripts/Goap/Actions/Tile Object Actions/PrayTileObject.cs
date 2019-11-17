@@ -5,7 +5,7 @@ using Traits;
 
 public class PrayTileObject : GoapAction {
 
-    public PrayTileObject(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PRAY_TILE_OBJECT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public PrayTileObject() : base(INTERACTION_TYPE.PRAY_TILE_OBJECT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         this.goapName = "Pray";
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         //validTimeOfDays = new TIME_IN_WORDS[] {

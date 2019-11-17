@@ -6,7 +6,7 @@ using Traits;
 public class Grieving : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
-    public Grieving(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.GRIEVING) {
+    public Grieving() : base(INTERACTION_TYPE.GRIEVING) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Hostile_Icon;
         isNotificationAnIntel = false;

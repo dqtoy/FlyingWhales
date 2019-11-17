@@ -5,7 +5,7 @@ using Traits;
 
 public class ResolveConflict : GoapAction {
 
-    public ResolveConflict(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.RESOLVE_CONFLICT) {
+    public ResolveConflict() : base(INTERACTION_TYPE.RESOLVE_CONFLICT) {
         actionIconString = GoapActionStateDB.Work_Icon;
     }
 

@@ -5,7 +5,7 @@ using Traits;
 
 public class Drop : GoapAction {
 
-    public Drop(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DROP) {
+    public Drop() : base(INTERACTION_TYPE.DROP) {
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION_B;
         actionIconString = GoapActionStateDB.Hostile_Icon;
         isNotificationAnIntel = false;

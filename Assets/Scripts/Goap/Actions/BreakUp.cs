@@ -7,7 +7,7 @@ public class BreakUp : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
 
-    public BreakUp(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.BREAK_UP) {
+    public BreakUp() : base(INTERACTION_TYPE.BREAK_UP) {
         actionIconString = GoapActionStateDB.Social_Icon;
     }
 

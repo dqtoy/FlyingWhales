@@ -6,7 +6,7 @@ using Traits;
 
 public class HuntingToDrinkBlood : GoapAction {
 
-    public HuntingToDrinkBlood(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD) {
+    public HuntingToDrinkBlood() : base(INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD) {
         actionIconString = GoapActionStateDB.Eat_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         isNotificationAnIntel = false;

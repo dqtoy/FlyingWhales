@@ -5,7 +5,7 @@ using Traits;
 
 public class DispelMagic : GoapAction {
 
-    public DispelMagic(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DISPEL_MAGIC, INTERACTION_ALIGNMENT.GOOD, actor, poiTarget) {
+    public DispelMagic() : base(INTERACTION_TYPE.DISPEL_MAGIC, INTERACTION_ALIGNMENT.GOOD, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.FirstAid_Icon;
         //validTimeOfDays = new TIME_IN_WORDS[] {

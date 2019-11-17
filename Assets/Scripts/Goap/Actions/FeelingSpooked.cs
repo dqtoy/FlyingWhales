@@ -7,7 +7,7 @@ public class FeelingSpooked : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
 
-    public FeelingSpooked(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.FEELING_SPOOKED) {
+    public FeelingSpooked() : base(INTERACTION_TYPE.FEELING_SPOOKED) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Hostile_Icon;
         isNotificationAnIntel = false;

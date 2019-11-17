@@ -5,7 +5,7 @@ using Traits;
 
 public class MakeLove : GoapAction {
 
-    public MakeLove(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.MAKE_LOVE) {
+    public MakeLove() : base(INTERACTION_TYPE.MAKE_LOVE) {
         actionIconString = GoapActionStateDB.Flirt_Icon;
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.AFTERNOON,

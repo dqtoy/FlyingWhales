@@ -5,7 +5,7 @@ using Traits;
 
 public class CurseCharacter : GoapAction {
 
-    public CurseCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CURSE_CHARACTER) {
+    public CurseCharacter() : base(INTERACTION_TYPE.CURSE_CHARACTER) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Hostile_Icon;
         shouldAddLogs = false; //set to false because this action has a special case for logs

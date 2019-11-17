@@ -5,7 +5,7 @@ using Traits;
 
 public class DropResource : GoapAction {
     //TODO: Modify to use generic ResourcePile
-    public DropResource(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DROP_RESOURCE) {
+    public DropResource() : base(INTERACTION_TYPE.DROP_RESOURCE) {
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
     }

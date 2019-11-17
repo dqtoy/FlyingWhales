@@ -20,7 +20,7 @@ namespace Traits {
         public override void OnSeePOI(IPointOfInterest targetPOI, Character character) {
             if (targetPOI is Character) {
                 Character seenCharacter = targetPOI as Character;
-                if (seenCharacter.currentActionNode.action != null && seenCharacter.currentActionNode.action.isPerformingActualAction) {
+                if (seenCharacter.currentActionNode.action != null && seenCharacter.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING) {
                     if (seenCharacter.currentActionNode.action.goapType == INTERACTION_TYPE.PLAY_GUITAR) {
                         OnHearGuitarPlaying(seenCharacter);
                     } else if (seenCharacter.currentActionNode.action.goapType == INTERACTION_TYPE.SING) {
@@ -51,6 +51,16 @@ namespace Traits {
         public override void OnOwnerInitiallyPlaced(Character owner) {
             base.OnOwnerInitiallyPlaced(owner);
             //Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
+        }
+        public override void ExecuteActionPerTickEffects(INTERACTION_TYPE action) {
+            if (action == INTERACTION_TYPE.SING) {
+                owner.AdjustHappiness(200);
+            }
+        }
+        public override void ExecuteCostModification(INTERACTION_TYPE action, ref int cost) {
+            if (action == INTERACTION_TYPE.SING) {
+                cost = Utilities.rng.Next(10, 27);
+            }
         }
         #endregion
 

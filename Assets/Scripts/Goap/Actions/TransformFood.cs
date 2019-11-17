@@ -16,7 +16,7 @@ public class TransformFood : GoapAction {
     }
 
 
-    public TransformFood(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.TRANSFORM_FOOD, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public TransformFood() : base(INTERACTION_TYPE.TRANSFORM_FOOD, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Work_Icon;
 
         if (poiTarget is Character) {

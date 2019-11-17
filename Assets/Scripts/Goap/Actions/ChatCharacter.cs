@@ -7,7 +7,7 @@ public class ChatCharacter : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
 
-    public ChatCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CHAT_CHARACTER) {
+    public ChatCharacter() : base(INTERACTION_TYPE.CHAT_CHARACTER) {
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,
             TIME_IN_WORDS.LUNCH_TIME,

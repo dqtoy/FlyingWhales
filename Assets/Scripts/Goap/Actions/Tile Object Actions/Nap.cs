@@ -4,40 +4,35 @@ using UnityEngine;
 using Traits;
 
 public class Nap : GoapAction {
-    protected override string failActionState { get { return "Nap Fail"; } }
 
-    private Resting _restingTrait;
-    public Nap(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.NAP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public Nap() : base(INTERACTION_TYPE.NAP) {
         actionIconString = GoapActionStateDB.Sleep_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
         isNotificationAnIntel = false;
     }
 
     #region Overrides
-    protected override void ConstructRequirement() {
-        _requirementAction = Requirement;
-    }
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = actor });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        if (!isTargetMissing) {
-            if (CanSleepInBed(actor, poiTarget as TileObject)) {
-                SetState("Nap Success");
-            } else {
-                SetState("Nap Fail");
-            }
-        } else {
-            TileObject obj = poiTarget as TileObject;
-            if (!obj.IsAvailable()) {
-                SetState("Nap Fail");
-            } else {
-                SetState("Target Missing");
+        SetState("Nap Success", goapNode);
+    }
+    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(actor, poiTarget, otherData);
+        if (goapActionInvalidity.isInvalid == false) {
+            if (CanSleepInBed(actor, poiTarget as TileObject) == false) {
+                goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.logKey = "nap fail_description";
+            } else if (poiTarget.IsAvailable() == false) {
+                goapActionInvalidity.isInvalid = true;
             }
         }
+        return goapActionInvalidity;
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+        LocationStructure targetStructure = target.gridTileLocation.structure;
         if(targetStructure.structureType == STRUCTURE_TYPE.DWELLING) {
             Dwelling dwelling = targetStructure as Dwelling;
             if (dwelling.IsResident(actor)) {
@@ -61,78 +56,75 @@ public class Nap : GoapAction {
         }
         return 100;
     }
-    public override void OnStopWhilePerforming() {
-        if(currentState.name == "Nap Success") {
-            RemoveTraitFrom(actor, "Resting");
-        }
+    public override void OnStopWhilePerforming(Character actor, IPointOfInterest target, object[] otherData) {
+        base.OnStopWhilePerforming(actor, target, otherData);
+        actor.traitContainer.RemoveTrait(actor, "Resting");
     }
     #endregion
 
     #region Requirements
-   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
-        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
-            return false;
-        }
-        //if (targetStructure.structureType == STRUCTURE_TYPE.DWELLING && knownLoc != null) {
-        //    TileObject obj = poiTarget as TileObject;
-        //    return obj.IsAvailable();
-        //}
-        //return false;
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+                return false;
+            }
 
-        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+        }
+        return false;
     }
     #endregion
 
     #region State Effects
-    private void PreNapSuccess() {
-        //currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-        _restingTrait = new Resting();
-        actor.traitContainer.AddTrait(actor, _restingTrait);
+    private void PreNapSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Resting");
     }
-    private void PerTickNapSuccess() {
-        actor.AdjustTiredness(30);
+    private void PerTickNapSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.AdjustTiredness(30);
 
-        if(_restingTrait.lycanthropyTrait == null) {
-            if (currentState.currentDuration == currentState.duration) {
-                //If sleep will end, check if the actor is being targetted by Drink Blood action, if it is, do not end sleep
-                bool isTargettedByDrinkBlood = false;
-                for (int i = 0; i < actor.targettedByAction.Count; i++) {
-                    if (actor.targettedByAction[i].goapType == INTERACTION_TYPE.DRINK_BLOOD && !actor.targettedByAction[i].isDone && actor.targettedByAction[i].isPerformingActualAction) {
-                        isTargettedByDrinkBlood = true;
-                        break;
-                    }
-                }
-                if (isTargettedByDrinkBlood) {
-                    currentState.OverrideDuration(currentState.duration + 1);
-                }
-            }
-        } else {
-            bool isTargettedByDrinkBlood = false;
-            for (int i = 0; i < actor.targettedByAction.Count; i++) {
-                if (actor.targettedByAction[i].goapType == INTERACTION_TYPE.DRINK_BLOOD && !actor.targettedByAction[i].isDone && actor.targettedByAction[i].isPerformingActualAction) {
-                    isTargettedByDrinkBlood = true;
-                    break;
-                }
-            }
-            if (currentState.currentDuration == currentState.duration) {
-                //If sleep will end, check if the actor is being targetted by Drink Blood action, if it is, do not end sleep
-                if (isTargettedByDrinkBlood) {
-                    currentState.OverrideDuration(currentState.duration + 1);
-                } else {
-                    if (!_restingTrait.hasTransformed) {
-                        _restingTrait.CheckForLycanthropy(true);
-                    }
-                }
-            } else {
-                if (!isTargettedByDrinkBlood) {
-                    _restingTrait.CheckForLycanthropy();
-                }
-            }
-        }
+        //TODO:
+        //if(_restingTrait.lycanthropyTrait == null) {
+        //    if (currentState.currentDuration == currentState.duration) {
+        //        //If sleep will end, check if the actor is being targetted by Drink Blood action, if it is, do not end sleep
+        //        bool isTargettedByDrinkBlood = false;
+        //        for (int i = 0; i < actor.targettedByAction.Count; i++) {
+        //            if (actor.targettedByAction[i].goapType == INTERACTION_TYPE.DRINK_BLOOD && !actor.targettedByAction[i].isDone && actor.targettedByAction[i].isPerformingActualAction) {
+        //                isTargettedByDrinkBlood = true;
+        //                break;
+        //            }
+        //        }
+        //        if (isTargettedByDrinkBlood) {
+        //            currentState.OverrideDuration(currentState.duration + 1);
+        //        }
+        //    }
+        //} else {
+        //    bool isTargettedByDrinkBlood = false;
+        //    for (int i = 0; i < actor.targettedByAction.Count; i++) {
+        //        if (actor.targettedByAction[i].goapType == INTERACTION_TYPE.DRINK_BLOOD && !actor.targettedByAction[i].isDone && actor.targettedByAction[i].isPerformingActualAction) {
+        //            isTargettedByDrinkBlood = true;
+        //            break;
+        //        }
+        //    }
+        //    if (currentState.currentDuration == currentState.duration) {
+        //        //If sleep will end, check if the actor is being targetted by Drink Blood action, if it is, do not end sleep
+        //        if (isTargettedByDrinkBlood) {
+        //            currentState.OverrideDuration(currentState.duration + 1);
+        //        } else {
+        //            if (!_restingTrait.hasTransformed) {
+        //                _restingTrait.CheckForLycanthropy(true);
+        //            }
+        //        }
+        //    } else {
+        //        if (!isTargettedByDrinkBlood) {
+        //            _restingTrait.CheckForLycanthropy();
+        //        }
+        //    }
+        //}
         
     }
-    private void AfterNapSuccess() {
-        RemoveTraitFrom(actor, "Resting");
+    private void AfterNapSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Resting");
     }
     //private void PreNapFail() {
     //    currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);

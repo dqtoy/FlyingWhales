@@ -5,7 +5,7 @@ using Traits;
 
 public class DouseFire : GoapAction {
 
-    public DouseFire(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DOUSE_FIRE) {
+    public DouseFire() : base(INTERACTION_TYPE.DOUSE_FIRE) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.FirstAid_Icon;
         validTimeOfDays = new TIME_IN_WORDS[] {

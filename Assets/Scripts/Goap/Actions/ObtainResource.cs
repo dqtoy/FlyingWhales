@@ -4,7 +4,7 @@ using UnityEngine;
 using Traits;
 
 public class ObtainResource : GoapAction {
-    public ObtainResource(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.OBTAIN_RESOURCE) {
+    public ObtainResource() : base(INTERACTION_TYPE.OBTAIN_RESOURCE) {
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
     }

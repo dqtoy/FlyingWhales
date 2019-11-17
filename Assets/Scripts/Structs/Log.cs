@@ -184,11 +184,7 @@ public class Log {
     private GoapAction GetGoapActionAssociatedWithThisLog() {
         if(_goapAction != null) {
             if(_goapAction.goapType == INTERACTION_TYPE.SHARE_INFORMATION) {
-                return (_goapAction as ShareInformation).eventToBeShared;
-            }else if (_goapAction.goapType == INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_FRIENDSHIP) {
-                return (_goapAction as SpreadRumorRemoveFriendship).chosenMemory.goapAction;
-            }else if (_goapAction.goapType == INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_LOVE) {
-                return (_goapAction as SpreadRumorRemoveLove).chosenMemory.goapAction;
+                //return (_goapAction as ShareInformation).eventToBeShared;
             }
         }
         return _goapAction;

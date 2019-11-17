@@ -6,7 +6,7 @@ using Traits;
 public class Dance : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
-    public Dance(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DANCE) {
+    public Dance() : base(INTERACTION_TYPE.DANCE) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,

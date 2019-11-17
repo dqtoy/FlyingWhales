@@ -7,7 +7,7 @@ public class FeelingBrokenhearted : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
 
-    public FeelingBrokenhearted(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.FEELING_BROKENHEARTED) {
+    public FeelingBrokenhearted() : base(INTERACTION_TYPE.FEELING_BROKENHEARTED) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Hostile_Icon;
         isNotificationAnIntel = false;

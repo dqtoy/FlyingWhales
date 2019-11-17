@@ -8,7 +8,7 @@ public class Play : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
-    public Play(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PLAY) {
+    public Play() : base(INTERACTION_TYPE.PLAY) {
         shouldIntelNotificationOnlyIfActorIsActive = true;
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         validTimeOfDays = new TIME_IN_WORDS[] {

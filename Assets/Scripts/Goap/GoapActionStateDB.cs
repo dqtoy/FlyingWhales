@@ -40,27 +40,22 @@ public static class GoapActionStateDB {
     }
 
     public static Dictionary<INTERACTION_TYPE, StateNameAndDuration[]> goapActionStates = new Dictionary<INTERACTION_TYPE, StateNameAndDuration[]>() {
-        {INTERACTION_TYPE.EAT_PLANT, new StateNameAndDuration[]{
+        {INTERACTION_TYPE.EAT, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Eat Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
             new StateNameAndDuration(){ name = "Eat Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
-        {INTERACTION_TYPE.EAT_ANIMAL, new StateNameAndDuration[]{
+        {INTERACTION_TYPE.EAT, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Eat Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
             new StateNameAndDuration(){ name = "Eat Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
-        {INTERACTION_TYPE.EAT_AT_TABLE, new StateNameAndDuration[]{
+        {INTERACTION_TYPE.EAT, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Eat Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
             new StateNameAndDuration(){ name = "Eat Poisoned", status = InteractionManager.Goap_State_Success, duration = 6 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
         {INTERACTION_TYPE.EAT_CORPSE, new StateNameAndDuration[]{
-            new StateNameAndDuration(){ name = "Eat Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
-            new StateNameAndDuration(){ name = "Eat Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
-            new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
-        } },
-        {INTERACTION_TYPE.EAT_CHARACTER, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Eat Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
             new StateNameAndDuration(){ name = "Eat Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
@@ -276,12 +271,6 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Feed Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
-        {INTERACTION_TYPE.STEAL_FROM_CHARACTER, new StateNameAndDuration[]{
-            new StateNameAndDuration(){ name = "Steal Success", status = InteractionManager.Goap_State_Success, duration = 0 },
-            new StateNameAndDuration(){ name = "Steal Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
-            new StateNameAndDuration(){ name = "Steal Vigilant", status = InteractionManager.Goap_State_Fail, duration = 0 },
-            new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
-        } },
         {INTERACTION_TYPE.DROP_ITEM, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Drop Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
@@ -357,19 +346,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.TANTRUM, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Tantrum Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
-        {INTERACTION_TYPE.EAT_MUSHROOM, new StateNameAndDuration[]{
+        {INTERACTION_TYPE.EAT, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Eat Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
             new StateNameAndDuration(){ name = "Eat Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
-            new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
-        } },
-        {INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_FRIENDSHIP, new StateNameAndDuration[]{
-            new StateNameAndDuration(){ name = "Break Friendship Success", status = InteractionManager.Goap_State_Success, duration = 0 },
-            //new StateNameAndDuration(){ name = "Break Friendship Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
-            new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
-        } },
-        {INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_LOVE, new StateNameAndDuration[]{
-            new StateNameAndDuration(){ name = "Break Love Success", status = InteractionManager.Goap_State_Success, duration = 0 },
-            //new StateNameAndDuration(){ name = "Break Love Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
         {INTERACTION_TYPE.BREAK_UP, new StateNameAndDuration[]{

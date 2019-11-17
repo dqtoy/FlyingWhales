@@ -6,7 +6,7 @@ using Traits;
 
 public class JudgeCharacter : GoapAction {
 
-    public JudgeCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.JUDGE_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public JudgeCharacter() : base(INTERACTION_TYPE.JUDGE_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         //actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Work_Icon;
         //validTimeOfDays = new TIME_IN_WORDS[] {

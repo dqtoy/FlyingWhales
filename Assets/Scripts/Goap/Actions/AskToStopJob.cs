@@ -7,7 +7,7 @@ public class AskToStopJob : GoapAction {
 
     public GoapPlanJob jobToStop { get; private set; }
 
-    public AskToStopJob(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ASK_TO_STOP_JOB) {
+    public AskToStopJob() : base(INTERACTION_TYPE.ASK_TO_STOP_JOB) {
         actionIconString = GoapActionStateDB.Work_Icon;
         doesNotStopTargetCharacter = true;
     }

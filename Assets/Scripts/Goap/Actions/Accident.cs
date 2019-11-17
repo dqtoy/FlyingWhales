@@ -6,7 +6,7 @@ using Traits;
 public class Accident : GoapAction {
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
-    public Accident(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ACCIDENT) {
+    public Accident() : base(INTERACTION_TYPE.ACCIDENT) {
         actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         isNotificationAnIntel = false;

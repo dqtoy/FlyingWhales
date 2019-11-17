@@ -9,7 +9,7 @@ public class DropItem : GoapAction {
         get { return ACTION_CATEGORY.DIRECT; }
     }
 
-    public DropItem(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DROP_ITEM) {
+    public DropItem() : base(INTERACTION_TYPE.DROP_ITEM) {
         actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION_B;
         isNotificationAnIntel = false;

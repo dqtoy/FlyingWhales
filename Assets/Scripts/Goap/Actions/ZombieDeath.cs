@@ -5,7 +5,7 @@ using Traits;
 
 public class ZombieDeath : GoapAction {
 
-    public ZombieDeath(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ZOMBIE_DEATH, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public ZombieDeath() : base(INTERACTION_TYPE.ZOMBIE_DEATH, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.No_Icon;
     }

@@ -6,7 +6,7 @@ using Traits;
 public class RestrainCarryCharacter : GoapAction {
     private bool isForCriminal;
 
-    public RestrainCarryCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.RESTRAIN_CARRY_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public RestrainCarryCharacter() : base(INTERACTION_TYPE.RESTRAIN_CARRY_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
         //isNotificationAnIntel = false;
     }

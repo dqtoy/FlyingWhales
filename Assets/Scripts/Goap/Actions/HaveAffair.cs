@@ -7,7 +7,7 @@ public class HaveAffair : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
 
-    public HaveAffair(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.HAVE_AFFAIR) {
+    public HaveAffair() : base(INTERACTION_TYPE.HAVE_AFFAIR) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Flirt_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;

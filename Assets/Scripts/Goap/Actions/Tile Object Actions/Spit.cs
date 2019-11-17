@@ -6,7 +6,7 @@ using Traits;
 public class Spit : GoapAction {
     protected override string failActionState { get { return "Target Missing"; } }
 
-    public Spit(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.SPIT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public Spit() : base(INTERACTION_TYPE.SPIT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Entertain_Icon;
     }
 

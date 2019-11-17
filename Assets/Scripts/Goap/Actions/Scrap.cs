@@ -4,10 +4,10 @@ using UnityEngine;
 using Traits;
 
 public class Scrap : GoapAction {
-    //public override LocationStructure targetStructure { get { return _targetStructure; } }
 
-    //private LocationStructure _targetStructure;
-    public Scrap(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.SCRAP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
+
+    public Scrap() : base(INTERACTION_TYPE.SCRAP) {
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,
             TIME_IN_WORDS.LUNCH_TIME,
@@ -20,51 +20,36 @@ public class Scrap : GoapAction {
     }
 
     #region Overrides
-    protected override void ConstructRequirement() {
-        _requirementAction = Requirement;
-    }
     protected override void ConstructBasePreconditionsAndEffects() {
-        SpecialToken item = poiTarget as SpecialToken;
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = TokenManager.Instance.itemData[item.specialTokenType].supplyValue, targetPOI = actor });
+        //TODO: AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = TokenManager.Instance.itemData[item.specialTokenType].supplyValue, targetPOI = actor });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        if (!isTargetMissing) {
-            SetState("Scrap Success");
-        } else {
-            SetState("Target Missing");
-        }
+        SetState("Scrap Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 5;
     }
-    //public override void SetTargetStructure() {
-    //    ItemAwareness awareness = actor.GetAwareness(poiTarget) as ItemAwareness;
-    //    _targetStructure = poiTarget.gridTileLocation.structure;
-    //    base.SetTargetStructure();
-    //    //targetTile = awareness.knownLocation;
-    //}
-    //public override void FailAction() {
-    //    base.FailAction();
-    //    SetState("Target Missing");
-    //}
     #endregion
 
     #region Requirements
-   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
-        if (poiTarget is SpecialToken) {
-            SpecialToken token = poiTarget as SpecialToken;
-            if (token.gridTileLocation != null && token.gridTileLocation.structure.location.IsRequiredByWarehouse(token)) {
-                return false;
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            if (poiTarget is SpecialToken) {
+                SpecialToken token = poiTarget as SpecialToken;
+                if (token.gridTileLocation != null && token.gridTileLocation.structure.location.IsRequiredByWarehouse(token)) {
+                    return false;
+                }
             }
-        }
-        if (poiTarget.gridTileLocation != null) {
-            if (poiTarget.factionOwner != null) {
-                if (actor.faction == poiTarget.factionOwner) {
+            if (poiTarget.gridTileLocation != null) {
+                if (poiTarget.factionOwner != null) {
+                    if (actor.faction == poiTarget.factionOwner) {
+                        return true;
+                    }
+                } else {
                     return true;
                 }
-            } else {
-                return true;
             }
         }
         return false;
@@ -72,23 +57,17 @@ public class Scrap : GoapAction {
     #endregion
 
     #region State Effects
-    private void PreScrapSuccess() {
-        SpecialToken item = poiTarget as SpecialToken;
-        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+    private void PreScrapSuccess(ActualGoapNode goapNode) {
+        SpecialToken item = goapNode.poiTarget as SpecialToken;
+        GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
+        currentState.AddLogFiller(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
         currentState.AddLogFiller(item, item.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         currentState.AddLogFiller(null, TokenManager.Instance.itemData[item.specialTokenType].supplyValue.ToString(), LOG_IDENTIFIER.STRING_1);
     }
-    private void AfterScrapSuccess() {
-        SpecialToken item = poiTarget as SpecialToken;
-        actor.AdjustSupply(TokenManager.Instance.itemData[item.specialTokenType].supplyValue);
-        actor.DestroyToken(item);
-    }
-    private void PreTargetMissing() {
-        currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-        currentState.AddLogFiller(poiTarget as SpecialToken, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    }
-    public void AfterTargetMissing() {
-        actor.RemoveAwareness(poiTarget);
+    private void AfterScrapSuccess(ActualGoapNode goapNode) {
+        SpecialToken item = goapNode.poiTarget as SpecialToken;
+        goapNode.actor.AdjustSupply(TokenManager.Instance.itemData[item.specialTokenType].supplyValue);
+        goapNode.actor.DestroyToken(item);
     }
     #endregion
 }

@@ -5,7 +5,7 @@ using Traits;
 
 public class WellJump : GoapAction {
 
-    public WellJump(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.WELL_JUMP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public WellJump() : base(INTERACTION_TYPE.WELL_JUMP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Sleep_Icon;
     }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 using Traits;
 
 public class SlayCharacter : GoapAction {
-    public SlayCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.SLAY_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public SlayCharacter() : base(INTERACTION_TYPE.SLAY_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         doesNotStopTargetCharacter = true;
         actionIconString = GoapActionStateDB.Hostile_Icon;
     }

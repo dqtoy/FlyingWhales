@@ -36,7 +36,7 @@ namespace Traits {
                 if (gainedFromDoing == null) {
                     owner.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
                 } else {
-                    if (gainedFromDoing.goapType == INTERACTION_TYPE.EAT_AT_TABLE) {
+                    if (gainedFromDoing.goapType == INTERACTION_TYPE.EAT) {
                         Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", gainedFromDoing);
                         addLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);

@@ -8,7 +8,7 @@ public class CraftFurniture : GoapAction {
     public TILE_OBJECT_TYPE furnitureToCreate { get; private set; }
     private bool hasSetOtherData;
 
-    public CraftFurniture(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CRAFT_FURNITURE) {
+    public CraftFurniture() : base(INTERACTION_TYPE.CRAFT_FURNITURE) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Work_Icon;
         showIntelNotification = false;

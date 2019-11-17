@@ -10,7 +10,7 @@ public class AssaultCharacter : GoapAction {
     //private Character winner;
     private Character loser;
 
-    public AssaultCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ASSAULT_CHARACTER) {
+    public AssaultCharacter() : base(INTERACTION_TYPE.ASSAULT_CHARACTER) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Hostile_Icon;
         doesNotStopTargetCharacter = true;

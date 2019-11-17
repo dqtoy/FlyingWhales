@@ -5,7 +5,9 @@ using Traits;
 
 public class RitualKilling : GoapAction {
 
-    public RitualKilling(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.RITUAL_KILLING, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
+
+    public RitualKilling() : base(INTERACTION_TYPE.RITUAL_KILLING) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
         validTimeOfDays = new TIME_IN_WORDS[] {
                 TIME_IN_WORDS.AFTER_MIDNIGHT,
@@ -15,46 +17,47 @@ public class RitualKilling : GoapAction {
     }
 
     #region Overrides
-    protected override void ConstructRequirement() {
-        _requirementAction = Requirement;
-    }
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = poiTarget });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        //rather than checking location check if the character is not in anyone elses party and is still active
-        if (!isTargetMissing) {
-            if (actor.marker.CanDoStealthActionToTarget(poiTarget)) {
-                SetState("Killing Success");
-            } else {
-                SetState("Killing Fail");
-            }
-        } else {
-            SetState("Target Missing");
-        }
+        SetState("Killing Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 1;
     }
+    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(actor, poiTarget, otherData);
+        if (goapActionInvalidity.isInvalid == false) {
+            if (actor.marker.CanDoStealthActionToTarget(poiTarget) == false) {
+                goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.logKey = "killing success_description";
+            }
+        }
+        return goapActionInvalidity;
+    }
     #endregion
 
     #region Requirements
-   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
-        return actor != poiTarget && actor.traitContainer.GetNormalTrait("Serial Killer") != null;
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            return actor != poiTarget && actor.traitContainer.GetNormalTrait("Serial Killer") != null;
+        }
+        return false;
     }
     #endregion
 
     #region State Effects
-    private void PreKillingSuccess() {
-        SetCommittedCrime(CRIME.MURDER, new Character[] { actor });
+    private void PreKillingSuccess(ActualGoapNode goapNode) {
+        
     }
-    private void AfterKillingSuccess() {
-        actor.AdjustHappiness(10000);
-        if (poiTarget is Character) {
-            SetCannotCancelAction(true);
-            Character targetCharacter = poiTarget as Character;
-            targetCharacter.Death(deathFromAction: this, responsibleCharacter: actor);
+    private void AfterKillingSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.AdjustHappiness(10000);
+        if (goapNode.poiTarget is Character) {
+            Character targetCharacter = goapNode.poiTarget as Character;
+            targetCharacter.Death(deathFromAction: this, responsibleCharacter: goapNode.actor);
         }
     }
     #endregion

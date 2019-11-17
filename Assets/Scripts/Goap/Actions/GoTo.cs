@@ -5,7 +5,7 @@ using Traits;
 
 public class GoTo : GoapAction {
 
-    public GoTo(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.GO_TO, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public GoTo() : base(INTERACTION_TYPE.GO_TO, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.TARGET_IN_VISION;
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;

@@ -7,7 +7,7 @@ public class BuryCharacter : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
-    public BuryCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.BURY_CHARACTER) {
+    public BuryCharacter() : base(INTERACTION_TYPE.BURY_CHARACTER) {
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION_B;
         actionIconString = GoapActionStateDB.Work_Icon;
     }

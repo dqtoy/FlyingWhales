@@ -5,7 +5,7 @@ using Traits;
 
 public class Pray : GoapAction {
 
-    public Pray(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PRAY) {
+    public Pray() : base(INTERACTION_TYPE.PRAY) {
         this.goapName = "Pray";
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         validTimeOfDays = new TIME_IN_WORDS[] {

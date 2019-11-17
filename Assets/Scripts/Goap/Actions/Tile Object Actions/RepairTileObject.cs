@@ -5,7 +5,7 @@ using Traits;
 
 public class RepairTileObject : GoapAction {
 
-    public RepairTileObject(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.REPAIR_TILE_OBJECT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public RepairTileObject() : base(INTERACTION_TYPE.REPAIR_TILE_OBJECT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;

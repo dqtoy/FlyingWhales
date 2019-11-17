@@ -5,7 +5,7 @@ using Traits;
 
 public class Whip : GoapAction {
 
-    public Whip(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.WHIP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public Whip() : base(INTERACTION_TYPE.WHIP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
     }
 

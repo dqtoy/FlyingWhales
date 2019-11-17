@@ -11,7 +11,7 @@ public class Watch : GoapAction {
 
     //for testing
     private int ticksInWatch;
-    public Watch(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.WATCH, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public Watch() : base(INTERACTION_TYPE.WATCH, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Watch_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         doesNotStopTargetCharacter = true;

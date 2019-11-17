@@ -6,7 +6,7 @@ using Traits;
 public class RememberFallen : GoapAction {
     protected override string failActionState { get { return "Target Missing"; } }
 
-    public RememberFallen(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.REMEMBER_FALLEN, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public RememberFallen() : base(INTERACTION_TYPE.REMEMBER_FALLEN, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Entertain_Icon;
         isNotificationAnIntel = false;
     }

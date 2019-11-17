@@ -7,7 +7,7 @@ public class DrinkBlood : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.CONSUME; } }
 
-    public DrinkBlood(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DRINK_BLOOD) {
+    public DrinkBlood() : base(INTERACTION_TYPE.DRINK_BLOOD) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Drink_Blood_Icon;
         doesNotStopTargetCharacter = true;

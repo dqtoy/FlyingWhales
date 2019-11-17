@@ -29,13 +29,11 @@ namespace Traits {
             owner = sourceCharacter as Character;
             owner.AdjustHappinessDecreaseRate(_happinessDecreaseRate);
             base.OnAddTrait(sourceCharacter);
-            owner.AddInteractionType(INTERACTION_TYPE.STEAL_FROM_CHARACTER);
             owner.AddInteractionType(INTERACTION_TYPE.STEAL);
             Messenger.AddListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             base.OnRemoveTrait(sourceCharacter, removedBy);
-            owner.RemoveInteractionType(INTERACTION_TYPE.STEAL_FROM_CHARACTER);
             owner.RemoveInteractionType(INTERACTION_TYPE.STEAL);
             owner.AdjustHappinessDecreaseRate(-_happinessDecreaseRate);
             Messenger.RemoveListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
@@ -115,6 +113,17 @@ namespace Traits {
                 }
             }
             return base.TriggerFlaw(character);
+        }
+        public override void ExecuteCostModification(INTERACTION_TYPE action, ref int cost) {
+            if (action == INTERACTION_TYPE.STEAL) {
+                cost = Utilities.rng.Next(5, 46);
+            }
+        }
+        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action) {
+            base.ExecuteActionAfterEffects(action);
+            if (action == INTERACTION_TYPE.STEAL) {
+                owner.AdjustHappiness(6000);
+            }
         }
         #endregion
 

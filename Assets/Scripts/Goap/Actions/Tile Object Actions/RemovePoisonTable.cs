@@ -6,7 +6,7 @@ using Traits;
 public class RemovePoisonTable : GoapAction {
     protected override string failActionState { get { return "Remove Poison Fail"; } }
 
-    public RemovePoisonTable(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.REMOVE_POISON_TABLE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public RemovePoisonTable() : base(INTERACTION_TYPE.REMOVE_POISON_TABLE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         //this.goapName = "Remove Poison";
         actionIconString = GoapActionStateDB.Work_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;

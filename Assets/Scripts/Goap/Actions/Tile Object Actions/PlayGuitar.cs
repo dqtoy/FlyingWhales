@@ -6,7 +6,7 @@ using Traits;
 public class PlayGuitar : GoapAction {
     protected override string failActionState { get { return "Play Fail"; } }
 
-    public PlayGuitar(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PLAY_GUITAR, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public PlayGuitar() : base(INTERACTION_TYPE.PLAY_GUITAR, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,
             TIME_IN_WORDS.LUNCH_TIME,

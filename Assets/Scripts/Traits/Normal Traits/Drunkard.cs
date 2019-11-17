@@ -37,6 +37,12 @@ namespace Traits {
             }
             return base.TriggerFlaw(character);
         }
+        public override void ExecuteCostModification(INTERACTION_TYPE action, ref int cost) {
+            base.ExecuteCostModification(action, ref cost);
+            if (action == INTERACTION_TYPE.DRINK) {
+                cost =  Utilities.rng.Next(5, 20);
+            }
+        }
         #endregion
     }
 

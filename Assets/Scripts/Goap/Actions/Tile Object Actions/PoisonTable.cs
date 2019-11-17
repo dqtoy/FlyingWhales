@@ -9,7 +9,7 @@ public class PoisonTable : GoapAction {
 
     public Character targetCharacter { get; private set; }
 
-    public PoisonTable(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.POISON_TABLE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public PoisonTable() : base(INTERACTION_TYPE.POISON_TABLE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         //this.goapName = "Poison Table";
         actionIconString = GoapActionStateDB.Hostile_Icon;
         //_isStealthAction = true;
@@ -148,7 +148,7 @@ public class PoisonTable : GoapAction {
     private void ScheduleFionaEat() {
         Character fiona = CharacterManager.Instance.GetCharacterByName("Fiona");
         fiona.CancelAllJobsAndPlans();
-        GoapAction eat = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.EAT_AT_TABLE, fiona, poiTarget);
+        GoapAction eat = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.EAT, fiona, poiTarget);
         GoapPlan plan = new GoapPlan(new GoapNode(null, eat.cost, eat), new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY }, GOAP_CATEGORY.FULLNESS);
         plan.ConstructAllNodes();
         fiona.AddPlan(plan, true);

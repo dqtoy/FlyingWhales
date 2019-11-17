@@ -7,7 +7,7 @@ public class PickUp : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
-    public PickUp(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PICK_UP) {
+    public PickUp() : base(INTERACTION_TYPE.PICK_UP) {
         actionIconString = GoapActionStateDB.Explore_Icon;
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         isNotificationAnIntel = false;

@@ -5,7 +5,7 @@ using Traits;
 
 public class CraftItem : GoapAction {
 
-    public CraftItem(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CRAFT_ITEM) {
+    public CraftItem() : base(INTERACTION_TYPE.CRAFT_ITEM) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;

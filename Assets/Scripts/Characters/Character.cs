@@ -5888,7 +5888,6 @@ public class Character : ILeader, IPointOfInterest, IJobQueueOwner {
         poiGoapActions.Add(INTERACTION_TYPE.PLAY);
         poiGoapActions.Add(INTERACTION_TYPE.REPORT_CRIME);
         poiGoapActions.Add(INTERACTION_TYPE.REPORT_HOSTILE);
-        poiGoapActions.Add(INTERACTION_TYPE.STEAL_FROM_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.JUDGE_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.CURSE_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER);
@@ -5899,8 +5898,6 @@ public class Character : ILeader, IPointOfInterest, IJobQueueOwner {
         poiGoapActions.Add(INTERACTION_TYPE.INVITE);
         poiGoapActions.Add(INTERACTION_TYPE.REPLACE_TILE_OBJECT);
         poiGoapActions.Add(INTERACTION_TYPE.TANTRUM);
-        poiGoapActions.Add(INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_FRIENDSHIP);
-        poiGoapActions.Add(INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_LOVE);
         poiGoapActions.Add(INTERACTION_TYPE.BREAK_UP);
         poiGoapActions.Add(INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
         poiGoapActions.Add(INTERACTION_TYPE.ROAMING_TO_STEAL);
@@ -5931,7 +5928,6 @@ public class Character : ILeader, IPointOfInterest, IJobQueueOwner {
         if (race != RACE.SKELETON) {
             poiGoapActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);
             poiGoapActions.Add(INTERACTION_TYPE.DRINK_BLOOD);
-            poiGoapActions.Add(INTERACTION_TYPE.EAT_CHARACTER);
             poiGoapActions.Add(INTERACTION_TYPE.KNOCKOUT_CHARACTER);
             poiGoapActions.Add(INTERACTION_TYPE.TRANSFORM_FOOD);
         }

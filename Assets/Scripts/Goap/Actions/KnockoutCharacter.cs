@@ -7,7 +7,7 @@ public class KnockoutCharacter : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
-    public KnockoutCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.KNOCKOUT_CHARACTER) {
+    public KnockoutCharacter() : base(INTERACTION_TYPE.KNOCKOUT_CHARACTER) {
         doesNotStopTargetCharacter = true;
         actionIconString = GoapActionStateDB.Stealth_Icon;
     }

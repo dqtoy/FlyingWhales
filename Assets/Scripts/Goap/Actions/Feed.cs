@@ -7,7 +7,7 @@ public class Feed : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
-    public Feed(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.FEED) {
+    public Feed() : base(INTERACTION_TYPE.FEED) {
         actionIconString = GoapActionStateDB.FirstAid_Icon;
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,

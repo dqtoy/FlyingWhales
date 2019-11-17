@@ -7,7 +7,7 @@ public class ReleaseCharacter : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
-    public ReleaseCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.RELEASE_CHARACTER) {
+    public ReleaseCharacter() : base(INTERACTION_TYPE.RELEASE_CHARACTER) {
         actionIconString = GoapActionStateDB.Work_Icon;
     }
 

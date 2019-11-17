@@ -8,7 +8,7 @@ public class Daydream : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
-    public Daydream(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DAYDREAM) {
+    public Daydream() : base(INTERACTION_TYPE.DAYDREAM) {
         shouldIntelNotificationOnlyIfActorIsActive = true;
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         validTimeOfDays = new TIME_IN_WORDS[] {

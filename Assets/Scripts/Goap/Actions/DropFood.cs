@@ -5,7 +5,7 @@ using Traits;
 
 public class DropFood : GoapAction {
 
-    public DropFood(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DROP_FOOD) {
+    public DropFood() : base(INTERACTION_TYPE.DROP_FOOD) {
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
     }

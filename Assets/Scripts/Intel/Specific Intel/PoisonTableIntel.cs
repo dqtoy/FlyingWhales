@@ -30,7 +30,7 @@ public class PoisonTableIntel : EventIntel {
 
     private void OnCharacterDidAction(Character character, GoapAction action) {
         //once this intel is made, it should listen for when a character eats at the table that was poisoned, and store that action
-        if (action.goapType == INTERACTION_TYPE.EAT_AT_TABLE && action.poiTarget == poisonedTable) {
+        if (action.goapType == INTERACTION_TYPE.EAT && action.poiTarget == poisonedTable) {
             eatAtTableAction = action;
         }
     }
