@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Traits;
 
 public class BerserkedState : CharacterState {
 
@@ -20,10 +21,10 @@ public class BerserkedState : CharacterState {
         stateComponent.character.AdjustDoNotGetHungry(1);
         stateComponent.character.AdjustDoNotGetLonely(1);
         stateComponent.character.AdjustDoNotGetTired(1);
-        stateComponent.character.AddTrait("Berserked");
+        stateComponent.character.traitContainer.AddTrait(stateComponent.character, "Berserked");
         BerserkBuff berserkBuff = new BerserkBuff();
         berserkBuff.SetLevel(level);
-        stateComponent.character.AddTrait(berserkBuff);
+        stateComponent.character.traitContainer.AddTrait(stateComponent.character, berserkBuff);
         base.StartState();
     }
     protected override void EndState() {
@@ -33,8 +34,8 @@ public class BerserkedState : CharacterState {
         stateComponent.character.AdjustDoNotGetTired(-1);
         stateComponent.character.AdjustHappiness(50);
         stateComponent.character.AdjustTiredness(50);
-        stateComponent.character.RemoveTrait("Berserked");
-        stateComponent.character.RemoveTrait("Berserk Buff");
+        stateComponent.character.traitContainer.RemoveTrait(stateComponent.character, "Berserked");
+        stateComponent.character.traitContainer.RemoveTrait(stateComponent.character, "Berserk Buff");
     }
     protected override void DoMovementBehavior() {
         base.DoMovementBehavior();
@@ -142,7 +143,7 @@ public class BerserkedState : CharacterState {
     //}
     //public override void AfterExitingState() {
     //    base.AfterExitingState();
-    //    Spooked spooked = stateComponent.character.GetNormalTrait("Spooked") as Spooked;
+    //    Spooked spooked = stateComponent.character.traitContainer.GetNormalTrait("Spooked") as Spooked;
     //    if (spooked != null) {
     //        //If has spooked, add them in avoid list and transfer all in engage list to flee list
     //        stateComponent.character.marker.AddAvoidsInRange(spooked.terrifyingCharacters, false);

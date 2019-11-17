@@ -1,12 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class TileObjectDestroy : GoapAction {
 
     private LocationStructure structure;
 
-    public TileObjectDestroy(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public TileObjectDestroy() : base(INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
     }
 
@@ -58,7 +59,7 @@ public class TileObjectDestroy : GoapAction {
     //        SetState("Target Missing");
     //    }
     //}
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 10;
     }
     //public override void FailAction() {
@@ -77,7 +78,6 @@ public class TileObjectDestroy : GoapAction {
         }
     }
     private void OnFinishCombatState() {
-        //TODO: Add Checking if the actor of this action was the one that removed the tile object
         TileObject target = poiTarget as TileObject;
         if (target.removedBy == actor) {
             SetState("Destroy Success");
@@ -107,7 +107,7 @@ public class TileObjectDestroy : GoapAction {
     #endregion
 
     #region Requirement
-    protected bool Requirement() {
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
     }
     #endregion
@@ -117,7 +117,7 @@ public class TileObjectDestroy : GoapAction {
         List<string> reactions = new List<string>();
         TileObject tileObj = poiTarget as TileObject;
 
-        RELATIONSHIP_EFFECT relWithActor = recipient.GetRelationshipEffectWith(actor);
+        RELATIONSHIP_EFFECT relWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
         if (recipient == actor) {
             // - If informed: "I am embarrassed by my own actions."
             if (status == SHARE_INTEL_STATUS.INFORMED) {
@@ -128,7 +128,7 @@ public class TileObjectDestroy : GoapAction {
         else if (tileObj.IsOwnedBy(recipient)) {
             if (relWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
                 //-Witnesser has a negative relationship with Actor
-                CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);  //-Relationship degradation with Actor
+                RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);  //-Relationship degradation with Actor
                 if (status == SHARE_INTEL_STATUS.WITNESSED) {
                     //- If witnessed: Create an Assault job targeting the Actor
                     recipient.CreateKnockoutJob(actor);
@@ -138,7 +138,7 @@ public class TileObjectDestroy : GoapAction {
                 }
             } else if (relWithActor == RELATIONSHIP_EFFECT.POSITIVE || relWithActor == RELATIONSHIP_EFFECT.NONE) {
                 //- Witnesser has a positive or neutral relationship with Actor
-                CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);  //-Relationship degradation with Actor
+                RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);  //-Relationship degradation with Actor
                 if (status == SHARE_INTEL_STATUS.INFORMED) {
                     //- If informed: "Perhaps it's best if I avoid [Actor Name] for now."
                     reactions.Add(string.Format("Perhaps it's best if I avoid {0} for now.", actor.name));

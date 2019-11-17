@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class PlayGuitar : GoapAction {
     protected override string failActionState { get { return "Play Fail"; } }
 
-    public PlayGuitar(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PLAY_GUITAR, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public PlayGuitar() : base(INTERACTION_TYPE.PLAY_GUITAR, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,
             TIME_IN_WORDS.LUNCH_TIME,
@@ -24,8 +25,8 @@ public class PlayGuitar : GoapAction {
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
-    public override void Perform() {
-        base.Perform();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         if (!isTargetMissing) {
             SetState("Play Success");
         } else {
@@ -36,8 +37,8 @@ public class PlayGuitar : GoapAction {
             }
         }
     }
-    protected override int GetBaseCost() {
-        Trait musicLover = actor.GetNormalTrait("MusicLover");
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+        Trait musicLover = actor.traitContainer.GetNormalTrait("MusicLover");
         if (poiTarget.gridTileLocation != null) {
             LocationGridTile knownLoc = poiTarget.gridTileLocation;
             if (actor.homeStructure == knownLoc.structure) {
@@ -52,7 +53,7 @@ public class PlayGuitar : GoapAction {
                     if (dwelling.residents.Count > 0) {
                         for (int i = 0; i < dwelling.residents.Count; i++) {
                             Character currResident = dwelling.residents[i];
-                            if (currResident.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE)) {
+                            if (currResident.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
                                 //- Actor is not a resident but has a positive relationship with the Guitar's Dwelling resident: 20-36 (If music lover 10 - 26)
                                 if (musicLover != null) {
                                     return Utilities.rng.Next(10, 27);
@@ -85,7 +86,7 @@ public class PlayGuitar : GoapAction {
     public void PrePlaySuccess() {
         actor.AdjustDoNotGetLonely(1);
         poiTarget.SetPOIState(POI_STATE.INACTIVE);
-        isMusicLover = actor.GetNormalTrait("Music Lover") != null;
+        isMusicLover = actor.traitContainer.GetNormalTrait("Music Lover") != null;
         currentState.SetIntelReaction(PlaySuccessIntelReaction);
     }
     public void PerTickPlaySuccess() {
@@ -113,7 +114,7 @@ public class PlayGuitar : GoapAction {
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
-        if (actor.GetNormalTrait("MusicHater") != null) {
+        if (actor.traitContainer.GetNormalTrait("MusicHater") != null) {
             return false; //music haters will never play guitar
         }
         if (poiTarget.gridTileLocation == null) {
@@ -129,7 +130,7 @@ public class PlayGuitar : GoapAction {
                 if (dwelling.residents.Count > 0) {
                     for (int i = 0; i < dwelling.residents.Count; i++) {
                         Character currResident = dwelling.residents[i];
-                        if (currResident.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE)) {
+                        if (currResident.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
                             return true;
                         }
                     }
@@ -151,9 +152,9 @@ public class PlayGuitar : GoapAction {
     private List<string> PlaySuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
 
-        if(status == SHARE_INTEL_STATUS.WITNESSED && recipient.GetNormalTrait("Music Hater") != null) {
-            recipient.AddTrait("Annoyed");
-            if (recipient.HasRelationshipOfTypeWith(actor, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+        if(status == SHARE_INTEL_STATUS.WITNESSED && recipient.traitContainer.GetNormalTrait("Music Hater") != null) {
+            recipient.traitContainer.AddTrait(recipient, "Annoyed");
+            if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) || recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
                 if (recipient.CreateBreakupJob(actor) != null) {
                     Log log = new Log(GameManager.Instance.Today(), "Trait", "MusicHater", "break_up");
                     log.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -161,14 +162,14 @@ public class PlayGuitar : GoapAction {
                     log.AddLogToInvolvedObjects();
                     PlayerManager.Instance.player.ShowNotificationFrom(recipient, log);
                 }
-            } else if (!recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
+            } else if (!recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
                 //Otherwise, if the Actor does not yet consider the Target an Enemy, relationship degradation will occur, log:
                 Log log = new Log(GameManager.Instance.Today(), "Trait", "MusicHater", "degradation");
                 log.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 log.AddLogToInvolvedObjects();
                 PlayerManager.Instance.player.ShowNotificationFrom(recipient, log);
-                CharacterManager.Instance.RelationshipDegradation(actor, recipient);
+                RelationshipManager.Instance.RelationshipDegradation(actor, recipient);
             }
         }
         return reactions;
@@ -189,7 +190,7 @@ public class PlayGuitarData : GoapActionData {
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
-        if (actor.GetNormalTrait("MusicHater") != null) {
+        if (actor.traitContainer.GetNormalTrait("MusicHater") != null) {
             return false; //music haters will never play guitar
         }
         if (poiTarget.gridTileLocation == null) {
@@ -205,7 +206,7 @@ public class PlayGuitarData : GoapActionData {
                 if (dwelling.residents.Count > 0) {
                     for (int i = 0; i < dwelling.residents.Count; i++) {
                         Character currResident = dwelling.residents[i];
-                        if (currResident.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE)) {
+                        if (currResident.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
                             return true;
                         }
                     }

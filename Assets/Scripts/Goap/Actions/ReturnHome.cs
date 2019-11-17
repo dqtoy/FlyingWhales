@@ -1,15 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class ReturnHome : GoapAction {
-    public override LocationStructure targetStructure { get { return _targetStructure; } }
 
-    private LocationStructure _targetStructure;
+    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
-    protected override string failActionState { get { return "Return Home Failed"; } }
-
-    public ReturnHome(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.RETURN_HOME, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public ReturnHome() : base(INTERACTION_TYPE.RETURN_HOME) {
         showIntelNotification = false;
         shouldAddLogs = false;
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
@@ -17,46 +15,26 @@ public class ReturnHome : GoapAction {
     }
 
     #region Overrides
-    //protected override void ConstructPreconditionsAndEffects() {
-    //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = actor });
-    //}
-    public override void Perform() {
-        //if (targetTile != null) {
-        //} else {
-        //    SetState("Return Home Failed");
-        //}
-        base.Perform();
-        SetState("Return Home Success");
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
+        SetState("Return Home Success", goapNode);
     }
-    public override LocationGridTile GetTargetLocationTile() {
-        if(targetStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
-            return null;
-        }
-        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
-    }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 3;
     }
-    //public override void FailAction() {
-    //    base.FailAction();
-    //    SetState("Return Home Failed");
-    //}
-    public override void SetTargetStructure() {
+    public override LocationStructure GetTargetStructure(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         if (actor.homeStructure != null) {
-            _targetStructure = actor.homeStructure;
+            return actor.homeStructure;
         } else {
-            _targetStructure = actor.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            return actor.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
         }
-        base.SetTargetStructure();
     }
     #endregion
 
     #region State Effects
-    public void PreReturnHomeSuccess() {
-        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-    }
-    public void PreReturnHomeFailed() {
-        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+    public void PreReturnHomeSuccess(ActualGoapNode goapNode) {
+        GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
+        currentState.AddLogFiller(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     #endregion
 }

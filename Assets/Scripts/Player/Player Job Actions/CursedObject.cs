@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Traits;
 
 public class CursedObject : PlayerJobAction {
     public CursedObject() : base(INTERVENTION_ABILITY.CURSED_OBJECT) {
@@ -16,7 +17,7 @@ public class CursedObject : PlayerJobAction {
             TileObject to = targetPOI as TileObject;
             Trait newTrait = new Cursed();
             newTrait.SetLevel(level);
-            targetPOI.AddTrait(newTrait);
+            targetPOI.traitContainer.AddTrait(targetPOI, newTrait);
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cursed_object");
             log.AddToFillers(to, to.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddLogToInvolvedObjects();
@@ -28,7 +29,7 @@ public class CursedObject : PlayerJobAction {
     protected override bool CanPerformActionTowards(IPointOfInterest targetPOI) {
         if (targetPOI is TileObject) {
             TileObject to = targetPOI as TileObject;
-            if(to.GetNormalTrait("Cursed") == null){
+            if(to.traitContainer.GetNormalTrait("Cursed") == null){
                 return true;
             }
         }
@@ -37,7 +38,7 @@ public class CursedObject : PlayerJobAction {
     public override bool CanTarget(IPointOfInterest targetPOI, ref string hoverText) {
         if (targetPOI is TileObject) {
             TileObject to = targetPOI as TileObject;
-            if (to.GetNormalTrait("Cursed") == null) {
+            if (to.traitContainer.GetNormalTrait("Cursed") == null) {
                 return true;
             }
         }

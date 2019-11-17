@@ -1,74 +1,66 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class Inspect : GoapAction {
 
-    private int _gainedSupply;
-    public Inspect(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.INSPECT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public Inspect() : base(INTERACTION_TYPE.INSPECT) {
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
     }
 
     #region Overrides
-    protected override void ConstructRequirement() {
-        _requirementAction = Requirement;
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
+        SetState("Inspect Success", goapNode);
     }
-    //protected override void ConstructPreconditionsAndEffects() {
-    //    if (actor.GetNormalTrait("Curious") != null) {
-    //        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
-    //    }
-    //}
-    public override void Perform() {
-        base.Perform();
-        if (!isTargetMissing) {
-            SetState("Inspect Success");
-        } else {
-            SetState("Target Missing");
-        }
-    }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 4;
     }
-    public override void AfterAfterEffect() {
-        base.AfterAfterEffect();
-        if(currentState.name == "Inspect Success") {
-            //Log result;
-            (poiTarget as TileObject).OnInspect(actor); //, out result
-            //if (result != null) {
-            //    currentState.AddLogFiller(null, Utilities.LogReplacer(result), LOG_IDENTIFIER.STRING_1);
-            //} else {
-            //    currentState.AddLogFiller(null, "and nothing happened", LOG_IDENTIFIER.STRING_1);
-            //}
-        }
-    }
+    //TODO:
+    //public override void AfterAfterEffect() {
+    //    base.AfterAfterEffect();
+    //    if(currentState.name == "Inspect Success") {
+    //        //Log result;
+    //        (poiTarget as TileObject).OnInspect(actor); //, out result
+    //        //if (result != null) {
+    //        //    currentState.AddLogFiller(null, Utilities.LogReplacer(result), LOG_IDENTIFIER.STRING_1);
+    //        //} else {
+    //        //    currentState.AddLogFiller(null, "and nothing happened", LOG_IDENTIFIER.STRING_1);
+    //        //}
+    //    }
+    //}
     #endregion
 
     #region Requirements
-    protected bool Requirement() {
-        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+        }
+        return false;
     }
     #endregion
 
     #region State Effects
-    public void PreInspectSuccess() {
+    public void PreInspectSuccess(ActualGoapNode goapNode) {
         //currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-        currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        goapNode.action.states[goapNode.currentStateName].AddLogFiller(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
-    public void AfterInspectSuccess() {
-        if (poiTarget is TileObject) {
-            TileObject to = poiTarget as TileObject;
-            //Curious curios = actor.GetNormalTrait("Curious") as Curious;
-            actor.defaultCharacterTrait.AddAlreadyInspectedObject(to);
+    public void AfterInspectSuccess(ActualGoapNode goapNode) {
+        if (goapNode.poiTarget is TileObject) {
+            TileObject to = goapNode.poiTarget as TileObject;
+            goapNode.actor.defaultCharacterTrait.AddAlreadyInspectedObject(to);
         } 
     }
-    public void PreTargetMissing() {
-        currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-    }
-    public void AfterTargetMissing() {
-        actor.RemoveAwareness(poiTarget);
-    }
+    //public void PreTargetMissing(ActualGoapNode goapNode) {
+    //    currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //    currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+    //}
+    //public void AfterTargetMissing(ActualGoapNode goapNode) {
+    //    actor.RemoveAwareness(poiTarget);
+    //}
     #endregion
 }
 

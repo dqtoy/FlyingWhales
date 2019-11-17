@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class DispelMagic : GoapAction {
 
-    public DispelMagic(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DISPEL_MAGIC, INTERACTION_ALIGNMENT.GOOD, actor, poiTarget) {
+    public DispelMagic() : base(INTERACTION_TYPE.DISPEL_MAGIC, INTERACTION_ALIGNMENT.GOOD, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.FirstAid_Icon;
         //validTimeOfDays = new TIME_IN_WORDS[] {
@@ -22,15 +23,15 @@ public class DispelMagic : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Cursed", targetPOI = poiTarget });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Reanimated", targetPOI = poiTarget });
     }
-    public override void Perform() {
-        base.Perform();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
             SetState("Dispel Magic Success");
         } else {
             SetState("Target Missing");
         }
     }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 1;
     }
     #endregion
@@ -63,6 +64,6 @@ public class DispelMagicData : GoapActionData {
         requirementAction = Requirement;
     }
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return poiTarget.GetNormalTrait("Reanimated", "Cursed") != null;
+        return poiTarget.traitContainer.GetNormalTrait("Reanimated", "Cursed") != null;
     }
 }

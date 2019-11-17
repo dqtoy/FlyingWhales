@@ -12,11 +12,11 @@ public class Study : WorldEvent {
     #region Overrides
     protected override void ExecuteAfterEffect(Region region, Character spawner) {
         //(gain a positive trait) 
-        List<string> buffs = AttributeManager.Instance.GetAllBuffTraitsThatCharacterCanHave(region.eventSpawnedBy);
+        List<string> buffs = TraitManager.Instance.GetAllBuffTraitsThatCharacterCanHave(region.eventSpawnedBy);
         Log log;
         if (buffs.Count > 0) {
             string chosenBuff = buffs[Random.Range(0, buffs.Count)];
-            region.eventSpawnedBy.AddTrait(chosenBuff);
+            region.eventSpawnedBy.traitContainer.AddTrait(region.eventSpawnedBy, chosenBuff);
             log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect_gain_trait");
             log.AddToFillers(null, chosenBuff, LOG_IDENTIFIER.STRING_1);
         } else {

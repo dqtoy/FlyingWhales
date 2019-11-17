@@ -18,7 +18,6 @@ public class MainMenuManager : MonoBehaviour {
     [SerializeField] private GameObject worldConfigsMenuGO;
     [SerializeField] private GameObject worldConfigPrefab;
     [SerializeField] private GameObject worldConfigContent;
-    [SerializeField] private ContentSorter worldConfigContentSorter;
 
     [ContextMenu("Get Combinations")]
     public void GetCombinations() {
@@ -34,11 +33,9 @@ public class MainMenuManager : MonoBehaviour {
         }
     }
 
-    private WorldSaveData newGameData;
-
     #region Monobehaviours
     public void Awake() {
-        LoadNewGameData();
+        
     }
     private void Start() {
         Initialize();
@@ -69,47 +66,6 @@ public class MainMenuManager : MonoBehaviour {
     private void OnFinishMusicTransition() {
         //WorldConfigManager.Instance.SetDataToUse(newGameData); //Remove so that code will randomly generate world.
         LevelLoaderManager.Instance.LoadLevel("Game");
-    }
-
-    private void ShowWorldConfigurations() {
-        worldConfigsMenuGO.SetActive(true);
-        LoadWorldConfigurations();
-    }
-
-    private void LoadNewGameData() {
-        DirectoryInfo templateDirInfo = new DirectoryInfo(Utilities.worldConfigsTemplatesPath);
-        FileInfo[] templateFiles = templateDirInfo.GetFiles("*.worldConfig");
-        if (templateFiles.Length == 0) {
-            throw new System.Exception("There is no new game data");
-        }
-        newGameData = SaveGame.Load<WorldSaveData>(templateFiles[0].FullName);
-        Utilities.ValidateSaveData(newGameData);
-    }
-
-    private void LoadWorldConfigurations() {
-        //initial templates
-        Directory.CreateDirectory(Utilities.worldConfigsTemplatesPath);
-        DirectoryInfo templateDirInfo = new DirectoryInfo(Utilities.worldConfigsTemplatesPath);
-        FileInfo[] templateFiles = templateDirInfo.GetFiles("*.worldConfig");
-        for (int i = 0; i < templateFiles.Length; i++) {
-            FileInfo currFile = templateFiles[i];
-            GameObject configGO = GameObject.Instantiate(worldConfigPrefab, worldConfigContent.transform);
-            configGO.transform.localScale = Vector3.one;
-            WorldConfigItem item = configGO.GetComponent<WorldConfigItem>();
-            item.SetFile(currFile);
-        }
-
-        //custom maps
-        Directory.CreateDirectory(Utilities.worldConfigsSavePath);
-        DirectoryInfo customMapDirInfo = new DirectoryInfo(Utilities.worldConfigsSavePath);
-        FileInfo[] customMapFiles = customMapDirInfo.GetFiles("*.worldConfig");
-        for (int i = 0; i < customMapFiles.Length; i++) {
-            FileInfo currFile = customMapFiles[i];
-            GameObject configGO = GameObject.Instantiate(worldConfigPrefab, worldConfigContent.transform);
-            configGO.transform.localScale = Vector3.one;
-            WorldConfigItem item = configGO.GetComponent<WorldConfigItem>();
-            item.SetFile(currFile);
-        }
     }
 
     private void PlayGame() {

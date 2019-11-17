@@ -209,7 +209,7 @@ public class ActualGoapNode {
                     //} else if (targetCharacter.stateComponent.stateToDo != null) {
                     //    targetCharacter.stateComponent.SetStateToDo(null, false, false);
                     //}
-                    targetCharacter.marker.pathfindingAI.AdjustDoNotMove(1);
+                    targetCharacter.DecreaseCanMove();
                     targetCharacter.FaceTarget(actor);
                 }
                 targetCharacter.AdjustIsStoppedByOtherCharacter(1);
@@ -236,7 +236,7 @@ public class ActualGoapNode {
                 //        targetCharacter.stateComponent.currentState.ResumeState();
                 //    }
                 //}
-                targetCharacter.marker.pathfindingAI.AdjustDoNotMove(-1);
+                targetCharacter.IncreaseCanMove();
             }
             targetCharacter.AdjustIsStoppedByOtherCharacter(-1);
         }

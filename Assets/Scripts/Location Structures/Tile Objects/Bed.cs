@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Traits;
 
 public class Bed : TileObject {
     private Character[] bedUsers; //array of characters, currently using the bed
@@ -99,7 +100,7 @@ public class Bed : TileObject {
                 break;
         }
     }
-    protected override void OnTileObjectGainedTrait(Trait trait) {
+    public override void OnTileObjectGainedTrait(Trait trait) {
         base.OnTileObjectGainedTrait(trait);
         if (trait.name == "Burning") {
             for (int i = 0; i < bedUsers.Length; i++) {
@@ -150,7 +151,7 @@ public class Bed : TileObject {
                 }
                 //enable the character's marker
                 character.marker.SetVisualState(true);
-                if (character.gridTileLocation != null && character.GetNormalTrait("Paralyzed") != null) {
+                if (character.gridTileLocation != null && character.traitContainer.GetNormalTrait("Paralyzed") != null) {
                     //When a paralyzed character awakens, place it on a nearby adjacent empty tile in the same Structure
                     LocationGridTile gridTile = character.gridTileLocation.GetNearestUnoccupiedTileFromThis();
                     character.marker.PlaceMarkerAt(gridTile);

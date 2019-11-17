@@ -15,7 +15,6 @@ public class CombatManager : MonoBehaviour {
 
     public CharacterSetup[] baseCharacters;
 	public Color[] characterColors;
-	public Dictionary<WEAPON_TYPE, List<Skill>> weaponTypeSkills;
 
 	private List<Color> unusedColors;
 	private List<Color> usedColors;
@@ -26,7 +25,6 @@ public class CombatManager : MonoBehaviour {
         Instance = this;
     }
 	internal void Initialize(){
-        weaponTypeSkills = new Dictionary<WEAPON_TYPE, List<Skill>>();
         unusedColors = new List<Color>();
         usedColors = new List<Color>();
         newCombat.Initialize();
@@ -315,14 +313,14 @@ public class CombatManager : MonoBehaviour {
                 //if there is one mismatch, return false already because the separator is AND, otherwise, return true
                 if (traitEffect.isNot) {
                     for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                        if (icharacter.GetNormalTrait(traitEffect.requirements[i]) != null) {
+                        if (icharacter.traitContainer.GetNormalTrait(traitEffect.requirements[i]) != null) {
                             return false;
                         }
                     }
                     return true;
                 } else {
                     for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                        if (icharacter.GetNormalTrait(traitEffect.requirements[i]) == null) {
+                        if (icharacter.traitContainer.GetNormalTrait(traitEffect.requirements[i]) == null) {
                             return false;
                         }
                     }
@@ -332,14 +330,14 @@ public class CombatManager : MonoBehaviour {
                 //if there is one match, return true already because the separator is OR, otherwise, return false   
                 if (traitEffect.isNot) {
                     for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                        if (icharacter.GetNormalTrait(traitEffect.requirements[i]) == null) {
+                        if (icharacter.traitContainer.GetNormalTrait(traitEffect.requirements[i]) == null) {
                             return true;
                         }
                     }
                     return false;
                 } else {
                     for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                        if (icharacter.GetNormalTrait(traitEffect.requirements[i]) != null) {
+                        if (icharacter.traitContainer.GetNormalTrait(traitEffect.requirements[i]) != null) {
                             return true;
                         }
                     }

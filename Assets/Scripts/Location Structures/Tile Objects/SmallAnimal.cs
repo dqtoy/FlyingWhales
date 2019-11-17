@@ -9,11 +9,11 @@ public class SmallAnimal : TileObject {
 
     public SmallAnimal(LocationStructure location) {
         SetStructureLocation(location);
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_ANIMAL, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(TILE_OBJECT_TYPE.SMALL_ANIMAL);
     }
     public SmallAnimal(SaveDataTileObject data) {
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_ANIMAL, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(data);
     }
 

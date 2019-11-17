@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Traits;
 
 //IMPORTANT NOTE: Class name format for all derived classes of SaveDataTrait must be: "SaveData" + [Trait Name], example: SaveDataKleptomaniac
 [System.Serializable]
@@ -23,7 +24,6 @@ public class SaveDataTrait {
         name = trait.name;
         level = trait.level;
         daysDuration = trait.daysDuration;
-        isDisabled = trait.isDisabled;
         
         if(trait.responsibleCharacter == null) {
             responsibleCharacterID = -1;
@@ -51,14 +51,13 @@ public class SaveDataTrait {
             responsibleCharacter = CharacterManager.Instance.GetCharacterByID(responsibleCharacterID);
         }
         Trait trait = null;
-        if (AttributeManager.Instance.IsInstancedTrait(name)) {
-            trait = AttributeManager.Instance.CreateNewInstancedTraitClass(name);
+        if (TraitManager.Instance.IsInstancedTrait(name)) {
+            trait = TraitManager.Instance.CreateNewInstancedTraitClass(name);
         } else {
-            trait = AttributeManager.Instance.allTraits[name];
+            trait = TraitManager.Instance.allTraits[name];
         }
         trait.SetLevel(level);
         trait.OverrideDuration(daysDuration);
-        trait.SetIsDisabled(isDisabled);
         trait.SetTraitEffects(effects);
         trait.SetDateEstablished(new GameDate(month, day, year, tick));
         for (int i = 0; i < responsibleCharacterIDs.Count; i++) {
@@ -76,24 +75,23 @@ public class SaveDataTrait {
             responsibleCharacter = CharacterManager.Instance.GetCharacterByID(responsibleCharacterID);
         }
         Trait trait = null;
-        if (AttributeManager.Instance.IsInstancedTrait(name)) {
-            trait = AttributeManager.Instance.CreateNewInstancedTraitClass(name);
+        if (TraitManager.Instance.IsInstancedTrait(name)) {
+            trait = TraitManager.Instance.CreateNewInstancedTraitClass(name);
         } else {
-            if (!AttributeManager.Instance.allTraits.ContainsKey(name)) {
+            if (!TraitManager.Instance.allTraits.ContainsKey(name)) {
                 Debug.Log("noooo!");
             }
-            trait = AttributeManager.Instance.allTraits[name];
+            trait = TraitManager.Instance.allTraits[name];
         }
         trait.SetLevel(level);
         trait.OverrideDuration(daysDuration);
-        trait.SetIsDisabled(isDisabled);
         trait.SetTraitEffects(effects);
         trait.SetDateEstablished(new GameDate(month, day, year, tick));
         for (int i = 0; i < responsibleCharacterIDs.Count; i++) {
             Character currChar = CharacterManager.Instance.GetCharacterByID(responsibleCharacterIDs[i]);
             trait.AddCharacterResponsibleForTrait(currChar);
         }
-        trait.SetCharacterResponsibleForTrait(responsibleCharacter);
+        trait.AddCharacterResponsibleForTrait(responsibleCharacter);
         //alterEgo.AddTrait(trait);
         return trait;
     }

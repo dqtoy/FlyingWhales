@@ -32,7 +32,6 @@ public class Faction {
     public MORALITY morality { get; private set; }
     public FACTION_SIZE size { get; private set; }
     public FACTION_TYPE factionType { get; private set; }
-    public WeightedDictionary<AreaCharacterClass> additionalClassWeights { get; private set; }
     public bool isActive { get; private set; }
     public List<Log> history { get; private set; }
     public Region mainRegion { get { return ownedRegions[0]; } }
@@ -69,60 +68,8 @@ public class Faction {
         recruitableRaces = new List<RACE>();
         startingFollowers = new List<RACE>();
         history = new List<Log>();
-        //favor = new Dictionary<Faction, int>();
-        //defenderWeights = new WeightedDictionary<AreaCharacterClass>();
-        additionalClassWeights = new WeightedDictionary<AreaCharacterClass>();
         GenerateFactionRequirementForJoining();
-        //InitializeInteractions();
-#if !WORLD_CREATION_TOOL
-        //SetDailyInteractionGenerationTick();
         AddListeners();
-#endif
-    }
-
-    public Faction(FactionSaveData data) {
-        id = Utilities.SetID(this, data.factionID);
-        SetName(data.factionName);
-        SetDescription(data.factionDescription);
-        SetFactionColor(data.factionColor);
-        SetEmblem(FactionManager.Instance.GetFactionEmblem(data.emblemIndex));
-        SetMorality(data.morality);
-        SetSize(data.size);
-        SetRace(data.race.race);
-        SetLevel(data.level);
-        SetFactionActiveState(data.isActive);
-        initialLeaderClass = data.initialLeaderClass;
-        initialLeaderRace = data.initialLeaderRace;
-        initialLeaderGender = data.initialLeaderGender;
-        recruitableRaces = data.recruitableRaces;
-        startingFollowers = data.startingFollowers;
-
-        inventoryTaskWeight = FactionManager.Instance.GetRandomInventoryTaskWeight();
-        factionType = Utilities.GetRandomEnumValue<FACTION_TYPE>();
-        characters = new List<Character>();
-        ownedLandmarks = new List<BaseLandmark>();
-        relationships = new Dictionary<Faction, FactionRelationship>();
-        ownedRegions = new List<Region>();
-        if (recruitableRaces == null) {
-            recruitableRaces = new List<RACE>();
-        }
-        if (startingFollowers == null) {
-            startingFollowers = new List<RACE>();
-        }
-        history = new List<Log>();
-        //favor = new Dictionary<Faction, int>();
-        //if (data.defenderWeights != null) {
-        //    defenderWeights = new WeightedDictionary<AreaCharacterClass>(data.defenderWeights);
-        //} else {
-        //    defenderWeights = new WeightedDictionary<AreaCharacterClass>();
-        //}
-        additionalClassWeights = new WeightedDictionary<AreaCharacterClass>();
-        GenerateFactionRequirementForJoining();
-        //InitializeInteractions();
-#if !WORLD_CREATION_TOOL
-        //SetDailyInteractionGenerationTick();
-        AddListeners();
-#endif
     }
     public Faction(SaveDataFaction data) {
         this.isPlayerFaction = data.isPlayerFaction;
@@ -150,14 +97,7 @@ public class Faction {
         recruitableRaces = new List<RACE>();
         startingFollowers = new List<RACE>();
         history = new List<Log>();
-        //favor = new Dictionary<Faction, int>();
-        //defenderWeights = new WeightedDictionary<AreaCharacterClass>();
-        additionalClassWeights = new WeightedDictionary<AreaCharacterClass>();
-        //InitializeInteractions();
-#if !WORLD_CREATION_TOOL
-        //SetDailyInteractionGenerationTick();
         AddListeners();
-#endif
     }
 
     #region Virtuals
@@ -255,7 +195,7 @@ public class Faction {
         List<Character> chars = new List<Character>();
         for (int i = 0; i < characters.Count; i++) {
             Character currCharacter = characters[i];
-            if (currCharacter.gender == gender && !currCharacter.isDead && !currCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) && !currCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+            if (currCharacter.gender == gender && !currCharacter.isDead && !currCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && !currCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
                 for (int j = 0; j < role.Length; j++) {
                     if(currCharacter.role.roleType == role[j]) {
                         chars.Add(currCharacter);
@@ -273,7 +213,7 @@ public class Faction {
             string log = GameManager.Instance.TodayLogString() + name + " faction is deciding a new leader...";
 
             log += "\nChecking male relatives of the king...";
-            List<Character> maleRelatives = previousRuler.GetViableCharactersWithRelationship(GENDER.MALE, RELATIONSHIP_TRAIT.RELATIVE);
+            List<Character> maleRelatives = FactionManager.Instance.GetViableRulers(previousRuler, GENDER.MALE, RELATIONSHIP_TRAIT.RELATIVE);
             if(maleRelatives.Count > 0) {
                 newRuler = maleRelatives[UnityEngine.Random.Range(0, maleRelatives.Count)];
                 log += "\nNew Ruler: " + newRuler.name;
@@ -285,7 +225,7 @@ public class Faction {
                     log += "\nNew Ruler: " + newRuler.name;
                 } else {
                     log += "\nChecking female relatives of the king...";
-                    List<Character> femaleRelatives = previousRuler.GetViableCharactersWithRelationship(GENDER.FEMALE, RELATIONSHIP_TRAIT.RELATIVE);
+                    List<Character> femaleRelatives = FactionManager.Instance.GetViableRulers(previousRuler, GENDER.FEMALE, RELATIONSHIP_TRAIT.RELATIVE);
                     if (femaleRelatives.Count > 0) {
                         newRuler = femaleRelatives[UnityEngine.Random.Range(0, femaleRelatives.Count)];
                         log += "\nNew Ruler: " + newRuler.name;
@@ -465,7 +405,7 @@ public class Faction {
                 Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.ELVES, Utilities.GetRandomGender(),
                     this, mainRegion);
                 createdCharacter.LevelUp(citizensLevel - 1);
-                //CharacterManager.Instance.CreateNewRelationshipBetween(leader, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
+                //RelationshipManager.Instance.RemoveOneWayRelationship(leader, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
             }
             //**3 Human Adventurers**
             for (int i = 0; i < adventurerCount; i++) {
@@ -485,7 +425,7 @@ public class Faction {
                 Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.ELVES, Utilities.GetRandomGender(),
                     this, mainRegion);
                 createdCharacter.LevelUp(citizensLevel - 1);
-                //CharacterManager.Instance.CreateNewRelationshipBetween(leader, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
+                //RelationshipManager.Instance.RemoveOneWayRelationship(leader, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
             }
 
             //**2 Elven Nobles**
@@ -515,13 +455,13 @@ public class Faction {
                 Character skeletonSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.SKELETON, Utilities.GetRandomGender(),
                     this, mainRegion);
                 skeletonSoldier.LevelUp(citizensLevel - 1);
-                //CharacterManager.Instance.CreateNewRelationshipBetween(leader, skeletonSoldier, RELATIONSHIP_TRAIT.SERVANT);
+                //RelationshipManager.Instance.RemoveOneWayRelationship(leader, skeletonSoldier, RELATIONSHIP_TRAIT.SERVANT);
 
                 if (i == 0) {
                     Character goblinSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.GOBLIN, Utilities.GetRandomGender(),
                    this, mainRegion);
                     goblinSoldier.LevelUp(citizensLevel - 1);
-                    //CharacterManager.Instance.CreateNewRelationshipBetween(leader, goblinSoldier, RELATIONSHIP_TRAIT.SERVANT);
+                    //RelationshipManager.Instance.RemoveOneWayRelationship(leader, goblinSoldier, RELATIONSHIP_TRAIT.SERVANT);
                 }
             }
         } else if (name == "Rikitik") {
@@ -530,7 +470,7 @@ public class Faction {
                 Character goblinSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.GOBLIN, Utilities.GetRandomGender(),
                     this, mainRegion);
                 goblinSoldier.LevelUp(citizensLevel - 1);
-                //CharacterManager.Instance.CreateNewRelationshipBetween(leader, goblinSoldier, RELATIONSHIP_TRAIT.SERVANT);
+                //RelationshipManager.Instance.RemoveOneWayRelationship(leader, goblinSoldier, RELATIONSHIP_TRAIT.SERVANT);
             }
 
             //**1 Goblin Noble** with **3 Goblin Soldiers** as servants
@@ -543,7 +483,7 @@ public class Faction {
                     Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.GOBLIN, Utilities.GetRandomGender(),
                    this, mainRegion);
                     createdCharacter.LevelUp(citizensLevel - 1);
-                    //CharacterManager.Instance.CreateNewRelationshipBetween(noble, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
+                    //RelationshipManager.Instance.RemoveOneWayRelationship(noble, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
                 }
             }
 
@@ -559,7 +499,7 @@ public class Faction {
                 Character faerySoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.FAERY, Utilities.GetRandomGender(),
                     this, mainRegion);
                 faerySoldier.LevelUp(citizensLevel - 1);
-                //CharacterManager.Instance.CreateNewRelationshipBetween(leader, faerySoldier, RELATIONSHIP_TRAIT.SERVANT);
+                //RelationshipManager.Instance.RemoveOneWayRelationship(leader, faerySoldier, RELATIONSHIP_TRAIT.SERVANT);
             }
 
             //**1 Faery Adventurers**
@@ -581,7 +521,7 @@ public class Faction {
                 Character spiderSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.SPIDER, Utilities.GetRandomGender(),
                     this, mainRegion);
                 spiderSoldier.LevelUp(citizensLevel - 1);
-                //CharacterManager.Instance.CreateNewRelationshipBetween(leader, spiderSoldier, RELATIONSHIP_TRAIT.SERVANT);
+                //RelationshipManager.Instance.RemoveOneWayRelationship(leader, spiderSoldier, RELATIONSHIP_TRAIT.SERVANT);
             }
 
             //**3 Faery Nobles** with **3 Spider Soldiers** each as their servants
@@ -594,7 +534,7 @@ public class Faction {
                     Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.SPIDER, Utilities.GetRandomGender(),
                    this, mainRegion);
                     createdCharacter.LevelUp(citizensLevel - 1);
-                    //CharacterManager.Instance.CreateNewRelationshipBetween(noble, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
+                    //RelationshipManager.Instance.RemoveOneWayRelationship(noble, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
                 }
             }
 
@@ -615,12 +555,12 @@ public class Faction {
                 Character elfSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.ELVES, Utilities.GetRandomGender(),
                     this, mainRegion);
                 elfSoldier.LevelUp(citizensLevel - 1);
-                //CharacterManager.Instance.CreateNewRelationshipBetween(leader, elfSoldier, RELATIONSHIP_TRAIT.SERVANT);
+                //RelationshipManager.Instance.RemoveOneWayRelationship(leader, elfSoldier, RELATIONSHIP_TRAIT.SERVANT);
 
                 Character humanSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.HUMANS, Utilities.GetRandomGender(),
                    this, mainRegion);
                 humanSoldier.LevelUp(citizensLevel - 1);
-                //CharacterManager.Instance.CreateNewRelationshipBetween(leader, humanSoldier, RELATIONSHIP_TRAIT.SERVANT);
+                //RelationshipManager.Instance.RemoveOneWayRelationship(leader, humanSoldier, RELATIONSHIP_TRAIT.SERVANT);
             }
 
             //**2 Human Adventurers** and **2 Elven Adventurers**
@@ -791,12 +731,6 @@ public class Faction {
     #region Morality
     public void SetMorality(MORALITY morality) {
         this.morality = morality;
-    }
-    #endregion
-
-    #region Class Weights
-    public void AddClassWeight(string className, int weight) {
-        additionalClassWeights.AddElement(new AreaCharacterClass(className), weight);
     }
     #endregion
 

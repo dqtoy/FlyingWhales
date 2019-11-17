@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Traits;
+using System.Linq;
 
 public class KillCountCharacterItem : CharacterNameplateItem {
 
@@ -34,7 +36,7 @@ public class KillCountCharacterItem : CharacterNameplateItem {
             supportingLbl.text = "\"" + character.deathStr + "\"";
         } else {
             string text = string.Empty;
-            Trait negDisTrait = character.GetTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
+            Trait negDisTrait = character.traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE).FirstOrDefault();
             if (negDisTrait != null) {
                 if (negDisTrait is Unconscious) {
                     text = "\"" + character.name + " was knocked out by " + negDisTrait.responsibleCharacter.name + ".\"";

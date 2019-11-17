@@ -1,17 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class Play : GoapAction {
 
-    //private LocationStructure _targetStructure;
+    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
-    //public override LocationStructure targetStructure { get { return _targetStructure; } }
-
-    protected override string failActionState { get { return "Play Failed"; } }
-
-    public Play(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PLAY, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public Play() : base(INTERACTION_TYPE.PLAY) {
         shouldIntelNotificationOnlyIfActorIsActive = true;
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         validTimeOfDays = new TIME_IN_WORDS[] {
@@ -25,73 +22,48 @@ public class Play : GoapAction {
     }
 
     #region Overrides
-    protected override void ConstructRequirement() {
-        _requirementAction = Requirement;
-    }
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, target = GOAP_EFFECT_TARGET.ACTOR });
     }
-    public override void Perform() {
-        base.Perform();
-        //if (targetTile.occupant != null && targetTile.occupant != actor) {
-        //    SetState("Play Failed");
-        //} else {
-            SetState("Play Success");
-        //}
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
+        SetState("Play Success", goapNode);
     }
-    public override void DoAction() {
-        SetTargetStructure();
-        base.DoAction();
-    }
-    public override LocationGridTile GetTargetLocationTile() {
-        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
-    }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         //**Cost**: randomize between 6-15
         return Utilities.rng.Next(6, 16);
     }
-    //public override void FailAction() {
-    //    base.FailAction();
-    //    SetState("Play Failed");
-    //}
-    //public override void SetTargetStructure() {
-    //    List<LocationStructure> choices = actor.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WILDERNESS).ToList();
-    //    if (actor.specificLocation.HasStructure(STRUCTURE_TYPE.WORK_AREA)) {
-    //        choices.AddRange(actor.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WORK_AREA));
-    //    }
-    //    if (choices.Count > 0) {
-    //        _targetStructure = choices[Utilities.rng.Next(0, choices.Count)];
-    //    }
-    //    base.SetTargetStructure();
-    //}
-    public override void OnStopWhilePerforming() {
-        if (currentState.name == "Play Success") {
-            actor.AdjustDoNotGetLonely(-1);
-            actor.AdjustDoNotGetTired(-1);
-        }
-    }
-    #endregion
-
-    #region Effects
-    private void PrePlaySuccess() {
-        actor.AdjustDoNotGetLonely(1);
-        actor.AdjustDoNotGetTired(1);
-    }
-    private void PerTickPlaySuccess() {
-        actor.AdjustHappiness(500);
-    }
-    private void AfterPlaySuccess() {
+    public override void OnStopWhilePerforming(Character actor, IPointOfInterest target, object[] otherData) {
+        base.OnStopWhilePerforming(actor, target, otherData);
         actor.AdjustDoNotGetLonely(-1);
         actor.AdjustDoNotGetTired(-1);
     }
     #endregion
 
+    #region Effects
+    private void PrePlaySuccess(ActualGoapNode goapNode) {
+        goapNode.actor.AdjustDoNotGetLonely(1);
+        goapNode.actor.AdjustDoNotGetTired(1);
+    }
+    private void PerTickPlaySuccess(ActualGoapNode goapNode) {
+        goapNode.actor.AdjustHappiness(500);
+    }
+    private void AfterPlaySuccess(ActualGoapNode goapNode) {
+        goapNode.actor.AdjustDoNotGetLonely(-1);
+        goapNode.actor.AdjustDoNotGetTired(-1);
+    }
+    #endregion
+
     #region Requirement
-    protected bool Requirement() {
-        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
-            return false;
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+                return false;
+            }
+            return actor == poiTarget;
         }
-        return actor == poiTarget;
+        return false;
     }
     #endregion
 }

@@ -44,14 +44,10 @@ public class MonsterPanelUI : MonoBehaviour {
 
     private ItemDropBtn _currentSelectedItemDropBtn;
     private List<string> _allSkills;
-    private List<ItemDrop> _itemDrops;
 
     #region getters/setters
     public List<string> allSkills {
         get { return _allSkills; }
-    }
-    public List<ItemDrop> itemDrops {
-        get { return _itemDrops; }
     }
     #endregion
 
@@ -70,7 +66,6 @@ public class MonsterPanelUI : MonoBehaviour {
     }
     public void LoadAllData() {
         _allSkills = new List<string>();
-        _itemDrops = new List<ItemDrop>();
         typeOptions.ClearOptions();
         //itemDropOptions.ClearOptions();
 
@@ -112,7 +107,6 @@ public class MonsterPanelUI : MonoBehaviour {
         isSleepingOnSpawnToggle.isOn = false;
 
         _allSkills.Clear();
-        _itemDrops.Clear();
         foreach (Transform child in skillContentTransform) {
             GameObject.Destroy(child.gameObject);
         }
@@ -130,72 +124,9 @@ public class MonsterPanelUI : MonoBehaviour {
         if (Utilities.DoesFileExist(path)) {
             if (EditorUtility.DisplayDialog("Overwrite Monster", "A monster with name " + nameInput.text + " already exists. Replace with this monster?", "Yes", "No")) {
                 File.Delete(path);
-                SaveMonsterJson(path);
             }
-        } else {
-            SaveMonsterJson(path);
-        }
+        } 
 #endif
-    }
-    private void SaveMonsterJson(string path) {
-        Monster newMonster = new Monster();
-
-        newMonster.SetDataFromMonsterPanelUI();
-
-        string jsonString = JsonUtility.ToJson(newMonster);
-
-        System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
-        writer.WriteLine(jsonString);
-        writer.Close();
-
-#if UNITY_EDITOR
-        //Re-import the file to update the reference in the editor
-        UnityEditor.AssetDatabase.ImportAsset(path);
-#endif
-        Debug.Log("Successfully saved monster at " + path);
-
-        CombatSimManager.Instance.UpdateAllMonsters();
-    }
-    private void LoadMonster() {
-#if UNITY_EDITOR
-        string filePath = EditorUtility.OpenFilePanel("Select Monster", Utilities.dataPath + "Monsters/", "json");
-
-        if (!string.IsNullOrEmpty(filePath)) {
-            string dataAsJson = File.ReadAllText(filePath);
-
-            Monster monster = JsonUtility.FromJson<Monster>(dataAsJson);
-            ClearData();
-            LoadMonsterDataToUI(monster);
-        }
-#endif
-    }
-    private void LoadMonsterDataToUI(Monster monster) {
-        nameInput.text = monster.name;
-        typeOptions.value = GetMonsterTypeIndex(monster.type);
-        levelInput.text = monster.level.ToString();
-        expInput.text = monster.experienceDrop.ToString();
-        hpInput.text = monster.maxHP.ToString();
-        spInput.text = monster.maxSP.ToString();
-        powerInput.text = monster.attackPower.ToString();
-        speedInput.text = monster.speed.ToString();
-        dodgeInput.text = monster.dodgeChance.ToString();
-        hitInput.text = monster.hitChance.ToString();
-        critInput.text = monster.critChance.ToString();
-        armyCountInput.text = monster.startingArmyCount.ToString();
-        isSleepingOnSpawnToggle.isOn = monster.isSleepingOnSpawn;
-
-        for (int i = 0; i < monster.skillNames.Count; i++) {
-            string skillName = monster.skillNames[i];
-            _allSkills.Add(skillName);
-            GameObject go = GameObject.Instantiate(monsterSkillBtnGO, skillContentTransform);
-            go.GetComponent<MonsterSkillButton>().buttonText.text = skillName;
-        }
-        for (int i = 0; i < monster.itemDrops.Count; i++) {
-            ItemDrop itemDrop = monster.itemDrops[i];
-            _itemDrops.Add(itemDrop);
-            GameObject go = GameObject.Instantiate(itemDropBtnPrefab, itemDropContentTransform);
-            go.GetComponent<ItemDropBtn>().Set(itemDrop.itemName, itemDrop.dropRate);
-        }
     }
     private int GetMonsterTypeIndex(MONSTER_TYPE monsterType) {
         for (int i = 0; i < typeOptions.options.Count; i++) {
@@ -208,31 +139,11 @@ public class MonsterPanelUI : MonoBehaviour {
     public void SetItemDropBn(ItemDropBtn btn) {
         _currentSelectedItemDropBtn = btn;
     }
-    private bool HasItemDrop(string itemName) {
-        for (int i = 0; i < _itemDrops.Count; i++) {
-            if(_itemDrops[i].itemName == itemName) {
-                return true;
-            }
-        }
-        return false;
-    }
-    private bool RemoveItemDrop(string itemName) {
-        for (int i = 0; i < _itemDrops.Count; i++) {
-            if (_itemDrops[i].itemName == itemName) {
-                _itemDrops.RemoveAt(i);
-                return true;
-            }
-        }
-        return false;
-    }
     #endregion
 
     #region Button Clicks
     public void OnClickAddNewMonster() {
         ClearData();
-    }
-    public void OnClickEditMonster() {
-        LoadMonster();
     }
     public void OnClickSaveMonster() {
         SaveMonster();
@@ -264,24 +175,10 @@ public class MonsterPanelUI : MonoBehaviour {
     }
     public void OnClickAddItemDrop() {
         string itemToAdd = itemDropOptions.options[itemDropOptions.value].text;
-        if (!HasItemDrop(itemToAdd)) {
-            float rate = float.Parse(itemDropRateInput.text);
-            ItemDrop itemDrop = new ItemDrop() {
-                itemName = itemToAdd,
-                dropRate = rate
-            };
-            _itemDrops.Add(itemDrop);
-            GameObject go = GameObject.Instantiate(itemDropBtnPrefab, itemDropContentTransform);
-            go.GetComponent<ItemDropBtn>().Set(itemDrop.itemName, itemDrop.dropRate);
-        }
     }
     public void OnClickRemoveItemDrop() {
         if (_currentSelectedItemDropBtn != null) {
             string itemToRemove = _currentSelectedItemDropBtn.name;
-            if (RemoveItemDrop(itemToRemove)) {
-                GameObject.Destroy(_currentSelectedItemDropBtn.gameObject);
-                _currentSelectedItemDropBtn = null;
-            }
         }
     }
     #endregion

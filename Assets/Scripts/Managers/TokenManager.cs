@@ -1,7 +1,9 @@
 ﻿
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Traits;
 using UnityEngine;
 
 public class TokenManager : MonoBehaviour {
@@ -13,6 +15,8 @@ public class TokenManager : MonoBehaviour {
     public List<SpecialObject> specialObjects { get; private set; }
     public List<SpecialToken> specialTokens { get; private set; }
 
+    public Dictionary<SPECIAL_TOKEN, ItemData> itemData { get; private set; }
+
     void Awake() {
         Instance = this;
 
@@ -22,6 +26,7 @@ public class TokenManager : MonoBehaviour {
     }
 
     public void Initialize() {
+        ConstructItemData();
         LoadSpecialTokens();
     }
 
@@ -43,8 +48,8 @@ public class TokenManager : MonoBehaviour {
             //    continue; //skip
             //}
             for (int j = 0; j < currSetting.quantity; j++) {
-                if (Random.Range(0, 100) < currSetting.appearanceWeight) {
-                    Area chosenArea = areas[Random.Range(0, areas.Count)];
+                if (UnityEngine.Random.Range(0, 100) < currSetting.appearanceWeight) {
+                    Area chosenArea = areas[UnityEngine.Random.Range(0, areas.Count)];
                     SpecialToken createdToken = CreateSpecialToken(currSetting.tokenType, currSetting.appearanceWeight);
                     if (createdToken != null) {
                         chosenArea.AddSpecialTokenToLocation(createdToken);
@@ -57,7 +62,7 @@ public class TokenManager : MonoBehaviour {
     }
     public SpecialToken CreateRandomDroppableSpecialToken() {
         SPECIAL_TOKEN[] choices = Utilities.GetEnumValues<SPECIAL_TOKEN>().Where(x => x.CreatesObjectWhenDropped()).ToArray();
-        SPECIAL_TOKEN random = choices[Random.Range(0, choices.Length)];
+        SPECIAL_TOKEN random = choices[UnityEngine.Random.Range(0, choices.Length)];
         return CreateSpecialToken(random);
     }
     public SpecialToken CreateSpecialToken(SPECIAL_TOKEN tokenType, int appearanceWeight = 0) {
@@ -121,7 +126,6 @@ public class TokenManager : MonoBehaviour {
         }
         return areas;
     }
-
     public Sprite GetItemSprite(SPECIAL_TOKEN tokenType) {
         if (itemSpritesDictionary.ContainsKey(tokenType)) {
             return itemSpritesDictionary[tokenType];
@@ -139,7 +143,6 @@ public class TokenManager : MonoBehaviour {
         }
         return null;
     }
-
     public void AddSpecialToken(SpecialToken token) {
         specialTokens.Add(token);
     }
@@ -151,6 +154,105 @@ public class TokenManager : MonoBehaviour {
         }
         return null;
     }
+    private void ConstructItemData() {
+        itemData = new Dictionary<SPECIAL_TOKEN, ItemData>() {
+            {SPECIAL_TOKEN.TOOL, new ItemData(){
+                supplyValue = 15,
+                craftCost = 25,
+                purchaseCost = 35,
+                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+            {SPECIAL_TOKEN.BLIGHTED_POTION, new ItemData(){
+                supplyValue = 15,
+                craftCost = 25,
+                purchaseCost = 35,
+                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+            {SPECIAL_TOKEN.BOOK_OF_THE_DEAD, new ItemData(){
+                supplyValue = 15,
+                craftCost = 25,
+                purchaseCost = 35,
+                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+            {SPECIAL_TOKEN.CHARM_SPELL, new ItemData(){
+                supplyValue = 15,
+                craftCost = 25,
+                purchaseCost = 35,
+                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+            {SPECIAL_TOKEN.FEAR_SPELL, new ItemData(){
+                supplyValue = 15,
+                craftCost = 25,
+                purchaseCost = 35,
+                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+            {SPECIAL_TOKEN.MARK_OF_THE_WITCH, new ItemData(){
+                supplyValue = 15,
+                craftCost = 25,
+                purchaseCost = 35,
+                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+            {SPECIAL_TOKEN.BRAND_OF_THE_BEASTMASTER, new ItemData(){
+                supplyValue = 15,
+                craftCost = 25,
+                purchaseCost = 35,
+                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+            {SPECIAL_TOKEN.BOOK_OF_WIZARDRY, new ItemData(){
+                supplyValue = 15,
+                craftCost = 25,
+                purchaseCost = 35,
+                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+            {SPECIAL_TOKEN.SECRET_SCROLL, new ItemData(){
+                supplyValue = 15,
+                craftCost = 25,
+                purchaseCost = 35,
+                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+            {SPECIAL_TOKEN.MUTAGENIC_GOO, new ItemData(){
+                supplyValue = 15,
+                craftCost = 25,
+                purchaseCost = 35,
+                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+            {SPECIAL_TOKEN.DISPEL_SCROLL, new ItemData(){
+                supplyValue = 15,
+                craftCost = 25,
+                purchaseCost = 35,
+                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+            {SPECIAL_TOKEN.PANACEA, new ItemData(){
+                supplyValue = 15,
+                craftCost = 25,
+                purchaseCost = 35,
+                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+            {SPECIAL_TOKEN.JUNK, new ItemData(){
+                supplyValue = 15,
+                craftCost = 25,
+                purchaseCost = 35,
+                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+            {SPECIAL_TOKEN.HEALING_POTION, new ItemData(){
+                supplyValue = 15,
+                craftCost = 25,
+                purchaseCost = 35,
+                canBeCraftedBy = new Type[] { typeof(Doctor), typeof(Herbalist) } } },
+            {SPECIAL_TOKEN.ENCHANTED_AMULET, new ItemData(){
+                supplyValue = 15,
+                craftCost = 25,
+                purchaseCost = 35,
+                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+            {SPECIAL_TOKEN.GOLDEN_NECTAR, new ItemData(){
+                supplyValue = 15,
+                craftCost = 25,
+                purchaseCost = 35,
+                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+            {SPECIAL_TOKEN.SCROLL_OF_POWER, new ItemData(){
+                supplyValue = 15,
+                craftCost = 25,
+                purchaseCost = 35,
+                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+            {SPECIAL_TOKEN.ACID_FLASK, new ItemData(){
+                supplyValue = 15,
+                craftCost = 25,
+                purchaseCost = 35,
+                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+            {SPECIAL_TOKEN.SCROLL_OF_FRENZY, new ItemData(){
+                supplyValue = 15,
+                craftCost = 25,
+                purchaseCost = 35,
+                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+        };
+    }
 }
 
 [System.Serializable]
@@ -160,4 +262,11 @@ public class SpecialTokenSettings {
     public int quantity;
     public int appearanceWeight;
     public List<string> areaLocations;
+}
+
+public struct ItemData {
+    public int supplyValue;
+    public int craftCost;
+    public int purchaseCost;
+    public System.Type[] canBeCraftedBy;
 }

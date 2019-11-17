@@ -1,12 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class Sleep : GoapAction {
     protected override string failActionState { get { return "Rest Fail"; } }
 
     private Resting _restingTrait;
-    public Sleep(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.SLEEP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public Sleep() : base(INTERACTION_TYPE.SLEEP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Sleep_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
         isNotificationAnIntel = false;
@@ -19,8 +20,8 @@ public class Sleep : GoapAction {
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
-    public override void Perform() {
-        base.Perform();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         if (!isTargetMissing) {
             if(CanSleepInBed(actor, poiTarget as TileObject)) {
                 SetState("Rest Success");
@@ -36,7 +37,7 @@ public class Sleep : GoapAction {
             }
         }
     }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         if (targetStructure.structureType == STRUCTURE_TYPE.DWELLING) {
             Dwelling dwelling = targetStructure as Dwelling;
             if (dwelling.IsResident(actor)) {
@@ -45,9 +46,9 @@ public class Sleep : GoapAction {
                 for (int i = 0; i < dwelling.residents.Count; i++) {
                     Character resident = dwelling.residents[i];
                     if (resident != actor) {
-                        CharacterRelationshipData characterRelationshipData = actor.GetCharacterRelationshipData(resident);
+                        IRelationshipData characterRelationshipData = actor.relationshipContainer.GetRelationshipDataWith(resident);
                         if (characterRelationshipData != null) {
-                            if (characterRelationshipData.HasRelationshipOfEffect(TRAIT_EFFECT.POSITIVE)) {
+                            if (characterRelationshipData.relationshipStatus == RELATIONSHIP_EFFECT.POSITIVE) {
                                 return 15;
                             }
                         }
@@ -73,7 +74,7 @@ public class Sleep : GoapAction {
     #endregion
 
     #region Requirements
-    protected bool Requirement() {
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
@@ -97,7 +98,7 @@ public class Sleep : GoapAction {
         //poiTarget.SetPOIState(POI_STATE.INACTIVE);
         //actor.AdjustDoNotGetTired(1);
         _restingTrait = new Resting();
-        actor.AddTrait(_restingTrait);
+        actor.traitContainer.AddTrait(actor, _restingTrait);
         currentState.OverrideDuration(actor.currentSleepTicks);
     }
     private void PerTickRestSuccess() {
@@ -164,7 +165,7 @@ public class Sleep : GoapAction {
     private bool CanSleepInBed(Character character, TileObject tileObject) {
         for (int i = 0; i < tileObject.users.Length; i++) {
             if (tileObject.users[i] != null) {
-                RELATIONSHIP_EFFECT relEffect = character.GetRelationshipEffectWith(tileObject.users[i]);
+                RELATIONSHIP_EFFECT relEffect = character.relationshipContainer.GetRelationshipEffectWith(tileObject.users[i]);
                 if(relEffect == RELATIONSHIP_EFFECT.NEGATIVE || relEffect == RELATIONSHIP_EFFECT.NONE) {
                     return false;
                 }

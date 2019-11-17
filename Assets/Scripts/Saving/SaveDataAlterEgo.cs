@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Traits;
 using UnityEngine;
 
 [System.Serializable]
@@ -55,11 +56,11 @@ public class SaveDataAlterEgo {
         }
 
         relationships = new List<SaveDataRelationship>();
-        foreach (CharacterRelationshipData relData in alterEgo.relationships.Values) {
-            SaveDataRelationship saveDataRelationship = new SaveDataRelationship();
-            saveDataRelationship.Save(relData);
-            relationships.Add(saveDataRelationship);
-        }
+        //foreach (CharacterRelationshipData relData in alterEgo.relationshipContainer.relationships.Values) {
+        //    SaveDataRelationship saveDataRelationship = new SaveDataRelationship();
+        //    saveDataRelationship.Save(relData);
+        //    relationships.Add(saveDataRelationship);
+        //}
     }
 
     public void Load(Character character) {

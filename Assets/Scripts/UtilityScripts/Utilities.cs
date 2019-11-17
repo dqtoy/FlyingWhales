@@ -73,18 +73,12 @@ public class Utilities : MonoBehaviour {
         } else if (obj is SpecialToken) {
             lastItemID += 1;
             return lastItemID;
-        } else if (obj is Monster) {
-            lastMonsterID += 1;
-            return lastMonsterID;
         } else if (obj is Area) {
             lastAreaID += 1;
             return lastAreaID;
         } else if (obj is Party) {
             lastPartyID += 1;
             return lastPartyID;
-        } else if (obj is Squad) {
-            lastSquadID += 1;
-            return lastSquadID;
         } else if (obj is CharacterSim) {
             lastCharacterSimID += 1;
             return lastCharacterSimID;
@@ -128,14 +122,10 @@ public class Utilities : MonoBehaviour {
             if (lastCharacterID <= idToUse) { lastCharacterID = idToUse; }
         } else if (obj is SpecialToken) {
             if (lastItemID <= idToUse) { lastItemID = idToUse; }
-        } else if (obj is Monster) {
-            if (lastMonsterID <= idToUse) { lastMonsterID = idToUse; }
         } else if (obj is Area) {
             if (lastAreaID <= idToUse) { lastAreaID = idToUse; }
         } else if (obj is Party) {
             if (lastPartyID <= idToUse) { lastPartyID = idToUse; }
-        } else if (obj is Squad) {
-            if (lastSquadID <= idToUse) { lastSquadID = idToUse; }
         } else if (obj is CharacterSim) {
             if (lastCharacterSimID <= idToUse) { lastCharacterSimID = idToUse; }
         } else if (obj is LocationStructure) {
@@ -1499,151 +1489,6 @@ public class Utilities : MonoBehaviour {
         }
         return -1;
     }
-    public static List<string> GetPossibleRelationshipsChoicesBasedOnGender(GENDER gender1, GENDER gender2) {
-        List<CHARACTER_RELATIONSHIP> rels = new List<CHARACTER_RELATIONSHIP>();
-        if (gender2 == GENDER.MALE) {
-            rels.Add(CHARACTER_RELATIONSHIP.FRIEND);
-            rels.Add(CHARACTER_RELATIONSHIP.MENTOR);
-            rels.Add(CHARACTER_RELATIONSHIP.STUDENT);
-            rels.Add(CHARACTER_RELATIONSHIP.FATHER);
-            rels.Add(CHARACTER_RELATIONSHIP.BROTHER);
-            rels.Add(CHARACTER_RELATIONSHIP.SON);
-            rels.Add(CHARACTER_RELATIONSHIP.LOVER);
-            rels.Add(CHARACTER_RELATIONSHIP.ENEMY);
-            rels.Add(CHARACTER_RELATIONSHIP.RIVAL);
-            rels.Add(CHARACTER_RELATIONSHIP.STALKER);
-            if (gender1 != GENDER.MALE) { //other gender is not a male
-                rels.Add(CHARACTER_RELATIONSHIP.HUSBAND);
-            }
-        } else {
-            rels.Add(CHARACTER_RELATIONSHIP.FRIEND);
-            rels.Add(CHARACTER_RELATIONSHIP.MENTOR);
-            rels.Add(CHARACTER_RELATIONSHIP.STUDENT);
-            rels.Add(CHARACTER_RELATIONSHIP.MOTHER);
-            rels.Add(CHARACTER_RELATIONSHIP.SISTER);
-            rels.Add(CHARACTER_RELATIONSHIP.DAUGHTER);
-            rels.Add(CHARACTER_RELATIONSHIP.LOVER);
-            rels.Add(CHARACTER_RELATIONSHIP.ENEMY);
-            rels.Add(CHARACTER_RELATIONSHIP.RIVAL);
-            rels.Add(CHARACTER_RELATIONSHIP.STALKER);
-            if (gender1 != GENDER.FEMALE) { //other gender is not a female
-                rels.Add(CHARACTER_RELATIONSHIP.WIFE);
-            }
-        }
-        List<string> choices = new List<string>();
-        rels.ForEach(x => choices.Add(x.ToString()));
-
-        return choices;
-    }
-    public static List<CHARACTER_RELATIONSHIP> GetPossibleRelationshipsBasedOnGender(GENDER gender1, GENDER gender2) {
-        List<CHARACTER_RELATIONSHIP> rels = new List<CHARACTER_RELATIONSHIP>();
-        if (gender2 == GENDER.MALE) {
-            rels.Add(CHARACTER_RELATIONSHIP.FRIEND);
-            rels.Add(CHARACTER_RELATIONSHIP.MENTOR);
-            rels.Add(CHARACTER_RELATIONSHIP.STUDENT);
-            rels.Add(CHARACTER_RELATIONSHIP.FATHER);
-            rels.Add(CHARACTER_RELATIONSHIP.BROTHER);
-            rels.Add(CHARACTER_RELATIONSHIP.SON);
-            rels.Add(CHARACTER_RELATIONSHIP.ENEMY);
-            rels.Add(CHARACTER_RELATIONSHIP.RIVAL);
-            rels.Add(CHARACTER_RELATIONSHIP.STALKER);
-            if (gender1 != GENDER.MALE) {
-                rels.Add(CHARACTER_RELATIONSHIP.LOVER);
-                rels.Add(CHARACTER_RELATIONSHIP.HUSBAND);
-            }
-        } else {
-            rels.Add(CHARACTER_RELATIONSHIP.FRIEND);
-            rels.Add(CHARACTER_RELATIONSHIP.MENTOR);
-            rels.Add(CHARACTER_RELATIONSHIP.STUDENT);
-            rels.Add(CHARACTER_RELATIONSHIP.MOTHER);
-            rels.Add(CHARACTER_RELATIONSHIP.SISTER);
-            rels.Add(CHARACTER_RELATIONSHIP.DAUGHTER);
-            rels.Add(CHARACTER_RELATIONSHIP.ENEMY);
-            rels.Add(CHARACTER_RELATIONSHIP.RIVAL);
-            rels.Add(CHARACTER_RELATIONSHIP.STALKER);
-            if (gender1 != GENDER.FEMALE) {
-                rels.Add(CHARACTER_RELATIONSHIP.LOVER);
-                rels.Add(CHARACTER_RELATIONSHIP.WIFE);
-            }
-        }
-        return rels;
-    }
-    public static bool IsRelationshipStatusUnique(CHARACTER_RELATIONSHIP rel) {
-        switch (rel) {
-            case CHARACTER_RELATIONSHIP.FATHER:
-            case CHARACTER_RELATIONSHIP.MOTHER:
-            case CHARACTER_RELATIONSHIP.HUSBAND:
-            case CHARACTER_RELATIONSHIP.WIFE:
-            case CHARACTER_RELATIONSHIP.RIVAL:
-            return true;
-            default:
-            return false;
-        }
-    }
-    /*
-     This is a utility funtion to restrict your father being your mother, your son being your brother
-     or other scenarios.
-         */
-    public static bool IsRelationshipStatusMutuallyExclusive(CHARACTER_RELATIONSHIP relStat, Relationship relationship, Relationship otherRelationship) {
-        //List<CHARACTER_RELATIONSHIP> mutuallyExclusiveStats = new List<CHARACTER_RELATIONSHIP>() { //this is the list of relationships that cannot co exist
-        //    CHARACTER_RELATIONSHIP.SON,
-        //    CHARACTER_RELATIONSHIP.DAUGHTER,
-        //    CHARACTER_RELATIONSHIP.WIFE,
-        //    CHARACTER_RELATIONSHIP.HUSBAND,
-        //    CHARACTER_RELATIONSHIP.BROTHER,
-        //    CHARACTER_RELATIONSHIP.SISTER,
-        //    CHARACTER_RELATIONSHIP.MOTHER,
-        //    CHARACTER_RELATIONSHIP.FATHER
-        //};
-        if (relStat == CHARACTER_RELATIONSHIP.FATHER || relStat == CHARACTER_RELATIONSHIP.MOTHER) {
-            if (relationship.HasStatus(CHARACTER_RELATIONSHIP.SON) || relationship.HasStatus(CHARACTER_RELATIONSHIP.DAUGHTER) || relationship.HasStatus(CHARACTER_RELATIONSHIP.WIFE)
-                || relationship.HasStatus(CHARACTER_RELATIONSHIP.HUSBAND) || relationship.HasStatus(CHARACTER_RELATIONSHIP.BROTHER) || relationship.HasStatus(CHARACTER_RELATIONSHIP.SISTER)
-                || relationship.HasStatus(CHARACTER_RELATIONSHIP.MOTHER) || relationship.HasStatus(CHARACTER_RELATIONSHIP.FATHER)) {
-                return true;
-            }
-            if (otherRelationship != null) {
-                if (otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.WIFE) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.HUSBAND) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.BROTHER)
-                || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.SISTER) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.MOTHER) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.FATHER)) {
-                    return true;
-                }
-            }
-        } else if (relStat == CHARACTER_RELATIONSHIP.SON || relStat == CHARACTER_RELATIONSHIP.DAUGHTER) {
-            if (relationship.HasStatus(CHARACTER_RELATIONSHIP.WIFE) || relationship.HasStatus(CHARACTER_RELATIONSHIP.HUSBAND) || relationship.HasStatus(CHARACTER_RELATIONSHIP.BROTHER)
-                || relationship.HasStatus(CHARACTER_RELATIONSHIP.SISTER) || relationship.HasStatus(CHARACTER_RELATIONSHIP.MOTHER) || relationship.HasStatus(CHARACTER_RELATIONSHIP.FATHER)
-                || relationship.HasStatus(CHARACTER_RELATIONSHIP.SON) || relationship.HasStatus(CHARACTER_RELATIONSHIP.DAUGHTER)) {
-                return true;
-            }
-            if (otherRelationship != null) {
-                if (otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.WIFE) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.HUSBAND) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.BROTHER)
-                || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.SISTER) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.SON) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.DAUGHTER)) {
-                    return true;
-                }
-            }
-        } else if (relStat == CHARACTER_RELATIONSHIP.BROTHER || relStat == CHARACTER_RELATIONSHIP.SISTER) {
-            if (relationship.HasStatus(CHARACTER_RELATIONSHIP.WIFE) || relationship.HasStatus(CHARACTER_RELATIONSHIP.HUSBAND) || relationship.HasStatus(CHARACTER_RELATIONSHIP.SON)
-                || relationship.HasStatus(CHARACTER_RELATIONSHIP.DAUGHTER) || relationship.HasStatus(CHARACTER_RELATIONSHIP.MOTHER) || relationship.HasStatus(CHARACTER_RELATIONSHIP.FATHER)) {
-                return true;
-            }
-            if (otherRelationship != null) {
-                if (otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.WIFE) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.HUSBAND) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.SON)
-                || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.DAUGHTER) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.MOTHER) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.FATHER)) {
-                    return true;
-                }
-            }
-        } else if (relStat == CHARACTER_RELATIONSHIP.HUSBAND || relStat == CHARACTER_RELATIONSHIP.WIFE) {
-            if (relationship.HasStatus(CHARACTER_RELATIONSHIP.SON) || relationship.HasStatus(CHARACTER_RELATIONSHIP.DAUGHTER) || relationship.HasStatus(CHARACTER_RELATIONSHIP.BROTHER)
-                || relationship.HasStatus(CHARACTER_RELATIONSHIP.SISTER) || relationship.HasStatus(CHARACTER_RELATIONSHIP.MOTHER) || relationship.HasStatus(CHARACTER_RELATIONSHIP.FATHER)) {
-                return true;
-            }
-            if (otherRelationship != null) {
-                if (otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.SON) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.DAUGHTER) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.BROTHER)
-                || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.SISTER) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.MOTHER) || otherRelationship.HasStatus(CHARACTER_RELATIONSHIP.FATHER)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
     public static List<HexTile> GetTilesFromIDs(List<int> ids) {
         List<HexTile> tiles = new List<HexTile>();
         for (int i = 0; i < ids.Count; i++) {
@@ -1721,67 +1566,6 @@ public class Utilities : MonoBehaviour {
     }
     #endregion
 
-    #region Resources
-    public static WeightedDictionary<MATERIAL> GetMaterialWeights() {
-        WeightedDictionary<MATERIAL> materialWeights = new WeightedDictionary<MATERIAL>();
-        MATERIAL[] allMaterials = GetEnumValues<MATERIAL>();
-        for (int i = 0; i < allMaterials.Length; i++) {
-            MATERIAL currMat = allMaterials[i];
-            if (currMat != MATERIAL.NONE) {
-                materialWeights.AddElement(currMat, MaterialManager.Instance.materialsLookup[currMat].weight);
-            }
-        }
-        return materialWeights;
-    }
-    public static MATERIAL_CATEGORY GetMaterialCategory(MATERIAL material) {
-        if (material == MATERIAL.IRON || material == MATERIAL.COBALT || material == MATERIAL.MITHRIL) {
-            return MATERIAL_CATEGORY.METAL;
-        } else if (material == MATERIAL.OAK || material == MATERIAL.YEW || material == MATERIAL.EBONY) {
-            return MATERIAL_CATEGORY.WOOD;
-        } else if (material == MATERIAL.CLAY || material == MATERIAL.LIMESTONE || material == MATERIAL.MARBLE || material == MATERIAL.GRANITE) {
-            return MATERIAL_CATEGORY.STONE;
-        } else if (material == MATERIAL.SILK || material == MATERIAL.COTTON || material == MATERIAL.FLAX) {
-            return MATERIAL_CATEGORY.CLOTH;
-        } else if (material == MATERIAL.CORN || material == MATERIAL.RICE) {
-            return MATERIAL_CATEGORY.PLANT;
-        } else if (material == MATERIAL.PIGMEAT || material == MATERIAL.COWMEAT) {
-            return MATERIAL_CATEGORY.MEAT;
-        } else if (material == MATERIAL.GOATHIDE || material == MATERIAL.DEERHIDE || material == MATERIAL.BEHEMOTHHIDE) {
-            return MATERIAL_CATEGORY.LEATHER;
-        }
-        return MATERIAL_CATEGORY.NONE;
-    }
-    public static MATERIAL ConvertLandmarkTypeToMaterial(LANDMARK_TYPE landmarkType) {
-        try {
-            MATERIAL mat = (MATERIAL) System.Enum.Parse(typeof(MATERIAL), landmarkType.ToString(), true);
-            return mat;
-        } catch {
-            return MATERIAL.NONE;
-        }
-    }
-    public static LANDMARK_TYPE ConvertMaterialToLandmarkType(MATERIAL material) {
-        try {
-            LANDMARK_TYPE landmarkType = (LANDMARK_TYPE) System.Enum.Parse(typeof(LANDMARK_TYPE), material.ToString(), true);
-            return landmarkType;
-        } catch {
-            throw new Exception("THERE IS NO LANDMARK TYPE FOR MATERIAL " + material.ToString());
-        }
-    }
-    //public static RESOURCE GetResourceTypeByObjectType(SPECIFIC_OBJECT_TYPE objectType) {
-    //    //switch (objectType) {
-    //    //    case SPECIFIC_OBJECT_TYPE.ELVEN_RESIDENCES:
-    //    //    return RESOURCE.ELF_CIVILIAN;
-    //    //    case SPECIFIC_OBJECT_TYPE.HUMAN_RESIDENCES:
-    //    //    return RESOURCE.HUMAN_CIVILIAN;
-    //    //    case SPECIFIC_OBJECT_TYPE.OAK_WOODS:
-    //    //    return RESOURCE.OAK;
-    //    //    case SPECIFIC_OBJECT_TYPE.IRON_MINE:
-    //    //    return RESOURCE.IRON;
-    //    //}
-    //    return RESOURCE.NONE;
-    //}
-    #endregion
-
     #region Landmarks
     // public static BASE_LANDMARK_TYPE GetBaseLandmarkType(LANDMARK_TYPE landmarkType) {
     //     switch (landmarkType) {
@@ -1842,37 +1626,6 @@ public class Utilities : MonoBehaviour {
             choices.Add(currentClass.className);
         }
         return choices;
-    }
-    #endregion
-
-    #region Combat Prototype
-    public static IBodyPart.ATTRIBUTE GetNeededAttributeForArmor(Armor armor) {
-        string armorBodyType = string.Empty;
-        if(ItemManager.Instance != null) {
-            armorBodyType = ItemManager.Instance.armorTypeData[armor.armorType].armorBodyType;
-        } else {
-            armorBodyType = CombatSimManager.Instance.armorTypeData[armor.armorType].armorBodyType;
-        }
-        switch (armorBodyType) {
-            case "Head":
-            return IBodyPart.ATTRIBUTE.CAN_EQUIP_HEAD_ARMOR;
-            case "Torso":
-            return IBodyPart.ATTRIBUTE.CAN_EQUIP_TORSO_ARMOR;
-            case "Tail":
-            return IBodyPart.ATTRIBUTE.CAN_EQUIP_TAIL_ARMOR;
-            case "Arm":
-            return IBodyPart.ATTRIBUTE.CAN_EQUIP_ARM_ARMOR;
-            case "Hand":
-            return IBodyPart.ATTRIBUTE.CAN_EQUIP_HAND_ARMOR;
-            case "Leg":
-            return IBodyPart.ATTRIBUTE.CAN_EQUIP_LEG_ARMOR;
-            case "Hip":
-            return IBodyPart.ATTRIBUTE.CAN_EQUIP_HIP_ARMOR;
-            case "Feet":
-            return IBodyPart.ATTRIBUTE.CAN_EQUIP_FOOT_ARMOR;
-            default:
-            return IBodyPart.ATTRIBUTE.CAN_EQUIP_TORSO_ARMOR;
-        }
     }
     #endregion
 
@@ -2102,31 +1855,6 @@ public class Utilities : MonoBehaviour {
     public static TKey GetRandomKeyFromDictionary<TKey, TValue>(IDictionary<TKey, TValue> dict) {
         List<TKey> keys = Enumerable.ToList(dict.Keys);
         return keys[rng.Next(dict.Count)];
-    }
-    #endregion
-
-    #region Saves
-    public static void ValidateSaveData(WorldSaveData saveData) {
-        if (saveData.landmarksData != null) {
-            List<LandmarkSaveData> invalidData = new List<LandmarkSaveData>();
-            for (int i = 0; i < saveData.landmarksData.Count; i++) {
-                LandmarkSaveData landmarkData = saveData.landmarksData[i];
-                if (landmarkData.landmarkType == LANDMARK_TYPE.NONE) {
-                    invalidData.Add(landmarkData);
-                }
-            }
-            ListRemoveRange(saveData.landmarksData, invalidData);
-        }
-
-        if (saveData.factionsData != null) {
-            //Faction Emblems
-            for (int i = 0; i < saveData.factionsData.Count; i++) {
-                FactionSaveData currData = saveData.factionsData[i];
-                //if (string.IsNullOrEmpty(currData.emblemBGName)) {
-                //    currData.emblemBGName = FactionManager.Instance.emblemBGs[0].name;
-                //}
-            }
-        }
     }
     #endregion
 

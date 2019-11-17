@@ -196,8 +196,7 @@ public class AreaMapCameraMove : MonoBehaviour {
     }
     private void Targetting() {
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow) ||
-            Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D)
-            || (Minimap.Instance != null && Minimap.Instance.isDragging) || isDragging) {
+            Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D) || isDragging) {
             //reset target when player pushes a button to pan the camera
             //if(target != null) {
             //    Messenger.Broadcast(Signals.CAMERA_OUT_OF_FOCUS);

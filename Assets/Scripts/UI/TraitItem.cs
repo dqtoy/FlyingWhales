@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Linq;
+using Traits;
 
 public class TraitItem : MonoBehaviour {
     public TextMeshProUGUI nameText;
@@ -26,7 +27,7 @@ public class TraitItem : MonoBehaviour {
             //portrait.SetClickButton(UnityEngine.EventSystems.PointerEventData.InputButton.Left);
         } else {
             portrait.gameObject.SetActive(false);
-            Sprite icon = AttributeManager.Instance.GetTraitIcon(trait.name);
+            Sprite icon = TraitManager.Instance.GetTraitIcon(trait.name);
             if (icon != null) {
                 iconImg.sprite = icon;
                 iconImg.gameObject.SetActive(true);
@@ -43,25 +44,7 @@ public class TraitItem : MonoBehaviour {
     public void OnHover() {
         if(trait != null) {
             string summary = trait.nameInUI;
-            if (trait is RelationshipTrait) {
-                RelationshipTrait t = trait as RelationshipTrait;
-                for (int i = 0; i < t.targetCharacter.alterEgos.Values.Count; i++) {
-                    AlterEgoData currAlterEgo = t.targetCharacter.alterEgos.Values.ElementAt(i);
-                    if (UIManager.Instance.characterInfoUI.activeCharacter.HasRelationshipWith(currAlterEgo, true)) {
-                        CharacterRelationshipData rel = UIManager.Instance.characterInfoUI.activeCharacter.relationships[currAlterEgo];
-                        summary += "\n" + rel.GetSummary();
-                        break;
-                    }
-                }
-                //if (UIManager.Instance.characterInfoUI.activeCharacter.HasRelationshipWith(t.targetCharacter, true)) {
-                //CharacterRelationshipData rel = UIManager.Instance.characterInfoUI.activeCharacter.relationships[t.targetCharacter.currentAlterEgo];
-                //summary += "\n" + rel.GetSummary();
-                //} else {
-                //    summary = string.Empty;
-                //}
-            } else {
-                summary += "\n" + trait.GetTestingData();
-            }
+            summary += "\n" + trait.GetTestingData();
             if(summary != string.Empty) {
                 UIManager.Instance.ShowSmallInfo(summary);
             }

@@ -49,7 +49,7 @@ public class ProvokeMenu : MonoBehaviour {
 
     private void ProvokeAction(ref string targetText, ref string actorText) {
         bool succeedProvoke = false;
-        if (targetCharacter.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.ENEMY, false)) {
+        if (targetCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.ENEMY) != null) {
             //succeedProvoke = true;
             CHARACTER_MOOD currentMood = targetCharacter.currentMoodType;
             if (currentMood == CHARACTER_MOOD.GREAT) {
@@ -73,7 +73,7 @@ public class ProvokeMenu : MonoBehaviour {
             }
         } else {
             actorText = "You should take revenge on your enemies.";
-            if(targetCharacter.GetNormalTrait("Diplomatic") != null) {
+            if(targetCharacter.traitContainer.GetNormalTrait("Diplomatic") != null) {
                 targetText = "Sorry, I don't do that. I am a very peaceful person.";
             } else {
                 targetText = "Sorry, I don't have any.";
@@ -83,7 +83,7 @@ public class ProvokeMenu : MonoBehaviour {
         bool succeedUndermine = false;
         Character chosenCharacter = null;
         if (succeedProvoke) {
-            List<Character> enemyCharacters = targetCharacter.GetCharactersWithRelationship(RELATIONSHIP_TRAIT.ENEMY).Where(x => !x.isDead).ToList();
+            List<Character> enemyCharacters = targetCharacter.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.ENEMY).Where(x => x is AlterEgoData && !(x as AlterEgoData).owner.isDead).Select(x => (x as AlterEgoData).owner).ToList();
             while (chosenCharacter == null && enemyCharacters.Count > 0) {
                 int index = UnityEngine.Random.Range(0, enemyCharacters.Count);
                 Character character = enemyCharacters[index];

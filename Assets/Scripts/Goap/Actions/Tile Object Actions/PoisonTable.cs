@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 using System.Linq;
 
 public class PoisonTable : GoapAction {
@@ -8,7 +9,7 @@ public class PoisonTable : GoapAction {
 
     public Character targetCharacter { get; private set; }
 
-    public PoisonTable(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.POISON_TABLE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public PoisonTable() : base(INTERACTION_TYPE.POISON_TABLE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         //this.goapName = "Poison Table";
         actionIconString = GoapActionStateDB.Hostile_Icon;
         //_isStealthAction = true;
@@ -38,8 +39,8 @@ public class PoisonTable : GoapAction {
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = actor });
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, targetPOI = actor });
     }
-    public override void Perform() {
-        base.Perform();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         if (!isTargetMissing) {
             SetState("Poison Success");
             //if (!HasOtherCharacterInRadius()) {
@@ -52,7 +53,7 @@ public class PoisonTable : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 4;
     }
     //public override void FailAction() {
@@ -112,12 +113,12 @@ public class PoisonTable : GoapAction {
                 SetIsOldNews(true);
             }
             //Poison from Table is Removed
-            else if (action == this && poi.GetNormalTrait("Poisoned") == null) {
+            else if (action == this && poi.traitContainer.GetNormalTrait("Poisoned") == null) {
                 SetIsOldNews(true);
             }
         }else if (poi is Character && targetCharacter == poi) {
             //Target's Sick Trait is Removed
-            if (action == this && poi.GetNormalTrait("Sick") == null) {
+            if (action == this && poi.traitContainer.GetNormalTrait("Sick") == null) {
                 SetIsOldNews(true);
             }
             //Poison from Table is Removed
@@ -147,7 +148,7 @@ public class PoisonTable : GoapAction {
     private void ScheduleFionaEat() {
         Character fiona = CharacterManager.Instance.GetCharacterByName("Fiona");
         fiona.CancelAllJobsAndPlans();
-        GoapAction eat = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.EAT_AT_TABLE, fiona, poiTarget);
+        GoapAction eat = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.EAT, fiona, poiTarget);
         GoapPlan plan = new GoapPlan(new GoapNode(null, eat.cost, eat), new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY }, GOAP_CATEGORY.FULLNESS);
         plan.ConstructAllNodes();
         fiona.AddPlan(plan, true);
@@ -170,7 +171,7 @@ public class PoisonTable : GoapAction {
             if (d.residents.Count == 0) {
                 return false;
             }
-            Poisoned poisonedTrait = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
+            Poisoned poisonedTrait = poiTarget.traitContainer.GetNormalTrait("Poisoned") as Poisoned;
             if (poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
                 return false; //to prevent poisoning a table that has been already poisoned by this character
             }
@@ -189,7 +190,7 @@ public class PoisonTable : GoapAction {
         //NOTE: Poisoned trait has a list of characters that poisoned it. If the poisoned trait that is currently on the table has the actor of this action in it's list
         //this action is still valid for reactions where the table is currently poisoned.
         //PoisonTableIntel pti = sharedIntel as PoisonTableIntel;
-        Poisoned poisonedTrait = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
+        Poisoned poisonedTrait = poiTarget.traitContainer.GetNormalTrait("Poisoned") as Poisoned;
         Dwelling targetDwelling = poiTarget.gridTileLocation.structure as Dwelling;
         
         if(poisonedTrait != null) {
@@ -212,11 +213,11 @@ public class PoisonTable : GoapAction {
             if (targetDwelling.IsResident(recipient)) {
                 assumedTargetCharacter = recipient;
             } else {
-                List<Character> positiveRelOwners = targetDwelling.residents.Where(x => recipient.GetRelationshipEffectWith(x) == RELATIONSHIP_EFFECT.POSITIVE).ToList();
+                List<Character> positiveRelOwners = targetDwelling.residents.Where(x => recipient.relationshipContainer.GetRelationshipEffectWith(x) == RELATIONSHIP_EFFECT.POSITIVE).ToList();
                 if(positiveRelOwners != null && positiveRelOwners.Count > 0) {
                     assumedTargetCharacter = positiveRelOwners[UnityEngine.Random.Range(0, positiveRelOwners.Count)];
                 } else {
-                    List<Character> negativeRelOwners = targetDwelling.residents.Where(x => recipient.GetRelationshipEffectWith(x) == RELATIONSHIP_EFFECT.NEGATIVE).ToList();
+                    List<Character> negativeRelOwners = targetDwelling.residents.Where(x => recipient.relationshipContainer.GetRelationshipEffectWith(x) == RELATIONSHIP_EFFECT.NEGATIVE).ToList();
                     if (negativeRelOwners != null && negativeRelOwners.Count > 0) {
                         assumedTargetCharacter = negativeRelOwners[UnityEngine.Random.Range(0, negativeRelOwners.Count)];
                     } else {
@@ -240,8 +241,8 @@ public class PoisonTable : GoapAction {
             }
         } else {
             Character targetCharacter = assumedTargetCharacter;
-            Sick sickTrait = targetCharacter.GetNormalTrait("Sick") as Sick;
-            Dead deadTrait = targetCharacter.GetNormalTrait("Dead") as Dead;
+            Sick sickTrait = targetCharacter.traitContainer.GetNormalTrait("Sick") as Sick;
+            Dead deadTrait = targetCharacter.traitContainer.GetNormalTrait("Dead") as Dead;
             bool targetIsSick = sickTrait != null && sickTrait.gainedFromDoing != null && sickTrait.gainedFromDoing.poiTarget == poiTarget;
             bool targetIsDead = deadTrait != null && deadTrait.gainedFromDoing != null && deadTrait.gainedFromDoing.poiTarget == poiTarget;
 
@@ -269,7 +270,7 @@ public class PoisonTable : GoapAction {
                 else if (recipient == targetCharacter) {
                     if (recipient.faction == actor.faction) {
                         //- Same Faction
-                        if (!recipient.HasRelationshipWith(actor)) {
+                        if (!recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo)) {
                             if (recipientMood == CHARACTER_MOOD.BAD || recipientMood == CHARACTER_MOOD.DARK) {
                                 //- No Relationship (Negative Mood)
                                 if (tableHasPoison) {
@@ -299,7 +300,7 @@ public class PoisonTable : GoapAction {
                                     recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
                                 }
                             }
-                        } else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                        } else if (recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
                             //- Has Negative Relationship
                             if (tableHasPoison) {
                                 reactions.Add(string.Format("That stupid {0} wants to poison me?! {1} will get what {2} deserves!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
@@ -314,7 +315,7 @@ public class PoisonTable : GoapAction {
                             if (!hasCrimeBeenReported) {
                                 recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
                             }
-                        } else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
+                        } else if (recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
                             //- Has Positive Relationship
                             if (tableHasPoison) {
                                 if (!hasCrimeBeenReported) {
@@ -339,10 +340,10 @@ public class PoisonTable : GoapAction {
                         }
                     } else {
                         //- Not Same Faction
-                        if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
+                        if (recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
                             //- Has Positive Relationship
                             if (tableHasPoison) {
-                                if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                                if (RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                                     reactions.Add(string.Format("{0} wants to poison me?! {1} will not get away with this!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true)));
                                     recipient.CreateUndermineJobOnly(actor, "informed", status);
                                 } else {
@@ -350,7 +351,7 @@ public class PoisonTable : GoapAction {
                                 }
                                 CreateRemovePoisonJob(recipient, assumedTargetCharacter);
                             } else if (targetIsSick) {
-                                if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                                if (RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                                     reactions.Add(string.Format("{0} poisoned me?! I will have my revenge!", actor.name));
                                     recipient.CreateUndermineJobOnly(actor, "informed", status);
                                 } else {
@@ -375,8 +376,8 @@ public class PoisonTable : GoapAction {
                     }
                 }
                 //- Recipient Has Positive Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
-                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
+                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
                     if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
                         if (tableHasPoison) {
                             if (!hasCrimeBeenReported) {
@@ -452,8 +453,8 @@ public class PoisonTable : GoapAction {
                     }
                 }
                 //- Recipient Has Negative Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
-                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
                     if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
                         if (tableHasPoison) {
                             reactions.Add(string.Format("I hope {0} dies from that poison!", targetCharacter.name));
@@ -494,7 +495,7 @@ public class PoisonTable : GoapAction {
                 }
                 //- Recipient Has No Relationship with Target
                 else {
-                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
                     if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
                         if (tableHasPoison) {
                             if (!hasCrimeBeenReported) {
@@ -604,7 +605,7 @@ public class PoisonTableData : GoapActionData {
             if (d.residents.Count == 0) {
                 return false;
             }
-            Poisoned poisonedTrait = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
+            Poisoned poisonedTrait = poiTarget.traitContainer.GetNormalTrait("Poisoned") as Poisoned;
             if (poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
                 return false; //to prevent poisoning a table that has been already poisoned by this character
             }

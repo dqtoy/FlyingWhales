@@ -15,7 +15,7 @@ public class Disable : PlayerJobAction {
             return;
         }
 
-        targetPOI.AddTrait(new Disabled());
+        //targetPOI.AddTrait(new Disabled());
 
         //targetPOI.SetIsDisabledByPlayer(true);
         //GameDate dueDate = GameManager.Instance.Today();

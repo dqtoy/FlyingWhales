@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Traits;
 
 public class CorruptCultist : WorldEvent {
 
@@ -11,7 +12,7 @@ public class CorruptCultist : WorldEvent {
 
     #region Overrides
     protected override void ExecuteAfterEffect(Region region, Character spawner) {
-        Cultist cultist = spawner.GetNormalTrait("Cultist") as Cultist;
+        Cultist cultist = spawner.traitContainer.GetNormalTrait("Cultist") as Cultist;
         spawner.RecruitAsMinion(cultist.minionData);
         Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect");
         AddDefaultFillersToLog(log, region);

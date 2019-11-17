@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Traits;
 
 //Characters will avoid the area. If any character gets caught within, they will gain Poisoned status effect. Any objects inside the radius are disabled.
 public class MiasmaEmitter : Artifact {
@@ -45,15 +46,15 @@ public class MiasmaEmitter : Artifact {
             }
             if (currTile.objHere is TileObject) {
                 TileObject obj = currTile.objHere as TileObject;
-                Trait existing = obj.GetNormalTrait("Disabled");
-                if (existing != null) {
-                    existing.OverrideDuration(0);
-                    obj.RefreshTraitExpiry(existing);
-                } else {
-                    Trait disabled = new Disabled();
-                    disabled.OverrideDuration(0);
-                    obj.AddTrait(disabled);
-                }
+                Trait existing = obj.traitContainer.GetNormalTrait("Disabled");
+                //if (existing != null) {
+                //    existing.OverrideDuration(0);
+                //    obj.RefreshTraitExpiry(existing);
+                //} else {
+                //    Trait disabled = new Disabled();
+                //    disabled.OverrideDuration(0);
+                //    obj.traitContainer.AddTrait(obj, disabled);
+                //}
             }
         }
         particle = GameManager.Instance.CreateAOEEffectAt(tile, range);
@@ -68,7 +69,7 @@ public class MiasmaEmitter : Artifact {
             LocationGridTile currTile = tilesInRange[i];
             if (currTile.objHere is TileObject) {
                 TileObject obj = currTile.objHere as TileObject;
-                obj.RemoveTrait("Disabled");
+                obj.traitContainer.RemoveTrait(obj, "Disabled");
             }
         }
         for (int i = 0; i < previousTile.parentAreaMap.area.charactersAtLocation.Count; i++) {
@@ -99,24 +100,24 @@ public class MiasmaEmitter : Artifact {
                 characters.AddRange(currTile.charactersHere);
             }
 
-            for (int i = 0; i < characters.Count; i++) {
-                Character currCharacter = characters[i];
-                currCharacter.AddTrait(new Poisoned());
-            }
+            //for (int i = 0; i < characters.Count; i++) {
+            //    Character currCharacter = characters[i];
+            //    currCharacter.AddTrait(new Poisoned());
+            //}
         }
     }
 
     private void OnTileObjectPlaced(TileObject obj, LocationGridTile tile) {
         if (tilesInRange.Contains(tile)) {
-            Trait existing = obj.GetNormalTrait("Disabled");
-            if (existing != null) {
-                existing.OverrideDuration(0);
-                obj.RefreshTraitExpiry(existing);
-            } else {
-                Trait disabled = new Disabled();
-                disabled.OverrideDuration(0);
-                obj.AddTrait(disabled);
-            }
+            //Trait existing = obj.GetNormalTrait("Disabled");
+            //if (existing != null) {
+            //    existing.OverrideDuration(0);
+            //    obj.RefreshTraitExpiry(existing);
+            //} else {
+            //    Trait disabled = new Disabled();
+            //    disabled.OverrideDuration(0);
+            //    obj.AddTrait(disabled);
+            //}
         }
     }
 

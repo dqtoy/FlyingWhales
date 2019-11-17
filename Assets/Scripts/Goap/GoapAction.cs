@@ -4,10 +4,12 @@ using System;
 using UnityEngine;
 using System.Reflection;
 using System.Linq;
+using Traits;
 
 public class GoapAction {
 
     public INTERACTION_TYPE goapType { get; private set; }
+    public virtual ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
     public string goapName { get; protected set; }
     //public IPointOfInterest poiTarget { get; private set; }
     //public AlterEgoData poiTargetAlterEgo { get; protected set; } //The alter ego the target was using while doing this action. only occupied if target is a character
@@ -749,12 +751,12 @@ public class GoapAction {
     #endregion
 
     #region Preconditions
-    protected void AddPrecondition(GoapEffect effect, Func<Character, IPointOfInterest, bool> condition) {
+    protected void AddPrecondition(GoapEffect effect, Func<Character, IPointOfInterest, object[], bool> condition) {
         preconditions.Add(new Precondition(effect, condition));
     }
-    public bool CanSatisfyAllPreconditions(Character actor, IPointOfInterest target) {
+    public bool CanSatisfyAllPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
         for (int i = 0; i < preconditions.Count; i++) {
-            if (!preconditions[i].CanSatisfyCondition(actor, target)) {
+            if (!preconditions[i].CanSatisfyCondition(actor, target, otherData)) {
                 return false;
             }
         }

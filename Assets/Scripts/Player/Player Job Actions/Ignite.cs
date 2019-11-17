@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Traits;
 
 public class Ignite : PlayerJobAction {
 
@@ -23,8 +24,8 @@ public class Ignite : PlayerJobAction {
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile tile = tiles[i];
                 Burning burning = new Burning();
-                burning.SetSourceOfBurning(bs, tile);
-                tile.AddTrait(burning);
+                burning.SetSourceOfBurning(bs, tile.genericTileObject);
+                tile.genericTileObject.traitContainer.AddTrait(tile.genericTileObject, burning);
             }
             Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", this.GetType().ToString(), "activated");
             PlayerManager.Instance.player.ShowNotification(log);
@@ -56,7 +57,7 @@ public class Ignite : PlayerJobAction {
         } else if (level >= 3) {
             tiles.AddRange(origin.neighbourList);
         }
-        return tiles.Where(x => x.GetNormalTrait("Burning", "Burnt", "Wet", "Fireproof") == null && x.GetNormalTrait("Flammable") != null).ToList();
+        return tiles.Where(x => x.genericTileObject.traitContainer.GetNormalTrait("Burning", "Burnt", "Wet", "Fireproof") == null && x.genericTileObject.traitContainer.GetNormalTrait("Flammable") != null).ToList();
     }
 }
 

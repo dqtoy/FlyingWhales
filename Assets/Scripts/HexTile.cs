@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using PathFind;
 using System.Linq;
-
-using worldcreator;
 using SpriteGlow;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -27,7 +25,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] private GameObject _centerPiece;
     [SerializeField] private GameObject _highlightGO;
     [SerializeField] private GameObject _hoverHighlightGO;
-    [SerializeField] private GameObject _clickHighlightGO;
     [SerializeField] private Animator baseTileAnimator;
     [SerializeField] private SpriteRenderer emptyBuildingSpotGO;
     [SerializeField] private SpriteRenderer currentlyBuildingSpotGO;
@@ -40,13 +37,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] private SpriteRenderer botRightBorder;
     [SerializeField] private SpriteRenderer rightBorder;
     [SerializeField] private SpriteRenderer topRightBorder;
-
-    //[SerializeField] private SpriteGlowEffect topLeftBorderSGE;
-    //[SerializeField] private SpriteGlowEffect leftBorderSGE;
-    //[SerializeField] private SpriteGlowEffect botLeftBorderSGE;
-    //[SerializeField] private SpriteGlowEffect botRightBorderSGE;
-    //[SerializeField] private SpriteGlowEffect rightBorderSGE;
-    //[SerializeField] private SpriteGlowEffect topRightBorderSGE;
 
     [Space(10)]
     [Header("Structure Objects")]
@@ -115,9 +105,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     internal Dictionary<HEXTILE_DIRECTION, HexTile> neighbourDirections {
         get { return _neighbourDirections; }
     }
-    public GameObject clickHighlightGO {
-        get { return _clickHighlightGO; }
-    }
     public HexTile tileLocation {
         get { return this; }
     }
@@ -182,28 +169,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             SetElevation(ELEVATION.PLAIN);
         }
         Biomes.Instance.UpdateTileVisuals(this);
-        return landmarkOnTile;
-    }
-    public BaseLandmark CreateLandmarkOfType(LandmarkSaveData saveData) {
-        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(saveData.landmarkType);
-        //SetLandmarkOnTile(new BaseLandmark(this, saveData));
-        SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, saveData), false);
-        if (landmarkData.minimumTileCount > 1) {
-            if (neighbourDirections.ContainsKey(landmarkData.connectedTileDirection) && neighbourDirections[landmarkData.connectedTileDirection] != null) {
-                HexTile tileToConnect = neighbourDirections[landmarkData.connectedTileDirection];
-                landmarkOnTile.SetConnectedTile(tileToConnect);
-                tileToConnect.SetElevation(ELEVATION.PLAIN);
-                tileToConnect.SetLandmarkOnTile(this.landmarkOnTile); //set the landmark of the connected tile to the same landmark on this tile
-                Biomes.Instance.UpdateTileVisuals(tileToConnect);
-            }
-        }
-        //Create Landmark Game Object on tile
-        GameObject landmarkGO = CreateLandmarkVisual(saveData.landmarkType, this.landmarkOnTile, landmarkData);
-        if (landmarkGO != null) {
-            landmarkGO.transform.localPosition = Vector3.zero;
-            landmarkGO.transform.localScale = Vector3.one;
-            landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkVisual>());
-        }
         return landmarkOnTile;
     }
     public BaseLandmark CreateLandmarkOfType(SaveDataLandmark saveData) {
@@ -1000,163 +965,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         _isInternal = state;
     }
     #endregion
-
-    #region Context Menu
-#if WORLD_CREATION_TOOL
-    public ContextMenuSettings GetContextMenuSettings() {
-        ContextMenuSettings settings = new ContextMenuSettings();
-        if (this.elevationType == ELEVATION.PLAIN) {
-            if (WorldCreatorManager.Instance.selectionComponent.selection.Count > 0) {
-                ContextMenuItemSettings setMana = new ContextMenuItemSettings("Set Mana");
-                setMana.onClickAction = () => WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Set Mana", "Home much mana?", WorldCreatorManager.Instance.SetManaOnTiles, UnityEngine.UI.InputField.CharacterValidation.Integer);
-                settings.AddMenuItem(setMana);
-            } else {
-                ContextMenuItemSettings setMana = new ContextMenuItemSettings("Set Mana");
-                setMana.onClickAction = () => WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Set Mana", "Home much mana?", SetManaOnTile, UnityEngine.UI.InputField.CharacterValidation.Integer);
-                settings.AddMenuItem(setMana);
-            }
-        }
-        if (this.areaOfTile != null) {
-            ContextMenuItemSettings renameArea = new ContextMenuItemSettings("Rename Area");
-            renameArea.onClickAction = () => worldcreator.WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Rename Area", "Rename area to what?", this.areaOfTile.SetName, UnityEngine.UI.InputField.CharacterValidation.Name);
-            settings.AddMenuItem(renameArea);
-        }
-        if (this.landmarkOnTile != null) {
-            //edit landmark info
-            ContextMenuItemSettings editInfo = new ContextMenuItemSettings("Edit Landmark Info");
-            editInfo.onClickAction = () => worldcreator.WorldCreatorUI.Instance.ShowLandmarkInfoEditor(this.landmarkOnTile);
-            settings.AddMenuItem(editInfo);
-            //end edit landmark info
-
-            ////rename landmark
-            //ContextMenuItemSettings renameLandmark = new ContextMenuItemSettings("Rename Landmark");
-            //renameLandmark.onClickAction = () => worldcreator.WorldCreatorUI.Instance.messageBox.ShowInputMessageBox("Rename Landmark", "Rename landmark to what?", this.landmarkOnTile.SetName, UnityEngine.UI.InputField.CharacterValidation.Name);
-            //settings.AddMenuItem(renameLandmark);
-            ////end rename landmark
-
-            //monster spawn set
-            if (landmarkOnTile is MonsterSpawnerLandmark) {
-                LandmarkData data = LandmarkManager.Instance.GetLandmarkData(landmarkOnTile.specificLandmarkType);
-                ContextMenuItemSettings setMonsterSet = new ContextMenuItemSettings("Set Monster Spawn Choices");
-                settings.AddMenuItem(setMonsterSet);
-                ContextMenuSettings setMonsterSettings = new ContextMenuSettings();
-                setMonsterSet.SetSubMenu(setMonsterSettings);
-                for (int i = 0; i < data.monsterSets.Count; i++) {
-                    MonsterSet monsterSet = data.monsterSets[i];
-                    ContextMenuItemSettings setMonsterItem = new ContextMenuItemSettings(monsterSet.name);
-                    setMonsterItem.onClickAction = () => (landmarkOnTile as MonsterSpawnerLandmark).SetMonsterChoices(monsterSet);
-                    setMonsterSettings.AddMenuItem(setMonsterItem);
-                }
-            }
-            //monster spawn end
-
-            //place item
-            ContextMenuItemSettings placeItem = new ContextMenuItemSettings("Place Item");
-            settings.AddMenuItem(placeItem);
-            ContextMenuSettings placeItemSubMenu = new ContextMenuSettings();
-            placeItem.SetSubMenu(placeItemSubMenu);
-            foreach (KeyValuePair<string, Item> kvp in ItemManager.Instance.allItems) {
-                ContextMenuItemSettings currItemItem = new ContextMenuItemSettings(kvp.Key);
-                currItemItem.onClickAction = () => landmarkOnTile.AddItem(ItemManager.Instance.CreateNewItemInstance(kvp.Key));
-                placeItemSubMenu.AddMenuItem(currItemItem);
-            }
-            //place item end
-
-            if (landmarkOnTile.itemsInLandmark.Count > 0) {
-                //remove item
-                ContextMenuItemSettings removeItem = new ContextMenuItemSettings("Remove Item");
-                settings.AddMenuItem(removeItem);
-                ContextMenuSettings removeItemSubMenu = new ContextMenuSettings();
-                removeItem.SetSubMenu(removeItemSubMenu);
-                for (int i = 0; i < landmarkOnTile.itemsInLandmark.Count; i++) {
-                    Item currItem = landmarkOnTile.itemsInLandmark[i];
-                    ContextMenuItemSettings currItemItem = new ContextMenuItemSettings(currItem.itemName);
-                    currItemItem.onClickAction = () => landmarkOnTile.RemoveItemInLandmark(currItem);
-                    removeItemSubMenu.AddMenuItem(currItemItem);
-                }
-                //remove item end
-            }
-        }
-
-        if (this.areaOfTile != null) {
-            AreaData areaData = LandmarkManager.Instance.GetAreaData(_areaOfTile.areaType);
-            if (landmarkOnTile == null) {
-                //landmark creation
-                ContextMenuItemSettings createLandmarkItem = new ContextMenuItemSettings("Create Landmark");
-                settings.AddMenuItem(createLandmarkItem);
-
-                ContextMenuSettings createLandmarkSettings = new ContextMenuSettings();
-                createLandmarkItem.SetSubMenu(createLandmarkSettings);
-                LANDMARK_TYPE[] types = Utilities.GetEnumValues<LANDMARK_TYPE>();
-
-                for (int i = 0; i < types.Length; i++) {
-                    LANDMARK_TYPE landmarkType = types[i];
-                    ContextMenuItemSettings createLandmark = new ContextMenuItemSettings(Utilities.NormalizeStringUpperCaseFirstLetters(landmarkType.ToString()));
-                    createLandmark.onClickAction = () => worldcreator.WorldCreatorUI.Instance.editLandmarksMenu.SpawnLandmark(landmarkType, this);
-                    createLandmarkSettings.AddMenuItem(createLandmark);
-                }
-                //end landmark creation
-            } else {
-                //Landmark Destruction
-                ContextMenuItemSettings destroyLandmarkItem = new ContextMenuItemSettings("Destroy Landmark");
-                destroyLandmarkItem.onClickAction = () => worldcreator.WorldCreatorManager.Instance.DestroyLandmarks(this);
-                settings.AddMenuItem(destroyLandmarkItem);
-                //end landmark destruction
-
-                ////Monster Spawning
-                //ContextMenuItemSettings spawnMonster = new ContextMenuItemSettings("Spawn Monster");
-                //settings.AddMenuItem(spawnMonster);
-
-                //ContextMenuSettings createMonsterSettings = new ContextMenuSettings();
-                //spawnMonster.SetSubMenu(createMonsterSettings);
-
-                //for (int i = 0; i < areaData.possibleMonsterSpawns.Count; i++) {
-                //    MonsterPartyComponent monsterParty = areaData.possibleMonsterSpawns[i];
-                //    ContextMenuItemSettings spawnMonsterItem = new ContextMenuItemSettings(monsterParty.name);
-                //    spawnMonsterItem.onClickAction = () => MonsterManager.Instance.SpawnMonsterPartyOnLandmark(landmarkOnTile, monsterParty);
-                //    createMonsterSettings.AddMenuItem(spawnMonsterItem);
-                //}
-                ////end monster spawning
-            }
-        }
-        return settings;
-    }
-#else
-    public ContextMenuSettings GetContextMenuSettings() {
-        ContextMenuSettings settings = new ContextMenuSettings();
-        //if ((this.areaOfTile == null || this.areaOfTile.id != PlayerManager.Instance.player.playerArea.id) && this.landmarkOnTile == null && IsAdjacentToPlayerArea()) {
-        //    ContextMenuItemSettings purchaseTileItem = new ContextMenuItemSettings("Purchase Tile");
-        //    purchaseTileItem.onClickAction += () => PlayerManager.Instance.PurchaseTile(this);
-        //    settings.AddMenuItem(purchaseTileItem);
-        //}
-#if UNITY_EDITOR
-        //if (UIManager.Instance.characterInfoUI.activeCharacter != null && UIManager.Instance.characterInfoUI.isShowing) {
-        //    if (this.landmarkOnTile != null) {
-        //        Character character = UIManager.Instance.characterInfoUI.activeCharacter;
-        //        ContextMenuItemSettings forceActionMain = new ContextMenuItemSettings("Force Action");
-        //        //forceActionMain.onClickAction += () => PlayerManager.Instance.AddTileToPlayerArea(this);
-        //        bool hasDoableAction = false;
-        //        ContextMenuSettings forceActionSub = new ContextMenuSettings();
-        //        forceActionMain.SetSubMenu(forceActionSub);
-        //        for (int i = 0; i < landmarkOnTile.landmarkObj.currentState.actions.Count; i++) {
-        //            CharacterAction action = landmarkOnTile.landmarkObj.currentState.actions[i];
-        //            if (action.MeetsRequirements(character.party, this._landmarkOnTile) && action.CanBeDone(landmarkOnTile.landmarkObj) && action.CanBeDoneBy(character.party, landmarkOnTile.landmarkObj)) {
-        //                hasDoableAction = true;
-        //                ContextMenuItemSettings doableAction = new ContextMenuItemSettings(Utilities.NormalizeStringUpperCaseFirstLetters(action.actionType.ToString()));
-        //                doableAction.onClickAction = () => character.party.actionData.ForceDoAction(action, landmarkOnTile.landmarkObj);
-        //                forceActionSub.AddMenuItem(doableAction);
-        //            }
-        //        }
-        //        if (hasDoableAction) {
-        //            settings.AddMenuItem(forceActionMain);
-        //        }
-        //    }
-        //}
-#endif
-        return settings;
-    }
-#endif
-    #endregion   
 
     #region Pathfinding
     public TravelLine CreateTravelLine(HexTile target, int numOfTicks, Character character) {

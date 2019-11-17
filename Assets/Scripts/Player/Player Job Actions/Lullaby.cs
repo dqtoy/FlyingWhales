@@ -32,7 +32,7 @@ public class Lullaby : PlayerJobAction {
         for (int i = 0; i < charactersInHighlightedTiles.Count; i++) {
             Character character = charactersInHighlightedTiles[i];
 
-            if(character.GetNormalTrait("Resting") == null) {
+            if(character.traitContainer.GetNormalTrait("Resting") == null) {
                 if (character.stateComponent.currentState != null) {
                     character.stateComponent.currentState.OnExitThisState();
                     //This call is doubled so that it will also exit the previous major state if there's any

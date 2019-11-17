@@ -62,10 +62,10 @@ public class Enrage : PlayerJobAction {
         if (!targetCharacter.IsInOwnParty()) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Enrage") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait("Enrage") != null) {
             return false;
         }
-        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
         //    return false;
         //}
         return base.CanPerformActionTowards(targetCharacter);
@@ -106,10 +106,10 @@ public class Enrage : PlayerJobAction {
         if (!targetCharacter.IsInOwnParty()) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Enrage") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait("Enrage") != null) {
             return false;
         }
-        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
         //    return false;
         //}
         return base.CanTarget(targetCharacter, ref hoverText);

@@ -27,14 +27,10 @@ public class IntelItem : MonoBehaviour {
         ClearClickActions();
         SetClickedState(false);
         if (intel != null) {
-            //string preText = "TIP: ";
             iconImg.sprite = objectIntelIcon;
             if (intel is EventIntel) {
-                //preText = "EVENT: ";
                 iconImg.sprite = eventIntelIcon;
-            } else if (intel is PlanIntel) {
-                //preText = "PLAN: ";
-            }
+            } 
             infoLbl.text = Utilities.LogReplacer(intel.intelLog);
             mainBtn.interactable = true;
             iconImg.gameObject.SetActive(true);

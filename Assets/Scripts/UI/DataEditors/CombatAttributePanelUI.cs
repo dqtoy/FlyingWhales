@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using System.Linq;
 using System.IO;
 using System;
-
+using Traits;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -182,9 +182,6 @@ public class CombatAttributePanelUI : MonoBehaviour {
             thoughtText = thoughtInput.text,
             type = (TRAIT_TYPE)System.Enum.Parse(typeof(TRAIT_TYPE), traitTypeOptions.options[traitTypeOptions.value].text),
             effect = (TRAIT_EFFECT)System.Enum.Parse(typeof(TRAIT_EFFECT), traitEffectOptions.options[traitEffectOptions.value].text),
-            trigger = (TRAIT_TRIGGER)System.Enum.Parse(typeof(TRAIT_TRIGGER), traitTriggerOptions.options[traitTriggerOptions.value].text),
-            associatedInteraction = (INTERACTION_TYPE)System.Enum.Parse(typeof(INTERACTION_TYPE), associatedInteractionOptions.options[associatedInteractionOptions.value].text),
-            crimeSeverity = (CRIME_CATEGORY)System.Enum.Parse(typeof(CRIME_CATEGORY), crimeSeverityOptions.options[crimeSeverityOptions.value].text),
             daysDuration = int.Parse(durationInput.text),
             effects = _effects,
             isHidden = _isHidden.isOn,
@@ -222,9 +219,6 @@ public class CombatAttributePanelUI : MonoBehaviour {
         thoughtInput.text = trait.thoughtText;
         traitTypeOptions.value = GetOptionIndex(trait.type.ToString(), traitTypeOptions);
         traitEffectOptions.value = GetOptionIndex(trait.effect.ToString(), traitEffectOptions);
-        traitTriggerOptions.value = GetOptionIndex(trait.trigger.ToString(), traitTriggerOptions);
-        associatedInteractionOptions.value = GetOptionIndex(trait.associatedInteraction.ToString(), associatedInteractionOptions);
-        crimeSeverityOptions.value = GetOptionIndex(trait.crimeSeverity.ToString(), crimeSeverityOptions);
         durationInput.text = trait.daysDuration.ToString();
         mutuallyExclusiveInput.text = ConvertMutuallyExclusiveTraitsToText(trait);
 

@@ -1,37 +1,37 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class Tease : GoapAction {
 
-    public Tease(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.TEASE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
+
+    public Tease() : base(INTERACTION_TYPE.TEASE) {
         actionIconString = GoapActionStateDB.Entertain_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         doesNotStopTargetCharacter = true;
     }
 
     #region Overrides
-    public override void Perform() {
-        base.Perform();
-        SetState("Tease Success");
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
+        SetState("Tease Success", goapNode);
     }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         Character targetCharacter = poiTarget as Character;
-        List<RELATIONSHIP_TRAIT> rels = actor.GetAllRelationshipTraitTypesWith(targetCharacter);
+        List<RELATIONSHIP_TRAIT> rels = actor.relationshipContainer.GetRelationshipDataWith(targetCharacter).relationships;
         if (rels.Contains(RELATIONSHIP_TRAIT.FRIEND)) {
             return Utilities.rng.Next(40, 61);
         } else {
             return Utilities.rng.Next(50, 71);
         }
     }
-    public override LocationGridTile GetTargetLocationTile() {
-        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
-    }
     #endregion
 
     #region State Effects
-    private void PerTickTeaseSuccess() {
-        actor.AdjustHappiness(500);
+    private void PerTickTeaseSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.AdjustHappiness(500);
     }
     #endregion   
 }

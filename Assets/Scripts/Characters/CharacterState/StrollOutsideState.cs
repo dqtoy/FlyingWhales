@@ -40,7 +40,7 @@ public class StrollOutsideState : CharacterState {
         if (stateComponent.character.role.roleType != CHARACTER_ROLE.BEAST && stateComponent.character.race != RACE.SKELETON && targetPOI is SpecialToken) {
             SpecialToken token = targetPOI as SpecialToken;
             if (token.characterOwner == null) {
-                GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_ITEM, stateComponent.character, targetPOI);
+                GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_UP, stateComponent.character, targetPOI);
                 if (goapAction.targetTile != null) {
                     SetCurrentlyDoingAction(goapAction);
                     goapAction.CreateStates();

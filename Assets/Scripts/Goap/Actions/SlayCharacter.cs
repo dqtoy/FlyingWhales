@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class SlayCharacter : GoapAction {
-    public SlayCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.SLAY_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public SlayCharacter() : base(INTERACTION_TYPE.SLAY_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         doesNotStopTargetCharacter = true;
         actionIconString = GoapActionStateDB.Hostile_Icon;
     }
@@ -12,8 +13,8 @@ public class SlayCharacter : GoapAction {
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = poiTarget });
     }
-    public override void Perform() {
-        base.Perform();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         //rather than checking location check if the character is not in anyone elses party and is still active
         if (!isTargetMissing) {
             if ((poiTarget as Character).isDead) {
@@ -25,7 +26,7 @@ public class SlayCharacter : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 1;
     }
     //public override int GetArrangedLogPriorityIndex(string priorityID) {
@@ -244,6 +245,6 @@ public class SlayCharacterData : GoapActionData {
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor != poiTarget && (poiTarget as Character).HasTraitOf(TRAIT_TYPE.DISABLER);
+        return actor != poiTarget && (poiTarget as Character).traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER);
     }
 }

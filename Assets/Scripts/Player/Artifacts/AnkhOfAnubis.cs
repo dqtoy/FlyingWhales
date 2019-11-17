@@ -85,8 +85,8 @@ public class AnkhOfAnubis : Artifact {
             for (int i = 0; i < characters.Count; i++) {
                 Character currCharacter = characters[i];
                 if (Random.Range(0, 100) > currCharacter.speed) {
-                    if (currCharacter.GetNormalTrait("Encumbered") == null) {
-                        currCharacter.AddTrait("Encumbered");
+                    if (currCharacter.traitContainer.GetNormalTrait("Encumbered") == null) {
+                        currCharacter.traitContainer.AddTrait(currCharacter, "Encumbered");
                     } else {
                         //roll for death
                         if (Random.Range(0, 100) < deathChance) {

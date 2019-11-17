@@ -16,7 +16,7 @@ public class Release : PlayerJobAction {
         if (targetPOI is Character) {
             Character target = targetPOI as Character;
 
-            target.RemoveTrait("Restrained");
+            target.traitContainer.RemoveTrait(target, "Restrained");
 
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_released_character");
             log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -30,7 +30,7 @@ public class Release : PlayerJobAction {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Restrained") == null) {
+        if (targetCharacter.traitContainer.GetNormalTrait("Restrained") == null) {
             return false;
         }
         return base.CanPerformActionTowards(targetCharacter);
@@ -47,7 +47,7 @@ public class Release : PlayerJobAction {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Restrained") == null) {
+        if (targetCharacter.traitContainer.GetNormalTrait("Restrained") == null) {
             return false;
         }
         return base.CanTarget(targetCharacter, ref hoverText);

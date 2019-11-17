@@ -54,7 +54,6 @@ MonoBehaviour:
   UIPrefabs:
   - {fileID: 1169224389995412, guid: 098b2e337fdaee74d8c8e6db791778ce, type: 2}
   - {fileID: 1995387493181358, guid: cdfed07929227104599994075478446b, type: 2}
-  - {fileID: 1404552397919108, guid: 44606a74032cb404ca32744b5b0b1489, type: 2}
   - {fileID: 1635049517752946, guid: dd80f663ef5751843b3ef77c38facc41, type: 2}
   - {fileID: 1668576898731800, guid: e2d243a395fd9384a8973709eb9bc9b9, type: 2}
   - {fileID: 1618945397602768, guid: 2975c486214c95b4ab5eed6af62fba90, type: 2}
@@ -100,6 +99,7 @@ MonoBehaviour:
   - {fileID: 1365955370331216, guid: c04f709275ab55a40a47f68a1fa005ce, type: 2}
   - {fileID: 1488923180431098, guid: b1c7a390af8a6004eb6942f9c17727fb, type: 2}
   - {fileID: 1544373111404930, guid: 775cdba7f8881044983289d6151e8633, type: 2}
+  - {fileID: 1842310337787150, guid: 06ddee44121ad3841aa3f946c18fd359, type: 2}
   otherPrefabs:
   - {fileID: 1000012712350628, guid: 5372250d22a51bc40a200236eee58ac2, type: 2}
   - {fileID: 1674000059252808, guid: 3030287a209452f45ba8aca3380a5e2e, type: 2}

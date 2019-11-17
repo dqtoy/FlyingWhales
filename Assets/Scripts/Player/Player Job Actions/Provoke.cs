@@ -31,7 +31,7 @@ public class Provoke : PlayerJobAction {
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Unconscious") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait("Unconscious") != null) {
             return false;
         }
         return base.CanPerformActionTowards(targetCharacter);
@@ -47,7 +47,7 @@ public class Provoke : PlayerJobAction {
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Unconscious") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait("Unconscious") != null) {
             return false;
         }
         return base.CanTarget(targetCharacter, ref hoverText);

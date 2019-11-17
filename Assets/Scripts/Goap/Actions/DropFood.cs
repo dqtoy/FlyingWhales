@@ -1,58 +1,37 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class DropFood : GoapAction {
-    public int neededFood { get; private set; }
-    public DropFood(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DROP_FOOD, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+
+    public DropFood() : base(INTERACTION_TYPE.DROP_FOOD) {
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
     }
 
     #region Overrides
-    protected override void ConstructRequirement() {
-        _requirementAction = Requirement;
-    }
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_FOOD, conditionKey = 0, targetPOI = actor }, IsActorFoodEnough);
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_FOOD, conditionKey = 0, targetPOI = poiTarget });
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_FOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR }, IsActorFoodEnough);
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_FOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.TARGET });
     }
-    public override void Perform() {
-        base.Perform();
-        if (!isTargetMissing) {
-            SetState("Drop Success");
-        } else {
-            SetState("Target Missing");
-        }
-        
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
+        SetState("Drop Success", goapNode);
     }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 3;
     }
-    public override bool InitializeOtherData(object[] otherData) {
-        this.otherData = otherData;
-        if (otherData.Length == 1 && otherData[0] is int) {
-            neededFood = (int) otherData[0];
-            return true;
-        }
-        return base.InitializeOtherData(otherData);
-    }
-    //public override void FailAction() {
-    //    base.FailAction();
-    //    SetState("Target Missing");
-    //}
     #endregion
 
     #region Preconditions
-    private bool IsActorFoodEnough() {
+    private bool IsActorFoodEnough(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         if(poiTarget is Table) {
+            int neededFood = (int)otherData[0];
             Table table = poiTarget as Table;
             if (actor.food >= neededFood) {
                 return true;
             }
-            //if((actor.food + table.food) >= 60) {
-            //    return true;
-            //}
         } else if (poiTarget is FoodPile) {
             //FoodPile foodPile = poiTarget as FoodPile;
             if (actor.food >= 10) {
@@ -61,33 +40,40 @@ public class DropFood : GoapAction {
         }
         return false;
     }
+
     #endregion
     #region Requirements
-    protected bool Requirement() {
-        if (poiTarget.gridTileLocation == null) {
-            return false;
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            if (poiTarget.gridTileLocation == null) {
+                return false;
+            }
+            return actor.homeArea == poiTarget.gridTileLocation.structure.location;
         }
-        return actor.homeArea == poiTarget.gridTileLocation.structure.location;
+        return false;
     }
     #endregion
 
     #region State Effects
-    private void PreDropSuccess() {
-        int givenFood = actor.food;
-        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+    private void PreDropSuccess(ActualGoapNode goapNode) {
+        int givenFood = goapNode.actor.food;
+        GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         currentState.AddLogFiller(null, givenFood.ToString(), LOG_IDENTIFIER.STRING_1);
     }
-    private void AfterDropSuccess() {
-        int givenFood = actor.food;
-        if (poiTarget is Table) {
-            Table table = poiTarget as Table;
-            actor.AdjustFood(-givenFood);
+    private void AfterDropSuccess(ActualGoapNode goapNode) {
+        int givenFood = goapNode.actor.food;
+        if (goapNode.poiTarget is Table) {
+            Table table = goapNode.poiTarget as Table;
+            goapNode.actor.AdjustFood(-givenFood);
             table.AdjustFood(givenFood);
-        } else if (poiTarget is FoodPile) {
-            FoodPile foodPile = poiTarget as FoodPile;
-            actor.AdjustFood(-givenFood);
-            foodPile.AdjustFoodInPile(givenFood);
-        }
+        } 
+        //TODO: Moved to Drop Resource action
+        //else if (poiTarget is FoodPile) {
+        //    FoodPile foodPile = poiTarget as FoodPile;
+        //    actor.AdjustFood(-givenFood);
+        //    foodPile.AdjustFoodInPile(givenFood);
+        //}
     }
     #endregion
 }

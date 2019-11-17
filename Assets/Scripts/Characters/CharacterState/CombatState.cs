@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Traits;
 
 public class CombatState : CharacterState {
 
@@ -43,11 +44,9 @@ public class CombatState : CharacterState {
             return; //to prevent exiting from this function, when this state was already exited by another funtion in the same stack.
         }
         if (stateComponent.character.doNotDisturb > 0) {
-            //if (!(characterState == CHARACTER_STATE.BERSERKED && stateComponent.character.doNotDisturb == 1 && stateComponent.character.GetNormalTrait("Combat Recovery") != null)) {
-                StopStatePerTick();
-                OnExitThisState();
-                return;
-            //}
+            StopStatePerTick();
+            OnExitThisState();
+            return;
         }
         //if the character is away from home and is at an edge tile, go to home location
         //if (!isAttacking && stateComponent.character.homeArea != null && stateComponent.character.homeArea != stateComponent.character.specificLocation && stateComponent.character.gridTileLocation.IsAtEdgeOfWalkableMap()) {
@@ -117,7 +116,7 @@ public class CombatState : CharacterState {
     public override void AfterExitingState() {
         base.AfterExitingState();
         if (!stateComponent.character.isDead) {
-            if(isBeingApprehended && stateComponent.character.HasTraitOf(TRAIT_TYPE.CRIMINAL) && !stateComponent.character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            if(isBeingApprehended && stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL) && !stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
                 //If this criminal character is being apprehended and survived (meaning he did not die, or is not unconscious or restrained)
                 if (stateComponent.character.faction != FactionManager.Instance.neutralFaction) {
                     //Leave current faction
@@ -273,7 +272,7 @@ public class CombatState : CharacterState {
         if (isAttacking) {
             stateComponent.character.marker.StopPerTickFlee();
             log += "\n" + stateComponent.character.name + " is attacking!";
-            Trait taunted = stateComponent.character.GetNormalTrait("Taunted");
+            Trait taunted = stateComponent.character.traitContainer.GetNormalTrait("Taunted");
             if (forcedTarget != null) {
                 log += "\n" + stateComponent.character.name + " has a forced target. Setting " + forcedTarget.name + " as target.";
                 SetClosestHostile(forcedTarget);
@@ -323,7 +322,7 @@ public class CombatState : CharacterState {
                 stateComponent.character.PrintLogIfActive(log);
                 return;
             }
-            if (stateComponent.character.marker.pathfindingAI.IsNotAllowedToMove()) {
+            if (stateComponent.character.canMove == false) {
                 log += "\nCannot move, not fleeing";
                 stateComponent.character.PrintLogIfActive(log);
                 return;
@@ -510,9 +509,7 @@ public class CombatState : CharacterState {
         if (fledFrom is Character) {
             Character character = fledFrom as Character;
             if (stateComponent.character.IsHostileWith(character)) {
-                //if (!targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")) {
                 stateComponent.character.marker.AddTerrifyingObject(fledFrom);
-                //}
             }
             if (stateComponent.character.IsHostileOutsider(character)) {
                 if (stateComponent.character.role.roleType == CHARACTER_ROLE.LEADER || stateComponent.character.role.roleType == CHARACTER_ROLE.NOBLE || stateComponent.character.role.roleType == CHARACTER_ROLE.SOLDIER) {
@@ -521,7 +518,7 @@ public class CombatState : CharacterState {
                         stateComponent.character.CreateLocationKnockoutJobs(character, numOfJobs);
                     }
                 } else {    
-                    if (!(character.isDead || (character.isAtHomeRegion && character.isPartOfHomeFaction))) { //|| targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")
+                    if (!(character.isDead || (character.isAtHomeRegion && character.isPartOfHomeFaction))) {
                         if (stateComponent.character.isAtHomeRegion && stateComponent.character.isPartOfHomeFaction) {
                             if (!stateComponent.character.jobQueue.HasJobWithOtherData(JOB_TYPE.REPORT_HOSTILE, fledFrom)) {
                                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPORT_HOSTILE, INTERACTION_TYPE.REPORT_HOSTILE, new Dictionary<INTERACTION_TYPE, object[]>() {

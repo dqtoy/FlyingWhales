@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Traits;
 
 public class SpecialToken : IPointOfInterest {
     public int id { get; private set; }
@@ -12,9 +13,9 @@ public class SpecialToken : IPointOfInterest {
     public Character characterOwner { get; private set; }
     public LocationStructure structureLocation { get; private set; }
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
-    public int supplyValue { get { return ItemManager.Instance.itemData[specialTokenType].supplyValue; } }
-    public int craftCost { get { return ItemManager.Instance.itemData[specialTokenType].craftCost; } }
-    public int purchaseCost { get { return ItemManager.Instance.itemData[specialTokenType].purchaseCost; } }
+    public int supplyValue { get { return TokenManager.Instance.itemData[specialTokenType].supplyValue; } }
+    public int craftCost { get { return TokenManager.Instance.itemData[specialTokenType].craftCost; } }
+    public int purchaseCost { get { return TokenManager.Instance.itemData[specialTokenType].purchaseCost; } }
     public Area specificLocation { get { return gridTileLocation.structure.location; } }
     public bool isDisabledByPlayer { get; protected set; }
     public POI_STATE state { get; protected set; }
@@ -55,9 +56,6 @@ public class SpecialToken : IPointOfInterest {
     public LocationGridTile gridTileLocation {
         get { return tile; }
     }
-    public List<Trait> normalTraits {
-        get { return _traits; }
-    }
     public Faction factionOwner {
         get { return owner; }
     }
@@ -77,11 +75,12 @@ public class SpecialToken : IPointOfInterest {
         this.specialTokenType = specialTokenType;
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.specialTokenType.ToString());
         weight = appearanceRate;
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_ITEM, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP, INTERACTION_TYPE.ITEM_DESTROY, INTERACTION_TYPE.DROP_ITEM_HOME};
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_UP, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP, INTERACTION_TYPE.ITEM_DESTROY, INTERACTION_TYPE.DROP_ITEM};
         _traits = new List<Trait>();
         allJobsTargettingThis = new List<JobQueueItem>();
         //targettedByAction = new List<GoapAction>();
         uses = 1;
+        CreateTraitContainer();
         InitializeCollisionTrigger();
     }
     public void SetID(int id) {
@@ -238,89 +237,15 @@ public class SpecialToken : IPointOfInterest {
     #endregion
 
     #region Traits
-    public bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
-        if (AttributeManager.Instance.IsInstancedTrait(traitName)) {
-            return AddTrait(AttributeManager.Instance.CreateNewInstancedTraitClass(traitName), characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd);
-        } else {
-            return AddTrait(AttributeManager.Instance.allTraits[traitName], characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd);
-        }
-    }
-    public bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
-        if (trait.IsUnique()) {
-            Trait oldTrait = GetNormalTrait(trait.name);
-            if (oldTrait != null) {
-                oldTrait.SetCharacterResponsibleForTrait(characterResponsible);
-                oldTrait.AddCharacterResponsibleForTrait(characterResponsible);
-                return false;
-            }
-        }
-        _traits.Add(trait);
-        trait.SetGainedFromDoing(gainedFromDoing);
-        trait.SetOnRemoveAction(onRemoveAction);
-        trait.SetCharacterResponsibleForTrait(characterResponsible);
-        trait.AddCharacterResponsibleForTrait(characterResponsible);
-        //ApplyTraitEffects(trait);
-        //ApplyPOITraitInteractions(trait);
-        if (trait.daysDuration > 0) {
-            GameDate removeDate = GameManager.Instance.Today();
-            removeDate.AddTicks(trait.daysDuration);
-            string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait), this);
-            trait.SetExpiryTicket(this, ticket);
-        }
-        if (triggerOnAdd) {
-            trait.OnAddTrait(this);
-        }
-        return true;
-    }
-    public bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null, bool includeAlterEgo = true) {
-        if (_traits.Remove(trait)) {
-            trait.RemoveExpiryTicket(this);
-            if (triggerOnRemove) {
-                trait.OnRemoveTrait(this, removedBy);
-            }
-            return true;
-        }
-        return false;
-    }
-    public bool RemoveTrait(string traitName, bool triggerOnRemove = true, Character removedBy = null) {
-        Trait trait = GetNormalTrait(traitName);
-        if (trait != null) {
-            return RemoveTrait(trait, triggerOnRemove, removedBy);
-        }
-        return false;
-    }
-    public void RemoveTrait(List<Trait> traits) {
-        for (int i = 0; i < traits.Count; i++) {
-            RemoveTrait(traits[i]);
-        }
-    }
-    public List<Trait> RemoveAllTraitsByType(TRAIT_TYPE traitType) {
-        List<Trait> removedTraits = new List<Trait>();
-        for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i].type == traitType) {
-                removedTraits.Add(_traits[i]);
-                _traits.RemoveAt(i);
-                i--;
-            }
-        }
-        return removedTraits;
-    }
-    public Trait GetNormalTrait(params string[] traitNames) {
-        for (int i = 0; i < _traits.Count; i++) {
-            Trait trait = _traits[i];
-
-            for (int j = 0; j < traitNames.Length; j++) {
-                if (trait.name == traitNames[j] && !trait.isDisabled) {
-                    return trait;
-                }
-            }
-        }
-        return null;
+    public ITraitContainer traitContainer { get; private set; }
+    public TraitProcessor traitProcessor { get { return TraitManager.specialTokenTraitProcessor; } }
+    private void CreateTraitContainer() {
+        traitContainer = new TraitContainer();
     }
     private void RemoveAllTraits() {
-        List<Trait> allTraits = new List<Trait>(normalTraits);
+        List<Trait> allTraits = new List<Trait>(traitContainer.allTraits);
         for (int i = 0; i < allTraits.Count; i++) {
-            RemoveTrait(allTraits[i]);
+            traitContainer.RemoveTrait(this, allTraits[i]);
         }
     }
     #endregion

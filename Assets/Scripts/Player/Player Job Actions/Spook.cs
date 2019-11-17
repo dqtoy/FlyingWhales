@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Traits;
 using UnityEngine;
 
 public class Spook : PlayerJobAction {
@@ -26,7 +27,7 @@ public class Spook : PlayerJobAction {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(currTarget)) {
                     Spooked newTrait = new Spooked();
-                    currTarget.AddTrait(newTrait);
+                    currTarget.traitContainer.AddTrait(currTarget, newTrait);
 
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_intervention");
                     log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -58,10 +59,10 @@ public class Spook : PlayerJobAction {
         if (!targetCharacter.IsInOwnParty()) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Spooked") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait("Spooked") != null) {
             return false;
         }
-        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
         //    return false;
         //}
         //if (targetCharacter.marker.inVisionPOIs.Where(x => x.poiType == POINT_OF_INTEREST_TYPE.CHARACTER).ToList().Count == 0) {
@@ -93,10 +94,10 @@ public class Spook : PlayerJobAction {
         if (!targetCharacter.IsInOwnParty()) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Spooked") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait("Spooked") != null) {
             return false;
         }
-        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
         //    return false;
         //}
         return base.CanTarget(targetCharacter, ref hoverText);

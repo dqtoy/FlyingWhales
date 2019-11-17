@@ -30,11 +30,7 @@ public class HextileInfoUI : UIMenu {
     }
 
     public override void SetData(object data) {
-        if (currentlyShowingHexTile != null) {
-            currentlyShowingHexTile.clickHighlightGO.SetActive(false);
-        }
         base.SetData(data); //replace this existing data
-        currentlyShowingHexTile.clickHighlightGO.SetActive(true);
         if (isShowing) {
             UpdateHexTileInfo();
         }

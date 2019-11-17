@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class FeelingSpooked : GoapAction {
 
-    public FeelingSpooked(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.FEELING_SPOOKED, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
+
+    public FeelingSpooked() : base(INTERACTION_TYPE.FEELING_SPOOKED) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Hostile_Icon;
         isNotificationAnIntel = false;
@@ -14,31 +17,14 @@ public class FeelingSpooked : GoapAction {
     //protected override void ConstructPreconditionsAndEffects() {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = actor, targetPOI = poiTarget });
     //}
-    public override void Perform() {
-        base.Perform();
-        SetState("Spooked Success");
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
+        SetState("Spooked Success", goapNode);
     }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 10;
     }
-    public override void DoAction() {
-        SetTargetStructure();
-        base.DoAction();
-    }
-    public override LocationGridTile GetTargetLocationTile() {
-        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
-    }
     #endregion
-
-    //#region State Effects
-    //public void AfterSpookedSuccess() {
-    //    //if (parentPlan != null && parentPlan.job != null) {
-    //    //    parentPlan.job.SetCannotOverrideJob(true);//Carry should not be overrideable if the character is actually already carrying another character.
-    //    //}
-    //    Character target = poiTarget as Character;
-    //    actor.ownParty.AddCharacter(target);
-    //}
-    //#endregion
 }
 
 public class FeelingSpookedData : GoapActionData {

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Traits;
 
 public interface ICharacter {
     //getters
@@ -44,15 +44,10 @@ public interface ICharacter {
     CharacterRole role { get; } //Character only
     CharacterClass characterClass { get; } //Character only
     //Job job { get; } //Character only
-    Weapon equippedWeapon { get; }
-    Armor equippedArmor { get; }
-    Item equippedAccessory { get; }
-    Item equippedConsumable { get; }
     Minion minion { get; }
     //PairCombatStats[] pairCombatStats { get; set; }
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
     Dictionary<ELEMENT, float> elementalResistances { get; }
-    List<Skill> skills { get; }
     List<Log> history { get; }
     List<Trait> normalTraits { get; }
     PortraitSettings portraitSettings { get; }
@@ -87,7 +82,5 @@ public interface ICharacter {
     Party CreateOwnParty();
     Trait GetNormalTrait(params string[] name);
     void ConstructBuffs();
-    void AddBuff(Buff buff);
-    void RemoveBuff(Buff buff);
     void SetPlayerCharacterItem(PlayerCharacterItem item);
 }

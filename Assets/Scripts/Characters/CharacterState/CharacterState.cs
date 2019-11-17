@@ -92,10 +92,8 @@ public class CharacterState {
                 StopStatePerTick();
                 OnExitThisState();
             } else if (stateComponent.character.doNotDisturb > 0) {
-                //if (!(characterState == CHARACTER_STATE.BERSERKED && stateComponent.character.doNotDisturb == 1 && stateComponent.character.GetNormalTrait("Combat Recovery") != null)) {
-                    StopStatePerTick();
-                    OnExitThisState();
-                //}
+                StopStatePerTick();
+                OnExitThisState();
             }
             currentDuration++;
         }

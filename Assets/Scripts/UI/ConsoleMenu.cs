@@ -153,13 +153,7 @@ public class ConsoleMenu : UIMenu {
             text += "\n<b>MARKER DETAILS:</b>";
             text += "\n<b>Target POI:</b> " + character.marker.targetPOI?.name ?? "None";
             text += "\n<b>Destination Tile:</b> " + character.marker.destinationTile?.ToString() ?? "None";
-            text += "\n<b>Do not move:</b> " + character.marker.pathfindingAI.doNotMove.ToString();
-            text += "\n<b>Last Negative do not move:</b> " + character.marker.pathfindingAI.lastAdjustNegativeDoNotMoveST;
-            text += "\n<b>Last Positive do not move:</b> " + character.marker.pathfindingAI.lastAdjustPositiveDoNotMoveST;
             text += "\n<b>Stop Movement?:</b> " + character.marker.pathfindingAI.isStopMovement.ToString();
-            if (character.marker.pathfindingAI.isStopMovement) {
-                text += "\n<b>Stop Movement Set by:</b> " + character.marker.pathfindingAI.stopMovementST;
-            }
         }
 
         text += "\n<b>All Plans:</b> ";
@@ -657,7 +651,7 @@ public class ConsoleMenu : UIMenu {
         }
 
         //if (AttributeManager.Instance.allTraits.ContainsKey(traitParameterString)) {
-        character.AddTrait(traitParameterString);
+        character.traitContainer.AddTrait(character, traitParameterString);
         //} else {
         //    switch (traitParameterString) {
         //        case "Criminal":
@@ -686,7 +680,7 @@ public class ConsoleMenu : UIMenu {
             return;
         }
 
-        if (character.RemoveTrait(traitParameterString)) {
+        if (character.traitContainer.RemoveTrait(character, traitParameterString)) {
             AddSuccessMessage("Removed " + traitParameterString + " to " + character.name);
         } else {
             AddErrorMessage(character.name + " has no trait named " + traitParameterString);
@@ -756,10 +750,10 @@ public class ConsoleMenu : UIMenu {
             return;
         }
 
-        if (character.marker.pathfindingAI.doNotMove == 0) {
-            character.marker.pathfindingAI.AdjustDoNotMove(1);
+        if (character.canMove) {
+            character.DecreaseCanMove();
         } else {
-            character.marker.pathfindingAI.AdjustDoNotMove(-1);
+            character.IncreaseCanMove();
         }
         AddSuccessMessage("Adjusted " + character.name + " do not disturb to " + character.doNotDisturb);
     }
@@ -899,7 +893,7 @@ public class ConsoleMenu : UIMenu {
         if (character2 == null) {
             AddErrorMessage("There is no character with name " + character2ParameterString);
         }
-        CharacterManager.Instance.CreateNewRelationshipBetween(character1, character2, rel);
+        RelationshipManager.Instance.RemoveOneWayRelationship(character1, character2, rel);
         AddSuccessMessage(character1.name + " and " + character2.name + " now have relationship " + rel.ToString());
     }
     private void ForcedRelationshipDegradation(string[] parameters) {
@@ -919,7 +913,7 @@ public class ConsoleMenu : UIMenu {
         if (character2 == null) {
             AddErrorMessage("There is no character with name " + character2ParameterString);
         }
-        CharacterManager.Instance.RelationshipDegradation(character1, character2);
+        RelationshipManager.Instance.RelationshipDegradation(character1, character2);
         AddSuccessMessage("Relationship degradation between " + character1.name + " and " + character2.name + " has been executed.");
     }
     private void SetHP(string[] parameters) {

@@ -1,10 +1,7 @@
-﻿
-using EZObjectPools;
-using System.Collections;
-using System.Collections.Generic;
+﻿using EZObjectPools;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+using Traits;
 
 public class LandmarkCharacterItem : PooledObject {
 
@@ -54,7 +51,7 @@ public class LandmarkCharacterItem : PooledObject {
 
     private void UpdateLocationIcons() {
         if (parentMenu is AreaInfoUI) {
-            if(character.GetNormalTrait("Abducted", "Restrained") != null) {
+            if(character.traitContainer.GetNormalTrait("Abducted", "Restrained") != null) {
                 restrainedIcon.SetActive(true);
                 unrestrainedGO.SetActive(false);
             } else {
@@ -82,7 +79,7 @@ public class LandmarkCharacterItem : PooledObject {
             }
             (parentMenu as AreaInfoUI).OrderCharacterItems();
         } else if (parentMenu is RegionInfoUI) {
-            if (character.GetNormalTrait("Abducted", "Restrained") != null) {
+            if (character.traitContainer.GetNormalTrait("Abducted", "Restrained") != null) {
                 restrainedIcon.SetActive(true);
                 unrestrainedGO.SetActive(false);
             } else {
@@ -99,7 +96,7 @@ public class LandmarkCharacterItem : PooledObject {
                 coverGO.SetActive(false);
             }
         } else if (parentMenu is TileObjectInfoUI) {
-            if (character.GetNormalTrait("Abducted", "Restrained") != null) {
+            if (character.traitContainer.GetNormalTrait("Abducted", "Restrained") != null) {
                 restrainedIcon.SetActive(true);
                 unrestrainedGO.SetActive(false);
             } else {
@@ -149,8 +146,8 @@ public class LandmarkCharacterItem : PooledObject {
     }
     public void ShowRestrainedTooltip() {
         string info = string.Empty;
-        Trait abductedTrait = character.GetNormalTrait("Abducted");
-        Trait restrainedTrait = character.GetNormalTrait("Restrained");
+        Trait abductedTrait = character.traitContainer.GetNormalTrait("Abducted");
+        Trait restrainedTrait = character.traitContainer.GetNormalTrait("Restrained");
         if (abductedTrait != null) {
             info += abductedTrait.GetToolTipText();
         }
@@ -195,7 +192,7 @@ public class LandmarkCharacterItem : PooledObject {
     private void OnTraitRemoved(Character character, Trait trait) {
         if (character.id == this.character.id) {
             if (trait.name == "Abducted" || trait.name == "Restrained") {
-                if(character.GetNormalTrait("Abducted", "Restrained") == null) {
+                if(character.traitContainer.GetNormalTrait("Abducted", "Restrained") == null) {
                     restrainedIcon.SetActive(false);
                     unrestrainedGO.SetActive(true);
                 }

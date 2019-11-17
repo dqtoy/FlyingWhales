@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using BayatGames.SaveGameFree.Types;
+using Traits;
 
 [System.Serializable]
 public class SaveDataCharacter {
@@ -162,8 +163,8 @@ public class SaveDataCharacter {
         isStoppedByOtherCharacter = character.isStoppedByOtherCharacter;
 
         normalTraits = new List<SaveDataTrait>();
-        for (int i = 0; i < character.normalTraits.Count; i++) {
-            Trait trait = character.normalTraits[i];
+        for (int i = 0; i < character.traitContainer.allTraits.Count; i++) {
+            Trait trait = character.traitContainer.allTraits[i];
 
             SaveDataTrait saveDataTrait = SaveManager.ConvertTraitToSaveDataTrait(trait);
             if (saveDataTrait != null) {
@@ -183,8 +184,6 @@ public class SaveDataCharacter {
         attackPowerPercentMod = character.attackPowerPercentMod;
         speedPercentMod = character.speedPercentMod;
         maxHPPercentMod = character.maxHPPercentMod;
-
-        morality = character.morality;
 
         currentInteractionTypes = character.currentInteractionTypes;
         supply = character.supply;
@@ -321,7 +320,7 @@ public class SaveDataCharacter {
         for (int i = 0; i < normalTraits.Count; i++) {
             Character responsibleCharacter = null;
             Trait trait = normalTraits[i].Load(ref responsibleCharacter);
-            character.AddTrait(trait, responsibleCharacter);
+            character.traitContainer.AddTrait(character, trait, responsibleCharacter);
         }
         character.LoadAllStatsOfCharacter(this);
     }
