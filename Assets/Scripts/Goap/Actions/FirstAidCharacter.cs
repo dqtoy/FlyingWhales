@@ -18,20 +18,20 @@ public class FirstAidCharacter : GoapAction {
     }
 
     #region Overrides
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.HEALING_POTION.ToString(), targetPOI = actor }, () => actor.HasTokenInInventory(SPECIAL_TOKEN.HEALING_POTION));
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Injured", targetPOI = poiTarget });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Unconscious", targetPOI = poiTarget });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
             SetState("First Aid Success");
         } else {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 12;
     }
     #endregion

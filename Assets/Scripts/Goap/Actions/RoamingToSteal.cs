@@ -22,16 +22,16 @@ public class RoamingToSteal : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         if (actor.traitContainer.GetNormalTrait("Kleptomaniac") != null) {
             AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
         }
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         SetState("In Progress");
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         if (actor.traitContainer.GetNormalTrait("Kleptomaniac") != null) {
             return Utilities.rng.Next(5, 46);
         }
@@ -43,7 +43,7 @@ public class RoamingToSteal : GoapAction {
     #endregion
 
     #region Requirements
-    protected bool Requirement() {
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (actor == poiTarget) {
             return true;
         }

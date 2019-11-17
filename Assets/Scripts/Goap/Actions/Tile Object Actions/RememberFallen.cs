@@ -15,22 +15,22 @@ public class RememberFallen : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         if (!isTargetMissing) {
             SetState("Remember Success");
         } else {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         //**Cost**: randomize between 5-35
         return Utilities.rng.Next(5, 36);
     }
-    protected override void AddDefaultObjectsToLog(Log log) {
+    protected override void AddFillersToLog(Log log) {
         log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         Tombstone tombstone = poiTarget as Tombstone;
         log.AddToFillers(tombstone.character, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
@@ -40,7 +40,7 @@ public class RememberFallen : GoapAction {
             log.AddToFillers(actor.specificLocation, actor.specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         }
     }
-    public override void OnStopActionDuringCurrentState() {
+    public override void OnStopWhilePerforming() {
         if (currentState.name == "Remember Success") {
             actor.AdjustDoNotGetLonely(-1);
         }
@@ -48,7 +48,7 @@ public class RememberFallen : GoapAction {
     #endregion
 
     #region Requirement
-    protected bool Requirement() {
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
             return false;
         }

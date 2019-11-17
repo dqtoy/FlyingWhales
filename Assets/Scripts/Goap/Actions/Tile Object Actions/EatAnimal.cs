@@ -7,7 +7,7 @@ public class EatAnimal : GoapAction {
     protected override string failActionState { get { return "Eat Fail"; } }
 
     public EatAnimal(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.EAT_ANIMAL, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
+        //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         actionIconString = GoapActionStateDB.Eat_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
         isNotificationAnIntel = false;
@@ -17,11 +17,11 @@ public class EatAnimal : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         if (!isTargetMissing) {
             SetState("Eat Success");
         } else {
@@ -32,7 +32,7 @@ public class EatAnimal : GoapAction {
             }
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         if (actor.traitContainer.GetNormalTrait("Carnivore") != null) {
             return 25;
         } else {
@@ -43,7 +43,7 @@ public class EatAnimal : GoapAction {
     //    base.FailAction();
     //    SetState("Eat Fail");
     //}
-    public override void OnStopActionDuringCurrentState() {
+    public override void OnStopWhilePerforming() {
         if(currentState.name == "Eat Success") {
             actor.AdjustDoNotGetHungry(-1);
         }
@@ -76,7 +76,7 @@ public class EatAnimal : GoapAction {
     #endregion
 
     #region Requirements
-    protected bool Requirement() {
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (!poiTarget.IsAvailable()) {
             return false;
         }

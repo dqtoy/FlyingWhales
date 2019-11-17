@@ -4,26 +4,22 @@ using UnityEngine;
 using Traits;
 
 public class FeelingBrokenhearted : GoapAction {
-    public FeelingBrokenhearted(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.FEELING_BROKENHEARTED, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+
+    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
+
+    public FeelingBrokenhearted(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.FEELING_BROKENHEARTED) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Hostile_Icon;
         isNotificationAnIntel = false;
     }
 
     #region Overrides
-    public override void PerformActualAction() {
-        base.PerformActualAction();
-        SetState("Brokenhearted Success");
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
+        SetState("Brokenhearted Success", goapNode);
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 10;
-    }
-    public override void DoAction() {
-        SetTargetStructure();
-        base.DoAction();
-    }
-    public override LocationGridTile GetTargetLocationTile() {
-        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
     #endregion
 }

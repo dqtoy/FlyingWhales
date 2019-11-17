@@ -10,14 +10,7 @@ public class Drink : GoapAction {
     public Drink(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DRINK, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         //shouldIntelNotificationOnlyIfActorIsActive = true;
         if (actor.traitContainer.GetNormalTrait("Drunkard") != null) {
-            validTimeOfDays = new TIME_IN_WORDS[] {
-                TIME_IN_WORDS.MORNING,
-                TIME_IN_WORDS.LUNCH_TIME,
-                TIME_IN_WORDS.AFTERNOON,
-                TIME_IN_WORDS.AFTER_MIDNIGHT,
-                TIME_IN_WORDS.EARLY_NIGHT,
-                TIME_IN_WORDS.LATE_NIGHT,
-            };
+            validTimeOfDays = null;
         } else {
             validTimeOfDays = new TIME_IN_WORDS[] {
                 TIME_IN_WORDS.EARLY_NIGHT,
@@ -33,11 +26,11 @@ public class Drink : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         if (!isTargetMissing) {
             //SetState("Drink Success");
             poisonedTrait = poiTarget.traitContainer.GetNormalTrait("Poisoned") as Poisoned;
@@ -50,7 +43,7 @@ public class Drink : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         //**Cost**: 15 - 26 (If Actor is alcoholic 5 - 19)
         if (actor.traitContainer.GetNormalTrait("Drunkard") != null) {
             return Utilities.rng.Next(5, 20);
@@ -61,7 +54,7 @@ public class Drink : GoapAction {
     //    base.FailAction();
     //    SetState("Target Missing");
     //}
-    public override void OnStopActionDuringCurrentState() {
+    public override void OnStopWhilePerforming() {
         if (currentState.name == "Drink Success" || currentState.name == "Drink Poisoned") {
             actor.AdjustDoNotGetLonely(-1);
         }
@@ -124,7 +117,7 @@ public class Drink : GoapAction {
     #endregion
 
     #region Requirements
-    protected bool Requirement() {
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }

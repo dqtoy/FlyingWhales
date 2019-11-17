@@ -29,7 +29,7 @@ namespace Traits {
         public override string TriggerFlaw(Character character) {
             //Will drop current action and will perform Happiness Recovery.
             if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
-                if (character.currentAction != null) {
+                if (character.currentActionNode.action != null) {
                     character.StopCurrentAction(false);
                 }
                 if (character.stateComponent.currentState != null) {

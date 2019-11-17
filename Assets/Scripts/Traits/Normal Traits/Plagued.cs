@@ -78,13 +78,13 @@ namespace Traits {
             if (pukeRoll < pukeChance) {
                 //summary += "\nPuke chance met. Doing puke action.";
                 //do puke action
-                if (owner.currentAction != null && owner.currentAction.goapType != INTERACTION_TYPE.PUKE) {
-                    stoppedAction = owner.currentAction;
+                if (owner.currentActionNode.action != null && owner.currentActionNode.action.goapType != INTERACTION_TYPE.PUKE) {
+                    stoppedAction = owner.currentActionNode.action;
                     //If current action is a roaming action like Hunting To Drink Blood, we must requeue the job after it is removed by StopCurrentAction
                     JobQueueItem currentJob = null;
                     JobQueue currentJobQueue = null;
-                    if (owner.currentAction.isRoamingAction && owner.currentAction.parentPlan != null && owner.currentAction.parentPlan.job != null) {
-                        currentJob = owner.currentAction.parentPlan.job;
+                    if (owner.currentActionNode.action.isRoamingAction && owner.currentActionNode.action.parentPlan != null && owner.currentActionNode.action.parentPlan.job != null) {
+                        currentJob = owner.currentActionNode.action.parentPlan.job;
                         currentJobQueue = currentJob.jobQueueParent;
                     }
                     owner.StopCurrentAction(false);
@@ -103,7 +103,7 @@ namespace Traits {
 
                     goapAction.CreateStates();
                     owner.jobQueue.AddJobInQueue(job, false);
-                    //owner.currentAction.SetEndAction(ResumeLastAction);
+                    //owner.currentActionNode.action.SetEndAction(ResumeLastAction);
                     goapAction.DoAction();
                     hasCreatedJob = true;
                 } else if (owner.stateComponent.currentState != null) {
@@ -123,7 +123,7 @@ namespace Traits {
                     goapAction.SetEndAction(ResumePausedState);
                     goapAction.DoAction();
                     hasCreatedJob = true;
-                } else if (owner.stateComponent.currentState == null && owner.currentAction == null) {
+                } else if (owner.stateComponent.currentState == null && owner.currentActionNode.action == null) {
                     GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PUKE, owner, owner);
 
                     GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
@@ -140,8 +140,8 @@ namespace Traits {
                 //Debug.Log(summary);
             } else if (septicRoll < septicChance) {
                 //summary += "\nSeptic Shock chance met. Doing septic shock action.";
-                if (owner.currentAction != null && owner.currentAction.goapType != INTERACTION_TYPE.SEPTIC_SHOCK) {
-                    stoppedAction = owner.currentAction;
+                if (owner.currentActionNode.action != null && owner.currentActionNode.action.goapType != INTERACTION_TYPE.SEPTIC_SHOCK) {
+                    stoppedAction = owner.currentActionNode.action;
                     owner.StopCurrentAction(false);
                     owner.marker.StopMovement();
                     GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.SEPTIC_SHOCK, owner, owner);
@@ -171,7 +171,7 @@ namespace Traits {
 
                     goapAction.DoAction();
                     hasCreatedJob = true;
-                } else if (owner.stateComponent.currentState == null && owner.currentAction == null) {
+                } else if (owner.stateComponent.currentState == null && owner.currentActionNode.action == null) {
                     GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.SEPTIC_SHOCK, owner, owner);
 
                     GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
@@ -182,7 +182,7 @@ namespace Traits {
                     goapAction.CreateStates();
                     owner.jobQueue.AddJobInQueue(job, false);
 
-                    owner.currentAction.DoAction();
+                    owner.currentActionNode.action.DoAction();
                     hasCreatedJob = true;
                 }
                 //Debug.Log(summary);

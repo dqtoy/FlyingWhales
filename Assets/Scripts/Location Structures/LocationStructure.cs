@@ -20,6 +20,7 @@ public class LocationStructure {
 
     //Inner Map
     public List<LocationGridTile> tiles { get; private set; }
+    public List<LocationGridTile> unoccupiedTiles { get; private set; }
     public LocationGridTile entranceTile { get; private set; }
     public bool isFromTemplate { get; private set; }
 
@@ -29,9 +30,6 @@ public class LocationStructure {
     }
     public List<SpecialToken> itemsInStructure {
         get { return _itemsHere; }
-    }
-    public List<LocationGridTile> unoccupiedTiles {
-        get { return tiles.Where(x => !x.isOccupied).ToList(); }
     }
     #endregion
 
@@ -45,6 +43,7 @@ public class LocationStructure {
         _itemsHere = new List<SpecialToken>();
         pointsOfInterest = new List<IPointOfInterest>();
         tiles = new List<LocationGridTile>();
+        unoccupiedTiles = new List<LocationGridTile>();
         AddListeners();
         //if (structureType == STRUCTURE_TYPE.DUNGEON || structureType == STRUCTURE_TYPE.WAREHOUSE) {
         //    AddPOI(new SupplyPile(this));
@@ -247,10 +246,22 @@ public class LocationStructure {
     public void AddTile(LocationGridTile tile) {
         if (!tiles.Contains(tile)) {
             tiles.Add(tile);
+            if(tile.tileState == LocationGridTile.Tile_State.Empty) {
+                AddUnoccupiedTile(tile);
+            } else {
+                RemoveUnoccupiedTile(tile);
+            }
         }
     }
     public void RemoveTile(LocationGridTile tile) {
         tiles.Remove(tile);
+        RemoveUnoccupiedTile(tile);
+    }
+    public void AddUnoccupiedTile(LocationGridTile tile) {
+        unoccupiedTiles.Add(tile);
+    }
+    public void RemoveUnoccupiedTile(LocationGridTile tile) {
+        unoccupiedTiles.Remove(tile);
     }
     public bool IsFull() {
         return unoccupiedTiles.Count <= 0;

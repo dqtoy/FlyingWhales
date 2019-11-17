@@ -227,8 +227,8 @@ public class CharacterInfoUI : UIMenu {
             return;
         }
         //Action
-        if (_activeCharacter.currentAction != null && !_activeCharacter.currentAction.isStopped) {
-            Log currentLog = _activeCharacter.currentAction.GetCurrentLog();
+        if (_activeCharacter.currentActionNode != null && !_activeCharacter.currentActionNode.isStopped) {
+            Log currentLog = _activeCharacter.currentActionNode.GetCurrentLog();
             plansLblLogItem.SetLog(currentLog);
             plansLbl.text = Utilities.LogReplacer(currentLog);
             return;
@@ -256,29 +256,29 @@ public class CharacterInfoUI : UIMenu {
             return;
         }
 
-        //targetted by action
-        if (_activeCharacter.targettedByAction.Count > 0) {
-            //character is targetted by an action
-            Log targetLog = null;
-            for (int i = 0; i < _activeCharacter.targettedByAction.Count; i++) {
-                GoapAction action = _activeCharacter.targettedByAction[i];
-                if (action.isPerformingActualAction && action.targetLog != null) {
-                    targetLog = action.targetLog;
-                    break;
-                }
-            }
-            if (targetLog != null) {
-                plansLbl.text = Utilities.LogReplacer(targetLog);
-                return;
-            }
-        }
+        ////targetted by action
+        //if (_activeCharacter.targettedByAction.Count > 0) {
+        //    //character is targetted by an action
+        //    Log targetLog = null;
+        //    for (int i = 0; i < _activeCharacter.targettedByAction.Count; i++) {
+        //        GoapAction action = _activeCharacter.targettedByAction[i];
+        //        if (action.isPerformingActualAction && action.targetLog != null) {
+        //            targetLog = action.targetLog;
+        //            break;
+        //        }
+        //    }
+        //    if (targetLog != null) {
+        //        plansLbl.text = Utilities.LogReplacer(targetLog);
+        //        return;
+        //    }
+        //}
 
         //State Job To Do
-        if (_activeCharacter.stateComponent.stateToDo != null) {
-            plansLblLogItem.SetLog(_activeCharacter.stateComponent.stateToDo.thoughtBubbleLog);
-            plansLbl.text = Utilities.LogReplacer(_activeCharacter.stateComponent.stateToDo.thoughtBubbleLog);
-            return;
-        }
+        //if (_activeCharacter.stateComponent.stateToDo != null) {
+        //    plansLblLogItem.SetLog(_activeCharacter.stateComponent.stateToDo.thoughtBubbleLog);
+        //    plansLbl.text = Utilities.LogReplacer(_activeCharacter.stateComponent.stateToDo.thoughtBubbleLog);
+        //    return;
+        //}
 
         //fleeing
         if (_activeCharacter.marker.hasFleePath) {
@@ -657,15 +657,15 @@ public class CharacterInfoUI : UIMenu {
         summary += "\nAttack Range: " + activeCharacter.characterClass.attackRange.ToString();
         summary += "\nAttack Speed: " + activeCharacter.attackSpeed.ToString();
         summary += "\nCurrent State: " + activeCharacter.stateComponent.currentState?.ToString() ?? "None";
-        summary += "\nState To Do: " + activeCharacter.stateComponent.stateToDo?.ToString() ?? "None";
+        //summary += "\nState To Do: " + activeCharacter.stateComponent.stateToDo?.ToString() ?? "None";
         summary += "\nActions targetting this character: ";
-        if (activeCharacter.targettedByAction.Count > 0) {
-            for (int i = 0; i < activeCharacter.targettedByAction.Count; i++) {
-                summary += "\n" + activeCharacter.targettedByAction[i].goapName + " done by " + activeCharacter.targettedByAction[i].actor.name;
-            }
-        } else {
-            summary += "None";
-        }
+        //if (activeCharacter.targettedByAction.Count > 0) {
+        //    for (int i = 0; i < activeCharacter.targettedByAction.Count; i++) {
+        //        summary += "\n" + activeCharacter.targettedByAction[i].goapName + " done by " + activeCharacter.targettedByAction[i].actor.name;
+        //    }
+        //} else {
+        //    summary += "None";
+        //}
         //summary += "\nActions advertised by this character: ";
         //if (activeCharacter.poiGoapActions.Count > 0) {
         //    for (int i = 0; i < activeCharacter.poiGoapActions.Count; i++) {

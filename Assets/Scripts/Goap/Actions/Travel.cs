@@ -24,15 +24,15 @@ public class Travel : GoapAction {
     //protected override void ConstructPreconditionsAndEffects() {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     //}
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         //if (targetTile.occupant != null && targetTile.occupant != actor) {
         //    SetState("Travel Failed");
         //} else {
             SetState("Travel Success");
         //}
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 3;
     }
     //public override void FailAction() {
@@ -55,7 +55,7 @@ public class Travel : GoapAction {
     #endregion
 
     #region Requirement
-    protected bool Requirement() {
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         return actor == poiTarget;
     }
     #endregion

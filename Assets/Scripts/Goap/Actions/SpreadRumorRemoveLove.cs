@@ -17,12 +17,12 @@ public class SpreadRumorRemoveLove : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Lover", targetPOI = rumoredCharacter });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Paramour", targetPOI = rumoredCharacter });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         if (!isTargetMissing) {
             WeightedDictionary<string> weights = new WeightedDictionary<string>();
             weights.AddElement("Break Love Success", 10);
@@ -32,7 +32,7 @@ public class SpreadRumorRemoveLove : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 15;
     }
     public override bool InitializeOtherData(object[] otherData) {
@@ -42,7 +42,7 @@ public class SpreadRumorRemoveLove : GoapAction {
             affairMemoriesInvolvingRumoredCharacter = otherData[1] as List<Log>;
             preconditions.Clear();
             expectedEffects.Clear();
-            ConstructPreconditionsAndEffects();
+            ConstructBasePreconditionsAndEffects();
             if (thoughtBubbleMovingLog != null) {
                 thoughtBubbleMovingLog.AddToFillers(rumoredCharacter, rumoredCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
             }
@@ -53,7 +53,7 @@ public class SpreadRumorRemoveLove : GoapAction {
     #endregion
 
     #region Requirements
-    protected bool Requirement() {
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (rumoredCharacter != null) {
             Character target = poiTarget as Character;
             if (target.relationshipContainer.HasRelationshipWith(rumoredCharacter, RELATIONSHIP_TRAIT.LOVER)

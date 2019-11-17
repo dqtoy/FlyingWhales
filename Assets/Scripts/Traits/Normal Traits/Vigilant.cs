@@ -11,6 +11,7 @@ namespace Traits {
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.NEUTRAL;
             daysDuration = 0;
+            canStopActions = new INTERACTION_TYPE[] { INTERACTION_TYPE.KNOCKOUT_CHARACTER };
         }
     }
 }

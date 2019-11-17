@@ -99,7 +99,7 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Rest Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
-        {INTERACTION_TYPE.PICK_ITEM, new StateNameAndDuration[]{
+        {INTERACTION_TYPE.PICK_UP, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Take Success", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
@@ -154,11 +154,11 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Explore Success", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Explore Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
-        {INTERACTION_TYPE.TABLE_REMOVE_POISON, new StateNameAndDuration[]{
+        {INTERACTION_TYPE.REMOVE_POISON_TABLE, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Remove Poison Success", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
-        {INTERACTION_TYPE.TABLE_POISON, new StateNameAndDuration[]{
+        {INTERACTION_TYPE.POISON_TABLE, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Poison Success", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Poison Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
@@ -197,7 +197,7 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Take Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
-        {INTERACTION_TYPE.DROP_SUPPLY, new StateNameAndDuration[]{
+        {INTERACTION_TYPE.DROP_RESOURCE, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Drop Success", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
@@ -205,7 +205,7 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Drop Success", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
-        {INTERACTION_TYPE.GET_FOOD, new StateNameAndDuration[]{
+        {INTERACTION_TYPE.OBTAIN_RESOURCE, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Take Success", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Take Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
@@ -282,7 +282,7 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Steal Vigilant", status = InteractionManager.Goap_State_Fail, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
-        {INTERACTION_TYPE.DROP_ITEM_HOME, new StateNameAndDuration[]{
+        {INTERACTION_TYPE.DROP_ITEM, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Drop Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
         {INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new StateNameAndDuration[]{
@@ -332,7 +332,7 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Report Hostile Fail", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
-        {INTERACTION_TYPE.INVITE_TO_MAKE_LOVE, new StateNameAndDuration[]{
+        {INTERACTION_TYPE.INVITE, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Invite Success", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Invite Fail", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
@@ -463,10 +463,10 @@ public static class GoapActionStateDB {
         { INTERACTION_TYPE.NARCOLEPTIC_NAP, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Nap Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
         } },
-        { INTERACTION_TYPE.PRIORITIZED_SHOCK, new StateNameAndDuration[]{
+        { INTERACTION_TYPE.SHOCK, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Shock Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
-        { INTERACTION_TYPE.PRIORITIZED_CRY, new StateNameAndDuration[]{
+        { INTERACTION_TYPE.CRY, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Cry Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
         { INTERACTION_TYPE.CRY, new StateNameAndDuration[]{
@@ -516,12 +516,12 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.DANCE, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Dance Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
-        {INTERACTION_TYPE.DESTROY_SUPPLY, new StateNameAndDuration[]{
+        {INTERACTION_TYPE.DESTROY_RESOURCE, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Destroy Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
             new StateNameAndDuration(){ name = "Destroy Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
-        {INTERACTION_TYPE.DESTROY_FOOD, new StateNameAndDuration[]{
+        {INTERACTION_TYPE.DESTROY_RESOURCE, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Destroy Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
             new StateNameAndDuration(){ name = "Destroy Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },

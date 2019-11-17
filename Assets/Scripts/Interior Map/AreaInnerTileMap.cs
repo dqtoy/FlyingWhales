@@ -1816,6 +1816,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                         continue;
                     }
                     LocationGridTile result = map[dx, dy];
+                    if(result.structure == null) { continue; } //do not include tiles with no structures
                     if(!includeTilesInDifferentStructure && result.structure != centerTile.structure) { continue; }
                     tiles.Add(result);
                 }

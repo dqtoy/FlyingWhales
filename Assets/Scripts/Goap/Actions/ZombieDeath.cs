@@ -11,15 +11,15 @@ public class ZombieDeath : GoapAction {
     }
 
     #region Overrides
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         SetState("Zombie Death Success");
     }
     public override void DoAction() {
         SetTargetStructure();
         base.DoAction();
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 10;
     }
     public override LocationGridTile GetTargetLocationTile() {

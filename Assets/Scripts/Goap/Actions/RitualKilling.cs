@@ -18,11 +18,11 @@ public class RitualKilling : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = poiTarget });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         //rather than checking location check if the character is not in anyone elses party and is still active
         if (!isTargetMissing) {
             if (actor.marker.CanDoStealthActionToTarget(poiTarget)) {
@@ -34,13 +34,13 @@ public class RitualKilling : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 1;
     }
     #endregion
 
     #region Requirements
-    protected bool Requirement() {
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         return actor != poiTarget && actor.traitContainer.GetNormalTrait("Serial Killer") != null;
     }
     #endregion

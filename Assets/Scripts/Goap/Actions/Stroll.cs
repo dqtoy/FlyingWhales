@@ -11,7 +11,7 @@ public class Stroll : GoapAction {
     protected override string failActionState { get { return "Stroll Fail"; } }
 
     public Stroll(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.STROLL, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        SetShowIntelNotification(false);
+        showIntelNotification = false;
         shouldAddLogs = false;
         actionIconString = GoapActionStateDB.No_Icon;
     }
@@ -20,8 +20,8 @@ public class Stroll : GoapAction {
     //protected override void ConstructPreconditionsAndEffects() {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = actor });
     //}
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         //if (targetTile != null) {
             SetState("Stroll Success");
         //} else {
@@ -32,7 +32,7 @@ public class Stroll : GoapAction {
         SetTargetStructure();
         base.DoAction();
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 5;
     }
     //public override void FailAction() {

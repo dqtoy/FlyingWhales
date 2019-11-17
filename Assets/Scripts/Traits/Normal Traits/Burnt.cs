@@ -77,8 +77,8 @@ namespace Traits {
                 if (targetPOI.poiGoapActions.Contains(INTERACTION_TYPE.REPAIR_TILE_OBJECT)) {
                     GoapPlanJob currentJob = targetPOI.GetJobTargettingThisCharacter(JOB_TYPE.REPAIR);
                     if (currentJob == null) {
-                        GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Burnt", targetPOI);
-                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPAIR, effect);
+                        GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Burnt", false, GOAP_EFFECT_TARGET.TARGET);
+                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPAIR, targetPOI, new Precondition(effect, null));
                         //job.SetCanBeDoneInLocation(true);
                         if (InteractionManager.Instance.CanCharacterTakeRepairJob(characterThatWillDoJob, job)) {
                             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
@@ -90,22 +90,8 @@ namespace Traits {
                         //    return false;
                         //}
                     } else {
-                        if (currentJob.jobQueueParent.isAreaOrQuestJobQueue && InteractionManager.Instance.CanCharacterTakeRepairJob(characterThatWillDoJob, currentJob)) {
-                            bool canBeTransfered = false;
-                            if (currentJob.assignedCharacter != null && currentJob.assignedCharacter.currentAction != null
-                                && currentJob.assignedCharacter.currentAction.parentPlan != null && currentJob.assignedCharacter.currentAction.parentPlan.job == currentJob) {
-                                if (currentJob.assignedCharacter != characterThatWillDoJob) {
-                                    canBeTransfered = !currentJob.assignedCharacter.marker.inVisionPOIs.Contains(currentJob.assignedCharacter.currentAction.poiTarget);
-                                }
-                            } else {
-                                canBeTransfered = true;
-                            }
-                            if (canBeTransfered && characterThatWillDoJob.CanCurrentJobBeOverriddenByJob(currentJob)) {
-                                currentJob.jobQueueParent.CancelJob(currentJob, shouldDoAfterEffect: false, forceRemove: true);
-                                characterThatWillDoJob.jobQueue.AddJobInQueue(currentJob, false);
-                                characterThatWillDoJob.jobQueue.AssignCharacterToJobAndCancelCurrentAction(currentJob, characterThatWillDoJob);
-                                return true;
-                            }
+                        if (InteractionManager.Instance.CanCharacterTakeRepairJob(characterThatWillDoJob, currentJob)) {
+                            return TryTransferJob(currentJob, characterThatWillDoJob);
                         }
                     }
                 }

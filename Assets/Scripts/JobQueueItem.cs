@@ -6,8 +6,9 @@ using System.Reflection;
 
 public class JobQueueItem {
     public int id { get; protected set; }
-    public JobQueue jobQueueParent { get; protected set; }
-    public Character assignedCharacter { get; protected set; }
+    public IJobQueueOwner originalOwner { get; protected set; } //The true original owner of this job
+    public IJobQueueOwner currentOwner { get; protected set; } //The current owner of this job
+    //public Character assignedCharacter { get; protected set; }
     public string name { get; private set; }
     public JOB_TYPE jobType { get; protected set; }
     public bool cannotCancelJob { get; private set; }
@@ -53,7 +54,7 @@ public class JobQueueItem {
     #region Virtuals
     public virtual void UnassignJob(bool shouldDoAfterEffect = true, string reason = "") { }
     protected virtual bool CanTakeJob(Character character) {
-        if (jobQueueParent.isAreaOrQuestJobQueue) {
+        if (currentOwner.isAreaOrQuestJobQueue) {
             //Criminals and Characters with Negative Disabler Traits should no longer create and take Location Jobs
             return !character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL) && !character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE);
         }
@@ -63,7 +64,7 @@ public class JobQueueItem {
     public virtual bool OnRemoveJobFromQueue() { return true; }
     public virtual bool CanCharacterTakeThisJob(Character character) {
         //All jobs that are personal will bypass _canTakeThisJob/_canTakeThisJobWithTarget function checkers if the character parameter is the owner of the job queue
-        if (character == jobQueueParent.character) {
+        if (character == currentOwner.character) {
             return CanTakeJob(character);
         }
         if (canTakeThisJob != null) {
@@ -78,10 +79,11 @@ public class JobQueueItem {
         onTakeJobAction?.Invoke(character, this);
     }
     public virtual void OnCharacterUnassignedToJob(Character character) { }
+    public virtual void ProcessJob() { }
     #endregion
 
-    public void SetJobQueueParent(JobQueue parent) {
-        jobQueueParent = parent;
+    public void SetCurrentOwner(IJobQueueOwner parent) {
+        currentOwner = parent;
     }
     public void SetAssignedCharacter(Character character) {
         Character previousAssignedCharacter = null;
@@ -156,6 +158,9 @@ public class JobQueueItem {
     #endregion
 
     #region Utilities
+    public bool CanCharacterDoJob(Character character) {
+        return CanCharacterTakeThisJob(character) && !blacklistedCharacters.Contains(character);
+    }
     public override string ToString() {
         return jobType.ToString() + " assigned to " + assignedCharacter?.name ?? "None";
     }

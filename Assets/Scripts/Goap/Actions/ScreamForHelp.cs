@@ -11,11 +11,11 @@ public class ScreamForHelp : GoapAction {
     }
 
     #region Overrides
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         SetState("Scream Success");
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 1;
     }
     public override void DoAction() {

@@ -5,9 +5,7 @@ using Traits;
 
 public class DouseFire : GoapAction {
 
-    private LocationGridTile tile;
-
-    public DouseFire(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DOUSE_FIRE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public DouseFire(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DOUSE_FIRE) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.FirstAid_Icon;
         validTimeOfDays = new TIME_IN_WORDS[] {
@@ -21,30 +19,19 @@ public class DouseFire : GoapAction {
     }
 
     #region Overrides
-    protected override void ConstructRequirement() {
-        _requirementAction = Requirement;
+    protected override void ConstructBasePreconditionsAndEffects() {
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.WATER_BUCKET.ToString(), target = GOAP_EFFECT_TARGET.ACTOR }, HasWaterBucketInInventory);
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Burning", target = GOAP_EFFECT_TARGET.TARGET });
     }
-    protected override void ConstructPreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.WATER_BUCKET.ToString(), targetPOI = actor }, () => actor.HasTokenInInventory(SPECIAL_TOKEN.WATER_BUCKET));
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Burning", targetPOI = poiTarget });
-    }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 10;
     }
-    protected override void MoveToDoAction(Character targetCharacter) {
-        base.MoveToDoAction(targetCharacter);
-        tile = poiTarget.gridTileLocation;
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
+        SetState("Douse Fire Success", goapNode);
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
-        if (poiTarget.gridTileLocation != null && poiTarget.traitContainer.GetNormalTrait("Burning") != null && actor.GetToken(SPECIAL_TOKEN.WATER_BUCKET) != null) {
-            SetState("Douse Fire Success");
-        } else {
-            SetState("Target Missing");
-        }
-    }
-    protected override void AddDefaultObjectsToLog(Log log) {
-        base.AddDefaultObjectsToLog(log);
+    public override void AddFillersToLog(Log log, Character actor, IPointOfInterest poiTarget, object[] otherData, LocationStructure targetStructure) {
+        base.AddFillersToLog(log, actor, poiTarget, otherData, targetStructure);
         if (poiTarget is TileObject) {
             if (poiTarget is GenericTileObject) {
                 LocationGridTile tile = poiTarget.gridTileLocation;
@@ -59,47 +46,58 @@ public class DouseFire : GoapAction {
             }
         }
     }
+    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        GoapActionInvalidity actionInvalidity = base.IsInvalid(actor, poiTarget, otherData);
+        if (actionInvalidity.isInvalid == false) {
+            if (poiTarget.traitContainer.GetNormalTrait("Burning") != null && actor.GetToken(SPECIAL_TOKEN.WATER_BUCKET) != null) {
+                actionInvalidity.isInvalid = true;
+            }
+        }
+        return actionInvalidity;
+    }
     #endregion
 
     #region State Effects
-    private void PreDouseFireSuccess() {
-        if (poiTarget is TileObject) {
-            if (poiTarget is GenericTileObject) {
-                LocationGridTile tile = poiTarget.gridTileLocation;
-                currentState.AddLogFiller(null, tile.structure.GetNameRelativeTo(actor) + " floor", LOG_IDENTIFIER.TARGET_CHARACTER);
+    private void PreDouseFireSuccess(ActualGoapNode goapNode) {
+        if (goapNode.poiTarget is TileObject) {
+            GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
+            if (goapNode.poiTarget is GenericTileObject) {
+                LocationGridTile tile = goapNode.poiTarget.gridTileLocation;
+                currentState.AddLogFiller(null, tile.structure.GetNameRelativeTo(goapNode.actor) + " floor", LOG_IDENTIFIER.TARGET_CHARACTER);
             } else {
-                if (poiTarget == actor) {
-                    Character character = poiTarget as Character;
-                    currentState.AddLogFiller(poiTarget, Utilities.GetPronounString(character.gender, PRONOUN_TYPE.REFLEXIVE, false), LOG_IDENTIFIER.TARGET_CHARACTER);
+                if (goapNode.poiTarget == goapNode.actor) {
+                    Character character = goapNode.poiTarget as Character;
+                    currentState.AddLogFiller(goapNode.poiTarget, Utilities.GetPronounString(character.gender, PRONOUN_TYPE.REFLEXIVE, false), LOG_IDENTIFIER.TARGET_CHARACTER);
                 } else {
-                    currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    currentState.AddLogFiller(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 }
             }
         }
     }
-    private void AfterDouseFireSuccess() {
-        poiTarget.traitContainer.RemoveTrait(poiTarget, "Burning", removedBy: actor);
-        SpecialToken water = actor.GetToken(SPECIAL_TOKEN.WATER_BUCKET);
+    private void AfterDouseFireSuccess(ActualGoapNode goapNode) {
+        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Burning", removedBy: goapNode.actor);
+        SpecialToken water = goapNode.actor.GetToken(SPECIAL_TOKEN.WATER_BUCKET);
         if (water != null) {
             //Reduce water count by 1.
-            actor.ConsumeToken(water);
+            goapNode.actor.ConsumeToken(water);
         }
-        poiTarget.traitContainer.AddTrait(poiTarget, "Wet", actor);
+        goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Wet", goapNode.actor);
     }
-    //private void PreTargetMissing() {
-    //    if (poiTarget is TileObject) {
-    //        if (poiTarget is GenericTileObject) {
-    //            currentState.AddLogFiller(null, tile.structure.GetNameRelativeTo(actor) + " floor", LOG_IDENTIFIER.TARGET_CHARACTER);
-    //        } else {
-    //            currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    //        }
-    //    }
-    //}
     #endregion
 
     #region Requirements
-    private bool Requirement() {
-        return poiTarget.gridTileLocation != null;
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            return poiTarget.gridTileLocation != null;
+        }
+        return false;
+    }
+    #endregion
+
+    #region Preconditions
+    private bool HasWaterBucketInInventory(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return actor.HasTokenInInventory(SPECIAL_TOKEN.WATER_BUCKET);
     }
     #endregion
 

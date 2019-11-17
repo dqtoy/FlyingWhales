@@ -20,10 +20,10 @@ namespace Traits {
         public override void OnSeePOI(IPointOfInterest targetPOI, Character character) {
             if (targetPOI is Character) {
                 Character seenCharacter = targetPOI as Character;
-                if (seenCharacter.currentAction != null && seenCharacter.currentAction.isPerformingActualAction) {
-                    if (seenCharacter.currentAction.goapType == INTERACTION_TYPE.PLAY_GUITAR) {
+                if (seenCharacter.currentActionNode.action != null && seenCharacter.currentActionNode.action.isPerformingActualAction) {
+                    if (seenCharacter.currentActionNode.action.goapType == INTERACTION_TYPE.PLAY_GUITAR) {
                         OnHearGuitarPlaying(seenCharacter);
-                    } else if (seenCharacter.currentAction.goapType == INTERACTION_TYPE.SING) {
+                    } else if (seenCharacter.currentActionNode.action.goapType == INTERACTION_TYPE.SING) {
                         OnHearSinging(seenCharacter);
                     }
                 }

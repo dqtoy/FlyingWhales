@@ -24,7 +24,7 @@ public class HuntState : CharacterState {
                 if (goapAction.targetTile != null) {
                     SetCurrentlyDoingAction(goapAction);
                     goapAction.CreateStates();
-                    stateComponent.character.SetCurrentAction(goapAction);
+                    stateComponent.character.SetCurrentActionNode(goapAction);
                     stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtCorpseLocation);
                 } else {
                     Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't eat corpse " + targetPOI.name + " because there is no tile to go to!");
@@ -51,19 +51,19 @@ public class HuntState : CharacterState {
     #endregion
 
     private void OnArriveAtCorpseLocation() {
-        if (stateComponent.character.currentAction == null) {
+        if (stateComponent.character.currentActionNode == null) {
             Debug.LogWarning(GameManager.Instance.TodayLogString() + stateComponent.character.name + " arrived at corpse location during " + stateName + ", but current action is null");
             return;
         }
-        stateComponent.character.currentAction.SetEndAction(HuntAgain);
-        stateComponent.character.currentAction.PerformActualAction();
+        stateComponent.character.currentActionNode.SetEndAction(HuntAgain);
+        stateComponent.character.currentActionNode.Perform();
     }
     private void HuntAgain(string result, GoapAction goapAction) {
         SetCurrentlyDoingAction(null);
         if (stateComponent.currentState != this) {
             return;
         }
-        stateComponent.character.SetCurrentAction(null);
+        stateComponent.character.SetCurrentActionNode(null);
         StartHuntMovement();
     }
     private void StartHuntMovement() {

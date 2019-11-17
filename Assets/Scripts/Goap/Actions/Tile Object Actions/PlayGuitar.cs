@@ -22,11 +22,11 @@ public class PlayGuitar : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         if (!isTargetMissing) {
             SetState("Play Success");
         } else {
@@ -37,7 +37,7 @@ public class PlayGuitar : GoapAction {
             }
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         Trait musicLover = actor.traitContainer.GetNormalTrait("MusicLover");
         if (poiTarget.gridTileLocation != null) {
             LocationGridTile knownLoc = poiTarget.gridTileLocation;
@@ -73,7 +73,7 @@ public class PlayGuitar : GoapAction {
         }
         return Utilities.rng.Next(40, 57);
     }
-    public override void OnStopActionDuringCurrentState() {
+    public override void OnStopWhilePerforming() {
         if (currentState.name == "Play Success") {
             actor.AdjustDoNotGetLonely(-1);
             poiTarget.SetPOIState(POI_STATE.ACTIVE);

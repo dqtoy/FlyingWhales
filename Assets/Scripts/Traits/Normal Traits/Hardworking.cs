@@ -30,7 +30,7 @@ namespace Traits {
                 JobQueueItem job = character.specificLocation.jobQueue.GetJobByID(jobID);
                 if (job == null) {
                     SetJobIDReplacementForHappinessRecovery(0);
-                } else if (job.assignedCharacter != character) {
+                } else if (job.currentOwner != character) {
                     SetJobIDReplacementForHappinessRecovery(0);
                 }
             }

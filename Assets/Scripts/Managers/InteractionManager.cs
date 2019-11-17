@@ -15,7 +15,8 @@ public class InteractionManager : MonoBehaviour {
     public static readonly int Character_Action_Delay = 5;
 
     private string dailyInteractionSummary;
-    public Dictionary<INTERACTION_TYPE, GoapActionData> goapActionData { get; private set; }
+    public Dictionary<INTERACTION_TYPE, GoapAction> goapActionData { get; private set; }
+    public Dictionary<POINT_OF_INTEREST_TYPE, List<GoapAction>> allGoapActionAdvertisements { get; private set; }
 
     private void Awake() {
         Instance = this;
@@ -28,30 +29,30 @@ public class InteractionManager : MonoBehaviour {
         ConstructGoapActionData();
     }
 
-    public GoapAction CreateNewGoapInteraction(INTERACTION_TYPE type, Character actor, IPointOfInterest target, bool willInitialize = true) {
-        var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(type.ToString());
-        System.Type systemType = System.Type.GetType(typeName);
-        GoapAction goapAction = null;
-        if (systemType != null) {
-            goapAction = System.Activator.CreateInstance(systemType, actor, target) as GoapAction;
-        }
-        if (goapAction == null) {
-            throw new Exception("There is no goap action: " + type.ToString());
-        }
-        if (goapAction != null && willInitialize) {
-            goapAction.Initialize();
-        }
-        return goapAction;
-    }
+    //public GoapAction CreateNewGoapInteraction(INTERACTION_TYPE type, Character actor, IPointOfInterest target, bool willInitialize = true) {
+    //    var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(type.ToString());
+    //    System.Type systemType = System.Type.GetType(typeName);
+    //    GoapAction goapAction = null;
+    //    if (systemType != null) {
+    //        goapAction = System.Activator.CreateInstance(systemType, actor, target) as GoapAction;
+    //    }
+    //    if (goapAction == null) {
+    //        throw new Exception("There is no goap action: " + type.ToString());
+    //    }
+    //    if (goapAction != null && willInitialize) {
+    //        goapAction.Initialize();
+    //    }
+    //    return goapAction;
+    //}
     private void ConstructGoapActionData() {
-        goapActionData = new Dictionary<INTERACTION_TYPE, GoapActionData>();
+        goapActionData = new Dictionary<INTERACTION_TYPE, GoapAction>();
         INTERACTION_TYPE[] allGoapActions = Utilities.GetEnumValues<INTERACTION_TYPE>();
         for (int i = 0; i < allGoapActions.Length; i++) {
             INTERACTION_TYPE currType = allGoapActions[i];
-            var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(currType.ToString()) + "Data";
+            var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(currType.ToString());
             System.Type type = System.Type.GetType(typeName);
             if(type != null) {
-                GoapActionData data = System.Activator.CreateInstance(type) as GoapActionData;
+                GoapAction data = System.Activator.CreateInstance(type) as GoapAction;
                 goapActionData.Add(currType, data);
             }
         }
@@ -62,19 +63,19 @@ public class InteractionManager : MonoBehaviour {
         }
         throw new Exception("No Goap Action Data for " + goapType.ToString());
     }
-    public bool CanSatisfyGoapActionRequirementsOnBuildTree(INTERACTION_TYPE goapType, Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (goapActionData.ContainsKey(goapType)) {
-            return goapActionData[goapType].CanSatisfyRequirementOnBuildGoapTree(actor, poiTarget, otherData);
-        }
-        throw new Exception("No Goap Action Data for " + goapType.ToString());
-    }
+    //public bool CanSatisfyGoapActionRequirementsOnBuildTree(INTERACTION_TYPE goapType, Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    //    if (goapActionData.ContainsKey(goapType)) {
+    //        return goapActionData[goapType].CanSatisfyRequirementOnBuildGoapTree(actor, poiTarget, otherData);
+    //    }
+    //    throw new Exception("No Goap Action Data for " + goapType.ToString());
+    //}
 
     #region Intel
     public Intel CreateNewIntel(params object[] obj) {
         if (obj[0] is GoapAction) {
             GoapAction action = obj[0] as GoapAction;
             switch (action.goapType) {
-                case INTERACTION_TYPE.TABLE_POISON:
+                case INTERACTION_TYPE.POISON_TABLE:
                     return new PoisonTableIntel(obj[1] as Character, obj[0] as GoapAction);
                 default:
                     return new EventIntel(obj[1] as Character, obj[0] as GoapAction);
@@ -135,12 +136,12 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 break;
-            case ACTION_LOCATION_TYPE.ON_TARGET:
-                //**On Target**: in the same tile as the target item or tile object
-                //if(knownPOITargetLocation.occupant == null || knownPOITargetLocation.occupant == actor) {
-                chosenTile = knownPOITargetLocation;
-                //}
-                break;
+            //case ACTION_LOCATION_TYPE.ON_TARGET:
+            //    //**On Target**: in the same tile as the target item or tile object
+            //    //if(knownPOITargetLocation.occupant == null || knownPOITargetLocation.occupant == actor) {
+            //    chosenTile = knownPOITargetLocation;
+            //    //}
+            //    break;
             default:
                 break;
         }
@@ -373,7 +374,7 @@ public class InteractionManager : MonoBehaviour {
         if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeRegion) {
             if(job != null) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
-                if (targetCharacter.traitContainer.GetNormalTrait((string) goapJob.targetEffect.conditionKey).IsResponsibleForTrait(character)) {
+                if (targetCharacter.traitContainer.GetNormalTrait((string) goapJob.goals.conditionKey).IsResponsibleForTrait(character)) {
                     return false;
                 }
             }
@@ -388,7 +389,7 @@ public class InteractionManager : MonoBehaviour {
         if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeRegion) {
             if (job != null) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
-                if (targetCharacter.traitContainer.GetNormalTrait((string) goapJob.targetEffect.conditionKey).IsResponsibleForTrait(character)) {
+                if (targetCharacter.traitContainer.GetNormalTrait((string) goapJob.goals.conditionKey).IsResponsibleForTrait(character)) {
                     return false;
                 }
                 //try {
@@ -407,7 +408,7 @@ public class InteractionManager : MonoBehaviour {
         if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeRegion) {
             if (job != null) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
-                if (targetCharacter.traitContainer.GetNormalTrait((string) goapJob.targetEffect.conditionKey).IsResponsibleForTrait(character)) {
+                if (targetCharacter.traitContainer.GetNormalTrait((string) goapJob.goals.conditionKey).IsResponsibleForTrait(character)) {
                     return false;
                 }
                 //try {

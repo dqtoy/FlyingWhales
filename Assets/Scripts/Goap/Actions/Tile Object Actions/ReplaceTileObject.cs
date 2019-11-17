@@ -12,20 +12,20 @@ public class ReplaceTileObject : GoapAction {
     public override LocationStructure targetStructure { get { return _targetStructure; } }
 
     public ReplaceTileObject(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.REPLACE_TILE_OBJECT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
+        //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         actionIconString = GoapActionStateDB.Work_Icon;
         tileObjectToReplace = null;
         isNotificationAnIntel = false;
     }
 
     #region Overrides
-    protected override void AddDefaultObjectsToLog(Log log) {
-        base.AddDefaultObjectsToLog(log);
+    protected override void AddFillersToLog(Log log) {
+        base.AddFillersToLog(log);
         if (tileObjectToReplace != null) {
             log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectToReplace.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
         }
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         if (tileObjectToReplace != null) {
             TileObjectData data = TileObjectDB.GetTileObjectData(tileObjectToReplace.tileObjectType);
             AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = data.constructionCost, targetPOI = actor }, () => HasSupply(data.constructionCost));
@@ -39,8 +39,8 @@ public class ReplaceTileObject : GoapAction {
     //    SetTargetStructure();
     //    base.DoAction(plan);
     //}
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         if (!isTargetMissing) {
             SetState("Replace Success");
         } else {
@@ -50,7 +50,7 @@ public class ReplaceTileObject : GoapAction {
     public override LocationGridTile GetTargetLocationTile() {
         return whereToPlace;
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 1;
     }
     public override bool InitializeOtherData(object[] otherData) {
@@ -62,7 +62,7 @@ public class ReplaceTileObject : GoapAction {
             SetTargetStructure();
             preconditions.Clear();
             expectedEffects.Clear();
-            ConstructPreconditionsAndEffects();
+            ConstructBasePreconditionsAndEffects();
             CreateThoughtBubbleLog();
             states["Replace Success"].OverrideDuration(TileObjectDB.GetTileObjectData(tileObjectToReplace.tileObjectType).constructionTime);
             return true;

@@ -88,10 +88,10 @@ namespace Traits {
                     } else {
                         if (currentJob.jobQueueParent.isAreaOrQuestJobQueue && InteractionManager.Instance.CanCharacterTakeRemoveIllnessesJob(characterThatWillDoJob, targetCharacter, currentJob)) {
                             bool canBeTransfered = false;
-                            if (currentJob.assignedCharacter != null && currentJob.assignedCharacter.currentAction != null
-                                && currentJob.assignedCharacter.currentAction.parentPlan != null && currentJob.assignedCharacter.currentAction.parentPlan.job == currentJob) {
+                            if (currentJob.assignedCharacter != null && currentJob.assignedCharacter.currentActionNode.action != null
+                                && currentJob.assignedCharacter.currentActionNode.action.parentPlan != null && currentJob.assignedCharacter.currentActionNode.action.parentPlan.job == currentJob) {
                                 if (currentJob.assignedCharacter != characterThatWillDoJob) {
-                                    canBeTransfered = !currentJob.assignedCharacter.marker.inVisionPOIs.Contains(currentJob.assignedCharacter.currentAction.poiTarget);
+                                    canBeTransfered = !currentJob.assignedCharacter.marker.inVisionPOIs.Contains(currentJob.assignedCharacter.currentActionNode.action.poiTarget);
                                 }
                             } else {
                                 canBeTransfered = true;

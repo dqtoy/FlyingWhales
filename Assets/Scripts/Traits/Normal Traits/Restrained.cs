@@ -118,10 +118,10 @@ namespace Traits {
                         } else {
                             if (currentJob.jobQueueParent.isAreaOrQuestJobQueue && InteractionManager.Instance.CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, currentJob)) {
                                 bool canBeTransfered = false;
-                                if (currentJob.assignedCharacter != null && currentJob.assignedCharacter.currentAction != null
-                                    && currentJob.assignedCharacter.currentAction.parentPlan != null && currentJob.assignedCharacter.currentAction.parentPlan.job == currentJob) {
+                                if (currentJob.assignedCharacter != null && currentJob.assignedCharacter.currentActionNode.action != null
+                                    && currentJob.assignedCharacter.currentActionNode.action.parentPlan != null && currentJob.assignedCharacter.currentActionNode.action.parentPlan.job == currentJob) {
                                     if (currentJob.assignedCharacter != characterThatWillDoJob) {
-                                        canBeTransfered = !currentJob.assignedCharacter.marker.inVisionPOIs.Contains(currentJob.assignedCharacter.currentAction.poiTarget);
+                                        canBeTransfered = !currentJob.assignedCharacter.marker.inVisionPOIs.Contains(currentJob.assignedCharacter.currentActionNode.action.poiTarget);
                                     }
                                 } else {
                                     canBeTransfered = true;
@@ -152,7 +152,7 @@ namespace Traits {
         }
         private void CheckRestrainTraitPerHour() {
             if (!isPrisoner && _sourceCharacter.IsInOwnParty()) { //applies even if character is being Carried: so just remove the _sourceCharacter.IsInOwnParty(), right now it cannot happen while character is being carried
-                if (_sourceCharacter.currentAction == null && _sourceCharacter.stateComponent.currentState == null && _sourceCharacter.stateComponent.stateToDo == null
+                if (_sourceCharacter.currentActionNode.action == null && _sourceCharacter.stateComponent.currentState == null && _sourceCharacter.stateComponent.stateToDo == null
                     && UnityEngine.Random.Range(0, 100) < 75 && !_sourceCharacter.jobQueue.HasJob(JOB_TYPE.SCREAM)
                     && _sourceCharacter.traitContainer.GetNormalTrait("Unconscious", "Resting") == null) {
                     GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SCREAM, INTERACTION_TYPE.SCREAM_FOR_HELP, _sourceCharacter);

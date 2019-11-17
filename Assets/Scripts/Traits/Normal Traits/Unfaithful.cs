@@ -57,7 +57,7 @@ namespace Traits {
                 } else {
                     if (!character.jobQueue.HasJob(JOB_TYPE.CHEAT)) {
                         //If already has a paramour, the character will attempt to make love with one.
-                        GoapPlanJob cheatJob = new GoapPlanJob(JOB_TYPE.CHEAT, INTERACTION_TYPE.INVITE_TO_MAKE_LOVE, paramour);
+                        GoapPlanJob cheatJob = new GoapPlanJob(JOB_TYPE.CHEAT, INTERACTION_TYPE.INVITE, paramour);
                         character.jobQueue.AddJobInQueue(cheatJob);
                     }
                 }

@@ -198,6 +198,27 @@ namespace Traits {
         public void SetTraitEffects(List<TraitEffect> effects) {
             this.effects = effects;
         }
+        protected bool TryTransferJob(JobQueueItem currentJob, Character characterThatWillDoJob) {
+            if (currentJob.currentOwner.ownerType == JOB_QUEUE_OWNER.LOCATION || currentJob.currentOwner.ownerType == JOB_QUEUE_OWNER.QUEST) {
+                bool canBeTransfered = false;
+                Character assignedCharacter = currentJob.currentOwner as Character;
+                if (assignedCharacter != null && assignedCharacter.currentActionNode.action != null
+                    && assignedCharacter.currentJob != null && assignedCharacter.currentJob == currentJob) {
+                    if (assignedCharacter != characterThatWillDoJob) {
+                        canBeTransfered = !assignedCharacter.marker.inVisionPOIs.Contains(assignedCharacter.currentActionNode.poiTarget);
+                    }
+                } else {
+                    canBeTransfered = true;
+                }
+                if (canBeTransfered && characterThatWillDoJob.CanCurrentJobBeOverriddenByJob(currentJob)) {
+                    (currentJob.currentOwner as Character).jobQueue.CancelJob(currentJob, shouldDoAfterEffect: false, forceRemove: true);
+                    characterThatWillDoJob.jobQueue.AddJobInQueue(currentJob, false);
+                    //TODO: characterThatWillDoJob.jobQueue.AssignCharacterToJobAndCancelCurrentAction(currentJob, characterThatWillDoJob);
+                    return true;
+                }
+            }
+            return false;
+        }
         #endregion
 
         #region Actions

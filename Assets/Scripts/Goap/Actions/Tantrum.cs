@@ -24,26 +24,26 @@ public class Tantrum : GoapAction {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = actor });
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     //}
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         SetState("Tantrum Success");
     }
     public override void DoAction() {
         SetTargetStructure();
         base.DoAction();
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         //**Cost**: randomize between 3-10
         return Utilities.rng.Next(3, 11);
     }
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
-    public override void OnResultReturnedToActor() {
-        base.OnResultReturnedToActor();
-        //CharacterState berserkedState = actor.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, actor.specificLocation, GameManager.Instance.GetTicksBasedOnHour(2));
-        //(berserkedState as BerserkedState).SetAreCombatsLethal(false);
-    }
+    //public override void OnResultReturnedToActor() {
+    //    base.OnResultReturnedToActor();
+    //    //CharacterState berserkedState = actor.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, actor.specificLocation, GameManager.Instance.GetTicksBasedOnHour(2));
+    //    //(berserkedState as BerserkedState).SetAreCombatsLethal(false);
+    //}
     public override bool InitializeOtherData(object[] otherData) {
         this.otherData = otherData;
         if (otherData.Length == 1 && otherData[0] is string) {
@@ -64,7 +64,7 @@ public class Tantrum : GoapAction {
     #endregion
 
     #region Requirement
-    protected bool Requirement() {
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         return actor == poiTarget;
     }
     #endregion

@@ -54,14 +54,14 @@ namespace Traits {
                 //Turn back to normal form
                 if (forceTransform || chance < 1) {
                     lycanthropyTrait.PlanRevertToNormal();
-                    _character.currentAction.currentState.EndPerTickEffect();
+                    _character.currentActionNode.action.currentState.EndPerTickEffect();
                     hasTransformed = true;
                 }
             } else {
                 //Turn to wolf
                 if (forceTransform || chance < 40) {
                     lycanthropyTrait.PlanTransformToWolf();
-                    _character.currentAction.currentState.EndPerTickEffect();
+                    _character.currentActionNode.action.currentState.EndPerTickEffect();
                     hasTransformed = true;
                 }
             }

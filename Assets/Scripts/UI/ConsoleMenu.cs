@@ -75,7 +75,7 @@ public class ConsoleMenu : UIMenu {
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         //Messenger.AddListener(Signals.TICK_ENDED, CheckForWrongCharacterData);
-        Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
+        Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
 #endif
         InitializeMinion();
     }
@@ -139,9 +139,9 @@ public class ConsoleMenu : UIMenu {
         text += "\n\t<b>Grid Location:</b> " + character.gridTileLocation?.localPlace.ToString() ?? "None";
 
         text += "\n<b>Faction:</b> " + character.faction?.name ?? "None";
-        text += "\n<b>Current Action:</b> " + character.currentAction?.goapName ?? "None";
-        if (character.currentAction != null) {
-            text += "\n<b>Current Plan:</b> " + character.currentAction.parentPlan.GetGoalSummary();
+        text += "\n<b>Current Action:</b> " + character.currentActionNode?.goapName ?? "None";
+        if (character.currentActionNode != null) {
+            text += "\n<b>Current Plan:</b> " + character.currentActionNode.parentPlan.GetGoalSummary();
         }
         if (character.currentParty.icon != null) {
             text += "\n<b>Is Travelling:</b> " + character.currentParty.icon.isTravelling.ToString();
@@ -296,9 +296,9 @@ public class ConsoleMenu : UIMenu {
     }
 
     #region Listeners
-    private void OnCharacterDoingAction(Character character, GoapAction action) {
-        if (typesSubscribedTo.Contains(action.goapType)) {
-            Messenger.Broadcast<string, int, UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, character.name + " is doing " + action.goapType.ToString(),
+    private void OnCharacterDoingAction(Character character, ActualGoapNode actionNode) {
+        if (typesSubscribedTo.Contains(actionNode.goapType)) {
+            Messenger.Broadcast<string, int, UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, character.name + " is doing " + actionNode.goapType.ToString(),
                 100, () => UIManager.Instance.ShowCharacterInfo(character, true));
             UIManager.Instance.Pause();
         }

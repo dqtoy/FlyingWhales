@@ -368,9 +368,9 @@ public class CharacterMarker : PooledObject {
             }
             actionIcon.gameObject.SetActive(true);
         } else {
-            if (character.currentAction != null) {
-                if (character.currentAction.actionIconString != GoapActionStateDB.No_Icon) {
-                    actionIcon.sprite = actionIconDictionary[character.currentAction.actionIconString];
+            if (character.currentActionNode != null) {
+                if (character.currentActionNode.actionIconString != GoapActionStateDB.No_Icon) {
+                    actionIcon.sprite = actionIconDictionary[character.currentActionNode.actionIconString];
                     actionIcon.gameObject.SetActive(true);
                 } else {
                     actionIcon.gameObject.SetActive(false);
@@ -391,39 +391,36 @@ public class CharacterMarker : PooledObject {
             }
         }
     }
-    public void OnThisCharacterDoingAction(GoapAction action) {
-         UpdateActionIcon();
-    }
-    public void OnCharacterTargettedByAction(GoapAction action) {
-        UpdateActionIcon();
-        for (int i = 0; i < action.expectedEffects.Count; i++) {
-            if(action.expectedEffects[i].conditionType == GOAP_EFFECT_CONDITION.REMOVE_TRAIT) {
-                if(action.expectedEffects[i].conditionKey is string) {
-                    string key = (string) action.expectedEffects[i].conditionKey;
-                    if(TraitManager.Instance.allTraits.ContainsKey(key) && TraitManager.Instance.allTraits[key].effect == TRAIT_EFFECT.NEGATIVE) {
-                        AdjustTargettedByRemoveNegativeTraitActions(1);
-                    } else if (key == "Negative") {
-                        AdjustTargettedByRemoveNegativeTraitActions(1);
-                    }
-                }
-            }
-        }
-    }
-    public void OnCharacterRemovedTargettedByAction(GoapAction action) {
-        UpdateActionIcon();
-        for (int i = 0; i < action.expectedEffects.Count; i++) {
-            if (action.expectedEffects[i].conditionType == GOAP_EFFECT_CONDITION.REMOVE_TRAIT) {
-                if (action.expectedEffects[i].conditionKey is string) {
-                    string key = (string) action.expectedEffects[i].conditionKey;
-                    if (TraitManager.Instance.allTraits.ContainsKey(key) && TraitManager.Instance.allTraits[key].effect == TRAIT_EFFECT.NEGATIVE) {
-                        AdjustTargettedByRemoveNegativeTraitActions(-1);
-                    } else if (key == "Negative") {
-                        AdjustTargettedByRemoveNegativeTraitActions(-1);
-                    }
-                }
-            }
-        }
-    }
+    //public void OnCharacterTargettedByAction(GoapAction action) {
+    //    UpdateActionIcon();
+    //    for (int i = 0; i < action.expectedEffects.Count; i++) {
+    //        if(action.expectedEffects[i].conditionType == GOAP_EFFECT_CONDITION.REMOVE_TRAIT) {
+    //            if(action.expectedEffects[i].conditionKey is string) {
+    //                string key = (string) action.expectedEffects[i].conditionKey;
+    //                if(AttributeManager.Instance.allTraits.ContainsKey(key) && AttributeManager.Instance.allTraits[key].effect == TRAIT_EFFECT.NEGATIVE) {
+    //                    AdjustTargettedByRemoveNegativeTraitActions(1);
+    //                } else if (key == "Negative") {
+    //                    AdjustTargettedByRemoveNegativeTraitActions(1);
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
+    //public void OnCharacterRemovedTargettedByAction(GoapAction action) {
+    //    UpdateActionIcon();
+    //    for (int i = 0; i < action.expectedEffects.Count; i++) {
+    //        if (action.expectedEffects[i].conditionType == GOAP_EFFECT_CONDITION.REMOVE_TRAIT) {
+    //            if (action.expectedEffects[i].conditionKey is string) {
+    //                string key = (string) action.expectedEffects[i].conditionKey;
+    //                if (AttributeManager.Instance.allTraits.ContainsKey(key) && AttributeManager.Instance.allTraits[key].effect == TRAIT_EFFECT.NEGATIVE) {
+    //                    AdjustTargettedByRemoveNegativeTraitActions(-1);
+    //                } else if (key == "Negative") {
+    //                    AdjustTargettedByRemoveNegativeTraitActions(-1);
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
     #endregion
 
     #region Object Pool
@@ -717,10 +714,10 @@ public class CharacterMarker : PooledObject {
         } else if (character.currentParty.icon != null && character.currentParty.icon.isTravelling) {
             //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
             PlayWalkingAnimation();
-        } else if (character.currentAction != null && character.currentAction.currentState != null && !string.IsNullOrEmpty(character.currentAction.currentState.animationName)) {
-            PlayAnimation(character.currentAction.currentState.animationName);
-        } else if (character.currentAction != null && !string.IsNullOrEmpty(character.currentAction.animationName)) {
-            PlayAnimation(character.currentAction.animationName);
+        } else if (character.currentActionNode != null && character.currentActionNode.currentState != null && !string.IsNullOrEmpty(character.currentActionNode.currentState.animationName)) {
+            PlayAnimation(character.currentActionNode.currentState.animationName);
+        } else if (character.currentActionNode != null && !string.IsNullOrEmpty(character.currentActionNode.animationName)) {
+            PlayAnimation(character.currentActionNode.animationName);
         } else {
             PlayIdle();
         }
@@ -772,8 +769,8 @@ public class CharacterMarker : PooledObject {
                         speed = character.walkSpeed;
                     }
                 }
-                if (character.currentAction != null) {
-                    if (character.currentAction.goapType == INTERACTION_TYPE.RETURN_HOME || character.currentAction.goapType.IsEmergencyAction()) {
+                if (character.currentActionNode != null) {
+                    if (character.currentActionNode.goapType == INTERACTION_TYPE.RETURN_HOME || character.currentActionNode.goapType.IsEmergencyAction()) {
                         //Run
                         speed = character.runSpeed;
                     }
@@ -1045,7 +1042,7 @@ public class CharacterMarker : PooledObject {
         Debug.Log(summary);
     }
     private void OnAddPOIAsInVisionRange(IPointOfInterest poi) {
-        if (character.currentAction != null && character.currentAction.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION && character.currentAction.poiTarget == poi) {
+        if (character.currentActionNode != null && character.currentActionNode.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION && character.currentActionNode.poiTarget == poi) {
             StopMovement();
             character.PerformGoapAction();
         }
@@ -1062,8 +1059,7 @@ public class CharacterMarker : PooledObject {
                     if (actions != null && actions.Count > 0) {
                         for (int j = 0; j < actions.Count; j++) {
                             GoapAction action = actions[j];
-                            if ((action.isPerformingActualAction && !action.isDone && action.goapType != INTERACTION_TYPE.WATCH) ||
-                                (action.currentState != null && action.currentState.name == action.whileMovingState)) {
+                            if (action.isPerformingActualAction && !action.isDone && action.goapType != INTERACTION_TYPE.WATCH) { // ||(action.currentState != null && action.currentState.name == action.whileMovingState)
                                 //Cannot witness a watch action
                                 IPointOfInterest poiTarget = null;
                                 if (action.goapType == INTERACTION_TYPE.MAKE_LOVE) {

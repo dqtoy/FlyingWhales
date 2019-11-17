@@ -24,16 +24,16 @@ public class PrayTileObject : GoapAction {
     //protected override void ConstructPreconditionsAndEffects() {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     //}
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         SetState("Pray Success");
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         //**Cost**: randomize between 15 - 55
         return Utilities.rng.Next(15, 56);
     }
-    protected override void AddDefaultObjectsToLog(Log log) {
-        base.AddDefaultObjectsToLog(log);
+    protected override void AddFillersToLog(Log log) {
+        base.AddFillersToLog(log);
         TileObject obj = poiTarget as TileObject;
         log.AddToFillers(poiTarget, Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.TARGET_CHARACTER);
     }
@@ -53,7 +53,7 @@ public class PrayTileObject : GoapAction {
     #endregion
 
     #region Requirement
-    protected bool Requirement() {
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }

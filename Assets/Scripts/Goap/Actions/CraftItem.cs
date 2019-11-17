@@ -4,105 +4,72 @@ using UnityEngine;
 using Traits;
 
 public class CraftItem : GoapAction {
-    public SPECIAL_TOKEN craftedItem { get; private set; }
-    private bool hasSetCraftedItem;
 
-    public override LocationStructure targetStructure {
-        get { return actor.currentStructure; }
-    }
-
-    public CraftItem(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CRAFT_ITEM, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public CraftItem(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CRAFT_ITEM) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Work_Icon;
-        hasSetCraftedItem = false;
         isNotificationAnIntel = false;
     }
 
     #region Overrides
-    protected override void ConstructRequirement() {
-        _requirementAction = Requirement;
+    protected override void ConstructBasePreconditionsAndEffects() {
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, target = GOAP_EFFECT_TARGET.ACTOR }, HasSupply);
+        //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = craftedItem.ToString(), target = GOAP_EFFECT_TARGET.ACTOR });
     }
-    protected override void ConstructPreconditionsAndEffects() {
-        if (hasSetCraftedItem) {
-            AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = TokenManager.Instance.itemData[craftedItem].craftCost, targetPOI = actor }, HasSupply);
-            AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = craftedItem.ToString(), targetPOI = actor });
-        }
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
+        SetState("Craft Success", goapNode);
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
-        SetState("Craft Success");
-    }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 10;
     }
-    protected override void CreateThoughtBubbleLog() {
-        base.CreateThoughtBubbleLog();
-        if (hasSetCraftedItem) {
-            thoughtBubbleLog.AddToFillers(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
-            thoughtBubbleMovingLog.AddToFillers(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
-            planLog.AddToFillers(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
-
-            thoughtBubbleLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
-            thoughtBubbleMovingLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
-            planLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
-        }
-    }
-    public override bool InitializeOtherData(object[] otherData) {
-        this.otherData = otherData;
-        if(otherData.Length == 1 && otherData[0] is SPECIAL_TOKEN) {
-            SetCraftedItem((SPECIAL_TOKEN) otherData[0]);
-            preconditions.Clear();
-            expectedEffects.Clear();
-            ConstructPreconditionsAndEffects();
-            CreateThoughtBubbleLog();
-            return true;
-        }
-        return base.InitializeOtherData(otherData);
+    public override void AddFillersToLog(Log log, Character actor, IPointOfInterest poiTarget, object[] otherData, LocationStructure targetStructure) {
+        base.AddFillersToLog(log, actor, poiTarget, otherData, targetStructure);
+        SPECIAL_TOKEN craftedItem = (SPECIAL_TOKEN)otherData[0];
+        log.AddToFillers(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
     }
     #endregion
 
     #region Preconditions
-    private bool HasSupply() {
+    private bool HasSupply(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        SPECIAL_TOKEN craftedItem = (SPECIAL_TOKEN)otherData[0];
         return actor.supply >= TokenManager.Instance.itemData[craftedItem].craftCost;
+       
     }
     #endregion
 
     #region Requirements
-    protected bool Requirement() {
-        //return actor.GetToken(poiTarget as SpecialToken) == null;
-        if (actor != poiTarget) {
-            return false;
-        }
-        //return true;
-        if (hasSetCraftedItem) {
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            if (actor != poiTarget) {
+                return false;
+            }
+            SPECIAL_TOKEN craftedItem = (SPECIAL_TOKEN)otherData[0];
             //if the crafted item enum has been set, check if the actor has the needed trait to craft it
             return craftedItem.CanBeCraftedBy(actor);
-        } else {
-            //if the creafted enum has NOT been set, always allow, since we know that the character has the ability to craft an item, 
-            //because craft item action is only added to characters with traits that allow crafting
-            return true;
+   
         }
-
+        return false;
     }
     #endregion
 
     #region State Effects
-    private void PreCraftSuccess() {
+    private void PreCraftSuccess(ActualGoapNode goapNode) {
+        GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
+        SPECIAL_TOKEN craftedItem = (SPECIAL_TOKEN)goapNode.otherData[0];
         currentState.AddLogFiller(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
         currentState.AddLogFiller(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
 
-        actor.AdjustSupply(-TokenManager.Instance.itemData[craftedItem].craftCost);
+        goapNode.actor.AdjustSupply(-TokenManager.Instance.itemData[craftedItem].craftCost);
     }
-    private void AfterCraftSuccess() {
+    private void AfterCraftSuccess(ActualGoapNode goapNode) {
+        SPECIAL_TOKEN craftedItem = (SPECIAL_TOKEN)goapNode.otherData[0];
         SpecialToken tool = TokenManager.Instance.CreateSpecialToken(craftedItem);
-        actor.ObtainToken(tool);
+        goapNode.actor.ObtainToken(tool);
     }
     #endregion
-
-    private void SetCraftedItem(SPECIAL_TOKEN item) {
-        craftedItem = item;
-        hasSetCraftedItem = true;
-    }
 }
 
 public class CraftItemData : GoapActionData {

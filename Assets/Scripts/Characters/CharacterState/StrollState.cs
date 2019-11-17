@@ -36,11 +36,11 @@ public class StrollState : CharacterState {
         if (stateComponent.character.faction == PlayerManager.Instance.player.currentTargetFaction && stateComponent.character.role.roleType != CHARACTER_ROLE.BEAST && targetPOI is SpecialToken) {
             SpecialToken token = targetPOI as SpecialToken;
             if (token.characterOwner == null) {
-                GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_ITEM, stateComponent.character, targetPOI);
+                GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_UP, stateComponent.character, targetPOI);
                 if (goapAction.targetTile != null) {
                     SetCurrentlyDoingAction(goapAction);
                     goapAction.CreateStates();
-                    stateComponent.character.SetCurrentAction(goapAction);
+                    stateComponent.character.SetCurrentActionNode(goapAction);
                     stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtPickUpLocation);
                     PauseState();
                 } else {
@@ -54,19 +54,19 @@ public class StrollState : CharacterState {
     #endregion
 
     private void OnArriveAtPickUpLocation() {
-        if (stateComponent.character.currentAction == null) {
+        if (stateComponent.character.currentActionNode == null) {
             Debug.LogWarning(GameManager.Instance.TodayLogString() + stateComponent.character.name + " arrived at pick up location of item during " + stateName + ", but current action is null");
             return;
         }
-        stateComponent.character.currentAction.SetEndAction(StrollAgain);
-        stateComponent.character.currentAction.PerformActualAction();
+        stateComponent.character.currentActionNode.SetEndAction(StrollAgain);
+        stateComponent.character.currentActionNode.Perform();
     }
     private void StrollAgain(string result, GoapAction goapAction) {
         SetCurrentlyDoingAction(null);
         if (stateComponent.currentState != this) {
             return;
         }
-        stateComponent.character.SetCurrentAction(null);
+        stateComponent.character.SetCurrentActionNode(null);
         ResumeState();
     }
 

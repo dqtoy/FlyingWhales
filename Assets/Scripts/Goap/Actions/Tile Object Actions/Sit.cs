@@ -16,8 +16,8 @@ public class Sit : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         if (!isTargetMissing) {
             SetState("Sit Success");
         } else {
@@ -28,7 +28,7 @@ public class Sit : GoapAction {
             }
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 8;
     }
     #endregion
@@ -43,7 +43,7 @@ public class Sit : GoapAction {
     #endregion
 
     #region Requirement
-    protected bool Requirement() {
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if(poiTarget.gridTileLocation != null) { //&& poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.DWELLING
             return poiTarget.IsAvailable();
             //Dwelling dwelling = poiTarget.gridTileLocation.structure as Dwelling;

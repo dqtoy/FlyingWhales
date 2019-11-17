@@ -4,26 +4,21 @@ using UnityEngine;
 using Traits;
 
 public class Grieving : GoapAction {
-    public Grieving(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.GRIEVING, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+
+    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
+    public Grieving(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.GRIEVING) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Hostile_Icon;
         isNotificationAnIntel = false;
     }
 
     #region Overrides
-    public override void PerformActualAction() {
-        base.PerformActualAction();
-        SetState("Grieving Success");
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
+        SetState("Grieving Success", goapNode);
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 10;
-    }
-    public override void DoAction() {
-        SetTargetStructure();
-        base.DoAction();
-    }
-    public override LocationGridTile GetTargetLocationTile() {
-        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
     #endregion
 }

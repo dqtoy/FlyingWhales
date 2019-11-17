@@ -79,17 +79,19 @@ public class Summon : Character, IWorldObject {
             //}
             if (stateComponent.currentState != null) {
                 stateComponent.currentState.OnExitThisState();
-            } else if (stateComponent.stateToDo != null) {
-                stateComponent.SetStateToDo(null);
             }
-            if (deathFromAction != null) { //if this character died from an action, do not cancel the action that he/she died from. so that the action will just end as normal.
-                CancelAllJobsTargettingThisCharacterExcept(deathFromAction, "target is already dead", false);
-            } else {
-                CancelAllJobsTargettingThisCharacter("target is already dead", false);
-            }
-            Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this as Character, "target is already dead");
-            if (currentAction != null && !currentAction.cannotCancelAction) {
-                currentAction.StopAction();
+            //else if (stateComponent.stateToDo != null) {
+            //    stateComponent.SetStateToDo(null);
+            //}
+            //if (deathFromAction != null) { //if this character died from an action, do not cancel the action that he/she died from. so that the action will just end as normal.
+            //    CancelAllJobsTargettingThisCharacterExcept(deathFromAction, "target is already dead", false);
+            //} else {
+            //    CancelAllJobsTargettingThisCharacter("target is already dead", false);
+            //}
+            CancelAllJobsTargettingThisCharacter("target is already dead", false);
+            //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this as Character, "target is already dead");
+            if (currentActionNode != null && !currentActionNode.cannotCancelAction) {
+                currentActionNode.StopAction();
             }
             if (ownParty.specificLocation != null && isHoldingItem) {
                 DropAllTokens(ownParty.specificLocation, currentStructure, deathTile, true);

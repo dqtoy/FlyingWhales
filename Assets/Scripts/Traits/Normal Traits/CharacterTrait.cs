@@ -55,11 +55,11 @@ namespace Traits {
                     if (dwelling.IsResident(characterThatWillDoJob)) {
                         if (!targetTable.HasJobTargettingThis(JOB_TYPE.OBTAIN_FOOD)) {
                             int neededFood = 60 - targetTable.food;
-                            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.OBTAIN_FOOD, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_FOOD, conditionKey = 0, targetPOI = targetPOI }
+                            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.OBTAIN_FOOD, targetTable
                             , new Dictionary<INTERACTION_TYPE, object[]>() {
                             { INTERACTION_TYPE.DROP_FOOD, new object[] { neededFood } },
-                            { INTERACTION_TYPE.GET_FOOD, new object[] { neededFood } },
-                            });
+                            { INTERACTION_TYPE.OBTAIN_RESOURCE, new object[] { neededFood } },
+                            },  new Precondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_FOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.TARGET }, null));
                             job.AllowDeadTargets();
                             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                             return true;
@@ -98,8 +98,8 @@ namespace Traits {
                             && token.specificLocation.region == characterThatWillDoJob.homeRegion) {
                             return false;
                         }
-                        if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_ITEM)) {
-                            GoapPlanJob pickUpJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_ITEM, token);
+                        if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP)) {
+                            GoapPlanJob pickUpJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP, token);
                             characterThatWillDoJob.jobQueue.AddJobInQueue(pickUpJob);
                         }
                         return true;
@@ -148,8 +148,8 @@ namespace Traits {
                          //    Character carriedCharacter = targetCharacter.currentParty.characters[1];
                          //    if (characterThatWillDoJob != carriedCharacter && !carriedCharacter.isDead && carriedcharacter.traitContainer.GetNormalTrait("Unconscious", "Restrained") != null) {
                          //        if (!targetCharacter.HasRelationshipOfTypeWith(carriedCharacter, false, RELATIONSHIP_TRAIT.RELATIVE, RELATIONSHIP_TRAIT.LOVER)) {
-                         //            if (targetCharacter.currentAction != null && !targetCharacter.currentAction.hasCrimeBeenReported) {
-                         //                characterThatWillDoJob.ReactToCrime(CRIME.ASSAULT, targetCharacter.currentAction, targetCharacter.currentAlterEgo, SHARE_INTEL_STATUS.WITNESSED);
+                         //            if (targetCharacter.currentActionNode.action != null && !targetCharacter.currentActionNode.action.hasCrimeBeenReported) {
+                         //                characterThatWillDoJob.ReactToCrime(CRIME.ASSAULT, targetCharacter.currentActionNode.action, targetCharacter.currentAlterEgo, SHARE_INTEL_STATUS.WITNESSED);
                          //            }
                          //        }
                          //    }
@@ -162,7 +162,7 @@ namespace Traits {
                     ///NOTE: Puke and Stumble Reactions can be found at <see cref="Puke.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/> and <see cref="Stumble.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/> respectively
                     //They will trigger a personal https://trello.com/c/uCbLBXsF/2846-character-laugh-at job
                     if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY) && targetCharacter.traitContainer.GetNormalTrait("Unconscious", "Catatonic", "Restrained") != null && characterThatWillDoJob.faction == targetCharacter.faction
-                        && (characterThatWillDoJob.currentAction == null || !characterThatWillDoJob.currentAction.isPerformingActualAction)) {
+                        && (characterThatWillDoJob.currentActionNode.action == null || characterThatWillDoJob.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)) {
                         return CreateLaughAtJob(characterThatWillDoJob, targetCharacter);
                     }
 
@@ -172,7 +172,7 @@ namespace Traits {
                     //They will trigger a personal https://trello.com/c/iDsfwQ7d/2845-character-feeling-concerned job
                     else if (characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE && targetCharacter.traitContainer.GetNormalTrait("Unconscious", "Catatonic", "Restrained") != null
                         && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.REMOVE_TRAIT, targetCharacter) && characterThatWillDoJob.faction == targetCharacter.faction
-                         && (characterThatWillDoJob.currentAction == null || !characterThatWillDoJob.currentAction.isPerformingActualAction)) {
+                         && (characterThatWillDoJob.currentActionNode.action == null || characterThatWillDoJob.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)) {
                         return CreateFeelingConcernedJob(characterThatWillDoJob, targetCharacter);
                     }
                     #endregion
@@ -214,16 +214,16 @@ namespace Traits {
             }
         }
         private bool CreatePrioritizedShockJob(Character characterThatWillDoJob) {
-            if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.PRIORITIZED_SHOCK)) {
-                GoapPlanJob shockJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PRIORITIZED_SHOCK, characterThatWillDoJob);
+            if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.SHOCK)) {
+                GoapPlanJob shockJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.SHOCK, characterThatWillDoJob);
                 characterThatWillDoJob.jobQueue.AddJobInQueue(shockJob);
                 return true;
             }
             return false;
         }
         private bool CreatePrioritizedCryJob(Character characterThatWillDoJob) {
-            if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.PRIORITIZED_CRY)) {
-                GoapPlanJob cryJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PRIORITIZED_CRY, characterThatWillDoJob);
+            if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.CRY)) {
+                GoapPlanJob cryJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.CRY, characterThatWillDoJob);
                 characterThatWillDoJob.jobQueue.AddJobInQueue(cryJob);
                 return true;
             }

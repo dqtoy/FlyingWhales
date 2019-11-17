@@ -5,35 +5,30 @@ using Traits;
 
 public class Cry : GoapAction {
 
-    public Cry(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CRY, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
+
+    public Cry(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CRY) {
         actionIconString = GoapActionStateDB.Entertain_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         isNotificationAnIntel = false;
     }
 
     #region Overrides
-    protected override void ConstructPreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
+    protected override void ConstructBasePreconditionsAndEffects() {
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, target = GOAP_EFFECT_TARGET.ACTOR });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
-        SetState("Cry Success");
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
+        SetState("Cry Success", goapNode);
     }
-    public override void DoAction() {
-        SetTargetStructure();
-        base.DoAction();
-    }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return Utilities.rng.Next(25, 51);
-    }
-    public override LocationGridTile GetTargetLocationTile() {
-        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
     #endregion
 
     #region State Effects
-    private void PerTickCrySuccess() {
-        actor.AdjustHappiness(500);
+    private void PerTickCrySuccess(ActualGoapNode goapNode) {
+        goapNode.actor.AdjustHappiness(500);
     }
     #endregion
 }

@@ -38,16 +38,16 @@ public class TileObjectDestroy : GoapAction {
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         base.OnCancelActionTowardsTarget();
     }
-    public override void OnStopActionWhileTravelling() {
+    public override void OnStopWhileStarted() {
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
-        base.OnStopActionWhileTravelling();
+        base.OnStopWhileStarted();
     }
-    public override void OnStopActionDuringCurrentState() {
-        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
-    }
-    public override void OnResultReturnedToActor() {
+    public override void OnStopWhilePerforming() {
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
     }
+    //public override void OnResultReturnedToActor() {
+    //    Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+    //}
     //protected override void ConstructPreconditionsAndEffects() {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     //}
@@ -59,7 +59,7 @@ public class TileObjectDestroy : GoapAction {
     //        SetState("Target Missing");
     //    }
     //}
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 10;
     }
     //public override void FailAction() {
@@ -107,7 +107,7 @@ public class TileObjectDestroy : GoapAction {
     #endregion
 
     #region Requirement
-    protected bool Requirement() {
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
     }
     #endregion

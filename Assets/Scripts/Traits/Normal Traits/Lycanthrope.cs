@@ -80,7 +80,7 @@ namespace Traits {
         public void TurnToWolf() {
             ////Drop all plans except for the current action
             //_character.AdjustIsWaitingForInteraction(1);
-            //_character.DropAllPlans(_character.currentAction.parentPlan);
+            //_character.DropAllPlans(_character.currentActionNode.action.parentPlan);
             //_character.AdjustIsWaitingForInteraction(-1);
 
             ////Copy non delicate data
@@ -149,7 +149,7 @@ namespace Traits {
         public void RevertToNormal() {
             ////Drop all plans except for the current action
             //_character.AdjustIsWaitingForInteraction(1);
-            //_character.DropAllPlans(_character.currentAction.parentPlan);
+            //_character.DropAllPlans(_character.currentActionNode.action.parentPlan);
             //_character.AdjustIsWaitingForInteraction(-1);
 
             ////Revert back data including awareness
@@ -205,7 +205,7 @@ namespace Traits {
             return _character.marker.inVisionCharacters.Count == 0;
         }
         private void DoTransformWolf() {
-            if (_character.currentAction != null) {
+            if (_character.currentActionNode.action != null) {
                 _character.StopCurrentAction(false);
             }
             if (_character.stateComponent.currentState != null) {

@@ -17,8 +17,8 @@ public class Stand : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         SetState("Stand Success");
     }
     public override void DoAction() {
@@ -28,13 +28,13 @@ public class Stand : GoapAction {
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 4;
     }
     #endregion
 
     #region Requirement
-    protected bool Requirement() {
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         return actor == poiTarget;
     }
     #endregion

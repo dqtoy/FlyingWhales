@@ -19,18 +19,18 @@ public class Sing : GoapAction {
     }
 
     #region Overrides
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         SetState("Sing Success");
     }
     public override void DoAction() {
         SetTargetStructure();
         base.DoAction();
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         //**Cost**: randomize between 20 - 36 (if music lover 10 - 26)
         if(actor.traitContainer.GetNormalTrait("Music Lover") != null) {
             return Utilities.rng.Next(10, 27);
@@ -40,7 +40,7 @@ public class Sing : GoapAction {
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
-    public override void OnStopActionDuringCurrentState() {
+    public override void OnStopWhilePerforming() {
         if (currentState.name == "Sing Success") {
             actor.AdjustDoNotGetLonely(-1);
         }

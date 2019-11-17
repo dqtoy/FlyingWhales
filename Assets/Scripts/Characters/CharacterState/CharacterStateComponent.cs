@@ -17,7 +17,7 @@ public class CharacterStateComponent {
     //This is the character's current state
     public CharacterState currentState { get; private set; }
     //Right now this is only for Explore State so that we can store the state even when the character is still moving to the area that will be explored
-    public CharacterState stateToDo { get; private set; }
+    //public CharacterState stateToDo { get; private set; }
 
     public CharacterStateComponent(Character character) {
         this.character = character;
@@ -27,24 +27,24 @@ public class CharacterStateComponent {
         currentState = state;
         //Debug.Log(character.name + " set state to " + currentState?.stateName ?? "Null");
     }
-    public void SetStateToDo(CharacterState state, bool unassignJob = true, bool stopMovement = true) {
-        if(unassignJob && state == null && stateToDo != null) {
-            if(stateToDo.job != null) {
-                stateToDo.job.SetAssignedCharacter(null);
-                stateToDo.job.SetAssignedState(null);
-            }
-        }
-        if (stopMovement) {
-            if (character.currentParty.icon.isTravelling) {
-                if (character.currentParty.icon.travelLine == null) {
-                    character.marker.StopMovement();
-                } else {
-                    character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
-                }
-            }
-        }
-        stateToDo = state;
-    }
+    //public void SetStateToDo(CharacterState state, bool unassignJob = true, bool stopMovement = true) {
+    //    if(unassignJob && state == null && stateToDo != null) {
+    //        if(stateToDo.job != null) {
+    //            stateToDo.job.SetAssignedCharacter(null);
+    //            stateToDo.job.SetAssignedState(null);
+    //        }
+    //    }
+    //    if (stopMovement) {
+    //        if (character.currentParty.icon.isTravelling) {
+    //            if (character.currentParty.icon.travelLine == null) {
+    //                character.marker.StopMovement();
+    //            } else {
+    //                character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
+    //            }
+    //        }
+    //    }
+    //    stateToDo = state;
+    //}
 
     //This switches from one state to another
     //If the character is not in a state right now, this simply starts a new state instead of switching
@@ -56,7 +56,7 @@ public class CharacterStateComponent {
 
         //Before switching character must end current action first because once a character is in a state in cannot make plans
         character.AdjustIsWaitingForInteraction(1);
-        if (character.currentAction != null && character.currentAction.ShouldBeStoppedWhenSwitchingStates()) {
+        if (character.currentActionNode != null && character.currentActionNode.ShouldBeStoppedWhenSwitchingStates()) {
             character.StopCurrentAction();
         }
         character.AdjustIsWaitingForInteraction(-1);
@@ -87,12 +87,13 @@ public class CharacterStateComponent {
                 //If current state is a minor state, simply end it
                 currentState.ExitState();
             }
-        }else if (stateToDo != null) {
-            if(stateToDo.stateCategory == CHARACTER_STATE_CATEGORY.MAJOR) {
-                previousMajorState = stateToDo;
-            }
-            SetStateToDo(null, false, false);
         }
+        //else if (stateToDo != null) {
+        //    if(stateToDo.stateCategory == CHARACTER_STATE_CATEGORY.MAJOR) {
+        //        previousMajorState = stateToDo;
+        //    }
+        //    SetStateToDo(null, false, false);
+        //}
 
         //Assigns new state as the current state then enter that state
         //newState.SetParentMajorState(previousMajorState);
@@ -135,7 +136,7 @@ public class CharacterStateComponent {
 
         //Stops movement unless told otherwise
         if (stopMovement) {
-            if(!(this.currentState != null && character.currentAction != null && character.currentAction.parentPlan == null)) {
+            if(!(this.currentState != null && character.currentActionNode != null && character.currentActionNode.parentPlan == null)) {
                 if (character.currentParty.icon.isTravelling) {
                     if (character.currentParty.icon.travelLine == null) {
                         character.marker.StopMovement();

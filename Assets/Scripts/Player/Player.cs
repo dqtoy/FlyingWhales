@@ -141,9 +141,9 @@ public class Player : ILeader {
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
 
         //goap
-        Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnCharacterDidAction);
-        Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
-        Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
+        //Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnCharacterDidAction);
+        Messenger.AddListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
+        Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
 
@@ -542,44 +542,44 @@ public class Player : ILeader {
     /// Listener for when a character has finished doing an action.
     /// </summary>
     /// <param name="character">The character that finished the action.</param>
-    /// <param name="action">The action that was finished.</param>
-    private void OnCharacterDidAction(Character character, GoapAction action) {
-        for (int i = 0; i < action.currentState.arrangedLogs.Count; i++) {
-            if(action.currentState.arrangedLogs[i].notifAction != null) {
-                action.currentState.arrangedLogs[i].notifAction();
-            } else {
-                bool showPopup = false;
-                if (action.showIntelNotification) {
-                    if (action.shouldIntelNotificationOnlyIfActorIsActive) {
-                        showPopup = ShouldShowNotificationFrom(character, true);
-                    } else {
-                        showPopup = ShouldShowNotificationFrom(character, action.currentState.descriptionLog);
-                    }
-                }
-                if (showPopup) {
-                    if (!action.isNotificationAnIntel) {
-                        Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, action.currentState.descriptionLog);
-                    } else {
-                        Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(action, character));
-                    }
-                }
-            }
-        }
-    }
+    /// <param name="actionNode">The action that was finished.</param>
+    //private void OnCharacterDidAction(Character character, GoapAction action) {
+    //    for (int i = 0; i < action.currentState.arrangedLogs.Count; i++) {
+    //        if(action.currentState.arrangedLogs[i].notifAction != null) {
+    //            action.currentState.arrangedLogs[i].notifAction();
+    //        } else {
+    //            bool showPopup = false;
+    //            if (action.showIntelNotification) {
+    //                if (action.shouldIntelNotificationOnlyIfActorIsActive) {
+    //                    showPopup = ShouldShowNotificationFrom(character, true);
+    //                } else {
+    //                    showPopup = ShouldShowNotificationFrom(character, action.currentState.descriptionLog);
+    //                }
+    //            }
+    //            if (showPopup) {
+    //                if (!action.isNotificationAnIntel) {
+    //                    Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, action.currentState.descriptionLog);
+    //                } else {
+    //                    Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(action, character));
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
     /// <summary>
     /// Listener for when a character starts an action.
     /// Character will go to target location. <see cref="GoapAction.DoAction"/>
     /// </summary>
     /// <param name="character">The character that will do the action.</param>
     /// <param name="action">The action that will be performed.</param>
-    private void OnCharacterDoingAction(Character character, GoapAction action) {
+    private void OnCharacterDoingAction(Character character, ActualGoapNode actionNode) {
         bool showPopup = false;
-        Log log = action.GetCurrentLog();
-        if (action.showIntelNotification && !action.IsActorAtTargetTile() && log != null) { //added checking if actor is already at target tile. So that travelling notification won't show if that is the case.
-            if (action.shouldIntelNotificationOnlyIfActorIsActive) {
-                showPopup = ShouldShowNotificationFrom(action.actor, true);
+        Log log = actionNode.GetCurrentLog();
+        if (actionNode.showIntelNotification && !actionNode.IsActorAtTargetTile() && log != null) { //added checking if actor is already at target tile. So that travelling notification won't show if that is the case.
+            if (actionNode.shouldIntelNotificationOnlyIfActorIsActive) {
+                showPopup = ShouldShowNotificationFrom(actionNode.actor, true);
             } else {
-                showPopup = ShouldShowNotificationFrom(action.actor, log);
+                showPopup = ShouldShowNotificationFrom(actionNode.actor, log);
             }
         }
         if (showPopup) {
@@ -592,7 +592,7 @@ public class Player : ILeader {
     /// </summary>
     /// <param name="action">The action that is being performed.</param>
     /// <param name="state">The state that the action is in.</param>
-    private void OnActionStateSet(GoapAction action, GoapActionState state) {
+    private void OnAfterActionStateSet(string stateName, ActualGoapNode actionNode) {
         bool showPopup = false;
         Log log = action.GetCurrentLog();
         if (action.showIntelNotification && state.duration > 0 && log != null) { //added checking for duration because this notification should only show for actions that have durations.
@@ -677,7 +677,7 @@ public class Player : ILeader {
         }
         return false;
     }
-    private bool ShouldShowNotificationFrom(Character character, Log log) {
+    public bool ShouldShowNotificationFrom(Character character, Log log) {
 #if TRAILER_BUILD
         if (character.name == "Fiona" || character.name == "Jamie" || character.name == "Audrey") {
             return true;

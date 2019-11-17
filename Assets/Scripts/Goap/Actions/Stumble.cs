@@ -16,32 +16,32 @@ public class Stumble : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         SetState("Stumble Success");
     }
     public override void DoAction() {
         SetTargetStructure();
         base.DoAction();
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 10;
     }
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
-    public override void OnResultReturnedToActor() {
-        base.OnResultReturnedToActor();
-        //if (currentState.name == "Stumble Success") {
-        //    if (actor.currentHP <= 0) {
-        //        actor.Death(deathFromAction: this);
-        //    }
-        //}
-    }
+    //public override void OnResultReturnedToActor() {
+    //    base.OnResultReturnedToActor();
+    //    //if (currentState.name == "Stumble Success") {
+    //    //    if (actor.currentHP <= 0) {
+    //    //        actor.Death(deathFromAction: this);
+    //    //    }
+    //    //}
+    //}
     #endregion
 
     #region Requirements
-    protected bool Requirement() {
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         return actor == poiTarget;
     }
     #endregion

@@ -31,7 +31,7 @@ namespace Traits {
             int napChance = UnityEngine.Random.Range(0, 100);
             bool hasCreatedJob = false;
             if (napChance < 1) {
-                if (owner.currentAction == null || (owner.currentAction.goapType != INTERACTION_TYPE.NARCOLEPTIC_NAP)) {
+                if (owner.currentActionNode.action == null || (owner.currentActionNode.action.goapType != INTERACTION_TYPE.NARCOLEPTIC_NAP)) {
                     DoNarcolepticNap();
 
                     hasCreatedJob = true;
@@ -64,7 +64,7 @@ namespace Traits {
             if (owner.IsInOwnParty()) {
                 owner.ownParty.RemoveAllOtherCharacters();
             }
-            if (owner.currentAction != null) {
+            if (owner.currentActionNode.action != null) {
                 owner.StopCurrentAction(false);
             }
             if (owner.stateComponent.currentState != null) {

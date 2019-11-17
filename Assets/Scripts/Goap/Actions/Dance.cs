@@ -5,7 +5,8 @@ using Traits;
 
 public class Dance : GoapAction {
 
-    public Dance(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DANCE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
+    public Dance(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DANCE) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,
@@ -18,40 +19,40 @@ public class Dance : GoapAction {
     }
 
     #region Overrides
-    protected override void ConstructPreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
+    protected override void ConstructBasePreconditionsAndEffects() {
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, target = GOAP_EFFECT_TARGET.ACTOR });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
-        SetState("Dance Success");
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
+        SetState("Dance Success", goapNode);
     }
-    public override void DoAction() {
-        SetTargetStructure();
-        base.DoAction();
-    }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         //**Cost**: randomize between 20-36
         return Utilities.rng.Next(20, 37);
     }
-    public override LocationGridTile GetTargetLocationTile() {
-        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
+    public override void OnStopWhilePerforming(Character actor, IPointOfInterest target, object[] otherData) {
+        base.OnStopWhilePerforming(actor, target, otherData);
+        actor.AdjustDoNotGetLonely(-1);
     }
-    public override void OnStopActionDuringCurrentState() {
-        if (currentState.name == "Dance Success") {
-            actor.AdjustDoNotGetLonely(-1);
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, object[] otherData) {
+        bool satisfied = base.AreRequirementsSatisfied(actor, target, otherData);
+        if (satisfied) {
+            //"Actor should be in Good or better mood"
+            return actor.currentMoodType == CHARACTER_MOOD.GOOD || actor.currentMoodType == CHARACTER_MOOD.GREAT;
         }
+        return false;
     }
     #endregion
 
     #region Effects
-    private void PreDanceSuccess() {
-        actor.AdjustDoNotGetLonely(1);
+    private void PreDanceSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.AdjustDoNotGetLonely(1);
     }
-    private void PerTickDanceSuccess() {
-        actor.AdjustHappiness(1000);
+    private void PerTickDanceSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.AdjustHappiness(1000);
     }
-    private void AfterDanceSuccess() {
-        actor.AdjustDoNotGetLonely(-1);
+    private void AfterDanceSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.AdjustDoNotGetLonely(-1);
     }
     #endregion
 }

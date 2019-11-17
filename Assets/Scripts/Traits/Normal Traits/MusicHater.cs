@@ -20,7 +20,7 @@ namespace Traits {
         //public override void OnSeePOI(IPointOfInterest targetPOI, Character character) {
         //    if (targetPOI is Character) {
         //        Character seenCharacter = targetPOI as Character;
-        //        if (seenCharacter.currentAction != null && seenCharacter.currentAction.goapType == INTERACTION_TYPE.PLAY_GUITAR && seenCharacter.currentAction.isPerformingActualAction) {
+        //        if (seenCharacter.currentActionNode.action != null && seenCharacter.currentActionNode.action.goapType == INTERACTION_TYPE.PLAY_GUITAR && seenCharacter.currentActionNode.action.isPerformingActualAction) {
         //            OnHearGuitarPlaying(seenCharacter);
         //        }
         //    }

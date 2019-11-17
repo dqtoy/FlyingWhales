@@ -225,6 +225,11 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         }
     }
     public void SetTileState(Tile_State state) {
+        if(this.tileState == Tile_State.Empty && state == Tile_State.Occupied) {
+            structure.RemoveUnoccupiedTile(this);
+        } else if (this.tileState == Tile_State.Occupied && state == Tile_State.Empty && reservedObjectType == TILE_OBJECT_TYPE.NONE) {
+            structure.AddUnoccupiedTile(this);
+        }
         this.tileState = state;
         //if (state == Tile_State.Occupied) {
         //    Messenger.Broadcast(Signals.TILE_OCCUPIED, this, objHere);
@@ -611,6 +616,11 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
 
     #region Tile Objects
     public void SetReservedType(TILE_OBJECT_TYPE reservedType) {
+        if(this.reservedObjectType != TILE_OBJECT_TYPE.NONE && reservedType == TILE_OBJECT_TYPE.NONE && tileState == Tile_State.Empty) {
+            structure.AddUnoccupiedTile(this);
+        } else if (this.reservedObjectType == TILE_OBJECT_TYPE.NONE && reservedType != TILE_OBJECT_TYPE.NONE) {
+            structure.RemoveUnoccupiedTile(this);
+        }
         reservedObjectType = reservedType;
     }
     #endregion

@@ -30,8 +30,8 @@ public class Watch : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         Character targetCharacter = poiTarget as Character;
         if (targetCharacter.IsInOwnParty()) {
             SetState("Watch Success");
@@ -39,7 +39,7 @@ public class Watch : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 10;
     }
     public override bool InitializeOtherData(object[] otherData) {
@@ -80,8 +80,8 @@ public class Watch : GoapAction {
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
-    public override void OnStopActionDuringCurrentState() {
-        base.OnStopActionDuringCurrentState();
+    public override void OnStopWhilePerforming() {
+        base.OnStopWhilePerforming();
         //if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
         //    Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
         //}

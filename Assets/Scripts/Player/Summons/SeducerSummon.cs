@@ -9,7 +9,7 @@ public class SeducerSummon : Summon {
     private List<Character> doneCharacters; //list of characters that the succubus has invited to make love with, regardless of success
     public override int ignoreHostility {
         get {
-            if (currentAction != null && currentAction.goapType.IsHostileAction()) {
+            if (currentActionNode != null && currentActionNode.goapType.IsHostileAction()) {
                 return 0; //allow hostility checking
             } else if (stateComponent.currentState != null && (stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT || stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED)) {
                 return 0; //if in combat or berserked state allow hostility checking
@@ -23,7 +23,7 @@ public class SeducerSummon : Summon {
     public SeducerSummon(SUMMON_TYPE type, GENDER gender) : base(type, CharacterRole.MINION, RACE.DEMON, gender) {
         seduceChance = 25;
         doneCharacters = new List<Character>();
-        AddInteractionType(INTERACTION_TYPE.INVITE_TO_MAKE_LOVE);
+        AddInteractionType(INTERACTION_TYPE.INVITE);
         AddInteractionType(INTERACTION_TYPE.MAKE_LOVE);
     }
     public SeducerSummon(SaveDataCharacter data) : base(data) {
@@ -43,7 +43,7 @@ public class SeducerSummon : Summon {
         //Messenger.AddListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration);
         AdjustIgnoreHostilities(1);
     }
-    public override List<GoapAction> ThisCharacterSaw(IPointOfInterest target) {
+    public override List<ActualGoapNode> ThisCharacterSaw(IPointOfInterest target) {
         if (traitContainer.GetNormalTrait("Unconscious", "Resting") != null) {
             return null;
         }
@@ -69,7 +69,7 @@ public class SeducerSummon : Summon {
             List<TileObject> validBeds = specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.INN).GetTileObjectsOfType(TILE_OBJECT_TYPE.BED);
             if (choices.Count > 0 && validBeds.Count > 0) {
                 Character chosenCharacter = choices[Random.Range(0, choices.Count)];
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SEDUCE, INTERACTION_TYPE.INVITE_TO_MAKE_LOVE, chosenCharacter);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SEDUCE, INTERACTION_TYPE.INVITE, chosenCharacter);
                 job.SetCannotOverrideJob(true);
                 job.SetCannotCancelJob(true);
                 jobQueue.AddJobInQueue(job);
@@ -82,7 +82,7 @@ public class SeducerSummon : Summon {
         
     }
     public override void OnActionStateSet(GoapAction action, GoapActionState state) {
-        if (action.actor == this && action.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE) {
+        if (action.actor == this && action.goapType == INTERACTION_TYPE.INVITE) {
             doneCharacters.Add(action.poiTarget as Character);
         } else if (action.actor == this && action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
             if (state.status == InteractionManager.Goap_State_Success) {
@@ -113,9 +113,10 @@ public class SeducerSummon : Summon {
             if (stateComponent.currentState != null) {
                 stateComponent.currentState.OnExitThisState();
             }
-        } else if (stateComponent.currentState != null) {
-            stateComponent.SetStateToDo(null);
         }
+        //else if (stateComponent.currentState != null) {
+        //    stateComponent.SetStateToDo(null);
+        //}
 
         if (currentParty.icon.isTravelling) {
             marker.StopMovement();

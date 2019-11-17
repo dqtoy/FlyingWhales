@@ -23,7 +23,7 @@ public class StealFromCharacter : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         //if (actor.traitContainer.GetNormalTrait("Kleptomaniac") != null) {
         //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
         //}
@@ -35,8 +35,8 @@ public class StealFromCharacter : GoapAction {
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = actor });
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, targetPOI = actor });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
             if (_targetCharacter.isHoldingItem) {
                 if (_targetCharacter.traitContainer.GetNormalTrait("Vigilant") != null) {
@@ -51,28 +51,28 @@ public class StealFromCharacter : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         if (actor.traitContainer.GetNormalTrait("Kleptomaniac") != null) {
             return Utilities.rng.Next(5, 46);
         }
         return Utilities.rng.Next(35, 56);
     }
-    public override void OnResultReturnedToActor() {
-        base.OnResultReturnedToActor();
-        //if (currentState.name == "Steal Vigilant") {
-        //    if (poiTarget is Character) {
-        //        Character targetCharacter = poiTarget as Character;
-        //        if (!targetCharacter.ReactToCrime(committedCrime, this, actorAlterEgo, SHARE_INTEL_STATUS.WITNESSED)) {
-        //            RelationshipManager.Instance.RelationshipDegradation(actor, targetCharacter, this);
-        //        }
-        //        targetCharacter.marker.AddHostileInRange(actor, false);
-        //    }
-        //}
-    }
+    //public override void OnResultReturnedToActor() {
+    //    base.OnResultReturnedToActor();
+    //    //if (currentState.name == "Steal Vigilant") {
+    //    //    if (poiTarget is Character) {
+    //    //        Character targetCharacter = poiTarget as Character;
+    //    //        if (!targetCharacter.ReactToCrime(committedCrime, this, actorAlterEgo, SHARE_INTEL_STATUS.WITNESSED)) {
+    //    //            CharacterManager.Instance.RelationshipDegradation(actor, targetCharacter, this);
+    //    //        }
+    //    //        targetCharacter.marker.AddHostileInRange(actor, false);
+    //    //    }
+    //    //}
+    //}
     #endregion
 
     #region Requirements
-    protected bool Requirement() {
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }

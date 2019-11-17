@@ -5,12 +5,7 @@ using Traits;
 
 public class Pray : GoapAction {
 
-    private LocationStructure _targetStructure;
-    public override LocationStructure targetStructure { get { return _targetStructure; } }
-
-    protected override string failActionState { get { return "Pray Failed"; } }
-
-    public Pray(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PRAY, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public Pray(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PRAY) {
         this.goapName = "Pray";
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         validTimeOfDays = new TIME_IN_WORDS[] {
@@ -23,76 +18,48 @@ public class Pray : GoapAction {
     }
 
     #region Overrides
-    protected override void ConstructRequirement() {
-        _requirementAction = Requirement;
+    protected override void ConstructBasePreconditionsAndEffects() {
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, target = GOAP_EFFECT_TARGET.ACTOR });
     }
-    protected override void ConstructPreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
+        SetState("Pray Success", goapNode);
     }
-    public override void PerformActualAction() {
-        //if (targetTile.occupant != null && targetTile.occupant != actor) {
-        //    SetState("Pray Failed");
-        //} else {
-        //}
-        base.PerformActualAction();
-        SetState("Pray Success");
-    }
-    public override void DoAction() {
-        SetTargetStructure();
-        base.DoAction();
-    }
-    public override LocationGridTile GetTargetLocationTile() {
-        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
-    }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         //**Cost**: randomize between 15 - 55
         return Utilities.rng.Next(15, 56);
     }
-    //public override void FailAction() {
-    //    base.FailAction();
-    //    SetState("Pray Failed");
-    //}
-    public override void SetTargetStructure() {
-        _targetStructure = actor.currentStructure;
-        base.SetTargetStructure();
-    }
-    public override void OnStopActionDuringCurrentState() {
-        if (currentState.name == "Pray Success") {
-            actor.AdjustDoNotGetLonely(-1);
-        }
-    }
-    public override bool InitializeOtherData(object[] otherData) {
-        this.otherData = otherData;
-        if (otherData.Length == 1 && otherData[0] is ACTION_LOCATION_TYPE) {
-            actionLocationType = (ACTION_LOCATION_TYPE) otherData[0];
-            SetTargetStructure();
-            return true;
-        }
-        return base.InitializeOtherData(otherData);
-    }
-    #endregion
-
-    #region State Effects
-    public void PrePraySuccess() {
-        actor.AdjustDoNotGetLonely(1);
-    }
-    public void PerTickPraySuccess() {
-        actor.AdjustHappiness(400);
-    }
-    public void AfterPraySuccess() {
+    public override void OnStopWhilePerforming(Character actor, IPointOfInterest target, object[] otherData) {
+        base.OnStopWhilePerforming(actor, target, otherData);
         actor.AdjustDoNotGetLonely(-1);
     }
     #endregion
 
+    #region State Effects
+    public void PrePraySuccess(ActualGoapNode goapNode) {
+        goapNode.actor.AdjustDoNotGetLonely(1);
+    }
+    public void PerTickPraySuccess(ActualGoapNode goapNode) {
+        goapNode.actor.AdjustHappiness(400);
+    }
+    public void AfterPraySuccess(ActualGoapNode goapNode) {
+        goapNode.actor.AdjustDoNotGetLonely(-1);
+    }
+    #endregion
+
     #region Requirement
-    protected bool Requirement() {
-        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
-            return false;
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+                return false;
+            }
+            if (actor.traitContainer.GetNormalTrait("Evil") != null) {
+                return false;
+            }
+            return actor == poiTarget;
         }
-        if (actor.traitContainer.GetNormalTrait("Evil") != null) {
-            return false;
-        }
-        return actor == poiTarget;
+        return false;
     }
     #endregion
 }

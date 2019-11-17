@@ -6,13 +6,13 @@ using Traits;
 public class RepairTileObject : GoapAction {
 
     public RepairTileObject(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.REPAIR_TILE_OBJECT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
+        //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
     }
 
     #region Overrides
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         TileObject tileObj = poiTarget as TileObject;
         TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
         int craftCost = (int)(data.constructionCost * 0.5f);
@@ -20,15 +20,15 @@ public class RepairTileObject : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Burnt", targetPOI = poiTarget });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Damaged", targetPOI = poiTarget });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         if (poiTarget.gridTileLocation != null) {
             SetState("Repair Success");
         } else {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 2;
     }
     #endregion

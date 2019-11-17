@@ -10,11 +10,11 @@ public class SlayCharacter : GoapAction {
     }
 
     #region Overrides
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = poiTarget });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         //rather than checking location check if the character is not in anyone elses party and is still active
         if (!isTargetMissing) {
             if ((poiTarget as Character).isDead) {
@@ -26,7 +26,7 @@ public class SlayCharacter : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 1;
     }
     //public override int GetArrangedLogPriorityIndex(string priorityID) {
@@ -37,12 +37,12 @@ public class SlayCharacter : GoapAction {
     //    }
     //    return base.GetArrangedLogPriorityIndex(priorityID);
     //}
-    public override void OnResultReturnedToActor() {
-        base.OnResultReturnedToActor();
-        //if(currentState.name == "Slay Success") {
-        //    (poiTarget as Character).Death(deathFromAction: this, responsibleCharacter: actor);
-        //}
-    }
+    //public override void OnResultReturnedToActor() {
+    //    base.OnResultReturnedToActor();
+    //    //if(currentState.name == "Slay Success") {
+    //    //    (poiTarget as Character).Death(deathFromAction: this, responsibleCharacter: actor);
+    //    //}
+    //}
     #endregion
 
     #region State Effects

@@ -6,7 +6,7 @@ using Traits;
 public class CraftTileObject : GoapAction {
 
     public CraftTileObject(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CRAFT_TILE_OBJECT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
+        //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
     }
@@ -23,21 +23,21 @@ public class CraftTileObject : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         if (poiTarget.gridTileLocation != null) {
             SetState("Craft Success");
         } else {
             SetState("Target Missing");
         }
     }
-    protected override void AddDefaultObjectsToLog(Log log) {
-        base.AddDefaultObjectsToLog(log);
+    protected override void AddFillersToLog(Log log) {
+        base.AddFillersToLog(log);
         TileObject obj = poiTarget as TileObject;
         log.AddToFillers(null, Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
         log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 2;
     }
     #endregion

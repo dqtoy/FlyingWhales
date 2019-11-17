@@ -11,7 +11,7 @@ public class ReturnHome : GoapAction {
     protected override string failActionState { get { return "Return Home Failed"; } }
 
     public ReturnHome(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.RETURN_HOME, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        SetShowIntelNotification(false);
+        showIntelNotification = false;
         shouldAddLogs = false;
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
         actionIconString = GoapActionStateDB.No_Icon;
@@ -21,12 +21,12 @@ public class ReturnHome : GoapAction {
     //protected override void ConstructPreconditionsAndEffects() {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = actor });
     //}
-    public override void PerformActualAction() {
+    public override void Perform(ActualGoapNode goapNode) {
         //if (targetTile != null) {
         //} else {
         //    SetState("Return Home Failed");
         //}
-        base.PerformActualAction();
+        base.Perform(goapNode);
         SetState("Return Home Success");
     }
     public override LocationGridTile GetTargetLocationTile() {
@@ -35,7 +35,7 @@ public class ReturnHome : GoapAction {
         }
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 3;
     }
     //public override void FailAction() {

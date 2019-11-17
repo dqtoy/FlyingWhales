@@ -72,11 +72,11 @@ namespace Traits {
             if (targetPOI is Character) {
                 //In Vampiric, the parameter traitOwner is the target character, that's why you must pass the target character in this parameter not the actual owner of the trait, the actual owner of the trait is the characterThatWillDoJob
                 Character targetCharacter = targetPOI as Character;
-                if (characterThatWillDoJob.currentAction != null && characterThatWillDoJob.currentAction.goapType == INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD && !characterThatWillDoJob.currentAction.isDone) {
+                if (characterThatWillDoJob.currentActionNode.action != null && characterThatWillDoJob.currentActionNode.action.goapType == INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD && !characterThatWillDoJob.currentActionNode.action.isDone) {
                     if (characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.POSITIVE && targetCharacter.traitContainer.GetNormalTrait("Vampiric") == null && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetCharacter)) {
-                        GoapPlanJob job = new GoapPlanJob(characterThatWillDoJob.currentAction.parentPlan.job.jobType, INTERACTION_TYPE.DRINK_BLOOD, targetCharacter);
+                        GoapPlanJob job = new GoapPlanJob(characterThatWillDoJob.currentActionNode.action.parentPlan.job.jobType, INTERACTION_TYPE.DRINK_BLOOD, targetCharacter);
                         job.SetIsStealth(true);
-                        characterThatWillDoJob.currentAction.parentPlan.job.jobQueueParent.CancelJob(characterThatWillDoJob.currentAction.parentPlan.job);
+                        characterThatWillDoJob.currentActionNode.action.parentPlan.job.jobQueueParent.CancelJob(characterThatWillDoJob.currentActionNode.action.parentPlan.job);
                         characterThatWillDoJob.jobQueue.AddJobInQueue(job, false);
                         characterThatWillDoJob.jobQueue.AssignCharacterToJobAndCancelCurrentAction(job, characterThatWillDoJob);
                         return true;

@@ -37,7 +37,7 @@ namespace Traits {
                     GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.BURY);
                     if (currentJob == null) {
                         GoapPlanJob buryJob = new GoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, targetCharacter);
-                        buryJob.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CORPSE);
+                        //TODO: buryJob.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CORPSE);
                         buryJob.AllowDeadTargets();
                         //buryJob.SetCanBeDoneInLocation(true);
                         if (InteractionManager.Instance.CanTakeBuryJob(characterThatWillDoJob, buryJob)) {
@@ -50,22 +50,8 @@ namespace Traits {
                         //    return false;
                         //}
                     } else {
-                        if (currentJob.jobQueueParent.isAreaOrQuestJobQueue && InteractionManager.Instance.CanTakeBuryJob(characterThatWillDoJob, currentJob)) {
-                            bool canBeTransfered = false;
-                            if (currentJob.assignedCharacter != null && currentJob.assignedCharacter.currentAction != null
-                                && currentJob.assignedCharacter.currentAction.parentPlan != null && currentJob.assignedCharacter.currentAction.parentPlan.job == currentJob) {
-                                if (currentJob.assignedCharacter != characterThatWillDoJob) {
-                                    canBeTransfered = !currentJob.assignedCharacter.marker.inVisionPOIs.Contains(currentJob.assignedCharacter.currentAction.poiTarget);
-                                }
-                            } else {
-                                canBeTransfered = true;
-                            }
-                            if (canBeTransfered && characterThatWillDoJob.CanCurrentJobBeOverriddenByJob(currentJob)) {
-                                currentJob.jobQueueParent.CancelJob(currentJob, shouldDoAfterEffect: false, forceRemove: true);
-                                characterThatWillDoJob.jobQueue.AddJobInQueue(currentJob, false);
-                                characterThatWillDoJob.jobQueue.AssignCharacterToJobAndCancelCurrentAction(currentJob, characterThatWillDoJob);
-                            }
-                            return true;
+                        if (InteractionManager.Instance.CanTakeBuryJob(characterThatWillDoJob, currentJob)) {
+                            return TryTransferJob(currentJob, characterThatWillDoJob);
                         }
                     }
                 }

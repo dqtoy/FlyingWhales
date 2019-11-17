@@ -10,18 +10,8 @@ public class TransformFood : GoapAction {
 
     protected override bool isTargetMissing {
         get {
-            bool targetMissing = poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
+            return poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
               || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) || !(poiTarget as Character).isDead;
-
-            if (targetMissing) {
-                return targetMissing;
-            } else {
-                Invisible invisible = poiTarget.traitContainer.GetNormalTrait("Invisible") as Invisible;
-                if (invisible != null && !invisible.charactersThatCanSee.Contains(actor)) {
-                    return true;
-                }
-                return targetMissing;
-            }
         }
     }
 
@@ -43,41 +33,41 @@ public class TransformFood : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         if(poiTarget is Character) {
             AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = poiTarget }, IsTargetDead);
         }
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_FOOD, conditionKey = 0, targetPOI = actor });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         if (!isTargetMissing) {
             SetState("Transform Success");
         } else {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return Utilities.rng.Next(15, 26);
     }
     protected override void CreateThoughtBubbleLog() {
         base.CreateThoughtBubbleLog();
         thoughtBubbleMovingLog.AddToFillers(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
-    public override void OnResultReturnedToActor() {
-        base.OnResultReturnedToActor();
-        //if (currentState.name == "Transform Success") {
-        //    if (poiTarget is Tombstone) {
-        //        poiTarget.gridTileLocation.structure.RemovePOI(poiTarget, actor);
-        //    } else if (poiTarget is Character) {
-        //        (poiTarget as Character).DestroyMarker();
-        //    }
-        //}
-    }
+    //public override void OnResultReturnedToActor() {
+    //    base.OnResultReturnedToActor();
+    //    //if (currentState.name == "Transform Success") {
+    //    //    if (poiTarget is Tombstone) {
+    //    //        poiTarget.gridTileLocation.structure.RemovePOI(poiTarget, actor);
+    //    //    } else if (poiTarget is Character) {
+    //    //        (poiTarget as Character).DestroyMarker();
+    //    //    }
+    //    //}
+    //}
     #endregion
 
     #region Requirements
-    protected bool Requirement() {
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (poiTarget.gridTileLocation == null) {
             return false;
         }

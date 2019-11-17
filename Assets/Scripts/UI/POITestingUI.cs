@@ -51,7 +51,7 @@ public class POITestingUI : MonoBehaviour {
     public void InviteToMakeLove() {
         if (poi is Character) {
             Character target = poi as Character;
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY_FORLORN, INTERACTION_TYPE.INVITE_TO_MAKE_LOVE, target);
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY_FORLORN, INTERACTION_TYPE.INVITE, target);
             job.SetCannotOverrideJob(true);
             UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
             //if (UIManager.Instance.characterInfoUI.activeCharacter.HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
@@ -99,7 +99,7 @@ public class POITestingUI : MonoBehaviour {
     #region Tile Object Testing
     public void PoisonTable() {
         if (poi is Table) {
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.UNDERMINE_ENEMY, INTERACTION_TYPE.TABLE_POISON, poi);
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.UNDERMINE_ENEMY, INTERACTION_TYPE.POISON_TABLE, poi);
             UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
             Debug.LogError(poi.name + " is not a table!");

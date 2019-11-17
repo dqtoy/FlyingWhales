@@ -37,7 +37,7 @@ namespace Traits {
             int stumbleChance = UnityEngine.Random.Range(0, 100);
             bool hasCreatedJob = false;
             if (stumbleChance < 2) {
-                if (owner.currentAction == null || (owner.currentAction.goapType != INTERACTION_TYPE.STUMBLE && owner.currentAction.goapType != INTERACTION_TYPE.ACCIDENT)) {
+                if (owner.currentActionNode == null || (owner.currentActionNode.action.goapType != INTERACTION_TYPE.STUMBLE && owner.currentActionNode.action.goapType != INTERACTION_TYPE.ACCIDENT)) {
                     DoStumble();
                     hasCreatedJob = true;
                 }
@@ -60,9 +60,9 @@ namespace Traits {
             if (character.marker.isMoving) {
                 //If moving, the character will stumble and get injured.
                 DoStumble();
-            } else if (character.currentAction != null && !excludedActionsFromAccidentProneTrait.Contains(character.currentAction.goapType)) {
+            } else if (character.currentActionNode.action != null && !excludedActionsFromAccidentProneTrait.Contains(character.currentActionNode.action.goapType)) {
                 //If doing something, the character will fail and get injured.
-                DoAccident(character.currentAction);
+                DoAccident(character.currentActionNode.action);
             }
             return base.TriggerFlaw(character);
         }
@@ -89,12 +89,12 @@ namespace Traits {
             if (owner.IsInOwnParty()) {
                 owner.ownParty.RemoveAllOtherCharacters();
             }
-            if (owner.currentAction != null) {
+            if (owner.currentActionNode.action != null) {
                 //If current action is a roaming action like Hunting To Drink Blood, we must requeue the job after it is removed by StopCurrentAction
                 JobQueueItem currentJob = null;
                 JobQueue currentJobQueue = null;
-                if (owner.currentAction.isRoamingAction && owner.currentAction.parentPlan != null && owner.currentAction.parentPlan.job != null) {
-                    currentJob = owner.currentAction.parentPlan.job;
+                if (owner.currentActionNode.action.isRoamingAction && owner.currentActionNode.action.parentPlan != null && owner.currentActionNode.action.parentPlan.job != null) {
+                    currentJob = owner.currentActionNode.action.parentPlan.job;
                     currentJobQueue = currentJob.jobQueueParent;
                 }
                 owner.StopCurrentAction(false);
@@ -132,8 +132,8 @@ namespace Traits {
 
             owner.jobQueue.AddJobInQueue(job, false);
 
-            if (owner.currentAction != null && owner.currentAction.parentPlan != null && owner.currentAction.parentPlan.job != null
-                && owner.currentAction.parentPlan.job.id == owner.sleepScheduleJobID) {
+            if (owner.currentActionNode.action != null && owner.currentActionNode.action.parentPlan != null && owner.currentActionNode.action.parentPlan.job != null
+                && owner.currentActionNode.action.parentPlan.job.id == owner.sleepScheduleJobID) {
                 owner.SetHasCancelledSleepSchedule(true);
             }
 

@@ -5,77 +5,48 @@ using Traits;
 
 public class Carry : GoapAction {
 
-    //protected override bool isTargetMissing {
-    //    get {
-    //        bool targetMissing = false;
-    //        if (parentPlan != null && parentPlan.job != null && parentPlan.job.allowDeadTargets) {
-    //            targetMissing = poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
-    //                || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) || !(poiTarget as Character).isDead;
-    //        } else {
-    //            targetMissing = !poiTarget.IsAvailable() || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
-    //                || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation));
-    //        }
-
-    //        if (targetMissing) {
-    //            return targetMissing;
-    //        } else {
-    //            if (actor != poiTarget) {
-    //                Invisible invisible = poiTarget.GetNormalTrait("Invisible") as Invisible;
-    //                if (invisible != null && !invisible.charactersThatCanSee.Contains(actor)) {
-    //                    return true;
-    //                }
-    //            }
-    //            return targetMissing;
-    //        }
-    //    }
-    //}
-
-    public Carry(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CARRY, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public Carry(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CARRY) {
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
     }
 
     #region Overrides
-    protected override void ConstructRequirement() {
-        _requirementAction = Requirement;
+    protected override void ConstructBasePreconditionsAndEffects() {
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, target = GOAP_EFFECT_TARGET.TARGET });
     }
-    protected override void ConstructPreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = actor, targetPOI = poiTarget });
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
+        SetState("Target Missing", goapNode);
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
-        if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
-            SetState("Carry Success");
-        } else {
-            SetState("Target Missing");
+    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest target, object[] otherData) {
+        GoapActionInvalidity actionInvalidity = base.IsInvalid(actor, target, otherData);
+        if (actionInvalidity.isInvalid == false) {
+            if ((target as Character).IsInOwnParty() == false) {
+                actionInvalidity.isInvalid = true;
+            }
         }
+        return actionInvalidity;
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 1;
-    }
-    public override void DoAction() {
-        SetTargetStructure();
-        base.DoAction();
     }
     #endregion
 
     #region Requirements
-    protected bool Requirement() {
-        return actor != poiTarget;
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            return actor != poiTarget;
+        }
+        return false;
     }
     #endregion
 
     #region State Effects
-    public void AfterCarrySuccess() {
-        //if (parentPlan != null && parentPlan.job != null) {
-        //    parentPlan.job.SetCannotOverrideJob(true);//Carry should not be overrideable if the character is actually already carrying another character.
-        //}
-        Character target = poiTarget as Character;
-        actor.ownParty.AddCharacter(target);
+    public void AfterCarrySuccess(ActualGoapNode goapNode) {
+        Character target = goapNode.poiTarget as Character;
+        goapNode.actor.ownParty.AddCharacter(target);
     }
-    //public void AfterTargetMissing() {
-    //    actor.RemoveAwareness(poiTarget);
-    //}
     #endregion
 }
 
