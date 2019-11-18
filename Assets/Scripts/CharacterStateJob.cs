@@ -10,12 +10,12 @@ public class CharacterStateJob : JobQueueItem {
 
     public List<System.Action<Character>> onUnassignActions { get; private set; }
 
-    public CharacterStateJob(JOB_TYPE jobType, CHARACTER_STATE state, Region targetRegion) : base(jobType) {
+    public CharacterStateJob(JOB_TYPE jobType, CHARACTER_STATE state, Region targetRegion, IJobOwner owner) : base(jobType, owner) {
         this.targetState = state;
         this.targetRegion = targetRegion;
         onUnassignActions = new List<System.Action<Character>>();
     }
-    public CharacterStateJob(JOB_TYPE jobType, CHARACTER_STATE state) : base(jobType) {
+    public CharacterStateJob(JOB_TYPE jobType, CHARACTER_STATE state, IJobOwner owner) : base(jobType, owner) {
         this.targetState = state;
         onUnassignActions = new List<System.Action<Character>>();
     }
@@ -30,18 +30,19 @@ public class CharacterStateJob : JobQueueItem {
     }
 
     #region Overrides
-    public override void ProcessJob() {
-        base.ProcessJob();
+    public override bool ProcessJob() {
         Character characterOwner = assignedCharacter as Character;
         CharacterState newState = characterOwner.stateComponent.SwitchToState(targetState);
         if (newState != null) {
             SetAssignedState(newState);
+            return true;
         } else {
             throw new System.Exception(characterOwner.name + " tried doing state " + targetState.ToString() + " but was unable to do so! This must not happen!");
         }
+        //return base.ProcessJob();
     }
     public override void UnassignJob(bool shouldDoAfterEffect = true, string reason = "") {
-        base.UnassignJob(shouldDoAfterEffect);
+        base.UnassignJob(shouldDoAfterEffect, reason);
         if(assignedState != null && assignedCharacter != null) {
             //if(assignedCharacter.stateComponent.stateToDo == assignedState) {
             //    assignedCharacter.stateComponent.SetStateToDo(null);

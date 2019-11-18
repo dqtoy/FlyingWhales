@@ -87,7 +87,7 @@ public class Summon : Character, IWorldObject {
             //} else {
             //    CancelAllJobsTargettingThisCharacter("target is already dead", false);
             //}
-            CancelAllJobsTargettingThisCharacter("target is already dead", false);
+            ForceCancelAllJobsTargettingThisCharacter(false, "target is already dead");
             //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this as Character, "target is already dead");
             if (currentActionNode != null && !currentActionNode.cannotCancelAction) {
                 currentActionNode.StopAction();
@@ -136,7 +136,7 @@ public class Summon : Character, IWorldObject {
             AddTrait(dead, gainedFromDoing: deathFromAction);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this as Character);
 
-            CancelAllJobsAndPlans();
+            CancelAllJobs();
 
             //Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
             Log deathLog;
@@ -210,7 +210,7 @@ public class Summon : Character, IWorldObject {
         }
         RemoveAllNonPersistentTraits();
         ClearAllAwareness();
-        CancelAllJobsAndPlans();
+        CancelAllJobs();
         ResetToFullHP();
     }
 

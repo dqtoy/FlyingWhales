@@ -485,4 +485,10 @@ public class InteractionManager : MonoBehaviour {
         j.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.TOOL.ToString(), targetPOI = character }, INTERACTION_TYPE.CRAFT_ITEM);
     }
     #endregion
+
+    #region Precondition Resolvers
+    public bool TargetHasNegativeTraitEffect(Character actor, IPointOfInterest target) {
+        return target.HasTraitOf(TRAIT_EFFECT.NEGATIVE);
+    }
+    #endregion
 }

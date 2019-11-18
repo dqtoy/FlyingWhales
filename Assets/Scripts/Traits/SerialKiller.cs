@@ -123,7 +123,7 @@ public class SerialKiller : Trait {
             if(chance < 20) {
                 CheckTargetVictimIfStillAvailable();
                 if (targetVictim != null) {
-                    character.CancelAllJobsAndPlans();
+                    character.CancelAllJobs();
                     if (character.stateComponent.currentState != null) {
                         character.stateComponent.currentState.OnExitThisState();
                         if (character.stateComponent.currentState != null) {
@@ -159,7 +159,7 @@ public class SerialKiller : Trait {
             }
         }
         if (targetVictim != null) {
-            character.CancelAllJobsAndPlans();
+            character.CancelAllJobs();
             if(character.stateComponent.currentState != null) {
                 character.stateComponent.currentState.OnExitThisState();
                 if (character.stateComponent.currentState != null) {

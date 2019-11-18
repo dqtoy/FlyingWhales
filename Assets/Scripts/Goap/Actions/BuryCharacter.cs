@@ -94,7 +94,7 @@ public class BuryCharacter : GoapAction {
         Tombstone tombstone = new Tombstone(actor.currentStructure);
         tombstone.SetCharacter(targetCharacter);
         actor.currentStructure.AddPOI(tombstone, chosenLocation);
-        targetCharacter.CancelAllJobsTargettingThisCharacter(JOB_TYPE.BURY, except:parentPlan.job);
+        //targetCharacter.CancelAllJobsTargettingThisCharacter(JOB_TYPE.BURY, except:parentPlan.job);
         List<Character> characters = targetCharacter.GetAllCharactersThatHasRelationship();
         if(characters != null) {
             for (int i = 0; i < characters.Count; i++) {

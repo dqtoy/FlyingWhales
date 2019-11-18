@@ -25,9 +25,10 @@ public class JobQueueItem {
     public System.Action<Character, JobQueueItem> onTakeJobAction { get; protected set; }
     protected int _priority; //The lower the amount the higher the priority
 
-    public JobQueueItem(JOB_TYPE jobType) {
+    public JobQueueItem(JOB_TYPE jobType, IJobOwner owner) {
         id = Utilities.SetID(this);
         this.jobType = jobType;
+        this.originalOwner = owner;
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.jobType.ToString());
         this.blacklistedCharacters = new List<Character>();
         SetInitialPriority();
@@ -77,7 +78,7 @@ public class JobQueueItem {
     public virtual bool ProcessJob() { return false; }
 
     //Returns true or false if job was really removed in queue
-    public virtual bool CancelJob(bool shouldDoAfterEffect = true, string cause = "", string reason = "") {
+    public virtual bool CancelJob(bool shouldDoAfterEffect = true, string cause = "") {
         //When cancelling a job, we must check if it's personal or not because if it is a faction/settlement job it cannot be removed from queue
         //The only way for a faction/settlement job to be removed is if it is forced or it is actually finished
         if(assignedCharacter == null) {
@@ -102,7 +103,7 @@ public class JobQueueItem {
         //}
         //return hasBeenRemovedInJobQueue;
     }
-    public virtual bool ForceCancelJob(bool shouldDoAfterEffect = true, string cause = "", string reason = "") {
+    public virtual bool ForceCancelJob(bool shouldDoAfterEffect = true, string cause = "") {
         if (assignedCharacter != null) {
             return assignedCharacter.jobQueue.RemoveJobInQueue(this);
         }

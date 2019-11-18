@@ -1172,6 +1172,22 @@ public class Area : IJobOwner {
         }
         return false;
     }
+    public bool HasJobWithOtherData(JOB_TYPE jobType, object otherData) {
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            if (jobsInQueue[i].jobType == jobType && jobsInQueue[i] is GoapPlanJob) {
+                GoapPlanJob job = jobsInQueue[i] as GoapPlanJob;
+                if (job.allOtherData != null) {
+                    for (int j = 0; j < job.allOtherData.Count; j++) {
+                        object data = job.allOtherData[j];
+                        if (data == otherData) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
     public JobQueueItem GetJob(params JOB_TYPE[] jobTypes) {
         for (int i = 0; i < availableJobs.Count; i++) {
             for (int j = 0; j < jobTypes.Length; j++) {

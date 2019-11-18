@@ -63,7 +63,7 @@ public class Trait {
         if (type == TRAIT_TYPE.CRIMINAL && removedFrom is Character) {
             Character character = removedFrom as Character;
             if (!character.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-                character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
+                character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
             }
         }
         Messenger.Broadcast(Signals.TRAITABLE_LOST_TRAIT, removedFrom, this, removedBy);

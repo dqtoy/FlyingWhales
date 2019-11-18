@@ -146,7 +146,7 @@ public class PoisonTable : GoapAction {
     }
     private void ScheduleFionaEat() {
         Character fiona = CharacterManager.Instance.GetCharacterByName("Fiona");
-        fiona.CancelAllJobsAndPlans();
+        fiona.CancelAllJobs();
         GoapAction eat = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.EAT_AT_TABLE, fiona, poiTarget);
         GoapPlan plan = new GoapPlan(new GoapNode(null, eat.cost, eat), new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY }, GOAP_CATEGORY.FULLNESS);
         plan.ConstructAllNodes();

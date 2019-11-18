@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GoapPlanJob : JobQueueItem {
-    public Precondition[] goals { get; protected set; }
+    public GoapEffect goal { get; protected set; }
     public GoapPlan assignedPlan { get; protected set; }
     //public GoapPlan targetPlan { get; protected set; }
     public IPointOfInterest targetPOI { get; protected set; }
@@ -26,14 +26,14 @@ public class GoapPlanJob : JobQueueItem {
 
     public List<object> allOtherData { get; private set; }
 
-    public GoapPlanJob(JOB_TYPE jobType, IPointOfInterest targetPOI, params Precondition[] goals) : base(jobType) {
-        this.goals = goals;
+    public GoapPlanJob(JOB_TYPE jobType, GoapEffect goal, IPointOfInterest targetPOI, IJobOwner owner) : base(jobType, owner) {
+        this.goal = goal;
         this.targetPOI = targetPOI;
         //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         //allowDeadTargets = false;
     }
-    public GoapPlanJob(JOB_TYPE jobType, IPointOfInterest targetPOI, Dictionary<INTERACTION_TYPE, object[]> otherData, params Precondition[] goals) : base(jobType) {
-        this.goals = goals;
+    public GoapPlanJob(JOB_TYPE jobType, GoapEffect goal, IPointOfInterest targetPOI, Dictionary<INTERACTION_TYPE, object[]> otherData, IJobOwner owner) : base(jobType, owner) {
+        this.goal = goal;
         this.targetPOI = targetPOI;
         //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         //allowDeadTargets = false;
@@ -50,34 +50,34 @@ public class GoapPlanJob : JobQueueItem {
             }
         }
     }
-    public GoapPlanJob(JOB_TYPE jobType, INTERACTION_TYPE targetInteractionType) : base(jobType) {
-        //this.targetEffect = targetEffect;
-        //this.targetPOI = targetEffect.targetPOI;
-        this.targetInteractionType = targetInteractionType;
-        this.otherData = null;
-        //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
-        //allowDeadTargets = false;
-    }
-    public GoapPlanJob(JOB_TYPE jobType, INTERACTION_TYPE targetInteractionType, Dictionary<INTERACTION_TYPE, object[]> otherData) : base(jobType) {
-        //this.targetEffect = targetEffect;
-        //this.targetPOI = targetEffect.targetPOI;
-        this.targetInteractionType = targetInteractionType;
-        this.otherData = otherData;
-        //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
-        //allowDeadTargets = false;
-        if(otherData != null) {
-            isNotSavable = true;
-            allOtherData = new List<object>();
-            foreach (object[] data in otherData.Values) {
-                if(data != null) {
-                    for (int i = 0; i < data.Length; i++) {
-                        allOtherData.Add(data[i]);
-                    }
-                }
-            }
-        }
-    }
-    public GoapPlanJob(JOB_TYPE jobType, INTERACTION_TYPE targetInteractionType, IPointOfInterest targetPOI) : base(jobType) {
+    //public GoapPlanJob(JOB_TYPE jobType, INTERACTION_TYPE targetInteractionType, IJobOwner owner) : base(jobType, owner) {
+    //    //this.targetEffect = targetEffect;
+    //    //this.targetPOI = targetEffect.targetPOI;
+    //    this.targetInteractionType = targetInteractionType;
+    //    this.otherData = null;
+    //    //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
+    //    //allowDeadTargets = false;
+    //}
+    //public GoapPlanJob(JOB_TYPE jobType, INTERACTION_TYPE targetInteractionType, Dictionary<INTERACTION_TYPE, object[]> otherData, IJobOwner owner) : base(jobType, owner) {
+    //    //this.targetEffect = targetEffect;
+    //    //this.targetPOI = targetEffect.targetPOI;
+    //    this.targetInteractionType = targetInteractionType;
+    //    this.otherData = otherData;
+    //    //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
+    //    //allowDeadTargets = false;
+    //    if(otherData != null) {
+    //        isNotSavable = true;
+    //        allOtherData = new List<object>();
+    //        foreach (object[] data in otherData.Values) {
+    //            if(data != null) {
+    //                for (int i = 0; i < data.Length; i++) {
+    //                    allOtherData.Add(data[i]);
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
+    public GoapPlanJob(JOB_TYPE jobType, INTERACTION_TYPE targetInteractionType, IPointOfInterest targetPOI, IJobOwner owner) : base(jobType, owner) {
         //this.targetEffect = targetEffect;
         this.targetPOI = targetPOI;
         this.targetInteractionType = targetInteractionType;
@@ -85,7 +85,7 @@ public class GoapPlanJob : JobQueueItem {
         //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         //allowDeadTargets = false;
     }
-    public GoapPlanJob(JOB_TYPE jobType, INTERACTION_TYPE targetInteractionType, IPointOfInterest targetPOI, Dictionary<INTERACTION_TYPE, object[]> otherData) : base(jobType) {
+    public GoapPlanJob(JOB_TYPE jobType, INTERACTION_TYPE targetInteractionType, IPointOfInterest targetPOI, Dictionary<INTERACTION_TYPE, object[]> otherData, IJobOwner owner) : base(jobType, owner) {
         //this.targetEffect = targetEffect;
         this.targetPOI = targetPOI;
         this.targetInteractionType = targetInteractionType;
@@ -140,16 +140,17 @@ public class GoapPlanJob : JobQueueItem {
         if (targetInteractionType != INTERACTION_TYPE.NONE) {
             characterOwner.planner.StartGOAP(targetInteractionType, targetPOI, GOAP_CATEGORY.WORK, this, isPersonal);
         } else {
-            for (int i = 0; i < goals.Length; i++) {
-                Precondition goal = goals[i];
-                if(!goal.CanSatisfyCondition(characterOwner, targetPOI)) {
-                    characterOwner.planner.StartGOAP(goal.goapEffect, targetPOI, GOAP_CATEGORY.WORK, this, isPersonal);
-                }
-            }
+            characterOwner.planner.StartGOAP(goal, targetPOI, GOAP_CATEGORY.WORK, this, isPersonal);
+            //for (int i = 0; i < goals.Length; i++) {
+            //    Precondition goal = goals[i];
+            //    if(!goal.CanSatisfyCondition(characterOwner, targetPOI)) {
+            //        characterOwner.planner.StartGOAP(goal.goapEffect, targetPOI, GOAP_CATEGORY.WORK, this, isPersonal);
+            //    }
+            //}
         }
         return base.ProcessJob();
     }
-    public override bool CancelJob(bool shouldDoAfterEffect = true, string cause = "", string reason = "") {
+    public override bool CancelJob(bool shouldDoAfterEffect = true, string cause = "") {
         if (assignedCharacter == null) {
             //Can only cancel jobs that are in character job queue
             return false;
@@ -160,7 +161,7 @@ public class GoapPlanJob : JobQueueItem {
         }
         return false;
     }
-    public override bool ForceCancelJob(bool shouldDoAfterEffect = true, string cause = "", string reason = "") {
+    public override bool ForceCancelJob(bool shouldDoAfterEffect = true, string cause = "") {
         if (assignedCharacter != null) {
             if (assignedCharacter.jobQueue.RemoveJobInQueue(this)) {
                 assignedCharacter.RegisterLogAndShowNotifToThisCharacterOnly("Generic", "job_cancelled_cause", null, cause);
@@ -343,20 +344,22 @@ public class GoapPlanJob : JobQueueItem {
 
     #region Goap Effects
     public bool HasGoalConditionKey(string key) {
-        for (int i = 0; i < goals.Length; i++) {
-            if (goals[i].goapEffect.conditionKey == key) {
-                return true;
-            }
-        }
-        return false;
+        return goal.conditionKey == key;
+        //for (int i = 0; i < goals.Length; i++) {
+        //    if (goals[i].goapEffect.conditionKey == key) {
+        //        return true;
+        //    }
+        //}
+        //return false;
     }
     public bool HasGoalConditionType(GOAP_EFFECT_CONDITION conditionType) {
-        for (int i = 0; i < goals.Length; i++) {
-            if (goals[i].goapEffect.conditionType == conditionType) {
-                return true;
-            }
-        }
-        return false;
+        return goal.conditionType == conditionType;
+        //for (int i = 0; i < goals.Length; i++) {
+        //    if (goals[i].goapEffect.conditionType == conditionType) {
+        //        return true;
+        //    }
+        //}
+        //return false;
     }
     #endregion
 }
@@ -413,13 +416,13 @@ public class SaveDataGoapPlanJob : SaveDataJobQueueItem {
         } else {
             targetPOIID = -1;
         }
-        goalEffects = new SaveDataGoapEffect[goapJob.goals.Length];
-        for (int i = 0; i < goapJob.goals.Length; i++) {
-            GoapEffect goalEffect = goapJob.goals[i].goapEffect;
-            SaveDataGoapEffect saveEffect = new SaveDataGoapEffect();
-            saveEffect.Save(goalEffect);
-            goalEffects[i] = saveEffect;
-        }
+        //goalEffects = new SaveDataGoapEffect[goapJob.goals.Length];
+        //for (int i = 0; i < goapJob.goals.Length; i++) {
+        //    GoapEffect goalEffect = goapJob.goals[i].goapEffect;
+        //    SaveDataGoapEffect saveEffect = new SaveDataGoapEffect();
+        //    saveEffect.Save(goalEffect);
+        //    goalEffects[i] = saveEffect;
+        //}
 
 
         //forcedActionsGoapEffect = new List<SaveDataGoapEffect>();

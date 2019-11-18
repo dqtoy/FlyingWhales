@@ -44,7 +44,7 @@ public class Invisible : Trait {
         base.OnAddTrait(sourcePOI);
         if (sourcePOI is Character) {
             owner = sourcePOI as Character;
-            owner.CancelAllJobsTargettingThisCharacter();
+            owner.ForceCancelAllJobsTargettingThisCharacter();
         }
     }
     public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {

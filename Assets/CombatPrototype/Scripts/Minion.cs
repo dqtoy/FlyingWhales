@@ -123,7 +123,7 @@ public class Minion {
             //else if (character.stateComponent.stateToDo != null) {
             //    character.stateComponent.SetStateToDo(null);
             //}
-            character.CancelAllJobsTargettingThisCharacter("target is already dead", false);
+            character.ForceCancelAllJobsTargettingThisCharacter(false, "target is already dead");
             Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, character, "target is already dead");
             if (character.currentActionNode != null && !character.currentActionNode.cannotCancelAction) {
                 character.currentActionNode.StopAction();
@@ -166,7 +166,7 @@ public class Minion {
             PlayerManager.Instance.player.RemoveMinion(this);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, character);
 
-            character.CancelAllJobsAndPlans();
+            character.CancelAllJobs();
             StopInvasionProtocol(PlayerManager.Instance.player.currentAreaBeingInvaded);
 
             //Debug.Log(GameManager.Instance.TodayLogString() + character.name + " died of " + cause);
@@ -351,7 +351,7 @@ public class Minion {
         //character.marker.ClearPOIsInVisionRange();
         PlayerManager.Instance.player.playerArea.AddCharacterToLocation(character);
         character.ClearAllAwareness();
-        character.CancelAllJobsAndPlans();
+        character.CancelAllJobs();
         character.RemoveAllNonPersistentTraits();
         character.ResetToFullHP();
         if (character.isDead) {

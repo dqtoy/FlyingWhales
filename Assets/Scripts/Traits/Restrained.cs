@@ -56,8 +56,8 @@ public class Restrained : Trait {
     public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
         if(sourceCharacter is Character) {
             Character character = sourceCharacter as Character;
-            character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.FEED);
-            character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.JUDGEMENT);
+            character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.FEED);
+            character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.JUDGEMENT);
             Messenger.RemoveListener(Signals.TICK_STARTED, CheckRestrainTrait);
             Messenger.RemoveListener(Signals.HOUR_STARTED, CheckRestrainTraitPerHour);
             //_sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());

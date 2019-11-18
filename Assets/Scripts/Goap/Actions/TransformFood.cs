@@ -109,7 +109,7 @@ public class TransformFood : GoapAction {
         currentState.AddLogFiller(null, transformedFood.ToString(), LOG_IDENTIFIER.STRING_1);
     }
     private void AfterTransformSuccess() {
-        deadCharacter.CancelAllJobsTargettingThisCharacter(JOB_TYPE.BURY);
+        deadCharacter.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.BURY);
         actor.AdjustFood(transformedFood);
         if (poiTarget is Tombstone) {
             poiTarget.gridTileLocation.structure.RemovePOI(poiTarget, actor);
