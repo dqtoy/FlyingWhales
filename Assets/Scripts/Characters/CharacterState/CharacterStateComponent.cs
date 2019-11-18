@@ -50,7 +50,7 @@ public class CharacterStateComponent {
     //If the character is not in a state right now, this simply starts a new state instead of switching
     public CharacterState SwitchToState(CHARACTER_STATE state, Character targetCharacter = null, Area targetArea = null, int durationOverride = -1, int level = 1) {
         //Cannot switch state is has negative disabler
-        if(character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        if(character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
             return null;
         }
 
@@ -177,23 +177,6 @@ public class CharacterStateComponent {
                     previousMajorState.ExitState();
                     SetCurrentState(null);
                     currState.endStateAction?.Invoke();
-                    //if (previousMajorState.characterState == CHARACTER_STATE.BERSERKED && character.doNotDisturb == 1 && character.GetNormalTrait("Combat Recovery") != null) { //Quick fix only for build, MUST REDO
-                    //    if (previousMajorState.hasStarted) {
-                    //        //Resumes previous major state
-                    //        if (previousMajorState.CanResumeState()) {
-                    //            SetCurrentState(previousMajorState);
-                    //            currentState.ResumeState();
-                    //        } else {
-                    //            previousMajorState = null;
-                    //            SetCurrentState(null);
-                    //        }
-                    //    } else {
-                    //        previousMajorState.EnterState(previousMajorState.targetArea);
-                    //    }
-                    //} else {
-                    //    previousMajorState.ExitState();
-                    //    SetCurrentState(null);
-                    //}
                 } else {
                     bool resumeState = true;
                     if(currState.characterState == CHARACTER_STATE.COMBAT && previousMajorState.characterState == CHARACTER_STATE.BERSERKED) {

@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class RestrainCarryCharacter : GoapAction {
     private bool isForCriminal;
 
-    public RestrainCarryCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.RESTRAIN_CARRY_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public RestrainCarryCharacter() : base(INTERACTION_TYPE.RESTRAIN_CARRY_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
         //isNotificationAnIntel = false;
     }
@@ -18,8 +19,8 @@ public class RestrainCarryCharacter : GoapAction {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_NON_POSITIVE_TRAIT, conditionKey = "Disabler", targetPOI = poiTarget }, HasNonPositiveDisablerTrait);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.RESTRAIN_CARRY, conditionKey = actor, targetPOI = poiTarget });
     }
-    public override void Perform() {
-        base.Perform();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         isForCriminal = parentPlan != null && parentPlan.job != null && (parentPlan.job.jobType == JOB_TYPE.APPREHEND || parentPlan.job.jobType == JOB_TYPE.RESTRAIN);
         //rather than checking location check if the character is not in anyone elses party and is still active
         if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) { 
@@ -28,7 +29,7 @@ public class RestrainCarryCharacter : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 1;
     }
     //public override void FailAction() {
@@ -42,7 +43,7 @@ public class RestrainCarryCharacter : GoapAction {
     #endregion
 
     #region Requirements
-    protected bool Requirement() {
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         return actor != poiTarget;
     }
     #endregion
@@ -58,7 +59,7 @@ public class RestrainCarryCharacter : GoapAction {
         Character target = poiTarget as Character;
         actor.ownParty.AddCharacter(target);
 
-        if(target.GetNormalTrait("Restrained") == null) {
+        if(target.traitContainer.GetNormalTrait("Restrained") == null) {
             AddTraitTo(target, new Restrained(), actor);
         }
     }
@@ -99,8 +100,8 @@ public class RestrainCarryCharacter : GoapAction {
         }
         //Otherwise (usually criminal stuff like Serial Killing):
         else {
-            RELATIONSHIP_EFFECT relWithActor = recipient.GetRelationshipEffectWith(actor);
-            RELATIONSHIP_EFFECT relWithTarget = recipient.GetRelationshipEffectWith(target);
+            RELATIONSHIP_EFFECT relWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
+            RELATIONSHIP_EFFECT relWithTarget = recipient.relationshipContainer.GetRelationshipEffectWith(target.currentAlterEgo);
             if (recipient == actor) {
                 if (status == SHARE_INTEL_STATUS.INFORMED) {
                     //- If Informed: "Do not tell anybody, please!"
@@ -113,7 +114,7 @@ public class RestrainCarryCharacter : GoapAction {
                 }
             } else if (relWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
                 if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
-                    CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
+                    RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);
                     //- Considers it an Assault
                     recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
                     if (status == SHARE_INTEL_STATUS.WITNESSED && actor.currentAction != null && actor.currentAction.parentPlan != null && actor.currentAction.parentPlan.job != null) {
@@ -137,7 +138,7 @@ public class RestrainCarryCharacter : GoapAction {
                 }
             } else if (relWithActor == RELATIONSHIP_EFFECT.NONE) {
                 if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
-                    CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
+                    RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);
                     //- Considers it an Assault
                     recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
                     if (status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -148,7 +149,7 @@ public class RestrainCarryCharacter : GoapAction {
                         reactions.Add(string.Format("{0} shouldn't have done that to {1}!", actor.name, target.name));
                     }
                 } else if (relWithTarget == RELATIONSHIP_EFFECT.NONE) {
-                    CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
+                    RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);
                     //- Considers it an Assault
                     recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
                     if (status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -169,7 +170,7 @@ public class RestrainCarryCharacter : GoapAction {
                 }
             } else if (relWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
                 if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
-                    CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
+                    RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);
                     //- Considers it an Assault
                     recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
                     if (status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -182,7 +183,7 @@ public class RestrainCarryCharacter : GoapAction {
                         reactions.Add(string.Format("{0} is such a vile creature!", actor.name));
                     }
                 } else if (relWithTarget == RELATIONSHIP_EFFECT.NONE) {
-                    CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
+                    RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);
                     //- Considers it Aberration
                     recipient.ReactToCrime(CRIME.ABERRATION, this, actorAlterEgo, status);
                     if (status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -219,6 +220,6 @@ public class RestrainCarryCharacterData : GoapActionData {
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor != poiTarget && poiTarget is Character && (poiTarget as Character).HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
+        return actor != poiTarget && poiTarget is Character && (poiTarget as Character).traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE);
     }
 }

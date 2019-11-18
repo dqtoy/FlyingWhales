@@ -2,15 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
 using TMPro;
 using UnityEngine.UI;
-using System;
+using Traits;
 
 public class CharacterInfoUI : UIMenu {
-
-    public bool isWaitingForAttackTarget;
-    public bool isWaitingForJoinBattleTarget;
 
     [Space(10)]
     [Header("Minion")]
@@ -68,22 +64,17 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI statusTraitsLbl;
     [SerializeField] private ScrollRect normalTraitsScrollView;
     [SerializeField] private TextMeshProUGUI normalTraitsLbl;
-    [SerializeField] private ScrollRect relationshipTraitsScrollView;
     [SerializeField] private ScrollRect itemsScrollView;
     [SerializeField] private GameObject combatAttributePrefab;
     [SerializeField] private EventLabel statusTraitsEventLbl;
     [SerializeField] private EventLabel normalTraitsEventLbl;
 
     [Space(10)]
-    [Header("Memories")]
-    [SerializeField] private GameObject memoriesGO;
-    [SerializeField] private GameObject memoryItemPrefab;
-    [SerializeField] private ScrollRect memoriesScrollView;
-    public MemoryItem[] memoryItems { get; private set; }
+    [Header("Relationships")]
+    [SerializeField] private ScrollRect relationshipTraitsScrollView;
+    [SerializeField] private GameObject relationshipItemPrefab;
 
-    private TraitItem[] relationshipTraitContainers;
     private ItemContainer[] inventoryItemContainers;
-
     private LogHistoryItem[] logHistoryItems;
 
     private Character _activeCharacter;
@@ -102,7 +93,6 @@ public class CharacterInfoUI : UIMenu {
 
     internal override void Initialize() {
         base.Initialize();
-        isWaitingForAttackTarget = false;
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, UpdateTraitsFromSignal);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, UpdateTraitsFromSignal);
@@ -114,19 +104,12 @@ public class CharacterInfoUI : UIMenu {
         Messenger.AddListener<SpecialToken, Character>(Signals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<SpecialToken, Character>(Signals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<Character>(Signals.CHARACTER_SWITCHED_ALTER_EGO, OnCharacterChangedAlterEgo);
-
-        //statusTraitContainers = Utilities.GetComponentsInDirectChildren<TraitItem>(statusTraitsScrollView.content.gameObject);
-        //normalTraitContainers = Utilities.GetComponentsInDirectChildren<TraitItem>(normalTraitsScrollView.content.gameObject);
-        relationshipTraitContainers = Utilities.GetComponentsInDirectChildren<TraitItem>(relationshipTraitsScrollView.content.gameObject);
+        Messenger.AddListener<Relatable, Relatable>(Signals.RELATIONSHIP_ADDED, OnRelationshipAdded);
+        Messenger.AddListener<Relatable, RELATIONSHIP_TRAIT, Relatable>(Signals.RELATIONSHIP_REMOVED, OnRelationshipRemoved);
         inventoryItemContainers = Utilities.GetComponentsInDirectChildren<ItemContainer>(itemsScrollView.content.gameObject);
 
-        //statusTraitsEventLbl.SetHighlightChecker(ShouldTraitBeHighlighted);
-
-        //normalTraitsEventLbl.SetHighlightChecker(ShouldTraitBeHighlighted);
         normalTraitsEventLbl.SetOnClickAction(OnClickTrait);
         statusTraitsEventLbl.SetOnClickAction(OnClickTrait);
-
-        //InitializeMemoryUI();
 
         InitializeLogsMenu();
     }
@@ -159,6 +142,7 @@ public class CharacterInfoUI : UIMenu {
         UpdateTabsToShow();
         UpdateCharacterInfo();
         UpdateTraits();
+        UpdateRelationships();
         UpdateInventoryInfo();
         UpdateAllHistoryInfo();
         ResetAllScrollPositions();
@@ -252,7 +236,7 @@ public class CharacterInfoUI : UIMenu {
 
         //Disabler Thought
         if (_activeCharacter.doNotDisturb > 0) {
-            Trait disablerTrait = _activeCharacter.GetTraitOf(TRAIT_TYPE.DISABLER);
+            Trait disablerTrait = _activeCharacter.traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER).FirstOrDefault();
             if (disablerTrait != null) {
                 if (disablerTrait.thoughtText != null && disablerTrait.thoughtText != string.Empty) {
                     plansLbl.text = disablerTrait.thoughtText.Replace("[Character]", _activeCharacter.name);
@@ -428,19 +412,12 @@ public class CharacterInfoUI : UIMenu {
         if (_activeCharacter.minion != null) {
             return;
         }
-        //Utilities.DestroyChildren(statusTraitsScrollView.content);
-        //Utilities.DestroyChildren(normalTraitsScrollView.content);
-        //Utilities.DestroyChildren(relationshipTraitsScrollView.content);
-
-        //int lastStatusIndex = 0;
-        //int lastNormalIndex = 0;
-        int lastRelationshipIndex = 0;
-
+ 
         statusTraitsLbl.text = string.Empty;
         normalTraitsLbl.text = string.Empty;
         
-        for (int i = 0; i < _activeCharacter.normalTraits.Count; i++) {
-            Trait currTrait = _activeCharacter.normalTraits[i];
+        for (int i = 0; i < _activeCharacter.traitContainer.allTraits.Count; i++) {
+            Trait currTrait = _activeCharacter.traitContainer.allTraits[i];
             if (currTrait.isHidden) {
                 continue; //skip
             }
@@ -449,11 +426,6 @@ public class CharacterInfoUI : UIMenu {
                 continue; //hide combat traits
             }
             if (currTrait.type == TRAIT_TYPE.STATUS || currTrait.type == TRAIT_TYPE.DISABLER || currTrait.type == TRAIT_TYPE.ENCHANTMENT || currTrait.type == TRAIT_TYPE.EMOTION) {
-                //CreateTraitGO(currTrait, statusTraitsScrollView.content);
-                //if (lastStatusIndex < statusTraitContainers.Length) {
-                //    statusTraitContainers[lastStatusIndex].SetCombatAttribute(currTrait);
-                //    lastStatusIndex++;
-                //}
                 string color = normalTextColor;
                 if (currTrait.type == TRAIT_TYPE.BUFF) {
                     color = buffTextColor;
@@ -465,11 +437,6 @@ public class CharacterInfoUI : UIMenu {
                 }
                 statusTraitsLbl.text += "<b><color=" + color + "><link=" + '"' + i.ToString() + '"' + ">" + currTrait.name + "</link></color></b>";
             } else {
-                //CreateTraitGO(currTrait, normalTraitsScrollView.content);
-                //if (lastNormalIndex < normalTraitContainers.Length) {
-                //    normalTraitContainers[lastNormalIndex].SetCombatAttribute(currTrait);
-                //    lastNormalIndex++;
-                //}
                 string color = normalTextColor;
                 if (currTrait.type == TRAIT_TYPE.BUFF) {
                     color = buffTextColor;
@@ -482,64 +449,25 @@ public class CharacterInfoUI : UIMenu {
                 normalTraitsLbl.text += "<b><color=" + color + "><link=" + '"' + i.ToString() + '"' + ">" + currTrait.name + "</link></color></b>";
             }
         }
-        for (int i = 0; i < _activeCharacter.relationshipTraits.Count; i++) {
-            Trait currTrait = _activeCharacter.relationshipTraits[i];
-            //CreateTraitGO(currTrait, relationshipTraitsScrollView.content);
-            if (lastRelationshipIndex < relationshipTraitContainers.Length) {
-                relationshipTraitContainers[lastRelationshipIndex].SetCombatAttribute(currTrait);
-                lastRelationshipIndex++;
-            }
-            
-        }
-
-        if (lastRelationshipIndex < relationshipTraitContainers.Length) {
-            for (int i = lastRelationshipIndex; i < relationshipTraitContainers.Length; i++) {
-                relationshipTraitContainers[i].gameObject.SetActive(false);
-            }
-        }
-        //if (lastStatusIndex < statusTraitContainers.Length) {
-        //    for (int i = lastStatusIndex; i < statusTraitContainers.Length; i++) {
-        //        statusTraitContainers[i].gameObject.SetActive(false);
-        //    }
-        //}
-        //if (lastNormalIndex < normalTraitContainers.Length) {
-        //    for (int i = lastNormalIndex; i < normalTraitContainers.Length; i++) {
-        //        normalTraitContainers[i].gameObject.SetActive(false);
-        //    }
-        //}
     }
-    //private void CreateTraitGO(Trait combatAttribute, RectTransform parent) {
-    //    GameObject go = GameObject.Instantiate(combatAttributePrefab, parent);
-    //    CombatAttributeItem combatAttributeItem = go.GetComponent<CombatAttributeItem>();
-    //    combatAttributeItem.SetCombatAttribute(combatAttribute);
-    //}
     public void OnHoverTrait(object obj) {
         if (obj is string) {
             string text = (string) obj;
             int index = int.Parse(text);
-            Trait trait = activeCharacter.normalTraits[index];
+            Trait trait = activeCharacter.traitContainer.allTraits[index];
             UIManager.Instance.ShowSmallInfo(trait.description);
         }
 
     }
-    //private bool ShouldTraitBeHighlighted(object obj) {
-    //    if (obj is string) {
-    //        string text = (string)obj;
-    //        int index = int.Parse(text);
-    //        Trait trait = activeCharacter.normalTraits[index];
-    //        return trait.canBeTriggered;
-    //    }
-    //    return false;
-    //}
     public void OnHoverOutTrait() {
         UIManager.Instance.HideSmallInfo();
     }
     private void OnClickTrait(object obj) {
-        if (activeCharacter.CanStillTriggerFlaws()) {
+        if (TraitManager.Instance.CanStillTriggerFlaws(activeCharacter)) {
             if (obj is string) {
                 string text = (string)obj;
                 int index = int.Parse(text);
-                Trait trait = activeCharacter.normalTraits[index];
+                Trait trait = activeCharacter.traitContainer.allTraits[index];
                 string traitDescription = trait.description;
                 if (trait.canBeTriggered) {
                     traitDescription += "\n" + trait.GetRequirementDescription(activeCharacter) +
@@ -671,89 +599,7 @@ public class CharacterInfoUI : UIMenu {
     public void SetLogMenuState(bool state) {
         logParentGO.SetActive(state);
     }
-    #endregion
-
-    #region Attack Character
-    private void ShowAttackButton() {
-        SetActiveAttackButtonGO(true);
-        SetAttackButtonState(false);
-    }
-    public void ToggleAttack() {
-        isWaitingForAttackTarget = !isWaitingForAttackTarget;
-        if (isWaitingForAttackTarget) {
-            SetJoinBattleButtonState(false);
-        }
-    }
-    public void SetAttackButtonState(bool state) {
-        attackBtnToggle.isOn = state;
-        //isWaitingForAttackTarget = state;
-        if (isWaitingForAttackTarget) {
-            SetJoinBattleButtonState(false);
-        }
-    }
-    public void SetActiveAttackButtonGO(bool state) {
-        attackButtonGO.SetActive(state);
-    }
-    #endregion
-
-    #region Join Battle Character
-    private void ShowJoinBattleButton() {
-        SetActiveJoinBattleButtonGO(true);
-        SetJoinBattleButtonState(false);
-    }
-    public void ToggleJoinBattle() {
-        isWaitingForJoinBattleTarget = !isWaitingForJoinBattleTarget;
-        if (isWaitingForJoinBattleTarget) {
-            SetAttackButtonState(false);
-        }
-    }
-    public void SetJoinBattleButtonState(bool state) {
-        isWaitingForJoinBattleTarget = state;
-        joinBattleBtnToggle.isOn = state;
-        if (isWaitingForJoinBattleTarget) {
-            SetAttackButtonState(false);
-        }
-    }
-    public void SetActiveJoinBattleButtonGO(bool state) {
-        joinBattleButtonGO.SetActive(state);
-    }
-    #endregion
-
-    #region Level Up
-    public void LevelUpCharacter() {
-        _activeCharacter.LevelUp();
-        UpdateStatInfo();
-    }
-    public void LevelDownCharacter() {
-        _activeCharacter.LevelUp(-1);
-        UpdateStatInfo();
-    }
-    #endregion
-
-    //#region Memories
-    //private void InitializeMemoryUI() {
-    //    memoryItems = new MemoryItem[CharacterManager.CHARACTER_MAX_MEMORY];
-    //    for (int i = 0; i < CharacterManager.CHARACTER_MAX_MEMORY; i++) {
-    //        GameObject go = GameObject.Instantiate(memoryItemPrefab, memoriesScrollView.content);
-    //        memoryItems[i] = go.GetComponent<MemoryItem>();
-    //    }
-    //}
-    //private void UpdateMemories() {
-    //    if (memoriesGO.activeSelf) {
-    //        for (int i = 0; i < memoryItems.Length; i++) {
-    //            if(i < _activeCharacter.memories.memoryList.Count) {
-    //                memoryItems[i].SetMemory(_activeCharacter.memories.memoryList[(_activeCharacter.memories.memoryList.Count - 1) - i]);
-    //            } else {
-    //                memoryItems[i].SetMemory(null);
-    //            }
-    //        }
-    //    }
-    //}
-    //public void OpenMemories() {
-    //    memoriesGO.SetActive(true);
-    //    UpdateMemories();
-    //}
-    //#endregion
+    #endregion   
 
     #region Listeners
     private void OnMenuOpened(UIMenu openedMenu) {
@@ -835,7 +681,6 @@ public class CharacterInfoUI : UIMenu {
         }
         UIManager.Instance.ShowSmallInfo(summary);
     }
-
     public void HideCharacterTestingInfo() {
         UIManager.Instance.HideSmallInfo();
     }
@@ -864,11 +709,34 @@ public class CharacterInfoUI : UIMenu {
             Debug.LogError("No eligible characters to assault!");
         }
     }
-    //public void LogWorldDistanceToCurrentHostile() {
-    //    Debug.Log(Vector2.Distance(_activeCharacter.marker.transform.position, (_activeCharacter.stateComponent.currentState as CombatState).currentClosestHostile.marker.transform.position));
-    //}
-    //public void LogLocalDistanceToCurrentHostile() {
-    //    Debug.Log(Vector2.Distance(_activeCharacter.marker.transform.localPosition, (_activeCharacter.stateComponent.currentState as CombatState).currentClosestHostile.marker.transform.localPosition));
-    //}
+    #endregion
+
+    #region Relationships
+    private void UpdateRelationships() {
+        //CharacterRelationshipItem[] items = Utilities.GetComponentsInDirectChildren<CharacterRelationshipItem>(relationshipTraitsScrollView.content.gameObject);
+        Utilities.DestroyChildren(relationshipTraitsScrollView.content);
+        foreach (KeyValuePair<Relatable, IRelationshipData> keyValuePair in activeCharacter.relationshipContainer.relationships) {
+            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(relationshipItemPrefab.name, Vector3.zero, Quaternion.identity, relationshipTraitsScrollView.content);
+            CharacterRelationshipItem item = go.GetComponent<CharacterRelationshipItem>();
+            if (keyValuePair.Key is AlterEgoData) {
+                item.Initialize(keyValuePair.Key as AlterEgoData, keyValuePair.Value);
+            }
+        }
+    }
+    private void OnRelationshipAdded(Relatable gainedBy, Relatable rel) {
+        if (isShowing) {
+            if (gainedBy == activeCharacter.currentAlterEgo || rel == activeCharacter.currentAlterEgo) {
+                UpdateRelationships();
+            }
+        }
+        
+    }
+    private void OnRelationshipRemoved(Relatable gainedBy, RELATIONSHIP_TRAIT trait, Relatable rel) {
+        if (isShowing) {
+            if (gainedBy == activeCharacter.currentAlterEgo || rel == activeCharacter.currentAlterEgo) {
+                UpdateRelationships();
+            }
+        }
+    }
     #endregion
 }

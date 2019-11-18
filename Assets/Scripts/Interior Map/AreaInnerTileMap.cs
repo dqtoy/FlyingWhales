@@ -179,7 +179,6 @@ public class AreaInnerTileMap : MonoBehaviour {
         SplitMap(false);
         //Vector3Int startPoint = new Vector3Int(eastOutsideTiles, southOutsideTiles, 0);
         //DrawTownMap(data.generatedTownMapSettings, startPoint);
-        //TODO: DrawTownMap
         //No need to Place Structures since structure of tile is loaded upon loading grid tile
         //AssignOuterAreas(insideTiles, outsideTiles); //no need for this because structure reference is already saved per location grid tile, and this only assigns the tile to either the wilderness or work area structure
     }

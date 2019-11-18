@@ -1,38 +1,32 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class SepticShock : GoapAction {
 
-    public SepticShock(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.SEPTIC_SHOCK, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public SepticShock() : base(INTERACTION_TYPE.SEPTIC_SHOCK) {
         actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
     }
 
     #region Overrides
-    public override void Perform() {
-        base.Perform();
-        SetState("Septic Shock Success");
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
+        SetState("Septic Shock Success", goapNode);
     }
-    public override void DoAction() {
-        SetTargetStructure();
-        base.DoAction();
-    }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 5;
-    }
-    public override LocationGridTile GetTargetLocationTile() {
-        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
     #endregion
 
     #region State Effects
-    private void PreSepticShockSuccess() {
-        actor.SetPOIState(POI_STATE.INACTIVE);
+    private void PreSepticShockSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.SetPOIState(POI_STATE.INACTIVE);
     }
-    private void AfterSepticShockSuccess() {
-        actor.SetPOIState(POI_STATE.ACTIVE);
-        actor.Death("Septic Shock", this, _deathLog: currentState.descriptionLog);
+    private void AfterSepticShockSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.SetPOIState(POI_STATE.ACTIVE);
+        goapNode.actor.Death("Septic Shock", this, _deathLog: goapNode.action.states[goapNode.currentStateName].descriptionLog);
     }
     #endregion
 }

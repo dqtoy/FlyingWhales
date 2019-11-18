@@ -15,7 +15,6 @@ public class ThiefSummon : Summon {
     public ThiefSummon() : base(SUMMON_TYPE.ThiefSummon, CharacterRole.BANDIT, RACE.HUMANS, Utilities.GetRandomGender()) {
         itemsToSteal = 1;
         AddInteractionType(INTERACTION_TYPE.STEAL);
-        AddInteractionType(INTERACTION_TYPE.STEAL_FROM_CHARACTER);
     }
     public ThiefSummon(SaveDataCharacter data) : base(data) {
         itemsToSteal = 1;

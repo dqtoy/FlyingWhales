@@ -1,17 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class Daydream : GoapAction {
 
-    //private LocationStructure _targetStructure;
+    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
-    //public override LocationStructure targetStructure { get { return _targetStructure; } }
-
-    protected override string failActionState { get { return "Daydream Failed"; } }
-
-    public Daydream(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DAYDREAM, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public Daydream() : base(INTERACTION_TYPE.DAYDREAM) {
         shouldIntelNotificationOnlyIfActorIsActive = true;
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         validTimeOfDays = new TIME_IN_WORDS[] {
@@ -24,90 +21,51 @@ public class Daydream : GoapAction {
     }
 
     #region Overrides
-    protected override void ConstructRequirement() {
-        _requirementAction = Requirement;
-    }
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, target = GOAP_EFFECT_TARGET.ACTOR });
     }
-    public override void Perform() {
-        base.Perform();
-        //if (targetTile.occupant != null && targetTile.occupant != actor) {
-        //    SetState("Daydream Failed");
-        //} else {
-        SetState("Daydream Success");
-        //}
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
+        SetState("Daydream Success", goapNode);
     }
-    public override void DoAction() {
-        SetTargetStructure();
-        base.DoAction();
-    }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         //**Cost**: randomize between 10-30
         return Utilities.rng.Next(10, 31);
     }
-    //public override void FailAction() {
-    //    base.FailAction();
-    //    SetState("Daydream Failed");
-    //}
-    //public override void SetTargetStructure() {
-    //    List<LocationStructure> choices = actor.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WILDERNESS).ToList();
-    //    if (actor.specificLocation.HasStructure(STRUCTURE_TYPE.WORK_AREA)) {
-    //        choices.AddRange(actor.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.WORK_AREA));
-    //    }
-    //    if (choices.Count > 0) {
-    //        _targetStructure = choices[Utilities.rng.Next(0, choices.Count)];
-    //    }
-    //    base.SetTargetStructure();
-    //}
-    public override LocationGridTile GetTargetLocationTile() {
-        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
-    }
-    public override void OnStopWhilePerforming() {
-        if (currentState.name == "Daydream Success") {
-            actor.AdjustDoNotGetLonely(-1);
-            actor.AdjustDoNotGetTired(-1);
-        }
-    }
-    public override bool InitializeOtherData(object[] otherData) {
-        this.otherData = otherData;
-        if (otherData.Length == 1 && otherData[0] is ACTION_LOCATION_TYPE) {
-            actionLocationType = (ACTION_LOCATION_TYPE) otherData[0];
-            SetTargetStructure();
-            return true;
-        }
-        return base.InitializeOtherData(otherData);
-    }
-    #endregion
-
-    #region Effects
-    private void PreDaydreamSuccess() {
-        actor.AdjustDoNotGetLonely(1);
-        actor.AdjustDoNotGetTired(1);
-    }
-    private void PerTickDaydreamSuccess() {
-        actor.AdjustHappiness(500);
-    }
-    private void AfterDaydreamSuccess() {
+    public override void OnStopWhilePerforming(Character actor, IPointOfInterest target, object[] otherData) {
+        base.OnStopWhilePerforming(actor, target, otherData);
         actor.AdjustDoNotGetLonely(-1);
         actor.AdjustDoNotGetTired(-1);
     }
     #endregion
 
+    #region Effects
+    private void PreDaydreamSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.AdjustDoNotGetLonely(1);
+        goapNode.actor.AdjustDoNotGetTired(1);
+    }
+    private void PerTickDaydreamSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.AdjustHappiness(500);
+    }
+    private void AfterDaydreamSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.AdjustDoNotGetLonely(-1);
+        goapNode.actor.AdjustDoNotGetTired(-1);
+    }
+    #endregion
+
     #region Requirement
-    protected bool Requirement() {
-        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
-            return false;
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+                return false;
+            }
+            if (actor.traitContainer.GetNormalTrait("Disillusioned") != null) {
+                return false;
+            }
+            return actor == poiTarget;
         }
-        if (actor.GetNormalTrait("Disillusioned") != null) {
-            return false;
-        }
-        return actor == poiTarget;
-        //if (actor == poiTarget) {
-        //    //actor should be non-beast
-        //    return actor.role.roleType != CHARACTER_ROLE.BEAST;
-        //}
-        //return false;
+        return false;
     }
     #endregion
 }

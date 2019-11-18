@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Traits;
 
 public interface ICharacterSim {
     string name { get; }
@@ -26,9 +26,7 @@ public interface ICharacterSim {
     RACE race { get; }
     CharacterBattleOnlyTracker battleOnlyTracker { get; }
     CharacterClass characterClass { get; }
-    List<Skill> skills { get; }
     List<Trait> normalTraits { get; }
-    //List<BodyPart> bodyParts { get; }
     Dictionary<ELEMENT, float> elementalWeaknesses { get; }
     Dictionary<ELEMENT, float> elementalResistances { get; }
 
@@ -40,7 +38,6 @@ public interface ICharacterSim {
     void SetRowNumber(int row);
     void AdjustSP(int amount);
     void AdjustHP(int amount, Character killer = null);
-    void EnableDisableSkills(CombatSim combatSim);
     //CharacterAttribute GetAttribute(string attribute);
     //int GetDef();
 }

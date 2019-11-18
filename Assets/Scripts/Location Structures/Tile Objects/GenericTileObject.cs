@@ -1,36 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Traits;
 
 public class GenericTileObject : TileObject {
 
-    public override List<Trait> normalTraits {
-        get { return gridTileLocation.normalTraits; }
-    }
+    public bool hasBeenInitialized { get; private set; }
 
     public GenericTileObject(LocationStructure location) {
-        SetStructureLocation(location);
         poiGoapActions = new List<INTERACTION_TYPE>();
-        Initialize(TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT);
     }
     public GenericTileObject(SaveDataTileObject data) {
         poiGoapActions = new List<INTERACTION_TYPE>();
         Initialize(data);
-    }
-
-    public override List<Trait> RemoveAllTraitsByType(TRAIT_TYPE traitType) {
-        return gridTileLocation.RemoveAllTraitsByType(traitType);
-    }
-    public override bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null, bool includeAlterEgo = true) {
-        return gridTileLocation.RemoveTrait(trait, triggerOnRemove, removedBy);
-    }
-    public override bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
-        if (gridTileLocation != null) {
-            return gridTileLocation.AddTrait(trait, characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd);
-        } else {
-            return false;
-        }
-        
     }
     protected override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom) {
         Messenger.Broadcast(Signals.TILE_OBJECT_REMOVED, this as TileObject, removedBy, removedFrom);
@@ -73,5 +55,23 @@ public class GenericTileObject : TileObject {
     }
     public override string ToString() {
         return "Generic Obj at tile " + gridTileLocation?.ToString();
+    }
+
+    public void ManualInitialize(LocationStructure location, LocationGridTile tile) {
+        hasBeenInitialized = true;
+        SetStructureLocation(location);
+        Initialize(TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT);
+        SetGridTileLocation(tile);
+        DisableCollisionTrigger();
+
+        switch (gridTileLocation.groundType) {
+            case LocationGridTile.Ground_Type.Grass:
+            case LocationGridTile.Ground_Type.Wood:
+                    traitContainer.AddTrait(this, "Flammable");
+                break;
+            default:
+                traitContainer.RemoveTrait(this, "Flammable");
+                break;
+        }
     }
 }

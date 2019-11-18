@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class GoTo : GoapAction {
 
-    public GoTo(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.GO_TO, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public GoTo() : base(INTERACTION_TYPE.GO_TO, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.TARGET_IN_VISION;
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
@@ -15,11 +16,11 @@ public class GoTo : GoapAction {
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_VISION, targetPOI = poiTarget });
     }
-    public override void Perform() {
-        base.Perform();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         SetState("Goto Success");
     }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 15;
     }
     #endregion

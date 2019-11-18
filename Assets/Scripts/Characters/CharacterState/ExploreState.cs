@@ -25,7 +25,6 @@ public class ExploreState : CharacterState {
     protected override void StartState() {
         base.StartState();
         hasStateStarted = true;
-        stateComponent.character.SetLastExploreState(null);
     }
     protected override void DoMovementBehavior() {
         base.DoMovementBehavior();
@@ -48,7 +47,7 @@ public class ExploreState : CharacterState {
         } else if (stateComponent.character.role.roleType != CHARACTER_ROLE.BEAST && targetPOI is SpecialToken) {
             SpecialToken token = targetPOI as SpecialToken;
             if (token.characterOwner == null) {
-                GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_ITEM, stateComponent.character, targetPOI);
+                GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_UP, stateComponent.character, targetPOI);
                 if (goapAction.targetTile != null) {
                     SetCurrentlyDoingAction(goapAction);
                     goapAction.CreateStates();
@@ -68,7 +67,6 @@ public class ExploreState : CharacterState {
     }
     public override void OnExitThisState() {
         base.OnExitThisState();
-        stateComponent.character.SetLastExploreState(this);
         if (!stateComponent.character.isDead) {
             //Force deposit items in character home location warehouse
             //Stroll goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.DROP_ITEM, this, this) as Stroll;
@@ -81,7 +79,7 @@ public class ExploreState : CharacterState {
     protected override void PerTickInState() {
         base.PerTickInState();
         if (!isDone && !isPaused) {
-            //if (stateComponent.character.GetNormalTrait("Injured") != null || targetArea != stateComponent.character.specificLocation) {
+            //if (stateComponent.character.traitContainer.GetNormalTrait("Injured") != null || targetArea != stateComponent.character.specificLocation) {
             //    StopStatePerTick();
             //    OnExitThisState();
             //    return;

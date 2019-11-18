@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class TransformFood : GoapAction {
 
@@ -15,7 +16,7 @@ public class TransformFood : GoapAction {
     }
 
 
-    public TransformFood(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.TRANSFORM_FOOD, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public TransformFood() : base(INTERACTION_TYPE.TRANSFORM_FOOD, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Work_Icon;
 
         if (poiTarget is Character) {
@@ -38,15 +39,15 @@ public class TransformFood : GoapAction {
         }
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_FOOD, conditionKey = 0, targetPOI = actor });
     }
-    public override void Perform() {
-        base.Perform();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         if (!isTargetMissing) {
             SetState("Transform Success");
         } else {
             SetState("Target Missing");
         }
     }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return Utilities.rng.Next(15, 26);
     }
     protected override void CreateThoughtBubbleLog() {
@@ -66,14 +67,14 @@ public class TransformFood : GoapAction {
     #endregion
 
     #region Requirements
-    protected bool Requirement() {
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (poiTarget.gridTileLocation == null) {
             return false;
         }
         if (deadCharacter != null) {
             if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
                 //return true;
-                if (actor.GetNormalTrait("Cannibal") != null) {
+                if (actor.traitContainer.GetNormalTrait("Cannibal") != null) {
                     return true;
                 }
                 return false;
@@ -144,8 +145,8 @@ public class TransformFood : GoapAction {
         List<string> reactions = new List<string>();
         Character targetCharacter = poiTarget as Character;
 
-        RELATIONSHIP_EFFECT relWithActor = recipient.GetRelationshipEffectWith(actor);
-        RELATIONSHIP_EFFECT relWithTarget = recipient.GetRelationshipEffectWith(targetCharacter);
+        RELATIONSHIP_EFFECT relWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
+        RELATIONSHIP_EFFECT relWithTarget = recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo);
 
         if (isOldNews) {
             //Old News
@@ -244,7 +245,7 @@ public class TransformFoodData : GoapActionData {
         if (targetCharacter != null) {
             if (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES) {
                 //return true;
-                if (actor.GetNormalTrait("Cannibal") != null) {
+                if (actor.traitContainer.GetNormalTrait("Cannibal") != null) {
                     return true;
                 }
                 return false;

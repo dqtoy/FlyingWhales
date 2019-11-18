@@ -1,64 +1,51 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class Strangle : GoapAction {
 
-    private LocationStructure _targetStructure;
-    public override LocationStructure targetStructure {
-        get { return _targetStructure; }
-    }
-
-    public Strangle(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.STRANGLE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public Strangle() : base(INTERACTION_TYPE.STRANGLE) {
         actionIconString = GoapActionStateDB.Sleep_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
     }
 
-    #region Overrides
-    protected override void ConstructRequirement() {
-        _requirementAction = Requirement;
-    }
-    public override void SetTargetStructure() {
-        _targetStructure = actor.homeStructure;
-        if (_targetStructure == null) {
-            _targetStructure = actor.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-        }
-        base.SetTargetStructure();
-    }
-    public override LocationGridTile GetTargetLocationTile() {
-        if (actor.currentStructure == targetStructure) {
-            return actor.gridTileLocation;
-        }
-        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
-    }
+    #region Override
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = actor });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, target = GOAP_EFFECT_TARGET.ACTOR });
     }
-    public override void Perform() {
-        base.Perform();
-        //if (!isTargetMissing) {
-            SetState("Strangle Success");
-        //} else {
-        //    SetState("Target Missing");
-        //}
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
+        SetState("Strangle Success", goapNode);
     }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 2;
+    }
+    public override LocationStructure GetTargetStructure(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (actor.homeStructure != null) {
+            return actor.homeStructure;
+        } else {
+            return actor.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+        }
     }
     #endregion
 
     #region Requirements
-    protected bool Requirement() {
-        return poiTarget == actor && poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            return poiTarget == actor && poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+        }
+        return false;
     }
     #endregion
 
     #region State Effects
-    public void PerTickStrangleSuccess() {
-        actor.AdjustHP(-(int)((float)actor.maxHP * 0.18f));
+    public void PerTickStrangleSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.AdjustHP(-(int)((float)goapNode.actor.maxHP * 0.18f));
     }
-    public void AfterStrangleSuccess() {
-        actor.Death("suicide", this, _deathLog: currentState.descriptionLog);
+    public void AfterStrangleSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.Death("suicide", this, _deathLog: goapNode.action.states[goapNode.currentStateName].descriptionLog);
     }
     #endregion
 }

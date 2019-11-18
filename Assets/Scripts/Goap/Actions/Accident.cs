@@ -1,72 +1,56 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class Accident : GoapAction {
-    public GoapAction actionToDo { get; private set; }
+    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
-    public Accident(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ACCIDENT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public Accident() : base(INTERACTION_TYPE.ACCIDENT) {
         actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         isNotificationAnIntel = false;
     }
 
     #region Overrides
-    protected override void ConstructRequirement() {
-        _requirementAction = Requirement;
+    protected override void ConstructBasePreconditionsAndEffects() {
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REDUCE_HP, target = GOAP_EFFECT_TARGET.ACTOR });
     }
-    public override void Perform() {
-        base.Perform();
-        SetState("Accident Success");
+    public override void Perform(ActualGoapNode actionNode) {
+        base.Perform(actionNode);
+        SetState("Drop Success", actionNode);
     }
-    public override void DoAction() {
-        SetTargetStructure();
-        base.DoAction();
-    }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 5;
-    }
-    public override LocationGridTile GetTargetLocationTile() {
-        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
-    }
-    //public override void OnResultReturnedToActor() {
-    //    base.OnResultReturnedToActor();
-    //    //if (currentState.name == "Accident Success") {
-    //    //    if (actor.currentHP <= 0) {
-    //    //        actor.Death(deathFromAction: this);
-    //    //    }
-    //    //}
-    //}
-    public override bool InitializeOtherData(object[] otherData) {
-        this.otherData = otherData;
-        if (otherData.Length == 1 && otherData[0] is GoapAction) {
-            actionToDo = otherData[0] as GoapAction;
-            return true;
-        }
-        return base.InitializeOtherData(otherData);
     }
     #endregion
 
     #region Requirements
-    protected bool Requirement() {
-        return actor == poiTarget;
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            return actor == poiTarget;
+        }
+        return false;
     }
     #endregion
 
     #region State Effects
-    private void PreAccidentSuccess() {
+    private void PreAccidentSuccess(ActualGoapNode goapNode) {
+        GoapAction actionToDo = goapNode.otherData[0] as GoapAction;
+        GoapActionState currentState = this.states[goapNode.currentStateName];
         currentState.AddLogFiller(actionToDo, actionToDo.goapName, LOG_IDENTIFIER.STRING_1);
     }
-    private void AfterAccidentSuccess() {
-        actor.AddTrait("Injured", gainedFromDoing: this);
+    private void AfterAccidentSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Injured", gainedFromDoing: this);
 
         int randomHpToLose = UnityEngine.Random.Range(5, 26);
         float percentMaxHPToLose = randomHpToLose / 100f;
-        int actualHPToLose = Mathf.CeilToInt(actor.maxHP * percentMaxHPToLose);
+        int actualHPToLose = Mathf.CeilToInt(goapNode.actor.maxHP * percentMaxHPToLose);
 
-        actor.AdjustHP(-actualHPToLose);
-        if (actor.currentHP <= 0) {
-            actor.Death(deathFromAction: this);
+        goapNode.actor.AdjustHP(-actualHPToLose);
+        if (goapNode.actor.currentHP <= 0) {
+            goapNode.actor.Death(deathFromAction: this);
         }
     }
     #endregion

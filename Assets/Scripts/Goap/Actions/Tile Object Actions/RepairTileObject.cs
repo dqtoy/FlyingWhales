@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class RepairTileObject : GoapAction {
 
-    public RepairTileObject(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.REPAIR_TILE_OBJECT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public RepairTileObject() : base(INTERACTION_TYPE.REPAIR_TILE_OBJECT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
@@ -19,15 +20,15 @@ public class RepairTileObject : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Burnt", targetPOI = poiTarget });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Damaged", targetPOI = poiTarget });
     }
-    public override void Perform() {
-        base.Perform();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         if (poiTarget.gridTileLocation != null) {
             SetState("Repair Success");
         } else {
             SetState("Target Missing");
         }
     }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 2;
     }
     #endregion
@@ -44,8 +45,8 @@ public class RepairTileObject : GoapAction {
         poiTarget.AdjustHP(20);
     }
     private void AfterRepairSuccess() {
-        poiTarget.RemoveTrait("Burnt");
-        poiTarget.RemoveTrait("Damaged");
+        poiTarget.traitContainer.RemoveTrait(poiTarget, "Burnt");
+        poiTarget.traitContainer.RemoveTrait(poiTarget, "Damaged");
 
         TileObject tileObj = poiTarget as TileObject;
         TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class Watch : GoapAction {
     public GoapAction actionBeingWatched { get; private set; }
@@ -10,7 +11,7 @@ public class Watch : GoapAction {
 
     //for testing
     private int ticksInWatch;
-    public Watch(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.WATCH, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public Watch() : base(INTERACTION_TYPE.WATCH, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Watch_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         doesNotStopTargetCharacter = true;
@@ -29,8 +30,8 @@ public class Watch : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    public override void Perform() {
-        base.Perform();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         Character targetCharacter = poiTarget as Character;
         if (targetCharacter.IsInOwnParty()) {
             SetState("Watch Success");
@@ -38,7 +39,7 @@ public class Watch : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 10;
     }
     public override bool InitializeOtherData(object[] otherData) {
@@ -140,7 +141,7 @@ public class Watch : GoapAction {
 
         if(!actor.currentParty.icon.isTravelling && !actor.marker.inVisionPOIs.Contains(poiTarget)) {
             //Go to target because target is not in vision
-            if(actor.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            if(actor.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
                 //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
                 currentState.EndPerTickEffect();
                 return;

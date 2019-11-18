@@ -9,18 +9,12 @@ using UnityEngine;
 public class PhaseItemDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(StringIntDictionary))]
 public class StringIntDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-[CustomPropertyDrawer(typeof(LandmarkDefenderWeightDictionary))]
-public class LandmarkDefenderWeightDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(InteractionWeightDictionary))]
 public class InteractionWeightDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-[CustomPropertyDrawer(typeof(ActionCharacterTagListDictionary))]
-public class ActionCharacterTagDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(BiomeLandmarkSpriteListDictionary))]
 public class BiomeLandmarkSpriteListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileSpriteCorruptionListDictionary))]
 public class TileSpriteCorruptionListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-[CustomPropertyDrawer(typeof(RaceClassListDictionary))]
-public class RaceDefenderListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(RolePortraitFramesDictionary))]
 public class JobPortraitFramesDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(BiomeSpriteAnimationDictionary))]
@@ -65,14 +59,10 @@ public class YieldTypeLandmarksDictionaryPropertyDrawer : SerializableDictionary
 public class InterventionAbilityTierDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 //list storage
-[CustomPropertyDrawer(typeof(CharacterTagListStorage))]
-public class CharacterTagListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 [CustomPropertyDrawer(typeof(LandmarkSpriteListStorage))]
 public class LandmarkSpriteListStorageStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 [CustomPropertyDrawer(typeof(CorruptionObjectsListStorage))]
 public class CorruptionObjectsListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
-[CustomPropertyDrawer(typeof(RaceDefenderListStorage))]
-public class DefenderListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileObjectSlotListStorage))]
 public class TileObjectSlotListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileBaseListStorage))]

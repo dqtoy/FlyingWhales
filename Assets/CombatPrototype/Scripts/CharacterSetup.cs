@@ -12,9 +12,6 @@ public class CharacterSetup {
 	public CHARACTER_ROLE optionalRole;
     public List<ATTRIBUTE> tags;
 
-	public List<ItemAndType> preEquippedItems;
-
-
     private CharacterClass _charClass;
 	//private RaceSetting _raceSetting;
 

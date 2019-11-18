@@ -129,32 +129,6 @@ public class UIManager : MonoBehaviour {
         ToggleBorders();
     }
     private void Update() {
-        if (Input.GetKeyDown(KeyCode.Escape)) {
-            if (contextMenu.gameObject.activeSelf) {
-                HideContextMenu();
-            }
-        } else 
-        //if (Input.GetKeyDown(KeyCode.Space) && !IsMouseOnInput()) {
-        //    if (pauseBtn.IsInteractable()) {
-        //        if (GameManager.Instance.isPaused) {
-        //            Unpause();
-        //        } else {
-        //            Pause();
-        //        }
-        //    }
-        //} else 
-        //if (Input.GetKeyDown(KeyCode.Alpha1)) {
-        //    PlayerUI.Instance.ScrollRoleSlotTo(0);
-        //} else if (Input.GetKeyDown(KeyCode.Alpha2)) {
-        //    PlayerUI.Instance.ScrollRoleSlotTo(1);
-        //} else if (Input.GetKeyDown(KeyCode.Alpha3)) {
-        //    PlayerUI.Instance.ScrollRoleSlotTo(2);
-        //} else if (Input.GetKeyDown(KeyCode.Alpha4)) {
-        //    PlayerUI.Instance.ScrollRoleSlotTo(3);
-        //} else if (Input.GetKeyDown(KeyCode.Alpha5)) {
-        //    PlayerUI.Instance.ScrollRoleSlotTo(4);
-        //}
-        //UpdateSpeedToggles(GameManager.Instance.isPaused);
         if (isHoveringTile) {
             //if (currentTileHovered.areaOfTile != null && currentTileHovered.areaOfTile.areaType != AREA_TYPE.DEMONIC_INTRUSION) {
             //    ShowSmallInfo("Double click to view.", currentTileHovered.areaOfTile.name);
@@ -190,7 +164,6 @@ public class UIManager : MonoBehaviour {
         //}
         //UnifySelectables();
         //popupMessageBox.Initialize();
-        Messenger.AddListener<HexTile>(Signals.TILE_RIGHT_CLICKED, ShowContextMenu);
         Messenger.AddListener(Signals.HIDE_MENUS, HideMenus);
         Messenger.AddListener<string, int, UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, ShowDeveloperNotification);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
@@ -229,7 +202,6 @@ public class UIManager : MonoBehaviour {
         UpdateUI();
     }
     private void HideMenus() {
-        HideContextMenu();
         poiTestingUI.HideUI();
         if (characterInfoUI.isShowing) {
             characterInfoUI.CloseMenu();
@@ -1061,33 +1033,6 @@ public class UIManager : MonoBehaviour {
     }
     public void HideConsole() {
         consoleUI.HideConsole();
-    }
-    #endregion
-
-    #region Context Menu
-    [Space(10)]
-    [Header("Context Menu")]
-    public GameObject contextMenuPrefab;
-    public GameObject contextMenuItemPrefab;
-    public UIContextMenu contextMenu;
-    private void ShowContextMenu(HexTile tile) {
-        if (PlayerManager.Instance.isChoosingStartingTile) {
-            //|| landmarkInfoUI.isWaitingForAttackTarget
-            return;
-        }
-        ContextMenuSettings settings = tile.GetContextMenuSettings();
-        if (settings.items.Count > 0) {
-            contextMenu.LoadSettings(settings);
-            contextMenu.gameObject.SetActive(true);
-            //Vector2 pos;
-            //RectTransformUtility.ScreenPointToLocalPointInRectangle(this.transform as RectTransform, Input.mousePosition, eventSystem.camera, out pos);
-            //contextMenu.transform.position = Input.mousePosition;
-            PositionTooltip(contextMenu.gameObject, contextMenu.transform as RectTransform, contextMenu.transform as RectTransform);
-        }
-        
-    }
-    public void HideContextMenu() {
-        contextMenu.gameObject.SetActive(false);
     }
     #endregion
 

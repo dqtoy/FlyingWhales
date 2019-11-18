@@ -1,75 +1,57 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class ChopWood : GoapAction {
     private const int MAX_SUPPLY = 50;
-    private const int MIN_SUPPLY = 20;
 
-    private int _gainedSupply;
-    public ChopWood(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CHOP_WOOD, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        //validTimeOfDays = new TIME_IN_WORDS[] {
-        //    TIME_IN_WORDS.MORNING,
-        //    TIME_IN_WORDS.AFTERNOON,
-        //    TIME_IN_WORDS.EARLY_NIGHT,
-        //};
+    public ChopWood() : base(INTERACTION_TYPE.CHOP_WOOD) {
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
     }
 
     #region Overrides
-    protected override void ConstructRequirement() {
-        _requirementAction = Requirement;
-    }
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = MAX_SUPPLY, targetPOI = actor });
-        //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = MAX_SUPPLY.ToString(), isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
     }
-    public override void Perform() {
-        base.Perform();
-        if (!isTargetMissing) {
-            SetState("Chop Success");
-        } else {
-            SetState("Target Missing");
-        }
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
+        SetState("Chop Success", goapNode);
     }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 3;
     }
-    //public override void FailAction() {
-    //    base.FailAction();
-    //    SetState("Target Missing");
-    //}
     #endregion
 
     #region Requirements
-    protected bool Requirement() {
-        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+        }
+        return false;
     }
     #endregion
 
     #region State Effects
-    public void PreChopSuccess() {
-        if (poiTarget is TreeObject) {
-            TreeObject tree = poiTarget as TreeObject;
-            _gainedSupply = tree.GetSupplyPerMine();
-        }
-        currentState.AddLogFiller(null, _gainedSupply.ToString(), LOG_IDENTIFIER.STRING_1);
-        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+    public void PreChopSuccess(ActualGoapNode goapNode) {
+        TreeObject tree = goapNode.poiTarget as TreeObject;
+        GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
+        currentState.AddLogFiller(null, tree.GetSupplyPerMine().ToString(), LOG_IDENTIFIER.STRING_1);
+        currentState.AddLogFiller(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     }
-    public void AfterChopSuccess() {
-        if (poiTarget is TreeObject) {
-            TreeObject tree = poiTarget as TreeObject;
-            actor.AdjustSupply(_gainedSupply);
-            tree.AdjustYield(-1);
-        }
+    public void AfterChopSuccess(ActualGoapNode goapNode) {
+        TreeObject tree = goapNode.poiTarget as TreeObject;
+        goapNode.actor.AdjustSupply(tree.GetSupplyPerMine());
+        tree.AdjustYield(-1);
     }
-    public void PreTargetMissing() {
-        currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-    }
-    public void AfterTargetMissing() {
-        actor.RemoveAwareness(poiTarget);
-    }
+    //public void PreTargetMissing(ActualGoapNode goapNode) {
+    //    currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+    //}
+    //public void AfterTargetMissing(ActualGoapNode goapNode) {
+    //    actor.RemoveAwareness(poiTarget);
+    //}
     #endregion
 }
 

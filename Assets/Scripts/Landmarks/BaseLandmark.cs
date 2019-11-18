@@ -1,6 +1,4 @@
-﻿//#define TESTING_VALUES
-
-/*
+﻿/*
  This is the base class for all landmarks.
  eg. Settlements(Cities), Resources, Dungeons, Lairs, etc.
  */
@@ -59,27 +57,7 @@ public class BaseLandmark {
         ConstructTags(landmarkData);
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.tileLocation);
         nameplate = UIManager.Instance.CreateLandmarkNameplate(this);
-#if TESTING_VALUES
-        SetInvasionTicks(12);
-#else
         SetInvasionTicks(GameManager.Instance.GetTicksBasedOnHour(4));
-#endif
-    }
-    public BaseLandmark(HexTile location, LandmarkSaveData data) : this() {
-        _id = Utilities.SetID(this, data.landmarkID);
-        _location = location;
-        _specificLandmarkType = data.landmarkType;
-        SetName(data.landmarkName);
-        
-        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
-        ConstructTags(landmarkData);
-        nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.tileLocation);
-        nameplate = UIManager.Instance.CreateLandmarkNameplate(this);
-#if TESTING_VALUES
-        SetInvasionTicks(12);
-#else
-        SetInvasionTicks(GameManager.Instance.GetTicksBasedOnHour(4));
-#endif
     }
     public BaseLandmark(HexTile location, SaveDataLandmark data) : this() {
         _id = Utilities.SetID(this, data.id);

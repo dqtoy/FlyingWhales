@@ -99,18 +99,6 @@ public enum MONTH{
 	NOV,
 	DEC,
 }
-public enum RESOURCE {
-    NONE,
-    //OAK,
-    //ELF_CIVILIAN,
-    //HUMAN_CIVILIAN,
-    //IRON,
-    WOOD,
-    IRON,
-    GOLD,
-    FOOD,
-
-}
 public enum MATERIAL{
 	NONE, //0
 	CLAY, //11
@@ -559,51 +547,6 @@ public enum MODE {
     ALERT,
     STEALTH
 }
-public enum STORYLINE {
-    THE_DYING_KING,
-}
-public enum CHARACTER_RELATIONSHIP{
-	FRIEND,
-    MENTOR,
-    STUDENT,
-    FATHER,
-    MOTHER,
-    BROTHER,
-    SISTER,
-    SON,
-    DAUGHTER,
-    LOVER,
-    HUSBAND,
-    WIFE,
-    ENEMY,
-    RIVAL,
-    STALKER,
-    //RIVAL,
-	//FRIEND,
-	//ENEMY,
-	//SIBLING,
-	//PARENT,
-	//CHILD,
-	//LOVER,
-	//EX_LOVER,
-	//APPRENTICE,
-	//MENTOR,
-	//ACQUAINTANCE,
-}
-
-public enum CHARACTER_RELATIONSHIP_CATEGORY{
-	NEGATIVE,
-	POSITIVE,
-	FAMILIAL,
-	NEUTRAL,
-}
-
-public enum COMBAT_INTENT{
-	KILL,
-	IMPRISON,
-	DEFEAT,
-}
-
 public enum ACTION_TYPE {
     REST,
     MOVE_TO,
@@ -668,8 +611,9 @@ public enum ACTION_TYPE {
     RAID_LANDMARK,
 }
 public enum ACTION_CATEGORY {
-    WORK,
-    MISC,
+    DIRECT,
+    INDIRECT,
+    CONSUME,
 }
 
 public enum OBJECT_TYPE {
@@ -918,39 +862,25 @@ public enum MINIONS_SORT_TYPE {
 public enum INTERACTION_TYPE {
     NONE,
     RETURN_HOME,
-    //USE_ITEM_ON_CHARACTER,
-    DROP_ITEM_HOME,
+    DROP_ITEM,
     ABDUCT_CHARACTER,
-    //HUNT,
-    //EAT_DEFENSELESS,
-    PICK_ITEM,
+    PICK_UP,
     RELEASE_CHARACTER,
-    //MOVE_TO_VISIT,
-    //TRANSFER_HOME,
-    //HANG_OUT_ACTION,
-    //ARGUE_ACTION,
-    //CURSE_ACTION,
     CRAFT_ITEM,
     MINE,
     ASK_FOR_HELP_SAVE_CHARACTER,
     ASSAULT_CHARACTER,
     TRANSFORM_TO_WOLF_FORM,
     REVERT_TO_NORMAL_FORM,
-    EAT_PLANT,
     SLEEP,
     RESTRAIN_CARRY_CHARACTER,
     IMPRISON_CHARACTER,
-    EAT_ANIMAL,
-    EAT_AT_TABLE,
+    EAT,
     DAYDREAM,
     PLAY_GUITAR,
     CHAT_CHARACTER,
-    //ARGUE_CHARACTER,
-    //STROLL,
     DRINK,
     SLEEP_OUTSIDE,
-    //EXPLORE,
-    //PATROL,
     REMOVE_POISON_TABLE,
     POISON_TABLE,
     PRAY,
@@ -959,13 +889,11 @@ public enum INTERACTION_TYPE {
     SCRAP,
     MAGIC_CIRCLE_PERFORM_RITUAL,
     GET_SUPPLY,
-    DROP_SUPPLY,
+    DROP_RESOURCE,
     TILE_OBJECT_DESTROY,
     ITEM_DESTROY,
-    //TRAVEL,
-    //RETURN_HOME_LOCATION,
+    RETURN_HOME_LOCATION,
     PLAY,
-    //PATROL_ROAM,
     EAT_CORPSE,
     RESTRAIN_CHARACTER,
     FIRST_AID_CHARACTER,
@@ -975,7 +903,6 @@ public enum INTERACTION_TYPE {
     JUDGE_CHARACTER,
     REPORT_CRIME,
     FEED,
-    STEAL_FROM_CHARACTER,
     DROP_ITEM_WAREHOUSE,
     ASK_FOR_HELP_REMOVE_POISON_TABLE,
     SIT,
@@ -987,19 +914,15 @@ public enum INTERACTION_TYPE {
     SPIT,
     REPORT_HOSTILE,
     MAKE_LOVE,
-    INVITE_TO_MAKE_LOVE,
+    INVITE,
     DRINK_BLOOD,
     REPLACE_TILE_OBJECT,
     CRAFT_FURNITURE,
     TANTRUM,
-    EAT_MUSHROOM,
-    SPREAD_RUMOR_REMOVE_FRIENDSHIP,
-    SPREAD_RUMOR_REMOVE_LOVE,
     BREAK_UP,
     SHARE_INFORMATION,
     WATCH,
     INSPECT,
-    EAT_CHARACTER,
     HUNTING_TO_DRINK_BLOOD,
     ROAMING_TO_STEAL,
     PUKE,
@@ -1014,7 +937,7 @@ public enum INTERACTION_TYPE {
     GET_WATER,
     STUMBLE,
     ACCIDENT,
-    GET_FOOD,
+    OBTAIN_RESOURCE,
     DROP_FOOD,
     TRANSFORM_FOOD,
     ASK_TO_STOP_JOB,
@@ -1022,8 +945,7 @@ public enum INTERACTION_TYPE {
     STRANGLE,
     REPAIR_TILE_OBJECT,
     NARCOLEPTIC_NAP,
-    PRIORITIZED_SHOCK,
-    PRIORITIZED_CRY,
+    SHOCK,
     CRY,
     CRAFT_TILE_OBJECT,
     PRAY_TILE_OBJECT,
@@ -1038,8 +960,7 @@ public enum INTERACTION_TYPE {
     GO_TO,
     SING,
     DANCE,
-    DESTROY_SUPPLY,
-    DESTROY_FOOD,
+    DESTROY_RESOURCE,
     SCREAM_FOR_HELP,
     REACT_TO_SCREAM,
     WHIP,
@@ -1229,30 +1150,29 @@ public enum POINT_OF_INTEREST_TYPE {
     TILE_OBJECT,
 }
 public enum TILE_OBJECT_TYPE {
-    SUPPLY_PILE,
-    CORPSE,
-    SMALL_ANIMAL,
-    EDIBLE_PLANT,
-    GUITAR,
-    MAGIC_CIRCLE,
-    TABLE,
-    BED,
-    ORE,
-    TREE_OBJECT,
-    FOOD,
-    DESK,
-    TOMBSTONE,
-    NONE,
-    MUSHROOM,
-    NECRONOMICON,
-    CHAOS_ORB,
-    HERMES_STATUE,
-    ANKH_OF_ANUBIS,
-    MIASMA_EMITTER,
-    WATER_WELL,
-    GENERIC_TILE_OBJECT,
-    FOOD_PILE,
-    GODDESS_STATUE,
+    SUPPLY_PILE = 0,
+    SMALL_ANIMAL = 2,
+    EDIBLE_PLANT = 3,
+    GUITAR = 4,
+    MAGIC_CIRCLE = 5,
+    TABLE = 6,
+    BED = 7,
+    ORE = 8,
+    TREE_OBJECT = 9,
+    FOOD = 10,
+    DESK = 11,
+    TOMBSTONE = 12,
+    NONE = 13,
+    MUSHROOM = 14,
+    NECRONOMICON = 15,
+    CHAOS_ORB = 16,
+    HERMES_STATUE = 17,
+    ANKH_OF_ANUBIS = 18,
+    MIASMA_EMITTER = 19,
+    WATER_WELL = 20,
+    GENERIC_TILE_OBJECT = 21,
+    FOOD_PILE = 22,
+    GODDESS_STATUE = 23,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -1277,7 +1197,7 @@ public enum TIME_IN_WORDS { AFTER_MIDNIGHT, AFTER_MIDNIGHT_1, AFTER_MIDNIGHT_2, 
 //public enum CRIME_SEVERITY { NONE, INFRACTION, MISDEMEANOUR, SERIOUS_CRIME, }
 public enum FOOD { BERRY, MUSHROOM, RABBIT, RAT }
 public enum GOAP_EFFECT_CONDITION { NONE, REMOVE_TRAIT, HAS_TRAIT, HAS_SUPPLY, HAS_ITEM, FULLNESS_RECOVERY, TIREDNESS_RECOVERY, HAPPINESS_RECOVERY, HAS_NON_POSITIVE_TRAIT, IN_PARTY, REMOVE_FROM_PARTY, DESTROY, DEATH, PATROL, EXPLORE, REMOVE_ITEM, HAS_TRAIT_EFFECT, HAS_PLAN, HAS_FOOD
-, TARGET_REMOVE_RELATIONSHIP, TARGET_STOP_ACTION_AND_JOB, RESTRAIN_CARRY, REMOVE_FROM_PARTY_NO_CONSENT, IN_VISION }
+, TARGET_REMOVE_RELATIONSHIP, TARGET_STOP_ACTION_AND_JOB, RESTRAIN_CARRY, REMOVE_FROM_PARTY_NO_CONSENT, IN_VISION, REDUCE_HP, INVITED, MAKE_NOISE}
 public enum GOAP_EFFECT_TARGET { ACTOR, TARGET, }
 public enum GOAP_PLAN_STATE { IN_PROGRESS, SUCCESS, FAILED, CANCELLED, }
 public enum GOAP_PLANNING_STATUS { NONE, RUNNING, }
@@ -1343,6 +1263,7 @@ public enum FACILITY_TYPE { NONE, HAPPINESS_RECOVERY, FULLNESS_RECOVERY, TIREDNE
 public enum FURNITURE_TYPE { NONE, BED, TABLE, DESK, GUITAR, }
 public enum RELATIONSHIP_EFFECT {
     NONE,
+    NEUTRAL,
     POSITIVE,
     NEGATIVE,
 }
@@ -1481,7 +1402,6 @@ public static class Extensions {
         switch (type) {
             case INTERACTION_TYPE.ASSAULT_CHARACTER:
             case INTERACTION_TYPE.STEAL:
-            case INTERACTION_TYPE.STEAL_FROM_CHARACTER:
             case INTERACTION_TYPE.TILE_OBJECT_DESTROY:
             case INTERACTION_TYPE.CURSE_CHARACTER:
             case INTERACTION_TYPE.RESTRAIN_CHARACTER:
@@ -1506,7 +1426,7 @@ public static class Extensions {
     public static bool CanBeReplaced(this INTERACTION_TYPE type) {
         switch (type) {
             case INTERACTION_TYPE.DRINK:
-            case INTERACTION_TYPE.EAT_AT_TABLE:
+            case INTERACTION_TYPE.EAT:
             case INTERACTION_TYPE.SIT:
                 return true;
             default:
@@ -1552,13 +1472,13 @@ public static class Extensions {
 
     #region Tokens
     public static bool CanBeCraftedBy(this SPECIAL_TOKEN type, Character character) {
-        if (ItemManager.Instance.itemData.ContainsKey(type)) {
-            ItemData data = ItemManager.Instance.itemData[type];
+        if (TokenManager.Instance.itemData.ContainsKey(type)) {
+            ItemData data = TokenManager.Instance.itemData[type];
             if (data.canBeCraftedBy == null) {
                 return true;
             }
             for (int i = 0; i < data.canBeCraftedBy.Length; i++) {
-                if (character.HasTraitOf(data.canBeCraftedBy[i])) {
+                if (character.traitContainer.GetNormalTrait(data.canBeCraftedBy[i].ToString()) != null) {
                     return true;
                 }
             }
@@ -1593,7 +1513,7 @@ public static class Extensions {
             if (data.neededTraitType == null) {
                 return true;
             }
-            return character.HasTraitOf(data.neededTraitType);
+            return character.traitContainer.GetNormalTrait(data.neededTraitType.ToString()) != null;
         }
         return true;
     }

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Traits;
 public class PrayAtTemple : WorldEvent {
 
     public PrayAtTemple() : base(WORLD_EVENT.PRAY_AT_TEMPLE) {
@@ -12,10 +12,10 @@ public class PrayAtTemple : WorldEvent {
     #region Overrides
     protected override void ExecuteAfterEffect(Region region, Character spawner) {
         //(remove a negative trait) 
-        List<Trait> choices = spawner.GetTraitsOf(TRAIT_TYPE.FLAW);
+        List<Trait> choices = spawner.traitContainer.GetAllTraitsOf(TRAIT_TYPE.FLAW);
         if (choices.Count > 0) {
             Trait chosen = choices[Random.Range(0, choices.Count)];
-            spawner.RemoveTrait(chosen);
+            spawner.traitContainer.RemoveTrait(spawner, chosen);
             Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect");
             AddDefaultFillersToLog(log, region);
             log.AddToFillers(null, chosen.name, LOG_IDENTIFIER.STRING_1);
@@ -27,7 +27,7 @@ public class PrayAtTemple : WorldEvent {
         base.ExecuteAfterEffect(region,spawner);
     }
     public override bool CanSpawnEventAt(Region region, Character spawner) {
-        return spawner.HasTraitOf(TRAIT_TYPE.FLAW); //the character must have at least 1 flaw
+        return spawner.traitContainer.HasTraitOf(TRAIT_TYPE.FLAW); //the character must have at least 1 flaw
     }
     #endregion
 

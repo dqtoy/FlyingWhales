@@ -1,24 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class ZombieDeath : GoapAction {
 
-    public ZombieDeath(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ZOMBIE_DEATH, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public ZombieDeath() : base(INTERACTION_TYPE.ZOMBIE_DEATH, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.No_Icon;
     }
 
     #region Overrides
-    public override void Perform() {
-        base.Perform();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         SetState("Zombie Death Success");
     }
     public override void DoAction() {
         SetTargetStructure();
         base.DoAction();
     }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 10;
     }
     public override LocationGridTile GetTargetLocationTile() {

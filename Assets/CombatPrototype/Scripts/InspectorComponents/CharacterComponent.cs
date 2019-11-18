@@ -10,8 +10,6 @@ public class CharacterComponent : MonoBehaviour {
 	public CHARACTER_ROLE optionalRole;
     public List<ATTRIBUTE> tags;
 
-	[SerializeField] internal List<ItemAndType> preEquippedItems;
-
 	public int currCharacterSelectedIndex;
 	//public int currRaceSelectedIndex;
 	public int currItemSelectedIndex;
@@ -23,10 +21,7 @@ public class CharacterComponent : MonoBehaviour {
 	public ITEM_TYPE itemTypeToAdd;
 
 	public void AddItem(string itemName){
-		if (preEquippedItems == null) {
-			preEquippedItems = new List<ItemAndType> ();
-		}
-		preEquippedItems.Add (new ItemAndType(itemTypeToAdd, itemName));
+		
 	}
 //		public void RemoveItem(string itemName){
 //			preEquippedItems.Remove (itemName);

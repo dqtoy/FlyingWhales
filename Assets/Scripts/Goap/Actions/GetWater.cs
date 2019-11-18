@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class GetWater : GoapAction {
 
-    public GetWater(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.GET_WATER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public GetWater() : base(INTERACTION_TYPE.GET_WATER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Drink_Icon;
         validTimeOfDays = new TIME_IN_WORDS[] {
@@ -21,11 +22,11 @@ public class GetWater : GoapAction {
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.WATER_BUCKET.ToString(), targetPOI = actor });
     }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 5;
     }
-    public override void Perform() {
-        base.Perform();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         if (!isTargetMissing) {
             SetState("Obtain Water Success");
         } else {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using BayatGames.SaveGameFree;
+using Traits;
 
 public class SaveManager : MonoBehaviour {
     public static SaveManager Instance;

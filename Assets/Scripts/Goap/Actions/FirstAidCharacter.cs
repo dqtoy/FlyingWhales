@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class FirstAidCharacter : GoapAction {
 
-    public FirstAidCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.FIRST_AID_CHARACTER, INTERACTION_ALIGNMENT.GOOD, actor, poiTarget) {
+    public FirstAidCharacter() : base(INTERACTION_TYPE.FIRST_AID_CHARACTER, INTERACTION_ALIGNMENT.GOOD, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.FirstAid_Icon;
         validTimeOfDays = new TIME_IN_WORDS[] {
@@ -22,15 +23,15 @@ public class FirstAidCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Injured", targetPOI = poiTarget });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Unconscious", targetPOI = poiTarget });
     }
-    public override void Perform() {
-        base.Perform();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
             SetState("First Aid Success");
         } else {
             SetState("Target Missing");
         }
     }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 12;
     }
     #endregion
@@ -85,11 +86,11 @@ public class FirstAidCharacter : GoapAction {
                     reactions.Add(string.Format("I am grateful for {0}'s help.", actor.name));
                 }
                 //- Recipient Has Positive Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
                     reactions.Add(string.Format("I am grateful that {0} helped {1}.", actor.name, targetCharacter.name));
                 }
                 //- Recipient Has Negative Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
                     reactions.Add(string.Format("{0} is such a chore.", targetCharacter.name));
                 }
                 //- Recipient Has No Relationship with Target
@@ -109,6 +110,6 @@ public class FirstAidCharacterData : GoapActionData {
         requirementAction = Requirement;
     }
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return poiTarget.GetNormalTrait("Injured", "Unconscious") != null;
+        return poiTarget.traitContainer.GetNormalTrait("Injured", "Unconscious") != null;
     }
 }

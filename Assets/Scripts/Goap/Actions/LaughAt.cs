@@ -1,35 +1,35 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class LaughAt : GoapAction {
 
-    public LaughAt(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.LAUGH_AT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
+
+    public LaughAt() : base(INTERACTION_TYPE.LAUGH_AT) {
         actionIconString = GoapActionStateDB.Entertain_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         doesNotStopTargetCharacter = true;
     }
 
     #region Overrides
-    public override void Perform() {
-        base.Perform();
-        SetState("Laugh Success");
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
+        SetState("Laugh Success", goapNode);
     }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return Utilities.rng.Next(40, 61);
-    }
-    public override LocationGridTile GetTargetLocationTile() {
-        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
     #endregion
 
     #region State Effects
-    private void PerTickLaughSuccess() {
-        actor.AdjustHappiness(500);
+    private void PerTickLaughSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.AdjustHappiness(500);
     }
-    private void AfterLaughSuccess() {
-        if (poiTarget.GetNormalTrait("Unconscious") == null) {
-            poiTarget.AddTrait("Ashamed");
+    private void AfterLaughSuccess(ActualGoapNode goapNode) {
+        if (goapNode.poiTarget.traitContainer.GetNormalTrait("Unconscious") == null) {
+            goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Ashamed");
         }
     }
     #endregion   

@@ -1,38 +1,35 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class ScreamForHelp : GoapAction {
 
-    public ScreamForHelp(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.SCREAM_FOR_HELP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
+
+    public ScreamForHelp() : base(INTERACTION_TYPE.SCREAM_FOR_HELP) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Hostile_Icon;
     }
 
     #region Overrides
-    public override void Perform() {
-        base.Perform();
-        SetState("Scream Success");
+    protected override void ConstructBasePreconditionsAndEffects() {
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.MAKE_NOISE, target = GOAP_EFFECT_TARGET.ACTOR });
     }
-    protected override int GetBaseCost() {
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
+        SetState("Scream Success", goapNode);
+    }
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 1;
-    }
-    public override void DoAction() {
-        SetTargetStructure();
-        base.DoAction();
-    }
-    public override LocationGridTile GetTargetLocationTile() {
-        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
     #endregion
 
     #region State Effects
-    //public void PreScreamSuccess() {
-    //}
-    public void PerTickScreamSuccess() {
-        Messenger.Broadcast(Signals.SCREAM_FOR_HELP, actor);
+    public void PerTickScreamSuccess(ActualGoapNode goapNode) {
+        Messenger.Broadcast(Signals.SCREAM_FOR_HELP, goapNode.actor);
     }
-    public void AfterScreamSuccess() {
+    public void AfterScreamSuccess(ActualGoapNode goapNode) {
 
     }
     #endregion

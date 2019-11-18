@@ -23,7 +23,7 @@ public class SeducerSummon : Summon {
     public SeducerSummon(SUMMON_TYPE type, GENDER gender) : base(type, CharacterRole.MINION, RACE.DEMON, gender) {
         seduceChance = 25;
         doneCharacters = new List<Character>();
-        AddInteractionType(INTERACTION_TYPE.INVITE_TO_MAKE_LOVE);
+        AddInteractionType(INTERACTION_TYPE.INVITE);
         AddInteractionType(INTERACTION_TYPE.MAKE_LOVE);
     }
     public SeducerSummon(SaveDataCharacter data) : base(data) {
@@ -44,11 +44,11 @@ public class SeducerSummon : Summon {
         AdjustIgnoreHostilities(1);
     }
     public override List<ActualGoapNode> ThisCharacterSaw(IPointOfInterest target) {
-        if (GetNormalTrait("Unconscious", "Resting") != null) {
+        if (traitContainer.GetNormalTrait("Unconscious", "Resting") != null) {
             return null;
         }
-        for (int i = 0; i < normalTraits.Count; i++) {
-            normalTraits[i].OnSeePOI(target, this);
+        for (int i = 0; i < traitContainer.allTraits.Count; i++) {
+            traitContainer.allTraits[i].OnSeePOI(target, this);
         }
         return null;
     }
@@ -64,12 +64,12 @@ public class SeducerSummon : Summon {
             //pick a random character that is sexually compatible with this character, to seduce. Exclude characters that this succubus has already invited.
             List<Character> choices = specificLocation.charactersAtLocation.Where(x => x.faction != this.faction
             && !doneCharacters.Contains(x)
-            && CharacterManager.Instance.IsSexuallyCompatibleOneSided(x, this)
-            && !x.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)).ToList();
+            && RelationshipManager.Instance.IsSexuallyCompatibleOneSided(x, this)
+            && !x.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)).ToList();
             List<TileObject> validBeds = specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.INN).GetTileObjectsOfType(TILE_OBJECT_TYPE.BED);
             if (choices.Count > 0 && validBeds.Count > 0) {
                 Character chosenCharacter = choices[Random.Range(0, choices.Count)];
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SEDUCE, INTERACTION_TYPE.INVITE_TO_MAKE_LOVE, chosenCharacter);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SEDUCE, INTERACTION_TYPE.INVITE, chosenCharacter);
                 job.SetCannotOverrideJob(true);
                 job.SetCannotCancelJob(true);
                 jobQueue.AddJobInQueue(job);
@@ -82,7 +82,7 @@ public class SeducerSummon : Summon {
         
     }
     public override void OnActionStateSet(GoapAction action, GoapActionState state) {
-        if (action.actor == this && action.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE) {
+        if (action.actor == this && action.goapType == INTERACTION_TYPE.INVITE) {
             doneCharacters.Add(action.poiTarget as Character);
         } else if (action.actor == this && action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
             if (state.status == InteractionManager.Goap_State_Success) {
@@ -128,8 +128,8 @@ public class SeducerSummon : Summon {
         PlayerManager.Instance.player.playerArea.AddCharacterToLocation(this);
         ownParty.SetSpecificLocation(PlayerManager.Instance.player.playerArea);
         ClearAllAwareness();
-        CancelAllJobs();
-        RemoveAllNonPersistentTraits();
+        CancelAllJobsAndPlans();
+        traitContainer.RemoveAllNonPersistentTraits(this);
         ResetToFullHP();
         UnsubscribeSignals();
         DestroyMarker(disappearTile);

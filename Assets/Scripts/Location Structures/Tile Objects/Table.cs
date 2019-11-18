@@ -14,7 +14,7 @@ public class Table : TileObject {
 
     public Table(LocationStructure location) {
         SetStructureLocation(location);
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_AT_TABLE, INTERACTION_TYPE.DRINK, INTERACTION_TYPE.REMOVE_POISON_TABLE, INTERACTION_TYPE.POISON_TABLE, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.DROP_FOOD, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT, INTERACTION_TYPE.DRINK, INTERACTION_TYPE.REMOVE_POISON_TABLE, INTERACTION_TYPE.POISON_TABLE, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.DROP_FOOD, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
         SetFood(UnityEngine.Random.Range(20, 81)); //
         Initialize(TILE_OBJECT_TYPE.TABLE);
         //int slots = 4;
@@ -27,7 +27,7 @@ public class Table : TileObject {
     }
 
     public Table(SaveDataTileObject data) {
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_AT_TABLE, INTERACTION_TYPE.DRINK, INTERACTION_TYPE.REMOVE_POISON_TABLE, INTERACTION_TYPE.POISON_TABLE, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.DROP_FOOD, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT, INTERACTION_TYPE.DRINK, INTERACTION_TYPE.REMOVE_POISON_TABLE, INTERACTION_TYPE.POISON_TABLE, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.DROP_FOOD, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
         Initialize(data);
     }
     public void SetUsedAsset(TileBase usedAsset) {
@@ -51,7 +51,7 @@ public class Table : TileObject {
     public override void OnDoActionToObject(GoapAction action) {
         base.OnDoActionToObject(action);
         switch (action.goapType) {
-            case INTERACTION_TYPE.EAT_AT_TABLE:
+            case INTERACTION_TYPE.EAT:
             case INTERACTION_TYPE.DRINK:
             case INTERACTION_TYPE.SIT:
                 AddUser(action.actor);
@@ -62,7 +62,7 @@ public class Table : TileObject {
     public override void OnDoneActionToObject(GoapAction action) {
         base.OnDoneActionToObject(action);
         switch (action.goapType) {
-            case INTERACTION_TYPE.EAT_AT_TABLE:
+            case INTERACTION_TYPE.EAT:
             case INTERACTION_TYPE.DRINK:
             case INTERACTION_TYPE.SIT:
                 RemoveUser(action.actor);
@@ -73,7 +73,7 @@ public class Table : TileObject {
     public override void OnCancelActionTowardsObject(GoapAction action) {
         base.OnCancelActionTowardsObject(action);
         switch (action.goapType) {
-            case INTERACTION_TYPE.EAT_AT_TABLE:
+            case INTERACTION_TYPE.EAT:
             case INTERACTION_TYPE.DRINK:
             case INTERACTION_TYPE.SIT:
                 RemoveUser(action.actor);

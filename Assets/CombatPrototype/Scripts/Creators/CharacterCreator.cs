@@ -51,20 +51,6 @@ public class CharacterCreator : Editor {
 
         characterComponent.itemFoldout = EditorGUILayout.Foldout(characterComponent.itemFoldout, "Pre-equipped Items");
 
-		if (characterComponent.itemFoldout && characterComponent.preEquippedItems != null) {
-			EditorGUI.indentLevel++;
-			for (int i = 0; i < characterComponent.preEquippedItems.Count; i++) {
-				SerializedProperty currItem = serializedObject.FindProperty("preEquippedItems").GetArrayElementAtIndex(i);
-				EditorGUILayout.PropertyField(currItem, true);
-//					EditorGUILayout.LabelField(characterComponent.preEquippedItems[i]);
-//					if (GUILayout.Button("Remove")) {
-//						characterComponent.RemoveItem(i);
-//					}
-			}
-			EditorGUI.indentLevel--;
-		}
-
-
 		//Add Item Area
 		GUILayout.Space(10);
 		GUILayout.BeginVertical(EditorStyles.helpBox);
@@ -129,7 +115,6 @@ public class CharacterCreator : Editor {
 		newCharacter.characterClassName = characterComponent.characterClassName;
 		newCharacter.optionalRole = characterComponent.optionalRole;
         newCharacter.tags = characterComponent.tags;
-        newCharacter.preEquippedItems = characterComponent.preEquippedItems;
 
         return newCharacter;
     }

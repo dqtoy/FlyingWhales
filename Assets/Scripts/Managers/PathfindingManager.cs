@@ -71,13 +71,11 @@ public class PathfindingManager : MonoBehaviour {
         if (state) {
             for (int i = 0; i < _allAgents.Count; i++) {
                 CharacterAIPath currentAI = _allAgents[i];
-                currentAI.AdjustDoNotMove(1);
                 currentAI.marker.PauseAnimation();
             }
         } else {
             for (int i = 0; i < _allAgents.Count; i++) {
                 CharacterAIPath currentAI = _allAgents[i];
-                currentAI.AdjustDoNotMove(-1);
                 currentAI.marker.UnpauseAnimation();
             }
         }

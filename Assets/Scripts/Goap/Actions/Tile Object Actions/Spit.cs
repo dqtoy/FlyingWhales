@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class Spit : GoapAction {
     protected override string failActionState { get { return "Target Missing"; } }
 
-    public Spit(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.SPIT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public Spit() : base(INTERACTION_TYPE.SPIT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Entertain_Icon;
     }
 
@@ -16,22 +17,22 @@ public class Spit : GoapAction {
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
-    public override void Perform() {
-        base.Perform();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         if (!isTargetMissing) {
             SetState("Spit Success");
         } else {
             SetState("Target Missing");
         }
     }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         //**Cost**: randomize between 5-35
         return Utilities.rng.Next(5, 36);
     }
     #endregion
 
     #region Requirement
-    protected bool Requirement() {
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
             return false;
         }
@@ -41,7 +42,7 @@ public class Spit : GoapAction {
         if (poiTarget is Tombstone) {
             Tombstone tombstone = poiTarget as Tombstone;
             Character target = tombstone.character;
-            return actor.HasRelationshipOfEffectWith(target, TRAIT_EFFECT.NEGATIVE);
+            return actor.relationshipContainer.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.NEGATIVE;
         }
         return false;
     }
@@ -83,7 +84,7 @@ public class Spit : GoapAction {
                 }
                 //- Recipient is Target
                 else if (recipient == targetCharacter) {
-                    if(CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                    if(RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                         reactions.Add(string.Format("{0} does not respect me.", actor.name));
                         AddTraitTo(recipient, "Annoyed");
                     } else {
@@ -91,8 +92,8 @@ public class Spit : GoapAction {
                     }
                 }
                 //- Recipient Has Positive Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
-                    if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
+                    if (RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                         reactions.Add("That was very rude!");
                         AddTraitTo(recipient, "Annoyed");
                     } else {
@@ -100,7 +101,7 @@ public class Spit : GoapAction {
                     }
                 }
                 //- Recipient Has Negative Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
                     reactions.Add("That was not nice.");
                 }
                 //- Recipient Has No Relationship with Target
@@ -130,7 +131,7 @@ public class SpitData : GoapActionData {
         if (poiTarget is Tombstone) {
             Tombstone tombstone = poiTarget as Tombstone;
             Character target = tombstone.character;
-            return actor.HasRelationshipOfEffectWith(target, TRAIT_EFFECT.NEGATIVE);
+            return actor.relationshipContainer.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.NEGATIVE;
         }
         return false;
     }

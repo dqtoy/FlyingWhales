@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class RememberFallen : GoapAction {
     protected override string failActionState { get { return "Target Missing"; } }
 
-    public RememberFallen(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.REMEMBER_FALLEN, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public RememberFallen() : base(INTERACTION_TYPE.REMEMBER_FALLEN, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Entertain_Icon;
         isNotificationAnIntel = false;
     }
@@ -17,15 +18,15 @@ public class RememberFallen : GoapAction {
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
-    public override void Perform() {
-        base.Perform();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         if (!isTargetMissing) {
             SetState("Remember Success");
         } else {
             SetState("Target Missing");
         }
     }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         //**Cost**: randomize between 5-35
         return Utilities.rng.Next(5, 36);
     }
@@ -47,7 +48,7 @@ public class RememberFallen : GoapAction {
     #endregion
 
     #region Requirement
-    protected bool Requirement() {
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
             return false;
         }
@@ -57,7 +58,7 @@ public class RememberFallen : GoapAction {
         if (poiTarget is Tombstone) {
             Tombstone tombstone = poiTarget as Tombstone;
             Character target = tombstone.character;
-            return actor.HasRelationshipOfEffectWith(target, TRAIT_EFFECT.POSITIVE);
+            return actor.relationshipContainer.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.POSITIVE;
         }
         return false;
     }
@@ -98,7 +99,7 @@ public class RememberFallenData : GoapActionData {
         if (poiTarget is Tombstone) {
             Tombstone tombstone = poiTarget as Tombstone;
             Character target = tombstone.character;
-            return actor.HasRelationshipOfEffectWith(target, TRAIT_EFFECT.POSITIVE);
+            return actor.relationshipContainer.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.POSITIVE;
         }
         return false;
     }

@@ -34,34 +34,10 @@ public class CombatSimManager : MonoBehaviour {
     private List<string> _allMonsters;
     private List<string> _allCharacters;
     private Dictionary<ELEMENT, float> _elementsChanceDictionary;
-    private Dictionary<WEAPON_TYPE, WeaponType> _weaponTypeData;
-    private Dictionary<ARMOR_TYPE, ArmorType> _armorTypeData;
-    private Dictionary<WEAPON_PREFIX, WeaponPrefix> _weaponPrefixes;
-    private Dictionary<WEAPON_SUFFIX, WeaponSuffix> _weaponSuffixes;
-    private Dictionary<ARMOR_PREFIX, ArmorPrefix> _armorPrefixes;
-    private Dictionary<ARMOR_SUFFIX, ArmorSuffix> _armorSuffixes;
 
     #region getters/setters
     public Dictionary<ELEMENT, float> elementsChanceDictionary {
         get { return _elementsChanceDictionary; }
-    }
-    public Dictionary<WEAPON_TYPE, WeaponType> weaponTypeData {
-        get { return _weaponTypeData; }
-    }
-    public Dictionary<ARMOR_TYPE, ArmorType> armorTypeData {
-        get { return _armorTypeData; }
-    }
-    public Dictionary<WEAPON_PREFIX, WeaponPrefix> weaponPrefixes {
-        get { return _weaponPrefixes; }
-    }
-    public Dictionary<WEAPON_SUFFIX, WeaponSuffix> weaponSuffixes {
-        get { return _weaponSuffixes; }
-    }
-    public Dictionary<ARMOR_PREFIX, ArmorPrefix> armorPrefixes {
-        get { return _armorPrefixes; }
-    }
-    public Dictionary<ARMOR_SUFFIX, ArmorSuffix> armorSuffixes {
-        get { return _armorSuffixes; }
     }
     public List<ICharacterSim> sideAList {
         get { return _sideAList; }
@@ -83,10 +59,6 @@ public class CombatSimManager : MonoBehaviour {
         _sideAList = new List<ICharacterSim>();
         _sideBList = new List<ICharacterSim>();
         ConstructElementChanceDictionary();
-        ConstructWeaponTypeData();
-        ConstructArmorTypeData();
-        ConstructWeaponPrefixesAndSuffixes();
-        ConstructArmorPrefixesAndSuffixes();
         UpdateAllCharacters();
         UpdateAllMonsters();
         UpdateCharacterOptions();
@@ -114,22 +86,6 @@ public class CombatSimManager : MonoBehaviour {
         sideBOptions.AddOptions(_allCharacters);
         sideBOptions.AddOptions(_allMonsters);
     }
-    private bool SideAContains(string name) {
-        for (int i = 0; i < _sideAList.Count; i++) {
-            if(_sideAList[i].name == name) {
-                return true;
-            }
-        }
-        return false;
-    }
-    private bool SideBContains(string name) {
-        for (int i = 0; i < _sideBList.Count; i++) {
-            if (_sideBList[i].name == name) {
-                return true;
-            }
-        }
-        return false;
-    }
     private void ResetCharacters() {
         for (int i = 0; i < _sideAList.Count; i++) {
             _sideAList[i].ResetToFullHP();
@@ -146,88 +102,6 @@ public class CombatSimManager : MonoBehaviour {
         ELEMENT[] elements = (ELEMENT[]) System.Enum.GetValues(typeof(ELEMENT));
         for (int i = 0; i < elements.Length; i++) {
             _elementsChanceDictionary.Add(elements[i], 0f);
-        }
-    }
-    private void ConstructWeaponTypeData() {
-        _weaponTypeData = new Dictionary<WEAPON_TYPE, WeaponType>();
-        string path = Utilities.dataPath + "WeaponTypes/";
-        string[] files = Directory.GetFiles(path, "*.json");
-        for (int i = 0; i < files.Length; i++) {
-            string currFilePath = files[i];
-            string dataAsJson = File.ReadAllText(currFilePath);
-            WeaponType data = JsonUtility.FromJson<WeaponType>(dataAsJson);
-            _weaponTypeData.Add(data.weaponType, data);
-        }
-    }
-    private void ConstructArmorTypeData() {
-        _armorTypeData = new Dictionary<ARMOR_TYPE, ArmorType>();
-        string path = Utilities.dataPath + "ArmorTypes/";
-        string[] files = Directory.GetFiles(path, "*.json");
-        for (int i = 0; i < files.Length; i++) {
-            string currFilePath = files[i];
-            string dataAsJson = File.ReadAllText(currFilePath);
-            ArmorType data = JsonUtility.FromJson<ArmorType>(dataAsJson);
-            _armorTypeData.Add(data.armorType, data);
-        }
-    }
-    private void ConstructWeaponPrefixesAndSuffixes() {
-        _weaponPrefixes = new Dictionary<WEAPON_PREFIX, WeaponPrefix>();
-        _weaponSuffixes = new Dictionary<WEAPON_SUFFIX, WeaponSuffix>();
-        WEAPON_PREFIX[] prefixes = (WEAPON_PREFIX[]) Enum.GetValues(typeof(WEAPON_PREFIX));
-        WEAPON_SUFFIX[] suffixes = (WEAPON_SUFFIX[]) Enum.GetValues(typeof(WEAPON_SUFFIX));
-        for (int i = 0; i < prefixes.Length; i++) {
-            CreateWeaponPrefix(prefixes[i]);
-        }
-        for(int i = 0; i < suffixes.Length; i++) {
-            CreateWeaponSuffix(suffixes[i]);
-        }
-    }
-    private void ConstructArmorPrefixesAndSuffixes() {
-        _armorPrefixes = new Dictionary<ARMOR_PREFIX, ArmorPrefix>();
-        _armorSuffixes = new Dictionary<ARMOR_SUFFIX, ArmorSuffix>();
-        ARMOR_PREFIX[] prefixes = (ARMOR_PREFIX[]) Enum.GetValues(typeof(ARMOR_PREFIX));
-        ARMOR_SUFFIX[] suffixes = (ARMOR_SUFFIX[]) Enum.GetValues(typeof(ARMOR_SUFFIX));
-        for (int i = 0; i < prefixes.Length; i++) {
-            CreateArmorPrefix(prefixes[i]);
-        }
-        for (int i = 0; i < suffixes.Length; i++) {
-            CreateArmorSuffix(suffixes[i]);
-        }
-    }
-    private void CreateWeaponPrefix(WEAPON_PREFIX prefix) {
-        if (!_weaponPrefixes.ContainsKey(prefix)) {
-            switch (prefix) {
-                case WEAPON_PREFIX.NONE:
-                _weaponPrefixes.Add(prefix, new WeaponPrefix(prefix));
-                break;
-            }
-        }
-    }
-    private void CreateWeaponSuffix(WEAPON_SUFFIX suffix) {
-        if (!_weaponSuffixes.ContainsKey(suffix)) {
-            switch (suffix) {
-                case WEAPON_SUFFIX.NONE:
-                _weaponSuffixes.Add(suffix, new WeaponSuffix(suffix));
-                break;
-            }
-        }
-    }
-    private void CreateArmorPrefix(ARMOR_PREFIX prefix) {
-        if (!_armorPrefixes.ContainsKey(prefix)) {
-            switch (prefix) {
-                case ARMOR_PREFIX.NONE:
-                _armorPrefixes.Add(prefix, new ArmorPrefix(prefix));
-                break;
-            }
-        }
-    }
-    private void CreateArmorSuffix(ARMOR_SUFFIX suffix) {
-        if (!_armorSuffixes.ContainsKey(suffix)) {
-            switch (suffix) {
-                case ARMOR_SUFFIX.NONE:
-                _armorSuffixes.Add(suffix, new ArmorSuffix(suffix));
-                break;
-            }
         }
     }
     #endregion
@@ -257,8 +131,6 @@ public class CombatSimManager : MonoBehaviour {
             icharacterSim = characterSim;
         } else {
             string path = monsterPath + chosenCharacterName + ".json";
-            Monster monster = JsonUtility.FromJson<Monster>(System.IO.File.ReadAllText(path));
-            icharacterSim = monster;
         }
         icharacterSim.InitializeSim();
         _sideAList.Add(icharacterSim);
@@ -276,8 +148,6 @@ public class CombatSimManager : MonoBehaviour {
             icharacterSim = characterSim;
         } else {
             string path = monsterPath + chosenCharacterName + ".json";
-            Monster monster = JsonUtility.FromJson<Monster>(System.IO.File.ReadAllText(path));
-            icharacterSim = monster;
         }
         icharacterSim.InitializeSim();
         _sideBList.Add(icharacterSim);

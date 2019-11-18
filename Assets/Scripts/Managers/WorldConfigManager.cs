@@ -7,8 +7,6 @@ public class WorldConfigManager : MonoBehaviour {
 
     public static WorldConfigManager Instance;
 
-    [System.NonSerialized]public WorldSaveData loadedData = null; //Used for saved worlds
-
     [Header("Map Settings")]
     public int minRegionCount;
     public int maxRegionCount;
@@ -30,9 +28,6 @@ public class WorldConfigManager : MonoBehaviour {
             Destroy(Instance.gameObject);
         }
         DontDestroyOnLoad(this.gameObject);
-    }
-    public void SetDataToUse(WorldSaveData data) {
-        loadedData = data;
     }
     public Dictionary<LANDMARK_TYPE, int> GetLandmarksForGeneration(int regionCount) {
         //The world must have the following landmarks:

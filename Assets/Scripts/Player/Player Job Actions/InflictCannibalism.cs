@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Traits;
 
 public class Cannibalism : PlayerJobAction {
 
@@ -29,7 +30,7 @@ public class Cannibalism : PlayerJobAction {
                 if (CanPerformActionTowards(currTarget)) {
                     Trait newTrait = new Cannibal();
                     newTrait.SetLevel(level);
-                    currTarget.AddTrait(newTrait);
+                    currTarget.traitContainer.AddTrait(currTarget, newTrait);
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
                     log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(newTrait, newTrait.name, LOG_IDENTIFIER.STRING_1);
@@ -60,10 +61,10 @@ public class Cannibalism : PlayerJobAction {
         if (targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Cannibal", "Vampiric") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait("Cannibal", "Vampiric") != null) {
             return false;
         }
-        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
         //    return false;
         //}
         return base.CanPerformActionTowards(targetCharacter);
@@ -94,10 +95,10 @@ public class Cannibalism : PlayerJobAction {
         if (targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Cannibal", "Vampiric") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait("Cannibal", "Vampiric") != null) {
             return false;
         }
-        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
         //    return false;
         //}
         return base.CanTarget(targetCharacter, ref hoverText);

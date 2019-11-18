@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Traits;
 
 public class CharacterMarkerVisionCollision : MonoBehaviour {
 
@@ -116,8 +117,8 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
     }
     public bool ChatHandling(Character targetCharacter) {
         if (targetCharacter.isDead
-            || targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)
-            || parentMarker.character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)
+            || targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) //TODO: .HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER) Change to use new cannot move/cannot witness
+            || parentMarker.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
             || (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
             || (parentMarker.character.stateComponent.currentState != null && parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
             || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
@@ -143,8 +144,8 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
     }
     public bool ForceChatHandling(Character targetCharacter) {
         if (targetCharacter.isDead
-            || targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)
-            || parentMarker.character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)
+            || targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)//TODO: .HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER) Change to use new cannot move/cannot witness
+            || parentMarker.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
             || (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
             || (parentMarker.character.stateComponent.currentState != null && parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
             || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
@@ -177,7 +178,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             targetCharacter = poi as Character;
         }
         parentMarker.AddPOIAsInVisionRange(poi);
-        if(targetCharacter != null && parentMarker.character.GetNormalTrait("Resting", "Unconscious") == null) {
+        if(targetCharacter != null && parentMarker.character.traitContainer.GetNormalTrait("Resting", "Unconscious") == null) {
             parentMarker.AddHostileInRange(targetCharacter);
         }
         //if (GameManager.Instance.gameHasStarted) {

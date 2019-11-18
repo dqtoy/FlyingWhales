@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using BayatGames.SaveGameFree.Types;
+using Traits;
 
 public class TileObject : IPointOfInterest {
 
@@ -13,9 +14,6 @@ public class TileObject : IPointOfInterest {
     public List<INTERACTION_TYPE> poiGoapActions { get; protected set; }
     public Area specificLocation { get { return gridTileLocation.structure.location; } }
     protected List<Trait> _traits;
-    public virtual List<Trait> normalTraits {
-        get { return _traits; }
-    }
     public List<Character> awareCharacters { get; private set; } //characters that are aware of this object (Used for checking if a ghost trigger should be destroyed)
     public List<string> actionHistory { get; private set; } //list of actions that was done to this object
     public LocationStructure structureLocation { get; protected set; }
@@ -87,7 +85,8 @@ public class TileObject : IPointOfInterest {
         hasCreatedSlots = false;
         maxHP = TileObjectDB.GetTileObjectData(tileObjectType).maxHP;
         currentHP = maxHP;
-        AddTrait("Flammable");
+        CreateTraitContainer();
+        traitContainer.AddTrait(this, "Flammable");
         InitializeCollisionTrigger();
         InteriorMapManager.Instance.AddTileObject(this);
     }
@@ -113,6 +112,7 @@ public class TileObject : IPointOfInterest {
         owners = new List<Character>();
         //targettedByAction = new List<GoapAction>();
         hasCreatedSlots = false;
+        CreateTraitContainer();
         InitializeCollisionTrigger();
         InteriorMapManager.Instance.AddTileObject(this);
     }
@@ -234,12 +234,12 @@ public class TileObject : IPointOfInterest {
         if (hasCreatedSlots) {
             DestroyTileSlots();
         }
-        RemoveAllTraits();
+        traitContainer.RemoveAllTraits(this);
     }
     public virtual bool CanBeReplaced() {
         return false;
     }
-    protected virtual void OnTileObjectGainedTrait(Trait trait) { }
+    public virtual void OnTileObjectGainedTrait(Trait trait) { }
     public virtual void SetStructureLocation(LocationStructure structure) {
         structureLocation = structure;
     }
@@ -351,104 +351,10 @@ public class TileObject : IPointOfInterest {
     #endregion
 
     #region Traits
-    public bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
-        if (AttributeManager.Instance.IsInstancedTrait(traitName)) {
-            return AddTrait(AttributeManager.Instance.CreateNewInstancedTraitClass(traitName), characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd);
-        } else {
-            return AddTrait(AttributeManager.Instance.allTraits[traitName], characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd);
-        }
-    }
-    public virtual bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
-        if (trait.IsUnique()) {
-            Trait oldTrait = GetNormalTrait(trait.name);
-            if (oldTrait != null) {
-                oldTrait.SetCharacterResponsibleForTrait(characterResponsible);
-                oldTrait.AddCharacterResponsibleForTrait(characterResponsible);
-                return false;
-            }
-            //return false;
-        }
-        _traits.Add(trait);
-        trait.SetGainedFromDoing(gainedFromDoing);
-        trait.SetOnRemoveAction(onRemoveAction);
-        trait.SetCharacterResponsibleForTrait(characterResponsible);
-        trait.AddCharacterResponsibleForTrait(characterResponsible);
-        //ApplyTraitEffects(trait);
-        //ApplyPOITraitInteractions(trait);
-        if (trait.daysDuration > 0) {
-            GameDate removeDate = GameManager.Instance.Today();
-            removeDate.AddTicks(trait.daysDuration);
-            string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait), this);
-            trait.SetExpiryTicket(this, ticket);
-        }
-        if (triggerOnAdd) {
-            trait.OnAddTrait(this);
-        }
-        OnTileObjectGainedTrait(trait);
-        return true;
-    }
-    public virtual bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null, bool includeAlterEgo = true) {
-        if (_traits.Remove(trait)) {
-            trait.RemoveExpiryTicket(this);
-            if (triggerOnRemove) {
-                trait.OnRemoveTrait(this, removedBy);
-            }
-            return true;
-        }
-        return false;
-    }
-    public bool RemoveTrait(string traitName, bool triggerOnRemove = true, Character removedBy = null) {
-        Trait trait = GetNormalTrait(traitName);
-        if (trait != null) {
-            return RemoveTrait(trait, triggerOnRemove, removedBy);
-        }
-        return false;
-    }
-    public void RemoveTrait(List<Trait> traits) {
-        for (int i = 0; i < traits.Count; i++) {
-            RemoveTrait(traits[i]);
-        }
-    }
-    public virtual List<Trait> RemoveAllTraitsByType(TRAIT_TYPE traitType) {
-        List<Trait> removedTraits = new List<Trait>();
-        for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i].type == traitType) {
-                removedTraits.Add(_traits[i]);
-                _traits.RemoveAt(i);
-                i--;
-            }
-        }
-        return removedTraits;
-    }
-    public Trait GetNormalTrait(params string[] traitNames) {
-        for (int i = 0; i < normalTraits.Count; i++) {
-            Trait trait = normalTraits[i];
-
-            for (int j = 0; j < traitNames.Length; j++) {
-                if (trait.name == traitNames[j] && !trait.isDisabled) {
-                    return trait;
-                }
-            }
-        }
-        return null;
-    }
-    public void RefreshTraitExpiry(Trait trait) {
-        if (trait.expiryTickets.ContainsKey(this)) {
-            SchedulingManager.Instance.RemoveSpecificEntry(trait.expiryTickets[this]);
-        }
-        if (trait.daysDuration > 0) {
-            GameDate removeDate = GameManager.Instance.Today();
-            removeDate.AddTicks(trait.daysDuration);
-            string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait), this);
-            trait.SetExpiryTicket(this, ticket);
-        }
-
-    }
-    private void RemoveAllTraits() {
-        List<Trait> allTraits = new List<Trait>(normalTraits);
-        for (int i = 0; i < allTraits.Count; i++) {
-            RemoveTrait(allTraits[i]);
-        }
+    public ITraitContainer traitContainer { get; private set; }
+    public TraitProcessor traitProcessor { get { return TraitManager.tileObjectTraitProcessor; } }
+    private void CreateTraitContainer() {
+        traitContainer = new TraitContainer();
     }
     #endregion
 
@@ -703,7 +609,7 @@ public class TileObject : IPointOfInterest {
 
     #region Utilities
     public void DoCleanup() {
-        RemoveAllTraits();
+        traitContainer.RemoveAllTraits(this);
     }
     public void UpdateOwners() {
         if (tile.structure is Dwelling) {
@@ -806,10 +712,10 @@ public class SaveDataTileObject {
         }
 
         traits = new List<SaveDataTrait>();
-        for (int i = 0; i < tileObject.normalTraits.Count; i++) {
-            SaveDataTrait saveDataTrait = SaveManager.ConvertTraitToSaveDataTrait(tileObject.normalTraits[i]);
+        for (int i = 0; i < tileObject.traitContainer.allTraits.Count; i++) {
+            SaveDataTrait saveDataTrait = SaveManager.ConvertTraitToSaveDataTrait(tileObject.traitContainer.allTraits[i]);
             if (saveDataTrait != null) {
-                saveDataTrait.Save(tileObject.normalTraits[i]);
+                saveDataTrait.Save(tileObject.traitContainer.allTraits[i]);
                 traits.Add(saveDataTrait);
             }
         }
@@ -860,7 +766,7 @@ public class SaveDataTileObject {
         for (int i = 0; i < traits.Count; i++) {
             Character responsibleCharacter = null;
             Trait trait = traits[i].Load(ref responsibleCharacter);
-            loadedTileObject.AddTrait(trait, responsibleCharacter);
+            loadedTileObject.traitContainer.AddTrait(loadedTileObject, trait, responsibleCharacter);
         }
     }
 }

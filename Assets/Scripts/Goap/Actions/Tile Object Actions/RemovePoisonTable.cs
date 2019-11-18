@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class RemovePoisonTable : GoapAction {
     protected override string failActionState { get { return "Remove Poison Fail"; } }
 
-    public RemovePoisonTable(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.REMOVE_POISON_TABLE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public RemovePoisonTable() : base(INTERACTION_TYPE.REMOVE_POISON_TABLE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         //this.goapName = "Remove Poison";
         actionIconString = GoapActionStateDB.Work_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
@@ -19,15 +20,15 @@ public class RemovePoisonTable : GoapAction {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.TOOL.ToString(), targetPOI = actor }, HasItemTool);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
     }
-    public override void Perform() {
-        base.Perform();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         if (!isTargetMissing) {
             SetState("Remove Poison Success");
         } else {
             SetState("Target Missing");
         }
     }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 4;
     }
     //public override void FailAction() {
@@ -60,7 +61,7 @@ public class RemovePoisonTable : GoapAction {
         if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
             return false;
         }
-        return poiTarget.GetNormalTrait("Poisoned") != null;
+        return poiTarget.traitContainer.GetNormalTrait("Poisoned") != null;
     }
     #endregion
 
@@ -81,6 +82,6 @@ public class RemovePoisonTableData : GoapActionData {
         if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
             return false;
         }
-        return poiTarget.GetNormalTrait("Poisoned") != null;
+        return poiTarget.traitContainer.GetNormalTrait("Poisoned") != null;
     }
 }

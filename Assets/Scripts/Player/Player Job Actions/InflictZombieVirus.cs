@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Traits;
 using UnityEngine;
 
 public class ZombieVirus : PlayerJobAction {
@@ -28,7 +29,7 @@ public class ZombieVirus : PlayerJobAction {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(currTarget)) {
                     Trait newTrait = new Infected();
-                    currTarget.AddTrait(newTrait);
+                    currTarget.traitContainer.AddTrait(currTarget, newTrait);
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
                     log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(newTrait, newTrait.name, LOG_IDENTIFIER.STRING_1);
@@ -59,7 +60,7 @@ public class ZombieVirus : PlayerJobAction {
         if (targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Infected", "Robust") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait("Infected", "Robust") != null) {
             return false;
         }
         return base.CanPerformActionTowards(targetCharacter);
@@ -90,7 +91,7 @@ public class ZombieVirus : PlayerJobAction {
         if (targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Infected", "Robust") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait("Infected", "Robust") != null) {
             return false;
         }
         return base.CanTarget(targetCharacter, ref hoverText);

@@ -1,0 +1,263 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+
+namespace Traits {
+    [System.Serializable]
+    public class Trait {
+        public virtual string nameInUI {
+            get { return name; }
+        }
+        public virtual bool isNotSavable {
+            get { return false; }
+        }
+        public string name;
+        public string description;
+        public string thoughtText;
+        public TRAIT_TYPE type;
+        public TRAIT_EFFECT effect;
+        public List<INTERACTION_TYPE> advertisedInteractions;
+        public int daysDuration; //Zero (0) means Permanent
+        public int level;
+        public List<TraitEffect> effects;
+        public bool isHidden;
+        public string[] mutuallyExclusive; //list of traits that this trait cannot be with.
+        public bool canBeTriggered;
+        public bool hindersWitness; //if a character has this trait, and this is true, then he/she cannot witness events
+        public bool hindersMovement; //if a character has this trait, and this is true, then he/she cannot move
+        public bool hindersAttackTarget; //if a character has this trait, and this is true, then he/she cannot be attacked
+
+        public Character responsibleCharacter { get { return responsibleCharacters.FirstOrDefault(); } }
+        public List<Character> responsibleCharacters { get; protected set; }
+        public Dictionary<ITraitable, string> expiryTickets { get; private set; } //this is the key for the scheduled removal of this trait for each object
+        public GoapAction gainedFromDoing { get; private set; } //what action was this poi involved in that gave it this trait.
+        public GameDate dateEstablished { get; protected set; }
+        public virtual bool isPersistent { get { return false; } } //should this trait persist through all a character's alter egos
+        public virtual bool isRemovedOnSwitchAlterEgo { get { return false; } }
+
+        #region Virtuals
+        public virtual void OnAddTrait(ITraitable addedTo) {
+            //if(type == TRAIT_TYPE.CRIMINAL && sourceCharacter is Character) {
+            //    Character character = sourceCharacter as Character;
+            //    character.CreateApprehendJob();
+            //}
+            if (level == 0) {
+                SetLevel(1);
+            }
+            SetDateEstablished(GameManager.Instance.Today());
+        }
+        public virtual void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+            if (type == TRAIT_TYPE.CRIMINAL && removedFrom is Character) {
+                Character character = removedFrom as Character;
+                if (!character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+                    character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
+                }
+            }
+        }
+        public virtual string GetToolTipText() { return string.Empty; }
+        public virtual bool IsUnique() { return true; }
+        /// <summary>
+        /// Only used for characters, since traits aren't removed when a character dies.
+        /// This function will be called to ensure that any unneeded resources in traits can be freed up when a character dies.
+        /// <see cref="Character.Death(string)"/>
+        /// </summary>
+        public virtual void OnDeath(Character character) { }
+        /// <summary>
+        /// Used to return necessary actions when a character with this trait
+        /// returns to life.
+        /// </summary>
+        /// <param name="character">The character that returned to life.</param>
+        public virtual void OnReturnToLife(Character character) { }
+        public virtual string GetTestingData() { return string.Empty; }
+        public virtual bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) { return false; } //What jobs a character can create based on the target's traits?
+        public virtual bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) { return false; } //What jobs a character can create based on the his/her own traits, considering the target?
+        public virtual void OnSeePOI(IPointOfInterest targetPOI, Character character) { }
+        protected virtual void OnChangeLevel() { }
+        public virtual void OnOwnerInitiallyPlaced(Character owner) { }
+        public virtual bool IsTangible() { return false; } //is this trait tangible? Only used for traits on tiles, so that the tile's tile object will be activated when it has a tangible trait
+        public virtual bool PerTickOwnerMovement() { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
+        public virtual bool OnStartPerformGoapAction(GoapAction action, ref bool willStillContinueAction) { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
+        //Returns the string of the log key that's supposed to be logged
+        public virtual string TriggerFlaw(Character character) {
+            int manaCost = GetTriggerFlawManaCost(character); ;
+            PlayerManager.Instance.player.AdjustMana(-manaCost);
+            if (character.trapStructure.structure != null) {
+                //clear all trap structures when triggering flaw
+                character.trapStructure.SetStructureAndDuration(null, 0);
+            }
+            return "flaw_effect";
+        }
+        /// <summary>
+        /// This checks if this flaw can be triggered. This checks both the requirements of the individual traits,
+        /// and the mana cost. This is responsible for enabling/disabling the trigger flaw buttton.
+        /// </summary>
+        /// <param name="character">The character whose flaw will be triggered</param>
+        /// <returns>true or false</returns>
+        public virtual bool CanFlawBeTriggered(Character character) {
+            //return true;
+            int manaCost = GetTriggerFlawManaCost(character);
+
+            return PlayerManager.Instance.player.mana >= manaCost
+                && character.canWitness
+                //&& !character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER) //disabled characters cannot be triggered
+                && character.traitContainer.GetNormalTrait("Blessed") == null
+                && !character.currentParty.icon.isTravellingOutside; //characters travelling outside cannot be triggered
+        }
+        public virtual string GetRequirementDescription(Character character) {
+            return "Mana cost of triggering this flaw's negative effect depends on the character's mood. The darker the mood, the cheaper the cost.";
+        }
+        public virtual List<string> GetCannotTriggerFlawReasons(Character character) {
+            List<string> reasons = new List<string>();
+            if (PlayerManager.Instance.player.mana < GetTriggerFlawManaCost(character)) {
+                reasons.Add("You do not have enough mana.");
+            }
+            if (character.traitContainer.GetNormalTrait("Blessed") != null) {
+                reasons.Add("Blessed characters cannot be targeted by Trigger Flaw.");
+            }
+            if (!character.canWitness) {
+                reasons.Add("Characters that cannot witness events cannot be targeted by Trigger Flaw.");
+            }
+            //if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER)) {
+            //    reasons.Add("Inactive characters cannot be targeted by Trigger Flaw.");
+            //}
+            return reasons;
+
+        }
+        #endregion
+
+        #region Utilities
+        public int GetTriggerFlawManaCost(Character character) {
+            //Triggering while in a bad mood costs more Mana (100) than triggering while in a dark mood (50). Great and good mood costs 200 mana.
+            if (character.currentMoodType == CHARACTER_MOOD.BAD) {
+                return 25;
+            } else if (character.currentMoodType == CHARACTER_MOOD.DARK) {
+                return 10;
+            } else {
+                return 50; //great or good
+            }
+        }
+        public string GetTriggerFlawEffectDescription(Character character, string key) {
+            if (LocalizationManager.Instance.HasLocalizedValue("Trait", this.GetType().ToString(), key)) {
+                Log log = new Log(GameManager.Instance.Today(), "Trait", this.GetType().ToString(), key);
+                log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                return Utilities.LogReplacer(log);
+            }
+            return string.Empty;
+        }
+        public void SetGainedFromDoing(GoapAction action) {
+            gainedFromDoing = action;
+        }
+        public void OverrideDuration(int newDuration) {
+            daysDuration = newDuration;
+        }
+        public void AddCharacterResponsibleForTrait(Character character) {
+            if (responsibleCharacters == null) {
+                responsibleCharacters = new List<Character>();
+            }
+            if (character != null && !responsibleCharacters.Contains(character)) {
+                responsibleCharacters.Add(character);
+            }
+        }
+        public bool IsResponsibleForTrait(Character character) {
+            if (responsibleCharacter == character) {
+                return true;
+            } else if (responsibleCharacters != null) {
+                return responsibleCharacters.Contains(character);
+            }
+            return false;
+        }
+        public void SetExpiryTicket(ITraitable obj, string expiryTicket) {
+            if (expiryTickets == null) {
+                expiryTickets = new Dictionary<ITraitable, string>();
+            }
+            if (!expiryTickets.ContainsKey(obj)) {
+                expiryTickets.Add(obj, expiryTicket);
+            } else {
+                expiryTickets[obj] = expiryTicket;
+            }
+        }
+        public void RemoveExpiryTicket(ITraitable traitable) {
+            if (expiryTickets != null) {
+                expiryTickets.Remove(traitable);
+            }
+        }
+        public void LevelUp() {
+            level++;
+            level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY);
+            OnChangeLevel();
+        }
+        public void SetLevel(int amount) {
+            level = amount;
+            level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY);
+            OnChangeLevel();
+        }
+        public void SetDateEstablished(GameDate date) {
+            dateEstablished = date;
+        }
+        public void SetTraitEffects(List<TraitEffect> effects) {
+            this.effects = effects;
+        }
+        protected bool TryTransferJob(JobQueueItem currentJob, Character characterThatWillDoJob) {
+            if (currentJob.currentOwner.ownerType == JOB_QUEUE_OWNER.LOCATION || currentJob.currentOwner.ownerType == JOB_QUEUE_OWNER.QUEST) {
+                bool canBeTransfered = false;
+                Character assignedCharacter = currentJob.currentOwner as Character;
+                if (assignedCharacter != null && assignedCharacter.currentActionNode.action != null
+                    && assignedCharacter.currentJob != null && assignedCharacter.currentJob == currentJob) {
+                    if (assignedCharacter != characterThatWillDoJob) {
+                        canBeTransfered = !assignedCharacter.marker.inVisionPOIs.Contains(assignedCharacter.currentActionNode.poiTarget);
+                    }
+                } else {
+                    canBeTransfered = true;
+                }
+                if (canBeTransfered && characterThatWillDoJob.CanCurrentJobBeOverriddenByJob(currentJob)) {
+                    (currentJob.currentOwner as Character).jobQueue.CancelJob(currentJob, shouldDoAfterEffect: false, forceRemove: true);
+                    characterThatWillDoJob.jobQueue.AddJobInQueue(currentJob, false);
+                    //TODO: characterThatWillDoJob.jobQueue.AssignCharacterToJobAndCancelCurrentAction(currentJob, characterThatWillDoJob);
+                    return true;
+                }
+            }
+            return false;
+        }
+        #endregion
+
+        #region Actions
+        protected INTERACTION_TYPE[] canStopActions; //list of actions that this trait can stop
+        /// <summary>
+        /// If this trait modifies any costs of an action, put it here.
+        /// </summary>
+        /// <param name="action">The type of action.</param>
+        /// <param name="cost">The cost to be modified.</param>
+        public virtual void ExecuteCostModification(INTERACTION_TYPE action, ref int cost) { }
+        public bool CanStopAction(INTERACTION_TYPE type) {
+            for (int i = 0; i < canStopActions.Length; i++) {
+                if (type == canStopActions[i]) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public virtual void ExecuteActionPreEffects(INTERACTION_TYPE action) { }
+        public virtual void ExecuteActionPerTickEffects(INTERACTION_TYPE action) { }
+        public virtual void ExecuteActionAfterEffects(INTERACTION_TYPE action) { }
+        #endregion
+    }
+}
+
+
+[System.Serializable]
+public class TraitEffect {
+    public STAT stat;
+    public float amount;
+    public bool isPercentage;
+    public TRAIT_REQUIREMENT_CHECKER checker;
+    public TRAIT_REQUIREMENT_TARGET target;
+    public DAMAGE_IDENTIFIER damageIdentifier; //Only used during combat
+    public string description;
+
+    public bool hasRequirement;
+    public bool isNot;
+    public TRAIT_REQUIREMENT requirementType;
+    public TRAIT_REQUIREMENT_SEPARATOR requirementSeparator;
+    public List<string> requirements;
+}

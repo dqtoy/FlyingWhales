@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using BayatGames.SaveGameFree.Types;
+using Traits;
 
 [System.Serializable]
 public class SaveDataItem {
@@ -24,10 +25,10 @@ public class SaveDataItem {
         weight = item.weight;
         isDisabledByPlayer = item.isDisabledByPlayer;
         state = item.state;
-        if(item.normalTraits != null) {
+        if(item.traitContainer.allTraits != null) {
             traits = new List<SaveDataTrait>();
-            for (int i = 0; i < item.normalTraits.Count; i++) {
-                Trait trait = item.normalTraits[i];
+            for (int i = 0; i < item.traitContainer.allTraits.Count; i++) {
+                Trait trait = item.traitContainer.allTraits[i];
                 SaveDataTrait saveDataTrait = SaveManager.ConvertTraitToSaveDataTrait(trait);
                 if(saveDataTrait != null) {
                     saveDataTrait.Save(trait);
@@ -52,7 +53,7 @@ public class SaveDataItem {
         for (int i = 0; i < traits.Count; i++) {
             Character responsibleCharacter = null;
             Trait trait = traits[i].Load(ref responsibleCharacter);
-            item.AddTrait(trait, responsibleCharacter);
+            item.traitContainer.AddTrait(item, trait, responsibleCharacter);
         }
         LocationStructure structure = null;
         LocationGridTile tile = null;
@@ -70,7 +71,7 @@ public class SaveDataItem {
         for (int i = 0; i < traits.Count; i++) {
             Character responsibleCharacter = null;
             Trait trait = traits[i].Load(ref responsibleCharacter);
-            item.AddTrait(trait, responsibleCharacter);
+            item.traitContainer.AddTrait(item, trait, responsibleCharacter);
         }
         characterOwner.ObtainToken(item);
     }

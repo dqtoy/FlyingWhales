@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Traits;
 public class Golem : Summon {
 
     public Golem() : base(SUMMON_TYPE.Golem, CharacterRole.SOLDIER, RACE.ABOMINATION, Utilities.GetRandomGender()) {
@@ -27,14 +27,14 @@ public class Golem : Summon {
     //}
     protected override void OnSeenBy(Character character) {
         base.OnSeenBy(character);
-        if (HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        if (traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
             return;
         }
         if (!character.IsHostileWith(this)) {
             return;
         }
         //add taunted trait to the character
-        character.AddTrait(new Taunted(), this);
+        character.traitContainer.AddTrait(character, new Taunted(), this);
     }
     #endregion
 }

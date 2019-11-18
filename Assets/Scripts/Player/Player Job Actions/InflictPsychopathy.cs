@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Traits;
 using UnityEngine;
 
 public class Psychopathy : PlayerJobAction {
@@ -18,7 +19,7 @@ public class Psychopathy : PlayerJobAction {
             if (CanPerformActionTowards(currTarget)) {
                 Trait newTrait = new SerialKiller();
                 newTrait.SetLevel(level);
-                currTarget.AddTrait(newTrait);
+                currTarget.traitContainer.AddTrait(currTarget, newTrait);
             }
             base.ActivateAction(targetPOI);
         }
@@ -30,10 +31,10 @@ public class Psychopathy : PlayerJobAction {
         if (targetCharacter.race == RACE.SKELETON || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Serial Killer") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait("Serial Killer") != null) {
             return false;
         }
-        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
         //    return false;
         //}
         return base.CanPerformActionTowards(targetCharacter);
@@ -47,10 +48,10 @@ public class Psychopathy : PlayerJobAction {
         if (targetCharacter.race == RACE.SKELETON || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Serial Killer") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait("Serial Killer") != null) {
             return false;
         }
-        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
         //    return false;
         //}
         return true;

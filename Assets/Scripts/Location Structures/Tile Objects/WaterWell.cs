@@ -1,16 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Traits;
 
 public class WaterWell : TileObject {
 
     public WaterWell(LocationStructure location) {
         SetStructureLocation(location);
         Initialize(TILE_OBJECT_TYPE.WATER_WELL);
-        RemoveTrait("Flammable");
+        traitContainer.RemoveTrait(this, "Flammable");
         Wet wet = new Wet();
         wet.daysDuration = 0;
-        AddTrait(wet);
+        traitContainer.AddTrait(this, wet);
     }
     public WaterWell(SaveDataTileObject data) {
         Initialize(data);

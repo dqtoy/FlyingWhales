@@ -452,9 +452,9 @@ public class InteriorMapManager : MonoBehaviour {
                 summary += "None";
             }
             summary += "\n\tObject Traits: ";
-            if (poi.normalTraits.Count > 0) {
-                for (int i = 0; i < poi.normalTraits.Count; i++) {
-                    summary += "\n\t\t- " + poi.normalTraits[i].name + " - " + poi.normalTraits[i].GetTestingData();
+            if (poi.traitContainer.allTraits.Count > 0) {
+                for (int i = 0; i < poi.traitContainer.allTraits.Count; i++) {
+                    summary += "\n\t\t- " + poi.traitContainer.allTraits[i].name + " - " + poi.traitContainer.allTraits[i].GetTestingData();
                 }
             } else {
                 summary += "None";

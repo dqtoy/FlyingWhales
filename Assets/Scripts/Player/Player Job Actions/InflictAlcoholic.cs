@@ -25,7 +25,7 @@ public class Alcoholic : PlayerJobAction {
             for (int i = 0; i < targets.Count; i++) {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(currTarget)) {
-                    currTarget.AddTrait("Drunkard");
+                    currTarget.traitContainer.AddTrait(currTarget, "Drunkard");
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
                     log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(null, "Drunkard", LOG_IDENTIFIER.STRING_1);
@@ -57,7 +57,7 @@ public class Alcoholic : PlayerJobAction {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Drunkard") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait("Drunkard") != null) {
             return false;
         }
         return base.CanTarget(targetCharacter, ref hoverText);
@@ -66,7 +66,7 @@ public class Alcoholic : PlayerJobAction {
         if (targetPOI.isDead) {
             return false;
         }
-        if (!(targetPOI is Character) || targetPOI.GetNormalTrait("Drunkard") != null) {
+        if (!(targetPOI is Character) || targetPOI.traitContainer.GetNormalTrait("Drunkard") != null) {
             return false;
         }
         return base.CanPerformActionTowards(targetPOI);

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class ReplaceTileObject : GoapAction {
 
@@ -10,7 +11,7 @@ public class ReplaceTileObject : GoapAction {
     private LocationStructure _targetStructure;
     public override LocationStructure targetStructure { get { return _targetStructure; } }
 
-    public ReplaceTileObject(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.REPLACE_TILE_OBJECT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public ReplaceTileObject() : base(INTERACTION_TYPE.REPLACE_TILE_OBJECT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         actionIconString = GoapActionStateDB.Work_Icon;
         tileObjectToReplace = null;
@@ -38,8 +39,8 @@ public class ReplaceTileObject : GoapAction {
     //    SetTargetStructure();
     //    base.DoAction(plan);
     //}
-    public override void Perform() {
-        base.Perform();
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
         if (!isTargetMissing) {
             SetState("Replace Success");
         } else {
@@ -49,7 +50,7 @@ public class ReplaceTileObject : GoapAction {
     public override LocationGridTile GetTargetLocationTile() {
         return whereToPlace;
     }
-    protected override int GetBaseCost() {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 1;
     }
     public override bool InitializeOtherData(object[] otherData) {

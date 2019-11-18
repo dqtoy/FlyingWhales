@@ -75,7 +75,7 @@ public class SkirmishUI : MonoBehaviour {
             if(char1.minion != null) {
                 char1.minion.AddTrait("Injured", char2);
             } else {
-                char1.AddTrait("Injured", char2);
+                char1.traitContainer.AddTrait(char1, "Injured", char2);
             }
         }
         resultText.gameObject.SetActive(true);

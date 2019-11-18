@@ -109,27 +109,6 @@ public class Area : IJobOwner {
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
         availableJobs = new List<JobQueueItem>();
     }
-    public Area(AreaSaveData data) {
-        id = Utilities.SetID(this, data.areaID);
-        //charactersAtLocation = new List<Character>();
-        SetAreaType(data.areaType);
-        itemsInArea = new List<SpecialToken>();
-        //jobQueue = new JobQueue(this);
-        LoadStructures(data);
-        AssignPrison();
-
-//#if WORLD_CREATION_TOOL
-//        SetCoreTile(worldcreator.WorldCreatorManager.Instance.GetHexTile(data.coreTileID));
-//#else
-//        SetCoreTile(GridMap.Instance.GetHexTile(data.coreTileID));
-//#endif
-
-        //AddTile(Utilities.GetTilesFromIDs(data.tileData));
-        //UpdateBorderColors();
-        //GenerateDefaultRace();
-        nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
-    }
-
     public Area(SaveDataArea saveDataArea) {
         region = GridMap.Instance.GetRegionByID(saveDataArea.regionID);
         id = Utilities.SetID(this, saveDataArea.id);
@@ -362,11 +341,6 @@ public class Area : IJobOwner {
     //        UnsubscribeToSignals();
     //    }
     //}
-    private void ReleaseAllAbductedCharacters() {
-        for (int i = 0; i < charactersAtLocation.Count; i++) {
-            charactersAtLocation[i].ReleaseFromAbduction();
-        }
-    }
     public string GetAreaTypeString() {
         if (areaType == AREA_TYPE.DEMONIC_INTRUSION) {
             return "Demonic Intrusion";
@@ -455,7 +429,7 @@ public class Area : IJobOwner {
             if (PlayerManager.Instance != null && PlayerManager.Instance.player != null && this.id == PlayerManager.Instance.player.playerArea.id) {
                 chosenDwelling = structures[STRUCTURE_TYPE.DWELLING][0] as Dwelling; //to avoid errors, residents in player area will all share the same dwelling
             } else {
-                Character lover = character.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
+                Character lover = (character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.LOVER) as AlterEgoData)?.owner ?? null;
                 if (lover != null && lover.faction.id == character.faction.id && region.residents.Contains(lover)) { //check if the character has a lover that lives in the area
                     chosenDwelling = lover.homeStructure;
                 }
@@ -761,18 +735,6 @@ public class Area : IJobOwner {
             LandmarkManager.Instance.LoadStructureAt(this, data.structures[i]);
         }
         AssignPrison();
-    }
-    private void LoadStructures(AreaSaveData data) {
-        structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
-        if (data.structures == null) {
-            return;
-        }
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in data.structures) {
-            for (int i = 0; i < kvp.Value.Count; i++) {
-                LocationStructure currStructure = kvp.Value[i];
-                LandmarkManager.Instance.CreateNewStructureAt(this, currStructure.structureType, currStructure.isInside);
-            }
-        }
     }
     public void AddStructure(LocationStructure structure) {
         if (!structures.ContainsKey(structure.structureType)) {
