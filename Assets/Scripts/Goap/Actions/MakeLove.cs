@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
+using System.Linq;
 
 public class MakeLove : GoapAction {
 
     public MakeLove() : base(INTERACTION_TYPE.MAKE_LOVE) {
+        actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Flirt_Icon;
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.AFTERNOON,
@@ -16,15 +18,16 @@ public class MakeLove : GoapAction {
     }
 
     #region Overrides
-    //protected override void ConstructPreconditionsAndEffects() {
-    //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = poiTarget });
-    //}
+    protected override void ConstructBasePreconditionsAndEffects() {
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.INVITED, target = GOAP_EFFECT_TARGET.TARGET }, IsTargetInvited);
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.TARGET });
+    }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Make Love Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 1;
+        return Utilities.rng.Next(30, 57);
     }
     public override void OnStopWhilePerforming(Character actor, IPointOfInterest target, object[] otherData) {
         base.OnStopWhilePerforming(actor, target, otherData);
@@ -32,6 +35,9 @@ public class MakeLove : GoapAction {
         actor.ownParty.RemoveCharacter(targetCharacter);
         actor.AdjustDoNotGetLonely(-1);
         targetCharacter.AdjustDoNotGetLonely(-1);
+
+        Bed bed = actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).First() as Bed;
+        bed.OnDoneActionToObject(actor.currentActionNode);
 
         target.traitContainer.RemoveTrait(targetCharacter, "Wooed");
         if (targetCharacter.currentActionNode.action == this) {
@@ -50,54 +56,46 @@ public class MakeLove : GoapAction {
             targetCharacter.SetCurrentActionNode(null);
         }
     }
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
-        if (satisfied) {
-            Character targetCharacter = poiTarget as Character;
-            Bed bed = poiTarget as Bed;
-            if (bed.GetActiveUserCount() > 0 || targetCharacter.currentParty != actor.ownParty) {
-                return false;
-            } else {
-                return true;
+    public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
+        return goapNode.actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).First();
+    }
+    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest target, object[] otherData) {
+        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(actor, target, otherData);
+        if (goapActionInvalidity.isInvalid == false) {
+            Bed bed = actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).First() as Bed;
+            if (bed.IsAvailable() == false || bed.GetActiveUserCount() > 0) {
+                goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.stateName = "Make Love Fail";
             }
         }
-        return false;
+        return goapActionInvalidity;
     }
     #endregion
 
     #region Effects
     private void PreMakeLoveSuccess(ActualGoapNode goapNode) {
+        Bed bed = goapNode.actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).First() as Bed;
+        bed.OnDoActionToObject(goapNode);
+
         Character targetCharacter = goapNode.poiTarget as Character;
         goapNode.actor.AdjustDoNotGetLonely(1);
         targetCharacter.AdjustDoNotGetLonely(1);
 
         targetCharacter.SetCurrentActionNode(goapNode);
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        currentState.AddLogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        goapNode.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         //TODO: currentState.SetIntelReaction(MakeLoveSuccessReactions);
     }
     private void PerTickMakeLoveSuccess(ActualGoapNode goapNode) {
         //**Per Tick Effect 1 * *: Actor's Happiness Meter +500
-        int actorHappinessAmount = 500;
-        int targetHappinessAmount = 500;
-        //TODO: Move values to traits
-        //if (actor.traitContainer.GetNormalTrait("Lustful") != null) {
-        //    actorHappinessAmount += 100;
-        //} else if (actor.traitContainer.GetNormalTrait("Chaste") != null) {
-        //    actorHappinessAmount -= 100;
-        //}
-        //if (targetCharacter.traitContainer.GetNormalTrait("Lustful") != null) {
-        //    targetHappinessAmount += 100;
-        //} else if (targetCharacter.traitContainer.GetNormalTrait("Chaste") != null) {
-        //    targetHappinessAmount -= 100;
-        //}
-
-        goapNode.actor.AdjustHappiness(actorHappinessAmount);
+        goapNode.actor.AdjustHappiness(500);
         //**Per Tick Effect 2**: Target's Happiness Meter +500
         Character targetCharacter = goapNode.poiTarget as Character;
-        targetCharacter.AdjustHappiness(targetHappinessAmount);
+        targetCharacter.AdjustHappiness(500);
     }
     private void AfterMakeLoveSuccess(ActualGoapNode goapNode) {
+        Bed bed = goapNode.actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).First() as Bed;
+        bed.OnDoneActionToObject(goapNode);
         Character targetCharacter = goapNode.poiTarget as Character;
         goapNode.actor.AdjustDoNotGetLonely(-1);
         targetCharacter.AdjustDoNotGetLonely(-1);
@@ -107,39 +105,6 @@ public class MakeLove : GoapAction {
             //kill the target character
             targetCharacter.Death("seduced", this, goapNode.actor);
         }
-
-        //TODO: Move to plagued trait
-        //Plagued chances
-        //Plagued actorPlagued = actor.traitContainer.GetNormalTrait("Plagued") as Plagued;
-        //Plagued targetPlagued = targetCharacter.traitContainer.GetNormalTrait("Plagued") as Plagued;
-        //if ((actorPlagued == null || targetPlagued == null) && (actorPlagued != null || targetPlagued != null)) {
-        //    //if either the actor or the target is not yet plagued and one of them is plagued, check for infection chance
-        //    if (actorPlagued != null) {
-        //        //actor has plagued trait
-        //        int roll = Random.Range(0, 100);
-        //        if (roll < actorPlagued.GetMakeLoveInfectChance()) {
-        //            //target will be infected with plague
-        //            if (AddTraitTo(targetCharacter, "Plagued", actor)) {
-        //                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
-        //                log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        //                log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //                log.AddLogToInvolvedObjects();
-        //            }
-        //        }
-        //    } else if (targetPlagued != null) {
-        //        //target has plagued trait
-        //        int roll = Random.Range(0, 100);
-        //        if (roll < targetPlagued.GetMakeLoveInfectChance()) {
-        //            //actor will be infected with plague
-        //            if (AddTraitTo(actor, "Plagued", targetCharacter)) {
-        //                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
-        //                log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //                log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        //                log.AddLogToInvolvedObjects();
-        //            }
-        //        }
-        //    }
-        //}
 
         if (goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Satisfied", targetCharacter);
@@ -155,6 +120,52 @@ public class MakeLove : GoapAction {
         if (targetCharacter.currentActionNode.action == this) {
             targetCharacter.SetCurrentActionNode(null);
         }
+    }
+    #endregion
+
+    #region Preconditions
+    private bool IsTargetInvited(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return actor.ownParty.characters.Contains(poiTarget as Character);
+    }
+    #endregion
+
+    #region Requirements
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+                return false;
+            }
+            Character target = poiTarget as Character;
+            if (target == actor) {
+                return false;
+            }
+            if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) { //do not woo characters that have transformed to other alter egos
+                return false;
+            }
+            if (target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
+                return false;
+            }
+            if (target.stateComponent.currentState is CombatState) { //do not invite characters that are currently in combat
+                return false;
+            }
+            if (target.returnedToLife) { //do not woo characters that have been raised from the dead
+                return false;
+            }
+            if (target.currentParty.icon.isTravellingOutside || target.currentRegion != null) {
+                return false; //target is outside the map
+            }
+            if (actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).Count <= 0) {
+                return false;
+            }
+            if (!(actor is SeducerSummon)) { //ignore relationships if succubus
+                if (!actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                    return false; //only lovers and paramours can make love
+                }
+            }
+            return target.IsInOwnParty();
+        }
+        return false;
     }
     #endregion
 
@@ -408,5 +419,33 @@ public class MakeLove : GoapAction {
 public class MakeLoveData : GoapActionData {
     public MakeLoveData() : base(INTERACTION_TYPE.MAKE_LOVE) {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            return false;
+        }
+        Character target = poiTarget as Character;
+        if (target == actor) {
+            return false;
+        }
+        if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
+            return false;
+        }
+        if (target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
+            return false;
+        }
+        if (target.stateComponent.currentState is CombatState) { //do not invite characters that are currently in combat
+            return false;
+        }
+        if (actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).Count <= 0) {
+            return false;
+        }
+        if (!(actor is SeducerSummon)) { //ignore relationships if succubus
+            if (!actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                return false; //only lovers and paramours can make love
+            }
+        }
+        return target.IsInOwnParty();
     }
 }

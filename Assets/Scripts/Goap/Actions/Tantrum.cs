@@ -16,6 +16,9 @@ public class Tantrum : GoapAction {
     }
 
     #region Overrides
+    protected override void ConstructBasePreconditionsAndEffects() {
+        AddExpectedEffect(new GoapEffect { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Berserked", target = GOAP_EFFECT_TARGET.ACTOR });
+    }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Tantrum Success", goapNode);
@@ -28,12 +31,10 @@ public class Tantrum : GoapAction {
 
     #region Effects
     private void PreTantrumSuccess(ActualGoapNode goapNode) {
-        goapNode.action.states[goapNode.currentStateName].AddLogFiller(null, (string)goapNode.otherData[0], LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(null, (string)goapNode.otherData[0], LOG_IDENTIFIER.STRING_1);
     }
     private void AfterTantrumSuccess(ActualGoapNode goapNode) {
-        //TODO: Add Berserked Trait
-        //CharacterState berserkedState = goapNode.actor.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, goapNode.actor.specificLocation, GameManager.Instance.GetTicksBasedOnHour(2));
-        //(berserkedState as BerserkedState).SetAreCombatsLethal(false);
+        goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Berserked");
     }
     #endregion
 

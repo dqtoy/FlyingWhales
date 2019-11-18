@@ -4,52 +4,53 @@ using UnityEngine;
 using Traits;
 
 public class Sit : GoapAction {
-    public Sit() : base(INTERACTION_TYPE.SIT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+
+    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
+
+    public Sit() : base(INTERACTION_TYPE.SIT) {
         actionIconString = GoapActionStateDB.No_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
         isNotificationAnIntel = false;
-        canBeAddedToMemory = false;
         shouldAddLogs = false;
     }
 
     #region Overrides
-    protected override void ConstructRequirement() {
-        _requirementAction = Requirement;
-    }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        if (!isTargetMissing) {
-            SetState("Sit Success");
-        } else {
-            if(!poiTarget.IsAvailable()) {
-                SetState("Sit Fail");
-            } else {
-                SetState("Target Missing");
-            }
-        }
+        SetState("Sit Success", goapNode);
+       
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 8;
     }
+    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(actor, poiTarget, otherData);
+        if (goapActionInvalidity.isInvalid == false) {
+            if (poiTarget.IsAvailable() == false) {
+                goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.stateName = "Sit Fail";
+            }
+        }
+        return goapActionInvalidity;
+    }
     #endregion
 
     #region Effects
-    private void PreSitFail() {
-        currentState.AddLogFiller(null, poiTarget.name, LOG_IDENTIFIER.STRING_1);
+    private void PreSitFail(ActualGoapNode goapNode) {
+        goapNode.descriptionLog.AddToFillers(null, goapNode.poiTarget.name, LOG_IDENTIFIER.STRING_1);
     }
-    private void PreTargetMissing() {
-        currentState.AddLogFiller(null, poiTarget.name, LOG_IDENTIFIER.STRING_1);
-    }
+    //private void PreTargetMissing(ActualGoapNode goapNode) {
+    //    goapNode.descriptionLog.AddToFillers(null, goapNode.poiTarget.name, LOG_IDENTIFIER.STRING_1);
+    //}
     #endregion
 
     #region Requirement
-   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
-        if(poiTarget.gridTileLocation != null) { //&& poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.DWELLING
-            return poiTarget.IsAvailable();
-            //Dwelling dwelling = poiTarget.gridTileLocation.structure as Dwelling;
-            //if (dwelling.IsResident(actor)) {
-            //    return true;
-            //}
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            if (poiTarget.gridTileLocation != null) { //&& poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.DWELLING
+                return poiTarget.IsAvailable();
+            }
         }
         return false;
     }

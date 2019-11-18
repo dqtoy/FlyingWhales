@@ -30,7 +30,7 @@ public class RevertToNormalForm : GoapAction {
     public void PreTransformSuccess(ActualGoapNode goapNode) {
         AlterEgoData ogData = goapNode.actor.GetAlterEgoData(CharacterManager.Original_Alter_Ego);
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        currentState.AddLogFiller(null, Utilities.GetNormalizedSingularRace(ogData.race), LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(ogData.race), LOG_IDENTIFIER.STRING_1);
         //TODO: currentState.SetIntelReaction(TransformSuccessIntelReaction);
     }
     public void AfterTransformSuccess(ActualGoapNode goapNode) {

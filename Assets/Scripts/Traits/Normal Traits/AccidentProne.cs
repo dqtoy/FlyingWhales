@@ -69,93 +69,15 @@ namespace Traits {
         #endregion
 
         private void DoStumble() {
-            GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.STUMBLE, owner, owner);
-
-            GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
-            GoapPlan plan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.STUMBLE, owner);
-            plan.ConstructAllNodes();
-            plan.SetDoNotRecalculate(true);
-            job.SetAssignedPlan(plan);
-            job.SetAssignedCharacter(owner);
-            job.SetCancelOnFail(true);
-
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.STUMBLE, owner, owner);
             owner.jobQueue.AddJobInQueue(job, false);
-
-            owner.AdjustIsWaitingForInteraction(1);
-            if (owner.currentParty.icon.isTravelling) {
-                owner.marker.StopMovement();
-            }
-            if (owner.IsInOwnParty()) {
-                owner.ownParty.RemoveAllOtherCharacters();
-            }
-            if (owner.currentActionNode.action != null) {
-                //If current action is a roaming action like Hunting To Drink Blood, we must requeue the job after it is removed by StopCurrentAction
-                JobQueueItem currentJob = null;
-                JobQueue currentJobQueue = null;
-                if (owner.currentActionNode.action.isRoamingAction && owner.currentActionNode.action.parentPlan != null && owner.currentActionNode.action.parentPlan.job != null) {
-                    currentJob = owner.currentActionNode.action.parentPlan.job;
-                    currentJobQueue = currentJob.jobQueueParent;
-                }
-                owner.StopCurrentAction(false);
-                if (currentJob != null) {
-                    currentJobQueue.AddJobInQueue(currentJob, false);
-                }
-            }
-            if (owner.stateComponent.currentState != null) {
-                storedState = owner.stateComponent.currentState;
-                owner.stateComponent.currentState.PauseState();
-                goapAction.SetEndAction(ResumePausedState);
-            } else if (owner.stateComponent.stateToDo != null) {
-                storedState = owner.stateComponent.stateToDo;
-                owner.stateComponent.SetStateToDo(null, false, false);
-                goapAction.SetEndAction(ResumeStateToDoState);
-            }
-            owner.AdjustIsWaitingForInteraction(-1);
-
-            owner.AddPlan(plan, true, false);
-            owner.PerformTopPriorityJob();
         }
 
         private void DoAccident(GoapAction action) {
-            GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.ACCIDENT, owner, owner);
-            goapAction.InitializeOtherData(new object[] { action });
-
-            GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
-            GoapPlan plan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.ACCIDENT, owner);
-            plan.ConstructAllNodes();
-            plan.SetDoNotRecalculate(true);
-            job.SetAssignedPlan(plan);
-            job.SetAssignedCharacter(owner);
-            job.SetCancelOnFail(true);
-
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.ACCIDENT, owner, new Dictionary<INTERACTION_TYPE, object[]>() {
+                { INTERACTION_TYPE.ACCIDENT, new object[] { action }}
+            },  owner);
             owner.jobQueue.AddJobInQueue(job, false);
-
-            if (owner.currentActionNode.action != null && owner.currentActionNode.action.parentPlan != null && owner.currentActionNode.action.parentPlan.job != null
-                && owner.currentActionNode.action.parentPlan.job.id == owner.sleepScheduleJobID) {
-                owner.SetHasCancelledSleepSchedule(true);
-            }
-
-            owner.AdjustIsWaitingForInteraction(1);
-            owner.currentParty.RemoveAllOtherCharacters();
-            if (owner.currentParty.icon.isTravelling) {
-                owner.marker.StopMovement();
-            }
-            action.StopAction(true);
-            owner.AdjustIsWaitingForInteraction(-1);
-
-            owner.AddPlan(plan, true, false);
-            owner.PerformTopPriorityJob();
-        }
-
-        private void ResumePausedState(string result, GoapAction action) {
-            owner.GoapActionResult(result, action);
-            storedState.ResumeState();
-        }
-        private void ResumeStateToDoState(string result, GoapAction action) {
-            owner.GoapActionResult(result, action);
-            owner.stateComponent.SetStateToDo(storedState);
         }
     }
 }

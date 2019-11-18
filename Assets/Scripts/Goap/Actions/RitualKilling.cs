@@ -32,7 +32,7 @@ public class RitualKilling : GoapAction {
         if (goapActionInvalidity.isInvalid == false) {
             if (actor.marker.CanDoStealthActionToTarget(poiTarget) == false) {
                 goapActionInvalidity.isInvalid = true;
-                goapActionInvalidity.logKey = "killing success_description";
+                goapActionInvalidity.stateName = "Killing Fail";
             }
         }
         return goapActionInvalidity;

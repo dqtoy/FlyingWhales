@@ -42,10 +42,9 @@ public class ShareInformation : GoapAction {
 
     #region State Effects
     private void PreShareSuccess(ActualGoapNode goapNode) {
-        GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        //TODO: currentState.AddLogFiller(null, Utilities.LogDontReplace(eventToBeShared.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
-        currentState.AddLogFiller(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.OTHER);
-        currentState.AddLogFiller(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.OTHER_2);
+        //TODO: goapNode.descriptionLog.AddToFillers(null, Utilities.LogDontReplace(eventToBeShared.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
+        goapNode.descriptionLog.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.OTHER);
+        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.OTHER_2);
         //TODO: currentState.AddLogFillers(eventToBeShared.currentState.descriptionLog.fillers);
     }
     private void AfterShareSuccess(ActualGoapNode goapNode) {

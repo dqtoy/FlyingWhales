@@ -19,15 +19,9 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             addedTo.traitContainer.RemoveTrait(addedTo, "Burning");
-            if (addedTo is IPointOfInterest && this.daysDuration == 0) {
-                (addedTo as IPointOfInterest).AddAdvertisedAction(INTERACTION_TYPE.GET_WATER);
-            }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
-            if (removedFrom is IPointOfInterest && this.daysDuration == 0) {
-                (removedFrom as IPointOfInterest).RemoveAdvertisedAction(INTERACTION_TYPE.GET_WATER);
-            }
         }
         #endregion
 

@@ -11,8 +11,17 @@ namespace Traits {
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.NEUTRAL;
             daysDuration = 0;
-            canStopActions = new INTERACTION_TYPE[] { INTERACTION_TYPE.KNOCKOUT_CHARACTER };
         }
+
+        #region Overrides
+        public override bool TryStopAction(INTERACTION_TYPE action, Character actor, IPointOfInterest target, ref GoapActionInvalidity goapActionInvalidity) {
+            if (action == INTERACTION_TYPE.STEAL || action == INTERACTION_TYPE.KNOCKOUT_CHARACTER) {
+                goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.stateName = "Target Missing"; //TODO: provide log instead.
+            }
+            return false;
+        }
+        #endregion
     }
 }
 

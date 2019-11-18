@@ -5,7 +5,9 @@ using Traits;
 
 public class ZombieDeath : GoapAction {
 
-    public ZombieDeath() : base(INTERACTION_TYPE.ZOMBIE_DEATH, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
+
+    public ZombieDeath() : base(INTERACTION_TYPE.ZOMBIE_DEATH) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.No_Icon;
     }
@@ -13,23 +15,16 @@ public class ZombieDeath : GoapAction {
     #region Overrides
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        SetState("Zombie Death Success");
-    }
-    public override void DoAction() {
-        SetTargetStructure();
-        base.DoAction();
+        SetState("Zombie Death Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 10;
     }
-    public override LocationGridTile GetTargetLocationTile() {
-        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
-    }
     #endregion
 
     #region Effects
-    private void AfterZombieDeathSuccess() {
-        actor.Death("Zombie Death", this, _deathLog:currentState.descriptionLog);
+    private void AfterZombieDeathSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.Death("Zombie Death", this, _deathLog: goapNode.action.states[goapNode.currentStateName].descriptionLog);
     }
     #endregion
 }

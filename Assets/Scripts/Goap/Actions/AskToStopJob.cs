@@ -76,13 +76,13 @@ public class AskToStopJob : GoapAction {
    // private void PreAskSuccess() {
    //     if (poiTarget is Character) {
    //         Character targetCharacter = poiTarget as Character;
-   //         currentState.AddLogFiller(null, targetCharacter.currentActionNode.goapName, LOG_IDENTIFIER.STRING_1);
+   //         goapNode.descriptionLog.AddToFillers(null, targetCharacter.currentActionNode.goapName, LOG_IDENTIFIER.STRING_1);
    //     }
    // }
    // private void PreAskFail() {
    //     if (poiTarget is Character) {
    //         Character targetCharacter = poiTarget as Character;
-   //         currentState.AddLogFiller(null, jobToStop.name, LOG_IDENTIFIER.STRING_1);
+   //         goapNode.descriptionLog.AddToFillers(null, jobToStop.name, LOG_IDENTIFIER.STRING_1);
    //     }
    // }
    // private void AfterAskSuccess() {

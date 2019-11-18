@@ -35,7 +35,7 @@ public class DrinkBlood : GoapAction {
             Character targetCharacter = target as Character;
             if (targetCharacter.canMove || targetCharacter.canWitness || targetCharacter.IsAvailable() == false) {
                 actionInvalidity.isInvalid = true;
-                actionInvalidity.logKey = "drink fail_description";
+                actionInvalidity.stateName = "Drink Fail";
             }
         }
         return actionInvalidity;

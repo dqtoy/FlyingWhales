@@ -1,6 +1,4 @@
-﻿//#define TESTING_VALUES
-
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -41,16 +39,16 @@ public class DivineInterventionQuest : Quest {
         //Cancel jobs that are no longer applicable
         //Might have performance issue, but for now this will do
         //Will improve later
-        for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
-            JobQueueItem job = jobQueue.jobsInQueue[i];
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
             if(job.jobType == JOB_TYPE.BUILD_GODDESS_STATUE && !IsThereStillEmptyGoddessStatueSpot()) {
-                jobQueue.CancelJob(job);
+                job.CancelJob();
                 i--;
             }else if (job.jobType == JOB_TYPE.DESTROY_PROFANE_LANDMARK && !AreThereProfaneLandmarks()) {
-                jobQueue.CancelJob(job);
+                job.CancelJob();
                 i--;
             }else if (job.jobType == JOB_TYPE.PERFORM_HOLY_INCANTATION && !AreThereHallowedGrounds()) {
-                jobQueue.CancelJob(job);
+                job.CancelJob();
                 i--;
             }
         }
@@ -63,12 +61,8 @@ public class DivineInterventionQuest : Quest {
     private void TryCreateBuildGoddessStatueJob() {
         if (GameManager.Instance.tick == 72 || GameManager.Instance.tick == 132) { //72 = 6:00AM, 132 = 11:00AM
             string summary = GameManager.Instance.TodayLogString() + " Will try to create build goddess statue job";
-#if TESTING_VALUES
-            int roll = 0;
-#else
             int roll = UnityEngine.Random.Range(0, 100);
-#endif
-            bool hasExistingJob = jobQueue.HasJob(JOB_TYPE.BUILD_GODDESS_STATUE);
+            bool hasExistingJob = HasJob(JOB_TYPE.BUILD_GODDESS_STATUE);
             bool hasEmptyGoddessStatue = IsThereStillEmptyGoddessStatueSpot();
             summary += "\nRoll is: " + roll.ToString();
             summary += "\nHas Existing Job?: " + hasExistingJob.ToString();
@@ -88,12 +82,8 @@ public class DivineInterventionQuest : Quest {
     private void TryCreateDestroyProfaneLandmarkJob() {
         if (GameManager.Instance.tick == 72 || GameManager.Instance.tick == 132) { //72 = 6:00AM, 132 = 11:00AM
             string summary = GameManager.Instance.TodayLogString() + " Will try to create build goddess statue job";
-#if TESTING_VALUES
-            int roll = 0;
-#else
             int roll = UnityEngine.Random.Range(0, 100);
-#endif
-            bool hasExistingJob = jobQueue.HasJob(JOB_TYPE.DESTROY_PROFANE_LANDMARK);
+            bool hasExistingJob = HasJob(JOB_TYPE.DESTROY_PROFANE_LANDMARK);
             bool hasProfaneLandmarks = AreThereProfaneLandmarks();
             summary += "\nRoll is: " + roll.ToString();
             summary += "\nHas Existing Job?: " + hasExistingJob.ToString();
@@ -118,12 +108,8 @@ public class DivineInterventionQuest : Quest {
     private void TryCreatePerformHolyIncantationJob() {
         if (GameManager.Instance.tick == 72 || GameManager.Instance.tick == 132) { //72 = 6:00AM, 132 = 11:00AM
             string summary = GameManager.Instance.TodayLogString() + " Will try to create build goddess statue job";
-#if TESTING_VALUES
-            int roll = 0;
-#else
             int roll = UnityEngine.Random.Range(0, 100);
-#endif
-            bool hasExistingJob = jobQueue.HasJob(JOB_TYPE.PERFORM_HOLY_INCANTATION);
+            bool hasExistingJob = HasJob(JOB_TYPE.PERFORM_HOLY_INCANTATION);
             bool hasHallowedGrounds = AreThereHallowedGrounds();
             summary += "\nRoll is: " + roll.ToString();
             summary += "\nHas Existing Job?: " + hasExistingJob.ToString();
@@ -150,9 +136,9 @@ public class DivineInterventionQuest : Quest {
     private void CreateBuildGoddessStatueJob() {
         List<TileObject> goddessStatues = region.area.GetTileObjectsOfType(TILE_OBJECT_TYPE.GODDESS_STATUE).Where(x => x.state == POI_STATE.INACTIVE).ToList();
         TileObject target = goddessStatues[Random.Range(0, goddessStatues.Count)];
-        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BUILD_GODDESS_STATUE, INTERACTION_TYPE.CRAFT_TILE_OBJECT, target);
+        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BUILD_GODDESS_STATUE, INTERACTION_TYPE.CRAFT_TILE_OBJECT, target, this);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeBuildGoddessStatueJob);
-        jobQueue.AddJobInQueue(job);
+        AddToAvailableJobs(job);
 
         //expires at end of day
         GameDate expiryDate = GameManager.Instance.Today();
@@ -163,9 +149,9 @@ public class DivineInterventionQuest : Quest {
 
     #region Destroy Profane
     private void CreateDestroyProfaneJob() {
-        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.DESTROY_PROFANE_LANDMARK, CHARACTER_STATE.MOVE_OUT);
+        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.DESTROY_PROFANE_LANDMARK, CHARACTER_STATE.MOVE_OUT, this);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoDestroyProfaneJob);
-        jobQueue.AddJobInQueue(job);
+        AddToAvailableJobs(job);
 
         //expires at end of day
         GameDate expiryDate = GameManager.Instance.Today();
@@ -176,9 +162,9 @@ public class DivineInterventionQuest : Quest {
 
     #region Holy Incantation
     private void CreateHolyIncantationJob() {
-        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.PERFORM_HOLY_INCANTATION, CHARACTER_STATE.MOVE_OUT);
+        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.PERFORM_HOLY_INCANTATION, CHARACTER_STATE.MOVE_OUT, this);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoHolyIncantationJob);
-        jobQueue.AddJobInQueue(job);
+        AddToAvailableJobs(job);
 
         //expires at end of day
         GameDate expiryDate = GameManager.Instance.Today();
@@ -189,19 +175,19 @@ public class DivineInterventionQuest : Quest {
 
     #region Sabotage Faction
     public void CreateSabotageFactionnJob() {
-        if (!jobQueue.HasJob(JOB_TYPE.SABOTAGE_FACTION)) {
-            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.SABOTAGE_FACTION, CHARACTER_STATE.MOVE_OUT);
+        if (!HasJob(JOB_TYPE.SABOTAGE_FACTION)) {
+            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.SABOTAGE_FACTION, CHARACTER_STATE.MOVE_OUT, this);
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoSabotageFactionJob);
-            jobQueue.AddJobInQueue(job);
+            AddToAvailableJobs(job);
         }
     }
     #endregion
 
     #region Utilities
     private void CheckIfJobWillExpire(JobQueueItem item) {
-        if (item.assignedCharacter == null && item.assignedCharacter != null && item.assignedCharacter.jobsInQueue.Contains(item)) {
+        if (item.assignedCharacter == null && item.assignedCharacter != null && item.assignedCharacter.jobQueue.jobsInQueue.Contains(item)) {
             Debug.Log(GameManager.Instance.TodayLogString() + item.jobType.ToString() + " expired.");
-            item.assignedCharacter.RemoveJobInQueue(item);
+            item.assignedCharacter.jobQueue.RemoveJobInQueue(item);
         }
     }
     #endregion

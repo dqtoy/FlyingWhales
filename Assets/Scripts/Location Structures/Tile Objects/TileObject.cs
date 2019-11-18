@@ -88,6 +88,7 @@ public class TileObject : IPointOfInterest {
         CreateTraitContainer();
         traitContainer.AddTrait(this, "Flammable");
         InitializeCollisionTrigger();
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         InteriorMapManager.Instance.AddTileObject(this);
     }
     //protected void Initialize(SaveDataArtifactSlot data, TILE_OBJECT_TYPE tileObjectType) {
@@ -122,22 +123,21 @@ public class TileObject : IPointOfInterest {
     /// Called when a character starts to do an action towards this object.
     /// </summary>
     /// <param name="action">The current action</param>
-    public virtual void OnDoActionToObject(GoapAction action) {
+    public virtual void OnDoActionToObject(ActualGoapNode action) {
         //owner.SetPOIState(POI_STATE.INACTIVE);
-        AddActionToHistory(action);
     }
     /// <summary>
     /// Called when a character finished doing an action towards this object.
     /// </summary>
     /// <param name="action">The finished action</param>
-    public virtual void OnDoneActionToObject(GoapAction action) {
+    public virtual void OnDoneActionToObject(ActualGoapNode action) {
 
     }
     /// <summary>
     /// Called when a character cancelled doing an action towards this object.
     /// </summary>
     /// <param name="action">The finished action</param>
-    public virtual void OnCancelActionTowardsObject(GoapAction action) {
+    public virtual void OnCancelActionTowardsObject(ActualGoapNode action) {
 
     }
     public virtual void SetGridTileLocation(LocationGridTile tile) {
@@ -422,23 +422,6 @@ public class TileObject : IPointOfInterest {
         //each ghost collider will then check if it's current location is part of the broadcasted list
         //if not, it is safe to destroy that ghost object
         //else keep it
-    }
-    #endregion
-
-    #region For Testing
-    protected void AddActionToHistory(GoapAction action) {
-        string summary = GameManager.Instance.ConvertDayToLogString(action.executionDate) + action.actor.name + " performed " + action.goapName;
-        actionHistory.Add(summary);
-        if (actionHistory.Count > 50) {
-            actionHistory.RemoveAt(0);
-        }
-    }
-    public void LogActionHistory() {
-        string summary = this.ToString() + "'s action history:";
-        for (int i = 0; i < actionHistory.Count; i++) {
-            summary += "\n" + (i + 1).ToString() + " - " + actionHistory[i];
-        }
-        Debug.Log(summary);
     }
     #endregion
 

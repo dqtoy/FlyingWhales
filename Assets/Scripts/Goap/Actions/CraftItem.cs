@@ -59,8 +59,8 @@ public class CraftItem : GoapAction {
     private void PreCraftSuccess(ActualGoapNode goapNode) {
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         SPECIAL_TOKEN craftedItem = (SPECIAL_TOKEN)goapNode.otherData[0];
-        currentState.AddLogFiller(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
-        currentState.AddLogFiller(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
+        goapNode.descriptionLog.AddToFillers(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
 
         goapNode.actor.AdjustSupply(-TokenManager.Instance.itemData[craftedItem].craftCost);
     }

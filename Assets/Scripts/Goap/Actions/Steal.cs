@@ -15,10 +15,11 @@ public class Steal : GoapAction {
     }
 
     #region Overrides
-    protected override void ConstructBasePreconditionsAndEffects() {
-        //SpecialToken token = poiTarget as SpecialToken;
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, target = GOAP_EFFECT_TARGET.TARGET });
-        //TODO: AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = token.specialTokenType.ToString(), targetPOI = actor });
+    protected override List<GoapEffect> GetExpectedEffects(IPointOfInterest target, object[] otherData) {
+        List <GoapEffect> ee = base.GetExpectedEffects(target, otherData);
+        SpecialToken token = target as SpecialToken;
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = token.specialTokenType.ToString(), target = GOAP_EFFECT_TARGET.TARGET });
+        return ee;
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -50,16 +51,16 @@ public class Steal : GoapAction {
     private void PreStealSuccess(ActualGoapNode goapNode) {
         //**Note**: This is a Theft crime
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        currentState.AddLogFiller(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-        currentState.AddLogFiller(goapNode.poiTarget as SpecialToken, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget as SpecialToken, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         //TODO: currentState.SetIntelReaction(State1Reactions);
     }
     private void AfterStealSuccess(ActualGoapNode goapNode) {
         goapNode.actor.PickUpToken(goapNode.poiTarget as SpecialToken, false);
     }
     private void PreTargetMissing(ActualGoapNode goapNode) {
-        //currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-        //currentState.AddLogFiller(poiTarget as SpecialToken, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //goapNode.descriptionLog.AddToFillers(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        //goapNode.descriptionLog.AddToFillers(poiTarget as SpecialToken, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     public void AfterTargetMissing(ActualGoapNode goapNode) {
         //actor.RemoveAwareness(poiTarget);

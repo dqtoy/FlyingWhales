@@ -47,34 +47,17 @@ namespace Traits {
                         if (targetCharacter.traitContainer.GetNormalTrait("Restrained") == null) {
                             GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.RESTRAIN);
                             if (currentJob == null) {
-                                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.RESTRAIN, INTERACTION_TYPE.IMPRISON_CHARACTER, targetCharacter);
+                                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, targetCharacter, new Dictionary<INTERACTION_TYPE, object[]>() {
+                                    { INTERACTION_TYPE.DROP, new object[] { characterThatWillDoJob.specificLocation.prison } }
+                                }, characterThatWillDoJob);
                                 //job.SetCanBeDoneInLocation(true);
                                 if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, job)) {
                                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                                     return true;
                                 }
-                                //else {
-                                //    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRestrainJob);
-                                //    characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
-                                //    return false;
-                                //}
                             } else {
-                                if (currentJob.jobQueueParent.isAreaOrQuestJobQueue && InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, currentJob)) {
-                                    bool canBeTransfered = false;
-                                    if (currentJob.assignedCharacter != null && currentJob.assignedCharacter.currentActionNode.action != null
-                                        && currentJob.assignedCharacter.currentActionNode.action.parentPlan != null && currentJob.assignedCharacter.currentActionNode.action.parentPlan.job == currentJob) {
-                                        if (currentJob.assignedCharacter != characterThatWillDoJob) {
-                                            canBeTransfered = !currentJob.assignedCharacter.marker.inVisionPOIs.Contains(currentJob.assignedCharacter.currentActionNode.action.poiTarget);
-                                        }
-                                    } else {
-                                        canBeTransfered = true;
-                                    }
-                                    if (canBeTransfered && characterThatWillDoJob.CanCurrentJobBeOverriddenByJob(currentJob)) {
-                                        currentJob.jobQueueParent.CancelJob(currentJob, shouldDoAfterEffect: false, forceRemove: true);
-                                        characterThatWillDoJob.jobQueue.AddJobInQueue(currentJob, false);
-                                        characterThatWillDoJob.jobQueue.AssignCharacterToJobAndCancelCurrentAction(currentJob, characterThatWillDoJob);
-                                        return true;
-                                    }
+                                if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, currentJob)) {
+                                    return TryTransferJob(currentJob, characterThatWillDoJob);
                                 }
                             }
                         }
@@ -111,7 +94,7 @@ namespace Traits {
             if (character.HasJobTargettingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
                 return;
             }
-            if (character.allGoapPlans.Count > 0) {
+            if (character.jobQueue.jobsInQueue.Count > 0) {
                 character.PerformTopPriorityJob();
             } else {
                 if (!PlanTirednessRecovery()) {
@@ -121,11 +104,11 @@ namespace Traits {
         }
         private void CheckParalyzedTraitPerHour() {
             if (character.IsInOwnParty()) {
-                if (character.CanPlanGoap() && character.stateComponent.currentState == null && character.stateComponent.stateToDo == null
+                if (character.CanPlanGoap() && character.stateComponent.currentState == null
                     && (character.isStarving || character.isExhausted || character.isForlorn)
                     && UnityEngine.Random.Range(0, 100) < 75 && !character.jobQueue.HasJob(JOB_TYPE.SCREAM)
                     && character.traitContainer.GetNormalTrait("Unconscious", "Resting") == null && !character.HasJobTargettingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
-                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SCREAM, INTERACTION_TYPE.SCREAM_FOR_HELP, character);
+                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SCREAM, INTERACTION_TYPE.SCREAM_FOR_HELP, character, character);
                     character.jobQueue.AddJobInQueue(job);
                 }
             }
@@ -136,8 +119,7 @@ namespace Traits {
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DROP, INTERACTION_TYPE.DROP, character,
                             new Dictionary<INTERACTION_TYPE, object[]>() {
                     { INTERACTION_TYPE.DROP, new object[] { dropLocationStructure }
-                } });
-            //job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeDropJob);
+                } }, characterThatWillDoJob);
             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
             return true;
         }
@@ -145,21 +127,21 @@ namespace Traits {
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DROP, INTERACTION_TYPE.DROP, character,
                            new Dictionary<INTERACTION_TYPE, object[]>() {
                     { INTERACTION_TYPE.DROP, new object[] { dropLocationStructure, dropGridTile }
-                } });
-            //job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeDropJob);
+                } }, characterThatWillDoJob);
             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
             return true;
         }
         private void OnCharacterFinishedAction(Character character, GoapAction action, string result) {
-            if (action.goapType == INTERACTION_TYPE.DROP && action.poiTarget == this.character) {
-                if (this.character.gridTileLocation.objHere != null && this.character.gridTileLocation.objHere is Bed) {
-                    CreateActualSleepJob(this.character.gridTileLocation.objHere as Bed);
-                } else if (this.character.gridTileLocation.structure == this.character.homeStructure) {
-                    CreateActualHappinessRecoveryJob(INTERACTION_TYPE.PRAY);
-                } else {
-                    CreateActualHappinessRecoveryJob(INTERACTION_TYPE.DAYDREAM);
-                }
-            }
+            //TODO:
+            //if (action.goapType == INTERACTION_TYPE.DROP && action.poiTarget == this.character) {
+            //    if (this.character.gridTileLocation.objHere != null && this.character.gridTileLocation.objHere is Bed) {
+            //        CreateActualSleepJob(this.character.gridTileLocation.objHere as Bed);
+            //    } else if (this.character.gridTileLocation.structure == this.character.homeStructure) {
+            //        CreateActualHappinessRecoveryJob(INTERACTION_TYPE.PRAY);
+            //    } else {
+            //        CreateActualHappinessRecoveryJob(INTERACTION_TYPE.DAYDREAM);
+            //    }
+            //}
         }
         #endregion
 
@@ -172,8 +154,8 @@ namespace Traits {
         }
         private bool CreateFeedJob(Character characterThatWillDoJob) {
             if (characterThatWillDoJob.specificLocation.region.IsResident(character)) {
-                GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = character };
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.FEED, goapEffect);
+                GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, target = GOAP_EFFECT_TARGET.TARGET };
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.FEED, goapEffect, characterThatWillDoJob, characterThatWillDoJob);
                 //job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeParalyzedFeedJob);
                 characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                 return true;
@@ -268,11 +250,10 @@ namespace Traits {
             }
             if (!triggerBrokenhearted) {
                 GoapPlanJob job = new GoapPlanJob(jobType, actionType, character, new Dictionary<INTERACTION_TYPE, object[]>() {
-                    { actionType, new object[] { ACTION_LOCATION_TYPE.IN_PLACE } } });
+                    { actionType, new object[] { ACTION_LOCATION_TYPE.IN_PLACE } } }, character);
                 character.jobQueue.AddJobInQueue(job);
-                character.jobQueue.AssignCharacterToJob(job, character);
             } else {
-                character.jobQueue.AssignCharacterToJob(heartbroken.TriggerBrokenhearted(), character);
+                heartbroken.TriggerBrokenhearted();
             }
         }
         #endregion
@@ -322,11 +303,10 @@ namespace Traits {
             }
             if (!triggerSpooked) {
                 GoapPlanJob job = new GoapPlanJob(jobType, INTERACTION_TYPE.SLEEP, bed, new Dictionary<INTERACTION_TYPE, object[]>() {
-                    { INTERACTION_TYPE.SLEEP, new object[] { ACTION_LOCATION_TYPE.IN_PLACE } } });
+                    { INTERACTION_TYPE.SLEEP, new object[] { ACTION_LOCATION_TYPE.IN_PLACE } } }, character);
                 character.jobQueue.AddJobInQueue(job);
-                character.jobQueue.AssignCharacterToJob(job, character);
             } else {
-                character.jobQueue.AssignCharacterToJob(spooked.TriggerFeelingSpooked(), character);
+                spooked.TriggerFeelingSpooked();
             }
         }
         #endregion

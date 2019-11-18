@@ -82,6 +82,16 @@ public class Quest : IJobOwner {
         return RemoveFromAvailableJobs(job);
     }
     #endregion
+
+    public bool HasJob(JOB_TYPE jobType) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem jqi = availableJobs[i];
+            if (jqi.jobType == jobType) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 [System.Serializable]
@@ -102,8 +112,8 @@ public class SaveDataQuest {
 
 
         //    jobs = new List<SaveDataJobQueueItem>();
-        //    for (int i = 0; i < quest.jobQueue.jobsInQueue.Count; i++) {
-        //        JobQueueItem job = quest.jobQueue.jobsInQueue[i];
+        //    for (int i = 0; i < quest.availableJobs.Count; i++) {
+        //        JobQueueItem job = quest.availableJobs[i];
         //        if (job.isNotSavable) {
         //            continue;
         //        }

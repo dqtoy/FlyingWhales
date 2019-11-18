@@ -8,18 +8,11 @@ public class Adventurer : CharacterRole {
     public Adventurer() : base(CHARACTER_ROLE.ADVENTURER, "Normal", new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.INVENTORY, INTERACTION_CATEGORY.RECRUITMENT, INTERACTION_CATEGORY.EXPANSION, INTERACTION_CATEGORY.DEFENSE }) {
         allowedInteractions = new INTERACTION_TYPE[] {
             INTERACTION_TYPE.GET_SUPPLY,
-            INTERACTION_TYPE.ASSAULT_CHARACTER,
+            INTERACTION_TYPE.ASSAULT,
         };
         requiredItems = new SPECIAL_TOKEN[] {
             SPECIAL_TOKEN.TOOL,
             SPECIAL_TOKEN.HEALING_POTION
         };
     }
-
-    #region Overrides
-    public override void AddRoleWorkPlansToCharacterWeights(WeightedDictionary<INTERACTION_TYPE> weights) {
-        base.AddRoleWorkPlansToCharacterWeights(weights);
-        weights.AddElement(INTERACTION_TYPE.EXPLORE, 5);
-    }
-    #endregion
 }

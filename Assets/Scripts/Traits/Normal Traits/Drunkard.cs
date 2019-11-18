@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Traits {
@@ -29,7 +30,10 @@ namespace Traits {
                     if (character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
                         character.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN);
                     }
-                    GoapPlanJob drinkJob = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.DRINK);
+
+                    TileObject to = character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.INN).GetTileObjectsThatAdvertise(INTERACTION_TYPE.DRINK).First();
+
+                    GoapPlanJob drinkJob = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.DRINK, character, character);
                     character.jobQueue.AddJobInQueue(drinkJob);
                 } else {
                     heartbroken.TriggerBrokenhearted();
@@ -37,8 +41,8 @@ namespace Traits {
             }
             return base.TriggerFlaw(character);
         }
-        public override void ExecuteCostModification(INTERACTION_TYPE action, ref int cost) {
-            base.ExecuteCostModification(action, ref cost);
+        public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref int cost) {
+            base.ExecuteCostModification(action, actor, poiTarget, otherData, ref cost);
             if (action == INTERACTION_TYPE.DRINK) {
                 cost =  Utilities.rng.Next(5, 20);
             }

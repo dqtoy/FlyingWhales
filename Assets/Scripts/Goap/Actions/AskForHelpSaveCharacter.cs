@@ -54,7 +54,7 @@ public class AskForHelpSaveCharacter : GoapAction {
 
    // #region State Effects
    // public void PreAskSuccess() {
-   //     currentState.AddLogFiller(troubledCharacter, troubledCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
+   //     goapNode.descriptionLog.AddToFillers(troubledCharacter, troubledCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
    // }
    // public void AfterAskSuccess() {
    //     Character target = poiTarget as Character;
@@ -62,7 +62,7 @@ public class AskForHelpSaveCharacter : GoapAction {
    //     target.CreateSaveCharacterJob(troubledCharacter);
    // }
    // public void PreTargetMissing() {
-   //     currentState.AddLogFiller(troubledCharacter, troubledCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
+   //     goapNode.descriptionLog.AddToFillers(troubledCharacter, troubledCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
    // }
    // #endregion
 }

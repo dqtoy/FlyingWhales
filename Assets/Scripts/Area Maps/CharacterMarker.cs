@@ -369,8 +369,8 @@ public class CharacterMarker : PooledObject {
             actionIcon.gameObject.SetActive(true);
         } else {
             if (character.currentActionNode != null) {
-                if (character.currentActionNode.actionIconString != GoapActionStateDB.No_Icon) {
-                    actionIcon.sprite = actionIconDictionary[character.currentActionNode.actionIconString];
+                if (character.currentActionNode.action.actionIconString != GoapActionStateDB.No_Icon) {
+                    actionIcon.sprite = actionIconDictionary[character.currentActionNode.action.actionIconString];
                     actionIcon.gameObject.SetActive(true);
                 } else {
                     actionIcon.gameObject.SetActive(false);
@@ -714,10 +714,10 @@ public class CharacterMarker : PooledObject {
         } else if (character.currentParty.icon != null && character.currentParty.icon.isTravelling) {
             //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
             PlayWalkingAnimation();
-        } else if (character.currentActionNode != null && character.currentActionNode.currentState != null && !string.IsNullOrEmpty(character.currentActionNode.currentState.animationName)) {
+        } else if (character.currentActionNode != null && string.IsNullOrEmpty(character.currentActionNode.currentStateName) == false && string.IsNullOrEmpty(character.currentActionNode.action.states[character.currentActionNode.currentStateName].animationName) == false) {
             PlayAnimation(character.currentActionNode.currentState.animationName);
-        } else if (character.currentActionNode != null && !string.IsNullOrEmpty(character.currentActionNode.animationName)) {
-            PlayAnimation(character.currentActionNode.animationName);
+        } else if (character.currentActionNode != null && !string.IsNullOrEmpty(character.currentActionNode.action.animationName)) {
+            PlayAnimation(character.currentActionNode.action.animationName);
         } else {
             PlayIdle();
         }
@@ -761,16 +761,18 @@ public class CharacterMarker : PooledObject {
                 speed = character.walkSpeed;
             } else {
                 if (character.stateComponent.currentState != null) {
-                    if (character.stateComponent.currentState.characterState == CHARACTER_STATE.EXPLORE
-                        || character.stateComponent.currentState.characterState == CHARACTER_STATE.PATROL
+                    if (character.stateComponent.currentState.characterState == CHARACTER_STATE.PATROL
                         || character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
                         || character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE) {
                         //Walk
                         speed = character.walkSpeed;
+                    }else if (character.stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE) {
+                        //Run
+                        speed = character.runSpeed;
                     }
                 }
                 if (character.currentActionNode != null) {
-                    if (character.currentActionNode.goapType == INTERACTION_TYPE.RETURN_HOME || character.currentActionNode.goapType.IsEmergencyAction()) {
+                    if (character.currentActionNode.action.goapType == INTERACTION_TYPE.RETURN_HOME) {
                         //Run
                         speed = character.runSpeed;
                     }
@@ -1042,7 +1044,7 @@ public class CharacterMarker : PooledObject {
         Debug.Log(summary);
     }
     private void OnAddPOIAsInVisionRange(IPointOfInterest poi) {
-        if (character.currentActionNode != null && character.currentActionNode.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION && character.currentActionNode.poiTarget == poi) {
+        if (character.currentActionNode != null && character.currentActionNode.action.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION && character.currentActionNode.poiTarget == poi) {
             StopMovement();
             character.PerformGoapAction();
         }
@@ -1055,31 +1057,32 @@ public class CharacterMarker : PooledObject {
                     IPointOfInterest poi = unprocessedVisionPOIs[i];
                     log += "\n - Reacting to " + poi.name;
                     //Collect all actions to witness and avoid duplicates
-                    List<GoapAction> actions = character.ThisCharacterSaw(poi);
-                    if (actions != null && actions.Count > 0) {
-                        for (int j = 0; j < actions.Count; j++) {
-                            GoapAction action = actions[j];
-                            if (action.isPerformingActualAction && !action.isDone && action.goapType != INTERACTION_TYPE.WATCH) { // ||(action.currentState != null && action.currentState.name == action.whileMovingState)
-                                //Cannot witness a watch action
-                                IPointOfInterest poiTarget = null;
-                                if (action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
-                                    poiTarget = (action as MakeLove).targetCharacter;
-                                } else {
-                                    poiTarget = action.poiTarget;
-                                }
-                                if (action.actor != character && poiTarget != character) {
-                                    if (!actionsToWitness.Contains(action)) {
-                                        actionsToWitness.Add(action);
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    //TODO:
+                    //List<GoapAction> actions = character.ThisCharacterSaw(poi);
+                    //if (actions != null && actions.Count > 0) {
+                    //    for (int j = 0; j < actions.Count; j++) {
+                    //        GoapAction node = actions[j];
+                    //        if (node.isPerformingActualAction && !node.isDone && node.goapType != INTERACTION_TYPE.WATCH) { // ||(action.currentState != null && action.currentState.name == action.whileMovingState)
+                    //            //Cannot witness a watch action
+                    //            IPointOfInterest poiTarget = node.poiTarget;
+                    //            //if (node.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+                    //            //    poiTarget = (node as MakeLove).targetCharacter;
+                    //            //} else {
+                    //            //    poiTarget = node.poiTarget;
+                    //            //}
+                    //            if (node.actor != character && poiTarget != character) {
+                    //                if (!actionsToWitness.Contains(node)) {
+                    //                    actionsToWitness.Add(node);
+                    //                }
+                    //            }
+                    //        }
+                    //    }
+                    //}
 
                     log += "\n - Reacting to character traits...";
                     //Character reacts to traits
                     if(character.stateComponent.currentState == null || !character.stateComponent.currentState.OnEnterVisionWith(poi)) {
-                        if (!character.CreateJobsOnEnterVisionWith(poi, true)) {
+                        if (!character.CreateJobsOnEnterVisionWith(poi)) {
                             if (poi is Character) {
                                 character.ChatCharacter(poi as Character, 8);
                             }
@@ -1087,17 +1090,18 @@ public class CharacterMarker : PooledObject {
                     }
                 }
 
+                //TODO:
                 //Witness all actions
-                log += "\n - Witnessing collected actions:";
-                if (actionsToWitness.Count > 0) {
-                    for (int i = 0; i < actionsToWitness.Count; i++) {
-                        GoapAction action = actionsToWitness[i];
-                        log += "\n   - Witnessed: " + action.goapName + " of " + action.actor.name + " with target " + action.poiTarget.name;
-                        character.ThisCharacterWitnessedEvent(action);
-                    }
-                } else {
-                    log += "\n   - No collected actions";
-                }
+                //log += "\n - Witnessing collected actions:";
+                //if (actionsToWitness.Count > 0) {
+                //    for (int i = 0; i < actionsToWitness.Count; i++) {
+                //        GoapAction action = actionsToWitness[i];
+                //        log += "\n   - Witnessed: " + action.goapName + " of " + action.actor.name + " with target " + action.poiTarget.name;
+                //        character.ThisCharacterWitnessedEvent(action);
+                //    }
+                //} else {
+                //    log += "\n   - No collected actions";
+                //}
             } else {
                 log += "\n - Character is either dead, unconscious, resting, or zapped, not processing...";
             }

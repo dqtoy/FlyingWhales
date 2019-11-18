@@ -14,11 +14,16 @@ public class PickUp : GoapAction {
     }
 
     #region Overrides
-    protected override void ConstructBasePreconditionsAndEffects() {
-        //TODO: 
-        //SpecialToken token = poiTarget as SpecialToken;
-        //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = poiTarget, targetPOI = actor });
-        //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = token.specialTokenType.ToString(), targetPOI = actor });
+    //protected override void ConstructBasePreconditionsAndEffects() {
+    //    //SpecialToken token = poiTarget as SpecialToken;
+    //    //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = poiTarget, targetPOI = actor });
+    //    //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = token.specialTokenType.ToString(), targetPOI = actor });
+    //}
+    protected override List<GoapEffect> GetExpectedEffects(IPointOfInterest target, object[] otherData) {
+        List <GoapEffect> ee = base.GetExpectedEffects(target, otherData);
+        SpecialToken token = target as SpecialToken;
+        ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = token.specialTokenType.ToString(), target = GOAP_EFFECT_TARGET.ACTOR });
+        return ee;
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -44,8 +49,8 @@ public class PickUp : GoapAction {
     #region State Effects
     public void PreTakeSuccess(ActualGoapNode goapNode) {
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        currentState.AddLogFiller(goapNode.poiTarget as SpecialToken, goapNode.poiTarget.name, LOG_IDENTIFIER.ITEM_1);
-        currentState.AddLogFiller(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget as SpecialToken, goapNode.poiTarget.name, LOG_IDENTIFIER.ITEM_1);
+        goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterTakeSuccess(ActualGoapNode goapNode) {
         goapNode.actor.PickUpToken(goapNode.poiTarget as SpecialToken);

@@ -21,7 +21,7 @@ public class BerserkedState : CharacterState {
         stateComponent.character.AdjustDoNotGetHungry(1);
         stateComponent.character.AdjustDoNotGetLonely(1);
         stateComponent.character.AdjustDoNotGetTired(1);
-        stateComponent.character.traitContainer.AddTrait(stateComponent.character, "Berserked");
+        //stateComponent.character.traitContainer.AddTrait(stateComponent.character, "Berserked");
         BerserkBuff berserkBuff = new BerserkBuff();
         berserkBuff.SetLevel(level);
         stateComponent.character.traitContainer.AddTrait(stateComponent.character, berserkBuff);
@@ -60,37 +60,37 @@ public class BerserkedState : CharacterState {
             if(target.tileObjectType != TILE_OBJECT_TYPE.TREE_OBJECT && target.advertisedActions.Contains(INTERACTION_TYPE.TILE_OBJECT_DESTROY)) {
                 int chance = UnityEngine.Random.Range(0, 100);
                 if (chance < 20) {
-                    GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.TILE_OBJECT_DESTROY, stateComponent.character, targetPOI);
-                    if (goapAction.targetTile != null) {
-                        SetCurrentlyDoingAction(goapAction);
-                        PauseState();
-                        goapAction.CreateStates();
-                        goapAction.SetEndAction(BerserkAgain);
-                        goapAction.DoAction();
-                        //stateComponent.character.SetCurrentAction(goapAction);
-                        //stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtLocation);
-                    } else {
-                        Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't destroy tile object " + targetPOI.name + " because there is no tile to go to!");
-                    }
+                    //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.TILE_OBJECT_DESTROY, stateComponent.character, targetPOI);
+                    //if (goapAction.targetTile != null) {
+                    //    SetCurrentlyDoingAction(goapAction);
+                    //    PauseState();
+                    //    goapAction.CreateStates();
+                    //    goapAction.SetEndAction(BerserkAgain);
+                    //    goapAction.DoAction();
+                    //    //stateComponent.character.SetCurrentAction(goapAction);
+                    //    //stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtLocation);
+                    //} else {
+                    //    Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't destroy tile object " + targetPOI.name + " because there is no tile to go to!");
+                    //}
                     return true;
                 }
             }
         } else if (targetPOI is SpecialToken) {
             int chance = UnityEngine.Random.Range(0, 100);
             if (chance < 20) {
-                GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.ITEM_DESTROY, stateComponent.character, targetPOI);
-                if (goapAction.targetTile != null) {
-                    goapAction.CreateStates();
-                    PauseState();
-                    goapAction.SetEndAction(BerserkAgain);
-                    goapAction.DoAction();
+                //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.ITEM_DESTROY, stateComponent.character, targetPOI);
+                //if (goapAction.targetTile != null) {
+                //    goapAction.CreateStates();
+                //    PauseState();
+                //    goapAction.SetEndAction(BerserkAgain);
+                //    goapAction.DoAction();
                     
-                    //stateComponent.character.SetCurrentAction(goapAction);
-                    //stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtLocation);
+                //    //stateComponent.character.SetCurrentAction(goapAction);
+                //    //stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtLocation);
                     
-                } else {
-                    Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't destroy item " + targetPOI.name + " because there is no tile to go to!");
-                }
+                //} else {
+                //    Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't destroy item " + targetPOI.name + " because there is no tile to go to!");
+                //}
                 return true;
             }
         }
@@ -157,8 +157,8 @@ public class BerserkedState : CharacterState {
             Debug.LogWarning(GameManager.Instance.TodayLogString() + stateComponent.character.name + " arrived at location of item/tile object to be destroyed during " + stateName + ", but current action is null");
             return;
         }
-        stateComponent.character.currentActionNode.SetEndAction(BerserkAgain);
-        stateComponent.character.currentActionNode.Perform();
+        //stateComponent.character.currentActionNode.SetEndAction(BerserkAgain);
+        //stateComponent.character.currentActionNode.Perform();
     }
     private void BerserkAgain(string result, GoapAction goapAction) {
         string summary = stateComponent.character.name + " is checking for berserk again";

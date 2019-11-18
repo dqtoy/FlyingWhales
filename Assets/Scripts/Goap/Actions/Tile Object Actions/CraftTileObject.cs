@@ -33,8 +33,8 @@ public class CraftTileObject : GoapAction {
     //#region State Effects
     //private void PreCraftSuccess() {
     //    TileObject obj = poiTarget as TileObject;
-    //    currentState.AddLogFiller(null, Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
-    //    currentState.AddLogFiller(null, Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
+    //    goapNode.descriptionLog.AddToFillers(null, Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
+    //    goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
     //}
     //private void AfterCraftSuccess() {
     //    //poiTarget.traitContainer.RemoveTrait(poiTarget, "Burnt");
@@ -48,7 +48,7 @@ public class CraftTileObject : GoapAction {
     //    tileObj.SetPOIState(POI_STATE.ACTIVE);
     //}
     //private void PreTargetMissing() {
-    //    currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //    goapNode.descriptionLog.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     //}
     //#endregion
 

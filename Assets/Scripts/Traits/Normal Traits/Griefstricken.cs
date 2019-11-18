@@ -27,7 +27,7 @@ namespace Traits {
         public GoapPlanJob TriggerGrieving() {
             owner.jobQueue.CancelAllJobs(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING);
 
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.GRIEVING, owner);
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.GRIEVING, owner, owner);
             job.SetCancelOnFail(true);
             owner.jobQueue.AddJobInQueue(job);
             return job;

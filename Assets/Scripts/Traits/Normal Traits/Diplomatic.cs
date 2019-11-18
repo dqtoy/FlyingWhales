@@ -25,7 +25,7 @@ namespace Traits {
                         && !targetCharacter.returnedToLife && targetCharacter.doNotDisturb <= 0
                         && targetCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.ENEMY) != null) {
                         if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.RESOLVE_CONFLICT)) {
-                            GoapPlanJob resolveConflictJob = new GoapPlanJob(JOB_TYPE.RESOLVE_CONFLICT, INTERACTION_TYPE.RESOLVE_CONFLICT, targetCharacter);
+                            GoapPlanJob resolveConflictJob = new GoapPlanJob(JOB_TYPE.RESOLVE_CONFLICT, INTERACTION_TYPE.RESOLVE_CONFLICT, targetCharacter, characterThatWillDoJob);
                             characterThatWillDoJob.jobQueue.AddJobInQueue(resolveConflictJob);
                         }
                     }

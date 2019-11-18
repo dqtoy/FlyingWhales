@@ -61,21 +61,76 @@ namespace Traits {
             _character = null;
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
+        public override void ExecuteActionPerTickEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
+            base.ExecuteActionPerTickEffects(action, goapNode);
+            if (action == INTERACTION_TYPE.NAP || action == INTERACTION_TYPE.SLEEP || action == INTERACTION_TYPE.SLEEP_OUTSIDE || action == INTERACTION_TYPE.NARCOLEPTIC_NAP) {
+                CheckForLycanthropy();
+            }
+        }
         #endregion
 
+        public void CheckForLycanthropy(bool forceTransform = false) {
+            int chance = UnityEngine.Random.Range(0, 100);
+            //TODO:
+            //if (restingTrait.lycanthropyTrait == null) {
+            //    if (currentState.currentDuration == currentState.duration) {
+            //        //If sleep will end, check if the actor is being targetted by Drink Blood action, if it is, do not end sleep
+            //        bool isTargettedByDrinkBlood = false;
+            //        for (int i = 0; i < actor.targettedByAction.Count; i++) {
+            //            if (actor.targettedByAction[i].goapType == INTERACTION_TYPE.DRINK_BLOOD && !actor.targettedByAction[i].isDone && actor.targettedByAction[i].isPerformingActualAction) {
+            //                isTargettedByDrinkBlood = true;
+            //                break;
+            //            }
+            //        }
+            //        if (isTargettedByDrinkBlood) {
+            //            currentState.OverrideDuration(currentState.duration + 1);
+            //        }
+            //    }
+            //} else {
+            //    bool isTargettedByDrinkBlood = false;
+            //    for (int i = 0; i < actor.targettedByAction.Count; i++) {
+            //        if (actor.targettedByAction[i].goapType == INTERACTION_TYPE.DRINK_BLOOD && !actor.targettedByAction[i].isDone && actor.targettedByAction[i].isPerformingActualAction) {
+            //            isTargettedByDrinkBlood = true;
+            //            break;
+            //        }
+            //    }
+            //    if (currentState.currentDuration == currentState.duration) {
+            //        //If sleep will end, check if the actor is being targetted by Drink Blood action, if it is, do not end sleep
+            //        if (isTargettedByDrinkBlood) {
+            //            currentState.OverrideDuration(currentState.duration + 1);
+            //        } else {
+            //            if (!restingTrait.hasTransformed) {
+            //                restingTrait.CheckForLycanthropy(true);
+            //            }
+            //        }
+            //    } else {
+            //        if (!isTargettedByDrinkBlood) {
+            //            restingTrait.CheckForLycanthropy();
+            //        }
+            //    }
+            //}
+            if (_character.race == RACE.WOLF) {
+                //Turn back to normal form
+                if (forceTransform || chance < 1) {
+                    PlanRevertToNormal();
+                }
+            } else {
+                //Turn to wolf
+                if (forceTransform || chance < 40) {
+                    PlanTransformToWolf();
+                }
+            }
+        }
+
         public void PlanTransformToWolf() {
-            GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM, _character, _character);
-            GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
-            GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
-            goapPlan.ConstructAllNodes();
-            _character.AddPlan(goapPlan, true);
+            _character.currentActionNode.EndPerTickEffect();
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM, _character, _character);
+            _character.jobQueue.AddJobInQueue(job);
         }
         public void PlanRevertToNormal() {
-            GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.REVERT_TO_NORMAL_FORM, _character, _character);
-            GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
-            GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
-            goapPlan.ConstructAllNodes();
-            _character.AddPlan(goapPlan, true);
+            _character.currentActionNode.EndPerTickEffect();
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.REVERT_TO_NORMAL_FORM, _character, _character);
+            _character.jobQueue.AddJobInQueue(job);
         }
         public void TurnToWolf() {
             ////Drop all plans except for the current action
@@ -210,8 +265,6 @@ namespace Traits {
             }
             if (_character.stateComponent.currentState != null) {
                 _character.stateComponent.currentState.OnExitThisState();
-            } else if (_character.stateComponent.stateToDo != null) {
-                _character.stateComponent.SetStateToDo(null, false, false);
             }
 
             PlanTransformToWolf();

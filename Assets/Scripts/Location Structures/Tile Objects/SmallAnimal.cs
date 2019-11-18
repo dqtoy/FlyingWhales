@@ -9,16 +9,18 @@ public class SmallAnimal : TileObject {
 
     public SmallAnimal(LocationStructure location) {
         SetStructureLocation(location);
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(TILE_OBJECT_TYPE.SMALL_ANIMAL);
+        traitContainer.AddTrait(this, "Edible");
     }
     public SmallAnimal(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(data);
+        traitContainer.AddTrait(this, "Edible");
     }
 
     #region Overrides
-    public override void OnDoActionToObject(GoapAction action) {
+    public override void OnDoActionToObject(ActualGoapNode action) {
         base.OnDoActionToObject(action);
         //SetPOIState(POI_STATE.INACTIVE);
         //ScheduleCooldown(action);

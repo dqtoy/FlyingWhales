@@ -199,9 +199,9 @@ namespace Traits {
             this.effects = effects;
         }
         protected bool TryTransferJob(JobQueueItem currentJob, Character characterThatWillDoJob) {
-            if (currentJob.currentOwner.ownerType == JOB_QUEUE_OWNER.LOCATION || currentJob.currentOwner.ownerType == JOB_QUEUE_OWNER.QUEST) {
+            if (currentJob.originalOwner.ownerType == JOB_OWNER.LOCATION || currentJob.originalOwner.ownerType == JOB_OWNER.QUEST) {
                 bool canBeTransfered = false;
-                Character assignedCharacter = currentJob.currentOwner as Character;
+                Character assignedCharacter = currentJob.assignedCharacter;
                 if (assignedCharacter != null && assignedCharacter.currentActionNode.action != null
                     && assignedCharacter.currentJobNode != null && assignedCharacter.currentJobNode == currentJob) {
                     if (assignedCharacter != characterThatWillDoJob) {
@@ -211,7 +211,7 @@ namespace Traits {
                     canBeTransfered = true;
                 }
                 if (canBeTransfered && characterThatWillDoJob.CanCurrentJobBeOverriddenByJob(currentJob)) {
-                    (currentJob.currentOwner as Character).jobQueue.CancelJob(currentJob, shouldDoAfterEffect: false, forceRemove: true);
+                    currentJob.CancelJob(shouldDoAfterEffect: false);
                     characterThatWillDoJob.jobQueue.AddJobInQueue(currentJob, false);
                     //TODO: characterThatWillDoJob.jobQueue.AssignCharacterToJobAndCancelCurrentAction(currentJob, characterThatWillDoJob);
                     return true;
@@ -222,24 +222,18 @@ namespace Traits {
         #endregion
 
         #region Actions
-        protected INTERACTION_TYPE[] canStopActions; //list of actions that this trait can stop
         /// <summary>
         /// If this trait modifies any costs of an action, put it here.
         /// </summary>
         /// <param name="action">The type of action.</param>
         /// <param name="cost">The cost to be modified.</param>
-        public virtual void ExecuteCostModification(INTERACTION_TYPE action, ref int cost) { }
-        public bool CanStopAction(INTERACTION_TYPE type) {
-            for (int i = 0; i < canStopActions.Length; i++) {
-                if (type == canStopActions[i]) {
-                    return true;
-                }
-            }
+        public virtual void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref int cost) { }
+        public virtual void ExecuteActionPreEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) { }
+        public virtual void ExecuteActionPerTickEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) { }
+        public virtual void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) { }
+        public virtual bool TryStopAction(INTERACTION_TYPE action, Character actor, IPointOfInterest target, ref GoapActionInvalidity goapActionInvalidity) {
             return false;
         }
-        public virtual void ExecuteActionPreEffects(INTERACTION_TYPE action) { }
-        public virtual void ExecuteActionPerTickEffects(INTERACTION_TYPE action) { }
-        public virtual void ExecuteActionAfterEffects(INTERACTION_TYPE action) { }
         #endregion
     }
 }

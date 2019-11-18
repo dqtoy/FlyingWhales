@@ -222,9 +222,6 @@ public class CharacterStateComponent {
     public CharacterState CreateNewState(CHARACTER_STATE state) {
         CharacterState newState = null;
         switch (state) {
-            case CHARACTER_STATE.EXPLORE:
-                newState = new ExploreState(this);
-                break;
             case CHARACTER_STATE.PATROL:
                 newState = new PatrolState(this);
                 break;

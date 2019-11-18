@@ -5,7 +5,6 @@ using UnityEngine;
 namespace Traits {
     public class Narcoleptic : Trait {
         public Character owner { get; private set; }
-        public CharacterState storedState { get; private set; }
 
         public Narcoleptic() {
             name = "Narcoleptic";
@@ -44,53 +43,10 @@ namespace Traits {
             return base.TriggerFlaw(character);
         }
         private void DoNarcolepticNap() {
-            GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.NARCOLEPTIC_NAP, owner, owner);
-
-            GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
-            GoapPlan plan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.NARCOLEPTIC_NAP, owner);
-            plan.ConstructAllNodes();
-            plan.SetDoNotRecalculate(true);
-            job.SetAssignedPlan(plan);
-            job.SetAssignedCharacter(owner);
-            job.SetCancelOnFail(true);
-
-            owner.jobQueue.AddJobInQueue(job, false);
-
-            owner.AdjustIsWaitingForInteraction(1);
-            if (owner.currentParty.icon.isTravelling) {
-                owner.marker.StopMovement();
-            }
-            if (owner.IsInOwnParty()) {
-                owner.ownParty.RemoveAllOtherCharacters();
-            }
-            if (owner.currentActionNode.action != null) {
-                owner.StopCurrentAction(false);
-            }
-            if (owner.stateComponent.currentState != null) {
-                storedState = owner.stateComponent.currentState;
-                owner.stateComponent.currentState.PauseState();
-                goapAction.SetEndAction(ResumePausedState);
-            } else if (owner.stateComponent.stateToDo != null) {
-                storedState = owner.stateComponent.stateToDo;
-                owner.stateComponent.SetStateToDo(null, false, false);
-                goapAction.SetEndAction(ResumeStateToDoState);
-            }
-            owner.AdjustIsWaitingForInteraction(-1);
-
-            owner.AddPlan(plan, true, false);
-            owner.PerformTopPriorityJob();
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.NARCOLEPTIC_NAP, owner, owner);
+            owner.jobQueue.AddJobInQueue(job);
         }
         #endregion
-
-        private void ResumePausedState(string result, GoapAction action) {
-            owner.GoapActionResult(result, action);
-            storedState.ResumeState();
-        }
-        private void ResumeStateToDoState(string result, GoapAction action) {
-            owner.GoapActionResult(result, action);
-            owner.stateComponent.SetStateToDo(storedState);
-        }
     }
 }
 

@@ -1126,8 +1126,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             JobQueueItem job = allJobsTargettingThis[i];
             if (job.jobType == jobType) {
                 if (job.ForceCancelJob()) {
-                    i--;
+                	i--;
                 }
+                
             }
         }
     }
@@ -1147,7 +1148,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //    }
     //}
     public void ForceCancelAllJobsTargettingThisCharacterExcept(JOB_TYPE jobType, string conditionKey, Character otherCharacter) {
-        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+    	for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             if (allJobsTargettingThis[i] is GoapPlanJob) {
                 GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
                 if (job.jobType == jobType && job.assignedCharacter != otherCharacter && job.HasGoalConditionKey(conditionKey)) {
@@ -1155,9 +1156,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                         i--;
                     }
                 }
-            }
-        }
+         
+             }        
+         }
+
     }
+
     //public void CancelAllJobsTargettingThisCharacter(JOB_TYPE jobType, JobQueueItem except, bool forceRemove = true) {
     //    for (int i = 0; i < allJobsTargettingThis.Count; i++) {
     //        JobQueueItem job = allJobsTargettingThis[i];
@@ -1184,7 +1188,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
             if (job.ForceCancelJob(shouldDoAfterEffect, cause)) {
-                i--;
+                    i--;
             }
         }
     }
@@ -1300,6 +1304,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void CancelOrUnassignRemoveTraitRelatedJobs() {
         ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT);
         CancelAllJobs(JOB_TYPE.REMOVE_TRAIT);
+        //TODO:
         //All remove trait jobs that are being done by this character must be unassigned
         //for (int i = 0; i < allGoapPlans.Count; i++) {
         //    GoapPlan plan = allGoapPlans[i];
@@ -1436,8 +1441,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             return CreateKnockoutJob(targetCharacter);
         }
         GoapPlanJob job = new GoapPlanJob(JOB_TYPE.UNDERMINE_ENEMY, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, "Negative", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, this);
-        Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job: negative trait to " + this.name + " with target " + targetCharacter.name);
-        jobQueue.AddJobInQueue(job, false);
+        Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job: negative trait to " + this.name + " with target " + targetCharacter.name);      
+        jobQueue.AddJobInQueue(job);
 
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", reason + "_and_undermine");
         log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -1581,13 +1586,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public GoapPlanJob CreateApprehendJobFor(Character targetCharacter, bool assignSelfToJob = false) {
         //if (homeArea.id == specificLocation.id) {
         if (homeArea != null && specificLocation == homeArea && !targetCharacter.HasJobTargettingThis(JOB_TYPE.APPREHEND) && targetCharacter.traitContainer.GetNormalTrait("Restrained") == null && !traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-            //GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = targetCharacter };
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.IMPRISON_CHARACTER, targetCharacter, this);
-            //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
-            //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = this, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CHARACTER);
-            //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = targetCharacter }, INTERACTION_TYPE.DROP_CHARACTER);
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, targetCharacter, new Dictionary<INTERACTION_TYPE, object[]>() {
+                { INTERACTION_TYPE.DROP, new object[] { specificLocation.prison } }
+            }, this);
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeApprehendJob);
-            //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
             homeArea.AddToAvailableJobs(job);
             if(assignSelfToJob) {
                 jobQueue.AddJobInQueue(job);
@@ -1618,37 +1620,38 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void CreatePersonalJobs() {
         bool hasCreatedJob = false;
 
+        //TODO:
         //build furniture job
-        if (!hasCreatedJob && currentStructure is Dwelling) {
-            Dwelling dwelling = currentStructure as Dwelling;
-            if (dwelling.HasUnoccupiedFurnitureSpot() && advertisedActions.Contains(INTERACTION_TYPE.CRAFT_FURNITURE)) {
-                if (UnityEngine.Random.Range(0, 100) < 10 || dwelling.HasFacilityDeficit()) { //if the dwelling has a facility deficit(facility at 0) or if chance is met.
-                    FACILITY_TYPE mostNeededFacility = dwelling.GetMostNeededValidFacility();
-                    if (mostNeededFacility != FACILITY_TYPE.NONE) {
-                        List<LocationGridTile> validSpots = dwelling.GetUnoccupiedFurnitureSpotsThatCanProvide(mostNeededFacility);
-                        LocationGridTile chosenTile = validSpots[UnityEngine.Random.Range(0, validSpots.Count)];
-                        FURNITURE_TYPE furnitureToCreate = chosenTile.GetFurnitureThatCanProvide(mostNeededFacility);
+        //if (!hasCreatedJob && currentStructure is Dwelling) {
+        //    Dwelling dwelling = currentStructure as Dwelling;
+        //    if (dwelling.HasUnoccupiedFurnitureSpot() && advertisedActions.Contains(INTERACTION_TYPE.CRAFT_FURNITURE)) {
+        //        if (UnityEngine.Random.Range(0, 100) < 10 || dwelling.HasFacilityDeficit()) { //if the dwelling has a facility deficit(facility at 0) or if chance is met.
+        //            FACILITY_TYPE mostNeededFacility = dwelling.GetMostNeededValidFacility();
+        //            if (mostNeededFacility != FACILITY_TYPE.NONE) {
+        //                List<LocationGridTile> validSpots = dwelling.GetUnoccupiedFurnitureSpotsThatCanProvide(mostNeededFacility);
+        //                LocationGridTile chosenTile = validSpots[UnityEngine.Random.Range(0, validSpots.Count)];
+        //                FURNITURE_TYPE furnitureToCreate = chosenTile.GetFurnitureThatCanProvide(mostNeededFacility);
 
-                        object[] otherData = new object[] { chosenTile, furnitureToCreate };
+        //                object[] otherData = new object[] { chosenTile, furnitureToCreate };
 
-                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BUILD_FURNITURE, INTERACTION_TYPE.CRAFT_FURNITURE, this, new Dictionary<INTERACTION_TYPE, object[]>() {
-                                { INTERACTION_TYPE.CRAFT_FURNITURE, otherData }
-                        }, this);
-                        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
-                        if (furnitureToCreate.ConvertFurnitureToTileObject().CanBeCraftedBy(this)) { //check first if the character can build that specific type of furniture
-                            if (!jobQueue.HasJobWithOtherData(JOB_TYPE.BUILD_FURNITURE, otherData)) {
-                                jobQueue.AddJobInQueue(job);
-                            }
-                        } else {
-                            //furniture cannot be crafted by this character, post a job on the area
-                            if (!homeArea.HasJobWithOtherData(JOB_TYPE.BUILD_FURNITURE, otherData)) {
-                                homeArea.AddToAvailableJobs(job);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        //                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BUILD_FURNITURE, INTERACTION_TYPE.CRAFT_FURNITURE, new Dictionary<INTERACTION_TYPE, object[]>() {
+        //                        { INTERACTION_TYPE.CRAFT_FURNITURE, otherData }
+        //                }, this);
+        //                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
+        //                if (furnitureToCreate.ConvertFurnitureToTileObject().CanBeCraftedBy(this)) { //check first if the character can build that specific type of furniture
+        //                    if (!jobQueue.HasJobWithOtherData(JOB_TYPE.BUILD_FURNITURE, otherData)) {
+        //                        jobQueue.AddJobInQueue(job);
+        //                    }
+        //                } else {
+        //                    //furniture cannot be crafted by this character, post a job on the area
+        //                    if (!homeArea.HasJobWithOtherData(JOB_TYPE.BUILD_FURNITURE, otherData)) {
+        //                        homeArea.AddToAvailableJobs(job);
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
         //Obtain Item job
         //if the character is part of a Faction and he doesnt have an Obtain Item Job in his personal job queue, 
@@ -1793,9 +1796,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 return;
             }
             if (!targetCharacter.HasJobTargettingThis(JOB_TYPE.SAVE_CHARACTER)) {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SAVE_CHARACTER, INTERACTION_TYPE.IMPRISON_CHARACTER, targetCharacter, this);
-                //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = this, targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CARRY_CHARACTER);
-                //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = targetCharacter.homeArea, targetPOI = targetCharacter }, INTERACTION_TYPE.DROP_CHARACTER);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, targetCharacter, new Dictionary<INTERACTION_TYPE, object[]>() {
+                    { INTERACTION_TYPE.DROP, new object[] { specificLocation.prison } }
+                }, this);
                 jobQueue.AddJobInQueue(job, processLogicForPersonalJob);
                 log += "\n" + name + " created save character job.";
                 //return job;
@@ -1843,6 +1846,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //    if (homeArea != null) {
     //        homeArea.jobQueue.UnassignAllJobsTakenBy(this);
     //    }
+        //}
 
     //    StopCurrentAction(false, reason: reason);
     //    for (int i = 0; i < allGoapPlans.Count; i++) {
@@ -2590,9 +2594,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void SetTileObjectLocation(TileObject tileObject) {
         tileObjectLocation = tileObject;
     }
-    public bool IsDoingEmergencyAction() {
-        return currentActionNode != null && currentActionNode.action.goapType.IsEmergencyAction();
-    }
     public void AdjustIsStoppedByOtherCharacter(int amount) {
         isStoppedByOtherCharacter += amount;
         isStoppedByOtherCharacter = Mathf.Max(0, isStoppedByOtherCharacter);
@@ -3122,7 +3123,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
             
         }
-        if (currentActionNode != null && !currentActionNode.isDone && currentActionNode.goapType == INTERACTION_TYPE.WATCH) {
+        if (currentActionNode != null && !currentActionNode.isDone && currentActionNode.action.goapType == INTERACTION_TYPE.WATCH) {
             summary += "\n-Already watching an action, will not watch another one...";
             PrintLogIfActive(summary);
             return;
@@ -5909,6 +5910,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                             data = otherData[INTERACTION_TYPE.NONE];
                         }
                     }
+                        object[] otherActionData = null;
+                        if (otherData.ContainsKey(currType)) {
+                            otherActionData = otherData[currType];
+                        }
                     if (action.CanSatisfyRequirements(actor, this, data)
                         && action.WillEffectsSatisfyPrecondition(precondition)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
                         int actionCost = action.GetCost(actor, this, data);
@@ -6002,10 +6007,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //}
     public void ConstructInitialGoapAdvertisementActions() {
         //poiGoapActions = new List<INTERACTION_TYPE>();
-        advertisedActions.Add(INTERACTION_TYPE.RESTRAIN_CARRY_CHARACTER);
-        advertisedActions.Add(INTERACTION_TYPE.ASSAULT_CHARACTER);
-        advertisedActions.Add(INTERACTION_TYPE.IMPRISON_CHARACTER);
-        advertisedActions.Add(INTERACTION_TYPE.ABDUCT_CHARACTER);
+        poiGoapActions.Add(INTERACTION_TYPE.ASSAULT);
         advertisedActions.Add(INTERACTION_TYPE.RESTRAIN_CHARACTER);
         //poiGoapActions.Add(INTERACTION_TYPE.STROLL);
         advertisedActions.Add(INTERACTION_TYPE.DAYDREAM);
@@ -6027,7 +6029,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         advertisedActions.Add(INTERACTION_TYPE.CARRY_CORPSE);
         advertisedActions.Add(INTERACTION_TYPE.DROP_ITEM_WAREHOUSE);
         advertisedActions.Add(INTERACTION_TYPE.INVITE);
-        advertisedActions.Add(INTERACTION_TYPE.REPLACE_TILE_OBJECT);
+        poiGoapActions.Add(INTERACTION_TYPE.MAKE_LOVE);
         advertisedActions.Add(INTERACTION_TYPE.TANTRUM);
         advertisedActions.Add(INTERACTION_TYPE.BREAK_UP);
         advertisedActions.Add(INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
@@ -6772,7 +6774,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //    }
     //}
     private void CancelCurrentAction(Character target, string cause) {
-        if (this != target && !isDead && currentActionNode != null && currentActionNode.poiTarget == target && currentActionNode.goapType != INTERACTION_TYPE.WATCH) {
+        if (this != target && !isDead && currentActionNode != null && currentActionNode.poiTarget == target && currentActionNode.action.goapType != INTERACTION_TYPE.WATCH) {
             RegisterLogAndShowNotifToThisCharacterOnly("Generic", "action_cancelled_cause", null, cause);
             currentActionNode.StopAction();
         }
@@ -7237,7 +7239,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             if (doNotDisturb > 0) {
                 return;
             }
-            if(currentActionNode != null && currentActionNode.goapType == INTERACTION_TYPE.TANTRUM) {
+            if(currentActionNode != null && currentActionNode.action.goapType == INTERACTION_TYPE.TANTRUM) {
                 return;
             }
             string tantrumReason = "Became " + fromTrait.nameInUI;

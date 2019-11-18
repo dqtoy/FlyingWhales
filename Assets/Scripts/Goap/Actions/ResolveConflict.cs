@@ -29,7 +29,7 @@ public class ResolveConflict : GoapAction {
                 (targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT
                 || targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED))) {
                 goapActionInvalidity.isInvalid = true;
-                goapActionInvalidity.logKey = "resolve fail_description";
+                goapActionInvalidity.stateName = "Resolve Fail";
             } 
         }
         return goapActionInvalidity;
@@ -59,7 +59,7 @@ public class ResolveConflict : GoapAction {
             if (allEnemyTraits.Count > 0) {
                 Relatable chosenEnemy = allEnemyTraits[UnityEngine.Random.Range(0, allEnemyTraits.Count)];
                 GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-                currentState.AddLogFiller(chosenEnemy, chosenEnemy.relatableName, LOG_IDENTIFIER.CHARACTER_3);
+                goapNode.descriptionLog.AddToFillers(chosenEnemy, chosenEnemy.relatableName, LOG_IDENTIFIER.CHARACTER_3);
                 RelationshipManager.Instance.RemoveOneWayRelationship(targetCharacter.currentAlterEgo, chosenEnemy, RELATIONSHIP_TRAIT.ENEMY);
                 //NOTE: Moved removal of enemy trait after the action is fully processed for proper arrangement of logs
             } else {

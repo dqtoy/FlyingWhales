@@ -17,6 +17,11 @@ public class CurseCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Cursed", target = GOAP_EFFECT_TARGET.TARGET });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", target = GOAP_EFFECT_TARGET.TARGET });
     }
+    public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
+        List<TileObject> magicCircle = goapNode.actor.specificLocation.GetTileObjectsOfType(TILE_OBJECT_TYPE.MAGIC_CIRCLE);
+        TileObject chosen = magicCircle[Random.Range(0, magicCircle.Count)];
+        return chosen;
+    }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         //TODO: Make actor go to Magic Circle
@@ -29,29 +34,12 @@ public class CurseCharacter : GoapAction {
 
     #region State Effects
     public void PreCurseSuccess(ActualGoapNode goapNode) {
-        //TODO:
-        //SetCommittedCrime(CRIME.ASSAULT, new Character[] { actor });
-        //actorLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), currentState.name.ToLower() + "_description_actor", this);
-        //actorLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //actorLog.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-
-        //targetLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), currentState.name.ToLower() + "_description_target", this);
-        //targetLog.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-
-        //currentState.OverrideDescriptionLog(actorLog);
-        //currentState.SetIntelReaction(CurseSuccessReactions);
-        //(poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(1);
+        goapNode.descriptionLog.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     public void AfterCurseSuccess(ActualGoapNode goapNode) {
-        //TODO:
-        //actorLog.SetDate(GameManager.Instance.Today());
-        //targetLog.SetDate(GameManager.Instance.Today());
-        //actor.AddHistory(actorLog);
-        //(poiTarget as Character).AddHistory(targetLog);
-
         //**After Effect 1**: Target gains Cursed trait.
-        Cursed cursed = new Cursed();
-        goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, cursed, goapNode.actor);
+        goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Cursed", goapNode.actor);
     }
     #endregion
 
@@ -59,7 +47,7 @@ public class CurseCharacter : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            return actor != poiTarget;
+            return actor != poiTarget && actor.specificLocation.GetTileObjectsOfType(TILE_OBJECT_TYPE.MAGIC_CIRCLE).Count > 0;
         }
         return false;
     }

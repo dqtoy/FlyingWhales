@@ -575,8 +575,8 @@ public class Player : ILeader {
     private void OnCharacterDoingAction(Character character, ActualGoapNode actionNode) {
         bool showPopup = false;
         Log log = actionNode.GetCurrentLog();
-        if (actionNode.showIntelNotification && !actionNode.IsActorAtTargetTile() && log != null) { //added checking if actor is already at target tile. So that travelling notification won't show if that is the case.
-            if (actionNode.shouldIntelNotificationOnlyIfActorIsActive) {
+        if (actionNode.action.showIntelNotification && log != null) { //TODO: added checking if actor is already at target tile. So that travelling notification won't show if that is the case. && !actionNode.IsActorAtTargetTile() 
+            if (actionNode.action.shouldIntelNotificationOnlyIfActorIsActive) {
                 showPopup = ShouldShowNotificationFrom(actionNode.actor, true);
             } else {
                 showPopup = ShouldShowNotificationFrom(actionNode.actor, log);
@@ -594,12 +594,12 @@ public class Player : ILeader {
     /// <param name="state">The state that the action is in.</param>
     private void OnAfterActionStateSet(string stateName, ActualGoapNode actionNode) {
         bool showPopup = false;
-        Log log = action.GetCurrentLog();
-        if (action.showIntelNotification && state.duration > 0 && log != null) { //added checking for duration because this notification should only show for actions that have durations.
-            if (action.shouldIntelNotificationOnlyIfActorIsActive) {
-                showPopup = ShouldShowNotificationFrom(action.actor, true);
+        Log log = actionNode.GetCurrentLog();
+        if (actionNode.action.showIntelNotification && actionNode.currentState.duration > 0 && log != null) { //added checking for duration because this notification should only show for actions that have durations.
+            if (actionNode.action.shouldIntelNotificationOnlyIfActorIsActive) {
+                showPopup = ShouldShowNotificationFrom(actionNode.actor, true);
             } else {
-                showPopup = ShouldShowNotificationFrom(action.actor, log);
+                showPopup = ShouldShowNotificationFrom(actionNode.actor, log);
             }
         }
         if (showPopup) {

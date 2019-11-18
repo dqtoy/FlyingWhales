@@ -45,8 +45,8 @@ namespace Traits {
             base.OnAddTrait(sourcePOI);
             if (sourcePOI is Character) {
                 owner = sourcePOI as Character;
-                owner.StopAllActionTargettingThis();
-                owner.ForceCancelAllJobsTargettingThisCharacter();
+                //owner.StopAllActionTargettingThis();
+                //owner.ForceCancelAllJobsTargettingThisCharacter();
             }
         }
         public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {

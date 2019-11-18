@@ -15,8 +15,8 @@ public class GoapAction {
     //public AlterEgoData poiTargetAlterEgo { get; protected set; } //The alter ego the target was using while doing this action. only occupied if target is a character
     //public Character actor { get; private set; }
     //public AlterEgoData actorAlterEgo { get; protected set; } //The alter ego the character was using while doing this action.
-    public List<Precondition> preconditions { get; private set; }
-    public List<GoapEffect> expectedEffects { get; private set; }
+    public List<Precondition> basePreconditions { get; private set; }
+    public List<GoapEffect> baseExpectedEffects { get; private set; }
     public RACE[] racesThatCanDoAction { get; protected set; }
     //public virtual LocationStructure targetStructure {
     //    get {
@@ -100,8 +100,8 @@ public class GoapAction {
         //SetShowIntelNotification(true);
         showIntelNotification = true;
         shouldAddLogs = true;
-        preconditions = new List<Precondition>();
-        expectedEffects = new List<GoapEffect>();
+        basePreconditions = new List<Precondition>();
+        baseExpectedEffects = new List<GoapEffect>();
         //actualEffects = new List<GoapEffect>();
         //committedCrime = CRIME.NONE;
         //animationName = string.Empty;
@@ -183,8 +183,6 @@ public class GoapAction {
         //Debug.Log(summary + "\n" + string.Format("Total creation time is {0}ms", sw.ElapsedMilliseconds));
     }
     protected virtual void ConstructBasePreconditionsAndEffects() { }
-    //protected virtual void ConstructRequirementOnBuildGoapTree() { }
-
     public virtual void Perform(ActualGoapNode actionNode) {
         //isPerformingActualAction = true;
         //actorAlterEgo = actor.currentAlterEgo;
@@ -225,24 +223,6 @@ public class GoapAction {
         //    Messenger.AddListener<TileObject, Character>(Signals.TILE_OBJECT_DISABLED, OnTileObjectDisabled);
         //}
     }
-    //protected void CreateThoughtBubbleLog() {
-    //    if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", this.GetType().ToString(), "thought_bubble")) {
-    //        thoughtBubbleLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "thought_bubble", this);
-    //        AddDefaultObjectsToLog(thoughtBubbleLog);
-    //    }
-    //    if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", this.GetType().ToString(), "thought_bubble_m")) {
-    //        thoughtBubbleMovingLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "thought_bubble_m", this);
-    //        AddDefaultObjectsToLog(thoughtBubbleMovingLog);
-    //    }
-    //    if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", this.GetType().ToString(), "plan_log")) {
-    //        planLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "plan_log", this);
-    //        AddDefaultObjectsToLog(planLog);
-    //    }
-    //    if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", this.GetType().ToString(), "target_log")) {
-    //        targetLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "target_log", this);
-    //        AddDefaultObjectsToLog(targetLog);
-    //    }
-    //}
     public virtual void AddFillersToLog(Log log, Character actor, IPointOfInterest poiTarget, object[] otherData, LocationStructure targetStructure) {
         log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
@@ -257,9 +237,19 @@ public class GoapAction {
         return 0;
     }
     public virtual GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest target, object[] otherData) {
-        string logKey = "target missing_description"; //TODO: actual log key subject to change
+        string stateName = "Target Missing";
         bool defaultTargetMissing = IsTargetMissing(actor, target, otherData);
-        return new GoapActionInvalidity(defaultTargetMissing, logKey);
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
+        if (defaultTargetMissing == false) {
+            //check the target's traits, if any of them can make this action invalid
+            for (int i = 0; i < target.traitContainer.allTraits.Count; i++) {
+                Trait trait = target.traitContainer.allTraits[i];
+                if (trait.TryStopAction(goapType, actor, target, ref goapActionInvalidity)) {
+                    break; //a trait made this action invalid, stop loop
+                }
+            }
+        }
+        return goapActionInvalidity;
     }
     public virtual LocationStructure GetTargetStructure(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         //if (poiTarget is Character) {
@@ -270,6 +260,15 @@ public class GoapAction {
         }
         return poiTarget.gridTileLocation.structure;
     }
+    /// <summary>
+    /// Function to use when actionLocationType is NEAR_TARGET. <see cref="GoapNode.MoveToDoAction"/>
+    /// Will, by default, return the poiTarget, but can be overridden to make actor go somewhere else.
+    /// </summary>
+    /// <returns></returns>
+    public virtual IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
+        return goapNode.poiTarget;
+    }
+
     ///<summary>
     ///This is called when the actor decides to do this specific action.
     ///All movement related actions should be done here.
@@ -424,7 +423,13 @@ public class GoapAction {
 
     #region Utilities
     public int GetCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return (GetBaseCost(actor, target, otherData) * TimeOfDaysCostMultiplier(actor) * PreconditionCostMultiplier()) + GetDistanceCost(actor, target);
+        int baseCost = GetBaseCost(actor, target, otherData);
+        //modify costs based on actors traits
+        for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
+            Trait trait = actor.traitContainer.allTraits[i];
+            trait.ExecuteCostModification(goapType, actor, target, otherData, ref baseCost);
+        }
+        return (baseCost * TimeOfDaysCostMultiplier(actor) * PreconditionCostMultiplier()) + GetDistanceCost(actor, target);
     }
     protected bool IsTargetMissing(Character actor, IPointOfInterest target, object[] otherData) {
         return !target.IsAvailable() || target.gridTileLocation == null || actor.specificLocation != target.specificLocation
@@ -665,7 +670,7 @@ public class GoapAction {
         return 3;
     }
     public int PreconditionCostMultiplier() {
-        return preconditions.Count * 2;
+        return basePreconditions.Count * 2;
     }
     //public void AddAwareCharacter(Character character) {
     //    if (!awareCharactersOfThisAction.Contains(character)) {
@@ -753,9 +758,10 @@ public class GoapAction {
 
     #region Preconditions
     protected void AddPrecondition(GoapEffect effect, Func<Character, IPointOfInterest, object[], bool> condition) {
-        preconditions.Add(new Precondition(effect, condition));
+        basePreconditions.Add(new Precondition(effect, condition));
     }
     public bool CanSatisfyAllPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
+        List<Precondition> preconditions = GetPreconditions(otherData);
         for (int i = 0; i < preconditions.Count; i++) {
             if (!preconditions[i].CanSatisfyCondition(actor, target, otherData)) {
                 return false;
@@ -763,19 +769,19 @@ public class GoapAction {
         }
         return true;
     }
-    //protected bool HasNonPositiveDisablerTrait() {
-    //    Character target = poiTarget as Character;
-    //    return target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER);
-    //}
+    public virtual List<Precondition> GetPreconditions(object[] otherData) {
+        return basePreconditions;
+    }
     #endregion
 
     #region Effects
     protected void AddExpectedEffect(GoapEffect effect) {
-        expectedEffects.Add(effect);
+        baseExpectedEffects.Add(effect);
     }
-    public bool WillEffectsSatisfyPrecondition(GoapEffect precondition) {
-        for (int i = 0; i < expectedEffects.Count; i++) {
-            if(EffectPreconditionMatching(expectedEffects[i], precondition)) {
+    public bool WillEffectsSatisfyPrecondition(GoapEffect precondition, IPointOfInterest target, object[] otherData) {
+        List<GoapEffect> effects = GetExpectedEffects(target, otherData);
+        for (int i = 0; i < effects.Count; i++) {
+            if(EffectPreconditionMatching(effects[i], precondition)) {
                 return true;
             }
         }
@@ -806,6 +812,10 @@ public class GoapAction {
         }
         return false;
     }
+    protected virtual List<GoapEffect> GetExpectedEffects(IPointOfInterest target, object[] otherData) {
+        return baseExpectedEffects;
+    }
+
     //public void AddActualEffect(GoapEffect effect) {
     //    actualEffects.Add(effect);
     //}
@@ -865,11 +875,11 @@ public class GoapAction {
 
 public struct GoapActionInvalidity {
     public bool isInvalid;
-    public string logKey;
+    public string stateName;
 
-    public GoapActionInvalidity(bool isInvalid, string logKey) {
+    public GoapActionInvalidity(bool isInvalid, string stateName) {
         this.isInvalid = isInvalid;
-        this.logKey = logKey;
+        this.stateName = stateName;
     }
 }
 public struct GoapEffect {

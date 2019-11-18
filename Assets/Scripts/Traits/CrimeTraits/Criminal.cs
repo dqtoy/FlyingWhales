@@ -24,7 +24,7 @@ namespace Traits {
                 Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "add_criminal");
                 addLog.AddToFillers(sourceCharacter, sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 sourceCharacter.AddHistory(addLog);
-                sourceCharacter.homeArea.jobQueue.UnassignAllJobsTakenBy(sourceCharacter);
+                //TODO: sourceCharacter.homeArea.jobQueue.UnassignAllJobsTakenBy(sourceCharacter);
                 sourceCharacter.CancelOrUnassignRemoveTraitRelatedJobs();
             }
 
@@ -47,33 +47,21 @@ namespace Traits {
         public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
             if (traitOwner is Character) {
                 Character targetCharacter = traitOwner as Character;
-                if ((gainedFromDoing == null || gainedFromDoing.awareCharactersOfThisAction.Contains(characterThatWillDoJob)) && targetCharacter.isAtHomeRegion && !targetCharacter.isDead
-                   && targetCharacter.traitContainer.GetNormalTrait("Restrained") == null) {
+                //TODO: (gainedFromDoing == null || gainedFromDoing.awareCharactersOfThisAction.Contains(characterThatWillDoJob)) &&
+                if (targetCharacter.isAtHomeRegion && !targetCharacter.isDead && targetCharacter.traitContainer.GetNormalTrait("Restrained") == null) {
                     GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.APPREHEND);
                     if (currentJob == null) {
-                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.IMPRISON_CHARACTER, targetCharacter);
+                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, targetCharacter, new Dictionary<INTERACTION_TYPE, object[]>() {
+                            { INTERACTION_TYPE.DROP, new object[] { characterThatWillDoJob.specificLocation.prison } }
+                        }, characterThatWillDoJob);
                         //job.SetCanBeDoneInLocation(true);
                         if (InteractionManager.Instance.CanCharacterTakeApprehendJob(characterThatWillDoJob, targetCharacter, job)) {
                             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                             return true;
                         }
                     } else {
-                        if (currentJob.jobQueueParent.isAreaOrQuestJobQueue && InteractionManager.Instance.CanCharacterTakeApprehendJob(characterThatWillDoJob, targetCharacter, currentJob)) {
-                            bool canBeTransfered = false;
-                            if (currentJob.assignedCharacter != null && currentJob.assignedCharacter.currentActionNode.action != null
-                                && currentJob.assignedCharacter.currentActionNode.action.parentPlan != null && currentJob.assignedCharacter.currentActionNode.action.parentPlan.job == currentJob) {
-                                if (currentJob.assignedCharacter != characterThatWillDoJob) {
-                                    canBeTransfered = !currentJob.assignedCharacter.marker.inVisionPOIs.Contains(currentJob.assignedCharacter.currentActionNode.action.poiTarget);
-                                }
-                            } else {
-                                canBeTransfered = true;
-                            }
-                            if (canBeTransfered && characterThatWillDoJob.CanCurrentJobBeOverriddenByJob(currentJob)) {
-                                currentJob.jobQueueParent.CancelJob(currentJob, shouldDoAfterEffect: false, forceRemove: true);
-                                characterThatWillDoJob.jobQueue.AddJobInQueue(currentJob, false);
-                                characterThatWillDoJob.jobQueue.AssignCharacterToJobAndCancelCurrentAction(currentJob, characterThatWillDoJob);
-                                return true;
-                            }
+                        if (InteractionManager.Instance.CanCharacterTakeApprehendJob(characterThatWillDoJob, targetCharacter, currentJob)) {
+                            return TryTransferJob(currentJob, characterThatWillDoJob);
                         }
                     }
                 }

@@ -67,27 +67,20 @@ namespace Traits {
         public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is SpecialToken) {
                 SpecialToken token = targetPOI as SpecialToken;
-                if (characterThatWillDoJob.currentActionNode.action != null && characterThatWillDoJob.currentActionNode.action.goapType == INTERACTION_TYPE.ROAMING_TO_STEAL && !characterThatWillDoJob.currentActionNode.action.isDone) {
-                    if ((token.characterOwner == null || token.characterOwner != characterThatWillDoJob) && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetPOI)) {
-                        GoapPlanJob job = new GoapPlanJob(characterThatWillDoJob.currentActionNode.action.parentPlan.job.jobType, INTERACTION_TYPE.STEAL, targetPOI);
-                        job.SetIsStealth(true);
-                        characterThatWillDoJob.currentActionNode.action.parentPlan.job.jobQueueParent.CancelJob(characterThatWillDoJob.currentActionNode.action.parentPlan.job);
-                        characterThatWillDoJob.jobQueue.AddJobInQueue(job, false);
-                        characterThatWillDoJob.jobQueue.AssignCharacterToJobAndCancelCurrentAction(job, characterThatWillDoJob);
-                        return true;
-                    }
+                if ((token.characterOwner == null || token.characterOwner != characterThatWillDoJob) && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetPOI)) {
+                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.STEAL, INTERACTION_TYPE.STEAL, targetPOI, characterThatWillDoJob);
+                    job.SetIsStealth(true);
+                    characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+                    return true;
                 }
             } else if (targetPOI is Character) {
                 Character targetCharacter = targetPOI as Character;
-                if (characterThatWillDoJob.currentActionNode.action != null && characterThatWillDoJob.currentActionNode.action.goapType == INTERACTION_TYPE.ROAMING_TO_STEAL && !characterThatWillDoJob.currentActionNode.action.isDone) {
-                    if (characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.POSITIVE && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetCharacter)) {
-                        GoapPlanJob job = new GoapPlanJob(characterThatWillDoJob.currentActionNode.action.parentPlan.job.jobType, INTERACTION_TYPE.STEAL_FROM_CHARACTER, targetCharacter);
-                        job.SetIsStealth(true);
-                        characterThatWillDoJob.currentActionNode.action.parentPlan.job.jobQueueParent.CancelJob(characterThatWillDoJob.currentActionNode.action.parentPlan.job);
-                        characterThatWillDoJob.jobQueue.AddJobInQueue(job, false);
-                        characterThatWillDoJob.jobQueue.AssignCharacterToJobAndCancelCurrentAction(job, characterThatWillDoJob);
-                        return true;
-                    }
+                if (characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.POSITIVE && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetCharacter) && targetCharacter.items.Count > 0) {
+                    SpecialToken item = targetCharacter.items[Random.Range(0, targetCharacter.items.Count)];
+                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.STEAL, INTERACTION_TYPE.STEAL, item, characterThatWillDoJob);
+                    job.SetIsStealth(true);
+                    characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+                    return true;
                 }
             }
             return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
@@ -104,8 +97,9 @@ namespace Traits {
                     if (character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
                         character.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN);
                     }
-                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = character });
-                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = character }, INTERACTION_TYPE.ROAMING_TO_STEAL);
+                    //TODO: Make this sure steal any time
+                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, target = GOAP_EFFECT_TARGET.ACTOR }, character, character);
+                    //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, target = GOAP_EFFECT_TARGET.ACTOR }, INTERACTION_TYPE.STEAL);
                     job.SetCancelOnFail(true);
                     character.jobQueue.AddJobInQueue(job);
                 } else {
@@ -114,13 +108,13 @@ namespace Traits {
             }
             return base.TriggerFlaw(character);
         }
-        public override void ExecuteCostModification(INTERACTION_TYPE action, ref int cost) {
+        public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref int cost) {
             if (action == INTERACTION_TYPE.STEAL) {
                 cost = Utilities.rng.Next(5, 46);
             }
         }
-        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action) {
-            base.ExecuteActionAfterEffects(action);
+        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
+            base.ExecuteActionAfterEffects(action, goapNode);
             if (action == INTERACTION_TYPE.STEAL) {
                 owner.AdjustHappiness(6000);
             }

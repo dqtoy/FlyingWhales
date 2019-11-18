@@ -38,8 +38,8 @@ public class ChopWood : GoapAction {
     public void PreChopSuccess(ActualGoapNode goapNode) {
         TreeObject tree = goapNode.poiTarget as TreeObject;
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        currentState.AddLogFiller(null, tree.GetSupplyPerMine().ToString(), LOG_IDENTIFIER.STRING_1);
-        currentState.AddLogFiller(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+        goapNode.descriptionLog.AddToFillers(null, tree.GetSupplyPerMine().ToString(), LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterChopSuccess(ActualGoapNode goapNode) {
         TreeObject tree = goapNode.poiTarget as TreeObject;
@@ -47,7 +47,7 @@ public class ChopWood : GoapAction {
         tree.AdjustYield(-1);
     }
     //public void PreTargetMissing(ActualGoapNode goapNode) {
-    //    currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+    //    goapNode.descriptionLog.AddToFillers(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     //}
     //public void AfterTargetMissing(ActualGoapNode goapNode) {
     //    actor.RemoveAwareness(poiTarget);

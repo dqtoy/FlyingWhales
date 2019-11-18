@@ -20,15 +20,15 @@ public class HuntState : CharacterState {
         if (targetPOI is Character) {
             Character targetCharacter = targetPOI as Character;
             if (targetCharacter.isDead) {
-                GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.EAT_CORPSE, stateComponent.character, targetPOI);
-                if (goapAction.targetTile != null) {
-                    SetCurrentlyDoingAction(goapAction);
-                    goapAction.CreateStates();
-                    stateComponent.character.SetCurrentActionNode(goapAction);
-                    stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtCorpseLocation);
-                } else {
-                    Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't eat corpse " + targetPOI.name + " because there is no tile to go to!");
-                }
+                //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.EAT_CORPSE, stateComponent.character, targetPOI);
+                //if (goapAction.targetTile != null) {
+                //    SetCurrentlyDoingAction(goapAction);
+                //    goapAction.CreateStates();
+                //    stateComponent.character.SetCurrentActionNode(goapAction);
+                //    stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtCorpseLocation);
+                //} else {
+                //    Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't eat corpse " + targetPOI.name + " because there is no tile to go to!");
+                //}
             } else {
                 stateComponent.character.marker.AddHostileInRange(targetCharacter);
             }

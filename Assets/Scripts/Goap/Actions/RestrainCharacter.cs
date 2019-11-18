@@ -12,7 +12,7 @@ public class RestrainCharacter : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        //TODO: AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_NON_POSITIVE_TRAIT, conditionKey = "Disabler", targetPOI = poiTarget }, HasNonPositiveDisablerTrait);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.CANNOT_MOVE, conditionKey = "Disabler", target = GOAP_EFFECT_TARGET.TARGET }, CannotMove);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", target = GOAP_EFFECT_TARGET.TARGET });
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = poiTarget });
     }
@@ -57,6 +57,12 @@ public class RestrainCharacter : GoapAction {
     public void AfterRestrainSuccess(ActualGoapNode goapNode) {
         //**Effect 1**: Target gains Restrained trait.
         goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Restrained", goapNode.actor);
+    }
+    #endregion
+
+    #region Preconditions
+    private bool CannotMove(Character actor, IPointOfInterest target, object[] otherData) {
+        return (target as Character).canMove == false;
     }
     #endregion
 

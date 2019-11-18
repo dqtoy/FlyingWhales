@@ -75,7 +75,7 @@ public class InteractionManager : MonoBehaviour {
         if (obj[0] is GoapAction) {
             GoapAction action = obj[0] as GoapAction;
             switch (action.goapType) {
-                case INTERACTION_TYPE.POISON_TABLE:
+                case INTERACTION_TYPE.POISON:
                     return new PoisonTableIntel(obj[1] as Character, obj[0] as GoapAction);
                 default:
                     return new EventIntel(obj[1] as Character, obj[0] as GoapAction);
@@ -466,19 +466,19 @@ public class InteractionManager : MonoBehaviour {
     }
     public void OnTakeBrewPotion(Character character, JobQueueItem job) {
         GoapPlanJob j = job as GoapPlanJob;
-        j.ClearForcedActions();
-        j.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.HEALING_POTION.ToString(), targetPOI = character }, INTERACTION_TYPE.CRAFT_ITEM);
+        //j.ClearForcedActions();
+        //j.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.HEALING_POTION.ToString(), targetPOI = character }, INTERACTION_TYPE.CRAFT_ITEM);
     }
     public void OnTakeCraftTool(Character character, JobQueueItem job) {
         GoapPlanJob j = job as GoapPlanJob;
-        j.ClearForcedActions();
-        j.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.TOOL.ToString(), targetPOI = character }, INTERACTION_TYPE.CRAFT_ITEM);
+        //j.ClearForcedActions();
+        //j.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.TOOL.ToString(), targetPOI = character }, INTERACTION_TYPE.CRAFT_ITEM);
     }
     #endregion
 
     #region Precondition Resolvers
     public bool TargetHasNegativeTraitEffect(Character actor, IPointOfInterest target) {
-        return target.HasTraitOf(TRAIT_EFFECT.NEGATIVE);
+        return target.traitContainer.HasTraitOf(TRAIT_EFFECT.NEGATIVE);
     }
     #endregion
 }

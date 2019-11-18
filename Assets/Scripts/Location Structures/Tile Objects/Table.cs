@@ -14,21 +14,16 @@ public class Table : TileObject {
 
     public Table(LocationStructure location) {
         SetStructureLocation(location);
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT, INTERACTION_TYPE.DRINK, INTERACTION_TYPE.REMOVE_POISON_TABLE, INTERACTION_TYPE.POISON_TABLE, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.DROP_FOOD, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
-        SetFood(UnityEngine.Random.Range(20, 81)); //
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DRINK, INTERACTION_TYPE.REMOVE_POISON_TABLE, INTERACTION_TYPE.POISON_TABLE, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.DROP_FOOD, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
+        SetFood(UnityEngine.Random.Range(20, 81)); 
         Initialize(TILE_OBJECT_TYPE.TABLE);
-        //int slots = 4;
-        //if (usedAsset.name.Contains("2")) {
-        //    slots = 2;
-        //} else if (usedAsset.name.Contains("Bartop")) {
-        //    slots = 1;
-        //}
-        //users = new Character[slots];
+        traitContainer.AddTrait(this, "Edible");
     }
 
     public Table(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT, INTERACTION_TYPE.DRINK, INTERACTION_TYPE.REMOVE_POISON_TABLE, INTERACTION_TYPE.POISON_TABLE, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.DROP_FOOD, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DRINK, INTERACTION_TYPE.REMOVE_POISON_TABLE, INTERACTION_TYPE.POISON_TABLE, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.DROP_FOOD, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
         Initialize(data);
+        traitContainer.AddTrait(this, "Edible");
     }
     public void SetUsedAsset(TileBase usedAsset) {
         this.usedAsset = usedAsset;
@@ -48,7 +43,7 @@ public class Table : TileObject {
     public override string ToString() {
         return "Table " + id.ToString();
     }
-    public override void OnDoActionToObject(GoapAction action) {
+    public override void OnDoActionToObject(ActualGoapNode action) {
         base.OnDoActionToObject(action);
         switch (action.goapType) {
             case INTERACTION_TYPE.EAT:
@@ -59,7 +54,7 @@ public class Table : TileObject {
 
         }
     }
-    public override void OnDoneActionToObject(GoapAction action) {
+    public override void OnDoneActionToObject(ActualGoapNode action) {
         base.OnDoneActionToObject(action);
         switch (action.goapType) {
             case INTERACTION_TYPE.EAT:
@@ -70,7 +65,7 @@ public class Table : TileObject {
 
         }
     }
-    public override void OnCancelActionTowardsObject(GoapAction action) {
+    public override void OnCancelActionTowardsObject(ActualGoapNode action) {
         base.OnCancelActionTowardsObject(action);
         switch (action.goapType) {
             case INTERACTION_TYPE.EAT:
@@ -274,12 +269,22 @@ public class Table : TileObject {
     #region Food
     public void AdjustFood(int amount) {
         food += amount;
+        if (food < 20) {
+            traitContainer.RemoveTrait(this, "Edible"); //to stop advertising eat
+        } else {
+            traitContainer.AddTrait(this, "Edible"); //to advertise eat
+        }
         if (food < 0) {
             food = 0;
         }
     }
     public void SetFood(int amount) {
         food = amount;
+        if (food < 20) {
+            traitContainer.RemoveTrait(this, "Edible"); //to stop advertising eat
+        } else {
+            traitContainer.AddTrait(this, "Edible"); //to advertise eat
+        }
         if (food < 0) {
             food = 0;
         }

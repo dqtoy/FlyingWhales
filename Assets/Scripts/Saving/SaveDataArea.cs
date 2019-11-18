@@ -74,8 +74,8 @@ public class SaveDataArea {
         }
 
         jobs = new List<SaveDataJobQueueItem>();
-        for (int i = 0; i < area.jobQueue.jobsInQueue.Count; i++) {
-            JobQueueItem job = area.jobQueue.jobsInQueue[i];
+        for (int i = 0; i < area.availableJobs.Count; i++) {
+            JobQueueItem job = area.availableJobs[i];
             if (job.isNotSavable) {
                 continue;
             }
@@ -118,7 +118,7 @@ public class SaveDataArea {
         Area area = LandmarkManager.Instance.GetAreaByID(id);
         for (int i = 0; i < jobs.Count; i++) {
             JobQueueItem job = jobs[i].Load();
-            area.jobQueue.AddJobInQueue(job, false);
+            area.AddToAvailableJobs(job);
             //if (jobs[i] is SaveDataCharacterStateJob) {
             //    SaveDataCharacterStateJob dataStateJob = jobs[i] as SaveDataCharacterStateJob;
             //    CharacterStateJob stateJob = job as CharacterStateJob;

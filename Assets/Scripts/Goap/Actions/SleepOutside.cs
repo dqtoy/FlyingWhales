@@ -16,7 +16,7 @@ public class SleepOutside : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, target = GOAP_EFFECT_TARGET.ACTOR });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -49,50 +49,11 @@ public class SleepOutside : GoapAction {
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Resting");
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         currentState.SetAnimation("Sleep Ground");
-        //TODO: currentState.OverrideDuration(goapNode.actor.currentSleepTicks);
+        goapNode.OverrideCurrentStateDuration(currentState.duration - goapNode.actor.currentSleepTicks); //this can make the current duration negative
     }
     private void PerTickRestSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustTiredness(70);
         goapNode.actor.AdjustSleepTicks(-1);
-
-        //TODO:
-        //if (_restingTrait.lycanthropyTrait == null) {
-        //    if (currentState.currentDuration == currentState.duration) {
-        //        //If sleep will end, check if the actor is being targetted by Drink Blood action, if it is, do not end sleep
-        //        bool isTargettedByDrinkBlood = false;
-        //        for (int i = 0; i < actor.targettedByAction.Count; i++) {
-        //            if (actor.targettedByAction[i].goapType == INTERACTION_TYPE.DRINK_BLOOD && !actor.targettedByAction[i].isDone && actor.targettedByAction[i].isPerformingActualAction) {
-        //                isTargettedByDrinkBlood = true;
-        //                break;
-        //            }
-        //        }
-        //        if (isTargettedByDrinkBlood) {
-        //            currentState.OverrideDuration(currentState.duration + 1);
-        //        }
-        //    }
-        //} else {
-        //    bool isTargettedByDrinkBlood = false;
-        //    for (int i = 0; i < actor.targettedByAction.Count; i++) {
-        //        if (actor.targettedByAction[i].goapType == INTERACTION_TYPE.DRINK_BLOOD && !actor.targettedByAction[i].isDone && actor.targettedByAction[i].isPerformingActualAction) {
-        //            isTargettedByDrinkBlood = true;
-        //            break;
-        //        }
-        //    }
-        //    if (currentState.currentDuration == currentState.duration) {
-        //        //If sleep will end, check if the actor is being targetted by Drink Blood action, if it is, do not end sleep
-        //        if (isTargettedByDrinkBlood) {
-        //            currentState.OverrideDuration(currentState.duration + 1);
-        //        } else {
-        //            if (!_restingTrait.hasTransformed) {
-        //                _restingTrait.CheckForLycanthropy(true);
-        //            }
-        //        }
-        //    } else {
-        //        if (!isTargettedByDrinkBlood) {
-        //            _restingTrait.CheckForLycanthropy();
-        //        }
-        //    }
-        //}
     }
     private void AfterRestSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Resting");

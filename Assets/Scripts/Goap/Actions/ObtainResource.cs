@@ -26,7 +26,7 @@ public class ObtainResource : GoapAction {
              FoodPile foodPile = target as FoodPile;
             if (foodPile.foodInPile <= 0) {
                 goapActionInvalidity.isInvalid = true;
-                goapActionInvalidity.logKey = "take fail_description";
+                goapActionInvalidity.stateName = "Take Fail";
             }
         }
         return goapActionInvalidity;
@@ -60,8 +60,8 @@ public class ObtainResource : GoapAction {
             takenFood = foodPile.foodInPile;
         }
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        currentState.AddLogFiller(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-        currentState.AddLogFiller(null, takenFood.ToString(), LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+        goapNode.descriptionLog.AddToFillers(null, takenFood.ToString(), LOG_IDENTIFIER.STRING_1);
     }
     private void AfterTakeSuccess(ActualGoapNode goapNode) {
         FoodPile foodPile = goapNode.poiTarget as FoodPile;

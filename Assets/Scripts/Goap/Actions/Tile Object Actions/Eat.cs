@@ -16,19 +16,13 @@ public class Eat : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, target = GOAP_EFFECT_TARGET.ACTOR });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Eat Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        //TODO:
-        //if (actor.traitContainer.GetNormalTrait("Carnivore") != null) {
-        //    return 25;
-        //} else {
-        //    return 50;
-        //}
         return 50;
     }
     public override void OnStopWhilePerforming(Character actor, IPointOfInterest target, object[] otherData) {
@@ -40,7 +34,7 @@ public class Eat : GoapAction {
         if (goapActionInvalidity.isInvalid == false) {
             if (target.IsAvailable() == false) {
                 goapActionInvalidity.isInvalid = true;
-                goapActionInvalidity.logKey = "eat fail_description";
+                goapActionInvalidity.stateName = "Eat Fail";
             }
         }
         return goapActionInvalidity;
@@ -49,29 +43,25 @@ public class Eat : GoapAction {
 
     #region Effects
     private void PreEatSuccess(ActualGoapNode goapNode) {
-        GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        currentState.AddLogFiller(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-        goapNode.poiTarget.SetPOIState(POI_STATE.INACTIVE);
+        goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+        //goapNode.poiTarget.SetPOIState(POI_STATE.INACTIVE);
         goapNode.actor.AdjustDoNotGetHungry(1);
         //actor.traitContainer.AddTrait(actor,"Eating");
     }
     private void PerTickEatSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.AdjustFullness(520);
+        //goapNode.actor.AdjustFullness(520);
     }
     private void AfterEatSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustDoNotGetHungry(-1);
-        goapNode.poiTarget.SetPOIState(POI_STATE.ACTIVE);
+        //goapNode.poiTarget.SetPOIState(POI_STATE.ACTIVE);
     }
     private void PreEatFail(ActualGoapNode goapNode) {
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        currentState.AddLogFiller(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+        goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     }
-    //private void PreTargetMissing(ActualGoapNode goapNode) {
-    //    currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-    //}
-    //private void AfterTargetMissing(ActualGoapNode goapNode) {
-    //    actor.RemoveAwareness(poiTarget);
-    //}
+    private void PreTargetMissing(ActualGoapNode goapNode) {
+        goapNode.descriptionLog.AddToFillers(goapNode.actor.currentStructure.location, goapNode.actor.currentStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+    }
     #endregion
 
     #region Requirements
@@ -85,11 +75,6 @@ public class Eat : GoapAction {
                 return false;
             }
             if (poiTarget.gridTileLocation != null) {
-                //if (knownLoc.occupant == null) {
-                //    return true;
-                //} else if (knownLoc.occupant == actor) {
-                //    return true;
-                //}
                 return true;
             }
         }

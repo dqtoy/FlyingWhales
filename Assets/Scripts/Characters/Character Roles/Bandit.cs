@@ -7,7 +7,7 @@ public class Bandit : CharacterRole {
     public Bandit() : base(CHARACTER_ROLE.BANDIT, "Normal", null) {
         allowedInteractions = new INTERACTION_TYPE[] {
             INTERACTION_TYPE.GET_SUPPLY,
-            INTERACTION_TYPE.ASSAULT_CHARACTER,
+            INTERACTION_TYPE.ASSAULT,
         };
     }
 }

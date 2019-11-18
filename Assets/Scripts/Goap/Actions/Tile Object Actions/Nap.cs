@@ -13,7 +13,7 @@ public class Nap : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, target = GOAP_EFFECT_TARGET.TARGET });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -24,7 +24,7 @@ public class Nap : GoapAction {
         if (goapActionInvalidity.isInvalid == false) {
             if (CanSleepInBed(actor, poiTarget as TileObject) == false) {
                 goapActionInvalidity.isInvalid = true;
-                goapActionInvalidity.logKey = "nap fail_description";
+                goapActionInvalidity.stateName = "Nap Fail";
             } else if (poiTarget.IsAvailable() == false) {
                 goapActionInvalidity.isInvalid = true;
             }
@@ -82,55 +82,15 @@ public class Nap : GoapAction {
     }
     private void PerTickNapSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustTiredness(30);
-
-        //TODO:
-        //if(_restingTrait.lycanthropyTrait == null) {
-        //    if (currentState.currentDuration == currentState.duration) {
-        //        //If sleep will end, check if the actor is being targetted by Drink Blood action, if it is, do not end sleep
-        //        bool isTargettedByDrinkBlood = false;
-        //        for (int i = 0; i < actor.targettedByAction.Count; i++) {
-        //            if (actor.targettedByAction[i].goapType == INTERACTION_TYPE.DRINK_BLOOD && !actor.targettedByAction[i].isDone && actor.targettedByAction[i].isPerformingActualAction) {
-        //                isTargettedByDrinkBlood = true;
-        //                break;
-        //            }
-        //        }
-        //        if (isTargettedByDrinkBlood) {
-        //            currentState.OverrideDuration(currentState.duration + 1);
-        //        }
-        //    }
-        //} else {
-        //    bool isTargettedByDrinkBlood = false;
-        //    for (int i = 0; i < actor.targettedByAction.Count; i++) {
-        //        if (actor.targettedByAction[i].goapType == INTERACTION_TYPE.DRINK_BLOOD && !actor.targettedByAction[i].isDone && actor.targettedByAction[i].isPerformingActualAction) {
-        //            isTargettedByDrinkBlood = true;
-        //            break;
-        //        }
-        //    }
-        //    if (currentState.currentDuration == currentState.duration) {
-        //        //If sleep will end, check if the actor is being targetted by Drink Blood action, if it is, do not end sleep
-        //        if (isTargettedByDrinkBlood) {
-        //            currentState.OverrideDuration(currentState.duration + 1);
-        //        } else {
-        //            if (!_restingTrait.hasTransformed) {
-        //                _restingTrait.CheckForLycanthropy(true);
-        //            }
-        //        }
-        //    } else {
-        //        if (!isTargettedByDrinkBlood) {
-        //            _restingTrait.CheckForLycanthropy();
-        //        }
-        //    }
-        //}
-        
     }
     private void AfterNapSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Resting");
     }
     //private void PreNapFail() {
-    //    currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+    //    goapNode.descriptionLog.AddToFillers(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     //}
     //private void PreNapMissing() {
-    //    currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+    //    goapNode.descriptionLog.AddToFillers(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     //}
     #endregion
 

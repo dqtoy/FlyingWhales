@@ -67,11 +67,6 @@ public class CharacterStateJob : JobQueueItem {
                 return true;
             }
             return false;
-        } else if (targetState == CHARACTER_STATE.EXPLORE) {
-            if(character.role.roleType == CHARACTER_ROLE.ADVENTURER) {
-                return true;
-            }
-            return false;
         }
         return base.CanTakeJob(character);
     }

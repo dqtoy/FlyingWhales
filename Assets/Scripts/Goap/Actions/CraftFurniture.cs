@@ -89,8 +89,8 @@ public class CraftFurniture : GoapAction {
 
    // #region State Effects
    // private void PreCraftSuccess() {
-   //     currentState.AddLogFiller(null, Utilities.GetArticleForWord(furnitureToCreate.ToString()), LOG_IDENTIFIER.STRING_1);
-   //     currentState.AddLogFiller(null, Utilities.NormalizeStringUpperCaseFirstLetters(furnitureToCreate.ToString()), LOG_IDENTIFIER.ITEM_1);
+   //     goapNode.descriptionLog.AddToFillers(null, Utilities.GetArticleForWord(furnitureToCreate.ToString()), LOG_IDENTIFIER.STRING_1);
+   //     goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(furnitureToCreate.ToString()), LOG_IDENTIFIER.ITEM_1);
    // }
    // private void AfterCraftSuccess() {
    //     actor.AdjustSupply(-TileObjectDB.GetTileObjectData(furnitureToCreate).constructionCost);

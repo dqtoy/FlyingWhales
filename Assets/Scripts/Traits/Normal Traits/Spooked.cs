@@ -48,7 +48,7 @@ namespace Traits {
             owner.ResetSleepTicks();
             owner.jobQueue.CancelAllJobs(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED);
 
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_SPOOKED, owner);
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_SPOOKED, owner, owner);
             job.SetCancelOnFail(true);
             owner.jobQueue.AddJobInQueue(job);
             return job;

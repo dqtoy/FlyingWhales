@@ -636,12 +636,13 @@ public class RelationshipManager : MonoBehaviour {
             return hasDegraded;
         }
         string summary = "Relationship degradation between " + actorAlterEgo.owner.name + " and " + target.name;
-        if (cause != null && cause.IsFromApprehendJob()) {
-            //If this has been triggered by an Action's End Result that is part of an Apprehend Job, skip processing.
-            summary += "Relationship degradation was caused by an action in an apprehend job. Skipping degredation...";
-            Debug.Log(summary);
-            return hasDegraded;
-        }
+        //TODO:
+        //if (cause != null && cause.IsFromApprehendJob()) {
+        //    //If this has been triggered by an Action's End Result that is part of an Apprehend Job, skip processing.
+        //    summary += "Relationship degradation was caused by an action in an apprehend job. Skipping degredation...";
+        //    Debug.Log(summary);
+        //    return hasDegraded;
+        //}
         //If Actor and Target are Lovers, 25% chance to create a Break Up Job with the Lover.
         if (target.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
             summary += "\n" + actorAlterEgo.owner.name + " and " + target.name + " are  lovers. Rolling for chance to create break up job...";

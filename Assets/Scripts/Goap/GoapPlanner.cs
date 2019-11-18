@@ -283,7 +283,10 @@ public class GoapPlanner {
                     List<GoapAction> actionList = kvp.Value;
                     for (int j = 0; j < actionList.Count; j++) {
                         GoapAction currentAction = actionList[j];
-                        if (currentAction.WillEffectsSatisfyPrecondition(goalEffect)) {
+                        object[] otherActionData = null;
+                        if (otherData.ContainsKey(currentAction.goapType)) { otherActionData = otherData[currentAction.goapType]; }
+
+                        if (currentAction.WillEffectsSatisfyPrecondition(goalEffect, target, otherActionData)) {
                             //Further optimize this by creating a list of all poi that currently advertises this action, and loop that
                             List<IPointOfInterest> poisThatAdvertisesCurrentAction = awareness[kvp.Key];
                             for (int k = 0; k < poisThatAdvertisesCurrentAction.Count; k++) {
@@ -441,10 +444,20 @@ public class GoapPlanner {
         GoapAction action = node.action;
         IPointOfInterest target = node.target;
         rawPlan.Add(node);
-        if (action.preconditions.Count > 0) {
-            for (int i = 0; i < action.preconditions.Count; i++) {
-                Precondition precondition = action.preconditions[i];
-                if (!precondition.CanSatisfyCondition(actor, target)) {
+        List<Precondition> preconditions = null;
+        if (job.otherData.ContainsKey(action.goapType)) {
+            preconditions = action.GetPreconditions(job.otherData[action.goapType]);
+        } else {
+            preconditions = action.basePreconditions;
+        }
+        if (preconditions.Count > 0) {
+            //get other data for current action
+            object[] preconditionActionData = null;
+            if (job.otherData.ContainsKey(action.goapType)) { preconditionActionData = job.otherData[action.goapType]; }
+
+            for (int i = 0; i < preconditions.Count; i++) {
+                Precondition precondition = preconditions[i];
+                if (!precondition.CanSatisfyCondition(actor, target, preconditionActionData)) {
                     GoapEffect preconditionEffect = precondition.goapEffect;
                     if (preconditionEffect.target == GOAP_EFFECT_TARGET.TARGET) {
                         //if precondition's target is the target, then the one who will advertise must be the target only
@@ -463,7 +476,12 @@ public class GoapPlanner {
                                 List<GoapAction> actionList = kvp.Value;
                                 for (int j = 0; j < actionList.Count; j++) {
                                     GoapAction currentAction = actionList[j];
-                                    if (currentAction.WillEffectsSatisfyPrecondition(preconditionEffect)) {
+
+                                    //get other data for current action.
+                                    object[] otherActionData = null;
+                                    if (job.otherData.ContainsKey(currentAction.goapType)) { otherActionData = job.otherData[currentAction.goapType]; }
+
+                                    if (currentAction.WillEffectsSatisfyPrecondition(preconditionEffect, target, otherActionData)) {
                                         //Further optimize this by creating a list of all poi that currently advertises this action, and loop that
                                         List<IPointOfInterest> poisThatAdvertisesCurrentAction = awareness[kvp.Key];
                                         for (int k = 0; k < poisThatAdvertisesCurrentAction.Count; k++) {

@@ -35,7 +35,7 @@ public class RepairTileObject : GoapAction {
 
     #region State Effects
     private void PreRepairSuccess() {
-        currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        goapNode.descriptionLog.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         int gainedHPPerTick = 20;
         int missingHP = poiTarget.maxHP - poiTarget.currentHP;
         int ticksToRecpverMissingHP = missingHP / gainedHPPerTick;
@@ -53,7 +53,7 @@ public class RepairTileObject : GoapAction {
         actor.AdjustSupply((int) (data.constructionCost * 0.5f));
     }
     private void PreTargetMissing() {
-        currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        goapNode.descriptionLog.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     #endregion
 

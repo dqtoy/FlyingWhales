@@ -8,7 +8,7 @@ public class Leader : CharacterRole {
     public Leader() : base(CHARACTER_ROLE.LEADER, "Unique", new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.DIPLOMACY, INTERACTION_CATEGORY.DEFENSE }) {
         allowedInteractions = new INTERACTION_TYPE[] {
             INTERACTION_TYPE.GET_SUPPLY,
-            INTERACTION_TYPE.ASSAULT_CHARACTER,
+            INTERACTION_TYPE.ASSAULT,
         };
         requiredItems = new SPECIAL_TOKEN[] {
             SPECIAL_TOKEN.HEALING_POTION,

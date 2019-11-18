@@ -152,7 +152,7 @@ public class Puke : GoapAction {
     //private GoapAction stoppedAction;
     //private CharacterState pausedState;
     //private bool AlsoPuke(Character character) {
-    //    if (character.currentActionNode != null && character.currentActionNode.goapType != INTERACTION_TYPE.PUKE) {
+    //    if (character.currentActionNode != null && character.currentActionNode.action.goapType != INTERACTION_TYPE.PUKE) {
     //        stoppedAction = character.currentActionNode;
     //        character.StopCurrentAction(false);
     //        character.marker.StopMovement();
