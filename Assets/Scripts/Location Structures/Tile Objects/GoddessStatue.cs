@@ -11,24 +11,24 @@ public class GoddessStatue : TileObject {
         //} else {
         //    poiGoapActions = new List<INTERACTION_TYPE>();
         //}
-        poiGoapActions = new List<INTERACTION_TYPE>();
+        advertisedActions = new List<INTERACTION_TYPE>();
 
         Initialize(TILE_OBJECT_TYPE.GODDESS_STATUE);
         traitContainer.RemoveTrait(this, "Flammable");
     }
     public GoddessStatue(SaveDataTileObject data) {
-        poiGoapActions = new List<INTERACTION_TYPE>();
+        advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(data);
     }
 
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);
         if (state == POI_STATE.INACTIVE) {
-            poiGoapActions.Add(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
-            poiGoapActions.Remove(INTERACTION_TYPE.PRAY_TILE_OBJECT);
+            advertisedActions.Add(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
+            advertisedActions.Remove(INTERACTION_TYPE.PRAY_TILE_OBJECT);
         } else {
-            poiGoapActions.Remove(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
-            poiGoapActions.Add(INTERACTION_TYPE.PRAY_TILE_OBJECT);
+            advertisedActions.Remove(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
+            advertisedActions.Add(INTERACTION_TYPE.PRAY_TILE_OBJECT);
         }
         if (gridTileLocation != null) {
             gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this); //update visual based on state

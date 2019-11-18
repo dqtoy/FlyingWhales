@@ -42,6 +42,15 @@ public class Quest : IJobOwner {
         }
         return false;
     }
+    public bool AddFirstUnassignedJobToCharacterJob(Character character) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (job.assignedCharacter == null && character.jobQueue.AddJobInQueue(job)) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Virtuals
@@ -62,11 +71,11 @@ public class Quest : IJobOwner {
 
     #region IJobOwner
     public void OnJobAddedToCharacterJobQueue(JobQueueItem job, Character character) {
-        RemoveFromAvailableJobs(job);
+        //RemoveFromAvailableJobs(job);
     }
     public void OnJobRemovedFromCharacterJobQueue(JobQueueItem job, Character character) {
-        if (job.IsJobStillApplicable()) {
-            AddToAvailableJobs(job);
+        if (!job.IsJobStillApplicable()) {
+            RemoveFromAvailableJobs(job);
         }
     }
     public bool ForceCancelJob(JobQueueItem job) {

@@ -57,7 +57,7 @@ public class CharacterMarker : PooledObject {
     public List<Character> inVisionCharacters { get; private set; } //POI's in this characters vision collider
     public List<IPointOfInterest> hostilesInRange { get; private set; } //POI's in this characters hostility collider
     public List<IPointOfInterest> avoidInRange { get; private set; } //POI's in this characters hostility collider
-    public List<GoapAction> actionsToWitness { get; private set; } //List of actions this character can witness, and has not been processed yet. Will be cleared after processing
+    public List<ActualGoapNode> actionsToWitness { get; private set; } //List of actions this character can witness, and has not been processed yet. Will be cleared after processing
     public Dictionary<Character, bool> lethalCharacters { get; private set; }
     public string avoidReason { get; private set; }
     public bool willProcessCombat { get; private set; }
@@ -114,7 +114,7 @@ public class CharacterMarker : PooledObject {
         terrifyingObjects = new List<IPointOfInterest>();
         avoidInRange = new List<IPointOfInterest>();
         lethalCharacters = new Dictionary<Character, bool>();
-        actionsToWitness = new List<GoapAction>();
+        actionsToWitness = new List<ActualGoapNode>();
         avoidReason = string.Empty;
         attackSpeedMeter = 0f;
         OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
@@ -1084,7 +1084,7 @@ public class CharacterMarker : PooledObject {
                     if(character.stateComponent.currentState == null || !character.stateComponent.currentState.OnEnterVisionWith(poi)) {
                         if (!character.CreateJobsOnEnterVisionWith(poi)) {
                             if (poi is Character) {
-                                visionCollision.ChatHandling(poi as Character);
+                                character.ChatCharacter(poi as Character, 8);
                             }
                         }
                     }

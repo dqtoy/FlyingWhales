@@ -8,14 +8,14 @@ public class SupplyPile : TileObject {
 
     public SupplyPile(LocationStructure location) {
         SetStructureLocation(location);
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.GET_SUPPLY, INTERACTION_TYPE.DROP_RESOURCE, INTERACTION_TYPE.REPAIR_TILE_OBJECT, INTERACTION_TYPE.DESTROY_RESOURCE };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.GET_SUPPLY, INTERACTION_TYPE.DROP_RESOURCE, INTERACTION_TYPE.REPAIR_TILE_OBJECT, INTERACTION_TYPE.DESTROY_RESOURCE };
         Initialize(TILE_OBJECT_TYPE.SUPPLY_PILE);
         SetSuppliesInPile(2000);
         traitContainer.RemoveTrait(this, "Flammable");
         Messenger.AddListener(Signals.TICK_STARTED, CheckSupply);
     }
     public SupplyPile(SaveDataTileObject data) {
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.GET_SUPPLY, INTERACTION_TYPE.DROP_RESOURCE, INTERACTION_TYPE.REPAIR_TILE_OBJECT, INTERACTION_TYPE.DESTROY_RESOURCE };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.GET_SUPPLY, INTERACTION_TYPE.DROP_RESOURCE, INTERACTION_TYPE.REPAIR_TILE_OBJECT, INTERACTION_TYPE.DESTROY_RESOURCE };
         Initialize(data);
         Messenger.AddListener(Signals.TICK_STARTED, CheckSupply);
     }

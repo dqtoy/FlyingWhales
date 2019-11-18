@@ -61,7 +61,7 @@ namespace Traits {
             if (removedFrom is IPointOfInterest) {
                 if (removedFrom is Character) {
                     Character character = removedFrom as Character;
-                    character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_FIRE);
+                    character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_FIRE);
                     character.AdjustDoNotRecoverHP(-1);
                 }
             } 

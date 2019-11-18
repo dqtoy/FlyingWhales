@@ -433,23 +433,23 @@ public class RaceManager : MonoBehaviour {
             } },
         };
     }
-    public List<INTERACTION_TYPE> GetNPCInteractionsOfCharacter(Character character) {
-        List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
-        if (_npcRaceInteractions.ContainsKey(character.race)) {
-            for (int i = 0; i < _npcRaceInteractions[character.race].Length; i++) {
-                interactions.Add(_npcRaceInteractions[character.race][i]);
-            }
-        }
-        if (character.role.allowedInteractions != null) {
-            for (int i = 0; i < character.role.allowedInteractions.Length; i++) {
-                interactions.Add(character.role.allowedInteractions[i]);
-            }
-        }
-        for (int i = 0; i < character.currentInteractionTypes.Count; i++) {
-            interactions.Add(character.currentInteractionTypes[i]);
-        }
-        return interactions;
-    }
+    //public List<INTERACTION_TYPE> GetNPCInteractionsOfCharacter(Character character) {
+    //    List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
+    //    if (_npcRaceInteractions.ContainsKey(character.race)) {
+    //        for (int i = 0; i < _npcRaceInteractions[character.race].Length; i++) {
+    //            interactions.Add(_npcRaceInteractions[character.race][i]);
+    //        }
+    //    }
+    //    if (character.role.allowedInteractions != null) {
+    //        for (int i = 0; i < character.role.allowedInteractions.Length; i++) {
+    //            interactions.Add(character.role.allowedInteractions[i]);
+    //        }
+    //    }
+    //    for (int i = 0; i < character.currentInteractionTypes.Count; i++) {
+    //        interactions.Add(character.currentInteractionTypes[i]);
+    //    }
+    //    return interactions;
+    //}
     public bool CanCharacterDoGoapAction(Character character, INTERACTION_TYPE goapType) {
         bool isTrue = false;
         Dictionary<INTERACTION_TYPE, GoapActionData> goapActionData = InteractionManager.Instance.goapActionData;

@@ -6,11 +6,11 @@ using UnityEngine;
 public class MagicCircle : TileObject {
     public MagicCircle(LocationStructure location) {
         SetStructureLocation(location);
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MAGIC_CIRCLE_PERFORM_RITUAL, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MAGIC_CIRCLE_PERFORM_RITUAL, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(TILE_OBJECT_TYPE.MAGIC_CIRCLE);
     }
     public MagicCircle(SaveDataTileObject data) {
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MAGIC_CIRCLE_PERFORM_RITUAL, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MAGIC_CIRCLE_PERFORM_RITUAL, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(data);
     }
 

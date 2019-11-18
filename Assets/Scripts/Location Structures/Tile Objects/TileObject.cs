@@ -11,7 +11,7 @@ public class TileObject : IPointOfInterest {
     public int id { get; private set; }
     public TILE_OBJECT_TYPE tileObjectType { get; private set; }
     public Faction factionOwner { get { return null; } }
-    public List<INTERACTION_TYPE> poiGoapActions { get; protected set; }
+    public List<INTERACTION_TYPE> advertisedActions { get; protected set; }
     public Area specificLocation { get { return gridTileLocation.structure.location; } }
     protected List<Trait> _traits;
     public List<Character> awareCharacters { get; private set; } //characters that are aware of this object (Used for checking if a ghost trigger should be destroyed)
@@ -181,10 +181,10 @@ public class TileObject : IPointOfInterest {
         return null;
     }
     public virtual List<GoapAction> AdvertiseActionsToActor(Character actor, Dictionary<INTERACTION_TYPE, object[]> otherData) {
-        if (poiGoapActions != null && poiGoapActions.Count > 0 && gridTileLocation != null) {
+        if (advertisedActions != null && advertisedActions.Count > 0 && gridTileLocation != null) {
             List<GoapAction> usableActions = new List<GoapAction>();
-            for (int i = 0; i < poiGoapActions.Count; i++) {
-                INTERACTION_TYPE currType = poiGoapActions[i];
+            for (int i = 0; i < advertisedActions.Count; i++) {
+                INTERACTION_TYPE currType = advertisedActions[i];
                 if (RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
                     object[] data = null;
                     if (otherData != null) {
@@ -265,27 +265,27 @@ public class TileObject : IPointOfInterest {
         if(isSummonedByPlayer != state) {
             isSummonedByPlayer = state;
             if (isSummonedByPlayer) {
-                if(poiGoapActions == null) {
-                    poiGoapActions = new List<INTERACTION_TYPE>();
+                if(advertisedActions == null) {
+                    advertisedActions = new List<INTERACTION_TYPE>();
                 }
-                if (!poiGoapActions.Contains(INTERACTION_TYPE.INSPECT)) {
-                    poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
+                if (!advertisedActions.Contains(INTERACTION_TYPE.INSPECT)) {
+                    advertisedActions.Add(INTERACTION_TYPE.INSPECT);
                 }
             } else {
-                if (poiGoapActions != null) {
-                    poiGoapActions.Remove(INTERACTION_TYPE.INSPECT);
+                if (advertisedActions != null) {
+                    advertisedActions.Remove(INTERACTION_TYPE.INSPECT);
                 }
             }
         }
     }
     public void AddAdvertisedAction(INTERACTION_TYPE type) {
-        if (poiGoapActions == null) {
-            poiGoapActions = new List<INTERACTION_TYPE>();
+        if (advertisedActions == null) {
+            advertisedActions = new List<INTERACTION_TYPE>();
         }
-        poiGoapActions.Add(type);
+        advertisedActions.Add(type);
     }
     public void RemoveAdvertisedAction(INTERACTION_TYPE type) {
-        poiGoapActions.Add(type);
+        advertisedActions.Add(type);
     }
     public void AddJobTargettingThis(JobQueueItem job) {
         allJobsTargettingThis.Add(job);
@@ -427,7 +427,7 @@ public class TileObject : IPointOfInterest {
 
     #region GOAP
     private void ConstructInitialGoapAdvertisements() {
-        poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
+        advertisedActions.Add(INTERACTION_TYPE.INSPECT);
     }
     /// <summary>
     /// Does this tile object advertise a given action type.
@@ -435,7 +435,7 @@ public class TileObject : IPointOfInterest {
     /// <param name="type">The action type that need to be advertised.</param>
     /// <returns>If this tile object advertises the given action.</returns>
     public bool Advertises(INTERACTION_TYPE type) {
-        return poiGoapActions.Contains(type);
+        return advertisedActions.Contains(type);
     }
     /// <summary>
     /// Does this tile object advertise all of the given actions.

@@ -82,7 +82,7 @@ namespace Traits {
                         return true;
                     }
                 } else {
-                    if (tileObj.state == POI_STATE.INACTIVE && tileObj.poiGoapActions.Contains(INTERACTION_TYPE.CRAFT_TILE_OBJECT)) {
+                    if (tileObj.state == POI_STATE.INACTIVE && tileObj.advertisedActions.Contains(INTERACTION_TYPE.CRAFT_TILE_OBJECT)) {
                         GoapPlanJob buildJob = new GoapPlanJob(JOB_TYPE.BUILD_TILE_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, tileObj, characterThatWillDoJob);
                         characterThatWillDoJob.jobQueue.AddJobInQueue(buildJob);
                         return true;

@@ -41,7 +41,7 @@ public class CharacterStateJob : JobQueueItem {
         }
         //return base.ProcessJob();
     }
-    public override void UnassignJob(bool shouldDoAfterEffect = true, string reason = "") {
+    public override void UnassignJob(bool shouldDoAfterEffect, string reason) {
         base.UnassignJob(shouldDoAfterEffect, reason);
         if(assignedState != null && assignedCharacter != null) {
             //if(assignedCharacter.stateComponent.stateToDo == assignedState) {

@@ -83,7 +83,7 @@ public class CharacterManager : MonoBehaviour {
         //ConstructAtHomeInteractionWeights();
         //ConstructRoleInteractions();
         //ConstructPortraitDictionaries();
-        Messenger.AddListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
+        //Messenger.AddListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
         Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
 
@@ -595,35 +595,40 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Listeners
-    private void OnAfterActionStateSet(string stateName, ActualGoapNode actionNode) {
-        action.actor.marker.UpdateAnimation();
+    //private void OnAfterActionStateSet(string stateName, ActualGoapNode actionNode) {
+    //    action.actor.marker.UpdateAnimation();
 
-        IPointOfInterest target = action.poiTarget; ;
-        List<Character> allInVisionCharacters = action.actor.marker.inVisionCharacters;
-        //allInVisionCharacters.Add(action.actor);
-        if (target is Character) {
-            Character targetCharacter = target as Character;
-            if (!targetCharacter.isDead) {
-                //TODO: FOR PERFORMANCE TESTING!
-                allInVisionCharacters = action.actor.marker.inVisionCharacters.Union(targetCharacter.marker.inVisionCharacters).ToList();
-            }
-        }
-        //if(allInVisionCharacters.Count <= 0) {
-        //    allInVisionCharacters.AddRange(action.actor.marker.inVisionCharacters);
-        //    allInVisionCharacters.Add(action.actor);
-        //}
-        //if(action.goapType == INTERACTION_TYPE.ASSAULT_CHARACTER) {
-        //    Debug.LogError("Check this!");
-        //}
-        for (int i = 0; i < allInVisionCharacters.Count; i++) {
-            Character inVisionChar = allInVisionCharacters[i];
-            if (target != inVisionChar && action.actor != inVisionChar) {
-                inVisionChar.OnActionStateSet(action, state);
-            } else if (inVisionChar is Summon) {
-                inVisionChar.OnActionStateSet(action, state);
-            }
-        }
-    }
+    //    IPointOfInterest target = null;
+    //    if (action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+    //        target = (action as MakeLove).targetCharacter;
+    //    } else {
+    //        target = action.poiTarget;
+    //    }
+    //    List<Character> allInVisionCharacters = action.actor.marker.inVisionCharacters;
+    //    //allInVisionCharacters.Add(action.actor);
+    //    if (target is Character) {
+    //        Character targetCharacter = target as Character;
+    //        if (!targetCharacter.isDead) {
+    //            //TODO: FOR PERFORMANCE TESTING!
+    //            allInVisionCharacters = action.actor.marker.inVisionCharacters.Union(targetCharacter.marker.inVisionCharacters).ToList();
+    //        }
+    //    }
+    //    //if(allInVisionCharacters.Count <= 0) {
+    //    //    allInVisionCharacters.AddRange(action.actor.marker.inVisionCharacters);
+    //    //    allInVisionCharacters.Add(action.actor);
+    //    //}
+    //    //if(action.goapType == INTERACTION_TYPE.ASSAULT_CHARACTER) {
+    //    //    Debug.LogError("Check this!");
+    //    //}
+    //    for (int i = 0; i < allInVisionCharacters.Count; i++) {
+    //        Character inVisionChar = allInVisionCharacters[i];
+    //        if (target != inVisionChar && action.actor != inVisionChar) {
+    //            inVisionChar.OnActionStateSet(action, state);
+    //        } else if (inVisionChar is Summon) {
+    //            inVisionChar.OnActionStateSet(action, state);
+    //        }
+    //    }
+    //}
     private void OnCharacterFinishedAction(Character actor, GoapAction action, string result) {
         actor.marker.UpdateActionIcon();
         actor.marker.UpdateAnimation();

@@ -15,11 +15,11 @@ namespace Traits {
 
             if (GameManager.Instance.gameHasStarted) {
                 if (trait.name == "Starving") {
-                    character.PlanFullnessRecoveryActions(true);
+                    character.PlanFullnessRecoveryActions();
                 } else if (trait.name == "Forlorn" || trait.name == "Lonely") {
-                    character.PlanHappinessRecoveryActions(true);
+                    character.PlanHappinessRecoveryActions();
                 } else if (trait.name == "Exhausted") {
-                    character.PlanTirednessRecoveryActions(true);
+                    character.PlanTirednessRecoveryActions();
                 }
             }
             if (character.canMove == false || character.canWitness == false) {
@@ -56,7 +56,7 @@ namespace Traits {
                     character.CancelAllJobsAndPlansExceptNeedsRecovery();
                 }
                 character.ownParty.RemoveAllOtherCharacters();
-                character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
+                character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
             }
             if (trait.name == "Abducted" || trait.name == "Restrained") {
                 character.AdjustDoNotGetTired(1);

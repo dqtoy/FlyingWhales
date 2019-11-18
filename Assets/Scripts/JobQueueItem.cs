@@ -10,11 +10,11 @@ public class JobQueueItem {
     public Character assignedCharacter { get; protected set; } //Only has value if job is inside character's job queue
     public string name { get; private set; }
     public JOB_TYPE jobType { get; protected set; }
-    public bool cannotCancelJob { get; private set; }
-    public bool cancelJobOnFail { get; private set; }
-    public bool cannotOverrideJob { get; private set; }
-    public bool canBeDoneInLocation { get; private set; } //If a character is unable to create a plan for this job and the value of this is true, push the job to the location job queue
-    public bool cancelJobOnDropPlan { get; private set; }
+    //public bool cannotCancelJob { get; private set; }
+    //public bool cancelJobOnFail { get; private set; }
+    //public bool cannotOverrideJob { get; private set; }
+    //public bool canBeDoneInLocation { get; private set; } //If a character is unable to create a plan for this job and the value of this is true, push the job to the location job queue
+    //public bool cancelJobOnDropPlan { get; private set; }
     public bool isStealth { get; private set; }
     public bool isNotSavable { get; protected set; }
     public List<Character> blacklistedCharacters { get; private set; }
@@ -42,11 +42,11 @@ public class JobQueueItem {
         for (int i = 0; i < data.blacklistedCharacterIDs.Count; i++) {
             blacklistedCharacters.Add(CharacterManager.Instance.GetCharacterByID(data.blacklistedCharacterIDs[i]));
         }
-        SetCannotCancelJob(data.cannotCancelJob);
-        SetCancelOnFail(data.cancelJobOnFail);
-        SetCannotOverrideJob(data.cannotOverrideJob);
-        SetCanBeDoneInLocation(data.canBeDoneInLocation);
-        SetCancelJobOnDropPlan(data.cancelJobOnDropPlan);
+        //SetCannotCancelJob(data.cannotCancelJob);
+        //SetCancelOnFail(data.cancelJobOnFail);
+        //SetCannotOverrideJob(data.cannotOverrideJob);
+        //SetCanBeDoneInLocation(data.canBeDoneInLocation);
+        //SetCancelJobOnDropPlan(data.cancelJobOnDropPlan);
         SetIsStealth(data.isStealth);
         SetInitialPriority();
     }
@@ -78,14 +78,15 @@ public class JobQueueItem {
     public virtual bool ProcessJob() { return false; }
 
     //Returns true or false if job was really removed in queue
-    public virtual bool CancelJob(bool shouldDoAfterEffect = true, string cause = "") {
+    //reason parameter only applies if the job that is being cancelled is the currentActionNode's job
+    public virtual bool CancelJob(bool shouldDoAfterEffect = true, string cause = "", string reason = "") {
         //When cancelling a job, we must check if it's personal or not because if it is a faction/settlement job it cannot be removed from queue
         //The only way for a faction/settlement job to be removed is if it is forced or it is actually finished
         if(assignedCharacter == null) {
             //Can only cancel jobs that are in character job queue
             return false;
         }
-        return assignedCharacter.jobQueue.RemoveJobInQueue(this);
+        return assignedCharacter.jobQueue.RemoveJobInQueue(this, shouldDoAfterEffect, reason);
         //if (process) {
         //    if (job is GoapPlanJob && cause != "") {
         //        GoapPlanJob planJob = job as GoapPlanJob;
@@ -103,14 +104,23 @@ public class JobQueueItem {
         //}
         //return hasBeenRemovedInJobQueue;
     }
-    public virtual bool ForceCancelJob(bool shouldDoAfterEffect = true, string cause = "") {
+    public virtual bool ForceCancelJob(bool shouldDoAfterEffect = true, string cause = "", string reason = "") {
         if (assignedCharacter != null) {
-            return assignedCharacter.jobQueue.RemoveJobInQueue(this);
+            assignedCharacter.jobQueue.RemoveJobInQueue(this, shouldDoAfterEffect, reason);
         }
         return originalOwner.ForceCancelJob(this);
     }
     public virtual bool IsJobStillApplicable() {
         return true;
+    }
+    public virtual void PushedBack() {
+        if(originalOwner.ownerType != JOB_OWNER.CHARACTER) {
+            //NOTE! This is temporary only! All jobs, even settlement jobs are just pushed back right now
+            //assignedCharacter.jobQueue.RemoveJobInQueue(this, false, "Have something important to do");
+            assignedCharacter.StopCurrentActionNode(false, "Have something important to do");
+        } else {
+            assignedCharacter.StopCurrentActionNode(false, "Have something important to do");
+        }
     }
     #endregion
 
@@ -142,21 +152,21 @@ public class JobQueueItem {
     public void SetOnTakeJobAction(System.Action<Character, JobQueueItem> action) {
         onTakeJobAction = action;
     }
-    public void SetCannotCancelJob(bool state) {
-        cannotCancelJob = state;
-    }
-    public void SetCancelOnFail(bool state) {
-        cancelJobOnFail = state;
-    }
-    public void SetCannotOverrideJob(bool state) {
-        cannotOverrideJob = state;
-    }
-    public void SetCanBeDoneInLocation(bool state) {
-        canBeDoneInLocation = state;
-    }
-    public void SetCancelJobOnDropPlan(bool state) {
-        cancelJobOnDropPlan = state;
-    }
+    //public void SetCannotCancelJob(bool state) {
+    //    cannotCancelJob = state;
+    //}
+    //public void SetCancelOnFail(bool state) {
+    //    cancelJobOnFail = state;
+    //}
+    //public void SetCannotOverrideJob(bool state) {
+    //    cannotOverrideJob = state;
+    //}
+    //public void SetCanBeDoneInLocation(bool state) {
+    //    canBeDoneInLocation = state;
+    //}
+    //public void SetCancelJobOnDropPlan(bool state) {
+    //    cancelJobOnDropPlan = state;
+    //}
     public void AddBlacklistedCharacter(Character character) {
         if (!blacklistedCharacters.Contains(character)) {
             blacklistedCharacters.Add(character);
@@ -221,11 +231,11 @@ public class SaveDataJobQueueItem {
         jobTypeIdentifier = job.GetType().ToString();
         name = job.name;
         jobType = job.jobType;
-        cannotCancelJob = job.cannotCancelJob;
-        cancelJobOnFail = job.cancelJobOnFail;
-        cannotOverrideJob = job.cannotOverrideJob;
-        canBeDoneInLocation = job.canBeDoneInLocation;
-        cancelJobOnDropPlan = job.cancelJobOnDropPlan;
+        //cannotCancelJob = job.cannotCancelJob;
+        //cancelJobOnFail = job.cancelJobOnFail;
+        //cannotOverrideJob = job.cannotOverrideJob;
+        //canBeDoneInLocation = job.canBeDoneInLocation;
+        //cancelJobOnDropPlan = job.cancelJobOnDropPlan;
         isStealth = job.isStealth;
         isNotSavable = job.isNotSavable;
 

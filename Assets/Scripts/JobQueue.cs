@@ -21,72 +21,84 @@ public class JobQueue {
     //    this.quest = quest;
     //}
 
-    public bool AddJobInQueue(JobQueueItem job, bool processLogicForPersonalJob = true) {
+    public bool AddJobInQueue(JobQueueItem job) { //, bool processLogicForPersonalJob = true
         if (!CanJobBeAddedToQueue(job)) {
             return false;
         }
         job.SetAssignedCharacter(owner);
-        bool hasBeenInserted = false;
-        int insertIndex = -1;
-        for (int i = 0; i < jobsInQueue.Count; i++) {
-            if(job.priority < jobsInQueue[i].priority) {
-                jobsInQueue.Insert(i, job);
-                insertIndex = i;
-                hasBeenInserted = true;
-                break;
+
+        bool isNewJobTopPriority = false;
+        //Push back current top priority first before adding the job
+        if (jobsInQueue.Count > 0 && job.priority < jobsInQueue[0].priority) { //This means that the job is inserted as the top most priority //characterOwner.CanCurrentJobBeOverriddenByJob(job))
+            jobsInQueue[0].PushedBack();
+            isNewJobTopPriority = true;
+        }
+
+        if (isNewJobTopPriority) {
+            jobsInQueue.Insert(0, job);
+            job.ProcessJob();
+        } else {
+            bool hasBeenInserted = false;
+            for (int i = 0; i < jobsInQueue.Count; i++) {
+                if (job.priority < jobsInQueue[i].priority) {
+                    jobsInQueue.Insert(i, job);
+                    hasBeenInserted = true;
+                    break;
+                }
+            }
+            if (!hasBeenInserted) {
+                jobsInQueue.Add(job);
             }
         }
-        if (!hasBeenInserted) {
-            jobsInQueue.Add(job);
-        }
+
         job.OnAddJobToQueue();
         job.originalOwner.OnJobAddedToCharacterJobQueue(job, owner);
         //if(quest != null) {
         //    quest.OnAddJob(job);
         //}
 
-        if (processLogicForPersonalJob) {
-            //bool hasProcessed = false;
-            //Character characterOwner = owner as Character;
-            //If the current action's job of the character is overridable and the added job has higher priority than it,
-            //then process that job immediately and stop what the character is currently doing
-            //Sometimes, in rare cases, the character still cannot be assigned to a job even if it is a personal job,
-            //It might be because CanTakeJob/CanCharacterTakeThisJob function is not satisfied
-            //if (processLogicForPersonalJob) {
-            if (hasBeenInserted && insertIndex == 0){ //This means that the job is inserted as the top most priority //characterOwner.CanCurrentJobBeOverriddenByJob(job))
-                CurrentTopPriorityIsPushedBackBy(job);
-            } 
-            //else {
-            //    //If a character is a higher priority than one of the currently existing jobs
-            //    //Check all currently existing plans of character
-            //    //All plans' job of character that has lower priority than the added job must be dropped so that the job will be prioritized than those 
-            //    if (hasBeenInserted) {
-            //        for (int i = 0; i < owner.allGoapPlans.Count; i++) {
-            //            GoapPlan plan = owner.allGoapPlans[i];
-            //            if(plan.job == null || (job.priority < plan.job.priority)) {
-            //                if(plan.job == null) {
-            //                    owner.JustDropPlan(plan);
-            //                } else {
-            //                    if (plan.job.jobQueueParent.isAreaOrQuestJobQueue) {
-            //                        plan.job.UnassignJob(false);
-            //                    } else {
-            //                        owner.JustDropPlan(plan);
-            //                    }
-            //                }
-            //                i--;
-            //            }
-            //        }
-            //    }
-            //}
-            //}
-            //if (processLogicForPersonalJob && !hasProcessed) {
-            //    if ((character.stateComponent.currentState != null && (character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL || character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE))
-            //        || (character.currentAction != null && character.currentAction.goapType == INTERACTION_TYPE.RETURN_HOME &&
-            //        (character.currentAction.parentPlan == null || character.currentAction.parentPlan.category == GOAP_CATEGORY.IDLE))) {
-            //        character.jobQueue.ProcessFirstJobInQueue(character);
-            //    }
-            //}
-        }
+        //if (processLogicForPersonalJob) {
+        //    //bool hasProcessed = false;
+        //    //Character characterOwner = owner as Character;
+        //    //If the current action's job of the character is overridable and the added job has higher priority than it,
+        //    //then process that job immediately and stop what the character is currently doing
+        //    //Sometimes, in rare cases, the character still cannot be assigned to a job even if it is a personal job,
+        //    //It might be because CanTakeJob/CanCharacterTakeThisJob function is not satisfied
+        //    //if (processLogicForPersonalJob) {
+        //    if (hasBeenInserted && insertIndex == 0){ //This means that the job is inserted as the top most priority //characterOwner.CanCurrentJobBeOverriddenByJob(job))
+        //        CurrentTopPriorityIsPushedBackBy(job);
+        //    } 
+        //    //else {
+        //    //    //If a character is a higher priority than one of the currently existing jobs
+        //    //    //Check all currently existing plans of character
+        //    //    //All plans' job of character that has lower priority than the added job must be dropped so that the job will be prioritized than those 
+        //    //    if (hasBeenInserted) {
+        //    //        for (int i = 0; i < owner.allGoapPlans.Count; i++) {
+        //    //            GoapPlan plan = owner.allGoapPlans[i];
+        //    //            if(plan.job == null || (job.priority < plan.job.priority)) {
+        //    //                if(plan.job == null) {
+        //    //                    owner.JustDropPlan(plan);
+        //    //                } else {
+        //    //                    if (plan.job.jobQueueParent.isAreaOrQuestJobQueue) {
+        //    //                        plan.job.UnassignJob(false);
+        //    //                    } else {
+        //    //                        owner.JustDropPlan(plan);
+        //    //                    }
+        //    //                }
+        //    //                i--;
+        //    //            }
+        //    //        }
+        //    //    }
+        //    //}
+        //    //}
+        //    //if (processLogicForPersonalJob && !hasProcessed) {
+        //    //    if ((character.stateComponent.currentState != null && (character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL || character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE))
+        //    //        || (character.currentAction != null && character.currentAction.goapType == INTERACTION_TYPE.RETURN_HOME &&
+        //    //        (character.currentAction.parentPlan == null || character.currentAction.parentPlan.category == GOAP_CATEGORY.IDLE))) {
+        //    //        character.jobQueue.ProcessFirstJobInQueue(character);
+        //    //    }
+        //    //}
+        //}
         return true;
     }
     public bool RemoveJobInQueue(JobQueueItem job, bool shouldDoAfterEffect = true, string reason = "") {
@@ -128,85 +140,86 @@ public class JobQueue {
     //    }
     //    return null;
     //}
-    public bool ProcessFirstJobInQueue() {
-        //if(owner.ownerType == JOB_OWNER.CHARACTER) {
-        //    if (jobsInQueue.Count > 0) {
-        //        jobsInQueue[0].ProcessJob();
-        //        return true;
-        //    }
-        //} else {
-        //    if (jobsInQueue.Count > 0) {
-        //        for (int i = 0; i < jobsInQueue.Count; i++) {
-        //            JobQueueItem job = jobsInQueue[i];
-        //            if (characterToDoJob.jobQueue.AddJobInQueue(job)) {
-        //                RemoveJobInQueue(job);
-        //                return true;
-        //            }
-        //        }
-        //    }
-        //}
-        if (jobsInQueue.Count > 0) {
-            jobsInQueue[0].ProcessJob();
-            return true;
-        }
-        return false;
-    }
-    public void CurrentTopPriorityIsPushedBackBy(JobQueueItem job) {
-        //if(owner.ownerType != JOB_OWNER.CHARACTER) {
-        //    return;
-        //}
-        if (owner.stateComponent.currentState != null) {
-            owner.stateComponent.currentState.OnExitThisState();
-            //This call is doubled so that it will also exit the previous major state if there's any
-            if (owner.stateComponent.currentState != null) {
-                owner.stateComponent.currentState.OnExitThisState();
-            }
-        }
-        //else if (character.stateComponent.stateToDo != null) {
-        //    character.stateComponent.SetStateToDo(null);
-        //} 
-        else {
-            if (owner.currentParty.icon.isTravelling) {
-                if (owner.currentParty.icon.travelLine == null) {
-                    owner.marker.StopMovement();
-                } else {
-                    owner.currentParty.icon.SetOnArriveAction(() => owner.OnArriveAtAreaStopMovement());
-                }
-            }
-            owner.AdjustIsWaitingForInteraction(1);
-            owner.StopCurrentAction(false, "Have something important to do");
-            owner.AdjustIsWaitingForInteraction(-1);
-        }
-        job.ProcessJob();
-        //if (AssignCharacterToJob(job)) {
-        //    if (job is CharacterStateJob) {
-        //        //Will no longer stop what is currently doing if job is a state job because it will already be done by that state
-        //        return;
-        //    }
-        //    if (characterOwner.stateComponent.currentState != null) {
-        //        characterOwner.stateComponent.currentState.OnExitThisState();
-        //        //This call is doubled so that it will also exit the previous major state if there's any
-        //        if (characterOwner.stateComponent.currentState != null) {
-        //            characterOwner.stateComponent.currentState.OnExitThisState();
-        //        }
-        //    }
-        //    //else if (character.stateComponent.stateToDo != null) {
-        //    //    character.stateComponent.SetStateToDo(null);
-        //    //} 
-        //    else {
-        //        if (characterOwner.currentParty.icon.isTravelling) {
-        //            if (characterOwner.currentParty.icon.travelLine == null) {
-        //                characterOwner.marker.StopMovement();
-        //            } else {
-        //                characterOwner.currentParty.icon.SetOnArriveAction(() => characterOwner.OnArriveAtAreaStopMovement());
-        //            }
-        //        }
-        //        characterOwner.AdjustIsWaitingForInteraction(1);
-        //        characterOwner.StopCurrentAction(false, "Have something important to do");
-        //        characterOwner.AdjustIsWaitingForInteraction(-1);
-        //    }
-        //}
-    }
+    //public bool ProcessFirstJobInQueue() {
+    //    //if(owner.ownerType == JOB_OWNER.CHARACTER) {
+    //    //    if (jobsInQueue.Count > 0) {
+    //    //        jobsInQueue[0].ProcessJob();
+    //    //        return true;
+    //    //    }
+    //    //} else {
+    //    //    if (jobsInQueue.Count > 0) {
+    //    //        for (int i = 0; i < jobsInQueue.Count; i++) {
+    //    //            JobQueueItem job = jobsInQueue[i];
+    //    //            if (characterToDoJob.jobQueue.AddJobInQueue(job)) {
+    //    //                RemoveJobInQueue(job);
+    //    //                return true;
+    //    //            }
+    //    //        }
+    //    //    }
+    //    //}
+    //    if (jobsInQueue.Count > 0) {
+    //        jobsInQueue[0].ProcessJob();
+    //        return true;
+    //    }
+    //    return false;
+    //}
+    //public void CurrentTopPriorityIsPushedBack() {
+    //    //if(owner.ownerType != JOB_OWNER.CHARACTER) {
+    //    //    return;
+    //    //}
+    //    if (owner.stateComponent.currentState != null) {
+    //        owner.stateComponent.currentState.OnExitThisState();
+    //        //This call is doubled so that it will also exit the previous major state if there's any
+    //        if (owner.stateComponent.currentState != null) {
+    //            owner.stateComponent.currentState.OnExitThisState();
+    //        }
+    //    }
+    //    //else if (character.stateComponent.stateToDo != null) {
+    //    //    character.stateComponent.SetStateToDo(null);
+    //    //} 
+    //    else {
+    //        if (owner.currentParty.icon.isTravelling) {
+    //            if (owner.currentParty.icon.travelLine == null) {
+    //                owner.marker.StopMovement();
+    //            } else {
+    //                owner.currentParty.icon.SetOnArriveAction(() => owner.OnArriveAtAreaStopMovement());
+    //            }
+    //        }
+    //        owner.StopCurrentActionNode(false, "Have something important to do");
+    //        //owner.AdjustIsWaitingForInteraction(1);
+    //        //owner.StopCurrentAction(false, "Have something important to do");
+    //        //owner.AdjustIsWaitingForInteraction(-1);
+    //    }
+
+    //    //if (AssignCharacterToJob(job)) {
+    //    //    if (job is CharacterStateJob) {
+    //    //        //Will no longer stop what is currently doing if job is a state job because it will already be done by that state
+    //    //        return;
+    //    //    }
+    //    //    if (characterOwner.stateComponent.currentState != null) {
+    //    //        characterOwner.stateComponent.currentState.OnExitThisState();
+    //    //        //This call is doubled so that it will also exit the previous major state if there's any
+    //    //        if (characterOwner.stateComponent.currentState != null) {
+    //    //            characterOwner.stateComponent.currentState.OnExitThisState();
+    //    //        }
+    //    //    }
+    //    //    //else if (character.stateComponent.stateToDo != null) {
+    //    //    //    character.stateComponent.SetStateToDo(null);
+    //    //    //} 
+    //    //    else {
+    //    //        if (characterOwner.currentParty.icon.isTravelling) {
+    //    //            if (characterOwner.currentParty.icon.travelLine == null) {
+    //    //                characterOwner.marker.StopMovement();
+    //    //            } else {
+    //    //                characterOwner.currentParty.icon.SetOnArriveAction(() => characterOwner.OnArriveAtAreaStopMovement());
+    //    //            }
+    //    //        }
+    //    //        characterOwner.AdjustIsWaitingForInteraction(1);
+    //    //        characterOwner.StopCurrentAction(false, "Have something important to do");
+    //    //        characterOwner.AdjustIsWaitingForInteraction(-1);
+    //    //    }
+    //    //}
+    //}
     //public bool AssignCharacterToJob(JobQueueItem job) {
     //    if (CanJobBeAddedToQueue(job)) {
     //        //job.SetAssignedCharacter(characterToDoJob);

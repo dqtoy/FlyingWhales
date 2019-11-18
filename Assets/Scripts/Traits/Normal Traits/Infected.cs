@@ -29,7 +29,7 @@ namespace Traits {
             base.OnRemoveTrait(removedFrom, removedBy);
             Messenger.RemoveListener(Signals.HOUR_STARTED, PerHour);
             owner.marker.SetMarkerColor(Color.white);
-            owner.CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE.REMOVE_TRAIT, name, removedBy);
+            owner.ForceCancelAllJobsTargettingThisCharacterExcept(JOB_TYPE.REMOVE_TRAIT, name, removedBy);
         }
         public override void OnDeath(Character character) {
             base.OnDeath(character);

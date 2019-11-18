@@ -92,7 +92,7 @@ namespace Traits {
                 return;
             }
             if (owner.jobQueue.jobsInQueue.Count > 0) {
-                owner.PerformGoapPlans();
+                owner.PerformTopPriorityJob();
             } else {
                 PlanTirednessRecovery();
             }

@@ -95,7 +95,7 @@ namespace Traits {
                 return;
             }
             if (character.jobQueue.jobsInQueue.Count > 0) {
-                character.PerformGoapPlans();
+                character.PerformTopPriorityJob();
             } else {
                 if (!PlanTirednessRecovery()) {
                     PlanHappinessRecovery();
