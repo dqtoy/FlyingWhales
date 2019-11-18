@@ -29,20 +29,20 @@ public class TheProfane : BaseLandmark {
             targetCharacter.traitContainer.AddTrait(targetCharacter,"Cultist");
         } else if (action == "Corrupt") {
             if (!targetCharacter.jobQueue.HasJob(JOB_TYPE.CORRUPT_CULTIST)) {
-                CharacterStateJob job = new CharacterStateJob(JOB_TYPE.CORRUPT_CULTIST, CHARACTER_STATE.MOVE_OUT);
+                CharacterStateJob job = new CharacterStateJob(JOB_TYPE.CORRUPT_CULTIST, CHARACTER_STATE.MOVE_OUT, targetCharacter);
                 targetCharacter.jobQueue.AddJobInQueue(job);
             }
         } else if (action == "Sabotage Faction Quest") {
             (targetCharacter.faction.activeQuest as DivineInterventionQuest).CreateSabotageFactionnJob();
         } else if (action == "Destroy Supply") {
             if (!targetCharacter.jobQueue.HasJob(JOB_TYPE.DESTROY_SUPPLY)) {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DESTROY_SUPPLY, INTERACTION_TYPE.DESTROY_RESOURCE);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DESTROY_SUPPLY, INTERACTION_TYPE.DESTROY_RESOURCE, targetCharacter.specificLocation.supplyPile, targetCharacter);
                 job.SetIsStealth(true);
                 targetCharacter.jobQueue.AddJobInQueue(job);
             }
         } else if (action == "Destroy Food") {
             if (!targetCharacter.jobQueue.HasJob(JOB_TYPE.DESTROY_FOOD)) {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DESTROY_FOOD, INTERACTION_TYPE.DESTROY_RESOURCE);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DESTROY_FOOD, INTERACTION_TYPE.DESTROY_RESOURCE, targetCharacter.specificLocation.supplyPile, targetCharacter);
                 job.SetIsStealth(true);
                 targetCharacter.jobQueue.AddJobInQueue(job);
             }

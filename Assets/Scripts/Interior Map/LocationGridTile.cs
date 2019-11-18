@@ -588,11 +588,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
 #endif
         } else if (objHere is TileObject || objHere is SpecialToken) {
 #if UNITY_EDITOR
-            if (inputButton == PointerEventData.InputButton.Middle) {
-                if (objHere is TileObject) {
-                    (objHere as TileObject).LogActionHistory();
-                }
-            } else if (inputButton == PointerEventData.InputButton.Right) {
+            if (inputButton == PointerEventData.InputButton.Right) {
                 if (objHere is TileObject) {
                     UIManager.Instance.poiTestingUI.ShowUI(objHere);
                     structure.RemovePOI(objHere);

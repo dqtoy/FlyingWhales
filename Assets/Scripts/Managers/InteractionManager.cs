@@ -375,7 +375,7 @@ public class InteractionManager : MonoBehaviour {
         if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeRegion) {
             if(job != null) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
-                if (targetCharacter.traitContainer.GetNormalTrait((string) goapJob.goals.conditionKey).IsResponsibleForTrait(character)) {
+                if (targetCharacter.traitContainer.GetNormalTrait((string) goapJob.goal.conditionKey).IsResponsibleForTrait(character)) {
                     return false;
                 }
             }
@@ -390,7 +390,7 @@ public class InteractionManager : MonoBehaviour {
         if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeRegion) {
             if (job != null) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
-                if (targetCharacter.traitContainer.GetNormalTrait((string) goapJob.goals.conditionKey).IsResponsibleForTrait(character)) {
+                if (targetCharacter.traitContainer.GetNormalTrait((string) goapJob.goal.conditionKey).IsResponsibleForTrait(character)) {
                     return false;
                 }
                 //try {
@@ -409,7 +409,7 @@ public class InteractionManager : MonoBehaviour {
         if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeRegion) {
             if (job != null) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
-                if (targetCharacter.traitContainer.GetNormalTrait((string) goapJob.goals.conditionKey).IsResponsibleForTrait(character)) {
+                if (targetCharacter.traitContainer.GetNormalTrait((string) goapJob.goal.conditionKey).IsResponsibleForTrait(character)) {
                     return false;
                 }
                 //try {

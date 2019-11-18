@@ -398,7 +398,7 @@ public class PlayerManager : MonoBehaviour {
                         continue;
                     }
                     IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
-                    character.StopCurrentAction(false, "Stopped by the player");
+                    character.StopCurrentActionNode(false, "Stopped by the player");
                     if (character.stateComponent.currentState != null) {
                         character.stateComponent.currentState.OnExitThisState();
                     }

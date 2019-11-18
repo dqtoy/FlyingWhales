@@ -45,29 +45,29 @@ public class ThiefSummon : Summon {
         return actions;
     }
     protected override void OnTickStarted() {
-        if (_hasAlreadyAskedForPlan) {
-            return;
-        }
-        SetHasAlreadyAskedForPlan(true);
-        if (items.Count >= itemsToSteal) {
-            //if the thief has already reached his/her max number of stolen items, exit the area.
-            LocationGridTile targetTile = GetNearestUnoccupiedEdgeTileFromThis();
-            marker.GoTo(targetTile, OnReachExitAction);
-        } else {
-            //if the warehouse still has items in it, try to steal them.
-            LocationStructure warehouse = specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
-            if (warehouse.itemsInStructure.Count > 0) {
-                SpecialToken chosenItem = warehouse.itemsInStructure[UnityEngine.Random.Range(0, warehouse.itemsInStructure.Count)];
-                //GoapPlanJob job = new GoapPlanJob(JOB_TYPE.STEAL, INTERACTION_TYPE.STEAL, chosenItem);
-                //job.SetCannotOverrideJob(true);
-                //job.SetCannotCancelJob(true);
-                //jobQueue.AddJobInQueue(job);
-            } else {
-                //just enter berserked mode.
-                stateComponent.SwitchToState(CHARACTER_STATE.STROLL, null, specificLocation);
-                SetHasAlreadyAskedForPlan(false);
-            }
-        }
+        //if (_hasAlreadyAskedForPlan) {
+        //    return;
+        //}
+        //SetHasAlreadyAskedForPlan(true);
+        //if (items.Count >= itemsToSteal) {
+        //    //if the thief has already reached his/her max number of stolen items, exit the area.
+        //    LocationGridTile targetTile = GetNearestUnoccupiedEdgeTileFromThis();
+        //    marker.GoTo(targetTile, OnReachExitAction);
+        //} else {
+        //    //if the warehouse still has items in it, try to steal them.
+        //    LocationStructure warehouse = specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
+        //    if (warehouse.itemsInStructure.Count > 0) {
+        //        SpecialToken chosenItem = warehouse.itemsInStructure[UnityEngine.Random.Range(0, warehouse.itemsInStructure.Count)];
+        //        //GoapPlanJob job = new GoapPlanJob(JOB_TYPE.STEAL, INTERACTION_TYPE.STEAL, chosenItem);
+        //        //job.SetCannotOverrideJob(true);
+        //        //job.SetCannotCancelJob(true);
+        //        //jobQueue.AddJobInQueue(job);
+        //    } else {
+        //        //just enter berserked mode.
+        //        stateComponent.SwitchToState(CHARACTER_STATE.STROLL, null, specificLocation);
+        //        SetHasAlreadyAskedForPlan(false);
+        //    }
+        //}
     }
     public override void LevelUp() {
         base.LevelUp();

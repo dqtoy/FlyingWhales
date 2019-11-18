@@ -65,7 +65,7 @@ public class Summon : Character, IWorldObject {
         PlayerManager.Instance.player.playerArea.AddCharacterToLocation(this);
         ResetToFullHP();
     }
-    public override void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
+    public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
         if (!_isDead) {
             Area deathLocation = ownParty.specificLocation;
             LocationStructure deathStructure = currentStructure;
@@ -90,8 +90,8 @@ public class Summon : Character, IWorldObject {
             //}
             ForceCancelAllJobsTargettingThisCharacter(false, "target is already dead");
             //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this as Character, "target is already dead");
-            if (currentActionNode != null && !currentActionNode.cannotCancelAction) {
-                currentActionNode.StopAction();
+            if (currentActionNode != null) {
+                currentActionNode.StopActionNode(false);
             }
             if (ownParty.specificLocation != null && isHoldingItem) {
                 DropAllTokens(ownParty.specificLocation, currentStructure, deathTile, true);
@@ -131,13 +131,12 @@ public class Summon : Character, IWorldObject {
             }
 
             marker?.OnDeath(deathTile);
-            _numOfWaitingForGoapThread = 0; //for raise dead
             Dead dead = new Dead();
             dead.AddCharacterResponsibleForTrait(responsibleCharacter);
             traitContainer.AddTrait(this, dead, gainedFromDoing: deathFromAction);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this as Character);
 
-            CancelAllJobs();
+            CancelAllJobsAndPlans();
 
             //Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
             Log deathLog;
@@ -224,7 +223,7 @@ public class Summon : Character, IWorldObject {
         }
         traitContainer.RemoveAllNonPersistentTraits(this);
         ClearAllAwareness();
-        CancelAllJobs();
+        CancelAllJobsAndPlans();
         ResetToFullHP();
     }
 

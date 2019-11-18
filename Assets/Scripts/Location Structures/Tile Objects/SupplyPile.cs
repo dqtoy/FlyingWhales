@@ -35,13 +35,13 @@ public class SupplyPile : TileObject {
 
     private void CheckSupply() {
         if (suppliesInPile < 100) {
-            if (!structureLocation.location.jobQueue.HasJob(JOB_TYPE.OBTAIN_SUPPLY, this)) {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.OBTAIN_SUPPLY, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = 0, targetPOI = this });
+            if (!structureLocation.location.HasJob(JOB_TYPE.OBTAIN_SUPPLY)) {
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.OBTAIN_SUPPLY, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_SUPPLY, "0", true, GOAP_EFFECT_TARGET.TARGET ), this, structureLocation.location);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainSupplyJob);
-                structureLocation.location.jobQueue.AddJobInQueue(job);
+                structureLocation.location.AddToAvailableJobs(job);
             }
         } else {
-            structureLocation.location.jobQueue.CancelAllJobsRelatedTo(GOAP_EFFECT_CONDITION.HAS_SUPPLY, this);
+            structureLocation.location.ForceCancelJob(structureLocation.location.GetJob(JOB_TYPE.OBTAIN_SUPPLY));
         }
     }
     public void SetSuppliesInPile(int amount) {

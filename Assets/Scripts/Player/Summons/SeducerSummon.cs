@@ -53,10 +53,6 @@ public class SeducerSummon : Summon {
         return null;
     }
     protected override void OnTickStarted() {
-        if (_hasAlreadyAskedForPlan) {
-            return;
-        }
-        SetHasAlreadyAskedForPlan(true);
         if (hasSucceeded) {
             //disappear
             Disappear();
@@ -70,22 +66,18 @@ public class SeducerSummon : Summon {
             if (choices.Count > 0 && validBeds.Count > 0) {
                 Character chosenCharacter = choices[Random.Range(0, choices.Count)];
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SEDUCE, INTERACTION_TYPE.INVITE, chosenCharacter, this);
-                job.SetCannotOverrideJob(true);
-                job.SetCannotCancelJob(true);
                 jobQueue.AddJobInQueue(job);
             } else {
-                //just enter berserked mode.
-                stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, specificLocation);
-                SetHasAlreadyAskedForPlan(false);
+                PlanIdleStrollOutside(currentStructure);
             }
         }
         
     }
     public override void OnAfterActionStateSet(string stateName, ActualGoapNode node) {
-        if (action.actor == this && action.goapType == INTERACTION_TYPE.INVITE) {
-            doneCharacters.Add(action.poiTarget as Character);
-        } else if (action.actor == this && action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
-            if (state.status == InteractionManager.Goap_State_Success) {
+        if (node.actor == this && node.goapType == INTERACTION_TYPE.INVITE) {
+            doneCharacters.Add(node.poiTarget as Character);
+        } else if (node.actor == this && node.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+            if (node.actionStatus == ACTION_STATUS.SUCCESS) {
                 hasSucceeded = true;
             }
         }

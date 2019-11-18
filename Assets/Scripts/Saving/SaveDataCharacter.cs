@@ -395,7 +395,7 @@ public class SaveDataCharacter {
     public void LoadCharacterJobs(Character character) {
         for (int i = 0; i < jobs.Count; i++) {
             JobQueueItem job = jobs[i].Load();
-            character.jobQueue.AddJobInQueue(job, false);
+            character.jobQueue.AddJobInQueue(job);
 
             //if (jobs[i] is SaveDataCharacterStateJob) {
             //    SaveDataCharacterStateJob dataStateJob = jobs[i] as SaveDataCharacterStateJob;

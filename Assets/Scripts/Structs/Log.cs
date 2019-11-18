@@ -54,7 +54,7 @@ public class Log {
         //logCallStack = StackTraceUtility.ExtractStackTrace();
     }
 
-    public Log(GameDate date, string message, GoapAction goapAction = null) {
+    public Log(GameDate date, string message, ActualGoapNode goapAction = null) {
         this.id = Utilities.SetID<Log>(this);
         this.month = (MONTH)date.month;
         this.day = date.day;

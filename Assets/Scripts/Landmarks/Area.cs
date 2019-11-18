@@ -1235,8 +1235,6 @@ public class Area : IJobOwner {
                         { INTERACTION_TYPE.REPLACE_TILE_OBJECT, new object[]{ removedObj, removedFrom } },
         });
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeReplaceTileObjectJob);
-        job.SetCancelOnFail(false);
-        job.SetCancelJobOnDropPlan(false);
         AddToAvailableJobs(job);
     }
     #endregion
@@ -1278,7 +1276,7 @@ public class Area : IJobOwner {
         return currentHeroEventJobs < maxHeroEventJobs;
     }
     private void CreateMoveOutJobs() {
-        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.MOVE_OUT, CHARACTER_STATE.MOVE_OUT);
+        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.MOVE_OUT, CHARACTER_STATE.MOVE_OUT, this);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanMoveOut);
         AddToAvailableJobs(job);
     }
@@ -1299,7 +1297,7 @@ public class Area : IJobOwner {
         }
     }
     private void CreateObtainFoodOutsideJob() {
-        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.OBTAIN_FOOD_OUTSIDE, CHARACTER_STATE.MOVE_OUT);
+        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.OBTAIN_FOOD_OUTSIDE, CHARACTER_STATE.MOVE_OUT, this);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainFoodOutsideJob);
         AddToAvailableJobs(job);
     }
@@ -1320,7 +1318,7 @@ public class Area : IJobOwner {
         }
     }
     private void CreateObtainSupplyOutsideJob() {
-        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE, CHARACTER_STATE.MOVE_OUT);
+        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE, CHARACTER_STATE.MOVE_OUT, this);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainSupplyOutsideJob);
         AddToAvailableJobs(job);
     }
@@ -1350,7 +1348,7 @@ public class Area : IJobOwner {
             return; //hero events are maxed.
         }
         if (UnityEngine.Random.Range(0, 100) < 15) {//15
-            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.IMPROVE, CHARACTER_STATE.MOVE_OUT);
+            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.IMPROVE, CHARACTER_STATE.MOVE_OUT, this);
             AddToAvailableJobs(job);
             //expires at midnight
             GameDate expiry = GameManager.Instance.Today();
@@ -1368,7 +1366,7 @@ public class Area : IJobOwner {
             return; //hero events are maxed.
         }
         if (UnityEngine.Random.Range(0, 100) < 15) {//15
-            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.EXPLORE, CHARACTER_STATE.MOVE_OUT);
+            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.EXPLORE, CHARACTER_STATE.MOVE_OUT, this);
             //Used lambda expression instead of new function. Reference: https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/lambda-expressions
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoExploreJob);
             AddToAvailableJobs(job);
@@ -1388,7 +1386,7 @@ public class Area : IJobOwner {
             return; //hero events are maxed.
         }
         if (UnityEngine.Random.Range(0, 100) < 15) {//15
-            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.MOVE_OUT);
+            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.MOVE_OUT, this);
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCombatJob);
             AddToAvailableJobs(job);
             //expires at midnight

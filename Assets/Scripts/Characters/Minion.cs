@@ -105,7 +105,7 @@ public class Minion {
     public void SetIndexDefaultSort(int index) {
         indexDefaultSort = index;
     }
-    public void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
+    public void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
         if (!character.isDead) {
             Area deathLocation = character.ownParty.specificLocation;
             LocationStructure deathStructure = character.currentStructure;
@@ -126,8 +126,8 @@ public class Minion {
             //}
             character.ForceCancelAllJobsTargettingThisCharacter(false, "target is already dead");
             Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, character, "target is already dead");
-            if (character.currentActionNode != null && !character.currentActionNode.cannotCancelAction) {
-                character.currentActionNode.StopAction();
+            if (character.currentActionNode != null) {
+                character.currentActionNode.StopActionNode(false);
             }
             if (character.ownParty.specificLocation != null && character.isHoldingItem) {
                 character.DropAllTokens(character.ownParty.specificLocation, character.currentStructure, deathTile, true);
@@ -314,7 +314,7 @@ public class Minion {
         if (character.isDead) {
             return;
         }
-        if (!character.IsInOwnParty() || character.ownParty.icon.isTravelling || character.doNotDisturb > 0 || character.isWaitingForInteraction > 0) {
+        if (!character.IsInOwnParty() || character.ownParty.icon.isTravelling || character.doNotDisturb > 0) {
             return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
         }
         if (character.stateComponent.currentState != null /*|| character.stateComponent.stateToDo != null*/ || character.marker == null) {
@@ -342,9 +342,7 @@ public class Minion {
         if (character.currentParty.icon.isTravelling) {
             character.marker.StopMovement();
         }
-        character.AdjustIsWaitingForInteraction(1);
-        character.StopCurrentAction(false);
-        character.AdjustIsWaitingForInteraction(-1);
+        character.StopCurrentActionNode(false);
 
         character.specificLocation.RemoveCharacterFromLocation(character);
         //character.marker.ClearAvoidInRange(false);
@@ -378,7 +376,7 @@ public class Minion {
     /// <summary>
     /// Add trait function for minions. Added handling for when a minion gains a trait while outside of an area map. All traits are stored and will be added once the minion is placed at an area map.
     /// </summary>
-    public bool AddTrait(string traitName, Character characterResponsible = null, GoapAction gainedFromDoing = null) {
+    public bool AddTrait(string traitName, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
         if (InteriorMapManager.Instance.isAnAreaMapShowing) {
             return character.traitContainer.AddTrait(character, traitName, characterResponsible, gainedFromDoing);
         } else {

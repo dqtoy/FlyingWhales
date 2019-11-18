@@ -874,7 +874,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             Messenger.Broadcast(Signals.CHARACTER_RETURNED_TO_LIFE, this);
         }
     }
-    public virtual void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
+    public virtual void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
         if(minion != null) {
             minion.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
             return;
