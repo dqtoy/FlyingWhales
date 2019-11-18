@@ -47,7 +47,7 @@ public class SlayCharacter : GoapAction {
 
     #region State Effects
     private void AfterSlaySuccess(ActualGoapNode goapNode) {
-        (goapNode.poiTarget as Character).Death(deathFromAction: this, responsibleCharacter: goapNode.actor);
+        (goapNode.poiTarget as Character).Death(deathFromAction: goapNode, responsibleCharacter: goapNode.actor);
     }
     #endregion
 

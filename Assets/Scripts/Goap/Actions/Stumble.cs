@@ -47,7 +47,7 @@ public class Stumble : GoapAction {
     }
     private void AfterStumbleSuccess(ActualGoapNode goapNode) {
         if (goapNode.actor.currentHP <= 0) {
-            goapNode.actor.Death(deathFromAction: this);
+            goapNode.actor.Death(deathFromAction: goapNode);
         }
     }
     #endregion

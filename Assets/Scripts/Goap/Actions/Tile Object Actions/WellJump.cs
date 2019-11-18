@@ -36,7 +36,7 @@ public class WellJump : GoapAction {
 
     #region State Effects
     public void AfterWellJumpSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.Death("suicide", this, _deathLog: goapNode.action.states[goapNode.currentStateName].descriptionLog);
+        goapNode.actor.Death("suicide", goapNode, _deathLog: goapNode.action.states[goapNode.currentStateName].descriptionLog);
     }
     #endregion
 }

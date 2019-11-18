@@ -11,10 +11,10 @@ public class EventIntel : Intel {
 
     public EventIntel(Character actor, GoapAction action) : base(actor, action) {
         this.actor = actor;
-        target = action.poiTarget;
-        this.action = action;
-        plan = action.parentPlan;
-        SetIntelLog(action.currentState.descriptionLog);
+        //target = action.poiTarget;
+        //this.action = action;
+        //plan = action.parentPlan;
+        //SetIntelLog(action.currentState.descriptionLog);
     }
 
     public EventIntel(SaveDataEventIntel data) : base(data) {

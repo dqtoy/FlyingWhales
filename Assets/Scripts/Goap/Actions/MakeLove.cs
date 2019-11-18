@@ -103,7 +103,7 @@ public class MakeLove : GoapAction {
         //**After Effect 1**: If Actor and Target are Lovers, they both gain Cheery trait. If Actor and Target are Paramours, they both gain Ashamed trait.
         if (goapNode.actor is SeducerSummon) {
             //kill the target character
-            targetCharacter.Death("seduced", this, goapNode.actor);
+            targetCharacter.Death("seduced", goapNode, goapNode.actor);
         }
 
         if (goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {

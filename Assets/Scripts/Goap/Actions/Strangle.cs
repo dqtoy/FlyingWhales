@@ -45,7 +45,7 @@ public class Strangle : GoapAction {
         goapNode.actor.AdjustHP(-(int)((float)goapNode.actor.maxHP * 0.18f));
     }
     public void AfterStrangleSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.Death("suicide", this, _deathLog: goapNode.action.states[goapNode.currentStateName].descriptionLog);
+        goapNode.actor.Death("suicide", goapNode, _deathLog: goapNode.action.states[goapNode.currentStateName].descriptionLog);
     }
     #endregion
 }

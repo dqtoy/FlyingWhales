@@ -136,7 +136,7 @@ public class JudgeCharacter : GoapAction {
         }
     }
     private void TargetExecuted(ActualGoapNode goapNode) {
-        (goapNode.poiTarget as Character).Death("executed", deathFromAction: this, responsibleCharacter: goapNode.actor);
+        (goapNode.poiTarget as Character).Death("executed", deathFromAction: goapNode, responsibleCharacter: goapNode.actor);
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Restrained");
     }
     private void TargetReleased(ActualGoapNode goapNode) {

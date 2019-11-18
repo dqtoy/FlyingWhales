@@ -40,7 +40,7 @@ public class KnockoutCharacter : GoapAction {
         //TODO: currentState.SetIntelReaction(KnockoutSuccessIntelReaction);
     }
     private void AfterKnockoutSuccess(ActualGoapNode goapNode) {
-        goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Unconscious", goapNode.actor, gainedFromDoing: this);
+        goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Unconscious", goapNode.actor, gainedFromDoing: goapNode);
     }
     //private void PreKnockoutFail() {
     //    SetCommittedCrime(CRIME.ASSAULT, new Character[] { actor });
