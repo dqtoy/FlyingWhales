@@ -36,9 +36,8 @@ namespace Traits {
                 if (responsibleCharacter != characterThatWillDoJob && targetCharacter.race != RACE.SKELETON && !(targetCharacter is Summon)) {
                     GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.BURY);
                     if (currentJob == null) {
-                        GoapPlanJob buryJob = new GoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, targetCharacter);
-                        //TODO: buryJob.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CORPSE);
-                        buryJob.AllowDeadTargets();
+                        GoapPlanJob buryJob = new GoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, targetCharacter, characterThatWillDoJob);
+                        //buryJob.AllowDeadTargets();
                         //buryJob.SetCanBeDoneInLocation(true);
                         if (InteractionManager.Instance.CanTakeBuryJob(characterThatWillDoJob, buryJob)) {
                             characterThatWillDoJob.jobQueue.AddJobInQueue(buryJob);

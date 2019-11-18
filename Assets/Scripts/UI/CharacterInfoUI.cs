@@ -227,7 +227,7 @@ public class CharacterInfoUI : UIMenu {
             return;
         }
         //Action
-        if (_activeCharacter.currentActionNode != null && !_activeCharacter.currentActionNode.isStopped) {
+        if (_activeCharacter.currentActionNode != null) {
             Log currentLog = _activeCharacter.currentActionNode.GetCurrentLog();
             plansLblLogItem.SetLog(currentLog);
             plansLbl.text = Utilities.LogReplacer(currentLog);

@@ -80,7 +80,7 @@ public class CombatState : CharacterState {
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
 
         base.StartState();
-        if (stateComponent.character.currentActionNode is AssaultCharacter && !stateComponent.character.currentActionNode.isPerformingActualAction) {
+        if (stateComponent.character.currentActionNode is Assault && !stateComponent.character.currentActionNode.isPerformingActualAction) {
             stateComponent.character.currentActionNode.Perform(); //this is for when a character will assault a target, but his/her attack range is less than his/her vision range. (Because end reached distance of assault action is set to attack range)
         }
         stateComponent.character.StopCurrentAction(false);

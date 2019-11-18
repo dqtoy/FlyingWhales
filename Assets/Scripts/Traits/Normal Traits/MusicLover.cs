@@ -52,14 +52,41 @@ namespace Traits {
             base.OnOwnerInitiallyPlaced(owner);
             //Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         }
-        public override void ExecuteActionPerTickEffects(INTERACTION_TYPE action) {
-            if (action == INTERACTION_TYPE.SING) {
+        public override void ExecuteActionPerTickEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
+            if (action == INTERACTION_TYPE.SING && owner == goapNode.actor) {
                 owner.AdjustHappiness(200);
+            } else if (action == INTERACTION_TYPE.PLAY_GUITAR && owner == goapNode.actor) {
+                owner.AdjustHappiness(100);
             }
         }
-        public override void ExecuteCostModification(INTERACTION_TYPE action, ref int cost) {
+        public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref int cost) {
             if (action == INTERACTION_TYPE.SING) {
                 cost = Utilities.rng.Next(10, 27);
+            } else if (action == INTERACTION_TYPE.PLAY_GUITAR) {
+                if (poiTarget.gridTileLocation != null) {
+                    LocationGridTile knownLoc = poiTarget.gridTileLocation;
+                    if (actor.homeStructure == knownLoc.structure) {
+                        //- Actor is resident of the Guitar's Dwelling: 15 - 26 (If Music Lover 5 - 12)
+                        cost = Utilities.rng.Next(5, 13);
+                    } else {
+                        if (knownLoc.structure is Dwelling) {
+                            Dwelling dwelling = knownLoc.structure as Dwelling;
+                            if (dwelling.residents.Count > 0) {
+                                for (int i = 0; i < dwelling.residents.Count; i++) {
+                                    Character currResident = dwelling.residents[i];
+                                    if (currResident.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
+                                        //- Actor is not a resident but has a positive relationship with the Guitar's Dwelling resident: 20-36 (If music lover 10 - 26)
+                                        cost = Utilities.rng.Next(10, 27);
+                                    }
+                                }
+                                //the actor does NOT have any positive relations with any resident
+                                cost = 99999; //NOTE: Should never reach here since Requirement prevents this.
+                            }
+                        }
+                    }
+                }
+                //- Guitar Structure Has No Residents 40 - 56 (If Music Lover 25 - 46)
+                cost = Utilities.rng.Next(25, 47);
             }
         }
         #endregion

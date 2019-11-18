@@ -574,15 +574,6 @@ public class InteriorMapManager : MonoBehaviour {
         } else {
             summary += "None";
         }
-        summary += "\n\tPlans In Queue: ";
-        if (character.allGoapPlans.Count > 0) {
-            for (int i = 0; i < character.allGoapPlans.Count; i++) {
-                GoapPlan plan = character.allGoapPlans[i];
-                summary += plan.endNode.action.goapName + ", ";
-            }
-        } else {
-            summary += "None";
-        }
         summary += "\n\tPersonal Job Queue: ";
         if (character.jobQueue.jobsInQueue.Count > 0) {
             for (int i = 0; i < character.jobQueue.jobsInQueue.Count; i++) {

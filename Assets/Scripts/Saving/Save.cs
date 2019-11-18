@@ -274,7 +274,7 @@ public class Save {
             if (currArea.areaMap != null) {
                 for (int j = 0; j < currArea.areaMap.activeBurningSources.Count; j++) {
                     BurningSource currBurningSource = currArea.areaMap.activeBurningSources[j];
-                    currBurningSource.ActivateCharactersDousingFire();
+                    //currBurningSource.ActivateCharactersDousingFire();
                 }
             }
         }

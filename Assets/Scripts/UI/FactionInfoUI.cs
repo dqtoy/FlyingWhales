@@ -334,8 +334,8 @@ public class FactionInfoUI : UIMenu {
     public void ShowFactionTestingInfo() {
         if (activeFaction.activeQuest != null) {
             string questSummary = activeFaction.activeQuest.name;
-            for (int i = 0; i < activeFaction.activeQuest.jobQueue.jobsInQueue.Count; i++) {
-                JobQueueItem item = activeFaction.activeQuest.jobQueue.jobsInQueue[i];
+            for (int i = 0; i < activeFaction.activeQuest.availableJobs.Count; i++) {
+                JobQueueItem item = activeFaction.activeQuest.availableJobs[i];
                 questSummary += "\n\t- " + item.jobType.ToString() + ": " + item.assignedCharacter?.name;
             }
             UIManager.Instance.ShowSmallInfo(questSummary);

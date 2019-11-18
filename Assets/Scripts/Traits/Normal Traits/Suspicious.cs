@@ -10,9 +10,6 @@ namespace Traits {
             description = "Suspicious characters will destroy Artifacts placed by the Ruinarch instead of inspecting them.";
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.NEUTRAL;
-            
-            
-            
             daysDuration = 0;
             //effects = new List<TraitEffect>();
         }
@@ -23,7 +20,7 @@ namespace Traits {
                 TileObject objectToBeInspected = targetPOI as TileObject;
                 if (objectToBeInspected.isSummonedByPlayer) {
                     if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.DESTROY, objectToBeInspected)) {
-                        GoapPlanJob destroyJob = new GoapPlanJob(JOB_TYPE.DESTROY, INTERACTION_TYPE.TILE_OBJECT_DESTROY, objectToBeInspected);
+                        GoapPlanJob destroyJob = new GoapPlanJob(JOB_TYPE.DESTROY, INTERACTION_TYPE.TILE_OBJECT_DESTROY, objectToBeInspected, characterThatWillDoJob);
                         characterThatWillDoJob.jobQueue.AddJobInQueue(destroyJob);
                     }
                 }

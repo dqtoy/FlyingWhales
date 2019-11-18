@@ -19,40 +19,7 @@ public class Invite : GoapAction {
         SetState("Invite Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        bool isChaste = actor.traitContainer.GetNormalTrait("Chaste") != null;
-        if (isChaste) {
-            //Chaste 40 - 66 all three time of day and also unfaithful values
-            return Utilities.rng.Next(40, 67);
-        }
-        bool isLustful = actor.traitContainer.GetNormalTrait("Lustful") != null;
-        TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick(actor);
-        if (currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT) {
-            if (poiTarget is Character) {
-                //If unfaithful and target is Paramour (15 - 36)/(8 - 20)/(5-15) per level, affects Early Night and Late Night only).
-                Character targetCharacter = poiTarget as Character;
-                Unfaithful unfaithful = actor.traitContainer.GetNormalTrait("Unfaithful") as Unfaithful;
-                if (unfaithful != null && actor.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
-                    if (unfaithful.level == 1) {
-                        return Utilities.rng.Next(15, 37);
-                    } else if (unfaithful.level == 2) {
-                        return Utilities.rng.Next(8, 21);
-                    } else if (unfaithful.level == 3) {
-                        return Utilities.rng.Next(5, 16);
-                    }
-                }
-            }
-            if (isLustful) {
-                //Lustful(Early Night or Late Night 5 - 25)
-                return Utilities.rng.Next(5, 26);
-            }
-            return Utilities.rng.Next(15, 37);
-        }
-
-        if (isLustful) {
-            // - Lustful 15 - 25
-            return Utilities.rng.Next(15, 26);
-        }
-        return Utilities.rng.Next(30, 57);
+        return 1;
     }
     public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         GoapActionInvalidity goapActionInvalidity = base.IsInvalid(actor, poiTarget, otherData);
@@ -63,7 +30,7 @@ public class Invite : GoapAction {
                 if (UnityEngine.Random.Range(0, 100) > seducer.seduceChance || targetCharacter.HasOtherCharacterInParty()
                      || targetCharacter.stateComponent.currentState != null || targetCharacter.IsAvailable() == false) {
                     goapActionInvalidity.isInvalid = true;
-                    goapActionInvalidity.logKey = "invite fail_description";
+                    goapActionInvalidity.stateName = "Invite Fail";
                 }
             } else {
                 int acceptChance = 100;
@@ -72,9 +39,9 @@ public class Invite : GoapAction {
                 }
                 if (UnityEngine.Random.Range(0, 100) > acceptChance || targetCharacter.isStarving || targetCharacter.isExhausted
                 || targetCharacter.traitContainer.GetNormalTrait("Annoyed") != null || targetCharacter.HasOtherCharacterInParty()
-                || targetCharacter.stateComponent.currentState != null || targetCharacter.IsAvailable() == false || targetCharacter.IsDoingEmergencyAction() == false) {
+                || targetCharacter.stateComponent.currentState != null || targetCharacter.IsAvailable() == false) {
                     goapActionInvalidity.isInvalid = true;
-                    goapActionInvalidity.logKey = "invite fail_description";
+                    goapActionInvalidity.stateName = "Invite Fail";
                 }
             }
         }
@@ -127,11 +94,6 @@ public class Invite : GoapAction {
             }
             if (target.currentParty.icon.isTravellingOutside || target.currentRegion != null) {
                 return false; //target is outside the map
-            }
-            if (!(actor is SeducerSummon)) { //ignore relationships if succubus
-                if (!actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
-                    return false; //only lovers and paramours can make love
-                }
             }
             return target.IsInOwnParty();
         }
@@ -394,8 +356,8 @@ public class Invite : GoapAction {
     //#endregion
 }
 
-public class InviteToMakeLoveData : GoapActionData {
-    public InviteToMakeLoveData() : base(INTERACTION_TYPE.INVITE) {
+public class InviteData : GoapActionData {
+    public InviteData() : base(INTERACTION_TYPE.INVITE) {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
@@ -416,11 +378,6 @@ public class InviteToMakeLoveData : GoapActionData {
         }
         if (target.stateComponent.currentState is CombatState) { //do not invite characters that are currently in combat
             return false;
-        }
-        if (!(actor is SeducerSummon)) { //ignore relationships if succubus
-            if (!actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
-                return false; //only lovers and paramours can make love
-            }
         }
         return target.IsInOwnParty();
     }

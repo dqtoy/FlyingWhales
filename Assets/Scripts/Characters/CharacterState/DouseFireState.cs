@@ -148,7 +148,7 @@ public class DouseFireState : CharacterState {
         if (isFetchingWater) {
             return;
         }
-        List<TileObject> targets = stateComponent.character.specificLocation.GetTileObjectsThatAdvertise(INTERACTION_TYPE.GET_WATER);
+        List<TileObject> targets = stateComponent.character.specificLocation.GetTileObjectsOfType(TILE_OBJECT_TYPE.WATER_WELL);
         TileObject nearestWater = null;
         float nearestDist = 9999f;
         for (int i = 0; i < targets.Count; i++) {
@@ -161,47 +161,15 @@ public class DouseFireState : CharacterState {
         }
 
         if (nearestWater != null) {
-            GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.GET_WATER, stateComponent.character, nearestWater);
-            GoapNode node = new GoapNode(null, goapAction.cost, goapAction);
-            GoapPlan plan = new GoapPlan(node, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.REMOVE_TRAIT }, GOAP_CATEGORY.REACTION);
-            plan.ConstructAllNodes();
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_FIRE, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Burning", targetPOI = nearestWater });
-            job.SetAssignedPlan(plan);
-            SetCurrentlyDoingAction(goapAction);
-            goapAction.CreateStates();
-            Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnAfterActionDone);
-            //stateComponent.character.marker.GoTo(goapAction.targetTile, () => OnArriveAtWaterLocation(goapAction));
-            PauseState();
+            stateComponent.character.marker.GoTo(nearestWater.gridTileLocation, ObtainWater);
             isFetchingWater = true;
-            goapAction.DoAction();
         } else {
             throw new System.Exception(stateComponent.character.name + " cannot find any sources of water!");
         }
     }
-    private void OnAfterActionDone(Character characterThatDidAction, GoapAction actionDone) {
-        if(characterThatDidAction == stateComponent.character) {
-            if(actionDone.goapType == INTERACTION_TYPE.GET_WATER) {
-                Messenger.RemoveListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnAfterActionDone);
-                OnGetWaterFromPond(actionDone.result, actionDone);
-            }else if (actionDone.goapType == INTERACTION_TYPE.DOUSE_FIRE) {
-                Messenger.RemoveListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnAfterActionDone);
-                OnDouseFire(actionDone.result, actionDone);
-            }
-        }
-    }
-    private void OnGetWaterFromPond(string result, GoapAction action) {
-        SetCurrentlyDoingAction(null);
-        if (stateComponent.currentState != this) {
-            return;
-        }
-        stateComponent.character.SetCurrentActionNode(null);
-        isFetchingWater = false;
-        ResumeState();
-    }
-    private void OnArriveAtWaterLocation(GoapAction goapAction) {
-        stateComponent.character.SetCurrentActionNode(goapAction);
-        stateComponent.character.currentActionNode.SetEndAction(OnGetWaterFromPond);
-        stateComponent.character.currentActionNode.Perform();
+    private void ObtainWater() {
+        stateComponent.character.ObtainToken(TokenManager.Instance.CreateSpecialToken(SPECIAL_TOKEN.WATER_BUCKET));
+        isFetchingWater = false; 
     }
     private void DouseNearestFire() {
         if (isDousingFire) {
@@ -226,51 +194,23 @@ public class DouseFireState : CharacterState {
             }
         }
         if (nearestFire != null && nearestFire != currentTarget) {
-            GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.DOUSE_FIRE, stateComponent.character, nearestFire);
-            GoapNode node = new GoapNode(null, goapAction.cost, goapAction);
-            GoapPlan plan = new GoapPlan(node, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.REMOVE_TRAIT }, GOAP_CATEGORY.REACTION);
-            plan.ConstructAllNodes();
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_FIRE, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Burning", targetPOI = nearestFire });
-            job.SetAssignedPlan(plan);
-            SetCurrentlyDoingAction(goapAction);
-            goapAction.CreateStates();
-            Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnAfterActionDone);
-            PauseState();
             isDousingFire = true;
-            goapAction.DoAction();
-            //currentTarget = nearestFire;
-            //stateComponent.character.marker.GoTo(nearestFire, () => OnArriveAtDouseFireLocaton(goapAction));
+            currentTarget = nearestFire;
+            stateComponent.character.marker.GoTo(nearestFire, DouseFire);
         } 
         //else if (nearestFire == null) {
         //    DetermineAction();
         //}
     }
-    private void OnArriveAtDouseFireLocaton(GoapAction goapAction) {
-        //if (stateComponent.character.currentAction == null) {
-        //    OnDouseFire(InteractionManager.Goap_State_Fail, null); //ususally happens when character collides with ghost collider of fire and the douse fire action is automatically ended.
-        //    return;
-        //}
-        stateComponent.character.SetCurrentActionNode(goapAction);
-        stateComponent.character.currentActionNode.SetEndAction(OnDouseFire);
-        stateComponent.character.currentActionNode.Perform();
-    }
-    private void OnDouseFire(string result, GoapAction action) {
-        SetCurrentlyDoingAction(null);
-        if (stateComponent.currentState != this) {
-            return;
+    private void DouseFire() {
+        currentTarget.traitContainer.RemoveTrait(currentTarget, "Burning", removedBy: this.stateComponent.character);
+        SpecialToken water = this.stateComponent.character.GetToken(SPECIAL_TOKEN.WATER_BUCKET);
+        if (water != null) {
+            //Reduce water count by 1.
+            this.stateComponent.character.ConsumeToken(water);
         }
-        stateComponent.character.SetCurrentActionNode(null);
-        //THIS IS QUICK FIX ONLY!
-        if(result == InteractionManager.Goap_State_Fail) {
-            //When douse fire fails, it means that the target is no longer burning or doesn't have grid tile location or actor no longer has water
-            //When this happens, be sure to remove it from the list because it causes an UNENDING LOOP!
-            foreach (List<IPointOfInterest> listOfBurning in fires.Values) {
-                listOfBurning.Remove(action.poiTarget);
-            }
-        }
-        isDousingFire = false;
-        //objsOnFire.Remove(action.poiTarget);
-        ResumeState();
+        currentTarget.traitContainer.AddTrait(currentTarget, "Wet", this.stateComponent.character);
+        isDousingFire = false; 
     }
     private bool AddFire(IPointOfInterest poi) {
         Burning burning = poi.traitContainer.GetNormalTrait("Burning") as Burning;

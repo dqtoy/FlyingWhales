@@ -59,12 +59,12 @@ public class QuestInfoUI : MonoBehaviour {
 
     private void UpdateJobText() {
         string jobInfo = "Associated Events: ";
-        if (quest.jobQueue.jobsInQueue.Count <= 0) {
+        if (quest.availableJobs.Count <= 0) {
             jobInfo = "Associated Events: None";
         }
-        //if (quest.jobQueue.jobsInQueue.Count > 0) {
-        //    for (int i = 0; i < quest.jobQueue.jobsInQueue.Count; i++) {
-        //        JobQueueItem job = quest.jobQueue.jobsInQueue[i];
+        //if (quest.availableJobs.Count > 0) {
+        //    for (int i = 0; i < quest.availableJobs.Count; i++) {
+        //        JobQueueItem job = quest.availableJobs[i];
         //        jobInfo += "\n\t<link=" + '"' + i + "_job" + '"' + ">" + (i + 1) + ". <b>" + job.name + "</b></link>";
         //        //if (job.assignedCharacter != null) {
         //        //    jobInfo += "\n\t\t" + "<link=" + '"' + job.assignedCharacter.id.ToString() + "_character" + '"' + ">Assigned Character: <b>" + job.assignedCharacter.name + "</b></link>";
@@ -82,8 +82,8 @@ public class QuestInfoUI : MonoBehaviour {
         if(jobScrollRect.content.childCount > 0) {
             Utilities.DestroyChildren(jobScrollRect.content);
         }
-        for (int i = 0; i < quest.jobQueue.jobsInQueue.Count; i++) {
-            GenerateQuestJobNameplate(quest, quest.jobQueue.jobsInQueue[i], false);
+        for (int i = 0; i < quest.availableJobs.Count; i++) {
+            GenerateQuestJobNameplate(quest, quest.availableJobs[i], false);
         }
     }
     private void GenerateQuestJobNameplate(Quest quest, JobQueueItem job, bool updateJobText = true) {

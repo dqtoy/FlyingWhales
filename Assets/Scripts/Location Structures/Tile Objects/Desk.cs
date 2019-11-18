@@ -26,7 +26,7 @@ public class Desk : TileObject {
             gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this); //update visual based on state
         }
     }
-    public override void OnDoActionToObject(GoapAction action) {
+    public override void OnDoActionToObject(ActualGoapNode action) {
         base.OnDoActionToObject(action);
         switch (action.goapType) {
             case INTERACTION_TYPE.SIT:
@@ -35,7 +35,7 @@ public class Desk : TileObject {
 
         }
     }
-    public override void OnDoneActionToObject(GoapAction action) {
+    public override void OnDoneActionToObject(ActualGoapNode action) {
         base.OnDoneActionToObject(action);
         switch (action.goapType) {
             case INTERACTION_TYPE.SIT:
@@ -44,7 +44,7 @@ public class Desk : TileObject {
 
         }
     }
-    public override void OnCancelActionTowardsObject(GoapAction action) {
+    public override void OnCancelActionTowardsObject(ActualGoapNode action) {
         base.OnCancelActionTowardsObject(action);
         switch (action.goapType) {
             case INTERACTION_TYPE.SIT:

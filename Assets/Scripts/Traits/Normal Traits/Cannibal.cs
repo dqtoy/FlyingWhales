@@ -24,7 +24,7 @@ namespace Traits {
                 Character owner = sourcePOI as Character;
                 GoapPlanJob job = owner.jobQueue.GetJob(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING) as GoapPlanJob;
                 if (job != null) {
-                    owner.jobQueue.CancelJob(job, shouldDoAfterEffect: false);
+                    job.CancelJob(false);
                 }
             }
         }
@@ -45,7 +45,7 @@ namespace Traits {
             string successLogKey = base.TriggerFlaw(character);
             IPointOfInterest poi = GetPOIToTransformToFood(character);
             if (poi != null) {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.TRANSFORM_FOOD, poi);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.TRANSFORM_FOOD, poi, character);
                 character.jobQueue.AddJobInQueue(job);
                 return successLogKey;
             } else {

@@ -1161,6 +1161,19 @@ public class Area : IJobOwner {
         }
         return null;
     }
+    public JobQueueItem GetJob(JOB_TYPE jobType, IPointOfInterest target) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem currJob = availableJobs[i];
+            if (currJob is GoapPlanJob) {
+                GoapPlanJob goapJob = currJob as GoapPlanJob;
+                if (goapJob.targetPOI == target) {
+                    return goapJob;
+                }
+            }
+            return null;
+        }
+        return null;
+    }
     private void HourlyJobActions() {
         CreatePatrolJobs();
         //if (UnityEngine.Random.Range(0, 100) < 5 && currentMoveOutJobs < maxMoveOutJobs) {

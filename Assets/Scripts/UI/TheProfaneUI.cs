@@ -172,7 +172,7 @@ public class TheProfaneUI : MonoBehaviour {
             actions.Add("Corrupt");
         }
         if (character.homeRegion.area != null && character.homeRegion.IsFactionHere(character.faction) && character.faction.activeQuest is DivineInterventionQuest &&
-            !(character.faction.activeQuest as DivineInterventionQuest).jobQueue.HasJob(JOB_TYPE.SABOTAGE_FACTION)) {
+            !(character.faction.activeQuest as DivineInterventionQuest).HasJob(JOB_TYPE.SABOTAGE_FACTION)) {
             //only allow creation of sabotage faction quest if there is no job of that type yet.
             actions.Add("Sabotage Faction Quest");
         }

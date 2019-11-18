@@ -5,47 +5,39 @@ using Traits;
 
 public class PrayTileObject : GoapAction {
 
-    public PrayTileObject() : base(INTERACTION_TYPE.PRAY_TILE_OBJECT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
+
+    public PrayTileObject() : base(INTERACTION_TYPE.PRAY_TILE_OBJECT) {
         this.goapName = "Pray";
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
-        //validTimeOfDays = new TIME_IN_WORDS[] {
-        //    TIME_IN_WORDS.EARLY_NIGHT,
-        //    TIME_IN_WORDS.LATE_NIGHT,
-        //};
         actionIconString = GoapActionStateDB.Pray_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
         isNotificationAnIntel = false;
     }
 
     #region Overrides
-    protected override void ConstructRequirement() {
-        _requirementAction = Requirement;
-    }
-    //protected override void ConstructPreconditionsAndEffects() {
-    //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
-    //}
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        SetState("Pray Success");
+        SetState("Pray Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         //**Cost**: randomize between 15 - 55
         return Utilities.rng.Next(15, 56);
     }
-    protected override void AddFillersToLog(Log log) {
-        base.AddFillersToLog(log);
+    public override void AddFillersToLog(Log log, Character actor, IPointOfInterest poiTarget, object[] otherData, LocationStructure targetStructure) {
+        base.AddFillersToLog(log, actor, poiTarget, otherData, targetStructure);
         TileObject obj = poiTarget as TileObject;
         log.AddToFillers(poiTarget, Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     #endregion
 
     #region State Effects
-    public void PrePraySuccess() {
-        TileObject obj = poiTarget as TileObject;
-        currentState.AddLogFiller(poiTarget, Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.TARGET_CHARACTER);
+    public void PrePraySuccess(ActualGoapNode goapNode) {
+        TileObject obj = goapNode.poiTarget as TileObject;
+        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget, Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.TARGET_CHARACTER);
     }
-    public void AfterPraySuccess() {
-        if (poiTarget is GoddessStatue) {
+    public void AfterPraySuccess(ActualGoapNode goapNode) {
+        if (goapNode.poiTarget is GoddessStatue) {
             //Speed up divine intervention by 4 hours
             PlayerManager.Instance.player.AdjustDivineInterventionDuration(-GameManager.Instance.GetTicksBasedOnHour(4));
         }
@@ -53,11 +45,15 @@ public class PrayTileObject : GoapAction {
     #endregion
 
     #region Requirement
-   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
-        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
-            return false;
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+                return false;
+            }
+            return true;
         }
-        return true;
+        return false;
     }
     #endregion
 }

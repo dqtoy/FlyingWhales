@@ -518,9 +518,9 @@ public class RegionInfoUI : UIMenu {
 //#if UNITY_EDITOR
         if(activeRegion.area != null) {
             string summary = "Location Job Queue: ";
-            if (activeRegion.area.jobQueue.jobsInQueue.Count > 0) {
-                for (int i = 0; i < activeRegion.area.jobQueue.jobsInQueue.Count; i++) {
-                    JobQueueItem jqi = activeRegion.area.jobQueue.jobsInQueue[i];
+            if (activeRegion.area.availableJobs.Count > 0) {
+                for (int i = 0; i < activeRegion.area.availableJobs.Count; i++) {
+                    JobQueueItem jqi = activeRegion.area.availableJobs[i];
                     if (jqi is GoapPlanJob) {
                         GoapPlanJob gpj = jqi as GoapPlanJob;
                         summary += "\n" + gpj.name + " Targetting " + gpj.targetPOI?.name ?? "None";

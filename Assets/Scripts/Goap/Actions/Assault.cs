@@ -3,18 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
 
-//TODO: Should be witnessed even while in combat.
 //will be branded criminal if anybody witnesses or after combat
-public class AssaultCharacter : GoapAction {
+public class Assault : GoapAction {
 
     //private Character winner;
     private Character loser;
 
-    public AssaultCharacter() : base(INTERACTION_TYPE.ASSAULT_CHARACTER) {
-        actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
+    public Assault() : base(INTERACTION_TYPE.ASSAULT) {
+        actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Hostile_Icon;
         doesNotStopTargetCharacter = true;
     }
+
+    #region Overrides
+    protected override void ConstructBasePreconditionsAndEffects() {
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.STARTS_COMBAT, target = GOAP_EFFECT_TARGET.ACTOR });
+    }
+    public override void Perform(ActualGoapNode actionNode) {
+        base.Perform(actionNode);
+        SetState("Combat Start", actionNode);
+    }
+    #endregion
+
+    #region Effects
+    private void AfterCombatStart(ActualGoapNode goapNode) {
+        goapNode.actor.marker.AddHostileInRange(goapNode.poiTarget, false);
+    }
+    #endregion
 
     //#region Overrides
     ////protected override void ConstructRequirement() {
@@ -185,7 +200,7 @@ public class AssaultCharacter : GoapAction {
     //       && !IsFromApprehendJob()) {
     //        SetCommittedCrime(CRIME.ASSAULT, new Character[] { actor });
     //    }
-    //    currentState.AddLogFiller(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
+    //    goapNode.descriptionLog.AddToFillers(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
     //    //AddTraitTo(winner, "Combat Recovery", loser);
     //    //Injured injured = new Injured();
     //    //AddTraitTo(loser, injured, winner);
@@ -210,7 +225,7 @@ public class AssaultCharacter : GoapAction {
     //        && !IsFromApprehendJob()) {
     //        SetCommittedCrime(CRIME.ASSAULT, new Character[] { actor });
     //    }
-    //    currentState.AddLogFiller(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
+    //    goapNode.descriptionLog.AddToFillers(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
     //    //AddTraitTo(winner, "Combat Recovery", loser);
     //    RelationshipManager.Instance.RelationshipDegradation(actor, poiTarget as Character, this);
     //    currentState.SetIntelReaction(TargetInjuredKnockOutReactions);
@@ -231,7 +246,7 @@ public class AssaultCharacter : GoapAction {
     //        && !IsFromApprehendJob()) {
     //        SetCommittedCrime(CRIME.MURDER, new Character[] { actor });
     //    }
-    //    currentState.AddLogFiller(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
+    //    goapNode.descriptionLog.AddToFillers(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
     //    //AddTraitTo(winner, "Combat Recovery", loser);
     //    currentState.SetIntelReaction(TargetKilledReactions);
     //}
@@ -251,7 +266,7 @@ public class AssaultCharacter : GoapAction {
     //    }
     //}
     ////public void PreTargetMissing() {
-    ////    currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    ////    goapNode.descriptionLog.AddToFillers(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     ////}
     //#endregion
 
@@ -525,7 +540,7 @@ public class AssaultCharacter : GoapAction {
 }
 
 public class AssaultCharacterData : GoapActionData {
-    public AssaultCharacterData() : base(INTERACTION_TYPE.ASSAULT_CHARACTER) {
+    public AssaultCharacterData() : base(INTERACTION_TYPE.ASSAULT) {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }

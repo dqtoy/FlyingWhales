@@ -22,9 +22,9 @@ namespace Traits {
                     character.PlanTirednessRecoveryActions(true);
                 }
             }
-            if (trait.effect == TRAIT_EFFECT.NEGATIVE && trait.type == TRAIT_TYPE.DISABLER) {
+            if (character.canMove == false || character.canWitness == false) {
                 //when a character gains a negative disabler trait, drop all location jobs that this character is assigned to
-                character.homeArea.jobQueue.UnassignAllJobsTakenBy(character);
+                //TODO: //character.jobQueue.UnassignAllJobsTakenBy(character);
             }
             DefaultProcessOnAddTrait(traitable, trait, characterResponsible, gainedFromDoing);
             Messenger.Broadcast(Signals.TRAIT_ADDED, character, trait);

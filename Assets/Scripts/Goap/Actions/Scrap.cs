@@ -20,8 +20,14 @@ public class Scrap : GoapAction {
     }
 
     #region Overrides
-    protected override void ConstructBasePreconditionsAndEffects() {
-        //TODO: AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = TokenManager.Instance.itemData[item.specialTokenType].supplyValue, targetPOI = actor });
+    //protected override void ConstructBasePreconditionsAndEffects() {
+    //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = TokenManager.Instance.itemData[item.specialTokenType].supplyValue, targetPOI = actor });
+    //}
+    protected override List<GoapEffect> GetExpectedEffects(IPointOfInterest target, object[] otherData) {
+        List <GoapEffect> ee = base.GetExpectedEffects(target, otherData);
+        SpecialToken item = target as SpecialToken;
+        ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = TokenManager.Instance.itemData[item.specialTokenType].supplyValue.ToString(), isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
+        return ee;
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -60,9 +66,9 @@ public class Scrap : GoapAction {
     private void PreScrapSuccess(ActualGoapNode goapNode) {
         SpecialToken item = goapNode.poiTarget as SpecialToken;
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        currentState.AddLogFiller(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-        currentState.AddLogFiller(item, item.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        currentState.AddLogFiller(null, TokenManager.Instance.itemData[item.specialTokenType].supplyValue.ToString(), LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+        goapNode.descriptionLog.AddToFillers(item, item.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        goapNode.descriptionLog.AddToFillers(null, TokenManager.Instance.itemData[item.specialTokenType].supplyValue.ToString(), LOG_IDENTIFIER.STRING_1);
     }
     private void AfterScrapSuccess(ActualGoapNode goapNode) {
         SpecialToken item = goapNode.poiTarget as SpecialToken;

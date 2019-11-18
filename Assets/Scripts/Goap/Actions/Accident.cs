@@ -39,7 +39,7 @@ public class Accident : GoapAction {
     private void PreAccidentSuccess(ActualGoapNode goapNode) {
         GoapAction actionToDo = goapNode.otherData[0] as GoapAction;
         GoapActionState currentState = this.states[goapNode.currentStateName];
-        currentState.AddLogFiller(actionToDo, actionToDo.goapName, LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(actionToDo, actionToDo.goapName, LOG_IDENTIFIER.STRING_1);
     }
     private void AfterAccidentSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Injured", gainedFromDoing: this);

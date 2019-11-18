@@ -53,7 +53,7 @@ public class ConsoleMenu : UIMenu {
             {"/remove_trait_character", RemoveTraitToCharacter },
             {"/transfer_character_faction", TransferCharacterToFaction },
             {"/show_full_debug", ShowFullDebug },
-            {"/force_action", ForceCharacterInteraction },
+            //{"/force_action", ForceCharacterInteraction },
             {"/t_freeze_char", ToggleFreezeCharacter },
             {"/set_mood", SetMoodToCharacter },
             {"/log_awareness", LogAwareness },
@@ -140,9 +140,9 @@ public class ConsoleMenu : UIMenu {
 
         text += "\n<b>Faction:</b> " + character.faction?.name ?? "None";
         text += "\n<b>Current Action:</b> " + character.currentActionNode?.goapName ?? "None";
-        if (character.currentActionNode != null) {
-            text += "\n<b>Current Plan:</b> " + character.currentActionNode.parentPlan.GetGoalSummary();
-        }
+        //if (character.currentActionNode != null) {
+        //    text += "\n<b>Current Plan:</b> " + character.currentActionNode.parentPlan.GetGoalSummary();
+        //}
         if (character.currentParty.icon != null) {
             text += "\n<b>Is Travelling:</b> " + character.currentParty.icon.isTravelling.ToString();
             text += "\n<b>Target Location:</b> " + character.currentParty.icon.targetLocation?.name ?? "None";
@@ -156,15 +156,15 @@ public class ConsoleMenu : UIMenu {
             text += "\n<b>Stop Movement?:</b> " + character.marker.pathfindingAI.isStopMovement.ToString();
         }
 
-        text += "\n<b>All Plans:</b> ";
-        if (character.allGoapPlans.Count > 0) {
-            for (int i = 0; i < character.allGoapPlans.Count; i++) {
-                GoapPlan goapPlan = character.allGoapPlans[i];
-                text += "\n" + goapPlan.GetPlanSummary();
-            }
-        } else {
-            text += "\nNone";
-        }
+        //text += "\n<b>All Plans:</b> ";
+        //if (character.allGoapPlans.Count > 0) {
+        //    for (int i = 0; i < character.allGoapPlans.Count; i++) {
+        //        GoapPlan goapPlan = character.allGoapPlans[i];
+        //        text += "\n" + goapPlan.GetPlanSummary();
+        //    }
+        //} else {
+        //    text += "\nNone";
+        //}
 
         text += "\n<b>Action History:</b> ";
         List<string> reverseHistory = new List<string>(character.actionHistory);
@@ -710,31 +710,6 @@ public class ConsoleMenu : UIMenu {
 
         character.ChangeFactionTo(faction);
         AddSuccessMessage("Transferred " + character.name + " to " + faction.name);
-    }
-    private void ForceCharacterInteraction(string[] parameters) {
-        string characterStr = parameters[0];
-        string targetCharacterStr = parameters.ElementAtOrDefault(1);
-        string goapEffectTypeStr = parameters.ElementAtOrDefault(2);
-        string conditionKeyStr = parameters.ElementAtOrDefault(3);
-
-        Character character = CharacterManager.Instance.GetCharacterByName(characterStr);
-        if (character == null) {
-            AddErrorMessage("There is no character with name " + characterStr);
-            return;
-        }
-        Character targetCharacter = CharacterManager.Instance.GetCharacterByName(targetCharacterStr);
-        if (targetCharacter == null) {
-            AddErrorMessage("There is no character with name " + targetCharacterStr);
-            return;
-        }
-        GOAP_EFFECT_CONDITION goapEffectType;
-        if (!System.Enum.TryParse(goapEffectTypeStr, out goapEffectType)) {
-            AddErrorMessage("There is no goap effect with type " + goapEffectType);
-            return;
-        }
-
-        character.StartGOAP(new GoapEffect() { conditionType = goapEffectType, conditionKey = conditionKeyStr, targetPOI = targetCharacter }, targetCharacter, GOAP_CATEGORY.NONE, true);
-        AddSuccessMessage(character.name + " will create new new plan with effect " + goapEffectType.ToString() + "(" + conditionKeyStr + ") targetting " + targetCharacter.name);
     }
     private void ToggleFreezeCharacter(string[] parameter) {
         if (parameter.Length < 1) {

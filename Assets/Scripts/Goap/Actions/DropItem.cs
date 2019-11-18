@@ -49,8 +49,8 @@ public class DropItem : GoapAction {
     #region State Effects
     public void PreDropSuccess(ActualGoapNode goapNode) {
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        currentState.AddLogFiller(goapNode.poiTarget as SpecialToken, goapNode.poiTarget.name, LOG_IDENTIFIER.ITEM_1);
-        currentState.AddLogFiller(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget as SpecialToken, goapNode.poiTarget.name, LOG_IDENTIFIER.ITEM_1);
+        goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterDropSuccess(ActualGoapNode goapNode) {
         LocationGridTile tile = goapNode.actor.gridTileLocation.GetNearestUnoccupiedTileFromThis();

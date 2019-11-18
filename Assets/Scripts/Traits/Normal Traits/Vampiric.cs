@@ -72,13 +72,13 @@ namespace Traits {
             if (targetPOI is Character) {
                 //In Vampiric, the parameter traitOwner is the target character, that's why you must pass the target character in this parameter not the actual owner of the trait, the actual owner of the trait is the characterThatWillDoJob
                 Character targetCharacter = targetPOI as Character;
-                if (characterThatWillDoJob.currentActionNode.action != null && characterThatWillDoJob.currentActionNode.action.goapType == INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD && !characterThatWillDoJob.currentActionNode.action.isDone) {
+                if (characterThatWillDoJob.currentActionNode.action != null && characterThatWillDoJob.currentActionNode.action.goapType == INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD && !characterThatWillDoJob.currentActionNode.isDone) {
                     if (characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.POSITIVE && targetCharacter.traitContainer.GetNormalTrait("Vampiric") == null && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetCharacter)) {
-                        GoapPlanJob job = new GoapPlanJob(characterThatWillDoJob.currentActionNode.action.parentPlan.job.jobType, INTERACTION_TYPE.DRINK_BLOOD, targetCharacter);
-                        job.SetIsStealth(true);
-                        characterThatWillDoJob.currentActionNode.action.parentPlan.job.jobQueueParent.CancelJob(characterThatWillDoJob.currentActionNode.action.parentPlan.job);
-                        characterThatWillDoJob.jobQueue.AddJobInQueue(job, false);
-                        characterThatWillDoJob.jobQueue.AssignCharacterToJobAndCancelCurrentAction(job, characterThatWillDoJob);
+                        //TODO: GoapPlanJob job = new GoapPlanJob(characterThatWillDoJob.currentJobNode.jobType, INTERACTION_TYPE.DRINK_BLOOD, targetCharacter);
+                        //job.SetIsStealth(true);
+                        //characterThatWillDoJob.currentActionNode.action.parentPlan.job.jobQueueParent.CancelJob(characterThatWillDoJob.currentActionNode.action.parentPlan.job);
+                        //characterThatWillDoJob.jobQueue.AddJobInQueue(job, false);
+                        //characterThatWillDoJob.jobQueue.AssignCharacterToJobAndCancelCurrentAction(job, characterThatWillDoJob);
                         return true;
                     }
                 }
@@ -97,10 +97,9 @@ namespace Traits {
                     triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
                 }
                 if (!triggerGrieving) {
-                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = character });
-                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = character }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-                    job.SetCancelOnFail(true);
-                    character.jobQueue.AddJobInQueue(job);
+                    //TODO: GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.DRINK_BLOOD);
+                    //job.SetCancelOnFail(true);
+                    //character.jobQueue.AddJobInQueue(job);
                 } else {
                     griefstricken.TriggerGrieving();
                 }

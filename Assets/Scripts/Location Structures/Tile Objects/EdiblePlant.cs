@@ -9,16 +9,18 @@ public class EdiblePlant : TileObject {
 
     public EdiblePlant(LocationStructure location) {
         SetStructureLocation(location);
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(TILE_OBJECT_TYPE.EDIBLE_PLANT);
+        traitContainer.AddTrait(this, "Edible");
     }
     public EdiblePlant(SaveDataTileObject data) {
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(data);
+        traitContainer.AddTrait(this, "Edible");
     }
 
     #region Overrides
-    public override void OnDoActionToObject(GoapAction action) {
+    public override void OnDoActionToObject(ActualGoapNode action) {
         base.OnDoActionToObject(action);
         //SetPOIState(POI_STATE.INACTIVE);
         //ScheduleCooldown(action);

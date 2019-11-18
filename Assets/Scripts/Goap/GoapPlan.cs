@@ -175,8 +175,8 @@ public class GoapPlan {
     }
     public string GetGoalSummary() {
         string summary = "Goal: ";
-        for (int i = 0; i < endNode.singleNode.action.expectedEffects.Count; i++) {
-            GoapEffect effect = endNode.singleNode.action.expectedEffects[i];
+        for (int i = 0; i < endNode.singleNode.action.baseExpectedEffects.Count; i++) {
+            GoapEffect effect = endNode.singleNode.action.baseExpectedEffects[i];
             summary += effect.ToString() + ", ";
         }
         return summary;

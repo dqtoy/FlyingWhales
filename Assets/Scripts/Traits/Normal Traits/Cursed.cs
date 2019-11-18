@@ -55,22 +55,14 @@ namespace Traits {
                     GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
                     if (currentJob == null) {
                         GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET };
-                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, targetCharacter,
+                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect, targetCharacter,
                             new Dictionary<INTERACTION_TYPE, object[]>() { 
                                 { INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION } } 
-                            }, new Precondition(goapEffect, null));
-                        //job.SetCanBeDoneInLocation(true);
+                            }, characterThatWillDoJob);
                         if (InteractionManager.Instance.CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, job)) {
                             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                             return true;
                         }
-                        //else {
-                        //    if (!IsResponsibleForTrait(characterThatWillDoJob)) {
-                        //        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRemoveTraitJob);
-                        //        characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
-                        //    }
-                        //    return false;
-                        //}
                     } else {
                         if (InteractionManager.Instance.CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, currentJob)) {
                             return TryTransferJob(currentJob, characterThatWillDoJob);

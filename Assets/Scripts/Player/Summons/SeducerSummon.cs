@@ -9,7 +9,7 @@ public class SeducerSummon : Summon {
     private List<Character> doneCharacters; //list of characters that the succubus has invited to make love with, regardless of success
     public override int ignoreHostility {
         get {
-            if (currentActionNode != null && currentActionNode.goapType.IsHostileAction()) {
+            if (currentActionNode != null && currentActionNode.action.goapType.IsHostileAction()) {
                 return 0; //allow hostility checking
             } else if (stateComponent.currentState != null && (stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT || stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED)) {
                 return 0; //if in combat or berserked state allow hostility checking
@@ -69,7 +69,7 @@ public class SeducerSummon : Summon {
             List<TileObject> validBeds = specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.INN).GetTileObjectsOfType(TILE_OBJECT_TYPE.BED);
             if (choices.Count > 0 && validBeds.Count > 0) {
                 Character chosenCharacter = choices[Random.Range(0, choices.Count)];
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SEDUCE, INTERACTION_TYPE.INVITE, chosenCharacter);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SEDUCE, INTERACTION_TYPE.INVITE, chosenCharacter, this);
                 job.SetCannotOverrideJob(true);
                 job.SetCannotCancelJob(true);
                 jobQueue.AddJobInQueue(job);

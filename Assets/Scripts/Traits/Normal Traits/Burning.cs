@@ -29,7 +29,6 @@ namespace Traits {
                 if (tile.genericTileObject == null) {
                     throw new System.Exception("Generic Tile Object of " + tile.ToString() + " is null!");
                 }
-                tile.genericTileObject.AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
                 owner = tile.genericTileObject;
             } else if (addedTo is IPointOfInterest) {
                 owner = addedTo as IPointOfInterest;
@@ -37,16 +36,13 @@ namespace Traits {
                     TileObject obj = addedTo as TileObject;
                     burningEffect = GameManager.Instance.CreateBurningEffectAt(obj);
                     obj.SetPOIState(POI_STATE.INACTIVE);
-                    obj.AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
                 } else if (addedTo is SpecialToken) {
                     SpecialToken token = addedTo as SpecialToken;
                     burningEffect = GameManager.Instance.CreateBurningEffectAt(token);
                     token.SetPOIState(POI_STATE.INACTIVE);
-                    token.AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
                 } else if (addedTo is Character) {
                     Character character = addedTo as Character;
                     burningEffect = GameManager.Instance.CreateBurningEffectAt(character);
-                    character.AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
                     character.AdjustDoNotRecoverHP(1);
                     CreateJobsOnEnterVisionBasedOnTrait(character, character);
                 }
@@ -68,10 +64,7 @@ namespace Traits {
                     character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_FIRE);
                     character.AdjustDoNotRecoverHP(-1);
                 }
-                (removedFrom as IPointOfInterest).RemoveAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
-            } else if (removedFrom is LocationGridTile) {
-                (removedFrom as LocationGridTile).genericTileObject.RemoveAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
-            }
+            } 
             sourceOfBurning.RemoveObjectOnFire(owner);
         }
         public override void OnDeath(Character character) {
@@ -147,7 +140,7 @@ namespace Traits {
                 }
 
                 if (willCreateDouseFireJob) {
-                    CharacterStateJob job = new CharacterStateJob(JOB_TYPE.REMOVE_FIRE, CHARACTER_STATE.DOUSE_FIRE);
+                    CharacterStateJob job = new CharacterStateJob(JOB_TYPE.REMOVE_FIRE, CHARACTER_STATE.DOUSE_FIRE, characterThatWillDoJob);
                     if (CanTakeRemoveFireJob(characterThatWillDoJob, traitOwner)) {
                         sourceOfBurning.AddCharactersDousingFire(characterThatWillDoJob); //adjust the number of characters dousing the fire source. NOTE: Make sure to reduce that number if a character decides to quit the job for any reason.
                         job.AddOnUnassignAction(sourceOfBurning.RemoveCharactersDousingFire); //This is the action responsible for reducing the number of characters dousing the fire when a character decides to quit the job.

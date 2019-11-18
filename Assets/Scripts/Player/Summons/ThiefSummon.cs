@@ -58,10 +58,10 @@ public class ThiefSummon : Summon {
             LocationStructure warehouse = specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
             if (warehouse.itemsInStructure.Count > 0) {
                 SpecialToken chosenItem = warehouse.itemsInStructure[UnityEngine.Random.Range(0, warehouse.itemsInStructure.Count)];
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.STEAL, INTERACTION_TYPE.STEAL, chosenItem);
-                job.SetCannotOverrideJob(true);
-                job.SetCannotCancelJob(true);
-                jobQueue.AddJobInQueue(job);
+                //GoapPlanJob job = new GoapPlanJob(JOB_TYPE.STEAL, INTERACTION_TYPE.STEAL, chosenItem);
+                //job.SetCannotOverrideJob(true);
+                //job.SetCannotCancelJob(true);
+                //jobQueue.AddJobInQueue(job);
             } else {
                 //just enter berserked mode.
                 stateComponent.SwitchToState(CHARACTER_STATE.STROLL, null, specificLocation);
@@ -76,7 +76,7 @@ public class ThiefSummon : Summon {
     public override bool CanBeInstructedByPlayer() {
         bool canBeInstructed = base.CanBeInstructedByPlayer();
         if (canBeInstructed) {
-            if (currentActionNode != null && !currentActionNode.goapType.IsHostileAction()) {
+            if (currentActionNode != null && !currentActionNode.action.goapType.IsHostileAction()) {
                 canBeInstructed = false;
             } else if (stateComponent.currentState == null || !(stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT || stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED)) {
                 canBeInstructed = false;

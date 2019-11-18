@@ -27,6 +27,7 @@ namespace Traits {
                 if (character.marker != null) {
                     character.marker.BerserkedMarker();
                 }
+                character.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {

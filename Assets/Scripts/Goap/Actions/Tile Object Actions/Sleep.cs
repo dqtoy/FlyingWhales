@@ -4,40 +4,26 @@ using UnityEngine;
 using Traits;
 
 public class Sleep : GoapAction {
-    protected override string failActionState { get { return "Rest Fail"; } }
 
-    private Resting _restingTrait;
-    public Sleep() : base(INTERACTION_TYPE.SLEEP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
+
+    public Sleep() : base(INTERACTION_TYPE.SLEEP) {
         actionIconString = GoapActionStateDB.Sleep_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
         isNotificationAnIntel = false;
     }
 
     #region Overrides
-    protected override void ConstructRequirement() {
-        _requirementAction = Requirement;
-    }
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = actor });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        if (!isTargetMissing) {
-            if(CanSleepInBed(actor, poiTarget as TileObject)) {
-                SetState("Rest Success");
-            } else {
-                SetState("Rest Fail");
-            }
-        } else {
-            TileObject obj = poiTarget as TileObject;
-            if (!obj.IsAvailable()) {
-                SetState("Rest Fail");
-            } else {
-                SetState("Target Missing");
-            }
-        }
+        SetState("Rest Success", goapNode);
+           
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+        LocationStructure targetStructure = target.gridTileLocation.structure;
         if (targetStructure.structureType == STRUCTURE_TYPE.DWELLING) {
             Dwelling dwelling = targetStructure as Dwelling;
             if (dwelling.IsResident(actor)) {
@@ -61,104 +47,58 @@ public class Sleep : GoapAction {
         }
         return 100;
     }
-    //public override void FailAction() {
-    //    Debug.LogError(actor.name + " failed " + goapName + " action from recalculate path!");
-    //    base.FailAction();
-    //    SetState("Rest Fail");
-    //}
-    public override void OnStopWhilePerforming() {
-        if (currentState.name == "Rest Success") {
-            RemoveTraitFrom(actor, "Resting");
+    public override void OnStopWhilePerforming(Character actor, IPointOfInterest target, object[] otherData) {
+        base.OnStopWhilePerforming(actor, target, otherData);
+        actor.traitContainer.RemoveTrait(actor, "Resting");
+    }
+    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(actor, poiTarget, otherData);
+        if (goapActionInvalidity.isInvalid == false) {
+            if (CanSleepInBed(actor, poiTarget as TileObject) == false) {
+                goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.stateName = "Rest Fail";
+            } else if (poiTarget.IsAvailable() == false) {
+                goapActionInvalidity.isInvalid = true;
+            }
         }
+        return goapActionInvalidity;
     }
     #endregion
 
     #region Requirements
-   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
-        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
-            return false;
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+                return false;
+            }
+            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
         }
-        //if (targetStructure.structureType == STRUCTURE_TYPE.DWELLING && knownLoc != null) {
-        //    TileObject obj = poiTarget as TileObject;
-        //    return obj.IsAvailable();
-        //    //if(knownLoc.occupant == null) {
-        //    //    return true;
-        //    //} else if (knownLoc.occupant == actor) {
-        //    //    return true;
-        //    //}
-        //}
-        //return false;
-        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+        return false;
     }
     #endregion
 
     #region State Effects
-    private void PreRestSuccess() {
-        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-        //poiTarget.SetPOIState(POI_STATE.INACTIVE);
-        //actor.AdjustDoNotGetTired(1);
-        _restingTrait = new Resting();
-        actor.traitContainer.AddTrait(actor, _restingTrait);
-        currentState.OverrideDuration(actor.currentSleepTicks);
+    private void PreRestSuccess(ActualGoapNode goapNode) {
+        goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+        goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Resting");
+        //goapNode.action.states[goapNode.currentStateName].OverrideDuration(goapNode.actor.currentSleepTicks);
     }
-    private void PerTickRestSuccess() {
-        actor.AdjustTiredness(75);
-        actor.AdjustSleepTicks(-1);
-
-        if (_restingTrait.lycanthropyTrait == null) {
-            if (currentState.currentDuration == currentState.duration) {
-                //If sleep will end, check if the actor is being targetted by Drink Blood action, if it is, do not end sleep
-                bool isTargettedByDrinkBlood = false;
-                for (int i = 0; i < actor.targettedByAction.Count; i++) {
-                    if (actor.targettedByAction[i].goapType == INTERACTION_TYPE.DRINK_BLOOD && !actor.targettedByAction[i].isDone && actor.targettedByAction[i].isPerformingActualAction) {
-                        isTargettedByDrinkBlood = true;
-                        break;
-                    }
-                }
-                if (isTargettedByDrinkBlood) {
-                    currentState.OverrideDuration(currentState.duration + 1);
-                }
-            }
-        } else {
-            bool isTargettedByDrinkBlood = false;
-            for (int i = 0; i < actor.targettedByAction.Count; i++) {
-                if (actor.targettedByAction[i].goapType == INTERACTION_TYPE.DRINK_BLOOD && !actor.targettedByAction[i].isDone && actor.targettedByAction[i].isPerformingActualAction) {
-                    isTargettedByDrinkBlood = true;
-                    break;
-                }
-            }
-            if (currentState.currentDuration == currentState.duration) {
-                //If sleep will end, check if the actor is being targetted by Drink Blood action, if it is, do not end sleep
-                if (isTargettedByDrinkBlood) {
-                    currentState.OverrideDuration(currentState.duration + 1);
-                } else {
-                    if (!_restingTrait.hasTransformed) {
-                        _restingTrait.CheckForLycanthropy(true);
-                    }
-                }
-            } else {
-                if (!isTargettedByDrinkBlood) {
-                    _restingTrait.CheckForLycanthropy();
-                }
-            }
-        }
+    private void PerTickRestSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.AdjustTiredness(75);
+        goapNode.actor.AdjustSleepTicks(-1);
     }
-    private void AfterRestSuccess() {
-        //poiTarget.SetPOIState(POI_STATE.ACTIVE);
-        //actor.AdjustDoNotGetTired(-1);
-        RemoveTraitFrom(actor, "Resting");
+    private void AfterRestSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Resting");
     }
-    private void PreRestFail() {
-        if (parentPlan != null && parentPlan.job != null && parentPlan.job.id == actor.sleepScheduleJobID) {
-            actor.SetHasCancelledSleepSchedule(true);
-        }
-        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-    }
-    private void PreTargetMissing() {
-        currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-    }
-    //private void AfterTargetMissing() {
-    //    actor.RemoveAwareness(poiTarget);
+    //private void PreRestFail(ActualGoapNode goapNode) {
+    //    if (parentPlan != null && parentPlan.job != null && parentPlan.job.id == actor.sleepScheduleJobID) {
+    //        actor.SetHasCancelledSleepSchedule(true);
+    //    }
+    //    goapNode.descriptionLog.AddToFillers(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+    //}
+    //private void PreTargetMissing() {
+    //    goapNode.descriptionLog.AddToFillers(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     //}
     #endregion
 

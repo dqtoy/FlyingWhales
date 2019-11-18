@@ -66,8 +66,8 @@ public class AskForHelpRemovePoisonTable : GoapAction {
 
    // #region State Effects
    // public void PreAskSuccess() {
-   //     currentState.AddLogFiller(troubledCharacter, troubledCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
-   //     currentState.AddLogFiller(targetTable.gridTileLocation.structure, targetTable.gridTileLocation.structure.name, LOG_IDENTIFIER.LANDMARK_1);
+   //     goapNode.descriptionLog.AddToFillers(troubledCharacter, troubledCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
+   //     goapNode.descriptionLog.AddToFillers(targetTable.gridTileLocation.structure, targetTable.gridTileLocation.structure.name, LOG_IDENTIFIER.LANDMARK_1);
    //     currentState.SetIntelReaction(SuccessReactions);
    // }
    // public void AfterAskSuccess() {
@@ -77,7 +77,7 @@ public class AskForHelpRemovePoisonTable : GoapAction {
    //     target.jobQueue.AddJobInQueue(job);
    // }
    // //public void PreTargetMissing() {
-   // //    currentState.AddLogFiller(troubledCharacter, troubledCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
+   // //    goapNode.descriptionLog.AddToFillers(troubledCharacter, troubledCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
    // //}
    // #endregion
 

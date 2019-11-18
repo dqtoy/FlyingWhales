@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Traits;
 
 public struct GoapNode {
     //public GoapNode parent;
@@ -100,6 +101,25 @@ public class ActualGoapNode {
     public string currentStateName { get; private set; }
     public int currentStateDuration { get; private set; }
 
+    #region getters
+    //TODO: Refactor these getters after all errors are resolved.
+    public GoapActionState currentState {
+        get { return action.states[currentStateName]; }
+    }
+    public bool isPerformingActualAction {
+        get { return actionStatus == ACTION_STATUS.PERFORMING; }
+    }
+    public bool isDone {
+        get { return actionStatus == ACTION_STATUS.SUCCESS || actionStatus == ACTION_STATUS.FAIL; }
+    }
+    public INTERACTION_TYPE goapType {
+        get { return action.goapType; }
+    }
+    public string goapName {
+        get { return action.goapName; }
+    }
+    #endregion
+
     public ActualGoapNode(GoapAction action, Character actor, IPointOfInterest poiTarget, object[] otherData, int cost) {
         this.action = action;
         this.actor = actor;
@@ -139,7 +159,7 @@ public class ActualGoapNode {
             actor.currentParty.GoToLocation(targetStructure.location.region, PATHFINDING_MODE.NORMAL, doneAction: MoveToDoAction);
         } else {
             if (action.actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET) {
-                actor.marker.GoTo(poiTarget, OnArriveAtTargetLocation);
+                actor.marker.GoTo(action.GetTargetToGoTo(this), OnArriveAtTargetLocation);
             } else if (action.actionLocationType == ACTION_LOCATION_TYPE.IN_PLACE) {
                 actor.PerformGoapAction();
             } else if (action.actionLocationType == ACTION_LOCATION_TYPE.NEARBY) {
@@ -184,6 +204,12 @@ public class ActualGoapNode {
         actor.PerformGoapAction();
     }
     public void PerformAction() {
+        GoapActionInvalidity goapActionInvalidity = action.IsInvalid(actor, poiTarget, otherData);
+        if (goapActionInvalidity.isInvalid) {
+            action.SetState(goapActionInvalidity.stateName, this);
+            actor.GoapActionResult(InteractionManager.Goap_State_Fail, this);
+            return;
+        }
         actionStatus = ACTION_STATUS.PERFORMING;
         actorAlterEgo = actor.currentAlterEgo;
         if(poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -344,6 +370,14 @@ public class ActualGoapNode {
         GoapActionState currentState = action.states[currentStateName];
         CreateDescriptionLog(currentState);
         currentState.preEffect?.Invoke(this);
+        for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
+            Trait currTrait = actor.traitContainer.allTraits[i];
+            currTrait.ExecuteActionPreEffects(action.goapType, this);
+        }
+        for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
+            Trait currTrait = poiTarget.traitContainer.allTraits[i];
+            currTrait.ExecuteActionPreEffects(action.goapType, this);
+        }
         //parentAction.SetExecutionDate(GameManager.Instance.Today());
 
         if (currentState.duration > 0) {
@@ -373,6 +407,14 @@ public class ActualGoapNode {
         //After effect and logs should be done after processing action result so that we can be sure that the action is completely done before doing anything
         if (shouldDoAfterEffect) {
             currentState.afterEffect?.Invoke(this);
+            for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
+                Trait currTrait = actor.traitContainer.allTraits[i];
+                currTrait.ExecuteActionAfterEffects(action.goapType, this);
+            }
+            for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
+                Trait currTrait = poiTarget.traitContainer.allTraits[i];
+                currTrait.ExecuteActionAfterEffects(action.goapType, this);
+            }
             if (descriptionLog != null && action.shouldAddLogs) { //only add logs if both the parent action and this state should add logs
                 //if (descriptionLog != null) {
                 //    AddArrangedLog("description", descriptionLog, null);
@@ -412,6 +454,14 @@ public class ActualGoapNode {
         GoapActionState currentState = action.states[currentStateName];
         currentStateDuration++;
         currentState.perTickEffect?.Invoke(this);
+        for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
+            Trait currTrait = actor.traitContainer.allTraits[i];
+            currTrait.ExecuteActionPerTickEffects(action.goapType, this);
+        }
+        for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
+            Trait currTrait = poiTarget.traitContainer.allTraits[i];
+            currTrait.ExecuteActionPerTickEffects(action.goapType, this);
+        }
         if (currentStateDuration >= currentState.duration) {
             EndPerTickEffect();
         }
@@ -422,7 +472,7 @@ public class ActualGoapNode {
         }
         if (poiTarget is TileObject) {
             TileObject target = poiTarget as TileObject;
-            target.OnDoActionToObject(action);
+            target.OnDoActionToObject(this);
         }
         //else if (poiTarget is Character) {
         //    if (currentState.name != "Target Missing" && !doesNotStopTargetCharacter) {
@@ -436,14 +486,17 @@ public class ActualGoapNode {
         }
         if (poiTarget is TileObject) {
             TileObject target = poiTarget as TileObject;
-            target.OnDoneActionToObject(action);
+            target.OnDoneActionToObject(this);
         }
     }
     private void OnCancelActionTowardsTarget() {
         if (poiTarget is TileObject) {
             TileObject target = poiTarget as TileObject;
-            target.OnCancelActionTowardsObject(action);
+            target.OnCancelActionTowardsObject(this);
         }
+    }
+    public void OverrideCurrentStateDuration(int val) {
+        currentStateDuration = val;
     }
     #endregion
 

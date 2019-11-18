@@ -18,7 +18,7 @@ public class HuntingToDrinkBlood : GoapAction {
    // }
    // protected override void ConstructBasePreconditionsAndEffects() {
    //     if (actor.traitContainer.GetNormalTrait("Vampiric") != null) {
-   //         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
+   //         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, targetPOI = actor });
    //     }
    // }
    // public override void Perform(ActualGoapNode goapNode) {

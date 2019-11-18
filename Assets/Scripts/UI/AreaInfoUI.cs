@@ -469,9 +469,9 @@ public class AreaInfoUI : UIMenu {
     #region For Testing
     public void ShowLocationInfo() {
         string summary = "Location Job Queue: ";
-        if (activeArea.jobQueue.jobsInQueue.Count > 0) {
-            for (int i = 0; i < activeArea.jobQueue.jobsInQueue.Count; i++) {
-                JobQueueItem jqi = activeArea.jobQueue.jobsInQueue[i];
+        if (activeArea.availableJobs.Count > 0) {
+            for (int i = 0; i < activeArea.availableJobs.Count; i++) {
+                JobQueueItem jqi = activeArea.availableJobs[i];
                 if (jqi is GoapPlanJob) {
                     GoapPlanJob gpj = jqi as GoapPlanJob;
                     summary += "\n" + gpj.name + " Targetting " + gpj.targetPOI?.name ?? "None";

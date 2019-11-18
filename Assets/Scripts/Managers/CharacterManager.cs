@@ -598,12 +598,7 @@ public class CharacterManager : MonoBehaviour {
     private void OnAfterActionStateSet(string stateName, ActualGoapNode actionNode) {
         action.actor.marker.UpdateAnimation();
 
-        IPointOfInterest target = null;
-        if (action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
-            target = (action as MakeLove).targetCharacter;
-        } else {
-            target = action.poiTarget;
-        }
+        IPointOfInterest target = action.poiTarget; ;
         List<Character> allInVisionCharacters = action.actor.marker.inVisionCharacters;
         //allInVisionCharacters.Add(action.actor);
         if (target is Character) {

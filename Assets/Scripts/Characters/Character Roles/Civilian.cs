@@ -12,7 +12,7 @@ public class Civilian : CharacterRole {
             INTERACTION_TYPE.MINE,
             INTERACTION_TYPE.CHOP_WOOD,
             INTERACTION_TYPE.SCRAP,
-            INTERACTION_TYPE.ASSAULT_CHARACTER,
+            INTERACTION_TYPE.ASSAULT,
         };
         requiredItems = new SPECIAL_TOKEN[] {
             SPECIAL_TOKEN.TOOL,

@@ -48,10 +48,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                 }
             }
             
-            if (collidedWith is GhostCollisionTrigger) {
-                //ignored same structure requirement for ghost collisions
-                GhostCollisionHandling(collidedWith as GhostCollisionTrigger);
-            } else {
+            if (!(collidedWith is GhostCollisionTrigger)) {
                 string collisionSummary = parentMarker.name + " collided with " + collidedWith.poi.name;
                 if (collidedWith.poi.gridTileLocation == null) {
                     return; //ignore, Usually happens if an item is picked up just as this character sees it.
@@ -97,24 +94,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
     }
     #endregion
 
-    private void GhostCollisionHandling(GhostCollisionTrigger collidedWith) {
-        //string ghostCollisionSummary = parentMarker.character.name + " collided with a ghost collider! " + collidedWith.poi.name;
-        //when a character collides with a ghost collision trigger
-        if (parentMarker.character.HasAwareness(collidedWith.poi)) { //it will check if it is aware of the associated poi
-            //if it is aware of the poi
-            //ghostCollisionSummary += "\n" + parentMarker.character.name + " is aware of " + collidedWith.poi.name;
-            parentMarker.character.RemoveAwareness(collidedWith.poi);
-            //ghostCollisionSummary += "\n" + parentMarker.character.name + "'s known location of " + collidedWith.poi.name + " is same as this ghost colliders position, removing it from it's awareness...";
-            if (parentMarker.character.currentActionNode != null && parentMarker.character.currentActionNode.poiTarget == collidedWith.poi) {
-                if (parentMarker.character.currentActionNode.poiTarget is TileObject && (parentMarker.character.currentActionNode.poiTarget as TileObject).removedBy == parentMarker.character) {
-                    return; //if the ghost collider is from a tile object and this character is the one responsible for removing it, then do not execute target missing
-                }
-                //trigger target missing state
-                parentMarker.character.currentActionNode.ExecuteTargetMissing();
-            }
-        }
-        //Debug.Log(ghostCollisionSummary);
-    }
+    
     public bool ChatHandling(Character targetCharacter) {
         if (targetCharacter.isDead
             || targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) //TODO: .HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER) Change to use new cannot move/cannot witness

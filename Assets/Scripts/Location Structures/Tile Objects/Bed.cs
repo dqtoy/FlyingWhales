@@ -58,7 +58,7 @@ public class Bed : TileObject {
             }
         }
     }
-    public override void OnDoActionToObject(GoapAction action) {
+    public override void OnDoActionToObject(ActualGoapNode action) {
         base.OnDoActionToObject(action);
         switch (action.goapType) {
             case INTERACTION_TYPE.SLEEP:
@@ -66,13 +66,12 @@ public class Bed : TileObject {
                 AddUser(action.actor);
                 break;
             case INTERACTION_TYPE.MAKE_LOVE:
-                MakeLove makeLove = action as MakeLove;
-                AddUser(makeLove.actor);
-                AddUser(makeLove.targetCharacter);
+                AddUser(action.actor);
+                AddUser(action.poiTarget as Character);
                 break;
         }
     }
-    public override void OnDoneActionToObject(GoapAction action) {
+    public override void OnDoneActionToObject(ActualGoapNode action) {
         base.OnDoneActionToObject(action);
         switch (action.goapType) {
             case INTERACTION_TYPE.SLEEP:
@@ -80,13 +79,12 @@ public class Bed : TileObject {
                 RemoveUser(action.actor);
                 break;
             case INTERACTION_TYPE.MAKE_LOVE:
-                MakeLove makeLove = action as MakeLove;
-                RemoveUser(makeLove.actor);
-                RemoveUser(makeLove.targetCharacter);
+                RemoveUser(action.actor);
+                RemoveUser(action.poiTarget as Character);
                 break;
         }
     }
-    public override void OnCancelActionTowardsObject(GoapAction action) {
+    public override void OnCancelActionTowardsObject(ActualGoapNode action) {
         base.OnCancelActionTowardsObject(action);
         switch (action.goapType) {
             case INTERACTION_TYPE.SLEEP:
@@ -94,9 +92,8 @@ public class Bed : TileObject {
                 RemoveUser(action.actor);
                 break;
             case INTERACTION_TYPE.MAKE_LOVE:
-                MakeLove makeLove = action as MakeLove;
-                RemoveUser(makeLove.actor);
-                RemoveUser(makeLove.targetCharacter);
+                RemoveUser(action.actor);
+                RemoveUser(action.poiTarget as Character);
                 break;
         }
     }
