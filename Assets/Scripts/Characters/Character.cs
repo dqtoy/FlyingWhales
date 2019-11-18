@@ -6306,64 +6306,94 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //StartDailyGoapPlanGeneration();
             return;
         }
-        log = GameManager.Instance.TodayLogString() + name + " is performing goap action: " + currentActionNode.goapName;
+        log = GameManager.Instance.TodayLogString() + name + " is performing goap action: " + currentActionNode.action.goapName;
         FaceTarget(currentActionNode.poiTarget);
-        if (currentActionNode.isStopped) {
-            log += "\n Action is stopped! Dropping plan...";
+        bool willStillContinueAction = true;
+        OnStartPerformGoapAction(currentActionNode, ref willStillContinueAction);
+        if (!willStillContinueAction) {
+            return;
+        }
+        if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentActionNode.action.goapType, currentActionNode.actor, currentActionNode.poiTarget, currentActionNode.otherData)
+            && currentActionNode.action.CanSatisfyAllPreconditions(currentActionNode.actor, currentActionNode.poiTarget, currentActionNode.otherData)) {
+            log += "\nAction satisfies all requirements and preconditions, proceeding to perform actual action: " + currentActionNode.action.goapName + " to " + currentActionNode.poiTarget.name + " at " + currentActionNode.poiTarget.gridTileLocation?.ToString() ?? "No Tile Location";
             PrintLogIfActive(log);
-            SetCurrentActionNode(null);
-            if (!DropPlan(currentActionNode.parentPlan)) {
-                //PlanGoapActions();
-            }
+            currentActionNode.PerformAction();
         } else {
-            bool willStillContinueAction = true;
-            OnStartPerformGoapAction(currentActionNode, ref willStillContinueAction);
-            if (!willStillContinueAction) {
-                return;
-            }
-            if (currentActionNode.IsHalted()) {
-                log += "\n Action is waiting! Not doing action...";
-                //if (currentAction.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                //    Character targetCharacter = currentAction.poiTarget as Character;
-                //    targetCharacter.AdjustIsWaitingForInteraction(-1);
-                //}
-                SetCurrentActionNode(null);
-                return;
-            }
-            if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentActionNode.goapType, currentActionNode.actor, currentActionNode.poiTarget, currentActionNode.otherData) 
-                && currentActionNode.CanSatisfyAllPreconditions()) {
-                //if (currentAction.poiTarget != this && currentAction.isStealth) {
-                //    //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
-                //    if (marker.inVisionPOIs.Contains(currentAction.poiTarget) && !marker.CanDoStealthActionToTarget(currentAction.poiTarget)) {
-                //        log += "\n - Action is stealth and character cannot do stealth action right now...";
-                //        PrintLogIfActive(log);
-                //        return;
-                //    }
-                //}
-                log += "\nAction satisfies all requirements and preconditions, proceeding to perform actual action: " + currentActionNode.goapName + " to " + currentActionNode.poiTarget.name + " at " + currentActionNode.poiTarget.gridTileLocation?.ToString() ?? "No Tile Location";
+            log += "\nAction did not meet all requirements and preconditions. Will try to recalculate plan...";
+            //if (currentAction.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            //    Character targetCharacter = currentAction.poiTarget as Character;
+            //    targetCharacter.AdjustIsWaitingForInteraction(-1);
+            //}
+            GoapPlan plan = currentActionNode.parentPlan;
+            SetCurrentActionNode(null);
+            if (plan.doNotRecalculate) {
+                log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
                 PrintLogIfActive(log);
-                currentActionNode.Perform();
-            } else {
-                log += "\nAction did not meet all requirements and preconditions. Will try to recalculate plan...";
-                //if (currentAction.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                //    Character targetCharacter = currentAction.poiTarget as Character;
-                //    targetCharacter.AdjustIsWaitingForInteraction(-1);
-                //}
-                GoapPlan plan = currentActionNode.parentPlan;
-                SetCurrentActionNode(null);
-                if (plan.doNotRecalculate) {
-                    log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
-                    PrintLogIfActive(log);
-                    if (!DropPlan(plan)) {
-                        //PlanGoapActions();
-                    }
-                } else {
-                    PrintLogIfActive(log);
-                    planner.RecalculateJob(plan);
-                    //IdlePlans();
+                if (!DropPlan(plan)) {
+                    //PlanGoapActions();
                 }
+            } else {
+                PrintLogIfActive(log);
+                planner.RecalculateJob(plan);
+                //IdlePlans();
             }
         }
+        //if (currentActionNode.isStopped) {
+        //    log += "\n Action is stopped! Dropping plan...";
+        //    PrintLogIfActive(log);
+        //    SetCurrentActionNode(null);
+        //    if (!DropPlan(currentActionNode.parentPlan)) {
+        //        //PlanGoapActions();
+        //    }
+        //} else {
+        //    bool willStillContinueAction = true;
+        //    OnStartPerformGoapAction(currentActionNode, ref willStillContinueAction);
+        //    if (!willStillContinueAction) {
+        //        return;
+        //    }
+        //    if (currentActionNode.IsHalted()) {
+        //        log += "\n Action is waiting! Not doing action...";
+        //        //if (currentAction.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+        //        //    Character targetCharacter = currentAction.poiTarget as Character;
+        //        //    targetCharacter.AdjustIsWaitingForInteraction(-1);
+        //        //}
+        //        SetCurrentActionNode(null);
+        //        return;
+        //    }
+        //    if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentActionNode.goapType, currentActionNode.actor, currentActionNode.poiTarget, currentActionNode.otherData) 
+        //        && currentActionNode.CanSatisfyAllPreconditions()) {
+        //        //if (currentAction.poiTarget != this && currentAction.isStealth) {
+        //        //    //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
+        //        //    if (marker.inVisionPOIs.Contains(currentAction.poiTarget) && !marker.CanDoStealthActionToTarget(currentAction.poiTarget)) {
+        //        //        log += "\n - Action is stealth and character cannot do stealth action right now...";
+        //        //        PrintLogIfActive(log);
+        //        //        return;
+        //        //    }
+        //        //}
+        //        log += "\nAction satisfies all requirements and preconditions, proceeding to perform actual action: " + currentActionNode.goapName + " to " + currentActionNode.poiTarget.name + " at " + currentActionNode.poiTarget.gridTileLocation?.ToString() ?? "No Tile Location";
+        //        PrintLogIfActive(log);
+        //        currentActionNode.Perform();
+        //    } else {
+        //        log += "\nAction did not meet all requirements and preconditions. Will try to recalculate plan...";
+        //        //if (currentAction.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+        //        //    Character targetCharacter = currentAction.poiTarget as Character;
+        //        //    targetCharacter.AdjustIsWaitingForInteraction(-1);
+        //        //}
+        //        GoapPlan plan = currentActionNode.parentPlan;
+        //        SetCurrentActionNode(null);
+        //        if (plan.doNotRecalculate) {
+        //            log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
+        //            PrintLogIfActive(log);
+        //            if (!DropPlan(plan)) {
+        //                //PlanGoapActions();
+        //            }
+        //        } else {
+        //            PrintLogIfActive(log);
+        //            planner.RecalculateJob(plan);
+        //            //IdlePlans();
+        //        }
+        //    }
+        //}
     }
     public void GoapActionResult(string result, ActualGoapNode actionNode) {
         string log = GameManager.Instance.TodayLogString() + name + " is done performing goap action: " + actionNode.action.goapName;
@@ -6775,11 +6805,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //        }
     //    }
     //}
-    public void OnStartPerformGoapAction(GoapAction action, ref bool willStillContinueAction) {
+    public void OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
         bool stillContinueCurrentAction = true;
         for (int i = 0; i < traitContainer.allTraits.Count; i++) {
             Trait trait = traitContainer.allTraits[i];
-            if (trait.OnStartPerformGoapAction(action, ref stillContinueCurrentAction)) {
+            if (trait.OnStartPerformGoapAction(node, ref stillContinueCurrentAction)) {
                 willStillContinueAction = stillContinueCurrentAction;
                 break;
             } else {

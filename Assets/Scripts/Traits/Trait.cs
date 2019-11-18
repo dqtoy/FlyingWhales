@@ -90,7 +90,7 @@ public class Trait {
     public virtual void OnOwnerInitiallyPlaced(Character owner) { }
     public virtual bool IsTangible() { return false; } //is this trait tangible? Only used for traits on tiles, so that the tile's tile object will be activated when it has a tangible trait
     public virtual bool PerTickOwnerMovement() { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
-    public virtual bool OnStartPerformGoapAction(GoapAction action, ref bool willStillContinueAction) { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
+    public virtual bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
     //Returns the string of the log key that's supposed to be logged
     public virtual string TriggerFlaw(Character character) {
         int manaCost = GetTriggerFlawManaCost(character); ;
