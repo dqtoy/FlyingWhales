@@ -1135,9 +1135,9 @@ public class Area : IJobOwner {
         return false;
     }
     public bool HasJobWithOtherData(JOB_TYPE jobType, object otherData) {
-        for (int i = 0; i < jobsInQueue.Count; i++) {
-            if (jobsInQueue[i].jobType == jobType && jobsInQueue[i] is GoapPlanJob) {
-                GoapPlanJob job = jobsInQueue[i] as GoapPlanJob;
+        for (int i = 0; i < availableJobs.Count; i++) {
+            if (availableJobs[i].jobType == jobType && availableJobs[i] is GoapPlanJob) {
+                GoapPlanJob job = availableJobs[i] as GoapPlanJob;
                 if (job.allOtherData != null) {
                     for (int j = 0; j < job.allOtherData.Count; j++) {
                         object data = job.allOtherData[j];
@@ -1160,6 +1160,15 @@ public class Area : IJobOwner {
             }
         }
         return null;
+    }
+    public bool AddFirstUnassignedJobToCharacterJob(Character character) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if(job.assignedCharacter == null && character.jobQueue.AddJobInQueue(job)) {
+                return true;
+            }
+        }
+        return false;
     }
     private void HourlyJobActions() {
         CreatePatrolJobs();
@@ -1234,11 +1243,11 @@ public class Area : IJobOwner {
 
     #region IJobOwner
     public void OnJobAddedToCharacterJobQueue(JobQueueItem job, Character character) {
-        RemoveFromAvailableJobs(job);
+        //RemoveFromAvailableJobs(job);
     }
     public void OnJobRemovedFromCharacterJobQueue(JobQueueItem job, Character character) {
-        if (job.IsJobStillApplicable()) {
-            AddToAvailableJobs(job);
+        if (!job.IsJobStillApplicable()) {
+            RemoveFromAvailableJobs(job);
         }
     }
     public bool ForceCancelJob(JobQueueItem job) {

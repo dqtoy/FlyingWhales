@@ -244,6 +244,7 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.PERFORM_HOLY_INCANTATION:
             case JOB_TYPE.PRAY_GODDESS_STATUE:
             case JOB_TYPE.REACT_TO_SCREAM:
+            case JOB_TYPE.CHAT:
                 priority = 120;
                 break;
             case JOB_TYPE.BREAK_UP:

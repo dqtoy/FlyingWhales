@@ -60,7 +60,7 @@ namespace Traits {
             //    _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
             //}
             //_sourceCharacter.CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE.RESTRAIN, removedBy); //so that the character that restrained him will not cancel his job.
-            _sourceCharacter.CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE.REMOVE_TRAIT, name, removedBy); //so that the character that cured him will not cancel his job.
+            _sourceCharacter.ForceCancelAllJobsTargettingThisCharacterExcept(JOB_TYPE.REMOVE_TRAIT, name, removedBy); //so that the character that cured him will not cancel his job.
             _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
             _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
             base.OnRemoveTrait(sourceCharacter, removedBy);

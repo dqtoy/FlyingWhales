@@ -739,13 +739,13 @@ public class Faction {
         if (!history.Contains(log)) {
             history.Add(log);
             if (this.history.Count > 60) {
-                if (this.history[0].goapAction != null) {
-                    this.history[0].goapAction.AdjustReferenceCount(-1);
+                if (this.history[0].node != null) {
+                    this.history[0].node.AdjustReferenceCount(-1);
                 }
                 this.history.RemoveAt(0);
             }
-            if (log.goapAction != null) {
-                log.goapAction.AdjustReferenceCount(1);
+            if (log.node != null) {
+                log.node.AdjustReferenceCount(1);
             }
             Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
         }

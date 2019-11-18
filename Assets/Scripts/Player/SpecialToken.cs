@@ -12,7 +12,7 @@ public class SpecialToken : IPointOfInterest {
     public Faction owner;
     public Character characterOwner { get; private set; }
     public LocationStructure structureLocation { get; private set; }
-    public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
+    public List<INTERACTION_TYPE> advertisedActions { get; private set; }
     public int supplyValue { get { return TokenManager.Instance.itemData[specialTokenType].supplyValue; } }
     public int craftCost { get { return TokenManager.Instance.itemData[specialTokenType].craftCost; } }
     public int purchaseCost { get { return TokenManager.Instance.itemData[specialTokenType].purchaseCost; } }
@@ -75,7 +75,7 @@ public class SpecialToken : IPointOfInterest {
         this.specialTokenType = specialTokenType;
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.specialTokenType.ToString());
         weight = appearanceRate;
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_UP, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP, INTERACTION_TYPE.ITEM_DESTROY, INTERACTION_TYPE.DROP_ITEM};
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_UP, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP, INTERACTION_TYPE.ITEM_DESTROY, INTERACTION_TYPE.DROP_ITEM};
         _traits = new List<Trait>();
         allJobsTargettingThis = new List<JobQueueItem>();
         //targettedByAction = new List<GoapAction>();
@@ -157,10 +157,10 @@ public class SpecialToken : IPointOfInterest {
 
     #region Point Of Interest
     public List<GoapAction> AdvertiseActionsToActor(Character actor, Dictionary<INTERACTION_TYPE, object[]> otherData) {
-        if (poiGoapActions != null && poiGoapActions.Count > 0 && gridTileLocation != null) { //only advertise items that are not being carried
+        if (advertisedActions != null && advertisedActions.Count > 0 && gridTileLocation != null) { //only advertise items that are not being carried
             List<GoapAction> usableActions = new List<GoapAction>();
-            for (int i = 0; i < poiGoapActions.Count; i++) {
-                INTERACTION_TYPE currType = poiGoapActions[i];
+            for (int i = 0; i < advertisedActions.Count; i++) {
+                INTERACTION_TYPE currType = advertisedActions[i];
                 if (RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
                     object[] data = null;
                     if (otherData != null) {
@@ -199,10 +199,10 @@ public class SpecialToken : IPointOfInterest {
         isDisabledByPlayer = state;
     }
     public void AddAdvertisedAction(INTERACTION_TYPE type) {
-        poiGoapActions.Add(type);
+        advertisedActions.Add(type);
     }
     public void RemoveAdvertisedAction(INTERACTION_TYPE type) {
-        poiGoapActions.Add(type);
+        advertisedActions.Add(type);
     }
     public void AdjustHP(int amount, bool triggerDeath = false, object source = null) {
         if (currentHP == 0 && amount < 0) {

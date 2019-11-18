@@ -9,11 +9,11 @@ public class EdiblePlant : TileObject {
 
     public EdiblePlant(LocationStructure location) {
         SetStructureLocation(location);
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(TILE_OBJECT_TYPE.EDIBLE_PLANT);
     }
     public EdiblePlant(SaveDataTileObject data) {
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(data);
     }
 

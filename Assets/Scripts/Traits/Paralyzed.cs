@@ -111,7 +111,7 @@ public class Paralyzed : Trait {
             return;
         }
         if(character.allGoapPlans.Count > 0) {
-            character.PerformGoapPlans();
+            character.PerformTopPriorityJob();
         } else {
             if (!PlanTirednessRecovery()) {
                 PlanHappinessRecovery();

@@ -52,7 +52,7 @@ public class SeducerSummon : Summon {
         }
         return null;
     }
-    protected override void IdlePlans() {
+    protected override void PerStartTickActionPlanning() {
         if (_hasAlreadyAskedForPlan) {
             return;
         }
@@ -81,7 +81,7 @@ public class SeducerSummon : Summon {
         }
         
     }
-    public override void OnActionStateSet(GoapAction action, GoapActionState state) {
+    public override void OnAfterActionStateSet(string stateName, ActualGoapNode node) {
         if (action.actor == this && action.goapType == INTERACTION_TYPE.INVITE) {
             doneCharacters.Add(action.poiTarget as Character);
         } else if (action.actor == this && action.goapType == INTERACTION_TYPE.MAKE_LOVE) {

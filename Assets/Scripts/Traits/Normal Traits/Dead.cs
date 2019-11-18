@@ -27,7 +27,7 @@ namespace Traits {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is ITraitable) {
                 Character owner = removedFrom as Character;
-                owner.CancelAllJobsTargettingThisCharacter(JOB_TYPE.BURY);
+                owner.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.BURY);
             }
         }
         public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {

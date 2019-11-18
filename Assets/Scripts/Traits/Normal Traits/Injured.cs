@@ -54,7 +54,7 @@ namespace Traits {
             //if (_removeTraitJob != null) {
             //    _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
             //}
-            _sourceCharacter.CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE.REMOVE_TRAIT, name, removedBy);
+            _sourceCharacter.ForceCancelAllJobsTargettingThisCharacterExcept(JOB_TYPE.REMOVE_TRAIT, name, removedBy);
             _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
             _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
             base.OnRemoveTrait(sourceCharacter, removedBy);

@@ -79,7 +79,7 @@ namespace Traits {
             owner.AdjustIsWaitingForInteraction(-1);
 
             owner.AddPlan(plan, true, false);
-            owner.PerformGoapPlans();
+            owner.PerformTopPriorityJob();
         }
         #endregion
 

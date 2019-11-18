@@ -81,7 +81,7 @@ public class Minion {
         interventionAbilitiesToResearch.Remove(abilityType);
     }
     public void SetPlayerCharacterItem(PlayerCharacterItem item) {
-        character.SetPlayerCharacterItem(item);
+        //character.SetPlayerCharacterItem(item);
     }
     public void AdjustExp(int amount) {
         exp += amount;
@@ -124,7 +124,7 @@ public class Minion {
             //else if (character.stateComponent.stateToDo != null) {
             //    character.stateComponent.SetStateToDo(null);
             //}
-            character.CancelAllJobsTargettingThisCharacter("target is already dead", false);
+            character.ForceCancelAllJobsTargettingThisCharacter(false, "target is already dead");
             Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, character, "target is already dead");
             if (character.currentActionNode != null && !character.currentActionNode.cannotCancelAction) {
                 character.currentActionNode.StopAction();
@@ -160,7 +160,7 @@ public class Minion {
             character.traitContainer.RemoveAllNonPersistentTraits(character);
 
             character.marker?.OnDeath(deathTile, wasOutsideSettlement);
-            character.SetNumWaitingForGoapThread(0); //for raise dead
+            //character.SetNumWaitingForGoapThread(0); //for raise dead
             Dead dead = new Dead();
             dead.AddCharacterResponsibleForTrait(responsibleCharacter);
             character.traitContainer.AddTrait(character, dead, gainedFromDoing: deathFromAction);

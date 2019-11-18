@@ -64,7 +64,7 @@ namespace Traits {
                                     bool canBeTransfered = false;
                                     Character assignedCharacter = currentJob.currentOwner as Character;
                                     if (assignedCharacter != null && assignedCharacter.currentActionNode.action != null
-                                        && assignedCharacter.currentJob != null && assignedCharacter.currentJob == currentJob) {
+                                        && assignedCharacter.currentJobNode != null && assignedCharacter.currentJobNode == currentJob) {
                                         if (assignedCharacter != characterThatWillDoJob) {
                                             canBeTransfered = !assignedCharacter.marker.inVisionPOIs.Contains(assignedCharacter.currentActionNode.poiTarget);
                                         }
@@ -112,7 +112,7 @@ namespace Traits {
                 return;
             }
             if (owner.allGoapPlans.Count > 0) {
-                owner.PerformGoapPlans();
+                owner.PerformTopPriorityJob();
             } else {
                 PlanTirednessRecovery();
             }

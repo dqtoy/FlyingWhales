@@ -7,11 +7,11 @@ public class Guitar : TileObject {
 
     public Guitar(LocationStructure location) {
         SetStructureLocation(location);
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PLAY_GUITAR, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PLAY_GUITAR, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
         Initialize(TILE_OBJECT_TYPE.GUITAR);
     }
     public Guitar(SaveDataTileObject data) {
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PLAY_GUITAR, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PLAY_GUITAR, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
         Initialize(data);
     }
     public override string ToString() {

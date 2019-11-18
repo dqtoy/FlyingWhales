@@ -444,9 +444,9 @@ public class InteriorMapManager : MonoBehaviour {
                 summary += "\n\tFaction Owner: " + (poi as SpecialToken).factionOwner?.name ?? "None";
             }
             summary += "\n\tAdvertised Actions: ";
-            if (poi.poiGoapActions.Count > 0) {
-                for (int i = 0; i < poi.poiGoapActions.Count; i++) {
-                    summary += "|" + poi.poiGoapActions[i].ToString() + "|";
+            if (poi.advertisedActions.Count > 0) {
+                for (int i = 0; i < poi.advertisedActions.Count; i++) {
+                    summary += "|" + poi.advertisedActions[i].ToString() + "|";
                 }
             } else {
                 summary += "None";

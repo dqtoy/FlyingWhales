@@ -107,6 +107,7 @@ public class ActualGoapNode {
         this.otherData = otherData;
         this.cost = cost;
         actionStatus = ACTION_STATUS.NONE;
+        currentStateName = string.Empty;
         Messenger.AddListener<string, ActualGoapNode>(Signals.ACTION_STATE_SET, OnActionStateSet);
     }
 
@@ -257,47 +258,7 @@ public class ActualGoapNode {
         Messenger.Broadcast(Signals.CHARACTER_FINISHED_ACTION, actor, this, result);
         //parentPlan?.OnActionInPlanFinished(actor, this, result);
     }
-
-    //Only stop an action node if it is the current action node
-    public void StopActionNode(bool shouldDoAfterEffect = false, string reason = "") {
-        if(actor.currentActionNode != this) {
-            return;
-        }
-        if(reason != "") {
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "current_action_abandoned_reason");
-            log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(null, action.goapName, LOG_IDENTIFIER.STRING_1);
-            log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
-            actor.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
-        }
-        //if (actor.currentAction != null && actor.currentAction.parentPlan != null && actor.currentAction.parentPlan.job != null && actor.currentAction == this) {
-        //    if (reason != "") {
-        //        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "current_action_abandoned_reason");
-        //        log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //        log.AddToFillers(null, actor.currentAction.goapName, LOG_IDENTIFIER.STRING_1);
-        //        log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
-        //        actor.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
-        //    }
-        //}
-        actor.SetCurrentActionNode(null);
-        if (actor.currentParty.icon.isTravelling) {
-            if (actor.currentParty.icon.travelLine == null) {
-                //This means that the actor currently travelling to another tile in tilemap
-                actor.marker.StopMovement();
-            } else {
-                //This means that the actor is currently travelling to another area
-                actor.currentParty.icon.SetOnArriveAction(() => actor.OnArriveAtAreaStopMovement());
-            }
-        }
-        //if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-        //    Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
-        //    Messenger.RemoveListener<TileObject, Character>(Signals.TILE_OBJECT_DISABLED, OnTileObjectDisabled);
-        //}
-
-        //SetIsStopped(true);
-
-        //JobQueueItem job = parentPlan.job;
-
+    public void StopActionNode(bool shouldDoAfterEffect) {
         if (actionStatus == ACTION_STATUS.PERFORMING) {
             OnCancelActionTowardsTarget();
             //ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
@@ -320,15 +281,6 @@ public class ActualGoapNode {
             action.OnStopWhileStarted(actor, poiTarget, otherData);
             actor.DropPlan(parentPlan, forceProcessPlanJob: true); //TODO: Try to push back instead of dropping plan immediately, only drop plan if push back fails (fail: if no other plan replaces this plan)
         }
-        //Remove job in queue if job is personal job and removeJobInQueue value is true
-        //if (removeJobInQueue && job != null && !job.jobQueueParent.isAreaOrQuestJobQueue) {
-        //    job.jobQueueParent.RemoveJobInQueue(job);
-        //}
-        if (UIManager.Instance.characterInfoUI.isShowing) {
-            UIManager.Instance.characterInfoUI.UpdateBasicInfo();
-        }
-        //Messenger.Broadcast<GoapAction>(Signals.STOP_ACTION, this);
-        actor.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Stopped action of " + actor.name + " which is " + action.goapName + " targetting " + poiTarget.name + "!");
     }
     #endregion
 

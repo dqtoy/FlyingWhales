@@ -8,10 +8,10 @@ public class GenericTileObject : TileObject {
     public bool hasBeenInitialized { get; private set; }
 
     public GenericTileObject(LocationStructure location) {
-        poiGoapActions = new List<INTERACTION_TYPE>();
+        advertisedActions = new List<INTERACTION_TYPE>();
     }
     public GenericTileObject(SaveDataTileObject data) {
-        poiGoapActions = new List<INTERACTION_TYPE>();
+        advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(data);
     }
     protected override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom) {

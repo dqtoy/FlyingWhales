@@ -115,55 +115,55 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         }
         //Debug.Log(ghostCollisionSummary);
     }
-    public bool ChatHandling(Character targetCharacter) {
-        if (targetCharacter.isDead
-            || targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) //TODO: .HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER) Change to use new cannot move/cannot witness
-            || parentMarker.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
-            || (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
-            || (parentMarker.character.stateComponent.currentState != null && parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
-            || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
-            || parentMarker.character.role.roleType == CHARACTER_ROLE.BEAST
-            || targetCharacter.faction == PlayerManager.Instance.player.playerFaction
-            || parentMarker.character.faction == PlayerManager.Instance.player.playerFaction
-            || targetCharacter.characterClass.className == "Zombie"
-            || parentMarker.character.characterClass.className == "Zombie") {
-            return false;
-        }
-        if(!parentMarker.character.IsHostileWith(targetCharacter)) {
-            int roll = UnityEngine.Random.Range(0, 100);
-            int chance = 8;
+    //public bool ChatHandling(Character targetCharacter) {
+    //    if (targetCharacter.isDead
+    //        || targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) //TODO: .HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER) Change to use new cannot move/cannot witness
+    //        || parentMarker.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
+    //        || (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
+    //        || (parentMarker.character.stateComponent.currentState != null && parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
+    //        || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
+    //        || parentMarker.character.role.roleType == CHARACTER_ROLE.BEAST
+    //        || targetCharacter.faction == PlayerManager.Instance.player.playerFaction
+    //        || parentMarker.character.faction == PlayerManager.Instance.player.playerFaction
+    //        || targetCharacter.characterClass.className == "Zombie"
+    //        || parentMarker.character.characterClass.className == "Zombie") {
+    //        return false;
+    //    }
+    //    if(!parentMarker.character.IsHostileWith(targetCharacter)) {
+    //        int roll = UnityEngine.Random.Range(0, 100);
+    //        int chance = 8;
 
-            if (roll < chance) {
-                if (!parentMarker.character.isChatting && !targetCharacter.isChatting) {
-                    parentMarker.character.ChatCharacter(targetCharacter);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public bool ForceChatHandling(Character targetCharacter) {
-        if (targetCharacter.isDead
-            || targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)//TODO: .HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER) Change to use new cannot move/cannot witness
-            || parentMarker.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
-            || (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
-            || (parentMarker.character.stateComponent.currentState != null && parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
-            || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
-            || parentMarker.character.role.roleType == CHARACTER_ROLE.BEAST
-            || targetCharacter.faction == PlayerManager.Instance.player.playerFaction
-            || parentMarker.character.faction == PlayerManager.Instance.player.playerFaction
-            || targetCharacter.characterClass.className == "Zombie"
-            || parentMarker.character.characterClass.className == "Zombie") {
-            return false;
-        }
-        if (!parentMarker.character.IsHostileWith(targetCharacter)) {
-            if (!parentMarker.character.isChatting && !targetCharacter.isChatting) {
-                parentMarker.character.ChatCharacter(targetCharacter);
-                return true;
-            }
-        }
-        return false;
-    }
+    //        if (roll < chance) {
+    //            if (!parentMarker.character.isChatting && !targetCharacter.isChatting) {
+    //                parentMarker.character.ChatCharacter(targetCharacter);
+    //                return true;
+    //            }
+    //        }
+    //    }
+    //    return false;
+    //}
+    //public bool ForceChatHandling(Character targetCharacter) {
+    //    if (targetCharacter.isDead
+    //        || targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)//TODO: .HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER) Change to use new cannot move/cannot witness
+    //        || parentMarker.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
+    //        || (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
+    //        || (parentMarker.character.stateComponent.currentState != null && parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
+    //        || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
+    //        || parentMarker.character.role.roleType == CHARACTER_ROLE.BEAST
+    //        || targetCharacter.faction == PlayerManager.Instance.player.playerFaction
+    //        || parentMarker.character.faction == PlayerManager.Instance.player.playerFaction
+    //        || targetCharacter.characterClass.className == "Zombie"
+    //        || parentMarker.character.characterClass.className == "Zombie") {
+    //        return false;
+    //    }
+    //    if (!parentMarker.character.IsHostileWith(targetCharacter)) {
+    //        if (!parentMarker.character.isChatting && !targetCharacter.isChatting) {
+    //            parentMarker.character.ChatCharacter(targetCharacter);
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
     //private void NormalCollisionHandling(IPointOfInterest poi) {
     //    if(poi is Character) {
     //        Character targetCharacter = poi as Character;

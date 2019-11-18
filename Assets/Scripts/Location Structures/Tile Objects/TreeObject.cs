@@ -10,12 +10,12 @@ public class TreeObject : TileObject {
 
     public TreeObject(LocationStructure location) {
         SetStructureLocation(location);
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CHOP_WOOD, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CHOP_WOOD, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
         Initialize(TILE_OBJECT_TYPE.TREE_OBJECT);
         SetYield(Random.Range(15, 36));
     }
     public TreeObject(SaveDataTileObject data) {
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CHOP_WOOD, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CHOP_WOOD, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
         Initialize(data);
     }
 

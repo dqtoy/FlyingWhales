@@ -10,7 +10,7 @@ public interface IPointOfInterest : ITraitable {
     POI_STATE state { get; }
     Area specificLocation { get; }
     LocationGridTile gridTileLocation { get; }
-    List<INTERACTION_TYPE> poiGoapActions { get; }
+    List<INTERACTION_TYPE> advertisedActions { get; }
     List<JobQueueItem> allJobsTargettingThis { get; }
     //List<GoapAction> targettedByAction { get; }
     //List<Trait> normalTraits { get; }

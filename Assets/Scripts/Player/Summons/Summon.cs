@@ -57,7 +57,7 @@ public class Summon : Character, IWorldObject {
         //gameDate.AddTicks(1);
         //SchedulingManager.Instance.AddEntry(gameDate, () => PlanGoapActions());
     }
-    public override void OnActionStateSet(GoapAction action, GoapActionState state) { } //overriddn OnActionStateSet so that summons cannot witness other events.
+    public override void OnAfterActionStateSet(string stateName, ActualGoapNode node) { } //overriddn OnActionStateSet so that summons cannot witness other events.
     protected override void OnSuccessInvadeArea(Area area) {
         base.OnSuccessInvadeArea(area);
         //clean up
@@ -160,28 +160,41 @@ public class Summon : Character, IWorldObject {
             }
         }
     }
-    protected override void PerTickGoapPlanGeneration() {
-        if (isDead || minion != null) {
-            return;
-        }
+    protected override void OnTickStarted() {
+        //What happens every start of tick
 
         //Out of combat hp recovery
         if (!isDead && (stateComponent.currentState == null || stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)) {
             HPRecovery(0.0025f);
         }
 
-        //This is to ensure that this character will not be idle forever
-        //If at the start of the tick, the character is not currently doing any action, and is not waiting for any new plans, it means that the character will no longer perform any actions
-        //so start doing actions again
-        SetHasAlreadyAskedForPlan(false);
-        if (CanPlanGoap()) {
-            PlanGoapActions();
+        if (!ownParty.icon.isTravelling) {
+            GoToWorkArea();
         }
+
+        //StartTickGoapPlanGeneration();
+
+        //if (isDead || minion != null) {
+        //    return;
+        //}
+
+        ////Out of combat hp recovery
+        //if (stateComponent.currentState == null || stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT) {
+        //    HPRecovery(0.0025f);
+        //}
+
+        ////This is to ensure that this character will not be idle forever
+        ////If at the start of the tick, the character is not currently doing any action, and is not waiting for any new plans, it means that the character will no longer perform any actions
+        ////so start doing actions again
+        //SetHasAlreadyAskedForPlan(false);
+        //if (CanPlanGoap()) {
+        //    PerStartTickActionPlanning();
+        //}
     }
-    protected override void IdlePlans() {
-        //base.IdlePlans();
-        GoToWorkArea();
-    }
+    //protected override void PerStartTickActionPlanning() {
+    //    //base.IdlePlans();
+    //    GoToWorkArea();
+    //}
     #endregion
 
     #region Virtuals

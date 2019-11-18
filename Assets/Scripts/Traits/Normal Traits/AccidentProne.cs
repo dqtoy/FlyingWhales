@@ -114,7 +114,7 @@ namespace Traits {
             owner.AdjustIsWaitingForInteraction(-1);
 
             owner.AddPlan(plan, true, false);
-            owner.PerformGoapPlans();
+            owner.PerformTopPriorityJob();
         }
 
         private void DoAccident(GoapAction action) {
@@ -146,7 +146,7 @@ namespace Traits {
             owner.AdjustIsWaitingForInteraction(-1);
 
             owner.AddPlan(plan, true, false);
-            owner.PerformGoapPlans();
+            owner.PerformTopPriorityJob();
         }
 
         private void ResumePausedState(string result, GoapAction action) {

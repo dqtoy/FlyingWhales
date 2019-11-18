@@ -33,12 +33,12 @@ public class Log {
     public string logText { get; private set; }
 
     //Memory data
-    private GoapAction _goapAction;
-    public GoapAction goapAction {
-        get { return GetGoapActionAssociatedWithThisLog(); }
+    private ActualGoapNode _node;
+    public ActualGoapNode node {
+        get { return GetNodeAssociatedWithThisLog(); }
     }
 
-    public Log(GameDate date, string category, string file, string key, GoapAction goapAction = null) {
+    public Log(GameDate date, string category, string file, string key, ActualGoapNode node = null) {
         this.id = Utilities.SetID<Log>(this);
         this.month = (MONTH)date.month;
         this.day = date.day;
@@ -47,7 +47,7 @@ public class Log {
         this.category = category;
         this.file = file;
         this.key = key;
-        this._goapAction = goapAction;
+        this._node = node;
         this.fillers = new List<LogFiller>();
         //this.lockFillers = false;
         logText = string.Empty;
@@ -61,7 +61,7 @@ public class Log {
         this.year = date.year;
         this.tick = date.tick;
         this.message = message;
-        this._goapAction = goapAction;
+        this._node = goapAction;
         this.fillers = new List<LogFiller>();
         //this.lockFillers = false;
         logText = string.Empty;
@@ -89,7 +89,7 @@ public class Log {
         }
 
         //No goap action when loaded because we cannot save goap action
-        _goapAction = null;
+        _node = null;
 }
 
     internal void AddToFillers(object obj, string value, LOG_IDENTIFIER identifier, bool replaceExisting = true){
@@ -181,13 +181,13 @@ public class Log {
         }
         return false;
     }
-    private GoapAction GetGoapActionAssociatedWithThisLog() {
-        if(_goapAction != null) {
-            if(_goapAction.goapType == INTERACTION_TYPE.SHARE_INFORMATION) {
-                //return (_goapAction as ShareInformation).eventToBeShared;
-            }
-        }
-        return _goapAction;
+    private ActualGoapNode GetNodeAssociatedWithThisLog() {
+        //if(_node != null) {
+        //    if(_node.goapType == INTERACTION_TYPE.SHARE_INFORMATION) {
+        //        //return (_goapAction as ShareInformation).eventToBeShared;
+        //    }
+        //}
+        return _node;
     }
 
     #region Utilities

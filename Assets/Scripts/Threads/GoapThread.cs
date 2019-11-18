@@ -11,7 +11,7 @@ public class GoapThread : Multithread {
     public IPointOfInterest target { get; private set; }
     //public bool isPriority { get; private set; }
     public bool isPersonalPlan { get; private set; }
-    public GOAP_CATEGORY category { get; private set; }
+    //public GOAP_CATEGORY category { get; private set; }
     //public List<IPointOfInterest> characterTargetsAwareness { get; private set; }
     public GoapPlanJob job { get; private set; }
     //public bool allowDeadTargets { get; private set; }
@@ -23,7 +23,7 @@ public class GoapThread : Multithread {
     //For recalculation
     public GoapPlan recalculationPlan;
 
-    public GoapThread(Character actor, IPointOfInterest target, GoapEffect goalEffect, GOAP_CATEGORY category, bool isPersonalPlan, GoapPlanJob job) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
+    public GoapThread(Character actor, IPointOfInterest target, GoapEffect goalEffect, bool isPersonalPlan, GoapPlanJob job) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
         this.recalculationPlan = null;
         this.actor = actor;
@@ -34,7 +34,7 @@ public class GoapThread : Multithread {
         //this.actorAllowedActions = actorAllowedActions;
         //this.usableActions = usableActions;
         this.isPersonalPlan = isPersonalPlan;
-        this.category = category;
+        //this.category = category;
         this.job = job;
         //this.allowDeadTargets = allowDeadTargets;
     }
@@ -55,7 +55,7 @@ public class GoapThread : Multithread {
     //    //this.allowDeadTargets = allowDeadTargets;
     //    this.otherData = otherData;
     //}
-    public GoapThread(Character actor, IPointOfInterest target, GoapAction goalAction, GOAP_CATEGORY category
+    public GoapThread(Character actor, IPointOfInterest target, GoapAction goalAction
         , bool isPersonalPlan, GoapPlanJob job) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
         this.recalculationPlan = null;
@@ -67,7 +67,7 @@ public class GoapThread : Multithread {
         //this.actorAllowedActions = actorAllowedActions;
         //this.usableActions = usableActions;
         this.isPersonalPlan = isPersonalPlan;
-        this.category = category;
+        //this.category = category;
         this.job = job;
         //this.allowDeadTargets = allowDeadTargets;
     }
@@ -87,7 +87,7 @@ public class GoapThread : Multithread {
     //    //this.allowDeadTargets = allowDeadTargets;
     //    this.otherData = otherData;
     //}
-    public GoapThread(Character actor, INTERACTION_TYPE goalType, IPointOfInterest target, GOAP_CATEGORY category
+    public GoapThread(Character actor, INTERACTION_TYPE goalType, IPointOfInterest target
         , bool isPersonalPlan, GoapPlanJob job) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
         this.recalculationPlan = null;
@@ -97,7 +97,7 @@ public class GoapThread : Multithread {
         //this.isPriority = isPriority;
         //this.characterTargetsAwareness = characterTargetsAwareness;
         this.isPersonalPlan = isPersonalPlan;
-        this.category = category;
+        //this.category = category;
         this.job = job;
         //this.allowDeadTargets = allowDeadTargets;
         //this.otherData = otherData;
@@ -146,13 +146,20 @@ public class GoapThread : Multithread {
         GoapPlan plan = null;
         if (goalType != INTERACTION_TYPE.NONE) {
             //provided goal type
-            plan = actor.planner.PlanActions(target, InteractionManager.Instance.goapActionData[goalType], category, isPersonalPlan, ref planLog, job);
+            GoapAction action = InteractionManager.Instance.goapActionData[goalType];
+            int cost = 0;
+            if (target.CanAdvertiseActionsToActor(actor, action, job.otherData, ref cost)) {
+                plan = actor.planner.PlanActions(target, action, isPersonalPlan, ref planLog, job);
+            }
         } else if (goalAction != null) {
             //provided goal action
-            plan = actor.planner.PlanActions(target, goalAction, category, isPersonalPlan, ref planLog, job);
+            int cost = 0;
+            if (target.CanAdvertiseActionsToActor(actor, goalAction, job.otherData, ref cost)) {
+                plan = actor.planner.PlanActions(target, goalAction, isPersonalPlan, ref planLog, job);
+            }
         } else {
             //default
-            plan = actor.planner.PlanActions(target, goalEffect, category, isPersonalPlan, ref planLog, job);
+            plan = actor.planner.PlanActions(target, goalEffect, isPersonalPlan, ref planLog, job);
         }
         if(plan != null) {
             log += "\nGENERATED PLAN: ";

@@ -22,9 +22,9 @@ public class StrollState : CharacterState {
         if (!isDone && !isPaused) {
             if (_planDuration >= 4) {
                 _planDuration = 0;
-                if (!stateComponent.character.PlanFullnessRecoveryActions(true)) {
-                    if (!stateComponent.character.PlanTirednessRecoveryActions(true)) {
-                        stateComponent.character.PlanHappinessRecoveryActions(true);
+                if (!stateComponent.character.PlanFullnessRecoveryActions()) {
+                    if (!stateComponent.character.PlanTirednessRecoveryActions()) {
+                        stateComponent.character.PlanHappinessRecoveryActions();
                     }
                 }
             } else {

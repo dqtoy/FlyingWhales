@@ -42,7 +42,7 @@ public class POITestingUI : MonoBehaviour {
     }
     public void ChatWithThisCharacter() {
         if (poi is Character) {
-            UIManager.Instance.characterInfoUI.activeCharacter.marker.visionCollision.ForceChatHandling(poi as Character);
+            UIManager.Instance.characterInfoUI.activeCharacter.ChatCharacter(poi as Character, 100);
         } else {
             Debug.LogError(poi.name + " is not a character!");
         }

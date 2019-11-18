@@ -51,7 +51,7 @@ namespace Traits {
             if (type == TRAIT_TYPE.CRIMINAL && removedFrom is Character) {
                 Character character = removedFrom as Character;
                 if (!character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-                    character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
+                    character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
                 }
             }
         }
@@ -203,7 +203,7 @@ namespace Traits {
                 bool canBeTransfered = false;
                 Character assignedCharacter = currentJob.currentOwner as Character;
                 if (assignedCharacter != null && assignedCharacter.currentActionNode.action != null
-                    && assignedCharacter.currentJob != null && assignedCharacter.currentJob == currentJob) {
+                    && assignedCharacter.currentJobNode != null && assignedCharacter.currentJobNode == currentJob) {
                     if (assignedCharacter != characterThatWillDoJob) {
                         canBeTransfered = !assignedCharacter.marker.inVisionPOIs.Contains(assignedCharacter.currentActionNode.poiTarget);
                     }

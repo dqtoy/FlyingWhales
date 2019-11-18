@@ -39,7 +39,7 @@ namespace Traits {
         public override string TriggerFlaw(Character character) {
             if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
                 //Will perform Fullness Recovery.
-                character.PlanForcedStarvingFullnessRecovery(JOB_TYPE.TRIGGER_FLAW);
+                character.TriggerFlawFullnessRecovery();
             }
             return base.TriggerFlaw(character);
         }

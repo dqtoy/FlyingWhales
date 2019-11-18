@@ -57,6 +57,7 @@ public class GoapAction {
     //public string result { get; private set; }
     public string animationName { get; protected set; } //what animation should the character be playing while doing this action
     public bool doesNotStopTargetCharacter { get; protected set; }
+    public bool canBeAdvertisedEvenIfActorIsUnavailable { get; protected set; }
     //public bool resumeTargetCharacterState { get; protected set; } //used to determine whether or not the target character's current state should be resumed after this action is performed towards him
     //public bool cannotCancelAction { get; protected set; }
     //public bool canBeAddedToMemory { get; protected set; }
