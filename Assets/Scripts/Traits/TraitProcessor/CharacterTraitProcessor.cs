@@ -7,7 +7,7 @@ namespace Traits {
     /// Functions to be used to determine what happens when a trait is added/removed to a character
     /// </summary>
     public class CharacterTraitProcessor : TraitProcessor {
-        public override void OnTraitAdded(ITraitable traitable, Trait trait, Character characterResponsible = null, GoapAction gainedFromDoing = null) {
+        public override void OnTraitAdded(ITraitable traitable, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
             Character character = traitable as Character;
             ApplyTraitEffects(character, trait);
             ApplyPOITraitInteractions(character, trait);
@@ -53,7 +53,7 @@ namespace Traits {
                 character.AdjustDoNotDisturb(1);
                 if (trait.effect == TRAIT_EFFECT.NEGATIVE) {
                     character.AdjustIgnoreHostilities(1);
-                    character.CancelAllJobsAndPlansExceptNeedsRecovery();
+                    //character.CancelAllJobsAndPlansExceptNeedsRecovery();
                 }
                 character.ownParty.RemoveAllOtherCharacters();
                 character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);

@@ -7232,7 +7232,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         moodValue = amount;
         moodValue = Mathf.Clamp(moodValue, 1, 100);
     }
-    public void AdjustMoodValue(int amount, Trait fromTrait, GoapAction triggerAction = null) {
+    public void AdjustMoodValue(int amount, Trait fromTrait, ActualGoapNode triggerAction = null) {
         moodValue += amount;
         moodValue = Mathf.Clamp(moodValue, 1, 100);
         if(amount < 0 && currentMoodType == CHARACTER_MOOD.DARK) {

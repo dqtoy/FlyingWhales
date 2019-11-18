@@ -4,30 +4,30 @@ using UnityEngine;
 using Traits;
 
 public class SlayCharacter : GoapAction {
-    public SlayCharacter() : base(INTERACTION_TYPE.SLAY_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public SlayCharacter() : base(INTERACTION_TYPE.SLAY_CHARACTER) {
         doesNotStopTargetCharacter = true;
         actionIconString = GoapActionStateDB.Hostile_Icon;
     }
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = poiTarget });
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET));
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        //rather than checking location check if the character is not in anyone elses party and is still active
-        if (!isTargetMissing) {
-            if ((poiTarget as Character).isDead) {
-                SetState("Slay Fail");
-            } else {
-                SetState("Slay Success");
-            }
-        } else {
-            SetState("Target Missing");
-        }
+        SetState("Slay Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 1;
+    }
+    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(actor, poiTarget, otherData);
+        if (goapActionInvalidity.isInvalid == false) {
+            if ((poiTarget as Character).isDead == false) {
+                goapActionInvalidity.isInvalid = true;
+            }
+        }
+        return goapActionInvalidity;
     }
     //public override int GetArrangedLogPriorityIndex(string priorityID) {
     //    if (priorityID == "description") {
@@ -46,12 +46,8 @@ public class SlayCharacter : GoapAction {
     #endregion
 
     #region State Effects
-    private void PreSlaySuccess() {
-        SetCommittedCrime(CRIME.MURDER, new Character[] { actor });
-        //currentState.SetIntelReaction(KnockoutSuccessIntelReaction);
-    }
-    private void AfterSlaySuccess() {
-        (poiTarget as Character).Death(deathFromAction: this, responsibleCharacter: actor);
+    private void AfterSlaySuccess(ActualGoapNode goapNode) {
+        (goapNode.poiTarget as Character).Death(deathFromAction: this, responsibleCharacter: goapNode.actor);
     }
     #endregion
 

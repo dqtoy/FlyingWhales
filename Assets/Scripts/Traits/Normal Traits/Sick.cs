@@ -65,7 +65,6 @@ namespace Traits {
                         //job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
                         GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect, targetCharacter,
                         new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, }, characterThatWillDoJob);
-                        job.SetCanBeDoneInLocation(true);
                         characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                         return true;
                     } else {
@@ -99,7 +98,7 @@ namespace Traits {
                     || owner.stateComponent.currentState != null || (owner.currentActionNode.action == null && owner.stateComponent.currentState == null)) {
                     //If current action is a roaming action like Hunting To Drink Blood, we must requeue the job after it is removed by StopCurrentAction
                     GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
-                    owner.jobQueue.AddJobInQueue(job, false);
+                    owner.jobQueue.AddJobInQueue(job);
                     hasCreatedJob = true;
                 } 
             }

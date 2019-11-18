@@ -100,7 +100,6 @@ namespace Traits {
                     //TODO: Make this sure steal any time
                     GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, target = GOAP_EFFECT_TARGET.ACTOR }, character, character);
                     //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, target = GOAP_EFFECT_TARGET.ACTOR }, INTERACTION_TYPE.STEAL);
-                    job.SetCancelOnFail(true);
                     character.jobQueue.AddJobInQueue(job);
                 } else {
                     heartbroken.TriggerBrokenhearted();

@@ -50,14 +50,12 @@ namespace Traits {
                     if (InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob(characterThatWillDoJob, targetCharacter, null)) {
                         GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect, targetCharacter,
                         new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, }, characterThatWillDoJob);
-                        job.SetCanBeDoneInLocation(true);
                         characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                         return true;
                     } else {
                         if (!IsResponsibleForTrait(characterThatWillDoJob)) {
                             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect, targetCharacter,
                         new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, }, characterThatWillDoJob);
-                            job.SetCanBeDoneInLocation(true);
                             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob);
                             characterThatWillDoJob.specificLocation.AddToAvailableJobs(job);
                         }
@@ -97,7 +95,7 @@ namespace Traits {
             if (roll < 2 && owner.isAtHomeRegion) { //2
                 owner.marker.StopMovement();
                 if (owner.currentActionNode.action != null && owner.currentActionNode.action.goapType != INTERACTION_TYPE.ZOMBIE_DEATH) {
-                    owner.StopCurrentAction(false);
+                    owner.StopCurrentActionNode(false);
                 } else if (owner.stateComponent.currentState != null) {
                     owner.stateComponent.currentState.OnExitThisState();
                 }

@@ -111,7 +111,7 @@ public class Butcher : GoapAction {
         } else if (deadCharacter.race == RACE.ELVES) {
             transformedFood = 120;
         }
-        deadCharacter.CancelAllJobsTargettingThisCharacter(JOB_TYPE.BURY);
+        //TODO: deadCharacter.CancelAllJobsTargettingThisCharacter(JOB_TYPE.BURY);
         goapNode.actor.AdjustFood(transformedFood);
         if (goapNode.poiTarget is Tombstone) {
             goapNode.poiTarget.gridTileLocation.structure.RemovePOI(goapNode.poiTarget, goapNode.actor);

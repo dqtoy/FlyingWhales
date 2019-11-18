@@ -5,7 +5,7 @@ using Traits;
 
 public class FeelingConcerned : GoapAction {
 
-    public FeelingConcerned() : base(INTERACTION_TYPE.FEELING_CONCERNED, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public FeelingConcerned() : base(INTERACTION_TYPE.FEELING_CONCERNED) {
         actionIconString = GoapActionStateDB.Flirt_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         doesNotStopTargetCharacter = true;
@@ -14,7 +14,7 @@ public class FeelingConcerned : GoapAction {
     #region Overrides
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        SetState("Concerned Success");
+        SetState("Concerned Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 1;

@@ -71,7 +71,7 @@ public class BuryCharacter : GoapAction {
         Tombstone tombstone = new Tombstone(goapNode.actor.currentStructure);
         tombstone.SetCharacter(targetCharacter);
         goapNode.actor.currentStructure.AddPOI(tombstone, chosenLocation);
-        targetCharacter.CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE.BURY, goapNode.actor);
+        //TODO: targetCharacter.CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE.BURY, goapNode.actor);
         List<Character> characters = targetCharacter.relationshipContainer.relationships.Keys.Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList();
         if(characters != null) {
             for (int i = 0; i < characters.Count; i++) {

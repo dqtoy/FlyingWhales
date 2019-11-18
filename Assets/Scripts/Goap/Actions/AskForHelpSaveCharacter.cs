@@ -8,7 +8,6 @@ public class AskForHelpSaveCharacter : GoapAction {
     private Character troubledCharacter;
 
     public AskForHelpSaveCharacter() : base(INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER) {
-        troubledCharacter = actor.troubledCharacter;
         actionIconString = GoapActionStateDB.Hostile_Icon;
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,

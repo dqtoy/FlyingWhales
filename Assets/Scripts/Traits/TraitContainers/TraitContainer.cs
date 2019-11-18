@@ -22,7 +22,7 @@ namespace Traits {
         /// The main AddTrait function. All other AddTrait functions will eventually call this.
         /// </summary>
         /// <returns>If the trait was added or not.</returns>
-        public bool AddTrait(ITraitable addTo, Trait trait, Character characterResponsible = null, GoapAction gainedFromDoing = null) {
+        public bool AddTrait(ITraitable addTo, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
             //TODO: Either move or totally remove validation from inside this container
             if (TraitValidator.CanAddTrait(addTo, trait) == false) {
                 if (trait.IsUnique()) {
@@ -42,7 +42,7 @@ namespace Traits {
             addTo.traitProcessor.OnTraitAdded(addTo, trait, characterResponsible, gainedFromDoing);
             return true;
         }
-        public bool AddTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible = null, GoapAction gainedFromDoing = null) {
+        public bool AddTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
             if (TraitManager.Instance.IsInstancedTrait(traitName)) {
                 trait = TraitManager.Instance.CreateNewInstancedTraitClass(traitName);
                 return AddTrait(addTo, trait, characterResponsible, gainedFromDoing);
@@ -51,7 +51,7 @@ namespace Traits {
                 return AddTrait(addTo, trait, characterResponsible, gainedFromDoing);
             }
         }
-        public bool AddTrait(ITraitable addTo, string traitName, Character characterResponsible = null, GoapAction gainedFromDoing = null) {
+        public bool AddTrait(ITraitable addTo, string traitName, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
             if (TraitManager.Instance.IsInstancedTrait(traitName)) {
                 return AddTrait(addTo, TraitManager.Instance.CreateNewInstancedTraitClass(traitName), characterResponsible, gainedFromDoing);
             } else {

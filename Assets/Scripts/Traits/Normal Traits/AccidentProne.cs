@@ -70,14 +70,14 @@ namespace Traits {
 
         private void DoStumble() {
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.STUMBLE, owner, owner);
-            owner.jobQueue.AddJobInQueue(job, false);
+            owner.jobQueue.AddJobInQueue(job);
         }
 
         private void DoAccident(GoapAction action) {
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.ACCIDENT, owner, new Dictionary<INTERACTION_TYPE, object[]>() {
                 { INTERACTION_TYPE.ACCIDENT, new object[] { action }}
             },  owner);
-            owner.jobQueue.AddJobInQueue(job, false);
+            owner.jobQueue.AddJobInQueue(job);
         }
     }
 }

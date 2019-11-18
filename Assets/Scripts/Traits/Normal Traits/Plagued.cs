@@ -51,7 +51,6 @@ namespace Traits {
                     if (InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob(characterThatWillDoJob, targetCharacter, null)) {
                         GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect, targetCharacter,
                         new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION } } }, characterThatWillDoJob);
-                        job.SetCanBeDoneInLocation(true);
                         characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                         return true;
                     } else {

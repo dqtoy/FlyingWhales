@@ -50,8 +50,7 @@ namespace Traits {
             string summary = GameManager.Instance.TodayLogString() + character.name + " saw burning source " + source.ToString();
             if (character.marker.AddAvoidsInRange(source.objectsOnFire)) {
                 summary += "\nStarted fleeing";
-                //owner.marker.AddTerrifyingObject(source.objectsOnFire);
-                character.CancelAllPlans();
+                //TODO:character.CancelAllJobsAndPlans();
                 Log log = new Log(GameManager.Instance.Today(), "Trait", this.GetType().ToString(), "flee");
                 log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddLogToInvolvedObjects();

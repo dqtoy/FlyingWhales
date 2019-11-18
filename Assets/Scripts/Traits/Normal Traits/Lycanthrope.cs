@@ -261,7 +261,7 @@ namespace Traits {
         }
         private void DoTransformWolf() {
             if (_character.currentActionNode.action != null) {
-                _character.StopCurrentAction(false);
+                _character.StopCurrentActionNode(false);
             }
             if (_character.stateComponent.currentState != null) {
                 _character.stateComponent.currentState.OnExitThisState();

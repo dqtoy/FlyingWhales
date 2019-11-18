@@ -13,8 +13,8 @@ namespace Traits {
         List<RelationshipTrait> relationshipTraits { get; }
 
         #region Adding
-        bool AddTrait(ITraitable addTo, string traitName, Character characterResponsible = null, GoapAction gainedFromDoing = null);
-        bool AddTrait(ITraitable addTo, Trait trait, Character characterResponsible = null, GoapAction gainedFromDoing = null);
+        bool AddTrait(ITraitable addTo, string traitName, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null);
+        bool AddTrait(ITraitable addTo, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null);
         #endregion
 
         #region Removing

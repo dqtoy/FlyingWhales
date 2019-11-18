@@ -5,7 +5,7 @@ using Traits;
 
 public class RepairTileObject : GoapAction {
 
-    public RepairTileObject() : base(INTERACTION_TYPE.REPAIR_TILE_OBJECT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public RepairTileObject() : base(INTERACTION_TYPE.REPAIR_TILE_OBJECT) {
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
@@ -13,20 +13,19 @@ public class RepairTileObject : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        TileObject tileObj = poiTarget as TileObject;
-        TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
-        int craftCost = (int)(data.constructionCost * 0.5f);
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = craftCost, targetPOI = actor }, () => HasSupply(craftCost));
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Burnt", targetPOI = poiTarget });
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Damaged", targetPOI = poiTarget });
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Burnt", false, GOAP_EFFECT_TARGET.TARGET));
     }
+    //TODO:
+    //public override List<Precondition> GetPreconditions(object[] otherData) {
+    //    return base.GetPreconditions(otherData);
+    //    TileObject tileObj = poiTarget as TileObject;
+    //    TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
+    //    int craftCost = (int)(data.constructionCost * 0.5f);
+    //    AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = craftCost, targetPOI = actor }, () => HasSupply(craftCost));
+    //}
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        if (poiTarget.gridTileLocation != null) {
-            SetState("Repair Success");
-        } else {
-            SetState("Target Missing");
-        }
+        SetState("Repair Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 2;
@@ -34,26 +33,23 @@ public class RepairTileObject : GoapAction {
     #endregion
 
     #region State Effects
-    private void PreRepairSuccess() {
-        goapNode.descriptionLog.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    private void PreRepairSuccess(ActualGoapNode goapNode) {
+        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         int gainedHPPerTick = 20;
-        int missingHP = poiTarget.maxHP - poiTarget.currentHP;
+        int missingHP = goapNode.poiTarget.maxHP - goapNode.poiTarget.currentHP;
         int ticksToRecpverMissingHP = missingHP / gainedHPPerTick;
-        currentState.OverrideDuration(ticksToRecpverMissingHP);
+        //TODO: currentState.OverrideDuration(ticksToRecpverMissingHP);
     }
-    private void PerTickRepairSuccess() {
-        poiTarget.AdjustHP(20);
+    private void PerTickRepairSuccess(ActualGoapNode goapNode) {
+        goapNode.poiTarget.AdjustHP(20);
     }
-    private void AfterRepairSuccess() {
-        poiTarget.traitContainer.RemoveTrait(poiTarget, "Burnt");
-        poiTarget.traitContainer.RemoveTrait(poiTarget, "Damaged");
+    private void AfterRepairSuccess(ActualGoapNode goapNode) {
+        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Burnt");
+        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Damaged");
 
-        TileObject tileObj = poiTarget as TileObject;
+        TileObject tileObj = goapNode.poiTarget as TileObject;
         TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
-        actor.AdjustSupply((int) (data.constructionCost * 0.5f));
-    }
-    private void PreTargetMissing() {
-        goapNode.descriptionLog.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        goapNode.actor.AdjustSupply((int) (data.constructionCost * 0.5f));
     }
     #endregion
 

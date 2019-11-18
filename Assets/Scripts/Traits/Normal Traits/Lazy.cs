@@ -30,7 +30,7 @@ namespace Traits {
             //Will drop current action and will perform Happiness Recovery.
             if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
                 if (character.currentActionNode.action != null) {
-                    character.StopCurrentAction(false);
+                    character.StopCurrentActionNode(false);
                 }
                 if (character.stateComponent.currentState != null) {
                     character.stateComponent.currentState.OnExitThisState();
@@ -68,7 +68,6 @@ namespace Traits {
                 }
                 if (!triggerBrokenhearted) {
                     GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, target = GOAP_EFFECT_TARGET.ACTOR }, owner, owner);
-                    job.SetCancelOnFail(true);
                     owner.jobQueue.AddJobInQueue(job);
 
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "trigger_lazy");

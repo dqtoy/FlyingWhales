@@ -5,55 +5,52 @@ using Traits;
 
 public class DispelMagic : GoapAction {
 
-    public DispelMagic() : base(INTERACTION_TYPE.DISPEL_MAGIC, INTERACTION_ALIGNMENT.GOOD, actor, poiTarget) {
+    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
+
+    public DispelMagic() : base(INTERACTION_TYPE.DISPEL_MAGIC) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.FirstAid_Icon;
-        //validTimeOfDays = new TIME_IN_WORDS[] {
-        //    TIME_IN_WORDS.MORNING,
-        //    TIME_IN_WORDS.AFTERNOON,
-        //    TIME_IN_WORDS.EARLY_NIGHT,
-        //    TIME_IN_WORDS.LATE_NIGHT,
-        //};
         isNotificationAnIntel = false;
     }
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Ritualized", targetPOI = actor }, () => HasTrait(actor, "Ritualized"));
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Cursed", targetPOI = poiTarget });
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Reanimated", targetPOI = poiTarget });
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Enchantment", false, GOAP_EFFECT_TARGET.TARGET ));
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
-            SetState("Dispel Magic Success");
-        } else {
-            SetState("Target Missing");
-        }
+        SetState("Dispel Magic Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 1;
     }
+    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(actor, poiTarget, otherData);
+        if (goapActionInvalidity.isInvalid == false) {
+            if ((poiTarget as Character).IsInOwnParty() == false) {
+                goapActionInvalidity.isInvalid = true;
+            }
+        }
+        return goapActionInvalidity;
+    }
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            return poiTarget.traitContainer.HasTraitOf(TRAIT_TYPE.ENCHANTMENT);
+        }
+        return false;
+    }
     #endregion
 
     #region State Effects
-    public void PreDispelMagicSuccess() {
+    public void PreDispelMagicSuccess(ActualGoapNode goapNode) {
         //**Pre Effect 1**: Prevent movement of Target
         //(poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(1);
 
     }
-    public void AfterDispelMagicSuccess() {
+    public void AfterDispelMagicSuccess(ActualGoapNode goapNode) {
         //**After Effect 1**: Reduce all of target's Enchantment type traits
-        if (parentPlan.job != null) {
-            parentPlan.job.SetCannotCancelJob(true);
-        }
-        SetCannotCancelAction(true);
-        RemoveTraitsOfType(poiTarget, TRAIT_TYPE.ENCHANTMENT);
-        //**After Effect 2**: Actor loses Ritualized trait.
-        RemoveTraitFrom(actor, "Ritualized");
-        //**After Effect 3**: Allow movement of Target
-        //(poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(-1);
-
+        goapNode.poiTarget.traitContainer.RemoveAllTraitsByType(goapNode.poiTarget, TRAIT_TYPE.ENCHANTMENT);
     }
     #endregion
 }

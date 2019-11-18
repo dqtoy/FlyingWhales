@@ -144,8 +144,7 @@ namespace Traits {
                     if (CanTakeRemoveFireJob(characterThatWillDoJob, traitOwner)) {
                         sourceOfBurning.AddCharactersDousingFire(characterThatWillDoJob); //adjust the number of characters dousing the fire source. NOTE: Make sure to reduce that number if a character decides to quit the job for any reason.
                         job.AddOnUnassignAction(sourceOfBurning.RemoveCharactersDousingFire); //This is the action responsible for reducing the number of characters dousing the fire when a character decides to quit the job.
-                                                                                              //characterThatWillDoJob.CancelAllJobsAndPlansExcept(JOB_TYPE.REMOVE_FIRE); //cancel all other plans except douse fire.
-                        characterThatWillDoJob.CancelAllPlans(); //cancel all other plans except douse fire.
+                        //TODO: characterThatWillDoJob.CancelAllJobsAndPlans(); //cancel all other plans except douse fire.
                         characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                         return true;
                     }

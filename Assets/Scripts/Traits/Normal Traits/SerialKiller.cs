@@ -85,11 +85,6 @@ namespace Traits {
         public void SetHasStartedFollowing(bool state) {
             if (hasStartedFollowing != state) {
                 hasStartedFollowing = state;
-                if (hasStartedFollowing) {
-                    character.AdjustIsWaitingForInteraction(1);
-                } else {
-                    character.AdjustIsWaitingForInteraction(-1);
-                }
             }
         }
 
@@ -269,7 +264,7 @@ namespace Traits {
             //job.SetAssignedCharacter(character);
             //job.SetCancelOnFail(true);
 
-            character.jobQueue.AddJobInQueue(job, false);
+            character.jobQueue.AddJobInQueue(job);
 
             //character.AdjustIsWaitingForInteraction(1);
             //if (character.stateComponent.currentState != null) {

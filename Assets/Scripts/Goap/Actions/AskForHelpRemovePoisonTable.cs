@@ -10,7 +10,6 @@ public class AskForHelpRemovePoisonTable : GoapAction {
     private Poisoned poison;
 
     public AskForHelpRemovePoisonTable() : base(INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE) {
-        troubledCharacter = actor.troubledCharacter;
         actionIconString = GoapActionStateDB.Work_Icon;
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,

@@ -49,11 +49,9 @@ public class Lullaby : PlayerJobAction {
                             character.marker.StopMovement();
                         }
                     }
-                    character.AdjustIsWaitingForInteraction(1);
                     if (character.currentActionNode != null) {
-                        character.currentActionNode.StopAction(true, "Stopped by the player");
+                        character.currentActionNode.StopActionNode(true);
                     }
-                    character.AdjustIsWaitingForInteraction(-1);
                 }
                 character.marker.UpdateActionIcon();
             }

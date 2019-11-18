@@ -24,7 +24,7 @@ namespace Traits {
             if (character.homeStructure != null) {
                 if (character.currentStructure != character.homeStructure) {
                     if (character.currentActionNode.action != null) {
-                        character.StopCurrentAction(false);
+                        character.StopCurrentActionNode(false);
                     }
                     if (character.stateComponent.currentState != null) {
                         character.stateComponent.currentState.OnExitThisState();

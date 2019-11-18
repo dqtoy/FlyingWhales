@@ -5,7 +5,7 @@ using Traits;
 
 public class GoTo : GoapAction {
 
-    public GoTo() : base(INTERACTION_TYPE.GO_TO, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public GoTo() : base(INTERACTION_TYPE.GO_TO) {
         actionLocationType = ACTION_LOCATION_TYPE.TARGET_IN_VISION;
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
@@ -14,11 +14,11 @@ public class GoTo : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_VISION, targetPOI = poiTarget });
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.IN_VISION, string.Empty, false, GOAP_EFFECT_TARGET.TARGET ));
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        SetState("Goto Success");
+        SetState("Goto Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 15;

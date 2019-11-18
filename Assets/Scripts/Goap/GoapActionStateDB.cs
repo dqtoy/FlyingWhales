@@ -432,9 +432,6 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.REACT_TO_SCREAM, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "React Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
-         {INTERACTION_TYPE.WHIP, new StateNameAndDuration[]{
-            new StateNameAndDuration(){ name = "Whip Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
-        } },
          {INTERACTION_TYPE.RESOLVE_COMBAT, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Combat Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },

@@ -31,7 +31,7 @@ namespace Traits {
         public Character responsibleCharacter { get { return responsibleCharacters.FirstOrDefault(); } }
         public List<Character> responsibleCharacters { get; protected set; }
         public Dictionary<ITraitable, string> expiryTickets { get; private set; } //this is the key for the scheduled removal of this trait for each object
-        public GoapAction gainedFromDoing { get; private set; } //what action was this poi involved in that gave it this trait.
+        public ActualGoapNode gainedFromDoing { get; private set; } //what action was this poi involved in that gave it this trait.
         public GameDate dateEstablished { get; protected set; }
         public virtual bool isPersistent { get { return false; } } //should this trait persist through all a character's alter egos
         public virtual bool isRemovedOnSwitchAlterEgo { get { return false; } }
@@ -145,7 +145,7 @@ namespace Traits {
             }
             return string.Empty;
         }
-        public void SetGainedFromDoing(GoapAction action) {
+        public void SetGainedFromDoing(ActualGoapNode action) {
             gainedFromDoing = action;
         }
         public void OverrideDuration(int newDuration) {

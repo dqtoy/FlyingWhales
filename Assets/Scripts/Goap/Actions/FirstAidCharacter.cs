@@ -5,7 +5,9 @@ using Traits;
 
 public class FirstAidCharacter : GoapAction {
 
-    public FirstAidCharacter() : base(INTERACTION_TYPE.FIRST_AID_CHARACTER, INTERACTION_ALIGNMENT.GOOD, actor, poiTarget) {
+    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
+
+    public FirstAidCharacter() : base(INTERACTION_TYPE.FIRST_AID_CHARACTER) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.FirstAid_Icon;
         validTimeOfDays = new TIME_IN_WORDS[] {
@@ -19,89 +21,88 @@ public class FirstAidCharacter : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.HEALING_POTION.ToString(), targetPOI = actor }, () => actor.HasTokenInInventory(SPECIAL_TOKEN.HEALING_POTION));
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Injured", targetPOI = poiTarget });
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Unconscious", targetPOI = poiTarget });
+        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_ITEM, SPECIAL_TOKEN.HEALING_POTION.ToString(), false, GOAP_EFFECT_TARGET.ACTOR), HasHealingPotion);
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Injured", false, GOAP_EFFECT_TARGET.TARGET));
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET));
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
-            SetState("First Aid Success");
-        } else {
-            SetState("Target Missing");
-        }
+        SetState("First Aid Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 12;
     }
+    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(actor, poiTarget, otherData);
+        if (goapActionInvalidity.isInvalid == false) {
+            if ((poiTarget as Character).IsInOwnParty() == false) {
+                goapActionInvalidity.isInvalid = true;
+            }
+        }
+        return goapActionInvalidity;
+    }
     #endregion
 
     #region State Effects
-    public void PreFirstAidSuccess() {
-        //**Pre Effect 1**: Prevent movement of Target
-        //(poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(1);
-        currentState.SetIntelReaction(FirstAidSuccessReactions);
-    }
-    public void AfterFirstAidSuccess() {
-        //**After Effect 1**: Remove target's Injured and Unconscious trait
-        //if (parentPlan.job != null) {
-        //    parentPlan.job.SetCannotCancelJob(true);
-        //}
-        //SetCannotCancelAction(true);
-        RemoveTraitFrom(poiTarget, "Injured", actor);
-        RemoveTraitFrom(poiTarget, "Unconscious", actor);
-        //**After Effect 2**: Reduce character's Supply by 10
-        //actor.AdjustSupply(-10);
-        if (actor.HasTokenInInventory(SPECIAL_TOKEN.HEALING_POTION)) {
-            actor.ConsumeToken(actor.GetToken(SPECIAL_TOKEN.HEALING_POTION));
+    public void AfterFirstAidSuccess(ActualGoapNode goapNode) {
+        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Injured", goapNode.actor);
+        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Unconscious", goapNode.actor);
+        if (goapNode.actor.HasTokenInInventory(SPECIAL_TOKEN.HEALING_POTION)) {
+            goapNode.actor.ConsumeToken(goapNode.actor.GetToken(SPECIAL_TOKEN.HEALING_POTION));
         } else {
             //the actor does not have a tool, log for now
-            Debug.LogWarning(actor.name + " does not have a tool for removing poison! Poison was still removed, but thought you should know.");
+            Debug.LogWarning(goapNode.actor.name + " does not have a tool for removing poison! Poison was still removed, but thought you should know.");
         }
         //**After Effect 3**: Allow movement of Target
         //(poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(-1);
     }
     #endregion
 
-    #region Intel Reactions
-    private List<string> FirstAidSuccessReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
-        List<string> reactions = new List<string>();
-        Character targetCharacter = poiTarget as Character;
-
-        if (isOldNews) {
-            //Old News
-            reactions.Add("This is old news.");
-        } else {
-            //Not Yet Old News
-            if (awareCharactersOfThisAction.Contains(recipient)) {
-                //- If Recipient is Aware
-                reactions.Add("I know that already.");
-            } else {
-                //- Recipient is Actor
-                if (recipient == actor) {
-                    reactions.Add("I know what I did.");
-                }
-                //- Recipient is Target
-                else if (recipient == targetCharacter) {
-                    reactions.Add(string.Format("I am grateful for {0}'s help.", actor.name));
-                }
-                //- Recipient Has Positive Relationship with Target
-                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
-                    reactions.Add(string.Format("I am grateful that {0} helped {1}.", actor.name, targetCharacter.name));
-                }
-                //- Recipient Has Negative Relationship with Target
-                else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
-                    reactions.Add(string.Format("{0} is such a chore.", targetCharacter.name));
-                }
-                //- Recipient Has No Relationship with Target
-                else {
-                    reactions.Add(string.Format("That was nice of {0}.", Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
-                }
-            }
-        }
-        return reactions;
+    #region Precondition
+    private bool HasHealingPotion(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return actor.HasTokenInInventory(SPECIAL_TOKEN.HEALING_POTION);
     }
     #endregion
+
+    //#region Intel Reactions
+    //private List<string> FirstAidSuccessReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
+    //    List<string> reactions = new List<string>();
+    //    Character targetCharacter = poiTarget as Character;
+
+    //    if (isOldNews) {
+    //        //Old News
+    //        reactions.Add("This is old news.");
+    //    } else {
+    //        //Not Yet Old News
+    //        if (awareCharactersOfThisAction.Contains(recipient)) {
+    //            //- If Recipient is Aware
+    //            reactions.Add("I know that already.");
+    //        } else {
+    //            //- Recipient is Actor
+    //            if (recipient == actor) {
+    //                reactions.Add("I know what I did.");
+    //            }
+    //            //- Recipient is Target
+    //            else if (recipient == targetCharacter) {
+    //                reactions.Add(string.Format("I am grateful for {0}'s help.", actor.name));
+    //            }
+    //            //- Recipient Has Positive Relationship with Target
+    //            else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
+    //                reactions.Add(string.Format("I am grateful that {0} helped {1}.", actor.name, targetCharacter.name));
+    //            }
+    //            //- Recipient Has Negative Relationship with Target
+    //            else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
+    //                reactions.Add(string.Format("{0} is such a chore.", targetCharacter.name));
+    //            }
+    //            //- Recipient Has No Relationship with Target
+    //            else {
+    //                reactions.Add(string.Format("That was nice of {0}.", Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
+    //            }
+    //        }
+    //    }
+    //    return reactions;
+    //}
+    //#endregion
 }
 
 public class FirstAidCharacterData : GoapActionData {
