@@ -212,7 +212,7 @@ namespace Traits {
                 }
                 if (canBeTransfered && characterThatWillDoJob.CanCurrentJobBeOverriddenByJob(currentJob)) {
                     currentJob.CancelJob(shouldDoAfterEffect: false);
-                    characterThatWillDoJob.jobQueue.AddJobInQueue(currentJob, false);
+                    characterThatWillDoJob.jobQueue.AddJobInQueue(currentJob);
                     //TODO: characterThatWillDoJob.jobQueue.AssignCharacterToJobAndCancelCurrentAction(currentJob, characterThatWillDoJob);
                     return true;
                 }
