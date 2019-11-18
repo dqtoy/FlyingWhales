@@ -65,11 +65,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     public List<INTERACTION_TYPE> currentInteractionTypes { get; private set; }
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
-    public List<GoapPlan> allGoapPlans { get; private set; }
+    //public List<GoapPlan> allGoapPlans { get; private set; }
     public GoapPlanner planner { get; set; }
     public int supply { get; set; }
     public int food { get; set; }
-    public int isWaitingForInteraction { get; private set; }
+    //public int isWaitingForInteraction { get; private set; }
     public CharacterMarker marker { get; private set; }
     public ActualGoapNode currentActionNode { get; private set; }
     public ActualGoapNode previousCurrentActionNode { get; private set; }
