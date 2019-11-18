@@ -52,7 +52,7 @@ public class SeducerSummon : Summon {
         }
         return null;
     }
-    protected override void PerStartTickActionPlanning() {
+    protected override void OnTickStarted() {
         if (_hasAlreadyAskedForPlan) {
             return;
         }

@@ -1170,10 +1170,6 @@ public class Area : IJobOwner {
         }
         return false;
     }
-            return null;
-        }
-        return null;
-    }
     private void HourlyJobActions() {
         CreatePatrolJobs();
         //if (UnityEngine.Random.Range(0, 100) < 5 && currentMoveOutJobs < maxMoveOutJobs) {

@@ -44,7 +44,7 @@ public class ThiefSummon : Summon {
         }
         return actions;
     }
-    protected override void PerStartTickActionPlanning() {
+    protected override void OnTickStarted() {
         if (_hasAlreadyAskedForPlan) {
             return;
         }
