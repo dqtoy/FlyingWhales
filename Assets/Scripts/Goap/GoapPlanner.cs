@@ -328,13 +328,14 @@ public class GoapPlanner {
                             }
                         }
 
-                        if (currentAction.WillEffectsSatisfyPrecondition(goalEffect, target, otherActionData)) {
+                        if (currentAction.WillEffectsMatchPreconditionTypeAndTarget(goalEffect)) {
                             //Further optimize this by creating a list of all poi that currently advertises this action, and loop that
                             List<IPointOfInterest> poisThatAdvertisesCurrentAction = awareness[kvp.Key];
                             for (int k = 0; k < poisThatAdvertisesCurrentAction.Count; k++) {
                                 IPointOfInterest poiTarget = poisThatAdvertisesCurrentAction[k];
                                 int cost = 0;
-                                bool canDoAction = poiTarget.CanAdvertiseActionsToActor(actor, currentAction, otherData, ref cost);
+                                bool canDoAction = poiTarget.CanAdvertiseActionToActor(actor, currentAction, otherData, ref cost)
+                                    && currentAction.WillEffectsSatisfyPrecondition(goalEffect, poiTarget, otherActionData);
                                 if (canDoAction) {
                                     if (lowestCostAction == null || cost < lowestCost) {
                                         lowestCostAction = currentAction;
@@ -537,13 +538,14 @@ public class GoapPlanner {
                                         }
                                     }
 
-                                    if (currentAction.WillEffectsSatisfyPrecondition(preconditionEffect, target, otherActionData)) {
+                                    if (currentAction.WillEffectsMatchPreconditionTypeAndTarget(preconditionEffect)) {
                                         //Further optimize this by creating a list of all poi that currently advertises this action, and loop that
                                         List<IPointOfInterest> poisThatAdvertisesCurrentAction = awareness[kvp.Key];
                                         for (int k = 0; k < poisThatAdvertisesCurrentAction.Count; k++) {
                                             IPointOfInterest poiTarget = poisThatAdvertisesCurrentAction[k];
                                             int cost = 0;
-                                            bool canDoAction = poiTarget.CanAdvertiseActionsToActor(actor, currentAction, job.otherData, ref cost);
+                                            bool canDoAction = poiTarget.CanAdvertiseActionToActor(actor, currentAction, job.otherData, ref cost) 
+                                                && currentAction.WillEffectsSatisfyPrecondition(preconditionEffect, poiTarget, otherActionData);
                                             if (canDoAction) {
                                                 if (lowestCostAction == null || cost < lowestCost) {
                                                     lowestCostAction = currentAction;

@@ -17,6 +17,7 @@ public class GoapAction {
     //public AlterEgoData actorAlterEgo { get; protected set; } //The alter ego the character was using while doing this action.
     public List<Precondition> basePreconditions { get; private set; }
     public List<GoapEffect> baseExpectedEffects { get; private set; }
+    public List<GoapEffectConditionTypeAndTargetType> possibleExpectedEffectsTypeAndTargetMatching { get; private set; }
     public RACE[] racesThatCanDoAction { get; protected set; }
     //public virtual LocationStructure targetStructure {
     //    get {
@@ -786,11 +787,24 @@ public class GoapAction {
     #region Effects
     protected void AddExpectedEffect(GoapEffect effect) {
         baseExpectedEffects.Add(effect);
+        AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(effect.conditionType, effect.target));
+    }
+    protected void AddPossibleExpectedEffectForTypeAndTargetMatching(GoapEffectConditionTypeAndTargetType effect) {
+        possibleExpectedEffectsTypeAndTargetMatching.Add(effect);
     }
     public bool WillEffectsSatisfyPrecondition(GoapEffect precondition, IPointOfInterest target, object[] otherData) {
         List<GoapEffect> effects = GetExpectedEffects(target, otherData);
         for (int i = 0; i < effects.Count; i++) {
             if(EffectPreconditionMatching(effects[i], precondition)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool WillEffectsMatchPreconditionTypeAndTarget(GoapEffect precondition) {
+        List<GoapEffectConditionTypeAndTargetType> effects = possibleExpectedEffectsTypeAndTargetMatching;
+        for (int i = 0; i < effects.Count; i++) {
+            if (effects[i].conditionType == precondition.conditionType && effects[i].target == precondition.target) {
                 return true;
             }
         }
@@ -824,7 +838,6 @@ public class GoapAction {
     protected virtual List<GoapEffect> GetExpectedEffects(IPointOfInterest target, object[] otherData) {
         return baseExpectedEffects;
     }
-
     //public void AddActualEffect(GoapEffect effect) {
     //    actualEffects.Add(effect);
     //}
@@ -891,13 +904,22 @@ public struct GoapActionInvalidity {
         this.stateName = stateName;
     }
 }
+public struct GoapEffectConditionTypeAndTargetType {
+    public GOAP_EFFECT_CONDITION conditionType;
+    public GOAP_EFFECT_TARGET target;
+    
+    public GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION conditionType, GOAP_EFFECT_TARGET target) {
+        this.conditionType = conditionType;
+        this.target = target;
+    }
+}
 public struct GoapEffect {
     public GOAP_EFFECT_CONDITION conditionType;
     //public object conditionKey;
     public string conditionKey;
     public bool isKeyANumber;
-    //public IPointOfInterest targetPOI; //this is the target that will be affected by the condition type and key
     public GOAP_EFFECT_TARGET target;
+    //public IPointOfInterest targetPOI; //this is the target that will be affected by the condition type and key
 
     public GoapEffect(GOAP_EFFECT_CONDITION conditionType, string conditionKey, bool isKeyANumber, GOAP_EFFECT_TARGET target) {
         this.conditionType = conditionType;

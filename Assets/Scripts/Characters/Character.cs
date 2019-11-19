@@ -5963,7 +5963,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         return chosenAction;
     }
-    public bool CanAdvertiseActionsToActor(Character actor, GoapAction action, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost) {
+    public bool CanAdvertiseActionToActor(Character actor, GoapAction action, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost) {
         if((IsAvailable() || action.canBeAdvertisedEvenIfActorIsUnavailable) 
             && advertisedActions != null && advertisedActions.Contains(action.goapType)
             && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)) {
