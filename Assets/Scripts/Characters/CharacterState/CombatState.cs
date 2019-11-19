@@ -10,7 +10,7 @@ public class CombatState : CharacterState {
 
     public bool isAttacking { get; private set; } //if not attacking, it is assumed that the character is fleeing
     public IPointOfInterest currentClosestHostile { get; private set; }
-    public GoapAction actionThatTriggeredThisState { get; private set; }
+    public GoapPlanJob jobThatTriggeredThisState { get; private set; }
     public Character forcedTarget { get; private set; }
     public List<Character> allCharactersThatDegradedRel { get; private set; }
 
@@ -80,10 +80,10 @@ public class CombatState : CharacterState {
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
 
         base.StartState();
-        if (stateComponent.character.currentActionNode is Assault && !stateComponent.character.currentActionNode.isPerformingActualAction) {
-            stateComponent.character.currentActionNode.Perform(); //this is for when a character will assault a target, but his/her attack range is less than his/her vision range. (Because end reached distance of assault action is set to attack range)
-        }
-        stateComponent.character.StopCurrentAction(false);
+        //if (stateComponent.character.currentActionNode is Assault && !stateComponent.character.currentActionNode.isPerformingActualAction) {
+        //    stateComponent.character.currentActionNode.Perform(); //this is for when a character will assault a target, but his/her attack range is less than his/her vision range. (Because end reached distance of assault action is set to attack range)
+        //}
+        stateComponent.character.StopCurrentActionNode(false);
         stateComponent.character.currentParty.RemoveAllOtherCharacters(); //Drop characters when entering combat
         if(stateComponent.character is SeducerSummon) { //If succubus/incubus enters a combat, automatically change its faction to the player faction if faction is still disguised
             if(stateComponent.character.faction == FactionManager.Instance.disguisedFaction) {
@@ -229,9 +229,8 @@ public class CombatState : CharacterState {
                 Character hostile = poi as Character;
                 if (hostile.stateComponent.currentState != null && hostile.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
                     CombatState combatState = hostile.stateComponent.currentState as CombatState;
-                    if (combatState.actionThatTriggeredThisState != null && combatState.actionThatTriggeredThisState.parentPlan != null
-                        && combatState.actionThatTriggeredThisState.parentPlan.job != null && combatState.actionThatTriggeredThisState.parentPlan.job.jobType == JOB_TYPE.APPREHEND
-                        && combatState.actionThatTriggeredThisState.parentPlan.job.targetPOI == stateComponent.character) {
+                    if (combatState.jobThatTriggeredThisState != null && combatState.jobThatTriggeredThisState.jobType == JOB_TYPE.APPREHEND
+                        && combatState.jobThatTriggeredThisState.targetPOI == stateComponent.character) {
                         isBeingApprehended = true;
                         return;
                     }
@@ -244,9 +243,8 @@ public class CombatState : CharacterState {
                 Character hostile = stateComponent.character.marker.avoidInRange[i] as Character;
                 if (hostile.stateComponent.currentState != null && hostile.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
                     CombatState combatState = hostile.stateComponent.currentState as CombatState;
-                    if (combatState.actionThatTriggeredThisState != null && combatState.actionThatTriggeredThisState.parentPlan != null
-                        && combatState.actionThatTriggeredThisState.parentPlan.job != null && combatState.actionThatTriggeredThisState.parentPlan.job.jobType == JOB_TYPE.APPREHEND
-                        && combatState.actionThatTriggeredThisState.parentPlan.job.targetPOI == stateComponent.character) {
+                    if (combatState.jobThatTriggeredThisState != null && combatState.jobThatTriggeredThisState.jobType == JOB_TYPE.APPREHEND
+                        && combatState.jobThatTriggeredThisState.targetPOI == stateComponent.character) {
                         isBeingApprehended = true;
                         return;
                     }
@@ -562,6 +560,9 @@ public class CombatState : CharacterState {
         if (!allCharactersThatDegradedRel.Contains(character)) {
             allCharactersThatDegradedRel.Add(character);
         }
+    }
+    public void SetActionThatTriggeredThisState(GoapPlanJob action) {
+        jobThatTriggeredThisState = action;
     }
     #endregion
 }
