@@ -184,9 +184,6 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.TANTRUM, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Tantrum Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
-        {INTERACTION_TYPE.EAT, new StateNameAndDuration[]{
-            new StateNameAndDuration(){ name = "Eat Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
-        } },
         {INTERACTION_TYPE.BREAK_UP, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Break Up Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
