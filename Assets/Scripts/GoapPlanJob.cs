@@ -216,7 +216,7 @@ public class GoapPlanJob : JobQueueItem {
         if (originalOwner.ownerType == JOB_OWNER.CHARACTER && assignedPlan == null) { //|| jobQueueParent.character.currentSleepTicks == CharacterManager.Instance.defaultSleepTicks
             //If original owner is character just get the assignedCharacter because for personal jobs, the assignedCharacter is always the owner
             //No need to cast the owner anymore
-            if (id == assignedCharacter.sleepScheduleJobID) {
+            if (assignedCharacter != null && id == assignedCharacter.sleepScheduleJobID) {
                 //If a character's scheduled sleep job is removed from queue before even doing it, consider it as cancelled 
                 assignedCharacter.SetHasCancelledSleepSchedule(true);
             }

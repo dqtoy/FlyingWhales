@@ -500,6 +500,9 @@ public class InteriorMapManager : MonoBehaviour {
         string summary = "Character: " + character.name;
         summary += "\n\tMood: " + character.currentMoodType.ToString();
         summary += "\n\tSupply: " + character.supply.ToString();
+        summary += "\n\tCan Move: " + character.canMove.ToString();
+        summary += "\n\tCan Witness: " + character.canWitness.ToString();
+        summary += "\n\tCan Be Attacked: " + character.canBeAtttacked.ToString();
         summary += "\n\tDestination: " + (character.marker.destinationTile != null ? character.marker.destinationTile.ToString() : "None");
         summary += "\n\tMove Speed: " + character.marker.pathfindingAI.speed.ToString();
         summary += "\n\tAttack Range: " + character.characterClass.attackRange.ToString();

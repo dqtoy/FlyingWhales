@@ -649,6 +649,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
         //Messenger.AddListener(Signals.TICK_STARTED, DailyInteractionGeneration);
         Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
+        Messenger.AddListener(Signals.TICK_ENDED, EndTickPerformJobs);
         Messenger.AddListener(Signals.DAY_STARTED, DailyGoapProcesses);
         Messenger.AddListener(Signals.HOUR_STARTED, DecreaseNeeds);
         //Messenger.AddListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
@@ -669,6 +670,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
         //Messenger.RemoveListener(Signals.TICK_STARTED, DailyInteractionGeneration);
         Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStarted);
+        Messenger.RemoveListener(Signals.TICK_ENDED, EndTickPerformJobs);
         Messenger.RemoveListener(Signals.DAY_STARTED, DailyGoapProcesses);
         Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseNeeds);
         //Messenger.RemoveListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
