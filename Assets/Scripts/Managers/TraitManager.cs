@@ -113,6 +113,7 @@ public class TraitManager : MonoBehaviour {
             new Disillusioned(),
             new Chaste(),
             new Lustful(),
+            new Edible(),
         };
         for (int i = 0; i < instancedTraits.Length; i++) {
             Trait trait = instancedTraits[i];
