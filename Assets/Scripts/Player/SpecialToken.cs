@@ -156,11 +156,20 @@ public class SpecialToken : IPointOfInterest {
     #endregion
 
     #region Point Of Interest
-    public List<GoapAction> AdvertiseActionsToActor(Character actor, Dictionary<INTERACTION_TYPE, object[]> otherData) {
-        if (advertisedActions != null && advertisedActions.Count > 0 && gridTileLocation != null) { //only advertise items that are not being carried
-            List<GoapAction> usableActions = new List<GoapAction>();
+    public INTERACTION_TYPE AdvertiseActionsToActor(Character actor, GoapEffect precondition, Dictionary<INTERACTION_TYPE, object[]> otherData) {
+        INTERACTION_TYPE chosenAction = INTERACTION_TYPE.NONE;
+        if (advertisedActions != null && advertisedActions.Count > 0) {//&& IsAvailable()
+            bool isCharacterAvailable = IsAvailable();
+            //List<GoapAction> usableActions = new List<GoapAction>();
+            INTERACTION_TYPE lowestCostAction = INTERACTION_TYPE.NONE;
+            int currentLowestCost = 0;
             for (int i = 0; i < advertisedActions.Count; i++) {
                 INTERACTION_TYPE currType = advertisedActions[i];
+                GoapAction action = InteractionManager.Instance.goapActionData[currType];
+                if (!isCharacterAvailable && !action.canBeAdvertisedEvenIfActorIsUnavailable) {
+                    //if this character is not available, check if the current action type can be advertised even when the character is inactive.
+                    continue; //skip
+                }
                 if (RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
                     object[] data = null;
                     if (otherData != null) {
@@ -170,24 +179,35 @@ public class SpecialToken : IPointOfInterest {
                             data = otherData[INTERACTION_TYPE.NONE];
                         }
                     }
-                    //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
-                    if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currType, actor, this, data)
-                        && InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)) {
-                        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
-                        if (goapAction != null) {
-                            if (data != null) {
-                                goapAction.InitializeOtherData(data);
-                            }
-                            usableActions.Add(goapAction);
-                        } else {
-                            throw new System.Exception("Goap action " + currType.ToString() + " is null!");
+                    object[] otherActionData = null;
+                    if (otherData.ContainsKey(currType)) {
+                        otherActionData = otherData[currType];
+                    }
+                    if (action.CanSatisfyRequirements(actor, this, data)
+                        && action.WillEffectsSatisfyPrecondition(precondition, this, data)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
+                        int actionCost = action.GetCost(actor, this, data);
+                        if (lowestCostAction == INTERACTION_TYPE.NONE || actionCost < currentLowestCost) {
+                            lowestCostAction = action.goapType;
+                            currentLowestCost = actionCost;
                         }
+                        //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
+                        //if (goapAction != null) {
+                        //    if (data != null) {
+                        //        goapAction.InitializeOtherData(data);
+                        //    }
+                        //    usableActions.Add(goapAction);
+                        //} else {
+                        //    throw new System.Exception("Goap action " + currType.ToString() + " is null!");
+                        //}
                     }
                 }
             }
-            return usableActions;
+            if (lowestCostAction != INTERACTION_TYPE.NONE) {
+                chosenAction = lowestCostAction;
+            }
+            //return usableActions;
         }
-        return null;
+        return chosenAction;
     }
     public void SetPOIState(POI_STATE state) {
         this.state = state;

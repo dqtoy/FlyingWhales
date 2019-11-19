@@ -283,8 +283,16 @@ public class GoapPlanner {
                     List<GoapAction> actionList = kvp.Value;
                     for (int j = 0; j < actionList.Count; j++) {
                         GoapAction currentAction = actionList[j];
+
+                        //get other data for current action.
                         object[] otherActionData = null;
-                        if (otherData.ContainsKey(currentAction.goapType)) { otherActionData = otherData[currentAction.goapType]; }
+                        if (job.otherData != null) {
+                            if (job.otherData.ContainsKey(currentAction.goapType)) {
+                                otherActionData = job.otherData[currentAction.goapType];
+                            } else if (job.otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+                                otherActionData = job.otherData[INTERACTION_TYPE.NONE];
+                            }
+                        }
 
                         if (currentAction.WillEffectsSatisfyPrecondition(goalEffect, target, otherActionData)) {
                             //Further optimize this by creating a list of all poi that currently advertises this action, and loop that
@@ -447,13 +455,21 @@ public class GoapPlanner {
         List<Precondition> preconditions = null;
         if (job.otherData.ContainsKey(action.goapType)) {
             preconditions = action.GetPreconditions(job.otherData[action.goapType]);
+        } else if (job.otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+            preconditions = action.GetPreconditions(job.otherData[INTERACTION_TYPE.NONE]);
         } else {
             preconditions = action.basePreconditions;
         }
         if (preconditions.Count > 0) {
             //get other data for current action
             object[] preconditionActionData = null;
-            if (job.otherData.ContainsKey(action.goapType)) { preconditionActionData = job.otherData[action.goapType]; }
+            if (job.otherData != null) {
+                if (job.otherData.ContainsKey(action.goapType)) {
+                    preconditionActionData = job.otherData[action.goapType];
+                } else if (job.otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+                    preconditionActionData = job.otherData[INTERACTION_TYPE.NONE];
+                }
+            }
 
             for (int i = 0; i < preconditions.Count; i++) {
                 Precondition precondition = preconditions[i];
@@ -479,7 +495,13 @@ public class GoapPlanner {
 
                                     //get other data for current action.
                                     object[] otherActionData = null;
-                                    if (job.otherData.ContainsKey(currentAction.goapType)) { otherActionData = job.otherData[currentAction.goapType]; }
+                                    if (job.otherData != null) {
+                                        if (job.otherData.ContainsKey(currentAction.goapType)) {
+                                            otherActionData = job.otherData[currentAction.goapType];
+                                        } else if (job.otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+                                            otherActionData = job.otherData[INTERACTION_TYPE.NONE];
+                                        }
+                                    }
 
                                     if (currentAction.WillEffectsSatisfyPrecondition(preconditionEffect, target, otherActionData)) {
                                         //Further optimize this by creating a list of all poi that currently advertises this action, and loop that

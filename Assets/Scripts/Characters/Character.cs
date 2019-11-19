@@ -5915,7 +5915,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                             otherActionData = otherData[currType];
                         }
                     if (action.CanSatisfyRequirements(actor, this, data)
-                        && action.WillEffectsSatisfyPrecondition(precondition)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
+                        && action.WillEffectsSatisfyPrecondition(precondition, this, data)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
                         int actionCost = action.GetCost(actor, this, data);
                         if (lowestCostAction == INTERACTION_TYPE.NONE || actionCost < currentLowestCost) {
                             lowestCostAction = action.goapType;
