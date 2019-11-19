@@ -6098,6 +6098,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         advertisedActions.Add(INTERACTION_TYPE.RESOLVE_COMBAT);
         advertisedActions.Add(INTERACTION_TYPE.RETURN_HOME);
         advertisedActions.Add(INTERACTION_TYPE.RETURN_HOME_LOCATION);
+        advertisedActions.Add(INTERACTION_TYPE.CHAT_CHARACTER);
 
         if (race != RACE.SKELETON) {
             advertisedActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);
@@ -6371,6 +6372,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 currentJob.CancelJob(false);
             } else {
                 PrintLogIfActive(log);
+                UnityEngine.Assertions.Assert.IsNotNull(currentJob);
+                UnityEngine.Assertions.Assert.IsTrue(currentJob is GoapPlanJob);
                 planner.RecalculateJob(currentJob as GoapPlanJob);
             }
         }
