@@ -434,9 +434,9 @@ public class InteriorMapManager : MonoBehaviour {
             } else if (poi is Ore) {
                 summary += "\n\tYield: " + (poi as Ore).yield.ToString();
             } else if (poi is SupplyPile) {
-                summary += "\n\tSupplies in Pile: " + (poi as SupplyPile).suppliesInPile.ToString();
+                summary += "\n\tSupplies in Pile: " + (poi as SupplyPile).resourceInPile.ToString();
             } else if (poi is FoodPile) {
-                summary += "\n\tFood in Pile: " + (poi as FoodPile).foodInPile.ToString();
+                summary += "\n\tFood in Pile: " + (poi as FoodPile).resourceInPile.ToString();
             } else if (poi is Table) {
                 summary += "\n\tFood in Table: " + (poi as Table).food.ToString();
             } else if (poi is SpecialToken) {

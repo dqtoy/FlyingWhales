@@ -48,11 +48,12 @@ namespace Traits {
                         //    characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(buryJob);
                         //    return false;
                         //}
-                    } else {
-                        if (InteractionManager.Instance.CanTakeBuryJob(characterThatWillDoJob, currentJob)) {
-                            return TryTransferJob(currentJob, characterThatWillDoJob);
-                        }
-                    }
+                    } 
+                    //else {
+                    //    if (InteractionManager.Instance.CanTakeBuryJob(characterThatWillDoJob, currentJob)) {
+                    //        return TryTransferJob(currentJob, characterThatWillDoJob);
+                    //    }
+                    //}
                 }
             }
             return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);

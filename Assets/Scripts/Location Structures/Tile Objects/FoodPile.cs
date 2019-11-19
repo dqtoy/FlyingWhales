@@ -3,18 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class FoodPile : TileObject {
-    public int foodInPile { get; private set; }
+public class FoodPile : ResourcePile {
 
-    public FoodPile(LocationStructure location) {
+    public FoodPile(LocationStructure location) : base(RESOURCE.FOOD) {
         SetStructureLocation(location);
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.OBTAIN_RESOURCE, INTERACTION_TYPE.DROP_RESOURCE, INTERACTION_TYPE.REPAIR, INTERACTION_TYPE.DESTROY_RESOURCE };
         Initialize(TILE_OBJECT_TYPE.FOOD_PILE);
-        SetFoodInPile(2000); //
+        SetResourceInPile(2000); //
         traitContainer.RemoveTrait(this, "Flammable");
     }
-    public FoodPile(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.OBTAIN_RESOURCE, INTERACTION_TYPE.DROP_RESOURCE, INTERACTION_TYPE.REPAIR, INTERACTION_TYPE.DESTROY_RESOURCE };
+    public FoodPile(SaveDataTileObject data) : base(RESOURCE.FOOD) {
         Initialize(data);
     }
 
@@ -24,25 +21,12 @@ public class FoodPile : TileObject {
     }
     #endregion
 
-    public void SetFoodInPile(int amount) {
-        foodInPile = amount;
-        foodInPile = Mathf.Max(0, foodInPile);
-    }
-
-    public void AdjustFoodInPile(int adjustment) {
-        foodInPile += adjustment;
-        foodInPile = Mathf.Max(0, foodInPile);
+    public override void AdjustResourceInPile(int adjustment) {
+        base.AdjustResourceInPile(adjustment);
         if (adjustment < 0) {
             Messenger.Broadcast(Signals.FOOD_IN_PILE_REDUCED, this);
         }
     }
-    public bool HasSupply() {
-        if (structureLocation.structureType == STRUCTURE_TYPE.WAREHOUSE) {
-            return foodInPile > 0;
-        }
-        return true;
-    }
-
     public override string ToString() {
         return "Food Pile " + id.ToString();
     }
@@ -57,12 +41,12 @@ public class SaveDataFoodPile : SaveDataTileObject {
     public override void Save(TileObject tileObject) {
         base.Save(tileObject);
         FoodPile obj = tileObject as FoodPile;
-        foodInPile = obj.foodInPile;
+        foodInPile = obj.resourceInPile;
     }
 
     public override TileObject Load() {
         FoodPile obj = base.Load() as FoodPile;
-        obj.SetFoodInPile(foodInPile);
+        obj.SetResourceInPile(foodInPile);
         return obj;
     }
 }

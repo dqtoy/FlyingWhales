@@ -39,6 +39,22 @@ namespace Traits {
             }
             return summary;
         }
+        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
+            base.ExecuteActionAfterEffects(action, goapNode);
+            if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
+                WeightedDictionary<string> result = GetResultWeights();
+                string res = result.PickRandomElementGivenWeights();
+                if (res == "Sick") {
+                    Sick sick = new Sick();
+                    for (int i = 0; i < responsibleCharacters.Count; i++) {
+                        sick.AddCharacterResponsibleForTrait(responsibleCharacters[i]);
+                    }
+                    goapNode.actor.traitContainer.AddTrait(goapNode.actor, sick);
+                } else if (res == "Death") {
+                    goapNode.actor.Death("poisoned", deathFromAction: goapNode);
+                }
+            }
+        }
         #endregion
 
         #region Aware Characters

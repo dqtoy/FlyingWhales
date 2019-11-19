@@ -4,16 +4,38 @@ using UnityEngine;
 using Traits;
 
 public class DropResource : GoapAction {
-    //TODO: Modify to use generic ResourcePile
     public DropResource() : base(INTERACTION_TYPE.DROP_RESOURCE) {
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
     }
 
     #region Overrides
-    protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = "0", target = GOAP_EFFECT_TARGET.ACTOR }, IsActorSupplyEnough);
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = "0", target = GOAP_EFFECT_TARGET.TARGET });
+    protected override List<GoapEffect> GetExpectedEffects(IPointOfInterest target, object[] otherData) {
+        List<GoapEffect> ee = base.GetExpectedEffects(target, otherData);
+        ResourcePile pile = target as ResourcePile;
+        switch (pile.providedResource) {
+            case RESOURCE.FOOD:
+                ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_FOOD, "0", true, GOAP_EFFECT_TARGET.ACTOR));
+                break;
+            case RESOURCE.WOOD:
+                ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_WOOD, "0", true, GOAP_EFFECT_TARGET.ACTOR));
+                break;
+        }
+        return ee;
+    }
+    public override List<Precondition> GetPreconditions(IPointOfInterest target, object[] otherData) {
+        List<Precondition> p = base.GetPreconditions(target, otherData);
+        ResourcePile pile = target as ResourcePile;
+        switch (pile.providedResource) {
+            case RESOURCE.FOOD:
+                p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_FOOD, "0", true, GOAP_EFFECT_TARGET.ACTOR), IsActorFoodEnough));
+                break;
+            case RESOURCE.WOOD:
+                p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_WOOD, "0", true, GOAP_EFFECT_TARGET.ACTOR), IsActorWoodEnough));
+                break;
+        }
+        return p;
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -25,15 +47,18 @@ public class DropResource : GoapAction {
     #endregion
 
     #region Preconditions
-    private bool IsActorSupplyEnough(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    private bool IsActorWoodEnough(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         if (actor.supply > actor.role.reservedSupply) {
             SupplyPile supplyPile = poiTarget as SupplyPile;
             int supplyToBeDeposited = actor.supply - actor.role.reservedSupply;
-            if((supplyToBeDeposited + supplyPile.suppliesInPile) >= 100) {
+            if((supplyToBeDeposited + supplyPile.resourceInPile) >= 100) {
                 return true;
             }
         }
         return false;
+    }
+    private bool IsActorFoodEnough(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return actor.food > 0;
     }
     #endregion
 
@@ -61,7 +86,7 @@ public class DropResource : GoapAction {
         SupplyPile supplyPile = goapNode.poiTarget as SupplyPile;
         int givenSupply = goapNode.actor.supply - goapNode.actor.role.reservedSupply;
         goapNode.actor.AdjustSupply(-givenSupply);
-        supplyPile.AdjustSuppliesInPile(givenSupply);
+        supplyPile.AdjustResourceInPile(givenSupply);
     }
     #endregion
 }

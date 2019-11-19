@@ -10,6 +10,7 @@ public class ZombieDeath : GoapAction {
     public ZombieDeath() : base(INTERACTION_TYPE.ZOMBIE_DEATH) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.No_Icon;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
     }
 
     #region Overrides

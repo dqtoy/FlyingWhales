@@ -88,21 +88,9 @@ public class TileObject : IPointOfInterest {
         CreateTraitContainer();
         traitContainer.AddTrait(this, "Flammable");
         InitializeCollisionTrigger();
-        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddCommonAdvertisments();
         InteriorMapManager.Instance.AddTileObject(this);
     }
-    //protected void Initialize(SaveDataArtifactSlot data, TILE_OBJECT_TYPE tileObjectType) {
-    //    id = Utilities.SetID(this, data.id);
-    //    this.tileObjectType = tileObjectType;
-    //    _traits = new List<Trait>();
-    //    actionHistory = new List<string>();
-    //    awareCharacters = new List<Character>();
-    //    allJobsTargettingThis = new List<JobQueueItem>();
-    //    owners = new List<Character>();
-    //    hasCreatedSlots = false;
-    //    InitializeCollisionTrigger();
-    //    InteriorMapManager.Instance.AddTileObject(this);
-    //}
     protected void Initialize(SaveDataTileObject data) {
         id = Utilities.SetID(this, data.id);
         tileObjectType = data.tileObjectType;
@@ -115,7 +103,14 @@ public class TileObject : IPointOfInterest {
         hasCreatedSlots = false;
         CreateTraitContainer();
         InitializeCollisionTrigger();
+        AddCommonAdvertisments();
         InteriorMapManager.Instance.AddTileObject(this);
+    }
+
+    private void AddCommonAdvertisments() {
+        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        AddAdvertisedAction(INTERACTION_TYPE.POISON);
+        AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
     }
 
     #region Virtuals
@@ -149,9 +144,6 @@ public class TileObject : IPointOfInterest {
         if (tile == null) {
             DisableCollisionTrigger();
             OnRemoveTileObject(null, previousTile);
-            if (previousTile != null) {
-                PlaceGhostCollisionTriggerAt(previousTile);
-            }
             SetPOIState(POI_STATE.INACTIVE);
         } else {
             PlaceCollisionTriggerAt(tile);
@@ -164,9 +156,6 @@ public class TileObject : IPointOfInterest {
         this.tile = null;
         DisableCollisionTrigger();
         OnRemoveTileObject(removedBy, previousTile);
-        if (previousTile != null) {
-            PlaceGhostCollisionTriggerAt(previousTile);
-        }
         SetPOIState(POI_STATE.INACTIVE);
     }
     public virtual LocationGridTile GetNearestUnoccupiedTileFromThis() {
@@ -401,16 +390,6 @@ public class TileObject : IPointOfInterest {
     }
     public void SetCollisionTrigger(POICollisionTrigger trigger) {
         _collisionTrigger = trigger;
-    }
-    public void PlaceGhostCollisionTriggerAt(LocationGridTile tile) {
-        GameObject ghostGO = GameObject.Instantiate(InteriorMapManager.Instance.ghostCollisionTriggerPrefab, tile.parentAreaMap.objectsParent);
-        RectTransform rt = ghostGO.transform as RectTransform;
-        rt.anchorMin = Vector2.zero;
-        rt.anchorMax = Vector2.zero;
-        (ghostGO.transform as RectTransform).anchoredPosition = tile.centeredLocalLocation;
-        GhostCollisionTrigger gct = ghostGO.GetComponent<GhostCollisionTrigger>();
-        gct.Initialize(this);
-        gct.SetLocation(tile);
     }
     #endregion
 

@@ -10,6 +10,7 @@ public class RememberFallen : GoapAction {
     public RememberFallen() : base(INTERACTION_TYPE.REMEMBER_FALLEN) {
         actionIconString = GoapActionStateDB.Entertain_Icon;
         isNotificationAnIntel = false;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
     }
 
     #region Overrides

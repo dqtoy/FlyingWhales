@@ -11,6 +11,7 @@ public class PickUp : GoapAction {
         actionIconString = GoapActionStateDB.Explore_Icon;
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         isNotificationAnIntel = false;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.ITEM };
     }
 
     #region Overrides

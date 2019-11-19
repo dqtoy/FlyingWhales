@@ -99,12 +99,12 @@ namespace Traits {
                             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                             return true;
                         }
-
-                    } else {
-                        if (InteractionManager.Instance.CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, currentJob)) {
-                            return TryTransferJob(currentJob, characterThatWillDoJob);
-                        }
-                    }
+                    } 
+                    //else {
+                    //    if (InteractionManager.Instance.CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, currentJob)) {
+                    //        return TryTransferJob(currentJob, characterThatWillDoJob);
+                    //    }
+                    //}
                 }
             }
             return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);

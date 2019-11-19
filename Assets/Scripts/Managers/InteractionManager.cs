@@ -27,8 +27,24 @@ public class InteractionManager : MonoBehaviour {
         //ConstructorInfo ctor = typeof(GoapAction).GetConstructors().First();
         //goapActionCreator = GetActivator<GoapAction>(ctor);
         ConstructGoapActionData();
+        ConstructAllGoapActionAdvertisements();
     }
 
+    private void ConstructAllGoapActionAdvertisements() {
+        POINT_OF_INTEREST_TYPE[] poiTypes = Utilities.GetEnumValues<POINT_OF_INTEREST_TYPE>();
+        allGoapActionAdvertisements = new Dictionary<POINT_OF_INTEREST_TYPE, List<GoapAction>>();
+        for (int i = 0; i < poiTypes.Length; i++) {
+            POINT_OF_INTEREST_TYPE currType = poiTypes[i];
+            allGoapActionAdvertisements.Add(currType, new List<GoapAction>());
+        }
+        for (int i = 0; i < goapActionData.Values.Count; i++) {
+            GoapAction currAction = goapActionData.Values.ElementAt(i);
+            for (int j = 0; j < currAction.advertisedBy.Length; j++) {
+                POINT_OF_INTEREST_TYPE currType = currAction.advertisedBy[i];
+                allGoapActionAdvertisements[currType].Add(currAction);
+            }
+        }
+    }
     //public GoapAction CreateNewGoapInteraction(INTERACTION_TYPE type, Character actor, IPointOfInterest target, bool willInitialize = true) {
     //    var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(type.ToString());
     //    System.Type systemType = System.Type.GetType(typeName);

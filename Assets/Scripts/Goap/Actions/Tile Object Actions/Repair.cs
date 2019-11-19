@@ -9,6 +9,8 @@ public class Repair : GoapAction {
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
+        canBeAdvertisedEvenIfActorIsUnavailable = true;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
     }
 
     #region Overrides
@@ -20,7 +22,7 @@ public class Repair : GoapAction {
         TileObject tileObj = poiTarget as TileObject;
         TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
         int craftCost = (int)(data.constructionCost * 0.5f);
-        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_SUPPLY, craftCost.ToString(), true, GOAP_EFFECT_TARGET.ACTOR), HasSupply));
+        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_WOOD, craftCost.ToString(), true, GOAP_EFFECT_TARGET.ACTOR), HasSupply));
 
         return p;
     }

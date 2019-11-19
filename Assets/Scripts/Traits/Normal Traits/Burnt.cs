@@ -89,11 +89,12 @@ namespace Traits {
                         //    characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
                         //    return false;
                         //}
-                    } else {
-                        if (InteractionManager.Instance.CanCharacterTakeRepairJob(characterThatWillDoJob, currentJob)) {
-                            return TryTransferJob(currentJob, characterThatWillDoJob);
-                        }
-                    }
+                    } 
+                    //else {
+                    //    if (InteractionManager.Instance.CanCharacterTakeRepairJob(characterThatWillDoJob, currentJob)) {
+                    //        return TryTransferJob(currentJob, characterThatWillDoJob);
+                    //    }
+                    //}
                 }
             }
             return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);

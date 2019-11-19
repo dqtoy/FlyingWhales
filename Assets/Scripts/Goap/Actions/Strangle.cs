@@ -8,6 +8,7 @@ public class Strangle : GoapAction {
     public Strangle() : base(INTERACTION_TYPE.STRANGLE) {
         actionIconString = GoapActionStateDB.Sleep_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
     }
 
     #region Override

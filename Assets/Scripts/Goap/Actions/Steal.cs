@@ -12,13 +12,14 @@ public class Steal : GoapAction {
             TIME_IN_WORDS.AFTER_MIDNIGHT,
         };
         actionIconString = GoapActionStateDB.Steal_Icon;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.ITEM };
     }
 
     #region Overrides
     protected override List<GoapEffect> GetExpectedEffects(IPointOfInterest target, object[] otherData) {
         List <GoapEffect> ee = base.GetExpectedEffects(target, otherData);
         SpecialToken token = target as SpecialToken;
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = token.specialTokenType.ToString(), target = GOAP_EFFECT_TARGET.TARGET });
+        ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = token.specialTokenType.ToString(), target = GOAP_EFFECT_TARGET.TARGET });
         return ee;
     }
     public override void Perform(ActualGoapNode goapNode) {

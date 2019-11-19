@@ -87,11 +87,12 @@ namespace Traits {
                             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                             return true;
                         }
-                    } else {
-                        if (InteractionManager.Instance.CanCharacterTakeRemoveIllnessesJob(characterThatWillDoJob, targetCharacter, currentJob)) {
-                            TryTransferJob(currentJob, characterThatWillDoJob);
-                        }
-                    }
+                    } 
+                    //else {
+                    //    if (InteractionManager.Instance.CanCharacterTakeRemoveIllnessesJob(characterThatWillDoJob, targetCharacter, currentJob)) {
+                    //        TryTransferJob(currentJob, characterThatWillDoJob);
+                    //    }
+                    //}
                 }
                 if (!targetCharacter.isDead && targetCharacter.faction != characterThatWillDoJob.faction && targetCharacter.traitContainer.GetNormalTrait("Restrained") == null) {
                     GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.RESTRAIN);
@@ -105,11 +106,12 @@ namespace Traits {
                             return true;
                         }
   
-                    } else {
-                        if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, currentJob)) {
-                            TryTransferJob(currentJob, characterThatWillDoJob);
-                        }
-                    }
+                    } 
+                    //else {
+                    //    if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, currentJob)) {
+                    //        TryTransferJob(currentJob, characterThatWillDoJob);
+                    //    }
+                    //}
                 }
             }
             return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);

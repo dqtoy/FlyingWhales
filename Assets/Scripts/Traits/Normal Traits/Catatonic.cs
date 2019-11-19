@@ -54,11 +54,12 @@ namespace Traits {
                                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                                     return true;
                                 }
-                            } else {
-                                if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, currentJob)) {
-                                    TryTransferJob(currentJob, characterThatWillDoJob);
-                                }
-                            }
+                            } 
+                            //else {
+                            //    if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, currentJob)) {
+                            //        TryTransferJob(currentJob, characterThatWillDoJob);
+                            //    }
+                            //}
                         }
                     } else {
                         if (characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.NEGATIVE) {

@@ -13,6 +13,7 @@ public class Stand : GoapAction {
         shouldIntelNotificationOnlyIfActorIsActive = true;
         isNotificationAnIntel = false;
         shouldAddLogs = false;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
     }
 
     #region Overrides

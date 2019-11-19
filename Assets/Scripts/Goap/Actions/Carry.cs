@@ -9,6 +9,7 @@ public class Carry : GoapAction {
     public Carry() : base(INTERACTION_TYPE.CARRY) {
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
     }
 
     #region Overrides

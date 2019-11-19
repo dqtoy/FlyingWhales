@@ -46,7 +46,6 @@ public interface IPointOfInterest : ITraitable {
     void PlaceCollisionTriggerAt(LocationGridTile tile);
     void DisableCollisionTrigger();
     void SetCollisionTrigger(POICollisionTrigger trigger);
-    void PlaceGhostCollisionTriggerAt(LocationGridTile tile);
     #endregion
 }
 

@@ -78,11 +78,12 @@ namespace Traits {
                             return true;
                         }
  
-                    } else {
-                        if (InteractionManager.Instance.CanCharacterTakeRemoveIllnessesJob(characterThatWillDoJob, targetCharacter, currentJob)) {
-                            return TryTransferJob(currentJob, characterThatWillDoJob);
-                        }
-                    }
+                    } 
+                    //else {
+                    //    if (InteractionManager.Instance.CanCharacterTakeRemoveIllnessesJob(characterThatWillDoJob, targetCharacter, currentJob)) {
+                    //        return TryTransferJob(currentJob, characterThatWillDoJob);
+                    //    }
+                    //}
                 }
             }
             return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);

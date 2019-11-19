@@ -31,9 +31,6 @@ public class GenericTileObject : TileObject {
         if (tile == null) {
             DisableCollisionTrigger();
             OnRemoveTileObject(null, previousTile);
-            if (previousTile != null) {
-                PlaceGhostCollisionTriggerAt(previousTile);
-            }
             SetPOIState(POI_STATE.INACTIVE);
         } else {
             PlaceCollisionTriggerAt(tile);
@@ -45,9 +42,6 @@ public class GenericTileObject : TileObject {
         LocationGridTile previousTile = this.tile;
         DisableCollisionTrigger();
         OnRemoveTileObject(removedBy, previousTile);
-        if (previousTile != null) {
-            PlaceGhostCollisionTriggerAt(previousTile);
-        }
         SetPOIState(POI_STATE.INACTIVE);
     }
     public override bool IsValidCombatTarget() {

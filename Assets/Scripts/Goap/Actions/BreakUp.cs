@@ -9,6 +9,7 @@ public class BreakUp : GoapAction {
 
     public BreakUp() : base(INTERACTION_TYPE.BREAK_UP) {
         actionIconString = GoapActionStateDB.Social_Icon;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
     }
 
     #region Overrides

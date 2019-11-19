@@ -10,6 +10,7 @@ public class KnockoutCharacter : GoapAction {
     public KnockoutCharacter() : base(INTERACTION_TYPE.KNOCKOUT_CHARACTER) {
         doesNotStopTargetCharacter = true;
         actionIconString = GoapActionStateDB.Stealth_Icon;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
     }
 
     #region Overrides

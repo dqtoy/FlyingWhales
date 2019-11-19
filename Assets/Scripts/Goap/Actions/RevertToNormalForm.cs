@@ -8,6 +8,7 @@ public class RevertToNormalForm : GoapAction {
     public RevertToNormalForm() : base(INTERACTION_TYPE.REVERT_TO_NORMAL_FORM) {
         actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
     }
 
     #region Overrides

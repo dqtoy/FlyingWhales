@@ -10,6 +10,7 @@ public class CurseCharacter : GoapAction {
         actionIconString = GoapActionStateDB.Hostile_Icon;
         shouldAddLogs = false; //set to false because this action has a special case for logs
         doesNotStopTargetCharacter = true;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
     }
 
     #region Overrides

@@ -12,6 +12,7 @@ public class Watch : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         doesNotStopTargetCharacter = true;
         isNotificationAnIntel = false;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
     }
 
     #region Overrides
