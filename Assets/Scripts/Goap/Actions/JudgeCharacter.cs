@@ -125,6 +125,9 @@ public class JudgeCharacter : GoapAction {
 
         weights.LogDictionaryValues(GameManager.Instance.TodayLogString() + goapNode.actor.name + " judgement weights towards " + targetCharacter.name);
         string chosen = weights.PickRandomElementGivenWeights();
+
+        CreateJudgeLog(goapNode, chosen);
+
         if (chosen == "Target Executed") {
             TargetExecuted(goapNode);
         } else if (chosen == "Target Released") {
@@ -182,6 +185,13 @@ public class JudgeCharacter : GoapAction {
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Restrained");
     }
     #endregion
+
+    private void CreateJudgeLog(ActualGoapNode goapNode, string logKey) {
+        Log log = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), logKey, goapNode);
+        log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        goapNode.OverrideDescriptionLog(log);
+    }
 
     private void ForceTargetReturnHome(ActualGoapNode goapNode) {
         Character target = goapNode.poiTarget as Character;

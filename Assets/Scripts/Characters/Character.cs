@@ -5999,7 +5999,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //}
     public void ConstructInitialGoapAdvertisementActions() {
         //poiGoapActions = new List<INTERACTION_TYPE>();
-        poiGoapActions.Add(INTERACTION_TYPE.ASSAULT);
+        advertisedActions.Add(INTERACTION_TYPE.ASSAULT);
         advertisedActions.Add(INTERACTION_TYPE.RESTRAIN_CHARACTER);
         //poiGoapActions.Add(INTERACTION_TYPE.STROLL);
         advertisedActions.Add(INTERACTION_TYPE.DAYDREAM);
@@ -6011,21 +6011,15 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //poiGoapActions.Add(INTERACTION_TYPE.RETURN_HOME_LOCATION);
         //poiGoapActions.Add(INTERACTION_TYPE.HUNT_ACTION);
         advertisedActions.Add(INTERACTION_TYPE.PLAY);
-        advertisedActions.Add(INTERACTION_TYPE.REPORT_CRIME);
-        advertisedActions.Add(INTERACTION_TYPE.REPORT_HOSTILE);
         advertisedActions.Add(INTERACTION_TYPE.JUDGE_CHARACTER);
         advertisedActions.Add(INTERACTION_TYPE.CURSE_CHARACTER);
         advertisedActions.Add(INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER);
         advertisedActions.Add(INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE);
         advertisedActions.Add(INTERACTION_TYPE.BURY_CHARACTER);
-        advertisedActions.Add(INTERACTION_TYPE.CARRY_CORPSE);
-        advertisedActions.Add(INTERACTION_TYPE.DROP_ITEM_WAREHOUSE);
         advertisedActions.Add(INTERACTION_TYPE.INVITE);
-        poiGoapActions.Add(INTERACTION_TYPE.MAKE_LOVE);
+        advertisedActions.Add(INTERACTION_TYPE.MAKE_LOVE);
         advertisedActions.Add(INTERACTION_TYPE.TANTRUM);
         advertisedActions.Add(INTERACTION_TYPE.BREAK_UP);
-        advertisedActions.Add(INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-        advertisedActions.Add(INTERACTION_TYPE.ROAMING_TO_STEAL);
         advertisedActions.Add(INTERACTION_TYPE.PUKE);
         advertisedActions.Add(INTERACTION_TYPE.SEPTIC_SHOCK);
         advertisedActions.Add(INTERACTION_TYPE.CARRY);
@@ -6048,13 +6042,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         advertisedActions.Add(INTERACTION_TYPE.SING);
         advertisedActions.Add(INTERACTION_TYPE.GO_TO);
         advertisedActions.Add(INTERACTION_TYPE.SCREAM_FOR_HELP);
-        advertisedActions.Add(INTERACTION_TYPE.WHIP);
 
         if (race != RACE.SKELETON) {
             advertisedActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);
             advertisedActions.Add(INTERACTION_TYPE.DRINK_BLOOD);
             advertisedActions.Add(INTERACTION_TYPE.KNOCKOUT_CHARACTER);
-            advertisedActions.Add(INTERACTION_TYPE.TRANSFORM_FOOD);
+            advertisedActions.Add(INTERACTION_TYPE.BUTCHER);
         }
     }
     /// <summary>

@@ -9,13 +9,13 @@ public class Mushroom : TileObject {
 
     public Mushroom(LocationStructure location) {
         SetStructureLocation(location);
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, };
         Initialize(TILE_OBJECT_TYPE.MUSHROOM);
         traitContainer.AddTrait(this, "Edible");
     }
 
     public Mushroom(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, };
         Initialize(data);
         traitContainer.AddTrait(this, "Edible");
     }

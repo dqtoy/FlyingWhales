@@ -77,6 +77,13 @@ namespace Traits {
         //    victim2Requirement = serialVictim;
         //}
         public void SetTargetVictim(Character victim) {
+            if (targetVictim != null) {
+                //TODO: Add checking if character is the target of any other serial killer
+                targetVictim.RemoveAdvertisedAction(INTERACTION_TYPE.RITUAL_KILLING);
+            }
+            if (victim != null) {
+                victim.AddAdvertisedAction(INTERACTION_TYPE.RITUAL_KILLING);
+            }
             targetVictim = victim;
         }
         public void SetIsFollowing(bool state) {

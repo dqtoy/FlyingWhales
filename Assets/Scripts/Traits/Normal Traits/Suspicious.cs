@@ -20,7 +20,7 @@ namespace Traits {
                 TileObject objectToBeInspected = targetPOI as TileObject;
                 if (objectToBeInspected.isSummonedByPlayer) {
                     if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.DESTROY, objectToBeInspected)) {
-                        GoapPlanJob destroyJob = new GoapPlanJob(JOB_TYPE.DESTROY, INTERACTION_TYPE.TILE_OBJECT_DESTROY, objectToBeInspected, characterThatWillDoJob);
+                        GoapPlanJob destroyJob = new GoapPlanJob(JOB_TYPE.DESTROY, INTERACTION_TYPE.ASSAULT, objectToBeInspected, characterThatWillDoJob);
                         characterThatWillDoJob.jobQueue.AddJobInQueue(destroyJob);
                     }
                 }

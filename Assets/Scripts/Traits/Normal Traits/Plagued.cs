@@ -94,20 +94,49 @@ namespace Traits {
         }
         public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
             base.ExecuteActionAfterEffects(action, goapNode);
-            if (action == INTERACTION_TYPE.MAKE_LOVE) {
-                int roll = Random.Range(0, 100);
-                if (roll < GetMakeLoveInfectChance()) {
-                    //target will be infected with plague
-                    if (goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Plagued", goapNode.actor)) {
-                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
-                        log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        log.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        log.AddLogToInvolvedObjects();
+            if (action == INTERACTION_TYPE.MAKE_LOVE || action == INTERACTION_TYPE.CHAT_CHARACTER || action == INTERACTION_TYPE.CARRY) {
+                IPointOfInterest target;
+                IPointOfInterest infector;
+                if (TryGetTargetAndInfector(goapNode, out target, out infector)) { //this is necessary so that this function can determine which of the characters is infecting the other
+                    int roll = Random.Range(0, 100);
+                    int chance = GetInfectChanceForAction(action);
+                    if (roll < chance) {
+                        //target will be infected with plague
+                        if (target.traitContainer.AddTrait(target, "Plagued", infector as Character)) {
+                            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
+                            log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                            log.AddToFillers(infector, infector.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                            log.AddLogToInvolvedObjects();
+                        }
                     }
                 }
             }
         }
         #endregion
+
+        private bool TryGetTargetAndInfector(ActualGoapNode goapNode,  out IPointOfInterest target, out IPointOfInterest infector) {
+            if (goapNode.actor == owner) {
+                target = goapNode.poiTarget;
+                infector = goapNode.actor;
+            } else {
+                target = goapNode.actor;
+                infector = goapNode.poiTarget;
+            }
+            return true;
+        }
+
+        private int GetInfectChanceForAction(INTERACTION_TYPE type) {
+            switch (type) {
+                case INTERACTION_TYPE.CHAT_CHARACTER:
+                    return GetChatInfectChance();
+                case INTERACTION_TYPE.MAKE_LOVE:
+                    return GetMakeLoveInfectChance();
+                case INTERACTION_TYPE.CARRY:
+                    return GetCarryInfectChance();
+                default:
+                    return 0;
+            }
+        }
 
         public int GetChatInfectChance() {
             if (level == 1) {

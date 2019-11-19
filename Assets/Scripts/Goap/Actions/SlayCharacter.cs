@@ -11,6 +11,7 @@ public class SlayCharacter : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
+        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.CANNOT_MOVE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), TargetCannotMove);
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET));
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -48,6 +49,12 @@ public class SlayCharacter : GoapAction {
     #region State Effects
     private void AfterSlaySuccess(ActualGoapNode goapNode) {
         (goapNode.poiTarget as Character).Death(deathFromAction: goapNode, responsibleCharacter: goapNode.actor);
+    }
+    #endregion
+
+    #region Preconditions
+    private bool TargetCannotMove(Character actor, IPointOfInterest target, object[] otherData) {
+        return (target as Character).canMove == false;
     }
     #endregion
 

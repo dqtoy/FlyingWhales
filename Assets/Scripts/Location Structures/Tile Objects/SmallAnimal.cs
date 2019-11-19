@@ -9,12 +9,12 @@ public class SmallAnimal : TileObject {
 
     public SmallAnimal(LocationStructure location) {
         SetStructureLocation(location);
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, };
         Initialize(TILE_OBJECT_TYPE.SMALL_ANIMAL);
         traitContainer.AddTrait(this, "Edible");
     }
     public SmallAnimal(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, };
         Initialize(data);
         traitContainer.AddTrait(this, "Edible");
     }

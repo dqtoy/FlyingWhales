@@ -5,7 +5,7 @@ using Traits;
 
 public class Butcher : GoapAction {
 
-    public Butcher() : base(INTERACTION_TYPE.TRANSFORM_FOOD) {
+    public Butcher() : base(INTERACTION_TYPE.BUTCHER) {
         actionIconString = GoapActionStateDB.Work_Icon;
     }
 
@@ -227,8 +227,8 @@ public class Butcher : GoapAction {
     //#endregion
 }
 
-public class TransformFoodData : GoapActionData {
-    public TransformFoodData() : base(INTERACTION_TYPE.TRANSFORM_FOOD) {
+public class ButcherData : GoapActionData {
+    public ButcherData() : base(INTERACTION_TYPE.BUTCHER) {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }

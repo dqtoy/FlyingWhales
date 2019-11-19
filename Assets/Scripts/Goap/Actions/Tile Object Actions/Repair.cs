@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
 
-public class RepairTileObject : GoapAction {
+public class Repair : GoapAction {
 
-    public RepairTileObject() : base(INTERACTION_TYPE.REPAIR_TILE_OBJECT) {
+    public Repair() : base(INTERACTION_TYPE.REPAIR) {
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
@@ -65,8 +65,8 @@ public class RepairTileObject : GoapAction {
 
 }
 
-public class RepairTileObjectData : GoapActionData {
-    public RepairTileObjectData() : base(INTERACTION_TYPE.REPAIR_TILE_OBJECT) {
+public class RepairData : GoapActionData {
+    public RepairData() : base(INTERACTION_TYPE.REPAIR) {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         //requirementAction = Requirement;
     }

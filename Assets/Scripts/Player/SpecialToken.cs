@@ -75,7 +75,7 @@ public class SpecialToken : IPointOfInterest {
         this.specialTokenType = specialTokenType;
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.specialTokenType.ToString());
         weight = appearanceRate;
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_UP, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP, INTERACTION_TYPE.ITEM_DESTROY, INTERACTION_TYPE.DROP_ITEM};
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_UP, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.DROP_ITEM};
         _traits = new List<Trait>();
         allJobsTargettingThis = new List<JobQueueItem>();
         //targettedByAction = new List<GoapAction>();

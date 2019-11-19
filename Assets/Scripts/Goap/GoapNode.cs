@@ -508,6 +508,9 @@ public class ActualGoapNode {
         //    }
         //}
     }
+    public void OverrideDescriptionLog(Log log) {
+        descriptionLog = log;
+    }
     #endregion
 
     #region Jobs

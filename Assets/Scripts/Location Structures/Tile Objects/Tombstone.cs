@@ -12,11 +12,11 @@ public class Tombstone : TileObject {
     public Character character { get; private set; }
     public Tombstone(LocationStructure structure) {
         SetStructureLocation(structure);
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMEMBER_FALLEN, INTERACTION_TYPE.SPIT, INTERACTION_TYPE.TRANSFORM_FOOD };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMEMBER_FALLEN, INTERACTION_TYPE.SPIT, INTERACTION_TYPE.BUTCHER };
         //Initialize(TILE_OBJECT_TYPE.TOMBSTONE);
     }
     public Tombstone(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMEMBER_FALLEN, INTERACTION_TYPE.SPIT, INTERACTION_TYPE.TRANSFORM_FOOD };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMEMBER_FALLEN, INTERACTION_TYPE.SPIT, INTERACTION_TYPE.BUTCHER };
         //Initialize(data);
     }
 

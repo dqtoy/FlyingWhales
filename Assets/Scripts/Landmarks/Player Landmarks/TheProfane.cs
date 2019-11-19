@@ -42,7 +42,7 @@ public class TheProfane : BaseLandmark {
             }
         } else if (action == "Destroy Food") {
             if (!targetCharacter.jobQueue.HasJob(JOB_TYPE.DESTROY_FOOD)) {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DESTROY_FOOD, INTERACTION_TYPE.DESTROY_RESOURCE, targetCharacter.specificLocation.supplyPile, targetCharacter);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DESTROY_FOOD, INTERACTION_TYPE.DESTROY_RESOURCE, targetCharacter.specificLocation.foodPile, targetCharacter);
                 job.SetIsStealth(true);
                 targetCharacter.jobQueue.AddJobInQueue(job);
             }

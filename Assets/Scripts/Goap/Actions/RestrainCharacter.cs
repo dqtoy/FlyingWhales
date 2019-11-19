@@ -12,7 +12,7 @@ public class RestrainCharacter : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.CANNOT_MOVE, conditionKey = "Disabler", target = GOAP_EFFECT_TARGET.TARGET }, CannotMove);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.CANNOT_MOVE, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.TARGET }, CannotMove);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", target = GOAP_EFFECT_TARGET.TARGET });
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = poiTarget });
     }

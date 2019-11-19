@@ -9,12 +9,12 @@ public class EdiblePlant : TileObject {
 
     public EdiblePlant(LocationStructure location) {
         SetStructureLocation(location);
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, };
         Initialize(TILE_OBJECT_TYPE.EDIBLE_PLANT);
         traitContainer.AddTrait(this, "Edible");
     }
     public EdiblePlant(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, };
         Initialize(data);
         traitContainer.AddTrait(this, "Edible");
     }

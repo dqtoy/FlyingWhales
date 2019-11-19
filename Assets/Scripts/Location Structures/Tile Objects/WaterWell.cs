@@ -22,7 +22,7 @@ public class WaterWell : TileObject {
     public override void SetStructureLocation(LocationStructure structure) {
         base.SetStructureLocation(structure);
         if (structure.structureType != STRUCTURE_TYPE.POND) {
-            advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.WELL_JUMP, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
+            advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.WELL_JUMP, INTERACTION_TYPE.REPAIR };
         } else {
             advertisedActions = new List<INTERACTION_TYPE>();
         }

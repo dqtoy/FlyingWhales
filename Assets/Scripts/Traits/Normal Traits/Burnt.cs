@@ -74,7 +74,7 @@ namespace Traits {
         public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
             if (traitOwner is TileObject) {
                 TileObject targetPOI = traitOwner as TileObject;
-                if (targetPOI.advertisedActions.Contains(INTERACTION_TYPE.REPAIR_TILE_OBJECT)) {
+                if (targetPOI.advertisedActions.Contains(INTERACTION_TYPE.REPAIR)) {
                     GoapPlanJob currentJob = targetPOI.GetJobTargettingThisCharacter(JOB_TYPE.REPAIR);
                     if (currentJob == null) {
                         GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Burnt", false, GOAP_EFFECT_TARGET.TARGET);

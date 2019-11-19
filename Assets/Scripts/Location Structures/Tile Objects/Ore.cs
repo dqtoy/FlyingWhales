@@ -10,12 +10,12 @@ public class Ore : TileObject {
 
     public Ore(LocationStructure location) {
         SetStructureLocation(location);
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE, INTERACTION_TYPE.ASSAULT, };
         Initialize(TILE_OBJECT_TYPE.ORE);
         yield = Random.Range(15, 36);
     }
     public Ore(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE, INTERACTION_TYPE.ASSAULT, };
         Initialize(data);
     }
 
