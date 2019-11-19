@@ -73,6 +73,7 @@ public class CombatState : CharacterState {
         }
     }
     protected override void StartState() {
+        stateComponent.character.DecreaseCanWitness();
         stateComponent.character.marker.ShowHPBar();
         stateComponent.character.marker.SetAnimationBool("InCombat", true);
         //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, stateComponent.character, "combat");
@@ -83,7 +84,7 @@ public class CombatState : CharacterState {
         //if (stateComponent.character.currentActionNode is Assault && !stateComponent.character.currentActionNode.isPerformingActualAction) {
         //    stateComponent.character.currentActionNode.Perform(); //this is for when a character will assault a target, but his/her attack range is less than his/her vision range. (Because end reached distance of assault action is set to attack range)
         //}
-        stateComponent.character.StopCurrentActionNode(false);
+        //stateComponent.character.StopCurrentActionNode(false);
         stateComponent.character.currentParty.RemoveAllOtherCharacters(); //Drop characters when entering combat
         if(stateComponent.character is SeducerSummon) { //If succubus/incubus enters a combat, automatically change its faction to the player faction if faction is still disguised
             if(stateComponent.character.faction == FactionManager.Instance.disguisedFaction) {
@@ -94,6 +95,7 @@ public class CombatState : CharacterState {
         stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
     }
     protected override void EndState() {
+        stateComponent.character.IncreaseCanWitness();
         stateComponent.character.marker.StopCoroutine(CheckIfCurrentHostileIsInRange());
         base.EndState();
         stateComponent.character.marker.HideHPBar();

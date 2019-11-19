@@ -148,7 +148,7 @@ public class GoapThread : Multithread {
             //provided goal type
             GoapAction action = InteractionManager.Instance.goapActionData[goalType];
             int cost = 0;
-            if (target.CanAdvertiseActionsToActor(actor, action, job.otherData, ref cost)) {
+            if (target.CanAdvertiseActionToActor(actor, action, job.otherData, ref cost)) {
                 log += $"\n{target.name} Can advertise actions to {actor.name}";
                 plan = actor.planner.PlanActions(target, action, isPersonalPlan, ref planLog, job);
             } else {
@@ -157,7 +157,7 @@ public class GoapThread : Multithread {
         } else if (goalAction != null) {
             //provided goal action
             int cost = 0;
-            if (target.CanAdvertiseActionsToActor(actor, goalAction, job.otherData, ref cost)) {
+            if (target.CanAdvertiseActionToActor(actor, goalAction, job.otherData, ref cost)) {
                 plan = actor.planner.PlanActions(target, goalAction, isPersonalPlan, ref planLog, job);
             }
         } else {

@@ -649,7 +649,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
         //Messenger.AddListener(Signals.TICK_STARTED, DailyInteractionGeneration);
         Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
-        Messenger.AddListener(Signals.TICK_ENDED, EndTickPerformJobs);
+        Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.AddListener(Signals.DAY_STARTED, DailyGoapProcesses);
         Messenger.AddListener(Signals.HOUR_STARTED, DecreaseNeeds);
         //Messenger.AddListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
@@ -670,7 +670,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
         //Messenger.RemoveListener(Signals.TICK_STARTED, DailyInteractionGeneration);
         Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStarted);
-        Messenger.RemoveListener(Signals.TICK_ENDED, EndTickPerformJobs);
+        Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.RemoveListener(Signals.DAY_STARTED, DailyGoapProcesses);
         Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseNeeds);
         //Messenger.RemoveListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
@@ -2919,9 +2919,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //}
     }
     public void ThisCharacterWitnessedEvent(ActualGoapNode witnessedEvent) {
-        if (isDead || !canWitness) {
-            return;
-        }
+        //if (isDead || !canWitness) {
+        //    return;
+        //}
         if (faction != witnessedEvent.actor.faction && //only check faction relationship if involved characters are of different factions
             faction.IsHostileWith(witnessedEvent.actor.faction)) {
             //Must not react if the faction of the actor of witnessed action is hostile with the faction of the witness
@@ -4021,6 +4021,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
 
         StartTickGoapPlanGeneration();
+    }
+    protected virtual void OnTickEnded() {
+        EndTickPerformJobs();
     }
     protected void StartTickGoapPlanGeneration() {
         //This is to ensure that this character will not be idle forever
@@ -5960,7 +5963,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         return chosenAction;
     }
-    public bool CanAdvertiseActionsToActor(Character actor, GoapAction action, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost) {
+    public bool CanAdvertiseActionToActor(Character actor, GoapAction action, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost) {
         if((IsAvailable() || action.canBeAdvertisedEvenIfActorIsUnavailable) 
             && advertisedActions != null && advertisedActions.Contains(action.goapType)
             && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)) {
@@ -7080,7 +7083,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     /// A variation of react to crime in which the parameter SHARE_INTEL_STATUS will be the one to determine if it is informed or witnessed crime
     /// Returns true or false, if the relationship between the reactor and the criminal has degraded
     /// </summary>
-    public bool ReactToCrime(CRIME committedCrime, ActualGoapNode crimeAction, AlterEgoData criminal, SHARE_INTEL_STATUS status) {
+    public bool ReactToCrime(CRIME committedCrime, GoapAction crimeAction, AlterEgoData criminal, SHARE_INTEL_STATUS status) {
         bool hasRelationshipDegraded = false;
         if (status == SHARE_INTEL_STATUS.WITNESSED) {
             ReactToCrime(committedCrime, crimeAction, criminal, ref hasRelationshipDegraded, crimeAction, null);
@@ -7098,7 +7101,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     /// <param name="criminal">The character that committed the crime</param>
     /// <param name="witnessedCrime">The crime witnessed by this character, if this is null, character was only informed of the crime by someone else.</param>
     /// <param name="informedCrime">The crime this character was informed of. NOTE: Should only have value if Share Intel</param>
-    public void ReactToCrime(CRIME committedCrime, ActualGoapNode crimeAction, AlterEgoData criminal, ref bool hasRelationshipDegraded, ActualGoapNode witnessedCrime = null, ActualGoapNode informedCrime = null) {
+    public void ReactToCrime(CRIME committedCrime, GoapAction crimeAction, AlterEgoData criminal, ref bool hasRelationshipDegraded, GoapAction witnessedCrime = null, GoapAction informedCrime = null) {
         //NOTE: Moved this to be per action specific. See GoapAction.IsConsideredACrimeBy and GoapAction.CanReactToThisCrime for necessary mechanics.
         //if (witnessedCrime != null) {
         //    //if the action that should be considered a crime is part of a job from this character's area, do not consider it a crime
@@ -7111,7 +7114,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //        return;
         //    }
         //}
-
+        
         string reactSummary = GameManager.Instance.TodayLogString() + this.name + " will react to crime committed by " + criminal.owner.name;
         if(committedCrime == CRIME.NONE) {
             reactSummary += "\nNo reaction because committed crime is " + committedCrime.ToString();
@@ -7213,7 +7216,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     /// <param name="criminal">The character that committed the crime</param>
     /// <param name="witnessedCrime">The crime witnessed by this character, if this is null, character was only informed of the crime by someone else.</param>
     /// <param name="informedCrime">The crime this character was informed of. NOTE: Should only have value if Share Intel</param>
-    private void PerRoleCrimeReaction(CRIME committedCrime, ActualGoapNode crimeAction, AlterEgoData criminal, ActualGoapNode witnessedCrime = null, ActualGoapNode informedCrime = null) {
+    private void PerRoleCrimeReaction(CRIME committedCrime, GoapAction crimeAction, AlterEgoData criminal, GoapAction witnessedCrime = null, GoapAction informedCrime = null) {
         GoapPlanJob job = null;
         switch (role.roleType) {
             case CHARACTER_ROLE.CIVILIAN:
@@ -7221,14 +7224,14 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 //- If the character is a Civilian or Adventurer, he will enter Flee mode (fleeing the criminal) and will create a Report Crime Job Type in his personal job queue
                 if (this.faction != FactionManager.Instance.neutralFaction && criminal.faction == this.faction) {
                     //only make character flee, if he/she actually witnessed the crime (not share intel)
-                    //GoapAction crimeToReport = informedCrime;
-                    //if (witnessedCrime != null) {
-                    //    crimeToReport = witnessedCrime;
-                    //    ////if a character has no negative disabler traits. Do not Flee. This is so that the character will not also add a Report hostile job
-                    //    //if (!this.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) { 
-                    //    //    this.marker.AddHostileInRange(criminal.owner, false);
-                    //    //}
-                    //}
+                    GoapAction crimeToReport = informedCrime;
+                    if (witnessedCrime != null) {
+                        crimeToReport = witnessedCrime;
+                        ////if a character has no negative disabler traits. Do not Flee. This is so that the character will not also add a Report hostile job
+                        //if (!this.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) { 
+                        //    this.marker.AddHostileInRange(criminal.owner, false);
+                        //}
+                    }
                     //TODO: job = CreateReportCrimeJob(committedCrime, crimeToReport, criminal);
                 }
                 break;
@@ -7270,7 +7273,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 break;
         }
     }
-    public void AddCriminalTrait(CRIME crime, ActualGoapNode crimeAction) {
+    public void AddCriminalTrait(CRIME crime, GoapAction crimeAction) {
         Trait trait = null;
         switch (crime) {
             case CRIME.THEFT:
