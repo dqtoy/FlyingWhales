@@ -120,7 +120,7 @@ public class SeducerSummon : Summon {
         PlayerManager.Instance.player.playerArea.AddCharacterToLocation(this);
         ownParty.SetSpecificLocation(PlayerManager.Instance.player.playerArea);
         ClearAllAwareness();
-        CancelAllJobsAndPlans();
+        CancelAllJobs();
         traitContainer.RemoveAllNonPersistentTraits(this);
         ResetToFullHP();
         UnsubscribeSignals();

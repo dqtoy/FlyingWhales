@@ -71,6 +71,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public int food { get; set; }
     //public int isWaitingForInteraction { get; private set; }
     public CharacterMarker marker { get; private set; }
+    public JobQueueItem currentJob { get; private set; }
+    public GoapPlan currentPlan { get; private set; }
     public ActualGoapNode currentActionNode { get; private set; }
     public ActualGoapNode previousCurrentActionNode { get; private set; }
     public Character lastAssaultedCharacter { get; private set; }
@@ -78,7 +80,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public CharacterStateComponent stateComponent { get; private set; }
     public List<SpecialToken> items { get; private set; }
     public JobQueue jobQueue { get; private set; }
-    public JobQueueItem currentJobNode { get { return GetCurrentJob(); } }
     public List<JobQueueItem> allJobsTargettingThis { get; private set; }
     public int moodValue { get; private set; }
     public bool isCombatant { get; private set; } //This should only be a getter but since we need to know when the value changes it now has a setter
@@ -365,6 +366,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public bool isHungry { get { return fullness <= FULLNESS_THRESHOLD_1; } }
     public bool isTired { get { return tiredness <= TIREDNESS_THRESHOLD_1; } }
     public bool isLonely { get { return happiness <= HAPPINESS_THRESHOLD_1; } }
+
     public AlterEgoData currentAlterEgo {
         get {
             if (alterEgos == null || !alterEgos.ContainsKey(currentAlterEgoName)) {
@@ -399,6 +401,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public ProjectileReceiver projectileReciever {
         get { return marker.collisionTrigger.projectileReciever; }
     }
+    public JOB_OWNER ownerType { get { return JOB_OWNER.CHARACTER; } }
     #endregion
 
     public Character(CharacterRole role, RACE race, GENDER gender) : this() {
@@ -707,7 +710,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     /// <param name="area">The invaded area.</param>
     protected virtual void OnSuccessInvadeArea(Area area) {
         if (specificLocation == area && minion == null) {
-            StopCurrentAction(false);
+            StopCurrentActionNode(false);
             if (stateComponent.currentState != null) {
                 stateComponent.currentState.OnExitThisState();
             } 
@@ -722,7 +725,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             UnsubscribeSignals();
             traitContainer.RemoveAllNonPersistentTraits(this);
             ClearAllAwareness();
-            CancelAllJobsAndPlans();
+            CancelAllJobs();
             SchedulingManager.Instance.ClearAllSchedulesBy(this);
             if (marker != null) {
                 DestroyMarker();
@@ -999,7 +1002,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //dead.SetCharacterResponsibleForTrait(responsibleCharacter);
             traitContainer.AddTrait(this, dead, responsibleCharacter, gainedFromDoing: deathFromAction);
 
-            CancelAllJobsAndPlans();
+            CancelAllJobs();
 
             PrintLogIfActive(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
             Log deathLog;
@@ -1109,12 +1112,15 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     #endregion
 
     #region Jobs
-    public JobQueueItem GetCurrentJob() {
-        if(currentActionNode != null && jobQueue.jobsInQueue.Count > 0) {
-            return jobQueue.jobsInQueue[0];
-        }
-        return null;
+    public void SetCurrentJob(JobQueueItem job) {
+        currentJob = job;
     }
+    //public JobQueueItem GetCurrentJob() {
+    //    if(currentActionNode != null && jobQueue.jobsInQueue.Count > 0) {
+    //        return jobQueue.jobsInQueue[0];
+    //    }
+    //    return null;
+    //}
     public void AddJobTargettingThis(JobQueueItem job) {
         allJobsTargettingThis.Add(job);
     }
@@ -1786,35 +1792,35 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
         }
     }
-    public void CreateSaveCharacterJob(Character targetCharacter, bool processLogicForPersonalJob = true) {
-        if (targetCharacter != null && targetCharacter != this) {
-            string log = name + " is creating save character job for " + targetCharacter.name;
-            if (role.roleType == CHARACTER_ROLE.CIVILIAN || role.roleType == CHARACTER_ROLE.NOBLE
-                || role.roleType == CHARACTER_ROLE.LEADER) {
-                CreateAskForHelpSaveCharacterJob(targetCharacter);
-                log += "\n" + name + " is either a Civilian/Leader/Noble and cannot save a character, thus, will try to ask for help.";
-                return;
-            }
-            if (!targetCharacter.HasJobTargettingThis(JOB_TYPE.SAVE_CHARACTER)) {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, targetCharacter, new Dictionary<INTERACTION_TYPE, object[]>() {
-                    { INTERACTION_TYPE.DROP, new object[] { specificLocation.prison } }
-                }, this);
-                jobQueue.AddJobInQueue(job, processLogicForPersonalJob);
-                log += "\n" + name + " created save character job.";
-                //return job;
-            } else {
-                log += "\n" + targetCharacter.name + " is already being saved by someone.";
-            }
-            PrintLogIfActive(log);
-        } else {
-            if (targetCharacter == null) {
-                Debug.LogError(name + " cannot create save character job because troubled character is null!");
-            } else {
-                Debug.LogError(name + " cannot create save character job for " + targetCharacter.name);
-            }
-        }
-        //return null;
-    }
+    //public void CreateSaveCharacterJob(Character targetCharacter, bool processLogicForPersonalJob = true) {
+    //    if (targetCharacter != null && targetCharacter != this) {
+    //        string log = name + " is creating save character job for " + targetCharacter.name;
+    //        if (role.roleType == CHARACTER_ROLE.CIVILIAN || role.roleType == CHARACTER_ROLE.NOBLE
+    //            || role.roleType == CHARACTER_ROLE.LEADER) {
+    //            CreateAskForHelpSaveCharacterJob(targetCharacter);
+    //            log += "\n" + name + " is either a Civilian/Leader/Noble and cannot save a character, thus, will try to ask for help.";
+    //            return;
+    //        }
+    //        if (!targetCharacter.HasJobTargettingThis(JOB_TYPE.SAVE_CHARACTER)) {
+    //            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SAVE_CHARACTER, INTERACTION_TYPE.DROP, targetCharacter, new Dictionary<INTERACTION_TYPE, object[]>() {
+    //                { INTERACTION_TYPE.DROP, new object[] { specificLocation.prison } }
+    //            }, this);
+    //            jobQueue.AddJobInQueue(job);
+    //            log += "\n" + name + " created save character job.";
+    //            //return job;
+    //        } else {
+    //            log += "\n" + targetCharacter.name + " is already being saved by someone.";
+    //        }
+    //        PrintLogIfActive(log);
+    //    } else {
+    //        if (targetCharacter == null) {
+    //            Debug.LogError(name + " cannot create save character job because troubled character is null!");
+    //        } else {
+    //            Debug.LogError(name + " cannot create save character job for " + targetCharacter.name);
+    //        }
+    //    }
+    //    //return null;
+    //}
     public GoapPlanJob CreateBreakupJob(Character targetCharacter) {
         if (jobQueue.HasJob(JOB_TYPE.BREAK_UP, targetCharacter)) {
             return null; //already has break up job targetting targetCharacter
@@ -1829,8 +1835,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                             { INTERACTION_TYPE.SHARE_INFORMATION, new object[] { info }}
                         }, this);
             //job.SetCannotOverrideJob(true);
-            job.SetCancelOnFail(true);
-            jobQueue.AddJobInQueue(job, false);
+            //job.SetCancelOnFail(true);
+            jobQueue.AddJobInQueue(job);
         }
     }
     //public void CancelAllJobsAndPlansExceptNeedsRecovery(string reason = "") {
@@ -1862,7 +1868,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //    }
     //    AdjustIsWaitingForInteraction(-1);
     //}
-    public void CancelAllJobsAndPlans(string reason = "") {
+    public void CancelAllJobs(string reason = "") {
         //AdjustIsWaitingForInteraction(1);
         //StopCurrentActionNode(reason: reason);
         for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
@@ -1888,6 +1894,18 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             if(job.jobType == jobType) {
                 if (job.CancelJob()) {
                     i--;
+                }
+            }
+        }
+    }
+    public void CancelAllJobsExceptForCurrent() {
+        if(currentJob != null) {
+            for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
+                JobQueueItem job = jobQueue.jobsInQueue[i];
+                if (job != currentJob) {
+                    if (job.CancelJob()) {
+                        i--;
+                    }
                 }
             }
         }
@@ -2023,7 +2041,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //    return stateComponent.stateToDo.job.priority;
         //}
         else {
-            JobQueueItem job = currentJobNode;
+            JobQueueItem job = currentJob;
             if (job != null) {
                 return job.priority;
             } else {
@@ -2703,12 +2721,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             if(currentActionNode.poiTarget == target) {
                 //Upon seeing the target while performing a stealth job action, check if it can do the action
                 if (!marker.CanDoStealthActionToTarget(target)) {
-                    currentJobNode.CancelJob(reason: "There is a witness around");
+                    currentJob.CancelJob(reason: "There is a witness around");
                 }
             } else {
                 //Upon seeing other characters while target of stealth action is already in vision, automatically cancel job
                 if (marker.inVisionCharacters.Contains(currentActionNode.poiTarget)) {
-                    currentJobNode.CancelJob(reason: "There is a witness around");
+                    currentJob.CancelJob(reason: "There is a witness around");
                 }
             }
 
@@ -3125,13 +3143,13 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             PrintLogIfActive(summary);
             return;
         }
-        if (HasPlanWithType(INTERACTION_TYPE.WATCH)) {
-            summary += "\n-Already has watch action in queue, will not watch another one...";
-            PrintLogIfActive(summary);
-            return;
-        }
+        //if (HasPlanWithType(INTERACTION_TYPE.WATCH)) {
+        //    summary += "\n-Already has watch action in queue, will not watch another one...";
+        //    PrintLogIfActive(summary);
+        //    return;
+        //}
         int watchJobPriority = InteractionManager.Instance.GetInitialPriority(JOB_TYPE.WATCH);
-        JobQueueItem currJob = currentJobNode;
+        JobQueueItem currJob = currentJob;
         if(currJob != null) {
             if (watchJobPriority >= currJob.priority) {
                 summary += "\n-Current action job " + currJob.name + " priority: " + currJob.priority + " is higher or equal than Watch Job priority " + watchJobPriority + ", will not watch...";
@@ -4106,7 +4124,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 JobQueueItem hungerRecoveryJob = jobQueue.GetJob(JOB_TYPE.HUNGER_RECOVERY);
                 if (hungerRecoveryJob != null) {
                     //Replace this with Hunger Recovery Starving only if the character is not doing the Hunger Recovery Job already
-                    JobQueueItem currJob = currentJobNode;
+                    JobQueueItem currJob = currentJob;
                     if (currJob == hungerRecoveryJob) {
                         return false;
                     } else {
@@ -4173,7 +4191,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 JobQueueItem tirednessRecoveryJob = jobQueue.GetJob(JOB_TYPE.TIREDNESS_RECOVERY);
                 if (tirednessRecoveryJob != null) {
                     //Replace this with Tiredness Recovery Exhausted only if the character is not doing the Tiredness Recovery Job already
-                    JobQueueItem currJob = currentJobNode;
+                    JobQueueItem currJob = currentJob;
                     if (currJob == tirednessRecoveryJob) {
                         return false;
                     } else {
@@ -4208,7 +4226,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 JobQueueItem happinessRecoveryJob = jobQueue.GetJob(JOB_TYPE.HAPPINESS_RECOVERY);
                 if (happinessRecoveryJob != null) {
                     //Replace this with Hunger Recovery Starving only if the character is not doing the Hunger Recovery Job already
-                    JobQueueItem currJob = currentJobNode;
+                    JobQueueItem currJob = currentJob;
                     if (currJob == happinessRecoveryJob) {
                         return false;
                     } else {
@@ -4883,7 +4901,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             if (roll < chance) {
                 if (!isChatting && !targetCharacter.isChatting) {
                     int chatPriority = InteractionManager.Instance.GetInitialPriority(JOB_TYPE.CHAT);
-                    JobQueueItem currJob = currentJobNode;
+                    JobQueueItem currJob = currentJob;
                     if (currJob != null) {
                         if (chatPriority >= currJob.priority) {
                             return false;
@@ -5879,12 +5897,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
     #region Point Of Interest
     //Returns the chosen action for the plan
-    public INTERACTION_TYPE AdvertiseActionsToActor(Character actor, GoapEffect precondition, Dictionary<INTERACTION_TYPE, object[]> otherData) {
-        INTERACTION_TYPE chosenAction = INTERACTION_TYPE.NONE;
+    public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost) {
+        GoapAction chosenAction = null;
         if (advertisedActions != null && advertisedActions.Count > 0) {//&& IsAvailable()
             bool isCharacterAvailable = IsAvailable();
             //List<GoapAction> usableActions = new List<GoapAction>();
-            INTERACTION_TYPE lowestCostAction = INTERACTION_TYPE.NONE;
+            GoapAction lowestCostAction = null;
             int currentLowestCost = 0;
             for (int i = 0; i < advertisedActions.Count; i++) {
                 INTERACTION_TYPE currType = advertisedActions[i];
@@ -5902,15 +5920,15 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                             data = otherData[INTERACTION_TYPE.NONE];
                         }
                     }
-                        object[] otherActionData = null;
-                        if (otherData.ContainsKey(currType)) {
-                            otherActionData = otherData[currType];
-                        }
+                    //object[] otherActionData = null;
+                    //if (otherData.ContainsKey(currType)) {
+                    //    otherActionData = otherData[currType];
+                    //}
                     if (action.CanSatisfyRequirements(actor, this, data)
                         && action.WillEffectsSatisfyPrecondition(precondition, this, data)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
                         int actionCost = action.GetCost(actor, this, data);
-                        if (lowestCostAction == INTERACTION_TYPE.NONE || actionCost < currentLowestCost) {
-                            lowestCostAction = action.goapType;
+                        if (lowestCostAction == null|| actionCost < currentLowestCost) {
+                            lowestCostAction = action;
                             currentLowestCost = actionCost;
                         }
                         //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
@@ -5925,12 +5943,30 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                     }
                 }
             }
-            if (lowestCostAction != INTERACTION_TYPE.NONE) {
-                chosenAction = lowestCostAction;
-            }
+            cost = currentLowestCost;
+            chosenAction = lowestCostAction;
             //return usableActions;
         }
         return chosenAction;
+    }
+    public bool CanAdvertiseActionsToActor(Character actor, GoapAction action, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost) {
+        if((IsAvailable() || action.canBeAdvertisedEvenIfActorIsUnavailable) 
+            && advertisedActions != null && advertisedActions.Contains(action.goapType)
+            && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)) {
+            object[] data = null;
+            if (otherData != null) {
+                if (otherData.ContainsKey(action.goapType)) {
+                    data = otherData[action.goapType];
+                } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+                    data = otherData[INTERACTION_TYPE.NONE];
+                }
+                if (action.CanSatisfyRequirements(actor, this, data)) {
+                    cost = action.GetCost(actor, this, data);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     //public List<GoapAction> AdvertiseActionsToActorFromDeadCharacter(Character actor, Dictionary<INTERACTION_TYPE, object[]> otherData) {
     //    if (advertisedActions != null && advertisedActions.Count > 0) {
@@ -6168,7 +6204,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                         log += "\n - Action's preconditions are all satisfied, doing action...";
                         PrintLogIfActive(log);
                         Messenger.Broadcast(Signals.CHARACTER_WILL_DO_PLAN, this, plan);
-                        currentNode.DoAction();
+                        currentNode.DoAction(currentTopPrioJob, plan);
                     }
                 } else {
                     log += "\n - Action did not meet current requirements and allowed actions, dropping plan...";
@@ -6307,22 +6343,15 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             currentActionNode.PerformAction();
         } else {
             log += "\nAction did not meet all requirements and preconditions. Will try to recalculate plan...";
-            //if (currentAction.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            //    Character targetCharacter = currentAction.poiTarget as Character;
-            //    targetCharacter.AdjustIsWaitingForInteraction(-1);
-            //}
-            GoapPlan plan = currentActionNode.parentPlan;
-            SetCurrentActionNode(null);
+            GoapPlan plan = currentPlan;
+            SetCurrentActionNode(null, null, null);
             if (plan.doNotRecalculate) {
                 log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
                 PrintLogIfActive(log);
-                if (!DropPlan(plan)) {
-                    //PlanGoapActions();
-                }
+                currentJob.CancelJob(false);
             } else {
                 PrintLogIfActive(log);
-                planner.RecalculateJob(plan);
-                //IdlePlans();
+                planner.RecalculateJob(currentJob as GoapPlanJob);
             }
         }
         //if (currentActionNode.isStopped) {
@@ -6385,25 +6414,29 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void GoapActionResult(string result, ActualGoapNode actionNode) {
         string log = GameManager.Instance.TodayLogString() + name + " is done performing goap action: " + actionNode.action.goapName;
         //Debug.Log(log);
+        GoapPlan plan = currentPlan;
+        GoapPlanJob job = currentJob as GoapPlanJob;
+
         if (actionNode == currentActionNode) {
-            SetCurrentActionNode(null);
+            SetCurrentActionNode(null, null, null);
         }
         //actionNode.poiTarget.RemoveTargettedByAction(actionNode);
 
-        GoapPlan plan = actionNode.parentPlan;
-        if (isDead) {
-            log += "\n" + name + " is dead!";
-            bool forceRemoveJobInQueue = false;
-            if (plan.job != null) {
-                if (result == InteractionManager.Goap_State_Success) {
-                    if (plan.currentNode.parent == null && plan.job.jobQueueParent != null) {
-                        log += "This plan has a job and the result of action " + actionNode.goapName + " is " + result + " and this is the last action for this plan, removing job in job queue...";
-                        forceRemoveJobInQueue = true;
-                    }
-                }
-            }
+        if (isDead || !canWitness) {
+            log += "\n" + name + " is dead! Do not do GoapActionResult, automatically CancelJob";
             PrintLogIfActive(log);
-            DropPlan(plan, forceRemoveJobInQueue, true);
+            job.CancelJob(false);
+            //bool forceRemoveJobInQueue = false;
+            //if (plan.job != null) {
+            //    if (result == InteractionManager.Goap_State_Success) {
+            //        if (plan.currentNode.parent == null && plan.job.jobQueueParent != null) {
+            //            log += "This plan has a job and the result of action " + actionNode.goapName + " is " + result + " and this is the last action for this plan, removing job in job queue...";
+            //            forceRemoveJobInQueue = true;
+            //        }
+            //    }
+            //}
+            //PrintLogIfActive(log);
+            //DropPlan(plan, forceRemoveJobInQueue, true);
             return;
         }
         //if (actionNode.isStopped) {
@@ -6414,71 +6447,103 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //}
 
         //Myk, para san to?
-        if (plan.state == GOAP_PLAN_STATE.CANCELLED || plan.currentNode == null) {
-            log += "\nPlan was cancelled.";
-            bool forceRemoveJobInQueue = false;
-            if (plan.job != null) {
-                if (!plan.job.jobQueueParent.isAreaOrQuestJobQueue) {
-                    log += "\nRemoving job in queue...";
-                    forceRemoveJobInQueue = true;
-                    //plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
-                } else {
-                    log += "\nPlan's job is either an area or faction job, returning it to jobQueue...";
-                }
-            }
-            PrintLogIfActive(log);
-            DropPlan(plan, forceRemoveJobInQueue);
-            return;
-        }
-
-        //Reason: https://trello.com/c/58aGENsO/1867-attempt-to-find-another-nearby-chair-first-instead-of-dropping-drink-eat-sit-down-actions
-        if (result == InteractionManager.Goap_State_Fail) {
-            //if the last action of the plan failed and that action type can be replaced
-            if (actionNode.goapType.CanBeReplaced()) {
-                //find a similar action that is advertised by another object, in the same structure
-                //if there is any, insert that action into the current plan, then do that next
-                List<TileObject> objs = currentStructure.GetTileObjectsThatAdvertise(actionNode.goapType);
-                if (objs.Count > 0) {
-                    TileObject chosenObject = objs[UnityEngine.Random.Range(0, objs.Count)];
-                    GoapAction newAction = chosenObject.Advertise(actionNode.goapType, this);
-                    if (newAction != null) {
-                        plan.InsertAction(newAction);
-                    } else {
-                        Debug.LogWarning(chosenObject.ToString() + " did not return an action of type " + actionNode.goapType.ToString());
-                    }
-                }
-            }
-        }
-        log += "\nPlan is setting next action to be done...";
-        plan.SetNextNode(actionNode);
-        if (plan.currentNode == null) {
-            log += "\nThis action is the end of plan.";
-            if (plan.job != null && plan.job.jobQueueParent != null) {
-                log += "\nRemoving job in queue...";
-                if (plan.job.jobQueueParent.isAreaOrQuestJobQueue && traitContainer.GetNormalTrait("Hardworking") != null) {
+        //if (plan.state == GOAP_PLAN_STATE.CANCELLED || plan.currentNode == null) {
+        //    log += "\nPlan was cancelled.";
+        //    bool forceRemoveJobInQueue = false;
+        //    if (plan.job != null) {
+        //        if (!plan.job.jobQueueParent.isAreaOrQuestJobQueue) {
+        //            log += "\nRemoving job in queue...";
+        //            forceRemoveJobInQueue = true;
+        //            //plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
+        //        } else {
+        //            log += "\nPlan's job is either an area or faction job, returning it to jobQueue...";
+        //        }
+        //    }
+        //    PrintLogIfActive(log);
+        //    DropPlan(plan, forceRemoveJobInQueue);
+        //    return;
+        //}
+        if(result == InteractionManager.Goap_State_Success) {
+            log += "\nPlan is setting next action to be done...";
+            plan.SetNextNode();
+            if (plan.currentNode == null) {
+                log += "\nThis action is the end of plan.";
+                if (job.originalOwner.ownerType != JOB_OWNER.CHARACTER && traitContainer.GetNormalTrait("Hardworking") != null) {
                     log += "\nFinished a settlement job and character is hardworking, increase happiness by 3000...";
                     AdjustHappiness(3000);
                 }
-                //plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
+                PrintLogIfActive(log);
+                //bool forceRemoveJobInQueue = true;
+                ////If an action is stopped as current action (meaning it was cancelled) and it is a settlement/faction job, do not remove it from the queue
+                //if (actionNode.isStoppedAsCurrentAction && plan != null && plan.job != null && plan.job.jobQueueParent.isAreaOrQuestJobQueue) {
+                //    forceRemoveJobInQueue = false;
+                //}
+                //this means that this is the end goal so end this plan now
+                job.ForceCancelJob(false);
+            } else {
+                log += "\nNext action for this plan: " + plan.currentActualNode.goapName;
+                //if (plan.job != null && plan.job.assignedCharacter != this) {
+                //    log += "\nPlan has a job: " + plan.job.name + ". Assigned character " + (plan.job.assignedCharacter != null ? plan.job.assignedCharacter.name : "None") + " does not match with " + name + ".";
+                //    log += "Drop plan because this character is no longer the one assigned";
+                //    DropPlan(plan);
+                //}
+                PrintLogIfActive(log);
+                //PlanGoapActions();
             }
-            PrintLogIfActive(log);
-            bool forceRemoveJobInQueue = true;
-            //If an action is stopped as current action (meaning it was cancelled) and it is a settlement/faction job, do not remove it from the queue
-            if (actionNode.isStoppedAsCurrentAction && plan != null && plan.job != null && plan.job.jobQueueParent.isAreaOrQuestJobQueue) {
-                forceRemoveJobInQueue = false;
-            }
-            //this means that this is the end goal so end this plan now
-            DropPlan(plan, forceRemoveJobInQueue);
-        } else {
-            log += "\nNext action for this plan: " + plan.currentNode.action.goapName;
-            if (plan.job != null && plan.job.assignedCharacter != this) {
-                log += "\nPlan has a job: " + plan.job.name + ". Assigned character " + (plan.job.assignedCharacter != null ? plan.job.assignedCharacter.name : "None") + " does not match with " + name + ".";
-                log += "Drop plan because this character is no longer the one assigned";
-                DropPlan(plan);
-            }
-            PrintLogIfActive(log);
-            //PlanGoapActions();
         }
+        //Reason: https://trello.com/c/58aGENsO/1867-attempt-to-find-another-nearby-chair-first-instead-of-dropping-drink-eat-sit-down-actions
+        else if (result == InteractionManager.Goap_State_Fail) {
+            if (plan.doNotRecalculate) {
+                job.CancelJob(false);
+            } else {
+                planner.RecalculateJob(job as GoapPlanJob);
+            }
+            //if the last action of the plan failed and that action type can be replaced
+            //if (actionNode.goapType.CanBeReplaced()) {
+            //    //find a similar action that is advertised by another object, in the same structure
+            //    //if there is any, insert that action into the current plan, then do that next
+            //    List<TileObject> objs = currentStructure.GetTileObjectsThatAdvertise(actionNode.goapType);
+            //    if (objs.Count > 0) {
+            //        TileObject chosenObject = objs[UnityEngine.Random.Range(0, objs.Count)];
+            //        GoapAction newAction = chosenObject.Advertise(actionNode.goapType, this);
+            //        if (newAction != null) {
+            //            plan.InsertAction(newAction);
+            //        } else {
+            //            Debug.LogWarning(chosenObject.ToString() + " did not return an action of type " + actionNode.goapType.ToString());
+            //        }
+            //    }
+            //}
+        }
+        //log += "\nPlan is setting next action to be done...";
+        //plan.SetNextNode(actionNode);
+        //if (plan.currentNode == null) {
+        //    log += "\nThis action is the end of plan.";
+        //    if (plan.job != null && plan.job.jobQueueParent != null) {
+        //        log += "\nRemoving job in queue...";
+        //        if (plan.job.jobQueueParent.isAreaOrQuestJobQueue && traitContainer.GetNormalTrait("Hardworking") != null) {
+        //            log += "\nFinished a settlement job and character is hardworking, increase happiness by 3000...";
+        //            AdjustHappiness(3000);
+        //        }
+        //        //plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
+        //    }
+        //    PrintLogIfActive(log);
+        //    bool forceRemoveJobInQueue = true;
+        //    //If an action is stopped as current action (meaning it was cancelled) and it is a settlement/faction job, do not remove it from the queue
+        //    if (actionNode.isStoppedAsCurrentAction && plan != null && plan.job != null && plan.job.jobQueueParent.isAreaOrQuestJobQueue) {
+        //        forceRemoveJobInQueue = false;
+        //    }
+        //    //this means that this is the end goal so end this plan now
+        //    DropPlan(plan, forceRemoveJobInQueue);
+        //} else {
+        //    log += "\nNext action for this plan: " + plan.currentNode.action.goapName;
+        //    if (plan.job != null && plan.job.assignedCharacter != this) {
+        //        log += "\nPlan has a job: " + plan.job.name + ". Assigned character " + (plan.job.assignedCharacter != null ? plan.job.assignedCharacter.name : "None") + " does not match with " + name + ".";
+        //        log += "Drop plan because this character is no longer the one assigned";
+        //        DropPlan(plan);
+        //    }
+        //    PrintLogIfActive(log);
+        //    //PlanGoapActions();
+        //}
         //action.OnResultReturnedToActor();
         //if (result == InteractionManager.Goap_State_Success) {
         //    log += "\nAction performed is a success!";
@@ -6522,120 +6587,120 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //    }
         //}
     }
-    public bool DropPlan(GoapPlan plan, bool forceRemoveJob = false, bool forceProcessPlanJob = false) {
-        bool hasBeenRemoved = false;
-        if (allGoapPlans.Remove(plan)) {
-            Debug.Log(GameManager.Instance.TodayLogString() + plan.name + " was removed from " + this.name + "'s plan list");
-            plan.EndPlan();
-            hasBeenRemoved = true;
-        }
-        if(hasBeenRemoved || forceProcessPlanJob) {
-            if (plan.job != null) {
-                if (plan.job.cancelJobOnFail || plan.job.cancelJobOnDropPlan || forceRemoveJob) {
-                    plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
-                }
-                plan.job.SetAssignedCharacter(null);
-                plan.job.SetAssignedPlan(null);
-            }
-        }
-        return hasBeenRemoved;
-    }
-    public bool JustDropPlan(GoapPlan plan, bool forceRemoveJob = false, bool forceProcessPlanJob = false) {
-        bool hasBeenRemoved = false;
-        if (allGoapPlans.Remove(plan)) {
-            Debug.Log(GameManager.Instance.TodayLogString() + plan.name + " was removed from " + this.name + "'s plan list");
-            plan.EndPlan();
-            hasBeenRemoved = true;
-        }
-        if (hasBeenRemoved || forceProcessPlanJob) {
-            if (plan.job != null) {
-                if (plan.job.cancelJobOnDropPlan || forceRemoveJob) {
-                    plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
-                }
-                plan.job.SetAssignedCharacter(null);
-                plan.job.SetAssignedPlan(null);
-            }
-        }
-        return hasBeenRemoved;
-    }
-    public void DropAllPlans(GoapPlan planException = null) {
-        if (planException == null) {
-            while (allGoapPlans.Count > 0) {
-                DropPlan(allGoapPlans[0]);
-            }
-        } else {
-            for (int i = 0; i < allGoapPlans.Count; i++) {
-                if (allGoapPlans[i] != planException) {
-                    DropPlan(allGoapPlans[i]);
-                    i--;
-                }
-            }
-        }
-    }
-    public void JustDropAllPlansOfType(INTERACTION_TYPE type) {
-        for (int i = 0; i < allGoapPlans.Count; i++) {
-            GoapPlan currPlan = allGoapPlans[i];
-            if (currPlan.endNode.action != null && currPlan.endNode.action.goapType == type) {
-                if (JustDropPlan(currPlan)) {
-                    i--;
-                }
-            }
-        }
-    }
-    public void DropAllPlansOfType(INTERACTION_TYPE type) {
-        for (int i = 0; i < allGoapPlans.Count; i++) {
-            GoapPlan currPlan = allGoapPlans[i];
-            if (currPlan.endNode.action != null && currPlan.endNode.action.goapType == type) {
-                if (DropPlan(currPlan)) {
-                    i--;
-                }
-            }
-        }
-    }
-    public bool HasPlanWithType(INTERACTION_TYPE type) {
-        for (int i = 0; i < allGoapPlans.Count; i++) {
-            GoapPlan currPlan = allGoapPlans[i];
-            if (currPlan.endNode.action != null && currPlan.endNode.action.goapType == type) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public GoapPlan GetPlanWithGoalEffect(GOAP_EFFECT_CONDITION goalEffect) {
-        for (int i = 0; i < allGoapPlans.Count; i++) {
-            if (allGoapPlans[i].goalEffects.Contains(goalEffect)) {
-                return allGoapPlans[i];
-            }
-        }
-        return null;
-    }
-    public GoapPlan GetPlanByCategory(GOAP_CATEGORY category) {
-        for (int i = 0; i < allGoapPlans.Count; i++) {
-            if (allGoapPlans[i].category == category) {
-                return allGoapPlans[i];
-            }
-        }
-        return null;
-    }
+    //public bool DropPlan(GoapPlan plan, bool forceRemoveJob = false, bool forceProcessPlanJob = false) {
+    //    bool hasBeenRemoved = false;
+    //    if (allGoapPlans.Remove(plan)) {
+    //        Debug.Log(GameManager.Instance.TodayLogString() + plan.name + " was removed from " + this.name + "'s plan list");
+    //        plan.EndPlan();
+    //        hasBeenRemoved = true;
+    //    }
+    //    if(hasBeenRemoved || forceProcessPlanJob) {
+    //        if (plan.job != null) {
+    //            if (plan.job.cancelJobOnFail || plan.job.cancelJobOnDropPlan || forceRemoveJob) {
+    //                plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
+    //            }
+    //            plan.job.SetAssignedCharacter(null);
+    //            plan.job.SetAssignedPlan(null);
+    //        }
+    //    }
+    //    return hasBeenRemoved;
+    //}
+    //public bool JustDropPlan(GoapPlan plan, bool forceRemoveJob = false, bool forceProcessPlanJob = false) {
+    //    bool hasBeenRemoved = false;
+    //    if (allGoapPlans.Remove(plan)) {
+    //        Debug.Log(GameManager.Instance.TodayLogString() + plan.name + " was removed from " + this.name + "'s plan list");
+    //        plan.EndPlan();
+    //        hasBeenRemoved = true;
+    //    }
+    //    if (hasBeenRemoved || forceProcessPlanJob) {
+    //        if (plan.job != null) {
+    //            if (plan.job.cancelJobOnDropPlan || forceRemoveJob) {
+    //                plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
+    //            }
+    //            plan.job.SetAssignedCharacter(null);
+    //            plan.job.SetAssignedPlan(null);
+    //        }
+    //    }
+    //    return hasBeenRemoved;
+    //}
+    //public void DropAllPlans(GoapPlan planException = null) {
+    //    if (planException == null) {
+    //        while (allGoapPlans.Count > 0) {
+    //            DropPlan(allGoapPlans[0]);
+    //        }
+    //    } else {
+    //        for (int i = 0; i < allGoapPlans.Count; i++) {
+    //            if (allGoapPlans[i] != planException) {
+    //                DropPlan(allGoapPlans[i]);
+    //                i--;
+    //            }
+    //        }
+    //    }
+    //}
+    //public void JustDropAllPlansOfType(INTERACTION_TYPE type) {
+    //    for (int i = 0; i < allGoapPlans.Count; i++) {
+    //        GoapPlan currPlan = allGoapPlans[i];
+    //        if (currPlan.endNode.action != null && currPlan.endNode.action.goapType == type) {
+    //            if (JustDropPlan(currPlan)) {
+    //                i--;
+    //            }
+    //        }
+    //    }
+    //}
+    //public void DropAllPlansOfType(INTERACTION_TYPE type) {
+    //    for (int i = 0; i < allGoapPlans.Count; i++) {
+    //        GoapPlan currPlan = allGoapPlans[i];
+    //        if (currPlan.endNode.action != null && currPlan.endNode.action.goapType == type) {
+    //            if (DropPlan(currPlan)) {
+    //                i--;
+    //            }
+    //        }
+    //    }
+    //}
+    //public bool HasPlanWithType(INTERACTION_TYPE type) {
+    //    for (int i = 0; i < allGoapPlans.Count; i++) {
+    //        GoapPlan currPlan = allGoapPlans[i];
+    //        if (currPlan.endNode.action != null && currPlan.endNode.action.goapType == type) {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
+    //public GoapPlan GetPlanWithGoalEffect(GOAP_EFFECT_CONDITION goalEffect) {
+    //    for (int i = 0; i < allGoapPlans.Count; i++) {
+    //        if (allGoapPlans[i].goalEffects.Contains(goalEffect)) {
+    //            return allGoapPlans[i];
+    //        }
+    //    }
+    //    return null;
+    //}
+    //public GoapPlan GetPlanByCategory(GOAP_CATEGORY category) {
+    //    for (int i = 0; i < allGoapPlans.Count; i++) {
+    //        if (allGoapPlans[i].category == category) {
+    //            return allGoapPlans[i];
+    //        }
+    //    }
+    //    return null;
+    //}
     //For testing: Drop Character
-    public void DropACharacter() {
-        if (awareness.ContainsKey(POINT_OF_INTEREST_TYPE.CHARACTER)) {
-            List<IPointOfInterest> characterAwarenesses = awareness[POINT_OF_INTEREST_TYPE.CHARACTER];
-            Character randomTarget = characterAwarenesses[UnityEngine.Random.Range(0, characterAwarenesses.Count)] as Character;
-            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeRegion, targetPOI = randomTarget };
-            StartGOAP(goapEffect, randomTarget, GOAP_CATEGORY.REACTION);
-        }
-    }
-    public GoapPlan GetPlanWithAction(GoapAction action) {
-        for (int i = 0; i < allGoapPlans.Count; i++) {
-            for (int j = 0; j < allGoapPlans[i].allNodes.Count; j++) {
-                if (allGoapPlans[i].allNodes[j].actionType == action) {
-                    return allGoapPlans[i];
-                }
-            }
-        }
-        return null;
-    }
+    //public void DropACharacter() {
+    //    if (awareness.ContainsKey(POINT_OF_INTEREST_TYPE.CHARACTER)) {
+    //        List<IPointOfInterest> characterAwarenesses = awareness[POINT_OF_INTEREST_TYPE.CHARACTER];
+    //        Character randomTarget = characterAwarenesses[UnityEngine.Random.Range(0, characterAwarenesses.Count)] as Character;
+    //        GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeRegion, targetPOI = randomTarget };
+    //        StartGOAP(goapEffect, randomTarget, GOAP_CATEGORY.REACTION);
+    //    }
+    //}
+    //public GoapPlan GetPlanWithAction(GoapAction action) {
+    //    for (int i = 0; i < allGoapPlans.Count; i++) {
+    //        for (int j = 0; j < allGoapPlans[i].allNodes.Count; j++) {
+    //            if (allGoapPlans[i].allNodes[j].actionType == action) {
+    //                return allGoapPlans[i];
+    //            }
+    //        }
+    //    }
+    //    return null;
+    //}
     public void OnCharacterDoAction(GoapAction action) {
         Messenger.Broadcast(Signals.CHARACTER_DID_ACTION, this, action);
     }
@@ -6658,7 +6723,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
         }
     }
-    public void SetCurrentActionNode(ActualGoapNode actionNode) {
+    public void SetCurrentActionNode(ActualGoapNode actionNode, JobQueueItem job, GoapPlan plan) {
         if (currentActionNode != null) {
             previousCurrentActionNode = currentActionNode;
         }
@@ -6669,7 +6734,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 ClearIgnoreHostilities();
             }
             //stateComponent.SetStateToDo(null, stopMovement: false);
+
+            //Current Job must always be the job in the top prio, if there is inconsistency with the currentActionNode, then the problem lies on what you set as the currentActionNode
         }
+        SetCurrentJob(job);
+        SetCurrentPlan(plan);
+        
         string summary = GameManager.Instance.TodayLogString() + "Set current action to ";
         if (currentActionNode == null) {
             summary += "null";
@@ -6682,6 +6752,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (actionHistory.Count > 10) {
             actionHistory.RemoveAt(0);
         }
+    }
+    public void SetCurrentPlan(GoapPlan plan) {
+        currentPlan = plan;
     }
     //Only stop an action node if it is the current action node
     ///Stopping action node does not mean that the job will be cancelled, if you want to cancel job at the same time call <see cref="StopCurrentActionNodeAndCancelItsJob">
@@ -6721,7 +6794,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
         //SetIsStopped(true);
         currentActionNode.StopActionNode(shouldDoAfterEffect);
-        SetCurrentActionNode(null);
+        SetCurrentActionNode(null, null, null);
         //JobQueueItem job = parentPlan.job;
 
         //Remove job in queue if job is personal job and removeJobInQueue value is true
@@ -6761,7 +6834,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     private void CancelCurrentAction(Character target, string cause) {
         if (this != target && !isDead && currentActionNode != null && currentActionNode.poiTarget == target && currentActionNode.action.goapType != INTERACTION_TYPE.WATCH) {
             RegisterLogAndShowNotifToThisCharacterOnly("Generic", "action_cancelled_cause", null, cause);
-            currentActionNode.StopAction();
+            StopCurrentActionNode();
         }
     }
     //This will only stop the current action of this character, this is different from StopAction because this will not drop the plan if the actor is not performing it but is on the way
@@ -6855,18 +6928,19 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //else if (stateComponent.stateToDo != null && stateComponent.stateToDo.job != null && stateComponent.stateToDo.job.priority <= reactJobPriority) {
         //    canReact = false;
         //} 
-        else if (currentActionNode != null && currentActionNode.parentPlan != null && currentActionNode.parentPlan.job != null && currentActionNode.parentPlan.job.priority <= reactJobPriority) {
+        else if (currentJob != null && currentJob.priority <= reactJobPriority) {
             canReact = false;
         }
         if (canReact) {
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REACT_TO_SCREAM, INTERACTION_TYPE.GO_TO, characterThatScreamed);
-            if (CanCurrentJobBeOverriddenByJob(job)) {
-                jobQueue.AddJobInQueue(job, false);
-                jobQueue.CurrentTopPriorityIsPushedBackBy(job, this);
-                log += "\n" + name + " will go to " + characterThatScreamed.name;
-            } else {
-                log += "\n" + name + " cannot react because there is still something important that he/she will do.";
-            }
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REACT_TO_SCREAM, INTERACTION_TYPE.GO_TO, characterThatScreamed, this);
+            jobQueue.AddJobInQueue(job);
+            //if (CanCurrentJobBeOverriddenByJob(job)) {
+            //    jobQueue.AddJobInQueue(job, false);
+            //    jobQueue.CurrentTopPriorityIsPushedBackBy(job, this);
+            //    log += "\n" + name + " will go to " + characterThatScreamed.name;
+            //} else {
+            //    log += "\n" + name + " cannot react because there is still something important that he/she will do.";
+            //}
         } else {
             log += "\n" + name + " cannot react because there is still something important that he/she will do.";
         }
@@ -6985,7 +7059,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     /// </summary>
     /// <param name="witnessedCrime">Witnessed Crime.</param>
     public void ReactToCrime(GoapAction witnessedCrime, ref bool hasRelationshipDegraded) {
-        ReactToCrime(witnessedCrime.committedCrime, witnessedCrime, witnessedCrime.actorAlterEgo, ref hasRelationshipDegraded, witnessedCrime);
+        //TODO: Crime System Handling!
+        //ReactToCrime(witnessedCrime.committedCrime, witnessedCrime, witnessedCrime.actorAlterEgo, ref hasRelationshipDegraded, witnessedCrime);
         //witnessedCrime.OnWitnessedBy(this);
     }
     /// <summary>
@@ -7152,7 +7227,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                     //only add apprehend job if the criminal is part of this characters faction
                     criminal.owner.AddCriminalTrait(committedCrime, crimeAction);
                     CreateApprehendJobFor(criminal.owner);
-                    crimeAction.OnReportCrime();
+                    //crimeAction.OnReportCrime();
                     //job = new GoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = actor });
                     //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                     //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
@@ -7175,7 +7250,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                     //if (job != null) {
                     //    homeArea.jobQueue.ForceAssignCharacterToJob(job, this);
                     //}
-                    crimeAction.OnReportCrime();
+                    //crimeAction.OnReportCrime();
                 }
                 break;
             default:
@@ -7422,10 +7497,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //currentAlterEgo.CopySpecialTraits();
 
             //Drop all plans except for the current action
-            if (currentActionNode != null && currentActionNode.parentPlan != null) {
-                DropAllPlans(currentActionNode.parentPlan);
+            if (currentActionNode != null) {
+                CancelAllJobsExceptForCurrent();
             } else {
-                DropAllPlans();
+                CancelAllJobs();
             }
 
             if(alterEgoName == "Lycanthrope") {
@@ -7497,4 +7572,13 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     #endregion
 
+    #region IJobOwner
+    public void OnJobAddedToCharacterJobQueue(JobQueueItem job, Character character) {
+    }
+    public void OnJobRemovedFromCharacterJobQueue(JobQueueItem job, Character character) {
+    }
+    public bool ForceCancelJob(JobQueueItem job) {
+        return false;
+    }
+    #endregion
 }

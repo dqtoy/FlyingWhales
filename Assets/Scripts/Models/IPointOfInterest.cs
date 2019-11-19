@@ -35,7 +35,7 @@ public interface IPointOfInterest : ITraitable {
     bool RemoveJobTargettingThis(JobQueueItem job);
     LocationGridTile GetNearestUnoccupiedTileFromThis();
     GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost);
-    List<GoapNode> AdvertiseActionsToActor(Character actor, GoapEffect precondition, Dictionary<INTERACTION_TYPE, object[]> otherData, int level);
+    //List<GoapNode> AdvertiseActionsToActor(Character actor, GoapEffect precondition, Dictionary<INTERACTION_TYPE, object[]> otherData, int level);
     bool CanAdvertiseActionsToActor(Character actor, GoapAction action, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost);
     void AdjustHP(int amount, bool triggerDeath = false, object source = null);
     void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary);

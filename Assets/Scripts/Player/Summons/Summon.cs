@@ -136,7 +136,7 @@ public class Summon : Character, IWorldObject {
             traitContainer.AddTrait(this, dead, gainedFromDoing: deathFromAction);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this as Character);
 
-            CancelAllJobsAndPlans();
+            CancelAllJobs();
 
             //Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
             Log deathLog;
@@ -223,7 +223,7 @@ public class Summon : Character, IWorldObject {
         }
         traitContainer.RemoveAllNonPersistentTraits(this);
         ClearAllAwareness();
-        CancelAllJobsAndPlans();
+        CancelAllJobs();
         ResetToFullHP();
     }
 

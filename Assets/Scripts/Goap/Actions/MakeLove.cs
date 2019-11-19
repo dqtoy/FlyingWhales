@@ -41,7 +41,7 @@ public class MakeLove : GoapAction {
 
         target.traitContainer.RemoveTrait(targetCharacter, "Wooed");
         if (targetCharacter.currentActionNode.action == this) {
-            targetCharacter.SetCurrentActionNode(null);
+            targetCharacter.SetCurrentActionNode(null, null, null);
         }
     }
     public override void OnStopWhileStarted(Character actor, IPointOfInterest target, object[] otherData) {
@@ -53,7 +53,7 @@ public class MakeLove : GoapAction {
 
         target.traitContainer.RemoveTrait(targetCharacter, "Wooed");
         if (targetCharacter.currentActionNode.action == this) {
-            targetCharacter.SetCurrentActionNode(null);
+            targetCharacter.SetCurrentActionNode(null, null, null);
         }
     }
     public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
@@ -81,7 +81,7 @@ public class MakeLove : GoapAction {
         goapNode.actor.AdjustDoNotGetLonely(1);
         targetCharacter.AdjustDoNotGetLonely(1);
 
-        targetCharacter.SetCurrentActionNode(goapNode);
+        targetCharacter.SetCurrentActionNode(goapNode.actor.currentActionNode, goapNode.actor.currentJob, goapNode.actor.currentPlan);
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         goapNode.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         //TODO: currentState.SetIntelReaction(MakeLoveSuccessReactions);
@@ -118,7 +118,7 @@ public class MakeLove : GoapAction {
 
         //targetCharacter.RemoveTargettedByAction(this);
         if (targetCharacter.currentActionNode.action == this) {
-            targetCharacter.SetCurrentActionNode(null);
+            targetCharacter.SetCurrentActionNode(null, null, null);
         }
     }
     #endregion

@@ -31,7 +31,7 @@ namespace Traits {
                         character.stateComponent.currentState.OnExitThisState();
                     }
                 }
-                character.CancelAllJobsAndPlans("Stopped by the player");
+                character.CancelAllJobs("Stopped by the player");
                 //else if(character.currentActionNode.action != null) {
                 //    character.currentActionNode.action.StopAction();
                 //} else if (character.currentParty.icon.isTravelling) {

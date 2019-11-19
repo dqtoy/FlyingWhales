@@ -184,7 +184,7 @@ namespace Traits {
         private void CheckAsCriminal() {
             if (owner.stateComponent.currentState == null && !owner.isAtHomeRegion && !owner.jobQueue.HasJob(JOB_TYPE.RETURN_HOME)) {
                 if (owner.jobQueue.jobsInQueue.Count > 0) {
-                    owner.CancelAllJobsAndPlans();
+                    owner.CancelAllJobs();
                 }
                 CharacterStateJob job = new CharacterStateJob(JOB_TYPE.RETURN_HOME, CHARACTER_STATE.MOVE_OUT, owner);
                 owner.jobQueue.AddJobInQueue(job);

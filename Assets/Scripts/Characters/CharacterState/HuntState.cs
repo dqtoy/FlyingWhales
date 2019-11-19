@@ -63,7 +63,7 @@ public class HuntState : CharacterState {
         if (stateComponent.currentState != this) {
             return;
         }
-        stateComponent.character.SetCurrentActionNode(null);
+        stateComponent.character.SetCurrentActionNode(null, null, null);
         StartHuntMovement();
     }
     private void StartHuntMovement() {

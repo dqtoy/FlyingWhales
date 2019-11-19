@@ -167,7 +167,7 @@ public class Minion {
             PlayerManager.Instance.player.RemoveMinion(this);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, character);
 
-            character.CancelAllJobsAndPlans();
+            character.CancelAllJobs();
             StopInvasionProtocol(PlayerManager.Instance.player.currentAreaBeingInvaded);
 
             //Debug.Log(GameManager.Instance.TodayLogString() + character.name + " died of " + cause);
@@ -350,7 +350,7 @@ public class Minion {
         //character.marker.ClearPOIsInVisionRange();
         PlayerManager.Instance.player.playerArea.AddCharacterToLocation(character);
         character.ClearAllAwareness();
-        character.CancelAllJobsAndPlans();
+        character.CancelAllJobs();
         character.traitContainer.RemoveAllNonPersistentTraits(character);
         character.ResetToFullHP();
         if (character.isDead) {

@@ -28,6 +28,7 @@ public class MultiJobNode : JobNode{
     private int currentIndex;
     public MultiJobNode(ActualGoapNode[] nodes) {
         this.nodes = nodes;
+        currentIndex = 0;
     }
 
     #region Overrides
@@ -137,9 +138,9 @@ public class ActualGoapNode {
     }
 
     #region Action
-    public virtual void DoAction() {
+    public virtual void DoAction(JobQueueItem job, GoapPlan plan) {
         actionStatus = ACTION_STATUS.STARTED;
-        actor.SetCurrentActionNode(this);
+        actor.SetCurrentActionNode(this, job, plan);
         //parentPlan?.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
         Messenger.Broadcast(Signals.CHARACTER_DOING_ACTION, actor, this);
         actor.marker.UpdateActionIcon();
@@ -305,7 +306,7 @@ public class ActualGoapNode {
             //    targetCharacter.AdjustIsWaitingForInteraction(-1);
             //}
             action.OnStopWhileStarted(actor, poiTarget, otherData);
-            actor.DropPlan(parentPlan, forceProcessPlanJob: true); //TODO: Try to push back instead of dropping plan immediately, only drop plan if push back fails (fail: if no other plan replaces this plan)
+            //actor.DropPlan(parentPlan, forceProcessPlanJob: true); //TODO: Try to push back instead of dropping plan immediately, only drop plan if push back fails (fail: if no other plan replaces this plan)
         }
     }
     #endregion

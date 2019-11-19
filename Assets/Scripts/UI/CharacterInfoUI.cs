@@ -685,7 +685,7 @@ public class CharacterInfoUI : UIMenu {
         UIManager.Instance.HideSmallInfo();
     }
     public void DropACharacter() {
-        _activeCharacter.DropACharacter();
+        //_activeCharacter.DropACharacter();
     }
     public void LogAwareness() {
         _activeCharacter.marker.LogPOIsInVisionRange();

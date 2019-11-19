@@ -126,7 +126,7 @@ namespace Traits {
                 if (chance < 20) {
                     CheckTargetVictimIfStillAvailable();
                     if (targetVictim != null) {
-                        character.CancelAllJobsAndPlans();
+                        character.CancelAllJobs();
                         if (character.stateComponent.currentState != null) {
                             character.stateComponent.currentState.OnExitThisState();
                             if (character.stateComponent.currentState != null) {
@@ -162,7 +162,7 @@ namespace Traits {
                 }
             }
             if (targetVictim != null) {
-                character.CancelAllJobsAndPlans();
+                character.CancelAllJobs();
                 if (character.stateComponent.currentState != null) {
                     character.stateComponent.currentState.OnExitThisState();
                     if (character.stateComponent.currentState != null) {

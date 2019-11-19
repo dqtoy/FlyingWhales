@@ -170,7 +170,7 @@ public class BerserkedState : CharacterState {
         }
         summary += "Berserk resuming!";
         Debug.Log(summary);
-        stateComponent.character.SetCurrentActionNode(null);
+        stateComponent.character.SetCurrentActionNode(null, null, null);
         ResumeState();
     }
     private void StartBerserkedMovement() {
