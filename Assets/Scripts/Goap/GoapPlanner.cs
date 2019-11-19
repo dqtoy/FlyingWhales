@@ -338,7 +338,7 @@ public class GoapPlanner {
                                 IPointOfInterest poiTarget = poisThatAdvertisesCurrentAction[k];
                                 int cost = 0;
                                 bool canDoAction = poiTarget.CanAdvertiseActionToActor(actor, currentAction, otherData, ref cost)
-                                    && currentAction.WillEffectsSatisfyPrecondition(goalEffect, poiTarget, otherActionData);
+                                    && currentAction.WillEffectsSatisfyPrecondition(goalEffect, actor, poiTarget, otherActionData);
                                 if (canDoAction) {
                                     if (lowestCostAction == null || cost < lowestCost) {
                                         lowestCostAction = currentAction;
@@ -559,7 +559,7 @@ public class GoapPlanner {
                                             IPointOfInterest poiTarget = poisThatAdvertisesCurrentAction[k];
                                             int cost = 0;
                                             bool canDoAction = poiTarget.CanAdvertiseActionToActor(actor, currentAction, job.otherData, ref cost) 
-                                                && currentAction.WillEffectsSatisfyPrecondition(preconditionEffect, poiTarget, otherActionData);
+                                                && currentAction.WillEffectsSatisfyPrecondition(preconditionEffect, actor, poiTarget, otherActionData);
                                             if (canDoAction) {
                                                 if (lowestCostAction == null || cost < lowestCost) {
                                                     lowestCostAction = currentAction;

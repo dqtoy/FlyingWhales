@@ -20,7 +20,7 @@ public class Accident : GoapAction {
     }
     public override void Perform(ActualGoapNode actionNode) {
         base.Perform(actionNode);
-        SetState("Drop Success", actionNode);
+        SetState("Accident Success", actionNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 5;

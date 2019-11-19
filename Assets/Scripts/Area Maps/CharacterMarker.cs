@@ -707,14 +707,15 @@ public class CharacterMarker : PooledObject {
         }
         if (character.isDead) {
             PlayAnimation("Dead");
-        } else if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
+        } else if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) || character.canMove == false) {
             PlaySleepGround();
         } else if (character.isStoppedByOtherCharacter > 0) {
             PlayIdle();
         } else if (character.currentParty.icon != null && character.currentParty.icon.isTravelling) {
             //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
             PlayWalkingAnimation();
-        } else if (character.currentActionNode != null && string.IsNullOrEmpty(character.currentActionNode.currentStateName) == false && string.IsNullOrEmpty(character.currentActionNode.action.states[character.currentActionNode.currentStateName].animationName) == false) {
+        } else if (character.currentActionNode != null && string.IsNullOrEmpty(character.currentActionNode.currentStateName) == false 
+            && string.IsNullOrEmpty(character.currentActionNode.currentState.animationName) == false) {
             PlayAnimation(character.currentActionNode.currentState.animationName);
         } else if (character.currentActionNode != null && !string.IsNullOrEmpty(character.currentActionNode.action.animationName)) {
             PlayAnimation(character.currentActionNode.action.animationName);

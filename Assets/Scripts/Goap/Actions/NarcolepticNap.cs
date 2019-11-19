@@ -40,8 +40,6 @@ public class NarcolepticNap : GoapAction {
 
     #region State Effects
     private void PreNapSuccess(ActualGoapNode goapNode) {
-        GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        currentState.SetAnimation("Sleep Ground");
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Resting");
     }
     private void PerTickNapSuccess(ActualGoapNode goapNode) {

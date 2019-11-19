@@ -48,7 +48,7 @@ public class Sleep : GoapAction {
         } else if (targetStructure.structureType == STRUCTURE_TYPE.INN) {
             return 30;
         }
-        return 100;
+        return 50;
     }
     public override void OnStopWhilePerforming(Character actor, IPointOfInterest target, object[] otherData) {
         base.OnStopWhilePerforming(actor, target, otherData);
@@ -72,9 +72,9 @@ public class Sleep : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
-                return false;
-            }
+            //if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            //    return false;
+            //}
             return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
         }
         return false;

@@ -5942,7 +5942,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                     //    otherActionData = otherData[currType];
                     //}
                     if (action.CanSatisfyRequirements(actor, this, data)
-                        && action.WillEffectsSatisfyPrecondition(precondition, this, data)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
+                        && action.WillEffectsSatisfyPrecondition(precondition, actor, this, data)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
                         int actionCost = action.GetCost(actor, this, data);
                         if (lowestCostAction == null|| actionCost < currentLowestCost) {
                             lowestCostAction = action;
@@ -6365,7 +6365,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         } else {
             log += "\nAction did not meet all requirements and preconditions. Will try to recalculate plan...";
             GoapPlan plan = currentPlan;
-            SetCurrentActionNode(null, null, null);
             if (plan.doNotRecalculate) {
                 log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
                 PrintLogIfActive(log);
@@ -6376,6 +6375,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 UnityEngine.Assertions.Assert.IsTrue(currentJob is GoapPlanJob);
                 planner.RecalculateJob(currentJob as GoapPlanJob);
             }
+            SetCurrentActionNode(null, null, null);
         }
         //if (currentActionNode.isStopped) {
         //    log += "\n Action is stopped! Dropping plan...";

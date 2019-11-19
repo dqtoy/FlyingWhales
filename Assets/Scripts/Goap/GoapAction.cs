@@ -126,6 +126,7 @@ public class GoapAction {
     //}
 
     #region States
+
     public void SetState(string stateName, ActualGoapNode actionNode) {
         Messenger.Broadcast(Signals.ACTION_STATE_SET, stateName, actionNode);
         Messenger.Broadcast(Signals.AFTER_ACTION_STATE_SET, stateName, actionNode);
@@ -178,7 +179,7 @@ public class GoapAction {
                 if (afterMethod != null) {
                     afterAction = (Action<ActualGoapNode>) Delegate.CreateDelegate(typeof(Action<ActualGoapNode>), this, afterMethod, false);
                 }
-                GoapActionState newState = new GoapActionState(state.name, this, preAction, perAction, afterAction, state.duration, state.status);
+                GoapActionState newState = new GoapActionState(state.name, this, preAction, perAction, afterAction, state.duration, state.status, state.animationName);
                 states.Add(state.name, newState);
                 //summary += "\n Creating state " + state.name;
             }
@@ -793,8 +794,8 @@ public class GoapAction {
     protected void AddPossibleExpectedEffectForTypeAndTargetMatching(GoapEffectConditionTypeAndTargetType effect) {
         possibleExpectedEffectsTypeAndTargetMatching.Add(effect);
     }
-    public bool WillEffectsSatisfyPrecondition(GoapEffect precondition, IPointOfInterest target, object[] otherData) {
-        List<GoapEffect> effects = GetExpectedEffects(target, otherData);
+    public bool WillEffectsSatisfyPrecondition(GoapEffect precondition, Character actor, IPointOfInterest target, object[] otherData) {
+        List<GoapEffect> effects = GetExpectedEffects(actor, target, otherData);
         for (int i = 0; i < effects.Count; i++) {
             if(EffectPreconditionMatching(effects[i], precondition)) {
                 return true;
@@ -836,8 +837,15 @@ public class GoapAction {
         }
         return false;
     }
-    protected virtual List<GoapEffect> GetExpectedEffects(IPointOfInterest target, object[] otherData) {
-        return baseExpectedEffects;
+    protected virtual List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, object[] otherData) {
+        List<GoapEffect> effects = new List<GoapEffect>(baseExpectedEffects);
+        //TODO: Might be a more optimized way to do this
+        //modify expected effects depending on actor's traits
+        for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
+            Trait currTrait = actor.traitContainer.allTraits[i];
+            currTrait.ExecuteExpectedEffectModification(goapType, actor, target, otherData, ref effects);
+        }
+        return effects;
     }
     //public void AddActualEffect(GoapEffect effect) {
     //    actualEffects.Add(effect);

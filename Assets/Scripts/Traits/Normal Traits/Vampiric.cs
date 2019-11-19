@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Traits {
@@ -97,14 +98,18 @@ namespace Traits {
                     triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
                 }
                 if (!triggerGrieving) {
-                    //TODO: GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.DRINK_BLOOD);
-                    //job.SetCancelOnFail(true);
-                    //character.jobQueue.AddJobInQueue(job);
+                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), character, character);
+                    character.jobQueue.AddJobInQueue(job);
                 } else {
                     griefstricken.TriggerGrieving();
                 }
             }
             return base.TriggerFlaw(character);
+        }
+        public override void ExecuteExpectedEffectModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref List<GoapEffect> effects) {
+            if (action == INTERACTION_TYPE.DRINK_BLOOD) {
+                effects.Add(new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
+            }
         }
         #endregion
     }

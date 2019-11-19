@@ -22,7 +22,7 @@ public class GoapActionState {
 
     //public List<ActionLog> arrangedLogs { get; protected set; }
 
-    public GoapActionState(string name, GoapAction parentAction, Action<ActualGoapNode> preEffect, Action<ActualGoapNode> perTickEffect, Action<ActualGoapNode> afterEffect, int duration, string status) {
+    public GoapActionState(string name, GoapAction parentAction, Action<ActualGoapNode> preEffect, Action<ActualGoapNode> perTickEffect, Action<ActualGoapNode> afterEffect, int duration, string status, string animationName) {
         this.name = name;
         this.preEffect = preEffect;
         this.perTickEffect = perTickEffect;
@@ -30,6 +30,7 @@ public class GoapActionState {
         this.parentAction = parentAction;
         this.duration = duration;
         this.status = status;
+        this.animationName = animationName;
         //this.shouldAddLogs = true;
         //this.isDone = false;
         //this.arrangedLogs = new List<ActionLog>();
@@ -130,12 +131,6 @@ public class GoapActionState {
     //        EndPerTickEffect();
     //    }
     //}
-
-    #region Animation
-    public void SetAnimation(string animationName) {
-        this.animationName = animationName;
-    }
-    #endregion
 
     public override string ToString() {
         return name + " " + parentAction.ToString();

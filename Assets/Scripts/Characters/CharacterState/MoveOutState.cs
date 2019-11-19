@@ -98,7 +98,7 @@ public class MoveOutState : CharacterState {
             return;
         }
         hasSceduledArriveAtRandomRegion = true;
-        stateComponent.character.CancelAllJobs();
+        stateComponent.character.CancelAllJobsExceptForCurrent();
         stateComponent.character.ownParty.icon.SetIsTravellingOutside(true);
         stateComponent.character.SetPOIState(POI_STATE.INACTIVE);
         stateComponent.character.marker.gameObject.SetActive(false);

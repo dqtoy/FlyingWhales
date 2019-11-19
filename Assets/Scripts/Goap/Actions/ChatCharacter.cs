@@ -31,7 +31,7 @@ public class ChatCharacter : GoapAction {
     #endregion
 
     #region State Effects
-    private void AfterChatSuccess(ActualGoapNode goapNode) {
+    private void PreChatSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
 
         CHARACTER_MOOD thisCharacterMood = goapNode.actor.currentMoodType;

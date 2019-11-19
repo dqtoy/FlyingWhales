@@ -97,9 +97,7 @@ namespace Traits {
                     if (character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
                         character.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN);
                     }
-                    //TODO: Make this sure steal any time
-                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, target = GOAP_EFFECT_TARGET.ACTOR }, character, character);
-                    //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, target = GOAP_EFFECT_TARGET.ACTOR }, INTERACTION_TYPE.STEAL);
+                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR }, character, character);
                     character.jobQueue.AddJobInQueue(job);
                 } else {
                     heartbroken.TriggerBrokenhearted();
@@ -109,13 +107,18 @@ namespace Traits {
         }
         public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref int cost) {
             if (action == INTERACTION_TYPE.STEAL) {
-                cost = Utilities.rng.Next(5, 46);
+                cost = Utilities.rng.Next(5, 10); //5,46
             }
         }
         public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
             base.ExecuteActionAfterEffects(action, goapNode);
             if (action == INTERACTION_TYPE.STEAL) {
                 owner.AdjustHappiness(6000);
+            }
+        }
+        public override void ExecuteExpectedEffectModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref List<GoapEffect> effects) {
+            if (action == INTERACTION_TYPE.STEAL) {
+                effects.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
             }
         }
         #endregion

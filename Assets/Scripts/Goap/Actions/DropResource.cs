@@ -16,8 +16,8 @@ public class DropResource : GoapAction {
         AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAS_FOOD, GOAP_EFFECT_TARGET.ACTOR));
         AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAS_WOOD, GOAP_EFFECT_TARGET.ACTOR));
     }
-    protected override List<GoapEffect> GetExpectedEffects(IPointOfInterest target, object[] otherData) {
-        List<GoapEffect> ee = base.GetExpectedEffects(target, otherData);
+    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, object[] otherData) {
+        List<GoapEffect> ee = base.GetExpectedEffects(actor, target, otherData);
         ResourcePile pile = target as ResourcePile;
         switch (pile.providedResource) {
             case RESOURCE.FOOD:
