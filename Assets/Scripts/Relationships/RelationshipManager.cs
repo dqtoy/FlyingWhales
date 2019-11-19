@@ -610,10 +610,10 @@ public class RelationshipManager : MonoBehaviour {
     /// </summary>
     /// <param name="actor">The character that did something to degrade the relationship.</param>
     /// <param name="target">The character that will change their relationship with the actor.</param>
-    public bool RelationshipDegradation(Character actor, Character target, GoapAction cause = null) {
+    public bool RelationshipDegradation(Character actor, Character target, ActualGoapNode cause = null) {
         return RelationshipDegradation(actor.currentAlterEgo, target, cause);
     }
-    public bool RelationshipDegradation(AlterEgoData actorAlterEgo, Character target, GoapAction cause = null) {
+    public bool RelationshipDegradation(AlterEgoData actorAlterEgo, Character target, ActualGoapNode cause = null) {
         if (actorAlterEgo.owner.race == RACE.DEMON || target.race == RACE.DEMON || actorAlterEgo.owner is Summon || target is Summon) {
             return false; //do not let demons and summons have relationships
         }

@@ -39,7 +39,6 @@ public class Accident : GoapAction {
     #region State Effects
     private void PreAccidentSuccess(ActualGoapNode goapNode) {
         GoapAction actionToDo = goapNode.otherData[0] as GoapAction;
-        GoapActionState currentState = this.states[goapNode.currentStateName];
         goapNode.descriptionLog.AddToFillers(actionToDo, actionToDo.goapName, LOG_IDENTIFIER.STRING_1);
     }
     private void AfterAccidentSuccess(ActualGoapNode goapNode) {

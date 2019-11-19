@@ -44,12 +44,12 @@ namespace Traits {
             }
             return hasCreatedJob;
         }
-        public override bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
+        public override bool OnStartPerformGoapAction(ActualGoapNode goapNode, ref bool willStillContinueAction) {
             int accidentChance = UnityEngine.Random.Range(0, 100);
             bool hasCreatedJob = false;
             if (accidentChance < 10) {
-                if (node != null && !excludedActionsFromAccidentProneTrait.Contains(node.action.goapType)) {
-                    DoAccident(node.action);
+                if (goapNode != null && !excludedActionsFromAccidentProneTrait.Contains(goapNode.action.goapType)) {
+                    DoAccident(goapNode);
                     hasCreatedJob = true;
                     willStillContinueAction = false;
                 }
@@ -62,7 +62,7 @@ namespace Traits {
                 DoStumble();
             } else if (character.currentActionNode.action != null && !excludedActionsFromAccidentProneTrait.Contains(character.currentActionNode.action.goapType)) {
                 //If doing something, the character will fail and get injured.
-                DoAccident(character.currentActionNode.action);
+                DoAccident(character.currentActionNode);
             }
             return base.TriggerFlaw(character);
         }
@@ -73,9 +73,9 @@ namespace Traits {
             owner.jobQueue.AddJobInQueue(job);
         }
 
-        private void DoAccident(GoapAction action) {
+        private void DoAccident(ActualGoapNode goapNode) {
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.ACCIDENT, owner, new Dictionary<INTERACTION_TYPE, object[]>() {
-                { INTERACTION_TYPE.ACCIDENT, new object[] { action }}
+                { INTERACTION_TYPE.ACCIDENT, new object[] { goapNode.action }}
             },  owner);
             owner.jobQueue.AddJobInQueue(job);
         }
