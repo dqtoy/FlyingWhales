@@ -25,6 +25,9 @@ public class JobQueueItem {
     public System.Action<Character, JobQueueItem> onTakeJobAction { get; protected set; }
     protected int _priority; //The lower the amount the higher the priority
 
+    //Additional data
+    public bool cannotBePushedBack { get; protected set; }
+
     public JobQueueItem(JOB_TYPE jobType, IJobOwner owner) {
         id = Utilities.SetID(this);
         this.jobType = jobType;
@@ -114,12 +117,17 @@ public class JobQueueItem {
         return true;
     }
     public virtual void PushedBack() {
-        if(originalOwner.ownerType != JOB_OWNER.CHARACTER) {
-            //NOTE! This is temporary only! All jobs, even settlement jobs are just pushed back right now
-            //assignedCharacter.jobQueue.RemoveJobInQueue(this, false, "Have something important to do");
-            assignedCharacter.StopCurrentActionNode(false, "Have something important to do");
+        if (cannotBePushedBack) {
+            //If job is cannot be pushed back and it is pushed back, cancel it instead
+            CancelJob(false);
         } else {
-            assignedCharacter.StopCurrentActionNode(false, "Have something important to do");
+            if (originalOwner.ownerType != JOB_OWNER.CHARACTER) {
+                //NOTE! This is temporary only! All jobs, even settlement jobs are just pushed back right now
+                //assignedCharacter.jobQueue.RemoveJobInQueue(this, false, "Have something important to do");
+                assignedCharacter.StopCurrentActionNode(false, "Have something important to do");
+            } else {
+                assignedCharacter.StopCurrentActionNode(false, "Have something important to do");
+            }
         }
     }
     #endregion
@@ -151,6 +159,9 @@ public class JobQueueItem {
     }
     public void SetOnTakeJobAction(System.Action<Character, JobQueueItem> action) {
         onTakeJobAction = action;
+    }
+    public void SetCannotBePushedBack (bool state) {
+        cannotBePushedBack = state;
     }
     //public void SetCannotCancelJob(bool state) {
     //    cannotCancelJob = state;
