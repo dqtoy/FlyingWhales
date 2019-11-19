@@ -14,7 +14,7 @@ public class ChopWood : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = MAX_SUPPLY.ToString(), isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_WOOD, conditionKey = MAX_SUPPLY.ToString(), isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);

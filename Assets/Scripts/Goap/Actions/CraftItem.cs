@@ -14,7 +14,7 @@ public class CraftItem : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, target = GOAP_EFFECT_TARGET.ACTOR }, HasSupply);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_WOOD, target = GOAP_EFFECT_TARGET.ACTOR }, HasSupply);
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = craftedItem.ToString(), target = GOAP_EFFECT_TARGET.ACTOR });
     }
     public override void Perform(ActualGoapNode goapNode) {

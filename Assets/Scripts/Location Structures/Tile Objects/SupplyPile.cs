@@ -3,19 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class SupplyPile : TileObject {
-    public int suppliesInPile { get; private set; }
+public class SupplyPile : ResourcePile {
 
-    public SupplyPile(LocationStructure location) {
+    public SupplyPile(LocationStructure location) : base(RESOURCE.WOOD) {
         SetStructureLocation(location);
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.OBTAIN_RESOURCE, INTERACTION_TYPE.DROP_RESOURCE, INTERACTION_TYPE.REPAIR, INTERACTION_TYPE.DESTROY_RESOURCE };
         Initialize(TILE_OBJECT_TYPE.SUPPLY_PILE);
-        SetSuppliesInPile(2000);
+        SetResourceInPile(2000);
         traitContainer.RemoveTrait(this, "Flammable");
         Messenger.AddListener(Signals.TICK_STARTED, CheckSupply);
     }
-    public SupplyPile(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.OBTAIN_RESOURCE, INTERACTION_TYPE.DROP_RESOURCE, INTERACTION_TYPE.REPAIR, INTERACTION_TYPE.DESTROY_RESOURCE };
+    public SupplyPile(SaveDataTileObject data) : base(RESOURCE.WOOD) {
         Initialize(data);
         Messenger.AddListener(Signals.TICK_STARTED, CheckSupply);
     }
@@ -34,9 +31,9 @@ public class SupplyPile : TileObject {
     #endregion
 
     private void CheckSupply() {
-        if (suppliesInPile < 100) {
+        if (resourceInPile < 100) {
             if (!structureLocation.location.HasJob(JOB_TYPE.OBTAIN_SUPPLY)) {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.OBTAIN_SUPPLY, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_SUPPLY, "0", true, GOAP_EFFECT_TARGET.TARGET ), this, structureLocation.location);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.OBTAIN_SUPPLY, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_WOOD, "0", true, GOAP_EFFECT_TARGET.TARGET ), this, structureLocation.location);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainSupplyJob);
                 structureLocation.location.AddToAvailableJobs(job);
             }
@@ -44,25 +41,12 @@ public class SupplyPile : TileObject {
             structureLocation.location.ForceCancelJob(structureLocation.location.GetJob(JOB_TYPE.OBTAIN_SUPPLY));
         }
     }
-    public void SetSuppliesInPile(int amount) {
-        suppliesInPile = amount;
-        suppliesInPile = Mathf.Max(0, suppliesInPile);
-    }
-
-    public void AdjustSuppliesInPile(int adjustment) {
-        suppliesInPile += adjustment;
-        suppliesInPile = Mathf.Max(0, suppliesInPile);
+    public override void AdjustResourceInPile(int adjustment) {
+        base.AdjustResourceInPile(adjustment);
         if (adjustment < 0) {
             Messenger.Broadcast(Signals.SUPPLY_IN_PILE_REDUCED, this);
         }
     }
-    public bool HasSupply() {
-        if (structureLocation.structureType == STRUCTURE_TYPE.WAREHOUSE) {
-            return suppliesInPile > 0;
-        }
-        return true;
-    }
-
     public override string ToString() {
         return "Supply Pile " + id.ToString();
     }
@@ -77,12 +61,12 @@ public class SaveDataSupplyPile : SaveDataTileObject {
     public override void Save(TileObject tileObject) {
         base.Save(tileObject);
         SupplyPile obj = tileObject as SupplyPile;
-        suppliesInPile = obj.suppliesInPile;
+        suppliesInPile = obj.resourceInPile;
     }
 
     public override TileObject Load() {
         SupplyPile obj = base.Load() as SupplyPile;
-        obj.SetSuppliesInPile(suppliesInPile);
+        obj.SetResourceInPile(suppliesInPile);
         return obj;
     }
 }

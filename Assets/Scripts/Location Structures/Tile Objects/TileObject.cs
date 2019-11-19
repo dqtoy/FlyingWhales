@@ -110,6 +110,7 @@ public class TileObject : IPointOfInterest {
     private void AddCommonAdvertisments() {
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.POISON);
+        AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
     }
 
     #region Virtuals

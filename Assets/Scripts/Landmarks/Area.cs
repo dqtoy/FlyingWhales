@@ -55,7 +55,7 @@ public class Area : IJobOwner {
             if (supplyPile == null) {
                 return 0;
             }
-            return supplyPile.suppliesInPile;
+            return supplyPile.resourceInPile;
         }
     }
     public SupplyPile supplyPile {
@@ -73,7 +73,7 @@ public class Area : IJobOwner {
             if (currFoodPile == null) {
                 return 0;
             }
-            return currFoodPile.foodInPile;
+            return currFoodPile.resourceInPile;
         }
     }
     public FoodPile foodPile {
@@ -381,7 +381,7 @@ public class Area : IJobOwner {
         if (supplyPile == null) {
             return;
         }
-        supplyPile.SetSuppliesInPile(amount);
+        supplyPile.SetResourceInPile(amount);
         Messenger.Broadcast(Signals.AREA_SUPPLIES_CHANGED, this);
         //suppliesInBank = Mathf.Clamp(suppliesInBank, 0, supplyCapacity);
     }
@@ -389,7 +389,7 @@ public class Area : IJobOwner {
         if (supplyPile == null) {
             return;
         }
-        supplyPile.AdjustSuppliesInPile(amount);
+        supplyPile.AdjustResourceInPile(amount);
         Messenger.Broadcast(Signals.AREA_SUPPLIES_CHANGED, this);
         //suppliesInBank = Mathf.Clamp(suppliesInBank, 0, supplyCapacity);
     }
@@ -401,7 +401,7 @@ public class Area : IJobOwner {
         if (currFoodPile == null) {
             return;
         }
-        currFoodPile.SetFoodInPile(amount);
+        currFoodPile.SetResourceInPile(amount);
         Messenger.Broadcast(Signals.AREA_FOOD_CHANGED, this);
     }
     public void AdjustFoodInBank(int amount) {
@@ -409,7 +409,7 @@ public class Area : IJobOwner {
         if (currFoodPile == null) {
             return;
         }
-        currFoodPile.AdjustFoodInPile(amount);
+        currFoodPile.AdjustResourceInPile(amount);
         Messenger.Broadcast(Signals.AREA_FOOD_CHANGED, this);
     }
     #endregion
@@ -1291,9 +1291,9 @@ public class Area : IJobOwner {
             return; //hero events are maxed.
         }
         int obtainFoodOutsideJobs = GetNumberOfJobsWith(JOB_TYPE.OBTAIN_FOOD_OUTSIDE);
-        if (obtainFoodOutsideJobs == 0 && foodPile.foodInPile < 1000) {
+        if (obtainFoodOutsideJobs == 0 && foodPile.resourceInPile < 1000) {
             CreateObtainFoodOutsideJob();
-        } else  if (obtainFoodOutsideJobs == 1 && foodPile.foodInPile < 500) { //there is at least 1 existing obtain food outside job.
+        } else  if (obtainFoodOutsideJobs == 1 && foodPile.resourceInPile < 500) { //there is at least 1 existing obtain food outside job.
             //allow the creation of a second obtain food outside job
             CreateObtainFoodOutsideJob();
         }
@@ -1312,9 +1312,9 @@ public class Area : IJobOwner {
             return; //hero events are maxed.
         }
         int obtainSupplyOutsideJobs = GetNumberOfJobsWith(JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE);
-        if (obtainSupplyOutsideJobs == 0 && supplyPile.suppliesInPile < 1000) {
+        if (obtainSupplyOutsideJobs == 0 && supplyPile.resourceInPile < 1000) {
             CreateObtainSupplyOutsideJob();
-        } else if (obtainSupplyOutsideJobs == 1 && supplyPile.suppliesInPile < 500) { //there is at least 1 existing obtain supply outside job.
+        } else if (obtainSupplyOutsideJobs == 1 && supplyPile.resourceInPile < 500) { //there is at least 1 existing obtain supply outside job.
             //allow the creation of a second obtain supply outside job
             CreateObtainSupplyOutsideJob();
         }

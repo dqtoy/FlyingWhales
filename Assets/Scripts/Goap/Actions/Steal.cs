@@ -19,7 +19,7 @@ public class Steal : GoapAction {
     protected override List<GoapEffect> GetExpectedEffects(IPointOfInterest target, object[] otherData) {
         List <GoapEffect> ee = base.GetExpectedEffects(target, otherData);
         SpecialToken token = target as SpecialToken;
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = token.specialTokenType.ToString(), target = GOAP_EFFECT_TARGET.TARGET });
+        ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = token.specialTokenType.ToString(), target = GOAP_EFFECT_TARGET.TARGET });
         return ee;
     }
     public override void Perform(ActualGoapNode goapNode) {

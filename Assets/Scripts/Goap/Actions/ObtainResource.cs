@@ -11,8 +11,18 @@ public class ObtainResource : GoapAction {
     }
 
     #region Overrides
-    protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_FOOD, target = GOAP_EFFECT_TARGET.ACTOR });
+    protected override List<GoapEffect> GetExpectedEffects(IPointOfInterest target, object[] otherData) {
+        List<GoapEffect> ee = base.GetExpectedEffects(target, otherData);
+        ResourcePile pile = target as ResourcePile;
+        switch (pile.providedResource) {
+            case RESOURCE.FOOD:
+                ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_FOOD, target = GOAP_EFFECT_TARGET.ACTOR });
+                break;
+            case RESOURCE.WOOD:
+                ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_WOOD, target = GOAP_EFFECT_TARGET.ACTOR });
+                break;
+        }
+        return ee;
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -25,7 +35,7 @@ public class ObtainResource : GoapAction {
         GoapActionInvalidity goapActionInvalidity = base.IsInvalid(actor, target, otherData);
         if (goapActionInvalidity.isInvalid == false) {
              FoodPile foodPile = target as FoodPile;
-            if (foodPile.foodInPile <= 0) {
+            if (foodPile.resourceInPile <= 0) {
                 goapActionInvalidity.isInvalid = true;
                 goapActionInvalidity.stateName = "Take Fail";
             }
@@ -43,7 +53,7 @@ public class ObtainResource : GoapAction {
             }
             if (poiTarget is FoodPile) {
                 FoodPile foodPile = poiTarget as FoodPile;
-                if (foodPile.foodInPile > 0) {
+                if (foodPile.resourceInPile > 0) {
                     return true;
                 }
             }
@@ -57,8 +67,8 @@ public class ObtainResource : GoapAction {
         FoodPile foodPile = goapNode.poiTarget as FoodPile;
         int neededFood = (int)goapNode.otherData[0];
         int takenFood = neededFood - goapNode.actor.food;
-        if(foodPile.foodInPile < takenFood) {
-            takenFood = foodPile.foodInPile;
+        if(foodPile.resourceInPile < takenFood) {
+            takenFood = foodPile.resourceInPile;
         }
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
@@ -68,11 +78,11 @@ public class ObtainResource : GoapAction {
         FoodPile foodPile = goapNode.poiTarget as FoodPile;
         int neededFood = (int)goapNode.otherData[0];
         int takenFood = neededFood - goapNode.actor.food;
-        if (foodPile.foodInPile < takenFood) {
-            takenFood = foodPile.foodInPile;
+        if (foodPile.resourceInPile < takenFood) {
+            takenFood = foodPile.resourceInPile;
         }
         goapNode.actor.AdjustFood(takenFood);
-        foodPile.AdjustFoodInPile(-takenFood);
+        foodPile.AdjustResourceInPile(-takenFood);
     }
     #endregion
 }
@@ -89,7 +99,7 @@ public class GetFoodData : GoapActionData {
         }
         if (poiTarget is FoodPile) {
             FoodPile foodPile = poiTarget as FoodPile;
-            if (foodPile.foodInPile > 0) {
+            if (foodPile.resourceInPile > 0) {
                 return true;
             }
         }

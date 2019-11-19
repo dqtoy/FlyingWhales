@@ -22,7 +22,7 @@ public class Repair : GoapAction {
         TileObject tileObj = poiTarget as TileObject;
         TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
         int craftCost = (int)(data.constructionCost * 0.5f);
-        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_SUPPLY, craftCost.ToString(), true, GOAP_EFFECT_TARGET.ACTOR), HasSupply));
+        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_WOOD, craftCost.ToString(), true, GOAP_EFFECT_TARGET.ACTOR), HasSupply));
 
         return p;
     }
