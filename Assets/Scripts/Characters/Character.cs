@@ -2700,10 +2700,13 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //Cannot witness if character is part of the action
             return;
         }
+        if (!node.action.shouldAddLogs) {
+            return;
+        }
 
         //Instead of witnessing the action immediately, it needs to be pooled to avoid duplicates, so add the supposed to be witnessed action to the list and let ProcessAllUnprocessedVisionPOIs in CharacterMarker do its thing
-        if(marker != null && !marker.actionsToWitness.Contains(node)) {
-            if(marker.inVisionCharacters.Contains(node.actor)) {
+        if(marker != null) { //&& !marker.actionsToWitness.Contains(node)
+            if (marker.inVisionCharacters.Contains(node.actor)) {
                 marker.actionsToWitness.Add(node);
                 //This is done so that the character will react again
                 marker.unprocessedVisionPOIs.Add(node.actor);
@@ -2766,14 +2769,16 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 for (int i = 0; i < target.allJobsTargettingThis.Count; i++) {
                     if(target.allJobsTargettingThis[i] is GoapPlanJob) {
                         GoapPlanJob job = target.allJobsTargettingThis[i] as GoapPlanJob;
-                        if(job.assignedPlan != null) {
-                            actionsToWitness.Add(job.assignedPlan.currentActualNode);
+                        GoapPlan plan = job.assignedPlan;
+                        if (plan != null && plan.currentActualNode.action.shouldAddLogs && plan.currentActualNode.actionStatus == ACTION_STATUS.PERFORMING) {
+                            actionsToWitness.Add(plan.currentActualNode);
                         }
                     }
                 }
             }
-            if (targetCharacter.currentActionNode != null) {
-                actionsToWitness.Add(targetCharacter.currentActionNode);
+            ActualGoapNode node = targetCharacter.currentActionNode;
+            if (node != null && node.action.shouldAddLogs && node.actionStatus == ACTION_STATUS.PERFORMING) {
+                actionsToWitness.Add(node);
             }
             //if (targetCharacter.currentAction != null && targetCharacter.currentAction.isPerformingActualAction && !targetCharacter.currentAction.isDone && targetCharacter.currentAction.goapType != INTERACTION_TYPE.WATCH) {
             //    //Cannot witness/watch a watch action

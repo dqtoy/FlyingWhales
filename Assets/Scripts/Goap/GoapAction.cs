@@ -127,7 +127,8 @@ public class GoapAction {
 
     #region States
     public void SetState(string stateName, ActualGoapNode actionNode) {
-        Messenger.Broadcast(Signals.ACTION_STATE_SET, stateName, actionNode);
+        actionNode.OnActionStateSet(stateName);
+        //Messenger.Broadcast(Signals.ACTION_STATE_SET, stateName, actionNode);
         Messenger.Broadcast(Signals.AFTER_ACTION_STATE_SET, stateName, actionNode);
         //GoapActionState currentState = states[stateName];
         //AddActionDebugLog(GameManager.Instance.TodayLogString() + " Set state to " + currentState.name);

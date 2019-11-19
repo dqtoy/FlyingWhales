@@ -129,13 +129,12 @@ public class ActualGoapNode {
         this.cost = cost;
         actionStatus = ACTION_STATUS.NONE;
         currentStateName = string.Empty;
-        Messenger.AddListener<string, ActualGoapNode>(Signals.ACTION_STATE_SET, OnActionStateSet);
+        //Messenger.AddListener<string, ActualGoapNode>(Signals.ACTION_STATE_SET, OnActionStateSet);
     }
 
-    public void DestroyNode() {
-        Messenger.RemoveListener<string, ActualGoapNode>(Signals.ACTION_STATE_SET, OnActionStateSet);
-
-    }
+    //public void DestroyNode() {
+    //    Messenger.RemoveListener<string, ActualGoapNode>(Signals.ACTION_STATE_SET, OnActionStateSet);
+    //}
 
     #region Action
     public virtual void DoAction(JobQueueItem job, GoapPlan plan) {
@@ -314,14 +313,15 @@ public class ActualGoapNode {
     #endregion
 
     #region Action State
-    private void OnActionStateSet(string stateName, ActualGoapNode actionNode) {
-        if (actionNode == this) {
-            currentStateName = stateName;
-            OnPerformActualActionToTarget();
-            ExecuteCurrentActionState();
-        }
+    public void OnActionStateSet(string stateName) {
+        currentStateName = stateName;
+        OnPerformActualActionToTarget();
+        ExecuteCurrentActionState();
     }
     private void ExecuteCurrentActionState() {
+        if (!action.states.ContainsKey(currentStateName)) {
+            Debug.LogError("Failed to execute current action state for " + actor.name + " because " + action.goapName + " does not have state with name: " + currentStateName);
+        }
         GoapActionState currentState = action.states[currentStateName];
         CreateDescriptionLog(currentState);
         currentState.preEffect?.Invoke(this);
