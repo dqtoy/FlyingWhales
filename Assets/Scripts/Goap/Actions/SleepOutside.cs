@@ -49,9 +49,8 @@ public class SleepOutside : GoapAction {
     #region State Effects
     private void PreRestSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Resting");
-        GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        currentState.SetAnimation("Sleep Ground");
-        goapNode.OverrideCurrentStateDuration(currentState.duration - goapNode.actor.currentSleepTicks); //this can make the current duration negative
+        //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
+        //goapNode.OverrideCurrentStateDuration(currentState.duration - goapNode.actor.currentSleepTicks); //this can make the current duration negative
     }
     private void PerTickRestSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustTiredness(70);

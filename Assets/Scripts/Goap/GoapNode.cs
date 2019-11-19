@@ -105,7 +105,10 @@ public class ActualGoapNode {
     #region getters
     //TODO: Refactor these getters after all errors are resolved.
     public GoapActionState currentState {
-        get { return action.states[currentStateName]; }
+        get {
+            UnityEngine.Assertions.Assert.IsTrue(action.states.ContainsKey(currentStateName));
+            return action.states[currentStateName]; 
+        }
     }
     public bool isPerformingActualAction {
         get { return actionStatus == ACTION_STATUS.PERFORMING; }
@@ -325,6 +328,9 @@ public class ActualGoapNode {
         GoapActionState currentState = action.states[currentStateName];
         CreateDescriptionLog(currentState);
         currentState.preEffect?.Invoke(this);
+
+        actor.marker.UpdateAnimation();
+
         for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
             Trait currTrait = actor.traitContainer.allTraits[i];
             currTrait.ExecuteActionPreEffects(action.goapType, this);
@@ -457,7 +463,7 @@ public class ActualGoapNode {
 
     #region Log
     private void CreateDescriptionLog(GoapActionState actionState) {
-        if (descriptionLog == null && action.shouldAddLogs) {
+        if (descriptionLog == null) {
             descriptionLog = actionState.CreateDescriptionLog(actor, poiTarget, this);
         }
     }

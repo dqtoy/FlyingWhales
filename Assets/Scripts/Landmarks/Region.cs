@@ -769,7 +769,7 @@ public class Region {
     public void AddFeature(RegionFeature feature) {
         if (!features.Contains(feature)) {
             features.Add(feature);
-            Debug.Log(GameManager.Instance.TodayLogString() + " added new region feature " + feature.name + " to " + this.name);
+            //Debug.Log(GameManager.Instance.TodayLogString() + " added new region feature " + feature.name + " to " + this.name);
         }
     }
     public void AddFeature(string featureName) {

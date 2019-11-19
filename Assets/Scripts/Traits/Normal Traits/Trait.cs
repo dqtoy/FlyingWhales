@@ -228,6 +228,7 @@ namespace Traits {
         /// <param name="action">The type of action.</param>
         /// <param name="cost">The cost to be modified.</param>
         public virtual void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref int cost) { }
+        public virtual void ExecuteExpectedEffectModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref List<GoapEffect> effects) { }
         public virtual void ExecuteActionPreEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) { }
         public virtual void ExecuteActionPerTickEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) { }
         public virtual void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) { }

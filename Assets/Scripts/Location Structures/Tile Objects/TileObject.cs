@@ -198,7 +198,7 @@ public class TileObject : IPointOfInterest {
                     //    otherActionData = otherData[currType];
                     //}
                     if (action.CanSatisfyRequirements(actor, this, data)
-                        && action.WillEffectsSatisfyPrecondition(precondition, this, data)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
+                        && action.WillEffectsSatisfyPrecondition(precondition, actor, this, data)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
                         int actionCost = action.GetCost(actor, this, data);
                         if (lowestCostAction == null || actionCost < currentLowestCost) {
                             lowestCostAction = action;

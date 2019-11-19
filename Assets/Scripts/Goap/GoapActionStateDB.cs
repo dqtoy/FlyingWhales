@@ -77,7 +77,7 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Drink Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
         } },
         {INTERACTION_TYPE.SLEEP_OUTSIDE, new StateNameAndDuration[]{
-            new StateNameAndDuration(){ name = "Rest Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(8) },
+            new StateNameAndDuration(){ name = "Rest Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(8), animationName = "Sleep Ground" },
         } },
         {INTERACTION_TYPE.REMOVE_POISON, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Remove Poison Success", status = InteractionManager.Goap_State_Success, duration = 0 },
@@ -224,7 +224,7 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Accident Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
         { INTERACTION_TYPE.STUMBLE, new StateNameAndDuration[]{
-            new StateNameAndDuration(){ name = "Stumble Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(10) },
+            new StateNameAndDuration(){ name = "Stumble Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(10), animationName = "Sleep Ground" },
         } },
         {INTERACTION_TYPE.BUTCHER, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Transform Success", status = InteractionManager.Goap_State_Success, duration = 0 },
@@ -242,7 +242,7 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Repair Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
         { INTERACTION_TYPE.NARCOLEPTIC_NAP, new StateNameAndDuration[]{
-            new StateNameAndDuration(){ name = "Nap Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
+            new StateNameAndDuration(){ name = "Nap Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1), animationName = "Sleep Ground" },
         } },
         { INTERACTION_TYPE.SHOCK, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Shock Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
@@ -308,4 +308,5 @@ public struct StateNameAndDuration {
     public string name;
     public string status;
     public int duration;
+    public string animationName;
 }

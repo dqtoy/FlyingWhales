@@ -25,8 +25,8 @@ public class Scrap : GoapAction {
     protected override void ConstructBasePreconditionsAndEffects() {
         AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAS_WOOD, GOAP_EFFECT_TARGET.ACTOR));
     }
-    protected override List<GoapEffect> GetExpectedEffects(IPointOfInterest target, object[] otherData) {
-        List <GoapEffect> ee = base.GetExpectedEffects(target, otherData);
+    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, object[] otherData) {
+        List <GoapEffect> ee = base.GetExpectedEffects(actor, target, otherData);
         SpecialToken item = target as SpecialToken;
         ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_WOOD, conditionKey = TokenManager.Instance.itemData[item.specialTokenType].supplyValue.ToString(), isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
         return ee;

@@ -71,6 +71,7 @@ public class ConsoleMenu : UIMenu {
             {"/gain_i_ability", GainInterventionAbility },
             {"/destroy_tile_obj", DestroyTileObj },
             {"/add_hostile", AddHostile },
+            {"/force_update_animation", ForceUpdateAnimation },
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -949,6 +950,21 @@ public class ConsoleMenu : UIMenu {
         }
 
         character.marker.AddHostileInRange(targetPOI);
+    }
+    private void ForceUpdateAnimation(string[] parameters) {
+        if (parameters.Length != 1) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of ForceUpdateAnimation");
+            return;
+        }
+        string characterParameterString = parameters[0];
+
+        Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+        if (character == null) {
+            AddErrorMessage("There is no character with name " + characterParameterString);
+            return;
+        }
+        character.marker.UpdateAnimation();
     }
     #endregion
 

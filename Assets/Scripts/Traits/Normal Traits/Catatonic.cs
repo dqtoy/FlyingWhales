@@ -136,7 +136,7 @@ namespace Traits {
         }
         private bool CreateFeedJob(Character characterThatWillDoJob) {
             if (characterThatWillDoJob.specificLocation.region.IsResident(owner)) {
-                GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = "", isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET };
+                GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET };
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.FEED, goapEffect, owner, characterThatWillDoJob);
                 //job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeParalyzedFeedJob);
                 characterThatWillDoJob.jobQueue.AddJobInQueue(job);
