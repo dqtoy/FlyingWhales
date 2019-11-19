@@ -275,7 +275,7 @@ public class CharacterAIPath : AILerp {
                 }
             }
         }
-        if(marker.character != null && marker.character.currentActionNode != null) { //&& marker.character.currentActionNode.willAvoidCharactersWhileMoving
+        if(marker.character != null && marker.character.currentActionNode != null && marker.character.currentActionNode.action.goapType.WillAvoidCharactersWhileMoving()) {
             for (int i = 0; i < marker.character.specificLocation.charactersAtLocation.Count; i++) {
                 Character terrifyingCharacter = marker.character.specificLocation.charactersAtLocation[i];
                 if (terrifyingCharacter.marker == null || terrifyingCharacter == marker.character) {

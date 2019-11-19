@@ -18,7 +18,7 @@ public class Repair : GoapAction {
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Burnt", false, GOAP_EFFECT_TARGET.TARGET));
     }
     public override List<Precondition> GetPreconditions(IPointOfInterest poiTarget, object[] otherData) {
-        List <Precondition> p = base.GetPreconditions(poiTarget, otherData);
+        List <Precondition> p = new List<Precondition>(base.GetPreconditions(poiTarget, otherData));
         TileObject tileObj = poiTarget as TileObject;
         TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
         int craftCost = (int)(data.constructionCost * 0.5f);

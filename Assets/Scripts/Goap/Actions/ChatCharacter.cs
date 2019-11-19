@@ -22,7 +22,6 @@ public class ChatCharacter : GoapAction {
     #region Overrides
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-
         SetState("Chat Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {

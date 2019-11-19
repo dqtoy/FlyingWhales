@@ -5971,10 +5971,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
                     data = otherData[INTERACTION_TYPE.NONE];
                 }
-                if (action.CanSatisfyRequirements(actor, this, data)) {
-                    cost = action.GetCost(actor, this, data);
-                    return true;
-                }
+            }
+            if (action.CanSatisfyRequirements(actor, this, data)) {
+                cost = action.GetCost(actor, this, data);
+                return true;
             }
         }
         return false;
@@ -6090,6 +6090,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         advertisedActions.Add(INTERACTION_TYPE.GO_TO);
         advertisedActions.Add(INTERACTION_TYPE.SCREAM_FOR_HELP);
         advertisedActions.Add(INTERACTION_TYPE.RESOLVE_COMBAT);
+        advertisedActions.Add(INTERACTION_TYPE.RETURN_HOME);
+        advertisedActions.Add(INTERACTION_TYPE.RETURN_HOME_LOCATION);
 
         if (race != RACE.SKELETON) {
             advertisedActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);
@@ -7522,7 +7524,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             ResetFullnessMeter();
             ResetHappinessMeter();
             ResetTirednessMeter();
-            traitContainer.RemoveAllNonPersistentTraits(this);//TODO: RemoveAllNonPersistentTraits(false); //remove all non persistent traits (include alter ego: false)
+            traitContainer.RemoveAllNonPersistentTraits(this); //remove all non persistent traits (include alter ego: false)
 
             SetHomeStructure(alterEgoData.homeStructure);
             ChangeFactionTo(alterEgoData.faction);

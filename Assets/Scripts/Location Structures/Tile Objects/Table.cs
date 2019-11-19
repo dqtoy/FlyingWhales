@@ -14,14 +14,14 @@ public class Table : TileObject {
 
     public Table(LocationStructure location) {
         SetStructureLocation(location);
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DRINK, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.DROP_FOOD, INTERACTION_TYPE.REPAIR };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DRINK, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.DROP_FOOD, INTERACTION_TYPE.REPAIR, INTERACTION_TYPE.SIT };
         Initialize(TILE_OBJECT_TYPE.TABLE);
         SetFood(UnityEngine.Random.Range(20, 81));
         traitContainer.AddTrait(this, "Edible");
     }
 
     public Table(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DRINK, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.DROP_FOOD, INTERACTION_TYPE.REPAIR };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DRINK, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.DROP_FOOD, INTERACTION_TYPE.REPAIR, INTERACTION_TYPE.SIT };
         Initialize(data);
         traitContainer.AddTrait(this, "Edible");
     }

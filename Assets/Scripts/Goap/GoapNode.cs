@@ -214,7 +214,9 @@ public class ActualGoapNode {
         }
         actionStatus = ACTION_STATUS.PERFORMING;
         actorAlterEgo = actor.currentAlterEgo;
-        if(poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+        actor.marker.UpdateAnimation();
+
+        if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character targetCharacter = poiTarget as Character;
             poiTargetAlterEgo = targetCharacter.currentAlterEgo;
             if (!action.doesNotStopTargetCharacter && actor != poiTarget) {
@@ -282,7 +284,7 @@ public class ActualGoapNode {
         //        actor.GoapActionResult(result, this);
         //    }
         //}
-        Messenger.Broadcast(Signals.CHARACTER_FINISHED_ACTION, actor, this, result);
+        Messenger.Broadcast(Signals.CHARACTER_FINISHED_ACTION, actor, this.action, result);
         //parentPlan?.OnActionInPlanFinished(actor, this, result);
     }
     public void StopActionNode(bool shouldDoAfterEffect) {

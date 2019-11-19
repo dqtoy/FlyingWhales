@@ -50,18 +50,20 @@ public class GoapActionState {
     public Log CreateDescriptionLog(Character actor, IPointOfInterest poiTarget, ActualGoapNode goapNode) {
         if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", parentAction.GetType().ToString(), name.ToLower() + "_description")) {
             Log descriptionLog = new Log(GameManager.Instance.Today(), "GoapAction", parentAction.GetType().ToString(), name.ToLower() + "_description", goapNode);
-            AddLogFiller(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            descriptionLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            descriptionLog.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             return descriptionLog;
+        } else {
+            Debug.LogWarning(this.name + " does had problems creating it's description log");
         }
         return null;
     }
     public void OverrideDescriptionLog(Log log) {
         descriptionLog = log;
     }
-    public void AddLogFiller(object obj, string value, LOG_IDENTIFIER identifier) {
-        descriptionLog.AddToFillers(obj, value, identifier);
-    }
+    //public void AddLogFiller(object obj, string value, LOG_IDENTIFIER identifier) {
+    //    descriptionLog.AddToFillers(obj, value, identifier);
+    //}
     public void AddLogFillers(List<LogFiller> fillers, bool replaceExisting = true) {
         descriptionLog.AddToFillers(fillers, replaceExisting);
     }

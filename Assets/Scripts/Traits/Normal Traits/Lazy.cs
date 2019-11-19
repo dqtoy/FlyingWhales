@@ -56,11 +56,11 @@ namespace Traits {
         #endregion
 
         public bool TriggerLazy() {
-            if (!owner.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
-                JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY;
-                if (owner.isForlorn) {
-                    jobType = JOB_TYPE.HAPPINESS_RECOVERY_FORLORN;
-                }
+            if (!owner.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
+                //JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY;
+                //if (owner.isForlorn) {
+                //    jobType = JOB_TYPE.HAPPINESS_RECOVERY_FORLORN;
+                //}
                 bool triggerBrokenhearted = false;
                 Heartbroken heartbroken = owner.traitContainer.GetNormalTrait("Heartbroken") as Heartbroken;
                 if (heartbroken != null) {

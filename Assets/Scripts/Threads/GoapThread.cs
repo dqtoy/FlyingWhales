@@ -149,7 +149,10 @@ public class GoapThread : Multithread {
             GoapAction action = InteractionManager.Instance.goapActionData[goalType];
             int cost = 0;
             if (target.CanAdvertiseActionsToActor(actor, action, job.otherData, ref cost)) {
+                log += $"\n{target.name} Can advertise actions to {actor.name}";
                 plan = actor.planner.PlanActions(target, action, isPersonalPlan, ref planLog, job);
+            } else {
+                log += $"\n{target.name} Cannot advertise actions to {actor.name}";
             }
         } else if (goalAction != null) {
             //provided goal action

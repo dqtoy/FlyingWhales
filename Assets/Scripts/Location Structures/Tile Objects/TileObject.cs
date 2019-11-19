@@ -233,10 +233,10 @@ public class TileObject : IPointOfInterest {
                 } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
                     data = otherData[INTERACTION_TYPE.NONE];
                 }
-                if (action.CanSatisfyRequirements(actor, this, data)) {
-                    cost = action.GetCost(actor, this, data);
-                    return true;
-                }
+            }
+            if (action.CanSatisfyRequirements(actor, this, data)) {
+                cost = action.GetCost(actor, this, data);
+                return true;
             }
         }
         return false;

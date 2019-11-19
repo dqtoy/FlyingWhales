@@ -90,6 +90,9 @@ public class GoapPlanner {
         if (goapThread.recalculationPlan != null && goapThread.recalculationPlan.isEnd) {
             return;
         }
+
+        status = GOAP_PLANNING_STATUS.PROCESSING_RESULT;
+
         actor.ExecutePendingActionsAfterMultithread();
         actor.PrintLogIfActive(goapThread.log);
         if (goapThread.createdPlan != null) {
@@ -378,6 +381,13 @@ public class GoapPlanner {
         GoapNode goalNode = new GoapNode(cost, 0, goalAction, target);
         BuildGoapTree(goalNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness); //, ref log
         if (rawPlan != null && rawPlan.Count > 0) {
+
+            string rawPlanSummary = $"Generated raw plan for job { job.name }";
+            for (int i = 0; i < rawPlan.Count; i++) {
+                GoapNode currNode = rawPlan[i];
+                rawPlanSummary += $"\n - {currNode.action.goapName }";
+            }
+            Debug.Log(rawPlanSummary);
             //has a created plan
             List<JobNode> actualNodes = TransformRawPlanToActualNodes(rawPlan, job.otherData);
             GoapPlan plan = new GoapPlan(actualNodes, target, isPersonalPlan);
@@ -487,10 +497,14 @@ public class GoapPlanner {
         IPointOfInterest target = node.target;
         rawPlan.Add(node);
         List<Precondition> preconditions = null;
-        if (job.otherData.ContainsKey(action.goapType)) {
-            preconditions = action.GetPreconditions(target, job.otherData[action.goapType]);
-        } else if (job.otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-            preconditions = action.GetPreconditions(target, job.otherData[INTERACTION_TYPE.NONE]);
+        if (job.otherData != null) {
+            if (job.otherData.ContainsKey(action.goapType)) {
+                preconditions = action.GetPreconditions(target, job.otherData[action.goapType]);
+            } else if (job.otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+                preconditions = action.GetPreconditions(target, job.otherData[INTERACTION_TYPE.NONE]);
+            } else {
+                preconditions = action.basePreconditions;
+            }
         } else {
             preconditions = action.basePreconditions;
         }
