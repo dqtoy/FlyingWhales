@@ -1179,7 +1179,7 @@ public class Area : IJobOwner {
     private void CreatePatrolJobs() {
         int patrolChance = UnityEngine.Random.Range(0, 100);
         if (patrolChance < 25 && GetNumberOfJobsWith(CHARACTER_STATE.PATROL) < 2) {
-            CharacterStateJob stateJob = new CharacterStateJob(JOB_TYPE.PATROL, CHARACTER_STATE.PATROL, null);
+            CharacterStateJob stateJob = new CharacterStateJob(JOB_TYPE.PATROL, CHARACTER_STATE.PATROL, this);
             stateJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoPatrolAndExplore);
             AddToAvailableJobs(stateJob);
         }

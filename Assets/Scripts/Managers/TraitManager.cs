@@ -141,7 +141,6 @@ public class TraitManager : MonoBehaviour {
     public Trait CreateNewInstancedTraitClass(string traitName) {
         string noSpacesTraitName = Utilities.RemoveAllWhiteSpace(traitName);
         string typeName = $"Traits.{ noSpacesTraitName }";
-        Debug.Log("Trait type name is: " + typeName);
         Type type = System.Type.GetType(typeName);
         return System.Activator.CreateInstance(type) as Trait;
     }

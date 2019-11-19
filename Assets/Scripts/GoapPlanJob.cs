@@ -273,6 +273,9 @@ public class GoapPlanJob : JobQueueItem {
         base.OnCharacterAssignedToJob(character);
         
     }
+    public override string ToString() {
+        return GetJobDetailString();
+    }
     #endregion
 
     #region Forced Actions

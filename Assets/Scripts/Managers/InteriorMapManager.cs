@@ -470,13 +470,6 @@ public class InteriorMapManager : MonoBehaviour {
         }
         if (tile.structure != null) {
             summary += "\nStructure: " + tile.structure.ToString();
-            if (tile.structure is Dwelling) {
-                Dwelling d = tile.structure as Dwelling;
-                summary += "\nFacilities: ";
-                foreach (KeyValuePair<FACILITY_TYPE, int> kvp in d.facilities) {
-                    summary += "|" + kvp.Key.ToString() + " - " + kvp.Value + "|";
-                }
-            }
             summary += "\nCharacters at " + tile.structure.ToString() + ": ";
             if (tile.structure.charactersHere.Count > 0) {
                 for (int i = 0; i < tile.structure.charactersHere.Count; i++) {
@@ -578,7 +571,7 @@ public class InteriorMapManager : MonoBehaviour {
         if (character.jobQueue.jobsInQueue.Count > 0) {
             for (int i = 0; i < character.jobQueue.jobsInQueue.Count; i++) {
                 JobQueueItem poi = character.jobQueue.jobsInQueue[i];
-                summary += poi.name + ", ";
+                summary += poi.ToString() + ", ";
             }
         } else {
             summary += "None";

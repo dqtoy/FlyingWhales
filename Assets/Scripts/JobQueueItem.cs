@@ -32,6 +32,9 @@ public class JobQueueItem {
         id = Utilities.SetID(this);
         this.jobType = jobType;
         this.originalOwner = owner;
+        if (this.originalOwner == null) {
+            throw new Exception($"Original owner of job {this.ToString()} is null");
+        }
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.jobType.ToString());
         this.blacklistedCharacters = new List<Character>();
         SetInitialPriority();
