@@ -154,20 +154,20 @@ public class Area : IJobOwner {
                             Character currResident = dwelling.residents[i];
                             if (removedObj.tileObjectType.CanBeCraftedBy(currResident)) {
                                 //add job to resident
-                                currResident.CreateReplaceTileObjectJob(removedObj, removedFrom);
-                                canBeCrafted = true;
+                                //currResident.CreateReplaceTileObjectJob(removedObj, removedFrom);
+                                //canBeCrafted = true;
                                 break;
                             }
                         }
                         if (!canBeCrafted) {
                             //no resident can craft object, post in settlement
-                            CreateReplaceTileObjectJob(removedObj, removedFrom);
+                            //CreateReplaceTileObjectJob(removedObj, removedFrom);
                         }
                     } else {
-                        CreateReplaceTileObjectJob(removedObj, removedFrom);
+                        //CreateReplaceTileObjectJob(removedObj, removedFrom);
                     }
                 } else {
-                    CreateReplaceTileObjectJob(removedObj, removedFrom);
+                    //CreateReplaceTileObjectJob(removedObj, removedFrom);
                 }
             }
         }
@@ -1186,57 +1186,59 @@ public class Area : IJobOwner {
     }
     public void CheckAreaInventoryJobs(LocationStructure affectedStructure) {
         if (affectedStructure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
+            //TODO:
             //brew potion
             //- If there are less than 2 Healing Potions in the Warehouse, it will create a Brew Potion job
             //- the warehouse stores an inventory count of items it needs to keep in stock. anytime an item is added or removed (claimed by someone, stolen or destroyed), inventory will be checked and missing items will be procured
             //- any character that can produce this item may take this Job
             //- cancel Brew Potion job whenever inventory check occurs and it specified that there are enough Healing Potions already
-            if (affectedStructure.GetItemsOfTypeCount(SPECIAL_TOKEN.HEALING_POTION) < 2) {
-                if (!HasJob(JOB_TYPE.BREW_POTION)) {
-                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BREW_POTION, INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new Dictionary<INTERACTION_TYPE, object[]>() {
-                        { INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
-                        { INTERACTION_TYPE.CRAFT_ITEM, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
-                    });
-                    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanBrewPotion);
-                    job.SetOnTakeJobAction(InteractionManager.Instance.OnTakeBrewPotion);
-                    //job.SetCannotOverrideJob(false);
-                    AddToAvailableJobs(job);
-                }
-            } else {
-                //warehouse has 2 or more healing potions
-                JobQueueItem brewJob = GetJob(JOB_TYPE.BREW_POTION);
-                if(brewJob != null) {
-                    ForceCancelJob(brewJob);
-                }
-            }
+            //if (affectedStructure.GetItemsOfTypeCount(SPECIAL_TOKEN.HEALING_POTION) < 2) {
+            //    if (!HasJob(JOB_TYPE.BREW_POTION)) {
+            //        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BREW_POTION, INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new Dictionary<INTERACTION_TYPE, object[]>() {
+            //            { INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
+            //            { INTERACTION_TYPE.CRAFT_ITEM, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
+            //        });
+            //        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanBrewPotion);
+            //        job.SetOnTakeJobAction(InteractionManager.Instance.OnTakeBrewPotion);
+            //        //job.SetCannotOverrideJob(false);
+            //        AddToAvailableJobs(job);
+            //    }
+            //} else {
+            //    //warehouse has 2 or more healing potions
+            //    JobQueueItem brewJob = GetJob(JOB_TYPE.BREW_POTION);
+            //    if(brewJob != null) {
+            //        ForceCancelJob(brewJob);
+            //    }
+            //}
 
+            //TODO:
             //craft tool
-            if (affectedStructure.GetItemsOfTypeCount(SPECIAL_TOKEN.TOOL) < 2) {
-                if (!HasJob(JOB_TYPE.CRAFT_TOOL)) {
-                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.CRAFT_TOOL, INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new Dictionary<INTERACTION_TYPE, object[]>() {
-                        { INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new object[]{ SPECIAL_TOKEN.TOOL } },
-                        { INTERACTION_TYPE.CRAFT_ITEM, new object[]{ SPECIAL_TOKEN.TOOL } },
-                    });
-                    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCraftTool);
-                    job.SetOnTakeJobAction(InteractionManager.Instance.OnTakeCraftTool);
-                    //job.SetCannotOverrideJob(false);
-                    AddToAvailableJobs(job);
-                }
-            } else {
-                JobQueueItem craftToolJob = GetJob(JOB_TYPE.CRAFT_TOOL);
-                if (craftToolJob != null) {
-                    ForceCancelJob(craftToolJob);
-                }
-            }
+            //if (affectedStructure.GetItemsOfTypeCount(SPECIAL_TOKEN.TOOL) < 2) {
+            //    if (!HasJob(JOB_TYPE.CRAFT_TOOL)) {
+            //        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.CRAFT_TOOL, INTERACTION_TYPE.DROP_ITEM, new Dictionary<INTERACTION_TYPE, object[]>() {
+            //            { INTERACTION_TYPE.DROP_ITEM, new object[]{ GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE), SPECIAL_TOKEN.TOOL } },
+            //            { INTERACTION_TYPE.CRAFT_ITEM, new object[]{ SPECIAL_TOKEN.TOOL } },
+            //        }, this);
+            //        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCraftTool);
+            //        job.SetOnTakeJobAction(InteractionManager.Instance.OnTakeCraftTool);
+            //        //job.SetCannotOverrideJob(false);
+            //        AddToAvailableJobs(job);
+            //    }
+            //} else {
+            //    JobQueueItem craftToolJob = GetJob(JOB_TYPE.CRAFT_TOOL);
+            //    if (craftToolJob != null) {
+            //        ForceCancelJob(craftToolJob);
+            //    }
+            //}
         }
     }
-    private void CreateReplaceTileObjectJob(TileObject removedObj, LocationGridTile removedFrom) {
-        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPLACE_TILE_OBJECT, INTERACTION_TYPE.REPLACE_TILE_OBJECT, new Dictionary<INTERACTION_TYPE, object[]>() {
-                        { INTERACTION_TYPE.REPLACE_TILE_OBJECT, new object[]{ removedObj, removedFrom } },
-        });
-        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeReplaceTileObjectJob);
-        AddToAvailableJobs(job);
-    }
+    //private void CreateReplaceTileObjectJob(TileObject removedObj, LocationGridTile removedFrom) {
+    //    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPLACE_TILE_OBJECT, INTERACTION_TYPE.REPLACE_TILE_OBJECT, new Dictionary<INTERACTION_TYPE, object[]>() {
+    //                    { INTERACTION_TYPE.REPLACE_TILE_OBJECT, new object[]{ removedObj, removedFrom } },
+    //    });
+    //    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeReplaceTileObjectJob);
+    //    AddToAvailableJobs(job);
+    //}
     #endregion
 
     #region IJobOwner

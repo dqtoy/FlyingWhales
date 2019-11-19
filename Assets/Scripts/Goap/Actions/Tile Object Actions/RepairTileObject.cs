@@ -15,14 +15,15 @@ public class RepairTileObject : GoapAction {
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Burnt", false, GOAP_EFFECT_TARGET.TARGET));
     }
-    //TODO:
-    //public override List<Precondition> GetPreconditions(object[] otherData) {
-    //    return base.GetPreconditions(otherData);
-    //    TileObject tileObj = poiTarget as TileObject;
-    //    TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
-    //    int craftCost = (int)(data.constructionCost * 0.5f);
-    //    AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = craftCost, targetPOI = actor }, () => HasSupply(craftCost));
-    //}
+    public override List<Precondition> GetPreconditions(IPointOfInterest poiTarget, object[] otherData) {
+        List <Precondition> p = base.GetPreconditions(poiTarget, otherData);
+        TileObject tileObj = poiTarget as TileObject;
+        TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
+        int craftCost = (int)(data.constructionCost * 0.5f);
+        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_SUPPLY, craftCost.ToString(), true, GOAP_EFFECT_TARGET.ACTOR), HasSupply));
+
+        return p;
+    }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Repair Success", goapNode);
@@ -50,6 +51,15 @@ public class RepairTileObject : GoapAction {
         TileObject tileObj = goapNode.poiTarget as TileObject;
         TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
         goapNode.actor.AdjustSupply((int) (data.constructionCost * 0.5f));
+    }
+    #endregion
+
+    #region Preconditions
+    private bool HasSupply(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        TileObject tileObj = poiTarget as TileObject;
+        TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
+        int craftCost = (int)(data.constructionCost * 0.5f);
+        return actor.supply >= craftCost;
     }
     #endregion
 

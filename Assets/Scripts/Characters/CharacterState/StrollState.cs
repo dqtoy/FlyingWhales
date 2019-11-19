@@ -36,16 +36,19 @@ public class StrollState : CharacterState {
         if (stateComponent.character.faction == PlayerManager.Instance.player.currentTargetFaction && stateComponent.character.role.roleType != CHARACTER_ROLE.BEAST && targetPOI is SpecialToken) {
             SpecialToken token = targetPOI as SpecialToken;
             if (token.characterOwner == null) {
-                GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_UP, stateComponent.character, targetPOI);
-                if (goapAction.targetTile != null) {
-                    SetCurrentlyDoingAction(goapAction);
-                    goapAction.CreateStates();
-                    stateComponent.character.SetCurrentActionNode(goapAction);
-                    stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtPickUpLocation);
-                    PauseState();
-                } else {
-                    Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't pick up item " + targetPOI.name + " because there is no tile to go to!");
-                }
+
+                stateComponent.character.marker.GoTo(token, () => OnArriveAtPickUpLocation(token));
+
+                //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_UP, stateComponent.character, targetPOI);
+                //if (goapAction.targetTile != null) {
+                //    SetCurrentlyDoingAction(goapAction);
+                //    goapAction.CreateStates();
+                //    stateComponent.character.SetCurrentActionNode(goapAction);
+                //    stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtPickUpLocation);
+                //    PauseState();
+                //} else {
+                //    Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't pick up item " + targetPOI.name + " because there is no tile to go to!");
+                //}
                 return true;
             }
         }
@@ -53,20 +56,11 @@ public class StrollState : CharacterState {
     }
     #endregion
 
-    private void OnArriveAtPickUpLocation() {
-        if (stateComponent.character.currentActionNode == null) {
-            Debug.LogWarning(GameManager.Instance.TodayLogString() + stateComponent.character.name + " arrived at pick up location of item during " + stateName + ", but current action is null");
-            return;
-        }
-        stateComponent.character.currentActionNode.SetEndAction(StrollAgain);
-        stateComponent.character.currentActionNode.Perform();
+    private void OnArriveAtPickUpLocation(SpecialToken token) {
+        stateComponent.character.PickUpToken(token);
+        StrollAgain();
     }
-    private void StrollAgain(string result, GoapAction goapAction) {
-        SetCurrentlyDoingAction(null);
-        if (stateComponent.currentState != this) {
-            return;
-        }
-        stateComponent.character.SetCurrentActionNode(null);
+    private void StrollAgain() {
         ResumeState();
     }
 

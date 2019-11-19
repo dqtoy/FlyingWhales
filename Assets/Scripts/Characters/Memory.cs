@@ -15,6 +15,6 @@ public class Memory {
     }
 
     public void SetText() {
-        text = Utilities.LogReplacer(this.goapAction.currentState.descriptionLog);
+        //text = Utilities.LogReplacer(this.goapAction.currentState.descriptionLog);
     }
 }

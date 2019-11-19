@@ -204,9 +204,7 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED:
                 priority = 30;
                 break;
-            case JOB_TYPE.REPORT_HOSTILE:
             case JOB_TYPE.APPREHEND:
-            case JOB_TYPE.REPORT_CRIME:
             case JOB_TYPE.ATTEMPT_TO_STOP_JOB:
             case JOB_TYPE.REMOVE_FIRE:
                 priority = 40;

@@ -41,8 +41,13 @@ public class DropItem : GoapAction {
 
     #region Preconditions
     private bool IsItemInInventory(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        SpecialToken token = poiTarget as SpecialToken;
-        return actor.GetToken(token) != null;
+        SpecialToken specialToken;
+        if (otherData.Length >= 2) {
+            specialToken = otherData[1] as SpecialToken;
+        } else {
+            specialToken = poiTarget as SpecialToken;
+        }
+        return actor.GetToken(specialToken) != null;
     }
     #endregion
 
@@ -54,7 +59,14 @@ public class DropItem : GoapAction {
     }
     public void AfterDropSuccess(ActualGoapNode goapNode) {
         LocationGridTile tile = goapNode.actor.gridTileLocation.GetNearestUnoccupiedTileFromThis();
-        goapNode.actor.DropToken(goapNode.poiTarget as SpecialToken, goapNode.actor.gridTileLocation.structure.location, goapNode.actor.gridTileLocation.structure, tile);
+        SpecialToken specialToken;
+        if (goapNode.otherData.Length >= 2) {
+            specialToken = goapNode.otherData[1] as SpecialToken;
+        } else {
+            specialToken = goapNode.poiTarget as SpecialToken;
+        }
+
+        goapNode.actor.DropToken(specialToken, goapNode.actor.gridTileLocation.structure.location, goapNode.actor.gridTileLocation.structure, tile);
     }
     #endregion
 }

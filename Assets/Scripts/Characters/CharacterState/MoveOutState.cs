@@ -94,11 +94,11 @@ public class MoveOutState : CharacterState {
             return;
         }
         if (GetRegionToDoJob(stateComponent.character) == null) {
-            job.assignedCharacter.CancelJob(job, "no valid regions", false);
+            job.CancelJob(false, "no valid regions");
             return;
         }
         hasSceduledArriveAtRandomRegion = true;
-        stateComponent.character.CancelAllPlans();
+        stateComponent.character.CancelAllJobsAndPlans();
         stateComponent.character.ownParty.icon.SetIsTravellingOutside(true);
         stateComponent.character.SetPOIState(POI_STATE.INACTIVE);
         stateComponent.character.marker.gameObject.SetActive(false);
@@ -127,7 +127,7 @@ public class MoveOutState : CharacterState {
             chosenRegion.AddCharacterToLocation(stateComponent.character);
             OnArriveAtRegion();
         } else {
-            job.assignedCharacter.CancelJob(job, "no valid regions", false);
+            job.CancelJob(false, "no valid regions");
         }
     }
 

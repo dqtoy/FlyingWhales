@@ -87,32 +87,31 @@ public class Watch : GoapAction {
             goapNode.EndPerTickEffect();
             return;
         }
-        //TODO:
-        //GoapAction actionBeingWatched = goapNode.otherData[0] as GoapAction;
-        //CharacterState stateBeingWatched = goapNode.otherData[0] as CharacterState;
-        //if (actionBeingWatched != null) {
-        //    if (actionBeingWatched. || actionBeingWatched.actor.currentAction != actionBeingWatched) {
-        //        //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
-        //        if (goapNode.actor.currentParty.icon.isTravelling) {
-        //            //Stop moving
-        //            goapNode.actor.marker.StopMovement();
-        //        }
-        //        goapNode.EndPerTickEffect();
-        //        return;
-        //    }
-        //} else if (stateBeingWatched != null) {
-        //    if (stateBeingWatched.isDone || (stateBeingWatched.stateComponent.currentState != stateBeingWatched && !stateBeingWatched.isPaused)) { //only end watch state if the state is done or if the watched state is no longer active and not paused
-        //        //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
-        //        if (goapNode.actor.currentParty.icon.isTravelling) {
-        //            //Stop moving
-        //            goapNode.actor.marker.StopMovement();
-        //        }
-        //        goapNode.EndPerTickEffect();
-        //        return;
-        //    }
-        //}
+        ActualGoapNode actionBeingWatched = goapNode.otherData[0] as ActualGoapNode;
+        CharacterState stateBeingWatched = goapNode.otherData[0] as CharacterState;
+        if (actionBeingWatched != null) {
+            if (actionBeingWatched.actionStatus == ACTION_STATUS.SUCCESS || actionBeingWatched.actionStatus == ACTION_STATUS.FAIL || actionBeingWatched.actor.currentActionNode != actionBeingWatched) {
+                //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
+                if (goapNode.actor.currentParty.icon.isTravelling) {
+                    //Stop moving
+                    goapNode.actor.marker.StopMovement();
+                }
+                goapNode.EndPerTickEffect();
+                return;
+            }
+        } else if (stateBeingWatched != null) {
+            if (stateBeingWatched.isDone || (stateBeingWatched.stateComponent.currentState != stateBeingWatched && !stateBeingWatched.isPaused)) { //only end watch state if the state is done or if the watched state is no longer active and not paused
+                //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
+                if (goapNode.actor.currentParty.icon.isTravelling) {
+                    //Stop moving
+                    goapNode.actor.marker.StopMovement();
+                }
+                goapNode.EndPerTickEffect();
+                return;
+            }
+        }
 
-        if(!goapNode.actor.marker.inVisionPOIs.Contains(goapNode.poiTarget)) {
+        if (!goapNode.actor.marker.inVisionPOIs.Contains(goapNode.poiTarget)) {
             //if no longer in vision, stop watching
             goapNode.EndPerTickEffect();
         }

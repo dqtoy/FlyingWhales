@@ -207,7 +207,7 @@ public class ActualGoapNode {
     public void PerformAction() {
         GoapActionInvalidity goapActionInvalidity = action.IsInvalid(actor, poiTarget, otherData);
         if (goapActionInvalidity.isInvalid) {
-            action.SetState(goapActionInvalidity.stateName, this);
+            action.LogActionInvalid(goapActionInvalidity, this);
             actor.GoapActionResult(InteractionManager.Goap_State_Fail, this);
             return;
         }
@@ -229,7 +229,7 @@ public class ActualGoapNode {
                         //}
                     }
                     if (targetCharacter.currentActionNode != null) {
-                        targetCharacter.StopCurrentAction(false);
+                        targetCharacter.StopCurrentActionNode(false);
                     }
                     //if (targetCharacter.stateComponent.currentState != null) {
                     //    targetCharacter.stateComponent.currentState.PauseState();
@@ -455,19 +455,19 @@ public class ActualGoapNode {
     #region Log
     private void CreateDescriptionLog(GoapActionState actionState) {
         if (descriptionLog == null && action.shouldAddLogs) {
-            descriptionLog = actionState.CreateDescriptionLog(actor, poiTarget);
+            descriptionLog = actionState.CreateDescriptionLog(actor, poiTarget, this);
         }
     }
     private void CreateThoughtBubbleLog(LocationStructure targetStructure) {
         if(thoughtBubbleLog == null) {
             if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", action.GetType().ToString(), "thought_bubble")) {
-                thoughtBubbleLog = new Log(GameManager.Instance.Today(), "GoapAction", action.GetType().ToString(), "thought_bubble", action);
+                thoughtBubbleLog = new Log(GameManager.Instance.Today(), "GoapAction", action.GetType().ToString(), "thought_bubble", this);
                 action.AddFillersToLog(thoughtBubbleLog, actor, poiTarget, otherData, targetStructure);
             }
         }
         if (thoughtBubbleMovingLog == null) {
             if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", action.GetType().ToString(), "thought_bubble_m")) {
-                thoughtBubbleMovingLog = new Log(GameManager.Instance.Today(), "GoapAction", action.GetType().ToString(), "thought_bubble_m", action);
+                thoughtBubbleMovingLog = new Log(GameManager.Instance.Today(), "GoapAction", action.GetType().ToString(), "thought_bubble_m", this);
                 action.AddFillersToLog(thoughtBubbleMovingLog, actor, poiTarget, otherData, targetStructure);
             }
         }

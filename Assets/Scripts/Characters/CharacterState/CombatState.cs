@@ -520,14 +520,18 @@ public class CombatState : CharacterState {
                 } else {    
                     if (!(character.isDead || (character.isAtHomeRegion && character.isPartOfHomeFaction))) {
                         if (stateComponent.character.isAtHomeRegion && stateComponent.character.isPartOfHomeFaction) {
-                            if (!stateComponent.character.jobQueue.HasJobWithOtherData(JOB_TYPE.REPORT_HOSTILE, fledFrom)) {
-                                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPORT_HOSTILE, INTERACTION_TYPE.REPORT_HOSTILE, new Dictionary<INTERACTION_TYPE, object[]>() {
-                                { INTERACTION_TYPE.REPORT_HOSTILE, new object[] { fledFrom }}
-                            });
-                                //job.SetCannotOverrideJob(true);
-                                job.SetCancelOnFail(true);
-                                stateComponent.character.jobQueue.AddJobInQueue(job, false);
+                            int numOfJobs = 3 - character.GetNumOfJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
+                            if (numOfJobs > 0) {
+                                stateComponent.character.CreateLocationKnockoutJobs(character, numOfJobs);
                             }
+                            //if (!stateComponent.character.jobQueue.HasJobWithOtherData(JOB_TYPE.REPORT_HOSTILE, fledFrom)) {
+                            //    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPORT_HOSTILE, INTERACTION_TYPE.REPORT_HOSTILE, new Dictionary<INTERACTION_TYPE, object[]>() {
+                            //    { INTERACTION_TYPE.REPORT_HOSTILE, new object[] { fledFrom }}
+                            //});
+                            //    //job.SetCannotOverrideJob(true);
+                            //    job.SetCancelOnFail(true);
+                            //    stateComponent.character.jobQueue.AddJobInQueue(job, false);
+                            //}
                         }
                     }
                 }
@@ -538,9 +542,6 @@ public class CombatState : CharacterState {
     #endregion
 
     #region Utilities
-    public void SetActionThatTriggeredThisState(GoapAction action) {
-        actionThatTriggeredThisState = action;
-    }
     public void ResetClosestHostile() {
         currentClosestHostile = null;
     }

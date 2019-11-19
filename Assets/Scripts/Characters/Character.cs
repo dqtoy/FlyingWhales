@@ -2037,14 +2037,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //    return 999999;
         //}
     }
-    public GoapPlanJob CreateReportCrimeJob(CRIME committedCrime, GoapAction crimeToReport, AlterEgoData criminal) {
-        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPORT_CRIME, INTERACTION_TYPE.REPORT_CRIME, criminal.owner, new Dictionary<INTERACTION_TYPE, object[]>() {
-                        { INTERACTION_TYPE.REPORT_CRIME,  new object[] { committedCrime, criminal, crimeToReport }}
-                    }, this);
-        //job.SetCannotOverrideJob(true);
-        jobQueue.AddJobInQueue(job);
-        return job;
-    }
     //public void CreateReplaceTileObjectJob(TileObject removedObj, LocationGridTile removedFrom) {
     //    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPLACE_TILE_OBJECT, INTERACTION_TYPE.REPLACE_TILE_OBJECT, new Dictionary<INTERACTION_TYPE, object[]>() {
     //                    { INTERACTION_TYPE.REPLACE_TILE_OBJECT, new object[]{ removedObj, removedFrom } },
@@ -3111,7 +3103,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //}
     }
     //In watch event, it's either the character watch an action or combat state, it cannot be both. (NOTE: Since 9/2/2019 Enabled watching of other states other than Combat)
-    public void CreateWatchEvent(GoapAction actionToWatch, CharacterState stateToWatch, Character targetCharacter) {
+    public void CreateWatchEvent(ActualGoapNode actionToWatch, CharacterState stateToWatch, Character targetCharacter) {
         string summary = "Creating watch event for " + name + " with target " + targetCharacter.name;
         if(actionToWatch != null) {
             summary += " involving " + actionToWatch.goapName;
@@ -3292,18 +3284,18 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 switch (result) {
                     case "Unconscious":
                         Unconscious unconscious = new Unconscious();
-                        traitContainer.AddTrait(this, unconscious, responsibleCharacter, gainedFromDoing: state.actionThatTriggeredThisState);
+                        traitContainer.AddTrait(this, "Unconscious", responsibleCharacter);
                         break;
                     case "Injured":
                         Injured injured = new Injured();
-                        traitContainer.AddTrait(this, injured, responsibleCharacter, gainedFromDoing: state.actionThatTriggeredThisState);
+                        traitContainer.AddTrait(this, "Injured", responsibleCharacter);
                         break;
                     case "Death":
                         string deathReason = "attacked";
                         if (!characterThatAttacked.marker.IsLethalCombatForTarget(this)) {
                             deathReason = "accidental_attacked";
                         }
-                        this.Death(deathReason, deathFromAction: state.actionThatTriggeredThisState, responsibleCharacter: responsibleCharacter);
+                        this.Death(deathReason, responsibleCharacter: responsibleCharacter);
                         break;
                 }
             } else {
@@ -7156,7 +7148,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                         //    this.marker.AddHostileInRange(criminal.owner, false);
                         //}
                     }
-                    job = CreateReportCrimeJob(committedCrime, crimeToReport, criminal);
+                    //TODO: job = CreateReportCrimeJob(committedCrime, crimeToReport, criminal);
                 }
                 break;
             case CHARACTER_ROLE.LEADER:
@@ -7437,13 +7429,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //currentAlterEgo.CopySpecialTraits();
 
             //Drop all plans except for the current action
-            AdjustIsWaitingForInteraction(1);
             if (currentActionNode != null && currentActionNode.parentPlan != null) {
                 DropAllPlans(currentActionNode.parentPlan);
             } else {
                 DropAllPlans();
             }
-            AdjustIsWaitingForInteraction(-1);
 
             if(alterEgoName == "Lycanthrope") {
                 hasForcedTiredness = true;

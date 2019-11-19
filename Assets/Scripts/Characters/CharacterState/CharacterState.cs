@@ -67,19 +67,20 @@ public class CharacterState {
     /// End this state. This is called after <see cref="OnExitThisState"/>.
     /// </summary>
     protected virtual void EndState() {
-        if (currentlyDoingAction != null) {
-            if (currentlyDoingAction.isPerformingActualAction && !currentlyDoingAction.isDone) {
-                currentlyDoingAction.SetEndAction(FakeEndAction);
-                currentlyDoingAction.currentState.EndPerTickEffect(false);
-            }
-            stateComponent.character.SetCurrentActionNode(null);
-            SetCurrentlyDoingAction(null);
-        }
+        //removed this, nothing sets currentlyDoingAction anymore.
+        //if (currentlyDoingAction != null) {
+        //    if (currentlyDoingAction.isPerformingActualAction && !currentlyDoingAction.isDone) {
+        //        currentlyDoingAction.SetEndAction(FakeEndAction);
+        //        currentlyDoingAction.currentState.EndPerTickEffect(false);
+        //    }
+        //    stateComponent.character.SetCurrentActionNode(null);
+        //    SetCurrentlyDoingAction(null);
+        //}
         isDone = true;
         StopStatePerTick();
         RemoveDefaultListeners();
         if(job != null) {
-            job.assignedCharacter.RemoveJobInQueue(job);
+            job.assignedCharacter.jobQueue.RemoveJobInQueue(job);
             job.SetAssignedCharacter(null);
             job.SetAssignedState(null);
         }

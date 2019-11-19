@@ -36,9 +36,14 @@ public class DispelMagic : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            return poiTarget.traitContainer.HasTraitOf(TRAIT_TYPE.ENCHANTMENT);
+            return poiTarget.traitContainer.HasTraitOf(TRAIT_TYPE.ENCHANTMENT) && actor.specificLocation.GetTileObjectsOfType(TILE_OBJECT_TYPE.MAGIC_CIRCLE).Count > 0;
         }
         return false;
+    }
+    public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
+        List<TileObject> magicCircle = goapNode.actor.specificLocation.GetTileObjectsOfType(TILE_OBJECT_TYPE.MAGIC_CIRCLE);
+        TileObject chosen = magicCircle[Random.Range(0, magicCircle.Count)];
+        return chosen;
     }
     #endregion
 

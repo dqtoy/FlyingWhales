@@ -148,6 +148,15 @@ namespace Traits {
             }
             return false;
         }
+        public bool HasTraitOf(TRAIT_EFFECT traitEffect) {
+            for (int i = 0; i < allTraits.Count; i++) {
+                Trait currTrait = allTraits[i];
+                if (currTrait.effect == traitEffect) {
+                    return true;
+                }
+            }
+            return false;
+        }
         public List<Trait> GetAllTraitsOf(TRAIT_TYPE type) {
             List<Trait> traits = new List<Trait>();
             for (int i = 0; i < allTraits.Count; i++) {

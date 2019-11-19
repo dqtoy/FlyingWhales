@@ -50,14 +50,14 @@ public class HuntState : CharacterState {
     }
     #endregion
 
-    private void OnArriveAtCorpseLocation() {
-        if (stateComponent.character.currentActionNode == null) {
-            Debug.LogWarning(GameManager.Instance.TodayLogString() + stateComponent.character.name + " arrived at corpse location during " + stateName + ", but current action is null");
-            return;
-        }
-        stateComponent.character.currentActionNode.SetEndAction(HuntAgain);
-        stateComponent.character.currentActionNode.Perform();
-    }
+    //private void OnArriveAtCorpseLocation() {
+    //    if (stateComponent.character.currentActionNode == null) {
+    //        Debug.LogWarning(GameManager.Instance.TodayLogString() + stateComponent.character.name + " arrived at corpse location during " + stateName + ", but current action is null");
+    //        return;
+    //    }
+    //    stateComponent.character.currentActionNode.SetEndAction(HuntAgain);
+    //    stateComponent.character.currentActionNode.Perform();
+    //}
     private void HuntAgain(string result, GoapAction goapAction) {
         SetCurrentlyDoingAction(null);
         if (stateComponent.currentState != this) {

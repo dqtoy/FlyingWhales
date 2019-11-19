@@ -36,6 +36,7 @@ public class DropResource : GoapAction {
         return false;
     }
     #endregion
+
     #region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
@@ -62,12 +63,6 @@ public class DropResource : GoapAction {
         goapNode.actor.AdjustSupply(-givenSupply);
         supplyPile.AdjustSuppliesInPile(givenSupply);
     }
-    //private void PreTargetMissing() {
-    //    goapNode.descriptionLog.AddToFillers(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-    //}
-    //public void AfterTargetMissing() {
-    //    actor.RemoveAwareness(poiTarget);
-    //}
     #endregion
 }
 

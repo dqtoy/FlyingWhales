@@ -24,7 +24,6 @@ public class CurseCharacter : GoapAction {
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        //TODO: Make actor go to Magic Circle
         SetState("Curse Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {

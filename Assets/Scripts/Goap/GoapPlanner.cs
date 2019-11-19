@@ -454,9 +454,9 @@ public class GoapPlanner {
         rawPlan.Add(node);
         List<Precondition> preconditions = null;
         if (job.otherData.ContainsKey(action.goapType)) {
-            preconditions = action.GetPreconditions(job.otherData[action.goapType]);
+            preconditions = action.GetPreconditions(target, job.otherData[action.goapType]);
         } else if (job.otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-            preconditions = action.GetPreconditions(job.otherData[INTERACTION_TYPE.NONE]);
+            preconditions = action.GetPreconditions(target, job.otherData[INTERACTION_TYPE.NONE]);
         } else {
             preconditions = action.basePreconditions;
         }

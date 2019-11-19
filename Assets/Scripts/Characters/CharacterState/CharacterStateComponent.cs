@@ -55,11 +55,9 @@ public class CharacterStateComponent {
         }
 
         //Before switching character must end current action first because once a character is in a state in cannot make plans
-        character.AdjustIsWaitingForInteraction(1);
-        if (character.currentActionNode != null && character.currentActionNode.ShouldBeStoppedWhenSwitchingStates()) {
-            character.StopCurrentAction();
+        if (character.currentActionNode != null) { // && character.currentActionNode.action.goapType.ShouldBeStoppedWhenSwitchingStates() //removed this because it is no longer needed
+            character.StopCurrentActionNode();
         }
-        character.AdjustIsWaitingForInteraction(-1);
 
         //Stop the movement of character because the new state probably has different movement behavior
         if(character.currentParty.icon.isTravelling) {
@@ -136,7 +134,7 @@ public class CharacterStateComponent {
 
         //Stops movement unless told otherwise
         if (stopMovement) {
-            if(!(this.currentState != null && character.currentActionNode != null && character.currentActionNode.parentPlan == null)) {
+            if(!(this.currentState != null && character.currentActionNode != null)) { //&& character.currentActionNode.parentPlan == null -- removed this?
                 if (character.currentParty.icon.isTravelling) {
                     if (character.currentParty.icon.travelLine == null) {
                         character.marker.StopMovement();

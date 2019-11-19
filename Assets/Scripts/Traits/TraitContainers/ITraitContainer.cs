@@ -31,6 +31,7 @@ namespace Traits {
         Trait GetNormalTrait(params string[] traitNames);
         bool HasTraitOf(TRAIT_TYPE traitType);
         bool HasTraitOf(TRAIT_TYPE type, TRAIT_EFFECT effect);
+        bool HasTraitOf(TRAIT_EFFECT traitEffect);
         List<Trait> GetAllTraitsOf(TRAIT_TYPE type);
         List<Trait> GetAllTraitsOf(TRAIT_TYPE type, TRAIT_EFFECT effect);
         #endregion

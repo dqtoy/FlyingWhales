@@ -707,6 +707,13 @@ public class GoapAction {
     //public override string ToString() {
     //    return goapName + " by " + actor.name;
     //}
+    public void LogActionInvalid(GoapActionInvalidity goapActionInvalidity, ActualGoapNode node) {
+        Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Generic", "Invalid");
+        log.AddToFillers(node.actor, node.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(node.poiTarget, node.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        log.AddToFillers(null, Utilities.NormalizeString(goapType.ToString()), LOG_IDENTIFIER.STRING_1);
+        log.AddLogToInvolvedObjects();
+    }
     #endregion
 
     #region Trait Utilities
@@ -761,7 +768,7 @@ public class GoapAction {
         basePreconditions.Add(new Precondition(effect, condition));
     }
     public bool CanSatisfyAllPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
-        List<Precondition> preconditions = GetPreconditions(otherData);
+        List<Precondition> preconditions = GetPreconditions(target, otherData);
         for (int i = 0; i < preconditions.Count; i++) {
             if (!preconditions[i].CanSatisfyCondition(actor, target, otherData)) {
                 return false;
@@ -769,7 +776,7 @@ public class GoapAction {
         }
         return true;
     }
-    public virtual List<Precondition> GetPreconditions(object[] otherData) {
+    public virtual List<Precondition> GetPreconditions(IPointOfInterest target, object[] otherData) {
         return basePreconditions;
     }
     #endregion
