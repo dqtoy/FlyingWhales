@@ -8,9 +8,14 @@ public class DropResource : GoapAction {
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
     }
 
     #region Overrides
+    protected override void ConstructBasePreconditionsAndEffects() {
+        AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAS_FOOD, GOAP_EFFECT_TARGET.ACTOR));
+        AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAS_WOOD, GOAP_EFFECT_TARGET.ACTOR));
+    }
     protected override List<GoapEffect> GetExpectedEffects(IPointOfInterest target, object[] otherData) {
         List<GoapEffect> ee = base.GetExpectedEffects(target, otherData);
         ResourcePile pile = target as ResourcePile;

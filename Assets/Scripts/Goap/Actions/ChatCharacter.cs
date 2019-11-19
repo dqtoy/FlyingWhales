@@ -17,6 +17,7 @@ public class ChatCharacter : GoapAction {
         actionIconString = GoapActionStateDB.Social_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
     }
 
     #region Overrides

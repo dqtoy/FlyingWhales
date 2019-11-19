@@ -18,12 +18,13 @@ public class Scrap : GoapAction {
         isNotificationAnIntel = false;
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.ITEM };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
     }
 
     #region Overrides
-    //protected override void ConstructBasePreconditionsAndEffects() {
-    //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = TokenManager.Instance.itemData[item.specialTokenType].supplyValue, targetPOI = actor });
-    //}
+    protected override void ConstructBasePreconditionsAndEffects() {
+        AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAS_WOOD, GOAP_EFFECT_TARGET.ACTOR));
+    }
     protected override List<GoapEffect> GetExpectedEffects(IPointOfInterest target, object[] otherData) {
         List <GoapEffect> ee = base.GetExpectedEffects(target, otherData);
         SpecialToken item = target as SpecialToken;

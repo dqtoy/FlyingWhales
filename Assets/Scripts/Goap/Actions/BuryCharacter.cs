@@ -12,6 +12,7 @@ public class BuryCharacter : GoapAction {
         actionIconString = GoapActionStateDB.Work_Icon;
         canBeAdvertisedEvenIfActorIsUnavailable = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
     }
 
     #region Overrides

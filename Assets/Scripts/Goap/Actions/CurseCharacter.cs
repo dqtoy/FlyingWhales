@@ -11,6 +11,7 @@ public class CurseCharacter : GoapAction {
         shouldAddLogs = false; //set to false because this action has a special case for logs
         doesNotStopTargetCharacter = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
     }
 
     #region Overrides

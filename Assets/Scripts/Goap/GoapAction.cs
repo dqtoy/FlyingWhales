@@ -104,6 +104,7 @@ public class GoapAction {
         shouldAddLogs = true;
         basePreconditions = new List<Precondition>();
         baseExpectedEffects = new List<GoapEffect>();
+        possibleExpectedEffectsTypeAndTargetMatching = new List<GoapEffectConditionTypeAndTargetType>();
         //actualEffects = new List<GoapEffect>();
         //committedCrime = CRIME.NONE;
         //animationName = string.Empty;

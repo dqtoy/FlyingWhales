@@ -12,6 +12,7 @@ public class Poison : GoapAction {
         //_isStealthAction = true;
         //SetIsStealth(true);
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
     }
 
     #region Overrides

@@ -431,11 +431,6 @@ public class InteriorMapManager : MonoBehaviour {
             summary += "\n\tObject State: " + poi.state.ToString();
             summary += "\n\tIs Available: " + poi.IsAvailable().ToString();
 
-            if (UIManager.Instance.characterInfoUI.isShowing) {
-                int cost = 0;
-                summary += "\n\tCan Advertise to active character: " + poi.CanAdvertiseActionsToActor(UIManager.Instance.characterInfoUI.activeCharacter, InteractionManager.Instance.goapActionData[INTERACTION_TYPE.SIT], null, ref cost).ToString();
-            }
-
             if (poi is TreeObject) {
                 summary += "\n\tYield: " + (poi as TreeObject).yield.ToString();
             } else if (poi is Ore) {

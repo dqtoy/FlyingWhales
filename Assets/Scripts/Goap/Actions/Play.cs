@@ -20,6 +20,7 @@ public class Play : GoapAction {
         actionIconString = GoapActionStateDB.Entertain_Icon;
         isNotificationAnIntel = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        racesThatCanDoAction = new RACE[] { RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON, };
     }
 
     #region Overrides

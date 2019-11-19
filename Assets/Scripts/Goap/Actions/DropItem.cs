@@ -14,6 +14,7 @@ public class DropItem : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION_B;
         isNotificationAnIntel = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.ITEM };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
     }
 
     #region Overrides

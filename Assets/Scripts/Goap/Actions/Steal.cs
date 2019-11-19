@@ -13,9 +13,13 @@ public class Steal : GoapAction {
         };
         actionIconString = GoapActionStateDB.Steal_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.ITEM };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
     }
 
     #region Overrides
+    protected override void ConstructBasePreconditionsAndEffects() {
+        AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAS_ITEM, GOAP_EFFECT_TARGET.ACTOR));
+    }
     protected override List<GoapEffect> GetExpectedEffects(IPointOfInterest target, object[] otherData) {
         List <GoapEffect> ee = base.GetExpectedEffects(target, otherData);
         SpecialToken token = target as SpecialToken;
