@@ -13,7 +13,8 @@ public class RitualKilling : GoapAction {
                 TIME_IN_WORDS.AFTER_MIDNIGHT,
                 TIME_IN_WORDS.EARLY_NIGHT,
                 TIME_IN_WORDS.LATE_NIGHT,
-            };
+        };
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
     }
 
     #region Overrides

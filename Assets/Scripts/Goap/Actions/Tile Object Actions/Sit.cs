@@ -12,6 +12,7 @@ public class Sit : GoapAction {
         shouldIntelNotificationOnlyIfActorIsActive = true;
         isNotificationAnIntel = false;
         shouldAddLogs = false;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
     }
 
     #region Overrides

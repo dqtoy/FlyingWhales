@@ -8,6 +8,7 @@ public class Invite : GoapAction {
 
     public Invite() : base(INTERACTION_TYPE.INVITE) {
         actionIconString = GoapActionStateDB.Flirt_Icon;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
     }
 
     #region Overrides

@@ -707,7 +707,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     /// <param name="area">The invaded area.</param>
     protected virtual void OnSuccessInvadeArea(Area area) {
         if (specificLocation == area && minion == null) {
-            StopCurrentAction(false);
+            StopCurrentActionNode(false);
             if (stateComponent.currentState != null) {
                 stateComponent.currentState.OnExitThisState();
             } 
@@ -1786,7 +1786,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
         }
     }
-    public void CreateSaveCharacterJob(Character targetCharacter, bool processLogicForPersonalJob = true) {
+    public void CreateSaveCharacterJob(Character targetCharacter) {
         if (targetCharacter != null && targetCharacter != this) {
             string log = name + " is creating save character job for " + targetCharacter.name;
             if (role.roleType == CHARACTER_ROLE.CIVILIAN || role.roleType == CHARACTER_ROLE.NOBLE
@@ -1799,7 +1799,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, targetCharacter, new Dictionary<INTERACTION_TYPE, object[]>() {
                     { INTERACTION_TYPE.DROP, new object[] { specificLocation.prison } }
                 }, this);
-                jobQueue.AddJobInQueue(job, processLogicForPersonalJob);
+                jobQueue.AddJobInQueue(job);
                 log += "\n" + name + " created save character job.";
                 //return job;
             } else {
@@ -1828,9 +1828,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SHARE_INFORMATION, INTERACTION_TYPE.SHARE_INFORMATION, targetCharacter, new Dictionary<INTERACTION_TYPE, object[]>() {
                             { INTERACTION_TYPE.SHARE_INFORMATION, new object[] { info }}
                         }, this);
-            //job.SetCannotOverrideJob(true);
-            job.SetCancelOnFail(true);
-            jobQueue.AddJobInQueue(job, false);
+            jobQueue.AddJobInQueue(job);
         }
     }
     //public void CancelAllJobsAndPlansExceptNeedsRecovery(string reason = "") {
@@ -6042,6 +6040,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         advertisedActions.Add(INTERACTION_TYPE.SING);
         advertisedActions.Add(INTERACTION_TYPE.GO_TO);
         advertisedActions.Add(INTERACTION_TYPE.SCREAM_FOR_HELP);
+        advertisedActions.Add(INTERACTION_TYPE.RESOLVE_COMBAT);
 
         if (race != RACE.SKELETON) {
             advertisedActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);
@@ -6910,7 +6909,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void PlaceCollisionTriggerAt(LocationGridTile tile) { }
     public void DisableCollisionTrigger() { }
     public void SetCollisionTrigger(POICollisionTrigger trigger) { }
-    public void PlaceGhostCollisionTriggerAt(LocationGridTile tile) { }
     #endregion
 
     #region Hostility

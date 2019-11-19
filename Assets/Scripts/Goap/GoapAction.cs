@@ -87,6 +87,7 @@ public class GoapAction {
     //protected System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
     //protected string actionSummary;
     protected TIME_IN_WORDS[] validTimeOfDays;
+    public POINT_OF_INTEREST_TYPE[] advertisedBy { get; protected set; } //list of poi types that can advertise this action
 
     public GoapAction(INTERACTION_TYPE goapType) { //, INTERACTION_ALIGNMENT alignment, Character actor, IPointOfInterest poiTarget
         //this.alignment = alignment;
@@ -113,6 +114,7 @@ public class GoapAction {
         //whileMovingState = string.Empty;
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.No_Icon;
+        canBeAdvertisedEvenIfActorIsUnavailable = false;
         ConstructBasePreconditionsAndEffects();
         CreateStates();
         //actionSummary = GameManager.Instance.TodayLogString() + actor.name + " created " + goapType.ToString() + " action, targetting " + poiTarget?.ToString() ?? "Nothing";

@@ -292,16 +292,6 @@ public class SpecialToken : IPointOfInterest {
     public void SetCollisionTrigger(POICollisionTrigger trigger) {
         collisionTrigger = trigger;
     }
-    public void PlaceGhostCollisionTriggerAt(LocationGridTile tile) {
-        GameObject ghostGO = GameObject.Instantiate(InteriorMapManager.Instance.ghostCollisionTriggerPrefab, tile.parentAreaMap.objectsParent);
-        RectTransform rt = ghostGO.transform as RectTransform;
-        rt.anchorMin = Vector2.zero;
-        rt.anchorMax = Vector2.zero;
-        (ghostGO.transform as RectTransform).anchoredPosition = tile.centeredLocalLocation;
-        GhostCollisionTrigger gct = ghostGO.GetComponent<GhostCollisionTrigger>();
-        gct.Initialize(this);
-        gct.SetLocation(tile);
-    }
     #endregion
 
     #region Utilities

@@ -12,6 +12,7 @@ public class SleepOutside : GoapAction {
         //animationName = "Sleep Ground";
         shouldIntelNotificationOnlyIfActorIsActive = true;
         isNotificationAnIntel = false;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
     }
 
     #region Overrides

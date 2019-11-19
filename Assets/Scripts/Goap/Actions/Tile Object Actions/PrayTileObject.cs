@@ -13,6 +13,7 @@ public class PrayTileObject : GoapAction {
         actionIconString = GoapActionStateDB.Pray_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
         isNotificationAnIntel = false;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
     }
 
     #region Overrides

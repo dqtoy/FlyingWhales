@@ -7,6 +7,8 @@ public class Butcher : GoapAction {
 
     public Butcher() : base(INTERACTION_TYPE.BUTCHER) {
         actionIconString = GoapActionStateDB.Work_Icon;
+        canBeAdvertisedEvenIfActorIsUnavailable = true;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
     }
 
     #region Overrides

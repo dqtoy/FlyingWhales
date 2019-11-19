@@ -9,6 +9,7 @@ public class ReleaseCharacter : GoapAction {
 
     public ReleaseCharacter() : base(INTERACTION_TYPE.RELEASE_CHARACTER) {
         actionIconString = GoapActionStateDB.Work_Icon;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
     }
 
     #region Overrides

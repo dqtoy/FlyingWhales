@@ -94,7 +94,7 @@ namespace Traits {
         }
         public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
             base.ExecuteActionAfterEffects(action, goapNode);
-            if (action == INTERACTION_TYPE.MAKE_LOVE || action == INTERACTION_TYPE.CHAT_CHARACTER || action == INTERACTION_TYPE.CARRY) {
+            if (goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT) {
                 IPointOfInterest target;
                 IPointOfInterest infector;
                 if (TryGetTargetAndInfector(goapNode, out target, out infector)) { //this is necessary so that this function can determine which of the characters is infecting the other

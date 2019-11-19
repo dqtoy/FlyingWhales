@@ -7,6 +7,7 @@ public class SlayCharacter : GoapAction {
     public SlayCharacter() : base(INTERACTION_TYPE.SLAY_CHARACTER) {
         doesNotStopTargetCharacter = true;
         actionIconString = GoapActionStateDB.Hostile_Icon;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
     }
 
     #region Overrides

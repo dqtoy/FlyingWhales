@@ -11,6 +11,7 @@ public class Poison : GoapAction {
         actionIconString = GoapActionStateDB.Hostile_Icon;
         //_isStealthAction = true;
         //SetIsStealth(true);
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
     }
 
     #region Overrides
@@ -39,9 +40,6 @@ public class Poison : GoapAction {
     public void AfterPoisonSuccess(ActualGoapNode goapNode) {
         
     }
-    //public void PreTargetMissing() {
-    //    goapNode.descriptionLog.AddToFillers(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-    //}
     #endregion
 
     #region Requirement

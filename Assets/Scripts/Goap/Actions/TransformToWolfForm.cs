@@ -17,6 +17,7 @@ public class TransformToWolfForm : GoapAction {
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Transform Success", goapNode);
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 5;

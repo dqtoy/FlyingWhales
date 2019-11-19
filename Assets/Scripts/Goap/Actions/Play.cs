@@ -19,6 +19,7 @@ public class Play : GoapAction {
         };
         actionIconString = GoapActionStateDB.Entertain_Icon;
         isNotificationAnIntel = false;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
     }
 
     #region Overrides

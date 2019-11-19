@@ -87,7 +87,7 @@ namespace Traits {
                 if (!targetCharacter.isAtHomeRegion && !targetCharacter.isPartOfHomeFaction) {
                     if (InteractionManager.Instance.CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, null) && !targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
                         if (!IsResponsibleForTrait(characterThatWillDoJob)) {
-                            characterThatWillDoJob.CreateSaveCharacterJob(targetCharacter, false);
+                            characterThatWillDoJob.CreateSaveCharacterJob(targetCharacter);
                             return true;
                         }
                     }

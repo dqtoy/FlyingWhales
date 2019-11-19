@@ -9,6 +9,7 @@ public class WellJump : GoapAction {
 
     public WellJump() : base(INTERACTION_TYPE.WELL_JUMP) {
         actionIconString = GoapActionStateDB.Sleep_Icon;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
     }
 
     #region Overrides

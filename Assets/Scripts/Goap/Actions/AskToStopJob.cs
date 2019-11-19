@@ -10,6 +10,7 @@ public class AskToStopJob : GoapAction {
     public AskToStopJob() : base(INTERACTION_TYPE.ASK_TO_STOP_JOB) {
         actionIconString = GoapActionStateDB.Work_Icon;
         doesNotStopTargetCharacter = true;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
     }
 
    // #region Overrides

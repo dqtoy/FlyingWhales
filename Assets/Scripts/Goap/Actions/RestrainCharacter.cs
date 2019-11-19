@@ -8,6 +8,7 @@ public class RestrainCharacter : GoapAction {
     public RestrainCharacter() : base(INTERACTION_TYPE.RESTRAIN_CHARACTER) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Restrain_Icon;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
     }
 
     #region Overrides

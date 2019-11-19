@@ -10,6 +10,7 @@ public class GoTo : GoapAction {
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
         doesNotStopTargetCharacter = true;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
     }
 
     #region Overrides

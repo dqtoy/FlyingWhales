@@ -12,6 +12,7 @@ public class Steal : GoapAction {
             TIME_IN_WORDS.AFTER_MIDNIGHT,
         };
         actionIconString = GoapActionStateDB.Steal_Icon;
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.ITEM };
     }
 
     #region Overrides
