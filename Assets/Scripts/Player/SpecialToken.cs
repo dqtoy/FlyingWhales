@@ -156,12 +156,13 @@ public class SpecialToken : IPointOfInterest {
     #endregion
 
     #region Point Of Interest
-    public INTERACTION_TYPE AdvertiseActionsToActor(Character actor, GoapEffect precondition, Dictionary<INTERACTION_TYPE, object[]> otherData) {
-        INTERACTION_TYPE chosenAction = INTERACTION_TYPE.NONE;
+    //Returns the chosen action for the plan
+    public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost) {
+        GoapAction chosenAction = null;
         if (advertisedActions != null && advertisedActions.Count > 0) {//&& IsAvailable()
             bool isCharacterAvailable = IsAvailable();
             //List<GoapAction> usableActions = new List<GoapAction>();
-            INTERACTION_TYPE lowestCostAction = INTERACTION_TYPE.NONE;
+            GoapAction lowestCostAction = null;
             int currentLowestCost = 0;
             for (int i = 0; i < advertisedActions.Count; i++) {
                 INTERACTION_TYPE currType = advertisedActions[i];
@@ -179,15 +180,15 @@ public class SpecialToken : IPointOfInterest {
                             data = otherData[INTERACTION_TYPE.NONE];
                         }
                     }
-                    object[] otherActionData = null;
-                    if (otherData.ContainsKey(currType)) {
-                        otherActionData = otherData[currType];
-                    }
+                    //object[] otherActionData = null;
+                    //if (otherData.ContainsKey(currType)) {
+                    //    otherActionData = otherData[currType];
+                    //}
                     if (action.CanSatisfyRequirements(actor, this, data)
                         && action.WillEffectsSatisfyPrecondition(precondition, this, data)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
                         int actionCost = action.GetCost(actor, this, data);
-                        if (lowestCostAction == INTERACTION_TYPE.NONE || actionCost < currentLowestCost) {
-                            lowestCostAction = action.goapType;
+                        if (lowestCostAction == null || actionCost < currentLowestCost) {
+                            lowestCostAction = action;
                             currentLowestCost = actionCost;
                         }
                         //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
@@ -202,12 +203,30 @@ public class SpecialToken : IPointOfInterest {
                     }
                 }
             }
-            if (lowestCostAction != INTERACTION_TYPE.NONE) {
-                chosenAction = lowestCostAction;
-            }
+            cost = currentLowestCost;
+            chosenAction = lowestCostAction;
             //return usableActions;
         }
         return chosenAction;
+    }
+    public bool CanAdvertiseActionsToActor(Character actor, GoapAction action, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost) {
+        if ((IsAvailable() || action.canBeAdvertisedEvenIfActorIsUnavailable)
+            && advertisedActions != null && advertisedActions.Contains(action.goapType)
+            && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)) {
+            object[] data = null;
+            if (otherData != null) {
+                if (otherData.ContainsKey(action.goapType)) {
+                    data = otherData[action.goapType];
+                } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+                    data = otherData[INTERACTION_TYPE.NONE];
+                }
+                if (action.CanSatisfyRequirements(actor, this, data)) {
+                    cost = action.GetCost(actor, this, data);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     public void SetPOIState(POI_STATE state) {
         this.state = state;
