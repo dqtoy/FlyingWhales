@@ -564,6 +564,6 @@ public class GoapThread : Multithread {
     //}
 
     public void ReturnPlanFromGoapThread() {
-        actor.ReceivePlanFromGoapThread(this);
+        actor.planner.ReceivePlanFromGoapThread(this);
     }
 }

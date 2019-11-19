@@ -44,12 +44,12 @@ namespace Traits {
             }
             return hasCreatedJob;
         }
-        public override bool OnStartPerformGoapAction(GoapAction action, ref bool willStillContinueAction) {
+        public override bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
             int accidentChance = UnityEngine.Random.Range(0, 100);
             bool hasCreatedJob = false;
             if (accidentChance < 10) {
-                if (action != null && !excludedActionsFromAccidentProneTrait.Contains(action.goapType)) {
-                    DoAccident(action);
+                if (node != null && !excludedActionsFromAccidentProneTrait.Contains(node.action.goapType)) {
+                    DoAccident(node.action);
                     hasCreatedJob = true;
                     willStillContinueAction = false;
                 }

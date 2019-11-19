@@ -2613,6 +2613,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public virtual bool IsValidCombatTarget() {
         return traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) == false;
     }
+    public void ExecutePendingActionsAfterMultithread() {
+        for (int i = 0; i < pendingActionsAfterMultiThread.Count; i++) {
+            pendingActionsAfterMultiThread[i].Invoke();
+        }
+        pendingActionsAfterMultiThread.Clear();
+    }
     #endregion    
 
     #region History/Logs

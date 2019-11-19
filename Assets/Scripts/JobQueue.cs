@@ -140,29 +140,29 @@ public class JobQueue {
     //    }
     //    return null;
     //}
-    //public bool ProcessFirstJobInQueue() {
-    //    //if(owner.ownerType == JOB_OWNER.CHARACTER) {
-    //    //    if (jobsInQueue.Count > 0) {
-    //    //        jobsInQueue[0].ProcessJob();
-    //    //        return true;
-    //    //    }
-    //    //} else {
-    //    //    if (jobsInQueue.Count > 0) {
-    //    //        for (int i = 0; i < jobsInQueue.Count; i++) {
-    //    //            JobQueueItem job = jobsInQueue[i];
-    //    //            if (characterToDoJob.jobQueue.AddJobInQueue(job)) {
-    //    //                RemoveJobInQueue(job);
-    //    //                return true;
-    //    //            }
-    //    //        }
-    //    //    }
-    //    //}
-    //    if (jobsInQueue.Count > 0) {
-    //        jobsInQueue[0].ProcessJob();
-    //        return true;
-    //    }
-    //    return false;
-    //}
+    public bool ProcessFirstJobInQueue() {
+        //if(owner.ownerType == JOB_OWNER.CHARACTER) {
+        //    if (jobsInQueue.Count > 0) {
+        //        jobsInQueue[0].ProcessJob();
+        //        return true;
+        //    }
+        //} else {
+        //    if (jobsInQueue.Count > 0) {
+        //        for (int i = 0; i < jobsInQueue.Count; i++) {
+        //            JobQueueItem job = jobsInQueue[i];
+        //            if (characterToDoJob.jobQueue.AddJobInQueue(job)) {
+        //                RemoveJobInQueue(job);
+        //                return true;
+        //            }
+        //        }
+        //    }
+        //}
+        if (jobsInQueue.Count > 0) {
+            jobsInQueue[0].ProcessJob();
+            return true;
+        }
+        return false;
+    }
     //public void CurrentTopPriorityIsPushedBack() {
     //    //if(owner.ownerType != JOB_OWNER.CHARACTER) {
     //    //    return;
@@ -517,6 +517,14 @@ public class JobQueue {
                 i--;
             }
         }
+    }
+    public int GetJobQueueIndex(JobQueueItem job) {
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            if (jobsInQueue[i] == job) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     /// <summary>

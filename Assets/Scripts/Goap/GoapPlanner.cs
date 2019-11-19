@@ -84,148 +84,182 @@ public class GoapPlanner {
         }
     }
     public void ReceivePlanFromGoapThread(GoapThread goapThread) {
-        //string log = name + " received a plan from other thread(" + _numOfWaitingForGoapThread + ")";
-        //if(goapThread.recalculationPlan == null) {
-        //    log += " - thread has no recalculation plan";
-        //}
-        //Debug.LogWarning(log);
-        if (isDead || marker == null) {
+        if (actor.isDead || actor.marker == null) {
             return;
         }
         if (goapThread.recalculationPlan != null && goapThread.recalculationPlan.isEnd) {
             return;
         }
-        if (goapThread.recalculationPlan == null) {
-            _numOfWaitingForGoapThread--;
-        }
-        if (_numOfWaitingForGoapThread == 0) {
-            for (int i = 0; i < pendingActionsAfterMultiThread.Count; i++) {
-                pendingActionsAfterMultiThread[i].Invoke();
-            }
-        }
-        PrintLogIfActive(goapThread.log);
+        actor.ExecutePendingActionsAfterMultithread();
+        actor.PrintLogIfActive(goapThread.log);
         if (goapThread.createdPlan != null) {
-            if (goapThread.recalculationPlan == null) {
-                int count = traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE).Count;
-                if (count >= 2 || (count == 1 && traitContainer.GetNormalTrait("Paralyzed") == null)) {
-                    PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping plan since " + name + " has a negative disabler trait. " + goapThread.job.name + " is the job.");
-                    if (goapThread.job != null) {
-                        if (goapThread.job.assignedCharacter == this) {
-                            goapThread.job.SetAssignedCharacter(null);
-                            goapThread.job.SetAssignedPlan(null);
-                            //Only remove job in queue if it is a personal job, cause if it is not, it must be returned to the queue
-                            if (!goapThread.job.currentOwner.isAreaOrQuestJobQueue) {
-                                goapThread.job.currentOwner.RemoveJobInQueue(goapThread.job);
-                            }
-                        }
-                    }
-                    return;
-                }
-                if (goapThread.job != null) {
-                    if (goapThread.job.assignedCharacter != this) {
-                        PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping plan since " + goapThread.job.name + " job's assigned character is no longer him/her. New assigned character is " + (goapThread.job.assignedCharacter != null ? goapThread.job.assignedCharacter.name : "None"));
-                        return;
-                    }
-                    goapThread.job.SetAssignedPlan(goapThread.createdPlan);
-
-                    //If the created plan contains a carry component, that plan cannot be overridden
-                    //for (int i = 0; i < goapThread.createdPlan.allNodes.Count; i++) {
-                    //    if (goapThread.createdPlan.allNodes[i].action.goapType == INTERACTION_TYPE.CARRY_CHARACTER
-                    //        || goapThread.createdPlan.allNodes[i].action.goapType == INTERACTION_TYPE.CARRY_CORPSE
-                    //        || goapThread.createdPlan.allNodes[i].action.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE) {
-                    //        goapThread.createdPlan.job.SetCannotOverrideJob(true);
-                    //        break;
-                    //    }
-                    //}
-                }
-                AddPlan(goapThread.createdPlan);
-                if (CanCurrentJobBeOverriddenByJob(goapThread.job)) {
-                    //AddPlan(goapThread.createdPlan, true);
-
-                    if (stateComponent.currentState != null) {
-                        stateComponent.currentState.OnExitThisState();
-                        //This call is doubled so that it will also exit the previous major state if there's any
-                        if (stateComponent.currentState != null) {
-                            stateComponent.currentState.OnExitThisState();
-                        }
-                        ////- berserk, flee, and engage are the highest priority, they cannot be overridden. character must finish the state before doing anything else.
-                        //if (stateComponent.currentState.characterState != CHARACTER_STATE.ENGAGE && stateComponent.currentState.characterState != CHARACTER_STATE.FLEE && stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED) {
-                        //    stateComponent.currentState.OnExitThisState();
-                        //}
-                    }
-                    //else if (stateComponent.currentState != null) {
-                    //    stateComponent.SetStateToDo(null);
-                    //} 
-                    else {
-                        if (currentParty.icon.isTravelling) {
-                            if (currentParty.icon.travelLine == null) {
-                                marker.StopMovement();
-                            } else {
-                                currentParty.icon.SetOnArriveAction(() => OnArriveAtAreaStopMovement());
-                            }
-                        }
-                        AdjustIsWaitingForInteraction(1);
-                        StopCurrentAction(false, "Have something important to do");
-                        AdjustIsWaitingForInteraction(-1);
-                    }
-                    //return;
-                }
-            } else {
-                //Receive plan recalculation
+            if (goapThread.recalculationPlan != null) {
+                //This means that the created plan is a recalculated plan
                 goapThread.createdPlan.SetIsBeingRecalculated(false);
-                int count = traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE).Count;
-                if (count >= 2 || (count == 1 && traitContainer.GetNormalTrait("Paralyzed") == null)) {
-                    PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping recalculated plan since " + name + " has a negative disabler trait. " + goapThread.job.name + " is the job.");
-                    DropPlan(goapThread.recalculationPlan, true);
-                    return;
-                }
-                if (goapThread.createdPlan.job != null) {
-                    if (goapThread.createdPlan.job.assignedCharacter != this) {
-                        PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping recalculated plan since " + goapThread.createdPlan.job.name + " job's assigned character is no longer him/her. New assigned character is " + (goapThread.createdPlan.job.assignedCharacter != null ? goapThread.createdPlan.job.assignedCharacter.name : "None"));
-                        DropPlan(goapThread.recalculationPlan, true);
-                        return;
-                    }
+            }
+            if (!actor.canWitness) {
+                actor.PrintLogIfActive(GameManager.Instance.TodayLogString() + actor.name + " is scrapping plan since " + actor.name + " cannot witness. " + goapThread.job.name + " is the job.");
+                goapThread.job.CancelJob(false);
+                return;
+            }
+            int jobIndex = actor.jobQueue.GetJobQueueIndex(goapThread.job);
+            if(jobIndex != -1) {
+                //Only set assigned plan if job is still in character job queue because if not, it means that the job is no longer taken
+                goapThread.job.SetAssignedPlan(goapThread.createdPlan);
+                if (jobIndex != 0) {
+                    //If the job of the receive plan is no longer the top priority, process the top most job because it means that while the goap planner is running, the top most priority has been replaced
+                    //This means that the top most priority was not processed since the goap planner is still running
+                    actor.jobQueue.ProcessFirstJobInQueue();
                 }
             }
         } else {
-            if (goapThread.job != null && goapThread.job.jobType.IsNeedsTypeJob()) {
+            if (goapThread.job.jobType.IsNeedsTypeJob()) {
                 //If unable to do a Need while in a Trapped Structure, remove Trap Structure.
-                if (trapStructure.structure != null) {
-                    trapStructure.SetStructureAndDuration(null, 0);
+                if (actor.trapStructure.structure != null) {
+                    actor.trapStructure.SetStructureAndDuration(null, 0);
                 }
             }
-            if (goapThread.recalculationPlan != null) {
-                //This means that the recalculation has failed
-                DropPlan(goapThread.recalculationPlan);
-            } else {
-                if (goapThread.job != null) {
-                    goapThread.job.SetAssignedCharacter(null);
-                    if (!goapThread.job.currentOwner.isAreaOrQuestJobQueue) {
-                        //If no plan was generated, automatically remove job from queue if it is a personal job
-                        goapThread.job.currentOwner.RemoveJobInQueue(goapThread.job);
-                        if (goapThread.job.jobType == JOB_TYPE.REMOVE_FIRE) {
-                            if (goapThread.job.targetPOI.gridTileLocation != null) { //this happens because sometimes the target that was burning is now put out.
-                                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan");
-                                log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                                log.AddToFillers(null, goapThread.job.GetJobDetailString(), LOG_IDENTIFIER.STRING_1);
-                                RegisterLogAndShowNotifToThisCharacterOnly(log);
-                            }
-                        } else {
-                            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan");
-                            log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                            log.AddToFillers(null, goapThread.job.GetJobDetailString(), LOG_IDENTIFIER.STRING_1);
-                            RegisterLogAndShowNotifToThisCharacterOnly(log);
-                        }
-                        //if (goapThread.job.canBeDoneInLocation) {
-                        //    //If a personal job can be done in location job queue, add it once no plan is generated
-                        //    specificLocation.jobQueue.AddJobInQueue(goapThread.job);
-                        //}
-                    } else {
-                        goapThread.job.AddBlacklistedCharacter(this);
-                    }
+            goapThread.job.CancelJob(false);
+            if (goapThread.recalculationPlan == null) {
+                //This means that the planner cannot create a new plan
+                bool logCancelJobNoPlan = true;
+                if (goapThread.job.jobType == JOB_TYPE.REMOVE_FIRE && goapThread.job.targetPOI.gridTileLocation == null) {
+                    logCancelJobNoPlan = false;
+                }
+                if (logCancelJobNoPlan) {
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan");
+                    log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(null, goapThread.job.GetJobDetailString(), LOG_IDENTIFIER.STRING_1);
+                    actor.RegisterLogAndShowNotifToThisCharacterOnly(log);
+                }
+                if (goapThread.job.originalOwner.ownerType != JOB_OWNER.CHARACTER) {
+                    goapThread.job.AddBlacklistedCharacter(actor);
                 }
             }
         }
+
+        //if (goapThread.createdPlan != null) {
+        //    if (goapThread.recalculationPlan == null) {
+        //        int count = traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE).Count;
+        //        if (count >= 2 || (count == 1 && traitContainer.GetNormalTrait("Paralyzed") == null)) {
+        //            PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping plan since " + name + " has a negative disabler trait. " + goapThread.job.name + " is the job.");
+        //            if (goapThread.job != null) {
+        //                if (goapThread.job.assignedCharacter == this) {
+        //                    goapThread.job.SetAssignedCharacter(null);
+        //                    goapThread.job.SetAssignedPlan(null);
+        //                    //Only remove job in queue if it is a personal job, cause if it is not, it must be returned to the queue
+        //                    if (!goapThread.job.currentOwner.isAreaOrQuestJobQueue) {
+        //                        goapThread.job.currentOwner.RemoveJobInQueue(goapThread.job);
+        //                    }
+        //                }
+        //            }
+        //            return;
+        //        }
+        //        if (goapThread.job != null) {
+        //            if (goapThread.job.assignedCharacter != this) {
+        //                PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping plan since " + goapThread.job.name + " job's assigned character is no longer him/her. New assigned character is " + (goapThread.job.assignedCharacter != null ? goapThread.job.assignedCharacter.name : "None"));
+        //                return;
+        //            }
+        //            goapThread.job.SetAssignedPlan(goapThread.createdPlan);
+
+        //            //If the created plan contains a carry component, that plan cannot be overridden
+        //            //for (int i = 0; i < goapThread.createdPlan.allNodes.Count; i++) {
+        //            //    if (goapThread.createdPlan.allNodes[i].action.goapType == INTERACTION_TYPE.CARRY_CHARACTER
+        //            //        || goapThread.createdPlan.allNodes[i].action.goapType == INTERACTION_TYPE.CARRY_CORPSE
+        //            //        || goapThread.createdPlan.allNodes[i].action.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE) {
+        //            //        goapThread.createdPlan.job.SetCannotOverrideJob(true);
+        //            //        break;
+        //            //    }
+        //            //}
+        //        }
+        //        AddPlan(goapThread.createdPlan);
+        //        if (CanCurrentJobBeOverriddenByJob(goapThread.job)) {
+        //            //AddPlan(goapThread.createdPlan, true);
+
+        //            if (stateComponent.currentState != null) {
+        //                stateComponent.currentState.OnExitThisState();
+        //                //This call is doubled so that it will also exit the previous major state if there's any
+        //                if (stateComponent.currentState != null) {
+        //                    stateComponent.currentState.OnExitThisState();
+        //                }
+        //                ////- berserk, flee, and engage are the highest priority, they cannot be overridden. character must finish the state before doing anything else.
+        //                //if (stateComponent.currentState.characterState != CHARACTER_STATE.ENGAGE && stateComponent.currentState.characterState != CHARACTER_STATE.FLEE && stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED) {
+        //                //    stateComponent.currentState.OnExitThisState();
+        //                //}
+        //            }
+        //            //else if (stateComponent.currentState != null) {
+        //            //    stateComponent.SetStateToDo(null);
+        //            //} 
+        //            else {
+        //                if (currentParty.icon.isTravelling) {
+        //                    if (currentParty.icon.travelLine == null) {
+        //                        marker.StopMovement();
+        //                    } else {
+        //                        currentParty.icon.SetOnArriveAction(() => OnArriveAtAreaStopMovement());
+        //                    }
+        //                }
+        //                AdjustIsWaitingForInteraction(1);
+        //                StopCurrentAction(false, "Have something important to do");
+        //                AdjustIsWaitingForInteraction(-1);
+        //            }
+        //            //return;
+        //        }
+        //    } else {
+        //        //Receive plan recalculation
+        //        goapThread.createdPlan.SetIsBeingRecalculated(false);
+        //        int count = traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE).Count;
+        //        if (count >= 2 || (count == 1 && traitContainer.GetNormalTrait("Paralyzed") == null)) {
+        //            PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping recalculated plan since " + name + " has a negative disabler trait. " + goapThread.job.name + " is the job.");
+        //            DropPlan(goapThread.recalculationPlan, true);
+        //            return;
+        //        }
+        //        if (goapThread.createdPlan.job != null) {
+        //            if (goapThread.createdPlan.job.assignedCharacter != this) {
+        //                PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping recalculated plan since " + goapThread.createdPlan.job.name + " job's assigned character is no longer him/her. New assigned character is " + (goapThread.createdPlan.job.assignedCharacter != null ? goapThread.createdPlan.job.assignedCharacter.name : "None"));
+        //                DropPlan(goapThread.recalculationPlan, true);
+        //                return;
+        //            }
+        //        }
+        //    }
+        //} else {
+        //    if (goapThread.job != null && goapThread.job.jobType.IsNeedsTypeJob()) {
+        //        //If unable to do a Need while in a Trapped Structure, remove Trap Structure.
+        //        if (trapStructure.structure != null) {
+        //            trapStructure.SetStructureAndDuration(null, 0);
+        //        }
+        //    }
+        //    if (goapThread.recalculationPlan != null) {
+        //        //This means that the recalculation has failed
+        //        DropPlan(goapThread.recalculationPlan);
+        //    } else {
+        //        if (goapThread.job != null) {
+        //            goapThread.job.SetAssignedCharacter(null);
+        //            if (!goapThread.job.currentOwner.isAreaOrQuestJobQueue) {
+        //                //If no plan was generated, automatically remove job from queue if it is a personal job
+        //                goapThread.job.currentOwner.RemoveJobInQueue(goapThread.job);
+        //                if (goapThread.job.jobType == JOB_TYPE.REMOVE_FIRE) {
+        //                    if (goapThread.job.targetPOI.gridTileLocation != null) { //this happens because sometimes the target that was burning is now put out.
+        //                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan");
+        //                        log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //                        log.AddToFillers(null, goapThread.job.GetJobDetailString(), LOG_IDENTIFIER.STRING_1);
+        //                        RegisterLogAndShowNotifToThisCharacterOnly(log);
+        //                    }
+        //                } else {
+        //                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan");
+        //                    log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //                    log.AddToFillers(null, goapThread.job.GetJobDetailString(), LOG_IDENTIFIER.STRING_1);
+        //                    RegisterLogAndShowNotifToThisCharacterOnly(log);
+        //                }
+        //                //if (goapThread.job.canBeDoneInLocation) {
+        //                //    //If a personal job can be done in location job queue, add it once no plan is generated
+        //                //    specificLocation.jobQueue.AddJobInQueue(goapThread.job);
+        //                //}
+        //            } else {
+        //                goapThread.job.AddBlacklistedCharacter(this);
+        //            }
+        //        }
+        //    }
+        //}
         status = GOAP_PLANNING_STATUS.NONE;
     }
     //public GoapPlan PlanActions(IPointOfInterest target, GoapAction goalAction, List<GoapAction> usableActions, GOAP_CATEGORY category, bool isPersonalPlan, ref string log, GoapPlanJob job = null) {

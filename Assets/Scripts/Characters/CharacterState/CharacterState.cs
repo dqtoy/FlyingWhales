@@ -61,7 +61,7 @@ public class CharacterState {
         if(startStateAction != null) {
             startStateAction();
         }
-        stateComponent.character.JustDropAllPlansOfType(INTERACTION_TYPE.WATCH);
+        //stateComponent.character.JustDropAllPlansOfType(INTERACTION_TYPE.WATCH);
     }
     /// <summary>
     /// End this state. This is called after <see cref="OnExitThisState"/>.
