@@ -38,17 +38,17 @@ public class KnockoutCharacter : GoapAction {
     #endregion
 
     #region State Effects
-    private void PreKnockoutSuccess(ActualGoapNode goapNode) {
+    public void PreKnockoutSuccess(ActualGoapNode goapNode) {
         //TODO: currentState.SetIntelReaction(KnockoutSuccessIntelReaction);
     }
-    private void AfterKnockoutSuccess(ActualGoapNode goapNode) {
+    public void AfterKnockoutSuccess(ActualGoapNode goapNode) {
         goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Unconscious", goapNode.actor, gainedFromDoing: goapNode);
     }
-    //private void PreKnockoutFail() {
+    //public void PreKnockoutFail() {
     //    SetCommittedCrime(CRIME.ASSAULT, new Character[] { actor });
     //    currentState.SetIntelReaction(KnockoutFailIntelReaction);
     //}
-    //private void AfterKnockoutFail() {
+    //public void AfterKnockoutFail() {
     //    if(poiTarget is Character) {
     //        Character targetCharacter = poiTarget as Character;
     //        if (!targetCharacter.ReactToCrime(committedCrime, this, actorAlterEgo, SHARE_INTEL_STATUS.WITNESSED)) {

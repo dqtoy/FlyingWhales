@@ -14,7 +14,7 @@ public class ResolveCombat : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.STARTS_COMBAT, target = GOAP_EFFECT_TARGET.ACTOR }, IsInCombat);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.STARTS_COMBAT, target = GOAP_EFFECT_TARGET.TARGET }, IsCombatFinished);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", target = GOAP_EFFECT_TARGET.TARGET });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.CANNOT_MOVE, target = GOAP_EFFECT_TARGET.TARGET });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", target = GOAP_EFFECT_TARGET.TARGET });
@@ -27,13 +27,21 @@ public class ResolveCombat : GoapAction {
     #endregion
 
     #region Effects
-    private void AfterCombatSuccess(ActualGoapNode goapNode) {
+    public void AfterCombatSuccess(ActualGoapNode goapNode) {
 
     }
     #endregion
 
     #region Preconditions
-    private bool IsInCombat(Character actor, IPointOfInterest target, object[] otherData) {
+    private bool IsCombatFinished(Character actor, IPointOfInterest target, object[] otherData) {
+        if (target is Character) {
+            Character targetCharcater = target as Character;
+            if (targetCharcater.canMove == false || targetCharcater.canWitness == false) {
+                return true;
+            }
+        } else {
+            return target.gridTileLocation == null;
+        }
         return false;
     }
     #endregion

@@ -107,7 +107,7 @@ namespace Traits {
         }
         public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref int cost) {
             if (action == INTERACTION_TYPE.STEAL) {
-                cost = Utilities.rng.Next(5, 10); //5,46
+                cost = 0;//Utilities.rng.Next(5, 10);//5,46
             }
         }
         public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {

@@ -6,11 +6,11 @@ using Traits;
 public class Steal : GoapAction {
 
     public Steal() : base(INTERACTION_TYPE.STEAL) {
-        validTimeOfDays = new TIME_IN_WORDS[] {
-            TIME_IN_WORDS.EARLY_NIGHT,
-            TIME_IN_WORDS.LATE_NIGHT,
-            TIME_IN_WORDS.AFTER_MIDNIGHT,
-        };
+        //validTimeOfDays = new TIME_IN_WORDS[] {
+        //    TIME_IN_WORDS.EARLY_NIGHT,
+        //    TIME_IN_WORDS.LATE_NIGHT,
+        //    TIME_IN_WORDS.AFTER_MIDNIGHT,
+        //};
         actionIconString = GoapActionStateDB.Steal_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.ITEM };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
@@ -33,19 +33,33 @@ public class Steal : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return Utilities.rng.Next(35, 56);
     }
+    public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
+        if (goapNode.poiTarget is SpecialToken) {
+            SpecialToken token = goapNode.poiTarget as SpecialToken;
+            if (token.carriedByCharacter != null) {
+                return token.carriedByCharacter; //make the actor follow the character that is carrying the item instead.
+            }
+        }
+        return base.GetTargetToGoTo(goapNode);
+    }
+    public override LocationStructure GetTargetStructure(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        SpecialToken token = poiTarget as SpecialToken;
+        if (token.carriedByCharacter != null) {
+            return token.carriedByCharacter.currentStructure;
+        }
+        return base.GetTargetStructure(actor, poiTarget, otherData);
+    }
     #endregion
 
     #region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
-                return false;
-            }
+            SpecialToken token = poiTarget as SpecialToken;
             if (poiTarget.gridTileLocation != null) {
-                //return true;
-                SpecialToken token = poiTarget as SpecialToken;
                 return token.characterOwner == null || token.characterOwner != actor;
+            } else {
+                return token.carriedByCharacter != null && (token.characterOwner == null || token.characterOwner != actor);
             }
         }
         return false;
@@ -53,22 +67,15 @@ public class Steal : GoapAction {
     #endregion
 
     #region State Effects
-    private void PreStealSuccess(ActualGoapNode goapNode) {
+    public void PreStealSuccess(ActualGoapNode goapNode) {
         //**Note**: This is a Theft crime
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
         goapNode.descriptionLog.AddToFillers(goapNode.poiTarget as SpecialToken, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         //TODO: currentState.SetIntelReaction(State1Reactions);
     }
-    private void AfterStealSuccess(ActualGoapNode goapNode) {
+    public void AfterStealSuccess(ActualGoapNode goapNode) {
         goapNode.actor.PickUpToken(goapNode.poiTarget as SpecialToken, false);
-    }
-    private void PreTargetMissing(ActualGoapNode goapNode) {
-        //goapNode.descriptionLog.AddToFillers(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-        //goapNode.descriptionLog.AddToFillers(poiTarget as SpecialToken, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    }
-    public void AfterTargetMissing(ActualGoapNode goapNode) {
-        //actor.RemoveAwareness(poiTarget);
     }
     #endregion
 

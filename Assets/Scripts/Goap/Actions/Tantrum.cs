@@ -32,10 +32,10 @@ public class Tantrum : GoapAction {
     #endregion
 
     #region Effects
-    private void PreTantrumSuccess(ActualGoapNode goapNode) {
+    public void PreTantrumSuccess(ActualGoapNode goapNode) {
         goapNode.descriptionLog.AddToFillers(null, (string)goapNode.otherData[0], LOG_IDENTIFIER.STRING_1);
     }
-    private void AfterTantrumSuccess(ActualGoapNode goapNode) {
+    public void AfterTantrumSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Berserked");
     }
     #endregion

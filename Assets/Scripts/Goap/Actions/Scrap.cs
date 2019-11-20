@@ -65,14 +65,14 @@ public class Scrap : GoapAction {
     #endregion
 
     #region State Effects
-    private void PreScrapSuccess(ActualGoapNode goapNode) {
+    public void PreScrapSuccess(ActualGoapNode goapNode) {
         SpecialToken item = goapNode.poiTarget as SpecialToken;
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
         goapNode.descriptionLog.AddToFillers(item, item.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         goapNode.descriptionLog.AddToFillers(null, TokenManager.Instance.itemData[item.specialTokenType].supplyValue.ToString(), LOG_IDENTIFIER.STRING_1);
     }
-    private void AfterScrapSuccess(ActualGoapNode goapNode) {
+    public void AfterScrapSuccess(ActualGoapNode goapNode) {
         SpecialToken item = goapNode.poiTarget as SpecialToken;
         goapNode.actor.AdjustSupply(TokenManager.Instance.itemData[item.specialTokenType].supplyValue);
         goapNode.actor.DestroyToken(item);

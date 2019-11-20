@@ -32,7 +32,7 @@ public class BreakUp : GoapAction {
     #endregion
 
     #region Effects
-    private void PreBreakUpSuccess(ActualGoapNode goapNode) {
+    public void PreBreakUpSuccess(ActualGoapNode goapNode) {
         Character target = goapNode.poiTarget as Character;
         if (goapNode.actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
             //**Effect 1**: Actor - Remove Lover relationship with Character 2

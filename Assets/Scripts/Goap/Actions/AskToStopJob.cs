@@ -75,19 +75,19 @@ public class AskToStopJob : GoapAction {
    // #endregion
 
    // #region State Effects
-   // private void PreAskSuccess() {
+   // public void PreAskSuccess() {
    //     if (poiTarget is Character) {
    //         Character targetCharacter = poiTarget as Character;
    //         goapNode.descriptionLog.AddToFillers(null, targetCharacter.currentActionNode.goapName, LOG_IDENTIFIER.STRING_1);
    //     }
    // }
-   // private void PreAskFail() {
+   // public void PreAskFail() {
    //     if (poiTarget is Character) {
    //         Character targetCharacter = poiTarget as Character;
    //         goapNode.descriptionLog.AddToFillers(null, jobToStop.name, LOG_IDENTIFIER.STRING_1);
    //     }
    // }
-   // private void AfterAskSuccess() {
+   // public void AfterAskSuccess() {
    //     if (poiTarget is Character) {
    //         Character targetCharacter = poiTarget as Character;
    //         if(targetCharacter.currentActionNode != null) {

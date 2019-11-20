@@ -9,26 +9,39 @@ public class Carry : GoapAction {
     public Carry() : base(INTERACTION_TYPE.CARRY) {
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
+        canBeAdvertisedEvenIfActorIsUnavailable = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
     }
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, target = GOAP_EFFECT_TARGET.TARGET });
+        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.CANNOT_MOVE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), TargetCannotMove);
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        SetState("Target Missing", goapNode);
+        SetState("Carry Success", goapNode);
     }
     public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest target, object[] otherData) {
-        GoapActionInvalidity actionInvalidity = base.IsInvalid(actor, target, otherData);
-        if (actionInvalidity.isInvalid == false) {
-            if ((target as Character).IsInOwnParty() == false) {
-                actionInvalidity.isInvalid = true;
+        string stateName = "Target Missing";
+        bool defaultTargetMissing = TargetMissingForCarry(actor, target, otherData);
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
+        if (defaultTargetMissing == false) {
+            //check the target's traits, if any of them can make this action invalid
+            for (int i = 0; i < target.traitContainer.allTraits.Count; i++) {
+                Trait trait = target.traitContainer.allTraits[i];
+                if (trait.TryStopAction(goapType, actor, target, ref goapActionInvalidity)) {
+                    break; //a trait made this action invalid, stop loop
+                }
             }
         }
-        return actionInvalidity;
+        if (goapActionInvalidity.isInvalid == false) {
+            if ((target as Character).IsInOwnParty() == false) {
+                goapActionInvalidity.isInvalid = true;
+            }
+        }
+        return goapActionInvalidity;
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 1;
@@ -51,6 +64,17 @@ public class Carry : GoapAction {
         goapNode.actor.ownParty.AddCharacter(target);
     }
     #endregion
+
+    #region Precondition
+    private bool TargetCannotMove(Character actor, IPointOfInterest target, object[] otherData) {
+        return (target as Character).canMove == false;
+    }
+    #endregion
+
+    private bool TargetMissingForCarry(Character actor, IPointOfInterest target, object[] otherData) {
+        return target.gridTileLocation == null || actor.specificLocation != target.specificLocation
+                    || !(actor.gridTileLocation == target.gridTileLocation || actor.gridTileLocation.IsNeighbour(target.gridTileLocation));
+    }
 }
 
 public class CarryData : GoapActionData {

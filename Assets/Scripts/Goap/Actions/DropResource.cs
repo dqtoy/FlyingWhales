@@ -81,13 +81,13 @@ public class DropResource : GoapAction {
     #endregion
 
     #region State Effects
-    private void PreDropSuccess(ActualGoapNode goapNode) {
+    public void PreDropSuccess(ActualGoapNode goapNode) {
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         int givenSupply = goapNode.actor.supply - goapNode.actor.role.reservedSupply;
         goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
         goapNode.descriptionLog.AddToFillers(null, givenSupply.ToString(), LOG_IDENTIFIER.STRING_1);
     }
-    private void AfterDropSuccess(ActualGoapNode goapNode) {
+    public void AfterDropSuccess(ActualGoapNode goapNode) {
         SupplyPile supplyPile = goapNode.poiTarget as SupplyPile;
         int givenSupply = goapNode.actor.supply - goapNode.actor.role.reservedSupply;
         goapNode.actor.AdjustSupply(-givenSupply);

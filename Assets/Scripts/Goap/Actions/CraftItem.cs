@@ -58,7 +58,7 @@ public class CraftItem : GoapAction {
     #endregion
 
     #region State Effects
-    private void PreCraftSuccess(ActualGoapNode goapNode) {
+    public void PreCraftSuccess(ActualGoapNode goapNode) {
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         SPECIAL_TOKEN craftedItem = (SPECIAL_TOKEN)goapNode.otherData[0];
         goapNode.descriptionLog.AddToFillers(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
@@ -66,7 +66,7 @@ public class CraftItem : GoapAction {
 
         goapNode.actor.AdjustSupply(-TokenManager.Instance.itemData[craftedItem].craftCost);
     }
-    private void AfterCraftSuccess(ActualGoapNode goapNode) {
+    public void AfterCraftSuccess(ActualGoapNode goapNode) {
         SPECIAL_TOKEN craftedItem = (SPECIAL_TOKEN)goapNode.otherData[0];
         SpecialToken tool = TokenManager.Instance.CreateSpecialToken(craftedItem);
         goapNode.actor.ObtainToken(tool);

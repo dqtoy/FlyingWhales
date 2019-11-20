@@ -43,13 +43,13 @@ public class ShareInformation : GoapAction {
     #endregion
 
     #region State Effects
-    private void PreShareSuccess(ActualGoapNode goapNode) {
+    public void PreShareSuccess(ActualGoapNode goapNode) {
         //TODO: goapNode.descriptionLog.AddToFillers(null, Utilities.LogDontReplace(eventToBeShared.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
         goapNode.descriptionLog.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.OTHER);
         goapNode.descriptionLog.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.OTHER_2);
         //TODO: currentState.AddLogFillers(eventToBeShared.currentState.descriptionLog.fillers);
     }
-    private void AfterShareSuccess(ActualGoapNode goapNode) {
+    public void AfterShareSuccess(ActualGoapNode goapNode) {
         //TODO:
         //if(eventToBeShared.currentState.shareIntelReaction != null) {
         //    eventToBeShared.currentState.shareIntelReaction.Invoke(poiTarget as Character, null, SHARE_INTEL_STATUS.INFORMED);

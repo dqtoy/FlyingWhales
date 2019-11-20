@@ -38,11 +38,11 @@ public class Accident : GoapAction {
     #endregion
 
     #region State Effects
-    private void PreAccidentSuccess(ActualGoapNode goapNode) {
+    public void PreAccidentSuccess(ActualGoapNode goapNode) {
         GoapAction actionToDo = goapNode.otherData[0] as GoapAction;
         goapNode.descriptionLog.AddToFillers(actionToDo, actionToDo.goapName, LOG_IDENTIFIER.STRING_1);
     }
-    private void AfterAccidentSuccess(ActualGoapNode goapNode) {
+    public void AfterAccidentSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Injured", gainedFromDoing: goapNode);
 
         int randomHpToLose = UnityEngine.Random.Range(5, 26);

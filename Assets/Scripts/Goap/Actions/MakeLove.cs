@@ -75,7 +75,7 @@ public class MakeLove : GoapAction {
     #endregion
 
     #region Effects
-    private void PreMakeLoveSuccess(ActualGoapNode goapNode) {
+    public void PreMakeLoveSuccess(ActualGoapNode goapNode) {
         Bed bed = goapNode.actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).First() as Bed;
         bed.OnDoActionToObject(goapNode);
 
@@ -88,14 +88,14 @@ public class MakeLove : GoapAction {
         goapNode.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         //TODO: currentState.SetIntelReaction(MakeLoveSuccessReactions);
     }
-    private void PerTickMakeLoveSuccess(ActualGoapNode goapNode) {
+    public void PerTickMakeLoveSuccess(ActualGoapNode goapNode) {
         //**Per Tick Effect 1 * *: Actor's Happiness Meter +500
         goapNode.actor.AdjustHappiness(500);
         //**Per Tick Effect 2**: Target's Happiness Meter +500
         Character targetCharacter = goapNode.poiTarget as Character;
         targetCharacter.AdjustHappiness(500);
     }
-    private void AfterMakeLoveSuccess(ActualGoapNode goapNode) {
+    public void AfterMakeLoveSuccess(ActualGoapNode goapNode) {
         Bed bed = goapNode.actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).First() as Bed;
         bed.OnDoneActionToObject(goapNode);
         Character targetCharacter = goapNode.poiTarget as Character;

@@ -42,14 +42,14 @@ public class Daydream : GoapAction {
     #endregion
 
     #region Effects
-    private void PreDaydreamSuccess(ActualGoapNode goapNode) {
+    public void PreDaydreamSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustDoNotGetLonely(1);
         goapNode.actor.AdjustDoNotGetTired(1);
     }
-    private void PerTickDaydreamSuccess(ActualGoapNode goapNode) {
+    public void PerTickDaydreamSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustHappiness(500);
     }
-    private void AfterDaydreamSuccess(ActualGoapNode goapNode) {
+    public void AfterDaydreamSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustDoNotGetLonely(-1);
         goapNode.actor.AdjustDoNotGetTired(-1);
     }

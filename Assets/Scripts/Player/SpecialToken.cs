@@ -22,7 +22,7 @@ public class SpecialToken : IPointOfInterest {
     public POICollisionTrigger collisionTrigger { get; protected set; }
     public int uses { get; protected set; } //how many times can this item be used?
     public List<JobQueueItem> allJobsTargettingThis { get; private set; }
-    //public List<GoapAction> targettedByAction { get; protected set; }
+    public Character carriedByCharacter { get; private set; }
 
     //hp
     public int maxHP { get; protected set; }
@@ -123,6 +123,9 @@ public class SpecialToken : IPointOfInterest {
             }
         }
         return false;
+    }
+    public void SetCarriedByCharacter(Character character) {
+        this.carriedByCharacter = character;
     }
     //public void AddTargettedByAction(GoapAction action) {
     //    targettedByAction.Add(action);

@@ -19,7 +19,7 @@ public class Assault : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.STARTS_COMBAT, target = GOAP_EFFECT_TARGET.ACTOR });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.STARTS_COMBAT, target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode actionNode) {
         base.Perform(actionNode);
@@ -28,7 +28,8 @@ public class Assault : GoapAction {
     #endregion
 
     #region Effects
-    private void AfterCombatStart(ActualGoapNode goapNode) {
+    public void AfterCombatStart(ActualGoapNode goapNode) {
+        Debug.Log(goapNode.actor + " will start combat towards " + goapNode.poiTarget.name);
         goapNode.actor.marker.AddHostileInRange(goapNode.poiTarget, false);
     }
     #endregion
@@ -541,8 +542,8 @@ public class Assault : GoapAction {
     //#endregion
 }
 
-public class AssaultCharacterData : GoapActionData {
-    public AssaultCharacterData() : base(INTERACTION_TYPE.ASSAULT) {
+public class AssaultData : GoapActionData {
+    public AssaultData() : base(INTERACTION_TYPE.ASSAULT) {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }

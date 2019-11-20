@@ -52,10 +52,10 @@ public class RitualKilling : GoapAction {
     #endregion
 
     #region State Effects
-    private void PreKillingSuccess(ActualGoapNode goapNode) {
+    public void PreKillingSuccess(ActualGoapNode goapNode) {
         
     }
-    private void AfterKillingSuccess(ActualGoapNode goapNode) {
+    public void AfterKillingSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustHappiness(10000);
         if (goapNode.poiTarget is Character) {
             Character targetCharacter = goapNode.poiTarget as Character;

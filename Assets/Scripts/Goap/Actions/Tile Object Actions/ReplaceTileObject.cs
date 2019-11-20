@@ -55,11 +55,11 @@ public class ReplaceTileObject : GoapAction {
     #endregion
 
     #region State Effects
-    private void PreReplaceSuccess(ActualGoapNode goapNode) {
+    public void PreReplaceSuccess(ActualGoapNode goapNode) {
         TileObject tileObjectToReplace = goapNode.otherData[0] as TileObject;
         goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectToReplace.ToString()), LOG_IDENTIFIER.STRING_1);
     }
-    private void AfterReplaceSuccess(ActualGoapNode goapNode) {
+    public void AfterReplaceSuccess(ActualGoapNode goapNode) {
         TileObject tileObjectToReplace = goapNode.otherData[0] as TileObject;
         LocationGridTile whereToPlace = goapNode.otherData[1] as LocationGridTile;
         //place the tile object at the specified location.
