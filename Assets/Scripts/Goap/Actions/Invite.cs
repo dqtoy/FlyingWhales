@@ -52,14 +52,14 @@ public class Invite : GoapAction {
     #endregion
 
     #region Effects
-    private void PreInviteSuccess(ActualGoapNode goapNode) {
+    public void PreInviteSuccess(ActualGoapNode goapNode) {
         goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Wooed", goapNode.actor);
         goapNode.actor.ownParty.AddCharacter(goapNode.poiTarget as Character);
     }
-    //private void PreInviteFail(ActualGoapNode goapNode) {
+    //public void PreInviteFail(ActualGoapNode goapNode) {
     //    currentState.SetIntelReaction(InviteFailReactions);
     //}
-    private void AfterInviteFail(ActualGoapNode goapNode) {
+    public void AfterInviteFail(ActualGoapNode goapNode) {
         if (goapNode.actor is SeducerSummon) {
             //Start Combat between actor and target
             Character target = goapNode.poiTarget as Character;

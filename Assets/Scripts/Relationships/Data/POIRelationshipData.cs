@@ -42,13 +42,21 @@ public class POIRelationshipData : IRelationshipData {
         return false;
     }
     private RELATIONSHIP_EFFECT GetRelationshipStatus() {
-        if (relationshipValue < 0) {
-            return RELATIONSHIP_EFFECT.NEGATIVE;
-        } else if (relationshipValue > 0) {
+        if (HasRelationship(RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.RELATIVE, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
             return RELATIONSHIP_EFFECT.POSITIVE;
+        } else if (HasRelationship(RELATIONSHIP_TRAIT.ENEMY)) {
+            return RELATIONSHIP_EFFECT.NEGATIVE;
         } else {
             return RELATIONSHIP_EFFECT.NEUTRAL;
         }
+
+        //if (relationshipValue < 0) {
+        //    return RELATIONSHIP_EFFECT.NEGATIVE;
+        //} else if (relationshipValue > 0) {
+        //    return RELATIONSHIP_EFFECT.POSITIVE;
+        //} else {
+        //    return RELATIONSHIP_EFFECT.NEUTRAL;
+        //}
     }
     #endregion
 

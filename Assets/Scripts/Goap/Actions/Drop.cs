@@ -27,10 +27,12 @@ public class Drop : GoapAction {
         return 1;
     }
     public override LocationStructure GetTargetStructure(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (otherData.Length == 1 && otherData[0] is LocationStructure) {
-            return otherData[0] as LocationStructure;
-        } else if (otherData.Length == 2 && otherData[0] is LocationStructure && otherData[1] is LocationGridTile) {
-            return otherData[0] as LocationStructure;
+        if (otherData != null) {
+            if (otherData.Length == 1 && otherData[0] is LocationStructure) {
+                return otherData[0] as LocationStructure;
+            } else if (otherData.Length == 2 && otherData[0] is LocationStructure && otherData[1] is LocationGridTile) {
+                return otherData[0] as LocationStructure;
+            }
         }
         return base.GetTargetStructure(actor, poiTarget, otherData);
     }

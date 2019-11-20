@@ -65,18 +65,18 @@ public class RememberFallen : GoapAction {
     #endregion
 
     #region Effects
-    private void PreRememberSuccess(ActualGoapNode goapNode) {
+    public void PreRememberSuccess(ActualGoapNode goapNode) {
         Tombstone tombstone = goapNode.poiTarget as Tombstone;
         goapNode.descriptionLog.AddToFillers(null, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         goapNode.actor.AdjustDoNotGetLonely(1);
     }
-    private void PerTickRememberSuccess(ActualGoapNode goapNode) {
+    public void PerTickRememberSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustHappiness(500);
     }
-    private void AfterRememberSuccess(ActualGoapNode goapNode) {
+    public void AfterRememberSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustDoNotGetLonely(-1);
     }
-    //private void PreTargetMissing() {
+    //public void PreTargetMissing() {
     //    Tombstone tombstone = goapNode.poiTarget as Tombstone;
     //    goapNode.descriptionLog.AddToFillers(null, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     //}

@@ -260,7 +260,7 @@ namespace Traits {
             return _character.marker.inVisionCharacters.Count == 0;
         }
         private void DoTransformWolf() {
-            if (_character.currentActionNode.action != null) {
+            if (_character.currentActionNode != null) {
                 _character.StopCurrentActionNode(false);
             }
             if (_character.stateComponent.currentState != null) {

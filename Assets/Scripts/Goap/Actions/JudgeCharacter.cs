@@ -24,7 +24,7 @@ public class JudgeCharacter : GoapAction {
     #endregion
 
     #region State Effects
-    private void AfterJudgeSuccess(ActualGoapNode goapNode) {
+    public void AfterJudgeSuccess(ActualGoapNode goapNode) {
         WeightedFloatDictionary<string> weights = new WeightedFloatDictionary<string>();
 
         Character targetCharacter = goapNode.poiTarget as Character;

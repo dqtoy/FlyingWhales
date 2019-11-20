@@ -57,8 +57,10 @@ public class StrollState : CharacterState {
     #endregion
 
     private void OnArriveAtPickUpLocation(SpecialToken token) {
-        stateComponent.character.PickUpToken(token);
-        StrollAgain();
+        if (token.gridTileLocation != null) {
+            stateComponent.character.PickUpToken(token);
+            StrollAgain();
+        }
     }
     private void StrollAgain() {
         ResumeState();

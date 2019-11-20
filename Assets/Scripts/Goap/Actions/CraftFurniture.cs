@@ -90,11 +90,11 @@ public class CraftFurniture : GoapAction {
    // #endregion
 
    // #region State Effects
-   // private void PreCraftSuccess() {
+   // public void PreCraftSuccess() {
    //     goapNode.descriptionLog.AddToFillers(null, Utilities.GetArticleForWord(furnitureToCreate.ToString()), LOG_IDENTIFIER.STRING_1);
    //     goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(furnitureToCreate.ToString()), LOG_IDENTIFIER.ITEM_1);
    // }
-   // private void AfterCraftSuccess() {
+   // public void AfterCraftSuccess() {
    //     actor.AdjustSupply(-TileObjectDB.GetTileObjectData(furnitureToCreate).constructionCost);
    //     if (targetSpot.objHere == null) {
    //         targetSpot.structure.AddTileObject(furnitureToCreate, targetSpot, false);

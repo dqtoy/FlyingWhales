@@ -27,10 +27,10 @@ public class LaughAt : GoapAction {
     #endregion
 
     #region State Effects
-    private void PerTickLaughSuccess(ActualGoapNode goapNode) {
+    public void PerTickLaughSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustHappiness(500);
     }
-    private void AfterLaughSuccess(ActualGoapNode goapNode) {
+    public void AfterLaughSuccess(ActualGoapNode goapNode) {
         if (goapNode.poiTarget.traitContainer.GetNormalTrait("Unconscious") == null) {
             goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Ashamed");
         }

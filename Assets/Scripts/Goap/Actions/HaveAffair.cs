@@ -47,10 +47,10 @@ public class HaveAffair : GoapAction {
     #endregion
 
     #region Effects
-    private void PreAffairSuccess() {
+    public void PreAffairSuccess() {
         //currentState.SetIntelReaction(AffairSuccessReactions);
     }
-    private void AfterAffairSuccess(ActualGoapNode goapNode) {
+    public void AfterAffairSuccess(ActualGoapNode goapNode) {
         RelationshipManager.Instance.CreateNewRelationshipBetween(goapNode.actor, goapNode.poiTarget as Character, RELATIONSHIP_TRAIT.PARAMOUR);
     }
     #endregion

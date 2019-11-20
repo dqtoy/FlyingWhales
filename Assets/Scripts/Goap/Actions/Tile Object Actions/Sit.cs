@@ -38,10 +38,10 @@ public class Sit : GoapAction {
     #endregion
 
     #region Effects
-    //private void PreSitFail(ActualGoapNode goapNode) {
+    //public void PreSitFail(ActualGoapNode goapNode) {
     //    goapNode.descriptionLog.AddToFillers(null, goapNode.poiTarget.name, LOG_IDENTIFIER.STRING_1);
     //}
-    //private void PreTargetMissing(ActualGoapNode goapNode) {
+    //public void PreTargetMissing(ActualGoapNode goapNode) {
     //    goapNode.descriptionLog.AddToFillers(null, goapNode.poiTarget.name, LOG_IDENTIFIER.STRING_1);
     //}
     #endregion

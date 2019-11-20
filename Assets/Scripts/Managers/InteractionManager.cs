@@ -39,9 +39,6 @@ public class InteractionManager : MonoBehaviour {
         }
         for (int i = 0; i < goapActionData.Values.Count; i++) {
             GoapAction currAction = goapActionData.Values.ElementAt(i);
-            if (currAction.advertisedBy == null) {
-                throw new Exception(currAction.goapName + "'s advertised by is null!");
-            }
             for (int j = 0; j < currAction.advertisedBy.Length; j++) {
                 POINT_OF_INTEREST_TYPE currType = currAction.advertisedBy[j];
                 allGoapActionAdvertisements[currType].Add(currAction);

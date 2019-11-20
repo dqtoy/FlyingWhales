@@ -23,10 +23,10 @@ public class SepticShock : GoapAction {
     #endregion
 
     #region State Effects
-    private void PreSepticShockSuccess(ActualGoapNode goapNode) {
+    public void PreSepticShockSuccess(ActualGoapNode goapNode) {
         goapNode.actor.SetPOIState(POI_STATE.INACTIVE);
     }
-    private void AfterSepticShockSuccess(ActualGoapNode goapNode) {
+    public void AfterSepticShockSuccess(ActualGoapNode goapNode) {
         goapNode.actor.SetPOIState(POI_STATE.ACTIVE);
         goapNode.actor.Death("Septic Shock", goapNode, _deathLog: goapNode.action.states[goapNode.currentStateName].descriptionLog);
     }

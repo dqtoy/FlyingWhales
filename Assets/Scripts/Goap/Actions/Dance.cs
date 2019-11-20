@@ -47,13 +47,13 @@ public class Dance : GoapAction {
     #endregion
 
     #region Effects
-    private void PreDanceSuccess(ActualGoapNode goapNode) {
+    public void PreDanceSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustDoNotGetLonely(1);
     }
-    private void PerTickDanceSuccess(ActualGoapNode goapNode) {
+    public void PerTickDanceSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustHappiness(1000);
     }
-    private void AfterDanceSuccess(ActualGoapNode goapNode) {
+    public void AfterDanceSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustDoNotGetLonely(-1);
     }
     #endregion

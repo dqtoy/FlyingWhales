@@ -23,11 +23,11 @@ public class Puke : GoapAction {
     #endregion
 
     #region State Effects
-    private void PrePukeSuccess(ActualGoapNode goapNode) {
+    public void PrePukeSuccess(ActualGoapNode goapNode) {
         goapNode.actor.SetPOIState(POI_STATE.INACTIVE);
         //TODO: currentState.SetIntelReaction(SuccessReactions);
     }
-    private void AfterPukeSuccess(ActualGoapNode goapNode) {
+    public void AfterPukeSuccess(ActualGoapNode goapNode) {
         goapNode.actor.SetPOIState(POI_STATE.ACTIVE);
         //if (recipient != null) {
         //    CreateRemoveTraitJob(recipient);

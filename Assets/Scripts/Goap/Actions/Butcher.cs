@@ -86,7 +86,7 @@ public class Butcher : GoapAction {
     }
 
     #region State Effects
-    private void PreTransformSuccess(ActualGoapNode goapNode) {
+    public void PreTransformSuccess(ActualGoapNode goapNode) {
         Character deadCharacter = GetDeadCharacter(goapNode.poiTarget);
         int transformedFood = 0;
         if (deadCharacter.race == RACE.WOLF) {
@@ -104,7 +104,7 @@ public class Butcher : GoapAction {
         goapNode.descriptionLog.AddToFillers(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         goapNode.descriptionLog.AddToFillers(null, transformedFood.ToString(), LOG_IDENTIFIER.STRING_1);
     }
-    private void AfterTransformSuccess(ActualGoapNode goapNode) {
+    public void AfterTransformSuccess(ActualGoapNode goapNode) {
         Character deadCharacter = GetDeadCharacter(goapNode.poiTarget);
         int transformedFood = 0;
         if (deadCharacter.race == RACE.WOLF) {
@@ -122,7 +122,7 @@ public class Butcher : GoapAction {
             (goapNode.poiTarget as Character).DestroyMarker();
         }
     }
-    //private void PreTargetMissing() {
+    //public void PreTargetMissing() {
     //    goapNode.descriptionLog.AddToFillers(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     //}
     #endregion

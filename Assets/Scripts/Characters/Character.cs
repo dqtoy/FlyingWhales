@@ -5170,6 +5170,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (AddToken(token)) {
             token.SetOwner(this.faction);
             token.OnObtainToken(this);
+            token.SetCarriedByCharacter(this);
             if (changeCharacterOwnership) {
                 token.SetCharacterOwner(this);
             } else {
@@ -5184,6 +5185,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     public bool UnobtainToken(SpecialToken token) {
         if (RemoveToken(token)) {
+            token.SetCarriedByCharacter(null);
             token.OnUnobtainToken(this);
             return true;
         }
@@ -5254,8 +5256,13 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
     }
     public void PickUpToken(SpecialToken token, bool changeCharacterOwnership = true) {
+        if (token.carriedByCharacter != null) {
+            token.carriedByCharacter.UnobtainToken(token);
+        }
         if (ObtainToken(token, changeCharacterOwnership)) {
-            token.gridTileLocation.structure.location.RemoveSpecialTokenFromLocation(token);
+            if (token.gridTileLocation != null) {
+                token.gridTileLocation.structure.location.RemoveSpecialTokenFromLocation(token);
+            }
         }
     }
     public void DestroyToken(SpecialToken token) {
@@ -6104,6 +6111,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         advertisedActions.Add(INTERACTION_TYPE.RETURN_HOME);
         advertisedActions.Add(INTERACTION_TYPE.RETURN_HOME_LOCATION);
         advertisedActions.Add(INTERACTION_TYPE.CHAT_CHARACTER);
+        advertisedActions.Add(INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM);
+        advertisedActions.Add(INTERACTION_TYPE.REVERT_TO_NORMAL_FORM);
 
         if (race != RACE.SKELETON) {
             advertisedActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);

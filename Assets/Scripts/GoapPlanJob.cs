@@ -168,6 +168,7 @@ public class GoapPlanJob : JobQueueItem {
     }
     public override bool ForceCancelJob(bool shouldDoAfterEffect = true, string cause = "", string reason = "") {
         if (assignedCharacter != null) {
+            Character assignedCharacter = this.assignedCharacter;
             if (assignedCharacter.jobQueue.RemoveJobInQueue(this, shouldDoAfterEffect, reason)) {
                 if (cause != "") {
                     assignedCharacter.RegisterLogAndShowNotifToThisCharacterOnly("Generic", "job_cancelled_cause", null, cause);

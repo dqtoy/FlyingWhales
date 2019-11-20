@@ -68,7 +68,7 @@ public class ObtainResource : GoapAction {
     #endregion
 
     #region State Effects
-    private void PreTakeSuccess(ActualGoapNode goapNode) {
+    public void PreTakeSuccess(ActualGoapNode goapNode) {
         FoodPile foodPile = goapNode.poiTarget as FoodPile;
         int neededFood = (int)goapNode.otherData[0];
         int takenFood = neededFood - goapNode.actor.food;
@@ -79,7 +79,7 @@ public class ObtainResource : GoapAction {
         goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
         goapNode.descriptionLog.AddToFillers(null, takenFood.ToString(), LOG_IDENTIFIER.STRING_1);
     }
-    private void AfterTakeSuccess(ActualGoapNode goapNode) {
+    public void AfterTakeSuccess(ActualGoapNode goapNode) {
         FoodPile foodPile = goapNode.poiTarget as FoodPile;
         int neededFood = (int)goapNode.otherData[0];
         int takenFood = neededFood - goapNode.actor.food;

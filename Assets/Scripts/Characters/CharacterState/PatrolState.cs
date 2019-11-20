@@ -67,8 +67,11 @@ public class PatrolState : CharacterState {
     #endregion
 
     private void OnArriveAtPickUpLocation(SpecialToken token) {
-        stateComponent.character.PickUpToken(token);
-        PatrolAgain();
+        if (token.gridTileLocation != null) {
+            stateComponent.character.PickUpToken(token);
+            PatrolAgain();
+        }
+        
     }
     private void PatrolAgain() {
         ResumeState();
