@@ -124,7 +124,7 @@ namespace Traits {
             for (int i = 0; i < allTraits.Count; i++) {
                 Trait trait = allTraits[i];
                 for (int j = 0; j < traitNames.Length; j++) {
-                    if (trait.name == traitNames[j] || trait.GetType().ToString() == traitNames[j]) {
+                    if (trait.name == traitNames[j]) { // || trait.GetType().ToString() == traitNames[j]
                         return trait;
                     }
                 }

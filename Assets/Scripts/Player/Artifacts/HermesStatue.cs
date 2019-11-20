@@ -34,8 +34,8 @@ public class HermesStatue : Artifact {
         if (choices.Count > 0 && currentUses < uses) {
             chosenRegion = choices[Random.Range(0, choices.Count)];
             OnInspectActionDone(inspectedBy);
-            if (LocalizationManager.Instance.HasLocalizedValue("Artifact", this.GetType().ToString(), "on_inspect")) {
-                Log result = new Log(GameManager.Instance.Today(), "Artifact", this.GetType().ToString(), "on_inspect");
+            if (LocalizationManager.Instance.HasLocalizedValue("Artifact", name, "on_inspect")) {
+                Log result = new Log(GameManager.Instance.Today(), "Artifact", name, "on_inspect");
                 result.AddToFillers(inspectedBy, inspectedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 result.AddToFillers(chosenRegion, chosenRegion.name, LOG_IDENTIFIER.LANDMARK_1);
                 inspectedBy.RegisterLogAndShowNotifToThisCharacterOnly(result, onlyClickedCharacter: false);

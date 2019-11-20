@@ -93,8 +93,8 @@ public class WorldEvent  {
     }
     public virtual void ExecuteAfterInvasionEffect(Region region) {
         Debug.Log(GameManager.Instance.TodayLogString() + this.name + " after invasion effect executed at " + region.name);
-        if (LocalizationManager.Instance.HasLocalizedValue("WorldEvent", this.GetType().ToString(), "after_invasion_effect")) {
-            Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_invasion_effect");
+        if (LocalizationManager.Instance.HasLocalizedValue("WorldEvent", name, "after_invasion_effect")) {
+            Log log = new Log(GameManager.Instance.Today(), "WorldEvent", name, "after_invasion_effect");
             AddDefaultFillersToLog(log, region);
             log.AddLogToInvolvedObjects();
             PlayerManager.Instance.player.ShowNotification(log);

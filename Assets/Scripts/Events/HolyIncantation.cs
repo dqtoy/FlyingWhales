@@ -11,7 +11,7 @@ public class HolyIncantation : WorldEvent {
 
     #region Overrides
     protected override void ExecuteAfterEffect(Region region, Character spawner) {
-        Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect");
+        Log log = new Log(GameManager.Instance.Today(), "WorldEvent", name, "after_effect");
         AddDefaultFillersToLog(log, region);
         log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(region.mainLandmark.specificLandmarkType.ToString()), LOG_IDENTIFIER.STRING_1);
         log.AddLogToInvolvedObjects();

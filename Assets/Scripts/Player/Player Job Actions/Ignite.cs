@@ -27,7 +27,7 @@ public class Ignite : PlayerJobAction {
                 burning.SetSourceOfBurning(bs, tile.genericTileObject);
                 tile.genericTileObject.traitContainer.AddTrait(tile.genericTileObject, burning);
             }
-            Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", this.GetType().ToString(), "activated");
+            Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", name, "activated");
             PlayerManager.Instance.player.ShowNotification(log);
         }
     }

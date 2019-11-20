@@ -109,7 +109,7 @@ public class MoveOutState : CharacterState {
         SchedulingManager.Instance.AddEntry(dueDate, ArriveAtRegion, this);
 
         //Show log
-        Log log = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "left");
+        Log log = new Log(GameManager.Instance.Today(), "CharacterState", stateName, "left");
         log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(stateComponent.character.specificLocation, stateComponent.character.specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         log.AddLogToInvolvedObjects();
@@ -135,7 +135,7 @@ public class MoveOutState : CharacterState {
     private void OnArriveAtRegion() {
         if(job.jobType == JOB_TYPE.RETURN_HOME) {
             //Show log
-            Log log = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "arrive_home");
+            Log log = new Log(GameManager.Instance.Today(), "CharacterState", stateName, "arrive_home");
             log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(stateComponent.character.homeRegion, stateComponent.character.homeRegion.name, LOG_IDENTIFIER.LANDMARK_1);
             log.AddLogToInvolvedObjects();
@@ -148,7 +148,7 @@ public class MoveOutState : CharacterState {
             GameDate dueDate = GameManager.Instance.Today();
             dueDate = dueDate.AddTicks(3 * GameManager.ticksPerHour);
             goHomeSchedID = SchedulingManager.Instance.AddEntry(dueDate, GoHome, this);
-            Log log = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "arrived_region");
+            Log log = new Log(GameManager.Instance.Today(), "CharacterState", stateName, "arrived_region");
             log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(chosenRegion, chosenRegion.name, LOG_IDENTIFIER.LANDMARK_1);
             log.AddLogToInvolvedObjects();
@@ -168,7 +168,7 @@ public class MoveOutState : CharacterState {
         SchedulingManager.Instance.AddEntry(dueDate, ArriveHome, this);
 
         //Show log
-        Log log = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "going_home");
+        Log log = new Log(GameManager.Instance.Today(), "CharacterState", stateName, "going_home");
         log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(stateComponent.character.homeRegion, stateComponent.character.homeRegion.name, LOG_IDENTIFIER.LANDMARK_1);
         log.AddLogToInvolvedObjects();
@@ -182,7 +182,7 @@ public class MoveOutState : CharacterState {
         CheckNeeds();
         
         //Show log
-        Log log = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "arrive_home");
+        Log log = new Log(GameManager.Instance.Today(), "CharacterState", stateName, "arrive_home");
         log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(stateComponent.character.homeRegion, stateComponent.character.homeRegion.name, LOG_IDENTIFIER.LANDMARK_1);
         log.AddLogToInvolvedObjects();

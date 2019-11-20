@@ -51,7 +51,7 @@ namespace Traits {
             if (character.marker.AddAvoidsInRange(source.objectsOnFire)) {
                 summary += "\nStarted fleeing";
                 //TODO:character.CancelAllJobsAndPlans();
-                Log log = new Log(GameManager.Instance.Today(), "Trait", this.GetType().ToString(), "flee");
+                Log log = new Log(GameManager.Instance.Today(), "Trait", name, "flee");
                 log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddLogToInvolvedObjects();
                 PlayerManager.Instance.player.ShowNotificationFrom(character, log);
@@ -62,7 +62,7 @@ namespace Traits {
             Debug.Log(summary);
         }
         public void BeCatatonic(BurningSource source, Character character) {
-            Log log = new Log(GameManager.Instance.Today(), "Trait", this.GetType().ToString(), "catatonic");
+            Log log = new Log(GameManager.Instance.Today(), "Trait", name, "catatonic");
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddLogToInvolvedObjects();
             PlayerManager.Instance.player.ShowNotificationFrom(character, log);

@@ -6,8 +6,7 @@ using BayatGames.SaveGameFree.Types;
 using Traits;
 
 public class TileObject : IPointOfInterest {
-
-    public string name { get { return ToString(); } }
+    public string name { get; private set; }
     public int id { get; private set; }
     public TILE_OBJECT_TYPE tileObjectType { get; private set; }
     public Faction factionOwner { get { return null; } }
@@ -76,6 +75,7 @@ public class TileObject : IPointOfInterest {
     protected void Initialize(TILE_OBJECT_TYPE tileObjectType) {
         id = Utilities.SetID(this);
         this.tileObjectType = tileObjectType;
+        name = Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectType.ToString());
         _traits = new List<Trait>();
         actionHistory = new List<string>();
         awareCharacters = new List<Character>();

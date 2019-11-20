@@ -18,7 +18,7 @@ public class Spoil : PlayerJobAction {
             Poisoned poison = new Poisoned();
             poison.SetLevel(level);
             targetPOI.traitContainer.AddTrait(targetPOI, poison);
-            Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", this.GetType().ToString(), "activated");
+            Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", name, "activated");
             PlayerManager.Instance.player.ShowNotification(log);
         }
     }

@@ -149,8 +149,8 @@ public class CharacterState {
     }
     protected virtual void OnJobSet() { }
     protected virtual void CreateThoughtBubbleLog() {
-        if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", this.GetType().ToString(), "thought_bubble")) {
-            thoughtBubbleLog = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "thought_bubble");
+        if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", stateName, "thought_bubble")) {
+            thoughtBubbleLog = new Log(GameManager.Instance.Today(), "CharacterState", stateName, "thought_bubble");
             thoughtBubbleLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             if (targetCharacter != null) {
                 thoughtBubbleLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
@@ -159,10 +159,10 @@ public class CharacterState {
     }
     #endregion
 
-    private void FakeEndAction(string str, GoapAction action) {
-        //This is just a fake holder end action so that the currently doing action will not go to its actual end action (ex. PatrolAgain)
-        //This is done because we don't want the GoapActionResult to be called as well as the actual end action
-    }
+    //private void FakeEndAction(string str, GoapAction action) {
+    //    //This is just a fake holder end action so that the currently doing action will not go to its actual end action (ex. PatrolAgain)
+    //    //This is done because we don't want the GoapActionResult to be called as well as the actual end action
+    //}
 
     //Stops the timer of this state
     public void StopStatePerTick() {
@@ -248,8 +248,8 @@ public class CharacterState {
     /// What should happen once the job of this state is set to anything other than null?
     /// </summary>
     private void CreateStartStateLog() {
-        if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", this.GetType().ToString(), "start")) {
-            Log log = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "start");
+        if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", stateName, "start")) {
+            Log log = new Log(GameManager.Instance.Today(), "CharacterState", stateName, "start");
             log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             if (targetCharacter != null) {
                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
@@ -263,8 +263,8 @@ public class CharacterState {
         }
     }
     private void CreateTravellingThoughtBubbleLog(Area targetLocation) {
-        if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", this.GetType().ToString(), "thought_bubble_m")) {
-            thoughtBubbleLog = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "thought_bubble_m");
+        if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", stateName, "thought_bubble_m")) {
+            thoughtBubbleLog = new Log(GameManager.Instance.Today(), "CharacterState", stateName, "thought_bubble_m");
             thoughtBubbleLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             thoughtBubbleLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         }

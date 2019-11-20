@@ -138,8 +138,8 @@ namespace Traits {
             }
         }
         public string GetTriggerFlawEffectDescription(Character character, string key) {
-            if (LocalizationManager.Instance.HasLocalizedValue("Trait", this.GetType().ToString(), key)) {
-                Log log = new Log(GameManager.Instance.Today(), "Trait", this.GetType().ToString(), key);
+            if (LocalizationManager.Instance.HasLocalizedValue("Trait", name, key)) {
+                Log log = new Log(GameManager.Instance.Today(), "Trait", name, key);
                 log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 return Utilities.LogReplacer(log);
             }

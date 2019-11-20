@@ -132,7 +132,7 @@ public class TraitManager : MonoBehaviour {
     public bool IsInstancedTrait(string traitName) {
         for (int i = 0; i < instancedTraits.Length; i++) {
             Trait currTrait = instancedTraits[i];
-            if (string.Equals(currTrait.name, traitName, StringComparison.OrdinalIgnoreCase) || string.Equals(currTrait.GetType().ToString(), traitName, StringComparison.OrdinalIgnoreCase)) {
+            if (string.Equals(currTrait.name, traitName, StringComparison.OrdinalIgnoreCase)) { //|| string.Equals(currTrait.GetType().ToString(), traitName, StringComparison.OrdinalIgnoreCase)
                 return true;
             }
         }
