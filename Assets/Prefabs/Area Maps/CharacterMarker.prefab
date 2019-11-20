@@ -657,7 +657,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 1.25, y: 1.25}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -796,7 +796,6 @@ MonoBehaviour:
   hoveredImg: {fileID: 212097248544747360}
   clickedImg: {fileID: 212731852412647684}
   actionIcon: {fileID: 212948007245262788}
-  berserkedOutline: {fileID: 212653369134426336}
   actionIconDictionary:
     m_keys:
     - Eat
@@ -1199,7 +1198,7 @@ SpriteRenderer:
   m_SortingLayerID: 1024382313
   m_SortingLayer: 19
   m_SortingOrder: 20
-  m_Sprite: {fileID: 21300000, guid: 45b22988c879646488b23dcc2915bc35, type: 3}
+  m_Sprite: {fileID: 21300000, guid: eddb2d77e75969f48a7ba6d72a99b436, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

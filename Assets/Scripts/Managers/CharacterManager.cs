@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Traits;
+using System.IO;
 
 public class CharacterManager : MonoBehaviour {
 
@@ -32,7 +33,8 @@ public class CharacterManager : MonoBehaviour {
     public Material hsvMaterial;
 
     [Header("Character Marker Assets")]
-    [SerializeField] private List<RaceMarkerAssets> markerAssets;
+    [SerializeField] private List<RaceMarkerAsset> markerAssets;
+    [SerializeField] private RuntimeAnimatorController baseAnimator;
 
     [Header("Summon Settings")]
     [SerializeField] private SummonSettingDictionary summonSettings;
@@ -574,32 +576,88 @@ public class CharacterManager : MonoBehaviour {
     }
     #endregion
 
-    //#region Elements
-    //private void ConstructElementChanceDictionary() {
-    //    _elementsChanceDictionary = new Dictionary<ELEMENT, float>();
-    //    ELEMENT[] elements = (ELEMENT[]) System.Enum.GetValues(typeof(ELEMENT));
-    //    for (int i = 0; i < elements.Length; i++) {
-    //        _elementsChanceDictionary.Add(elements[i], 0f);
-    //    }
-    //}
-    //#endregion
-
     #region Marker Assets
-    public MarkerAsset GetMarkerAsset(RACE race, GENDER gender) {
+    public CharacterClassAsset GetMarkerAsset(RACE race, GENDER gender, string characterClassName) {
         for (int i = 0; i < markerAssets.Count; i++) {
-            RaceMarkerAssets currRaceAsset = markerAssets[i];
+            RaceMarkerAsset currRaceAsset = markerAssets[i];
             if (currRaceAsset.race == race) {
-                MarkerAsset asset = currRaceAsset.maleAssets;
-                if (gender == GENDER.FEMALE) {
-                    asset  = currRaceAsset.femaleAssets;
+                GenderMarkerAsset asset = currRaceAsset.GetMarkerAsset(gender);
+                if (asset.characterClassAssets.ContainsKey(characterClassName) == false) {
+                    throw new System.Exception($"There are no class assets for {characterClassName} {gender.ToString()} {race.ToString()}");
                 }
-                return asset;
+                return asset.characterClassAssets[characterClassName];
             }
         }
-        if (gender == GENDER.FEMALE) {
-            return markerAssets[0].femaleAssets;
+        //if (gender == GENDER.FEMALE) {
+        //    return markerAssets[0].femaleAssets;
+        //}
+        //return markerAssets[0].maleAssets;
+        return null;
+    }
+    public void LoadCharacterMarkerAssets() {
+        markerAssets = new List<RaceMarkerAsset>();
+        string characterMarkerAssetPath = "Assets/Textures/Character Markers/";
+        string[] races = Directory.GetDirectories(characterMarkerAssetPath);
+
+        //Debug.Log(raceName);
+        //Debug.Log(Path.GetFileName(Path.GetDirectoryName(currRacePath)));
+
+        //loop through races found in directory
+        for (int i = 0; i < races.Length; i++) {
+            string currRacePath = races[i];
+            string raceName = new DirectoryInfo(currRacePath).Name.ToUpper();
+            RACE race;
+            if (System.Enum.TryParse(raceName, out race)) {
+                RaceMarkerAsset raceAsset = new RaceMarkerAsset(race);
+                //loop through genders found in races directory
+                string[] genders = System.IO.Directory.GetDirectories(currRacePath);
+                for (int j = 0; j < genders.Length; j++) {
+                    string currGenderPath = genders[j];
+                    string genderName = new DirectoryInfo(currGenderPath).Name.ToUpper();
+                    GENDER gender;
+                    if (System.Enum.TryParse(genderName, out gender)) {
+                        GenderMarkerAsset markerAsset = raceAsset.GetMarkerAsset(gender);
+                        //loop through all folders found in gender directory. consider all these as character classes
+                        string[] characterClasses = System.IO.Directory.GetDirectories(currGenderPath);
+                        for (int k = 0; k < characterClasses.Length; k++) {
+                            string currCharacterClassPath = characterClasses[k];
+                            string className = new DirectoryInfo(currCharacterClassPath).Name;
+                            string[] classFiles = Directory.GetFiles(currCharacterClassPath);
+                            CharacterClassAsset characterClassAsset = new CharacterClassAsset();
+                            markerAsset.characterClassAssets.Add(className, characterClassAsset);
+                            characterClassAsset.animator = this.baseAnimator;
+                            for (int l = 0; l < classFiles.Length; l++) {
+                                string classAssetPath = classFiles[l];
+                                Sprite loadedSprite = (Sprite)UnityEditor.AssetDatabase.LoadAssetAtPath(classAssetPath, typeof(Sprite));
+                                if (loadedSprite != null) {
+                                    if (loadedSprite.name.Contains("_body")) {
+                                        characterClassAsset.defaultSprite = loadedSprite;
+                                    }
+                                }
+                                AnimationClip animationClip = (AnimationClip)UnityEditor.AssetDatabase.LoadAssetAtPath(classAssetPath, typeof(AnimationClip));
+                                if (animationClip != null) {
+                                    if (animationClip.name.Contains("attack")) {
+                                        characterClassAsset.attackClip = animationClip;
+                                    } else if (animationClip.name.Contains("idle")) {
+                                        characterClassAsset.idleClip = animationClip;
+                                    } else if (animationClip.name.Contains("walk")) {
+                                        characterClassAsset.walkClip = animationClip;
+                                    } else if (animationClip.name.Contains("dead")) {
+                                        characterClassAsset.deadClip = animationClip;
+                                    } else if (animationClip.name.Contains("raise_dead")) {
+                                        characterClassAsset.raiseDeadClip = animationClip;
+                                    } else if (animationClip.name.Contains("sleep_ground")) {
+                                        characterClassAsset.sleepGroundClip = animationClip;
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+                markerAssets.Add(raceAsset);
+            }
         }
-        return markerAssets[0].maleAssets;
     }
     #endregion
 

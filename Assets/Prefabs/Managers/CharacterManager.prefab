@@ -321,246 +321,1409 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 9d587aedde59e4e45885cde1e5758b37, type: 3}
   hsvMaterial: {fileID: 2100000, guid: f635580cdf2e2344ea31e0dba17cb9b5, type: 2}
   markerAssets:
-  - raceName: Humans
-    race: 1
-    maleAssets:
-      gender: 0
-      defaultSprite: {fileID: 21300000, guid: 94475c8d3316bae45b0f52eec2c2ea25, type: 3}
-      hoverSprite: {fileID: 21300000, guid: ec914b0adf68767468fd588db4e9c4cf, type: 3}
-      clickedSprite: {fileID: 21300000, guid: 260d3d2393afbfd45afd87419937c87a, type: 3}
-      animator: {fileID: 9100000, guid: ffe6e2853385f4440abc8c2b55a9068f, type: 2}
-      idle: {fileID: 7400000, guid: 51cc1d7bf1bd77243ba37bb61972b2eb, type: 2}
-      walk: {fileID: 7400000, guid: d4d892eeb06417547ba6b0300ff5fe8f, type: 2}
-      sleepGround: {fileID: 7400000, guid: baccf9421c26e514d9be49e2c569f40e, type: 2}
-      dead: {fileID: 7400000, guid: d69f1ffcdbff2b7418ff129afa2885c5, type: 2}
-      raiseDead: {fileID: 7400000, guid: 92e3cdcd5c39cee469a5376ebf6c72d0, type: 2}
-      slashClip: {fileID: 7400000, guid: 7a7f8b33001b58e4ba5ef8c5d36c855d, type: 2}
-      magicClip: {fileID: 7400000, guid: 064c528a6e1311542839ce27b5cd6a01, type: 2}
-      arrowClip: {fileID: 7400000, guid: 8e5e076f01148a949a6185c83d94bf82, type: 2}
-      biteClip: {fileID: 0}
-      slashTiming: 0.07
-      magicTiming: 0.19
-      arrowTiming: 0.4
-      biteTiming: 0
-    femaleAssets:
-      gender: 1
-      defaultSprite: {fileID: 21300000, guid: fbdf443ba2b2b6b48984cb614f9d6297, type: 3}
-      hoverSprite: {fileID: 21300000, guid: 752576a71888a4e449e89de313c81659, type: 3}
-      clickedSprite: {fileID: 21300000, guid: ecf702ce7dcbb76498e6c9f447be1c4f, type: 3}
-      animator: {fileID: 22100000, guid: a4c9b209d307a3b4aa590916ee5f9703, type: 2}
-      idle: {fileID: 7400000, guid: 251498ddd001f60478b0be68d6d9be89, type: 2}
-      walk: {fileID: 7400000, guid: 3bcdf041eafb0c14f9e2874e68b37679, type: 2}
-      sleepGround: {fileID: 7400000, guid: 29e2c731bc2350d4895f57012816eb2c, type: 2}
-      dead: {fileID: 0}
-      raiseDead: {fileID: 0}
-      slashClip: {fileID: 7400000, guid: ab86c74549659f241b32398b9586617a, type: 2}
-      magicClip: {fileID: 7400000, guid: c4bb0719d97ffe747a7a41831871beb6, type: 2}
-      arrowClip: {fileID: 7400000, guid: 8ff0e129a632f1249abc8d1095989d13, type: 2}
-      biteClip: {fileID: 0}
-      slashTiming: 0.07
-      magicTiming: 0.19
-      arrowTiming: 0.4
-      biteTiming: 0
-  - raceName: Skeleton
-    race: 13
-    maleAssets:
-      gender: 0
-      defaultSprite: {fileID: 21300000, guid: 117a7958b7b80384fa8e7a1b09a4caeb, type: 3}
-      hoverSprite: {fileID: 21300000, guid: 117a7958b7b80384fa8e7a1b09a4caeb, type: 3}
-      clickedSprite: {fileID: 21300000, guid: 117a7958b7b80384fa8e7a1b09a4caeb, type: 3}
-      animator: {fileID: 22100000, guid: 854a6491febd9814aab3d1926810e193, type: 2}
-      idle: {fileID: 7400000, guid: 796f3e6177b98eb409ef07c5a04a309d, type: 2}
-      walk: {fileID: 7400000, guid: da5f81b021fb9c64eb4463b65a7d5677, type: 2}
-      sleepGround: {fileID: 7400000, guid: 08ad7bf8d527cc141b92edf15d13ab11, type: 2}
-      dead: {fileID: 0}
-      raiseDead: {fileID: 0}
-      slashClip: {fileID: 7400000, guid: 7682397befa5fcc44a396ba0d8c14053, type: 2}
-      magicClip: {fileID: 7400000, guid: 7682397befa5fcc44a396ba0d8c14053, type: 2}
-      arrowClip: {fileID: 7400000, guid: 7682397befa5fcc44a396ba0d8c14053, type: 2}
-      biteClip: {fileID: 7400000, guid: 7682397befa5fcc44a396ba0d8c14053, type: 2}
-      slashTiming: 0.4
-      magicTiming: 0.4
-      arrowTiming: 0.4
-      biteTiming: 0.4
-    femaleAssets:
-      gender: 1
-      defaultSprite: {fileID: 21300000, guid: 117a7958b7b80384fa8e7a1b09a4caeb, type: 3}
-      hoverSprite: {fileID: 21300000, guid: 117a7958b7b80384fa8e7a1b09a4caeb, type: 3}
-      clickedSprite: {fileID: 21300000, guid: 117a7958b7b80384fa8e7a1b09a4caeb, type: 3}
-      animator: {fileID: 22100000, guid: 854a6491febd9814aab3d1926810e193, type: 2}
-      idle: {fileID: 7400000, guid: 796f3e6177b98eb409ef07c5a04a309d, type: 2}
-      walk: {fileID: 7400000, guid: da5f81b021fb9c64eb4463b65a7d5677, type: 2}
-      sleepGround: {fileID: 7400000, guid: 08ad7bf8d527cc141b92edf15d13ab11, type: 2}
-      dead: {fileID: 0}
-      raiseDead: {fileID: 0}
-      slashClip: {fileID: 7400000, guid: 7682397befa5fcc44a396ba0d8c14053, type: 2}
-      magicClip: {fileID: 7400000, guid: 7682397befa5fcc44a396ba0d8c14053, type: 2}
-      arrowClip: {fileID: 7400000, guid: 7682397befa5fcc44a396ba0d8c14053, type: 2}
-      biteClip: {fileID: 7400000, guid: 7682397befa5fcc44a396ba0d8c14053, type: 2}
-      slashTiming: 0.4
-      magicTiming: 0.4
-      arrowTiming: 0.4
-      biteTiming: 0.4
-  - raceName: Wolf
-    race: 10
-    maleAssets:
-      gender: 0
-      defaultSprite: {fileID: 21300000, guid: 3a756fb8b4dda48438d4bfb084c208ce, type: 3}
-      hoverSprite: {fileID: 21300000, guid: 3a756fb8b4dda48438d4bfb084c208ce, type: 3}
-      clickedSprite: {fileID: 21300000, guid: 3a756fb8b4dda48438d4bfb084c208ce, type: 3}
-      animator: {fileID: 22100000, guid: f6789c343b1bc1646ab515ff86483b72, type: 2}
-      idle: {fileID: 7400000, guid: ddc8cf26362ad6948bcecade38ba6181, type: 2}
-      walk: {fileID: 7400000, guid: e5e14e74a90492e4fb5bc70c331e11e3, type: 2}
-      sleepGround: {fileID: 7400000, guid: 31b61b82d12e9a04c991a9999d4cc88b, type: 2}
-      dead: {fileID: 0}
-      raiseDead: {fileID: 0}
-      slashClip: {fileID: 0}
-      magicClip: {fileID: 0}
-      arrowClip: {fileID: 0}
-      biteClip: {fileID: 7400000, guid: b61ab7905b820624da705a91cca5d04d, type: 2}
-      slashTiming: 0
-      magicTiming: 0
-      arrowTiming: 0
-      biteTiming: 0.14
-    femaleAssets:
-      gender: 1
-      defaultSprite: {fileID: 21300000, guid: 3a756fb8b4dda48438d4bfb084c208ce, type: 3}
-      hoverSprite: {fileID: 21300000, guid: 3a756fb8b4dda48438d4bfb084c208ce, type: 3}
-      clickedSprite: {fileID: 21300000, guid: 3a756fb8b4dda48438d4bfb084c208ce, type: 3}
-      animator: {fileID: 22100000, guid: f6789c343b1bc1646ab515ff86483b72, type: 2}
-      idle: {fileID: 7400000, guid: ddc8cf26362ad6948bcecade38ba6181, type: 2}
-      walk: {fileID: 7400000, guid: e5e14e74a90492e4fb5bc70c331e11e3, type: 2}
-      sleepGround: {fileID: 7400000, guid: 31b61b82d12e9a04c991a9999d4cc88b, type: 2}
-      dead: {fileID: 0}
-      raiseDead: {fileID: 0}
-      slashClip: {fileID: 0}
-      magicClip: {fileID: 0}
-      arrowClip: {fileID: 0}
-      biteClip: {fileID: 7400000, guid: b61ab7905b820624da705a91cca5d04d, type: 2}
-      slashTiming: 0
-      magicTiming: 0
-      arrowTiming: 0
-      biteTiming: 0.14
-  - raceName: Elves
-    race: 2
-    maleAssets:
-      gender: 0
-      defaultSprite: {fileID: 21300000, guid: 5ee65e07929259446ab8e9d27bbf9b9e, type: 3}
-      hoverSprite: {fileID: 21300000, guid: 5ee65e07929259446ab8e9d27bbf9b9e, type: 3}
-      clickedSprite: {fileID: 21300000, guid: 5ee65e07929259446ab8e9d27bbf9b9e, type: 3}
-      animator: {fileID: 22100000, guid: 839ac1924c2c5b84f9780d1b67ae1e1a, type: 2}
-      idle: {fileID: 7400000, guid: 45c2e17bc07d8a34ea64008b976dcd09, type: 2}
-      walk: {fileID: 7400000, guid: a72140487961ba742b63502629566971, type: 2}
-      sleepGround: {fileID: 7400000, guid: d4eed393a7cc61b45835540462888a57, type: 2}
-      dead: {fileID: 0}
-      raiseDead: {fileID: 0}
-      slashClip: {fileID: 7400000, guid: 31659a02d1bffbe46bafc396b093c774, type: 2}
-      magicClip: {fileID: 7400000, guid: 9ae6415e888c697408dba7720702c529, type: 2}
-      arrowClip: {fileID: 7400000, guid: e85ab549b3f771348b8f5f857aadc461, type: 2}
-      biteClip: {fileID: 0}
-      slashTiming: 0.17
-      magicTiming: 0.14
-      arrowTiming: 0.4
-      biteTiming: 0
-    femaleAssets:
-      gender: 1
-      defaultSprite: {fileID: 21300000, guid: f45afa27e7c2e63428433d14677844b3, type: 3}
-      hoverSprite: {fileID: 21300000, guid: f45afa27e7c2e63428433d14677844b3, type: 3}
-      clickedSprite: {fileID: 21300000, guid: f45afa27e7c2e63428433d14677844b3, type: 3}
-      animator: {fileID: 22100000, guid: acbfc5b127d225b4fb1b33ed6464266e, type: 2}
-      idle: {fileID: 7400000, guid: 19ce8a7b454132944b2693a2b3635805, type: 2}
-      walk: {fileID: 7400000, guid: 15bed1de30c563c4ebc755519387f611, type: 2}
-      sleepGround: {fileID: 7400000, guid: 8fa0d90943c737c469493b15097c7435, type: 2}
-      dead: {fileID: 0}
-      raiseDead: {fileID: 0}
-      slashClip: {fileID: 7400000, guid: 44922575217df234c8d27638ff538887, type: 2}
-      magicClip: {fileID: 7400000, guid: d914e01b0baa953469c6763ccd2631e5, type: 2}
-      arrowClip: {fileID: 7400000, guid: 87eccc24e26675c4b9a4a95b53d61027, type: 2}
-      biteClip: {fileID: 0}
-      slashTiming: 0.17
-      magicTiming: 0.14
-      arrowTiming: 0.4
-      biteTiming: 0
-  - raceName: Abomination
-    race: 18
-    maleAssets:
-      gender: 0
-      defaultSprite: {fileID: 21300000, guid: 5ee65e07929259446ab8e9d27bbf9b9e, type: 3}
-      hoverSprite: {fileID: 21300000, guid: 5ee65e07929259446ab8e9d27bbf9b9e, type: 3}
-      clickedSprite: {fileID: 21300000, guid: 5ee65e07929259446ab8e9d27bbf9b9e, type: 3}
-      animator: {fileID: 22100000, guid: 839ac1924c2c5b84f9780d1b67ae1e1a, type: 2}
-      idle: {fileID: 7400000, guid: 45c2e17bc07d8a34ea64008b976dcd09, type: 2}
-      walk: {fileID: 7400000, guid: a72140487961ba742b63502629566971, type: 2}
-      sleepGround: {fileID: 7400000, guid: d4eed393a7cc61b45835540462888a57, type: 2}
-      dead: {fileID: 0}
-      raiseDead: {fileID: 0}
-      slashClip: {fileID: 7400000, guid: 31659a02d1bffbe46bafc396b093c774, type: 2}
-      magicClip: {fileID: 7400000, guid: 9ae6415e888c697408dba7720702c529, type: 2}
-      arrowClip: {fileID: 7400000, guid: e85ab549b3f771348b8f5f857aadc461, type: 2}
-      biteClip: {fileID: 0}
-      slashTiming: 0.17
-      magicTiming: 0.14
-      arrowTiming: 0.13
-      biteTiming: 0
-    femaleAssets:
-      gender: 1
-      defaultSprite: {fileID: 21300000, guid: f45afa27e7c2e63428433d14677844b3, type: 3}
-      hoverSprite: {fileID: 21300000, guid: f45afa27e7c2e63428433d14677844b3, type: 3}
-      clickedSprite: {fileID: 21300000, guid: f45afa27e7c2e63428433d14677844b3, type: 3}
-      animator: {fileID: 22100000, guid: acbfc5b127d225b4fb1b33ed6464266e, type: 2}
-      idle: {fileID: 7400000, guid: 19ce8a7b454132944b2693a2b3635805, type: 2}
-      walk: {fileID: 7400000, guid: 15bed1de30c563c4ebc755519387f611, type: 2}
-      sleepGround: {fileID: 7400000, guid: 8fa0d90943c737c469493b15097c7435, type: 2}
-      dead: {fileID: 0}
-      raiseDead: {fileID: 0}
-      slashClip: {fileID: 7400000, guid: 44922575217df234c8d27638ff538887, type: 2}
-      magicClip: {fileID: 7400000, guid: d914e01b0baa953469c6763ccd2631e5, type: 2}
-      arrowClip: {fileID: 7400000, guid: 87eccc24e26675c4b9a4a95b53d61027, type: 2}
-      biteClip: {fileID: 0}
-      slashTiming: 0.17
-      magicTiming: 0.14
-      arrowTiming: 0.13
-      biteTiming: 0
-  - raceName: Demon
+  - raceName: DEMON
     race: 14
     maleAssets:
       gender: 0
-      defaultSprite: {fileID: 21300000, guid: d5e4a8f65f6f5fc449380120838d3d2d, type: 3}
-      hoverSprite: {fileID: 21300000, guid: d5e4a8f65f6f5fc449380120838d3d2d, type: 3}
-      clickedSprite: {fileID: 21300000, guid: d5e4a8f65f6f5fc449380120838d3d2d, type: 3}
-      animator: {fileID: 22100000, guid: d4eb42681002a7b43b7f8ead79c7ab10, type: 2}
-      idle: {fileID: 7400000, guid: 30e8fa21006565549a140d90e5ca39a7, type: 2}
-      walk: {fileID: 7400000, guid: 52bc838e6e5210f478df1be37b4fb341, type: 2}
-      sleepGround: {fileID: 7400000, guid: e44a6c707e664a746aaf1a93e4f2aaf1, type: 2}
-      dead: {fileID: 0}
-      raiseDead: {fileID: 0}
-      slashClip: {fileID: 0}
-      magicClip: {fileID: 0}
-      arrowClip: {fileID: 0}
-      biteClip: {fileID: 0}
-      slashTiming: 0.17
-      magicTiming: 0.14
-      arrowTiming: 0.13
-      biteTiming: 0
+      characterClassAssets:
+        m_keys:
+        - Envy
+        - Gluttony
+        - Greed
+        - Idle
+        - Lust
+        - Pride
+        - Sleep Ground
+        - Sloth
+        - Walk
+        - Wrath
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: a21f6902b43448949ad783e9322dc352,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: c25c995b050bb8f47916d34a8e8475bd,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: cef7a3952f1b3054da00c3c71442c2eb,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: c7b64dce66d98ac47aae453af832a4c3,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 30926d55ad1777746b90c5eeb94f86bc,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: f472d172df0c15740842571bf3c35713,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: c6acdf3f21b61f540813ff5ccded32cf,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
     femaleAssets:
       gender: 1
-      defaultSprite: {fileID: 21300000, guid: af8e6c5dd3dba8f4b8c3e5e1067d8432, type: 3}
-      hoverSprite: {fileID: 21300000, guid: af8e6c5dd3dba8f4b8c3e5e1067d8432, type: 3}
-      clickedSprite: {fileID: 21300000, guid: af8e6c5dd3dba8f4b8c3e5e1067d8432, type: 3}
-      animator: {fileID: 22100000, guid: 5be51b216366e284ab244ec92b429fc9, type: 2}
-      idle: {fileID: 7400000, guid: 4e997934c07a68a43b13726e9228cf87, type: 2}
-      walk: {fileID: 7400000, guid: 4f69342dbbf93c24fbd756ff33e4ca87, type: 2}
-      sleepGround: {fileID: 7400000, guid: 00a3749d4ca7c634185a8a1e4e3c407c, type: 2}
-      dead: {fileID: 0}
-      raiseDead: {fileID: 0}
-      slashClip: {fileID: 0}
-      magicClip: {fileID: 0}
-      arrowClip: {fileID: 0}
-      biteClip: {fileID: 0}
-      slashTiming: 0.17
-      magicTiming: 0.14
-      arrowTiming: 0.13
-      biteTiming: 0
+      characterClassAssets:
+        m_keys:
+        - Envy
+        - Gluttony
+        - Greed
+        - Idle
+        - Lust
+        - Pride
+        - Sleep Ground
+        - Sloth
+        - Walk
+        - Wrath
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: ad73e2285731d56408e0a0e9203dd2d4,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 46deaa3744e2ee542bae44698286165f,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 854f8598005ee3248ac713d546d77bdb,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 40cfbdde452c26140a1485b196e4520e,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: f2c0de2c865fec5419e1c154e97eea71,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: ab34503ebe9c1c446b9acbbfd6c5efb1,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: d160d2e69b258f64983a9780615936cd,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+  - raceName: ELVES
+    race: 2
+    maleAssets:
+      gender: 0
+      characterClassAssets:
+        m_keys:
+        - Archer
+        - Attack
+        - Barbarian
+        - Craftsman
+        - Druid
+        - Hunter
+        - Idle
+        - Knight
+        - Leader
+        - Mage
+        - Marauder
+        - Miner
+        - Noble
+        - Peasant
+        - Shaman
+        - Sleep Ground
+        - Stalker
+        - Walk
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: d8c897e21d75a094bb7430865fe196bf,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 454ed2ff4ad83b5498ba8572437bcd12,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 86840cf9b0ef1124e90653321cd25a4b,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: d43cb15d39bcb6a4ba2a7930ec59f2a4,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 5ce09b671ccd3564aa2e1a3f8e87f48b,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: fc3792262b76c8f4293857b736675b34,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: e4ca4132b8fb3554a86b7ab51a132253,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 045716b2b3175fc4fbf004a476f935ae,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: e3721199cf20a8243b47dbdede3753aa,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 28f546512bc83714db4959ffaba8ff47,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 1d317344d6576684cb4b9816c890c672,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 034d2d46b57b2c644b6deefadb0b6921,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 94996932d25b4624dad1e821e560443e,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: bca1d3826fcf4694a9aaff90f17d28e7,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+    femaleAssets:
+      gender: 1
+      characterClassAssets:
+        m_keys:
+        - Archer
+        - Attack
+        - Barbarian
+        - Craftsman
+        - Druid
+        - Hunter
+        - Idle
+        - Knight
+        - Leader
+        - Mage
+        - Marauder
+        - Miner
+        - Noble
+        - Peasant
+        - Shaman
+        - Sleep Ground
+        - Stalker
+        - Walk
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: c5ca1d00d1f15d244be650f0e58aec8b,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 9406af7f51aec764ab283bf1bcd063a3,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: f8c0383c5caaeb94291cc0209ab57485,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 4ec117d0ad7266d4c8bbbecede88023d,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 1ee962eef84b61f498f33c395c6cfcf6,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 41679c0d8ac7c5745944d5782f9b9c7e,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 233fd512c26679c438003eabb7264a5b,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 2742a23343299c549872a147caf11b7e,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: b114680f13536f24d9a71e9d79aeaf7e,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: c276566d49dcb8f458f3c4f60ca3a8d7,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 23259b8a7532a7048819c5ea785f358c,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: e4efe431cb5388043af18b629d97ed52,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: c1005c014ead66b4e8a5f1c9d1541b1e,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: d1268784624d37e479e52956fed00302,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+  - raceName: HUMANS
+    race: 1
+    maleAssets:
+      gender: 0
+      characterClassAssets:
+        m_keys:
+        - Archer
+        - Attack
+        - Barbarian
+        - Craftsman
+        - Druid
+        - Hunter
+        - Idle
+        - Knight
+        - Leader
+        - Mage
+        - Marauder
+        - Miner
+        - Noble
+        - Peasant
+        - Shaman
+        - Sleep Ground
+        - Stalker
+        - Walking
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: 42b8b686260fbed45bc74a21496f7003,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 9099b2d3d40873d47bdf61454245321f,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: d668e47f9c6b4334daa15149a659701a,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 86a4c2ad0d67d1f4cb60098e8864bb7d,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: eddb2d77e75969f48a7ba6d72a99b436,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: baafac0ffa5564041bef8a690e06ab05,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: bb5b57af335dc824c978e7e846ea25af,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: bf319a02a698b174fbb4b6fc79c19a48,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 2372c45f1e8bb69498dbcd3516d0a758,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 395b00c9f0e77c94686e9ee8b620dfbc,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 4791f63a666100d41908c386d86187a5,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 2f484486913b56845aafedf02e0d67fc,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 86f8749858e6d8c499453b429e2c64b5,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: ebb641c198cad9b4282583960ba20edc,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+    femaleAssets:
+      gender: 1
+      characterClassAssets:
+        m_keys:
+        - Archer
+        - Attack
+        - Barbarian
+        - Craftsman
+        - Druid
+        - Hunter
+        - Idle
+        - Knight
+        - Leader
+        - Mage
+        - Marauder
+        - Miner
+        - Noble
+        - Peasant
+        - Shaman
+        - Sleep Ground
+        - Stalker
+        - Walk
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: 60ed29f4d6ad5b542a109978d4cc294e,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 27820d844895ee343a3508e2d658dbc4,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: d111b2033998da54dbfeadc44e895174,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 146b05dc8b99c3e41887efe156d7ad55,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 79a382b34f89aa9459b02d9a54461b9d,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 9b6c7f893c796c44e9b2b1955010e1da,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 033ccc19fd2b5b6468ba95a60bcc2980,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 2d89631192b9dea4abe2fc1f4fc71fd3,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: e2d8204830427ca46b181693b1602566,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: c2ce4fcc381765a4f83a67a4cdf37253,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: c37e799ffc3aa0e449051ab4b5df045d,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: c85f2b04b39630c41b6ef5115c8e195a,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: e689b93b6a111d4468beb4c9b715b987,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 3d9afd0c084ec324b8762f83b2370daa,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+  - raceName: SKELETON
+    race: 13
+    maleAssets:
+      gender: 0
+      characterClassAssets:
+        m_keys:
+        - Archer
+        - Attack
+        - Barbarian
+        - Craftsman
+        - Druid
+        - Faction Leader
+        - Hunter
+        - Idle
+        - Knight
+        - Mage
+        - Marauder
+        - Miner
+        - Noble
+        - Peasant
+        - Shaman
+        - Sleep Ground
+        - Stalker
+        - Walk
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: 7f61a59a24f36ac46997f1e576c79da7,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: e19dc72c285ed1748b50319bbacaca24,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 35338548ad70eb04bb420c077882e2f2,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 64ac2c16bf91d8448b1d4bb523711bed,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 04cb0dcb13ceff041b9a5e450d130a77,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 82fc6e8c5b1f819409ce72f43dcca0d4,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 2533042823c73a646bb837d2d5ec0599,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 892f3df44f353084e9d936b8fa089ef0,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: bde26eb0c1c844348ab933273071b502,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 1a344928e247715489c46b56c6a430e9,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: feeb5ea1c368f8440b9066048fb84615,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 9c9caeb070a715c448d4f4e49d156c8c,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 5ed41eb176ba5d142b63bd6b6b109e9f,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: e86bc5f001a60784f9135e1365c67ab8,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+    femaleAssets:
+      gender: 1
+      characterClassAssets:
+        m_keys:
+        - Archer
+        - Attack
+        - Barbarian
+        - Craftsman
+        - Druid
+        - Faction Leader
+        - Hunter
+        - Idle
+        - Knight
+        - Mage
+        - Marauder
+        - Miner
+        - Noble
+        - Peasant
+        - Shaman
+        - Sleep Ground
+        - Stalker
+        - Walk
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: a4dab614e27578d47af08bfcdb4f75ba,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 894755a0013f9ed4ea255f014f63bdf6,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 3236cd7992f74ed4cb4ca6b47f924e59,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 913c1bceb3201714c9793ece071b6dfd,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: a869a0cf148209849bee2c0622555c37,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 741deebafdb2d2f409c9705a832ca7e8,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: d617895ea701b244496a7f7e85f9d0f7,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 4d92f517225230d4fb970e36539cb799,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 05648e7138d657a4480a4d3387c49c27,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 59fbb8b8ce7a0d0488b39e4dcf18482b,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 1b533e06abb6f6f4186f4c92e69cb9c4,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 8e8f0063722efd84c8aa20bdcf6a93e3,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: b0352ae9959df5d4f8a32aea921ba5ef,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 083cc04684c05d64abaf8716ced522d3,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+  - raceName: WOLF
+    race: 10
+    maleAssets:
+      gender: 0
+      characterClassAssets:
+        m_keys:
+        - Attack
+        - Idle
+        - Ravager
+        - Sleep Ground
+        - Walk
+        m_values:
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 41381973a88100446aea32cc5794bd05,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+    femaleAssets:
+      gender: 1
+      characterClassAssets:
+        m_keys:
+        - Attack
+        - Idle
+        - Ravager
+        - Sleep Ground
+        - Walk
+        m_values:
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 21300000, guid: 1b959a7bc06a8bd4292bbb6f2ba4f001,
+            type: 3}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+        - defaultSprite: {fileID: 0}
+          animator: {fileID: 0}
+          idleClip: {fileID: 0}
+          attackClip: {fileID: 0}
+          walkClip: {fileID: 0}
+          deadClip: {fileID: 0}
+          raiseDeadClip: {fileID: 0}
+          sleepGroundClip: {fileID: 0}
+  baseAnimator: {fileID: 0}
   summonSettings:
     m_keys: 00000000010000000200000003000000040000000500000006000000
     m_values:

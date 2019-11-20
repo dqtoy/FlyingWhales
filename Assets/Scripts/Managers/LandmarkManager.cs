@@ -249,8 +249,8 @@ public class LandmarkManager : MonoBehaviour {
             faction.SetRace(RACE.HUMANS);
         }
         OwnRegion(faction, faction.race, settlementRegion);
-        settlementArea.GenerateStructures(citizenCount);
-        faction.GenerateStartingCitizens(2, 1, citizenCount); //9,7
+        settlementArea.GenerateStructures(14); //TODO: Revert once character markers have been evaluated
+        faction.GenerateStartingCitizens(2, 1, 14); //9,7 //citizenCount
 
         List<Region> availableRegions = new List<Region>(regions);
         availableRegions.Remove(portalRegion);

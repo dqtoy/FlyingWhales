@@ -7,7 +7,6 @@ using UnityEngine;
 [CustomEditor(typeof(CharacterManager))]
 public class CharacterManagerEditor : Editor {
 
-    string assetPath = "Assets/Textures/Portraits/";
 
     public override void OnInspectorGUI() {
         CharacterManager myTarget = (CharacterManager)target;
@@ -18,10 +17,8 @@ public class CharacterManagerEditor : Editor {
         // Show default inspector property editor
         DrawDefaultInspector();
 
-        GUILayout.Label("Asset Path");
-        assetPath = EditorGUILayout.TextField(assetPath);
-        if (GUILayout.Button("Load Portrait Assets")) {
-            //myTarget.LoadPortraitAssets(assetPath);
+        if (GUILayout.Button("Load Character Marker Assets")) {
+            myTarget.LoadCharacterMarkerAssets();
         }
     }
 }
