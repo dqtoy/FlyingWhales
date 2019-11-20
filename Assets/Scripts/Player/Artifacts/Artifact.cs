@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Artifact : TileObject, IWorldObject {
-
     public ARTIFACT_TYPE type { get; private set; }
     public int level { get; private set; }
     public bool hasBeenUsed { get; private set; }
@@ -69,7 +68,7 @@ public class Artifact : TileObject, IWorldObject {
     }
     protected virtual void OnRemoveArtifact() {
         Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
-        Debug.Log(GameManager.Instance.TodayLogString() + "Artifact " + this.GetType().ToString() + " has been removed");
+        Debug.Log(GameManager.Instance.TodayLogString() + "Artifact " + name + " has been removed");
     }
     public override void OnInspect(Character inspectedBy) { //, out Log result
         //if (LocalizationManager.Instance.HasLocalizedValue("Artifact", this.GetType().ToString(), "on_inspect")) {

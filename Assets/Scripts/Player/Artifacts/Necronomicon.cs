@@ -27,8 +27,8 @@ public class Necronomicon : Artifact {
         base.OnInspect(inspectedBy); //, out result
         if (!isActivated) {
             Activate();
-            if (LocalizationManager.Instance.HasLocalizedValue("Artifact", this.GetType().ToString(), "on_inspect")) {
-                Log result = new Log(GameManager.Instance.Today(), "Artifact", this.GetType().ToString(), "on_inspect");
+            if (LocalizationManager.Instance.HasLocalizedValue("Artifact", name, "on_inspect")) {
+                Log result = new Log(GameManager.Instance.Today(), "Artifact", name, "on_inspect");
                 result.AddToFillers(inspectedBy, inspectedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 result.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 inspectedBy.RegisterLogAndShowNotifToThisCharacterOnly(result, onlyClickedCharacter: false);

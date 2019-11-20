@@ -49,8 +49,10 @@ public class GoapActionState {
 
     #region Logs
     public Log CreateDescriptionLog(Character actor, IPointOfInterest poiTarget, ActualGoapNode goapNode) {
-        if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", parentAction.GetType().ToString(), name.ToLower() + "_description")) {
-            Log descriptionLog = new Log(GameManager.Instance.Today(), "GoapAction", parentAction.GetType().ToString(), name.ToLower() + "_description", goapNode);
+        string actionName = parentAction.goapName;
+        string stateNameLowercase = name.ToLower();
+        if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", actionName, stateNameLowercase + "_description")) {
+            Log descriptionLog = new Log(GameManager.Instance.Today(), "GoapAction", actionName, stateNameLowercase + "_description", goapNode);
             descriptionLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             descriptionLog.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             return descriptionLog;

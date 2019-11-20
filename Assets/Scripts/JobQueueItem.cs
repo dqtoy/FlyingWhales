@@ -223,7 +223,7 @@ public class JobQueueItem {
 [System.Serializable]
 public class SaveDataJobQueueItem {
     public int id;
-    public string jobTypeIdentifier;
+    //public string jobTypeIdentifier;
     //public Character assignedCharacter { get; protected set; }
     public string name;
     public JOB_TYPE jobType;
@@ -242,7 +242,7 @@ public class SaveDataJobQueueItem {
 
     public virtual void Save(JobQueueItem job) {
         id = job.id;
-        jobTypeIdentifier = job.GetType().ToString();
+        //jobTypeIdentifier = job.GetType().ToString();
         name = job.name;
         jobType = job.jobType;
         //cannotCancelJob = job.cannotCancelJob;
@@ -276,7 +276,7 @@ public class SaveDataJobQueueItem {
     }
 
     public virtual JobQueueItem Load() {
-        JobQueueItem job = System.Activator.CreateInstance(System.Type.GetType(jobTypeIdentifier), this) as JobQueueItem;
+        JobQueueItem job = System.Activator.CreateInstance(System.Type.GetType(GetType().ToString()), this) as JobQueueItem;
 
         Type thisType = typeof(InteractionManager);
         if(canTakeThisJobMethodName != string.Empty) {

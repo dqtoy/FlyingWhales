@@ -822,7 +822,7 @@ public class Utilities : MonoBehaviour {
     public static string NormalizeString(string s) {
         s = s.ToLower();
         string[] words = s.Split('_');
-        string normalizedString = Utilities.FirstLetterToUpperCase(words.First());
+        string normalizedString = Utilities.FirstLetterToUpperCase(words[0]);
         for (int i = 1; i < words.Length; i++) {
             normalizedString += " " + words[i];
         }

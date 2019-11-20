@@ -16,7 +16,7 @@ public class PrayAtTemple : WorldEvent {
         if (choices.Count > 0) {
             Trait chosen = choices[Random.Range(0, choices.Count)];
             spawner.traitContainer.RemoveTrait(spawner, chosen);
-            Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect");
+            Log log = new Log(GameManager.Instance.Today(), "WorldEvent", name, "after_effect");
             AddDefaultFillersToLog(log, region);
             log.AddToFillers(null, chosen.name, LOG_IDENTIFIER.STRING_1);
             log.AddLogToInvolvedObjects();

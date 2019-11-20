@@ -17,10 +17,10 @@ public class Study : WorldEvent {
         if (buffs.Count > 0) {
             string chosenBuff = buffs[Random.Range(0, buffs.Count)];
             region.eventSpawnedBy.traitContainer.AddTrait(region.eventSpawnedBy, chosenBuff);
-            log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect_gain_trait");
+            log = new Log(GameManager.Instance.Today(), "WorldEvent", name, "after_effect_gain_trait");
             log.AddToFillers(null, chosenBuff, LOG_IDENTIFIER.STRING_1);
         } else {
-            log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect_no_trait");
+            log = new Log(GameManager.Instance.Today(), "WorldEvent", name, "after_effect_no_trait");
         }
         AddDefaultFillersToLog(log, region);
         log.AddLogToInvolvedObjects();

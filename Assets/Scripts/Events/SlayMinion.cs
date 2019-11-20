@@ -17,7 +17,7 @@ public class SlayMinion : WorldEvent {
 
         minion.Death();
 
-        Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect");
+        Log log = new Log(GameManager.Instance.Today(), "WorldEvent", name, "after_effect");
         AddDefaultFillersToLog(log, region);
         log.AddToFillers(null, minion.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         log.AddLogToInvolvedObjects();
