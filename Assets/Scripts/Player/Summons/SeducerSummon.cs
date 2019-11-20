@@ -23,8 +23,8 @@ public class SeducerSummon : Summon {
     public SeducerSummon(SUMMON_TYPE type, GENDER gender) : base(type, CharacterRole.MINION, RACE.DEMON, gender) {
         seduceChance = 25;
         doneCharacters = new List<Character>();
-        AddInteractionType(INTERACTION_TYPE.INVITE);
-        AddInteractionType(INTERACTION_TYPE.MAKE_LOVE);
+        //AddInteractionType(INTERACTION_TYPE.INVITE);
+        //AddInteractionType(INTERACTION_TYPE.MAKE_LOVE);
     }
     public SeducerSummon(SaveDataCharacter data) : base(data) {
         seduceChance = 25;

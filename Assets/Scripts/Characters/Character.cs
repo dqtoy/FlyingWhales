@@ -63,7 +63,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public IRelationshipValidator relationshipValidator {
         get { return currentAlterEgo.relationshipValidator; }
     }
-    public List<INTERACTION_TYPE> currentInteractionTypes { get; private set; }
+    //public List<INTERACTION_TYPE> currentInteractionTypes { get; private set; }
     public List<INTERACTION_TYPE> advertisedActions { get; private set; }
     //public List<GoapPlan> allGoapPlans { get; private set; }
     public GoapPlanner planner { get; set; }
@@ -487,7 +487,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         CreateTraitContainer();
 
         combatHistory = new Dictionary<int, Combat>();
-        currentInteractionTypes = new List<INTERACTION_TYPE>();
+        //currentInteractionTypes = new List<INTERACTION_TYPE>();
         advertisedActions = new List<INTERACTION_TYPE>();
         //allGoapPlans = new List<GoapPlan>();
         //targettedByAction = new List<GoapAction>();
@@ -543,7 +543,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         speedPercentMod = data.speedPercentMod;
         maxHPPercentMod = data.maxHPPercentMod;
 
-        currentInteractionTypes = data.currentInteractionTypes;
+        //currentInteractionTypes = data.currentInteractionTypes;
         supply = data.supply;
         moodValue = data.moodValue;
         isCombatant = data.isCombatant;
@@ -4005,14 +4005,14 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //}
 
     #region Interaction
-    public void AddInteractionType(INTERACTION_TYPE type) {
-        if (!currentInteractionTypes.Contains(type)) {
-            currentInteractionTypes.Add(type);
-        }
-    }
-    public void RemoveInteractionType(INTERACTION_TYPE type) {
-        currentInteractionTypes.Remove(type);
-    }
+    //public void AddInteractionType(INTERACTION_TYPE type) {
+    //    if (!currentInteractionTypes.Contains(type)) {
+    //        currentInteractionTypes.Add(type);
+    //    }
+    //}
+    //public void RemoveInteractionType(INTERACTION_TYPE type) {
+    //    currentInteractionTypes.Remove(type);
+    //}
     #endregion
 
     #region Action Planning and Job Processing

@@ -26,7 +26,7 @@ public class CharacterRole {
     public string name { get; protected set; }
     public CHARACTER_ROLE roleType { get; protected set; }
     public INTERACTION_CATEGORY[] interactionCategories { get; protected set; }
-    public INTERACTION_TYPE[] allowedInteractions { get; protected set; }
+    //public INTERACTION_TYPE[] allowedInteractions { get; protected set; }
     public virtual int reservedSupply { get { return 0; } }
     public SPECIAL_TOKEN[] requiredItems { get; protected set; }//this is the list of items that the character must own.
 
