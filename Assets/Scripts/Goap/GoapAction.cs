@@ -450,8 +450,16 @@ public class GoapAction {
         return (baseCost * TimeOfDaysCostMultiplier(actor) * PreconditionCostMultiplier()) + GetDistanceCost(actor, target);
     }
     protected bool IsTargetMissing(Character actor, IPointOfInterest target, object[] otherData) {
-        return !target.IsAvailable() || target.gridTileLocation == null || actor.specificLocation != target.specificLocation
-                    || !(actor.gridTileLocation == target.gridTileLocation || actor.gridTileLocation.IsNeighbour(target.gridTileLocation));
+        if (target.IsAvailable() == false || target.gridTileLocation == null || actor.specificLocation != target.specificLocation) {
+            return true;
+        }
+        if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET) {
+            //if the action type is NEAR_TARGET, then check if the actor is near the target, if not, this action is invalid.
+            if (actor.gridTileLocation != target.gridTileLocation && actor.gridTileLocation.IsNeighbour(target.gridTileLocation) == false) {
+                return true;
+            }
+        }
+        return false;
     }
     //private void OnArriveAtTargetLocation() {
     //    if(actionLocationType != ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
