@@ -56,27 +56,12 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     }
     #endregion
 
-    void Start() {
-        //if (skin != null) {
-        //    Material mat = Instantiate(CharacterManager.Instance.hsvMaterial);
-        //    skin.material = mat;
-        //    //top.material = mat;
-        //}
-        //if (hair != null) {
-        //    Material mat = Instantiate(CharacterManager.Instance.hsvMaterial);
-        //    hair.material = mat;
-        //}
-    }
-
     private void OnEnable() {
         Messenger.AddListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
         Messenger.AddListener<Character>(Signals.FACTION_SET, OnFactionSet);
         Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         Messenger.AddListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
     }
-    //private void OnDisable() {
-    //    RemoveListeners();
-    //}
 
     public void GeneratePortrait(Character character) {
         _character = character;
