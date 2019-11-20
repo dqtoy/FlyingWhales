@@ -586,22 +586,27 @@ public class Faction {
         }
     }
     public void GenerateStartingCitizens(int leaderLevel, int citizensLevel, int citizenCount) {
+        string[] characterClasses = new string[] {
+            "Leader", "Archer", "Barbarian", "Craftsman", "Druid", "Hunter", "Knight", "Mage", "Marauder", "Miner", "Noble", "Peasant", "Shaman", "Stalker"
+        };
         for (int i = 0; i < citizenCount; i++) {
-            if (i == 0) {
-                //leader
-                Character leader = CharacterManager.Instance.CreateNewCharacter(CharacterRole.LEADER, race, initialLeaderGender, this, mainRegion); //initialLeaderClass
-                leader.LevelUp(leaderLevel - 1);
-                SetLeader(leader);
-            } else {
-                WeightedDictionary<CharacterRole> roleChoices = new WeightedDictionary<CharacterRole>();
-                roleChoices.AddElement(CharacterRole.CIVILIAN, 30);
-                roleChoices.AddElement(CharacterRole.ADVENTURER, 35);
-                roleChoices.AddElement(CharacterRole.SOLDIER, 35);
+            Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, characterClasses[i], race, Utilities.GetRandomGender(), this, mainRegion);
+            citizen.LevelUp(citizensLevel - 1);
+            //if (i == 0) {
+            //    //leader
+            //    Character leader = CharacterManager.Instance.CreateNewCharacter(CharacterRole.LEADER, race, initialLeaderGender, this, mainRegion); //initialLeaderClass
+            //    leader.LevelUp(leaderLevel - 1);
+            //    SetLeader(leader);
+            //} else {
+            //    WeightedDictionary<CharacterRole> roleChoices = new WeightedDictionary<CharacterRole>();
+            //    roleChoices.AddElement(CharacterRole.CIVILIAN, 30);
+            //    roleChoices.AddElement(CharacterRole.ADVENTURER, 35);
+            //    roleChoices.AddElement(CharacterRole.SOLDIER, 35);
 
-                //citizens
-                Character citizen = CharacterManager.Instance.CreateNewCharacter(roleChoices.PickRandomElementGivenWeights(), race, Utilities.GetRandomGender(), this, mainRegion);
-                citizen.LevelUp(citizensLevel - 1);
-            }
+            //    //citizens
+            //    Character citizen = CharacterManager.Instance.CreateNewCharacter(roleChoices.PickRandomElementGivenWeights(), race, Utilities.GetRandomGender(), this, mainRegion);
+            //    citizen.LevelUp(citizensLevel - 1);
+            //}
         }
         mainRegion.area.SetInitialResidentCount(citizenCount);
     }

@@ -3,15 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class RaceMarkerAssets {
+public class RaceMarkerAsset {
     public string raceName;
     public RACE race;
-    public MarkerAsset maleAssets;
-    public MarkerAsset femaleAssets;
+    public GenderMarkerAsset maleAssets;
+    public GenderMarkerAsset femaleAssets;
 
-    public RaceMarkerAssets(RACE race) {
+    public RaceMarkerAsset(RACE race) {
         this.race = race;
-        maleAssets = new MarkerAsset(GENDER.MALE);
-        femaleAssets = new MarkerAsset(GENDER.FEMALE);
+        raceName = race.ToString();
+        maleAssets = new GenderMarkerAsset(GENDER.MALE);
+        femaleAssets = new GenderMarkerAsset(GENDER.FEMALE);
+    }
+
+    public GenderMarkerAsset GetMarkerAsset(GENDER gender) {
+        switch (gender) {
+            case GENDER.MALE:
+                return maleAssets;
+            case GENDER.FEMALE:
+                return femaleAssets;
+            default:
+                return null;
+        }
     }
 }

@@ -4,11 +4,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 [System.Serializable]
-public class PhaseItemDictionary : SerializableDictionary<SCHEDULE_ACTION_CATEGORY, int> { }
-[System.Serializable]
 public class StringIntDictionary : SerializableDictionary<string, int> { }
-[System.Serializable]
-public class InteractionWeightDictionary : SerializableDictionary<INTERACTION_TYPE, int> { }
 [System.Serializable]
 public class BiomeLandmarkSpriteListDictionary : SerializableDictionary<BIOMES, List<LandmarkStructureSprite>, LandmarkSpriteListStorage> { }
 [System.Serializable]
@@ -24,13 +20,7 @@ public class StringSpriteDictionary : SerializableDictionary<string, Sprite> { }
 [System.Serializable]
 public class FactionEmblemDictionary : SerializableDictionary<int, Sprite> { }
 [System.Serializable]
-public class JobIconsDictionary : SerializableDictionary<JOB, Sprite> { }
-[System.Serializable]
-public class WallSpritesDictionary : SerializableDictionary<TwoTileDirections, Sprite> { }
-[System.Serializable]
 public class ItemTileBaseDictionary : SerializableDictionary<SPECIAL_TOKEN, TileBase> { }
-[System.Serializable]
-public class FoodTileBaseDictionary : SerializableDictionary<FOOD, TileBase> { }
 [System.Serializable]
 public class TileObjectTileBaseDictionary : SerializableDictionary<TILE_OBJECT_TYPE, TileObjectTileSetting> { }
 [System.Serializable]
@@ -50,11 +40,11 @@ public class ArtifactSettingDictionary : SerializableDictionary<ARTIFACT_TYPE, A
 [System.Serializable]
 public class SeamlessEdgeAssetsDictionary : SerializableDictionary<LocationGridTile.Ground_Type, List<TileBase>, TileBaseListStorage> { }
 [System.Serializable]
-public class LandmarkGenerationDictionary : SerializableDictionary<BIOMES, YieldTypeLandmarks> { }
-[System.Serializable]
 public class YieldTypeLandmarksDictionary : SerializableDictionary<LANDMARK_YIELD_TYPE, List<LANDMARK_TYPE>, LandmarkTypeListStorage> { }
 [System.Serializable]
 public class InterventionAbilityTierDictionary : SerializableDictionary<INTERVENTION_ABILITY, int> { }
+[System.Serializable]
+public class CharacterClassAssetDictionary : SerializableDictionary<string, CharacterClassAsset> { }
 
 //List storage
 [System.Serializable]
