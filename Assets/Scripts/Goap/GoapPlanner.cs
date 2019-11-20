@@ -382,7 +382,6 @@ public class GoapPlanner {
         GoapNode goalNode = new GoapNode(cost, 0, goalAction, target);
         BuildGoapTree(goalNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness); //, ref log
         if (rawPlan != null && rawPlan.Count > 0) {
-
             string rawPlanSummary = $"Generated raw plan for job { job.name }";
             for (int i = 0; i < rawPlan.Count; i++) {
                 GoapNode currNode = rawPlan[i];
@@ -411,7 +410,7 @@ public class GoapPlanner {
             object[] otherData = actualNode.otherData;
             GoapNode goalNode = new GoapNode(actualNode.cost, currentPlan.currentNodeIndex, goalAction, target);
             BuildGoapTree(goalNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness); //, ref log
-            if (rawPlan.Count > 0) {
+            if (rawPlan != null && rawPlan.Count > 0) {
                 //has a created plan
                 List<JobNode> plannedNodes = TransformRawPlanToActualNodes(rawPlan, job.otherData, currentPlan);
                 currentPlan.Reset(plannedNodes);
@@ -428,7 +427,7 @@ public class GoapPlanner {
                 GoapNode goalNode = new GoapNode(actualNode.cost, currentPlan.currentNodeIndex, goalAction, target);
                 BuildGoapTree(goalNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness); //, ref log
             }
-            if (rawPlan.Count > 0) {
+            if (rawPlan != null && rawPlan.Count > 0) {
                 //has a created plan
                 List<JobNode> plannedNodes = TransformRawPlanToActualNodes(rawPlan, job.otherData, currentPlan);
                 currentPlan.Reset(plannedNodes);
@@ -531,6 +530,10 @@ public class GoapPlanner {
                         if (currentAction != null) {
                             GoapNode leafNode = new GoapNode(cost, node.level + 1, currentAction, target);
                             BuildGoapTree(leafNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness); //, ref log
+                        } else {
+                            //Fail - rawPlan must be set to null so the plan will fail
+                            rawPlan = null;
+                            break;
                         }
                     } else if (preconditionEffect.target == GOAP_EFFECT_TARGET.ACTOR) {
                         GoapAction lowestCostAction = null;
@@ -575,6 +578,10 @@ public class GoapPlanner {
                         if(lowestCostAction != null) {
                             GoapNode leafNode = new GoapNode(lowestCost, node.level + 1, lowestCostAction, lowestCostTarget);
                             BuildGoapTree(leafNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness); //, ref log
+                        } else {
+                            //Fail - rawPlan must be set to null so the plan will fail
+                            rawPlan = null;
+                            break;
                         }
                         //foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness in actor.awareness) {
                         //    List<IPointOfInterest> awarenessList = awareness.Value;

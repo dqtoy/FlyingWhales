@@ -333,20 +333,21 @@ public class CombatAttributePanelUI : MonoBehaviour {
     #region Mutually Exclusive
     private string[] GetMutuallyExclusiveTraits() {
         string text = mutuallyExclusiveInput.text;
-        string[] words = text.Split(',').Where(x => !string.IsNullOrEmpty(x)).ToArray();
-        return words;
+        //string[] words = text.Split(',').Where(x => !string.IsNullOrEmpty(x)).ToArray();
+        return Utilities.ConvertStringToArray(text, ',');
     }
     private string ConvertMutuallyExclusiveTraitsToText(Trait trait) {
-        string text = string.Empty;
-        if (trait.mutuallyExclusive != null) {
-            for (int i = 0; i < trait.mutuallyExclusive.Length; i++) {
-                text += trait.mutuallyExclusive[i];
-                if (i + 1 < trait.mutuallyExclusive.Length) {
-                    text += ",";
-                }
-            }
-        }
-        return text;
+        return Utilities.ConvertArrayToString(trait.mutuallyExclusive, ',');
+        //string text = string.Empty;
+        //if (trait.mutuallyExclusive != null) {
+        //    for (int i = 0; i < trait.mutuallyExclusive.Length; i++) {
+        //        text += trait.mutuallyExclusive[i];
+        //        if (i + 1 < trait.mutuallyExclusive.Length) {
+        //            text += ",";
+        //        }
+        //    }
+        //}
+        //return text;
     }
     #endregion
 }

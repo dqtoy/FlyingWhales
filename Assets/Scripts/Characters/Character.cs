@@ -3811,12 +3811,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     public void CreateInitialTraitsByClass() {
         if (role.roleType != CHARACTER_ROLE.MINION && !(this is Summon)) { //only generate buffs and flaws for non minion characters. Reference: https://trello.com/c/pC9hBih0/2781-demonic-minions-should-not-have-pregenerated-buff-and-flaw-traits
-            string[] traitPool = new string[] { "Vigilant", "Doctor", "Diplomatic",
-            "Fireproof", "Accident Prone", "Unfaithful", "Drunkard", "Craftsman", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
+            string[] traitPool = new string[] { "Vigilant", "Diplomatic",
+            "Fireproof", "Accident Prone", "Unfaithful", "Drunkard", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
             "Herbalist", "Optimist", "Pessimist", "Fast", "Chaste", "Lustful", "Coward", "Lazy", "Hardworking", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
             "Narcoleptic", "Hothead", "Evil", "Treacherous", "Disillusioned", "Ambitious", "Authoritative"
             };
-            //"Kleptomaniac","Curious", 
+            //"Kleptomaniac","Curious", "Craftsman", "Healer"
 
             List<string> buffTraits = new List<string>();
             List<string> flawTraits = new List<string>();

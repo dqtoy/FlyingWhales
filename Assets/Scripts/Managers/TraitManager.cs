@@ -44,7 +44,7 @@ public class TraitManager : MonoBehaviour {
     #region Utilities
     private void AddInstancedTraits() {
         instancedTraits = new Trait[] {
-            new Craftsman(),
+            new Builder(),
             new Grudge(),
             new PatrollingCharacter(),
             new Reanimated(),
@@ -86,7 +86,7 @@ public class TraitManager : MonoBehaviour {
             new Plagued(),
             new Vigilant(),
             new Curious(),
-            new Doctor(),
+            new Healer(),
             new Diplomatic(),
             new AccidentProne(),
             new Wet(),

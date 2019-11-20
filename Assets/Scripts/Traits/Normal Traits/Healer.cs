@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Doctor : Trait {
-        public Doctor() {
-            name = "Doctor";
+    public class Healer : Trait {
+        public Healer() {
+            name = "Healer";
             description = "Doctors can craft Healing Potions and help injured and sick characters.";
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.NEUTRAL;

@@ -974,6 +974,20 @@ public class Utilities : MonoBehaviour {
         }
         return new string(src, 0, dstIdx);
     }
+    public static string[] ConvertStringToArray(string str, char separator) {
+        string[] arr = str.Split(',');
+        return arr;
+    }
+    public static string ConvertArrayToString(string[] str, char separator) {
+        string joinedStr = string.Empty;
+        for (int i = 0; i < str.Length; i++) {
+            if(i > 0) {
+                joinedStr += separator;
+            }
+            joinedStr += str[i];
+        }
+        return joinedStr;
+    }
     #endregion
 
     #region Weighted Dictionary

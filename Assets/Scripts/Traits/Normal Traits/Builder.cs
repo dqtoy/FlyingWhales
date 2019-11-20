@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Craftsman : Trait {
+    public class Builder : Trait {
 
         //public SPECIAL_TOKEN[] craftedItemNames { get; private set; }
         //   public FURNITURE_TYPE[] craftedFurnitureNames { get; private set; }
 
-        public Craftsman() {
-            name = "Craftsman";
+        public Builder() {
+            name = "Builder";
             //craftedItemNames = new SPECIAL_TOKEN[] { SPECIAL_TOKEN.TOOL, SPECIAL_TOKEN.HEALING_POTION };
             //craftedFurnitureNames = new FURNITURE_TYPE[] { FURNITURE_TYPE.BED, FURNITURE_TYPE.DESK, FURNITURE_TYPE.GUITAR, FURNITURE_TYPE.TABLE };
-            description = "Craftsmen can create a variety of objects.";
+            description = "Builders can create a variety of objects.";
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.POSITIVE;
             daysDuration = 0;
