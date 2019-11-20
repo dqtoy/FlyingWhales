@@ -7,11 +7,11 @@ namespace Traits {
         private Character _sourceCharacter;
         //private GoapPlanJob _removeTraitJob;
 
-        #region getters/setters
-        public override bool isRemovedOnSwitchAlterEgo {
-            get { return true; }
-        }
-        #endregion
+        //#region getters/setters
+        //public override bool isRemovedOnSwitchAlterEgo {
+        //    get { return true; }
+        //}
+        //#endregion
 
         public Injured() {
             name = "Injured";

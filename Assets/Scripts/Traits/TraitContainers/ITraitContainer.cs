@@ -20,6 +20,7 @@ namespace Traits {
         #region Removing
         bool RemoveTrait(ITraitable removeFrom, Trait trait, Character removedBy = null);
         bool RemoveTrait(ITraitable removeFrom, string traitName, Character removedBy = null);
+        bool RemoveTrait(ITraitable removeFrom, int index, Character removedBy = null);
         void RemoveTrait(ITraitable removeFrom, List<Trait> traits);
         List<Trait> RemoveAllTraitsByType(ITraitable removeFrom, TRAIT_TYPE traitType);
         bool RemoveTraitOnSchedule(ITraitable removeFrom, Trait trait);

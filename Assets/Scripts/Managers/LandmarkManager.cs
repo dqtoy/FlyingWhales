@@ -240,11 +240,11 @@ public class LandmarkManager : MonoBehaviour {
         settlement = settlementLandmark;
         Faction faction = FactionManager.Instance.CreateNewFaction();
         if (settlementType == AREA_TYPE.ELVEN_SETTLEMENT) {
-            faction.SetInitialFactionLeaderClass("Queen");
+            //faction.SetInitialFactionLeaderClass("Queen");
             faction.SetInitialFactionLeaderGender(GENDER.FEMALE);
             faction.SetRace(RACE.ELVES);
         } else if (settlementType == AREA_TYPE.HUMAN_SETTLEMENT) {
-            faction.SetInitialFactionLeaderClass("King");
+            //faction.SetInitialFactionLeaderClass("King");
             faction.SetInitialFactionLeaderGender(GENDER.MALE);
             faction.SetRace(RACE.HUMANS);
         }

@@ -46,11 +46,11 @@ public class CharacterManager : MonoBehaviour {
     public Dictionary<Character, List<string>> allCharacterLogs { get; private set; }
     public Dictionary<CHARACTER_ROLE, INTERACTION_TYPE[]> characterRoleInteractions { get; private set; }
     public Dictionary<string, CharacterClass> classesDictionary { get; private set; }
-    public Dictionary<string, CharacterClass> uniqueClasses { get; private set; }
-    public Dictionary<string, CharacterClass> normalClasses { get; private set; }
-    public Dictionary<string, CharacterClass> beastClasses { get; private set; }
-    public Dictionary<string, CharacterClass> demonClasses { get; private set; }
-    public Dictionary<string, Dictionary<string, CharacterClass>> identifierClasses { get; private set; }
+    //public Dictionary<string, CharacterClass> uniqueClasses { get; private set; }
+    //public Dictionary<string, CharacterClass> normalClasses { get; private set; }
+    //public Dictionary<string, CharacterClass> beastClasses { get; private set; }
+    //public Dictionary<string, CharacterClass> demonClasses { get; private set; }
+    public Dictionary<string, List<CharacterClass>> identifierClasses { get; private set; }
     public Dictionary<string, DeadlySin> deadlySins { get; private set; }
 
     public static readonly string[] sevenDeadlySinsClassNames = { "Lust", "Gluttony", "Greed", "Sloth", "Wrath", "Envy", "Pride" };
@@ -94,12 +94,14 @@ public class CharacterManager : MonoBehaviour {
     public Character CreateNewCharacter(CharacterRole role, RACE race, GENDER gender, Faction faction = null, 
         Region homeLocation = null, Dwelling homeStructure = null) {
         Character newCharacter = null;
-        if (role == CharacterRole.LEADER) {
-            //If the role is leader, it must have a faction, so get the data for the class from the faction
-            newCharacter = new Character(role, faction.initialLeaderClass, race, gender);
-        } else {
-            newCharacter = new Character(role, race, gender);
-        }
+        //if (role == CharacterRole.LEADER) {
+        //    //If the role is leader, it must have a faction, so get the data for the class from the faction
+        //    newCharacter = new Character(role, faction.initialLeaderClass, race, gender);
+        //} else {
+        //    newCharacter = new Character(role, race, gender);
+        //}
+        newCharacter = new Character(role, race, gender);
+
         //Party party = newCharacter.CreateOwnParty();
         newCharacter.Initialize();
         if (faction != null) {
@@ -202,40 +204,47 @@ public class CharacterManager : MonoBehaviour {
     }
     private void ConstructAllClasses() {
         classesDictionary = new Dictionary<string, CharacterClass>();
-        normalClasses = new Dictionary<string, CharacterClass>();
-        uniqueClasses = new Dictionary<string, CharacterClass>();
-        beastClasses = new Dictionary<string, CharacterClass>();
-        demonClasses = new Dictionary<string, CharacterClass>();
-        identifierClasses = new Dictionary<string, Dictionary<string, CharacterClass>>();
+        //normalClasses = new Dictionary<string, CharacterClass>();
+        //uniqueClasses = new Dictionary<string, CharacterClass>();
+        //beastClasses = new Dictionary<string, CharacterClass>();
+        //demonClasses = new Dictionary<string, CharacterClass>();
+        identifierClasses = new Dictionary<string, List<CharacterClass>>();
+        identifierClasses.Add("All", new List<CharacterClass>());
         string path = Utilities.dataPath + "CharacterClasses/";
         string[] classes = System.IO.Directory.GetFiles(path, "*.json");
         for (int i = 0; i < classes.Length; i++) {
             CharacterClass currentClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText(classes[i]));
             //currentClass.ConstructData();
             classesDictionary.Add(currentClass.className, currentClass);
-            if(currentClass.identifier == "Normal") {
-                normalClasses.Add(currentClass.className, currentClass);
-                if (!identifierClasses.ContainsKey(currentClass.identifier)) {
-                    identifierClasses.Add(currentClass.identifier, normalClasses);
-                }
-            }else if (currentClass.identifier == "Unique") {
-                uniqueClasses.Add(currentClass.className, currentClass);
-                if (!identifierClasses.ContainsKey(currentClass.identifier)) {
-                    identifierClasses.Add(currentClass.identifier, uniqueClasses);
-                }
-            } else if (currentClass.identifier == "Beast") {
-                beastClasses.Add(currentClass.className, currentClass);
-                if (!identifierClasses.ContainsKey(currentClass.identifier)) {
-                    identifierClasses.Add(currentClass.identifier, beastClasses);
-                }
-            } else if (currentClass.identifier == "Demon") {
-                demonClasses.Add(currentClass.className, currentClass);
-                if (!identifierClasses.ContainsKey(currentClass.identifier)) {
-                    identifierClasses.Add(currentClass.identifier, demonClasses);
-                }
+            //if(currentClass.identifier == "Normal") {
+            //    normalClasses.Add(currentClass.className, currentClass);
+            //    //if (!identifierClasses.ContainsKey(currentClass.identifier)) {
+            //    //    identifierClasses.Add(currentClass.identifier, normalClasses);
+            //    //}
+            //}else if (currentClass.identifier == "Unique") {
+            //    uniqueClasses.Add(currentClass.className, currentClass);
+            //    //if (!identifierClasses.ContainsKey(currentClass.identifier)) {
+            //    //    identifierClasses.Add(currentClass.identifier, uniqueClasses);
+            //    //}
+            //} else if (currentClass.identifier == "Beast") {
+            //    beastClasses.Add(currentClass.className, currentClass);
+            //    //if (!identifierClasses.ContainsKey(currentClass.identifier)) {
+            //    //    identifierClasses.Add(currentClass.identifier, beastClasses);
+            //    //}
+            //} else if (currentClass.identifier == "Demon") {
+            //    demonClasses.Add(currentClass.className, currentClass);
+            //    //if (!identifierClasses.ContainsKey(currentClass.identifier)) {
+            //    //    identifierClasses.Add(currentClass.identifier, demonClasses);
+            //    //}
+            //}
+            if (!identifierClasses.ContainsKey(currentClass.identifier)) {
+                identifierClasses.Add(currentClass.identifier, new List<CharacterClass>() { currentClass });
+            } else {
+                identifierClasses[currentClass.identifier].Add(currentClass);
             }
+            identifierClasses["All"].Add(currentClass);
         }
-        identifierClasses.Add("All", classesDictionary);
+
     }
     public CharacterClass CreateNewCharacterClass(string className) {
         if (classesDictionary.ContainsKey(className)) {
@@ -260,16 +269,16 @@ public class CharacterManager : MonoBehaviour {
         return string.Empty;
         //throw new System.Exception("There are no classes with the identifier " + identifier);
     }
-    public string GetRandomClassName(Dictionary<string, CharacterClass> dict) {
-        int random = UnityEngine.Random.Range(0, dict.Count);
-        int count = 0;
-        foreach (string className in dict.Keys) {
-            if (count == random) {
-                return className;
-            }
-            count++;
-        }
-        return string.Empty;
+    public string GetRandomClassName(List<CharacterClass> list) {
+        return list[UnityEngine.Random.Range(0, list.Count)].className;
+        //int count = 0;
+        //foreach (string className in list.Keys) {
+        //    if (count == random) {
+        //        return className;
+        //    }
+        //    count++;
+        //}
+        //return string.Empty;
     }
     public void AddCharacterAvatar(CharacterAvatar characterAvatar) {
         int centerOrderLayer = (_allCharacterAvatars.Count * 2) + 1;

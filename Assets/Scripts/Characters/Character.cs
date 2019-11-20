@@ -1106,7 +1106,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void AssignClass(CharacterClass characterClass) {
         if (_characterClass != null) {
             //This means that the character currently has a class and it will be replaced with a new class
-            traitContainer.RemoveTrait(this, traitContainer.GetNormalTrait(_characterClass.traitNames)); //Remove traits from class
+            for (int i = 0; i < _characterClass.traitNames.Length; i++) {
+                traitContainer.RemoveTrait(this, _characterClass.traitNames[i]); //Remove traits from class
+            }
         }
         _characterClass = characterClass;
         OnUpdateCharacterClass();
@@ -2335,7 +2337,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             if (_raceSetting.race == race) {
                 return false; //current race is already the new race, no change
             }
-            traitContainer.RemoveTrait(this, traitContainer.GetNormalTrait(_raceSetting.traitNames)); //remove traits from race
+            for (int i = 0; i < _raceSetting.traitNames.Length; i++) {
+                traitContainer.RemoveTrait(this, _raceSetting.traitNames[i]); //Remove traits from race
+            }
         }
         RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
@@ -7520,14 +7524,14 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         if (alterEgos.ContainsKey(alterEgoName)) {
             isSwitchingAlterEgo = true;
-            for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-                Trait currTrait = traitContainer.allTraits[i];
-                if (currTrait.isRemovedOnSwitchAlterEgo) {
-                    if (traitContainer.RemoveTrait(this, currTrait)) {
-                        i--;
-                    }
-                }
-            }
+            //for (int i = 0; i < traitContainer.allTraits.Count; i++) {
+            //    Trait currTrait = traitContainer.allTraits[i];
+            //    if (currTrait.isRemovedOnSwitchAlterEgo) {
+            //        if (traitContainer.RemoveTrait(this, currTrait)) {
+            //            i--;
+            //        }
+            //    }
+            //}
             //apply all alter ego changes here
             AlterEgoData alterEgoData = alterEgos[alterEgoName];
             //currentAlterEgo.CopySpecialTraits();
@@ -7547,7 +7551,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             ResetFullnessMeter();
             ResetHappinessMeter();
             ResetTirednessMeter();
-            traitContainer.RemoveAllNonPersistentTraits(this); //remove all non persistent traits (include alter ego: false)
 
             SetHomeStructure(alterEgoData.homeStructure);
             ChangeFactionTo(alterEgoData.faction);
@@ -7561,6 +7564,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             SetAttackPercentMod(alterEgoData.attackPowerPercentMod);
             SetSpeedMod(alterEgoData.speedMod);
             SetSpeedPercentMod(alterEgoData.speedPercentMod);
+            traitContainer.RemoveAllNonPersistentTraits(this); //remove all non persistent traits (include alter ego: false)
 
             ForceCancelAllJobsTargettingThisCharacter(false, "target is not found");
             Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target is not found");

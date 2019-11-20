@@ -1436,7 +1436,7 @@ public static class Extensions {
                 return true;
             }
             for (int i = 0; i < data.canBeCraftedBy.Length; i++) {
-                if (character.traitContainer.GetNormalTrait(data.canBeCraftedBy[i].ToString()) != null) {
+                if (character.traitContainer.GetNormalTrait(data.canBeCraftedBy[i]) != null) {
                     return true;
                 }
             }
@@ -1468,10 +1468,10 @@ public static class Extensions {
         }
         TileObjectData data;
         if (TileObjectDB.TryGetTileObjectData(type, out data)) {
-            if (data.neededTraitType == null) {
+            if (string.IsNullOrEmpty(data.neededTraitType)) {
                 return true;
             }
-            return character.traitContainer.GetNormalTrait(data.neededTraitType.ToString()) != null;
+            return character.traitContainer.GetNormalTrait(data.neededTraitType) != null;
         }
         return true;
     }

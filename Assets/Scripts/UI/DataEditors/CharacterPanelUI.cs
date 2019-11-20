@@ -19,7 +19,7 @@ public class CharacterPanelUI : MonoBehaviour {
     public Dropdown raceOptions;
     public Dropdown genderOptions;
     public Dropdown consumableOptions;
-    public Dropdown combatAttributeOptions;
+    public Dropdown traitOptions;
 
     public InputField nameInput;
     public InputField levelInput;
@@ -143,9 +143,9 @@ public class CharacterPanelUI : MonoBehaviour {
         classOptions.ClearOptions();
         classOptions.AddOptions(ClassPanelUI.Instance.allClasses);
     }
-    public void UpdateCombatAttributeOptions() {
-        combatAttributeOptions.ClearOptions();
-        combatAttributeOptions.AddOptions(CombatAttributePanelUI.Instance.allCombatAttributes);
+    public void UpdateTraitOptions() {
+        traitOptions.ClearOptions();
+        traitOptions.AddOptions(TraitPanelUI.Instance.allTraits);
     }
     public void UpdateItemOptions() {
         //UpdateWeaponOptions();
@@ -362,9 +362,9 @@ public class CharacterPanelUI : MonoBehaviour {
         } else {
             skillsLbl.text = "None";
         }
-        UpdateCombatAttributesUI();
+        UpdateTraitsUI();
     }
-    private void UpdateCombatAttributesUI() {
+    private void UpdateTraitsUI() {
         combatAttributesLbl.text = string.Empty;
         if (_allCombatAttributeNames != null && _allCombatAttributeNames.Count > 0) {
             combatAttributesLbl.text += _allCombatAttributeNames[0];
@@ -441,14 +441,14 @@ public class CharacterPanelUI : MonoBehaviour {
         ClassChange(classOptions.value);
     }
     public void OnAddCombatAttribute() {
-        if (combatAttributeOptions.options.Count > 0 && !_allCombatAttributeNames.Contains(combatAttributeOptions.options[combatAttributeOptions.value].text)) {
-            _allCombatAttributeNames.Add(combatAttributeOptions.options[combatAttributeOptions.value].text);
+        if (traitOptions.options.Count > 0 && !_allCombatAttributeNames.Contains(traitOptions.options[traitOptions.value].text)) {
+            _allCombatAttributeNames.Add(traitOptions.options[traitOptions.value].text);
         }
-        UpdateCombatAttributesUI();
+        UpdateTraitsUI();
     }
     public void OnRemoveCombatAttribute() {
-        if (combatAttributeOptions.options.Count > 0 && _allCombatAttributeNames.Remove(combatAttributeOptions.options[combatAttributeOptions.value].text)) {
-            UpdateCombatAttributesUI();
+        if (traitOptions.options.Count > 0 && _allCombatAttributeNames.Remove(traitOptions.options[traitOptions.value].text)) {
+            UpdateTraitsUI();
         }
     }
     #endregion

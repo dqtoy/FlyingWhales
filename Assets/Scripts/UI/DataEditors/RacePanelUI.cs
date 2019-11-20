@@ -63,7 +63,7 @@ public class RacePanelUI : MonoBehaviour {
     #region Utilities
     public void UpdateTraitOptions() {
         traitOptions.ClearOptions();
-        traitOptions.AddOptions(CombatAttributePanelUI.Instance.allCombatAttributes);
+        traitOptions.AddOptions(TraitPanelUI.Instance.allTraits);
     }
     public void LoadAllData() {
         _traitNames = new List<string>();

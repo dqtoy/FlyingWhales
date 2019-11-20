@@ -23,7 +23,7 @@ public class EditorPanelUI : MonoBehaviour {
         SkillPanelUI.Instance.LoadAllData();
         ClassPanelUI.Instance.LoadAllData();
         RacePanelUI.Instance.LoadAllData();
-        CombatAttributePanelUI.Instance.LoadAllData();
+        TraitPanelUI.Instance.LoadAllData();
         AttributePanelUI.Instance.LoadAllData();
         ItemPanelUI.Instance.LoadAllData();
     }

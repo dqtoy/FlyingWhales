@@ -286,7 +286,7 @@ public class ItemPanelUI : MonoBehaviour {
     }
     public void UpdateAttributeOptions() {
         attributeOptions.ClearOptions();
-        attributeOptions.AddOptions(CombatAttributePanelUI.Instance.allCombatAttributes);
+        attributeOptions.AddOptions(TraitPanelUI.Instance.allTraits);
     }
     #endregion
 

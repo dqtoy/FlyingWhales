@@ -137,7 +137,7 @@ public class GoapThread : Multithread {
         //TODO: Can be further optimized? No longer pool usable actions, instead check requirements upon building plan?
         log = "-----------------RECEIVING NEW PLAN FROM OTHER THREAD OF " + actor.name + " WITH TARGET " + target?.name ?? "None" + " (" + actor.specificLocation.name + ")-----------------------";
         if (goalType != INTERACTION_TYPE.NONE) {
-            log += "\nGOAL: "  + goalType.ToString();
+            log += "\nGOAL: " + goalType.ToString();
         } else {
             log += "\nGOAL: " + goalEffect.ToString();
         }

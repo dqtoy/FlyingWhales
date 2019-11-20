@@ -6,9 +6,9 @@ namespace Traits {
     public class Sick : Trait {
         private Character owner;
         private float pukeChance;
-        public override bool isRemovedOnSwitchAlterEgo {
-            get { return true; }
-        }
+        //public override bool isRemovedOnSwitchAlterEgo {
+        //    get { return true; }
+        //}
         public Sick() {
             name = "Sick";
             description = "This character has caught a mild illness.";

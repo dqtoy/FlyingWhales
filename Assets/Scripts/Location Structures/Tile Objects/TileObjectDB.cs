@@ -11,14 +11,14 @@ public static class TileObjectDB {
             constructionCost = 10,
             constructionTime = 12,
             maxHP = 10000,
-            neededTraitType = typeof(Builder)
+            neededTraitType = "Builder"
         } },
 
         { TILE_OBJECT_TYPE.BED, new TileObjectData() {
             constructionCost = 10,
             constructionTime = 12,
             maxHP = 1000,
-            neededTraitType = typeof(Builder),
+            neededTraitType = "Builder",
             providedFacilities = new ProvidedFacility[] {
                 new ProvidedFacility() { type = FACILITY_TYPE.TIREDNESS_RECOVERY, value = 20 }
             }
@@ -28,7 +28,7 @@ public static class TileObjectDB {
             constructionCost = 10,
             constructionTime = 12,
             maxHP = 1000,
-            neededTraitType = typeof(Builder),
+            neededTraitType = "Builder",
             providedFacilities = new ProvidedFacility[] {
                  new ProvidedFacility() { type = FACILITY_TYPE.SIT_DOWN_SPOT, value = 10 }
             }
@@ -38,7 +38,7 @@ public static class TileObjectDB {
             constructionCost = 10,
             constructionTime = 12,
             maxHP = 1000,
-            neededTraitType = typeof(Builder),
+            neededTraitType = "Builder",
             providedFacilities = new ProvidedFacility[] {
                 new ProvidedFacility() { type = FACILITY_TYPE.HAPPINESS_RECOVERY, value = 10 }
             }
@@ -47,7 +47,7 @@ public static class TileObjectDB {
             constructionCost = 10,
             constructionTime = 12,
             maxHP = 1000,
-            neededTraitType = typeof(Builder),
+            neededTraitType = "Builder",
             providedFacilities = new ProvidedFacility[] {
                 new ProvidedFacility() { type = FACILITY_TYPE.FULLNESS_RECOVERY, value = 20 },
                 new ProvidedFacility() { type = FACILITY_TYPE.SIT_DOWN_SPOT, value = 5 }
@@ -57,7 +57,7 @@ public static class TileObjectDB {
             constructionCost = 10,
             constructionTime = 12,
             maxHP = 1000,
-            neededTraitType = typeof(Builder),
+            neededTraitType = "Builder",
         } },
     };
 
@@ -85,7 +85,7 @@ public struct TileObjectData {
     public int constructionCost;
     public int constructionTime; //in ticks
     public int maxHP;
-    public System.Type neededTraitType;
+    public string neededTraitType;
     public ProvidedFacility[] providedFacilities;
 
     public bool CanProvideFacility(FACILITY_TYPE type) {
@@ -105,7 +105,7 @@ public struct TileObjectData {
                 constructionCost = 10,
                 constructionTime = 12,
                 maxHP = 1000,
-                neededTraitType = typeof(Builder),
+                neededTraitType = "Builder",
                 providedFacilities = null
             };
         }
