@@ -55,7 +55,7 @@ public class SaveDataCharacter {
     //    }
     //}
 
-    public List<INTERACTION_TYPE> currentInteractionTypes;
+    //public List<INTERACTION_TYPE> currentInteractionTypes;
     public int supply;
     public List<SaveDataItem> items;
     public int moodValue;
@@ -185,7 +185,7 @@ public class SaveDataCharacter {
         speedPercentMod = character.speedPercentMod;
         maxHPPercentMod = character.maxHPPercentMod;
 
-        currentInteractionTypes = character.currentInteractionTypes;
+        //currentInteractionTypes = character.currentInteractionTypes;
         supply = character.supply;
         moodValue = character.moodValue;
         isCombatant = character.isCombatant;

@@ -14,9 +14,6 @@ namespace Traits {
             thoughtText = "[Character] has irresistible urge to steal.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEGATIVE;
-            
-            
-            
             daysDuration = 0;
             //effects = new List<TraitEffect>();
             noItemCharacters = new List<Character>();
@@ -29,12 +26,12 @@ namespace Traits {
             owner = sourceCharacter as Character;
             owner.AdjustHappinessDecreaseRate(_happinessDecreaseRate);
             base.OnAddTrait(sourceCharacter);
-            owner.AddInteractionType(INTERACTION_TYPE.STEAL);
+            //owner.AddInteractionType(INTERACTION_TYPE.STEAL);
             Messenger.AddListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             base.OnRemoveTrait(sourceCharacter, removedBy);
-            owner.RemoveInteractionType(INTERACTION_TYPE.STEAL);
+            //owner.RemoveInteractionType(INTERACTION_TYPE.STEAL);
             owner.AdjustHappinessDecreaseRate(-_happinessDecreaseRate);
             Messenger.RemoveListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
         }
