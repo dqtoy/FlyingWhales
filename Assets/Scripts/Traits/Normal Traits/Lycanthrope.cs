@@ -123,12 +123,12 @@ namespace Traits {
         }
 
         public void PlanTransformToWolf() {
-            _character.currentActionNode.EndPerTickEffect();
+            _character.currentActionNode?.EndPerTickEffect();
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM, _character, _character);
             _character.jobQueue.AddJobInQueue(job);
         }
         public void PlanRevertToNormal() {
-            _character.currentActionNode.EndPerTickEffect();
+            _character.currentActionNode?.EndPerTickEffect();
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.REVERT_TO_NORMAL_FORM, _character, _character);
             _character.jobQueue.AddJobInQueue(job);
         }
