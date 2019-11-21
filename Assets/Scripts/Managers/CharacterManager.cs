@@ -52,6 +52,7 @@ public class CharacterManager : MonoBehaviour {
     public Dictionary<string, CharacterClass> demonClasses { get; private set; }
     public Dictionary<string, Dictionary<string, CharacterClass>> identifierClasses { get; private set; }
     public Dictionary<string, DeadlySin> deadlySins { get; private set; }
+    public List<CharacterClass> combatantClasses { get; private set; }
 
     public static readonly string[] sevenDeadlySinsClassNames = { "Lust", "Gluttony", "Greed", "Sloth", "Wrath", "Envy", "Pride" };
     private List<string> deadlySinsRotation = new List<string>();
@@ -207,6 +208,7 @@ public class CharacterManager : MonoBehaviour {
         beastClasses = new Dictionary<string, CharacterClass>();
         demonClasses = new Dictionary<string, CharacterClass>();
         identifierClasses = new Dictionary<string, Dictionary<string, CharacterClass>>();
+        combatantClasses = new List<CharacterClass>();
         string path = Utilities.dataPath + "CharacterClasses/";
         string[] classes = System.IO.Directory.GetFiles(path, "*.json");
         for (int i = 0; i < classes.Length; i++) {
@@ -233,6 +235,9 @@ public class CharacterManager : MonoBehaviour {
                 if (!identifierClasses.ContainsKey(currentClass.identifier)) {
                     identifierClasses.Add(currentClass.identifier, demonClasses);
                 }
+            }
+            if (!currentClass.isNonCombatant) {
+                combatantClasses.Add(currentClass);
             }
         }
         identifierClasses.Add("All", classesDictionary);

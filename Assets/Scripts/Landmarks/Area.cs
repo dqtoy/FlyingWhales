@@ -41,6 +41,8 @@ public class Area : IJobOwner {
     //public Race defaultRace { get; private set; }
     //private RACE _raceType;
 
+    public LocationClassManager locationClassManager { get; private set; }
+
     #region getters
     public List<Character> visitors {
         get { return charactersAtLocation.Where(x => !region.residents.Contains(x)).ToList(); }
