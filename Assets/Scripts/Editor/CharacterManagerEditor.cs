@@ -9,7 +9,7 @@ public class CharacterManagerEditor : Editor {
 
 
     public override void OnInspectorGUI() {
-        CharacterManager myTarget = (CharacterManager)target;
+        CharacterManager characterManager = (CharacterManager)target;
 
         //myTarget.experience = EditorGUILayout.IntField("Experience", myTarget.experience);
         //EditorGUILayout.LabelField("Level", myTarget.Level.ToString());
@@ -17,8 +17,13 @@ public class CharacterManagerEditor : Editor {
         // Show default inspector property editor
         DrawDefaultInspector();
 
+        GUILayout.Space(10f);
+
         if (GUILayout.Button("Load Character Marker Assets")) {
-            myTarget.LoadCharacterMarkerAssets();
+            characterManager.LoadCharacterMarkerAssets();
+        }
+        if (GUILayout.Button("Load Character Portrait Assets")) {
+            characterManager.LoadCharacterPortraitAssets();
         }
     }
 }

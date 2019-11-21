@@ -9,11 +9,13 @@ public class CharacterManager : MonoBehaviour {
 
     public static CharacterManager Instance = null;
 
+    public static readonly string[] sevenDeadlySinsClassNames = { "Lust", "Gluttony", "Greed", "Sloth", "Wrath", "Envy", "Pride" };
     public const int MAX_HISTORY_LOGS = 300;
     public const int CHARACTER_MAX_MEMORY = 20;
     public const int FULLNESS_DECREASE_RATE = 380;
     public const int TIREDNESS_DECREASE_RATE = 340;
     public const int HAPPINESS_DECREASE_RATE = 640;
+    public const string Original_Alter_Ego = "Original";
 
     public GameObject characterIconPrefab;
     public Transform characterIconsParent;
@@ -25,12 +27,16 @@ public class CharacterManager : MonoBehaviour {
 	public Sprite heroSprite;
 
     [Header("Character Portrait Assets")]
-    public GameObject characterPortraitPrefab;
+    [SerializeField] private GameObject _characterPortraitPrefab;
     [SerializeField] private List<RacePortraitAssets> portraitAssets;
-    public List<Color> hairColors;
     [SerializeField] private RolePortraitFramesDictionary portraitFrames;
     [SerializeField] private StringSpriteDictionary classPortraits;
     public Material hsvMaterial;
+    public Material spriteLightingMaterial;
+
+    //TODO: Will move this once other hair assets arrive
+    [SerializeField] private Sprite maleHairSprite;
+    [SerializeField] private Sprite femaleHairSprite;
 
     [Header("Character Marker Assets")]
     [SerializeField] private List<RaceMarkerAsset> markerAssets;
@@ -42,20 +48,13 @@ public class CharacterManager : MonoBehaviour {
     [Header("Artifact Settings")]
     [SerializeField] private ArtifactSettingDictionary artifactSettings;
 
-    //alter egos
-    public const string Original_Alter_Ego = "Original";
-
     public Dictionary<Character, List<string>> allCharacterLogs { get; private set; }
     public Dictionary<CHARACTER_ROLE, INTERACTION_TYPE[]> characterRoleInteractions { get; private set; }
     public Dictionary<string, CharacterClass> classesDictionary { get; private set; }
-    //public Dictionary<string, CharacterClass> uniqueClasses { get; private set; }
-    //public Dictionary<string, CharacterClass> normalClasses { get; private set; }
-    //public Dictionary<string, CharacterClass> beastClasses { get; private set; }
-    //public Dictionary<string, CharacterClass> demonClasses { get; private set; }
     public Dictionary<string, List<CharacterClass>> identifierClasses { get; private set; }
     public Dictionary<string, DeadlySin> deadlySins { get; private set; }
 
-    public static readonly string[] sevenDeadlySinsClassNames = { "Lust", "Gluttony", "Greed", "Sloth", "Wrath", "Envy", "Pride" };
+    
     private List<string> deadlySinsRotation = new List<string>();
 
     public int defaultSleepTicks { get; protected set; } //how many ticks does a character must sleep per day?
@@ -64,9 +63,9 @@ public class CharacterManager : MonoBehaviour {
     public List<Character> allCharacters {
         get { return _allCharacters; }
     }
-    //public Dictionary<ELEMENT, float> elementsChanceDictionary {
-    //    get { return _elementsChanceDictionary; }
-    //}
+    public GameObject characterPortraitPrefab {
+        get { return _characterPortraitPrefab; }
+    }
     #endregion
 
     private void Awake() {
@@ -78,14 +77,8 @@ public class CharacterManager : MonoBehaviour {
 
     public void Initialize() {
         ConstructAllClasses();
-        //ConstructElementChanceDictionary();
         CreateDeadlySinsData();
         defaultSleepTicks = GameManager.Instance.GetTicksBasedOnHour(8);
-        //ConstructAwayFromHomeInteractionWeights();
-        //ConstructAtHomeInteractionWeights();
-        //ConstructRoleInteractions();
-        //ConstructPortraitDictionaries();
-        //Messenger.AddListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
         Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
 
@@ -109,7 +102,6 @@ public class CharacterManager : MonoBehaviour {
         if (faction != null) {
             faction.JoinFaction(newCharacter);
         }
-#if !WORLD_CREATION_TOOL
         else {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
         }
@@ -120,7 +112,6 @@ public class CharacterManager : MonoBehaviour {
             homeLocation.AddCharacterToLocation(newCharacter.ownParty.owner);
         }
         //newCharacter.AddAwareness(newCharacter);
-#endif
         newCharacter.CreateInitialTraitsByClass();
         //newCharacter.CreateInitialTraitsByRace();
         _allCharacters.Add(newCharacter);
@@ -161,7 +152,6 @@ public class CharacterManager : MonoBehaviour {
                 faction.OnlySetLeader(newCharacter);
             }
         }
-#if !WORLD_CREATION_TOOL
         newCharacter.ownParty.CreateIcon();
 
         Region home = null;
@@ -191,7 +181,6 @@ public class CharacterManager : MonoBehaviour {
                 specificLocation.AddCharacterToLocation(newCharacter.ownParty.owner, null, false);
             }
         }
-#endif
         for (int i = 0; i < data.items.Count; i++) {
             data.items[i].Load(newCharacter);
         }
@@ -269,18 +258,9 @@ public class CharacterManager : MonoBehaviour {
             return GetRandomClassName(identifierClasses[identifier]);
         }
         return string.Empty;
-        //throw new System.Exception("There are no classes with the identifier " + identifier);
     }
     public string GetRandomClassName(List<CharacterClass> list) {
         return list[UnityEngine.Random.Range(0, list.Count)].className;
-        //int count = 0;
-        //foreach (string className in list.Keys) {
-        //    if (count == random) {
-        //        return className;
-        //    }
-        //    count++;
-        //}
-        //return string.Empty;
     }
     public void AddCharacterAvatar(CharacterAvatar characterAvatar) {
         int centerOrderLayer = (_allCharacterAvatars.Count * 2) + 1;
@@ -324,11 +304,6 @@ public class CharacterManager : MonoBehaviour {
         choices.Remove(SPECIAL_TOKEN.TOOL);
         for (int i = 0; i < allCharacters.Count; i++) {
             Character character = allCharacters[i];
-#if TRAILER_BUILD
-            if (character.name == "Fiona" || character.name == "Audrey" || character.name == "Jamie") {
-                continue;
-            }
-#endif
             if (character.minion == null) {
                 if (Random.Range(0, 2) == 0) {
                     SPECIAL_TOKEN randomItem = choices[UnityEngine.Random.Range(0, choices.Count)];
@@ -497,9 +472,6 @@ public class CharacterManager : MonoBehaviour {
 
     #region Character Portraits
     public PortraitAssetCollection GetPortraitAssets(RACE race, GENDER gender) {
-        //if (race != RACE.HUMANS) {
-        //    race = RACE.ELVES; //TODO: Change this when needed assets arrive
-        //}
         for (int i = 0; i < portraitAssets.Count; i++) {
             RacePortraitAssets racePortraitAssets = portraitAssets[i];
             if (racePortraitAssets.race == race) {
@@ -516,39 +488,38 @@ public class CharacterManager : MonoBehaviour {
         } else {
             return portraitAssets[0].femaleAssets;
         }
-        //throw new System.Exception("No portraits for " + race.ToString() + " " + gender.ToString());
     }
-    public PortraitSettings GenerateRandomPortrait(RACE race, GENDER gender) {
+    public PortraitSettings GenerateRandomPortrait(RACE race, GENDER gender, string characterClass) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);
         PortraitSettings ps = new PortraitSettings();
         ps.race = race;
         ps.gender = gender;
-        ps.skinIndex = Random.Range(0, pac.skinAssets.Count);
-        ps.hairIndex = Random.Range(0, pac.hairAssets.Count);
-        ps.underIndex = Random.Range(0, pac.underAssets.Count);
-        ps.topIndex = Random.Range(0, pac.topAssets.Count);
-        ps.bodyIndex = Random.Range(0, pac.bodyAssets.Count);
+        if (race == RACE.DEMON) {
+            ps.head = -1;
+            ps.brows = -1;
+            ps.eyes = -1;
+            ps.mouth = -1;
+            ps.nose = -1;
+            ps.hair = -1;
+            ps.mustache = -1;
+            ps.beard = -1;
+            ps.wholeImage = characterClass;
+            ps.hairColor = 0f;
+            ps.wholeImageColor = Random.Range(-144f, 144f);
+        } else {
+            ps.head = Utilities.GetRandomIndexInList(pac.head);
+            ps.brows = Utilities.GetRandomIndexInList(pac.head);
+            ps.eyes = Utilities.GetRandomIndexInList(pac.head);
+            ps.mouth = Utilities.GetRandomIndexInList(pac.head);
+            ps.nose = Utilities.GetRandomIndexInList(pac.head);
+            ps.hair = Utilities.GetRandomIndexInList(pac.head);
+            ps.mustache = Utilities.GetRandomIndexInList(pac.head);
+            ps.beard = Utilities.GetRandomIndexInList(pac.head);
+            ps.wholeImage = string.Empty;
+            ps.hairColor = Random.Range(-360f, 360f);
+            ps.wholeImageColor = 0f;
+        }
         return ps;
-    }
-    public Sprite GetHairSprite(int index, RACE race, GENDER gender) {
-        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.hairAssets.ElementAtOrDefault(index);
-    }
-    public Sprite GetBodySprite(int index, RACE race, GENDER gender) {
-        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.bodyAssets.ElementAtOrDefault(index);
-    }
-    public Sprite GetSkinSprite(int index, RACE race, GENDER gender) {
-        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.skinAssets.ElementAtOrDefault(index);
-    }
-    public Sprite GetTopSprite(int index, RACE race, GENDER gender) {
-        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.topAssets.ElementAtOrDefault(index);
-    }
-    public Sprite GetUnderSprite(int index, RACE race, GENDER gender) {
-        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
-        return pac.underAssets.ElementAtOrDefault(index);
     }
     public PortraitFrame GetPortraitFrame(CHARACTER_ROLE role) {
         if (portraitFrames.ContainsKey(role)) {
@@ -556,11 +527,90 @@ public class CharacterManager : MonoBehaviour {
         }
         throw new System.Exception("There is no frame for role " + role.ToString());
     }
-    public Sprite GetClassPortraitSprite(string className) {
+    public Sprite GetWholeImagePortraitSprite(string className) {
         if (classPortraits.ContainsKey(className)) {
             return classPortraits[className];
         }
         return null;
+    }
+    public Sprite GetPortraitSprite(string identifier, int index, RACE race, GENDER gender) {
+        if (index < 0) {
+            return null;
+        }
+        PortraitAssetCollection pac = GetPortraitAssets(race, gender);
+        List<Sprite> listToUse;
+        switch (identifier) {
+            case "head":
+                listToUse = pac.head;
+                break;
+            case "brows":
+                listToUse = pac.brows;
+                break;
+            case "eyes":
+                listToUse = pac.eyes;
+                break;
+            case "mouth":
+                listToUse = pac.mouth;
+                break;
+            case "nose":
+                listToUse = pac.nose;
+                break;
+            case "hair":
+                listToUse = pac.hair;
+                break;
+            case "mustache":
+                listToUse = pac.mustache;
+                break;
+            case "beard":
+                listToUse = pac.beard;
+                break;
+            default:
+                listToUse = null;
+                break;
+        }
+        if (listToUse != null && listToUse.Count > index) {
+            return listToUse[index];
+        }
+        return null;
+    }
+    public void LoadCharacterPortraitAssets() {
+        portraitAssets = new List<RacePortraitAssets>();
+        string characterPortraitAssetPath = "Assets/Textures/Portraits/";
+        string[] races = Directory.GetDirectories(characterPortraitAssetPath);
+
+        //loop through races found in directory
+        for (int i = 0; i < races.Length; i++) {
+            string currRacePath = races[i];
+            string raceName = new DirectoryInfo(currRacePath).Name.ToUpper();
+            RACE race;
+            if (System.Enum.TryParse(raceName, out race)) {
+                RacePortraitAssets raceAsset = new RacePortraitAssets(race);
+                //loop through genders found in races directory
+                string[] genders = System.IO.Directory.GetDirectories(currRacePath);
+                for (int j = 0; j < genders.Length; j++) {
+                    string currGenderPath = genders[j];
+                    string genderName = new DirectoryInfo(currGenderPath).Name.ToUpper();
+                    GENDER gender;
+                    if (System.Enum.TryParse(genderName, out gender)) {
+                        PortraitAssetCollection assetCollection = raceAsset.GetPortraitAssetCollection(gender);
+                        string[] faceParts = System.IO.Directory.GetDirectories(currGenderPath);
+                        for (int k = 0; k < faceParts.Length; k++) {
+                            string currFacePath = faceParts[k];
+                            string facePartName = new DirectoryInfo(currFacePath).Name;
+                            string[] facePartFiles = Directory.GetFiles(currFacePath);
+                            for (int l = 0; l < facePartFiles.Length; l++) {
+                                string facePartAssetPath = facePartFiles[l];
+                                Sprite loadedSprite = (Sprite)UnityEditor.AssetDatabase.LoadAssetAtPath(facePartAssetPath, typeof(Sprite));
+                                if (loadedSprite != null) {
+                                    assetCollection.AddSpriteToCollection(facePartName, loadedSprite);
+                                }
+                            }
+                        }
+                    }
+                }
+                portraitAssets.Add(raceAsset);
+            }
+        }
     }
     #endregion
 
@@ -594,13 +644,20 @@ public class CharacterManager : MonoBehaviour {
         //return markerAssets[0].maleAssets;
         return null;
     }
+    public Sprite GetMarkerHairSprite(GENDER gender) {
+        switch (gender) {
+            case GENDER.MALE:
+                return maleHairSprite;
+            case GENDER.FEMALE:
+                return femaleHairSprite;
+            default:
+                return null;
+        }
+    }
     public void LoadCharacterMarkerAssets() {
         markerAssets = new List<RaceMarkerAsset>();
         string characterMarkerAssetPath = "Assets/Textures/Character Markers/";
         string[] races = Directory.GetDirectories(characterMarkerAssetPath);
-
-        //Debug.Log(raceName);
-        //Debug.Log(Path.GetFileName(Path.GetDirectoryName(currRacePath)));
 
         //loop through races found in directory
         for (int i = 0; i < races.Length; i++) {
@@ -662,40 +719,6 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Listeners
-    //private void OnAfterActionStateSet(string stateName, ActualGoapNode actionNode) {
-    //    action.actor.marker.UpdateAnimation();
-
-    //    IPointOfInterest target = null;
-    //    if (action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
-    //        target = (action as MakeLove).targetCharacter;
-    //    } else {
-    //        target = action.poiTarget;
-    //    }
-    //    List<Character> allInVisionCharacters = action.actor.marker.inVisionCharacters;
-    //    //allInVisionCharacters.Add(action.actor);
-    //    if (target is Character) {
-    //        Character targetCharacter = target as Character;
-    //        if (!targetCharacter.isDead) {
-    //            //TODO: FOR PERFORMANCE TESTING!
-    //            allInVisionCharacters = action.actor.marker.inVisionCharacters.Union(targetCharacter.marker.inVisionCharacters).ToList();
-    //        }
-    //    }
-    //    //if(allInVisionCharacters.Count <= 0) {
-    //    //    allInVisionCharacters.AddRange(action.actor.marker.inVisionCharacters);
-    //    //    allInVisionCharacters.Add(action.actor);
-    //    //}
-    //    //if(action.goapType == INTERACTION_TYPE.ASSAULT_CHARACTER) {
-    //    //    Debug.LogError("Check this!");
-    //    //}
-    //    for (int i = 0; i < allInVisionCharacters.Count; i++) {
-    //        Character inVisionChar = allInVisionCharacters[i];
-    //        if (target != inVisionChar && action.actor != inVisionChar) {
-    //            inVisionChar.OnActionStateSet(action, state);
-    //        } else if (inVisionChar is Summon) {
-    //            inVisionChar.OnActionStateSet(action, state);
-    //        }
-    //    }
-    //}
     private void OnCharacterFinishedAction(Character actor, GoapAction action, string result) {
         actor.marker.UpdateActionIcon();
         actor.marker.UpdateAnimation();

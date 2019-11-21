@@ -15,15 +15,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     protected int _doNotGetHungry;
     protected int _doNotGetTired;
     protected int _doNotGetLonely;
-    public int doNotRecoverHP { get; protected set; }
-    //protected int _numOfWaitingForGoapThread;
     protected float _actRate;
     protected bool _isDead;
-    //protected bool _hasAlreadyAskedForPlan;
     protected bool _isChatting;
     protected bool _isFlirting;
     protected GENDER _gender;
-    public SEXUALITY sexuality { get; private set; }
     protected CharacterClass _characterClass;
     protected RaceSetting _raceSetting;
     protected CharacterRole _role;
@@ -35,7 +31,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     protected Minion _minion;
     protected CombatCharacter _currentCombatCharacter;
     protected List<Log> _history;
-    //protected PlayerCharacterItem _playerCharacterItem;
     private LocationStructure _currentStructure; //what structure is this character currently in.
 
     //Stats
@@ -47,6 +42,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     protected int _maxExperience;
     protected int _sp;
     protected int _maxSP;
+    public int doNotRecoverHP { get; protected set; }
+    public SEXUALITY sexuality { get; private set; }
     public int attackPowerMod { get; protected set; }
     public int speedMod { get; protected set; }
     public int maxHPMod { get; protected set; }
@@ -56,27 +53,22 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public Region homeRegion { get; protected set; }
     public Area homeArea { get { return homeRegion.area; } }
     public Dwelling homeStructure { get; protected set; }
-    //public Area defendingArea { get; private set; }
     public IRelationshipContainer relationshipContainer {
         get { return currentAlterEgo.relationshipContainer; }
     }
     public IRelationshipValidator relationshipValidator {
         get { return currentAlterEgo.relationshipValidator; }
     }
-    //public List<INTERACTION_TYPE> currentInteractionTypes { get; private set; }
     public List<INTERACTION_TYPE> advertisedActions { get; private set; }
-    //public List<GoapPlan> allGoapPlans { get; private set; }
     public GoapPlanner planner { get; set; }
     public int supply { get; set; }
     public int food { get; set; }
-    //public int isWaitingForInteraction { get; private set; }
     public CharacterMarker marker { get; private set; }
     public JobQueueItem currentJob { get; private set; }
     public GoapPlan currentPlan { get; private set; }
     public ActualGoapNode currentActionNode { get; private set; }
     public ActualGoapNode previousCurrentActionNode { get; private set; }
     public Character lastAssaultedCharacter { get; private set; }
-    //public List<GoapAction> targettedByAction { get; private set; }
     public CharacterStateComponent stateComponent { get; private set; }
     public List<SpecialToken> items { get; private set; }
     public JobQueue jobQueue { get; private set; }
@@ -2352,7 +2344,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             traitContainer.AddTrait(this, _raceSetting.traitNames[i]);
         }
         //Update Portrait to use new race
-        _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
+        _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender, characterClass.className);
         if (marker != null) {
             marker.UpdateMarkerVisuals();
         }
@@ -2371,18 +2363,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (minion != null) {
             minion.SetAssignedDeadlySinName(className);
         }
-
-#if !WORLD_CREATION_TOOL
-        //_homeLandmark.tileLocation.areaOfTile.excessClasses.Remove(previousClassName);
-        //_homeLandmark.tileLocation.areaOfTile.missingClasses.Remove(_characterClass.className);
-
-        //Log log = new Log(GameManager.Instance.Today(), "CharacterActions", "ChangeClassAction", "change_class");
-        //log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //log.AddToFillers(null, previousClassName, LOG_IDENTIFIER.STRING_1);
-        //log.AddToFillers(null, _characterClass.className, LOG_IDENTIFIER.STRING_2);
-        //AddHistory(log);
-        //check equipped items
-#endif
 
     }
     public void SetName(string newName) {

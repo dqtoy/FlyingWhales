@@ -8,7 +8,7 @@ namespace AssetImporters {
     public class CharacterMarkerAssetImporter : AssetPostprocessor {
 
         void OnPreprocessTexture() {
-            if (assetPath.Contains("Character Marker") && !assetPath.Contains("Action Icons")) {
+            if (assetPath.Contains("Character Marker") && !assetPath.Contains("Action Icons") && !assetPath.Contains("Hair")) {
                 TextureImporter textureImporter = (TextureImporter)assetImporter;
                 textureImporter.textureType = TextureImporterType.Sprite;
                 textureImporter.spriteImportMode = SpriteImportMode.Single;

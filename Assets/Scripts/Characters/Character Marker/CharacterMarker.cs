@@ -20,6 +20,7 @@ public class CharacterMarker : PooledObject {
     public Transform visualsParent;
     public TextMeshPro nameLbl;
     [SerializeField] private SpriteRenderer mainImg;
+    [SerializeField] private SpriteRenderer hairImg;
     [SerializeField] private SpriteRenderer hoveredImg;
     [SerializeField] private SpriteRenderer clickedImg;
     [SerializeField] private SpriteRenderer actionIcon;
@@ -89,6 +90,7 @@ public class CharacterMarker : PooledObject {
         nameLbl.SetText(character.name);
         this.character = character;
         mainImg.sortingOrder = InteriorMapManager.Default_Character_Sorting_Order + character.id;
+        hairImg.sortingOrder = mainImg.sortingOrder + 1;
         nameLbl.sortingOrder = mainImg.sortingOrder;
         actionIcon.sortingOrder = mainImg.sortingOrder;
         hoveredImg.sortingOrder = mainImg.sortingOrder - 1;
@@ -98,6 +100,11 @@ public class CharacterMarker : PooledObject {
         if (UIManager.Instance.characterInfoUI.isShowing) {
             clickedImg.gameObject.SetActive(UIManager.Instance.characterInfoUI.activeCharacter.id == character.id);
         }
+        Sprite hair = CharacterManager.Instance.GetMarkerHairSprite(character.gender);
+        hairImg.sprite = hair;
+        Material hairMat = Instantiate(CharacterManager.Instance.hsvMaterial);
+        hairMat.SetVector("_HSVAAdjust", new Vector4(character.portraitSettings.hairColor / 360f, 0f, 0f, 0f));
+        hairImg.materials = new Material[] { CharacterManager.Instance.spriteLightingMaterial, hairMat };
         UpdateMarkerVisuals();
         UpdateActionIcon();
 
@@ -114,6 +121,7 @@ public class CharacterMarker : PooledObject {
         OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
         //flee
         SetHasFleePath(false);
+        UpdateHairState();
 
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
@@ -853,6 +861,7 @@ public class CharacterMarker : PooledObject {
             animator.runtimeAnimatorController = null;
         }
         mainImg.sprite = assets.defaultSprite;
+        UpdateHairState();
     }
     public void UpdatePosition() {
         //This is checked per update, stress test this for performance
@@ -996,6 +1005,14 @@ public class CharacterMarker : PooledObject {
         yield return new WaitForSeconds(1f);
         if (!(character.stateComponent.currentState is CombatState)) {
             HideHPBar();
+        }
+    }
+    private void UpdateHairState() {
+        //TODO: Find another way to unify this
+        if (character.characterClass.className == "Mage") {
+            hairImg.gameObject.SetActive(false);
+        } else {
+            hairImg.gameObject.SetActive(true);
         }
     }
     #endregion

@@ -17,7 +17,7 @@ public class UnsummonedMinionNameplateItem : NameplateItem<UnsummonedMinionData>
         minionData = o;
         mainLbl.text = o.minionName;
         subLbl.text = "Demon " +  o.className;
-        Sprite classPortrait = CharacterManager.Instance.GetClassPortraitSprite(minionData.className);
+        Sprite classPortrait = CharacterManager.Instance.GetWholeImagePortraitSprite(minionData.className);
         this.classPortrait.sprite = classPortrait;
     }
     public override void OnHoverEnter() {
