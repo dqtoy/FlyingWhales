@@ -8,7 +8,7 @@ public class SaveDataFaction {
     public int id;
     public string name;
     public string description;
-    public string initialLeaderClass;
+    //public string initialLeaderClass;
     public string requirementForJoining;
     public int level;
     public int inventoryTaskWeight;
@@ -39,7 +39,7 @@ public class SaveDataFaction {
         id = faction.id;
         name = faction.name;
         description = faction.description;
-        initialLeaderClass = faction.initialLeaderClass;
+        //initialLeaderClass = faction.initialLeaderClass;
         level = faction.level;
         inventoryTaskWeight = faction.inventoryTaskWeight;
         isPlayerFaction = faction.isPlayerFaction;

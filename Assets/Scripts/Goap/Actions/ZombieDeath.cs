@@ -24,7 +24,7 @@ public class ZombieDeath : GoapAction {
     #endregion
 
     #region Effects
-    private void AfterZombieDeathSuccess(ActualGoapNode goapNode) {
+    public void AfterZombieDeathSuccess(ActualGoapNode goapNode) {
         goapNode.actor.Death("Zombie Death", goapNode, _deathLog: goapNode.action.states[goapNode.currentStateName].descriptionLog);
     }
     #endregion

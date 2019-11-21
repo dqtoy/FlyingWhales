@@ -49,7 +49,7 @@ public class StringPickerItem : ObjectPickerItem<string>, IPointerClickHandler {
                 iconImg.sprite = PlayerManager.Instance.GetJobActionSprite(str);
                 iconImg.gameObject.SetActive(true);
             } else if (identifier == "minion") {
-                iconImg.sprite = CharacterManager.Instance.GetClassPortraitSprite(str);
+                iconImg.sprite = CharacterManager.Instance.GetWholeImagePortraitSprite(str);
                 iconImg.gameObject.SetActive(true);
             }
             iconImg.SetNativeSize();

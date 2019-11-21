@@ -14,6 +14,9 @@ namespace Traits {
             //effects = new List<TraitEffect>();
             //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TRANSFORM_FOOD };
             charactersThatSawThisDead = new List<Character>();
+            hindersMovement = true;
+            hindersWitness = true;
+            hindersAttackTarget = true;
         }
 
         #region General

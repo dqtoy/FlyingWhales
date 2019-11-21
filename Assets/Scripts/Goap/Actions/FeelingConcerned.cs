@@ -25,10 +25,10 @@ public class FeelingConcerned : GoapAction {
     #endregion
 
     #region State Effects
-    private void PreConcernedSuccess() {
+    public void PreConcernedSuccess() {
         
     }
-    private void AfterConcernedSuccess() {
+    public void AfterConcernedSuccess() {
        
     }
     #endregion   

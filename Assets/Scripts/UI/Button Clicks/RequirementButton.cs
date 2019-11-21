@@ -14,7 +14,7 @@ public class RequirementButton : MonoBehaviour {
     #endregion
 
     public void SetCurrentlySelectedButton() {
-        CombatAttributePanelUI.Instance.currentSelectedRequirementButton = this;
+        TraitPanelUI.Instance.currentSelectedRequirementButton = this;
     }
     public void SetRequirement(string requirement) {
         _requirement = requirement;

@@ -419,6 +419,8 @@ public static class Signals {
             new SignalMethod() { methodName = "PerTickMovement", objectType = typeof(CharacterMarker) },
             new SignalMethod() { methodName = "PerTickInState", objectType = typeof(CharacterState) },
             new SignalMethod() { methodName = "PerTickInvasion", objectType = typeof(Player) },
+            new SignalMethod() { methodName = "ProcessAllUnprocessedVisionPOIs", objectType = typeof(CharacterMarker) },
+            new SignalMethod() { methodName = "OnTickEnded", objectType = typeof(Character) },
         }},
     };
 

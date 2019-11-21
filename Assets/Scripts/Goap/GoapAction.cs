@@ -156,37 +156,49 @@ public class GoapAction {
 
     #region Virtuals
     public virtual void CreateStates() {
-        //string summary = "Creating states for goap action (Dynamic) " + goapType.ToString() + " for actor " + actor.name;
-        //sw.Start();
+        string summary = "Creating states for goap action (Dynamic) " + goapType.ToString();
         states = new Dictionary<string, GoapActionState>();
         if (GoapActionStateDB.goapActionStates.ContainsKey(this.goapType)) {
             StateNameAndDuration[] statesSetup = GoapActionStateDB.goapActionStates[this.goapType];
             for (int i = 0; i < statesSetup.Length; i++) {
                 StateNameAndDuration state = statesSetup[i];
+                summary += "\nCreating " + state.name;
                 string trimmedState = Utilities.RemoveAllWhiteSpace(state.name);
                 Type thisType = this.GetType();
-                MethodInfo preMethod = thisType.GetMethod("Pre" + trimmedState, new Type[] { typeof(ActualGoapNode) }); //BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance
-                MethodInfo perMethod = thisType.GetMethod("PerTick" + trimmedState, new Type[] { typeof(ActualGoapNode) });
-                MethodInfo afterMethod = thisType.GetMethod("After" + trimmedState, new Type[] { typeof(ActualGoapNode) });
+                string estimatedPreMethodName = "Pre" + trimmedState;
+                string estimatedPerTickMethodName = "PerTick" + trimmedState;
+                string estimatedAfterMethodName = "After" + trimmedState;
+
+                MethodInfo preMethod = thisType.GetMethod(estimatedPreMethodName, new Type[] { typeof(ActualGoapNode) }); //
+                MethodInfo perMethod = thisType.GetMethod(estimatedPerTickMethodName, new Type[] { typeof(ActualGoapNode) });
+                MethodInfo afterMethod = thisType.GetMethod(estimatedAfterMethodName, new Type[] { typeof(ActualGoapNode) });
                 Action<ActualGoapNode> preAction = null;
                 Action<ActualGoapNode> perAction = null;
                 Action<ActualGoapNode> afterAction = null;
                 if (preMethod != null) {
                     preAction = (Action<ActualGoapNode>) Delegate.CreateDelegate(typeof(Action<ActualGoapNode>), this, preMethod, false);
+                    summary += "\n\tPre Method is " + preMethod.ToString();
+                } else {
+                    summary += "\n\tPre Method is null";
                 }
                 if (perMethod != null) {
                     perAction = (Action<ActualGoapNode>) Delegate.CreateDelegate(typeof(Action<ActualGoapNode>), this, perMethod, false);
+                    summary += "\n\tPer Tick Method is " + perAction.ToString();
+                } else {
+                    summary += "\n\tPer Tick Method is null";
                 }
                 if (afterMethod != null) {
                     afterAction = (Action<ActualGoapNode>) Delegate.CreateDelegate(typeof(Action<ActualGoapNode>), this, afterMethod, false);
+                    summary += "\n\tAfter Method is " + afterAction.ToString();
+                } else {
+                    summary += "\n\tAfter Method is null";
                 }
                 GoapActionState newState = new GoapActionState(state.name, this, preAction, perAction, afterAction, state.duration, state.status, state.animationName);
                 states.Add(state.name, newState);
                 //summary += "\n Creating state " + state.name;
             }
         }
-        //sw.Stop();
-        //Debug.Log(summary + "\n" + string.Format("Total creation time is {0}ms", sw.ElapsedMilliseconds));
+        Debug.Log(summary);
     }
     protected virtual void ConstructBasePreconditionsAndEffects() { }
     public virtual void Perform(ActualGoapNode actionNode) {
@@ -438,8 +450,16 @@ public class GoapAction {
         return (baseCost * TimeOfDaysCostMultiplier(actor) * PreconditionCostMultiplier()) + GetDistanceCost(actor, target);
     }
     protected bool IsTargetMissing(Character actor, IPointOfInterest target, object[] otherData) {
-        return !target.IsAvailable() || target.gridTileLocation == null || actor.specificLocation != target.specificLocation
-                    || !(actor.gridTileLocation == target.gridTileLocation || actor.gridTileLocation.IsNeighbour(target.gridTileLocation));
+        if (target.IsAvailable() == false || target.gridTileLocation == null || actor.specificLocation != target.specificLocation) {
+            return true;
+        }
+        if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET) {
+            //if the action type is NEAR_TARGET, then check if the actor is near the target, if not, this action is invalid.
+            if (actor.gridTileLocation != target.gridTileLocation && actor.gridTileLocation.IsNeighbour(target.gridTileLocation) == false) {
+                return true;
+            }
+        }
+        return false;
     }
     //private void OnArriveAtTargetLocation() {
     //    if(actionLocationType != ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
@@ -719,6 +739,7 @@ public class GoapAction {
         log.AddToFillers(node.poiTarget, node.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         log.AddToFillers(null, Utilities.NormalizeString(goapType.ToString()), LOG_IDENTIFIER.STRING_1);
         log.AddLogToInvolvedObjects();
+        PlayerManager.Instance.player.ShowNotificationFrom(node.actor, log);
     }
     #endregion
 

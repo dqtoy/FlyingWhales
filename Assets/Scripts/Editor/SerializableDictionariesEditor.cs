@@ -5,12 +5,8 @@ using UnityEditor;
 #endif
 using UnityEngine;
 
-[CustomPropertyDrawer(typeof(PhaseItemDictionary))]
-public class PhaseItemDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(StringIntDictionary))]
 public class StringIntDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-[CustomPropertyDrawer(typeof(InteractionWeightDictionary))]
-public class InteractionWeightDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(BiomeLandmarkSpriteListDictionary))]
 public class BiomeLandmarkSpriteListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileSpriteCorruptionListDictionary))]
@@ -25,14 +21,8 @@ public class LogReplacerDictionaryPropertyDrawer : SerializableDictionaryPropert
 public class LocationPortraitDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(FactionEmblemDictionary))]
 public class FactionEmblemDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-[CustomPropertyDrawer(typeof(JobIconsDictionary))]
-public class JobIconsDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-[CustomPropertyDrawer(typeof(WallSpritesDictionary))]
-public class WallSpritesDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(ItemTileBaseDictionary))]
 public class ItemTileBaseDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-[CustomPropertyDrawer(typeof(FoodTileBaseDictionary))]
-public class FoodTileBaseDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileObjectTileBaseDictionary))]
 public class TileObjectTileBaseDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(ItemSpriteDictionary))]
@@ -51,12 +41,12 @@ public class SummonSettingDictionaryPropertyDrawer : SerializableDictionaryPrope
 public class ArtifactSettingDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(SeamlessEdgeAssetsDictionary))]
 public class SeamlessEdgeAssetsDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-[CustomPropertyDrawer(typeof(LandmarkGenerationDictionary))]
-public class LandmarkGenerationDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(YieldTypeLandmarksDictionary))]
 public class YieldTypeLandmarksDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(InterventionAbilityTierDictionary))]
 public class InterventionAbilityTierDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(CharacterClassAssetDictionary))]
+public class CharacterClassAssetDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 //list storage
 [CustomPropertyDrawer(typeof(LandmarkSpriteListStorage))]

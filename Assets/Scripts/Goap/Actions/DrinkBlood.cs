@@ -66,14 +66,14 @@ public class DrinkBlood : GoapAction {
     #endregion
 
     #region Effects
-    private void PreDrinkSuccess(ActualGoapNode goapNode) {
+    public void PreDrinkSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustDoNotGetHungry(1);
         //TODO: currentState.SetIntelReaction(DrinkBloodSuccessIntelReaction);
     }
-    private void PerTickDrinkSuccess(ActualGoapNode goapNode) {
+    public void PerTickDrinkSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustFullness(1100);
     }
-    private void AfterDrinkSuccess(ActualGoapNode goapNode) {
+    public void AfterDrinkSuccess(ActualGoapNode goapNode) {
         //poiTarget.SetPOIState(POI_STATE.ACTIVE);
         goapNode.actor.AdjustDoNotGetHungry(-1);
         int chance = UnityEngine.Random.Range(0, 100);
@@ -83,7 +83,7 @@ public class DrinkBlood : GoapAction {
         } else {
             Vampiric vampiric = new Vampiric();
             goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, vampiric, goapNode.actor);
-            Log log = new Log(GameManager.Instance.Today(), "GoapAction", GetType().ToString(), "contracted", goapNode);
+            Log log = new Log(GameManager.Instance.Today(), "GoapAction", goapName, "contracted", goapNode);
             log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddLogToInvolvedObjects();

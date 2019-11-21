@@ -39,13 +39,13 @@ public class NarcolepticNap : GoapAction {
     #endregion
 
     #region State Effects
-    private void PreNapSuccess(ActualGoapNode goapNode) {
+    public void PreNapSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Resting");
     }
-    private void PerTickNapSuccess(ActualGoapNode goapNode) {
+    public void PerTickNapSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustTiredness(30);
     }
-    private void AfterNapSuccess(ActualGoapNode goapNode) {
+    public void AfterNapSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Resting");
     }
     #endregion

@@ -32,7 +32,7 @@ public class TraitManager : MonoBehaviour {
 
     public void Initialize() {
         _allTraits = new Dictionary<string, Trait>();
-        string path = Utilities.dataPath + "CombatAttributes/";
+        string path = Utilities.dataPath + "Traits/";
         string[] files = Directory.GetFiles(path, "*.json");
         for (int i = 0; i < files.Length; i++) {
             Trait attribute = JsonUtility.FromJson<Trait>(System.IO.File.ReadAllText(files[i]));
@@ -44,7 +44,7 @@ public class TraitManager : MonoBehaviour {
     #region Utilities
     private void AddInstancedTraits() {
         instancedTraits = new Trait[] {
-            new Craftsman(),
+            //new Builder(),
             new Grudge(),
             new PatrollingCharacter(),
             new Reanimated(),
@@ -86,7 +86,7 @@ public class TraitManager : MonoBehaviour {
             new Plagued(),
             new Vigilant(),
             new Curious(),
-            new Doctor(),
+            //new Healer(),
             new Diplomatic(),
             new AccidentProne(),
             new Wet(),
@@ -132,7 +132,7 @@ public class TraitManager : MonoBehaviour {
     public bool IsInstancedTrait(string traitName) {
         for (int i = 0; i < instancedTraits.Length; i++) {
             Trait currTrait = instancedTraits[i];
-            if (string.Equals(currTrait.name, traitName, StringComparison.OrdinalIgnoreCase) || string.Equals(currTrait.GetType().ToString(), traitName, StringComparison.OrdinalIgnoreCase)) {
+            if (string.Equals(currTrait.name, traitName, StringComparison.OrdinalIgnoreCase)) { //|| string.Equals(currTrait.GetType().ToString(), traitName, StringComparison.OrdinalIgnoreCase)
                 return true;
             }
         }

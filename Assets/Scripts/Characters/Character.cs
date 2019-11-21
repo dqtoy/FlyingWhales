@@ -15,15 +15,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     protected int _doNotGetHungry;
     protected int _doNotGetTired;
     protected int _doNotGetLonely;
-    public int doNotRecoverHP { get; protected set; }
-    //protected int _numOfWaitingForGoapThread;
     protected float _actRate;
     protected bool _isDead;
-    //protected bool _hasAlreadyAskedForPlan;
     protected bool _isChatting;
     protected bool _isFlirting;
     protected GENDER _gender;
-    public SEXUALITY sexuality { get; private set; }
     protected CharacterClass _characterClass;
     protected RaceSetting _raceSetting;
     protected CharacterRole _role;
@@ -35,7 +31,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     protected Minion _minion;
     protected CombatCharacter _currentCombatCharacter;
     protected List<Log> _history;
-    //protected PlayerCharacterItem _playerCharacterItem;
     private LocationStructure _currentStructure; //what structure is this character currently in.
 
     //Stats
@@ -47,6 +42,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     protected int _maxExperience;
     protected int _sp;
     protected int _maxSP;
+    public int doNotRecoverHP { get; protected set; }
+    public SEXUALITY sexuality { get; private set; }
     public int attackPowerMod { get; protected set; }
     public int speedMod { get; protected set; }
     public int maxHPMod { get; protected set; }
@@ -56,27 +53,22 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public Region homeRegion { get; protected set; }
     public Area homeArea { get { return homeRegion.area; } }
     public Dwelling homeStructure { get; protected set; }
-    //public Area defendingArea { get; private set; }
     public IRelationshipContainer relationshipContainer {
         get { return currentAlterEgo.relationshipContainer; }
     }
     public IRelationshipValidator relationshipValidator {
         get { return currentAlterEgo.relationshipValidator; }
     }
-    public List<INTERACTION_TYPE> currentInteractionTypes { get; private set; }
     public List<INTERACTION_TYPE> advertisedActions { get; private set; }
-    //public List<GoapPlan> allGoapPlans { get; private set; }
     public GoapPlanner planner { get; set; }
     public int supply { get; set; }
     public int food { get; set; }
-    //public int isWaitingForInteraction { get; private set; }
     public CharacterMarker marker { get; private set; }
     public JobQueueItem currentJob { get; private set; }
     public GoapPlan currentPlan { get; private set; }
     public ActualGoapNode currentActionNode { get; private set; }
     public ActualGoapNode previousCurrentActionNode { get; private set; }
     public Character lastAssaultedCharacter { get; private set; }
-    //public List<GoapAction> targettedByAction { get; private set; }
     public CharacterStateComponent stateComponent { get; private set; }
     public List<SpecialToken> items { get; private set; }
     public JobQueue jobQueue { get; private set; }
@@ -487,7 +479,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         CreateTraitContainer();
 
         combatHistory = new Dictionary<int, Combat>();
-        currentInteractionTypes = new List<INTERACTION_TYPE>();
+        //currentInteractionTypes = new List<INTERACTION_TYPE>();
         advertisedActions = new List<INTERACTION_TYPE>();
         //allGoapPlans = new List<GoapPlan>();
         //targettedByAction = new List<GoapAction>();
@@ -543,7 +535,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         speedPercentMod = data.speedPercentMod;
         maxHPPercentMod = data.maxHPPercentMod;
 
-        currentInteractionTypes = data.currentInteractionTypes;
+        //currentInteractionTypes = data.currentInteractionTypes;
         supply = data.supply;
         moodValue = data.moodValue;
         isCombatant = data.isCombatant;
@@ -1109,7 +1101,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void AssignClass(CharacterClass characterClass) {
         if (_characterClass != null) {
             //This means that the character currently has a class and it will be replaced with a new class
-            traitContainer.RemoveTrait(this, traitContainer.GetNormalTrait(_characterClass.traitNames)); //Remove traits from class
+            for (int i = 0; i < _characterClass.traitNames.Length; i++) {
+                traitContainer.RemoveTrait(this, _characterClass.traitNames[i]); //Remove traits from class
+            }
         }
         _characterClass = characterClass;
         OnUpdateCharacterClass();
@@ -2338,7 +2332,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             if (_raceSetting.race == race) {
                 return false; //current race is already the new race, no change
             }
-            traitContainer.RemoveTrait(this, traitContainer.GetNormalTrait(_raceSetting.traitNames)); //remove traits from race
+            for (int i = 0; i < _raceSetting.traitNames.Length; i++) {
+                traitContainer.RemoveTrait(this, _raceSetting.traitNames[i]); //Remove traits from race
+            }
         }
         RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
@@ -2351,7 +2347,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             traitContainer.AddTrait(this, _raceSetting.traitNames[i]);
         }
         //Update Portrait to use new race
-        _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
+        _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender, characterClass.className);
         if (marker != null) {
             marker.UpdateMarkerVisuals();
         }
@@ -2370,18 +2366,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (minion != null) {
             minion.SetAssignedDeadlySinName(className);
         }
-
-#if !WORLD_CREATION_TOOL
-        //_homeLandmark.tileLocation.areaOfTile.excessClasses.Remove(previousClassName);
-        //_homeLandmark.tileLocation.areaOfTile.missingClasses.Remove(_characterClass.className);
-
-        //Log log = new Log(GameManager.Instance.Today(), "CharacterActions", "ChangeClassAction", "change_class");
-        //log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //log.AddToFillers(null, previousClassName, LOG_IDENTIFIER.STRING_1);
-        //log.AddToFillers(null, _characterClass.className, LOG_IDENTIFIER.STRING_2);
-        //AddHistory(log);
-        //check equipped items
-#endif
 
     }
     public void SetName(string newName) {
@@ -3814,12 +3798,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     public void CreateInitialTraitsByClass() {
         if (role.roleType != CHARACTER_ROLE.MINION && !(this is Summon)) { //only generate buffs and flaws for non minion characters. Reference: https://trello.com/c/pC9hBih0/2781-demonic-minions-should-not-have-pregenerated-buff-and-flaw-traits
-            string[] traitPool = new string[] { "Vigilant", "Doctor", "Diplomatic",
-            "Fireproof", "Accident Prone", "Unfaithful", "Drunkard", "Craftsman", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
+            string[] traitPool = new string[] { "Vigilant", "Diplomatic",
+            "Fireproof", "Accident Prone", "Unfaithful", "Drunkard", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
             "Herbalist", "Optimist", "Pessimist", "Fast", "Chaste", "Lustful", "Coward", "Lazy", "Hardworking", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
             "Narcoleptic", "Hothead", "Evil", "Treacherous", "Disillusioned", "Ambitious", "Authoritative"
             };
-            //"Kleptomaniac","Curious", 
+            //"Kleptomaniac","Curious", "Craftsman", "Healer"
 
             List<string> buffTraits = new List<string>();
             List<string> flawTraits = new List<string>();
@@ -4004,14 +3988,14 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //}
 
     #region Interaction
-    public void AddInteractionType(INTERACTION_TYPE type) {
-        if (!currentInteractionTypes.Contains(type)) {
-            currentInteractionTypes.Add(type);
-        }
-    }
-    public void RemoveInteractionType(INTERACTION_TYPE type) {
-        currentInteractionTypes.Remove(type);
-    }
+    //public void AddInteractionType(INTERACTION_TYPE type) {
+    //    if (!currentInteractionTypes.Contains(type)) {
+    //        currentInteractionTypes.Add(type);
+    //    }
+    //}
+    //public void RemoveInteractionType(INTERACTION_TYPE type) {
+    //    currentInteractionTypes.Remove(type);
+    //}
     #endregion
 
     #region Action Planning and Job Processing
@@ -5173,6 +5157,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (AddToken(token)) {
             token.SetOwner(this.faction);
             token.OnObtainToken(this);
+            token.SetCarriedByCharacter(this);
             if (changeCharacterOwnership) {
                 token.SetCharacterOwner(this);
             } else {
@@ -5187,6 +5172,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     public bool UnobtainToken(SpecialToken token) {
         if (RemoveToken(token)) {
+            token.SetCarriedByCharacter(null);
             token.OnUnobtainToken(this);
             return true;
         }
@@ -5257,8 +5243,13 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
     }
     public void PickUpToken(SpecialToken token, bool changeCharacterOwnership = true) {
+        if (token.carriedByCharacter != null) {
+            token.carriedByCharacter.UnobtainToken(token);
+        }
         if (ObtainToken(token, changeCharacterOwnership)) {
-            token.gridTileLocation.structure.location.RemoveSpecialTokenFromLocation(token);
+            if (token.gridTileLocation != null) {
+                token.gridTileLocation.structure.location.RemoveSpecialTokenFromLocation(token);
+            }
         }
     }
     public void DestroyToken(SpecialToken token) {
@@ -6107,6 +6098,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         advertisedActions.Add(INTERACTION_TYPE.RETURN_HOME);
         advertisedActions.Add(INTERACTION_TYPE.RETURN_HOME_LOCATION);
         advertisedActions.Add(INTERACTION_TYPE.CHAT_CHARACTER);
+        advertisedActions.Add(INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM);
+        advertisedActions.Add(INTERACTION_TYPE.REVERT_TO_NORMAL_FORM);
 
         if (race != RACE.SKELETON) {
             advertisedActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);
@@ -7514,14 +7507,14 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         if (alterEgos.ContainsKey(alterEgoName)) {
             isSwitchingAlterEgo = true;
-            for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-                Trait currTrait = traitContainer.allTraits[i];
-                if (currTrait.isRemovedOnSwitchAlterEgo) {
-                    if (traitContainer.RemoveTrait(this, currTrait)) {
-                        i--;
-                    }
-                }
-            }
+            //for (int i = 0; i < traitContainer.allTraits.Count; i++) {
+            //    Trait currTrait = traitContainer.allTraits[i];
+            //    if (currTrait.isRemovedOnSwitchAlterEgo) {
+            //        if (traitContainer.RemoveTrait(this, currTrait)) {
+            //            i--;
+            //        }
+            //    }
+            //}
             //apply all alter ego changes here
             AlterEgoData alterEgoData = alterEgos[alterEgoName];
             //currentAlterEgo.CopySpecialTraits();
@@ -7541,7 +7534,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             ResetFullnessMeter();
             ResetHappinessMeter();
             ResetTirednessMeter();
-            traitContainer.RemoveAllNonPersistentTraits(this); //remove all non persistent traits (include alter ego: false)
 
             SetHomeStructure(alterEgoData.homeStructure);
             ChangeFactionTo(alterEgoData.faction);
@@ -7555,6 +7547,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             SetAttackPercentMod(alterEgoData.attackPowerPercentMod);
             SetSpeedMod(alterEgoData.speedMod);
             SetSpeedPercentMod(alterEgoData.speedPercentMod);
+            traitContainer.RemoveAllNonPersistentTraits(this); //remove all non persistent traits (include alter ego: false)
 
             ForceCancelAllJobsTargettingThisCharacter(false, "target is not found");
             Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target is not found");

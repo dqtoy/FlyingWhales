@@ -5,9 +5,9 @@ using UnityEngine;
 namespace Traits {
     public class Unconscious : Trait {
         private Character _sourceCharacter;
-        public override bool isRemovedOnSwitchAlterEgo {
-            get { return true; }
-        }
+        //public override bool isRemovedOnSwitchAlterEgo {
+        //    get { return true; }
+        //}
 
         public Unconscious() {
             name = "Unconscious";

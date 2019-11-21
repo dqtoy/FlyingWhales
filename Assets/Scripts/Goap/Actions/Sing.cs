@@ -37,14 +37,14 @@ public class Sing : GoapAction {
     #endregion
 
     #region Effects
-    private void PreSingSuccess(ActualGoapNode goapNode) {
+    public void PreSingSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustDoNotGetLonely(1);
         //currentState.SetIntelReaction(SingSuccessIntelReaction);
     }
-    private void PerTickSingSuccess(ActualGoapNode goapNode) {
+    public void PerTickSingSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustHappiness(1000);
     }
-    private void AfterSingSuccess(ActualGoapNode goapNode) {
+    public void AfterSingSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustDoNotGetLonely(-1);
     }
     #endregion

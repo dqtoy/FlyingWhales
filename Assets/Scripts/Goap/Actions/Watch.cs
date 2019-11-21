@@ -65,7 +65,7 @@ public class Watch : GoapAction {
     #endregion
 
     #region State Effects
-    private void PreWatchSuccess(ActualGoapNode goapNode) {
+    public void PreWatchSuccess(ActualGoapNode goapNode) {
         GoapAction actionBeingWatched = goapNode.otherData[0] as GoapAction;
         CharacterState stateBeingWatched = goapNode.otherData[0] as CharacterState;
         if (actionBeingWatched != null) {
@@ -78,7 +78,7 @@ public class Watch : GoapAction {
             }
         }
     }
-    private void PerTickWatchSuccess(ActualGoapNode goapNode) {
+    public void PerTickWatchSuccess(ActualGoapNode goapNode) {
         Character _targetCharacter = goapNode.poiTarget as Character;
         if (_targetCharacter.isDead) {
             //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
@@ -123,7 +123,7 @@ public class Watch : GoapAction {
             goapNode.actor.FaceTarget(goapNode.poiTarget);
         }
     }
-    //private void AfterWatchSuccess(ActualGoapNode goapNode) {
+    //public void AfterWatchSuccess(ActualGoapNode goapNode) {
     //    if (actionBeingWatched != null) {
     //        AddActionDebugLog(GameManager.Instance.TodayLogString() + actor.name + " has finished watching " + actionBeingWatched.goapName + " by " + actionBeingWatched.actor.name + ". Total ticks in watch is " + ticksInWatch.ToString() + "/" + currentState.duration.ToString());
     //    } else if (stateBeingWatched != null) {

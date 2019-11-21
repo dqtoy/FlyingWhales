@@ -48,17 +48,17 @@ public class Feed : GoapAction {
     #endregion
 
     #region Effects
-    private void PreFeedSuccess(ActualGoapNode goapNode) {
+    public void PreFeedSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
         targetCharacter.AdjustDoNotGetHungry(1);
         goapNode.actor.AdjustFood(-20);
         //TODO: goapNode.action.states[goapNode.currentStateName].SetIntelReaction(FeedSuccessReactions);
     }
-    private void PerTickFeedSuccess(ActualGoapNode goapNode) {
+    public void PerTickFeedSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
         targetCharacter.AdjustFullness(585);
     }
-    private void AfterFeedSuccess(ActualGoapNode goapNode) {
+    public void AfterFeedSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
         targetCharacter.AdjustDoNotGetHungry(-1);
     }

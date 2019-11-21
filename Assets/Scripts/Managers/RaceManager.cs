@@ -407,14 +407,14 @@ public class RaceManager : MonoBehaviour {
         if (goapActionData.ContainsKey(goapType)) {
             isTrue = goapActionData[goapType].DoesCharacterMatchRace(character);
         }
-        if (!isTrue) {
-            if (character.role.allowedInteractions != null) {
-                isTrue = character.role.allowedInteractions.Contains(goapType);
-            }
-        }
-        if (!isTrue) {
-            isTrue = character.currentInteractionTypes.Contains(goapType);
-        }
+        //if (!isTrue) {
+        //    if (character.role.allowedInteractions != null) {
+        //        isTrue = character.role.allowedInteractions.Contains(goapType);
+        //    }
+        //}
+        //if (!isTrue) {
+        //    isTrue = character.currentInteractionTypes.Contains(goapType);
+        //}
         return isTrue;
     }
     #endregion

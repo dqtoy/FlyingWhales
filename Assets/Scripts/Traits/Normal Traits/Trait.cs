@@ -27,6 +27,7 @@ namespace Traits {
         public bool hindersWitness; //if a character has this trait, and this is true, then he/she cannot witness events
         public bool hindersMovement; //if a character has this trait, and this is true, then he/she cannot move
         public bool hindersAttackTarget; //if a character has this trait, and this is true, then he/she cannot be attacked
+        //public bool isNonRemovable; //determines if trait can be removed through natural process (ie. RemoveTrait, etc.), if this is set to true, it means that it can only be removed by certain functions
 
         public Character responsibleCharacter { get { return responsibleCharacters.FirstOrDefault(); } }
         public List<Character> responsibleCharacters { get; protected set; }
@@ -34,7 +35,7 @@ namespace Traits {
         public ActualGoapNode gainedFromDoing { get; private set; } //what action was this poi involved in that gave it this trait.
         public GameDate dateEstablished { get; protected set; }
         public virtual bool isPersistent { get { return false; } } //should this trait persist through all a character's alter egos
-        public virtual bool isRemovedOnSwitchAlterEgo { get { return false; } }
+        //public virtual bool isRemovedOnSwitchAlterEgo { get { return false; } }
 
         #region Virtuals
         public virtual void OnAddTrait(ITraitable addedTo) {
@@ -138,8 +139,8 @@ namespace Traits {
             }
         }
         public string GetTriggerFlawEffectDescription(Character character, string key) {
-            if (LocalizationManager.Instance.HasLocalizedValue("Trait", this.GetType().ToString(), key)) {
-                Log log = new Log(GameManager.Instance.Today(), "Trait", this.GetType().ToString(), key);
+            if (LocalizationManager.Instance.HasLocalizedValue("Trait", name, key)) {
+                Log log = new Log(GameManager.Instance.Today(), "Trait", name, key);
                 log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 return Utilities.LogReplacer(log);
             }

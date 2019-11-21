@@ -82,25 +82,25 @@ public class Sleep : GoapAction {
     #endregion
 
     #region State Effects
-    private void PreRestSuccess(ActualGoapNode goapNode) {
+    public void PreRestSuccess(ActualGoapNode goapNode) {
         goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Resting");
         //goapNode.action.states[goapNode.currentStateName].OverrideDuration(goapNode.actor.currentSleepTicks);
     }
-    private void PerTickRestSuccess(ActualGoapNode goapNode) {
+    public void PerTickRestSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustTiredness(75);
         goapNode.actor.AdjustSleepTicks(-1);
     }
-    private void AfterRestSuccess(ActualGoapNode goapNode) {
+    public void AfterRestSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Resting");
     }
-    //private void PreRestFail(ActualGoapNode goapNode) {
+    //public void PreRestFail(ActualGoapNode goapNode) {
     //    if (parentPlan != null && parentPlan.job != null && parentPlan.job.id == actor.sleepScheduleJobID) {
     //        actor.SetHasCancelledSleepSchedule(true);
     //    }
     //    goapNode.descriptionLog.AddToFillers(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     //}
-    //private void PreTargetMissing() {
+    //public void PreTargetMissing() {
     //    goapNode.descriptionLog.AddToFillers(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     //}
     #endregion

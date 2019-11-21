@@ -14,7 +14,7 @@ public class CorruptCultist : WorldEvent {
     protected override void ExecuteAfterEffect(Region region, Character spawner) {
         Cultist cultist = spawner.traitContainer.GetNormalTrait("Cultist") as Cultist;
         spawner.RecruitAsMinion(cultist.minionData);
-        Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect");
+        Log log = new Log(GameManager.Instance.Today(), "WorldEvent", name, "after_effect");
         AddDefaultFillersToLog(log, region);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);

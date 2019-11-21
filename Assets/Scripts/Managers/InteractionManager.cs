@@ -39,9 +39,6 @@ public class InteractionManager : MonoBehaviour {
         }
         for (int i = 0; i < goapActionData.Values.Count; i++) {
             GoapAction currAction = goapActionData.Values.ElementAt(i);
-            if (currAction.advertisedBy == null) {
-                throw new Exception(currAction.goapName + "'s advertised by is null!");
-            }
             for (int j = 0; j < currAction.advertisedBy.Length; j++) {
                 POINT_OF_INTEREST_TYPE currType = currAction.advertisedBy[j];
                 allGoapActionAdvertisements[currType].Add(currAction);
@@ -375,7 +372,7 @@ public class InteractionManager : MonoBehaviour {
         return character.role.roleType == CHARACTER_ROLE.CIVILIAN;
     }
     public bool CanCharacterTakeBuildGoddessStatueJob(Character character, JobQueueItem item) {
-        return character.traitContainer.GetNormalTrait("Craftsman") != null;
+        return character.traitContainer.GetNormalTrait("Builder") != null;
     }
     public bool CanBrewPotion(Character character, JobQueueItem job) {
         //return character.HasExtraTokenInInventory(SPECIAL_TOKEN.HEALING_POTION);
@@ -418,7 +415,7 @@ public class InteractionManager : MonoBehaviour {
             if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
                 return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.relationshipContainer.HasRelationshipWith(character, RELATIONSHIP_TRAIT.ENEMY);
             }
-            return !character.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY); //&& character.traitContainer.GetNormalTrait("Doctor") != null;
+            return !character.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY); //&& character.traitContainer.GetNormalTrait("Healer") != null;
         }
         return false;
     }
@@ -439,7 +436,7 @@ public class InteractionManager : MonoBehaviour {
             if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
                 return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.relationshipContainer.HasRelationshipWith(character, RELATIONSHIP_TRAIT.ENEMY);
             }
-            return !character.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY) && character.traitContainer.GetNormalTrait("Doctor") != null;
+            return !character.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY) && character.traitContainer.GetNormalTrait("Healer") != null;
         }
         return false;
     }

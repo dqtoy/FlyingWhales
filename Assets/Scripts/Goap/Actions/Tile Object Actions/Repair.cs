@@ -37,17 +37,17 @@ public class Repair : GoapAction {
     #endregion
 
     #region State Effects
-    private void PreRepairSuccess(ActualGoapNode goapNode) {
+    public void PreRepairSuccess(ActualGoapNode goapNode) {
         goapNode.descriptionLog.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         int gainedHPPerTick = 20;
         int missingHP = goapNode.poiTarget.maxHP - goapNode.poiTarget.currentHP;
         int ticksToRecpverMissingHP = missingHP / gainedHPPerTick;
         //TODO: currentState.OverrideDuration(ticksToRecpverMissingHP);
     }
-    private void PerTickRepairSuccess(ActualGoapNode goapNode) {
+    public void PerTickRepairSuccess(ActualGoapNode goapNode) {
         goapNode.poiTarget.AdjustHP(20);
     }
-    private void AfterRepairSuccess(ActualGoapNode goapNode) {
+    public void AfterRepairSuccess(ActualGoapNode goapNode) {
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Burnt");
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Damaged");
 

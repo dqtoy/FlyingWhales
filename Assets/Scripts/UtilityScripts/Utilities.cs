@@ -822,7 +822,7 @@ public class Utilities : MonoBehaviour {
     public static string NormalizeString(string s) {
         s = s.ToLower();
         string[] words = s.Split('_');
-        string normalizedString = Utilities.FirstLetterToUpperCase(words.First());
+        string normalizedString = Utilities.FirstLetterToUpperCase(words[0]);
         for (int i = 1; i < words.Length; i++) {
             normalizedString += " " + words[i];
         }
@@ -973,6 +973,20 @@ public class Utilities : MonoBehaviour {
             }
         }
         return new string(src, 0, dstIdx);
+    }
+    public static string[] ConvertStringToArray(string str, char separator) {
+        string[] arr = str.Split(',');
+        return arr;
+    }
+    public static string ConvertArrayToString(string[] str, char separator) {
+        string joinedStr = string.Empty;
+        for (int i = 0; i < str.Length; i++) {
+            if(i > 0) {
+                joinedStr += separator;
+            }
+            joinedStr += str[i];
+        }
+        return joinedStr;
     }
     #endregion
 
@@ -1274,15 +1288,18 @@ public class Utilities : MonoBehaviour {
         }
         return newList;
     }
-    //public static bool ContainsElement<T>(this T[] array, T item) {
-    //    for (int i = 0; i < array.Length; i++) {
-    //        T currElement = array[i];
-    //        if (EqualityComparer<T>.Default.Equals(currElement, item)) {
-    //            return true;
-    //        }
-    //    }
-    //    return false;
-    //}
+    /// <summary>
+    /// Get a random index from the given list.
+    /// This will return -1 if the list has no elements.
+    /// </summary>
+    /// <param name="list">The sample list.</param>
+    /// <returns>An integer.</returns>
+    public static int GetRandomIndexInList<T>(List<T> list) {
+        if (list.Count == 0) {
+            return -1;
+        }
+        return rng.Next(0, list.Count);
+    }
     #endregion
 
     #region Game Utilities

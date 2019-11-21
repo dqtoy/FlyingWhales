@@ -106,7 +106,9 @@ public class ActualGoapNode {
     //TODO: Refactor these getters after all errors are resolved.
     public GoapActionState currentState {
         get {
-            UnityEngine.Assertions.Assert.IsTrue(action.states.ContainsKey(currentStateName));
+            if (!action.states.ContainsKey(currentStateName)) {
+                throw new System.Exception(action.goapName + " does not have a state named " + currentStateName);
+            }
             return action.states[currentStateName]; 
         }
     }
@@ -210,6 +212,7 @@ public class ActualGoapNode {
     public void PerformAction() {
         GoapActionInvalidity goapActionInvalidity = action.IsInvalid(actor, poiTarget, otherData);
         if (goapActionInvalidity.isInvalid) {
+            Debug.Log($"{GameManager.Instance.TodayLogString()}{actor.name}'s action {action.goapType.ToString()} was invalid!");
             action.LogActionInvalid(goapActionInvalidity, this);
             actor.GoapActionResult(InteractionManager.Goap_State_Fail, this);
             return;
@@ -317,6 +320,7 @@ public class ActualGoapNode {
 
     #region Action State
     public void OnActionStateSet(string stateName) {
+        Debug.Log("Set action state of " + actor.name + "'s " + action.goapName + " to " + stateName);
         currentStateName = stateName;
         OnPerformActualActionToTarget();
         ExecuteCurrentActionState();
@@ -325,6 +329,7 @@ public class ActualGoapNode {
         if (!action.states.ContainsKey(currentStateName)) {
             Debug.LogError("Failed to execute current action state for " + actor.name + " because " + action.goapName + " does not have state with name: " + currentStateName);
         }
+        Debug.Log("Executing action state of " + actor.name + "'s " + action.goapName + ", " + currentStateName);
         GoapActionState currentState = action.states[currentStateName];
         CreateDescriptionLog(currentState);
         currentState.preEffect?.Invoke(this);
@@ -359,7 +364,8 @@ public class ActualGoapNode {
         //    return;
         //}
         //isDone = true;
-        if(actionStatus == ACTION_STATUS.FAIL || actionStatus == ACTION_STATUS.SUCCESS) { //This means that the action is already finished
+        Debug.Log("Executing end per tick effect of " + actor.name + "'s " + action.goapName + ", " + currentStateName + ". Action status is " + actionStatus.ToString());
+        if (actionStatus == ACTION_STATUS.FAIL || actionStatus == ACTION_STATUS.SUCCESS) { //This means that the action is already finished
             return;
         }
         GoapActionState currentState = action.states[currentStateName];
@@ -469,14 +475,14 @@ public class ActualGoapNode {
     }
     private void CreateThoughtBubbleLog(LocationStructure targetStructure) {
         if(thoughtBubbleLog == null) {
-            if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", action.GetType().ToString(), "thought_bubble")) {
-                thoughtBubbleLog = new Log(GameManager.Instance.Today(), "GoapAction", action.GetType().ToString(), "thought_bubble", this);
+            if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", action.goapName, "thought_bubble")) {
+                thoughtBubbleLog = new Log(GameManager.Instance.Today(), "GoapAction", action.goapName, "thought_bubble", this);
                 action.AddFillersToLog(thoughtBubbleLog, actor, poiTarget, otherData, targetStructure);
             }
         }
         if (thoughtBubbleMovingLog == null) {
-            if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", action.GetType().ToString(), "thought_bubble_m")) {
-                thoughtBubbleMovingLog = new Log(GameManager.Instance.Today(), "GoapAction", action.GetType().ToString(), "thought_bubble_m", this);
+            if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", action.goapName, "thought_bubble_m")) {
+                thoughtBubbleMovingLog = new Log(GameManager.Instance.Today(), "GoapAction", action.goapName, "thought_bubble_m", this);
                 action.AddFillersToLog(thoughtBubbleMovingLog, actor, poiTarget, otherData, targetStructure);
             }
         }

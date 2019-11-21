@@ -391,7 +391,7 @@ namespace Traits {
                 CHARACTER_ROLE[] roles = new CHARACTER_ROLE[] { CHARACTER_ROLE.CIVILIAN, CHARACTER_ROLE.SOLDIER, CHARACTER_ROLE.ADVENTURER };
                 return roles[UnityEngine.Random.Range(0, roles.Length)].ToString();
             } else if (victimType == SERIAL_VICTIM_TYPE.TRAIT) {
-                string[] traits = new string[] { "Craftsman", "Criminal", "Drunk", "Sick", "Lazy", "Hardworking" }; //, "Curious"
+                string[] traits = new string[] { "Builder", "Criminal", "Drunk", "Sick", "Lazy", "Hardworking" }; //, "Curious"
                 return traits[UnityEngine.Random.Range(0, traits.Length)];
             } else if (victimType == SERIAL_VICTIM_TYPE.STATUS) {
                 string[] statuses = new string[] { "Hungry", "Tired", "Lonely" };
@@ -402,7 +402,7 @@ namespace Traits {
         private void GenerateText() {
             string firstText = string.Empty;
             string secondText = string.Empty;
-            if (victimSecondDescription != "Craftsman" && victimSecondDescription != "Criminal") {
+            if (victimSecondDescription != "Builder" && victimSecondDescription != "Criminal") {
                 firstText = victimSecondDescription;
                 secondText = PluralizeText(Utilities.NormalizeStringUpperCaseFirstLetters(victimFirstDescription));
             } else {

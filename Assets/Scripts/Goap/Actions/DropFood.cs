@@ -58,12 +58,12 @@ public class DropFood : GoapAction {
     #endregion
 
     #region State Effects
-    private void PreDropSuccess(ActualGoapNode goapNode) {
+    public void PreDropSuccess(ActualGoapNode goapNode) {
         int givenFood = goapNode.actor.food;
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         goapNode.descriptionLog.AddToFillers(null, givenFood.ToString(), LOG_IDENTIFIER.STRING_1);
     }
-    private void AfterDropSuccess(ActualGoapNode goapNode) {
+    public void AfterDropSuccess(ActualGoapNode goapNode) {
         int givenFood = goapNode.actor.food;
         if (goapNode.poiTarget is Table) {
             Table table = goapNode.poiTarget as Table;

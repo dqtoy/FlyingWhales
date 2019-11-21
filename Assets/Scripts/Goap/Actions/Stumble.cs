@@ -37,17 +37,17 @@ public class Stumble : GoapAction {
     #endregion
 
     #region State Effects
-    private void PreStumbleSuccess(ActualGoapNode goapNode) {
+    public void PreStumbleSuccess(ActualGoapNode goapNode) {
         //TODO: currentState.SetIntelReaction(SuccessReactions);
     }
-    private void PerTickStumbleSuccess(ActualGoapNode goapNode) {
+    public void PerTickStumbleSuccess(ActualGoapNode goapNode) {
         int randomHpToLose = UnityEngine.Random.Range(1, 6);
         float percentMaxHPToLose = randomHpToLose / 100f;
         int actualHPToLose = Mathf.CeilToInt(goapNode.actor.maxHP * percentMaxHPToLose);
 
         goapNode.actor.AdjustHP(-actualHPToLose);
     }
-    private void AfterStumbleSuccess(ActualGoapNode goapNode) {
+    public void AfterStumbleSuccess(ActualGoapNode goapNode) {
         if (goapNode.actor.currentHP <= 0) {
             goapNode.actor.Death(deathFromAction: goapNode);
         }

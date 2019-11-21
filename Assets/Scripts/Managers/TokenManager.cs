@@ -160,97 +160,97 @@ public class TokenManager : MonoBehaviour {
                 supplyValue = 15,
                 craftCost = 25,
                 purchaseCost = 35,
-                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+                canBeCraftedBy = new string[] { "Builder" } } },
             {SPECIAL_TOKEN.BLIGHTED_POTION, new ItemData(){
                 supplyValue = 15,
                 craftCost = 25,
                 purchaseCost = 35,
-                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+                canBeCraftedBy = new string[] { "Builder" } } },
             {SPECIAL_TOKEN.BOOK_OF_THE_DEAD, new ItemData(){
                 supplyValue = 15,
                 craftCost = 25,
                 purchaseCost = 35,
-                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+                canBeCraftedBy = new string[] { "Builder" } } },
             {SPECIAL_TOKEN.CHARM_SPELL, new ItemData(){
                 supplyValue = 15,
                 craftCost = 25,
                 purchaseCost = 35,
-                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+                canBeCraftedBy = new string[] { "Builder" } } },
             {SPECIAL_TOKEN.FEAR_SPELL, new ItemData(){
                 supplyValue = 15,
                 craftCost = 25,
                 purchaseCost = 35,
-                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+                canBeCraftedBy = new string[] { "Builder" } } },
             {SPECIAL_TOKEN.MARK_OF_THE_WITCH, new ItemData(){
                 supplyValue = 15,
                 craftCost = 25,
                 purchaseCost = 35,
-                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+                canBeCraftedBy = new string[] { "Builder" } } },
             {SPECIAL_TOKEN.BRAND_OF_THE_BEASTMASTER, new ItemData(){
                 supplyValue = 15,
                 craftCost = 25,
                 purchaseCost = 35,
-                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+                canBeCraftedBy = new string[] { "Builder" } } },
             {SPECIAL_TOKEN.BOOK_OF_WIZARDRY, new ItemData(){
                 supplyValue = 15,
                 craftCost = 25,
                 purchaseCost = 35,
-                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+                canBeCraftedBy = new string[] { "Builder" } } },
             {SPECIAL_TOKEN.SECRET_SCROLL, new ItemData(){
                 supplyValue = 15,
                 craftCost = 25,
                 purchaseCost = 35,
-                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+                canBeCraftedBy = new string[] { "Builder" } } },
             {SPECIAL_TOKEN.MUTAGENIC_GOO, new ItemData(){
                 supplyValue = 15,
                 craftCost = 25,
                 purchaseCost = 35,
-                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+                canBeCraftedBy = new string[] { "Builder" } } },
             {SPECIAL_TOKEN.DISPEL_SCROLL, new ItemData(){
                 supplyValue = 15,
                 craftCost = 25,
                 purchaseCost = 35,
-                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+                canBeCraftedBy = new string[] { "Builder" } } },
             {SPECIAL_TOKEN.PANACEA, new ItemData(){
                 supplyValue = 15,
                 craftCost = 25,
                 purchaseCost = 35,
-                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+                canBeCraftedBy = new string[] { "Builder" } } },
             {SPECIAL_TOKEN.JUNK, new ItemData(){
                 supplyValue = 15,
                 craftCost = 25,
                 purchaseCost = 35,
-                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+                canBeCraftedBy = new string[] { "Builder" } } },
             {SPECIAL_TOKEN.HEALING_POTION, new ItemData(){
                 supplyValue = 15,
                 craftCost = 25,
                 purchaseCost = 35,
-                canBeCraftedBy = new Type[] { typeof(Doctor), typeof(Herbalist) } } },
+                canBeCraftedBy = new string[] { "Healer", "Herbalist" } } },
             {SPECIAL_TOKEN.ENCHANTED_AMULET, new ItemData(){
                 supplyValue = 15,
                 craftCost = 25,
                 purchaseCost = 35,
-                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+                canBeCraftedBy = new string[] { "Builder" } } },
             {SPECIAL_TOKEN.GOLDEN_NECTAR, new ItemData(){
                 supplyValue = 15,
                 craftCost = 25,
                 purchaseCost = 35,
-                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+                canBeCraftedBy = new string[] { "Builder" } } },
             {SPECIAL_TOKEN.SCROLL_OF_POWER, new ItemData(){
                 supplyValue = 15,
                 craftCost = 25,
                 purchaseCost = 35,
-                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+                canBeCraftedBy = new string[] { "Builder" } } },
             {SPECIAL_TOKEN.ACID_FLASK, new ItemData(){
                 supplyValue = 15,
                 craftCost = 25,
                 purchaseCost = 35,
-                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+                canBeCraftedBy = new string[] { "Builder" } } },
             {SPECIAL_TOKEN.SCROLL_OF_FRENZY, new ItemData(){
                 supplyValue = 15,
                 craftCost = 25,
                 purchaseCost = 35,
-                canBeCraftedBy = new Type[] { typeof(Craftsman) } } },
+                canBeCraftedBy = new string[] { "Builder" } } },
         };
     }
 }
@@ -268,5 +268,5 @@ public struct ItemData {
     public int supplyValue;
     public int craftCost;
     public int purchaseCost;
-    public System.Type[] canBeCraftedBy;
+    public string[] canBeCraftedBy;
 }

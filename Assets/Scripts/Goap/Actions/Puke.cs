@@ -23,11 +23,11 @@ public class Puke : GoapAction {
     #endregion
 
     #region State Effects
-    private void PrePukeSuccess(ActualGoapNode goapNode) {
+    public void PrePukeSuccess(ActualGoapNode goapNode) {
         goapNode.actor.SetPOIState(POI_STATE.INACTIVE);
         //TODO: currentState.SetIntelReaction(SuccessReactions);
     }
-    private void AfterPukeSuccess(ActualGoapNode goapNode) {
+    public void AfterPukeSuccess(ActualGoapNode goapNode) {
         goapNode.actor.SetPOIState(POI_STATE.ACTIVE);
         //if (recipient != null) {
         //    CreateRemoveTraitJob(recipient);
@@ -109,7 +109,7 @@ public class Puke : GoapAction {
     //                this.recipient = recipient;
     //            }
     //            if (status == SHARE_INTEL_STATUS.INFORMED) {
-    //                if(recipient.traitContainer.GetNormalTrait("Doctor") != null) {
+    //                if(recipient.traitContainer.GetNormalTrait("Healer") != null) {
     //                    //- if informed: "I'm a doctor. I should help [Actor Name]."
     //                    reactions.Add(string.Format("I'm a doctor. I should help {0}.", recipient.name));
     //                } else {
@@ -243,7 +243,7 @@ public class Puke : GoapAction {
     //        if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
     //            return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.HasRelationshipOfTypeWith(character, RELATIONSHIP_TRAIT.ENEMY);
     //        }
-    //        return !character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY) && character.traitContainer.GetNormalTrait("Doctor") != null;
+    //        return !character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY) && character.traitContainer.GetNormalTrait("Healer") != null;
     //    }
     //    return false;
     //}

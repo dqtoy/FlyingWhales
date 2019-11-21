@@ -23,25 +23,17 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     [SerializeField] private GameObject lvlGO;
 
     [Header("Face")]
-    [SerializeField] private GameObject faceParentGO;
-
-    [Header("Skin")]
-    [SerializeField] private Image skin;
-
-    [Header("Hair")]
+    [SerializeField] private Image head;
+    [SerializeField] private Image brows;
+    [SerializeField] private Image eyes;
+    [SerializeField] private Image mouth;
+    [SerializeField] private Image nose;
     [SerializeField] private Image hair;
-
-    [Header("Body")]
-    [SerializeField] private Image body;
-
-    [Header("Top")]
-    [SerializeField] private Image top;
-
-    [Header("Under")]
-    [SerializeField] private Image under;
+    [SerializeField] private Image mustache;
+    [SerializeField] private Image beard;
+    [SerializeField] private Image wholeImage;
 
     [Header("Other")]
-    [SerializeField] private Image wholeImage;
     [SerializeField] private FactionEmblem factionEmblem;
     [SerializeField] private GameObject hoverObj;
 
@@ -56,89 +48,55 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     }
     #endregion
 
-    void Start() {
-        //if (skin != null) {
-        //    Material mat = Instantiate(CharacterManager.Instance.hsvMaterial);
-        //    skin.material = mat;
-        //    //top.material = mat;
-        //}
-        //if (hair != null) {
-        //    Material mat = Instantiate(CharacterManager.Instance.hsvMaterial);
-        //    hair.material = mat;
-        //}
-    }
-
     private void OnEnable() {
         Messenger.AddListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
         Messenger.AddListener<Character>(Signals.FACTION_SET, OnFactionSet);
         Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         Messenger.AddListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
     }
-    //private void OnDisable() {
-    //    RemoveListeners();
-    //}
 
     public void GeneratePortrait(Character character) {
         _character = character;
-        if(character == null) {
-            SetBodyPartsState(false);
-            SetWholeImageSprite(null);
-            //wholeImage.gameObject.SetActive(true);
-            return;
-        }
         _portraitSettings = character.portraitSettings;
 
-        if (character.role.roleType == CHARACTER_ROLE.MINION) {
-            SetWholeImageSprite(CharacterManager.Instance.GetClassPortraitSprite(character.characterClass.className));
+        SetPortraitAsset("head", character.portraitSettings.head, _portraitSettings.race, _portraitSettings.gender, head);
+        SetPortraitAsset("brows", character.portraitSettings.brows, _portraitSettings.race, _portraitSettings.gender, brows);
+        SetPortraitAsset("eyes", character.portraitSettings.eyes, _portraitSettings.race, _portraitSettings.gender, eyes);
+        SetPortraitAsset("mouth", character.portraitSettings.mouth, _portraitSettings.race, _portraitSettings.gender, mouth);
+        SetPortraitAsset("nose", character.portraitSettings.nose, _portraitSettings.race, _portraitSettings.gender, nose);
+        SetPortraitAsset("hair", character.portraitSettings.hair, _portraitSettings.race, _portraitSettings.gender, hair);
+        SetPortraitAsset("mustache", character.portraitSettings.mustache, _portraitSettings.race, _portraitSettings.gender, mustache);
+        SetPortraitAsset("beard", character.portraitSettings.beard, _portraitSettings.race, _portraitSettings.gender, beard);
+
+        if (string.IsNullOrEmpty(_portraitSettings.wholeImage) == false) {
+            //use whole image
+            SetWholeImageSprite(CharacterManager.Instance.GetWholeImagePortraitSprite(_portraitSettings.wholeImage));
+            SetWholeImageColor(_portraitSettings.wholeImageColor);
         } else {
-            Sprite originalClassPortrait = CharacterManager.Instance.GetClassPortraitSprite(character.originalClassName);
-            if (originalClassPortrait != null) { //so that only characters that started out with special classes can use the special portraits
-                SetWholeImageSprite(originalClassPortrait);
-            } else {
-                SetBody(character.portraitSettings.bodyIndex);
-                SetSkin(character.portraitSettings.skinIndex);
-                SetHair(character.portraitSettings.hairIndex);
-                SetUnder(character.portraitSettings.underIndex);
-                SetTop(character.portraitSettings.topIndex);
-                SetWholeImageSprite(null);
-            }
+            SetWholeImageSprite(null);
+            SetHairColor(_portraitSettings.hairColor);
         }
         UpdateLvl();
         UpdateFrame();
         UpdateFactionEmblem();
 
-        under.rectTransform.SetSiblingIndex(0);
-        skin.rectTransform.SetSiblingIndex(1);
-        body.rectTransform.SetSiblingIndex(2);
-        hair.rectTransform.SetSiblingIndex(3);
-        top.rectTransform.SetSiblingIndex(4);
-        UpdateShader();
-    }
-    public void GeneratePortrait(PortraitSettings portraitSettings) {
-        _portraitSettings = portraitSettings;
-        if (portraitSettings == null) {
-            SetBodyPartsState(false);
-            SetWholeImageSprite(null);
-            return;
-        }
-        SetBody(portraitSettings.bodyIndex);
-        SetSkin(portraitSettings.skinIndex);
-        SetHair(portraitSettings.hairIndex);
-        //SetHairColor(portraitSettings.hairColor);
-        SetWholeImageSprite(null);
-        UpdateFactionEmblem();
+        wholeImage.rectTransform.SetSiblingIndex(0);
+        head.rectTransform.SetSiblingIndex(1);
+        brows.rectTransform.SetSiblingIndex(2);
+        eyes.rectTransform.SetSiblingIndex(3);
+        mouth.rectTransform.SetSiblingIndex(4);
+        nose.rectTransform.SetSiblingIndex(5);
+        hair.rectTransform.SetSiblingIndex(6);
+        mustache.rectTransform.SetSiblingIndex(7);
+        beard.rectTransform.SetSiblingIndex(8);
     }
 
     #region Utilities
     public void UpdateLvl() {
         lvlTxt.text = _character.level.ToString();
     }
-    private void SetBodyPartsState(bool state) {
-        faceParentGO.SetActive(state);
-    }
     private void SetWholeImageSprite(Sprite sprite) {
         wholeImage.sprite = sprite;
-        SetBodyPartsState(sprite == null);
         SetWholeImageState(sprite != null);
     }
     private void SetWholeImageState(bool state) {
@@ -208,38 +166,11 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     #endregion
 
     #region Body Parts
-    public void SetHair(int index) {
-        Sprite chosenHairSettings = CharacterManager.Instance.GetHairSprite(index, _portraitSettings.race, _portraitSettings.gender);
-        //Sprite hairSprite = CharacterManager.Instance.GetHairSprite(index, _imgSize, _character.);
-        hair.sprite = chosenHairSettings;
-
-        hair.gameObject.SetActive(chosenHairSettings != null);
+    public void SetPortraitAsset(string identifier, int index, RACE race, GENDER gender, Image renderer) {
+        Sprite sprite = CharacterManager.Instance.GetPortraitSprite(identifier, index, race, gender);
+        renderer.sprite = sprite;
+        renderer.gameObject.SetActive(renderer.sprite != null);
     }
-    public void SetSkin(int index) {
-        Sprite headSprite = CharacterManager.Instance.GetSkinSprite(index, _portraitSettings.race, _portraitSettings.gender);
-        skin.sprite = headSprite;
-        skin.gameObject.SetActive(headSprite != null);
-    }
-    public void SetBody(int index) {
-        body.sprite = CharacterManager.Instance.GetBodySprite(index, _portraitSettings.race, _portraitSettings.gender);
-        body.gameObject.SetActive(body.sprite != null);
-    }
-    public void SetUnder(int index) {
-        under.sprite = CharacterManager.Instance.GetUnderSprite(index, _portraitSettings.race, _portraitSettings.gender);
-        under.gameObject.SetActive(under.sprite != null);
-    }
-    public void SetTop(int index) {
-        top.sprite = CharacterManager.Instance.GetTopSprite(index, _portraitSettings.race, _portraitSettings.gender);
-        top.gameObject.SetActive(top.sprite != null);
-    }
-    //public void SetHairColor(Color hairColor) {
-    //    //hair.color = hairColor;
-    //    //hairBack.color = hairColor;
-    //    Color newColor = new Color(hairColor.r, hairColor.g, hairColor.b, 115f/255f);
-    //    //hairOverlay.color = newColor;
-    //    //hairBackOverlay.color = newColor;
-    //    //facialHairOverlay.color = newColor;
-    //}
     #endregion
 
     #region Listeners
@@ -277,82 +208,16 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     #endregion
 
     #region Shader
-    private void UpdateShader() {
-        /*
-         Elves: Skin Color can change
-        Humans: Hair Color can change
-        Faeries: Skin Color and Hair Color can change
-        Goblins: Skin Color and Hair Color can change
-        Wolves: Skin Color can change
-        Dragons: Skin Color can change
-         */
-        switch (_character.race) {
-            case RACE.HUMANS:
-                skin.material = null;
-                hair.material = Instantiate(CharacterManager.Instance.hsvMaterial);
-                wholeImage.material = null;
-                hair.material.SetVector("_HSVAAdjust", new Vector4(_character.hHairColor/360f, 0f, 0f, 0f));
-                break;
-            case RACE.ELVES:
-                skin.material = Instantiate(CharacterManager.Instance.hsvMaterial);
-                hair.material = null;
-                wholeImage.material = null;
-                skin.material.SetVector("_HSVAAdjust", new Vector4(_character.hSkinColor/360f, 0f, 0f, 0f));
-                break;
-            case RACE.GOBLIN:
-                skin.material = Instantiate(CharacterManager.Instance.hsvMaterial);
-                hair.material = Instantiate(CharacterManager.Instance.hsvMaterial);
-                wholeImage.material = null;
-                skin.material.SetVector("_HSVAAdjust", new Vector4(_character.hSkinColor/360f, 0f, 0f, 0f));
-                hair.material.SetVector("_HSVAAdjust", new Vector4(_character.hHairColor/360f, 0f, 0f, 0f));
-                break;
-            case RACE.DRAGON:
-                skin.material = Instantiate(CharacterManager.Instance.hsvMaterial);
-                hair.material = null;
-                wholeImage.material = null;
-                skin.material.SetVector("_HSVAAdjust", new Vector4(_character.hSkinColor/360f, 0f, 0f, 0f));
-                break;
-            case RACE.WOLF:
-                skin.material = Instantiate(CharacterManager.Instance.hsvMaterial);
-                hair.material = null;
-                wholeImage.material = null;
-                skin.material.SetVector("_HSVAAdjust", new Vector4(_character.hSkinColor/360f, 0f, 0f, 0f));
-                break;
-            case RACE.FAERY:
-                skin.material = Instantiate(CharacterManager.Instance.hsvMaterial);
-                hair.material = Instantiate(CharacterManager.Instance.hsvMaterial);
-                wholeImage.material = null;
-                skin.material.SetVector("_HSVAAdjust", new Vector4(_character.hSkinColor/360f, 0f, 0f, 0f));
-                hair.material.SetVector("_HSVAAdjust", new Vector4(_character.hHairColor/360f, 0f, 0f, 0f));
-                break;
-            case RACE.SPIDER:
-                skin.material = Instantiate(CharacterManager.Instance.hsvMaterial);
-                hair.material = null;
-                wholeImage.material = null;
-                skin.material.SetVector("_HSVAAdjust", new Vector4(_character.hSkinColor/360f, 0f, 0f, 0f));
-                break;
-            case RACE.DEMON:
-                wholeImage.material = Instantiate(CharacterManager.Instance.hsvMaterial);
-                wholeImage.material.SetVector("_HSVAAdjust", new Vector4(_character.demonColor/360f, 0f, 0f, 0f));
-                break;
-            default:
-                skin.material = null;
-                hair.material = null;
-                wholeImage.material = null;
-                break;
-        }
+    private void SetHairColor(float hairColor) {
+        Material mat = Instantiate(CharacterManager.Instance.hsvMaterial);
+        mat.SetVector("_HSVAAdjust", new Vector4(hairColor / 360f, 0f, 0f, 0f));
+        hair.material = mat;
+        mustache.material = mat;
+        beard.material = mat;
     }
-    public void RandomizeHSV() {
-        //Color origRGBCcolor = wholeImage.color;
-        //float H, S, V;
-        //Color.RGBToHSV(origRGBCcolor, out H, out S, out V);
-        //Debug.Log("H: " + H + " S: " + S + " V: " + V);
-
-        //H = Random.Range(140f, 220f) / 360f;
-        //S = 50f/100f;
-        //wholeImage.color = Color.HSVToRGB(H, S, V);
-        wholeImage.material.SetVector("_HSVAAdjust", new Vector4(Random.Range(-0.4f, 0.4f), 0f, 0f, 0f));
-
+    private void SetWholeImageColor(float wholeImageColor) {
+        wholeImage.material = Instantiate(CharacterManager.Instance.hsvMaterial);
+        wholeImage.material.SetVector("_HSVAAdjust", new Vector4(wholeImageColor / 360f, 0f, 0f, 0f));
     }
     #endregion
 

@@ -14,7 +14,7 @@ public class TraitEffectButton : MonoBehaviour {
     #endregion
 
     public void SetCurrentlySelectedButton() {
-        CombatAttributePanelUI.Instance.currentSelectedTraitEffectButton = this;
+        TraitPanelUI.Instance.currentSelectedTraitEffectButton = this;
     }
     public void SetTraitEffect(TraitEffect traitEffect) {
         _traitEffect = traitEffect;

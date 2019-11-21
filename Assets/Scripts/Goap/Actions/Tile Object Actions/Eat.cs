@@ -44,24 +44,24 @@ public class Eat : GoapAction {
     #endregion
 
     #region Effects
-    private void PreEatSuccess(ActualGoapNode goapNode) {
+    public void PreEatSuccess(ActualGoapNode goapNode) {
         goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
         //goapNode.poiTarget.SetPOIState(POI_STATE.INACTIVE);
         goapNode.actor.AdjustDoNotGetHungry(1);
         //actor.traitContainer.AddTrait(actor,"Eating");
     }
-    private void PerTickEatSuccess(ActualGoapNode goapNode) {
+    public void PerTickEatSuccess(ActualGoapNode goapNode) {
         //goapNode.actor.AdjustFullness(520);
     }
-    private void AfterEatSuccess(ActualGoapNode goapNode) {
+    public void AfterEatSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustDoNotGetHungry(-1);
         //goapNode.poiTarget.SetPOIState(POI_STATE.ACTIVE);
     }
-    private void PreEatFail(ActualGoapNode goapNode) {
+    public void PreEatFail(ActualGoapNode goapNode) {
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     }
-    private void PreTargetMissing(ActualGoapNode goapNode) {
+    public void PreTargetMissing(ActualGoapNode goapNode) {
         goapNode.descriptionLog.AddToFillers(goapNode.actor.currentStructure.location, goapNode.actor.currentStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     #endregion

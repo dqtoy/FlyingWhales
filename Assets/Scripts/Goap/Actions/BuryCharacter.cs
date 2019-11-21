@@ -17,15 +17,15 @@ public class BuryCharacter : GoapAction {
 
     #region Overrides
     public override LocationStructure GetTargetStructure(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (otherData.Length == 1 && otherData[0] is LocationStructure) {
+        if (otherData != null && otherData.Length == 1 && otherData[0] is LocationStructure) {
             return otherData[0] as LocationStructure;
         } else {
             return actor.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY);
         }
     }
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, target = GOAP_EFFECT_TARGET.TARGET }, IsInActorParty);
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, target = GOAP_EFFECT_TARGET.TARGET });
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET }, IsInActorParty);
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -40,10 +40,17 @@ public class BuryCharacter : GoapAction {
         actor.ownParty.RemoveCharacter(targetCharacter, false);
         targetCharacter.SetCurrentStructureLocation(targetCharacter.gridTileLocation.structure, false);
     }
+    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest target, object[] otherData) {
+        string stateName = "Target Missing";
+        bool defaultTargetMissing = false;
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
+        //bury cannot be invalid because all cases are handled by the requirements of the action
+        return goapActionInvalidity;
+    }
     #endregion
 
     #region State Effects
-    private void PreBurySuccess(ActualGoapNode goapNode) {
+    public void PreBurySuccess(ActualGoapNode goapNode) {
         //TODO:
         //if (parentPlan.job != null) {
         //    if (parentPlan.job.jobType == JOB_TYPE.BURY) {
@@ -53,7 +60,7 @@ public class BuryCharacter : GoapAction {
         //    }
         //}
     }
-    private void AfterBurySuccess(ActualGoapNode goapNode) {
+    public void AfterBurySuccess(ActualGoapNode goapNode) {
         //if (parentPlan.job != null) {
         //    parentPlan.job.SetCannotCancelJob(true);
         //}

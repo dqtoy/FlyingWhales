@@ -11,9 +11,9 @@ namespace Traits {
         public bool isCriminal { get; private set; }
         public bool isLeader { get; private set; }
 
-        public override bool isRemovedOnSwitchAlterEgo {
-            get { return true; }
-        }
+        //public override bool isRemovedOnSwitchAlterEgo {
+        //    get { return true; }
+        //}
 
         public Restrained() {
             name = "Restrained";

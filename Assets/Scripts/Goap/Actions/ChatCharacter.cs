@@ -15,7 +15,7 @@ public class ChatCharacter : GoapAction {
             TIME_IN_WORDS.EARLY_NIGHT,
         };
         actionIconString = GoapActionStateDB.Social_Icon;
-        actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
+        actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
     }
@@ -31,7 +31,7 @@ public class ChatCharacter : GoapAction {
     #endregion
 
     #region State Effects
-    private void PreChatSuccess(ActualGoapNode goapNode) {
+    public void PreChatSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
 
         CHARACTER_MOOD thisCharacterMood = goapNode.actor.currentMoodType;
@@ -258,7 +258,7 @@ public class ChatCharacter : GoapAction {
     #endregion
 
     private void CreateChatLog(ActualGoapNode goapNode, string logKey) {
-        Log log = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), logKey, goapNode);
+        Log log = new Log(GameManager.Instance.Today(), "GoapAction", goapName, logKey, goapNode);
         log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         goapNode.OverrideDescriptionLog(log);

@@ -115,7 +115,7 @@ public class ClassPanelUI : MonoBehaviour {
     }
     public void UpdateTraitOptions() {
         traitOptions.ClearOptions();
-        traitOptions.AddOptions(CombatAttributePanelUI.Instance.allCombatAttributes);
+        traitOptions.AddOptions(TraitPanelUI.Instance.allTraits);
     }
     public void LoadAllData() {
         allClasses = new List<string>();

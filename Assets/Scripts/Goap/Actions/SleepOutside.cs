@@ -25,7 +25,7 @@ public class SleepOutside : GoapAction {
         SetState("Rest Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 65;
+        return 1000;
     }
     public override void OnStopWhilePerforming(Character actor, IPointOfInterest target, object[] otherData) {
         base.OnStopWhilePerforming(actor, target, otherData);
@@ -47,16 +47,16 @@ public class SleepOutside : GoapAction {
     #endregion
 
     #region State Effects
-    private void PreRestSuccess(ActualGoapNode goapNode) {
+    public void PreRestSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Resting");
         //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         //goapNode.OverrideCurrentStateDuration(currentState.duration - goapNode.actor.currentSleepTicks); //this can make the current duration negative
     }
-    private void PerTickRestSuccess(ActualGoapNode goapNode) {
+    public void PerTickRestSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustTiredness(70);
         goapNode.actor.AdjustSleepTicks(-1);
     }
-    private void AfterRestSuccess(ActualGoapNode goapNode) {
+    public void AfterRestSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Resting");
     }
     #endregion

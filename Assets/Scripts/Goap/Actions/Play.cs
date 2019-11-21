@@ -43,14 +43,14 @@ public class Play : GoapAction {
     #endregion
 
     #region Effects
-    private void PrePlaySuccess(ActualGoapNode goapNode) {
+    public void PrePlaySuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustDoNotGetLonely(1);
         goapNode.actor.AdjustDoNotGetTired(1);
     }
-    private void PerTickPlaySuccess(ActualGoapNode goapNode) {
+    public void PerTickPlaySuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustHappiness(500);
     }
-    private void AfterPlaySuccess(ActualGoapNode goapNode) {
+    public void AfterPlaySuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustDoNotGetLonely(-1);
         goapNode.actor.AdjustDoNotGetTired(-1);
     }
