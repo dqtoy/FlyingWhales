@@ -26,8 +26,8 @@ public class STCManagerEditor : Editor {
         if (GUILayout.Button("Place Tiles At Origin")) {
             stc.PlaceAtOrigin();
         }
-        if (GUILayout.Button("Create Connector")) {
-            stc.CreateNewConnector();
+        if (GUILayout.Button("Create Building Spot")) {
+            stc.CreateNewBuildingSpot();
         }
         if (GUILayout.Button("Create Furniture Spot")) {
             stc.CreateNewFurnitureSpot();

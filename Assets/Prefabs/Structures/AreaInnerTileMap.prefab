@@ -453,7 +453,7 @@ GameObject:
   - component: {fileID: 114231723980949014}
   - component: {fileID: 2569400266708677946}
   m_Layer: 14
-  m_Name: Inner Structures
+  m_Name: AreaInnerTileMap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1229,6 +1229,8 @@ MonoBehaviour:
   radiusLimit: 0
   x: 0
   y: 0
+  buildSpotPrefab: {fileID: 1855560008602744, guid: 7b7c51c67b1b4aa44805929102ceef8b,
+    type: 2}
   offsetX: 0
   offsetY: 0
   northEdgeTilemap: {fileID: 8195094282472968900}

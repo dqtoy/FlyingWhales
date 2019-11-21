@@ -10,16 +10,20 @@ using Unity.Collections;
 using UnityEditor;
 #endif
 
-//[ExecuteInEditMode]
 public class STCManager : MonoBehaviour {
 
+    [Header("Tilemaps")]
     [SerializeField] private Tilemap groundTilemap;
     [SerializeField] private Tilemap groundWallTilemap;
     [SerializeField] private Tilemap structureWallTilemap;
     [SerializeField] private Tilemap objectsTilemap;
     [SerializeField] private Tilemap detailsTilemap;
+
+    [Header("Parents")]
     [SerializeField] private Transform connectorsParent;
     [SerializeField] private Transform furnitureParent;
+
+    [Header("Prefabs")]
     [SerializeField] private GameObject connectorPrefab;
     [SerializeField] private GameObject furnitureSpotPrefab;
 
@@ -72,7 +76,6 @@ public class STCManager : MonoBehaviour {
         }
         return data;
     }
-
     /// <summary>
     /// Convinience function, for making the tiles have all positive coordinates
     /// </summary>
@@ -97,7 +100,7 @@ public class STCManager : MonoBehaviour {
         }
 
         //shift connectors
-        ConnectorMono[] connectors = connectorsParent.GetComponentsInChildren<ConnectorMono>();
+        BuildingSpotMonobehaviour[] connectors = connectorsParent.GetComponentsInChildren<BuildingSpotMonobehaviour>();
         for (int i = 0; i < connectors.Length; i++) {
             Vector3 currPos = connectors[i].transform.localPosition;
             //Vector3 actualPos = new Vector3(currPos.x - 0.5f, currPos.y - 0.5f, 0f);
@@ -114,7 +117,6 @@ public class STCManager : MonoBehaviour {
             furnitureSpots[i].transform.localPosition = newPos;
         }
     }
-
     private void ShiftTilemapPosition(Tilemap map, BoundsInt bounds) {
         TileTemplateData[] allData = GetTileData(map, bounds);
 
@@ -127,8 +129,6 @@ public class STCManager : MonoBehaviour {
             map.SetTransformMatrix(newCoords, currData.matrix);
         }
     }
-
-    [ContextMenu("Save Template")]
     public void SaveTemplate() {
         groundTilemap.CompressBounds();
         PlaceAtOrigin();
@@ -139,14 +139,13 @@ public class STCManager : MonoBehaviour {
         TileTemplateData[] objectTiles = GetTileData(objectsTilemap, groundTilemap.cellBounds);
         TileTemplateData[] detailTiles = GetTileData(detailsTilemap, groundTilemap.cellBounds);
 
-        ConnectorMono[] connectorMonos = Utilities.GetComponentsInDirectChildren<ConnectorMono>(connectorsParent.gameObject);
+        BuildingSpotMonobehaviour[] buildingSpotMonos = Utilities.GetComponentsInDirectChildren<BuildingSpotMonobehaviour>(connectorsParent.gameObject);
         FurnitureSpotMono[] furnitureSpotMonos = Utilities.GetComponentsInDirectChildren<FurnitureSpotMono>(furnitureParent.gameObject);
 
-
-        StructureConnector[] connectors = new StructureConnector[connectorMonos.Length];
-        for (int i = 0; i < connectorMonos.Length; i++) {
-            ConnectorMono currMono = connectorMonos[i];
-            connectors[i] = currMono.GetConnector();
+        BuildingSpot[] connectors = new BuildingSpot[buildingSpotMonos.Length];
+        for (int i = 0; i < buildingSpotMonos.Length; i++) {
+            BuildingSpotMonobehaviour currMono = buildingSpotMonos[i];
+            connectors[i] = currMono.Convert();
         }
 
         FurnitureSpot[] furnitureSpots = new FurnitureSpot[furnitureSpotMonos.Length];
@@ -154,7 +153,6 @@ public class STCManager : MonoBehaviour {
             FurnitureSpotMono currMono = furnitureSpotMonos[i];
             furnitureSpots[i] = currMono.GetFurnitureSpot();
         }
-
 
         Debug.Log("Got " + groundTiles.Length + " tiles");
 
@@ -164,7 +162,6 @@ public class STCManager : MonoBehaviour {
         string dataAsJson = JsonUtility.ToJson(newTemplate);
 
 #if UNITY_EDITOR
-
         string path = EditorUtility.SaveFilePanel("Save Structure Template", templatePath, "Structure_Template", "json");
         if (path == "")
             return;
@@ -172,8 +169,6 @@ public class STCManager : MonoBehaviour {
         AssetDatabase.Refresh();
 #endif
     }
-
-    [ContextMenu("Load Template")]
     public void LoadTemplate() {
 #if UNITY_EDITOR
         string path = EditorUtility.OpenFilePanel("Load Structure Template", templatePath, "json");
@@ -185,7 +180,15 @@ public class STCManager : MonoBehaviour {
         }
 #endif
     }
-
+    private BuildingSpotMonobehaviour GetBuildingSpotWithID(int id, BuildingSpotMonobehaviour[] pool) {
+        for (int i = 0; i < pool.Length; i++) {
+            BuildingSpotMonobehaviour currSpot = pool[i];
+            if (currSpot.id == id) {
+                return currSpot;
+            }
+        }
+        throw new System.Exception("There is no building spot with id " + id.ToString());
+    }
     private void LoadTemplate(StructureTemplate st) {
         ClearTiles();
         DrawTiles(groundTilemap, st.groundTiles);
@@ -197,13 +200,28 @@ public class STCManager : MonoBehaviour {
         //connectors
         Utilities.DestroyChildren(connectorsParent);
         if (st.connectors != null) {
-            for (int i = 0; i < st.connectors.Length; i++) {
-                StructureConnector connector = st.connectors[i];
+            BuildingSpotMonobehaviour[] createdConnectors = new BuildingSpotMonobehaviour[st.connectors.Length];
+            BuildingSpot[] ordered = st.connectors.ToList().OrderBy(x => x.id).ToArray();
+            for (int i = 0; i < ordered.Length; i++) {
+                BuildingSpot connector = ordered[i];
                 GameObject newConnector = GameObject.Instantiate(connectorPrefab, connectorsParent);
-                newConnector.transform.localPosition = new Vector3(connector.location.x, connector.location.y, 0);
-                ConnectorMono cm = newConnector.GetComponent<ConnectorMono>();
-                cm.connectionDirection = connector.neededDirection;
-                cm.allowedStructureType = connector.allowedStructureType;
+                newConnector.transform.localPosition = new Vector3(connector.location.x + 0.5f, connector.location.y + 0.5f, 0);
+                BuildingSpotMonobehaviour cm = newConnector.GetComponent<BuildingSpotMonobehaviour>();
+                cm.id = connector.id;
+                createdConnectors[i] = cm;
+            }
+
+            //assign adjacent ids
+            for (int i = 0; i < createdConnectors.Length; i++) {
+                BuildingSpotMonobehaviour currConnector = createdConnectors[i];
+                BuildingSpot data = ordered[i];
+                if (data.adjacentSpots != null) {
+                    for (int j = 0; j < data.adjacentSpots.Length; j++) {
+                        int currAdjacentID = data.adjacentSpots[j];
+                        BuildingSpotMonobehaviour adjacentSpot = GetBuildingSpotWithID(currAdjacentID, createdConnectors);
+                        currConnector.adjacentSpots.Add(adjacentSpot);
+                    }
+                }
             }
         }
 
@@ -220,7 +238,6 @@ public class STCManager : MonoBehaviour {
             }
         }
     }
-
     private void DrawTiles(Tilemap tilemap, TileTemplateData[] data) {
         if (data == null) {
             return;
@@ -232,7 +249,6 @@ public class STCManager : MonoBehaviour {
             tilemap.SetTransformMatrix(pos, currData.matrix);
         }
     }
-
     private TileBase GetTileAsset(string name) {
         for (int i = 0; i < allTileAssets.Count; i++) {
             TileBase currTile = allTileAssets[i];
@@ -242,8 +258,6 @@ public class STCManager : MonoBehaviour {
         }
         return null;
     }
-
-    [ContextMenu("Clear Tiles")]
     public void ClearTiles() {
         groundTilemap.ClearAllTiles();
         groundWallTilemap.ClearAllTiles();
@@ -253,21 +267,16 @@ public class STCManager : MonoBehaviour {
 
         Utilities.DestroyChildren(connectorsParent);
     }
-
-    [ContextMenu("Load Tile Assets")]
     public void LoadAllTilesAssets() {
         allTileAssets = Resources.LoadAll("Tile Map Assets", typeof(TileBase)).Cast<TileBase>().ToList();
         //foreach (var t in textures)
         //    Debug.Log(t.name);
     }
 
-    #region Connectors
-    public void CreateNewConnector() {
-        GameObject newConnector = GameObject.Instantiate(connectorPrefab, connectorsParent);
-        newConnector.transform.localPosition = Vector3.zero;
-        //ConnectorMono cm = newConnector.GetComponent<ConnectorMono>();
-        //cm.connectionDirection = connector.neededDirection;
-        //cm.connectionType = connector.allowedStructureType;
+    #region Building Spots
+    public void CreateNewBuildingSpot() {
+        GameObject newSpot = GameObject.Instantiate(connectorPrefab, connectorsParent);
+        newSpot.transform.localPosition = Vector3.zero;
     }
     #endregion
 
@@ -313,34 +322,10 @@ public class STCManager : MonoBehaviour {
     }
     #endregion
 
-
     #region For Testing
     private Dictionary<STRUCTURE_TYPE, int> testingStructures = new Dictionary<STRUCTURE_TYPE, int>() {
         { STRUCTURE_TYPE.DWELLING, 3 },
     };
-    private List<StructureTemplate> GetValidTownCenterTemplates() {
-        List<StructureTemplate> valid = new List<StructureTemplate>();
-        List<StructureTemplate> choices = GetStructureTemplates("TOWN CENTER");
-        for (int i = 0; i < choices.Count; i++) {
-            StructureTemplate currTemplate = choices[i];
-            if (currTemplate.HasConnectorsForStructure(testingStructures)) {
-                valid.Add(currTemplate);
-            }
-        }
-
-        return valid;
-    }
-    private List<StructureTemplate> GetTemplatesThatCanConnectTo(StructureTemplate otherTemplate, List<StructureTemplate> choices) {
-        List<StructureTemplate> valid = new List<StructureTemplate>();
-        for (int i = 0; i < choices.Count; i++) {
-            StructureTemplate currTemp = choices[i];
-            if (currTemp.CanConnectTo(otherTemplate)) {
-                valid.Add(currTemp);
-            }
-        }
-
-        return valid;
-    }
     public List<StructureTemplate> GetStructureTemplates(string folderName) {
         List<StructureTemplate> templates = new List<StructureTemplate>();
         string path = templatePath + folderName + "/";
@@ -358,22 +343,12 @@ public class STCManager : MonoBehaviour {
         }
         return templates;
     }
-    private void PlaceConnectors(StructureTemplate template) {
-        for (int i = 0; i < template.connectors.Length; i++) {
-            StructureConnector connector = template.connectors[i];
-            GameObject newConnector = GameObject.Instantiate(connectorPrefab, connectorsParent);
-            newConnector.transform.localPosition = new Vector3(connector.location.x + 0.5f, connector.location.y + 0.5f, 0);
-            ConnectorMono cm = newConnector.GetComponent<ConnectorMono>();
-            cm.connectionDirection = connector.neededDirection;
-            cm.allowedStructureType = connector.allowedStructureType;
-        }
-    }
     #endregion
 }
 
 
 [System.Serializable]
-public struct StructureTemplate {
+public class StructureTemplate {
     public string name;
     public Point size;
     public TileTemplateData[] groundTiles;
@@ -381,11 +356,11 @@ public struct StructureTemplate {
     public TileTemplateData[] structureWallTiles;
     public TileTemplateData[] objectTiles;
     public TileTemplateData[] detailTiles;
-    public StructureConnector[] connectors;
+    public BuildingSpot[] connectors;
     public FurnitureSpot[] furnitureSpots;
 
     public StructureTemplate(string _name, TileTemplateData[] _ground, TileTemplateData[] _groundWalls, TileTemplateData[] _walls,
-        TileTemplateData[] _objects, TileTemplateData[] _details, Point _size, StructureConnector[] _connectors, FurnitureSpot[] _furnitureSpots) {
+        TileTemplateData[] _objects, TileTemplateData[] _details, Point _size, BuildingSpot[] _connectors, FurnitureSpot[] _furnitureSpots) {
         name = _name;
         size = _size;
         groundTiles = _ground;
@@ -398,99 +373,48 @@ public struct StructureTemplate {
     }
 
 
-    #region Utilities
-    public bool HasConnectorsForStructure(Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures) {
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
-            if (keyValuePair.Key.IsOpenSpace() && keyValuePair.Key != STRUCTURE_TYPE.CEMETERY) {
-                continue; //skip
-            }
-            if (GetCountOfConnectorsForType(keyValuePair.Key) < keyValuePair.Value.Count) {
-                //this template has less than the number of needed connections for the current type
-                return false;
-            }
+    #region Building Spots
+    public bool HasEnoughBuildSpotsForArea(Area area) {
+        int structureCount = 0;
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in area.structures) {
+            structureCount += keyValuePair.Value.Count;
         }
-        return true;
+        return connectors.Length >= structureCount;
     }
-    /// <summary>
-    /// Does this template have all the needed connectors for all the given structures?
-    /// </summary>
-    /// <param name="structures">The structures to connect.</param>
-    /// <returns>True or False</returns>
-    public bool HasConnectorsForStructure(Dictionary<STRUCTURE_TYPE, int> structures) {
-        foreach (KeyValuePair<STRUCTURE_TYPE, int> keyValuePair in structures) {
-            if (keyValuePair.Key.IsOpenSpace() && keyValuePair.Key != STRUCTURE_TYPE.CEMETERY) {
-                continue; //skip
-            }
-            if (GetCountOfConnectorsForType(keyValuePair.Key) < keyValuePair.Value) {
-                //this template has less than the number of needed connections for the current type
-                return false;
-            }
-        }
-        return true;
-    }
-    private int GetCountOfConnectorsForType(STRUCTURE_TYPE type) {
-        int count = 0;
+    public bool TryGetOpenBuildingSpot(out BuildingSpot spot) {
         for (int i = 0; i < connectors.Length; i++) {
-            if (connectors[i].allowedStructureType == type) {
-                count++;
-            }
-        }
-        return count;
-    }
-    public bool HasAvailableConnectionFor(STRUCTURE_TYPE type, Cardinal_Direction direction) {
-        for (int i = 0; i < connectors.Length; i++) {
-            StructureConnector currConnector = connectors[i];
-            if (currConnector.neededDirection == direction && currConnector.allowedStructureType == type && currConnector.isOpen) {
+            if (connectors[i].isOpen) {
+                spot = connectors[i];
                 return true;
             }
         }
+        spot = default(BuildingSpot);
         return false;
     }
-    public bool HasAvailableConnectionFor(STRUCTURE_TYPE type, Cardinal_Direction direction, out StructureConnector availableConnector) {
+    public BuildingSpot GetRandomBuildingSpot() {
+        return connectors[Random.Range(0, connectors.Length)];
+    }
+    public BuildingSpot GetBuildingSpotWithID(int id) {
         for (int i = 0; i < connectors.Length; i++) {
-            StructureConnector currConnector = connectors[i];
-            if (currConnector.neededDirection == direction && currConnector.allowedStructureType == type && currConnector.isOpen) {
-                availableConnector = currConnector;
-                return true;
+            BuildingSpot currSpot = connectors[i];
+            if (currSpot.id == id) {
+                return currSpot;
             }
         }
-        availableConnector = default(StructureConnector);
-        return false;
+        throw new System.Exception("There is no building spot with id " + id.ToString());
     }
+    public BuildingSpot GetBuildingSpotAtLocation(Vector3 location) {
+        for (int i = 0; i < connectors.Length; i++) {
+            BuildingSpot currSpot = connectors[i];
+            if (currSpot.location.x == location.x && currSpot.location.y == location.y) {
+                return currSpot;
+            }
+        }
+        return null;
+    }
+    #endregion
 
-    /// <summary>
-    /// Checks if this template has a connector that is compatible with another template.
-    /// NOTE: Used opposite direction for checking connection because 
-    /// connections should be only allowed if (East connects to West, North connects to South and vise versa)
-    /// </summary>
-    /// <param name="otherTemplate">The template that this template wants to check</param>
-    /// <returns></returns>
-    public bool CanConnectTo(StructureTemplate otherTemplate) {
-        if (connectors != null) {
-            for (int i = 0; i < connectors.Length; i++) {
-                StructureConnector connector = connectors[i];
-                if (otherTemplate.HasAvailableConnectionFor(connector.allowedStructureType, connector.neededDirection.OppositeDirection())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    /// <summary>
-    /// Get a connector in this template that can connect to the other template.
-    /// </summary>
-    /// <param name="otherTemplate">The template to connect to</param>
-    /// <param name="connectTo">The valid connector that was found in the other template</param>
-    /// <returns></returns>
-    public StructureConnector GetValidConnectorTo(StructureTemplate otherTemplate, out StructureConnector connectTo) {
-        for (int i = 0; i < connectors.Length; i++) {
-            StructureConnector connector = connectors[i];
-            if (otherTemplate.HasAvailableConnectionFor(connector.allowedStructureType, connector.neededDirection.OppositeDirection(), out connectTo)) {
-                return connector;
-            }
-        }
-        throw new System.Exception("Could not find valid connector!");
-    }
+    #region Utilities
     public void UpdatePositionsGivenOrigin(Vector3Int origin) {
         UpdatePositionsGivenOrigin(groundTiles, origin);
         UpdatePositionsGivenOrigin(structureWallTiles, origin);
@@ -505,9 +429,9 @@ public struct StructureTemplate {
             data[i] = currData;
         }
     }
-    private void UpdatePositionsGivenOrigin(StructureConnector[] data, Vector3Int origin) {
+    private void UpdatePositionsGivenOrigin(BuildingSpot[] data, Vector3Int origin) {
         for (int i = 0; i < data.Length; i++) {
-            StructureConnector currData = data[i];
+            BuildingSpot currData = data[i];
             currData.location = new Vector3Int(currData.location.x + origin.x, currData.location.y + origin.y, 0);
             data[i] = currData;
         }

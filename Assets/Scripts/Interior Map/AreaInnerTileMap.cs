@@ -111,6 +111,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private int radiusLimit;
     [SerializeField] private int x;
     [SerializeField] private int y;
+    [SerializeField] private GameObject buildSpotPrefab;
 
     [Header("Perlin Noise")]
     [SerializeField] private float offsetX;
@@ -154,19 +155,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         Vector3Int startPoint = new Vector3Int(eastOutsideTiles, southOutsideTiles, 0);
         DrawTownMap(generatedSettings, startPoint);
         //once generated, just copy the generated structures to the actual map.
-        if (area.name == "Gloomhollow") {
-            LocationStructure exploreArea = area.GetRandomStructureOfType(STRUCTURE_TYPE.EXPLORE_AREA);
-            for (int i = 0; i < insideTiles.Count; i++) {
-                LocationGridTile currTile = insideTiles[i];
-                TileBase structureAsset = structureTilemap.GetTile(currTile.localPlace);
-                if (structureAsset == null || !structureAsset.name.Contains("wall")) {
-                    currTile.SetStructure(exploreArea);
-                    currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
-                }
-            }
-        } else {
-            PlaceStructures(generatedSettings, startPoint);
-        }
+        PlaceStructures(generatedSettings, startPoint);
         AssignOuterAreas(insideTiles, outsideTiles);
     }
     public void LoadMap(SaveDataAreaInnerTileMap data) {
@@ -237,12 +226,6 @@ public class AreaInnerTileMap : MonoBehaviour {
 
         groundTilemap.RefreshAllTiles();
     }
-    private void GenerateGrid(Dictionary<LocationStructure, LocationStructureSetting> settings) {
-        Point determinedSize = GetWidthAndHeightForSettings(settings);
-        width = determinedSize.X;
-        height = determinedSize.Y;
-        GenerateGrid();
-    }
     private void GenerateGrid(TownMapSettings settings) {
         Point determinedSize = GetWidthAndHeightForSettings(settings);
         width = determinedSize.X;
@@ -295,10 +278,8 @@ public class AreaInnerTileMap : MonoBehaviour {
         log = "Generating Inner Structures for " + area.name;
         insideTiles = new List<LocationGridTile>();
         outsideTiles = new List<LocationGridTile>();
-        if ((area.areaType == AREA_TYPE.DUNGEON && area.name == "Gloomhollow") 
-            || (area.areaType != AREA_TYPE.DUNGEON && area.areaType != AREA_TYPE.DEMONIC_INTRUSION)) {
+        if (area.areaType != AREA_TYPE.DUNGEON && area.areaType != AREA_TYPE.DEMONIC_INTRUSION) {
             //if this area is not a dungeon type
-            //InteriorMapManager.Instance.CleanupForTownGeneration();
             //first get a town center template that has the needed connections for the structures in the area
             List<StructureTemplate> validTownCenters = GetValidTownCenterTemplates(area);
             if (validTownCenters.Count == 0) {
@@ -313,111 +294,65 @@ public class AreaInnerTileMap : MonoBehaviour {
             usedTownCenterTemplateName = chosenTownCenter.name;
             log += "\nChosen town center template is " + usedTownCenterTemplateName;
             //Place that template in the area generation tilemap
-            //InteriorMapManager.Instance.DrawTownCenterTemplateForGeneration(chosenTownCenter, Vector3Int.zero);
             Dictionary<int, Dictionary<int, LocationGridTileSettings>> mainGeneratedSettings = InteriorMapManager.Instance.GenerateTownCenterTemplateForGeneration(chosenTownCenter, Vector3Int.zero);
-            //DrawTiles(InteriorMapManager.Instance.agGroundTilemap, chosenTownCenter.groundTiles, Vector3Int.zero);
             chosenTownCenter.UpdatePositionsGivenOrigin(Vector3Int.zero);
+            List<BuildingSpot> occupiedSlots = new List<BuildingSpot>();
             //then iterate through all the structures in this area, making sure that the chosen template for the structure can connect to the town center
             log += "\nGenerating Structures... ";
             foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in area.structures) {
                 log += "\nStructure Type is: " + keyValuePair.Key.ToString();
-                if (area.name == "Gloomhollow") {
-                    if (!keyValuePair.Key.ShouldBeGeneratedFromTemplate() && keyValuePair.Key != STRUCTURE_TYPE.EXPLORE_AREA) {
-                        //allow explore areas to be generated in gloomhollow
-                        continue; //skip
-                    }
-                } else {
-                    if (!keyValuePair.Key.ShouldBeGeneratedFromTemplate()) {
-                        log += "\nStructure type should not be generated from template. Skipping...";
-                        continue; //skip
-                    }
+                if (!keyValuePair.Key.ShouldBeGeneratedFromTemplate()) {
+                    log += "\nStructure type should not be generated from template. Skipping...";
+                    continue; //skip
                 }
-
                 int structuresToCreate = keyValuePair.Value.Count;
-                if (area.name == "Gloomhollow") {
-                    structuresToCreate = 5; //hardcoded to 5
-                }
                 log += "\nStructures to create are: " + structuresToCreate.ToString();
                 for (int i = 0; i < structuresToCreate; i++) {
-                    List<StructureTemplate> templates = InteriorMapManager.Instance.GetStructureTemplates(keyValuePair.Key); //placed this inside loop so that instance of template is unique per iteration
-                    List<StructureTemplate> choices = GetTemplatesThatCanConnectTo(chosenTownCenter, templates);
+                    List<StructureTemplate> choices = InteriorMapManager.Instance.GetStructureTemplates(keyValuePair.Key); //placed this inside loop so that instance of template is unique per iteration
                     if (choices.Count == 0) {
                         //NOTE: Show a warning log when there are no valid structure templates for the current structure
                         throw new System.Exception("There are no valid " + keyValuePair.Key.ToString() + " templates to connect to town center in area " + area.name);
                     }
-                    StructureTemplate chosenTemplate = choices[Utilities.rng.Next(0, choices.Count)];
-                    log += "\n\tChosen Template is: " + chosenTemplate.name;
+                    StructureTemplate chosenStructureTemplate = choices[Utilities.rng.Next(0, choices.Count)];
+                    log += "\n\tChosen Template is: " + chosenStructureTemplate.name;
 
-                    StructureConnector townCenterConnector;
-                    StructureConnector chosenTemplateConnector = chosenTemplate.GetValidConnectorTo(chosenTownCenter, out townCenterConnector);
+                    BuildingSpot chosenSpot;
+                    if (occupiedSlots.Count == 0) {
+                        chosenSpot = chosenTownCenter.GetRandomBuildingSpot();
+                    } else {
+                        chosenTownCenter.TryGetOpenBuildingSpot(out chosenSpot);
+                    }
 
-                    Vector3Int shiftTemplateBy = InteriorMapManager.Instance.GetMoveUnitsOfTemplateGivenConnections(chosenTemplate, chosenTemplateConnector, townCenterConnector);
+                    BuildingSpot townCenterConnector = chosenSpot;
+                    BuildingSpot chosenStructureTemplateConnector = chosenStructureTemplate.connectors[0];
+
+                    Vector3Int shiftTemplateBy = InteriorMapManager.Instance.GetMoveUnitsOfTemplateGivenConnections(chosenStructureTemplate, chosenStructureTemplateConnector, townCenterConnector);
                     townCenterConnector.SetIsOpen(false);
-                    chosenTemplateConnector.SetIsOpen(false);
+                    occupiedSlots.Add(townCenterConnector);
+                    townCenterConnector.SetAdjacentSpotsAsOpen(chosenTownCenter, occupiedSlots);
                     string structureLog;
-                    Dictionary<int, Dictionary<int, LocationGridTileSettings>> generatedStructure = InteriorMapManager.Instance.GenerateStructureTemplateForGeneration(chosenTemplate, shiftTemplateBy, keyValuePair.Key, out structureLog);
+                    Dictionary<int, Dictionary<int, LocationGridTileSettings>> generatedStructure = InteriorMapManager.Instance.GenerateStructureTemplateForGeneration(chosenStructureTemplate, shiftTemplateBy, keyValuePair.Key, out structureLog);
                     log += "\n\t\t" + structureLog;
                     InteriorMapManager.Instance.MergeSettings(generatedStructure, ref mainGeneratedSettings);
-                    //InteriorMapManager.Instance.DrawStructureTemplateForGeneration(chosenTemplate, shiftTemplateBy, keyValuePair.Key);
                 }
             }
+
+            //BuildingSpotMonobehaviour[] spotObjs = new BuildingSpotMonobehaviour[chosenTownCenter.connectors.Length];
+            //for (int i = 0; i < chosenTownCenter.connectors.Length; i++) {
+            //    BuildingSpot currSpot = chosenTownCenter.connectors[i];
+            //    GameObject buildSpotGO = GameObject.Instantiate(buildSpotPrefab, this.structureTilemap.transform);
+            //    BuildingSpotMonobehaviour mono = buildSpotGO.GetComponent<BuildingSpotMonobehaviour>();
+            //    mono.isOpen = currSpot.isOpen;
+            //    mono.idText.sortingLayerID = SortingLayer.NameToID("Area Maps");
+            //    mono.idText.sortingOrder = 1000;
+            //    buildSpotGO.transform.localPosition = new Vector3(currSpot.location.x + 0.5f, southEdge + currSpot.location.y, 0f);
+            //    spotObjs[i] = mono;
+            //}
+            Debug.Log(log);
             //once all structures are placed, get the occupied bounds in the area generation tilemap, and use that size to generate the actual grid for this map
             return InteriorMapManager.Instance.GetTownMapSettings(mainGeneratedSettings);
-            //GenerateGrid(generatedSettings);
-            //SplitMap();
-            //Vector3Int startPoint = new Vector3Int(eastOutsideTiles, southOutsideTiles, 0);
-            //DrawTownMap(generatedSettings, startPoint);
-            ////once generated, just copy the generated structures to the actual map.
-            //if (area.name == "Gloomhollow") {
-            //    LocationStructure exploreArea = area.GetRandomStructureOfType(STRUCTURE_TYPE.EXPLORE_AREA);
-            //    for (int i = 0; i < insideTiles.Count; i++) {
-            //        LocationGridTile currTile = insideTiles[i];
-            //        TileBase structureAsset = structureTilemap.GetTile(currTile.localPlace);
-            //        if (structureAsset == null || !structureAsset.name.Contains("wall")) {
-            //            currTile.SetStructure(exploreArea);
-            //            currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
-            //        }
-            //    }
-            //} else {
-            //    PlaceStructures(generatedSettings, startPoint);
-            //}
-            //AssignOuterAreas(insideTiles, outsideTiles);
-            //else use the old structure generation
         }
-        //else {
-        //    OldStructureGeneration();
-        //}
         return default(TownMapSettings);
-    }
-    private void OldStructureGeneration() {
-        Dictionary<LocationStructure, LocationStructureSetting> settings = GenerateStructureSettings(area);
-        Point mapSize = GetWidthAndHeightForSettings(settings);
-
-        Debug.Log("Generated Map size for " + area.name + " is: " + mapSize.X + ", " + mapSize.Y);
-
-        GenerateGrid(settings);
-        SplitMap();
-
-        if (area.areaType == AREA_TYPE.DUNGEON) {
-            DrawCaveWalls(insideTiles, outsideTiles);
-        }
-        //else {
-        //    ConstructInsideMapWalls(insideTiles, outsideTiles);
-        //}
-
-        PlaceStructures(settings, insideTiles);
-        DrawStructureWalls();
-
-        GenerateGates(outsideTiles);
-        AssignOuterAreas(insideTiles, outsideTiles);
-        if (area.areaType != AREA_TYPE.DEMONIC_INTRUSION && area.areaType != AREA_TYPE.DUNGEON) {
-            GenerateEntrances(insideTiles);
-            GenerateRoads();
-        }
-        if (area.HasStructure(STRUCTURE_TYPE.EXPLORE_AREA)) {
-            ConnectExploreAreas();
-            FillInCaveWalls(insideTiles);
-        }
     }
     private void AssignOuterAreas(List<LocationGridTile> inTiles, List<LocationGridTile> outTiles) {
         if (area.areaType != AREA_TYPE.DUNGEON) {
@@ -452,301 +387,11 @@ public class AreaInnerTileMap : MonoBehaviour {
             Debug.LogWarning(area.name + " doesn't have a structure for wilderness");
         }
     }
-    private void GenerateRoads() {
-        //main road
-        //make a path connecting the east and west gate
-        List<LocationGridTile> mainRoad = PathGenerator.Instance.GetPath(westGate, eastGate, GRID_PATHFINDING_MODE.MAIN_ROAD_GEN, true);
-        if (mainRoad != null) {
-            for (int i = 0; i < mainRoad.Count; i++) {
-                LocationGridTile currTile = mainRoad[i];
-                if (currTile.tileType == LocationGridTile.Tile_Type.Road) {
-                    continue; //skip
-                }
-                if (currTile.tileType == LocationGridTile.Tile_Type.Structure) {
-                    continue; //skip
-                }
-                //if (currTile.tileType == LocationGridTile.Tile_Type.Gate) {
-                //    continue; //skip
-                //}
-                if (currTile.tileType == LocationGridTile.Tile_Type.Structure_Entrance) {
-                    continue; //skip
-                }
-
-                if (area.areaType == AREA_TYPE.DUNGEON) {
-                    wallTilemap.SetTile(currTile.localPlace, null);
-                    detailsTilemap.SetTile(currTile.localPlace, null);
-                } else {
-                    //groundTilemap.SetTile(currTile.localPlace, insideTile);
-                    //roadTilemap.SetTile(currTile.localPlace, roadTile);
-                    roadTilemap.SetTile(currTile.localPlace, insideTile);
-                    detailsTilemap.SetTile(currTile.localPlace, null);
-                }
-
-                if (currTile.tileType != LocationGridTile.Tile_Type.Gate) {
-                    currTile.SetTileState(LocationGridTile.Tile_State.Empty);
-                    currTile.SetTileType(LocationGridTile.Tile_Type.Road);
-                }
-            }
-        }
-
-        //connect building entrances to main road
-        List<LocationStructure> buildings = area.GetStructuresAtLocation(true).OrderBy(x => x.GetNearestDistanceTo(westGate)).ToList();
-        for (int i = 0; i < buildings.Count; i++) {
-            LocationStructure currBuilding = buildings[i];
-            if (currBuilding.structureType == STRUCTURE_TYPE.WORK_AREA) {
-                continue; //skip work area
-            }
-            if (currBuilding.HasRoadTo(westGate)) {
-                continue; //skip, no need to create any road
-            }
-
-            LocationGridTile nearestMainRoadTile = mainRoad.OrderBy(x => Vector2.Distance(x.localLocation, currBuilding.entranceTile.localLocation)).First();
-
-            List<LocationGridTile> path = PathGenerator.Instance.GetPath(nearestMainRoadTile, currBuilding.entranceTile, GRID_PATHFINDING_MODE.NORMAL, true);
-            if (path != null) {
-                path.Reverse();
-                for (int j = 0; j < path.Count; j++) {
-                    LocationGridTile currTile = path[j];
-                    if (currTile.tileType == LocationGridTile.Tile_Type.Road) {
-                        continue; //skip
-                    }
-                    if (currTile.tileType == LocationGridTile.Tile_Type.Structure) {
-                        continue; //skip
-                    }
-                    if (currTile.tileType == LocationGridTile.Tile_Type.Gate) {
-                        continue; //skip
-                    }
-                    if (currTile.tileType == LocationGridTile.Tile_Type.Structure_Entrance) {
-                        continue; //skip
-                    }
-
-                    //groundTilemap.SetTile(currTile.localPlace, insideTile);
-                    //roadTilemap.SetTile(currTile.localPlace, roadTile);
-                    roadTilemap.SetTile(currTile.localPlace, insideTile);
-                    detailsTilemap.SetTile(currTile.localPlace, null);
-                    if (currTile.tileType != LocationGridTile.Tile_Type.Gate) {
-                        currTile.SetTileState(LocationGridTile.Tile_State.Empty);
-                        currTile.SetTileType(LocationGridTile.Tile_Type.Road);
-                    }
-                }
-            }
-        }
-    }
-    private void DrawStructureWalls() {
-        List<LocationStructure> structuresWithWalls = new List<LocationStructure>();
-        if (area.HasStructure(STRUCTURE_TYPE.DWELLING)) {
-            structuresWithWalls.AddRange(area.GetStructuresOfType(STRUCTURE_TYPE.DWELLING));
-        }
-        if (area.HasStructure(STRUCTURE_TYPE.WAREHOUSE)) {
-            structuresWithWalls.AddRange(area.GetStructuresOfType(STRUCTURE_TYPE.WAREHOUSE));
-        }
-        if (area.HasStructure(STRUCTURE_TYPE.PRISON)) {
-            structuresWithWalls.AddRange(area.GetStructuresOfType(STRUCTURE_TYPE.PRISON));
-        }
-        if (area.HasStructure(STRUCTURE_TYPE.INN)) {
-            structuresWithWalls.AddRange(area.GetStructuresOfType(STRUCTURE_TYPE.INN));
-        }
-
-        for (int i = 0; i < structuresWithWalls.Count; i++) {
-            LocationStructure currStructure = structuresWithWalls[i];
-            if (currStructure.isFromTemplate) {
-                //if this structure is from a template, do not draw it's walls
-                continue; //skip
-            }
-            List<LocationGridTile> outerTiles = currStructure.GetOuterTiles();
-            for (int j = 0; j < outerTiles.Count; j++) {
-                LocationGridTile currTile = outerTiles[j];
-                List<TileNeighbourDirection> sameStructNeighbours = currTile.GetSameStructureNeighbourDirections();
-                if (!sameStructNeighbours.Contains(TileNeighbourDirection.West)) {
-                    if (!sameStructNeighbours.Contains(TileNeighbourDirection.North)) {
-                        structureTilemap.SetTile(currTile.localPlace, topLeftCornerWall);
-                    } else if (!sameStructNeighbours.Contains(TileNeighbourDirection.South)) {
-                        structureTilemap.SetTile(currTile.localPlace, botLeftCornerWall);
-                    } else {
-                        structureTilemap.SetTile(currTile.localPlace, leftWall);
-                    }
-                } else if (!sameStructNeighbours.Contains(TileNeighbourDirection.East)) {
-                    if (!sameStructNeighbours.Contains(TileNeighbourDirection.North)) {
-                        structureTilemap.SetTile(currTile.localPlace, topRightCornerWall);
-                    } else if (!sameStructNeighbours.Contains(TileNeighbourDirection.South)) {
-                        structureTilemap.SetTile(currTile.localPlace, botRightCornerWall);
-                    } else {
-                        structureTilemap.SetTile(currTile.localPlace, rightWall);
-                    }
-                } else if (!sameStructNeighbours.Contains(TileNeighbourDirection.South)) {
-                    structureTilemap.SetTile(currTile.localPlace, bottomWall);
-                } else if (!sameStructNeighbours.Contains(TileNeighbourDirection.North)) {
-                    structureTilemap.SetTile(currTile.localPlace, topWall);
-                }
-            }
-        }
-    }
-    private void GenerateEntrances(List<LocationGridTile> inTiles) {
-        List<LocationStructure> structuresWithEntrances = new List<LocationStructure>();
-        if (area.HasStructure(STRUCTURE_TYPE.DWELLING)) {
-            structuresWithEntrances.AddRange(area.GetStructuresOfType(STRUCTURE_TYPE.DWELLING));
-        }
-        if (area.HasStructure(STRUCTURE_TYPE.WAREHOUSE)) {
-            structuresWithEntrances.AddRange(area.GetStructuresOfType(STRUCTURE_TYPE.WAREHOUSE));
-        }
-        if (area.HasStructure(STRUCTURE_TYPE.PRISON)) {
-            structuresWithEntrances.AddRange(area.GetStructuresOfType(STRUCTURE_TYPE.PRISON));
-        }
-        if (area.HasStructure(STRUCTURE_TYPE.INN)) {
-            structuresWithEntrances.AddRange(area.GetStructuresOfType(STRUCTURE_TYPE.INN));
-        }
-
-        //int minX = inTiles.Min(x => x.localPlace.x);
-        //int maxX = inTiles.Max(x => x.localPlace.x);
-        int minY = inTiles.Min(x => x.localPlace.y);
-        int maxY = inTiles.Max(x => x.localPlace.y);
-
-        int midY = (minY + maxY) / 2;
-
-        for (int i = 0; i < structuresWithEntrances.Count; i++) {
-            LocationStructure currStructure = structuresWithEntrances[i];
-            List<LocationGridTile> validEntrances = currStructure.GetValidEntranceTiles(midY);
-            if (validEntrances.Count > 0) {
-                LocationGridTile chosenEntrance = validEntrances[UnityEngine.Random.Range(0, validEntrances.Count)];
-                currStructure.SetEntranceTile(chosenEntrance);
-                chosenEntrance.SetTileType(LocationGridTile.Tile_Type.Structure_Entrance);
-                TileNeighbourDirection doorToUse = chosenEntrance.GetCardinalDirectionOfStructureType(STRUCTURE_TYPE.WORK_AREA);
-                switch (doorToUse) {
-                    case TileNeighbourDirection.North:
-                        structureTilemap.SetTile(chosenEntrance.localPlace, topDoor);
-                        break;
-                    case TileNeighbourDirection.South:
-                        structureTilemap.SetTile(chosenEntrance.localPlace, botDoor);
-                        break;
-                    case TileNeighbourDirection.West:
-                        structureTilemap.SetTile(chosenEntrance.localPlace, leftDoor);
-                        break;
-                    case TileNeighbourDirection.East:
-                        structureTilemap.SetTile(chosenEntrance.localPlace, rightDoor);
-                        break;
-                    default:
-                        structureTilemap.SetTile(chosenEntrance.localPlace, topDoor);
-                        break;
-                }
-                
-            }
-        }
-    }
-    private void GenerateGates(List<LocationGridTile> outTiles) {
-        //string summary = "Generating gates for " + area.name;
-        List<LocationGridTile> wallTiles = new List<LocationGridTile>();
-
-        for (int i = 0; i < outTiles.Count; i++) {
-            //check for out tiles that have neighbours in the in tile list
-            LocationGridTile currOutTile = outTiles[i];
-            //if (currOutTile.tileType == LocationGridTile.Tile_Type.Wall) {
-            //    wallTiles.Add(currOutTile);
-            //}
-            for (int j = 0; j < currOutTile.neighbours.Values.Count; j++) {
-                if (!outTiles.Contains(currOutTile.neighbours.Values.ElementAt(j))) {
-                    wallTiles.Add(currOutTile);
-                }
-            }
-        }
-
-        int minX = wallTiles.Min(x => x.localPlace.x);
-        int maxX = wallTiles.Max(x => x.localPlace.x);
-        int minY = wallTiles.Min(x => x.localPlace.y);
-        int maxY = wallTiles.Max(x => x.localPlace.y);
-
-        int midY = (minY + maxY) / 2;
-
-        minY = midY - 3; //To ensure that both gates are more or less centered
-        maxY = midY + 3;
-
-        //summary += "\nMinX: " + minX + ", MaxX: " + maxX + ", MinY: " + minY + ", MaxY: " + maxY + ", MidY: " + midY;
-
-        List<STRUCTURE_TYPE> unallowedNeighbours = new List<STRUCTURE_TYPE>() { STRUCTURE_TYPE.DWELLING, STRUCTURE_TYPE.INN, STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.PRISON };
-
-        List<LocationGridTile> elligibleWestGates = wallTiles
-            .Where(x => !x.HasStructureOfTypeHorizontally(unallowedNeighbours, 3) 
-            && !x.HasNeighbouringStructureOfType(unallowedNeighbours)
-            && x.localPlace.x == minX
-            && x.localPlace.y > minY && x.localPlace.y < maxY).ToList();
-        List<LocationGridTile> elligibleEastGates = wallTiles
-            .Where(x => !x.HasStructureOfTypeHorizontally(unallowedNeighbours, -3)
-            && !x.HasNeighbouringStructureOfType(unallowedNeighbours)
-            && x.localPlace.x == maxX
-            && x.localPlace.y > minY && x.localPlace.y < maxY).ToList();
-
-        LocationGridTile chosenWestGate = elligibleWestGates[Random.Range(0, elligibleWestGates.Count)];
-        chosenWestGate.SetTileType(LocationGridTile.Tile_Type.Gate);
-        wallTilemap.SetTile(chosenWestGate.localPlace, null);
-
-        westGate = chosenWestGate;
-        //summary += "\nWest gate is: " + westGate.ToString();
-
-        LocationGridTile chosenEastGate = elligibleEastGates[Random.Range(0, elligibleEastGates.Count)];
-        chosenEastGate.SetTileType(LocationGridTile.Tile_Type.Gate);
-        wallTilemap.SetTile(chosenEastGate.localPlace, null);
-
-        eastGate = chosenEastGate;
-        //summary += "\nEast gate is: " + eastGate.ToString();
-
-        //Debug.Log(summary);
-    }
     /// <summary>
     /// Generate a dictionary of settings per structure in an area. This is used to determine the size of each map
     /// </summary>
     /// <param name="area">The area to generate settings for</param>
     /// <returns>Dictionary of Point settings per structure</returns>
-    private Dictionary<LocationStructure, LocationStructureSetting> GenerateStructureSettings(Area area) {
-        Dictionary<STRUCTURE_TYPE, List<Point>> structureSettings = GetStructureSettings();
-        Dictionary<LocationStructure, LocationStructureSetting> generatedSettings = new Dictionary<LocationStructure, LocationStructureSetting>();
-
-        Dictionary<STRUCTURE_TYPE, List<LocationStructure>> orderedStructures = area.GetStructures(true).OrderBy(x => x.Key).ToDictionary(k => k.Key, v => v.Value);
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in orderedStructures) { //generate structure settings for inside structures only
-            List<StructureTemplate> templates = InteriorMapManager.Instance.GetStructureTemplates(keyValuePair.Key); //check for templates
-
-            if (templates.Count == 0 && !structureSettings.ContainsKey(keyValuePair.Key)) {
-                //if the structure type has no available templates and it has no default settings, skip
-                continue;
-            }
-
-            for (int i = 0; i < keyValuePair.Value.Count; i++) {
-                LocationStructure currStructure = keyValuePair.Value[i];
-                if (templates.Count > 0 && keyValuePair.Key != STRUCTURE_TYPE.EXPLORE_AREA) { //ignore explore area templates when not using town map generation
-                    //if the structure type has templates, use those
-                    StructureTemplate template = templates[Random.Range(0, templates.Count)];
-                    generatedSettings.Add(currStructure, new LocationStructureSetting(template));
-                } else {
-                    List<Point> choices = structureSettings[keyValuePair.Key];
-                    Point chosenSetting = choices[Random.Range(0, choices.Count)];
-                    generatedSettings.Add(currStructure, new LocationStructureSetting(chosenSetting));
-                }
-                
-            }
-        }
-
-        return generatedSettings;
-    }
-    private Point GetWidthAndHeightForSettings(Dictionary<LocationStructure, LocationStructureSetting> settings) {
-        //height is always 32, 18 is reserved for the inside structures (NOT including walls), and the remaining 14 is for the outside part (Top and bottom)
-        Point size = new Point();
-        size.Y = 32;
-
-        int ySizeForInner = 18;
-        int minimumNeededTiles = settings.Values.Sum(x => x.size.Product());
-        size.X = minimumNeededTiles / ySizeForInner;
-        if (size.X < ySizeForInner) {
-            size.X = ySizeForInner;
-        }
-        if (area.areaType == AREA_TYPE.DUNGEON) {
-            size.X += Mathf.FloorToInt(settings.Count * 3f); //add allowance depecnding on number of structures to place
-        } else {
-            size.X += Mathf.FloorToInt(settings.Count * 4f); //add allowance depecnding on number of structures to place
-        }
-
-        //increase size by 7 for each side (west and east) and another 7 for the east side for the part that will be covered by the UI
-        size.X += 21;
-
-        return size;
-    }
     private Point GetWidthAndHeightForSettings(TownMapSettings settings) {
         //height is always 32, 18 is reserved for the inside structures (NOT including walls), and the remaining 14 is for the outside part (Top and bottom)
         Point size = new Point();
@@ -778,85 +423,6 @@ public class AreaInnerTileMap : MonoBehaviour {
         //size.X += 21;
 
         return size;
-    }
-    private void PlaceStructures(Dictionary<LocationStructure, LocationStructureSetting> settings, List<LocationGridTile> sourceTiles) {
-        List<LocationGridTile>  elligibleTiles = new List<LocationGridTile>(sourceTiles);
-        if (elligibleTiles.Count == 0) {
-            Debug.LogWarning("There were no elligible tiles for structure placement at " + area.name);
-            return;
-        }
-        int leftMostCoordinate = elligibleTiles.Min(t => t.localPlace.x);
-        int rightMostCoordinate = elligibleTiles.Max(t => t.localPlace.x);
-        int topMostCoordinate = elligibleTiles.Max(t => t.localPlace.y);
-        int botMostCoordinate = elligibleTiles.Min(t => t.localPlace.y);
-        //structures = structures.OrderBy(x => x.Key).ToDictionary((keyItem) => keyItem.Key, (valueItem) => valueItem.Value);
-        foreach (KeyValuePair<LocationStructure, LocationStructureSetting> kvp in settings) {
-            LocationStructure currStruct = kvp.Key;
-            Point currPoint = kvp.Value.size;
-
-            //get all tiles, that meet the ff requirements:
-            // - it's y coordinate is 1 tile above the bottom most coordinate or it's y coordinate plus the size of the structure is equal to the top most coordinate
-            // - it's x coordinate is greater than the leftmost coordinate plus 1
-            // - it's x coordinate is less than the right most coordinate minus 1
-            // - none of it's tiles, given the size of the structure, are unelligible
-            List<LocationGridTile> choices = elligibleTiles.Where(
-            t => (t.localPlace.y + currPoint.Y == topMostCoordinate || t.localPlace.y == botMostCoordinate + 1)
-            && t.localPlace.x > leftMostCoordinate + 1 && t.localPlace.x + currPoint.X < rightMostCoordinate - 1
-            && Utilities.ContainsRange(elligibleTiles, GetTiles(currPoint, t))
-            ).ToList();
-
-            if (choices.Count == 0) {
-                Debug.LogWarning("Could not find tile to place " + kvp.Key.ToString());
-                continue; //skip
-            }
-
-            LocationGridTile chosenStartingTile = choices[Random.Range(0, choices.Count)];
-            if (kvp.Value.hasTemplate) {
-                //if there is a provided template, draw that instead
-                List<LocationGridTile> tilesUsed = DrawStructureTemplate(kvp.Value.template, chosenStartingTile, kvp.Key);
-                Utilities.ListRemoveRange(elligibleTiles, tilesUsed);
-                currStruct.SetIfFromTemplate(true);
-            } else {
-                //else, use the default way of drawing structures (just a box)
-                List<LocationGridTile> tiles = GetTiles(currPoint, chosenStartingTile);
-                for (int j = 0; j < tiles.Count; j++) {
-                    LocationGridTile currTile = tiles[j];
-                    currTile.SetStructure(currStruct);
-                    elligibleTiles.Remove(currTile);
-                    detailsTilemap.SetTile(currTile.localPlace, null);
-                    List<LocationGridTile> neighbourTiles = new List<LocationGridTile>();
-                    switch (kvp.Key.structureType) {
-                        case STRUCTURE_TYPE.EXPLORE_AREA:
-                            groundTilemap.SetTile(currTile.localPlace, dungeonFloorTile);
-                            currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
-                            wallTilemap.SetTile(currTile.localPlace, null);
-                            //neighbourTiles = GetTilesInRadius(currTile, 2, false, true);
-                            //for (int k = 0; k < neighbourTiles.Count; k++) {
-                            //    elligibleTiles.Remove(neighbourTiles[k]);
-                            //}
-                            break;
-                        case STRUCTURE_TYPE.INN:
-                        case STRUCTURE_TYPE.WAREHOUSE:
-                        case STRUCTURE_TYPE.PRISON:
-                            groundTilemap.SetTile(currTile.localPlace, floorTile);
-                            currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
-                            neighbourTiles = GetTilesInRadius(currTile, 1, 0, false, true);
-                            for (int k = 0; k < neighbourTiles.Count; k++) {
-                                elligibleTiles.Remove(neighbourTiles[k]);
-                            }
-                            break;
-                        default:
-                            groundTilemap.SetTile(currTile.localPlace, floorTile);
-                            currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
-                            //neighbourTiles = GetTilesInRadius(currTile, 1, false, true);
-                            //for (int k = 0; k < neighbourTiles.Count; k++) {
-                            //    elligibleTiles.Remove(neighbourTiles[k]);
-                            //}
-                            break;
-                    }
-                }
-            }
-        }
     }
     /// <summary>
     /// Assign each drawn structure, the actual structure LocationStructure class that they belong to. <see cref="LocationStructure">
@@ -924,69 +490,6 @@ public class AreaInnerTileMap : MonoBehaviour {
             }
         }
     }
-    private void FillInCaveWalls(List<LocationGridTile> inTiles) {
-        for (int i = 0; i < inTiles.Count; i++) {
-            LocationGridTile currTile = inTiles[i];
-            if (currTile.structure == null) {
-                wallTilemap.SetTile(currTile.localPlace, dungeonWallTile);
-                currTile.SetTileType(LocationGridTile.Tile_Type.Wall);
-            }
-        }
-    }
-    private Dictionary<STRUCTURE_TYPE, List<Point>> GetStructureSettings() {
-        Dictionary<STRUCTURE_TYPE, List<Point>> structureSettings = new Dictionary<STRUCTURE_TYPE, List<Point>>() {
-        { STRUCTURE_TYPE.DWELLING,
-            new List<Point>(){
-                new Point(4, 3),
-                new Point(3, 4),
-            }
-        },
-        { STRUCTURE_TYPE.EXPLORE_AREA,
-            new List<Point>(){
-                new Point(4, 5),
-                new Point(4, 6),
-                new Point(5, 6),
-                new Point(5, 5),
-                new Point(6, 5),
-                new Point(6, 4)
-            }
-        },
-        { STRUCTURE_TYPE.WAREHOUSE,
-            new List<Point>(){
-                new Point(5, 6),
-                new Point(6, 5),
-            }
-        },
-        { STRUCTURE_TYPE.INN,
-            new List<Point>(){
-                new Point(4, 5),
-                new Point(5, 4),
-            }
-        },
-        { STRUCTURE_TYPE.EXIT,
-            new List<Point>(){
-                new Point(3, 3),
-            }
-        }};
-        return structureSettings;
-    }
-    private List<LocationGridTile> DrawStructureTemplate(StructureTemplate st, LocationGridTile startingTile, LocationStructure structure) {
-        List<LocationGridTile> tilesUsed = new List<LocationGridTile>();
-
-        List<LocationGridTile> used = DrawTiles(groundTilemap, st.groundTiles, startingTile);
-        if (st.groundWallTiles != null) {
-            DrawTiles(wallTilemap, st.groundWallTiles, startingTile);
-        }
-        DrawTiles(structureTilemap, st.structureWallTiles, startingTile);
-        DrawTiles(objectsTilemap, st.objectTiles, startingTile);
-        DrawTiles(detailsTilemap, st.detailTiles, startingTile);
-
-        tilesUsed.AddRange(used);
-        for (int i = 0; i < tilesUsed.Count; i++) {
-            tilesUsed[i].SetStructure(structure);
-        }
-        return tilesUsed;
-    }
     private List<LocationGridTile> DrawTiles(Tilemap tilemap, TileTemplateData[] data, LocationGridTile startTile) {
         List<LocationGridTile> tiles = new List<LocationGridTile>();
         for (int i = 0; i < data.Length; i++) {
@@ -1045,25 +548,11 @@ public class AreaInnerTileMap : MonoBehaviour {
     private List<StructureTemplate> GetValidTownCenterTemplates(Area area) {
         List<StructureTemplate> valid = new List<StructureTemplate>();
         string extension = "Default";
-        if (area.name == "Gloomhollow") {
-            extension = "Snow";
-        }
         List<StructureTemplate> choices = InteriorMapManager.Instance.GetStructureTemplates("TOWN CENTER/" + extension);
         for (int i = 0; i < choices.Count; i++) {
             StructureTemplate currTemplate = choices[i];
-            if (currTemplate.HasConnectorsForStructure(area.structures)) {
+            if (currTemplate.HasEnoughBuildSpotsForArea(area)) {
                 valid.Add(currTemplate);
-            }
-        }
-
-        return valid;
-    }
-    private List<StructureTemplate> GetTemplatesThatCanConnectTo(StructureTemplate otherTemplate, List<StructureTemplate> choices) {
-        List<StructureTemplate> valid = new List<StructureTemplate>();
-        for (int i = 0; i < choices.Count; i++) {
-            StructureTemplate currTemp = choices[i];
-            if (currTemp.CanConnectTo(otherTemplate)) {
-                valid.Add(currTemp);
             }
         }
 
@@ -1079,129 +568,17 @@ public class AreaInnerTileMap : MonoBehaviour {
         DrawTiles(structureTilemap, settings.structureTiles, startPoint);
         DrawTiles(objectsTilemap, settings.objectTiles, startPoint);
         DrawTiles(detailsTilemap, settings.detailTiles, startPoint);
-    }
-    #endregion
 
-    #region Explore Areas
-    private void ConnectExploreAreas() {
-        List<LocationStructure> exploreAreas = area.GetStructuresOfType(STRUCTURE_TYPE.EXPLORE_AREA);
-        exploreAreas = Utilities.Shuffle(exploreAreas);
-        for (int i = 0; i < exploreAreas.Count; i++) {
-            LocationStructure currExploreArea = exploreAreas[i];
-            LocationStructure otherExploreArea = exploreAreas.ElementAtOrDefault(i + 1);
-            if (otherExploreArea == null) {
-                break;
-            }
-            //connect currArea to otherArea
-            List<LocationGridTile> currAreaOuter = currExploreArea.GetOuterTiles();
-            List<LocationGridTile> otherAreaOuter = otherExploreArea.GetOuterTiles();
-
-            LocationGridTile chosenCurrArea = currAreaOuter[Random.Range(0, currAreaOuter.Count)];
-            LocationGridTile chosenOtherArea = otherAreaOuter[Random.Range(0, otherAreaOuter.Count)];
-
-            List<LocationGridTile> path = PathGenerator.Instance.GetPath(chosenCurrArea, chosenOtherArea, GRID_PATHFINDING_MODE.CAVE_ROAD_GEN, true);
-            if (path != null) {
-                for (int j = 0; j < path.Count; j++) {
-                    LocationGridTile currTile = path[j];
-                    if (currTile.structure == null) {
-                        currTile.SetTileType(LocationGridTile.Tile_Type.Road);
-                        currTile.SetStructure(currExploreArea);
-                        wallTilemap.SetTile(currTile.localPlace, null);
-                        groundTilemap.SetTile(currTile.localPlace, dungeonFloorTile);
-                    }
-                }
-            }
+        for (int i = 0; i < settings.buildSpots.Count; i++) {
+            BuildingSpot currSpot = settings.buildSpots[i];
+            GameObject buildSpotGO = GameObject.Instantiate(buildSpotPrefab, this.structureTilemap.transform);
+            BuildingSpotMonobehaviour mono = buildSpotGO.GetComponent<BuildingSpotMonobehaviour>();
+            mono.isOpen = currSpot.isOpen;
+            mono.idText.sortingLayerID = SortingLayer.NameToID("Area Maps");
+            mono.idText.sortingOrder = 1000;
+            buildSpotGO.transform.localPosition = new Vector3(currSpot.location.x + 0.5f + startPoint.x, currSpot.location.y + startPoint.y, 0f);
         }
 
-        //connect nearest area to west gate
-        LocationGridTile nearestTile = null;
-        float nearestDist = 99999f;
-        for (int i = 0; i < exploreAreas.Count; i++) {
-            LocationStructure currArea = exploreAreas[i];
-            LocationGridTile tile = currArea.GetNearestTileTo(westGate);
-            float dist = tile.GetDistanceTo(westGate);
-            if (dist < nearestDist) {
-                nearestTile = tile;
-                nearestDist = dist;
-            }
-        }
-
-        List<LocationGridTile> p = PathGenerator.Instance.GetPath(westGate, nearestTile, GRID_PATHFINDING_MODE.CAVE_ROAD_GEN, true);
-        if (p != null) {
-            p.Add(westGate);
-            for (int j = 0; j < p.Count; j++) {
-                LocationGridTile currTile = p[j];
-                if (currTile.structure == null) {
-                    if (currTile.tileType != LocationGridTile.Tile_Type.Gate) {
-                        currTile.SetTileType(LocationGridTile.Tile_Type.Road);
-                    }
-                    currTile.SetStructure(nearestTile.structure);
-                    wallTilemap.SetTile(currTile.localPlace, null);
-                    groundTilemap.SetTile(currTile.localPlace, dungeonFloorTile);
-                }
-            }
-        }
-
-        //connect nearest area to east gate
-        nearestTile = null;
-        nearestDist = 99999f;
-        for (int i = 0; i < exploreAreas.Count; i++) {
-            LocationStructure currArea = exploreAreas[i];
-            LocationGridTile tile = currArea.GetNearestTileTo(eastGate);
-            float dist = tile.GetDistanceTo(eastGate);
-            if (dist < nearestDist) {
-                nearestTile = tile;
-                nearestDist = dist;
-            }
-        }
-
-        p = PathGenerator.Instance.GetPath(eastGate, nearestTile, GRID_PATHFINDING_MODE.CAVE_ROAD_GEN, true);
-        if (p != null) {
-            p.Add(eastGate);
-            for (int j = 0; j < p.Count; j++) {
-                LocationGridTile currTile = p[j];
-                if (currTile.structure == null) {
-                    if (currTile.tileType != LocationGridTile.Tile_Type.Gate) {
-                        currTile.SetTileType(LocationGridTile.Tile_Type.Road);
-                    }
-                    currTile.SetStructure(nearestTile.structure);
-                    wallTilemap.SetTile(currTile.localPlace, null);
-                    groundTilemap.SetTile(currTile.localPlace, dungeonFloorTile);
-                }
-            }
-        }
-    }
-    private void DrawCaveWalls(List<LocationGridTile> inTiles, List<LocationGridTile> outTiles) {
-        List<LocationGridTile> wallTiles = new List<LocationGridTile>();
-
-        for (int i = 0; i < outTiles.Count; i++) {
-            //check for out tiles that have neighbours in the in tile list
-            LocationGridTile currOutTile = outTiles[i];
-            for (int j = 0; j < currOutTile.neighbours.Values.Count; j++) {
-                LocationGridTile currNeighbour = currOutTile.neighbours.Values.ElementAt(j);
-                if (currNeighbour.isInside) {
-                    wallTiles.Add(currOutTile);
-                    break;
-                }
-            }
-        }
-
-        //wallTiles.AddRange(inTiles); //add all in tiles as walls at first, they will be set otherwise, when structures are placed.
-
-        //for (int i = 0; i < inTiles.Count; i++) {
-        //    LocationGridTile currTile = inTiles[i];
-        //    if (currTile.structure == null && currTile.tileType != LocationGridTile.Tile_Type.Road) {
-        //        wallTiles.Add(currTile);
-        //    }
-        //}
-
-        for (int i = 0; i < wallTiles.Count; i++) {
-            LocationGridTile currTile = wallTiles[i];
-            currTile.SetTileType(LocationGridTile.Tile_Type.Wall);
-            wallTilemap.SetTile(currTile.localPlace, dungeonWallTile);
-        }
-
-        
     }
     #endregion
 
@@ -1418,18 +795,6 @@ public class AreaInnerTileMap : MonoBehaviour {
                 //3% of tiles should have random garbage
                 currTile.hasDetail = true;
                 detailsTilemap.SetTile(currTile.localPlace, randomGarbTile);
-            }
-        }
-    }
-    public void RotateTiles() {
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                LocationGridTile currTile = map[x, y];
-                if (currTile.structure == null || currTile.structure.structureType.IsOpenSpace() || currTile.structure.structureType == STRUCTURE_TYPE.EXPLORE_AREA) {
-                    Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, (float)(90 * Random.Range(0, 5))), Vector3.one);
-                    groundTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
-                    groundTilemap.SetTransformMatrix(currTile.localPlace, m);
-                }
             }
         }
     }
