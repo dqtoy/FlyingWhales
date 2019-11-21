@@ -508,15 +508,15 @@ public class CharacterManager : MonoBehaviour {
             ps.wholeImageColor = Random.Range(-144f, 144f);
         } else {
             ps.head = Utilities.GetRandomIndexInList(pac.head);
-            ps.brows = Utilities.GetRandomIndexInList(pac.head);
-            ps.eyes = Utilities.GetRandomIndexInList(pac.head);
-            ps.mouth = Utilities.GetRandomIndexInList(pac.head);
-            ps.nose = Utilities.GetRandomIndexInList(pac.head);
-            ps.hair = Utilities.GetRandomIndexInList(pac.head);
-            ps.mustache = Utilities.GetRandomIndexInList(pac.head);
-            ps.beard = Utilities.GetRandomIndexInList(pac.head);
+            ps.brows = Utilities.GetRandomIndexInList(pac.brows);
+            ps.eyes = Utilities.GetRandomIndexInList(pac.eyes);
+            ps.mouth = Utilities.GetRandomIndexInList(pac.mouth);
+            ps.nose = Utilities.GetRandomIndexInList(pac.nose);
+            ps.hair = Utilities.GetRandomIndexInList(pac.hair);
+            ps.mustache = Utilities.GetRandomIndexInList(pac.mustache);
+            ps.beard = Utilities.GetRandomIndexInList(pac.beard);
             ps.wholeImage = string.Empty;
-            ps.hairColor = Random.Range(-360f, 360f);
+            ps.hairColor = Random.Range(-720f, 720f);
             ps.wholeImageColor = 0f;
         }
         return ps;
