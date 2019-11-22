@@ -518,9 +518,21 @@ public class CharacterManager : MonoBehaviour {
             ps.eyes = Utilities.GetRandomIndexInList(pac.eyes);
             ps.mouth = Utilities.GetRandomIndexInList(pac.mouth);
             ps.nose = Utilities.GetRandomIndexInList(pac.nose);
-            ps.hair = Utilities.GetRandomIndexInList(pac.hair);
-            ps.mustache = Utilities.GetRandomIndexInList(pac.mustache);
-            ps.beard = Utilities.GetRandomIndexInList(pac.beard);
+            if (UnityEngine.Random.Range(0, 100) < 10) {
+                ps.hair = -1; //chance to have no hair
+            } else {
+                ps.hair = Utilities.GetRandomIndexInList(pac.hair);
+            }
+            if (UnityEngine.Random.Range(0, 100) < 25) {
+                ps.mustache = -1; //chance to have no mustache
+            } else {
+                ps.mustache = Utilities.GetRandomIndexInList(pac.mustache);
+            }
+            if (UnityEngine.Random.Range(0, 100) < 12) {
+                ps.beard = -1; //chance to have no beard
+            } else {
+                ps.beard = Utilities.GetRandomIndexInList(pac.beard);
+            }
             ps.wholeImage = string.Empty;
             ps.hairColor = Random.Range(-720f, 720f);
             ps.wholeImageColor = 0f;

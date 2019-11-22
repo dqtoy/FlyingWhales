@@ -1009,7 +1009,7 @@ public class CharacterMarker : PooledObject {
     }
     private void UpdateHairState() {
         //TODO: Find another way to unify this
-        if (character.characterClass.className == "Mage") {
+        if (character.characterClass.className == "Mage" || character.portraitSettings.hair == -1) {
             hairImg.gameObject.SetActive(false);
         } else {
             hairImg.gameObject.SetActive(true);
