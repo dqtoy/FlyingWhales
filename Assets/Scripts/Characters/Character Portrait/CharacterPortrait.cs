@@ -89,6 +89,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         mustache.rectTransform.SetSiblingIndex(6);
         beard.rectTransform.SetSiblingIndex(7);
         mouth.rectTransform.SetSiblingIndex(8);
+        lvlGO.SetActive(false);
     }
 
     #region Utilities

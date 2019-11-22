@@ -73,8 +73,6 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 7fba7bbbf291e554e928b975caf9b7b6, type: 3}
       - {fileID: 21300000, guid: 3700c295659c86742b0e783fbe49b9a7, type: 3}
       - {fileID: 21300000, guid: 15e50ff2bfb8d3f488c47b9da5547816, type: 3}
-      - {fileID: 21300000, guid: 3886ffe8fc614fa468be7c2b15cf8c9b, type: 3}
-      - {fileID: 21300000, guid: 488452274043dde48af90ac4d3359ef0, type: 3}
       eyes:
       - {fileID: 21300000, guid: 4f624290721412c4c85d2fc5a5d785a7, type: 3}
       - {fileID: 21300000, guid: 0ffb6748cd1a5cd46a077404cbead42f, type: 3}
@@ -183,8 +181,6 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 069b3a11c714dfb4a8e95d8b64f42d51, type: 3}
       - {fileID: 21300000, guid: e9aca6c51c973ae4a88acebcf9441479, type: 3}
       - {fileID: 21300000, guid: a4336e33f1e824645ad3fa0bf731aa25, type: 3}
-      - {fileID: 21300000, guid: 08c96549ae8b0d746a5a74e9ab8cb218, type: 3}
-      - {fileID: 21300000, guid: 9a9aa0dea04b2514f9f2ba84a7b62532, type: 3}
       eyes:
       - {fileID: 21300000, guid: 2a598c31a1d7d5c4bb641f04ca98f223, type: 3}
       - {fileID: 21300000, guid: a657484cd2323604da890b3920f6b0e9, type: 3}
@@ -293,8 +289,6 @@ MonoBehaviour:
       - {fileID: 21300000, guid: c8ed1cba6020d9a45bc5b24f2332f8de, type: 3}
       - {fileID: 21300000, guid: 6cf077632df882f4ebcce95e71c3985b, type: 3}
       - {fileID: 21300000, guid: e8b76820ecaa15b45b921ec165347b5c, type: 3}
-      - {fileID: 21300000, guid: 155d8e40ac9f7934f86a3a1eabff95ca, type: 3}
-      - {fileID: 21300000, guid: 56c36e7375ed3de4eb44ae8c66a3a1fe, type: 3}
       eyes:
       - {fileID: 21300000, guid: 70898569ca9ee294da3bc7eff44047ff, type: 3}
       - {fileID: 21300000, guid: 061cabca67e26b84c857f75138b02841, type: 3}
@@ -403,8 +397,6 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 32fc966f081b6e241843ba78219c99b5, type: 3}
       - {fileID: 21300000, guid: 1149af3ea3bcae648a824dcaf3dc764a, type: 3}
       - {fileID: 21300000, guid: f0a819b46a778634f8f87bdd91704bdf, type: 3}
-      - {fileID: 21300000, guid: 7b1312247c3fdb8408e668d9f4e642cf, type: 3}
-      - {fileID: 21300000, guid: 495caf1210da00a48a87690aaff902d5, type: 3}
       eyes:
       - {fileID: 21300000, guid: 58827de0883256f4cb2d1ed413dbe576, type: 3}
       - {fileID: 21300000, guid: 4bfd74c4f1a92894a917d23ecbbb1d83, type: 3}
@@ -554,8 +546,10 @@ MonoBehaviour:
   hsvMaterial: {fileID: 2100000, guid: f635580cdf2e2344ea31e0dba17cb9b5, type: 2}
   spriteLightingMaterial: {fileID: 2100000, guid: 86bf23c43b3d1c1488f123d8f4d74dc1,
     type: 2}
-  maleHairSprite: {fileID: 21300000, guid: 262b3712b96ca0b44824cc35aae3ec03, type: 3}
-  femaleHairSprite: {fileID: 21300000, guid: 68cf74ef33622e043a41883bef5e2a12, type: 3}
+  maleHairSprite:
+  - {fileID: 21300000, guid: 262b3712b96ca0b44824cc35aae3ec03, type: 3}
+  femaleHairSprite:
+  - {fileID: 21300000, guid: 68cf74ef33622e043a41883bef5e2a12, type: 3}
   markerAssets:
   - raceName: DEMON
     race: 14
