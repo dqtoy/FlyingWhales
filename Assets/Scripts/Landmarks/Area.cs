@@ -716,8 +716,8 @@ public class Area : IJobOwner {
         // - a cemetery
         // - wilderness
         // - enough dwellings for it's citizens
-        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WAREHOUSE, true);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.INN, true);
+        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WAREHOUSE, true);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.PRISON, true);
         //LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.CEMETERY, true);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WORK_AREA, true);

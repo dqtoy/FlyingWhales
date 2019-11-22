@@ -36,21 +36,45 @@ public class BuildingSpot {
         }
     }
 
+    #region Data Setting
     public void SetIsOpen(bool isOpen) {
         this.isOpen = isOpen;
     }
     public void SetIsOccupied(bool isOccupied) {
         this.isOccupied = isOccupied;
     }
-
     public void SetAllAdjacentSpotsAsOpen(AreaInnerTileMap map) {
         BuildingSpot[] adjacent = map.GetBuildingSpotsWithID(adjacentSpots);
         for (int i = 0; i < adjacent.Length; i++) {
             BuildingSpot adjacentSpot = adjacent[i];
             //set adjacent spots that are not yet open, and are not yet occupied to be open. Need to check for occupancy because all spots start off as closed.
-            if (adjacentSpot.isOccupied == false && adjacentSpot.isOpen == false) { 
+            if (adjacentSpot.isOccupied == false && adjacentSpot.isOpen == false) {
                 adjacentSpot.SetIsOpen(true);
             }
         }
     }
+    #endregion
+
+    #region Checkers
+    public void CheckIfAdjacentSpotsCanStillBeOccupied(AreaInnerTileMap map) {
+        BuildingSpot[] adjacent = map.GetBuildingSpotsWithID(adjacentSpots);
+        for (int i = 0; i < adjacent.Length; i++) {
+            BuildingSpot currSpot = adjacent[i];
+            currSpot.CheckIfOccupied(map);
+        }
+    }
+    public void CheckIfOccupied(AreaInnerTileMap map) {
+        for (int i = 0; i < tilesInTerritory.Length; i++) {
+            LocationGridTile currTile = tilesInTerritory[i];
+            if (currTile.structure != null && currTile.structure.structureType != STRUCTURE_TYPE.WILDERNESS && currTile.structure.structureType != STRUCTURE_TYPE.WORK_AREA) {
+                //the spot is now occupied. set that
+                SetIsOccupied(true);
+                SetIsOpen(false);
+                SetAllAdjacentSpotsAsOpen(map); //set all adjacent unoccupied spots as open
+                break;
+            }
+        }
+    }
+    #endregion
+
 }

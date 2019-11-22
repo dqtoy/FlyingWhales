@@ -15,6 +15,9 @@ public class LocationStructureObject : MonoBehaviour {
     [SerializeField] private Transform contentParent;
     [SerializeField] private Vector3Int center;
 
+    public LocationGridTile[] tiles;
+
+    #region Testers
     [ContextMenu("Center Content")]
     public void CenterContent() {
         Vector2 center = new Vector2(size.x / 2f, size.y / 2f);
@@ -22,8 +25,6 @@ public class LocationStructureObject : MonoBehaviour {
         center.y += 0.5f;
         contentParent.localPosition = center * -1f;
     }
-
-
     [ContextMenu("Log Occupied coordinates")]
     public void LogOccupiedCoordinates() {
         groundTileMap.CompressBounds();
@@ -40,7 +41,6 @@ public class LocationStructureObject : MonoBehaviour {
         }
         Debug.Log(summary);
     }
-
     [ContextMenu("Log Bounds")]
     public void LogBounds() {
         groundTileMap.CompressBounds();
@@ -52,6 +52,73 @@ public class LocationStructureObject : MonoBehaviour {
         boundsSummary += "\nyMax - " + bounds.yMax.ToString();
         Debug.Log(boundsSummary);
     }
+    #endregion
+
+    #region Tile Maps
+    public void RefreshAllTilemaps() {
+        groundTileMap.RefreshAllTiles();
+        wallTileMap.RefreshAllTiles();
+        objectTileMap.RefreshAllTiles();
+        deatilTileMap.RefreshAllTiles();
+    }
+    #endregion
+
+    #region Tiles
+    public void SetTilesInStructure(LocationGridTile[] tiles) {
+        this.tiles = tiles;
+    }
+    #endregion
+
+    #region Tile Objects
+    public void RegisterPreplacedObjects() {
+        for (int i = 0; i < tiles.Length; i++) {
+            LocationGridTile currTile = tiles[i];
+            UnityEngine.Tilemaps.TileBase objTile = currTile.parentAreaMap.objectsTilemap.GetTile(currTile.localPlace);
+            //TODO: Make this better! because this does not scale well.
+            if (objTile != null) {
+                switch (objTile.name) {
+                    case "Bed":
+                        AddPOI(new Bed(this), currTile, false);
+                        currTile.SetReservedType(TILE_OBJECT_TYPE.BED);
+                        break;
+                    case "Desk":
+                        AddPOI(new Desk(this), currTile, false);
+                        currTile.SetReservedType(TILE_OBJECT_TYPE.DESK);
+                        break;
+                    case "Table0":
+                    case "Table1":
+                    case "Table2":
+                    case "tableDecor00":
+                    case "Bartop_Left":
+                    case "Bartop_Right":
+                        Table table = new Table(this);
+                        table.SetUsedAsset(objTile);
+                        AddPOI(table, currTile, false);
+                        currTile.SetReservedType(TILE_OBJECT_TYPE.TABLE);
+                        break;
+                    case "SupplyPile":
+                        AddPOI(new SupplyPile(this), currTile, false);
+                        currTile.SetReservedType(TILE_OBJECT_TYPE.SUPPLY_PILE);
+                        break;
+                    case "FoodPile":
+                        AddPOI(new FoodPile(this), currTile, false);
+                        currTile.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
+                        break;
+                    case "Guitar":
+                        AddPOI(new Guitar(this), currTile, false);
+                        currTile.SetReservedType(TILE_OBJECT_TYPE.GUITAR);
+                        break;
+                    case "WaterWell":
+                        AddPOI(new WaterWell(this), currTile, false);
+                        currTile.SetReservedType(TILE_OBJECT_TYPE.WATER_WELL);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+    #endregion
 
     public List<LocationGridTile> GetTilesOccupiedByStructure(AreaInnerTileMap map) {
         List<LocationGridTile> occupiedTiles = new List<LocationGridTile>();

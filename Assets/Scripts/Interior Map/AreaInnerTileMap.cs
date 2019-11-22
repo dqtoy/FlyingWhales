@@ -432,16 +432,21 @@ public class AreaInnerTileMap : MonoBehaviour {
                     if (chosenBuildingSpot != null) {
                         GameObject structurePrefab = ObjectPoolManager.Instance.InstantiateObjectFromPool(chosenStructurePrefab.name, Vector3.zero, Quaternion.identity, structureParent);
                         structurePrefab.transform.localPosition = chosenBuildingSpot.centeredLocation;
-                        LocationStructureObject structureobject = structurePrefab.GetComponent<LocationStructureObject>();
-                        List<LocationGridTile> occupiedTiles = structureobject.GetTilesOccupiedByStructure(this);
+                        LocationStructureObject structureObject = structurePrefab.GetComponent<LocationStructureObject>();
+                        structureObject.RefreshAllTilemaps();
+                        List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(this);
                         for (int j = 0; j < occupiedTiles.Count; j++) {
                             LocationGridTile tile = occupiedTiles[j];
                             tile.SetStructure(structure);
-                            tile.HighlightTile();
+                            //tile.HighlightTile();
                         }
                         chosenBuildingSpot.SetIsOpen(false);
                         chosenBuildingSpot.SetIsOccupied(true);
                         chosenBuildingSpot.SetAllAdjacentSpotsAsOpen(this);
+                        chosenBuildingSpot.CheckIfAdjacentSpotsCanStillBeOccupied(this);
+
+                        structureObject.SetTilesInStructure(occupiedTiles.ToArray());
+                        structure.SetStructureObject(structureObject);
                     }
                 }
             }
@@ -526,22 +531,6 @@ public class AreaInnerTileMap : MonoBehaviour {
 
                 //Generate details for work area (crates, barrels)
                 WorkAreaDetails(area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).tiles
-                    .Where(x => !x.hasDetail && x.tileType != LocationGridTile.Tile_Type.Road
-                    && x.objHere == null && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Gate)
-                    && !x.isLocked
-                    && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Structure_Entrance)
-                    && x.tileType != LocationGridTile.Tile_Type.Gate).ToList());
-            } else if (area.name == "Gloomhollow") {
-                //Generate details for inside map (Trees, shrubs, etc.)
-                MapPerlinDetails(insideTiles
-                    .Where(x => !x.hasDetail && x.tileType != LocationGridTile.Tile_Type.Road
-                    && x.objHere == null && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Gate)
-                    && !x.isLocked
-                    && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Structure_Entrance)
-                    && x.tileType != LocationGridTile.Tile_Type.Gate).ToList());
-
-                //Generate details for work area (crates, barrels)
-                WorkAreaDetails(insideTiles
                     .Where(x => !x.hasDetail && x.tileType != LocationGridTile.Tile_Type.Road
                     && x.objHere == null && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Gate)
                     && !x.isLocked
@@ -707,7 +696,7 @@ public class AreaInnerTileMap : MonoBehaviour {
 
         for (int i = 0; i < insideTiles.Count; i++) {
             LocationGridTile currTile = insideTiles[i];
-            if (currTile.tileType != LocationGridTile.Tile_Type.Road && !currTile.hasDetail && Random.Range(0, 100) < 3) {
+            if (currTile.tileType != LocationGridTile.Tile_Type.Road && !currTile.hasDetail && currTile.structure.structureType.IsOpenSpace() && Random.Range(0, 100) < 3) {
                 //3% of tiles should have random garbage
                 currTile.hasDetail = true;
                 detailsTilemap.SetTile(currTile.localPlace, randomGarbTile);

@@ -220,7 +220,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         }
         this.structure = structure;
         this.structure.AddTile(this);
-
         if (!genericTileObject.hasBeenInitialized) { //TODO: Make this better
             genericTileObject.ManualInitialize(structure, this);
         }

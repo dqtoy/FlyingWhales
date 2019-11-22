@@ -14,9 +14,9 @@ public class LocationStructure {
     [System.NonSerialized]
     private Area _location;
     private List<SpecialToken> _itemsHere;
-    public List<IPointOfInterest> pointsOfInterest { get; private set; }   
-    //public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
+    public List<IPointOfInterest> pointsOfInterest { get; private set; }
     public POI_STATE state { get; private set; }
+    public LocationStructureObject structureObj {get; private set;}
 
     //Inner Map
     public List<LocationGridTile> tiles { get; private set; }
@@ -44,10 +44,6 @@ public class LocationStructure {
         pointsOfInterest = new List<IPointOfInterest>();
         tiles = new List<LocationGridTile>();
         unoccupiedTiles = new List<LocationGridTile>();
-        AddListeners();
-        //if (structureType == STRUCTURE_TYPE.DUNGEON || structureType == STRUCTURE_TYPE.WAREHOUSE) {
-        //    AddPOI(new SupplyPile(this));
-        //}
     }
     public LocationStructure(Area location, SaveDataLocationStructure data) {
         _location = location;
@@ -59,10 +55,6 @@ public class LocationStructure {
         _itemsHere = new List<SpecialToken>();
         pointsOfInterest = new List<IPointOfInterest>();
         tiles = new List<LocationGridTile>();
-        AddListeners();
-        //if (structureType == STRUCTURE_TYPE.DUNGEON || structureType == STRUCTURE_TYPE.WAREHOUSE) {
-        //    AddPOI(new SupplyPile(this));
-        //}
     }
 
     #region Residents
@@ -125,11 +117,9 @@ public class LocationStructure {
     #region Points Of Interest
     public virtual bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null, bool placeAsset = true) {
         if (!pointsOfInterest.Contains(poi)) {
-#if !WORLD_CREATION_TOOL
             if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
                 if (!PlacePOIAtAppropriateTile(poi, tileLocation, placeAsset)) { return false; }
             }
-#endif
             pointsOfInterest.Add(poi);
             return true;
         }
@@ -137,7 +127,6 @@ public class LocationStructure {
     }
     public virtual bool RemovePOI(IPointOfInterest poi, Character removedBy = null) {
         if (pointsOfInterest.Remove(poi)) {
-#if !WORLD_CREATION_TOOL
             if (poi.gridTileLocation != null) {
                 //Debug.Log("Removed " + poi.ToString() + " from " + poi.gridTileLocation.ToString() + " at " + this.ToString());
                 if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -147,16 +136,7 @@ public class LocationStructure {
                 }
                 //throw new System.Exception("Provided tile of " + poi.ToString() + " is null!");
             }
-#endif
             return true;
-        }
-        return false;
-    }
-    public bool HasPOIOfType(POINT_OF_INTEREST_TYPE type) {
-        for (int i = 0; i < pointsOfInterest.Count; i++) {
-            if (pointsOfInterest[i].poiType == type) {
-                return true;
-            }
         }
         return false;
     }
@@ -263,42 +243,6 @@ public class LocationStructure {
     public void RemoveUnoccupiedTile(LocationGridTile tile) {
         unoccupiedTiles.Remove(tile);
     }
-    public bool IsFull() {
-        return unoccupiedTiles.Count <= 0;
-    }
-    public LocationGridTile GetNearestTileTo(LocationGridTile tile) {
-        LocationGridTile nearestTile = null;
-        float nearestDist = 99999f;
-        for (int i = 0; i < tiles.Count; i++) {
-            LocationGridTile currTile = tiles[i];
-            float dist = currTile.GetDistanceTo(tile);
-            if (dist < nearestDist) {
-                nearestTile = currTile;
-                nearestDist = dist;
-            }
-        }
-        return nearestTile;
-    }
-    public float GetNearestDistanceTo(LocationGridTile tile) {
-        float nearestDist = 99999f;
-        for (int i = 0; i < tiles.Count; i++) {
-            LocationGridTile currTile = tiles[i];
-            float dist = currTile.GetDistanceTo(tile);
-            if (dist < nearestDist) {
-                nearestDist = dist;
-            }
-        }
-        return nearestDist;
-    }
-    public bool HasRoadTo(LocationGridTile tile) {
-        return PathGenerator.Instance.GetPath(entranceTile, tile, GRID_PATHFINDING_MODE.ROADS_ONLY, true) != null;
-    }
-    public LocationGridTile GetRandomUnoccupiedTile() {
-        if (unoccupiedTiles.Count <= 0) {
-            return null;
-        }
-        return unoccupiedTiles[Random.Range(0, unoccupiedTiles.Count)];
-    }
     public LocationGridTile GetRandomTile() {
         if (tiles.Count <= 0) {
             return null;
@@ -311,19 +255,6 @@ public class LocationStructure {
     #endregion
 
     #region Utilities
-    public void SetInsideState(bool isInside) {
-        this.isInside = isInside;
-    }
-    public void DestroyStructure() {
-        _location.RemoveStructure(this);
-        RemoveListeners();
-    }
-    private void AddListeners() {
-        //Messenger.AddListener(Signals.DAY_STARTED, SpawnFoodOnStartDay);
-    }
-    private void RemoveListeners() {
-        //Messenger.RemoveListener(Signals.DAY_STARTED, SpawnFoodOnStartDay);
-    }
     /// <summary>
     /// Get the structure's name based on specified rules.
     /// Rules are at - https://trello.com/c/mRzzH9BE/1432-location-naming-convention
@@ -360,35 +291,6 @@ public class LocationStructure {
         }
         return outerTiles;
     }
-    public List<LocationGridTile> GetValidEntranceTiles(int midPoint) {
-
-        //int minX = tiles.Min(x => x.localPlace.x);
-        //int maxX = tiles.Max(x => x.localPlace.x);
-        int minY = tiles.Min(x => x.localPlace.y);
-        int maxY = tiles.Max(x => x.localPlace.y);
-
-        int yToUse = minY;
-        if (maxY <= midPoint) {
-            yToUse = maxY;
-        }
-
-        List<LocationGridTile> validTiles = new List<LocationGridTile>();
-        if (isFromTemplate) {
-            LocationGridTile preDoor = GetPreplacedDoor();
-            if (preDoor != null) {
-                validTiles.Add(preDoor);
-                return validTiles;
-            }
-        }
-        
-        for (int i = 0; i < tiles.Count; i++) {
-            LocationGridTile currTile = tiles[i];
-            if (currTile.localPlace.y == yToUse && currTile.CanBeAnEntrance()) {
-                validTiles.Add(currTile);
-            }
-        }
-        return validTiles;
-    }
     public void DoCleanup() {
         for (int i = 0; i < pointsOfInterest.Count; i++) {
             IPointOfInterest poi = pointsOfInterest[i];
@@ -405,109 +307,9 @@ public class LocationStructure {
     public void SetIfFromTemplate(bool isFromTemplate) {
         this.isFromTemplate = isFromTemplate;
     }
-    public void RegisterPreplacedObjects() {
-        for (int i = 0; i < tiles.Count; i++) {
-            LocationGridTile currTile = tiles[i];
-            UnityEngine.Tilemaps.TileBase objTile = currTile.parentAreaMap.objectsTilemap.GetTile(currTile.localPlace);
-            //TODO: Make this better! because this does not scale well.
-            if (objTile != null) {
-                switch (objTile.name) {
-                    case "Bed":
-                        AddPOI(new Bed(this), currTile, false);
-                        currTile.SetReservedType(TILE_OBJECT_TYPE.BED);
-                        break;
-                    case "Desk":
-                        AddPOI(new Desk(this), currTile, false);
-                        currTile.SetReservedType(TILE_OBJECT_TYPE.DESK);
-                        break;
-                    case "Table0":
-                    case "Table1":
-                    case "Table2":
-                    case "tableDecor00":
-                    case "Bartop_Left":
-                    case "Bartop_Right":
-                        Table table = new Table(this);
-                        table.SetUsedAsset(objTile);
-                        AddPOI(table, currTile, false);
-                        currTile.SetReservedType(TILE_OBJECT_TYPE.TABLE);
-                        break;
-                    case "SupplyPile":
-                        AddPOI(new SupplyPile(this), currTile, false);
-                        currTile.SetReservedType(TILE_OBJECT_TYPE.SUPPLY_PILE);
-                        break;
-                    case "FoodPile":
-                        AddPOI(new FoodPile(this), currTile, false);
-                        currTile.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
-                        break;
-                    case "Guitar":
-                        AddPOI(new Guitar(this), currTile, false);
-                        currTile.SetReservedType(TILE_OBJECT_TYPE.GUITAR);
-                        break;
-                    case "WaterWell":
-                        AddPOI(new WaterWell(this), currTile, false);
-                        currTile.SetReservedType(TILE_OBJECT_TYPE.WATER_WELL);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-    }
-    public LocationGridTile GetPreplacedDoor() {
-        for (int i = 0; i < tiles.Count; i++) {
-            LocationGridTile currTile = tiles[i];
-            UnityEngine.Tilemaps.TileBase objTile = currTile.parentAreaMap.objectsTilemap.GetTile(currTile.localPlace);
-            if (objTile != null && objTile.name.Contains("door")) {
-                return currTile;
-            }
-        }
-        return null;
-    }
     #endregion
 
     #region Tile Objects
-    public void AddTileObject(TILE_OBJECT_TYPE objType, LocationGridTile tile = null, bool placeAsset = true) {
-        switch (objType) {
-            case TILE_OBJECT_TYPE.SUPPLY_PILE:
-                AddPOI(new SupplyPile(this), tile, placeAsset);
-                break; ;
-            case TILE_OBJECT_TYPE.SMALL_ANIMAL:
-                AddPOI(new SmallAnimal(this), tile, placeAsset);
-                break;
-            case TILE_OBJECT_TYPE.EDIBLE_PLANT:
-                AddPOI(new EdiblePlant(this), tile, placeAsset);
-                break;
-            case TILE_OBJECT_TYPE.GUITAR:
-                AddPOI(new Guitar(this), tile, placeAsset);
-                break;
-            case TILE_OBJECT_TYPE.MAGIC_CIRCLE:
-                AddPOI(new MagicCircle(this), tile, placeAsset);
-                break;
-            case TILE_OBJECT_TYPE.TABLE:
-                AddPOI(new Table(this), tile, placeAsset);
-                break;
-            case TILE_OBJECT_TYPE.BED:
-                AddPOI(new Bed(this), tile, placeAsset);
-                break;
-            case TILE_OBJECT_TYPE.ORE:
-                AddPOI(new Ore(this), tile, placeAsset);
-                break;
-            case TILE_OBJECT_TYPE.TREE_OBJECT:
-                AddPOI(new TreeObject(this), tile, placeAsset);
-                break;
-            case TILE_OBJECT_TYPE.DESK:
-                AddPOI(new Desk(this), tile, placeAsset);
-                break;
-            case TILE_OBJECT_TYPE.MUSHROOM:
-                AddPOI(new Mushroom(this), tile, placeAsset);
-                break;
-            case TILE_OBJECT_TYPE.WATER_WELL:
-                AddPOI(new WaterWell(this), tile, placeAsset);
-                break;
-            default:
-                break;
-        }
-    }
     protected List<TileObject> GetTileObjects() {
         List<TileObject> objs = new List<TileObject>();
         for (int i = 0; i < pointsOfInterest.Count; i++) {
@@ -560,6 +362,13 @@ public class LocationStructure {
         return null;
     }
     #endregion
+
+    #region Structure Objects
+    public void SetStructureObject(LocationStructureObject structureObj) {
+        this.structureObj = structureObj;
+    }
+    #endregion
+
     public override string ToString() {
         return structureType.ToString() + " " + id.ToString() + " at " + location.name;
     }

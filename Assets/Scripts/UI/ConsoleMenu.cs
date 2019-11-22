@@ -72,6 +72,7 @@ public class ConsoleMenu : UIMenu {
             {"/destroy_tile_obj", DestroyTileObj },
             {"/add_hostile", AddHostile },
             {"/force_update_animation", ForceUpdateAnimation },
+            {"/highlight_structure_tiles", HighlightStructureTiles },
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -1229,6 +1230,43 @@ public class ConsoleMenu : UIMenu {
             }
         } else {
             AddErrorMessage("There is no tile object of type " + typeParameterString);
+        }
+    }
+    #endregion
+
+    #region Area Map
+    private void HighlightStructureTiles(string[] parameters) {
+        if (parameters.Length != 3) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of HighlightStructureTiles");
+            return;
+        }
+        string typeParameterString = parameters[0];
+        string idParameterString = parameters[1];
+        string highlightParameterString = parameters[2];
+        int id = System.Int32.Parse(idParameterString);
+        bool highlight = System.Boolean.Parse(highlightParameterString);
+
+        STRUCTURE_TYPE structureType;
+        if (System.Enum.TryParse(typeParameterString, out structureType) == false) {
+            AddErrorMessage("There is no structure type named " + typeParameterString.ToString());
+            return;
+        }
+
+        LocationStructure structure = InteriorMapManager.Instance.currentlyShowingMap.area.GetStructureByID(structureType, id);
+        if (structure == null) {
+            AddErrorMessage("There is no " + structureType.ToString() + " with id " + id.ToString());
+            return;
+        }
+
+        for (int i = 0; i < structure.tiles.Count; i++) {
+            LocationGridTile tile = structure.tiles[i];
+            if (highlight) {
+                tile.HighlightTile();
+            } else {
+                tile.UnhighlightTile();
+            }
+            
         }
     }
     #endregion
