@@ -30,7 +30,7 @@ public class Lycanthropy : PlayerJobAction {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(currTarget)) {
                     Trait newTrait = new Lycanthrope();
-                    newTrait.SetLevel(level);
+                    newTrait.SetLevel(_level);
                     currTarget.traitContainer.AddTrait(currTarget, newTrait);
                     //AlterEgoData alterEgoData = currTarget.GetAlterEgoData("Lycanthrope");
                     //alterEgoData.SetLevel(_level);

@@ -17,8 +17,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [Header("Booleans")]
     public bool isOccupied = false;
     private bool _isCorrupted = false;
-    private bool _isExternal = false;
-    private bool _isInternal = false;
+    //private bool _isExternal = false;
+    //private bool _isInternal = false;
 
     [Space(10)]
     [Header("Tile Visuals")]
@@ -72,8 +72,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public List<HexTile> AllNeighbours { get; set; }
     public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList(); } }
 
-    private List<HexTile> _tilesConnectedInGoingToMarker = new List<HexTile>();
-    private List<HexTile> _tilesConnectedInComingFromMarker = new List<HexTile>();
+    //private List<HexTile> _tilesConnectedInGoingToMarker = new List<HexTile>();
+    //private List<HexTile> _tilesConnectedInComingFromMarker = new List<HexTile>();
 
     private int _uncorruptibleLandmarkNeighbors = 0; //if 0, can be corrupted, otherwise, cannot be corrupted
     public BaseLandmark corruptedLandmark = null;
@@ -946,24 +946,24 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //        }
         //    }
         //}
-        return region.CanBeInvaded();
+        //return region.CanBeInvaded();
     }
     #endregion
 
     #region Areas
-    public void SetArea(Area area) {
-        _areaOfTile = area;
-        if (_areaOfTile == null) {
-            SetExternalState(false);
-            SetInternalState(false);
-        }
-    }
-    public void SetExternalState(bool state) {
-        _isExternal = state;
-    }
-    public void SetInternalState(bool state) {
-        _isInternal = state;
-    }
+    //public void SetArea(Area area) {
+    //    _areaOfTile = area;
+    //    if (_areaOfTile == null) {
+    //        SetExternalState(false);
+    //        SetInternalState(false);
+    //    }
+    //}
+    //public void SetExternalState(bool state) {
+    //    _isExternal = state;
+    //}
+    //public void SetInternalState(bool state) {
+    //    _isInternal = state;
+    //}
     #endregion
 
     #region Pathfinding

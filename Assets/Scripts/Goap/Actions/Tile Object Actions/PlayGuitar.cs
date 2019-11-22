@@ -55,13 +55,16 @@ public class PlayGuitar : GoapAction {
         //- Guitar Structure Has No Residents 40 - 56 (If Music Lover 25 - 46)
         return Utilities.rng.Next(40, 57);
     }
-    public override void OnStopWhilePerforming(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        base.OnStopWhilePerforming(actor, poiTarget, otherData);
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
         actor.AdjustDoNotGetLonely(-1);
         poiTarget.SetPOIState(POI_STATE.ACTIVE);
     }
-    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(actor, poiTarget, otherData);
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
+        IPointOfInterest poiTarget = node.poiTarget;
         if (goapActionInvalidity.isInvalid == false) {
             if (poiTarget.IsAvailable() == false) {
                 goapActionInvalidity.isInvalid = true;

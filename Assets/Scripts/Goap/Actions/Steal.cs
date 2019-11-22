@@ -42,12 +42,15 @@ public class Steal : GoapAction {
         }
         return base.GetTargetToGoTo(goapNode);
     }
-    public override LocationStructure GetTargetStructure(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    public override LocationStructure GetTargetStructure(ActualGoapNode node) {
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        object[] otherData = node.otherData;
         SpecialToken token = poiTarget as SpecialToken;
         if (token.carriedByCharacter != null) {
             return token.carriedByCharacter.currentStructure;
         }
-        return base.GetTargetStructure(actor, poiTarget, otherData);
+        return base.GetTargetStructure(node);
     }
     #endregion
 

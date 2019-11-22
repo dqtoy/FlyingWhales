@@ -31,9 +31,11 @@ public class MakeLove : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return Utilities.rng.Next(30, 57);
     }
-    public override void OnStopWhilePerforming(Character actor, IPointOfInterest target, object[] otherData) {
-        base.OnStopWhilePerforming(actor, target, otherData);
-        Character targetCharacter = target as Character;
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        Character targetCharacter = poiTarget as Character;
         actor.ownParty.RemoveCharacter(targetCharacter);
         actor.AdjustDoNotGetLonely(-1);
         targetCharacter.AdjustDoNotGetLonely(-1);
@@ -41,19 +43,21 @@ public class MakeLove : GoapAction {
         Bed bed = actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).First() as Bed;
         bed.OnDoneActionToObject(actor.currentActionNode);
 
-        target.traitContainer.RemoveTrait(targetCharacter, "Wooed");
+        targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Wooed");
         if (targetCharacter.currentActionNode.action == this) {
             targetCharacter.SetCurrentActionNode(null, null, null);
         }
     }
-    public override void OnStopWhileStarted(Character actor, IPointOfInterest target, object[] otherData) {
-        base.OnStopWhileStarted(actor, target, otherData);
-        Character targetCharacter = target as Character;
+    public override void OnStopWhileStarted(ActualGoapNode node) {
+        base.OnStopWhileStarted(node);
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        Character targetCharacter = poiTarget as Character;
         actor.ownParty.RemoveCharacter(targetCharacter);
         actor.AdjustDoNotGetLonely(-1);
         targetCharacter.AdjustDoNotGetLonely(-1);
 
-        target.traitContainer.RemoveTrait(targetCharacter, "Wooed");
+        targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Wooed");
         if (targetCharacter.currentActionNode.action == this) {
             targetCharacter.SetCurrentActionNode(null, null, null);
         }
@@ -61,8 +65,9 @@ public class MakeLove : GoapAction {
     public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
         return goapNode.actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).First();
     }
-    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest target, object[] otherData) {
-        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(actor, target, otherData);
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
+        Character actor = node.actor;
         if (goapActionInvalidity.isInvalid == false) {
             Bed bed = actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).First() as Bed;
             if (bed.IsAvailable() == false || bed.GetActiveUserCount() > 0) {

@@ -3296,11 +3296,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 attackSummary += "\ncombat result is " + result; ;
                 switch (result) {
                     case "Unconscious":
-                        Unconscious unconscious = new Unconscious();
+                        //Unconscious unconscious = new Unconscious();
                         traitContainer.AddTrait(this, "Unconscious", responsibleCharacter);
                         break;
                     case "Injured":
-                        Injured injured = new Injured();
+                        //Injured injured = new Injured();
                         traitContainer.AddTrait(this, "Injured", responsibleCharacter);
                         break;
                     case "Death":
@@ -7238,7 +7238,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     /// <param name="witnessedCrime">The crime witnessed by this character, if this is null, character was only informed of the crime by someone else.</param>
     /// <param name="informedCrime">The crime this character was informed of. NOTE: Should only have value if Share Intel</param>
     private void PerRoleCrimeReaction(CRIME committedCrime, ActualGoapNode crimeAction, AlterEgoData criminal, ActualGoapNode witnessedCrime = null, ActualGoapNode informedCrime = null) {
-        GoapPlanJob job = null;
+        //GoapPlanJob job = null;
         switch (role.roleType) {
             case CHARACTER_ROLE.CIVILIAN:
             case CHARACTER_ROLE.ADVENTURER:
@@ -7283,7 +7283,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                     //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                     //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
                     //homeArea.jobQueue.AddJobInQueue(job);
-                    job = CreateApprehendJobFor(criminal.owner, true);
+                    CreateApprehendJobFor(criminal.owner, true); //job =
                     //if (job != null) {
                     //    homeArea.jobQueue.ForceAssignCharacterToJob(job, this);
                     //}

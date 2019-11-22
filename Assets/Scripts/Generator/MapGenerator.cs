@@ -96,7 +96,7 @@ public class MapGenerator : MonoBehaviour {
     }
     private IEnumerator InitializeWorldCoroutine(Save data) {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
-        System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
+        //System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
         loadingWatch.Start();
 
         LevelLoaderManager.UpdateLoadingInfo("Loading Map...");

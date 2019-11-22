@@ -27,8 +27,9 @@ public class SleepOutside : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 1000;
     }
-    public override void OnStopWhilePerforming(Character actor, IPointOfInterest target, object[] otherData) {
-        base.OnStopWhilePerforming(actor, target, otherData);
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        Character actor = node.actor;
         actor.traitContainer.RemoveTrait(actor, "Resting");
     }
     #endregion

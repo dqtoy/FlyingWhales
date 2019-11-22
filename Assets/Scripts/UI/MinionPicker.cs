@@ -11,11 +11,11 @@ public class MinionPicker : MonoBehaviour {
     [SerializeField] private ToggleGroup toggleGroup;
 
     public System.Action<Character, bool> onClickMinionItemAction { get; private set; }
-    private System.Func<Minion, bool> shouldItemBeActiveChecker;
+    //private System.Func<Minion, bool> shouldItemBeActiveChecker;
 
     public void ShowMinionPicker(List<Minion> minionsToShow, System.Func<Minion, bool> shouldItemBeActiveChecker, System.Action<Character, bool> onClickMinionItemAction) {
         this.onClickMinionItemAction = onClickMinionItemAction;
-        this.shouldItemBeActiveChecker = shouldItemBeActiveChecker;
+        //this.shouldItemBeActiveChecker = shouldItemBeActiveChecker;
         Utilities.DestroyChildren(minonsScrollView.content);
         List<MinionCharacterItem> inactiveItems = new List<MinionCharacterItem>();
         for (int i = 0; i < minionsToShow.Count; i++) {

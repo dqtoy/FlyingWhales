@@ -14,7 +14,8 @@ public class Visit : GoapAction {
     }
 
     #region Overrides
-    public override LocationStructure GetTargetStructure(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    public override LocationStructure GetTargetStructure(ActualGoapNode node) {
+        object[] otherData = node.otherData;
         if (otherData != null && otherData.Length == 1) {
             if (otherData[0] is Dwelling) {
                 return otherData[0] as Dwelling;

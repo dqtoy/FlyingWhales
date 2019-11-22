@@ -26,7 +26,7 @@ public class Region {
     public List<Faction> factionsHere { get; private set; }
     public List<Character> residents { get; private set; }
 
-    private List<HexTile> outerTiles;
+    //private List<HexTile> outerTiles;
     private List<SpriteRenderer> borderSprites;
 
     //Player Building Demonic Landmark
@@ -126,7 +126,7 @@ public class Region {
         return LandmarkManager.Instance.GetLandmarkData(mainLandmark.specificLandmarkType).description;
     }
     public void FinalizeData() {
-        outerTiles = GetOuterTiles();
+        //outerTiles = GetOuterTiles();
         borderSprites = GetOuterBorders();
     }
     public void RedetermineCore() {

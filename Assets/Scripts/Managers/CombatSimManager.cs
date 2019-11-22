@@ -130,7 +130,7 @@ public class CombatSimManager : MonoBehaviour {
             CharacterSim characterSim = JsonUtility.FromJson<CharacterSim>(System.IO.File.ReadAllText(path));
             icharacterSim = characterSim;
         } else {
-            string path = monsterPath + chosenCharacterName + ".json";
+            //string path = monsterPath + chosenCharacterName + ".json";
         }
         icharacterSim.InitializeSim();
         _sideAList.Add(icharacterSim);
@@ -147,7 +147,7 @@ public class CombatSimManager : MonoBehaviour {
             CharacterSim characterSim = JsonUtility.FromJson<CharacterSim>(System.IO.File.ReadAllText(path));
             icharacterSim = characterSim;
         } else {
-            string path = monsterPath + chosenCharacterName + ".json";
+            //string path = monsterPath + chosenCharacterName + ".json";
         }
         icharacterSim.InitializeSim();
         _sideBList.Add(icharacterSim);

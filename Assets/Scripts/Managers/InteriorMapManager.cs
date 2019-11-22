@@ -1094,11 +1094,11 @@ public struct LocationGridTileSettings {
 
     public LocationGridTileSettings MergeWith(LocationGridTileSettings otherSetting) {
         LocationGridTileSettings setting = this;
-        bool overrideGroundTile = true;
-        if (!string.IsNullOrEmpty(groundTile.tileAssetName) && !groundTile.tileAssetName.Contains("Dirt")) {
-            //if the ground tile of this current setting is not dirt, do not replace it.
-            overrideGroundTile = false;
-        }
+        //bool overrideGroundTile = true;
+        //if (!string.IsNullOrEmpty(groundTile.tileAssetName) && !groundTile.tileAssetName.Contains("Dirt")) {
+        //    //if the ground tile of this current setting is not dirt, do not replace it.
+        //    overrideGroundTile = false;
+        //}
         setting.groundTile = otherSetting.groundTile;
         setting.groundWallTile = otherSetting.groundWallTile;
         setting.detailTile = otherSetting.detailTile;

@@ -156,7 +156,7 @@ public class ActualGoapNode {
     }
     private void MoveToDoAction() {
         if (targetStructure == null) {
-            targetStructure = action.GetTargetStructure(actor, poiTarget, otherData);
+            targetStructure = action.GetTargetStructure(this);
             if (targetStructure == null) { throw new System.Exception(actor.name + " target structure of action " + action.goapName + " is null."); }
         }
         //Only create thought bubble log when characters starts the action/moves to do the action so we can pass the target structure
@@ -210,7 +210,7 @@ public class ActualGoapNode {
         actor.PerformGoapAction();
     }
     public void PerformAction() {
-        GoapActionInvalidity goapActionInvalidity = action.IsInvalid(actor, poiTarget, otherData);
+        GoapActionInvalidity goapActionInvalidity = action.IsInvalid(this);
         if (goapActionInvalidity.isInvalid) {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{actor.name}'s action {action.goapType.ToString()} was invalid!");
             action.LogActionInvalid(goapActionInvalidity, this);
@@ -296,7 +296,7 @@ public class ActualGoapNode {
         if (actionStatus == ACTION_STATUS.PERFORMING) {
             OnCancelActionTowardsTarget();
             //ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
-            action.OnStopWhilePerforming(actor, poiTarget, otherData);
+            action.OnStopWhilePerforming(this);
             EndPerTickEffect(shouldDoAfterEffect);
 
             ////when the action is ended prematurely, make sure to readjust the target character's do not move values
@@ -312,7 +312,7 @@ public class ActualGoapNode {
             //    Character targetCharacter = action.poiTarget as Character;
             //    targetCharacter.AdjustIsWaitingForInteraction(-1);
             //}
-            action.OnStopWhileStarted(actor, poiTarget, otherData);
+            action.OnStopWhileStarted(this);
             //actor.DropPlan(parentPlan, forceProcessPlanJob: true); //TODO: Try to push back instead of dropping plan immediately, only drop plan if push back fails (fail: if no other plan replaces this plan)
         }
     }
@@ -477,13 +477,13 @@ public class ActualGoapNode {
         if(thoughtBubbleLog == null) {
             if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", action.goapName, "thought_bubble")) {
                 thoughtBubbleLog = new Log(GameManager.Instance.Today(), "GoapAction", action.goapName, "thought_bubble", this);
-                action.AddFillersToLog(thoughtBubbleLog, actor, poiTarget, otherData, targetStructure);
+                action.AddFillersToLog(thoughtBubbleLog, this);
             }
         }
         if (thoughtBubbleMovingLog == null) {
             if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", action.goapName, "thought_bubble_m")) {
                 thoughtBubbleMovingLog = new Log(GameManager.Instance.Today(), "GoapAction", action.goapName, "thought_bubble_m", this);
-                action.AddFillersToLog(thoughtBubbleMovingLog, actor, poiTarget, otherData, targetStructure);
+                action.AddFillersToLog(thoughtBubbleMovingLog, this);
             }
         }
     }

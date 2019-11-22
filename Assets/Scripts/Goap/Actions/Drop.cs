@@ -26,7 +26,8 @@ public class Drop : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 1;
     }
-    public override LocationStructure GetTargetStructure(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    public override LocationStructure GetTargetStructure(ActualGoapNode node) {
+        object[] otherData = node.otherData;
         if (otherData != null) {
             if (otherData.Length == 1 && otherData[0] is LocationStructure) {
                 return otherData[0] as LocationStructure;
@@ -34,16 +35,20 @@ public class Drop : GoapAction {
                 return otherData[0] as LocationStructure;
             }
         }
-        return base.GetTargetStructure(actor, poiTarget, otherData);
+        return base.GetTargetStructure(node);
     }
-    public override void OnStopWhileStarted(Character actor, IPointOfInterest target, object[] otherData) {
-        base.OnStopWhileStarted(actor, target, otherData);
-        Character targetCharacter = target as Character;
+    public override void OnStopWhileStarted(ActualGoapNode node) {
+        base.OnStopWhileStarted(node);
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        Character targetCharacter = poiTarget as Character;
         actor.currentParty.RemoveCharacter(targetCharacter);
     }
-    public override void OnStopWhilePerforming(Character actor, IPointOfInterest target, object[] otherData) {
-        base.OnStopWhilePerforming(actor, target, otherData);
-        Character targetCharacter = target as Character;
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        Character targetCharacter = poiTarget as Character;
         actor.currentParty.RemoveCharacter(targetCharacter);
     }
     #endregion

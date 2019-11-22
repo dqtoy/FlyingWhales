@@ -24,7 +24,8 @@ public class ReturnHome : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 3;
     }
-    public override LocationStructure GetTargetStructure(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    public override LocationStructure GetTargetStructure(ActualGoapNode node) {
+        Character actor = node.actor;
         if (actor.homeStructure != null) {
             return actor.homeStructure;
         } else {

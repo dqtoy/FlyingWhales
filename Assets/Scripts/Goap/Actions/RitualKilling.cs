@@ -29,8 +29,10 @@ public class RitualKilling : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 1;
     }
-    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(actor, poiTarget, otherData);
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
         if (goapActionInvalidity.isInvalid == false) {
             if (actor.marker.CanDoStealthActionToTarget(poiTarget) == false) {
                 goapActionInvalidity.isInvalid = true;

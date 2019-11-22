@@ -29,7 +29,8 @@ public class DropItem : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 1;
     }
-    public override LocationStructure GetTargetStructure(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    public override LocationStructure GetTargetStructure(ActualGoapNode node) {
+        object[] otherData = node.otherData;
         return otherData[0] as LocationStructure;
     }
     #endregion

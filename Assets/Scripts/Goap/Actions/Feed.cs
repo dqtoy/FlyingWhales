@@ -32,14 +32,16 @@ public class Feed : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 1;
     }
-    public override void OnStopWhilePerforming(Character actor, IPointOfInterest target, object[] otherData) {
-        base.OnStopWhilePerforming(actor, target, otherData);
-        (target as Character).AdjustDoNotGetHungry(-1);
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        IPointOfInterest poiTarget = node.poiTarget;
+        (poiTarget as Character).AdjustDoNotGetHungry(-1);
     }
-    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest target, object[] otherData) {
-        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(actor, target, otherData);
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
+        IPointOfInterest poiTarget = node.poiTarget;
         if (goapActionInvalidity.isInvalid == false) {
-            if ((target as Character).IsInOwnParty() == false) {
+            if ((poiTarget as Character).IsInOwnParty() == false) {
                 goapActionInvalidity.isInvalid = true;
             }
         }

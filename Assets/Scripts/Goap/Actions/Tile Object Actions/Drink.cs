@@ -34,8 +34,9 @@ public class Drink : GoapAction {
         //**Cost**: 15 - 26
         return Utilities.rng.Next(15, 27);
     }
-    public override void OnStopWhilePerforming(Character actor, IPointOfInterest target, object[] otherData) {
-        base.OnStopWhilePerforming(actor, target, otherData);
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        Character actor = node.actor;
         actor.AdjustDoNotGetLonely(-1);
     }
     #endregion

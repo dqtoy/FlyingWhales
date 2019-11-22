@@ -39,8 +39,8 @@ namespace Traits {
         }
         public override void OnSeePOI(IPointOfInterest targetPOI, Character character) {
             base.OnSeePOI(targetPOI, character);
-            if (targetPOI is Character) {
-                Character targetCharacter = targetPOI as Character;
+            if (targetPOI.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                //Character targetCharacter = targetPOI as Character;
                 if (character.traitContainer.GetNormalTrait("Berserked") != null) {
                     return;
                 }

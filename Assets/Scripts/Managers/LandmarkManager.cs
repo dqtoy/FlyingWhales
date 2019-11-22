@@ -271,7 +271,7 @@ public class LandmarkManager : MonoBehaviour {
             //otherLandmarkSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
             for (int i = 0; i < kvp.Value; i++) {
                 Region chosenRegion = availableRegions[Random.Range(0, availableRegions.Count)];
-                BaseLandmark landmark = CreateNewLandmarkOnTile(chosenRegion.coreTile, kvp.Key, true);
+                CreateNewLandmarkOnTile(chosenRegion.coreTile, kvp.Key, true); //BaseLandmark landmark = 
                 availableRegions.Remove(chosenRegion);
             }
         }

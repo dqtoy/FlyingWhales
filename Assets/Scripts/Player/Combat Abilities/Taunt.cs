@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Taunt : CombatAbility {
 
-    private int _hpGain;
+    //private int _hpGain;
     public Taunt() : base(COMBAT_ABILITY.TAUNT) {
         cooldown = 10;
         _currentCooldown = 10;
@@ -20,16 +20,16 @@ public class Taunt : CombatAbility {
         }
         return false;
     }
-    protected override void OnLevelUp() {
-        base.OnLevelUp();
-        if (lvl == 1) {
-            _hpGain = 1000;
-        } else if (lvl == 2) {
-            _hpGain = 1500;
-        } else if (lvl == 3) {
-            _hpGain = 2000;
-        }
-    }
+    //protected override void OnLevelUp() {
+    //    base.OnLevelUp();
+    //    if (lvl == 1) {
+    //        _hpGain = 1000;
+    //    } else if (lvl == 2) {
+    //        _hpGain = 1500;
+    //    } else if (lvl == 3) {
+    //        _hpGain = 2000;
+    //    }
+    //}
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if (targetPOI is Character) {
             Character character = targetPOI as Character;

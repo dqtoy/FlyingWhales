@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Traits {
     public class Pyrophobic : Trait {
 
-        private Character owner;
+        //private Character owner;
         private List<BurningSource> seenBurningSources;
 
         public Pyrophobic() {
@@ -20,12 +20,12 @@ namespace Traits {
             seenBurningSources = new List<BurningSource>();
         }
 
-        public override void OnAddTrait(ITraitable addedTo) {
-            base.OnAddTrait(addedTo);
-            if (addedTo is Character) {
-                owner = addedTo as Character;
-            }
-        }
+        //public override void OnAddTrait(ITraitable addedTo) {
+        //    base.OnAddTrait(addedTo);
+        //    if (addedTo is Character) {
+        //        owner = addedTo as Character;
+        //    }
+        //}
 
 
         public bool AddKnownBurningSource(BurningSource burningSource) {

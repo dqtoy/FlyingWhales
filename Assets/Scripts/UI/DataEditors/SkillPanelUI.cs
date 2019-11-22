@@ -110,14 +110,13 @@ public class SkillPanelUI : MonoBehaviour {
         
     }
     public void LoadSkill() {
-#if UNITY_EDITOR
-        string filePath = EditorUtility.OpenFilePanel("Select Skill", Utilities.dataPath + "Skills/", "json");
+//#if UNITY_EDITOR
+//        string filePath = EditorUtility.OpenFilePanel("Select Skill", Utilities.dataPath + "Skills/", "json");
 
-        if (!string.IsNullOrEmpty(filePath)) {
-            string dataAsJson = File.ReadAllText(filePath);
-          
-        }
-#endif
+//        if (!string.IsNullOrEmpty(filePath)) {
+//            string dataAsJson = File.ReadAllText(filePath);
+//        }
+//#endif
     }
     private int GetOptionIndex(string name, Dropdown ddOptions) {
         for (int i = 0; i < ddOptions.options.Count; i++) {

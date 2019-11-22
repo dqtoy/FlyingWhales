@@ -31,8 +31,7 @@ namespace Traits {
                         character.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN);
                     }
 
-                    TileObject to = character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.INN).GetTileObjectsThatAdvertise(INTERACTION_TYPE.DRINK).First();
-
+                    //TileObject to = character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.INN).GetTileObjectsThatAdvertise(INTERACTION_TYPE.DRINK).First();
                     GoapPlanJob drinkJob = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.DRINK, character, character);
                     character.jobQueue.AddJobInQueue(drinkJob);
                 } else {

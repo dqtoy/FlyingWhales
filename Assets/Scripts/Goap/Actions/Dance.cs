@@ -32,8 +32,9 @@ public class Dance : GoapAction {
         //**Cost**: randomize between 20-36
         return Utilities.rng.Next(20, 37);
     }
-    public override void OnStopWhilePerforming(Character actor, IPointOfInterest target, object[] otherData) {
-        base.OnStopWhilePerforming(actor, target, otherData);
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        Character actor = node.actor;
         actor.AdjustDoNotGetLonely(-1);
     }
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, object[] otherData) {

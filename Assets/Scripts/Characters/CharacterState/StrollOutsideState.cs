@@ -5,14 +5,14 @@ using UnityEngine;
 public class StrollOutsideState : CharacterState {
 
     private STRUCTURE_TYPE[] _notAllowedStructures;
-    private int _planDuration;
+    //private int _planDuration;
 
     public StrollOutsideState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Stroll Outside State";
         characterState = CHARACTER_STATE.STROLL_OUTSIDE;
         stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
         duration = GameManager.ticksPerHour;
-        _planDuration = 0;
+        //_planDuration = 0;
         _notAllowedStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.INN, STRUCTURE_TYPE.DWELLING, STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.PRISON };
     }
 

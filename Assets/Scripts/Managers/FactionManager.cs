@@ -24,7 +24,7 @@ public class FactionManager : MonoBehaviour {
     //[SerializeField] private List<Sprite> usedEmblems = new List<Sprite>();
 
     private int[] _inventoryTaskWeights = new int[] { 100, 250, 500 };
-    private List<int> factionTaskTriggerTicks = new List<int>();
+    //private List<int> factionTaskTriggerTicks = new List<int>();
 
     #region getters
     public List<EmblemBG> emblemBGs {

@@ -44,18 +44,18 @@ public class MiasmaEmitter : Artifact {
                     continue; //skip tiles that are not of the same structure and are bot not open space structures.
                 }
             }
-            if (currTile.objHere is TileObject) {
-                TileObject obj = currTile.objHere as TileObject;
-                Trait existing = obj.traitContainer.GetNormalTrait("Disabled");
-                //if (existing != null) {
-                //    existing.OverrideDuration(0);
-                //    obj.RefreshTraitExpiry(existing);
-                //} else {
-                //    Trait disabled = new Disabled();
-                //    disabled.OverrideDuration(0);
-                //    obj.traitContainer.AddTrait(obj, disabled);
-                //}
-            }
+            //if (currTile.objHere is TileObject) {
+            //    TileObject obj = currTile.objHere as TileObject;
+            //    Trait existing = obj.traitContainer.GetNormalTrait("Disabled");
+            //    //if (existing != null) {
+            //    //    existing.OverrideDuration(0);
+            //    //    obj.RefreshTraitExpiry(existing);
+            //    //} else {
+            //    //    Trait disabled = new Disabled();
+            //    //    disabled.OverrideDuration(0);
+            //    //    obj.traitContainer.AddTrait(obj, disabled);
+            //    //}
+            //}
         }
         particle = GameManager.Instance.CreateAOEEffectAt(tile, range);
         Messenger.AddListener(Signals.TICK_ENDED, CheckPerTick);

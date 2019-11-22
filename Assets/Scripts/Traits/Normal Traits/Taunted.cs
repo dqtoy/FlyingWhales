@@ -30,7 +30,7 @@ namespace Traits {
         }
         public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
             base.OnRemoveTrait(sourcePOI, removedBy);
-            Character character = sourcePOI as Character;
+            //Character character = sourcePOI as Character;
             Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
             Messenger.RemoveListener<Character, Character>(Signals.CHARACTER_REMOVED_FROM_VISION, OnCharacterRemovedFromVision);
             //if (!character.isDead && character.stateComponent.currentState is CombatState) {

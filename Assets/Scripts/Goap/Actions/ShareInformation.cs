@@ -20,18 +20,22 @@ public class ShareInformation : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 3;
     }
-    public override void AddFillersToLog(Log log, Character actor, IPointOfInterest poiTarget, object[] otherData, LocationStructure targetStructure) {
-        base.AddFillersToLog(log, actor, poiTarget, otherData, targetStructure);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        object[] otherData = node.otherData;
         if (otherData.Length == 1 && otherData[0] is GoapAction) {
-            GoapAction eventToBeShared = otherData[0] as GoapAction;
+            //GoapAction eventToBeShared = otherData[0] as GoapAction;
             //TODO: log.AddToFillers(null, Utilities.LogDontReplace(eventToBeShared.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.OTHER);
             log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.OTHER_2);
             //TODO: log.AddToFillers(eventToBeShared.currentState.descriptionLog.fillers);
         }
     }
-    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(actor, poiTarget, otherData);
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
+        IPointOfInterest poiTarget = node.poiTarget;
         if (goapActionInvalidity.isInvalid == false) {
             Character targetCharacter = poiTarget as Character;
             if (targetCharacter.IsInOwnParty() == false) {

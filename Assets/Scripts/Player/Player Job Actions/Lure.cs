@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Lure : PlayerJobAction {
 
-    private int _lureRange;
+    //private int _lureRange;
 
     //public List<Character> targetCharacters { get; private set; }
     //public List<LocationGridTile> tileChoices { get; private set; }
@@ -47,16 +47,16 @@ public class Lure : PlayerJobAction {
         } 
         return false;
     }
-    protected override void OnLevelUp() {
-        base.OnLevelUp();
-        if (level == 1) {
-            _lureRange = 3;
-        } else if (level == 2) {
-            _lureRange = 4;
-        } else if (level == 3) {
-            _lureRange = 5;
-        }
-    }
+    //protected override void OnLevelUp() {
+    //    base.OnLevelUp();
+    //    if (level == 1) {
+    //        _lureRange = 3;
+    //    } else if (level == 2) {
+    //        _lureRange = 4;
+    //    } else if (level == 3) {
+    //        _lureRange = 5;
+    //    }
+    //}
     #endregion
 
     private bool CanChooseRegion(Region region) {

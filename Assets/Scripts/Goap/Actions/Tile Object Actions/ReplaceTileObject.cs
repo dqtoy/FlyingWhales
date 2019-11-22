@@ -16,8 +16,9 @@ public class ReplaceTileObject : GoapAction {
     }
 
     #region Overrides
-    public override void AddFillersToLog(Log log, Character actor, IPointOfInterest poiTarget, object[] otherData, LocationStructure targetStructure) {
-        base.AddFillersToLog(log, actor, poiTarget, otherData, targetStructure);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
+        object[] otherData = node.otherData;
         TileObject tileObjectToReplace = otherData[0] as TileObject;
         log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectToReplace.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
     }

@@ -49,11 +49,11 @@ public class Spit : GoapAction {
     #endregion
 
     #region Effects
-    public void PreSpitSuccess(ActualGoapNode goapNode) {
-        Tombstone tombstone = goapNode.poiTarget as Tombstone;
-        //goapNode.descriptionLog.AddToFillers(null, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        //currentState.SetIntelReaction(SpitSuccessReactions);
-    }
+    //public void PreSpitSuccess(ActualGoapNode goapNode) {
+    //    //Tombstone tombstone = goapNode.poiTarget as Tombstone;
+    //    //goapNode.descriptionLog.AddToFillers(null, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //    //currentState.SetIntelReaction(SpitSuccessReactions);
+    //}
     public void AfterSpitSuccess(ActualGoapNode goapNode) {
         goapNode.actor.AdjustHappiness(5000);
     }

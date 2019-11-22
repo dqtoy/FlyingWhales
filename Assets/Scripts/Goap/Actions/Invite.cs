@@ -23,8 +23,10 @@ public class Invite : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         return 1;
     }
-    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(actor, poiTarget, otherData);
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
         if (goapActionInvalidity.isInvalid == false) {
             Character targetCharacter = poiTarget as Character;
             if (actor is SeducerSummon) {

@@ -255,7 +255,7 @@ public class CombatState : CharacterState {
         }
     }
     private void StartCombatMovement() {
-        string log = GameManager.Instance.TodayLogString() + "Starting combat movement for " + stateComponent.character.name;
+        //string log = GameManager.Instance.TodayLogString() + "Starting combat movement for " + stateComponent.character.name;
         //Debug.Log(log);
         //I set the value to its own because I only want to trigger the movement behavior, I do not want to change the boolean value
         //SetIsAttacking(isAttacking);

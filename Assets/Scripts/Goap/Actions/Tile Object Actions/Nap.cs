@@ -21,8 +21,10 @@ public class Nap : GoapAction {
         base.Perform(goapNode);
         SetState("Nap Success", goapNode);
     }
-    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(actor, poiTarget, otherData);
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
         if (goapActionInvalidity.isInvalid == false) {
             if (CanSleepInBed(actor, poiTarget as TileObject) == false) {
                 goapActionInvalidity.isInvalid = true;
@@ -58,8 +60,9 @@ public class Nap : GoapAction {
         }
         return 100;
     }
-    public override void OnStopWhilePerforming(Character actor, IPointOfInterest target, object[] otherData) {
-        base.OnStopWhilePerforming(actor, target, otherData);
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        Character actor = node.actor;
         actor.traitContainer.RemoveTrait(actor, "Resting");
     }
     #endregion

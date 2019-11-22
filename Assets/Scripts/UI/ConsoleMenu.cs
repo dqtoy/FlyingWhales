@@ -14,7 +14,7 @@ public class ConsoleMenu : UIMenu {
     private Dictionary<string, Action<string[]>> _consoleActions;
 
     private List<string> commandHistory;
-    private int currentHistoryIndex;
+    //private int currentHistoryIndex;
 
     [SerializeField] private GameObject consoleGO;
     [SerializeField] private Text consoleLbl;
@@ -286,7 +286,7 @@ public class ConsoleMenu : UIMenu {
     private void AddCommandHistory(string history) {
         commandHistoryLbl.text += history + "\n";
         commandHistory.Add(history);
-        currentHistoryIndex = commandHistory.Count - 1;
+        //currentHistoryIndex = commandHistory.Count - 1;
         ShowCommandHistory();
     }
     private void AddErrorMessage(string errorMessage) {
@@ -1051,16 +1051,16 @@ public class ConsoleMenu : UIMenu {
             return;
         }
 
-        string areaParameterString = parameters[0];
-        int areaID;
-        bool isAreaParameterNumeric = int.TryParse(areaParameterString, out areaID);
+        //string areaParameterString = parameters[0];
+        //int areaID;
+        //bool isAreaParameterNumeric = int.TryParse(areaParameterString, out areaID);
 
-        Area area = null;
-        if (isAreaParameterNumeric) {
-            area = LandmarkManager.Instance.GetAreaByID(areaID);
-        } else {
-            area = LandmarkManager.Instance.GetAreaByName(areaParameterString);
-        }
+        //Area area = null;
+        //if (isAreaParameterNumeric) {
+        //    area = LandmarkManager.Instance.GetAreaByID(areaID);
+        //} else {
+        //    area = LandmarkManager.Instance.GetAreaByName(areaParameterString);
+        //}
 
         //string text = area.name + "'s Characters History: ";
         //for (int i = 0; i < area.charactersAtLocationHistory.Count; i++) {

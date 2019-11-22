@@ -22,8 +22,9 @@ public class ResolveConflict : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 4;
     }
-    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        GoapActionInvalidity goapActionInvalidity =  base.IsInvalid(actor, poiTarget, otherData);
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        GoapActionInvalidity goapActionInvalidity =  base.IsInvalid(node);
+        IPointOfInterest poiTarget = node.poiTarget;
         if (goapActionInvalidity.isInvalid == false) {
             Character targetCharacter = poiTarget as Character;
             if ((targetCharacter.traitContainer.GetNormalTrait("Hothead") != null && UnityEngine.Random.Range(0, 2) == 0)

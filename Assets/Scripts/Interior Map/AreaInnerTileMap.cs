@@ -1965,10 +1965,10 @@ public class AreaInnerTileMap : MonoBehaviour {
         activeBurningSources.Remove(bs);
     }
     public void LoadBurningSources(List<SaveDataBurningSource> sources) {
-        for (int i = 0; i < sources.Count; i++) {
-            SaveDataBurningSource data = sources[i];
-            BurningSource bs = new BurningSource(area, data);
-        }
+        //for (int i = 0; i < sources.Count; i++) {
+        //    SaveDataBurningSource data = sources[i];
+        //    BurningSource bs = new BurningSource(area, data);
+        //}
     }
     #endregion
 }

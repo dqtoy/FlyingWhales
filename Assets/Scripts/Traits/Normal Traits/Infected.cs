@@ -83,6 +83,7 @@ namespace Traits {
                     || owner.stateComponent.currentState != null || (owner.stateComponent.currentState == null && owner.currentActionNode == null)) {
                     //If current action is a roaming action like Hunting To Drink Blood, we must requeue the job after it is removed by StopCurrentAction
                     GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
+                    owner.jobQueue.AddJobInQueue(job);
                     hasCreatedJob = true;
                 } 
             }

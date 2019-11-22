@@ -26,8 +26,9 @@ public class PrayTileObject : GoapAction {
         //**Cost**: randomize between 15 - 55
         return Utilities.rng.Next(15, 56);
     }
-    public override void AddFillersToLog(Log log, Character actor, IPointOfInterest poiTarget, object[] otherData, LocationStructure targetStructure) {
-        base.AddFillersToLog(log, actor, poiTarget, otherData, targetStructure);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
+        IPointOfInterest poiTarget = node.poiTarget;
         TileObject obj = poiTarget as TileObject;
         log.AddToFillers(poiTarget, Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.TARGET_CHARACTER);
     }

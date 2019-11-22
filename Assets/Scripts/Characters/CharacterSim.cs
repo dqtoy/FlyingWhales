@@ -34,15 +34,15 @@ public class CharacterSim : ICharacterSim {
 
     private int _id;
     private int _currentHP;
-    private int _currentSP;
+    //private int _currentSP;
     private int _currentRow;
     private int _hp;
-    private int _maxSP;
+    //private int _maxSP;
     private int _attackPower;
     private int _speed;
     private int _army;
     private float _actRate;
-    private bool _isDead;
+    //private bool _isDead;
     private SIDES _currentSide;
     private RaceSetting _raceSetting;
     private CharacterClass _characterClass;
@@ -86,9 +86,9 @@ public class CharacterSim : ICharacterSim {
     public int level {
         get { return _level; }
     }
-    public int maxSP {
-        get { return _maxSP; }
-    }
+    //public int maxSP {
+    //    get { return _maxSP; }
+    //}
     //public int defHead {
     //    get { return _defHead; }
     //}
@@ -123,9 +123,9 @@ public class CharacterSim : ICharacterSim {
     public int currentHP {
         get { return _currentHP; }
     }
-    public int currentSP {
-        get { return _currentSP; }
-    }
+    //public int currentSP {
+    //    get { return _currentSP; }
+    //}
     public int armyCount {
         get { return _army; }
     }
@@ -188,14 +188,14 @@ public class CharacterSim : ICharacterSim {
         _name = CharacterPanelUI.Instance.nameInput.text;
         _className = CharacterPanelUI.Instance.classOptions.options[CharacterPanelUI.Instance.classOptions.value].text;
         _raceName = CharacterPanelUI.Instance.raceOptions.options[CharacterPanelUI.Instance.raceOptions.value].text;
-        _weaponName = CharacterPanelUI.Instance.weaponName;
-        _armorName = CharacterPanelUI.Instance.armorName;
-        _accessoryName = CharacterPanelUI.Instance.accessoryName;
+        //_weaponName = CharacterPanelUI.Instance.weaponName;
+        //_armorName = CharacterPanelUI.Instance.armorName;
+        //_accessoryName = CharacterPanelUI.Instance.accessoryName;
         //_consumableName = CharacterPanelUI.Instance.consumableOptions.options[CharacterPanelUI.Instance.consumableOptions.value].text;
 
         _gender = (GENDER) System.Enum.Parse(typeof(GENDER), CharacterPanelUI.Instance.genderOptions.options[CharacterPanelUI.Instance.genderOptions.value].text);
         _level = int.Parse(CharacterPanelUI.Instance.levelInput.text);
-        _skillName = CharacterPanelUI.Instance.skillName;
+        //_skillName = CharacterPanelUI.Instance.skillName;
 
         _isArmy = CharacterPanelUI.Instance.toggleArmy.isOn;
         _armyCount = int.Parse(CharacterPanelUI.Instance.armyInput.text);
@@ -216,10 +216,10 @@ public class CharacterSim : ICharacterSim {
     }
     public void ResetToFullHP() {
         _currentHP = _hp * _armyCount;
-        _isDead = false;
+        //_isDead = false;
     }
     public void ResetToFullSP() {
-        AdjustSP(_maxSP);
+        //AdjustSP(_maxSP);
     }
     public void AdjustHP(int amount, Character killer = null) {
         int previous = this._currentHP;
@@ -239,15 +239,15 @@ public class CharacterSim : ICharacterSim {
         }
     }
     public void AdjustSP(int amount) {
-        _currentSP += amount;
-        _currentSP = Mathf.Clamp(_currentSP, 0, _maxSP);
+        //_currentSP += amount;
+        //_currentSP = Mathf.Clamp(_currentSP, 0, _maxSP);
     }
     public void AdjustArmyCount(int adjustment) {
         _army += adjustment;
         _army = Mathf.Clamp(_army, 0, _armyCount);
     }
     public void DeathSim() {
-        _isDead = true;
+        //_isDead = true;
         CombatSimManager.Instance.currentCombat.CharacterDeath(this);
     }
     #endregion

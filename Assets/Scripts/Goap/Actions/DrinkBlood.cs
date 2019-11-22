@@ -28,14 +28,17 @@ public class DrinkBlood : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 1;
     }
-    public override void OnStopWhilePerforming(Character actor, IPointOfInterest target, object[] otherData) {
-        base.OnStopWhilePerforming(actor, target, otherData);
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        Character actor = node.actor;
         actor.AdjustDoNotGetHungry(-1);
     }
-    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest target, object[] otherData) {
-        GoapActionInvalidity actionInvalidity = base.IsInvalid(actor, target, otherData);
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        GoapActionInvalidity actionInvalidity = base.IsInvalid(node);
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
         if (actionInvalidity.isInvalid == false) {
-            Character targetCharacter = target as Character;
+            Character targetCharacter = poiTarget as Character;
             if (targetCharacter.canMove || targetCharacter.canWitness || targetCharacter.IsAvailable() == false) {
                 actionInvalidity.isInvalid = true;
                 actionInvalidity.stateName = "Drink Fail";

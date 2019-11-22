@@ -116,7 +116,7 @@ public class PlayerManager : MonoBehaviour {
         LandmarkManager.Instance.OwnRegion(player.playerFaction, RACE.DEMON, chosenRegion);
         //Pre-build a Spire in the second initial empty corrupted region and ensure that it does not have a Hallowed Ground trait.
         chosenRegion.RemoveAllFeatures();
-        BaseLandmark newLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenRegion.coreTile, LANDMARK_TYPE.THE_SPIRE, false);
+        LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenRegion.coreTile, LANDMARK_TYPE.THE_SPIRE, false); //BaseLandmark newLandmark = 
 
     }
     public void InitializePlayer(SaveDataPlayer data) {

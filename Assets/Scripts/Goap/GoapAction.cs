@@ -241,7 +241,14 @@ public class GoapAction {
         //    Messenger.AddListener<TileObject, Character>(Signals.TILE_OBJECT_DISABLED, OnTileObjectDisabled);
         //}
     }
-    public virtual void AddFillersToLog(Log log, Character actor, IPointOfInterest poiTarget, object[] otherData, LocationStructure targetStructure) {
+    protected virtual bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, object[] otherData) { return true; }
+    protected virtual int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+        return 0;
+    }
+    public virtual void AddFillersToLog(Log log, ActualGoapNode node) {
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        LocationStructure targetStructure = node.targetStructure;
         log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
         if (targetStructure != null) {
@@ -250,29 +257,28 @@ public class GoapAction {
             log.AddToFillers(actor.specificLocation, actor.specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         }
     }
-    protected virtual bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, object[] otherData) { return true; }
-    protected virtual int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 0;
-    }
-    public virtual GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest target, object[] otherData) {
+    public virtual GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
         string stateName = "Target Missing";
-        bool defaultTargetMissing = IsTargetMissing(actor, target, otherData);
+        bool defaultTargetMissing = IsTargetMissing(node);
         GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
         if (defaultTargetMissing == false) {
             //check the target's traits, if any of them can make this action invalid
-            for (int i = 0; i < target.traitContainer.allTraits.Count; i++) {
-                Trait trait = target.traitContainer.allTraits[i];
-                if (trait.TryStopAction(goapType, actor, target, ref goapActionInvalidity)) {
+            for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
+                Trait trait = poiTarget.traitContainer.allTraits[i];
+                if (trait.TryStopAction(goapType, actor, poiTarget, ref goapActionInvalidity)) {
                     break; //a trait made this action invalid, stop loop
                 }
             }
         }
         return goapActionInvalidity;
     }
-    public virtual LocationStructure GetTargetStructure(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    public virtual LocationStructure GetTargetStructure(ActualGoapNode node) {
         //if (poiTarget is Character) {
         //    return (poiTarget as Character).currentStructure;
         //}
+        IPointOfInterest poiTarget = node.poiTarget;
         if (poiTarget.gridTileLocation == null) {
             return null;
         }
@@ -381,11 +387,11 @@ public class GoapAction {
     //    }
     //}
     //If this action is being performed and is stopped abruptly, call this
-    public virtual void OnStopWhilePerforming(Character actor, IPointOfInterest target, object[] otherData) { }
+    public virtual void OnStopWhilePerforming(ActualGoapNode node) { }
     /// <summary>
     /// What should happen when an action is stopped while the actor is still travelling towards it's target or when the action has already started?
     /// </summary>
-    public virtual void OnStopWhileStarted(Character actor, IPointOfInterest target, object[] otherData) { }
+    public virtual void OnStopWhileStarted(ActualGoapNode node) { }
     /// <summary>
     /// What should happen when another character witnesses this action.
     /// NOTE: This only happens when the character finishes the action. NOT during.
@@ -449,13 +455,15 @@ public class GoapAction {
         }
         return (baseCost * TimeOfDaysCostMultiplier(actor) * PreconditionCostMultiplier()) + GetDistanceCost(actor, target);
     }
-    protected bool IsTargetMissing(Character actor, IPointOfInterest target, object[] otherData) {
-        if (target.IsAvailable() == false || target.gridTileLocation == null || actor.specificLocation != target.specificLocation) {
+    protected bool IsTargetMissing(ActualGoapNode node) {
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        if (poiTarget.IsAvailable() == false || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation) {
             return true;
         }
         if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET) {
             //if the action type is NEAR_TARGET, then check if the actor is near the target, if not, this action is invalid.
-            if (actor.gridTileLocation != target.gridTileLocation && actor.gridTileLocation.IsNeighbour(target.gridTileLocation) == false) {
+            if (actor.gridTileLocation != poiTarget.gridTileLocation && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation) == false) {
                 return true;
             }
         }

@@ -28,7 +28,7 @@ public class DemonStone : SpecialObject {
     }
 
     private void OnInvocationDone() {
-        Minion minion = PlayerManager.Instance.player.CreateNewMinionRandomClass();
+        PlayerManager.Instance.player.CreateNewMinionRandomClass(); //Minion minion = 
         //PlayerManager.Instance.player.AddMinion(minion, true);
         //UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new Minion!", () => PlayerManager.Instance.player.AddMinion(minion, true));
     }

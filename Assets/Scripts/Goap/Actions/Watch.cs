@@ -24,8 +24,9 @@ public class Watch : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 10;
     }
-    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(actor, poiTarget, otherData);
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
+        IPointOfInterest poiTarget = node.poiTarget;
         if (goapActionInvalidity.isInvalid == false) {
             Character targetCharacter = poiTarget as Character;
             if (targetCharacter.IsInOwnParty() == false) {
@@ -34,8 +35,9 @@ public class Watch : GoapAction {
         }
         return goapActionInvalidity;
     }
-    public override void AddFillersToLog(Log log, Character actor, IPointOfInterest poiTarget, object[] otherData, LocationStructure targetStructure) {
-        base.AddFillersToLog(log, actor, poiTarget, otherData, targetStructure);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
+        object[] otherData = node.otherData;
         if (otherData.Length == 1) {
             if (otherData[0] is GoapAction) {
                 GoapAction actionBeingWatched = otherData[0] as GoapAction;

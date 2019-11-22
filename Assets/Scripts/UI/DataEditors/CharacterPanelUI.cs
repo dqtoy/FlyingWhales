@@ -49,25 +49,25 @@ public class CharacterPanelUI : MonoBehaviour {
     private int _attackPower;
     private int _speed;
     private int _hp;
-    private string _skillName;
-    private string _weaponName;
-    private string _armorName;
-    private string _accessoryName;
+    //private string _skillName;
+    //private string _weaponName;
+    //private string _armorName;
+    //private string _accessoryName;
     private List<string> _allCombatAttributeNames;
 
     #region getters/setters
-    public string skillName {
-        get { return _skillName; }
-    }
-    public string weaponName {
-        get { return _weaponName; }
-    }
-    public string armorName {
-        get { return _armorName; }
-    }
-    public string accessoryName {
-        get { return _accessoryName; }
-    }
+    //public string skillName {
+    //    get { return _skillName; }
+    //}
+    //public string weaponName {
+    //    get { return _weaponName; }
+    //}
+    //public string armorName {
+    //    get { return _armorName; }
+    //}
+    //public string accessoryName {
+    //    get { return _accessoryName; }
+    //}
     public int hp {
         get { return _singleHP; }
     }
@@ -353,15 +353,15 @@ public class CharacterPanelUI : MonoBehaviour {
         speedLbl.text = _speed.ToString();
         hpLbl.text = _hp.ToString();
         spLbl.text = _sp.ToString();
-        weaponLbl.text = _weaponName;
-        armorLbl.text = _armorName;
-        accessoryLbl.text = _accessoryName;
+        //weaponLbl.text = _weaponName;
+        //armorLbl.text = _armorName;
+        //accessoryLbl.text = _accessoryName;
 
-        if(!string.IsNullOrEmpty(_skillName)) {
-            skillsLbl.text = _skillName;
-        } else {
-            skillsLbl.text = "None";
-        }
+        //if(!string.IsNullOrEmpty(_skillName)) {
+        //    skillsLbl.text = _skillName;
+        //} else {
+        //    skillsLbl.text = "None";
+        //}
         UpdateTraitsUI();
     }
     private void UpdateTraitsUI() {

@@ -26,8 +26,11 @@ public class RememberFallen : GoapAction {
         //**Cost**: randomize between 5-35
         return Utilities.rng.Next(5, 36);
     }
-    public override void AddFillersToLog(Log log, Character actor, IPointOfInterest poiTarget, object[] otherData, LocationStructure targetStructure) {
-        base.AddFillersToLog(log, actor, poiTarget, otherData, targetStructure);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        LocationStructure targetStructure = node.targetStructure;
         log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         Tombstone tombstone = poiTarget as Tombstone;
         log.AddToFillers(tombstone.character, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
@@ -37,8 +40,9 @@ public class RememberFallen : GoapAction {
             log.AddToFillers(actor.specificLocation, actor.specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         }
     }
-    public override void OnStopWhilePerforming(Character actor, IPointOfInterest target, object[] otherData) {
-        base.OnStopWhilePerforming(actor, target, otherData);
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        Character actor = node.actor;
         actor.AdjustDoNotGetLonely(-1);
     }
     #endregion

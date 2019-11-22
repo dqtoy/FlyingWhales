@@ -1182,10 +1182,10 @@ public class Player : ILeader {
         return false;
     }
     public bool HasArtifact(string artifactName) {
-        ARTIFACT_TYPE type = (ARTIFACT_TYPE)System.Enum.Parse(typeof(ARTIFACT_TYPE), artifactName);
+        //ARTIFACT_TYPE type = (ARTIFACT_TYPE)System.Enum.Parse(typeof(ARTIFACT_TYPE), artifactName);
         for (int i = 0; i < artifactSlots.Count; i++) {
             Artifact currArtifact = artifactSlots[i].artifact;
-            if (currArtifact != null && currArtifact.type.ToString() == artifactName) {
+            if (currArtifact != null && currArtifact.name == artifactName) {
                 return true;
             }
         }

@@ -23,21 +23,24 @@ public class Carry : GoapAction {
         base.Perform(goapNode);
         SetState("Carry Success", goapNode);
     }
-    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest target, object[] otherData) {
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+
         string stateName = "Target Missing";
-        bool defaultTargetMissing = TargetMissingForCarry(actor, target, otherData);
+        bool defaultTargetMissing = TargetMissingForCarry(node);
         GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
         if (defaultTargetMissing == false) {
             //check the target's traits, if any of them can make this action invalid
-            for (int i = 0; i < target.traitContainer.allTraits.Count; i++) {
-                Trait trait = target.traitContainer.allTraits[i];
-                if (trait.TryStopAction(goapType, actor, target, ref goapActionInvalidity)) {
+            for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
+                Trait trait = poiTarget.traitContainer.allTraits[i];
+                if (trait.TryStopAction(goapType, actor, poiTarget, ref goapActionInvalidity)) {
                     break; //a trait made this action invalid, stop loop
                 }
             }
         }
         if (goapActionInvalidity.isInvalid == false) {
-            if ((target as Character).IsInOwnParty() == false) {
+            if ((poiTarget as Character).IsInOwnParty() == false) {
                 goapActionInvalidity.isInvalid = true;
             }
         }
@@ -71,9 +74,11 @@ public class Carry : GoapAction {
     }
     #endregion
 
-    private bool TargetMissingForCarry(Character actor, IPointOfInterest target, object[] otherData) {
-        return target.gridTileLocation == null || actor.specificLocation != target.specificLocation
-                    || !(actor.gridTileLocation == target.gridTileLocation || actor.gridTileLocation.IsNeighbour(target.gridTileLocation));
+    private bool TargetMissingForCarry(ActualGoapNode node) {
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        return poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
+                    || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation));
     }
 }
 

@@ -30,7 +30,7 @@ public class DropFood : GoapAction {
     private bool IsActorFoodEnough(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         if(poiTarget is Table) {
             int neededFood = (int)otherData[0];
-            Table table = poiTarget as Table;
+            //Table table = poiTarget as Table;
             if (actor.food >= neededFood) {
                 return true;
             }

@@ -24,17 +24,20 @@ public class Butcher : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return Utilities.rng.Next(15, 26);
     }
-    public override void AddFillersToLog(Log log, Character actor, IPointOfInterest poiTarget, object[] otherData, LocationStructure targetStructure) {
-        base.AddFillersToLog(log, actor, poiTarget, otherData, targetStructure);
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
+        IPointOfInterest poiTarget = node.poiTarget;
         Character deadCharacter = poiTarget as Character;
         if (deadCharacter == null) {
             deadCharacter = (poiTarget as Tombstone).character;
         }
         log.AddToFillers(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
-    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest target, object[] otherData) {
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
         string stateName = "Target Missing";
-        bool defaultTargetMissing = this.IsTargetMissing(actor, target);
+        bool defaultTargetMissing = this.IsTargetMissing(actor, poiTarget);
         return new GoapActionInvalidity(defaultTargetMissing, stateName);
     }
     private bool IsTargetMissing(Character actor, IPointOfInterest poiTarget) {

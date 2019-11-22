@@ -13,21 +13,21 @@ public class ResearchAbilityUI : MonoBehaviour {
     public Toggle ability1Toggle;
     public Image ability1Icon;
     public TextMeshProUGUI ability1Text;
-    private INTERVENTION_ABILITY ability1;
+    //private INTERVENTION_ABILITY ability1;
 
     [Header("Ability 2")]
     public Toggle ability2Toggle;
     public Image ability2Icon;
     public TextMeshProUGUI ability2Text;
-    private INTERVENTION_ABILITY ability2;
+    //private INTERVENTION_ABILITY ability2;
 
     [Header("Ability 3")]
     public Toggle ability3Toggle;
     public Image ability3Icon;
     public TextMeshProUGUI ability3Text;
-    private INTERVENTION_ABILITY ability3;
+    //private INTERVENTION_ABILITY ability3;
 
-    private INTERVENTION_ABILITY chosenAbility;
+    //private INTERVENTION_ABILITY chosenAbility;
 
     public void ShowResearchUI() {
         if (PlayerUI.Instance.IsMajorUIShowing()) {
@@ -46,7 +46,7 @@ public class ResearchAbilityUI : MonoBehaviour {
         gameObject.SetActive(true);
     }
     public void SetAbility1(INTERVENTION_ABILITY ability) {
-        ability1 = ability;
+        //ability1 = ability;
         string name = Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString());
         ability1Icon.sprite = PlayerManager.Instance.GetJobActionSprite(name);
         string text = name;
@@ -55,7 +55,7 @@ public class ResearchAbilityUI : MonoBehaviour {
         ability1Text.text = text;
     }
     public void SetAbility2(INTERVENTION_ABILITY ability) {
-        ability2 = ability;
+        //ability2 = ability;
         string name = Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString());
         ability2Icon.sprite = PlayerManager.Instance.GetJobActionSprite(name);
         string text = name;
@@ -64,7 +64,7 @@ public class ResearchAbilityUI : MonoBehaviour {
         ability2Text.text = text;
     }
     public void SetAbility3(INTERVENTION_ABILITY ability) {
-        ability3 = ability;
+        //ability3 = ability;
         string name = Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString());
         ability3Icon.sprite = PlayerManager.Instance.GetJobActionSprite(name);
         string text = name;
@@ -75,17 +75,17 @@ public class ResearchAbilityUI : MonoBehaviour {
 
     public void OnClickAbility1(bool state) {
         if (!state) { return; }
-        chosenAbility = ability1;
+        //chosenAbility = ability1;
         okBtn.interactable = true;
     }
     public void OnClickAbility2(bool state) {
         if (!state) { return; }
-        chosenAbility = ability2;
+        //chosenAbility = ability2;
         okBtn.interactable = true;
     }
     public void OnClickAbility3(bool state) {
         if (!state) { return; }
-        chosenAbility = ability3;
+        //chosenAbility = ability3;
         okBtn.interactable = true;
     }
     public void OnClickOk() {
@@ -94,7 +94,7 @@ public class ResearchAbilityUI : MonoBehaviour {
             //if (PlayerManager.Instance.player.isNotFirstResearch) {
             UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
             //}
-    }
+        }
         //PlayerManager.Instance.player.NewCycleForNewInterventionAbility(chosenAbility);
     }
 }

@@ -46,10 +46,10 @@ public class WorldEvent  {
         isCurrentlySpawned = true;
     }
     public virtual void Load(Region region, Character spawner, IWorldEventData eventData, out string afterEffectScheduleID) {
-        GameDate startDate = GameManager.Instance.Today();
+        //GameDate startDate = GameManager.Instance.Today();
         GameDate endDate = eventData.endDate;
 
-        int ticksDiff = GameManager.Instance.GetTicksDifferenceOfTwoDates(endDate, startDate);
+        //int ticksDiff = GameManager.Instance.GetTicksDifferenceOfTwoDates(endDate, startDate);
         //once spawned, schedule the after effect of this event to execute after a set amount of ticks (duration). NOTE: This schedule should be cancelled once the landmark it spawned at 
         afterEffectScheduleID = SchedulingManager.Instance.AddEntry(endDate, () => TryExecuteAfterEffect(region, spawner), this);
         Debug.Log(GameManager.Instance.TodayLogString() + this.name + " spawned at " + region.name);

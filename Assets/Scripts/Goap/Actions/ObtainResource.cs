@@ -36,10 +36,11 @@ public class ObtainResource : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return Utilities.rng.Next(10, 21);
     }
-    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest target, object[] otherData) {
-        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(actor, target, otherData);
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
+        IPointOfInterest poiTarget = node.poiTarget;
         if (goapActionInvalidity.isInvalid == false) {
-             FoodPile foodPile = target as FoodPile;
+            FoodPile foodPile = poiTarget as FoodPile;
             if (foodPile.resourceInPile <= 0) {
                 goapActionInvalidity.isInvalid = true;
                 goapActionInvalidity.stateName = "Take Fail";

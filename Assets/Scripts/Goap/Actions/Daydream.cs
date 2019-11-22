@@ -34,8 +34,9 @@ public class Daydream : GoapAction {
         //**Cost**: randomize between 10-30
         return Utilities.rng.Next(10, 31);
     }
-    public override void OnStopWhilePerforming(Character actor, IPointOfInterest target, object[] otherData) {
-        base.OnStopWhilePerforming(actor, target, otherData);
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        Character actor = node.actor;
         actor.AdjustDoNotGetLonely(-1);
         actor.AdjustDoNotGetTired(-1);
     }

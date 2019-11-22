@@ -37,7 +37,7 @@ namespace Traits {
             }
             if (jobID == 0) {
                 if (UnityEngine.Random.Range(0, 100) < 35) { //20
-                    string log = GameManager.Instance.TodayLogString() + character.name + " will do a task instead of happiness recovery because he is hardworking!";
+                    //string log = GameManager.Instance.TodayLogString() + character.name + " will do a task instead of happiness recovery because he is hardworking!";
                     //If there is no replacement settlement job for happiness recovery, process one
                     //Only get the first settlement job if it will be the highest priority in your personal jobs and it can override the current job
                     //TODO:

@@ -10,7 +10,7 @@ public interface ICharacterSim {
     int speed { get; }
     int currentRow { get; }
     int level { get; }
-    int currentSP { get; }
+    //int currentSP { get; }
     int currentHP { get; }
     int maxHP { get; }
     int attackPower { get; }

@@ -16,7 +16,9 @@ public class BuryCharacter : GoapAction {
     }
 
     #region Overrides
-    public override LocationStructure GetTargetStructure(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    public override LocationStructure GetTargetStructure(ActualGoapNode node) {
+        Character actor = node.actor;
+        object[] otherData = node.otherData;
         if (otherData != null && otherData.Length == 1 && otherData[0] is LocationStructure) {
             return otherData[0] as LocationStructure;
         } else {
@@ -34,13 +36,15 @@ public class BuryCharacter : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 1;
     }
-    public override void OnStopWhileStarted(Character actor, IPointOfInterest target, object[] otherData) {
-        base.OnStopWhileStarted(actor, target, otherData);
-        Character targetCharacter = target as Character;
+    public override void OnStopWhileStarted(ActualGoapNode node) {
+        base.OnStopWhileStarted(node);
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        Character targetCharacter = poiTarget as Character;
         actor.ownParty.RemoveCharacter(targetCharacter, false);
         targetCharacter.SetCurrentStructureLocation(targetCharacter.gridTileLocation.structure, false);
     }
-    public override GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest target, object[] otherData) {
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         string stateName = "Target Missing";
         bool defaultTargetMissing = false;
         GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
