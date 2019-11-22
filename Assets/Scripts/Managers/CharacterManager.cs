@@ -35,8 +35,8 @@ public class CharacterManager : MonoBehaviour {
     public Material spriteLightingMaterial;
 
     //TODO: Will move this once other hair assets arrive
-    [SerializeField] private Sprite maleHairSprite;
-    [SerializeField] private Sprite femaleHairSprite;
+    [SerializeField] private Sprite[] maleHairSprite;
+    [SerializeField] private Sprite[] femaleHairSprite;
 
     [Header("Character Marker Assets")]
     [SerializeField] private List<RaceMarkerAsset> markerAssets;
@@ -518,17 +518,18 @@ public class CharacterManager : MonoBehaviour {
             ps.eyes = Utilities.GetRandomIndexInList(pac.eyes);
             ps.mouth = Utilities.GetRandomIndexInList(pac.mouth);
             ps.nose = Utilities.GetRandomIndexInList(pac.nose);
-            if (UnityEngine.Random.Range(0, 100) < 10) {
+
+            if (UnityEngine.Random.Range(0, 100) < 10 && gender != GENDER.FEMALE) { //females have no chance to be bald
                 ps.hair = -1; //chance to have no hair
             } else {
                 ps.hair = Utilities.GetRandomIndexInList(pac.hair);
             }
-            if (UnityEngine.Random.Range(0, 100) < 25) {
+            if (UnityEngine.Random.Range(0, 100) < 20) {
                 ps.mustache = -1; //chance to have no mustache
             } else {
                 ps.mustache = Utilities.GetRandomIndexInList(pac.mustache);
             }
-            if (UnityEngine.Random.Range(0, 100) < 12) {
+            if (UnityEngine.Random.Range(0, 100) < 10) {
                 ps.beard = -1; //chance to have no beard
             } else {
                 ps.beard = Utilities.GetRandomIndexInList(pac.beard);
@@ -667,9 +668,9 @@ public class CharacterManager : MonoBehaviour {
     public Sprite GetMarkerHairSprite(GENDER gender) {
         switch (gender) {
             case GENDER.MALE:
-                return maleHairSprite;
+                return maleHairSprite[Random.Range(0, maleHairSprite.Length)];
             case GENDER.FEMALE:
-                return femaleHairSprite;
+                return femaleHairSprite[Random.Range(0, femaleHairSprite.Length)];
             default:
                 return null;
         }
