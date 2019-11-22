@@ -84,11 +84,11 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         head.rectTransform.SetSiblingIndex(1);
         brows.rectTransform.SetSiblingIndex(2);
         eyes.rectTransform.SetSiblingIndex(3);
-        mouth.rectTransform.SetSiblingIndex(4);
-        nose.rectTransform.SetSiblingIndex(5);
-        hair.rectTransform.SetSiblingIndex(6);
-        mustache.rectTransform.SetSiblingIndex(7);
-        beard.rectTransform.SetSiblingIndex(8);
+        nose.rectTransform.SetSiblingIndex(4);
+        hair.rectTransform.SetSiblingIndex(5);
+        mustache.rectTransform.SetSiblingIndex(6);
+        beard.rectTransform.SetSiblingIndex(7);
+        mouth.rectTransform.SetSiblingIndex(8);
     }
 
     #region Utilities
