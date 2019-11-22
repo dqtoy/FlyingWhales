@@ -41,6 +41,8 @@ public class LandmarkManager : MonoBehaviour {
 
     public Area enemyOfPlayerArea { get; private set; }
 
+    public List<LocationEvent> locationEventsData { get; private set; }
+
     //The Anvil
     public Dictionary<string, AnvilResearchData> anvilResearchData;
 
@@ -52,6 +54,7 @@ public class LandmarkManager : MonoBehaviour {
         ConstructLandmarkData();
         LoadLandmarkTypeDictionary();
         ConstructAnvilResearchData();
+        ConstructLocationEventsData();
     }
 
     #region Monobehaviours
@@ -61,6 +64,11 @@ public class LandmarkManager : MonoBehaviour {
     #endregion
 
     #region Landmarks
+    private void ConstructLocationEventsData() {
+        locationEventsData = new List<LocationEvent>() {
+            new NewResidentEvent(),
+        };
+    }
     private void ConstructLandmarkData() {
         for (int i = 0; i < landmarkData.Count; i++) {
             LandmarkData data = landmarkData[i];
@@ -250,7 +258,7 @@ public class LandmarkManager : MonoBehaviour {
         }
         OwnRegion(faction, faction.race, settlementRegion);
         settlementArea.GenerateStructures(14); //TODO: Revert once character markers have been evaluated
-        faction.GenerateStartingCitizens(2, 1, 14); //9,7 //citizenCount
+        faction.GenerateStartingCitizens(2, 1, 14, settlementArea.locationClassManager); //9,7 //citizenCount
 
         List<Region> availableRegions = new List<Region>(regions);
         availableRegions.Remove(portalRegion);

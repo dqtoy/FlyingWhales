@@ -388,6 +388,14 @@ public class GridMap : MonoBehaviour {
         }
         return null;
     }
+    public Region GetRegionByName(string name) {
+        for (int i = 0; i < allRegions.Length; i++) {
+            if (allRegions[i].name == name) {
+                return allRegions[i];
+            }
+        }
+        return null;
+    }
     #endregion
     #endregion
 }

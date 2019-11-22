@@ -207,6 +207,21 @@ public class Faction {
         }
         return chars;
     }
+    public List<Character> GetViableCharacters(GENDER gender, params string[] classNames) {
+        List<Character> chars = new List<Character>();
+        for (int i = 0; i < characters.Count; i++) {
+            Character currCharacter = characters[i];
+            if (currCharacter.gender == gender && !currCharacter.isDead && !currCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && !currCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+                for (int j = 0; j < classNames.Length; j++) {
+                    if (currCharacter.characterClass.className == classNames[j]) {
+                        chars.Add(currCharacter);
+                        break;
+                    }
+                }
+            }
+        }
+        return chars;
+    }
     public void SetNewLeader() {
         if(leader != null) {
             Character previousRuler = leader as Character;
@@ -220,7 +235,7 @@ public class Faction {
                 log += "\nNew Ruler: " + newRuler.name;
             } else {
                 log += "\nChecking male nobles...";
-                List<Character> maleNobles = GetViableCharacters(GENDER.MALE, CHARACTER_ROLE.NOBLE);
+                List<Character> maleNobles = GetViableCharacters(GENDER.MALE, "Noble");
                 if(maleNobles.Count > 0) {
                     newRuler = maleNobles[UnityEngine.Random.Range(0, maleNobles.Count)];
                     log += "\nNew Ruler: " + newRuler.name;
@@ -232,7 +247,7 @@ public class Faction {
                         log += "\nNew Ruler: " + newRuler.name;
                     } else {
                         log += "\nChecking female nobles...";
-                        List<Character> femaleNobles = GetViableCharacters(GENDER.FEMALE, CHARACTER_ROLE.NOBLE);
+                        List<Character> femaleNobles = GetViableCharacters(GENDER.FEMALE, "Noble");
                         if (femaleNobles.Count > 0) {
                             newRuler = femaleNobles[UnityEngine.Random.Range(0, femaleNobles.Count)];
                             log += "\nNew Ruler: " + newRuler.name;
@@ -585,13 +600,19 @@ public class Faction {
             }
         }
     }
-    public void GenerateStartingCitizens(int leaderLevel, int citizensLevel, int citizenCount) {
-        string[] characterClasses = new string[] {
-            "Leader", "Archer", "Barbarian", "Craftsman", "Druid", "Hunter", "Knight", "Mage", "Marauder", "Miner", "Noble", "Peasant", "Shaman", "Stalker"
-        };
+    public void GenerateStartingCitizens(int leaderLevel, int citizensLevel, int citizenCount, LocationClassManager classManager) {
+        //string[] characterClasses = new string[] {
+        //    "Leader", "Archer", "Barbarian", "Craftsman", "Druid", "Hunter", "Knight", "Mage", "Marauder", "Miner", "Noble", "Peasant", "Shaman", "Stalker"
+        //};
         for (int i = 0; i < citizenCount; i++) {
-            Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, characterClasses[i], race, Utilities.GetRandomGender(), this, mainRegion);
-            citizen.LevelUp(citizensLevel - 1);
+            string className = classManager.GetCurrentClassToCreate();
+            Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, Utilities.GetRandomGender(), this, mainRegion);
+            if(className == "Leader") {
+                citizen.LevelUp(leaderLevel - 1);
+                SetLeader(citizen);
+            } else {
+                citizen.LevelUp(citizensLevel - 1);
+            }
             //if (i == 0) {
             //    //leader
             //    Character leader = CharacterManager.Instance.CreateNewCharacter(CharacterRole.LEADER, race, initialLeaderGender, this, mainRegion); //initialLeaderClass

@@ -72,6 +72,9 @@ public class ConsoleMenu : UIMenu {
             {"/destroy_tile_obj", DestroyTileObj },
             {"/add_hostile", AddHostile },
             {"/force_update_animation", ForceUpdateAnimation },
+            {"/log_location_class_data", LogLocationClassData },
+            {"/add_new_resident", AddNewResident },
+
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -965,6 +968,42 @@ public class ConsoleMenu : UIMenu {
             return;
         }
         character.marker.UpdateAnimation();
+    }
+    private void LogLocationClassData(string[] parameters) {
+        if (parameters.Length != 1) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of LogLocationClassData");
+            return;
+        }
+        string regionParameterString = parameters[0];
+        Region region = GridMap.Instance.GetRegionByName(regionParameterString);
+        if (region == null) {
+            AddErrorMessage("There is no region with name " + regionParameterString);
+            return;
+        }
+        if(region.area == null) {
+            AddErrorMessage("Region " + regionParameterString + " has no area!");
+            return;
+        }
+        region.area.locationClassManager.LogLocationRequirementsData(regionParameterString);
+    }
+    private void AddNewResident(string[] parameters) {
+        if (parameters.Length != 1) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of LogLocationClassData");
+            return;
+        }
+        string regionParameterString = parameters[0];
+        Region region = GridMap.Instance.GetRegionByName(regionParameterString);
+        if (region == null) {
+            AddErrorMessage("There is no region with name " + regionParameterString);
+            return;
+        }
+        if (region.area == null) {
+            AddErrorMessage("Region " + regionParameterString + " has no area!");
+            return;
+        }
+        region.area.AddNewResident(RACE.HUMANS, region.owner);
     }
     #endregion
 

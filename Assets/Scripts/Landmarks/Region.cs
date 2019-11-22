@@ -603,7 +603,10 @@ public class Region {
             residents.Add(character);
 #if !WORLD_CREATION_TOOL
             if(area != null) {
-               area.AssignCharacterToDwellingInArea(character, chosenHome);
+                if(!coreTile.isCorrupted) {
+                    area.locationClassManager.OnAddResident(character);
+                }
+                area.AssignCharacterToDwellingInArea(character, chosenHome);
             }
 #endif
             return true;

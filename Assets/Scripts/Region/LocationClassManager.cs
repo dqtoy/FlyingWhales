@@ -18,13 +18,23 @@ public class LocationClassManager {
     }
 
     public string GetCurrentClassToCreate() {
-        string currentClass = characterClassOrder[currentIndex];
-        if(currentClass == "Combatant") {
-            List<CharacterClass> classes = CharacterManager.Instance.combatantClasses;
+        return GetClassToCreate(currentIndex);
+    }
+    public string GetNextClassToCreate() {
+        int nextIndex = currentIndex + 1;
+        if (nextIndex >= characterClassOrder.Length) {
+            nextIndex = startLoopIndex;
+        }
+        return GetClassToCreate(nextIndex);
+    }
+    private string GetClassToCreate(int index) {
+        string currentClass = characterClassOrder[index];
+        if (currentClass == "Combatant") {
+            List<CharacterClass> classes = CharacterManager.Instance.normalCombatantClasses;
             currentClass = classes[UnityEngine.Random.Range(0, classes.Count)].className;
         } else if (currentClass == "Civilian") {
             int i = UnityEngine.Random.Range(0, 3);
-            if(i == 0) {
+            if (i == 0) {
                 currentClass = "Miner";
             } else if (i == 0) {
                 currentClass = "Peasant";
@@ -183,6 +193,7 @@ public class LocationClassManager {
             //    AdjustCurrentNumberOfClass(previousClassName, -1);
             //}
         }
+        
     }
 
     private void RevertCharacterClassOrderByOne() {
@@ -227,6 +238,77 @@ public class LocationClassManager {
             log += "\n" + kvp.Key + " - Supposed Number: " + kvp.Value.supposedNumber + ", Current Number: " + kvp.Value.currentNumber; 
         }
         Debug.Log(log);
+    }
+    public bool IsClassASurplus(CharacterClass charClass) {
+        string className = charClass.className;
+
+        if (className == "Miner") {
+            LocationClassNumberGuide numberGuide = characterClassGuide["Civilian"];
+            return numberGuide.currentNumber > numberGuide.supposedNumber;
+        } else if (className == "Peasant" || className == "Craftsman") {
+            LocationClassNumberGuide numberGuide = characterClassGuide[className];
+            if (numberGuide.currentNumber > numberGuide.supposedNumber) {
+                return true;
+            } else {
+                numberGuide = characterClassGuide["Civilian"];
+                if (numberGuide.currentNumber > numberGuide.supposedNumber) {
+                    return true;
+                }
+            }
+        } else if (className == "Noble") {
+            LocationClassNumberGuide numberGuide = characterClassGuide[className];
+            if (numberGuide.currentNumber > numberGuide.supposedNumber) {
+                return true;
+            } else {
+                numberGuide = characterClassGuide["Combatant"];
+                if (numberGuide.currentNumber > numberGuide.supposedNumber) {
+                    return true;
+                }
+            }
+        } else if (!charClass.isNonCombatant) {
+            LocationClassNumberGuide numberGuide = characterClassGuide["Combatant"];
+            return numberGuide.currentNumber > numberGuide.supposedNumber;
+        } else {
+            LocationClassNumberGuide numberGuide = characterClassGuide[className];
+            return numberGuide.currentNumber > numberGuide.supposedNumber;
+        }
+        return false;
+    }
+
+    public bool IsClassADeficit(CharacterClass charClass) {
+        string className = charClass.className;
+
+        if (className == "Miner") {
+            LocationClassNumberGuide numberGuide = characterClassGuide["Civilian"];
+            return numberGuide.currentNumber < numberGuide.supposedNumber;
+        } else if (className == "Peasant" || className == "Craftsman") {
+            LocationClassNumberGuide numberGuide = characterClassGuide[className];
+            if (numberGuide.currentNumber < numberGuide.supposedNumber) {
+                return true;
+            } else {
+                numberGuide = characterClassGuide["Civilian"];
+                if (numberGuide.currentNumber < numberGuide.supposedNumber) {
+                    return true;
+                }
+            }
+        } else if (className == "Noble") {
+            LocationClassNumberGuide numberGuide = characterClassGuide[className];
+            if (numberGuide.currentNumber < numberGuide.supposedNumber) {
+                return true;
+            } else {
+                numberGuide = characterClassGuide["Combatant"];
+                if (numberGuide.currentNumber < numberGuide.supposedNumber) {
+                    return true;
+                }
+            }
+        } else if (!charClass.isNonCombatant) {
+            LocationClassNumberGuide numberGuide = characterClassGuide["Combatant"];
+            return numberGuide.currentNumber < numberGuide.supposedNumber;
+        } else {
+            LocationClassNumberGuide numberGuide = characterClassGuide[className];
+            return numberGuide.currentNumber < numberGuide.supposedNumber;
+        }
+        return false;
     }
 }
 

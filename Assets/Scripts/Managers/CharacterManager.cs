@@ -53,7 +53,7 @@ public class CharacterManager : MonoBehaviour {
     public Dictionary<string, CharacterClass> classesDictionary { get; private set; }
     public Dictionary<string, List<CharacterClass>> identifierClasses { get; private set; }
     public Dictionary<string, DeadlySin> deadlySins { get; private set; }
-    public List<CharacterClass> combatantClasses { get; private set; }
+    public List<CharacterClass> normalCombatantClasses { get; private set; }
 
     
     private List<string> deadlySinsRotation = new List<string>();
@@ -110,7 +110,7 @@ public class CharacterManager : MonoBehaviour {
         if(homeLocation != null) {
             newCharacter.ownParty.icon.SetPosition(homeLocation.coreTile.transform.position);
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
-            homeLocation.AddCharacterToLocation(newCharacter.ownParty.owner);
+            homeLocation.AddCharacterToLocation(newCharacter);
         }
         //newCharacter.AddAwareness(newCharacter);
         newCharacter.CreateInitialTraitsByClass();
@@ -132,7 +132,7 @@ public class CharacterManager : MonoBehaviour {
         if (homeLocation != null) {
             newCharacter.ownParty.icon.SetPosition(homeLocation.coreTile.transform.position);
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
-            homeLocation.AddCharacterToLocation(newCharacter.ownParty.owner);
+            homeLocation.AddCharacterToLocation(newCharacter);
         }
         newCharacter.CreateInitialTraitsByClass();
         _allCharacters.Add(newCharacter);
@@ -200,7 +200,7 @@ public class CharacterManager : MonoBehaviour {
         //uniqueClasses = new Dictionary<string, CharacterClass>();
         //beastClasses = new Dictionary<string, CharacterClass>();
         //demonClasses = new Dictionary<string, CharacterClass>();
-        combatantClasses = new List<CharacterClass>();
+        normalCombatantClasses = new List<CharacterClass>();
         identifierClasses = new Dictionary<string, List<CharacterClass>>();
         identifierClasses.Add("All", new List<CharacterClass>());
         string path = Utilities.dataPath + "CharacterClasses/";
@@ -237,8 +237,8 @@ public class CharacterManager : MonoBehaviour {
             }
             identifierClasses["All"].Add(currentClass);
             
-            if (!currentClass.isNonCombatant) {
-                combatantClasses.Add(currentClass);
+            if (!currentClass.isNonCombatant && currentClass.identifier == "Normal") {
+                normalCombatantClasses.Add(currentClass);
             }
         }
 

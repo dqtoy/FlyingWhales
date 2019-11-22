@@ -42,6 +42,7 @@ public class Area : IJobOwner {
     //private RACE _raceType;
 
     public LocationClassManager locationClassManager { get; private set; }
+    public LocationEventManager locationEventManager { get; private set; }
 
     #region getters
     public List<Character> visitors {
@@ -110,6 +111,9 @@ public class Area : IJobOwner {
         //AddTile(coreTile);
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
         availableJobs = new List<JobQueueItem>();
+        locationClassManager = new LocationClassManager();
+        locationEventManager = new LocationEventManager(this);
+
     }
     public Area(SaveDataArea saveDataArea) {
         region = GridMap.Instance.GetRegionByID(saveDataArea.regionID);
@@ -134,13 +138,14 @@ public class Area : IJobOwner {
         Messenger.AddListener<FoodPile>(Signals.FOOD_IN_PILE_REDUCED, OnFoodInPileReduced);
         Messenger.AddListener<SupplyPile>(Signals.SUPPLY_IN_PILE_REDUCED, OnSupplyInPileReduced);
         Messenger.AddListener(Signals.DAY_STARTED, PerDayHeroEventCreation);
+        Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
     }
     private void UnsubscribeToSignals() {
         Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyJobActions);
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         Messenger.RemoveListener<FoodPile>(Signals.FOOD_IN_PILE_REDUCED, OnFoodInPileReduced);
         Messenger.RemoveListener<SupplyPile>(Signals.SUPPLY_IN_PILE_REDUCED, OnSupplyInPileReduced);
-        Messenger.RemoveListener(Signals.DAY_STARTED, PerDayHeroEventCreation);
+        Messenger.RemoveListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
     }
     private void OnTileObjectRemoved(TileObject removedObj, Character character, LocationGridTile removedFrom) {
         //craft replacement tile object job
@@ -558,6 +563,34 @@ public class Area : IJobOwner {
     }
     public void SetInitialResidentCount(int count) {
         citizenCount = count;
+    }
+    private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass currentClass) {
+        if(character.homeArea == this) {
+            locationClassManager.OnResidentChangeClass(character, previousClass, currentClass);
+        }
+    }
+    public Character AddNewResident(RACE race, Faction faction) {
+        string className = locationClassManager.GetCurrentClassToCreate();
+        Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, Utilities.GetRandomGender(), faction, region);
+        PlaceNewResidentInInnerMap(citizen);
+        //citizen.CenterOnCharacter();
+        return citizen;
+
+        //if (className == "Leader") {
+        //    citizen.LevelUp(leaderLevel - 1);
+        //    SetLeader(leader);
+        //} else {
+        //    citizen.LevelUp(citizensLevel - 1);
+        //}
+    }
+    public Character CreateNewResidentNoLocation(RACE race, string className, Faction faction) {
+        Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, Utilities.GetRandomGender(), faction);
+        return citizen;
+    }
+    public void PlaceNewResidentInInnerMap(Character newResident) {
+        LocationGridTile mainEntrance = LandmarkManager.Instance.enemyOfPlayerArea.GetRandomUnoccupiedEdgeTile();
+        newResident.CreateMarker();
+        newResident.InitialCharacterPlacement(mainEntrance);
     }
     #endregion
 

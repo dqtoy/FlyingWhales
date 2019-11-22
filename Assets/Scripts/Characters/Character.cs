@@ -1075,17 +1075,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         traitContainer.RemoveTrait(this, traitContainer.GetNormalTrait(_characterClass.traitNames)); //Remove traits from class
         _characterClass = null;
     }
-    private void AssignClass(string className) {
+    public void AssignClass(string className) {
         if (CharacterManager.Instance.classesDictionary.ContainsKey(className)) {
-            if (_characterClass != null) {
-                //This means that the character currently has a class and it will be replaced with a new class
-                traitContainer.RemoveTrait(this, traitContainer.GetNormalTrait(_characterClass.traitNames)); //Remove traits from class
-            }
-            _characterClass = CharacterManager.Instance.CreateNewCharacterClass(className);
-            //_skills = new List<Skill>();
-            //_skills.Add(_characterClass.skill);
-            //EquipItemsByClass();
-            OnUpdateCharacterClass();
+            AssignClass(CharacterManager.Instance.CreateNewCharacterClass(className));
         } else {
             throw new Exception("There is no class named " + className + " but it is being assigned to " + this.name);
         }
@@ -1097,16 +1089,22 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (marker != null) {
             marker.UpdateMarkerVisuals();
         }
+        OnCharacterClassChange();
+        if (minion != null) {
+            minion.SetAssignedDeadlySinName(_characterClass.className);
+        }
     }
     public void AssignClass(CharacterClass characterClass) {
-        if (_characterClass != null) {
+        CharacterClass previousClass = _characterClass;
+        if (previousClass != null) {
             //This means that the character currently has a class and it will be replaced with a new class
-            for (int i = 0; i < _characterClass.traitNames.Length; i++) {
-                traitContainer.RemoveTrait(this, _characterClass.traitNames[i]); //Remove traits from class
+            for (int i = 0; i < previousClass.traitNames.Length; i++) {
+                traitContainer.RemoveTrait(this, previousClass.traitNames[i]); //Remove traits from class
             }
         }
         _characterClass = characterClass;
         OnUpdateCharacterClass();
+        Messenger.Broadcast(Signals.CHARACTER_CLASS_CHANGE, this, previousClass, _characterClass);
     }
     #endregion
 
@@ -2358,14 +2356,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
     }
     public void ChangeClass(string className) {
-        string previousClassName = _characterClass.className;
+        //string previousClassName = _characterClass.className;
         AssignClass(className);
         //_characterClass = charClass.CreateNewCopy();
-        OnCharacterClassChange();
-
-        if (minion != null) {
-            minion.SetAssignedDeadlySinName(className);
-        }
 
     }
     public void SetName(string newName) {
@@ -6100,6 +6093,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         advertisedActions.Add(INTERACTION_TYPE.CHAT_CHARACTER);
         advertisedActions.Add(INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM);
         advertisedActions.Add(INTERACTION_TYPE.REVERT_TO_NORMAL_FORM);
+        advertisedActions.Add(INTERACTION_TYPE.CHANGE_CLASS);
 
         if (race != RACE.SKELETON) {
             advertisedActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);
