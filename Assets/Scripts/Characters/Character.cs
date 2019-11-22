@@ -406,7 +406,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         originalClassName = _characterClass.className;
         SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
         GenerateSexuality();
-        ResetToFullHP();
+        StartingLevel();
         InitializeAlterEgos();
     }
     public Character(CharacterRole role, string className, RACE race, GENDER gender) : this() {
@@ -419,7 +419,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         originalClassName = _characterClass.className;
         SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
         GenerateSexuality();
-        ResetToFullHP();
+        StartingLevel();
         InitializeAlterEgos();
     }
     public Character(SaveDataCharacter data) {
@@ -472,7 +472,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         _history = new List<Log>();
 
         //RPG
-        _level = 1;
         SetExperience(0);
 
         //Traits
@@ -3363,6 +3362,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     #endregion
 
     #region RPG
+    private void StartingLevel() {
+        _level = 1;
+        UpdateMaxHP();
+        ResetToFullHP();
+    }
+
     private bool hpMagicRangedStatMod;
     public virtual void LevelUp() {
         //Only level up once per day
@@ -3792,7 +3797,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void CreateInitialTraitsByClass() {
         if (role.roleType != CHARACTER_ROLE.MINION && !(this is Summon)) { //only generate buffs and flaws for non minion characters. Reference: https://trello.com/c/pC9hBih0/2781-demonic-minions-should-not-have-pregenerated-buff-and-flaw-traits
             string[] traitPool = new string[] { "Vigilant", "Diplomatic",
-            "Fireproof", "Accident Prone", "Unfaithful", "Drunkard", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
+            "Fireproof"/*, "Accident Prone"*/, "Unfaithful", "Drunkard", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
             "Herbalist", "Optimist", "Pessimist", "Fast", "Chaste", "Lustful", "Coward", "Lazy", "Hardworking", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
             "Narcoleptic", "Hothead", "Evil", "Treacherous", "Disillusioned", "Ambitious", "Authoritative"
             };
@@ -3912,6 +3917,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
         traitContainer.AddTrait(this, "Character Trait");
         traitContainer.AddTrait(this, "Flammable");
+        traitContainer.AddTrait(this, "Accident Prone");
+
         defaultCharacterTrait = traitContainer.GetNormalTrait("Character Trait") as CharacterTrait;
     }
     public void AddTraitNeededToBeRemoved(Trait trait) {
@@ -4487,7 +4494,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public bool PlanIdleReturnHome() { //bool forceDoAction = false
         ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], this, this, null, 0);
         GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, this);
-        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.RETURN_HOME, INTERACTION_TYPE.RETURN_HOME, this, this);
+        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.RETURN_HOME, this, this);
         goapPlan.SetDoNotRecalculate(true);
         job.SetCannotBePushedBack(true);
         job.SetAssignedPlan(goapPlan);
@@ -4589,7 +4596,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                         Character chosenCharacter = GetParalyzedOrCatatonicCharacterToCheckOut();
                         if(chosenCharacter != null) {
                             log += "\n  -Will Check Out character " + chosenCharacter.name;
-                            PlanIdle(JOB_TYPE.MISC, new GoapEffect(GOAP_EFFECT_CONDITION.IN_VISION, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), chosenCharacter);
+                            PlanIdle(new GoapEffect(GOAP_EFFECT_CONDITION.IN_VISION, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), chosenCharacter);
                             return log;
                         } else {
                             log += "\n  -No available character to check out ";
@@ -4708,7 +4715,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                         Character chosenCharacter = GetParalyzedOrCatatonicCharacterToCheckOut();
                         if (chosenCharacter != null) {
                             log += "\n  -Will Check Out character " + chosenCharacter.name;
-                            PlanIdle(JOB_TYPE.MISC, new GoapEffect(GOAP_EFFECT_CONDITION.IN_VISION, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), chosenCharacter);
+                            PlanIdle(new GoapEffect(GOAP_EFFECT_CONDITION.IN_VISION, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), chosenCharacter);
                             return log;
                         } else {
                             log += "\n  -No available character to check out ";
@@ -4836,7 +4843,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     private void PlanIdle(INTERACTION_TYPE type, IPointOfInterest target, object[] otherData = null) {
         ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[type], this, target, otherData, 0);
         GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, target);
-        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, type, target, this);
+        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.IDLE, type, target, this);
         goapPlan.SetDoNotRecalculate(true);
         job.SetCannotBePushedBack(true);
         job.SetAssignedPlan(goapPlan);
@@ -4849,8 +4856,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //AddPlan(goapPlan);
         //PlanGoapActions(goapAction);
     }
-    private void PlanIdle(JOB_TYPE jobType, GoapEffect effect, IPointOfInterest target) {
-        GoapPlanJob job = new GoapPlanJob(jobType, effect, target, this);
+    private void PlanIdle(GoapEffect effect, IPointOfInterest target) {
+        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.IDLE, effect, target, this);
         jobQueue.AddJobInQueue(job);
         //if (effect.targetPOI != null && effect.targetPOI != this) {
         //    AddAwareness(effect.targetPOI);
@@ -5304,6 +5311,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //        itemsOwned.Add(token);
         //    }
         //}
+        if(homeStructure == null) {
+            Debug.LogError(name + " error in GetItemsOwned no homestructure!");
+        }
         for (int i = 0; i < homeStructure.itemsInStructure.Count; i++) {
             SpecialToken token = homeStructure.itemsInStructure[i];
             if (token.characterOwner == this) {
@@ -6112,8 +6122,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         advertisedActions.Add(INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM);
         advertisedActions.Add(INTERACTION_TYPE.REVERT_TO_NORMAL_FORM);
         advertisedActions.Add(INTERACTION_TYPE.CHANGE_CLASS);
-        advertisedActions.Add(INTERACTION_TYPE.STAND);
-        advertisedActions.Add(INTERACTION_TYPE.VISIT);
+        //advertisedActions.Add(INTERACTION_TYPE.STAND);
+        //advertisedActions.Add(INTERACTION_TYPE.VISIT);
 
         if (race != RACE.SKELETON) {
             advertisedActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);

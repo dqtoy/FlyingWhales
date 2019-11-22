@@ -205,6 +205,9 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.TANTRUM:
                 priority = 6;
                 break;
+            case JOB_TYPE.IDLE:
+                priority = 7;
+                break;
             case JOB_TYPE.DEATH:
             case JOB_TYPE.BERSERK:
             case JOB_TYPE.STEAL:

@@ -163,6 +163,7 @@ public class GoapThread : Multithread {
             //default
             plan = actor.planner.PlanActions(target, goalEffect, isPersonalPlan, ref planLog, job);
         }
+        log += "\nRaw Plan Log: " + planLog;
         if(plan != null) {
             log += "\nGENERATED PLAN: ";
             log += plan.LogPlan();

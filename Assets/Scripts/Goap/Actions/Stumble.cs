@@ -44,7 +44,7 @@ public class Stumble : GoapAction {
         int randomHpToLose = UnityEngine.Random.Range(1, 6);
         float percentMaxHPToLose = randomHpToLose / 100f;
         int actualHPToLose = Mathf.CeilToInt(goapNode.actor.maxHP * percentMaxHPToLose);
-
+        Debug.Log("Stumble of " + goapNode.actor.name + " percent: " + percentMaxHPToLose + ", max hp: " + goapNode.actor.maxHP + ", lost hp: " + actualHPToLose);
         goapNode.actor.AdjustHP(-actualHPToLose);
     }
     public void AfterStumbleSuccess(ActualGoapNode goapNode) {

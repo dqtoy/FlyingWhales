@@ -48,7 +48,7 @@ public class Accident : GoapAction {
         int randomHpToLose = UnityEngine.Random.Range(5, 26);
         float percentMaxHPToLose = randomHpToLose / 100f;
         int actualHPToLose = Mathf.CeilToInt(goapNode.actor.maxHP * percentMaxHPToLose);
-
+        Debug.Log("Accident of " + goapNode.actor.name + " percent: " + percentMaxHPToLose + ", max hp: " + goapNode.actor.maxHP + ", lost hp: " + actualHPToLose);
         goapNode.actor.AdjustHP(-actualHPToLose);
         if (goapNode.actor.currentHP <= 0) {
             goapNode.actor.Death(deathFromAction: goapNode);
