@@ -4490,6 +4490,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         GoapPlanJob job = new GoapPlanJob(JOB_TYPE.RETURN_HOME, INTERACTION_TYPE.RETURN_HOME, this, this);
         goapPlan.SetDoNotRecalculate(true);
         job.SetCannotBePushedBack(true);
+        job.SetAssignedPlan(goapPlan);
         jobQueue.AddJobInQueue(job);
         //if (GetTrait("Berserker") != null) {
         //    //Return home becomes stroll if the character has berserker trait
@@ -4546,8 +4547,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                         LocationStructure structure = specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.INN);
                         if(structure != null) {
                             log += "\n  -Early Night: " + name + " will go to Inn and set Base Structure for 2.5 hours";
-                            LocationGridTile gridTile = structure.GetRandomTile();
-                            marker.GoTo(gridTile, () => trapStructure.SetStructureAndDuration(structure, GameManager.Instance.GetTicksBasedOnHour(2) + GameManager.Instance.GetTicksBasedOnMinutes(30)));
+                            PlanIdle(INTERACTION_TYPE.VISIT, this, new object[] { structure });
+                            //LocationGridTile gridTile = structure.GetRandomTile();
+                            //marker.GoTo(gridTile, () => trapStructure.SetStructureAndDuration(structure, GameManager.Instance.GetTicksBasedOnHour(2) + GameManager.Instance.GetTicksBasedOnMinutes(30)));
                             return log;
                         } else {
                             log += "\n  -No Inn Structure in the area";
@@ -4615,16 +4617,30 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += "\n  -RNG roll: " + chance;
                     if (chance < 25) {
-                        List<Character> positiveCharacters = relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_EFFECT.POSITIVE).Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList(); //TODO: Improve this.
-                        if(positiveCharacters.Count > 0) {
-                            Character chosenCharacter = positiveCharacters[UnityEngine.Random.Range(0, positiveCharacters.Count)];
-                            if (chosenCharacter.homeStructure != null) {
+                        List<Relatable> positiveRelatables = relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_EFFECT.POSITIVE); //TODO: Improve this.
+                        if(positiveRelatables.Count > 0) {
+                            LocationStructure targetStructure = null;
+                            while(positiveRelatables.Count > 0 && targetStructure == null) {
+                                int index = UnityEngine.Random.Range(0, positiveRelatables.Count);
+                                Relatable chosenRelatable = positiveRelatables[index];
+                                if (chosenRelatable is AlterEgoData) {
+                                    targetStructure = (chosenRelatable as AlterEgoData).owner.homeStructure;
+                                }
+                                if(targetStructure == null) {
+                                    positiveRelatables.RemoveAt(index);
+                                } else if (targetStructure == homeStructure){
+                                    targetStructure = null;
+                                    positiveRelatables.RemoveAt(index);
+                                }
+                            }
+                            if (targetStructure != null) {
                                 log += "\n  -Morning or Afternoon: " + name + " will go to dwelling of character with positive relationship and set Base Structure for 2.5 hours";
-                                LocationGridTile gridTile = chosenCharacter.homeStructure.GetRandomTile();
-                                marker.GoTo(gridTile, () => trapStructure.SetStructureAndDuration(chosenCharacter.homeStructure, GameManager.Instance.GetTicksBasedOnHour(2) + GameManager.Instance.GetTicksBasedOnMinutes(30)));
+                                PlanIdle(INTERACTION_TYPE.VISIT, this, new object[] { targetStructure });
+                                //LocationGridTile gridTile = chosenCharacter.homeStructure.GetRandomTile();
+                                //marker.GoTo(gridTile, () => trapStructure.SetStructureAndDuration(chosenCharacter.homeStructure, GameManager.Instance.GetTicksBasedOnHour(2) + GameManager.Instance.GetTicksBasedOnMinutes(30)));
                                 return log;
                             } else {
-                                log += "\n  -Chosen Character: " + chosenCharacter.name + " has no home structure";
+                                log += "\n  -No positive relationship with home structure";
                             }
                         } else {
                             log += "\n  -No character with positive relationship";
@@ -4817,12 +4833,13 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //    PlanIdleStroll(currentStructure);
         //}
     }
-    private void PlanIdle(INTERACTION_TYPE type, IPointOfInterest target) {
-        ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[type], this, target, null, 0);
+    private void PlanIdle(INTERACTION_TYPE type, IPointOfInterest target, object[] otherData = null) {
+        ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[type], this, target, otherData, 0);
         GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, target);
         GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, type, target, this);
         goapPlan.SetDoNotRecalculate(true);
         job.SetCannotBePushedBack(true);
+        job.SetAssignedPlan(goapPlan);
         jobQueue.AddJobInQueue(job);
 
         //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(type, this, target);
@@ -4913,6 +4930,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                     GoapPlanJob job = new GoapPlanJob(JOB_TYPE.CHAT, INTERACTION_TYPE.CHAT_CHARACTER, targetCharacter, this);
                     goapPlan.SetDoNotRecalculate(true);
                     job.SetCannotBePushedBack(true);
+                    job.SetAssignedPlan(goapPlan);
                     jobQueue.AddJobInQueue(job);
                     return true;
                     //ChatCharacter chatAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CHAT_CHARACTER, this, targetCharacter) as ChatCharacter;
@@ -6089,11 +6107,13 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         advertisedActions.Add(INTERACTION_TYPE.SCREAM_FOR_HELP);
         advertisedActions.Add(INTERACTION_TYPE.RESOLVE_COMBAT);
         advertisedActions.Add(INTERACTION_TYPE.RETURN_HOME);
-        advertisedActions.Add(INTERACTION_TYPE.RETURN_HOME_LOCATION);
+        //advertisedActions.Add(INTERACTION_TYPE.RETURN_HOME_LOCATION);
         advertisedActions.Add(INTERACTION_TYPE.CHAT_CHARACTER);
         advertisedActions.Add(INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM);
         advertisedActions.Add(INTERACTION_TYPE.REVERT_TO_NORMAL_FORM);
         advertisedActions.Add(INTERACTION_TYPE.CHANGE_CLASS);
+        advertisedActions.Add(INTERACTION_TYPE.STAND);
+        advertisedActions.Add(INTERACTION_TYPE.VISIT);
 
         if (race != RACE.SKELETON) {
             advertisedActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);
