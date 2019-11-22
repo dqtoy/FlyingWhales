@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(CharacterMarkerFOV))]
 public class CharacterMarkerFOVEditor : Editor {
 
@@ -22,3 +23,4 @@ public class CharacterMarkerFOVEditor : Editor {
         }
     }
 }
+#endif

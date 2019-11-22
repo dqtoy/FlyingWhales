@@ -704,7 +704,7 @@ public class GoapAction {
         return 3;
     }
     public int PreconditionCostMultiplier() {
-        return basePreconditions.Count * 2;
+        return Math.Max(basePreconditions.Count * 2, 1);
     }
     //public void AddAwareCharacter(Character character) {
     //    if (!awareCharactersOfThisAction.Contains(character)) {

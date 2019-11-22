@@ -591,6 +591,7 @@ public class CharacterManager : MonoBehaviour {
         }
         return null;
     }
+#if UNITY_EDITOR
     public void LoadCharacterPortraitAssets() {
         portraitAssets = new List<RacePortraitAssets>();
         string characterPortraitAssetPath = "Assets/Textures/Portraits/";
@@ -630,6 +631,7 @@ public class CharacterManager : MonoBehaviour {
             }
         }
     }
+#endif
     #endregion
 
     #region Role
@@ -672,6 +674,7 @@ public class CharacterManager : MonoBehaviour {
                 return null;
         }
     }
+#if UNITY_EDITOR
     public void LoadCharacterMarkerAssets() {
         markerAssets = new List<RaceMarkerAsset>();
         string characterMarkerAssetPath = "Assets/Textures/Character Markers/";
@@ -734,6 +737,7 @@ public class CharacterManager : MonoBehaviour {
             }
         }
     }
+#endif
     #endregion
 
     #region Listeners

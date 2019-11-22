@@ -27,5 +27,4 @@ public class CharacterManagerEditor : Editor {
         }
     }
 }
-
 #endif
