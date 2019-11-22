@@ -64,6 +64,9 @@ public class InteriorMapManager : MonoBehaviour {
     [Header("Lighting")]
     [SerializeField] private Light areaMapLight;
 
+    [Header("Structures")]
+    [SerializeField] private LocationStructurePrefabDictionary structurePrefabs;
+
     //structure templates
     private string templatePath;
 
@@ -619,7 +622,7 @@ public class InteriorMapManager : MonoBehaviour {
         List<TileTemplateData> structureTiles = new List<TileTemplateData>();
         List<TileTemplateData> objectTiles = new List<TileTemplateData>();
         List<TileTemplateData> detailTiles = new List<TileTemplateData>();
-        List<BuildingSpot> buildingSpots = new List<BuildingSpot>();
+        List<BuildingSpotData> buildingSpotData = new List<BuildingSpotData>();
 
         int count = 0;
         for (int x = 0; x < maxX; x++) {
@@ -632,8 +635,8 @@ public class InteriorMapManager : MonoBehaviour {
                     structureTiles.Add(currSetting.structureWallTile);
                     objectTiles.Add(currSetting.objectTile);
                     detailTiles.Add(currSetting.detailTile);
-                    if (currSetting.buildingSpot != null) {
-                        buildingSpots.Add(currSetting.buildingSpot);
+                    if (currSetting.hasBuildingSpot) {
+                        buildingSpotData.Add(currSetting.buildingSpot);
                     }
                 } else {
                     TileTemplateData emptyData = TileTemplateData.Empty;
@@ -669,14 +672,14 @@ public class InteriorMapManager : MonoBehaviour {
         s.structureTiles = structureTiles.ToArray();
         s.objectTiles = objectTiles.ToArray();
         s.detailTiles = detailTiles.ToArray();
-        s.buildSpots = buildingSpots;
+        s.buildSpots = buildingSpotData;
 
         //structures
         s.structureSlots = placedStructures;
 
         //shift all positions so that the bounds minimum is at 0
         foreach (KeyValuePair<STRUCTURE_TYPE, List<StructureSlot>> keyValuePair in s.structureSlots) {
-            for (int i = 0; i < keyValuePair.Value.Count; i++) {
+            for (int i = 0; i < keyValuePair.Value.Count; i++) {    
                 keyValuePair.Value[i].AdjustStartPos(shiftXBy, shiftYBy);
             }
         }
@@ -738,7 +741,10 @@ public class InteriorMapManager : MonoBehaviour {
         for (int i = 0; i < template.groundTiles.Length; i++) {
             TileTemplateData ground = template.groundTiles[i];
             Vector3 tilePos = ground.tilePosition;
-            BuildingSpot buildingSpot = template.GetBuildingSpotAtLocation(tilePos);
+
+            BuildingSpotData buildingSpot;
+            bool hasBuildingSpot = template.TryGetBuildingSpotDataAtLocation(tilePos, out buildingSpot);
+
             tilePos.x += startPos.x;
             tilePos.y += startPos.y;
             TileTemplateData detail = template.detailTiles[i];
@@ -760,51 +766,52 @@ public class InteriorMapManager : MonoBehaviour {
                 detailTile = detail,
                 structureWallTile = structureWall,
                 objectTile = obj,
+                hasBuildingSpot = hasBuildingSpot,
                 buildingSpot = buildingSpot
             });
         }
         return generated;
 
     }
-    public Dictionary<int, Dictionary<int, LocationGridTileSettings>> GenerateStructureTemplateForGeneration(StructureTemplate template, Vector3Int startPos, STRUCTURE_TYPE structureType, out string log) {
-        Dictionary<int, Dictionary<int, LocationGridTileSettings>> generated = new Dictionary<int, Dictionary<int, LocationGridTileSettings>>();
-        for (int i = 0; i < template.groundTiles.Length; i++) {
-            TileTemplateData ground = template.groundTiles[i];
-            Vector3 tilePos = ground.tilePosition;
-            BuildingSpot buildingSpot = template.GetBuildingSpotAtLocation(tilePos);
-            tilePos.x += startPos.x;
-            tilePos.y += startPos.y;
+    //public Dictionary<int, Dictionary<int, LocationGridTileSettings>> GenerateStructureTemplateForGeneration(StructureTemplate template, Vector3Int startPos, STRUCTURE_TYPE structureType, out string log) {
+    //    Dictionary<int, Dictionary<int, LocationGridTileSettings>> generated = new Dictionary<int, Dictionary<int, LocationGridTileSettings>>();
+    //    for (int i = 0; i < template.groundTiles.Length; i++) {
+    //        TileTemplateData ground = template.groundTiles[i];
+    //        Vector3 tilePos = ground.tilePosition;
+    //        BuildingSpotData buildingSpot = template.GetBuildingSpotAtLocation(tilePos);
+    //        tilePos.x += startPos.x;
+    //        tilePos.y += startPos.y;
 
-            TileTemplateData detail = template.detailTiles[i];
-            TileTemplateData groundWall;
-            if (template.groundWallTiles != null) {
-                groundWall = template.groundWallTiles[i];
-            } else {
-                groundWall = TileTemplateData.Empty;
-            }
-            TileTemplateData structureWall = template.structureWallTiles[i];
-            TileTemplateData obj = template.objectTiles[i];
-            if (!generated.ContainsKey((int)tilePos.x)) {
-                generated.Add((int)tilePos.x, new Dictionary<int, LocationGridTileSettings>());
-            }
+    //        TileTemplateData detail = template.detailTiles[i];
+    //        TileTemplateData groundWall;
+    //        if (template.groundWallTiles != null) {
+    //            groundWall = template.groundWallTiles[i];
+    //        } else {
+    //            groundWall = TileTemplateData.Empty;
+    //        }
+    //        TileTemplateData structureWall = template.structureWallTiles[i];
+    //        TileTemplateData obj = template.objectTiles[i];
+    //        if (!generated.ContainsKey((int)tilePos.x)) {
+    //            generated.Add((int)tilePos.x, new Dictionary<int, LocationGridTileSettings>());
+    //        }
 
-            LocationGridTileSettings settings = new LocationGridTileSettings() {
-                groundTile = ground,
-                groundWallTile = groundWall,
-                detailTile = detail,
-                structureWallTile = structureWall,
-                objectTile = obj,
-                buildingSpot = buildingSpot
-            };
-            generated[(int)tilePos.x].Add((int)tilePos.y, settings);
-        }
-        StructureSlot slot = new StructureSlot() { size = template.size, startPos = startPos, furnitureSpots = template.furnitureSpots };
-        log = "Placed structure slot with size " + slot.size.ToString() + " at " + startPos.ToString();
+    //        LocationGridTileSettings settings = new LocationGridTileSettings() {
+    //            groundTile = ground,
+    //            groundWallTile = groundWall,
+    //            detailTile = detail,
+    //            structureWallTile = structureWall,
+    //            objectTile = obj,
+    //            buildingSpot = buildingSpot
+    //        };
+    //        generated[(int)tilePos.x].Add((int)tilePos.y, settings);
+    //    }
+    //    StructureSlot slot = new StructureSlot() { size = template.size, startPos = startPos, furnitureSpots = template.furnitureSpots };
+    //    log = "Placed structure slot with size " + slot.size.ToString() + " at " + startPos.ToString();
 
-        AddPlacedStructure(structureType, slot);
-        return generated;
+    //    AddPlacedStructure(structureType, slot);
+    //    return generated;
 
-    }
+    //}
     public void DrawTownCenterTemplateForGeneration(StructureTemplate template, Vector3Int startPos) {
         DrawTiles(agGroundTilemap, template.groundTiles, startPos);
         DrawTiles(agGroundWallTilemap, template.groundWallTiles, startPos);
@@ -900,7 +907,7 @@ public class InteriorMapManager : MonoBehaviour {
     /// <param name="connection1">The connection from the template</param>
     /// <param name="connection2">The connection the template will connect to</param>
     /// <returns></returns>
-    public Vector3Int GetMoveUnitsOfTemplateGivenConnections(StructureTemplate template, BuildingSpot connection1, BuildingSpot connection2) {
+    public Vector3Int GetMoveUnitsOfTemplateGivenConnections(StructureTemplate template, BuildingSpotData connection1, BuildingSpotData connection2) {
         Vector3Int shiftTemplateBy = connection2.Difference(connection1);
         //switch (connection2.neededDirection) {
         //    case Cardinal_Direction.North:
@@ -991,6 +998,12 @@ public class InteriorMapManager : MonoBehaviour {
         }
     }
     #endregion
+
+    #region Structures
+    public List<GameObject> GetStructurePrefabsForStructure(STRUCTURE_TYPE type) {
+        return structurePrefabs[type];
+    }
+    #endregion
 }
 
 #region Templates
@@ -1003,13 +1016,13 @@ public class TownMapSettings {
     public TileTemplateData[] structureTiles;
     public TileTemplateData[] objectTiles;
     public TileTemplateData[] detailTiles;
-    public List<BuildingSpot> buildSpots;
+    public List<BuildingSpotData> buildSpots;
 
     [System.NonSerialized]
     public Dictionary<STRUCTURE_TYPE, List<StructureSlot>> structureSlots;
 
     public TownMapSettings() {
-        buildSpots = new List<BuildingSpot>();
+        buildSpots = new List<BuildingSpotData>();
     }
 
     public void LogInfo() {
@@ -1052,7 +1065,8 @@ public struct LocationGridTileSettings {
     public TileTemplateData detailTile;
     public TileTemplateData structureWallTile;
     public TileTemplateData objectTile;
-    public BuildingSpot buildingSpot; //if this has value then it means that there is a building spot here
+    public bool hasBuildingSpot;
+    public BuildingSpotData buildingSpot; //if this has value then it means that there is a building spot here
 
     public LocationGridTileSettings MergeWith(LocationGridTileSettings otherSetting) {
         LocationGridTileSettings setting = this;
@@ -1061,7 +1075,7 @@ public struct LocationGridTileSettings {
         setting.detailTile = otherSetting.detailTile;
         setting.structureWallTile = otherSetting.structureWallTile;
         setting.objectTile = otherSetting.objectTile;
-        if (setting.buildingSpot == null) {
+        if (setting.hasBuildingSpot == false) {
             setting.buildingSpot = otherSetting.buildingSpot;
         }
         return setting;
@@ -1073,7 +1087,7 @@ public struct LocationGridTileSettings {
         detailTile.tilePosition = newPos;
         structureWallTile.tilePosition = newPos;
         objectTile.tilePosition = newPos;
-        if (buildingSpot != null) {
+        if (hasBuildingSpot) {
             buildingSpot.location = new Vector3Int((int)newPos.x, (int)newPos.y, 0);
         }
         

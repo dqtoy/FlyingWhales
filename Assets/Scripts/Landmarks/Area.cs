@@ -38,8 +38,6 @@ public class Area : IJobOwner {
 
     public List<JobQueueItem> availableJobs { get; protected set; }
     public JOB_OWNER ownerType { get { return JOB_OWNER.QUEST; } }
-    //public Race defaultRace { get; private set; }
-    //private RACE _raceType;
 
     public LocationClassManager locationClassManager { get; private set; }
 
@@ -363,8 +361,8 @@ public class Area : IJobOwner {
     /// </summary>
     public void OnAreaSetAsActive() {
         SubscribeToSignals();
-        LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
-        CheckAreaInventoryJobs(warehouse);
+        //LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
+        //CheckAreaInventoryJobs(warehouse);
     }
     //public void SetOutlineState(bool state) {
     //    SpriteRenderer[] borders = coreTile.GetAllBorders();
@@ -724,7 +722,7 @@ public class Area : IJobOwner {
         //LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.CEMETERY, true);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WORK_AREA, true);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WILDERNESS, false);
-        //LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.POND, true);
+        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.POND, true);
         for (int i = 0; i < citizenCount; i++) {
             LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.DWELLING, true);
         }
@@ -1419,7 +1417,6 @@ public class Area : IJobOwner {
                 token.SetOwner(this.owner);
             }
         }
-        
     }
     #endregion
 

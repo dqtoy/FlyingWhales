@@ -36,6 +36,10 @@ public static class Signals {
     public static string TILE_HOVERED_OUT = "OnTileHoveredOut"; //Parameters (HexTile hoveredTile)
     #endregion
 
+    #region Area Map
+    public static string TILE_STRUCTURE_SET = "OnTileStructureSet";
+    #endregion
+
     #region Areas
     public static string AREA_CREATED = "OnAreaCreated"; //Parameters (Area newArea)
     public static string AREA_DELETED = "OnAreaDeleted"; //Parameters (Area deletedArea)

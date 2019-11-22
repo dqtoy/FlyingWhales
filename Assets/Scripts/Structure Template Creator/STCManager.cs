@@ -100,7 +100,7 @@ public class STCManager : MonoBehaviour {
         }
 
         //shift connectors
-        BuildingSpotMonobehaviour[] connectors = connectorsParent.GetComponentsInChildren<BuildingSpotMonobehaviour>();
+        BuildingSpotDataMonobehaviour[] connectors = connectorsParent.GetComponentsInChildren<BuildingSpotDataMonobehaviour>();
         for (int i = 0; i < connectors.Length; i++) {
             Vector3 currPos = connectors[i].transform.localPosition;
             //Vector3 actualPos = new Vector3(currPos.x - 0.5f, currPos.y - 0.5f, 0f);
@@ -139,12 +139,12 @@ public class STCManager : MonoBehaviour {
         TileTemplateData[] objectTiles = GetTileData(objectsTilemap, groundTilemap.cellBounds);
         TileTemplateData[] detailTiles = GetTileData(detailsTilemap, groundTilemap.cellBounds);
 
-        BuildingSpotMonobehaviour[] buildingSpotMonos = Utilities.GetComponentsInDirectChildren<BuildingSpotMonobehaviour>(connectorsParent.gameObject);
+        BuildingSpotDataMonobehaviour[] buildingSpotMonos = Utilities.GetComponentsInDirectChildren<BuildingSpotDataMonobehaviour>(connectorsParent.gameObject);
         FurnitureSpotMono[] furnitureSpotMonos = Utilities.GetComponentsInDirectChildren<FurnitureSpotMono>(furnitureParent.gameObject);
 
-        BuildingSpot[] connectors = new BuildingSpot[buildingSpotMonos.Length];
+        BuildingSpotData[] connectors = new BuildingSpotData[buildingSpotMonos.Length];
         for (int i = 0; i < buildingSpotMonos.Length; i++) {
-            BuildingSpotMonobehaviour currMono = buildingSpotMonos[i];
+            BuildingSpotDataMonobehaviour currMono = buildingSpotMonos[i];
             connectors[i] = currMono.Convert();
         }
 
@@ -180,9 +180,9 @@ public class STCManager : MonoBehaviour {
         }
 #endif
     }
-    private BuildingSpotMonobehaviour GetBuildingSpotWithID(int id, BuildingSpotMonobehaviour[] pool) {
+    private BuildingSpotDataMonobehaviour GetBuildingSpotWithID(int id, BuildingSpotDataMonobehaviour[] pool) {
         for (int i = 0; i < pool.Length; i++) {
-            BuildingSpotMonobehaviour currSpot = pool[i];
+            BuildingSpotDataMonobehaviour currSpot = pool[i];
             if (currSpot.id == id) {
                 return currSpot;
             }
@@ -200,25 +200,25 @@ public class STCManager : MonoBehaviour {
         //connectors
         Utilities.DestroyChildren(connectorsParent);
         if (st.connectors != null) {
-            BuildingSpotMonobehaviour[] createdConnectors = new BuildingSpotMonobehaviour[st.connectors.Length];
-            BuildingSpot[] ordered = st.connectors.ToList().OrderBy(x => x.id).ToArray();
+            BuildingSpotDataMonobehaviour[] createdConnectors = new BuildingSpotDataMonobehaviour[st.connectors.Length];
+            BuildingSpotData[] ordered = st.connectors.ToList().OrderBy(x => x.id).ToArray();
             for (int i = 0; i < ordered.Length; i++) {
-                BuildingSpot connector = ordered[i];
+                BuildingSpotData connector = ordered[i];
                 GameObject newConnector = GameObject.Instantiate(connectorPrefab, connectorsParent);
                 newConnector.transform.localPosition = new Vector3(connector.location.x + 0.5f, connector.location.y + 0.5f, 0);
-                BuildingSpotMonobehaviour cm = newConnector.GetComponent<BuildingSpotMonobehaviour>();
+                BuildingSpotDataMonobehaviour cm = newConnector.GetComponent<BuildingSpotDataMonobehaviour>();
                 cm.id = connector.id;
                 createdConnectors[i] = cm;
             }
 
             //assign adjacent ids
             for (int i = 0; i < createdConnectors.Length; i++) {
-                BuildingSpotMonobehaviour currConnector = createdConnectors[i];
-                BuildingSpot data = ordered[i];
+                BuildingSpotDataMonobehaviour currConnector = createdConnectors[i];
+                BuildingSpotData data = ordered[i];
                 if (data.adjacentSpots != null) {
                     for (int j = 0; j < data.adjacentSpots.Length; j++) {
                         int currAdjacentID = data.adjacentSpots[j];
-                        BuildingSpotMonobehaviour adjacentSpot = GetBuildingSpotWithID(currAdjacentID, createdConnectors);
+                        BuildingSpotDataMonobehaviour adjacentSpot = GetBuildingSpotWithID(currAdjacentID, createdConnectors);
                         currConnector.adjacentSpots.Add(adjacentSpot);
                     }
                 }
@@ -356,11 +356,11 @@ public class StructureTemplate {
     public TileTemplateData[] structureWallTiles;
     public TileTemplateData[] objectTiles;
     public TileTemplateData[] detailTiles;
-    public BuildingSpot[] connectors;
+    public BuildingSpotData[] connectors;
     public FurnitureSpot[] furnitureSpots;
 
     public StructureTemplate(string _name, TileTemplateData[] _ground, TileTemplateData[] _groundWalls, TileTemplateData[] _walls,
-        TileTemplateData[] _objects, TileTemplateData[] _details, Point _size, BuildingSpot[] _connectors, FurnitureSpot[] _furnitureSpots) {
+        TileTemplateData[] _objects, TileTemplateData[] _details, Point _size, BuildingSpotData[] _connectors, FurnitureSpot[] _furnitureSpots) {
         name = _name;
         size = _size;
         groundTiles = _ground;
@@ -381,36 +381,38 @@ public class StructureTemplate {
         }
         return connectors.Length >= structureCount;
     }
-    public bool TryGetOpenBuildingSpot(out BuildingSpot spot) {
+    public bool TryGetOpenBuildingSpot(out BuildingSpotData spot) {
         for (int i = 0; i < connectors.Length; i++) {
             if (connectors[i].isOpen) {
                 spot = connectors[i];
                 return true;
             }
         }
-        spot = default(BuildingSpot);
+        spot = default(BuildingSpotData);
         return false;
     }
-    public BuildingSpot GetRandomBuildingSpot() {
+    public BuildingSpotData GetRandomBuildingSpot() {
         return connectors[Random.Range(0, connectors.Length)];
     }
-    public BuildingSpot GetBuildingSpotWithID(int id) {
+    public BuildingSpotData GetBuildingSpotWithID(int id) {
         for (int i = 0; i < connectors.Length; i++) {
-            BuildingSpot currSpot = connectors[i];
+            BuildingSpotData currSpot = connectors[i];
             if (currSpot.id == id) {
                 return currSpot;
             }
         }
         throw new System.Exception("There is no building spot with id " + id.ToString());
     }
-    public BuildingSpot GetBuildingSpotAtLocation(Vector3 location) {
+    public bool TryGetBuildingSpotDataAtLocation(Vector3 location, out BuildingSpotData spot) {
         for (int i = 0; i < connectors.Length; i++) {
-            BuildingSpot currSpot = connectors[i];
+            BuildingSpotData currSpot = connectors[i];
             if (currSpot.location.x == location.x && currSpot.location.y == location.y) {
-                return currSpot;
+                spot = currSpot;
+                return true;
             }
         }
-        return null;
+        spot = default(BuildingSpotData);
+        return false;
     }
     #endregion
 
@@ -429,9 +431,9 @@ public class StructureTemplate {
             data[i] = currData;
         }
     }
-    private void UpdatePositionsGivenOrigin(BuildingSpot[] data, Vector3Int origin) {
+    private void UpdatePositionsGivenOrigin(BuildingSpotData[] data, Vector3Int origin) {
         for (int i = 0; i < data.Length; i++) {
-            BuildingSpot currData = data[i];
+            BuildingSpotData currData = data[i];
             currData.location = new Vector3Int(currData.location.x + origin.x, currData.location.y + origin.y, 0);
             data[i] = currData;
         }

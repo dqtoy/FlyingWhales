@@ -4,10 +4,10 @@ using TMPro;
 using UnityEngine;
 
 [ExecuteInEditMode]
-public class BuildingSpotMonobehaviour : MonoBehaviour {
+public class BuildingSpotDataMonobehaviour : MonoBehaviour {
 
     public int id;
-    public List<BuildingSpotMonobehaviour> adjacentSpots;
+    public List<BuildingSpotDataMonobehaviour> adjacentSpots;
     public TextMeshPro idText;
     public bool isOpen = false;
 
@@ -18,13 +18,13 @@ public class BuildingSpotMonobehaviour : MonoBehaviour {
         this.name = summary;
     }
 
-    public BuildingSpot Convert() {
+    public BuildingSpotData Convert() {
         int[] converted = new int[adjacentSpots.Count];
         for (int i = 0; i < adjacentSpots.Count; i++) {
-            BuildingSpotMonobehaviour currSpot = adjacentSpots[i];
+            BuildingSpotDataMonobehaviour currSpot = adjacentSpots[i];
             converted[i] = currSpot.id;
         }
-        return new BuildingSpot() {
+        return new BuildingSpotData() {
             id = this.id,
             location = new Vector3Int((int)(transform.localPosition.x), (int)(transform.localPosition.y), 0),
             isOpen = this.isOpen,

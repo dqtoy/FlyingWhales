@@ -493,6 +493,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1889725855145798
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4990457838575030}
+  m_Layer: 14
+  m_Name: Structures
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1907983261482048
 GameObject:
   m_ObjectHideFlags: 0
@@ -795,10 +810,24 @@ Transform:
   m_Children:
   - {fileID: 224982915080243050}
   - {fileID: 4416850454280092}
+  - {fileID: 4990457838575030}
   - {fileID: 224866052313463470}
   - {fileID: 224719446748379270}
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4990457838575030
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1889725855145798}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4962896830789656}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &114001773158186232
 MonoBehaviour:
@@ -1187,26 +1216,11 @@ MonoBehaviour:
     type: 2}
   bed1SleepingVariant: {fileID: 11400000, guid: 33042c7f3715cf642b7abbb0d2248827,
     type: 2}
-  leftWall: {fileID: 11400000, guid: c05951cff2b0fc7449f72ccebda1c382, type: 2}
-  rightWall: {fileID: 11400000, guid: 9c1ad6fdb19ade5428fd7d86124e6aa4, type: 2}
-  topWall: {fileID: 11400000, guid: 801dc14b009276d4cb7b1cc2212bceee, type: 2}
-  bottomWall: {fileID: 11400000, guid: eaf437bd7d644a84599aab702566550a, type: 2}
-  topLeftCornerWall: {fileID: 11400000, guid: ebb862fbf056c2649971676936e867eb, type: 2}
-  botLeftCornerWall: {fileID: 11400000, guid: ec01d22f2c77ecb46b909fed89362bee, type: 2}
-  topRightCornerWall: {fileID: 11400000, guid: d855b9adcb25c324a8c20945831a0cc9, type: 2}
-  botRightCornerWall: {fileID: 11400000, guid: c488737a2bf124f4599aad80018fff80, type: 2}
-  topDoor: {fileID: 11400000, guid: 26fbebc594b3e6f49b93c968f1fe1f56, type: 2}
-  botDoor: {fileID: 11400000, guid: a4b51625580fecd48b2c75811029140c, type: 2}
-  leftDoor: {fileID: 11400000, guid: 0aef789ae48f000469cfc460a08750c1, type: 2}
-  rightDoor: {fileID: 11400000, guid: 45d4a712d80be9c40b53af4c40d053f6, type: 2}
-  dungeonWallTile: {fileID: 11400000, guid: 0e76310f7d566d54c98f2d850927ab6d, type: 2}
-  dungeonFloorTile: {fileID: 11400000, guid: 2403de5724c5b4247bc3fa5bfd41f6aa, type: 2}
   grassTile: {fileID: 11400000, guid: 5d1dfc24b82640c44bf0dd6e37c21a5f, type: 2}
   soilTile: {fileID: 11400000, guid: 9730174dcd21daf4f9643570dea4e144, type: 2}
   stoneTile: {fileID: 11400000, guid: 1eadf98aa5a55484f8390f237ea1f0f4, type: 2}
   snowTile: {fileID: 11400000, guid: 9c49ed01e47d38948bdb1fa1595e8183, type: 2}
   tundraTile: {fileID: 11400000, guid: d50f2fc723074ad4d91fea1cde34cbba, type: 2}
-  snowStoneFloorTile: {fileID: 11400000, guid: 223ec6e7f4915bf4b99adff35de3ab6e, type: 2}
   snowDirt: {fileID: 11400000, guid: f661c32973f40b2459dd33272f6fd9c3, type: 2}
   bigTreeTile: {fileID: 11400000, guid: 9a1c438dfdf8358469ee6162915febde, type: 2}
   treeTile: {fileID: 11400000, guid: 2e58fd5b2fae6c04d9113fc8182a44ae, type: 2}
@@ -1224,13 +1238,9 @@ MonoBehaviour:
   centerGOPrefab: {fileID: 1235531871457826, guid: 2b36a36d8ac855246b9993705d70c259,
     type: 2}
   graphUpdateScenesParent: {fileID: 4565357923952950}
-  pathLineRenderer: {fileID: 120984747812472938}
-  radius: 0
-  radiusLimit: 0
-  x: 0
-  y: 0
-  buildSpotPrefab: {fileID: 1855560008602744, guid: 7b7c51c67b1b4aa44805929102ceef8b,
+  buildSpotPrefab: {fileID: 1128990682525240, guid: 74dab492db5997b48b9676d136a36650,
     type: 2}
+  structureParent: {fileID: 4990457838575030}
   offsetX: 0
   offsetY: 0
   northEdgeTilemap: {fileID: 8195094282472968900}
@@ -1280,13 +1290,7 @@ MonoBehaviour:
       - {fileID: 0}
       - {fileID: 0}
       - {fileID: 0}
-  mapsToClear:
-  - {fileID: 8195094281662849848}
-  - {fileID: 8195094281692177958}
-  - {fileID: 8195094279940266850}
-  - {fileID: 8195094281029965638}
-  - {fileID: 8195094281757846180}
-  - {fileID: 8195094282159575352}
+  pathLineRenderer: {fileID: 120984747812472938}
 --- !u!114 &114419090812351620
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2032,7 +2036,7 @@ RectTransform:
   - {fileID: 224184709286759138}
   - {fileID: 224053078617451378}
   m_Father: {fileID: 4962896830789656}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -2053,7 +2057,7 @@ RectTransform:
   - {fileID: 224550571641554104}
   - {fileID: 224418071688748722}
   m_Father: {fileID: 4962896830789656}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -83393,6 +83393,19 @@ MonoBehaviour:
   tileObjectSlotPrefab: {fileID: 1847832602141464, guid: cf9a8aa5ff568694e81300ab062564ff,
     type: 2}
   areaMapLight: {fileID: 450682173}
+  structurePrefabs:
+    m_keys: 030000000200000001000000090000000a000000
+    m_values:
+    - data:
+      - {fileID: 1293362371696982, guid: 191a9e123946de349a254ec4c008d174, type: 2}
+    - data:
+      - {fileID: 1141179552670562, guid: fef47f679840f2349bbbdd68a5d554de, type: 2}
+    - data:
+      - {fileID: 1839432329802964, guid: 4951309cdc5721246873f2048bbcb0b5, type: 2}
+    - data:
+      - {fileID: 1785905159905196, guid: dd42394f7ee38ef4babf835f00d0529b, type: 2}
+    - data:
+      - {fileID: 1794830140391482, guid: e7f07aa2f80a73b4c8edfdb9741a50b2, type: 2}
   allTileAssets:
   - {fileID: 11400000, guid: 0aea801102e59e348ab2bb7724ad9da6, type: 2}
   - {fileID: 11400000, guid: ab12e88eb7994f141842ccf32417172c, type: 2}

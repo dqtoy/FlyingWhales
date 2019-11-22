@@ -45,6 +45,8 @@ public class YieldTypeLandmarksDictionary : SerializableDictionary<LANDMARK_YIEL
 public class InterventionAbilityTierDictionary : SerializableDictionary<INTERVENTION_ABILITY, int> { }
 [System.Serializable]
 public class CharacterClassAssetDictionary : SerializableDictionary<string, CharacterClassAsset> { }
+[System.Serializable]
+public class LocationStructurePrefabDictionary : SerializableDictionary<STRUCTURE_TYPE, List<GameObject>, GameObjectListStorage> { }
 
 //List storage
 [System.Serializable]
@@ -57,3 +59,5 @@ public class TileObjectSlotListStorage : SerializableDictionary.Storage<List<Til
 public class TileBaseListStorage : SerializableDictionary.Storage<List<TileBase>> { }
 [System.Serializable]
 public class LandmarkTypeListStorage : SerializableDictionary.Storage<List<LANDMARK_TYPE>> { }
+[System.Serializable]
+public class GameObjectListStorage : SerializableDictionary.Storage<List<GameObject>> { }
