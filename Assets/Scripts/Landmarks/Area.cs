@@ -870,9 +870,7 @@ public class Area : IJobOwner {
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
             for (int i = 0; i < keyValuePair.Value.Count; i++) {
                 LocationStructure structure = keyValuePair.Value[i];
-                if (structure.isFromTemplate) {
-                    structure.RegisterPreplacedObjects();
-                }
+                structure.structureObj?.RegisterPreplacedObjects(structure);
             }
         }
 
@@ -885,18 +883,6 @@ public class Area : IJobOwner {
         if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
             LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][0];
             structure.AddPOI(new MagicCircle(structure));
-        }
-        //Guitar
-        //Each Dwelling has a 40% chance of having one Guitar. Guitar should be placed at an edge tile.
-        if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
-            for (int i = 0; i < structures[STRUCTURE_TYPE.DWELLING].Count; i++) {
-                LocationStructure currDwelling = structures[STRUCTURE_TYPE.DWELLING][i];
-                if (!currDwelling.isFromTemplate) {
-                    if (UnityEngine.Random.Range(0, 100) < 40) {
-                        currDwelling.AddPOI(new Guitar(currDwelling));
-                    }
-                }
-            }
         }
         //Well
         if (structures.ContainsKey(STRUCTURE_TYPE.WORK_AREA)) {

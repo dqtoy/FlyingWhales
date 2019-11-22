@@ -70,19 +70,19 @@ public class LocationStructureObject : MonoBehaviour {
     #endregion
 
     #region Tile Objects
-    public void RegisterPreplacedObjects() {
+    public void RegisterPreplacedObjects(LocationStructure structure) {
         for (int i = 0; i < tiles.Length; i++) {
             LocationGridTile currTile = tiles[i];
-            UnityEngine.Tilemaps.TileBase objTile = currTile.parentAreaMap.objectsTilemap.GetTile(currTile.localPlace);
+            UnityEngine.Tilemaps.TileBase objTile = objectTileMap.GetTile(currTile.localPlace);
             //TODO: Make this better! because this does not scale well.
             if (objTile != null) {
                 switch (objTile.name) {
                     case "Bed":
-                        AddPOI(new Bed(this), currTile, false);
+                        structure.AddPOI(new Bed(structure), currTile, false);
                         currTile.SetReservedType(TILE_OBJECT_TYPE.BED);
                         break;
                     case "Desk":
-                        AddPOI(new Desk(this), currTile, false);
+                        structure.AddPOI(new Desk(structure), currTile, false);
                         currTile.SetReservedType(TILE_OBJECT_TYPE.DESK);
                         break;
                     case "Table0":
@@ -91,25 +91,25 @@ public class LocationStructureObject : MonoBehaviour {
                     case "tableDecor00":
                     case "Bartop_Left":
                     case "Bartop_Right":
-                        Table table = new Table(this);
+                        Table table = new Table(structure);
                         table.SetUsedAsset(objTile);
-                        AddPOI(table, currTile, false);
+                        structure.AddPOI(table, currTile, false);
                         currTile.SetReservedType(TILE_OBJECT_TYPE.TABLE);
                         break;
                     case "SupplyPile":
-                        AddPOI(new SupplyPile(this), currTile, false);
+                        structure.AddPOI(new SupplyPile(structure), currTile, false);
                         currTile.SetReservedType(TILE_OBJECT_TYPE.SUPPLY_PILE);
                         break;
                     case "FoodPile":
-                        AddPOI(new FoodPile(this), currTile, false);
+                        structure.AddPOI(new FoodPile(structure), currTile, false);
                         currTile.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
                         break;
                     case "Guitar":
-                        AddPOI(new Guitar(this), currTile, false);
+                        structure.AddPOI(new Guitar(structure), currTile, false);
                         currTile.SetReservedType(TILE_OBJECT_TYPE.GUITAR);
                         break;
                     case "WaterWell":
-                        AddPOI(new WaterWell(this), currTile, false);
+                        structure.AddPOI(new WaterWell(structure), currTile, false);
                         currTile.SetReservedType(TILE_OBJECT_TYPE.WATER_WELL);
                         break;
                     default:
