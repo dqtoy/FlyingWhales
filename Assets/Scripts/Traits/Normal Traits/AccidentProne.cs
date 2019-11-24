@@ -60,7 +60,7 @@ namespace Traits {
             if (character.marker.isMoving) {
                 //If moving, the character will stumble and get injured.
                 DoStumble();
-            } else if (character.currentActionNode.action != null && !excludedActionsFromAccidentProneTrait.Contains(character.currentActionNode.action.goapType)) {
+            } else if (character.currentActionNode != null && !excludedActionsFromAccidentProneTrait.Contains(character.currentActionNode.action.goapType)) {
                 //If doing something, the character will fail and get injured.
                 DoAccident(character.currentActionNode.action);
             }

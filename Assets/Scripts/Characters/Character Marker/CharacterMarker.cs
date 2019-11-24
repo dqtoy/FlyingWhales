@@ -819,49 +819,25 @@ public class CharacterMarker : PooledObject {
     }
     public void UpdateMarkerVisuals() {
         CharacterClassAsset assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender, character.characterClass.className);
-        if (assets.animator != null) {
-            animatorOverrideController = new AnimatorOverrideController(assets.animator);
+        if (assets != null) {
+            if (assets.animator != null) {
+                animatorOverrideController = new AnimatorOverrideController(assets.animator);
 
-            animatorOverrideController["Idle"] = assets.idleClip;
-            animatorOverrideController["Dead"] = assets.deadClip;
-            animatorOverrideController["Raise Dead"] = assets.raiseDeadClip;
-            animatorOverrideController["Sleep Ground"] = assets.sleepGroundClip;
-            animatorOverrideController["Walk"] = assets.walkClip;
-            animatorOverrideController["Attack"] = assets.attackClip;
+                animatorOverrideController["Idle"] = assets.idleClip;
+                animatorOverrideController["Dead"] = assets.deadClip;
+                animatorOverrideController["Raise Dead"] = assets.raiseDeadClip;
+                animatorOverrideController["Sleep Ground"] = assets.sleepGroundClip;
+                animatorOverrideController["Walk"] = assets.walkClip;
+                animatorOverrideController["Attack"] = assets.attackClip;
 
-            //update attack animations based on class
-            //AnimationClip attackClip = null;
-            //if (character.role.roleType == CHARACTER_ROLE.BEAST) {
-            //    attackClip = assets.biteClip;
-            //    attackExecutedTime = assets.biteTiming;
-            //} else {
-            //    switch (character.characterClass.rangeType) {
-            //        case RANGE_TYPE.MELEE:
-            //            attackClip = assets.slashClip;
-            //            attackExecutedTime = assets.slashTiming;
-            //            break;
-            //        case RANGE_TYPE.RANGED:
-            //            if (character.characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
-            //                attackClip = assets.arrowClip;
-            //                attackExecutedTime = assets.arrowTiming;
-            //            } else {
-            //                attackClip = assets.magicClip;
-            //                attackExecutedTime = assets.magicTiming;
-            //            }
-            //            break;
-            //        default:
-            //            attackClip = assets.slashClip;
-            //            attackExecutedTime = assets.slashTiming;
-            //            break;
-            //    }
-            //}
-
-            animator.runtimeAnimatorController = animatorOverrideController;
-        } else {
-            animator.runtimeAnimatorController = null;
+                animator.runtimeAnimatorController = animatorOverrideController;
+            } else {
+                animator.runtimeAnimatorController = null;
+            }
+            mainImg.sprite = assets.defaultSprite;
+            UpdateHairState();
         }
-        mainImg.sprite = assets.defaultSprite;
-        UpdateHairState();
+        
     }
     public void UpdatePosition() {
         //This is checked per update, stress test this for performance

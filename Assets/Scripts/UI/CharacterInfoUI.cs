@@ -412,10 +412,10 @@ public class CharacterInfoUI : UIMenu {
         if (_activeCharacter.minion != null) {
             return;
         }
- 
-        statusTraitsLbl.text = string.Empty;
-        normalTraitsLbl.text = string.Empty;
-        
+
+        string statusTraits = string.Empty;
+        string normalTraits = string.Empty;
+
         for (int i = 0; i < _activeCharacter.traitContainer.allTraits.Count; i++) {
             Trait currTrait = _activeCharacter.traitContainer.allTraits[i];
             if (currTrait.isHidden) {
@@ -432,10 +432,10 @@ public class CharacterInfoUI : UIMenu {
                 } else if (currTrait.type == TRAIT_TYPE.FLAW) {
                     color = flawTextColor;
                 }
-                if (!string.IsNullOrEmpty(statusTraitsLbl.text)) {
-                    statusTraitsLbl.text += ", ";
+                if (!string.IsNullOrEmpty(statusTraits)) {
+                    statusTraits += ", ";
                 }
-                statusTraitsLbl.text += "<b><color=" + color + "><link=" + '"' + i.ToString() + '"' + ">" + currTrait.name + "</link></color></b>";
+                statusTraits += "<b><color=" + color + "><link=" + '"' + i.ToString() + '"' + ">" + currTrait.name + "</link></color></b>";
             } else {
                 string color = normalTextColor;
                 if (currTrait.type == TRAIT_TYPE.BUFF) {
@@ -443,11 +443,22 @@ public class CharacterInfoUI : UIMenu {
                 } else if (currTrait.type == TRAIT_TYPE.FLAW) {
                     color = flawTextColor;
                 }
-                if (!string.IsNullOrEmpty(normalTraitsLbl.text)) {
-                    normalTraitsLbl.text += ", ";
+                if (!string.IsNullOrEmpty(normalTraits)) {
+                    normalTraits += ", ";
                 }
-                normalTraitsLbl.text += "<b><color=" + color + "><link=" + '"' + i.ToString() + '"' + ">" + currTrait.name + "</link></color></b>";
+                normalTraits += "<b><color=" + color + "><link=" + '"' + i.ToString() + '"' + ">" + currTrait.name + "</link></color></b>";
             }
+        }
+
+        statusTraitsLbl.text = string.Empty;
+        if (string.IsNullOrEmpty(statusTraits) == false) {
+            //character has status traits
+            statusTraitsLbl.text = "<i>Statuses:</i> \n" + statusTraits + "\n"; 
+        }
+
+        if (string.IsNullOrEmpty(normalTraits) == false) {
+            //character has normal traits
+            statusTraitsLbl.text += "<i>Traits:</i> \n" + normalTraits;
         }
     }
     public void OnHoverTrait(object obj) {

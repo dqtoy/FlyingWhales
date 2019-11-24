@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using Traits;
 
-public class SpecialToken : IPointOfInterest {
+public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
     public int id { get; private set; }
     public string name { get; private set; }
     public SPECIAL_TOKEN specialTokenType;
@@ -19,7 +19,6 @@ public class SpecialToken : IPointOfInterest {
     public Area specificLocation { get { return gridTileLocation.structure.location; } }
     public bool isDisabledByPlayer { get; protected set; }
     public POI_STATE state { get; protected set; }
-    public POICollisionTrigger collisionTrigger { get; protected set; }
     public int uses { get; protected set; } //how many times can this item be used?
     public List<JobQueueItem> allJobsTargettingThis { get; private set; }
     public Character carriedByCharacter { get; private set; }
@@ -81,11 +80,18 @@ public class SpecialToken : IPointOfInterest {
         //targettedByAction = new List<GoapAction>();
         uses = 1;
         CreateTraitContainer();
-        InitializeCollisionTrigger();
+        InitializeMapObject(this);
     }
     public void SetID(int id) {
         id = Utilities.SetID(this, id);
     }
+
+    #region Area Map Object
+    protected override void CreateAreaMapGameObject() {
+        GameObject obj = InteriorMapManager.Instance.areaMapObjectFactory.CreateNewItemAreaMapObject(this.poiType);
+        areaMapGameObject = obj.GetComponent<ItemGameObject>();
+    }
+    #endregion
 
     #region Virtuals
     public virtual void OnObtainToken(Character character) { }
@@ -127,21 +133,15 @@ public class SpecialToken : IPointOfInterest {
     public void SetCarriedByCharacter(Character character) {
         this.carriedByCharacter = character;
     }
-    //public void AddTargettedByAction(GoapAction action) {
-    //    targettedByAction.Add(action);
-    //}
-    //public void RemoveTargettedByAction(GoapAction action) {
-    //    targettedByAction.Remove(action);
-    //}
 
     #region Area Map
     public void SetGridTileLocation(LocationGridTile tile) {
         this.tile = tile;
         if (tile == null) {
-            DisableCollisionTrigger();
+            DisableGameObject();
             Messenger.Broadcast<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, this, tile);
         } else {
-            PlaceCollisionTriggerAt(tile);
+            PlaceMapObjectAt(tile);
             Messenger.Broadcast<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, this, tile);
         }
     }
@@ -289,30 +289,6 @@ public class SpecialToken : IPointOfInterest {
         for (int i = 0; i < allTraits.Count; i++) {
             traitContainer.RemoveTrait(this, allTraits[i]);
         }
-    }
-    #endregion
-
-    #region Collision
-    public void InitializeCollisionTrigger() {
-        GameObject collisionGO = GameObject.Instantiate(InteriorMapManager.Instance.poiCollisionTriggerPrefab, InteriorMapManager.Instance.transform);
-        SetCollisionTrigger(collisionGO.GetComponent<POICollisionTrigger>());
-        collisionGO.SetActive(false);
-        collisionTrigger.Initialize(this);
-        RectTransform rt = collisionGO.transform as RectTransform;
-        rt.anchorMin = Vector2.zero;
-        rt.anchorMax = Vector2.zero;
-    }
-    public void PlaceCollisionTriggerAt(LocationGridTile tile) {
-        collisionTrigger.transform.SetParent(tile.parentAreaMap.objectsParent);
-        (collisionTrigger.transform as RectTransform).anchoredPosition = tile.centeredLocalLocation;
-        collisionTrigger.gameObject.SetActive(true);
-        collisionTrigger.SetLocation(tile);
-    }
-    public void DisableCollisionTrigger() {
-        collisionTrigger.gameObject.SetActive(false);
-    }
-    public void SetCollisionTrigger(POICollisionTrigger trigger) {
-        collisionTrigger = trigger;
     }
     #endregion
 

@@ -654,7 +654,8 @@ public class CharacterManager : MonoBehaviour {
             if (currRaceAsset.race == race) {
                 GenderMarkerAsset asset = currRaceAsset.GetMarkerAsset(gender);
                 if (asset.characterClassAssets.ContainsKey(characterClassName) == false) {
-                    throw new System.Exception($"There are no class assets for {characterClassName} {gender.ToString()} {race.ToString()}");
+                    Debug.LogWarning($"There are no class assets for {characterClassName} {gender.ToString()} {race.ToString()}");
+                    return null;
                 }
                 return asset.characterClassAssets[characterClassName];
             }

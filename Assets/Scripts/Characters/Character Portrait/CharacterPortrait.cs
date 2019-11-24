@@ -55,7 +55,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         Messenger.AddListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
     }
 
-    public void GeneratePortrait(Character character) {
+    public void GeneratePortrait(Character character, bool makePixelPerfect = true) {
         _character = character;
         _portraitSettings = character.portraitSettings;
 
@@ -68,23 +68,25 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         SetPortraitAsset("mustache", character.portraitSettings.mustache, _portraitSettings.race, _portraitSettings.gender, mustache);
         SetPortraitAsset("beard", character.portraitSettings.beard, _portraitSettings.race, _portraitSettings.gender, beard);
 
-        head.SetNativeSize();
-        brows.SetNativeSize();
-        eyes.SetNativeSize();
-        mouth.SetNativeSize();
-        nose.SetNativeSize();
-        hair.SetNativeSize();
-        mustache.SetNativeSize();
-        beard.SetNativeSize();
+        if (makePixelPerfect) {
+            head.SetNativeSize();
+            brows.SetNativeSize();
+            eyes.SetNativeSize();
+            mouth.SetNativeSize();
+            nose.SetNativeSize();
+            hair.SetNativeSize();
+            mustache.SetNativeSize();
+            beard.SetNativeSize();
 
-        (head.transform as RectTransform).anchoredPosition = new Vector2(55f, 55f);
-        (brows.transform as RectTransform).anchoredPosition = new Vector2(55f, 55f);
-        (eyes.transform as RectTransform).anchoredPosition = new Vector2(55f, 55f);
-        (mouth.transform as RectTransform).anchoredPosition = new Vector2(55f, 55f);
-        (nose.transform as RectTransform).anchoredPosition = new Vector2(55f, 55f);
-        (hair.transform as RectTransform).anchoredPosition = new Vector2(55f, 55f);
-        (mustache.transform as RectTransform).anchoredPosition = new Vector2(55f, 55f);
-        (beard.transform as RectTransform).anchoredPosition = new Vector2(55f, 55f);
+            (head.transform as RectTransform).anchoredPosition = new Vector2(55f, 55f);
+            (brows.transform as RectTransform).anchoredPosition = new Vector2(55f, 55f);
+            (eyes.transform as RectTransform).anchoredPosition = new Vector2(55f, 55f);
+            (mouth.transform as RectTransform).anchoredPosition = new Vector2(55f, 55f);
+            (nose.transform as RectTransform).anchoredPosition = new Vector2(55f, 55f);
+            (hair.transform as RectTransform).anchoredPosition = new Vector2(55f, 55f);
+            (mustache.transform as RectTransform).anchoredPosition = new Vector2(55f, 55f);
+            (beard.transform as RectTransform).anchoredPosition = new Vector2(55f, 55f);
+        }
 
         if (string.IsNullOrEmpty(_portraitSettings.wholeImage) == false) {
             //use whole image

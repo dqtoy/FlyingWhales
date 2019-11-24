@@ -12,9 +12,6 @@ public class ObjectPoolManager : MonoBehaviour {
     private Dictionary<string, EZObjectPool> allObjectPools;
 
     [SerializeField] private GameObject[] UIPrefabs;
-    //[SerializeField] internal GameObject[] citizenAvatarPrefabs;
-    //[SerializeField] private GameObject[] monsterAvatarPrefabs;
-    //[SerializeField] private GameObject[] agentPrefabs;
     [SerializeField] internal GameObject[] otherPrefabs;
     [SerializeField] private GameObject UIObjectPoolParent;
 
@@ -26,45 +23,14 @@ public class ObjectPoolManager : MonoBehaviour {
     internal void InitializeObjectPools() {
         for (int i = 0; i < UIPrefabs.Length; i++) {
             GameObject currPrefab = UIPrefabs[i];
-            EZObjectPool newUIPool = CreateNewPool(currPrefab, currPrefab.name, 500, true, true, false);
+            EZObjectPool newUIPool = CreateNewPool(currPrefab, currPrefab.name, 300, true, true, false);
             newUIPool.transform.SetParent(UIObjectPoolParent.transform, false);
         }
 
-        //for (int i = 0; i < citizenAvatarPrefabs.Length; i++) {
-        //    GameObject currPrefab = citizenAvatarPrefabs[i];
-        //    CreateNewPool(currPrefab, currPrefab.name, 300, true, true, false);
-        //}
-
-        //for (int i = 0; i < agentPrefabs.Length; i++) {
-        //    GameObject currPrefab = agentPrefabs[i];
-        //    CreateNewPool(currPrefab, currPrefab.name, 300, true, true, false);
-        //}
-
         for (int i = 0; i < otherPrefabs.Length; i++) {
             GameObject currPrefab = otherPrefabs[i];
-            CreateNewPool(currPrefab, currPrefab.name, 100, true, true, false);
+            CreateNewPool(currPrefab, currPrefab.name, 80, true, true, false);
         }
-
-        //for (int i = 0; i < CityGenerator.Instance.humanStructures.structures.Length; i++) {
-        //    Structures currStructure = CityGenerator.Instance.humanStructures.structures[i];
-        //    GameObject[] structurePrefabs = currStructure.structureGameObjects;
-        //    for (int j = 0; j < structurePrefabs.Length; j++) {
-        //        CreateNewPool(structurePrefabs[j], structurePrefabs[j].name, 100, true, true, false);
-        //    }
-        //}
-
-        //for (int i = 0; i < CityGenerator.Instance.elvenStructures.structures.Length; i++) {
-        //    Structures currStructure = CityGenerator.Instance.elvenStructures.structures[i];
-        //    GameObject[] structurePrefabs = currStructure.structureGameObjects;
-        //    for (int j = 0; j < structurePrefabs.Length; j++) {
-        //        CreateNewPool(structurePrefabs[j], structurePrefabs[j].name, 100, true, true, false);
-        //    }
-        //}
-
-        //for (int i = 0; i < monsterAvatarPrefabs.Length; i++) {
-        //    GameObject currPrefab = monsterAvatarPrefabs[i];
-        //    CreateNewPool(currPrefab, currPrefab.name, 100, true, true, false);
-        //}
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null) {

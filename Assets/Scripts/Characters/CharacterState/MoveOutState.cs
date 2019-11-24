@@ -27,14 +27,23 @@ public class MoveOutState : CharacterState {
     protected override void StartState() {
         base.StartState();
         stateComponent.character.AdjustDoNotDisturb(1);
+        stateComponent.character.AdjustDoNotGetHungry(1);
+        stateComponent.character.AdjustDoNotGetLonely(1);
+        stateComponent.character.AdjustDoNotGetTired(1);
     }
     public override void PauseState() {
         base.PauseState();
         stateComponent.character.AdjustDoNotDisturb(-1);
+        stateComponent.character.AdjustDoNotGetHungry(-1);
+        stateComponent.character.AdjustDoNotGetLonely(-1);
+        stateComponent.character.AdjustDoNotGetTired(-1);
     }
     public override void ResumeState() {
         base.ResumeState();
         stateComponent.character.AdjustDoNotDisturb(1);
+        stateComponent.character.AdjustDoNotGetHungry(1);
+        stateComponent.character.AdjustDoNotGetLonely(1);
+        stateComponent.character.AdjustDoNotGetTired(1);
     }
     //protected override void DoMovementBehavior() {
     //    base.DoMovementBehavior();
@@ -76,6 +85,9 @@ public class MoveOutState : CharacterState {
             }
         }
         stateComponent.character.AdjustDoNotDisturb(-1);
+        stateComponent.character.AdjustDoNotGetHungry(-1);
+        stateComponent.character.AdjustDoNotGetLonely(-1);
+        stateComponent.character.AdjustDoNotGetTired(-1);
         SchedulingManager.Instance.ClearAllSchedulesBy(this);
     }
     protected override void PerTickInState() { }

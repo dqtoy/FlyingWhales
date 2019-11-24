@@ -21,9 +21,9 @@ public class LogReplacerDictionaryPropertyDrawer : SerializableDictionaryPropert
 public class LocationPortraitDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(FactionEmblemDictionary))]
 public class FactionEmblemDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-[CustomPropertyDrawer(typeof(ItemTileBaseDictionary))]
+[CustomPropertyDrawer(typeof(ItemAsseteDictionary))]
 public class ItemTileBaseDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-[CustomPropertyDrawer(typeof(TileObjectTileBaseDictionary))]
+[CustomPropertyDrawer(typeof(TileObjectAssetDictionary))]
 public class TileObjectTileBaseDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(ItemSpriteDictionary))]
 public class ItemSpriteDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
@@ -47,6 +47,8 @@ public class YieldTypeLandmarksDictionaryPropertyDrawer : SerializableDictionary
 public class InterventionAbilityTierDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(CharacterClassAssetDictionary))]
 public class CharacterClassAssetDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(LocationStructurePrefabDictionary))]
+public class LocationStructurePrefabDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 //list storage
 [CustomPropertyDrawer(typeof(LandmarkSpriteListStorage))]
@@ -59,5 +61,7 @@ public class TileObjectSlotListStoragePropertyDrawer : SerializableDictionarySto
 public class TileBaseListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 [CustomPropertyDrawer(typeof(LandmarkTypeListStorage))]
 public class LandmarkTypeListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
+[CustomPropertyDrawer(typeof(GameObjectListStorage))]
+public class GameObjectListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 
 
