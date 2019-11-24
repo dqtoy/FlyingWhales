@@ -709,22 +709,9 @@ public class LandmarkManager : MonoBehaviour {
     }
     public void RemoveArea(Area area) {
         allAreas.Remove(area);
-        //Messenger.Broadcast(Signals.AREA_DELETED, area);
     }
     public Area CreateNewArea(SaveDataArea saveDataArea) {
         Area newArea = new Area(saveDataArea);
-
-        //if(newArea.areaType == AREA_TYPE.DEMONIC_INTRUSION) {
-        //    for (int i = 0; i < saveDataArea.tileIDs.Count; i++) {
-        //        HexTile tile = GridMap.Instance.hexTiles[saveDataArea.tileIDs[i]];
-        //        newArea.AddTile(tile);
-        //        tile.SetCorruption(true);
-        //    }
-        //} else {
-        //    for (int i = 0; i < saveDataArea.tileIDs.Count; i++) {
-        //        newArea.AddTile(GridMap.Instance.hexTiles[saveDataArea.tileIDs[i]]);
-        //    }
-        //}
 
         if (locationPortraits.ContainsKey(newArea.areaType)) {
             newArea.SetLocationPortrait(locationPortraits[newArea.areaType]);
@@ -733,16 +720,25 @@ public class LandmarkManager : MonoBehaviour {
         allAreas.Add(newArea);
         return newArea;
     }
-    public void GenerateAreaMap(Area area, bool doMultiThread = true) {
+    public void GenerateAreaMap(Area area) {
         GameObject areaMapGO = GameObject.Instantiate(innerStructurePrefab, areaMapsParent);
         AreaInnerTileMap areaMap = areaMapGO.GetComponent<AreaInnerTileMap>();
         areaMap.ClearAllTilemaps();
-        InteriorMapManager.Instance.CleanupForTownGeneration();
-        if (doMultiThread) {
-            MultiThreadPool.Instance.AddToThreadPool(new AreaMapGenerationThread(area, areaMap));
-        } else {
-            OnFinishedGeneratingAreaMap(area, areaMap);
-        }
+
+        string log = string.Empty;
+        areaMap.Initialize(area);
+        TownMapSettings generatedSettings = areaMap.GenerateInnerStructures(out log);
+        areaMap.DrawMap(generatedSettings);
+        areaMap.PlaceInitialStructures(area);
+
+        areaMap.GenerateDetails();
+        area.PlaceObjects();
+
+        areaMap.OnMapGenerationFinished();
+        area.OnMapGenerationFinished();
+        InteriorMapManager.Instance.OnCreateAreaMap(areaMap);
+        CharacterManager.Instance.PlaceInitialCharacters(area);
+        area.OnAreaSetAsActive();
     }
     public void LoadAreaMap(SaveDataAreaInnerTileMap data) {
         GameObject areaMapGO = GameObject.Instantiate(innerStructurePrefab, areaMapsParent);
@@ -761,44 +757,6 @@ public class LandmarkManager : MonoBehaviour {
         InteriorMapManager.Instance.OnCreateAreaMap(areaMap);
 
         area.OnAreaSetAsActive();
-        UIManager.Instance.SetInteriorMapLoadingState(false);
-    }
-    private void OnFinishedGeneratingAreaMap(Area area, AreaInnerTileMap areaMap) {
-        //Debug.Log("Finished generating map for " + area.name);
-        string log = string.Empty;
-        areaMap.Initialize(area);
-        TownMapSettings generatedSettings = areaMap.GenerateInnerStructures(out log);
-        //Debug.Log(log);
-        areaMap.DrawMap(generatedSettings);
-        //area.SetAreaMap(areaMap);
-        areaMap.GenerateDetails();
-        area.PlaceTileObjects();
-        //thread.areaMap.RotateTiles();
-
-        areaMap.OnMapGenerationFinished();
-        area.OnMapGenerationFinished();
-        InteriorMapManager.Instance.OnCreateAreaMap(areaMap);
-        CharacterManager.Instance.PlaceInitialCharacters(area);
-        //InteriorMapManager.Instance.ShowAreaMap(thread.area);
-        area.OnAreaSetAsActive();
-        UIManager.Instance.SetInteriorMapLoadingState(false);
-    }
-    public void OnFinishedGeneratingAreaMap(AreaMapGenerationThread thread) {
-        //Debug.Log("Finished generating map for " + thread.area.name);
-        //Debug.Log(thread.log);
-        thread.areaMap.DrawMap(thread.generatedSettings);
-        thread.area.SetAreaMap(thread.areaMap);
-        thread.areaMap.GenerateDetails();
-        thread.area.PlaceTileObjects();
-        //thread.areaMap.RotateTiles();
-
-        thread.areaMap.OnMapGenerationFinished();
-        thread.area.OnMapGenerationFinished();
-        InteriorMapManager.Instance.OnCreateAreaMap(thread.areaMap);
-        CharacterManager.Instance.PlaceInitialCharacters(thread.area);
-        //InteriorMapManager.Instance.ShowAreaMap(thread.area);
-        thread.area.OnAreaSetAsActive();
-        UIManager.Instance.SetInteriorMapLoadingState(false);
     }
     public Area GetAreaByID(int id) {
         for (int i = 0; i < allAreas.Count; i++) {

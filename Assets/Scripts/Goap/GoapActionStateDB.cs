@@ -307,6 +307,12 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.VISIT, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Visit Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.PLACE_BLUEPRINT, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Place Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
+        } },
+        {INTERACTION_TYPE.BUILD_STRUCTURE, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Build Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
+        } },
     };
 }
 

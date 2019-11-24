@@ -1300,6 +1300,12 @@ public class Utilities : MonoBehaviour {
         }
         return rng.Next(0, list.Count);
     }
+    public static T GetRandomElement<T>(List<T> list) {
+        return list[rng.Next(0, list.Count)];
+    }
+    public static T GetRandomElement<T>(T[] list) {
+        return list[rng.Next(0, list.Length)];
+    }
     #endregion
 
     #region Game Utilities

@@ -346,9 +346,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public POI_STATE state {
         get { return _state; }
     }
-    public POICollisionTrigger collisionTrigger {
-        get { return marker.collisionTrigger; }
-    }
     public CHARACTER_MOOD currentMoodType {
         get { return ConvertCurrentMoodValueToType(); }
     }
@@ -7024,14 +7021,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             food = 0;
         }
     }
-    #endregion
-
-    #region Collision
-    //Most of collision is handled by the character's marker
-    public void InitializeCollisionTrigger() { }
-    public void PlaceCollisionTriggerAt(LocationGridTile tile) { }
-    public void DisableCollisionTrigger() { }
-    public void SetCollisionTrigger(POICollisionTrigger trigger) { }
     #endregion
 
     #region Hostility

@@ -110,4 +110,12 @@ MonoBehaviour:
   - {fileID: 1567879278629922, guid: dc7f162dba7b8db4a91545a576dc0867, type: 2}
   - {fileID: 1947762124885252, guid: 6c22c7ba9171ba54995acc5cc3820d1e, type: 2}
   - {fileID: 1403252843746304, guid: 8f6468a8213e24546a2d1a1f5134d8d6, type: 2}
+  - {fileID: 1293362371696982, guid: 191a9e123946de349a254ec4c008d174, type: 2}
+  - {fileID: 1839432329802964, guid: 4951309cdc5721246873f2048bbcb0b5, type: 2}
+  - {fileID: 1794830140391482, guid: e7f07aa2f80a73b4c8edfdb9741a50b2, type: 2}
+  - {fileID: 1785905159905196, guid: dd42394f7ee38ef4babf835f00d0529b, type: 2}
+  - {fileID: 1141179552670562, guid: fef47f679840f2349bbbdd68a5d554de, type: 2}
+  - {fileID: 1237125448053210, guid: 8344748a9e20f704da4cbcc458949aa0, type: 2}
+  - {fileID: 1340829586555444, guid: d9d549510a4f590468f27e4140b34e5e, type: 2}
+  - {fileID: 1320005381273642, guid: 762579c6fb9f7874a90ed88fbab952cc, type: 2}
   UIObjectPoolParent: {fileID: 0}

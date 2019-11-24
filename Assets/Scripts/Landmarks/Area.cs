@@ -38,8 +38,6 @@ public class Area : IJobOwner {
 
     public List<JobQueueItem> availableJobs { get; protected set; }
     public JOB_OWNER ownerType { get { return JOB_OWNER.QUEST; } }
-    //public Race defaultRace { get; private set; }
-    //private RACE _raceType;
 
     public LocationClassManager locationClassManager { get; private set; }
     public LocationEventManager locationEventManager { get; private set; }
@@ -368,8 +366,8 @@ public class Area : IJobOwner {
     /// </summary>
     public void OnAreaSetAsActive() {
         SubscribeToSignals();
-        LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
-        CheckAreaInventoryJobs(warehouse);
+        //LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
+        //CheckAreaInventoryJobs(warehouse);
     }
     //public void SetOutlineState(bool state) {
     //    SpriteRenderer[] borders = coreTile.GetAllBorders();
@@ -751,8 +749,8 @@ public class Area : IJobOwner {
         // - a cemetery
         // - wilderness
         // - enough dwellings for it's citizens
-        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WAREHOUSE, true);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.INN, true);
+        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WAREHOUSE, true);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.PRISON, true);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.CEMETERY, true);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WORK_AREA, true);
@@ -900,16 +898,17 @@ public class Area : IJobOwner {
     public void SetAreaMap(AreaInnerTileMap map) {
         areaMap = map;
     }
-    public void PlaceTileObjects() {
+    public void PlaceObjects() {
         //pre placed objects
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
             for (int i = 0; i < keyValuePair.Value.Count; i++) {
                 LocationStructure structure = keyValuePair.Value[i];
-                if (structure.isFromTemplate) {
-                    structure.RegisterPreplacedObjects();
-                }
+                structure.structureObj?.RegisterPreplacedObjects(structure, this.areaMap);
             }
         }
+
+        //place build spots
+        PlaceBuildSpots();
 
         PlaceOres();
         PlaceSupplyPiles();
@@ -919,33 +918,30 @@ public class Area : IJobOwner {
         //magic circle
         if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
             LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][0];
-            structure.AddPOI(new MagicCircle(structure));
-        }
-        //Guitar
-        //Each Dwelling has a 40% chance of having one Guitar. Guitar should be placed at an edge tile.
-        if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
-            for (int i = 0; i < structures[STRUCTURE_TYPE.DWELLING].Count; i++) {
-                LocationStructure currDwelling = structures[STRUCTURE_TYPE.DWELLING][i];
-                if (!currDwelling.isFromTemplate) {
-                    if (UnityEngine.Random.Range(0, 100) < 40) {
-                        currDwelling.AddPOI(new Guitar(currDwelling));
-                    }
-                }
-            }
+            structure.AddPOI(new MagicCircle());
         }
         //Well
         if (structures.ContainsKey(STRUCTURE_TYPE.WORK_AREA)) {
             for (int i = 0; i < 3; i++) {
                 LocationStructure structure = structures[STRUCTURE_TYPE.WORK_AREA][0];
-                structure.AddPOI(new WaterWell(structure));
+                structure.AddPOI(new WaterWell());
             }
         }
         //Goddess Statue
         if (structures.ContainsKey(STRUCTURE_TYPE.WORK_AREA)) {
             for (int i = 0; i < 4; i++) {
                 LocationStructure structure = structures[STRUCTURE_TYPE.WORK_AREA][0];
-                structure.AddPOI(new GoddessStatue(structure));
+                structure.AddPOI(new GoddessStatue());
             }
+        }
+    }
+    private void PlaceBuildSpots() {
+        for (int i = 0; i < areaMap.buildingSpots.Count; i++) {
+            BuildingSpot spot = areaMap.buildingSpots[i];
+            BuildSpotTileObject tileObj = new BuildSpotTileObject();
+            tileObj.SetBuildingSpot(spot);
+            LocationGridTile tileLocation = areaMap.map[spot.location.x, spot.location.y];
+            tileLocation.structure.AddPOI(tileObj, tileLocation);
         }
     }
     private void PlaceOres() {
@@ -956,7 +952,7 @@ public class Area : IJobOwner {
                 List<LocationGridTile> validTiles = structure.unoccupiedTiles.Where(x => x.IsAdjacentToPasssableTiles(3)).ToList();
                 if (validTiles.Count > 0) {
                     LocationGridTile chosenTile = validTiles[UnityEngine.Random.Range(0, validTiles.Count)];
-                    structure.AddPOI(new Ore(structure), chosenTile);
+                    structure.AddPOI(new Ore(), chosenTile);
                 } else {
                     break;
                 }
@@ -967,14 +963,14 @@ public class Area : IJobOwner {
         if (structures.ContainsKey(STRUCTURE_TYPE.DUNGEON)) {
             for (int i = 0; i < structures[STRUCTURE_TYPE.DUNGEON].Count; i++) {
                 LocationStructure structure = structures[STRUCTURE_TYPE.DUNGEON][i];
-                structure.AddPOI(new SupplyPile(structure));
+                structure.AddPOI(new SupplyPile());
             }
         }
         if (structures.ContainsKey(STRUCTURE_TYPE.WAREHOUSE)) {
             for (int i = 0; i < structures[STRUCTURE_TYPE.WAREHOUSE].Count; i++) {
                 LocationStructure structure = structures[STRUCTURE_TYPE.WAREHOUSE][i];
-                if (!structure.isFromTemplate) {
-                    structure.AddPOI(new SupplyPile(structure));
+                if (structure.structureObj == null) {
+                    structure.AddPOI(new SupplyPile());
                 }
             }
         }
@@ -983,15 +979,16 @@ public class Area : IJobOwner {
         if (structures.ContainsKey(STRUCTURE_TYPE.DUNGEON)) {
             for (int i = 0; i < structures[STRUCTURE_TYPE.DUNGEON].Count; i++) {
                 LocationStructure structure = structures[STRUCTURE_TYPE.DUNGEON][i];
-                structure.AddPOI(new FoodPile(structure));
+                structure.AddPOI(new FoodPile());
             }
         }
         if (structures.ContainsKey(STRUCTURE_TYPE.WAREHOUSE)) {
             for (int i = 0; i < structures[STRUCTURE_TYPE.WAREHOUSE].Count; i++) {
                 LocationStructure structure = structures[STRUCTURE_TYPE.WAREHOUSE][i];
-                FoodPile foodPile = new FoodPile(structure);
-                structure.AddPOI(foodPile);
-                foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
+                FoodPile foodPile = new FoodPile();
+                if (structure.AddPOI(foodPile)) {
+                    foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
+                }
             }
         }
     }
@@ -1007,7 +1004,7 @@ public class Area : IJobOwner {
                 List<LocationGridTile> validTiles = structure.unoccupiedTiles.Where(x => x.IsAdjacentToPasssableTiles(3)).ToList();
                 if (validTiles.Count > 0) {
                     LocationGridTile chosenTile = validTiles[UnityEngine.Random.Range(0, validTiles.Count)];
-                    structure.AddPOI(new SmallAnimal(structure), chosenTile);
+                    structure.AddPOI(new SmallAnimal(), chosenTile);
                 } else {
                     break;
                 }
@@ -1017,7 +1014,7 @@ public class Area : IJobOwner {
                 List<LocationGridTile> validTiles = structure.unoccupiedTiles.Where(x => x.IsAdjacentToPasssableTiles(3)).ToList();
                 if (validTiles.Count > 0) {
                     LocationGridTile chosenTile = validTiles[UnityEngine.Random.Range(0, validTiles.Count)];
-                    structure.AddPOI(new EdiblePlant(structure), chosenTile);
+                    structure.AddPOI(new EdiblePlant(), chosenTile);
                 } else {
                     break;
                 }
@@ -1452,7 +1449,6 @@ public class Area : IJobOwner {
                 token.SetOwner(this.owner);
             }
         }
-        
     }
     #endregion
 

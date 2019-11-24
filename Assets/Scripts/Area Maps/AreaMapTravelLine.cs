@@ -73,7 +73,7 @@ public class AreaMapTravelLine : MonoBehaviour {
     private void DestroyLine() {
         RemoveListeners();
         if (start.objHere == owner) {
-            areaMap.objectsTilemap.SetTile(start.localPlace, null);
+            //areaMap.objectsTilemap.SetTile(start.localPlace, null);
             //if (start.prefabHere != null) {
             //    ObjectPoolManager.Instance.DestroyObject(start.prefabHere);
             //}

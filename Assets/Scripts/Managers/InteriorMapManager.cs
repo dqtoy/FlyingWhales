@@ -11,14 +11,52 @@ using UnityEngine.Tilemaps;
 public class InteriorMapManager : MonoBehaviour {
 
     public static InteriorMapManager Instance = null;
-    public AreaInnerTileMap currentlyShowingMap { get; private set; }
-    public Area currentlyShowingArea { get; private set; }
-    public GameObject poiCollisionTriggerPrefab;
-    public GameObject ghostCollisionTriggerPrefab;
+
+    public static readonly Vector2 Building_Spot_Size = new Vector2(7, 7);
+    public const int Default_Character_Sorting_Order = 82;
+    public const int Ground_Tilemap_Sorting_Order = 10;
+    public const int Details_Tilemap_Sorting_Order = 40;
+    private const float nodeSize = 0.3f;
+
+    private Vector3 nextMapPos = Vector3.zero;
     public GameObject characterCollisionTriggerPrefab;
 
+    [Header("Pathfinding")]
+    [SerializeField] private AstarPath pathfinder;
+
+    [Header("Tile Object")]
+    [SerializeField] private TileObjectSlotDictionary tileObjectSlotSettings;
+    public GameObject tileObjectSlotsParentPrefab;
+    public GameObject tileObjectSlotPrefab;
+    
+    [Header("Lighting")]
+    [SerializeField] private Light areaMapLight;
+
+    [Header("Structures")]
+    [SerializeField] private LocationStructurePrefabDictionary structurePrefabs;
+
+    [Header("Tilemap Assets")]
+    [SerializeField] private ItemAsseteDictionary itemTiles;
+    [SerializeField] private TileObjectAssetDictionary tileObjectTiles;
+    [SerializeField] private List<TileBase> allTileAssets;
+
+    //Area Map Objects
+    public AreaMapGameObjectFactory areaMapObjectFactory;
+
+    //structure templates
+    private string templatePath;
+
+    private Dictionary<int, float> lightSettings = new Dictionary<int, float>() { //this specifies what light intensity is to be used while inside the specific range in ticks
+#if UNITY_EDITOR
+        { 228, 1f }, { 61, 1.8f }
+#else
+        { 228, 0.3f }, { 61, 0.8f }
+#endif
+    };
+    public Dictionary<TILE_OBJECT_TYPE, List<TileObject>> allTileObjects { get; private set; }
+    public AreaInnerTileMap currentlyShowingMap { get; private set; }
+    public Area currentlyShowingArea { get; private set; }
     public List<AreaInnerTileMap> areaMaps { get; private set; }
-    private Vector3 nextMapPos = Vector3.zero;
     public bool isAnAreaMapShowing {
         get {
             return currentlyShowingMap != null;
@@ -40,47 +78,6 @@ public class InteriorMapManager : MonoBehaviour {
     public LocationGridTile currentlyHoveredTile { get { return GetTileFromMousePosition(); } }
     public List<LocationGridTile> currentlyHighlightedTiles { get; private set; }
 
-    //Used for generating the inner map of an area, structure templates are first placed here before generating the actual map
-    public Tilemap agGroundTilemap;
-    public Tilemap agGroundWallTilemap;
-    public Tilemap agStructureTilemap;
-    public Tilemap agObjectsTilemap;
-    public Tilemap agDetailsTilemap;
-    
-    [Header("Pathfinding")]
-    [SerializeField] private AstarPath pathfinder;
-    private const float nodeSize = 0.3f;
-    public const int Default_Character_Sorting_Order = 82;
-
-    [Header("Tile Object")]
-    [SerializeField] private TileObjectSlotDictionary tileObjectSlotSettings;
-    public GameObject tileObjectSlotsParentPrefab;
-    public GameObject tileObjectSlotPrefab;
-    public Dictionary<TILE_OBJECT_TYPE, List<TileObject>> allTileObjects { get; private set; }
-
-    [Header("Lighting")]
-    [SerializeField] private Light areaMapLight;
-
-    //structure templates
-    private string templatePath;
-
-    //Local Avoidance
-    private Pathfinding.RVO.Simulator sim;
-    public List<TileBase> allTileAssets;
-
-    private Dictionary<STRUCTURE_TYPE, List<StructureSlot>> placedStructures;
-
-
-    private Dictionary<int, float> lightSettings = new Dictionary<int, float>() { //this specifies what light intensity is to be used while inside the specific range in ticks
-#if UNITY_EDITOR
-        { 228, 1f },
-        { 61, 1.8f }
-#else
-        { 228, 0.3f },
-        { 61, 0.8f }
-#endif
-
-    };
 
     #region Monobehaviours
     private void Awake() {
@@ -141,6 +138,7 @@ public class InteriorMapManager : MonoBehaviour {
     public void Initialize() {
         allTileObjects = new Dictionary<TILE_OBJECT_TYPE, List<TileObject>>();
         areaMaps = new List<AreaInnerTileMap>();
+        areaMapObjectFactory = new AreaMapGameObjectFactory();
         AreaMapCameraMove.Instance.Initialize();
         Messenger.AddListener(Signals.TICK_ENDED, CheckForChangeLight);
     }
@@ -153,9 +151,7 @@ public class InteriorMapManager : MonoBehaviour {
             //show existing map
             ShowAreaMap(area);
         } else {
-            //Generate
-            UIManager.Instance.SetInteriorMapLoadingState(true);
-            LandmarkManager.Instance.GenerateAreaMap(area);
+            throw new System.Exception($"{area.name} does not have a generated areaMap");
         }
     }
     public void ShowAreaMap(Area area, bool centerCameraOnMapCenter = true, bool instantCenter = true) {
@@ -274,9 +270,6 @@ public class InteriorMapManager : MonoBehaviour {
         }
         return false;
     }
-    //public void SetCurrentlyHoveredTile(LocationGridTile tile) {
-    //   currentlyHoveredTile = tile;
-    //}
     public void HighlightTiles(List<LocationGridTile> tiles) {
         if (tiles != null) {
             for (int i = 0; i < tiles.Count; i++) {
@@ -586,42 +579,6 @@ public class InteriorMapManager : MonoBehaviour {
     #endregion
 
     #region Town Map Generation
-    public void CleanupForTownGeneration() {
-        agGroundTilemap.ClearAllTiles();
-        agStructureTilemap.ClearAllTiles();
-        agObjectsTilemap.ClearAllTiles();
-        agDetailsTilemap.ClearAllTiles();
-        placedStructures = new Dictionary<STRUCTURE_TYPE, List<StructureSlot>>();
-    }
-    public TownMapSettings GetTownMapSettings() {
-        TownMapSettings s = new TownMapSettings();
-        //visuals
-        agGroundTilemap.CompressBounds();
-        s.size = new Point(agGroundTilemap.cellBounds.x, agGroundTilemap.cellBounds.y);
-
-        s.groundTiles = GetTileData(agGroundTilemap, agGroundTilemap.cellBounds);
-        s.groundWallTiles = GetTileData(agGroundWallTilemap, agGroundTilemap.cellBounds);
-        s.structureTiles = GetTileData(agStructureTilemap, agGroundTilemap.cellBounds);
-        s.objectTiles = GetTileData(agObjectsTilemap, agGroundTilemap.cellBounds);
-        s.detailTiles = GetTileData(agDetailsTilemap, agGroundTilemap.cellBounds);
-
-        int shiftXBy = 0; //shift x position of all objects by n
-        int shiftYBy = 0;//shift y position of all objects by n
-        if (agGroundTilemap.cellBounds.xMin != 0) { shiftXBy = agGroundTilemap.cellBounds.xMin * -1; }
-        if (agGroundTilemap.cellBounds.yMin != 0) { shiftYBy = agGroundTilemap.cellBounds.yMin * -1; }
-
-        //structures
-        s.structureSlots = placedStructures;
-
-        //shift all positions so that the bounds minimum is at 0
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<StructureSlot>> keyValuePair in s.structureSlots) {
-            for (int i = 0; i < keyValuePair.Value.Count; i++) {
-                keyValuePair.Value[i].AdjustStartPos(shiftXBy, shiftYBy);
-            }
-        }
-
-       return s;
-    }
     public TownMapSettings GetTownMapSettings(Dictionary<int, Dictionary<int, LocationGridTileSettings>> allSettings) {
         int minX;
         int maxX;
@@ -637,13 +594,6 @@ public class InteriorMapManager : MonoBehaviour {
         Dictionary<int, Dictionary<int, LocationGridTileSettings>> shiftedSettings = ShiftSettingsBy(new Vector2Int(shiftXBy, shiftYBy), allSettings);
         GetBounds(shiftedSettings, out minX, out maxX, out minY, out maxY);
 
-        ////order settings by their x and y coordinates (Used to determine size (X, Y) of the whole town map)
-        //shiftedSettings = shiftedSettings.OrderBy(x => x.Key).ToDictionary(pair => pair.Key, pair => pair.Value);
-        //List<int> keys = shiftedSettings.Keys.ToList();
-        //for (int i = 0; i < keys.Count; i++) {
-        //    int currKey = keys[i];
-        //    shiftedSettings[currKey] = shiftedSettings[currKey].OrderBy(x => x.Key).ToDictionary(pair => pair.Key, pair => pair.Value);
-        //}
         if (minX < 0 || minY < 0) {
             throw new System.Exception("Minimum bounds of shifted settings has negative value! X: " + minX.ToString() + ", Y: " + minY.ToString());
         }
@@ -654,11 +604,7 @@ public class InteriorMapManager : MonoBehaviour {
         List<TileTemplateData> structureTiles = new List<TileTemplateData>();
         List<TileTemplateData> objectTiles = new List<TileTemplateData>();
         List<TileTemplateData> detailTiles = new List<TileTemplateData>();
-
-        //s.groundTiles = new TileTemplateData[maxX * maxY];
-        //s.structureTiles = new TileTemplateData[maxX * maxY];
-        //s.objectTiles = new TileTemplateData[maxX * maxY];
-        //s.detailTiles = new TileTemplateData[maxX * maxY];
+        List<BuildingSpotData> buildingSpotData = new List<BuildingSpotData>();
 
         int count = 0;
         for (int x = 0; x < maxX; x++) {
@@ -671,6 +617,9 @@ public class InteriorMapManager : MonoBehaviour {
                     structureTiles.Add(currSetting.structureWallTile);
                     objectTiles.Add(currSetting.objectTile);
                     detailTiles.Add(currSetting.detailTile);
+                    if (currSetting.hasBuildingSpot) {
+                        buildingSpotData.Add(currSetting.buildingSpot);
+                    }
                 } else {
                     TileTemplateData emptyData = TileTemplateData.Empty;
                     emptyData.tilePosition = new Vector3(x, y, 0);
@@ -705,16 +654,7 @@ public class InteriorMapManager : MonoBehaviour {
         s.structureTiles = structureTiles.ToArray();
         s.objectTiles = objectTiles.ToArray();
         s.detailTiles = detailTiles.ToArray();
-
-        //structures
-        s.structureSlots = placedStructures;
-
-        //shift all positions so that the bounds minimum is at 0
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<StructureSlot>> keyValuePair in s.structureSlots) {
-            for (int i = 0; i < keyValuePair.Value.Count; i++) {
-                keyValuePair.Value[i].AdjustStartPos(shiftXBy, shiftYBy);
-            }
-        }
+        s.buildSpots = buildingSpotData;
         return s;
     }
     private void GetBounds(Dictionary<int, Dictionary<int, LocationGridTileSettings>> allSettings, out int minX, out int maxX, out int minY, out int maxY) {
@@ -732,26 +672,6 @@ public class InteriorMapManager : MonoBehaviour {
         }
         maxX += 1;
         maxY += 1; //because collections start at 0, and I need the max length of the collections.
-    }
-    public void MergeSettings(Dictionary<int, Dictionary<int, LocationGridTileSettings>> other, ref Dictionary<int, Dictionary<int, LocationGridTileSettings>> main) {
-        foreach (KeyValuePair<int, Dictionary<int, LocationGridTileSettings>> kvp in other) {
-            foreach (KeyValuePair<int, LocationGridTileSettings> kvp2 in kvp.Value) {
-                int x = kvp.Key;
-                int y = kvp2.Key;
-                LocationGridTileSettings newSetting = kvp2.Value;
-                if (main.ContainsKey(x) && main[x].ContainsKey(y)) {
-                    //merge the 2 settings
-                    LocationGridTileSettings mainSetting = main[x][y];
-                    mainSetting = mainSetting.MergeWith(newSetting);
-                    main[x][y] = mainSetting;
-                } else if (main.ContainsKey(x) && !main[x].ContainsKey(y)) {
-                    main[x].Add(y, newSetting);
-                } else if (!main.ContainsKey(x)) {
-                    main.Add(x, new Dictionary<int, LocationGridTileSettings>());
-                    main[x].Add(y, newSetting);
-                }
-            }
-        }
     }
     private Dictionary<int, Dictionary<int, LocationGridTileSettings>> ShiftSettingsBy(Vector2Int shiftBy, Dictionary<int, Dictionary<int, LocationGridTileSettings>> settings) {
         Dictionary<int, Dictionary<int, LocationGridTileSettings>> shifted = new Dictionary<int, Dictionary<int, LocationGridTileSettings>>();
@@ -773,6 +693,10 @@ public class InteriorMapManager : MonoBehaviour {
         for (int i = 0; i < template.groundTiles.Length; i++) {
             TileTemplateData ground = template.groundTiles[i];
             Vector3 tilePos = ground.tilePosition;
+
+            BuildingSpotData buildingSpot;
+            bool hasBuildingSpot = template.TryGetBuildingSpotDataAtLocation(tilePos, out buildingSpot);
+
             tilePos.x += startPos.x;
             tilePos.y += startPos.y;
             TileTemplateData detail = template.detailTiles[i];
@@ -794,180 +718,17 @@ public class InteriorMapManager : MonoBehaviour {
                 detailTile = detail,
                 structureWallTile = structureWall,
                 objectTile = obj,
+                hasBuildingSpot = hasBuildingSpot,
+                buildingSpot = buildingSpot
             });
         }
         return generated;
 
-    }
-    public Dictionary<int, Dictionary<int, LocationGridTileSettings>> GenerateStructureTemplateForGeneration(StructureTemplate template, Vector3Int startPos, STRUCTURE_TYPE structureType, out string log) {
-        Dictionary<int, Dictionary<int, LocationGridTileSettings>> generated = new Dictionary<int, Dictionary<int, LocationGridTileSettings>>();
-        for (int i = 0; i < template.groundTiles.Length; i++) {
-            TileTemplateData ground = template.groundTiles[i];
-            Vector3 tilePos = ground.tilePosition;
-            tilePos.x += startPos.x;
-            tilePos.y += startPos.y;
-            TileTemplateData detail = template.detailTiles[i];
-            TileTemplateData groundWall;
-            if (template.groundWallTiles != null) {
-                groundWall = template.groundWallTiles[i];
-            } else {
-                groundWall = TileTemplateData.Empty;
-            }
-            TileTemplateData structureWall = template.structureWallTiles[i];
-            TileTemplateData obj = template.objectTiles[i];
-            if (!generated.ContainsKey((int)tilePos.x)) {
-                generated.Add((int)tilePos.x, new Dictionary<int, LocationGridTileSettings>());
-            }
-            generated[(int)tilePos.x].Add((int)tilePos.y, new LocationGridTileSettings() {
-                groundTile = ground,
-                groundWallTile = groundWall,
-                detailTile = detail,
-                structureWallTile = structureWall,
-                objectTile = obj,
-            });
-        }
-        StructureSlot slot = new StructureSlot() { size = template.size, startPos = startPos, furnitureSpots = template.furnitureSpots };
-        log = "Placed structure slot with size " + slot.size.ToString() + " at " + startPos.ToString();
-
-        AddPlacedStructure(structureType, slot);
-        return generated;
-
-    }
-    public void DrawTownCenterTemplateForGeneration(StructureTemplate template, Vector3Int startPos) {
-        DrawTiles(agGroundTilemap, template.groundTiles, startPos);
-        DrawTiles(agGroundWallTilemap, template.groundWallTiles, startPos);
-        DrawTiles(agStructureTilemap, template.structureWallTiles, startPos);
-        DrawTiles(agObjectsTilemap, template.objectTiles, startPos);
-        DrawTiles(agDetailsTilemap, template.detailTiles, startPos);
-    }
-    public void DrawStructureTemplateForGeneration(StructureTemplate template, Vector3Int startPos, STRUCTURE_TYPE structureType) {
-        DrawTiles(agGroundTilemap, template.groundTiles, startPos);
-        DrawTiles(agGroundWallTilemap, template.groundWallTiles, startPos);
-        DrawTiles(agStructureTilemap, template.structureWallTiles, startPos);
-        DrawTiles(agObjectsTilemap, template.objectTiles, startPos);
-        DrawTiles(agDetailsTilemap, template.detailTiles, startPos);
-        AddPlacedStructure(structureType, new StructureSlot() { size = template.size, startPos = startPos, furnitureSpots = template.furnitureSpots});
-    }
-    private void DrawTiles(Tilemap tilemap, TileTemplateData[] data, Vector3Int startPos) {
-        for (int i = 0; i < data.Length; i++) {
-            TileTemplateData currData = data[i];
-            Vector3Int pos = new Vector3Int((int)currData.tilePosition.x, (int)currData.tilePosition.y, 0);
-            pos.x += startPos.x;
-            pos.y += startPos.y;
-            if (tilemap == agGroundTilemap) {
-                if (tilemap.GetTile(pos) != null && !tilemap.GetTile(pos).name.Contains("Dirt") && !tilemap.GetTile(pos).name.Contains("SnowOutside")) {
-                    //if the tile map is the ground tile map, and the tile to be replaced is not dirt, do not draw tile
-                    continue; //skip drawing this tile
-                }
-            } else {
-                if (tilemap.GetTile(pos) != null) {
-                    continue; //skip drawing this tile
-                }
-            }
-            
-            if (!string.IsNullOrEmpty(currData.tileAssetName)) {
-                tilemap.SetTile(pos, GetTileAsset(currData.tileAssetName, true));
-            }
-            
-            //else {
-            //    tilemap.SetTile(pos, GetTileAsset(currData.tileAssetName));
-            //}
-            tilemap.SetTransformMatrix(pos, currData.matrix);
-
-        }
-    }
-    private TileTemplateData[] GetTileData(Tilemap tilemap, BoundsInt bounds) {
-        TileTemplateData[] data = new TileTemplateData[bounds.size.x * bounds.size.y];
-        int count = 0;
-
-        for (int x = bounds.xMin; x < bounds.xMax; x++) {
-            for (int y = bounds.yMin; y < bounds.yMax; y++) {
-                Vector3Int pos = new Vector3Int(x, y, 0);
-                TileBase tb = tilemap.GetTile(pos);
-                Matrix4x4 matrix = tilemap.GetTransformMatrix(pos);
-
-                int normalizedX = x;
-                int normalizedY = y;
-
-                if (bounds.xMin != 0) {
-                    if (bounds.xMin < 0) {
-                        //x is negative
-                        normalizedX += Mathf.Abs(bounds.xMin);
-                    } else {
-                        //x is positive
-                        normalizedX -= Mathf.Abs(bounds.xMin);
-                    }
-                }
-
-                if (bounds.yMin != 0) {
-                    if (bounds.yMin < 0) {
-                        //y is negative
-                        normalizedY += Mathf.Abs(bounds.yMin);
-                    } else {
-                        //y is positive
-                        normalizedY -= Mathf.Abs(bounds.yMin);
-                    }
-                }
-
-                data[count] = new TileTemplateData(tb, matrix, new Vector3(normalizedX, normalizedY, 0));
-                count++;
-            }
-        }
-        return data;
-    }
-    private void AddPlacedStructure(STRUCTURE_TYPE type, StructureSlot slot) {
-        if (!placedStructures.ContainsKey(type)) {
-            placedStructures.Add(type, new List<StructureSlot>());
-        }
-        placedStructures[type].Add(slot);
-    }
-    /// <summary>
-    /// Get the units the template needs to move.
-    /// </summary>
-    /// <param name="template">The template that needs to move</param>
-    /// <param name="connection1">The connection from the template</param>
-    /// <param name="connection2">The connection the template will connect to</param>
-    /// <returns></returns>
-    public Vector3Int GetMoveUnitsOfTemplateGivenConnections(StructureTemplate template, StructureConnector connection1, StructureConnector connection2) {
-        Vector3Int shiftTemplateBy = connection2.Difference(connection1);
-        switch (connection2.neededDirection) {
-            case Cardinal_Direction.North:
-                shiftTemplateBy.y += 1;
-                break;
-            case Cardinal_Direction.South:
-                shiftTemplateBy.y -= 1;
-                break;
-            case Cardinal_Direction.East:
-                shiftTemplateBy.x += 1;
-                break;
-            case Cardinal_Direction.West:
-                shiftTemplateBy.x -= 1;
-                break;
-            default:
-                break;
-        }
-        return shiftTemplateBy;
-    }
-    public List<StructureTemplate> GetValidTownCenterTemplates(Area area) {
-        List<StructureTemplate> valid = new List<StructureTemplate>();
-        string extension = "Default";
-        if (area.name == "Gloomhollow") {
-            extension = "Snow";
-        }
-        List<StructureTemplate> choices = GetStructureTemplates("TOWN CENTER/" + extension);
-        for (int i = 0; i < choices.Count; i++) {
-            StructureTemplate currTemplate = choices[i];
-            if (currTemplate.HasConnectorsForStructure(area.structures)) {
-                valid.Add(currTemplate);
-            }
-        }
-
-        return valid;
     }
     #endregion
 
     #region Tile Object
-    public bool HasSettingForTileObjectAsset(TileBase asset) {
+    public bool HasSettingForTileObjectAsset(Sprite asset) {
         return tileObjectSlotSettings.ContainsKey(asset);
     }
     /// <summary>
@@ -976,7 +737,7 @@ public class InteriorMapManager : MonoBehaviour {
     /// </summary>
     /// <param name="asset">The asset used by the tile object.</param>
     /// <returns>The list of slot settings</returns>
-    public List<TileObjectSlotSetting> GetTileObjectSlotSettings(TileBase asset) {
+    public List<TileObjectSlotSetting> GetTileObjectSlotSettings(Sprite asset) {
         return tileObjectSlotSettings[asset];
     }
     public void AddTileObject(TileObject to) {
@@ -1002,6 +763,14 @@ public class InteriorMapManager : MonoBehaviour {
             }
         }
         return null;
+    }
+    public TileObject CreateNewTileObject(TILE_OBJECT_TYPE tileObjectType) {
+        var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString());
+        System.Type type = System.Type.GetType(typeName);
+        if (type != null) {
+            return System.Activator.CreateInstance(type) as TileObject;
+        }
+        throw new System.Exception("Could not create new instance of tile object of type " + tileObjectType.ToString());
     }
     #endregion
 
@@ -1035,83 +804,31 @@ public class InteriorMapManager : MonoBehaviour {
         }
     }
     #endregion
-}
 
-#region Templates
-[System.Serializable]
-public struct TownMapSettings {
-
-    public Point size;
-    public TileTemplateData[] groundTiles;
-    public TileTemplateData[] groundWallTiles;
-    public TileTemplateData[] structureTiles;
-    public TileTemplateData[] objectTiles;
-    public TileTemplateData[] detailTiles;
-
-    [System.NonSerialized]
-    public Dictionary<STRUCTURE_TYPE, List<StructureSlot>> structureSlots;
-
-    public void LogInfo() {
-        string info = "Town Map Info: " + size.ToString();
-        info += "\nGround tiles: " + groundTiles.Length.ToString();
-        info += "\nStructure tiles: " + structureTiles.Length.ToString();
-        info += "\nObejct tiles: " + objectTiles.Length.ToString();
-        info += "\nDetail tiles: " + detailTiles.Length.ToString();
-        //Debug.Log(info);
+    #region Structures
+    public List<GameObject> GetStructurePrefabsForStructure(STRUCTURE_TYPE type) {
+        return structurePrefabs[type];
     }
+    #endregion
 
-}
-public class StructureSlot {
-    public Vector3Int startPos;
-    public Point size;
-    public FurnitureSpot[] furnitureSpots;
-    public void AdjustStartPos(int x, int y) {
-        Vector3Int newPos = startPos;
-        newPos.x += x;
-        newPos.y += y;
-        startPos = newPos;
+    #region Assets
+    public Sprite GetItemAsset(SPECIAL_TOKEN itemType) {
+        return itemTiles[itemType];
     }
-    public bool TryGetFurnitureSpot(Vector3Int location, out FurnitureSpot furnitureSpot) {
-        for (int i = 0; i < furnitureSpots.Length; i++) {
-            FurnitureSpot spot = furnitureSpots[i];
-            if (spot.location == location) {
-                furnitureSpot = spot;
-                return true;
-            }
+    public Sprite GetTileObjectAsset(TILE_OBJECT_TYPE objectType, POI_STATE state, BIOMES biome) {
+        TileObjectTileSetting setting = tileObjectTiles[objectType];
+        BiomeTileObjectTileSetting biomeSetting;
+        if (setting.biomeAssets.ContainsKey(biome)) {
+            biomeSetting = setting.biomeAssets[biome];
+        } else {
+            biomeSetting = setting.biomeAssets[BIOMES.NONE];
         }
-        furnitureSpot = default(FurnitureSpot);
-        return false;
+        if (state == POI_STATE.ACTIVE) {
+            return biomeSetting.activeTile;
+        } else {
+            return biomeSetting.inactiveTile;
+        }
+        
     }
-}
-#endregion
-
-public struct LocationGridTileSettings {
-    public TileTemplateData groundTile;
-    public TileTemplateData groundWallTile;
-    public TileTemplateData detailTile;
-    public TileTemplateData structureWallTile;
-    public TileTemplateData objectTile;
-
-    public LocationGridTileSettings MergeWith(LocationGridTileSettings otherSetting) {
-        LocationGridTileSettings setting = this;
-        //bool overrideGroundTile = true;
-        //if (!string.IsNullOrEmpty(groundTile.tileAssetName) && !groundTile.tileAssetName.Contains("Dirt")) {
-        //    //if the ground tile of this current setting is not dirt, do not replace it.
-        //    overrideGroundTile = false;
-        //}
-        setting.groundTile = otherSetting.groundTile;
-        setting.groundWallTile = otherSetting.groundWallTile;
-        setting.detailTile = otherSetting.detailTile;
-        setting.structureWallTile = otherSetting.structureWallTile;
-        setting.objectTile = otherSetting.objectTile;
-        return setting;
-    }
-
-    public void UpdatePositions(Vector3 newPos) {
-        groundTile.tilePosition = newPos;
-        groundWallTile.tilePosition = newPos;
-        detailTile.tilePosition = newPos;
-        structureWallTile.tilePosition = newPos;
-        objectTile.tilePosition = newPos;
-    }
+    #endregion
 }

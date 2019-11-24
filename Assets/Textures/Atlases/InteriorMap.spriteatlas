@@ -171,6 +171,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: d9ae31d554049214ba62b98bd07e4949, type: 3}
   - {fileID: 21300000, guid: d1e20ae58b832e7478ae889735dce36b, type: 3}
   - {fileID: 21300000, guid: 65e674f5f7a74b640a41dcfdc536bef0, type: 3}
+  - {fileID: 21300000, guid: 8a722b06763402b40bb9d2fd8093c085, type: 3}
   - {fileID: 21300000, guid: db8a44165c5814d4b871f608a71d4db2, type: 3}
   - {fileID: 21300000, guid: 15a00226e41e6bb449bc595e7eebe398, type: 3}
   - {fileID: 21300000, guid: ef9922262d513cc43927866d6d2450f5, type: 3}
@@ -538,6 +539,7 @@ SpriteAtlas:
   - wallA-1000-00
   - flowers02
   - shore00011100-00
+  - chair02
   - wall1111-00
   - caveWallA-1001-02
   - chair01

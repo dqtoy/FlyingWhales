@@ -16,7 +16,7 @@ public class CharacterRelationshipItem : PooledObject {
         this.alterEgo = alterEgo;
         this.data = data;
 
-        portrait.GeneratePortrait(alterEgo.owner);
+        portrait.GeneratePortrait(alterEgo.owner, false);
     }
 
     public override void Reset() {
