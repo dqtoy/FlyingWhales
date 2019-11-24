@@ -4,13 +4,7 @@ using UnityEngine;
 
 public class GoddessStatue : TileObject {
 
-    public GoddessStatue(LocationStructure location) {
-        SetStructureLocation(location);
-        //if (location.structureType != STRUCTURE_TYPE.POND) {
-        //    poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.WELL_JUMP, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
-        //} else {
-        //    poiGoapActions = new List<INTERACTION_TYPE>();
-        //}
+    public GoddessStatue() {
         advertisedActions = new List<INTERACTION_TYPE>();
 
         Initialize(TILE_OBJECT_TYPE.GODDESS_STATUE);

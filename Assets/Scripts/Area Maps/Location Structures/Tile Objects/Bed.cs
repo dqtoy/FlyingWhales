@@ -11,8 +11,7 @@ public class Bed : TileObject {
         get { return bedUsers.Where(x => x != null).ToArray(); }
     }
 
-    public Bed(LocationStructure location) {
-        SetStructureLocation(location);
+    public Bed() {
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.SLEEP, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.NAP, INTERACTION_TYPE.REPAIR };
         Initialize(TILE_OBJECT_TYPE.BED);
         bedUsers = new Character[2];

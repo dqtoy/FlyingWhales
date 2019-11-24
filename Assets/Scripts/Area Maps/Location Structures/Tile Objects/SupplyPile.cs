@@ -5,8 +5,7 @@ using UnityEngine;
 
 public class SupplyPile : ResourcePile {
 
-    public SupplyPile(LocationStructure location) : base(RESOURCE.WOOD) {
-        SetStructureLocation(location);
+    public SupplyPile() : base(RESOURCE.WOOD) {
         Initialize(TILE_OBJECT_TYPE.SUPPLY_PILE);
         SetResourceInPile(2000);
         traitContainer.RemoveTrait(this, "Flammable");

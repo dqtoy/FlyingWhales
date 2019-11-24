@@ -4,8 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 public class MagicCircle : TileObject {
-    public MagicCircle(LocationStructure location) {
-        SetStructureLocation(location);
+    public MagicCircle() {
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, };
         Initialize(TILE_OBJECT_TYPE.MAGIC_CIRCLE);
     }

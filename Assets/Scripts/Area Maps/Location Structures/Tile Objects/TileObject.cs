@@ -15,7 +15,7 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
     protected List<Trait> _traits;
     public List<Character> awareCharacters { get; private set; } //characters that are aware of this object (Used for checking if a ghost trigger should be destroyed)
     public List<string> actionHistory { get; private set; } //list of actions that was done to this object
-    public LocationStructure structureLocation { get; protected set; }
+    public LocationStructure structureLocation { get { return gridTileLocation.structure; } }
     public bool isDisabledByPlayer { get; protected set; }
     public bool isSummonedByPlayer { get; protected set; }
     public List<JobQueueItem> allJobsTargettingThis { get; protected set; }
@@ -83,7 +83,6 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
         CreateTraitContainer();
         traitContainer.AddTrait(this, "Flammable");
         AddCommonAdvertisments();
-        InitializeMapObject(this);
 
         InteriorMapManager.Instance.AddTileObject(this);
     }
@@ -99,7 +98,6 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
         hasCreatedSlots = false;
         CreateTraitContainer();
         AddCommonAdvertisments();
-        InitializeMapObject(this);
 
         InteriorMapManager.Instance.AddTileObject(this);
     }
@@ -142,9 +140,9 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
     public virtual void SetGridTileLocation(LocationGridTile tile) {
         previousTile = this.tile;
         this.tile = tile;
-        //if (collisionTrigger == null) {
-        //    InitializeCollisionTrigger(this); //TODO: Remove chance of this happening?
-        //}
+        if (areaMapGameObject == null) {
+            InitializeMapObject(this);
+        }
         if (tile == null) {
             DisableGameObject();
             OnRemoveTileObject(null, previousTile);
@@ -271,9 +269,6 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
         return false;
     }
     public virtual void OnTileObjectGainedTrait(Trait trait) { }
-    public virtual void SetStructureLocation(LocationStructure structure) {
-        structureLocation = structure;
-    }
     public virtual bool IsValidCombatTarget() {
         return gridTileLocation != null;
     }
@@ -556,6 +551,12 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
             }
         }
     }
+    public void RevalidateTileObjectSlots() {
+        if (hasCreatedSlots) {
+            DestroyTileSlots();
+            CreateTileObjectSlots();
+        }
+    }
     #endregion
 
     #region Users
@@ -705,10 +706,10 @@ public class SaveDataTileObject {
         string tileObjectName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString());
         TileObject tileObject = System.Activator.CreateInstance(System.Type.GetType(tileObjectName), this) as TileObject;
 
-        if(structureLocationID != -1 && structureLocationAreaID != -1) {
-            Area area = LandmarkManager.Instance.GetAreaByID(structureLocationAreaID);
-            tileObject.SetStructureLocation(area.GetStructureByID(structureLocationType, structureLocationID));
-        }
+        //if(structureLocationID != -1 && structureLocationAreaID != -1) {
+        //    Area area = LandmarkManager.Instance.GetAreaByID(structureLocationAreaID);
+        //    tileObject.SetStructureLocation(area.GetStructureByID(structureLocationType, structureLocationID));
+        //}
         for (int i = 0; i < awareCharactersIDs.Count; i++) {
             tileObject.AddAwareCharacter(CharacterManager.Instance.GetCharacterByID(awareCharactersIDs[i]));
         }

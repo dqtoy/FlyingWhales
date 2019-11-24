@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class EdiblePlant : TileObject {
+public class Mushroom : TileObject {
 
     private const int Replenishment_Countdown = 96;
 
-    public EdiblePlant(LocationStructure location) {
-        SetStructureLocation(location);
+    public Mushroom() {
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, };
-        Initialize(TILE_OBJECT_TYPE.EDIBLE_PLANT);
+        Initialize(TILE_OBJECT_TYPE.MUSHROOM);
         traitContainer.AddTrait(this, "Edible");
     }
-    public EdiblePlant(SaveDataTileObject data) {
+
+    public Mushroom(SaveDataTileObject data) {
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, };
         Initialize(data);
         traitContainer.AddTrait(this, "Edible");
@@ -25,24 +25,19 @@ public class EdiblePlant : TileObject {
         //SetPOIState(POI_STATE.INACTIVE);
         //ScheduleCooldown(action);
     }
-    //public override List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
-    //    if (actor.GetTrait("Herbivore") != null) { //Herbivores only
-    //        return base.AdvertiseActionsToActor(actor, actorAllowedInteractions);
-    //    }
-    //    return null;
-    //}
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);
         if (gridTileLocation != null) {
+            //Debug.Log(GameManager.Instance.TodayLogString() + "Set " + this.ToString() + "' state to " + state.ToString());
             areaMapGameObject.UpdateTileObjectVisual(this); //update visual based on state
             if (!IsAvailable()) {
                 ScheduleCooldown();
             }
         }
-        
+
     }
     public override string ToString() {
-        return "Edible Plant " + id.ToString();
+        return "Mushroom " + id.ToString();
     }
     #endregion
 

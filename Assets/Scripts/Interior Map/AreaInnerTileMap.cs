@@ -386,6 +386,10 @@ public class AreaInnerTileMap : MonoBehaviour {
                         LocationStructureObject structureObject = structurePrefab.GetComponent<LocationStructureObject>();
                         structureObject.RefreshAllTilemaps();
                         List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(this);
+                        structureObject.SetTilesInStructure(occupiedTiles.ToArray());
+
+                        structureObject.ClearOutUnimportantObjectsBeforePlacement();
+
                         for (int j = 0; j < occupiedTiles.Count; j++) {
                             LocationGridTile tile = occupiedTiles[j];
                             tile.SetStructure(structure);
@@ -395,9 +399,8 @@ public class AreaInnerTileMap : MonoBehaviour {
                         chosenBuildingSpot.SetAllAdjacentSpotsAsOpen(this);
                         chosenBuildingSpot.CheckIfAdjacentSpotsCanStillBeOccupied(this);
 
-                        structureObject.SetTilesInStructure(occupiedTiles.ToArray());
                         structure.SetStructureObject(structureObject);
-                        structureObject.OnStructureObjectPlaced();
+                        structureObject.OnStructureObjectPlaced(this);
                     }
                 }
             }
@@ -578,7 +581,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                                     detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
                                     detailsTilemap.SetTransformMatrix(currTile.localPlace, m);
                                     if (currTile.structure != null) {
-                                        currTile.structure.AddPOI(new TreeObject(currTile.structure), currTile);
+                                        currTile.structure.AddPOI(new TreeObject(), currTile);
                                     }
                                 }
                             }

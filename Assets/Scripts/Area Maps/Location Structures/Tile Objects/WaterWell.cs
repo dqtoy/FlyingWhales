@@ -5,8 +5,7 @@ using Traits;
 
 public class WaterWell : TileObject {
 
-    public WaterWell(LocationStructure location) {
-        SetStructureLocation(location);
+    public WaterWell() {
         Initialize(TILE_OBJECT_TYPE.WATER_WELL);
         traitContainer.RemoveTrait(this, "Flammable");
         Wet wet = new Wet();
@@ -16,15 +15,19 @@ public class WaterWell : TileObject {
     public WaterWell(SaveDataTileObject data) {
         Initialize(data);
     }
+
+    public override void SetGridTileLocation(LocationGridTile tile) {
+        base.SetGridTileLocation(tile);
+        if (tile != null) {
+            if (structureLocation.structureType != STRUCTURE_TYPE.POND) {
+                advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.WELL_JUMP, INTERACTION_TYPE.REPAIR };
+            } else {
+                advertisedActions = new List<INTERACTION_TYPE>();
+            }
+        }
+    }
+
     public override string ToString() {
         return "Well " + id.ToString();
-    }
-    public override void SetStructureLocation(LocationStructure structure) {
-        base.SetStructureLocation(structure);
-        if (structure.structureType != STRUCTURE_TYPE.POND) {
-            advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.WELL_JUMP, INTERACTION_TYPE.REPAIR };
-        } else {
-            advertisedActions = new List<INTERACTION_TYPE>();
-        }
     }
 }

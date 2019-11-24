@@ -12,8 +12,7 @@ public class Table : TileObject {
     //    get { return users.Length;}
     //}
 
-    public Table(LocationStructure location) {
-        SetStructureLocation(location);
+    public Table() {
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DRINK, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.DROP_FOOD, INTERACTION_TYPE.REPAIR, INTERACTION_TYPE.SIT };
         Initialize(TILE_OBJECT_TYPE.TABLE);
         SetFood(UnityEngine.Random.Range(20, 81));

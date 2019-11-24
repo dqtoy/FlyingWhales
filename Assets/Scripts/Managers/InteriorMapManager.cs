@@ -764,13 +764,13 @@ public class InteriorMapManager : MonoBehaviour {
         }
         return null;
     }
-    public TileObject CreateNewTileObject(TILE_OBJECT_TYPE tileObjectType, LocationStructure structure) {
+    public TileObject CreateNewTileObject(TILE_OBJECT_TYPE tileObjectType) {
         var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString());
         System.Type type = System.Type.GetType(typeName);
         if (type != null) {
-            return System.Activator.CreateInstance(type, structure) as TileObject;
+            return System.Activator.CreateInstance(type) as TileObject;
         }
-        throw new System.Exception("Could not create new instance of tile object of type " + tileObjectType.ToString() + " for structure " + (structure?.ToString() ?? "null"));
+        throw new System.Exception("Could not create new instance of tile object of type " + tileObjectType.ToString());
     }
     #endregion
 

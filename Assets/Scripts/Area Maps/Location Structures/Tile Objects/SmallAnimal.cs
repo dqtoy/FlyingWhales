@@ -3,18 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Mushroom : TileObject {
+public class SmallAnimal : TileObject {
 
     private const int Replenishment_Countdown = 96;
 
-    public Mushroom(LocationStructure location) {
-        SetStructureLocation(location);
+    public SmallAnimal() {
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, };
-        Initialize(TILE_OBJECT_TYPE.MUSHROOM);
+        Initialize(TILE_OBJECT_TYPE.SMALL_ANIMAL);
         traitContainer.AddTrait(this, "Edible");
     }
-
-    public Mushroom(SaveDataTileObject data) {
+    public SmallAnimal(SaveDataTileObject data) {
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, };
         Initialize(data);
         traitContainer.AddTrait(this, "Edible");
@@ -26,6 +24,12 @@ public class Mushroom : TileObject {
         //SetPOIState(POI_STATE.INACTIVE);
         //ScheduleCooldown(action);
     }
+    //public override List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
+    //    if (actor.GetTrait("Carnivore") != null) { //Carnivores only
+    //        return base.AdvertiseActionsToActor(actor, actorAllowedInteractions);
+    //    }
+    //    return null;
+    //}
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);
         if (gridTileLocation != null) {
@@ -35,10 +39,9 @@ public class Mushroom : TileObject {
                 ScheduleCooldown();
             }
         }
-
     }
     public override string ToString() {
-        return "Mushroom " + id.ToString();
+        return "Small Animal " + id.ToString();
     }
     #endregion
 

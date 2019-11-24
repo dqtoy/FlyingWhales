@@ -5,8 +5,7 @@ using UnityEngine;
 
 public class Guitar : TileObject {
 
-    public Guitar(LocationStructure location) {
-        SetStructureLocation(location);
+    public Guitar() {
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PLAY_GUITAR, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.REPAIR };
         Initialize(TILE_OBJECT_TYPE.GUITAR);
     }

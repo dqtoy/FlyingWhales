@@ -12,6 +12,16 @@ public class BuildingSpot {
     public int[] adjacentSpots { get; private set; }
     public LocationGridTile[] tilesInTerritory { get; private set; }
 
+    //Building
+    public LocationStructureObject blueprint { get; private set; }
+    public STRUCTURE_TYPE blueprintType { get; private set; }
+
+    #region getters
+    public bool hasBlueprint {
+        get { return blueprint != null; }
+    }
+    #endregion
+
     public BuildingSpot(BuildingSpotData data) {
         this.id = data.id;
         this.isOpen = data.isOpen;
@@ -66,7 +76,7 @@ public class BuildingSpot {
     public void CheckIfOccupied(AreaInnerTileMap map) {
         for (int i = 0; i < tilesInTerritory.Length; i++) {
             LocationGridTile currTile = tilesInTerritory[i];
-            if (currTile.structure != null && currTile.structure.structureType != STRUCTURE_TYPE.WILDERNESS && currTile.structure.structureType != STRUCTURE_TYPE.WORK_AREA) {
+            if (currTile.hasBlueprint || (currTile.structure != null && currTile.structure.structureType != STRUCTURE_TYPE.WILDERNESS && currTile.structure.structureType != STRUCTURE_TYPE.WORK_AREA)) {
                 //the spot is now occupied. set that
                 SetIsOccupied(true);
                 SetIsOpen(false);
@@ -74,6 +84,16 @@ public class BuildingSpot {
                 break;
             }
         }
+    }
+    #endregion
+
+    #region Building
+    public void SetBlueprint(LocationStructureObject blueprint, STRUCTURE_TYPE blueprintType) {
+        this.blueprint = blueprint;
+        this.blueprintType = blueprintType;
+    }
+    public void ClearBlueprints() {
+        this.blueprint = null;
     }
     #endregion
 

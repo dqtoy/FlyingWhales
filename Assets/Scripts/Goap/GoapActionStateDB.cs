@@ -298,8 +298,14 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.REACT_TO_SCREAM, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "React Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
-         {INTERACTION_TYPE.RESOLVE_COMBAT, new StateNameAndDuration[]{
+        {INTERACTION_TYPE.RESOLVE_COMBAT, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Combat Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.PLACE_BLUEPRINT, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Place Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
+        } },
+        {INTERACTION_TYPE.BUILD_STRUCTURE, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Build Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
         } },
     };
 }

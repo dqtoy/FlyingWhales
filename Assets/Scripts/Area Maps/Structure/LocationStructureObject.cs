@@ -6,6 +6,8 @@ using UnityEngine.Tilemaps;
 
 public class LocationStructureObject : MonoBehaviour {
 
+    public enum Structure_Visual_Mode { Blueprint, Built }
+
     [Header("Tilemaps")]
     [SerializeField] private Tilemap _groundTileMap;
     [SerializeField] private Tilemap _wallTileMap;
@@ -22,6 +24,8 @@ public class LocationStructureObject : MonoBehaviour {
     [SerializeField] private Transform _furnitureSpotsParent;
 
     private LocationGridTile[] _tiles;
+    private Tilemap[] allTilemaps;
+    private TilemapCollider2D wallCollider; //NOTE: will eventually change this so that walls each have their own graph update scene object.
 
     #region Testers
     [ContextMenu("Log Occupied coordinates")]
@@ -53,16 +57,34 @@ public class LocationStructureObject : MonoBehaviour {
     }
     #endregion
 
+    #region Getters
+    public LocationGridTile[] tiles {
+        get { return _tiles; }
+    }
+    #endregion
+
+    #region Monobehaviours
+    void Awake() {
+        allTilemaps = this.transform.GetComponentsInChildren<Tilemap>();
+        wallCollider = _wallTileMap.gameObject.GetComponent<TilemapCollider2D>();
+    }
+    #endregion
+
     #region Tile Maps
     public void RefreshAllTilemaps() {
-        _groundTileMap.RefreshAllTiles();
-        _wallTileMap.RefreshAllTiles();
-        _detailTileMap.RefreshAllTiles();
+        for (int i = 0; i < allTilemaps.Length; i++) {
+            allTilemaps[i].RefreshAllTiles();
+        }
     }
     private void UpdateSortingOrders() {
         _groundTileMapRenderer.sortingOrder = InteriorMapManager.Ground_Tilemap_Sorting_Order + 5;
-        _wallTileMapRenderer.sortingOrder = _groundTileMapRenderer.sortingOrder + 1;
+        _wallTileMapRenderer.sortingOrder = _groundTileMapRenderer.sortingOrder + 2;
         _detailTileMapRenderer.sortingOrder = InteriorMapManager.Details_Tilemap_Sorting_Order;
+    }
+    private void SetAllTilemapsColor(Color color) {
+        for (int i = 0; i < allTilemaps.Length; i++) {
+            allTilemaps[i].color = color;
+        }
     }
     #endregion
 
@@ -81,10 +103,11 @@ public class LocationStructureObject : MonoBehaviour {
             LocationGridTile tile = areaMap.map[tileCoords.x, tileCoords.y];
             tile.SetReservedType(preplacedObj.tileObjectType);
 
-            TileObject newTileObject = InteriorMapManager.Instance.CreateNewTileObject(preplacedObj.tileObjectType, structure);
+            TileObject newTileObject = InteriorMapManager.Instance.CreateNewTileObject(preplacedObj.tileObjectType);
+            structure.AddPOI(newTileObject, tile);
             newTileObject.areaMapGameObject.OverrideVisual(preplacedObj.spriteRenderer.sprite);
             newTileObject.areaMapGameObject.SetRotation(preplacedObj.transform.localEulerAngles.z);
-            structure.AddPOI(newTileObject, tile);
+            newTileObject.RevalidateTileObjectSlots();
         }
     }
     private StructureTemplateObjectData[] GetPreplacedObjects() {
@@ -93,10 +116,27 @@ public class LocationStructureObject : MonoBehaviour {
     internal void ReceiveMapObject<T>(AreaMapGameObject<T> areaMapGameObject) where T : IPointOfInterest {
         areaMapGameObject.transform.SetParent(_objectsParent);
     }
+    public void RemovePreplacedObjectSettings() {
+        StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
+        if (preplacedObjs != null) {
+            for (int i = 0; i < preplacedObjs.Length; i++) {
+                GameObject.Destroy(preplacedObjs[i].gameObject);
+            }
+        }
+    }
+    public void ClearOutUnimportantObjectsBeforePlacement() {
+        for (int i = 0; i < _tiles.Length; i++) {
+            LocationGridTile tile = _tiles[i];
+            if (tile.objHere != null && (tile.objHere is BuildSpotTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
+                tile.structure.RemovePOI(tile.objHere);
+            }
+            tile.parentAreaMap.detailsTilemap.SetTile(tile.localPlace, null);
+        }
+    }
     #endregion
 
     #region Furniture Spots
-    public void RegisterFurnitureSpots(AreaInnerTileMap areaMap) {
+    private void RegisterFurnitureSpots(AreaInnerTileMap areaMap) {
         if (_furnitureSpotsParent == null) {
             return;
         }
@@ -114,22 +154,17 @@ public class LocationStructureObject : MonoBehaviour {
     #endregion
 
     #region Events
-    public void OnStructureObjectPlaced() {
+    public void OnStructureObjectPlaced(AreaInnerTileMap areaMap) {
         UpdateSortingOrders();
-        //clear out any objects or details on this objects occupied tiles
         for (int i = 0; i < _tiles.Length; i++) {
             LocationGridTile tile = _tiles[i];
-            if (tile.objHere != null) {
-                tile.structure.RemovePOI(tile.objHere);
-            }
             //check if the template has details at this tiles location
             tile.hasDetail = _detailTileMap.GetTile(_detailTileMap.LocalToCell(_detailTileMap.WorldToLocal(tile.worldLocation))) != null;
             if (tile.hasDetail) { //if it does then set that tile as occupied
                 tile.SetTileState(LocationGridTile.Tile_State.Occupied);
             }
-            //clear all details on the main area map detail tile map
-            tile.parentAreaMap.detailsTilemap.SetTile(tile.localPlace, null);
         }
+        RegisterFurnitureSpots(areaMap);
     }
     #endregion
 
@@ -168,6 +203,27 @@ public class LocationStructureObject : MonoBehaviour {
             occupiedTiles.Add(tile);
         }
         return occupiedTiles;
+    }
+    #endregion
+
+    #region Visuals
+    public void SetVisualMode(Structure_Visual_Mode mode, AreaInnerTileMap map) {
+        Color color = Color.white;
+        switch (mode) {
+            case Structure_Visual_Mode.Blueprint:
+                color.a = 128f / 255f;
+                SetAllTilemapsColor(color);
+                wallCollider.enabled = false;
+                RemovePreplacedObjectSettings();
+                break;
+            default:
+                color = Color.white;
+                SetAllTilemapsColor(color);
+                wallCollider.enabled = true;
+                //TODO: Scan Pathfinding Graph using Graph Update Scene instead of rescanning the whole grid.
+                PathfindingManager.Instance.RescanGrid(map.pathfindingGraph);
+                break;
+        }
     }
     #endregion
 

@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class SmallAnimal : TileObject {
+public class EdiblePlant : TileObject {
 
     private const int Replenishment_Countdown = 96;
 
-    public SmallAnimal(LocationStructure location) {
-        SetStructureLocation(location);
+    public EdiblePlant() {
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, };
-        Initialize(TILE_OBJECT_TYPE.SMALL_ANIMAL);
+        Initialize(TILE_OBJECT_TYPE.EDIBLE_PLANT);
         traitContainer.AddTrait(this, "Edible");
     }
-    public SmallAnimal(SaveDataTileObject data) {
+    public EdiblePlant(SaveDataTileObject data) {
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, };
         Initialize(data);
         traitContainer.AddTrait(this, "Edible");
@@ -26,7 +25,7 @@ public class SmallAnimal : TileObject {
         //ScheduleCooldown(action);
     }
     //public override List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
-    //    if (actor.GetTrait("Carnivore") != null) { //Carnivores only
+    //    if (actor.GetTrait("Herbivore") != null) { //Herbivores only
     //        return base.AdvertiseActionsToActor(actor, actorAllowedInteractions);
     //    }
     //    return null;
@@ -34,15 +33,15 @@ public class SmallAnimal : TileObject {
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);
         if (gridTileLocation != null) {
-            //Debug.Log(GameManager.Instance.TodayLogString() + "Set " + this.ToString() + "' state to " + state.ToString());
             areaMapGameObject.UpdateTileObjectVisual(this); //update visual based on state
             if (!IsAvailable()) {
                 ScheduleCooldown();
             }
         }
+        
     }
     public override string ToString() {
-        return "Small Animal " + id.ToString();
+        return "Edible Plant " + id.ToString();
     }
     #endregion
 

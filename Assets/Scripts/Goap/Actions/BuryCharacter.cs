@@ -78,7 +78,7 @@ public class BuryCharacter : GoapAction {
             }
             
         }
-        Tombstone tombstone = new Tombstone(goapNode.actor.currentStructure);
+        Tombstone tombstone = new Tombstone();
         tombstone.SetCharacter(targetCharacter);
         goapNode.actor.currentStructure.AddPOI(tombstone, chosenLocation);
         //TODO: targetCharacter.CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE.BURY, goapNode.actor);

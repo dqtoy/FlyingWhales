@@ -5,8 +5,7 @@ using UnityEngine;
 
 public class FoodPile : ResourcePile {
 
-    public FoodPile(LocationStructure location) : base(RESOURCE.FOOD) {
-        SetStructureLocation(location);
+    public FoodPile() : base(RESOURCE.FOOD) {
         Initialize(TILE_OBJECT_TYPE.FOOD_PILE);
         SetResourceInPile(2000); //
         traitContainer.RemoveTrait(this, "Flammable");

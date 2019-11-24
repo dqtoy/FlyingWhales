@@ -59,7 +59,9 @@ public class PathfindingManager : MonoBehaviour {
     public void RescanGrid() {
         AstarPath.active.Scan(mainGraph);
     }
-
+    public void RescanGrid(GridGraph graph) {
+        AstarPath.active.Scan(graph);
+    }
     public void AddAgent(CharacterAIPath agent) {
         _allAgents.Add(agent);
     }

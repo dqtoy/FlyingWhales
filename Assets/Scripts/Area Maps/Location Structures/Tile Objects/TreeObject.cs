@@ -3,33 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Ore : TileObject {
+public class TreeObject : TileObject {
     public int yield { get; private set; }
 
-    private const int Supply_Per_Mine = 50;
+    private const int Supply_Per_Mine = 25;
 
-    public Ore(LocationStructure location) {
-        SetStructureLocation(location);
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE, INTERACTION_TYPE.ASSAULT, };
-        Initialize(TILE_OBJECT_TYPE.ORE);
-        yield = Random.Range(15, 36);
+    public TreeObject() {
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CHOP_WOOD, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.REPAIR };
+        Initialize(TILE_OBJECT_TYPE.TREE_OBJECT);
+        SetYield(Random.Range(15, 36));
     }
-    public Ore(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE, INTERACTION_TYPE.ASSAULT, };
+    public TreeObject(SaveDataTileObject data) {
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CHOP_WOOD, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.REPAIR };
         Initialize(data);
     }
 
-    #region Overrides
     public override string ToString() {
-        return "Ore " + id.ToString();
+        return "Tree " + id.ToString();
     }
-    public override void SetPOIState(POI_STATE state) {
-        base.SetPOIState(state);
-        if (gridTileLocation != null) {
-            areaMapGameObject.UpdateTileObjectVisual(this); //update visual based on state
-        }
-    }
-    #endregion
 
     public int GetSupplyPerMine() {
         if (yield < Supply_Per_Mine) {
@@ -51,17 +42,17 @@ public class Ore : TileObject {
     }
 }
 
-public class SaveDataOre : SaveDataTileObject {
+public class SaveDataTreeObject: SaveDataTileObject {
     public int yield;
 
     public override void Save(TileObject tileObject) {
         base.Save(tileObject);
-        Ore obj = tileObject as Ore;
+        TreeObject obj = tileObject as TreeObject;
         yield = obj.yield;
     }
 
     public override TileObject Load() {
-        Ore obj = base.Load() as Ore;
+        TreeObject obj = base.Load() as TreeObject;
         obj.SetYield(yield);
         return obj;
     }

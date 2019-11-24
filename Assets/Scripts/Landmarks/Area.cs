@@ -871,9 +871,11 @@ public class Area : IJobOwner {
             for (int i = 0; i < keyValuePair.Value.Count; i++) {
                 LocationStructure structure = keyValuePair.Value[i];
                 structure.structureObj?.RegisterPreplacedObjects(structure, this.areaMap);
-                structure.structureObj?.RegisterFurnitureSpots(this.areaMap);
             }
         }
+
+        //place build spots
+        PlaceBuildSpots();
 
         PlaceOres();
         PlaceSupplyPiles();
@@ -883,21 +885,30 @@ public class Area : IJobOwner {
         //magic circle
         if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
             LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][0];
-            structure.AddPOI(new MagicCircle(structure));
+            structure.AddPOI(new MagicCircle());
         }
         //Well
         if (structures.ContainsKey(STRUCTURE_TYPE.WORK_AREA)) {
             for (int i = 0; i < 3; i++) {
                 LocationStructure structure = structures[STRUCTURE_TYPE.WORK_AREA][0];
-                structure.AddPOI(new WaterWell(structure));
+                structure.AddPOI(new WaterWell());
             }
         }
         //Goddess Statue
         if (structures.ContainsKey(STRUCTURE_TYPE.WORK_AREA)) {
             for (int i = 0; i < 4; i++) {
                 LocationStructure structure = structures[STRUCTURE_TYPE.WORK_AREA][0];
-                structure.AddPOI(new GoddessStatue(structure));
+                structure.AddPOI(new GoddessStatue());
             }
+        }
+    }
+    private void PlaceBuildSpots() {
+        for (int i = 0; i < areaMap.buildingSpots.Count; i++) {
+            BuildingSpot spot = areaMap.buildingSpots[i];
+            BuildSpotTileObject tileObj = new BuildSpotTileObject();
+            tileObj.SetBuildingSpot(spot);
+            LocationGridTile tileLocation = areaMap.map[spot.location.x, spot.location.y];
+            tileLocation.structure.AddPOI(tileObj, tileLocation);
         }
     }
     private void PlaceOres() {
@@ -908,7 +919,7 @@ public class Area : IJobOwner {
                 List<LocationGridTile> validTiles = structure.unoccupiedTiles.Where(x => x.IsAdjacentToPasssableTiles(3)).ToList();
                 if (validTiles.Count > 0) {
                     LocationGridTile chosenTile = validTiles[UnityEngine.Random.Range(0, validTiles.Count)];
-                    structure.AddPOI(new Ore(structure), chosenTile);
+                    structure.AddPOI(new Ore(), chosenTile);
                 } else {
                     break;
                 }
@@ -919,14 +930,14 @@ public class Area : IJobOwner {
         if (structures.ContainsKey(STRUCTURE_TYPE.DUNGEON)) {
             for (int i = 0; i < structures[STRUCTURE_TYPE.DUNGEON].Count; i++) {
                 LocationStructure structure = structures[STRUCTURE_TYPE.DUNGEON][i];
-                structure.AddPOI(new SupplyPile(structure));
+                structure.AddPOI(new SupplyPile());
             }
         }
         if (structures.ContainsKey(STRUCTURE_TYPE.WAREHOUSE)) {
             for (int i = 0; i < structures[STRUCTURE_TYPE.WAREHOUSE].Count; i++) {
                 LocationStructure structure = structures[STRUCTURE_TYPE.WAREHOUSE][i];
                 if (structure.structureObj == null) {
-                    structure.AddPOI(new SupplyPile(structure));
+                    structure.AddPOI(new SupplyPile());
                 }
             }
         }
@@ -935,13 +946,13 @@ public class Area : IJobOwner {
         if (structures.ContainsKey(STRUCTURE_TYPE.DUNGEON)) {
             for (int i = 0; i < structures[STRUCTURE_TYPE.DUNGEON].Count; i++) {
                 LocationStructure structure = structures[STRUCTURE_TYPE.DUNGEON][i];
-                structure.AddPOI(new FoodPile(structure));
+                structure.AddPOI(new FoodPile());
             }
         }
         if (structures.ContainsKey(STRUCTURE_TYPE.WAREHOUSE)) {
             for (int i = 0; i < structures[STRUCTURE_TYPE.WAREHOUSE].Count; i++) {
                 LocationStructure structure = structures[STRUCTURE_TYPE.WAREHOUSE][i];
-                FoodPile foodPile = new FoodPile(structure);
+                FoodPile foodPile = new FoodPile();
                 if (structure.AddPOI(foodPile)) {
                     foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
                 }
@@ -960,7 +971,7 @@ public class Area : IJobOwner {
                 List<LocationGridTile> validTiles = structure.unoccupiedTiles.Where(x => x.IsAdjacentToPasssableTiles(3)).ToList();
                 if (validTiles.Count > 0) {
                     LocationGridTile chosenTile = validTiles[UnityEngine.Random.Range(0, validTiles.Count)];
-                    structure.AddPOI(new SmallAnimal(structure), chosenTile);
+                    structure.AddPOI(new SmallAnimal(), chosenTile);
                 } else {
                     break;
                 }
@@ -970,7 +981,7 @@ public class Area : IJobOwner {
                 List<LocationGridTile> validTiles = structure.unoccupiedTiles.Where(x => x.IsAdjacentToPasssableTiles(3)).ToList();
                 if (validTiles.Count > 0) {
                     LocationGridTile chosenTile = validTiles[UnityEngine.Random.Range(0, validTiles.Count)];
-                    structure.AddPOI(new EdiblePlant(structure), chosenTile);
+                    structure.AddPOI(new EdiblePlant(), chosenTile);
                 } else {
                     break;
                 }

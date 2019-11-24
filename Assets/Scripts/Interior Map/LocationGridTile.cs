@@ -41,6 +41,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         get { return genericTileObject.traitContainer.allTraits; }
     }
     public LocationGridTile gridTileLocation { get { return this; } }
+    public bool hasBlueprint { get; private set; }
 
     private Color defaultTileColor;
 
@@ -90,7 +91,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     }
 
     private void CreateGenericTileObject() {
-        genericTileObject = new GenericTileObject(this.structure);
+        genericTileObject = new GenericTileObject();
     }
     public void UpdateWorldLocation() {
         worldLocation = parentTileMap.CellToWorld(localPlace);
@@ -194,24 +195,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         //        break;
         //}
     }
-    public List<TileNeighbourDirection> GetSameStructureNeighbourDirections() {
-        List<TileNeighbourDirection> dirs = new List<TileNeighbourDirection>();
-        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in neighbours) {
-            if (kvp.Value.structure == this.structure) {
-                dirs.Add(kvp.Key);
-            }
-        }
-        return dirs;
-    }
-    public List<TileNeighbourDirection> GetDifferentStructureNeighbourDirections() {
-        List<TileNeighbourDirection> dirs = new List<TileNeighbourDirection>();
-        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in neighbours) {
-            if (kvp.Value.structure != this.structure) {
-                dirs.Add(kvp.Key);
-            }
-        }
-        return dirs;
-    }
 
     #region Structures
     public void SetStructure(LocationStructure structure) {
@@ -256,22 +239,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     #region Points of Interest
     public void SetObjectHere(IPointOfInterest poi) {
         objHere = poi;
-        //if (hasFurnitureSpot && poi is TileObject) {
-        //    FURNITURE_TYPE furnitureType = (poi as TileObject).tileObjectType.ConvertTileObjectToFurniture();
-        //    if (furnitureType != FURNITURE_TYPE.NONE) {
-        //        FurnitureSetting settings;
-        //        if (furnitureSpot.TryGetFurnitureSettings(furnitureType, out settings)) {
-        //            TileBase usedAsset = InteriorMapManager.Instance.GetTileAsset(settings.tileAssetName);
-        //            parentAreaMap.objectsTilemap.SetTile(localPlace, usedAsset);
-        //            Matrix4x4 m = parentAreaMap.objectsTilemap.GetTransformMatrix(localPlace);
-        //            m.SetTRS(Vector3.zero, Quaternion.Euler(settings.rotation), Vector3.one);
-        //            parentAreaMap.objectsTilemap.SetTransformMatrix(localPlace, m);
-        //            if (poi is Table) {
-        //                (poi as Table).SetUsedAsset(usedAsset);
-        //            }
-        //        }
-        //    }
-        //}
         poi.SetGridTileLocation(this);
         SetTileState(Tile_State.Occupied);
         Messenger.Broadcast(Signals.OBJECT_PLACED_ON_TILE, this, poi);
@@ -598,6 +565,12 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             }
         }
         throw new System.Exception("Furniture spot at " + this.ToString() + " cannot provide facility " + facility.ToString() + "! Should not reach this point if that is the case!");
+    }
+    #endregion
+
+    #region Building
+    public void SetHasBlueprint(bool hasBlueprint) {
+        this.hasBlueprint = hasBlueprint;
     }
     #endregion
 }

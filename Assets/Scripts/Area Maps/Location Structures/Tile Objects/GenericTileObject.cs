@@ -7,7 +7,7 @@ public class GenericTileObject : TileObject {
 
     public bool hasBeenInitialized { get; private set; }
 
-    public GenericTileObject(LocationStructure location) {
+    public GenericTileObject() {
         advertisedActions = new List<INTERACTION_TYPE>();
     }
     public GenericTileObject(SaveDataTileObject data) {
@@ -25,9 +25,9 @@ public class GenericTileObject : TileObject {
         if (tile != null) {
             this.tile = tile;
         }
-        //if (collisionTrigger == null) {
-        //    InitializeCollisionTrigger(this); //TODO: Remove chance of this happening?
-        //}
+        if (areaMapGameObject == null) {
+            InitializeMapObject(this);
+        }
         if (tile == null) {
             DisableGameObject();
             OnRemoveTileObject(null, previousTile);
@@ -53,9 +53,8 @@ public class GenericTileObject : TileObject {
 
     public void ManualInitialize(LocationStructure location, LocationGridTile tile) {
         hasBeenInitialized = true;
-        SetStructureLocation(location);
-        Initialize(TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT);
         SetGridTileLocation(tile);
+        Initialize(TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT);
         DisableGameObject();
 
         switch (gridTileLocation.groundType) {
