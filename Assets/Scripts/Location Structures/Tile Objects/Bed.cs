@@ -53,7 +53,7 @@ public class Bed : TileObject {
                 UpdateUsedBedAsset();
             } else {
                 if (gridTileLocation != null) {
-                    gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this); //update visual based on state
+                    areaMapGameObject.UpdateTileObjectVisual(this);
                 }
             }
         }
@@ -206,12 +206,13 @@ public class Bed : TileObject {
         if (gridTileLocation == null) {
             return;
         }
-        int userCount = GetActiveUserCount();
-        if (userCount == 1) {
-            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.bed1SleepingVariant);
-        } else if (userCount == 2) {
-            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.bed2SleepingVariant);
-        }
+        areaMapGameObject.UpdateTileObjectVisual(this);
+        //int userCount = GetActiveUserCount();
+        //if (userCount == 1) {
+        //    gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.bed1SleepingVariant);
+        //} else if (userCount == 2) {
+        //    gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.bed2SleepingVariant);
+        //}
         //the asset will revert to no one sleeping once the bed is set to active again
     }
 }

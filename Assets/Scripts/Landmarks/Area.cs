@@ -719,7 +719,7 @@ public class Area : IJobOwner {
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.INN, true);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WAREHOUSE, true);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.PRISON, true);
-        //LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.CEMETERY, true);
+        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.CEMETERY, true);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WORK_AREA, true);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WILDERNESS, false);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.POND, true);
@@ -865,12 +865,13 @@ public class Area : IJobOwner {
     public void SetAreaMap(AreaInnerTileMap map) {
         areaMap = map;
     }
-    public void PlaceTileObjects() {
+    public void PlaceObjects() {
         //pre placed objects
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
             for (int i = 0; i < keyValuePair.Value.Count; i++) {
                 LocationStructure structure = keyValuePair.Value[i];
-                structure.structureObj?.RegisterPreplacedObjects(structure);
+                structure.structureObj?.RegisterPreplacedObjects(structure, this.areaMap);
+                structure.structureObj?.RegisterFurnitureSpots(this.areaMap);
             }
         }
 
@@ -924,7 +925,7 @@ public class Area : IJobOwner {
         if (structures.ContainsKey(STRUCTURE_TYPE.WAREHOUSE)) {
             for (int i = 0; i < structures[STRUCTURE_TYPE.WAREHOUSE].Count; i++) {
                 LocationStructure structure = structures[STRUCTURE_TYPE.WAREHOUSE][i];
-                if (!structure.isFromTemplate) {
+                if (structure.structureObj == null) {
                     structure.AddPOI(new SupplyPile(structure));
                 }
             }
@@ -941,8 +942,9 @@ public class Area : IJobOwner {
             for (int i = 0; i < structures[STRUCTURE_TYPE.WAREHOUSE].Count; i++) {
                 LocationStructure structure = structures[STRUCTURE_TYPE.WAREHOUSE][i];
                 FoodPile foodPile = new FoodPile(structure);
-                structure.AddPOI(foodPile);
-                foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
+                if (structure.AddPOI(foodPile)) {
+                    foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
+                }
             }
         }
     }

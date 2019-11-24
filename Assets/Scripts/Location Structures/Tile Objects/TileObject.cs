@@ -5,7 +5,7 @@ using UnityEngine;
 using BayatGames.SaveGameFree.Types;
 using Traits;
 
-public class TileObject : IPointOfInterest {
+public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
     public string name { get; private set; }
     public int id { get; private set; }
     public TILE_OBJECT_TYPE tileObjectType { get; private set; }
@@ -19,7 +19,6 @@ public class TileObject : IPointOfInterest {
     public bool isDisabledByPlayer { get; protected set; }
     public bool isSummonedByPlayer { get; protected set; }
     public List<JobQueueItem> allJobsTargettingThis { get; protected set; }
-    //public List<GoapAction> targettedByAction { get; protected set; }
     public List<Character> owners { get; private set; }
     public virtual Character[] users {
         get {
@@ -45,7 +44,6 @@ public class TileObject : IPointOfInterest {
 
     protected LocationGridTile tile;
     private POI_STATE _state;
-    protected POICollisionTrigger _collisionTrigger;
     public LocationGridTile previousTile { get; protected set; }
 
     #region getters/setters
@@ -57,9 +55,6 @@ public class TileObject : IPointOfInterest {
     }
     public POI_STATE state {
         get { return _state; }
-    }
-    public POICollisionTrigger collisionTrigger {
-        get { return _collisionTrigger; }
     }
     public Vector3 worldPosition {
         get { return gridTileLocation.centeredWorldLocation; }
@@ -87,8 +82,9 @@ public class TileObject : IPointOfInterest {
         currentHP = maxHP;
         CreateTraitContainer();
         traitContainer.AddTrait(this, "Flammable");
-        InitializeCollisionTrigger();
         AddCommonAdvertisments();
+        InitializeMapObject(this);
+
         InteriorMapManager.Instance.AddTileObject(this);
     }
     protected void Initialize(SaveDataTileObject data) {
@@ -102,8 +98,9 @@ public class TileObject : IPointOfInterest {
         //targettedByAction = new List<GoapAction>();
         hasCreatedSlots = false;
         CreateTraitContainer();
-        InitializeCollisionTrigger();
         AddCommonAdvertisments();
+        InitializeMapObject(this);
+
         InteriorMapManager.Instance.AddTileObject(this);
     }
 
@@ -112,6 +109,13 @@ public class TileObject : IPointOfInterest {
         AddAdvertisedAction(INTERACTION_TYPE.POISON);
         AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
     }
+
+    #region Area Map Object
+    protected override void CreateAreaMapGameObject() {
+        GameObject obj = InteriorMapManager.Instance.areaMapObjectFactory.CreateNewTileObjectAreaMapObject(this.tileObjectType);
+        areaMapGameObject = obj.GetComponent<TileObjectGameObject>();
+    }
+    #endregion
 
     #region Virtuals
     /// <summary>
@@ -138,15 +142,15 @@ public class TileObject : IPointOfInterest {
     public virtual void SetGridTileLocation(LocationGridTile tile) {
         previousTile = this.tile;
         this.tile = tile;
-        if (_collisionTrigger == null) {
-            InitializeCollisionTrigger();
-        }
+        //if (collisionTrigger == null) {
+        //    InitializeCollisionTrigger(this); //TODO: Remove chance of this happening?
+        //}
         if (tile == null) {
-            DisableCollisionTrigger();
+            DisableGameObject();
             OnRemoveTileObject(null, previousTile);
             SetPOIState(POI_STATE.INACTIVE);
         } else {
-            PlaceCollisionTriggerAt(tile);
+            PlaceMapObjectAt(tile);
             OnPlaceObjectAtTile(tile);
             SetPOIState(POI_STATE.ACTIVE);
         }
@@ -154,7 +158,7 @@ public class TileObject : IPointOfInterest {
     public virtual void RemoveTileObject(Character removedBy) {
         LocationGridTile previousTile = this.tile;
         this.tile = null;
-        DisableCollisionTrigger();
+        DisableGameObject();
         OnRemoveTileObject(removedBy, previousTile);
         SetPOIState(POI_STATE.INACTIVE);
     }
@@ -385,33 +389,6 @@ public class TileObject : IPointOfInterest {
     }
     #endregion
 
-    #region Collision
-    public void InitializeCollisionTrigger() {
-        GameObject collisionGO = GameObject.Instantiate(InteriorMapManager.Instance.poiCollisionTriggerPrefab, InteriorMapManager.Instance.transform);
-        SetCollisionTrigger(collisionGO.GetComponent<POICollisionTrigger>());
-        collisionGO.SetActive(false);
-        _collisionTrigger.Initialize(this);
-        RectTransform rt = collisionGO.transform as RectTransform;
-        rt.anchorMin = Vector2.zero;
-        rt.anchorMax = Vector2.zero;
-    }
-    public void PlaceCollisionTriggerAt(LocationGridTile tile) {
-        _collisionTrigger.transform.SetParent(tile.parentAreaMap.objectsParent);
-        (_collisionTrigger.transform as RectTransform).anchoredPosition = tile.centeredLocalLocation;
-        _collisionTrigger.gameObject.SetActive(true);
-        _collisionTrigger.SetLocation(tile);
-    }
-    public virtual void DisableCollisionTrigger() {
-        _collisionTrigger.gameObject.SetActive(false);
-    }
-    public virtual void EnableCollisionTrigger() {
-        _collisionTrigger.gameObject.SetActive(true);
-    }
-    public void SetCollisionTrigger(POICollisionTrigger trigger) {
-        _collisionTrigger = trigger;
-    }
-    #endregion
-
     #region Awareness
     public void AddAwareCharacter(Character character) {
         if (!awareCharacters.Contains(character)) {
@@ -506,12 +483,11 @@ public class TileObject : IPointOfInterest {
         Messenger.Broadcast(Signals.TILE_OBJECT_PLACED, this, tile);
     }
     private void CreateTileObjectSlots() {
-        UnityEngine.Tilemaps.TileBase usedAsset = tile.parentAreaMap.objectsTilemap.GetTile(tile.localPlace);
+        Sprite usedAsset = areaMapGameObject.usedSprite;
         if (tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT && usedAsset != null && InteriorMapManager.Instance.HasSettingForTileObjectAsset(usedAsset)) {
             List<TileObjectSlotSetting> slotSettings = InteriorMapManager.Instance.GetTileObjectSlotSettings(usedAsset);
-            slotsParent = GameObject.Instantiate(InteriorMapManager.Instance.tileObjectSlotsParentPrefab, tile.parentAreaMap.objectsTilemap.transform);
-            slotsParent.transform.localPosition = tile.centeredLocalLocation;
-            slotsParent.transform.localRotation = tile.parentAreaMap.objectsTilemap.GetTransformMatrix(tile.localPlace).rotation;
+            slotsParent = GameObject.Instantiate(InteriorMapManager.Instance.tileObjectSlotsParentPrefab, areaMapGameObject.transform);
+            slotsParent.transform.localPosition = Vector3.zero;
             slotsParent.name = this.ToString() + " Slots";
             slots = new TileObjectSlotItem[slotSettings.Count];
             for (int i = 0; i < slotSettings.Count; i++) {

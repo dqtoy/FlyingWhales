@@ -21,9 +21,9 @@ public class LogReplacerDictionaryPropertyDrawer : SerializableDictionaryPropert
 public class LocationPortraitDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(FactionEmblemDictionary))]
 public class FactionEmblemDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-[CustomPropertyDrawer(typeof(ItemTileBaseDictionary))]
+[CustomPropertyDrawer(typeof(ItemAsseteDictionary))]
 public class ItemTileBaseDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-[CustomPropertyDrawer(typeof(TileObjectTileBaseDictionary))]
+[CustomPropertyDrawer(typeof(TileObjectAssetDictionary))]
 public class TileObjectTileBaseDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(ItemSpriteDictionary))]
 public class ItemSpriteDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }

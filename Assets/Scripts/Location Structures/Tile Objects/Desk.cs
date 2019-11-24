@@ -23,7 +23,7 @@ public class Desk : TileObject {
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);
         if (gridTileLocation != null) {
-            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this); //update visual based on state
+           areaMapGameObject.UpdateTileObjectVisual(this); //update visual based on state
         }
     }
     public override void OnDoActionToObject(ActualGoapNode action) {

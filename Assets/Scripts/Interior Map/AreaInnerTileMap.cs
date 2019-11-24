@@ -28,17 +28,12 @@ public class AreaInnerTileMap : MonoBehaviour {
 
     [Header("Tile Maps")]
     public Tilemap groundTilemap;
-    public Tilemap wallTilemap;
     public Tilemap detailsTilemap;
     public Tilemap structureTilemap;
-    public Tilemap objectsTilemap;
-    public Tilemap roadTilemap;
 
     [Header("Tiles")]
     [SerializeField] private TileBase outsideTile;
     [SerializeField] private TileBase snowOutsideTile;
-    [SerializeField] private ItemTileBaseDictionary itemTiles;
-    [SerializeField] private TileObjectTileBaseDictionary tileObjectTiles;
 
     [Header("Special Cases")]
     //bed
@@ -82,7 +77,7 @@ public class AreaInnerTileMap : MonoBehaviour {
 
     [Header("Structures")]
     [SerializeField] private GameObject buildSpotPrefab;
-    [SerializeField] private Transform structureParent;
+    public Transform structureParent;
 
     [Header("Perlin Noise")]
     [SerializeField] private float offsetX;
@@ -100,10 +95,8 @@ public class AreaInnerTileMap : MonoBehaviour {
 
     //burning
     public List<BurningSource> activeBurningSources { get; private set; }
-    
     //Building spots
     public List<BuildingSpot> buildingSpots { get; private set; }
-
     public Character hoveredCharacter { get; private set; }
     public Area area { get; private set; }
     public LocationGridTile[,] map { get; private set; }
@@ -124,6 +117,21 @@ public class AreaInnerTileMap : MonoBehaviour {
         this.area = area;
         area.SetAreaMap(this);
         activeBurningSources = new List<BurningSource>();
+
+        //set tile map sorting orders
+        TilemapRenderer ground = groundTilemap.gameObject.GetComponent<TilemapRenderer>();
+        ground.sortingOrder = InteriorMapManager.Ground_Tilemap_Sorting_Order;
+        TilemapRenderer details = detailsTilemap.gameObject.GetComponent<TilemapRenderer>();
+        details.sortingOrder = InteriorMapManager.Details_Tilemap_Sorting_Order;
+
+        TilemapRenderer northEdge = northEdgeTilemap.gameObject.GetComponent<TilemapRenderer>();
+        northEdge.sortingOrder = InteriorMapManager.Ground_Tilemap_Sorting_Order + 1;
+        TilemapRenderer southEdge = southEdgeTilemap.gameObject.GetComponent<TilemapRenderer>();
+        southEdge.sortingOrder = InteriorMapManager.Ground_Tilemap_Sorting_Order + 1;
+        TilemapRenderer westEdge = westEdgeTilemap.gameObject.GetComponent<TilemapRenderer>();
+        westEdge.sortingOrder = InteriorMapManager.Ground_Tilemap_Sorting_Order + 2;
+        TilemapRenderer eastEdge = eastEdgeTilemap.gameObject.GetComponent<TilemapRenderer>();
+        eastEdge.sortingOrder = InteriorMapManager.Ground_Tilemap_Sorting_Order + 2;
     }
     public void DrawMap(TownMapSettings generatedSettings) {
         generatedTownMapSettings = generatedSettings;
@@ -271,46 +279,6 @@ public class AreaInnerTileMap : MonoBehaviour {
             //Place that template in the area generation tilemap
             Dictionary<int, Dictionary<int, LocationGridTileSettings>> mainGeneratedSettings = InteriorMapManager.Instance.GenerateTownCenterTemplateForGeneration(chosenTownCenter, Vector3Int.zero);
             chosenTownCenter.UpdatePositionsGivenOrigin(Vector3Int.zero);
-            //List<BuildingSpot> occupiedSlots = new List<BuildingSpot>();
-            //then iterate through all the structures in this area, making sure that the chosen template for the structure can connect to the town center
-            //log += "\nGenerating Structures... ";
-            //foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in area.structures) {
-            //    log += "\nStructure Type is: " + keyValuePair.Key.ToString();
-            //    if (!keyValuePair.Key.ShouldBeGeneratedFromTemplate()) {
-            //        log += "\nStructure type should not be generated from template. Skipping...";
-            //        continue; //skip
-            //    }
-            //    int structuresToCreate = keyValuePair.Value.Count;
-            //    log += "\nStructures to create are: " + structuresToCreate.ToString();
-            //    for (int i = 0; i < structuresToCreate; i++) {
-            //        List<StructureTemplate> choices = InteriorMapManager.Instance.GetStructureTemplates(keyValuePair.Key); //placed this inside loop so that instance of template is unique per iteration
-            //        if (choices.Count == 0) {
-            //            //NOTE: Show a warning log when there are no valid structure templates for the current structure
-            //            throw new System.Exception("There are no valid " + keyValuePair.Key.ToString() + " templates to connect to town center in area " + area.name);
-            //        }
-            //        StructureTemplate chosenStructureTemplate = choices[Utilities.rng.Next(0, choices.Count)];
-            //        log += "\n\tChosen Template is: " + chosenStructureTemplate.name;
-
-            //        BuildingSpot chosenSpot;
-            //        if (occupiedSlots.Count == 0) {
-            //            chosenSpot = chosenTownCenter.GetRandomBuildingSpot();
-            //        } else {
-            //            chosenTownCenter.TryGetOpenBuildingSpot(out chosenSpot);
-            //        }
-
-            //        BuildingSpot townCenterConnector = chosenSpot;
-            //        BuildingSpot chosenStructureTemplateConnector = chosenStructureTemplate.connectors[0];
-
-            //        Vector3Int shiftTemplateBy = InteriorMapManager.Instance.GetMoveUnitsOfTemplateGivenConnections(chosenStructureTemplate, chosenStructureTemplateConnector, townCenterConnector);
-            //        townCenterConnector.SetIsOpen(false);
-            //        occupiedSlots.Add(townCenterConnector);
-            //        townCenterConnector.SetAdjacentSpotsAsOpen(chosenTownCenter, occupiedSlots);
-            //        string structureLog;
-            //        Dictionary<int, Dictionary<int, LocationGridTileSettings>> generatedStructure = InteriorMapManager.Instance.GenerateStructureTemplateForGeneration(chosenStructureTemplate, shiftTemplateBy, keyValuePair.Key, out structureLog);
-            //        log += "\n\t\t" + structureLog;
-            //        InteriorMapManager.Instance.MergeSettings(generatedStructure, ref mainGeneratedSettings);
-            //    }
-            //}
             Debug.Log(log);
             //once all structures are placed, get the occupied bounds in the area generation tilemap, and use that size to generate the actual grid for this map
             return InteriorMapManager.Instance.GetTownMapSettings(mainGeneratedSettings);
@@ -368,23 +336,6 @@ public class AreaInnerTileMap : MonoBehaviour {
         size.X = xSize;
         size.Y = ySize;
 
-        //size.Y = 32;
-
-        //int ySizeForInner = 18;
-        //int minimumNeededTiles = settings.Values.Sum(x => x.size.Product());
-        //size.X = minimumNeededTiles / ySizeForInner;
-        //if (size.X < ySizeForInner) {
-        //    size.X = ySizeForInner;
-        //}
-        //if (area.areaType == AREA_TYPE.DUNGEON) {
-        //    size.X += Mathf.FloorToInt(settings.Count * 3f); //add allowance depecnding on number of structures to place
-        //} else {
-        //    size.X += Mathf.FloorToInt(settings.Count * 4f); //add allowance depecnding on number of structures to place
-        //}
-
-        ////increase size by 7 for each side (west and east) and another 7 for the east side for the part that will be covered by the UI
-        //size.X += 21;
-
         return size;
     }
     private void DrawTiles(Tilemap tilemap, TileTemplateData[] data, Vector3Int startPos) {
@@ -438,7 +389,6 @@ public class AreaInnerTileMap : MonoBehaviour {
                         for (int j = 0; j < occupiedTiles.Count; j++) {
                             LocationGridTile tile = occupiedTiles[j];
                             tile.SetStructure(structure);
-                            //tile.HighlightTile();
                         }
                         chosenBuildingSpot.SetIsOpen(false);
                         chosenBuildingSpot.SetIsOccupied(true);
@@ -447,6 +397,7 @@ public class AreaInnerTileMap : MonoBehaviour {
 
                         structureObject.SetTilesInStructure(occupiedTiles.ToArray());
                         structure.SetStructureObject(structureObject);
+                        structureObject.OnStructureObjectPlaced();
                     }
                 }
             }
@@ -474,9 +425,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     /// <param name="settings">The given settings</param>
     private void DrawTownMap(TownMapSettings settings, Vector3Int startPoint) {
         DrawTiles(groundTilemap, settings.groundTiles, startPoint);
-        DrawTiles(wallTilemap, settings.groundWallTiles, startPoint);
         DrawTiles(structureTilemap, settings.structureTiles, startPoint);
-        DrawTiles(objectsTilemap, settings.objectTiles, startPoint);
         DrawTiles(detailsTilemap, settings.detailTiles, startPoint);
     }
     private void CreateBuildingSpots(TownMapSettings settings, Vector3Int startPoint) {
@@ -604,7 +553,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                                 ovTile.SetTileState(LocationGridTile.Tile_State.Occupied);
                                 //ovTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
                             }
-                            objectsTilemap.SetTile(currTile.localPlace, GetBigTreeTile(area));
+                            detailsTilemap.SetTile(currTile.localPlace, GetBigTreeTile(area));
                             currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
                             //currTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
                         } else {
@@ -735,45 +684,17 @@ public class AreaInnerTileMap : MonoBehaviour {
 
     #region Points of Interest
     public void PlaceObject(IPointOfInterest obj, LocationGridTile tile, bool placeAsset = true) {
-        TileBase tileToUse = null;
         switch (obj.poiType) {
-            case POINT_OF_INTEREST_TYPE.ITEM:
-                if (placeAsset) {
-                    tileToUse = itemTiles[(obj as SpecialToken).specialTokenType];
-                    objectsTilemap.SetTile(tile.localPlace, tileToUse);
-                }
-                tile.SetObjectHere(obj);
-                break;
             case POINT_OF_INTEREST_TYPE.CHARACTER:
                 OnPlaceCharacterOnTile(obj as Character, tile);
-                //tileToUse = characterTile;
                 break;
-            case POINT_OF_INTEREST_TYPE.TILE_OBJECT:
-                TileObject to = obj as TileObject;
-                if (placeAsset) {
-                    tileToUse = tileObjectTiles[to.tileObjectType].GetAsset(area.coreTile.biomeType).activeTile;
-                    objectsTilemap.SetTile(tile.localPlace, tileToUse);
-                    detailsTilemap.SetTile(tile.localPlace, null);
-                    if (to.tileObjectType == TILE_OBJECT_TYPE.SMALL_ANIMAL || to.tileObjectType == TILE_OBJECT_TYPE.ORE 
-                        || to.tileObjectType == TILE_OBJECT_TYPE.EDIBLE_PLANT) {
-                        //randomize rotation.
-                        Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f,  (float)(90 * Random.Range(0, 5))), Vector3.one);
-                        objectsTilemap.RemoveTileFlags(tile.localPlace, TileFlags.LockTransform);
-                        objectsTilemap.SetTransformMatrix(tile.localPlace, m);
-                    }
-                }
+            default:
                 tile.SetObjectHere(obj);
                 break;
-            //default:
-            //    tileToUse = characterTile;
-            //    tile.SetObjectHere(obj);
-            //    objectsTilemap.SetTile(tile.localPlace, tileToUse);
-            //    break;
         }
     }
     public void RemoveObject(LocationGridTile tile, Character removedBy = null) {
         tile.RemoveObjectHere(removedBy);
-        objectsTilemap.SetTile(tile.localPlace, null);
     }
     private void OnPlaceCharacterOnTile(Character character, LocationGridTile tile) {
         if (character.marker.gameObject.transform.parent != objectsParent) {
@@ -786,24 +707,6 @@ public class AreaInnerTileMap : MonoBehaviour {
         if (!character.marker.gameObject.activeSelf) {
             character.marker.gameObject.SetActive(true);
         }
-    }
-    public void UpdateTileObjectVisual(TileObject obj) {
-        TileBase tileToUse = null;
-        switch (obj.state) {
-            case POI_STATE.ACTIVE:
-                tileToUse = tileObjectTiles[obj.tileObjectType].GetAsset(area.coreTile.biomeType).activeTile;
-                break;
-            case POI_STATE.INACTIVE:
-                tileToUse = tileObjectTiles[obj.tileObjectType].GetAsset(area.coreTile.biomeType).inactiveTile;
-                break;
-            default:
-                tileToUse = tileObjectTiles[obj.tileObjectType].GetAsset(area.coreTile.biomeType).activeTile;
-                break;
-        }
-        objectsTilemap.SetTile(obj.gridTileLocation.localPlace, tileToUse);
-    }
-    public void UpdateTileObjectVisual(TileObject obj, TileBase asset) {
-        objectsTilemap.SetTile(obj.gridTileLocation.localPlace, asset);
     }
     public void OnCharacterMovedTo(Character character, LocationGridTile to, LocationGridTile from) {
         if (from == null) { 
@@ -1127,42 +1030,6 @@ public class AreaInnerTileMap : MonoBehaviour {
         }
     }
     #endregion
-}
-
-[System.Serializable]
-public struct TileObjectTileSetting {
-    public TileObjectBiomeAssetDictionary biomeAssets;
-
-    public BiomeTileObjectTileSetting GetAsset(BIOMES biome) {
-        if (biomeAssets.ContainsKey(biome)) {
-            return biomeAssets[biome];
-        }
-        return biomeAssets[BIOMES.NONE]; //NONE is considered default
-    }
-}
-
-[System.Serializable]
-public struct BiomeTileObjectTileSetting {
-    public TileBase activeTile;
-    public TileBase inactiveTile;
-}
-
-public struct LocationStructureSetting {
-    public Point size;
-    public bool hasTemplate;
-    public StructureTemplate template;
-
-    public LocationStructureSetting(StructureTemplate t) {
-        size = t.size;
-        hasTemplate = true;
-        template = t;
-    }
-
-    public LocationStructureSetting(Point p) {
-        size = p;
-        hasTemplate = false;
-        template = default(StructureTemplate);
-    }
 }
 
 [System.Serializable]

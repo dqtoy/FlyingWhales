@@ -22,7 +22,6 @@ public class LocationStructure {
     public List<LocationGridTile> tiles { get; private set; }
     public List<LocationGridTile> unoccupiedTiles { get; private set; }
     public LocationGridTile entranceTile { get; private set; }
-    public bool isFromTemplate { get; private set; }
 
     #region getters
     public Area location {
@@ -115,10 +114,10 @@ public class LocationStructure {
     #endregion
 
     #region Points Of Interest
-    public virtual bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null, bool placeAsset = true) {
+    public virtual bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null) {
         if (!pointsOfInterest.Contains(poi)) {
             if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
-                if (!PlacePOIAtAppropriateTile(poi, tileLocation, placeAsset)) { return false; }
+                if (!PlaceAreaObjectAtAppropriateTile(poi, tileLocation)) { return false; }
             }
             pointsOfInterest.Add(poi);
             return true;
@@ -179,9 +178,9 @@ public class LocationStructure {
         }
         return null;
     }
-    private bool PlacePOIAtAppropriateTile(IPointOfInterest poi, LocationGridTile tile, bool placeAsset = true) {
+    private bool PlaceAreaObjectAtAppropriateTile(IPointOfInterest poi, LocationGridTile tile) {
         if (tile != null) {
-            location.areaMap.PlaceObject(poi, tile, placeAsset);
+            location.areaMap.PlaceObject(poi, tile);
             return true;
         } else {
             List<LocationGridTile> tilesToUse;
@@ -303,12 +302,6 @@ public class LocationStructure {
     }
     #endregion
 
-    #region Templates
-    public void SetIfFromTemplate(bool isFromTemplate) {
-        this.isFromTemplate = isFromTemplate;
-    }
-    #endregion
-
     #region Tile Objects
     protected List<TileObject> GetTileObjects() {
         List<TileObject> objs = new List<TileObject>();
@@ -392,7 +385,6 @@ public class SaveDataLocationStructure {
         structureType = structure.structureType;
         isInside = structure.isInside;
         state = structure.state;
-        isFromTemplate = structure.isFromTemplate;
 
         if(structure.entranceTile != null) {
             entranceTile = new Vector3Save(structure.entranceTile.localPlace.x, structure.entranceTile.localPlace.y, 0);
@@ -411,7 +403,6 @@ public class SaveDataLocationStructure {
                 createdStructure = new LocationStructure(area, this);
                 break;
         }
-        createdStructure.SetIfFromTemplate(isFromTemplate);
         loadedStructure = createdStructure;
         return createdStructure;
     }

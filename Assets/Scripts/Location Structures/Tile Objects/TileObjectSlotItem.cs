@@ -16,6 +16,7 @@ public class TileObjectSlotItem : MonoBehaviour {
         this.settings = settings;
         this.name = parentObj.ToString() + " - " + settings.slotName;
         slotVisual.sprite = settings.slotAsset;
+        slotVisual.sortingOrder = InteriorMapManager.Details_Tilemap_Sorting_Order - 1;
         transform.localRotation = Quaternion.Euler(settings.assetRotation);
         UnusedPosition();
     }
@@ -36,13 +37,12 @@ public class TileObjectSlotItem : MonoBehaviour {
         user = character;
         UsedPosition();
         user.marker.pathfindingAI.Teleport(this.transform.position);
-        //user.marker.transform.position = this.transform.TransformPoint(settings.characterPosition);
-        //user.marker.transform.localRotation = Quaternion.Euler(settings.assetRotation);
-        if (parentObj is Table && parentObj.gridTileLocation.parentAreaMap.objectsTilemap.GetTile(parentObj.gridTileLocation.localPlace).name.Contains("Bartop")) {
-            character.marker.Rotate(parentObj.gridTileLocation.parentAreaMap.objectsTilemap.GetTransformMatrix(parentObj.gridTileLocation.localPlace).rotation);
-        } else {
+
+        //if (parentObj is Table && parentObj.gridTileLocation.parentAreaMap.objectsTilemap.GetTile(parentObj.gridTileLocation.localPlace).name.Contains("Bartop")) {
+        //    character.marker.Rotate(parentObj.gridTileLocation.parentAreaMap.objectsTilemap.GetTransformMatrix(parentObj.gridTileLocation.localPlace).rotation);
+        //} else {
             user.marker.LookAt(parentObj.gridTileLocation.centeredWorldLocation);
-        }
+        //}
     }
     public void StopUsing() {
         if (user != null) {

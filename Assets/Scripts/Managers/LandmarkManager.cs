@@ -716,7 +716,6 @@ public class LandmarkManager : MonoBehaviour {
         GameObject areaMapGO = GameObject.Instantiate(innerStructurePrefab, areaMapsParent);
         AreaInnerTileMap areaMap = areaMapGO.GetComponent<AreaInnerTileMap>();
         areaMap.ClearAllTilemaps();
-        InteriorMapManager.Instance.CleanupForTownGeneration();
 
         string log = string.Empty;
         areaMap.Initialize(area);
@@ -725,7 +724,7 @@ public class LandmarkManager : MonoBehaviour {
         areaMap.PlaceInitialStructures(area);
 
         areaMap.GenerateDetails();
-        area.PlaceTileObjects();
+        area.PlaceObjects();
 
         areaMap.OnMapGenerationFinished();
         area.OnMapGenerationFinished();

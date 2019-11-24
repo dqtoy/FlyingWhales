@@ -103,8 +103,8 @@ public class Dwelling : LocationStructure {
         }
         return false;
     }
-    public override bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null, bool placeAsset = true) {
-        if (base.AddPOI(poi, tileLocation, placeAsset)) {
+    public override bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null) {
+        if (base.AddPOI(poi, tileLocation)) {
             if (poi is TileObject) {
                 UpdateFacilityValues();
             }

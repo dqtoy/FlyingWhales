@@ -12,10 +12,7 @@ public interface IPointOfInterest : ITraitable {
     LocationGridTile gridTileLocation { get; }
     List<INTERACTION_TYPE> advertisedActions { get; }
     List<JobQueueItem> allJobsTargettingThis { get; }
-    //List<GoapAction> targettedByAction { get; }
-    //List<Trait> normalTraits { get; }
     Faction factionOwner { get; }
-    POICollisionTrigger collisionTrigger { get; } //Each poi must only hav 1 at a time.
     bool isDisabledByPlayer { get; }
     int maxHP { get; }
     int currentHP { get; }
@@ -28,25 +25,15 @@ public interface IPointOfInterest : ITraitable {
     void AddJobTargettingThis(JobQueueItem job);
     void SetPOIState(POI_STATE state);
     void SetIsDisabledByPlayer(bool state);
-    //void AddTargettedByAction(GoapAction action);
-    //void RemoveTargettedByAction(GoapAction action);
     bool HasJobTargettingThis(params JOB_TYPE[] jobType);
     bool IsAvailable();
     bool RemoveJobTargettingThis(JobQueueItem job);
     LocationGridTile GetNearestUnoccupiedTileFromThis();
     GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost);
-    //List<GoapNode> AdvertiseActionsToActor(Character actor, GoapEffect precondition, Dictionary<INTERACTION_TYPE, object[]> otherData, int level);
     bool CanAdvertiseActionToActor(Character actor, GoapAction action, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost);
     void AdjustHP(int amount, bool triggerDeath = false, object source = null);
     void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary);
     bool IsValidCombatTarget();
-
-    #region Collision
-    void InitializeCollisionTrigger();
-    void PlaceCollisionTriggerAt(LocationGridTile tile);
-    void DisableCollisionTrigger();
-    void SetCollisionTrigger(POICollisionTrigger trigger);
-    #endregion
 }
 
 /// <summary>

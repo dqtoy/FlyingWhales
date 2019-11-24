@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -83283,110 +83283,75 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cb685a75a7ffda41884635f2b58fc01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  poiCollisionTriggerPrefab: {fileID: 1745477595920248, guid: 9104eed68eaa2e04ebc3bc983c63654b,
-    type: 2}
-  ghostCollisionTriggerPrefab: {fileID: 1745477595920248, guid: 0674029d643ce1b459ed5d0acf39bd81,
-    type: 2}
   characterCollisionTriggerPrefab: {fileID: 1745477595920248, guid: b561293b149dfb44a8798a971c7596c6,
     type: 2}
-  agGroundTilemap: {fileID: 499420755}
-  agGroundWallTilemap: {fileID: 0}
-  agStructureTilemap: {fileID: 28494588}
-  agObjectsTilemap: {fileID: 331101105}
-  agDetailsTilemap: {fileID: 1089974890}
   pathfinder: {fileID: 1536722385}
   tileObjectSlotSettings:
     m_keys:
-    - {fileID: 11400000, guid: 4c1f1c2a1d59c86479c16b6d87dcf2e7, type: 2}
-    - {fileID: 11400000, guid: da9968c36c781b140b57cd868d8468b3, type: 2}
-    - {fileID: 11400000, guid: 27ed232101b81ae41a6afe2dc7035f26, type: 2}
-    - {fileID: 11400000, guid: 1fb4485b293a8b34c81afc3b4cc73de3, type: 2}
-    - {fileID: 11400000, guid: 531d35881196a184fb1e11115c5609eb, type: 2}
-    - {fileID: 11400000, guid: 06974d1136b6fdb4ca04bcf1592704c4, type: 2}
+    - {fileID: 21300000, guid: fe44eb493c3bcf5469fa584116794486, type: 3}
+    - {fileID: 21300000, guid: c236f4926fa5e114ea5b76f7125fe18a, type: 3}
+    - {fileID: 21300000, guid: a068d9aa2379f654db5448dbf5559f3d, type: 3}
+    - {fileID: 21300000, guid: 1d4c825b7e27475458e36989cf618aef, type: 3}
+    - {fileID: 21300000, guid: f6a5febe714d1e446ad84ab66890939a, type: 3}
     m_values:
     - data:
       - slotName: North
-        characterPosition: {x: 0, y: 0.35, z: 0}
-        usedPosition: {x: 0, y: 0.55, z: 0}
-        unusedPosition: {x: 0, y: 0.35, z: 0}
-        assetRotation: {x: 0, y: 0, z: 0}
-        slotAsset: {fileID: 21300000, guid: ef9922262d513cc43927866d6d2450f5, type: 3}
-      - slotName: East
-        characterPosition: {x: 0.35, y: 0, z: 0}
-        usedPosition: {x: 0.55, y: 0, z: 0}
-        unusedPosition: {x: 0.35, y: 0, z: 0}
-        assetRotation: {x: 0, y: 0, z: 270}
-        slotAsset: {fileID: 21300000, guid: ef9922262d513cc43927866d6d2450f5, type: 3}
-      - slotName: South
-        characterPosition: {x: 0, y: -0.35, z: 0}
-        usedPosition: {x: 0, y: -0.55, z: 0}
-        unusedPosition: {x: 0, y: -0.35, z: 0}
-        assetRotation: {x: 0, y: 0, z: 180}
-        slotAsset: {fileID: 21300000, guid: ef9922262d513cc43927866d6d2450f5, type: 3}
-      - slotName: West
-        characterPosition: {x: -0.35, y: 0, z: 0}
-        usedPosition: {x: -0.55, y: 0, z: 0}
-        unusedPosition: {x: -0.35, y: 0, z: 0}
-        assetRotation: {x: 0, y: 0, z: 90}
-        slotAsset: {fileID: 21300000, guid: ef9922262d513cc43927866d6d2450f5, type: 3}
-    - data:
-      - slotName: North
-        characterPosition: {x: 0, y: 0.35, z: 0}
-        usedPosition: {x: 0, y: 0.55, z: 0}
-        unusedPosition: {x: 0, y: 0.35, z: 0}
-        assetRotation: {x: 0, y: 0, z: 0}
-        slotAsset: {fileID: 21300000, guid: ef9922262d513cc43927866d6d2450f5, type: 3}
-      - slotName: East
-        characterPosition: {x: 0.35, y: 0, z: 0}
-        usedPosition: {x: 0.55, y: 0, z: 0}
-        unusedPosition: {x: 0.35, y: 0, z: 0}
-        assetRotation: {x: 0, y: 0, z: 270}
-        slotAsset: {fileID: 21300000, guid: ef9922262d513cc43927866d6d2450f5, type: 3}
-      - slotName: South
-        characterPosition: {x: 0, y: -0.35, z: 0}
-        usedPosition: {x: 0, y: -0.55, z: 0}
-        unusedPosition: {x: 0, y: -0.35, z: 0}
-        assetRotation: {x: 0, y: 0, z: 180}
-        slotAsset: {fileID: 21300000, guid: ef9922262d513cc43927866d6d2450f5, type: 3}
-      - slotName: West
-        characterPosition: {x: -0.35, y: 0, z: 0}
-        usedPosition: {x: -0.55, y: 0, z: 0}
-        unusedPosition: {x: -0.35, y: 0, z: 0}
-        assetRotation: {x: 0, y: 0, z: 90}
-        slotAsset: {fileID: 21300000, guid: ef9922262d513cc43927866d6d2450f5, type: 3}
-    - data:
-      - slotName: North
-        characterPosition: {x: 0, y: 0.35, z: 0}
-        usedPosition: {x: 0, y: 0.55, z: 0}
+        characterPosition: {x: 0, y: 0.45, z: 0}
+        usedPosition: {x: 0, y: 0.5, z: 0}
         unusedPosition: {x: 0, y: 0.35, z: 0}
         assetRotation: {x: 0, y: 0, z: 0}
         slotAsset: {fileID: 21300000, guid: ef9922262d513cc43927866d6d2450f5, type: 3}
       - slotName: South
-        characterPosition: {x: 0, y: -0.35, z: 0}
-        usedPosition: {x: 0, y: -0.55, z: 0}
+        characterPosition: {x: 0, y: -0.45, z: 0}
+        usedPosition: {x: 0, y: -0.5, z: 0}
         unusedPosition: {x: 0, y: -0.35, z: 0}
-        assetRotation: {x: 0, y: 0, z: 180}
-        slotAsset: {fileID: 21300000, guid: ef9922262d513cc43927866d6d2450f5, type: 3}
-    - data:
-      - slotName: South
-        characterPosition: {x: 0, y: 0.2, z: 0}
-        usedPosition: {x: 0, y: 0.1, z: 0}
-        unusedPosition: {x: 0, y: 0.2, z: 0}
-        assetRotation: {x: 0, y: 0, z: 180}
-        slotAsset: {fileID: 21300000, guid: ef9922262d513cc43927866d6d2450f5, type: 3}
-    - data:
-      - slotName: South
-        characterPosition: {x: 0, y: 0.2, z: 0}
-        usedPosition: {x: 0, y: 0.1, z: 0}
-        unusedPosition: {x: 0, y: 0.2, z: 0}
         assetRotation: {x: 0, y: 0, z: 180}
         slotAsset: {fileID: 21300000, guid: ef9922262d513cc43927866d6d2450f5, type: 3}
     - data:
       - slotName: South
         characterPosition: {x: 0, y: -0.1, z: 0}
-        usedPosition: {x: 0, y: -0.3, z: 0}
-        unusedPosition: {x: 0, y: -0.1, z: 0}
+        usedPosition: {x: 0, y: -0.15, z: 0}
+        unusedPosition: {x: 0, y: 0, z: 0}
         assetRotation: {x: 0, y: 0, z: 180}
+        slotAsset: {fileID: 21300000, guid: ef9922262d513cc43927866d6d2450f5, type: 3}
+    - data:
+      - slotName: South
+        characterPosition: {x: 0, y: 0.15, z: 0}
+        usedPosition: {x: 0, y: 0, z: 0}
+        unusedPosition: {x: 0, y: 0.25, z: 0}
+        assetRotation: {x: 0, y: 0, z: 180}
+        slotAsset: {fileID: 21300000, guid: ef9922262d513cc43927866d6d2450f5, type: 3}
+    - data:
+      - slotName: South
+        characterPosition: {x: 0, y: 0.15, z: 0}
+        usedPosition: {x: 0, y: 0, z: 0}
+        unusedPosition: {x: 0, y: 0.25, z: 0}
+        assetRotation: {x: 0, y: 0, z: 180}
+        slotAsset: {fileID: 21300000, guid: ef9922262d513cc43927866d6d2450f5, type: 3}
+    - data:
+      - slotName: North
+        characterPosition: {x: 0, y: 0.45, z: 0}
+        usedPosition: {x: 0, y: 0.5, z: 0}
+        unusedPosition: {x: 0, y: 0.35, z: 0}
+        assetRotation: {x: 0, y: 0, z: 0}
+        slotAsset: {fileID: 21300000, guid: ef9922262d513cc43927866d6d2450f5, type: 3}
+      - slotName: West
+        characterPosition: {x: -0.45, y: 0, z: 0}
+        usedPosition: {x: -0.5, y: 0, z: 0}
+        unusedPosition: {x: -0.35, y: 0, z: 0}
+        assetRotation: {x: 0, y: 0, z: 90}
+        slotAsset: {fileID: 21300000, guid: ef9922262d513cc43927866d6d2450f5, type: 3}
+      - slotName: South
+        characterPosition: {x: 0, y: -0.45, z: 0}
+        usedPosition: {x: 0, y: -0.5, z: 0}
+        unusedPosition: {x: 0, y: -0.35, z: 0}
+        assetRotation: {x: 0, y: 0, z: 180}
+        slotAsset: {fileID: 21300000, guid: ef9922262d513cc43927866d6d2450f5, type: 3}
+      - slotName: Eastt
+        characterPosition: {x: 0.45, y: 0, z: 0}
+        usedPosition: {x: 0.5, y: 0, z: 0}
+        unusedPosition: {x: 0.35, y: 0, z: 0}
+        assetRotation: {x: 0, y: 0, z: 270}
         slotAsset: {fileID: 21300000, guid: ef9922262d513cc43927866d6d2450f5, type: 3}
   tileObjectSlotsParentPrefab: {fileID: 1351227454588492, guid: 33774aef485c80443adb5ad89896f480,
     type: 2}
@@ -83394,7 +83359,7 @@ MonoBehaviour:
     type: 2}
   areaMapLight: {fileID: 450682173}
   structurePrefabs:
-    m_keys: 030000000200000001000000090000000a000000
+    m_keys: 030000000200000001000000090000000a00000008000000
     m_values:
     - data:
       - {fileID: 1293362371696982, guid: 191a9e123946de349a254ec4c008d174, type: 2}
@@ -83406,6 +83371,146 @@ MonoBehaviour:
       - {fileID: 1785905159905196, guid: dd42394f7ee38ef4babf835f00d0529b, type: 2}
     - data:
       - {fileID: 1794830140391482, guid: e7f07aa2f80a73b4c8edfdb9741a50b2, type: 2}
+    - data:
+      - {fileID: 1320005381273642, guid: 762579c6fb9f7874a90ed88fbab952cc, type: 2}
+  itemTiles:
+    m_keys: 000000000100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f00000010000000110000001200000013000000
+    m_values:
+    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
+    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
+    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
+    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
+    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
+    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
+    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
+    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
+    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
+    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
+    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
+    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
+    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
+    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
+    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
+    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
+    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
+    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
+    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
+    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
+  tileObjectTiles:
+    m_keys: 0000000002000000030000000400000005000000060000000700000008000000090000000b0000000c0000000e0000000f0000001000000011000000120000001300000014000000150000001600000017000000
+    m_values:
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
+          inactiveTile: {fileID: 0}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 21300000, guid: 56be2c264d164374aa09a794d74609a5, type: 3}
+          inactiveTile: {fileID: 0}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 21300000, guid: 6b0d9acc33c3f924faa7c6840e010066, type: 3}
+          inactiveTile: {fileID: 21300000, guid: 9de607579992d7946a9c068fbf86e380,
+            type: 3}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 21300000, guid: fb1a6ce9958395a44a4b2d8c350575b9, type: 3}
+          inactiveTile: {fileID: 0}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 21300000, guid: fc52d1b2285534747b486ee03709a4c8, type: 3}
+          inactiveTile: {fileID: 0}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 21300000, guid: fe44eb493c3bcf5469fa584116794486, type: 3}
+          inactiveTile: {fileID: 0}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 21300000, guid: 079ce5cc13bbd324fa99a5820bda0d54, type: 3}
+          inactiveTile: {fileID: 0}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 21300000, guid: 04bc161e03119a1499a546c9c01f6422, type: 3}
+          inactiveTile: {fileID: 21300000, guid: 51135a4c08bdb184a91a8ae51a729303,
+            type: 3}
+    - biomeAssets:
+        m_keys: 060000000100000002000000
+        m_values:
+        - activeTile: {fileID: 21300000, guid: e298e16d6e4a4a345816aff73283be2a, type: 3}
+          inactiveTile: {fileID: 0}
+        - activeTile: {fileID: 21300000, guid: f7c768c5d5971b245bf59d7a3e1d15b7, type: 3}
+          inactiveTile: {fileID: 0}
+        - activeTile: {fileID: 21300000, guid: f7c768c5d5971b245bf59d7a3e1d15b7, type: 3}
+          inactiveTile: {fileID: 0}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 21300000, guid: c236f4926fa5e114ea5b76f7125fe18a, type: 3}
+          inactiveTile: {fileID: 0}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 21300000, guid: f3d6a1e3f40d32b4e86600a009bd6033, type: 3}
+          inactiveTile: {fileID: 0}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 21300000, guid: 6b0d9acc33c3f924faa7c6840e010066, type: 3}
+          inactiveTile: {fileID: 21300000, guid: 9de607579992d7946a9c068fbf86e380,
+            type: 3}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
+          inactiveTile: {fileID: 0}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
+          inactiveTile: {fileID: 0}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
+          inactiveTile: {fileID: 0}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
+          inactiveTile: {fileID: 0}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
+          inactiveTile: {fileID: 0}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 21300000, guid: 99d0b1fe44fb06140a363f47ebd6c47d, type: 3}
+          inactiveTile: {fileID: 0}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 0}
+          inactiveTile: {fileID: 0}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
+          inactiveTile: {fileID: 0}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
+          inactiveTile: {fileID: 0}
   allTileAssets:
   - {fileID: 11400000, guid: 0aea801102e59e348ab2bb7724ad9da6, type: 2}
   - {fileID: 11400000, guid: ab12e88eb7994f141842ccf32417172c, type: 2}

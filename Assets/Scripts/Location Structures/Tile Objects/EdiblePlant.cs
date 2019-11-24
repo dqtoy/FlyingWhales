@@ -34,8 +34,7 @@ public class EdiblePlant : TileObject {
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);
         if (gridTileLocation != null) {
-            //Debug.Log(GameManager.Instance.TodayLogString() + "Set " + this.ToString() + "' state to " + state.ToString());
-            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this); //update visual based on state
+            areaMapGameObject.UpdateTileObjectVisual(this); //update visual based on state
             if (!IsAvailable()) {
                 ScheduleCooldown();
             }

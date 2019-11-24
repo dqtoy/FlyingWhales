@@ -25,22 +25,22 @@ public class GenericTileObject : TileObject {
         if (tile != null) {
             this.tile = tile;
         }
-        if (_collisionTrigger == null) {
-            InitializeCollisionTrigger();
-        }
+        //if (collisionTrigger == null) {
+        //    InitializeCollisionTrigger(this); //TODO: Remove chance of this happening?
+        //}
         if (tile == null) {
-            DisableCollisionTrigger();
+            DisableGameObject();
             OnRemoveTileObject(null, previousTile);
             SetPOIState(POI_STATE.INACTIVE);
         } else {
-            PlaceCollisionTriggerAt(tile);
+            PlaceMapObjectAt(tile);
             OnPlaceObjectAtTile(tile);
             SetPOIState(POI_STATE.ACTIVE);
         }
     }
     public override void RemoveTileObject(Character removedBy) {
         LocationGridTile previousTile = this.tile;
-        DisableCollisionTrigger();
+        DisableGameObject();
         OnRemoveTileObject(removedBy, previousTile);
         SetPOIState(POI_STATE.INACTIVE);
     }
@@ -56,7 +56,7 @@ public class GenericTileObject : TileObject {
         SetStructureLocation(location);
         Initialize(TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT);
         SetGridTileLocation(tile);
-        DisableCollisionTrigger();
+        DisableGameObject();
 
         switch (gridTileLocation.groundType) {
             case LocationGridTile.Ground_Type.Grass:

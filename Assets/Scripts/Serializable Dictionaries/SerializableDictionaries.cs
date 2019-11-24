@@ -20,15 +20,15 @@ public class StringSpriteDictionary : SerializableDictionary<string, Sprite> { }
 [System.Serializable]
 public class FactionEmblemDictionary : SerializableDictionary<int, Sprite> { }
 [System.Serializable]
-public class ItemTileBaseDictionary : SerializableDictionary<SPECIAL_TOKEN, TileBase> { }
+public class ItemAsseteDictionary : SerializableDictionary<SPECIAL_TOKEN, Sprite> { }
 [System.Serializable]
-public class TileObjectTileBaseDictionary : SerializableDictionary<TILE_OBJECT_TYPE, TileObjectTileSetting> { }
+public class TileObjectAssetDictionary : SerializableDictionary<TILE_OBJECT_TYPE, TileObjectTileSetting> { }
 [System.Serializable]
 public class ItemSpriteDictionary : SerializableDictionary<SPECIAL_TOKEN, Sprite> { }
 [System.Serializable]
 public class TileObjectBiomeAssetDictionary : SerializableDictionary<BIOMES, BiomeTileObjectTileSetting> { }
 [System.Serializable]
-public class TileObjectSlotDictionary : SerializableDictionary<TileBase, List<TileObjectSlotSetting>, TileObjectSlotListStorage> { }
+public class TileObjectSlotDictionary : SerializableDictionary<Sprite, List<TileObjectSlotSetting>, TileObjectSlotListStorage> { }
 [System.Serializable]
 public class CursorTextureDictionary : SerializableDictionary<CursorManager.Cursor_Type, Texture2D> { }
 [System.Serializable]
