@@ -440,8 +440,9 @@ public class Area : IJobOwner {
                 }
             }
             if (chosenDwelling == null && (character.homeStructure == null || character.homeStructure.location.id != this.id)) { //else, find an unoccupied dwelling (also check if the character doesn't already live in this area)
-                for (int i = 0; i < structures[STRUCTURE_TYPE.DWELLING].Count; i++) {
-                    Dwelling currDwelling = structures[STRUCTURE_TYPE.DWELLING][i] as Dwelling;
+                List<LocationStructure> structureList = structures[STRUCTURE_TYPE.DWELLING];
+                for (int i = 0; i < structureList.Count; i++) {
+                    Dwelling currDwelling = structureList[i] as Dwelling;
                     if (currDwelling.CanBeResidentHere(character)) {
                         chosenDwelling = currDwelling;
                         break;

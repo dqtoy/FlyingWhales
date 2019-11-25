@@ -271,7 +271,7 @@ public class CharacterMarker : PooledObject {
         //}
         if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
             //if the character gained an unconscious trait, exit current state if it is flee
-            if (characterThatGainedTrait.stateComponent.currentState != null && characterThatGainedTrait.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+            if (character.isInCombat) {
                 characterThatGainedTrait.stateComponent.currentState.OnExitThisState();
                 gainTraitSummary += "\nGained trait is unconscious, and characters current state is combat, exiting combat state.";
             }
@@ -358,7 +358,7 @@ public class CharacterMarker : PooledObject {
             actionIcon.gameObject.SetActive(false);
             return;
         }
-        if (character.isChatting && (character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)) {
+        if (character.isChatting && !character.isInCombat) {
             if (character.isFlirting) {
                 actionIcon.sprite = actionIconDictionary[GoapActionStateDB.Flirt_Icon];
             } else {
@@ -526,7 +526,7 @@ public class CharacterMarker : PooledObject {
 
     }
     public void ArrivedAtTarget() {
-        if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+        if (character.isInCombat) {
             if((character.stateComponent.currentState as CombatState).isAttacking){
                 return;
             }
@@ -1162,7 +1162,7 @@ public class CharacterMarker : PooledObject {
             string removeHostileSummary = GameManager.Instance.TodayLogString() + poi.name + " was removed from " + character.name + "'s hostile range.";
             character.PrintLogIfActive(removeHostileSummary);
             //When removing hostile in range, check if character is still in combat state, if it is, reevaluate combat behavior, if not, do nothing
-            if (processCombatBehavior && character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+            if (processCombatBehavior && character.isInCombat) {
                 CombatState combatState = character.stateComponent.currentState as CombatState;
                 if (combatState.forcedTarget == poi) {
                     combatState.SetForcedTarget(null);
@@ -1180,7 +1180,7 @@ public class CharacterMarker : PooledObject {
             lethalCharacters.Clear();
             //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
             if (processCombatBehavior) {
-                if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+                if (character.isInCombat) {
                     Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
                 } 
                 //else {
@@ -1321,7 +1321,7 @@ public class CharacterMarker : PooledObject {
             //Debug.Log("Removed avoid in range " + poi.name + " from " + this.character.name);
             //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
             if (processCombatBehavior) {
-                if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+                if (character.isInCombat) {
                     Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
                 }
             }
@@ -1344,7 +1344,7 @@ public class CharacterMarker : PooledObject {
 
             //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
             if (processCombatBehavior) {
-                if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+                if (character.isInCombat) {
                     Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
                 } 
                 //else {
@@ -1463,7 +1463,7 @@ public class CharacterMarker : PooledObject {
                     }
                     ClearHostilesInRange(false);
                 }
-                if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+                if (character.isInCombat) {
                     Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
                 } else {
                     if (!character.currentParty.icon.isTravellingOutside) {
@@ -1639,7 +1639,7 @@ public class CharacterMarker : PooledObject {
         StopPerTickFlee();
     }
     public void ProcessCombatBehavior() {
-        if (this.character.stateComponent.currentState != null && this.character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+        if (character.isInCombat) {
             Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
         } else {
             this.character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);

@@ -28,8 +28,7 @@ public class ResolveConflict : GoapAction {
         if (goapActionInvalidity.isInvalid == false) {
             Character targetCharacter = poiTarget as Character;
             if ((targetCharacter.traitContainer.GetNormalTrait("Hothead") != null && UnityEngine.Random.Range(0, 2) == 0)
-                || (targetCharacter.stateComponent.currentState != null &&
-                (targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT
+                || targetCharacter.isInCombat
                 || targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED))) {
                 goapActionInvalidity.isInvalid = true;
                 goapActionInvalidity.stateName = "Resolve Fail";

@@ -391,6 +391,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         get { return marker.collisionTrigger.projectileReciever; }
     }
     public JOB_OWNER ownerType { get { return JOB_OWNER.CHARACTER; } }
+    public bool isInCombat { get { return stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT; } }
     #endregion
 
     public Character(CharacterRole role, RACE race, GENDER gender) : this() {
@@ -2997,7 +2998,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             return;
         }
         if (action == null) {
-            if (targetCharacter != null && targetCharacter.stateComponent.currentState != null && !targetCharacter.stateComponent.currentState.isDone && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT
+            if (targetCharacter != null && targetCharacter.isInCombat
                 && targetCharacter.faction == faction) {
                 CombatState targetCombatState = targetCharacter.stateComponent.currentState as CombatState;
                 if (targetCombatState.currentClosestHostile != null && targetCombatState.currentClosestHostile != this) {
@@ -4031,7 +4032,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         trapStructure.IncrementCurrentDuration(1);
 
         //Out of combat hp recovery
-        if (!isDead && (stateComponent.currentState == null || stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)) {
+        if (!isDead && !isInCombat) {
             HPRecovery(0.0025f);
         }
 
