@@ -229,7 +229,7 @@ public class CombatState : CharacterState {
             IPointOfInterest poi = stateComponent.character.marker.hostilesInRange[i];
             if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 Character hostile = poi as Character;
-                if (hostile.stateComponent.currentState != null && hostile.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+                if (hostile.isInCombat) {
                     CombatState combatState = hostile.stateComponent.currentState as CombatState;
                     if (combatState.jobThatTriggeredThisState != null && combatState.jobThatTriggeredThisState.jobType == JOB_TYPE.APPREHEND
                         && combatState.jobThatTriggeredThisState.targetPOI == stateComponent.character) {
@@ -243,7 +243,7 @@ public class CombatState : CharacterState {
         for (int i = 0; i < stateComponent.character.marker.avoidInRange.Count; i++) {
             if(stateComponent.character.marker.avoidInRange[i].poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 Character hostile = stateComponent.character.marker.avoidInRange[i] as Character;
-                if (hostile.stateComponent.currentState != null && hostile.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+                if (hostile.isInCombat) {
                     CombatState combatState = hostile.stateComponent.currentState as CombatState;
                     if (combatState.jobThatTriggeredThisState != null && combatState.jobThatTriggeredThisState.jobType == JOB_TYPE.APPREHEND
                         && combatState.jobThatTriggeredThisState.targetPOI == stateComponent.character) {

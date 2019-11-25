@@ -464,7 +464,7 @@ public class InteriorMapManager : MonoBehaviour {
             }
         }
         if (tile.structure != null) {
-            summary += "\nStructure: " + tile.structure.ToString();
+            summary += "\nStructure: " + tile.structure.ToString() + ", Has Owner: " + tile.structure.IsOccupied();
             summary += "\nCharacters at " + tile.structure.ToString() + ": ";
             if (tile.structure.charactersHere.Count > 0) {
                 for (int i = 0; i < tile.structure.charactersHere.Count; i++) {

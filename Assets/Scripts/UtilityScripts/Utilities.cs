@@ -1309,12 +1309,6 @@ public class Utilities : MonoBehaviour {
     #endregion
 
     #region Game Utilities
-    public static GENDER GetRandomGender() {
-        if (UnityEngine.Random.Range(0, 2) == 0) {
-            return GENDER.MALE;
-        }
-        return GENDER.FEMALE;
-    }
     public static string GetDateString(GameDate date) {
         return date.month + "/" + date.day + "/" + date.year;
     }
@@ -1740,6 +1734,40 @@ public class Utilities : MonoBehaviour {
         "Beastmaster",
         "Tempest",
     };
+    public static SEXUALITY GetCompatibleSexuality(SEXUALITY sexuality) {
+        int chance = rng.Next(0, 100);
+        if (sexuality == SEXUALITY.STRAIGHT) {
+            if (chance < 80) {
+                return SEXUALITY.STRAIGHT;
+            }
+            return SEXUALITY.BISEXUAL;
+        } else if (sexuality == SEXUALITY.BISEXUAL) {
+            if (chance < 80) {
+                return SEXUALITY.STRAIGHT;
+            } else if (chance >= 80 && chance < 90) {
+                return SEXUALITY.GAY;
+            }
+            return SEXUALITY.BISEXUAL;
+        } else if (sexuality == SEXUALITY.GAY) {
+            if (chance < 50) {
+                return SEXUALITY.GAY;
+            }
+            return SEXUALITY.BISEXUAL;
+        }
+        return sexuality;
+    }
+    public static GENDER GetRandomGender() {
+        if (UnityEngine.Random.Range(0, 2) == 0) {
+            return GENDER.MALE;
+        }
+        return GENDER.FEMALE;
+    }
+    public static GENDER GetOppositeGender(GENDER gender) {
+        if (gender == GENDER.FEMALE) {
+            return GENDER.MALE;
+        }
+        return GENDER.FEMALE;
+    }
     #endregion
 
     #region Character Tags

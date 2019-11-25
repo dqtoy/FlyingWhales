@@ -94,13 +94,12 @@ namespace Traits {
             bool hasCreatedJob = false;
             if (pukeRoll < pukeChance) {
                 //do puke action
-                if (owner.currentActionNode != null && owner.currentActionNode.action.goapType != INTERACTION_TYPE.PUKE
-                    || owner.stateComponent.currentState != null || (owner.currentActionNode == null && owner.stateComponent.currentState == null)) {
-                    //If current action is a roaming action like Hunting To Drink Blood, we must requeue the job after it is removed by StopCurrentAction
-                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
-                    owner.jobQueue.AddJobInQueue(job);
-                    hasCreatedJob = true;
-                } 
+                if (owner.characterClass.className == "Zombie" || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.PUKE)) {
+                    return hasCreatedJob;
+                }
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
+                owner.jobQueue.AddJobInQueue(job);
+                hasCreatedJob = true;
             }
             return hasCreatedJob;
         }

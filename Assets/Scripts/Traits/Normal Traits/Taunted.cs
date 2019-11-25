@@ -20,7 +20,7 @@ namespace Traits {
         public override void OnAddTrait(ITraitable sourcePOI) {
             base.OnAddTrait(sourcePOI);
             _sourceCharacter = sourcePOI as Character;
-            if (_sourceCharacter.stateComponent.currentState == null || _sourceCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT) {
+            if (!_sourceCharacter.isInCombat) {
                 _sourceCharacter.marker.AddHostileInRange(responsibleCharacter, false);
             } else {
                 Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, _sourceCharacter);

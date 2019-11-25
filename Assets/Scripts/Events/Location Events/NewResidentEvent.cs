@@ -7,33 +7,33 @@ public class NewResidentEvent : LocationEvent {
 	public NewResidentEvent() {
         name = "New Resident Event";
         triggerTick = 96;
-        triggerChance = 35;
+        triggerChance = 100;
         triggerCondition = Condition;
     }
 
     private bool Condition(Area location) {
-        if (location.structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
-            List<LocationStructure> structures = location.structures[STRUCTURE_TYPE.DWELLING];
-            for (int i = 0; i < structures.Count; i++) {
-                if (!structures[i].IsOccupied()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        //if (location.structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
+        //    List<LocationStructure> structures = location.structures[STRUCTURE_TYPE.DWELLING];
+        //    for (int i = 0; i < structures.Count; i++) {
+        //        if (!structures[i].IsOccupied()) {
+        //            return true;
+        //        }
+        //    }
+        //}
+        return !location.region.coreTile.isCorrupted && !location.IsResidentsFull();
     }
 
     #region Overrides
     public override void TriggerEvent(Area location) {
         base.TriggerEvent(location);
-        List<LocationStructure> structures = location.structures[STRUCTURE_TYPE.DWELLING];
-        int numberOfUnoccupiedDwellings = 0;
-        for (int i = 0; i < structures.Count; i++) {
-            if (!structures[i].IsOccupied()) {
-                numberOfUnoccupiedDwellings++;
-            }
-        }
-
+        //List<LocationStructure> structures = location.structures[STRUCTURE_TYPE.DWELLING];
+        //int numberOfUnoccupiedDwellings = 0;
+        //for (int i = 0; i < structures.Count; i++) {
+        //    if (!structures[i].IsOccupied()) {
+        //        numberOfUnoccupiedDwellings++;
+        //    }
+        //}
+        int numberOfUnoccupiedDwellings = location.GetNumberOfUnoccupiedStructure(STRUCTURE_TYPE.DWELLING);
         int numOfSoonToBeOccupiedDwellings = UnityEngine.Random.Range(1, numberOfUnoccupiedDwellings + 1);
         int maxCouple = 2;
         int currentCouple = 0;
@@ -57,7 +57,7 @@ public class NewResidentEvent : LocationEvent {
     private void GenerateSingleResident(Area location) {
         RACE race = GetRaceForNewResident(location);
         Character newResident = location.AddNewResident(race, location.region.owner);
-        Debug.Log("Generated new Single Resident " + newResident + " from New Resident Event");
+        Debug.Log(GameManager.Instance.TodayLogString() + "Generated new Single Resident " + newResident + " from New Resident Event");
         //CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, race, Utilities.GetRandomGender(), location.region.owner, location.region);
     }
     private void GenerateCoupleResidents(Area location) {
@@ -66,8 +66,23 @@ public class NewResidentEvent : LocationEvent {
         Character spouse1 = location.AddNewResident(race, location.region.owner);
 
         race = GetRaceForNewResident(location);
+        SEXUALITY sexuality = Utilities.GetCompatibleSexuality(spouse1.sexuality);
+        GENDER gender = Utilities.GetOppositeGender(spouse1.gender);
+        if(spouse1.sexuality == SEXUALITY.BISEXUAL) {
+            if(sexuality == SEXUALITY.GAY) {
+                gender = spouse1.gender;
+            }else if (sexuality == SEXUALITY.BISEXUAL) {
+                if(UnityEngine.Random.Range(0, 2) == 0) {
+                    gender = spouse1.gender;
+                }
+            }
+        } else if (spouse1.sexuality == SEXUALITY.GAY) {
+            if (sexuality == SEXUALITY.GAY) {
+                gender = spouse1.gender;
+            }
+        }
         //className = location.locationClassManager.GetNextClassToCreate();
-        Character spouse2 = location.AddNewResident(race, location.region.owner);
+        Character spouse2 = location.AddNewResident(race, gender, sexuality, location.region.owner);
 
         RelationshipManager.Instance.CreateNewRelationshipBetween(spouse1, spouse2, RELATIONSHIP_TRAIT.LOVER);
 
@@ -84,8 +99,7 @@ public class NewResidentEvent : LocationEvent {
         //location.PlaceNewResidentInInnerMap(spouse1);
         //location.PlaceNewResidentInInnerMap(spouse2);
 
-        Debug.Log("Generated new Couple Resident " + spouse1 + " and " + spouse2 + " from New Resident Event");
-
+        Debug.Log(GameManager.Instance.TodayLogString() + "Generated new Couple Resident " + spouse1 + " and " + spouse2 + " from New Resident Event");
     }
     private RACE GetRaceForNewResident(Area location) {
         if(location.region.owner != null) {

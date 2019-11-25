@@ -165,6 +165,8 @@ public static class Signals {
     /// Parameters (Character)
     /// </summary>
     public static string CHARACTER_RETURNED_TO_LIFE = "OnCharacterReturnedToLife";
+    public static string CHARACTER_BECOMES_MINION_OR_SUMMON = "OnCharacterBecomesMinionOrSummon";
+    public static string CHARACTER_BECOMES_NON_MINION_OR_SUMMON = "OnCharacterBecomesNonMinionOrSummon";
     #endregion
 
     #region UI

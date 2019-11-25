@@ -44,11 +44,11 @@ namespace Traits {
                 if (character.traitContainer.GetNormalTrait("Berserked") != null) {
                     return;
                 }
-                if (character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT) {
+                if (!character.isInCombat) {
                     if (character.marker.inVisionCharacters.Count >= 3) {
                         ApplyAgoraphobicEffect(character, true);
                     }
-                } else if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+                } else {
                     CombatState combatState = character.stateComponent.currentState as CombatState;
                     if (combatState.isAttacking) {
                         if (character.marker.inVisionCharacters.Count >= 3) {

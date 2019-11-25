@@ -391,6 +391,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         get { return marker.collisionTrigger.projectileReciever; }
     }
     public JOB_OWNER ownerType { get { return JOB_OWNER.CHARACTER; } }
+    public bool isInCombat { get { return stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT; } }
     #endregion
 
     public Character(CharacterRole role, RACE race, GENDER gender) : this() {
@@ -416,6 +417,19 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         originalClassName = _characterClass.className;
         SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
         GenerateSexuality();
+        StartingLevel();
+        InitializeAlterEgos();
+    }
+    public Character(CharacterRole role, string className, RACE race, GENDER gender, SEXUALITY sexuality) : this() {
+        _id = Utilities.SetID(this);
+        _gender = gender;
+        RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
+        _raceSetting = raceSetting.CreateNewCopy();
+        AssignRole(role, false);
+        _characterClass = CharacterManager.Instance.CreateNewCharacterClass(className);
+        originalClassName = _characterClass.className;
+        SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
+        SetSexuality(sexuality);
         StartingLevel();
         InitializeAlterEgos();
     }
@@ -2984,7 +2998,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             return;
         }
         if (action == null) {
-            if (targetCharacter != null && targetCharacter.stateComponent.currentState != null && !targetCharacter.stateComponent.currentState.isDone && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT
+            if (targetCharacter != null && targetCharacter.isInCombat
                 && targetCharacter.faction == faction) {
                 CombatState targetCombatState = targetCharacter.stateComponent.currentState as CombatState;
                 if (targetCombatState.currentClosestHostile != null && targetCombatState.currentClosestHostile != this) {
@@ -3931,6 +3945,14 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
     #region Minion
     public void SetMinion(Minion minion) {
+        if (_minion != null && minion == null) {
+            Messenger.Broadcast(Signals.CHARACTER_BECOMES_NON_MINION_OR_SUMMON, this);
+        } else if (_minion == null && minion != null) {
+            Messenger.Broadcast(Signals.CHARACTER_BECOMES_MINION_OR_SUMMON, this);
+        }
+        //else if (_minion != null && minion != null && _minion != minion) {
+        //    Messenger.Broadcast(Signals.CHARACTER_BECOMES_MINION_OR_SUMMON);
+        //}
         _minion = minion;
         //UnsubscribeSignals(); //Removed this since character's listeners are not on by default now.
     }
@@ -4010,7 +4032,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         trapStructure.IncrementCurrentDuration(1);
 
         //Out of combat hp recovery
-        if (!isDead && (stateComponent.currentState == null || stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)) {
+        if (!isDead && !isInCombat) {
             HPRecovery(0.0025f);
         }
 

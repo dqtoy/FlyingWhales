@@ -163,7 +163,7 @@ public class Summon : Character, IWorldObject {
         //What happens every start of tick
 
         //Out of combat hp recovery
-        if (!isDead && (stateComponent.currentState == null || stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)) {
+        if (!isDead && !isInCombat) {
             HPRecovery(0.0025f);
         }
 
