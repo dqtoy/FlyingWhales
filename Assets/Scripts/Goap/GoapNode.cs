@@ -203,6 +203,14 @@ public class ActualGoapNode {
                     //No OnArriveAtTargetLocation because it doesn't trigger on arrival rather on vision
                     actor.marker.GoTo(poiTarget);
                 }
+            } else if (action.actionLocationType == ACTION_LOCATION_TYPE.OVERRIDE) {
+                LocationGridTile tile = action.GetOverrideTargetTile(this);
+                if (tile != null) {
+                    actor.marker.GoTo(tile, OnArriveAtTargetLocation);
+                } else {
+                    throw new System.Exception(actor.name + " override target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
+                }
+                
             }
         }
     }

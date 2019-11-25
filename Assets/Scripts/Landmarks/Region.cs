@@ -383,6 +383,7 @@ public class Region {
     public void InvadeActions() {
         mainLandmark?.ChangeLandmarkType(LANDMARK_TYPE.NONE);
         ActivateRegionFeatures();
+        RemoveFeaturesAfterInvade();
         ExecuteEventAfterInvasion();
         ExecuteOtherAfterInvasionActions();
     }
@@ -816,6 +817,15 @@ public class Region {
                 if (f.isRemovedOnActivation) {
                     RemoveFeature(f);
                 }
+            }
+        }
+    }
+    private void RemoveFeaturesAfterInvade() {
+        List<RegionFeature> regionFeatures = new List<RegionFeature>(features);
+        for (int i = 0; i < regionFeatures.Count; i++) {
+            RegionFeature f = regionFeatures[i];
+            if (f.isRemovedOnInvade) {
+                RemoveFeature(f);
             }
         }
     }

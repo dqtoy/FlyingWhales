@@ -173,6 +173,31 @@ public class BaseLandmark {
         if (specificLandmarkType == LANDMARK_TYPE.NONE) {
             return; //do not
         }
+
+        //Constant features
+        switch (specificLandmarkType) {
+            case LANDMARK_TYPE.BARRACKS:
+                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Experience_Feature));
+                //tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Fortified_Feature));
+                break;
+            case LANDMARK_TYPE.MAGE_TOWER:
+                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Experience_Feature));
+                break;
+            case LANDMARK_TYPE.TEMPLE:
+                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Warded_Feature));
+                break;
+            //case LANDMARK_TYPE.MONSTER_LAIR:
+            //    tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Dangerous_Feature));
+            //    break;
+            case LANDMARK_TYPE.FARM:
+                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Fertile_Feature));
+                break;
+            case LANDMARK_TYPE.MINES:
+                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Stony_Feature));
+                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Metal_Rich_Feature));
+                break;
+        }
+
         //random features
         WeightedDictionary<string> randomFeatureWeights = new WeightedDictionary<string>();
         switch (specificLandmarkType) {
@@ -224,22 +249,7 @@ public class BaseLandmark {
             tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Hallowed_Ground_Feature));
         }
 
-        //Constant features
-        switch (specificLandmarkType) {
-            case LANDMARK_TYPE.BARRACKS:
-                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Experience_Feature));
-                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Fortified_Feature));
-                break;
-            case LANDMARK_TYPE.MAGE_TOWER:
-                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Experience_Feature));
-                break;
-            case LANDMARK_TYPE.TEMPLE:
-                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Warded_Feature));
-                break;
-            case LANDMARK_TYPE.MONSTER_LAIR:
-                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Dangerous_Feature));
-                break;
-        }
+       
     }
     #endregion
 }

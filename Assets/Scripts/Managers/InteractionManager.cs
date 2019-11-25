@@ -342,8 +342,8 @@ public class InteractionManager : MonoBehaviour {
     }
     public bool CanDoCraftFurnitureJob(Character character, JobQueueItem item) {
         object[] otherData = (item as GoapPlanJob).otherData[INTERACTION_TYPE.CRAFT_FURNITURE];
-        FURNITURE_TYPE furnitureToCreate = (FURNITURE_TYPE) otherData[1];
-        return furnitureToCreate.ConvertFurnitureToTileObject().CanBeCraftedBy(character);
+        TILE_OBJECT_TYPE furnitureToCreate = (TILE_OBJECT_TYPE) otherData[1];
+        return furnitureToCreate.CanBeCraftedBy(character);
     }
     public bool CanDoDestroyProfaneJob(Character character, JobQueueItem item) {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER;

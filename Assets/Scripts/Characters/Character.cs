@@ -1619,38 +1619,41 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void CreatePersonalJobs() {
         bool hasCreatedJob = false;
 
-        //TODO:
         //build furniture job
-        //if (!hasCreatedJob && currentStructure is Dwelling) {
-        //    Dwelling dwelling = currentStructure as Dwelling;
-        //    if (dwelling.HasUnoccupiedFurnitureSpot() && advertisedActions.Contains(INTERACTION_TYPE.CRAFT_FURNITURE)) {
-        //        if (UnityEngine.Random.Range(0, 100) < 10 || dwelling.HasFacilityDeficit()) { //if the dwelling has a facility deficit(facility at 0) or if chance is met.
-        //            FACILITY_TYPE mostNeededFacility = dwelling.GetMostNeededValidFacility();
-        //            if (mostNeededFacility != FACILITY_TYPE.NONE) {
-        //                List<LocationGridTile> validSpots = dwelling.GetUnoccupiedFurnitureSpotsThatCanProvide(mostNeededFacility);
-        //                LocationGridTile chosenTile = validSpots[UnityEngine.Random.Range(0, validSpots.Count)];
-        //                FURNITURE_TYPE furnitureToCreate = chosenTile.GetFurnitureThatCanProvide(mostNeededFacility);
+        if (!hasCreatedJob && currentStructure is Dwelling) {
+            Dwelling dwelling = currentStructure as Dwelling;
+            if (dwelling.HasUnoccupiedFurnitureSpot() && advertisedActions.Contains(INTERACTION_TYPE.CRAFT_FURNITURE)) {
+                if (UnityEngine.Random.Range(0, 100) < 10 || dwelling.HasFacilityDeficit()) { //if the dwelling has a facility deficit(facility at 0) or if chance is met.
+                    FACILITY_TYPE mostNeededFacility = dwelling.GetMostNeededValidFacility();
+                    if (mostNeededFacility != FACILITY_TYPE.NONE) {
+                        List<LocationGridTile> validSpots = dwelling.GetUnoccupiedFurnitureSpotsThatCanProvide(mostNeededFacility);
+                        LocationGridTile chosenTile = validSpots[UnityEngine.Random.Range(0, validSpots.Count)];
+                        FURNITURE_TYPE furnitureToCreate = chosenTile.GetFurnitureThatCanProvide(mostNeededFacility);
+                        TILE_OBJECT_TYPE tileObj = furnitureToCreate.ConvertFurnitureToTileObject();
+                        object[] otherData = new object[] { chosenTile, tileObj };
 
-        //                object[] otherData = new object[] { chosenTile, furnitureToCreate };
-
-        //                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BUILD_FURNITURE, INTERACTION_TYPE.CRAFT_FURNITURE, new Dictionary<INTERACTION_TYPE, object[]>() {
-        //                        { INTERACTION_TYPE.CRAFT_FURNITURE, otherData }
-        //                }, this);
-        //                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
-        //                if (furnitureToCreate.ConvertFurnitureToTileObject().CanBeCraftedBy(this)) { //check first if the character can build that specific type of furniture
-        //                    if (!jobQueue.HasJobWithOtherData(JOB_TYPE.BUILD_FURNITURE, otherData)) {
-        //                        jobQueue.AddJobInQueue(job);
-        //                    }
-        //                } else {
-        //                    //furniture cannot be crafted by this character, post a job on the area
-        //                    if (!homeArea.HasJobWithOtherData(JOB_TYPE.BUILD_FURNITURE, otherData)) {
-        //                        homeArea.AddToAvailableJobs(job);
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
+                        if (tileObj.CanBeCraftedBy(this)) { //check first if the character can build that specific type of furniture
+                            if (!jobQueue.HasJobWithOtherData(JOB_TYPE.BUILD_FURNITURE, otherData)) {
+                                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BUILD_FURNITURE, INTERACTION_TYPE.CRAFT_FURNITURE, this, new Dictionary<INTERACTION_TYPE, object[]>() {
+                                { INTERACTION_TYPE.CRAFT_FURNITURE, otherData }
+                                    }, this);
+                                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
+                                jobQueue.AddJobInQueue(job);
+                            }
+                        } else {
+                            //furniture cannot be crafted by this character, post a job on the area
+                            if (!homeArea.HasJobWithOtherData(JOB_TYPE.BUILD_FURNITURE, otherData)) {
+                                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BUILD_FURNITURE, INTERACTION_TYPE.CRAFT_FURNITURE, this, new Dictionary<INTERACTION_TYPE, object[]>() {
+                                { INTERACTION_TYPE.CRAFT_FURNITURE, otherData }
+                                    }, homeArea);
+                                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
+                                homeArea.AddToAvailableJobs(job);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         //Obtain Item job
         //if the character is part of a Faction and he doesnt have an Obtain Item Job in his personal job queue, 
@@ -6121,6 +6124,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         advertisedActions.Add(INTERACTION_TYPE.CHANGE_CLASS);
         //advertisedActions.Add(INTERACTION_TYPE.STAND);
         //advertisedActions.Add(INTERACTION_TYPE.VISIT);
+        advertisedActions.Add(INTERACTION_TYPE.CRAFT_FURNITURE);
 
         if (race != RACE.SKELETON) {
             advertisedActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);

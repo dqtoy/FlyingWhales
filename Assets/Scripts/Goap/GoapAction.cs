@@ -443,6 +443,9 @@ public class GoapAction {
     //}
     //This is called after doing the afterEffect action, and after registering the description log
     //public virtual void AfterAfterEffect() { }
+    public virtual LocationGridTile GetOverrideTargetTile(ActualGoapNode goapNode) {
+        return null;
+    }
     #endregion
 
     #region Utilities
