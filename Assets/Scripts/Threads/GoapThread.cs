@@ -163,13 +163,13 @@ public class GoapThread : Multithread {
             //default
             plan = actor.planner.PlanActions(target, goalEffect, isPersonalPlan, ref planLog, job);
         }
-        log += "\nRaw Plan Log: " + planLog;
+        log += "\nGOAP TREE LOG: " + planLog;
         if(plan != null) {
-            log += "\nGENERATED PLAN: ";
+            log += "\n\nGENERATED PLAN: ";
             log += plan.LogPlan();
             createdPlan = plan;
         } else {
-            log += "\nNO PLAN WAS GENERATED! End goap...";
+            log += "\n\nNO PLAN WAS GENERATED! End goap...";
         }
         //Dictionary<IPointOfInterest, List<GoapAction>> usableActions = new Dictionary<IPointOfInterest, List<GoapAction>>();
         //Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = actor.awareness;
@@ -463,8 +463,9 @@ public class GoapThread : Multithread {
             return;
         }
         log += "\nGOAL ACTION: " + recalculationPlan.endNode.singleNode.action.goapName + " - " + recalculationPlan.target.name;
-
-        bool success = actor.planner.RecalculatePathForPlan(recalculationPlan, job);
+        string planLog = string.Empty;
+        bool success = actor.planner.RecalculatePathForPlan(recalculationPlan, job, ref planLog);
+        log += "\nGOAP TREE LOG: " + planLog;
         if (success) {
             log += "\nGENERATED PLAN: ";
             log += recalculationPlan.LogPlan();
