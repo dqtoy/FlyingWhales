@@ -123,6 +123,10 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private ScrollRect killCountScrollView;
     [SerializeField] private RectTransform aliveHeader;
     [SerializeField] private RectTransform deadHeader;
+    private List<CharacterNameplateItem> killCountCharacterItems;
+    private int unusedKillCountCharacterItems;
+    private int aliveCount;
+    private int allFilteredCharactersCount;
 
     [Header("Top Buttons")]
     [SerializeField] private Toggle portalToggle;
@@ -184,7 +188,8 @@ public class PlayerUI : MonoBehaviour {
         LoadAttackSlot();
         LoadInterventionAbilitySlots();
         UpdateInterventionAbilitySlots();
-        LoadKillCountCharacterItems(LandmarkManager.Instance.enemyOfPlayerArea);
+        //LoadKillCountCharacterItems();
+        InitialUpdateKillCountCharacterItems();
 
         UpdateIntel();
         InitializeMemoriesMenu();
@@ -227,6 +232,10 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
         Messenger.AddListener<Character, Faction>(Signals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CREATED, AddedNewCharacter);
+        Messenger.AddListener<Character>(Signals.CHARACTER_BECOMES_MINION_OR_SUMMON, CharacterBecomesMinionOrSummon);
+        Messenger.AddListener<Character>(Signals.CHARACTER_BECOMES_NON_MINION_OR_SUMMON, CharacterBecomesNonMinionOrSummon);
+
 
         //Minion List
         Messenger.AddListener<Minion>(Signals.PLAYER_GAINED_MINION, OnGainedMinion);
@@ -305,27 +314,40 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     private void OnCharacterDied(Character character) {
-        UpdateKillCount();
-        OrderKillSummaryItems();
+        //UpdateKillCount();
+        //OrderKillSummaryItems();
+        TransferCharacterFromActiveToInactive(character);
         CheckIfAllCharactersWipedOut();
     }
     private void OnCharacterGainedTrait(Character character, Trait trait) {
         if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
-            UpdateKillCount();
-            OrderKillSummaryItems();
+            //UpdateKillCount();
+            //OrderKillSummaryItems();
+            TransferCharacterFromActiveToInactive(character);
             CheckIfAllCharactersWipedOut();
         }
     }
     private void OnCharacterLostTrait(Character character, Trait trait) {
         if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
-            UpdateKillCount();
-            OrderKillSummaryItems();
+            //UpdateKillCount();
+            //OrderKillSummaryItems();
+            TransferCharacterFromInactiveToActive(character);
         }
     }
     private void OnCharacterRemovedFromFaction(Character character, Faction faction) {
-        UpdateKillCount();
-        OrderKillSummaryItems();
+        //UpdateKillCount();
+        //OrderKillSummaryItems();
+        TransferCharacterFromActiveToInactive(character);
         CheckIfAllCharactersWipedOut();
+    }
+    private void AddedNewCharacter(Character character) {
+        OnAddNewCharacter(character);
+    }
+    private void CharacterBecomesMinionOrSummon(Character character) {
+        OnCharacterBecomesMinionOrSummon(character);
+    }
+    private void CharacterBecomesNonMinionOrSummon(Character character) {
+        OnCharacterBecomesNonMinionOrSummon(character);
     }
     private void CheckIfAllCharactersWipedOut() {
         if (PlayerManager.Instance.player.currentAreaBeingInvaded != null) {
@@ -1508,39 +1530,77 @@ public class PlayerUI : MonoBehaviour {
         killCountGO.SetActive(state);
         killSummaryGO.SetActive(false);
     }
-    private void LoadKillCountCharacterItems(Area area) {
-        CharacterNameplateItem[] items = Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(killCountScrollView.content.gameObject);
-        for (int i = 0; i < items.Length; i++) {
-            ObjectPoolManager.Instance.DestroyObject(items[i].gameObject);
+    private void LoadKillCountCharacterItems() {
+        aliveCount = 0;
+        allFilteredCharactersCount = 0;
+        unusedKillCountCharacterItems = 0;
+        killCountCharacterItems = new List<CharacterNameplateItem>();
+        for (int i = 0; i < 20; i++) { //Initial number is 20
+            CreateNewKillCountCharacterItem();
         }
-        for (int i = 0; i < area.region.residents.Count; i++) {
-            Character character = area.region.residents[i];
-            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(killCharacterItemPrefab.name, Vector3.zero, Quaternion.identity, killCountScrollView.content);
-            CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
+    }
+    private CharacterNameplateItem CreateNewKillCountCharacterItem() {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(killCharacterItemPrefab.name, Vector3.zero, Quaternion.identity, killCountScrollView.content);
+        CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
+        go.SetActive(false);
+        killCountCharacterItems.Add(item);
+        unusedKillCountCharacterItems++;
+        return item;
+    }
+    //This must only be called once during initialization
+    private void InitialUpdateKillCountCharacterItems() {
+        //CharacterNameplateItem[] items = Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(killCountScrollView.content.gameObject);
+        //for (int i = 0; i < items.Length; i++) {
+        //    ObjectPoolManager.Instance.DestroyObject(items[i].gameObject);
+        //}
+        LoadKillCountCharacterItems();
+        List<CharacterNameplateItem> alive = new List<CharacterNameplateItem>();
+        List<CharacterNameplateItem> dead = new List<CharacterNameplateItem>();
+        List<Character> allCharacters = CharacterManager.Instance.allCharacters;
+        int allCharactersCount = CharacterManager.Instance.allCharacters.Count;
+        int killCountCharacterItemsCount = killCountCharacterItems.Count;
+        //if (allCharactersCount < killCountCharacterItemsCount) {
+        //    for (int i = allCharactersCount; i < killCountCharacterItemsCount; i++) {
+        //        killCountCharacterItems[i].gameObject.SetActive(false);
+        //    }
+        //}
+        for (int i = 0; i < allCharactersCount; i++) {
+            Character character = allCharacters[i];
+            if (i >= killCountCharacterItemsCount) {
+                CreateNewKillCountCharacterItem();
+            }
+            CharacterNameplateItem item = killCountCharacterItems[i];
+            if (character.minion != null || character is Summon || character.faction == PlayerManager.Instance.player.playerFaction
+            || character.faction == FactionManager.Instance.disguisedFaction) {
+                //Do not show minions and summons
+                item.gameObject.SetActive(false);
+                continue;
+            }
             item.SetObject(character);
             item.SetAsButton();
             item.ClearAllOnClickActions();
             item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, false));
-
-        }
-        OrderKillSummaryItems();
-        UpdateKillCount();
-    }
-    private void UpdateKillCount() {
-        killCountLbl.text = LandmarkManager.Instance.enemyOfPlayerArea.region.residents.Where(x => x.IsAble()).Count().ToString() + "/" + LandmarkManager.Instance.enemyOfPlayerArea.citizenCount.ToString();
-    }
-    private void OrderKillSummaryItems() {
-        CharacterNameplateItem[] items = Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(killCountScrollView.content.gameObject);
-        List<CharacterNameplateItem> alive = new List<CharacterNameplateItem>();
-        List<CharacterNameplateItem> dead = new List<CharacterNameplateItem>();
-        for (int i = 0; i < items.Length; i++) {
-            CharacterNameplateItem currItem = items[i];
-            if (!currItem.character.IsAble() || !LandmarkManager.Instance.enemyOfPlayerArea.region.IsFactionHere(currItem.character.faction)) { //added checking for faction in cases that the character was raised from dead (Myk, if the concern here is only from raise dead, I changed the checker to returnedToLife to avoid conflicts with factions, otherwise you can return it to normal. -Chy)
-                dead.Add(currItem);
+            item.gameObject.SetActive(true);
+            allFilteredCharactersCount++;
+            unusedKillCountCharacterItems--;
+            if (character.faction == FactionManager.Instance.neutralFaction 
+                //|| character.faction == PlayerManager.Instance.player.playerFaction 
+                //|| character.faction == FactionManager.Instance.disguisedFaction
+                || !character.IsAble()) { //added checking for faction in cases that the character was raised from dead (Myk, if the concern here is only from raise dead, I changed the checker to returnedToLife to avoid conflicts with factions, otherwise you can return it to normal. -Chy)
+                dead.Add(item);
             } else {
-                alive.Add(currItem);
+                aliveCount++;
+                alive.Add(item);
             }
+            //GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(killCharacterItemPrefab.name, Vector3.zero, Quaternion.identity, killCountScrollView.content);
+            //CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
+            //item.SetObject(character);
+            //item.SetAsButton();
+            //item.ClearAllOnClickActions();
+            //item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, false));
         }
+        UpdateKillCount();
+
         aliveHeader.transform.SetAsFirstSibling();
         for (int i = 0; i < alive.Count; i++) {
             CharacterNameplateItem currItem = alive[i];
@@ -1551,7 +1611,129 @@ public class PlayerUI : MonoBehaviour {
             CharacterNameplateItem currItem = dead[i];
             currItem.transform.SetSiblingIndex(alive.Count + i + 2);
         }
+        //OrderKillSummaryItems();
+        //UpdateKillCount();
     }
+    private void OnAddNewCharacter(Character character) {
+        if (character.minion != null || character is Summon || character.faction == PlayerManager.Instance.player.playerFaction
+            || character.faction == FactionManager.Instance.disguisedFaction) {
+            //Do not show minions and summons
+            return;
+        }
+        allFilteredCharactersCount++;
+        CharacterNameplateItem item = null;
+        if (unusedKillCountCharacterItems > 0) {
+            item = GetUnusedCharacterNameplateItem();
+        } else {
+            item = CreateNewKillCountCharacterItem();
+        }
+        item.SetObject(character);
+        item.SetAsButton();
+        item.ClearAllOnClickActions();
+        item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, false));
+        item.gameObject.SetActive(true);
+        unusedKillCountCharacterItems--;
+        if (character.faction == FactionManager.Instance.neutralFaction 
+            //|| character.faction == PlayerManager.Instance.player.playerFaction
+            //|| character.faction == FactionManager.Instance.disguisedFaction
+            || !character.IsAble()) { //added checking for faction in cases that the character was raised from dead (Myk, if the concern here is only from raise dead, I changed the checker to returnedToLife to avoid conflicts with factions, otherwise you can return it to normal. -Chy)
+            if (allFilteredCharactersCount == killCountCharacterItems.Count) {
+                item.transform.SetAsLastSibling();
+            } else {
+                item.transform.SetSiblingIndex(allFilteredCharactersCount + 2);
+            }
+        } else {
+            aliveCount++;
+            item.transform.SetSiblingIndex(deadHeader.transform.GetSiblingIndex());
+        }
+        UpdateKillCount();
+    }
+    private void TransferCharacterFromActiveToInactive(Character character) {
+        CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
+        if (allFilteredCharactersCount == killCountCharacterItems.Count) {
+            item.transform.SetAsLastSibling();
+        } else {
+            item.transform.SetSiblingIndex(allFilteredCharactersCount + 2);
+        }
+        aliveCount--;
+        UpdateKillCount();
+    }
+    private void TransferCharacterFromInactiveToActive(Character character) {
+        CharacterNameplateItem item = GetInactiveCharacterNameplateItem(character);
+        item.transform.SetSiblingIndex(deadHeader.transform.GetSiblingIndex());
+        aliveCount++;
+        UpdateKillCount();
+    }
+    private void OnCharacterBecomesMinionOrSummon(Character character) {
+        CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
+        if(item != null) {
+            item.gameObject.SetActive(false);
+            aliveCount--;
+            allFilteredCharactersCount--;
+            unusedKillCountCharacterItems++;
+            UpdateKillCount();
+        }
+    }
+    private void OnCharacterBecomesNonMinionOrSummon(Character character) {
+        OnAddNewCharacter(character);
+    }
+    private CharacterNameplateItem GetUnusedCharacterNameplateItem() {
+        int killCountCharacterItemsCount = killCountCharacterItems.Count;
+        for (int i = killCountCharacterItemsCount - 1; i >= 0; i--) {
+            CharacterNameplateItem item = killCountCharacterItems[i];
+            if (!item.gameObject.activeSelf) {
+                return item;
+            }
+        }
+        return null;
+    }
+    private CharacterNameplateItem GetActiveCharacterNameplateItem(Character character) {
+        int killCountCharacterItemsCount = killCountCharacterItems.Count;
+        for (int i = 0; i < killCountCharacterItemsCount; i++) {
+            CharacterNameplateItem item = killCountCharacterItems[i];
+            if (item.gameObject.activeSelf && item.character == character) {
+                return item;
+            }
+        }
+        return null;
+    }
+    private CharacterNameplateItem GetInactiveCharacterNameplateItem(Character character) {
+        int killCountCharacterItemsCount = killCountCharacterItems.Count;
+        for (int i = killCountCharacterItemsCount - 1; i >= 0; i--) {
+            CharacterNameplateItem item = killCountCharacterItems[i];
+            if (item.gameObject.activeSelf && item.character == character) {
+                return item;
+            }
+        }
+        return null;
+    }
+    private void UpdateKillCount() {
+        killCountLbl.text = aliveCount + "/" + allFilteredCharactersCount;
+    }
+    //private void OrderKillSummaryItems() {
+    //    CharacterNameplateItem[] items = Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(killCountScrollView.content.gameObject);
+    //    List<CharacterNameplateItem> alive = new List<CharacterNameplateItem>();
+    //    List<CharacterNameplateItem> dead = new List<CharacterNameplateItem>();
+    //    for (int i = 0; i < items.Length; i++) {
+    //        CharacterNameplateItem currItem = items[i];
+    //        if (!currItem.character.IsAble() || !LandmarkManager.Instance.enemyOfPlayerArea.region.IsFactionHere(currItem.character.faction)) { //added checking for faction in cases that the character was raised from dead (Myk, if the concern here is only from raise dead, I changed the checker to returnedToLife to avoid conflicts with factions, otherwise you can return it to normal. -Chy)
+    //            dead.Add(currItem);
+    //        } else {
+    //            alive.Add(currItem);
+    //        }
+    //    }
+    //    aliveHeader.transform.SetAsFirstSibling();
+    //    for (int i = 0; i < alive.Count; i++) {
+    //        CharacterNameplateItem currItem = alive[i];
+    //        currItem.transform.SetSiblingIndex(i + 1);
+    //    }
+    //    deadHeader.transform.SetSiblingIndex(alive.Count + 1);
+    //    for (int i = 0; i < dead.Count; i++) {
+    //        CharacterNameplateItem currItem = dead[i];
+    //        currItem.transform.SetSiblingIndex(alive.Count + i + 2);
+    //    }
+    //    UpdateKillCount();
+    //}
     public void ToggleKillSummary(bool isOn) {
         killSummaryGO.SetActive(isOn);
     }

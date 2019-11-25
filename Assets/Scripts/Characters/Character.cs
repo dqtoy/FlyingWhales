@@ -419,6 +419,19 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         StartingLevel();
         InitializeAlterEgos();
     }
+    public Character(CharacterRole role, string className, RACE race, GENDER gender, SEXUALITY sexuality) : this() {
+        _id = Utilities.SetID(this);
+        _gender = gender;
+        RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
+        _raceSetting = raceSetting.CreateNewCopy();
+        AssignRole(role, false);
+        _characterClass = CharacterManager.Instance.CreateNewCharacterClass(className);
+        originalClassName = _characterClass.className;
+        SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
+        SetSexuality(sexuality);
+        StartingLevel();
+        InitializeAlterEgos();
+    }
     public Character(SaveDataCharacter data) {
         _id = Utilities.SetID(this, data.id);
         _characterColorCode = data.characterColorCode;
@@ -3931,6 +3944,14 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
     #region Minion
     public void SetMinion(Minion minion) {
+        if (_minion != null && minion == null) {
+            Messenger.Broadcast(Signals.CHARACTER_BECOMES_NON_MINION_OR_SUMMON, this);
+        } else if (_minion == null && minion != null) {
+            Messenger.Broadcast(Signals.CHARACTER_BECOMES_MINION_OR_SUMMON, this);
+        }
+        //else if (_minion != null && minion != null && _minion != minion) {
+        //    Messenger.Broadcast(Signals.CHARACTER_BECOMES_MINION_OR_SUMMON);
+        //}
         _minion = minion;
         //UnsubscribeSignals(); //Removed this since character's listeners are not on by default now.
     }

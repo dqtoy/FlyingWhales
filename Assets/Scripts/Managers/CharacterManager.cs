@@ -115,8 +115,7 @@ public class CharacterManager : MonoBehaviour {
         //newCharacter.AddAwareness(newCharacter);
         newCharacter.CreateInitialTraitsByClass();
         //newCharacter.CreateInitialTraitsByRace();
-        _allCharacters.Add(newCharacter);
-        Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
+        AddNewCharacter(newCharacter);
         return newCharacter;
     }
     public Character CreateNewCharacter(CharacterRole role, string className, RACE race, GENDER gender, Faction faction = null, 
@@ -135,8 +134,26 @@ public class CharacterManager : MonoBehaviour {
             homeLocation.AddCharacterToLocation(newCharacter);
         }
         newCharacter.CreateInitialTraitsByClass();
-        _allCharacters.Add(newCharacter);
-        Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
+        AddNewCharacter(newCharacter);
+        return newCharacter;
+    }
+    public Character CreateNewCharacter(CharacterRole role, string className, RACE race, GENDER gender, SEXUALITY sexuality, Faction faction = null,
+        Region homeLocation = null, Dwelling homeStructure = null) {
+        Character newCharacter = new Character(role, className, race, gender, sexuality);
+        newCharacter.Initialize();
+        if (faction != null) {
+            faction.JoinFaction(newCharacter);
+        } else {
+            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
+        }
+        newCharacter.ownParty.CreateIcon();
+        if (homeLocation != null) {
+            newCharacter.ownParty.icon.SetPosition(homeLocation.coreTile.transform.position);
+            newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
+            homeLocation.AddCharacterToLocation(newCharacter);
+        }
+        newCharacter.CreateInitialTraitsByClass();
+        AddNewCharacter(newCharacter);
         return newCharacter;
     }
     public Character CreateNewCharacter(SaveDataCharacter data) {
@@ -186,9 +203,12 @@ public class CharacterManager : MonoBehaviour {
             data.items[i].Load(newCharacter);
         }
 
-        _allCharacters.Add(newCharacter);
-        Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
+        AddNewCharacter(newCharacter);
         return newCharacter;
+    }
+    public void AddNewCharacter(Character character) {
+        _allCharacters.Add(character);
+        Messenger.Broadcast(Signals.CHARACTER_CREATED, character);
     }
     public void RemoveCharacter(Character character) {
         _allCharacters.Remove(character);
@@ -337,8 +357,7 @@ public class CharacterManager : MonoBehaviour {
             homeLocation.AddCharacterToLocation(newCharacter.ownParty.owner);
         }
         newCharacter.CreateInitialTraitsByClass();
-        _allCharacters.Add(newCharacter);
-        Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
+        AddNewCharacter(newCharacter);
         return newCharacter;
     }
     public Summon CreateNewSummon(SaveDataCharacter data) {
@@ -397,8 +416,7 @@ public class CharacterManager : MonoBehaviour {
         //}
         //newCharacter.LoadAllStatsOfCharacter(data);
 
-        _allCharacters.Add(newCharacter);
-        Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
+        AddNewCharacter(newCharacter);
         return newCharacter;
     }
     public Summon CreateNewSummonClassFromType(SaveDataCharacter data) {

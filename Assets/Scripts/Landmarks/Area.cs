@@ -515,13 +515,31 @@ public class Area : IJobOwner {
         if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerArea.id == this.id) {
             return false; //resident capacity is never full for player area
         }
-        return structures[STRUCTURE_TYPE.DWELLING].Where(x => !x.IsOccupied()).Count() == 0; //check if there are still unoccupied dwellings
+        if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
+            List<LocationStructure> dwellings = structures[STRUCTURE_TYPE.DWELLING];
+            for (int i = 0; i < dwellings.Count; i++) {
+                if (!dwellings[i].IsOccupied()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+        //return structures[STRUCTURE_TYPE.DWELLING].Where(x => !x.IsOccupied()).Count() == 0; //check if there are still unoccupied dwellings
     }
     public int GetNumberOfUnoccupiedStructure(STRUCTURE_TYPE structureType) {
         if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerArea.id == this.id) {
             return 0;
         }
-        return structures[structureType].Where(x => !x.IsOccupied()).Count();
+        int num = 0;
+        if (structures.ContainsKey(structureType)) {
+            List<LocationStructure> structureList = structures[structureType];
+            for (int i = 0; i < structureList.Count; i++) {
+                if (!structureList[i].IsOccupied()) {
+                    num++;
+                }
+            }
+        }
+        return num;
     }
     public Character GetRandomCharacterAtLocationExcept(Character character) {
         List<Character> choices = new List<Character>();
@@ -580,6 +598,20 @@ public class Area : IJobOwner {
         //} else {
         //    citizen.LevelUp(citizensLevel - 1);
         //}
+    }
+    public Character AddNewResident(RACE race, GENDER gender, Faction faction) {
+        string className = locationClassManager.GetCurrentClassToCreate();
+        Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, gender, faction, region);
+        PlaceNewResidentInInnerMap(citizen);
+        //citizen.CenterOnCharacter();
+        return citizen;
+    }
+    public Character AddNewResident(RACE race, GENDER gender, SEXUALITY sexuality, Faction faction) {
+        string className = locationClassManager.GetCurrentClassToCreate();
+        Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, gender, sexuality, faction, region);
+        PlaceNewResidentInInnerMap(citizen);
+        //citizen.CenterOnCharacter();
+        return citizen;
     }
     public Character CreateNewResidentNoLocation(RACE race, string className, Faction faction) {
         Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, Utilities.GetRandomGender(), faction);

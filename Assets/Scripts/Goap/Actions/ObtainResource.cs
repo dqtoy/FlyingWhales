@@ -21,10 +21,10 @@ public class ObtainResource : GoapAction {
         ResourcePile pile = target as ResourcePile;
         switch (pile.providedResource) {
             case RESOURCE.FOOD:
-                ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_FOOD, target = GOAP_EFFECT_TARGET.ACTOR });
+                ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_FOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
                 break;
             case RESOURCE.WOOD:
-                ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_WOOD, target = GOAP_EFFECT_TARGET.ACTOR });
+                ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_WOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
                 break;
         }
         return ee;
