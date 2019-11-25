@@ -946,7 +946,6 @@ MonoBehaviour:
   groundTilemap: {fileID: 8195094281923658812}
   detailsTilemap: {fileID: 8195094281029965638}
   structureTilemap: {fileID: 8195094281757846180}
-  objectsTilemap: {fileID: 8195094282159575352}
   outsideTile: {fileID: 11400000, guid: eb3f0a06db068d04f86d266316b14e08, type: 2}
   snowOutsideTile: {fileID: 11400000, guid: b19fb3108a794684e9cd863789e30c5a, type: 2}
   bed2SleepingVariant: {fileID: 11400000, guid: 07fbfb0f04b704441990560e16face2b,
