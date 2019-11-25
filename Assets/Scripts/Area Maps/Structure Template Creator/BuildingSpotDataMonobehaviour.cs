@@ -11,6 +11,8 @@ public class BuildingSpotDataMonobehaviour : MonoBehaviour {
     public TextMeshPro idText;
     public bool isOpen = false;
 
+    public Vector2 buildingSpotGridPos;
+
     private void Update() {
         id = transform.GetSiblingIndex();
         idText.text = id.ToString();
@@ -28,7 +30,8 @@ public class BuildingSpotDataMonobehaviour : MonoBehaviour {
             id = this.id,
             location = new Vector3Int((int)(transform.localPosition.x), (int)(transform.localPosition.y), 0),
             isOpen = this.isOpen,
-            adjacentSpots = converted
+            adjacentSpots = converted,
+            buildingSpotGridPos = new Vector2Int((int)this.buildingSpotGridPos.x, (int)this.buildingSpotGridPos.y)
         };
     }
 }

@@ -42,6 +42,9 @@ public abstract class AreaMapGameObject<T> : PooledObject
     public void SetColor(Color color) {
         objectVisual.color = color;
     }
+    public void SetActiveState(bool state) {
+        this.gameObject.SetActive(state);
+    }
     #endregion
 
 }

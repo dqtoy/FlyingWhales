@@ -257,7 +257,7 @@ public class LandmarkManager : MonoBehaviour {
             faction.SetRace(RACE.HUMANS);
         }
         OwnRegion(faction, faction.race, settlementRegion);
-        settlementArea.GenerateStructures(14); //14 //TODO: Revert once character markers have been evaluated
+        settlementArea.GenerateStructures(8); //14 //TODO: Revert once character markers have been evaluated
         faction.GenerateStartingCitizens(2, 1, UnityEngine.Random.Range(5, 8), settlementArea.locationClassManager); //UnityEngine.Random.Range(5, 8) //9,7 //citizenCount
 
         List<Region> availableRegions = new List<Region>(regions);
@@ -727,7 +727,7 @@ public class LandmarkManager : MonoBehaviour {
 
         string log = string.Empty;
         areaMap.Initialize(area);
-        TownMapSettings generatedSettings = areaMap.GenerateInnerStructures(out log);
+        TownMapSettings generatedSettings = areaMap.GenerateTownMap(out log);
         areaMap.DrawMap(generatedSettings);
         areaMap.PlaceInitialStructures(area);
 

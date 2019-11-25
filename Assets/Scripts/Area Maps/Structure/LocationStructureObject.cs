@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -132,6 +133,17 @@ public class LocationStructureObject : MonoBehaviour {
                 tile.structure.RemovePOI(tile.objHere);
             }
             tile.parentAreaMap.detailsTilemap.SetTile(tile.localPlace, null);
+
+            //clear out any details and objects on tiles adjacent to the built structure
+            List<LocationGridTile> differentStructureTiles = tile.neighbourList.Where(x => !_tiles.Contains(x)).ToList();
+            for (int j = 0; j < differentStructureTiles.Count; j++) {
+                LocationGridTile diffTile = differentStructureTiles[j];
+                if (diffTile.objHere != null && (diffTile.objHere is BuildSpotTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
+                    diffTile.structure.RemovePOI(diffTile.objHere);
+                }
+                diffTile.parentAreaMap.detailsTilemap.SetTile(diffTile.localPlace, null);
+
+            }
         }
     }
     #endregion
@@ -155,6 +167,10 @@ public class LocationStructureObject : MonoBehaviour {
     #endregion
 
     #region Events
+    /// <summary>
+    /// Actions to do when a structure object has been placed.
+    /// </summary>
+    /// <param name="areaMap">The map where the structure was placed.</param>
     public void OnStructureObjectPlaced(AreaInnerTileMap areaMap) {
         UpdateSortingOrders();
         for (int i = 0; i < _tiles.Length; i++) {
@@ -164,8 +180,13 @@ public class LocationStructureObject : MonoBehaviour {
             if (tile.hasDetail) { //if it does then set that tile as occupied
                 tile.SetTileState(LocationGridTile.Tile_State.Occupied);
             }
+
+            TileBase groundTile = _groundTileMap.GetTile(_groundTileMap.WorldToCell(tile.worldLocation));
+            //set the ground asset of the parent area map to what this objects ground map uses, then clear this objects ground map
+            tile.SetGroundTilemapVisual(groundTile);
             tile.parentAreaMap.detailsTilemap.SetTile(tile.localPlace, null);
         }
+        _groundTileMap.ClearAllTiles();
         RegisterFurnitureSpots(areaMap);
     }
     #endregion
@@ -205,6 +226,15 @@ public class LocationStructureObject : MonoBehaviour {
             occupiedTiles.Add(tile);
         }
         return occupiedTiles;
+    }
+    public bool IsBiggerThanBuildSpot() {
+        return _size.x > InteriorMapManager.Building_Spot_Size.x || _size.y > InteriorMapManager.Building_Spot_Size.y;
+    }
+    public bool IsHorizontallyBig() {
+        return _size.x > InteriorMapManager.Building_Spot_Size.x;
+    }
+    public bool IsVerticallyBig() {
+        return _size.y > InteriorMapManager.Building_Spot_Size.y;
     }
     #endregion
 

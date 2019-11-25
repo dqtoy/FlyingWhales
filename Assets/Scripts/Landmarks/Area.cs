@@ -382,14 +382,6 @@ public class Area : IJobOwner {
     #endregion
 
     #region Supplies
-    public void SetSuppliesInBank(int amount) {
-        if (supplyPile == null) {
-            return;
-        }
-        supplyPile.SetResourceInPile(amount);
-        Messenger.Broadcast(Signals.AREA_SUPPLIES_CHANGED, this);
-        //suppliesInBank = Mathf.Clamp(suppliesInBank, 0, supplyCapacity);
-    }
     public void AdjustSuppliesInBank(int amount) {
         if (supplyPile == null) {
             return;
@@ -749,6 +741,7 @@ public class Area : IJobOwner {
         // - a cemetery
         // - wilderness
         // - enough dwellings for it's citizens
+        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.CITY_CENTER, true);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.INN, true);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WAREHOUSE, true);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.PRISON, true);
@@ -920,13 +913,6 @@ public class Area : IJobOwner {
             LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][0];
             structure.AddPOI(new MagicCircle());
         }
-        //Well
-        if (structures.ContainsKey(STRUCTURE_TYPE.WORK_AREA)) {
-            for (int i = 0; i < 3; i++) {
-                LocationStructure structure = structures[STRUCTURE_TYPE.WORK_AREA][0];
-                structure.AddPOI(new WaterWell());
-            }
-        }
         //Goddess Statue
         if (structures.ContainsKey(STRUCTURE_TYPE.WORK_AREA)) {
             for (int i = 0; i < 4; i++) {
@@ -936,12 +922,14 @@ public class Area : IJobOwner {
         }
     }
     private void PlaceBuildSpots() {
-        for (int i = 0; i < areaMap.buildingSpots.Count; i++) {
-            BuildingSpot spot = areaMap.buildingSpots[i];
-            BuildSpotTileObject tileObj = new BuildSpotTileObject();
-            tileObj.SetBuildingSpot(spot);
-            LocationGridTile tileLocation = areaMap.map[spot.location.x, spot.location.y];
-            tileLocation.structure.AddPOI(tileObj, tileLocation);
+        for (int x = 0; x < areaMap.buildingSpots.GetUpperBound(0); x++) {
+            for (int y = 0; y < areaMap.buildingSpots.GetUpperBound(1); y++) {
+                BuildingSpot spot = areaMap.buildingSpots[x, y];
+                BuildSpotTileObject tileObj = new BuildSpotTileObject();
+                tileObj.SetBuildingSpot(spot);
+                LocationGridTile tileLocation = areaMap.map[spot.location.x, spot.location.y];
+                tileLocation.structure.AddPOI(tileObj, tileLocation);
+            }
         }
     }
     private void PlaceOres() {

@@ -1093,6 +1093,7 @@ public enum STRUCTURE_TYPE {
     CEMETERY,
     PRISON,
     POND,
+    CITY_CENTER,
 }
 public enum RELATIONSHIP_TRAIT {
     NONE = 0,
@@ -1156,7 +1157,7 @@ public enum INTERACTION_CHARACTER_EFFECT {
     TIREDNESS_RECOVERY,
 }
 public enum TARGET_POI { ACTOR, TARGET, }
-public enum TileNeighbourDirection { North, South, West, East, North_West,  North_East, South_West, South_East }
+public enum GridNeighbourDirection { North, South, West, East, North_West,  North_East, South_West, South_East }
 public enum TIME_IN_WORDS { AFTER_MIDNIGHT, AFTER_MIDNIGHT_1, AFTER_MIDNIGHT_2, MORNING, MORNING_1, MORNING_2, AFTERNOON, AFTERNOON_1, AFTERNOON_2, EARLY_NIGHT, LATE_NIGHT, NIGHT_1, NIGHT_2, LUNCH_TIME, NONE }
 //public enum CRIME_SEVERITY { NONE, INFRACTION, MISDEMEANOUR, SERIOUS_CRIME, }
 public enum FOOD { BERRY, MUSHROOM, RABBIT, RAT }
@@ -1346,12 +1347,12 @@ public static class Extensions {
         }
         throw new System.Exception("No opposite direction for " + dir.ToString());
     }
-    public static bool IsCardinalDirection(this TileNeighbourDirection dir) {
+    public static bool IsCardinalDirection(this GridNeighbourDirection dir) {
         switch (dir) {
-            case TileNeighbourDirection.North:
-            case TileNeighbourDirection.South:
-            case TileNeighbourDirection.West:
-            case TileNeighbourDirection.East:
+            case GridNeighbourDirection.North:
+            case GridNeighbourDirection.South:
+            case GridNeighbourDirection.West:
+            case GridNeighbourDirection.East:
                 return true;
             default:
                 return false;

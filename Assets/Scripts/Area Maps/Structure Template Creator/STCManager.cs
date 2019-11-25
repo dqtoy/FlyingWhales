@@ -359,6 +359,7 @@ public class StructureTemplate {
     public BuildingSpotData[] connectors;
     public FurnitureSpot[] furnitureSpots;
 
+
     public StructureTemplate(string _name, TileTemplateData[] _ground, TileTemplateData[] _groundWalls, TileTemplateData[] _walls,
         TileTemplateData[] _objects, TileTemplateData[] _details, Point _size, BuildingSpotData[] _connectors, FurnitureSpot[] _furnitureSpots) {
         name = _name;

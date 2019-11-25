@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -83340,7 +83340,7 @@ MonoBehaviour:
     type: 2}
   areaMapLight: {fileID: 450682173}
   structurePrefabs:
-    m_keys: 030000000200000001000000090000000a00000008000000
+    m_keys: 030000000200000001000000090000000a000000080000000b000000
     m_values:
     - data:
       - {fileID: 1293362371696982, guid: 191a9e123946de349a254ec4c008d174, type: 2}
@@ -83354,6 +83354,8 @@ MonoBehaviour:
       - {fileID: 1794830140391482, guid: e7f07aa2f80a73b4c8edfdb9741a50b2, type: 2}
     - data:
       - {fileID: 1320005381273642, guid: 762579c6fb9f7874a90ed88fbab952cc, type: 2}
+    - data:
+      - {fileID: 1853755111921850, guid: 7085c942d9188584ebdaef82219b3e1a, type: 2}
   itemTiles:
     m_keys: 000000000100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f00000010000000110000001200000013000000
     m_values:

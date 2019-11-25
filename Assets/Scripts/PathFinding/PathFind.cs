@@ -102,10 +102,10 @@ namespace PathFind {
                             break;
                         case GRID_PATHFINDING_MODE.MAIN_ROAD_GEN:
                             foreach (Node n in path.LastStep.FourNeighbours()) {
-                                if (n.HasNeighbouringStructureOfType(new List<STRUCTURE_TYPE>() {
+                                if (n.HasNeighbouringStructureOfType(
                                     STRUCTURE_TYPE.DWELLING, STRUCTURE_TYPE.WAREHOUSE,
-                                    STRUCTURE_TYPE.INN,
-                                }) || n.tileType ==  LocationGridTile.Tile_Type.Wall) {
+                                    STRUCTURE_TYPE.INN
+                                ) || n.tileType ==  LocationGridTile.Tile_Type.Wall) {
                                     continue; //skip
                                 }
 

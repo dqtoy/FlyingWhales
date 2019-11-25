@@ -14,6 +14,7 @@ public class GenericTileObject : TileObject {
         advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(data);
     }
+    #region Override
     protected override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom) {
         Messenger.Broadcast(Signals.TILE_OBJECT_REMOVED, this as TileObject, removedBy, removedFrom);
         if (hasCreatedSlots) {
@@ -47,24 +48,48 @@ public class GenericTileObject : TileObject {
     public override bool IsValidCombatTarget() {
         return false;
     }
+    public override void OnTileObjectGainedTrait(Trait trait) {
+        base.OnTileObjectGainedTrait(trait);
+        if (trait.IsTangible()) {
+            EnableGameObject();
+        }
+    }
+    public override void OnTileObjectLostTrait(Trait trait) {
+        base.OnTileObjectLostTrait(trait);
+        if (HasTangibleTrait() == false) {
+            DisableGameObject();
+        }
+    }
     public override string ToString() {
         return "Generic Obj at tile " + gridTileLocation?.ToString();
     }
+    #endregion
+
+    private bool HasTangibleTrait() {
+        for (int i = 0; i < traitContainer.allTraits.Count; i++) {
+            Trait currTrait = traitContainer.allTraits[i];
+            if (currTrait.IsTangible()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public void ManualInitialize(LocationStructure location, LocationGridTile tile) {
         hasBeenInitialized = true;
-        SetGridTileLocation(tile);
         Initialize(TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT);
+        SetGridTileLocation(tile);
         DisableGameObject();
 
-        switch (gridTileLocation.groundType) {
-            case LocationGridTile.Ground_Type.Grass:
-            case LocationGridTile.Ground_Type.Wood:
-                    traitContainer.AddTrait(this, "Flammable");
-                break;
-            default:
-                traitContainer.RemoveTrait(this, "Flammable");
-                break;
-        }
+        //switch (gridTileLocation.groundType) {
+        //    case LocationGridTile.Ground_Type.Grass:
+        //    case LocationGridTile.Ground_Type.Wood:
+        //            traitContainer.AddTrait(this, "Flammable");
+        //        break;
+        //    default:
+        //        traitContainer.RemoveTrait(this, "Flammable");
+        //        break;
+        //}
     }
 }

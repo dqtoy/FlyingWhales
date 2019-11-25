@@ -269,6 +269,7 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
         return false;
     }
     public virtual void OnTileObjectGainedTrait(Trait trait) { }
+    public virtual void OnTileObjectLostTrait(Trait trait) { }
     public virtual bool IsValidCombatTarget() {
         return gridTileLocation != null;
     }
