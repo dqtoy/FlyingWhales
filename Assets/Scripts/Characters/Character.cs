@@ -4792,7 +4792,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 || currentStructure.structureType == STRUCTURE_TYPE.INN 
                 || currentStructure.structureType == STRUCTURE_TYPE.WAREHOUSE
                 || currentStructure.structureType == STRUCTURE_TYPE.PRISON
-                || currentStructure.structureType == STRUCTURE_TYPE.CEMETERY) 
+                || currentStructure.structureType == STRUCTURE_TYPE.CEMETERY
+                || currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) 
                 && trapStructure.structure == null) {
                 log += "\n-" + name + " is in another Dwelling/Inn/Warehouse/Prison/Cemetery and Base Structure is empty";
                 log += "\n-100% chance to return home";
@@ -4804,6 +4805,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 PlanIdleReturnHome();
                 return log;
             }
+            throw new Exception(this.name + " had problems with idle plans.");
         } else {
             //Unaligned NPC Idle
             log += "\n-" + name + " has no faction";
