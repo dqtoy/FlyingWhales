@@ -60,7 +60,7 @@ public class BuildSpotTileObject : TileObject {
             tile.SetStructure(structure);
         }
         structure.SetStructureObject(spot.blueprint);
-        spot.blueprint.OnStructureObjectPlaced(gridTileLocation.parentAreaMap);
+        spot.blueprint.OnStructureObjectPlaced(gridTileLocation.parentAreaMap, structure);
         spot.ClearBlueprints();
         
     }

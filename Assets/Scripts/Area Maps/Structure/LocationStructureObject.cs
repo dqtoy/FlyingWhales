@@ -171,7 +171,7 @@ public class LocationStructureObject : MonoBehaviour {
     /// Actions to do when a structure object has been placed.
     /// </summary>
     /// <param name="areaMap">The map where the structure was placed.</param>
-    public void OnStructureObjectPlaced(AreaInnerTileMap areaMap) {
+    public void OnStructureObjectPlaced(AreaInnerTileMap areaMap, LocationStructure structure) {
         UpdateSortingOrders();
         for (int i = 0; i < _tiles.Length; i++) {
             LocationGridTile tile = _tiles[i];
@@ -188,6 +188,7 @@ public class LocationStructureObject : MonoBehaviour {
         }
         _groundTileMap.ClearAllTiles();
         RegisterFurnitureSpots(areaMap);
+        areaMap.area.OnLocationStructureObjectPlaced(structure);
     }
     #endregion
 

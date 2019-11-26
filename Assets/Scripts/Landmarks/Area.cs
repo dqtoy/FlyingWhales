@@ -7,10 +7,8 @@ using UnityEngine;
 public class Area : IJobOwner {
 
     public int id { get; private set; }
-    //public bool isDead { get; private set; }
     public AREA_TYPE areaType { get; private set; }
     public Region region { get; private set; }
-    //public JobQueue jobQueue { get; private set; }
     public LocationStructure prison { get; private set; }
     public int citizenCount { get; private set; }
 
@@ -22,7 +20,6 @@ public class Area : IJobOwner {
     public Faction previousOwner { get { return region.previousOwner; } }
     public List<HexTile> tiles { get { return region.tiles; } }
     public List<Character> charactersAtLocation { get { return region.charactersAtLocation; } }
-
 
     //special tokens
     public List<SpecialToken> itemsInArea { get; private set; }
@@ -49,44 +46,14 @@ public class Area : IJobOwner {
     }
     public int suppliesInBank {
         get {
-            LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE, 1);
-            if (warehouse == null) {
+            if (this.supplyPile == null) {
                 return 0;
             }
-            SupplyPile supplyPile = warehouse.GetSupplyPile();
-            if (supplyPile == null) {
-                return 0;
-            }
-            return supplyPile.resourceInPile;
+            return this.supplyPile.resourceInPile;
         }
     }
-    public SupplyPile supplyPile {
-        get {
-            LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE, 1);
-            if (warehouse == null) {
-                return null;
-            }
-            return warehouse.GetSupplyPile();
-        }
-    }
-    public int foodInBank {
-        get {
-            FoodPile currFoodPile = foodPile;
-            if (currFoodPile == null) {
-                return 0;
-            }
-            return currFoodPile.resourceInPile;
-        }
-    }
-    public FoodPile foodPile {
-        get {
-            LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE, 1);
-            if (warehouse == null) {
-                return null;
-            }
-            return warehouse.GetFoodPile();
-        }
-    }
+    public SupplyPile supplyPile { get; private set; }
+    public FoodPile foodPile { get; private set; }
     public int residentCapacity {
         get {
             if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
@@ -95,6 +62,7 @@ public class Area : IJobOwner {
             return 0;
         }
     }
+    public LocationStructure mainStorageStructure { get; private set; }
     #endregion
 
     public Area(Region region, AREA_TYPE areaType, int citizenCount) {
@@ -191,68 +159,6 @@ public class Area : IJobOwner {
     }
     #endregion
 
-    #region Tile Management
-    //public void AddTile(List<HexTile> tiles) {
-    //    for (int i = 0; i < tiles.Count; i++) {
-    //        AddTile(tiles[i]);
-    //    }
-    //}
-    //public void AddTile(HexTile tile) {
-    //    region.AddTile(tile);
-    //    //if (!tiles.Contains(tile)) {
-    //    //    tiles.Add(tile);
-    //    //    tile.SetArea(this);
-    //    //    OnTileAddedToArea(tile);
-    //    //    Messenger.Broadcast(Signals.AREA_TILE_ADDED, this, tile);
-    //    //}
-    //}
-    //public void RemoveTile(List<HexTile> tiles) {
-    //    for (int i = 0; i < tiles.Count; i++) {
-    //        RemoveTile(tiles[i]);
-    //    }
-    //}
-    //public void RemoveTile(HexTile tile) {
-    //    region.RemoveTile(tile);
-    //    //if (tiles.Remove(tile)) {
-    //    //    tile.SetArea(null);
-    //    //    OnTileRemovedFromArea(tile);
-    //    //    Messenger.Broadcast(Signals.AREA_TILE_REMOVED, this, tile);
-    //    //}
-    //}
-    //public void OnTileAddedToArea(HexTile addedTile) {
-    //    if (this.areaType == AREA_TYPE.ANCIENT_RUINS) {
-    //        addedTile.SetBiome(BIOMES.ANCIENT_RUIN);
-    //        Biomes.Instance.UpdateTileVisuals(addedTile);
-    //    }
-    //    //update tile visuals if necessary
-    //    if (this.areaType == AREA_TYPE.DEMONIC_INTRUSION) {
-    //        Biomes.Instance.CorruptTileVisuals(addedTile);
-    //    }
-    //}
-    //public void OnTileRemovedFromArea(HexTile removedTile) {
-    //    if (this.areaType == AREA_TYPE.ANCIENT_RUINS) {
-    //        removedTile.SetBaseSprite(Biomes.Instance.ancienctRuinTiles[UnityEngine.Random.Range(0, Biomes.Instance.ancienctRuinTiles.Length)]);
-    //        removedTile.HideLandmarkTileSprites();
-    //    }
-    //    ////update tile visuals if necessary
-    //    //if (this.areaType == AREA_TYPE.DEMONIC_INTRUSION) {
-    //    //    removedTile.SetBaseSprite(PlayerManager.Instance.playerAreaFloorSprites[Random.Range(0, PlayerManager.Instance.playerAreaFloorSprites.Length)]);
-    //    //    if (coreTile.id != removedTile.id) {
-    //    //        removedTile.SetLandmarkTileSprite(new LandmarkStructureSprite(PlayerManager.Instance.playerAreaDefaultStructureSprites[Random.Range(0, PlayerManager.Instance.playerAreaDefaultStructureSprites.Length)], null));
-    //    //    }
-    //    //} else if (this.areaType == AREA_TYPE.ANCIENT_RUINS) {
-    //    //    removedTile.SetBaseSprite(Biomes.Instance.ancienctRuinTiles[Random.Range(0, Biomes.Instance.ancienctRuinTiles.Length)]);
-    //    //    if (coreTile.id == removedTile.id) {
-    //    //        removedTile.SetLandmarkTileSprite(new LandmarkStructureSprite(LandmarkManager.Instance.ancientRuinTowerSprite, null));
-    //    //    } else {
-    //    //        if (Utilities.IsEven(tiles.Count)) {
-    //    //            removedTile.SetLandmarkTileSprite(new LandmarkStructureSprite(LandmarkManager.Instance.ancientRuinBlockerSprite, null));
-    //    //        }
-    //    //    }
-    //    //}
-    //}
-    #endregion
-
     #region Area Type
     public void SetAreaType(AREA_TYPE areaType) {
         this.areaType = areaType;
@@ -312,42 +218,6 @@ public class Area : IJobOwner {
     public void LoadAdditionalData() {
         CreateNameplate();
     }
-    private void UpdateBorderColors() {
-        for (int i = 0; i < tiles.Count; i++) {
-            if (owner == null) {
-                Color defaultColor = Color.gray;
-                defaultColor.a = 128f / 255f;
-                tiles[i].SetBorderColor(defaultColor);
-            } else {
-                tiles[i].SetBorderColor(owner.factionColor);
-            }
-        }
-    }
-    //public void Death() {
-    //    if (!isDead) {
-    //        isDead = true;
-    //        if (owner != null) {
-    //            for (int i = 0; i < areaResidents.Count; i++) {
-    //                Character resident = areaResidents[i];
-    //                if (!resident.isFactionless && !resident.currentParty.icon.isTravelling && resident.faction.id == owner.id && resident.id != resident.faction.leader.id && resident.specificLocation.id == id) {
-    //                    resident.Death();
-    //                }
-    //            }
-    //        }
-    //        LandmarkManager.Instance.UnownArea(this);
-    //        FactionManager.Instance.neutralFaction.AddToOwnedAreas(this);
-
-    //        if (previousOwner != null && previousOwner.leader != null && previousOwner.leader is Character) {
-    //            Character leader = previousOwner.leader as Character;
-    //            if (!leader.currentParty.icon.isTravelling && leader.specificLocation.id == id && leader.homeArea.id == id) {
-    //                leader.Death();
-    //            }
-    //        }
-
-    //        ReleaseAllAbductedCharacters();
-    //        UnsubscribeToSignals();
-    //    }
-    //}
     public string GetAreaTypeString() {
         if (areaType == AREA_TYPE.DEMONIC_INTRUSION) {
             return "Demonic Intrusion";
@@ -371,13 +241,6 @@ public class Area : IJobOwner {
         //LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
         //CheckAreaInventoryJobs(warehouse);
     }
-    //public void SetOutlineState(bool state) {
-    //    SpriteRenderer[] borders = coreTile.GetAllBorders();
-    //    for (int i = 0; i < borders.Length; i++) {
-    //        SpriteRenderer renderer = borders[i];
-    //        renderer.gameObject.SetActive(state);
-    //    }
-    //}
     public bool CanInvadeSettlement() {
         return coreTile.region.HasCorruptedConnection() && PlayerManager.Instance.player.currentAreaBeingInvaded == null && PlayerManager.Instance.player.minions.Where(x => x.assignedRegion == null).ToList().Count > 0;
     }
@@ -415,6 +278,10 @@ public class Area : IJobOwner {
 
     #region Characters
     public void AssignCharacterToDwellingInArea(Character character, Dwelling dwellingOverride = null) {
+        if (structures == null) {
+            Debug.LogWarning(this.name + " doesn't have any dwellings for " + character.name + " because structrues have not been generated yet");
+            return;
+        }
         if (character.faction != FactionManager.Instance.neutralFaction && !structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
             Debug.LogWarning(this.name + " doesn't have any dwellings for " + character.name);
             return;
@@ -451,24 +318,6 @@ public class Area : IJobOwner {
         }
         character.MigrateHomeStructureTo(chosenDwelling);
     }
-    //private void CheckForUnoccupancy() {
-    //    //whenever an owned area loses a resident, check if the area still has any residents that are part of the owner faction
-    //    //if there aren't any, unoccupy this area
-    //    if (this.owner != null) {
-    //        bool unoccupy = true;
-    //        for (int i = 0; i < areaResidents.Count; i++) {
-    //            Character currResident = areaResidents[i];
-    //            if (currResident.faction.id == this.owner.id) {
-    //                unoccupy = false;
-    //                break;
-    //            }
-    //        }
-    //        if (unoccupy) {
-    //            LandmarkManager.Instance.UnownRegion(region);
-    //            FactionManager.Instance.neutralFaction.AddToOwnedRegions(region);
-    //        }
-    //    }
-    //}
     public void AddCharacterToLocation(Character character, LocationGridTile tileOverride = null, bool isInitial = false) {
         region.AddCharacterToLocation(character);
         //if (!charactersAtLocation.Contains(character)) {
@@ -619,64 +468,6 @@ public class Area : IJobOwner {
     }
     #endregion
 
-    //#region Attack
-    //public List<Character> FormCombatCharacters() {
-    //    List<Character> residentsAtArea = new List<Character>();
-    //    CombatGrid combatGrid = new CombatGrid();
-    //    combatGrid.Initialize();
-    //    for (int i = 0; i < residents.Count; i++) {
-    //        Character resident = residents[i];
-    //        if (resident.isIdle && !resident.isLeader
-    //            && !resident.characterClass.isNonCombatant
-    //            && !resident.isDefender && resident.specificLocation.id == id && resident.currentStructure.isInside) {
-    //            if ((owner != null && resident.faction == owner) || (owner == null && resident.faction == FactionManager.Instance.neutralFaction)) {
-    //                residentsAtArea.Add(resident);
-    //            }
-    //        }
-    //    }
-    //    List<int> frontlineIndexes = new List<int>();
-    //    List<int> backlineIndexes = new List<int>();
-    //    for (int i = 0; i < residentsAtArea.Count; i++) {
-    //        if (residentsAtArea[i].characterClass.combatPosition == COMBAT_POSITION.FRONTLINE) {
-    //            frontlineIndexes.Add(i);
-    //        } else {
-    //            backlineIndexes.Add(i);
-    //        }
-    //    }
-    //    if (frontlineIndexes.Count > 0) {
-    //        for (int i = 0; i < frontlineIndexes.Count; i++) {
-    //            if (combatGrid.IsPositionFull(COMBAT_POSITION.FRONTLINE)) {
-    //                break;
-    //            } else {
-    //                combatGrid.AssignCharacterToGrid(residentsAtArea[frontlineIndexes[i]]);
-    //                frontlineIndexes.RemoveAt(i);
-    //                i--;
-    //            }
-    //        }
-    //    }
-    //    if (backlineIndexes.Count > 0) {
-    //        for (int i = 0; i < backlineIndexes.Count; i++) {
-    //            if (combatGrid.IsPositionFull(COMBAT_POSITION.BACKLINE)) {
-    //                break;
-    //            } else {
-    //                combatGrid.AssignCharacterToGrid(residentsAtArea[backlineIndexes[i]]);
-    //                backlineIndexes.RemoveAt(i);
-    //                i--;
-    //            }
-    //        }
-    //    }
-    //    List<Character> attackCharacters = new List<Character>();
-    //    for (int i = 0; i < combatGrid.slots.Length; i++) {
-    //        if (combatGrid.slots[i].isOccupied) {
-    //            if (!attackCharacters.Contains(combatGrid.slots[i].character)) {
-    //                attackCharacters.Add(combatGrid.slots[i].character);
-    //            }
-    //        }
-    //    }
-    //    return attackCharacters;
-    //}
-    //#endregion
-
     #region Special Tokens
     public bool AddSpecialTokenToLocation(SpecialToken token, LocationStructure structure = null, LocationGridTile gridLocation = null) {
         if (!IsItemInventoryFull() && !itemsInArea.Contains(token)) {
@@ -720,10 +511,8 @@ public class Area : IJobOwner {
         return itemsInArea.Count >= MAX_ITEM_CAPACITY;
     }
     private LocationStructure GetRandomStructureToPlaceItem(SpecialToken token) {
-        /*
-         Items are now placed specifically in a structure when spawning at world creation. 
-         Randomly place it at any non-Dwelling structure in the location.
-         */
+        //Items are now placed specifically in a structure when spawning at world creation. 
+        //Randomly place it at any non-Dwelling structure in the location.
         List<LocationStructure> choices = new List<LocationStructure>();
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in structures) {
             if (kvp.Key != STRUCTURE_TYPE.DWELLING && kvp.Key != STRUCTURE_TYPE.EXIT && kvp.Key != STRUCTURE_TYPE.CEMETERY
@@ -752,13 +541,12 @@ public class Area : IJobOwner {
     private void OnItemRemovedFromLocation(SpecialToken item, LocationStructure structure) {
         CheckAreaInventoryJobs(structure);
     }
-    public bool IsRequiredByWarehouse(SpecialToken token) {
-        if (token.gridTileLocation != null && token.gridTileLocation.structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
-            LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
+    public bool IsRequiredByArea(SpecialToken token) {
+        if (token.gridTileLocation != null && token.gridTileLocation.structure == mainStorageStructure) {
             if (token.specialTokenType == SPECIAL_TOKEN.HEALING_POTION) {
-                return warehouse.GetItemsOfTypeCount(SPECIAL_TOKEN.HEALING_POTION) <= 2; //item is required by warehouse.
+                return mainStorageStructure.GetItemsOfTypeCount(SPECIAL_TOKEN.HEALING_POTION) <= 2; //item is required by warehouse.
             } else if (token.specialTokenType == SPECIAL_TOKEN.TOOL) {
-                return warehouse.GetItemsOfTypeCount(SPECIAL_TOKEN.TOOL) <= 2; //item is required by warehouse.
+                return mainStorageStructure.GetItemsOfTypeCount(SPECIAL_TOKEN.TOOL) <= 2; //item is required by warehouse.
             }
         }
         return false;
@@ -879,19 +667,6 @@ public class Area : IJobOwner {
         }
         return null;
     }
-    public List<LocationStructure> GetStructuresOfType(STRUCTURE_TYPE structureType, LocationStructure except) {
-        if (structures.ContainsKey(structureType)) {
-            List<LocationStructure> currentStructures = structures[structureType];
-            List<LocationStructure> newStructures = new List<LocationStructure>();
-            for (int i = 0; i < currentStructures.Count; i++) {
-                if (currentStructures[i] != except) {
-                    newStructures.Add(currentStructures[i]);
-                }
-            }
-            return newStructures;
-        }
-        return null;
-    }
     public List<LocationStructure> GetStructuresAtLocation(bool inside) {
         List<LocationStructure> structures = new List<LocationStructure>();
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in this.structures) {
@@ -939,9 +714,8 @@ public class Area : IJobOwner {
         PlaceBuildSpots();
 
         PlaceOres();
-        PlaceSupplyPiles();
-        PlaceFoodPiles();
-        SpawnFoodNow();
+        PlaceResourcePiles();
+        SpawnFoodObjects();
 
         //magic circle
         if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
@@ -982,40 +756,25 @@ public class Area : IJobOwner {
             }
         }
     }
-    private void PlaceSupplyPiles() {
-        if (structures.ContainsKey(STRUCTURE_TYPE.DUNGEON)) {
-            for (int i = 0; i < structures[STRUCTURE_TYPE.DUNGEON].Count; i++) {
-                LocationStructure structure = structures[STRUCTURE_TYPE.DUNGEON][i];
-                structure.AddPOI(new SupplyPile());
-            }
-        }
+    private void PlaceResourcePiles() {
+        LocationStructure targetStructure;
         if (structures.ContainsKey(STRUCTURE_TYPE.WAREHOUSE)) {
-            for (int i = 0; i < structures[STRUCTURE_TYPE.WAREHOUSE].Count; i++) {
-                LocationStructure structure = structures[STRUCTURE_TYPE.WAREHOUSE][i];
-                if (structure.structureObj == null) {
-                    structure.AddPOI(new SupplyPile());
-                }
-            }
+            targetStructure = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
+        } else {
+            targetStructure = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+        }
+        if (supplyPile == null) {
+            SupplyPile pile = new SupplyPile();
+            targetStructure.AddPOI(pile);
+            pile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.SUPPLY_PILE);
+        }
+        if (foodPile == null) {
+            FoodPile pile = new FoodPile();
+            targetStructure.AddPOI(pile);
+            pile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
         }
     }
-    private void PlaceFoodPiles() {
-        if (structures.ContainsKey(STRUCTURE_TYPE.DUNGEON)) {
-            for (int i = 0; i < structures[STRUCTURE_TYPE.DUNGEON].Count; i++) {
-                LocationStructure structure = structures[STRUCTURE_TYPE.DUNGEON][i];
-                structure.AddPOI(new FoodPile());
-            }
-        }
-        if (structures.ContainsKey(STRUCTURE_TYPE.WAREHOUSE)) {
-            for (int i = 0; i < structures[STRUCTURE_TYPE.WAREHOUSE].Count; i++) {
-                LocationStructure structure = structures[STRUCTURE_TYPE.WAREHOUSE][i];
-                FoodPile foodPile = new FoodPile();
-                if (structure.AddPOI(foodPile)) {
-                    foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
-                }
-            }
-        }
-    }
-    private void SpawnFoodNow() {
+    private void SpawnFoodObjects() {
         if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
             LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][0];
             //Reduce number of Small Animals and Edible Plants in the wilderness to 4 and 6 respectively. 
@@ -1092,6 +851,27 @@ public class Area : IJobOwner {
                 }
             }
         }
+    }
+    public void SetSupplyPile(SupplyPile supplyPile) {
+        this.supplyPile = supplyPile;
+    }
+    public void SetFoodPile(FoodPile foodPile) {
+        this.foodPile = foodPile;
+    }
+    public void OnLocationStructureObjectPlaced(LocationStructure structure) {
+        if (structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
+            //if a warehouse was placed, and this area does not yet have a main storage structure, or is using the city center as their main storage structure, then use the new warehouse instead.
+            if (mainStorageStructure == null || mainStorageStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
+                SetMainStorageStructure(structure);
+            }
+        } else if (structure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
+            if (mainStorageStructure == null) {
+                SetMainStorageStructure(structure);
+            }
+        }
+    }
+    private void SetMainStorageStructure(LocationStructure structure) {
+        mainStorageStructure = structure;
     }
     #endregion
 
@@ -1240,7 +1020,7 @@ public class Area : IJobOwner {
         }
     }
     public void CheckAreaInventoryJobs(LocationStructure affectedStructure) {
-        if (affectedStructure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
+        if (affectedStructure == mainStorageStructure) {
             //TODO:
             //brew potion
             //- If there are less than 2 Healing Potions in the Warehouse, it will create a Brew Potion job
@@ -1249,10 +1029,10 @@ public class Area : IJobOwner {
             //- cancel Brew Potion job whenever inventory check occurs and it specified that there are enough Healing Potions already
             //if (affectedStructure.GetItemsOfTypeCount(SPECIAL_TOKEN.HEALING_POTION) < 2) {
             //    if (!HasJob(JOB_TYPE.BREW_POTION)) {
-            //        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BREW_POTION, INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new Dictionary<INTERACTION_TYPE, object[]>() {
-            //            { INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
+            //        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BREW_POTION, INTERACTION_TYPE.DROP_ITEM, , new Dictionary<INTERACTION_TYPE, object[]>() {
+            //            { INTERACTION_TYPE.DROP_ITEM, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
             //            { INTERACTION_TYPE.CRAFT_ITEM, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
-            //        });
+            //        }, this);
             //        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanBrewPotion);
             //        job.SetOnTakeJobAction(InteractionManager.Instance.OnTakeBrewPotion);
             //        //job.SetCannotOverrideJob(false);
@@ -1261,7 +1041,7 @@ public class Area : IJobOwner {
             //} else {
             //    //warehouse has 2 or more healing potions
             //    JobQueueItem brewJob = GetJob(JOB_TYPE.BREW_POTION);
-            //    if(brewJob != null) {
+            //    if (brewJob != null) {
             //        ForceCancelJob(brewJob);
             //    }
             //}

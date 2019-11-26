@@ -48,7 +48,7 @@ public class MapGenerator : MonoBehaviour {
         //New Map Generation
         BaseLandmark settlement;
         GridMap.Instance.DivideToRegions(GridMap.Instance.hexTiles, regionCount, width * height);
-        LandmarkManager.Instance.GenerateLandmarksNew(GridMap.Instance.allRegions, out portal, out settlement);
+        LandmarkManager.Instance.GenerateLandmarks(GridMap.Instance.allRegions, out portal, out settlement);
         LandmarkManager.Instance.GenerateConnections(portal, settlement);
 
         FactionManager.Instance.CreateNeutralFaction();
@@ -65,7 +65,7 @@ public class MapGenerator : MonoBehaviour {
         yield return null;
         UIManager.Instance.InitializeUI();
 
-        RelationshipManager.Instance.GenerateRelationships();
+        //RelationshipManager.Instance.GenerateRelationships();
         //CharacterManager.Instance.PlaceInitialCharacters();
         CharacterManager.Instance.GiveInitialItems();
         //CharacterManager.Instance.GenerateInitialAwareness();

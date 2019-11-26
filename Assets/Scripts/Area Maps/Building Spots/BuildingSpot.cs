@@ -51,6 +51,9 @@ public class BuildingSpot {
         }
     }
     public void FindNeighbours(AreaInnerTileMap map) {
+        if (neighbours != null) {
+            throw new System.Exception($"Build spot {this.id.ToString()} is trying to find neighbours again!");
+        }
         Debug.Log("Finding neighbours for build spot " + id.ToString());
         neighbours = new Dictionary<GridNeighbourDirection, BuildingSpot>();
         int mapUpperBoundX = map.buildingSpots.GetUpperBound(0);
@@ -70,9 +73,11 @@ public class BuildingSpot {
     #region Data Setting
     public void SetIsOpen(bool isOpen) {
         this.isOpen = isOpen;
+        Debug.Log($"Set building spot {id.ToString()} is open to {isOpen.ToString()}");
     }
     public void SetIsOccupied(bool isOccupied) {
         this.isOccupied = isOccupied;
+        Debug.Log($"Set building spot {id.ToString()} is occupied to {isOccupied.ToString()}");
     }
     public void SetAllAdjacentSpotsAsOpen(AreaInnerTileMap map) {
         List<BuildingSpot> adjacent = GetNeighbourList();
@@ -140,14 +145,20 @@ public class BuildingSpot {
     public void ClearBlueprints() {
         this.blueprint = null;
     }
-    public Vector3 GetRandomTilePositionInBuildSpot() {
+    public Vector3 GetRandomTilePositionInBuildSpot(LocationStructureObject structureObj) {
         int radius = Mathf.FloorToInt(InteriorMapManager.Building_Spot_Size.x / 2f);
-        int limitedRadius = radius - 2;
+        int limitedRadius = radius - 2; //-2 is to limit the structure from being placed on the border.
         int randomX = Random.Range(-limitedRadius, limitedRadius);
         int randomY = Random.Range(-limitedRadius, limitedRadius);
 
-        int newX = location.x + randomX;
-        int newY = location.y + randomY;
+        int newX = location.x;
+        if (structureObj.IsHorizontallyBig() == false) {
+            newX += randomX;
+        }
+        int newY = location.y;
+        if (structureObj.IsVerticallyBig() == false) {
+            newY += randomY;
+        }
 
         return new Vector3(newX + 0.5f, newY + 0.5f);
     }

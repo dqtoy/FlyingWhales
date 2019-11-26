@@ -602,14 +602,12 @@ public class Region {
             }
             character.SetHome(this);
             residents.Add(character);
-#if !WORLD_CREATION_TOOL
             if(area != null) {
                 if(!coreTile.isCorrupted) {
                     area.classManager.OnAddResident(character);
                 }
                 area.AssignCharacterToDwellingInArea(character, chosenHome);
             }
-#endif
             return true;
         }
         return false;
