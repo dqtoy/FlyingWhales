@@ -352,6 +352,21 @@ public class Region {
     #endregion
 
     #region Connections
+    public void AddConnection(Region newConnection) {
+        connections.Add(newConnection);
+    }
+    public bool IsConnectedWith(Region region) {
+        for (int i = 0; i < connections.Count; i++) {
+            Region connection = connections[i];
+            if (connection == region) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasMaximumConnections() {
+        return connections.Count >= LandmarkManager.Max_Connections;
+    }
     /// <summary>
     /// Is this landmark connected to another landmark that has been corrupted?
     /// </summary>
@@ -365,17 +380,14 @@ public class Region {
         }
         return false;
     }
-    #endregion
-
-    #region Connections
-    public void AddConnection(Region newConnection) {
-        connections.Add(newConnection);
-    }
-    public bool IsConnectedWith(Region otherLandmark) {
-        return connections.Contains(otherLandmark);
-    }
-    public bool HasMaximumConnections() {
-        return connections.Count >= LandmarkManager.Max_Connections;
+    public bool HasSettlementConnection() {
+        for (int i = 0; i < connections.Count; i++) {
+            Region connection = connections[i];
+            if (connection.area != null) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 

@@ -77,6 +77,8 @@ public class MapGenerator : MonoBehaviour {
         yield return null;
         LandmarkManager.Instance.GenerateAreaMap(settlement.tileLocation.areaOfTile);
         yield return null;
+        LandmarkManager.Instance.CreateTwoNewSettlementsAtTheStartOfGame();
+        yield return null;
 
         TokenManager.Instance.Initialize();
 

@@ -190,7 +190,8 @@ public class InteriorMapManager : MonoBehaviour {
         areaMaps.Add(newMap);
         newMap.transform.localPosition = nextMapPos;
         ////set the next map position based on the new maps height
-        //nextMapPos = new Vector3(nextMapPos.x, nextMapPos.y + newMap.height + 10, nextMapPos.z); //all maps now have same positon, because only 1 can exist at a time.
+        nextMapPos = new Vector3(nextMapPos.x, nextMapPos.y + newMap.height + 10, nextMapPos.z); //all maps now have same positon, because only 1 can exist at a time.
+        newMap.transform.localPosition = nextMapPos;
         CreatePathfindingGraphForArea(newMap);
         newMap.UpdateTilesWorldPosition();
     }

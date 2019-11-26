@@ -209,12 +209,56 @@ public class LandmarkManager : MonoBehaviour {
         //place settlement at opposite corner
         int oppositeCorner = GetOppositeCorner(portalCorner);
         Region settlementRegion = corners[oppositeCorner];
+        CreateSettlementArea(settlementRegion);
+        settlement = settlementRegion.mainLandmark;
+
+        List<Region> availableRegions = new List<Region>(regions);
+        availableRegions.Remove(portalRegion);
+        availableRegions.Remove(settlementRegion);
+
+        //place all other landmarks
+        Dictionary<LANDMARK_TYPE, int> landmarks = WorldConfigManager.Instance.GetLandmarksForGeneration(regions.Length - 2); //subtracted 2 because of portal and settlement
+        //string otherLandmarkSummary = "Will generate the following landmarks: ";
+        foreach (KeyValuePair<LANDMARK_TYPE, int> kvp in landmarks) {
+            //otherLandmarkSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
+            for (int i = 0; i < kvp.Value; i++) {
+                Region chosenRegion = availableRegions[Random.Range(0, availableRegions.Count)];
+                CreateNewLandmarkOnTile(chosenRegion.coreTile, kvp.Key, true); //BaseLandmark landmark = 
+                availableRegions.Remove(chosenRegion);
+            }
+        }
+        //Debug.Log(otherLandmarkSummary);
+    }
+    public void CreateTwoNewSettlementsAtTheStartOfGame() {
+        Region firstRegion = null;
+        Region secondRegion = null;
+
+        Region[] allRegions = GridMap.Instance.allRegions;
+        while(firstRegion == null) {
+            Region potentialRegion = allRegions[UnityEngine.Random.Range(0, allRegions.Length)];
+            if (!potentialRegion.HasSettlementConnection()) {
+                firstRegion = potentialRegion;
+            }
+        }
+        while (secondRegion == null) {
+            Region potentialRegion = allRegions[UnityEngine.Random.Range(0, allRegions.Length)];
+            if (!potentialRegion.IsConnectedWith(firstRegion) && !potentialRegion.HasSettlementConnection()) {
+                secondRegion = potentialRegion;
+            }
+        }
+
+        Area firstArea = CreateSettlementArea(firstRegion);
+        Area secondArea = CreateSettlementArea(secondRegion);
+
+        GenerateAreaMap(firstArea);
+        GenerateAreaMap(secondArea);
+    }
+    private Area CreateSettlementArea(Region settlementRegion) {
         AREA_TYPE settlementType = Utilities.RandomSettlementType();
         int citizenCount = Random.Range(WorldConfigManager.Instance.minCitizenCount, WorldConfigManager.Instance.maxCitizenCount + 1);
         Area settlementArea = CreateNewArea(settlementRegion, settlementType, citizenCount);
         SetEnemyPlayerArea(settlementArea);
         BaseLandmark settlementLandmark = CreateNewLandmarkOnTile(settlementRegion.coreTile, LANDMARK_TYPE.PALACE, true);
-        settlement = settlementLandmark;
         Faction faction = FactionManager.Instance.CreateNewFaction();
         if (settlementType == AREA_TYPE.ELVEN_SETTLEMENT) {
             //faction.SetInitialFactionLeaderClass("Queen");
@@ -234,23 +278,7 @@ public class LandmarkManager : MonoBehaviour {
             Character currCharacter = faction.characters[i];
             settlementArea.AssignCharacterToDwellingInArea(currCharacter);
         }
-
-        List<Region> availableRegions = new List<Region>(regions);
-        availableRegions.Remove(portalRegion);
-        availableRegions.Remove(settlementRegion);
-
-        //place all other landmarks
-        Dictionary<LANDMARK_TYPE, int> landmarks = WorldConfigManager.Instance.GetLandmarksForGeneration(regions.Length - 2); //subtracted 2 because of portal and settlement
-        //string otherLandmarkSummary = "Will generate the following landmarks: ";
-        foreach (KeyValuePair<LANDMARK_TYPE, int> kvp in landmarks) {
-            //otherLandmarkSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
-            for (int i = 0; i < kvp.Value; i++) {
-                Region chosenRegion = availableRegions[Random.Range(0, availableRegions.Count)];
-                CreateNewLandmarkOnTile(chosenRegion.coreTile, kvp.Key, true); //BaseLandmark landmark = 
-                availableRegions.Remove(chosenRegion);
-            }
-        }
-        //Debug.Log(otherLandmarkSummary);
+        return settlementArea;
     }
     private Region[] GetCornerRegions() {
         //Get the regions in the 4 corners of the map. NOTE: it is possible that there are multiple corners that belong to the same region.
