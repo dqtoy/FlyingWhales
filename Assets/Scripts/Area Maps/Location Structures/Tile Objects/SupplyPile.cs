@@ -27,6 +27,15 @@ public class SupplyPile : ResourcePile {
         }
         base.SetPOIState(state);
     }
+    public override void SetGridTileLocation(LocationGridTile tile) {
+        base.SetGridTileLocation(tile);
+        if (tile != null) {
+            //when a supply pile is placed, and the area does not yet have a supply pile, then set its supply pile to this
+            if (tile.parentAreaMap.area.supplyPile == null) {
+                tile.parentAreaMap.area.SetSupplyPile(this);
+            }
+        }
+    }
     #endregion
 
     private void CheckSupply() {

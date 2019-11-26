@@ -46,7 +46,7 @@ public class Scrap : GoapAction {
         if (satisfied) {
             if (poiTarget is SpecialToken) {
                 SpecialToken token = poiTarget as SpecialToken;
-                if (token.gridTileLocation != null && token.gridTileLocation.structure.location.IsRequiredByWarehouse(token)) {
+                if (token.gridTileLocation != null && token.gridTileLocation.structure.location.IsRequiredByArea(token)) {
                     return false;
                 }
             }
@@ -89,7 +89,7 @@ public class ScrapData : GoapActionData {
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         if (poiTarget is SpecialToken) {
             SpecialToken token = poiTarget as SpecialToken;
-            if (token.gridTileLocation != null && token.gridTileLocation.structure.location.IsRequiredByWarehouse(token)) {
+            if (token.gridTileLocation != null && token.gridTileLocation.structure.location.IsRequiredByArea(token)) {
                 return false;
             }
         }

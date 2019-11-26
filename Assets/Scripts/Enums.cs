@@ -67,10 +67,6 @@ public enum PATHFINDING_MODE{
 }
 public enum GRID_PATHFINDING_MODE {
     NORMAL,
-    ROADS_ONLY,
-    REALISTIC,
-    MAIN_ROAD_GEN,
-    CAVE_ROAD_GEN,
 }
 
 public enum GENDER{
@@ -1326,9 +1322,34 @@ public static class Extensions {
             case STRUCTURE_TYPE.CEMETERY:
             case STRUCTURE_TYPE.PRISON:
             case STRUCTURE_TYPE.POND:
+            case STRUCTURE_TYPE.CITY_CENTER:
                 return true;
             default:
                 return false;
+        }
+    }
+    /// <summary>
+    /// Get the priority that each structure should be generated in.
+    /// This determines what order the structures will be created during map generation. <see cref="AreaInnerTileMap.PlaceInitialStructures"/>
+    /// </summary>
+    /// <param name="sub">The type of structure</param>
+    /// <returns>The priority of a given structure type. 0 being the highest priority.</returns>
+    public static int StructureGenerationPriority(this STRUCTURE_TYPE sub) {
+        switch (sub) {
+            case STRUCTURE_TYPE.CITY_CENTER:
+                return 0;
+            case STRUCTURE_TYPE.DWELLING:
+                return 1;
+            case STRUCTURE_TYPE.INN:
+                return 2;
+            case STRUCTURE_TYPE.WAREHOUSE:
+                return 3;
+            case STRUCTURE_TYPE.CEMETERY:
+                return 4;
+            case STRUCTURE_TYPE.PRISON:
+                return 5;
+            default:
+                return 99;
         }
     }
     #endregion

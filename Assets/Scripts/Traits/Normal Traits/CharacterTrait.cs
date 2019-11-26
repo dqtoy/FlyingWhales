@@ -93,8 +93,8 @@ namespace Traits {
                 if (characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST) {
                     SpecialToken token = targetPOI as SpecialToken;
                     if (token.characterOwner == null) {
-                        //Patrollers should not pick up items from their warehouse
-                        if (token.structureLocation != null && token.structureLocation.structureType == STRUCTURE_TYPE.WAREHOUSE
+                        //Patrollers should not pick up items from their main storage structure
+                        if (token.structureLocation != null && token.structureLocation == characterThatWillDoJob.homeArea.mainStorageStructure
                             && token.specificLocation.region == characterThatWillDoJob.homeRegion) {
                             return false;
                         }

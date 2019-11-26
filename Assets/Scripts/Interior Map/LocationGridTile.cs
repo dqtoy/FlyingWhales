@@ -9,7 +9,7 @@ using Traits;
 
 public class LocationGridTile : IHasNeighbours<LocationGridTile> {
 
-    public enum Tile_Type { Empty, Wall, Structure, Gate, Road, Structure_Entrance }
+    public enum Tile_Type { Empty, Wall, Structure_Entrance }
     public enum Tile_State { Empty, Occupied }
     public enum Tile_Access { Passable, Impassable, }
     public enum Ground_Type { Soil, Grass, Stone, Snow, Tundra, Cobble, Wood, Snow_Dirt, Water }
@@ -45,9 +45,8 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
 
     private Color defaultTileColor;
 
-    public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty || o.tileType == Tile_Type.Gate || o.tileType == Tile_Type.Road).ToList(); } }
-    public List<LocationGridTile> RealisticTiles { get { return FourNeighbours().Where(o => o.tileAccess == Tile_Access.Passable && (o.structure != null || o.tileType == Tile_Type.Road || o.tileType == Tile_Type.Gate)).ToList(); } }
-    public List<LocationGridTile> RoadTiles { get { return neighbours.Values.Where(o => o.tileType == Tile_Type.Road).ToList(); } }
+    public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty).ToList(); } }
+    public List<LocationGridTile> RealisticTiles { get { return FourNeighbours().Where(o => o.tileAccess == Tile_Access.Passable && (o.structure != null)).ToList(); } }
     public List<LocationGridTile> UnoccupiedNeighbours { get { return neighbours.Values.Where(o => !o.isOccupied && o.structure == this.structure).ToList(); } }
 
     public GenericTileObject genericTileObject { get; private set; }
@@ -60,9 +59,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         localLocation = tilemap.CellToLocal(localPlace);
         centeredLocalLocation = new Vector3(localLocation.x + 0.5f, localLocation.y + 0.5f, localLocation.z);
         centeredWorldLocation = new Vector3(worldLocation.x + 0.5f, worldLocation.y + 0.5f, worldLocation.z);
-        //int xMult = worldLocation.x < 0 ? -1 : 1;
-        //int yMult = worldLocation.y < 0 ? -1 : 1;
-        //centeredWorldLocation = new Vector3(((int)worldLocation.x) + (0.5f * xMult), ((int)worldLocation.y) + (0.5f * yMult), worldLocation.z);
         tileType = Tile_Type.Empty;
         tileState = Tile_State.Empty;
         tileAccess = Tile_Access.Passable;
@@ -94,9 +90,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public void UpdateWorldLocation() {
         worldLocation = parentTileMap.CellToWorld(localPlace);
         centeredWorldLocation = new Vector3(worldLocation.x + 0.5f, worldLocation.y + 0.5f, worldLocation.z);
-        //int xMult = worldLocation.x < 0 ? -1 : 1;
-        //int yMult = worldLocation.y < 0 ? -1 : 1;
-        //centeredWorldLocation = new Vector3(((int) worldLocation.x) + (0.5f * xMult), ((int) worldLocation.y) + (0.5f * yMult), worldLocation.z);
     }
     public List<LocationGridTile> FourNeighbours() {
         List<LocationGridTile> fn = new List<LocationGridTile>();
@@ -133,15 +126,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             }
 
         }
-
-        //for (int i = 0; i < LandmarkManager.mapNeighborPoints.Count; i++) {
-        //    Point pointCalculation = LandmarkManager.mapNeighborPoints[i];
-        //    Point result = thisPoint.Sum(pointCalculation);
-        //    if (Utilities.IsInRange(result.X, 0, mapUpperBoundX + 1) &&
-        //        Utilities.IsInRange(result.Y, 0, mapUpperBoundY + 1)) {
-        //        neighbourList.Add(map[result.X, result.Y]);
-        //    }
-        //}
     }
     public Dictionary<GridNeighbourDirection, Point> possibleExits {
         get {
@@ -166,17 +150,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             case Tile_Type.Wall:
                 SetTileAccess(Tile_Access.Impassable);
                 break;
-            case Tile_Type.Gate:
-                SetTileAccess(Tile_Access.Passable);
-                break;
-            //case Tile_Type.Structure:
-            //    if (parentTileMap.GetTile(localPlace).name.Contains("Structure Floor Tile")) { //wood
-            //        SetGroundType(Ground_Type.Wood);
-            //    }
-            //    break;
-                //default:
-                //    SetTileState(Tile_State.Empty);
-                //    break;
         }
     }
     private void SetGroundType(Ground_Type groundType) {
@@ -225,7 +198,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
                 parentAreaMap.groundTilemap.SetTile(this.localPlace, parentAreaMap.tundraSoilAsset);
             }
         }
-        
     }
 
     #region Structures
