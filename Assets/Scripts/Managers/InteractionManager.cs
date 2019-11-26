@@ -200,6 +200,7 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.SABOTAGE_FACTION:
             case JOB_TYPE.SCREAM:
             case JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM:
+            case JOB_TYPE.INTERRUPTION:
                 priority = 5;
                 break;
             case JOB_TYPE.TANTRUM:
@@ -362,6 +363,21 @@ public class InteractionManager : MonoBehaviour {
     }
     public bool CanDoExploreJob(Character character, JobQueueItem item) {
         return character.role.roleType == CHARACTER_ROLE.ADVENTURER;
+    }
+    public bool CanDoCleanseRegionJob(Character character, JobQueueItem item) {
+        return true;
+    }
+    public bool CanDoClaimRegionJob(Character character, JobQueueItem item) {
+        return true;
+    }
+    public bool CanDoInvadeRegionJob(Character character, JobQueueItem item) {
+        return true;
+    }
+    public bool CanDoAttackNonDemonicRegionJob(Character character, JobQueueItem item) {
+        return true;
+    }
+    public bool CanDoAttackDemonicRegionJob(Character character, JobQueueItem item) {
+        return true;
     }
     public bool CanDoJudgementJob(Character character, JobQueueItem job) {
         return character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER;

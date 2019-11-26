@@ -605,7 +605,7 @@ public class Region {
 #if !WORLD_CREATION_TOOL
             if(area != null) {
                 if(!coreTile.isCorrupted) {
-                    area.locationClassManager.OnAddResident(character);
+                    area.classManager.OnAddResident(character);
                 }
                 area.AssignCharacterToDwellingInArea(character, chosenHome);
             }

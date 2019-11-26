@@ -3931,7 +3931,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
         traitContainer.AddTrait(this, "Character Trait");
         traitContainer.AddTrait(this, "Flammable");
-        //traitContainer.AddTrait(this, "Accident Prone");
+        traitContainer.AddTrait(this, "Accident Prone");
 
         defaultCharacterTrait = traitContainer.GetNormalTrait("Character Trait") as CharacterTrait;
     }

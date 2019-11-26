@@ -39,8 +39,9 @@ public class Area : IJobOwner {
     public List<JobQueueItem> availableJobs { get; protected set; }
     public JOB_OWNER ownerType { get { return JOB_OWNER.QUEST; } }
 
-    public LocationClassManager locationClassManager { get; private set; }
-    public LocationEventManager locationEventManager { get; private set; }
+    public LocationClassManager classManager { get; private set; }
+    public LocationEventManager eventManager { get; private set; }
+    public LocationJobManager jobManager { get; private set; }
 
     #region getters
     public List<Character> visitors {
@@ -109,8 +110,9 @@ public class Area : IJobOwner {
         //AddTile(coreTile);
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
         availableJobs = new List<JobQueueItem>();
-        locationClassManager = new LocationClassManager();
-        locationEventManager = new LocationEventManager(this);
+        classManager = new LocationClassManager();
+        eventManager = new LocationEventManager(this);
+        jobManager = new LocationJobManager(this);
 
     }
     public Area(SaveDataArea saveDataArea) {
@@ -575,11 +577,11 @@ public class Area : IJobOwner {
     }
     private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass currentClass) {
         if(character.homeArea == this) {
-            locationClassManager.OnResidentChangeClass(character, previousClass, currentClass);
+            classManager.OnResidentChangeClass(character, previousClass, currentClass);
         }
     }
     public Character AddNewResident(RACE race, Faction faction) {
-        string className = locationClassManager.GetCurrentClassToCreate();
+        string className = classManager.GetCurrentClassToCreate();
         Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, Utilities.GetRandomGender(), faction, region);
         PlaceNewResidentInInnerMap(citizen);
         //citizen.CenterOnCharacter();
@@ -593,14 +595,14 @@ public class Area : IJobOwner {
         //}
     }
     public Character AddNewResident(RACE race, GENDER gender, Faction faction) {
-        string className = locationClassManager.GetCurrentClassToCreate();
+        string className = classManager.GetCurrentClassToCreate();
         Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, gender, faction, region);
         PlaceNewResidentInInnerMap(citizen);
         //citizen.CenterOnCharacter();
         return citizen;
     }
     public Character AddNewResident(RACE race, GENDER gender, SEXUALITY sexuality, Faction faction) {
-        string className = locationClassManager.GetCurrentClassToCreate();
+        string className = classManager.GetCurrentClassToCreate();
         Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, gender, sexuality, faction, region);
         PlaceNewResidentInInnerMap(citizen);
         //citizen.CenterOnCharacter();

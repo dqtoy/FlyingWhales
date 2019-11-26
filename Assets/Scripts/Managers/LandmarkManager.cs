@@ -258,7 +258,7 @@ public class LandmarkManager : MonoBehaviour {
         }
         OwnRegion(faction, faction.race, settlementRegion);
         settlementArea.GenerateStructures(8); //14 //TODO: Revert once character markers have been evaluated
-        faction.GenerateStartingCitizens(2, 1, UnityEngine.Random.Range(5, 8), settlementArea.locationClassManager); //UnityEngine.Random.Range(5, 8) //9,7 //citizenCount
+        faction.GenerateStartingCitizens(2, 1, UnityEngine.Random.Range(5, 8), settlementArea.classManager); //UnityEngine.Random.Range(5, 8) //9,7 //citizenCount
 
         List<Region> availableRegions = new List<Region>(regions);
         availableRegions.Remove(portalRegion);

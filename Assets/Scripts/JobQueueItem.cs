@@ -119,17 +119,21 @@ public class JobQueueItem {
     public virtual bool IsJobStillApplicable() {
         return true;
     }
-    public virtual void PushedBack() {
+    public virtual void PushedBack(JobQueueItem jobThatPushedBack) {
         if (cannotBePushedBack) {
             //If job is cannot be pushed back and it is pushed back, cancel it instead
             CancelJob(false);
         } else {
+            string stopText = "Have something important to do";
+            if (jobThatPushedBack.IsAnInterruptionJob()) {
+                stopText = "Interrupted";
+            }
             if (originalOwner.ownerType != JOB_OWNER.CHARACTER) {
                 //NOTE! This is temporary only! All jobs, even settlement jobs are just pushed back right now
                 //assignedCharacter.jobQueue.RemoveJobInQueue(this, false, "Have something important to do");
-                assignedCharacter.StopCurrentActionNode(false, "Have something important to do");
+                assignedCharacter.StopCurrentActionNode(false, stopText);
             } else {
-                assignedCharacter.StopCurrentActionNode(false, "Have something important to do");
+                assignedCharacter.StopCurrentActionNode(false, stopText);
             }
         }
     }
@@ -216,6 +220,9 @@ public class JobQueueItem {
     }
     public override string ToString() {
         return jobType.ToString() + " assigned to " + assignedCharacter?.name ?? "None";
+    }
+    public bool IsAnInterruptionJob() {
+        return jobType == JOB_TYPE.INTERRUPTION || jobType == JOB_TYPE.DEATH;
     }
     #endregion
 }
