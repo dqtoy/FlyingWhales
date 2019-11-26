@@ -747,6 +747,14 @@ public class Faction {
             Messenger.Broadcast(Signals.FACTION_OWNED_REGION_REMOVED, this, region);
         }
     }
+    public bool HasOwnedRegionWithSettlement() {
+        for (int i = 0; i < ownedRegions.Count; i++) {
+            if (ownedRegions[i].area != null) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Emblems
