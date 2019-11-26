@@ -145,18 +145,18 @@ public class BuildingSpot {
     public void ClearBlueprints() {
         this.blueprint = null;
     }
-    public Vector3 GetRandomTilePositionInBuildSpot(bool randomizeX = true, bool randomizeY = true) {
+    public Vector3 GetRandomTilePositionInBuildSpot(LocationStructureObject structureObj) {
         int radius = Mathf.FloorToInt(InteriorMapManager.Building_Spot_Size.x / 2f);
-        int limitedRadius = radius - 2;
+        int limitedRadius = radius - 2; //-2 is to limit the structure from being placed on the border.
         int randomX = Random.Range(-limitedRadius, limitedRadius);
         int randomY = Random.Range(-limitedRadius, limitedRadius);
 
         int newX = location.x;
-        if (randomizeX) {
+        if (structureObj.IsHorizontallyBig() == false) {
             newX += randomX;
         }
         int newY = location.y;
-        if (randomizeY) {
+        if (structureObj.IsVerticallyBig() == false) {
             newY += randomY;
         }
 

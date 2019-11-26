@@ -382,7 +382,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                     if (TryGetValidBuildSpotForStructure(lso, out chosenBuildingSpot) == false) {
                         chosenBuildingSpot = GetRandomBuildingSpotAtCenter(0);
                         if (keyValuePair.Key != STRUCTURE_TYPE.CITY_CENTER) {
-                            throw new System.Exception($"There was no valid spot to place {structure.ToString()} uso it was placed at a random spot in the center");
+                            throw new System.Exception($"There was no valid spot to place {structure.ToString()} using prefab {chosenStructurePrefab.name} so it was placed at a random spot in the center");
                         }
                         Debug.LogWarning($"There was no valid spot to place {structure.ToString()} uso it was placed at a random spot in the center");
                     }
@@ -402,7 +402,7 @@ public class AreaInnerTileMap : MonoBehaviour {
             LocationStructureObject structureObjectPrefab = structureGO.GetComponent<LocationStructureObject>();
             //only randomize x position if structure prefab is NOT horizontally big
             //only randomize y position if structure prefab is NOT vertically big
-            structureGO.transform.localPosition = chosenBuildingSpot.GetRandomTilePositionInBuildSpot(structureObjectPrefab.IsHorizontallyBig() == false, structureObjectPrefab.IsVerticallyBig() == false); //chosenBuildingSpot.centeredLocation;
+            structureGO.transform.localPosition = chosenBuildingSpot.GetRandomTilePositionInBuildSpot(structureObjectPrefab); //chosenBuildingSpot.centeredLocation;
         } else {
             structureGO.transform.localPosition = chosenBuildingSpot.centeredLocation;
         }
@@ -486,7 +486,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         MapPerlinDetails(
             outsideTiles.Where(x =>
                 x.objHere == null
-                && (x.structure == null || x.structure.structureType.IsOpenSpace())
+                && (x.structure == null || x.structure.structureType == STRUCTURE_TYPE.WILDERNESS || x.structure.structureType == STRUCTURE_TYPE.WORK_AREA)
                 && x.tileType != LocationGridTile.Tile_Type.Wall
                 && !x.isLocked
                 && !x.IsAdjacentTo(typeof(MagicCircle))
