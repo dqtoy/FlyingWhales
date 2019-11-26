@@ -226,7 +226,7 @@ public class LandmarkManager : MonoBehaviour {
             faction.SetRace(RACE.HUMANS);
         }
         OwnRegion(faction, faction.race, settlementRegion);
-        faction.GenerateStartingCitizens(2, 1, UnityEngine.Random.Range(5, 8), settlementArea.locationClassManager);
+        faction.GenerateStartingCitizens(2, 1, UnityEngine.Random.Range(5, 8), settlementArea.classManager);
         settlementArea.GenerateStructures(faction.GetNumberOfDwellingsToHouseCharacters(faction.characters));
 
         //assign characters to their respective homes. No one should be homeless
