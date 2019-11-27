@@ -47,7 +47,7 @@ public class Eat : GoapAction {
 
     #region Effects
     public void PreEatSuccess(ActualGoapNode goapNode) {
-        goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+        //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
         //goapNode.poiTarget.SetPOIState(POI_STATE.INACTIVE);
         goapNode.actor.AdjustDoNotGetHungry(1);
         //actor.traitContainer.AddTrait(actor,"Eating");
@@ -59,13 +59,13 @@ public class Eat : GoapAction {
         goapNode.actor.AdjustDoNotGetHungry(-1);
         //goapNode.poiTarget.SetPOIState(POI_STATE.ACTIVE);
     }
-    public void PreEatFail(ActualGoapNode goapNode) {
-        GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-    }
-    public void PreTargetMissing(ActualGoapNode goapNode) {
-        goapNode.descriptionLog.AddToFillers(goapNode.actor.currentStructure.location, goapNode.actor.currentStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-    }
+    //public void PreEatFail(ActualGoapNode goapNode) {
+    //    GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
+    //    goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+    //}
+    //public void PreTargetMissing(ActualGoapNode goapNode) {
+    //    goapNode.descriptionLog.AddToFillers(goapNode.actor.currentStructure.location, goapNode.actor.currentStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+    //}
     #endregion
 
     #region Requirements

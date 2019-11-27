@@ -70,13 +70,13 @@ public class Steal : GoapAction {
     #endregion
 
     #region State Effects
-    public void PreStealSuccess(ActualGoapNode goapNode) {
-        //**Note**: This is a Theft crime
-        GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget as SpecialToken, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        //TODO: currentState.SetIntelReaction(State1Reactions);
-    }
+    //public void PreStealSuccess(ActualGoapNode goapNode) {
+    //    //**Note**: This is a Theft crime
+    //    //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
+    //    //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+    //    //goapNode.descriptionLog.AddToFillers(goapNode.poiTarget as SpecialToken, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //    //TODO: currentState.SetIntelReaction(State1Reactions);
+    //}
     public void AfterStealSuccess(ActualGoapNode goapNode) {
         goapNode.actor.PickUpToken(goapNode.poiTarget as SpecialToken, false);
     }

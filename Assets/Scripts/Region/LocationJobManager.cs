@@ -6,6 +6,7 @@ public class LocationJobManager {
     public Area location { get; private set; }
 
     private int createJobsTriggerTick;
+    private int currentExistingJobsCount;
     private List<string> jobNames;
 
     public LocationJobManager(Area location) {
@@ -17,13 +18,44 @@ public class LocationJobManager {
 
 
     private void ProcessJobs() {
-        if(GameManager.Instance.tick == createJobsTriggerTick) {
+        if(GameManager.Instance.tick == createJobsTriggerTick && currentExistingJobsCount < 2) {
             if (!JobsPart1()) {
                 if (!JobsPart2()) {
                     JobsPart3();
                 }
             }
+        }else if (GameManager.Instance.IsEndOfDay()) {
+            OnEndOfDay();
         }
+    }
+    private void OnEndOfDay() {
+        int chance = UnityEngine.Random.Range(0, 2);
+        if(currentExistingJobsCount > 0) {
+            for (int i = 0; i < location.availableJobs.Count; i++) {
+                JobQueueItem job = location.availableJobs[i];
+                if(job.assignedCharacter == null && chance == 0 && IsJobAnOutsideJob(job)) {
+                    job.ForceCancelJob(false);
+                }
+            }
+        }
+
+    }
+    public void OnAddToAvailableJobs(JobQueueItem addedJob) {
+        if(IsJobAnOutsideJob(addedJob)) {
+            currentExistingJobsCount++;
+        }
+    }
+    public void OnRemoveFromAvailableJobs(JobQueueItem removedJob) {
+        if (IsJobAnOutsideJob(removedJob)) {
+            currentExistingJobsCount--;
+        }
+    }
+    private bool IsJobAnOutsideJob(JobQueueItem job) {
+        if (job.jobType == JOB_TYPE.CLEANSE_REGION || job.jobType == JOB_TYPE.CLAIM_REGION || job.jobType == JOB_TYPE.INVADE_REGION
+            || job.jobType == JOB_TYPE.ATTACK_NON_DEMONIC_REGION || job.jobType == JOB_TYPE.ATTACK_DEMONIC_REGION) {
+            return true;
+        }
+        return false;
     }
 
     #region Part 1

@@ -53,8 +53,7 @@ public class GoapActionState {
         string stateNameLowercase = name.ToLower();
         if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", actionName, stateNameLowercase + "_description")) {
             Log descriptionLog = new Log(GameManager.Instance.Today(), "GoapAction", actionName, stateNameLowercase + "_description", goapNode);
-            descriptionLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            descriptionLog.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            goapNode.action.AddFillersToLog(descriptionLog, goapNode);
             return descriptionLog;
         } else {
             Debug.LogWarning(this.name + " does had problems creating it's description log");

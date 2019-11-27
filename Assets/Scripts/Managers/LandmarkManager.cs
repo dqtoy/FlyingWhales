@@ -196,6 +196,41 @@ public class LandmarkManager : MonoBehaviour {
             currLandmark.Initialize();
         }
     }
+    //private IEnumerator GenerateLandmarksCoroutine(Region[] regions, ref BaseLandmark portal, ref BaseLandmark settlement) {
+    //    //place portal first
+    //    Region[] corners = GetCornerRegions();
+    //    int portalCorner = Random.Range(0, 4);
+    //    Region portalRegion = corners[portalCorner];
+    //    Area portalArea = CreateNewArea(portalRegion, AREA_TYPE.DEMONIC_INTRUSION, 0);
+    //    BaseLandmark portalLandmark = CreateNewLandmarkOnTile(portalRegion.coreTile, LANDMARK_TYPE.THE_PORTAL, false);
+    //    portalArea.region.SetName("Portal"); //need this so that when player is initialized. This area will be assigned to the player.
+    //    portal = portalLandmark;
+
+    //    //place settlement at opposite corner
+    //    int oppositeCorner = GetOppositeCorner(portalCorner);
+    //    Region settlementRegion = corners[oppositeCorner];
+    //    CreateSettlementArea(settlementRegion);
+    //    settlement = settlementRegion.mainLandmark;
+
+    //    List<Region> availableRegions = new List<Region>(regions);
+    //    availableRegions.Remove(portalRegion);
+    //    availableRegions.Remove(settlementRegion);
+
+    //    //place all other landmarks
+    //    Dictionary<LANDMARK_TYPE, int> landmarks = WorldConfigManager.Instance.GetLandmarksForGeneration(regions.Length - 2); //subtracted 2 because of portal and settlement
+    //    //string otherLandmarkSummary = "Will generate the following landmarks: ";
+    //    foreach (KeyValuePair<LANDMARK_TYPE, int> kvp in landmarks) {
+    //        //otherLandmarkSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
+    //        for (int i = 0; i < kvp.Value; i++) {
+    //            Region chosenRegion = availableRegions[Random.Range(0, availableRegions.Count)];
+    //            CreateNewLandmarkOnTile(chosenRegion.coreTile, kvp.Key, true); //BaseLandmark landmark = 
+    //            availableRegions.Remove(chosenRegion);
+    //            yield return null;
+    //        }
+    //        yield return null;
+    //    }
+    //    //Debug.Log(otherLandmarkSummary);
+    //}
     public void GenerateLandmarks(Region[] regions, out BaseLandmark portal, out BaseLandmark settlement) {
         //place portal first
         Region[] corners = GetCornerRegions();

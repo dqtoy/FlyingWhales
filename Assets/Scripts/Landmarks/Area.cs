@@ -908,9 +908,14 @@ public class Area : IJobOwner {
     #region Jobs
     public void AddToAvailableJobs(JobQueueItem job) {
         availableJobs.Add(job);
+        jobManager.OnAddToAvailableJobs(job);
     }
     public bool RemoveFromAvailableJobs(JobQueueItem job) {
-        return availableJobs.Remove(job);
+        if (availableJobs.Remove(job)) {
+            jobManager.OnRemoveFromAvailableJobs(job);
+            return true;
+        }
+        return false;
     }
     public bool RemoveFromAvailableJobs(JOB_TYPE jobType) {
         for (int i = 0; i < availableJobs.Count; i++) {

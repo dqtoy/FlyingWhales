@@ -55,7 +55,7 @@ namespace Traits {
                     if (dwelling.IsResident(characterThatWillDoJob)) {
                         if (!targetTable.HasJobTargettingThis(JOB_TYPE.OBTAIN_FOOD)) {
                             int neededFood = 60 - targetTable.food;
-                            GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_FOOD, neededFood.ToString(), true, GOAP_EFFECT_TARGET.TARGET);
+                            GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_FOOD, "0", true, GOAP_EFFECT_TARGET.TARGET);
                             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.OBTAIN_FOOD, effect, targetTable
                             , new Dictionary<INTERACTION_TYPE, object[]>() {
                             { INTERACTION_TYPE.DROP_FOOD, new object[] { neededFood } },

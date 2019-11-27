@@ -45,9 +45,9 @@ public class Visit : GoapAction {
     #endregion
 
     #region State Effects
-    public void PreVisitSuccess(ActualGoapNode goapNode) {
-        goapNode.descriptionLog.AddToFillers(null, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-    }
+    //public void PreVisitSuccess(ActualGoapNode goapNode) {
+        //goapNode.descriptionLog.AddToFillers(null, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+    //}
     public void AfterVisitSuccess(ActualGoapNode goapNode) {
         goapNode.actor.trapStructure.SetStructureAndDuration(goapNode.targetStructure, GameManager.Instance.GetTicksBasedOnHour(2) + GameManager.Instance.GetTicksBasedOnMinutes(30));
     }

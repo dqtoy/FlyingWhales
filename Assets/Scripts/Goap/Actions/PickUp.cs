@@ -51,9 +51,9 @@ public class PickUp : GoapAction {
 
     #region State Effects
     public void PreTakeSuccess(ActualGoapNode goapNode) {
-        GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
+        //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         goapNode.descriptionLog.AddToFillers(goapNode.poiTarget as SpecialToken, goapNode.poiTarget.name, LOG_IDENTIFIER.ITEM_1);
-        goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+        //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterTakeSuccess(ActualGoapNode goapNode) {
         goapNode.actor.PickUpToken(goapNode.poiTarget as SpecialToken);

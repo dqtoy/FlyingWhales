@@ -224,6 +224,9 @@ public class GameManager : MonoBehaviour {
     public GameDate FirstDayOfTheMonth() {
 		return new GameDate(this.month, 1, this.year, 1);
 	}
+    public bool IsEndOfDay() {
+        return tick == ticksPerDay;
+    }
     public void SetPausedState(bool isPaused){
         if (isPaused) {
             StoreLastProgressionBeforePausing();

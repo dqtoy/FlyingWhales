@@ -21,10 +21,10 @@ public class ObtainResource : GoapAction {
         ResourcePile pile = target as ResourcePile;
         switch (pile.providedResource) {
             case RESOURCE.FOOD:
-                ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_FOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
+                ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_FOOD, conditionKey = "" + pile.resourceInPile, isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
                 break;
             case RESOURCE.WOOD:
-                ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_WOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
+                ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_WOOD, conditionKey = "" + pile.resourceInPile, isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
                 break;
         }
         return ee;
@@ -76,8 +76,8 @@ public class ObtainResource : GoapAction {
         if(foodPile.resourceInPile < takenFood) {
             takenFood = foodPile.resourceInPile;
         }
-        GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+        //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
+        //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
         goapNode.descriptionLog.AddToFillers(null, takenFood.ToString(), LOG_IDENTIFIER.STRING_1);
     }
     public void AfterTakeSuccess(ActualGoapNode goapNode) {

@@ -4805,7 +4805,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 PlanIdleReturnHome();
                 return log;
             }
-            throw new Exception(this.name + " had problems with idle plans.");
+            log += this.name + " had problems with idle plans.";
         } else {
             //Unaligned NPC Idle
             log += "\n-" + name + " has no faction";
