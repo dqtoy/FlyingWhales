@@ -45,7 +45,7 @@ public class Puke : GoapAction {
     //            return;
     //        }
     //        GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, targetPOI = actor };
-    //        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
+    //        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
     //            new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, });
     //        if (InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob(characterThatWillDoJob, actor, job)) {
     //            characterThatWillDoJob.jobQueue.AddJobInQueue(job);
@@ -85,7 +85,7 @@ public class Puke : GoapAction {
     //                    serialKiller.SerialKillerSawButWillNotAssist(actor, trait);
     //                } else {
     //                    GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, targetPOI = actor };
-    //                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
+    //                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
     //                        new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, });
     //                    if (InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob(recipient, actor, job)) {
     //                        if (status == SHARE_INTEL_STATUS.INFORMED) {
@@ -163,7 +163,7 @@ public class Puke : GoapAction {
 
     //        GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
     //        GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
-    //        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE);
+    //        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE);
     //        job.SetAssignedPlan(goapPlan);
     //        goapPlan.ConstructAllNodes();
     //        goapAction.CreateStates();
@@ -180,7 +180,7 @@ public class Puke : GoapAction {
 
     //        GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
     //        GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
-    //        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE);
+    //        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE);
     //        job.SetAssignedPlan(goapPlan);
     //        goapPlan.ConstructAllNodes();
     //        goapAction.CreateStates();
@@ -194,7 +194,7 @@ public class Puke : GoapAction {
 
     //        GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
     //        GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
-    //        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE);
+    //        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE);
     //        job.SetAssignedPlan(goapPlan);
     //        goapPlan.ConstructAllNodes();
     //        goapAction.CreateStates();
@@ -222,7 +222,7 @@ public class Puke : GoapAction {
     //#region Check Up
     //private bool CreateLaughAtJob(Character characterThatWillDoJob, Character target) {
     //    if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT)) {
-    //        GoapPlanJob laughJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT, target);
+    //        GoapPlanJob laughJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT, target);
     //        characterThatWillDoJob.jobQueue.AddJobInQueue(laughJob);
     //        return true;
     //    }
@@ -230,7 +230,7 @@ public class Puke : GoapAction {
     //}
     //private bool CreateFeelingConcernedJob(Character characterThatWillDoJob, Character target) {
     //    if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_CONCERNED)) {
-    //        GoapPlanJob laughJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_CONCERNED, target);
+    //        GoapPlanJob laughJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_CONCERNED, target);
     //        characterThatWillDoJob.jobQueue.AddJobInQueue(laughJob);
     //        return true;
     //    }

@@ -913,19 +913,20 @@ public class Area : IJobOwner {
     public bool RemoveFromAvailableJobs(JobQueueItem job) {
         if (availableJobs.Remove(job)) {
             jobManager.OnRemoveFromAvailableJobs(job);
+            JobManager.Instance.OnFinishGoapPlanJob(job);
             return true;
         }
         return false;
     }
-    public bool RemoveFromAvailableJobs(JOB_TYPE jobType) {
-        for (int i = 0; i < availableJobs.Count; i++) {
-            if(availableJobs[i].jobType == jobType) {
-                availableJobs.RemoveAt(i);
-                return true;
-            }
-        }
-        return false;
-    }
+    //public bool RemoveFromAvailableJobs(JOB_TYPE jobType) {
+    //    for (int i = 0; i < availableJobs.Count; i++) {
+    //        if(availableJobs[i].jobType == jobType) {
+    //            availableJobs.RemoveAt(i);
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
     public int GetNumberOfJobsWith(CHARACTER_STATE state) {
         int count = 0;
         for (int i = 0; i < availableJobs.Count; i++) {
@@ -1031,7 +1032,7 @@ public class Area : IJobOwner {
             //- cancel Brew Potion job whenever inventory check occurs and it specified that there are enough Healing Potions already
             //if (affectedStructure.GetItemsOfTypeCount(SPECIAL_TOKEN.HEALING_POTION) < 2) {
             //    if (!HasJob(JOB_TYPE.BREW_POTION)) {
-            //        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BREW_POTION, INTERACTION_TYPE.DROP_ITEM, , new Dictionary<INTERACTION_TYPE, object[]>() {
+            //        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BREW_POTION, INTERACTION_TYPE.DROP_ITEM, , new Dictionary<INTERACTION_TYPE, object[]>() {
             //            { INTERACTION_TYPE.DROP_ITEM, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
             //            { INTERACTION_TYPE.CRAFT_ITEM, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
             //        }, this);
@@ -1052,7 +1053,7 @@ public class Area : IJobOwner {
             //craft tool
             //if (affectedStructure.GetItemsOfTypeCount(SPECIAL_TOKEN.TOOL) < 2) {
             //    if (!HasJob(JOB_TYPE.CRAFT_TOOL)) {
-            //        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.CRAFT_TOOL, INTERACTION_TYPE.DROP_ITEM, new Dictionary<INTERACTION_TYPE, object[]>() {
+            //        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_TOOL, INTERACTION_TYPE.DROP_ITEM, new Dictionary<INTERACTION_TYPE, object[]>() {
             //            { INTERACTION_TYPE.DROP_ITEM, new object[]{ GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE), SPECIAL_TOKEN.TOOL } },
             //            { INTERACTION_TYPE.CRAFT_ITEM, new object[]{ SPECIAL_TOKEN.TOOL } },
             //        }, this);
@@ -1070,7 +1071,7 @@ public class Area : IJobOwner {
         }
     }
     //private void CreateReplaceTileObjectJob(TileObject removedObj, LocationGridTile removedFrom) {
-    //    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPLACE_TILE_OBJECT, INTERACTION_TYPE.REPLACE_TILE_OBJECT, new Dictionary<INTERACTION_TYPE, object[]>() {
+    //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPLACE_TILE_OBJECT, INTERACTION_TYPE.REPLACE_TILE_OBJECT, new Dictionary<INTERACTION_TYPE, object[]>() {
     //                    { INTERACTION_TYPE.REPLACE_TILE_OBJECT, new object[]{ removedObj, removedFrom } },
     //    });
     //    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeReplaceTileObjectJob);

@@ -74,7 +74,7 @@ public class AskForHelpRemovePoisonTable : GoapAction {
    // public void AfterAskSuccess() {
    //     Character target = poiTarget as Character;
    //     //**Effect 1**: Target will add a Remove Poison Table job on his personal queue.
-   //     GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_POISON, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = targetTable });
+   //     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_POISON, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = targetTable });
    //     target.jobQueue.AddJobInQueue(job);
    // }
    // //public void PreTargetMissing() {

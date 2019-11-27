@@ -28,7 +28,7 @@ namespace Traits {
         public GoapPlanJob TriggerBrokenhearted() {
             owner.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN);
 
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_BROKENHEARTED, owner, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_BROKENHEARTED, owner, owner);
             owner.jobQueue.AddJobInQueue(job);
             return job;
         }

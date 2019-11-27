@@ -525,7 +525,7 @@ public class CombatState : CharacterState {
                                 stateComponent.character.CreateLocationKnockoutJobs(character, numOfJobs);
                             }
                             //if (!stateComponent.character.jobQueue.HasJobWithOtherData(JOB_TYPE.REPORT_HOSTILE, fledFrom)) {
-                            //    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPORT_HOSTILE, INTERACTION_TYPE.REPORT_HOSTILE, new Dictionary<INTERACTION_TYPE, object[]>() {
+                            //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPORT_HOSTILE, INTERACTION_TYPE.REPORT_HOSTILE, new Dictionary<INTERACTION_TYPE, object[]>() {
                             //    { INTERACTION_TYPE.REPORT_HOSTILE, new object[] { fledFrom }}
                             //});
                             //    //job.SetCannotOverrideJob(true);

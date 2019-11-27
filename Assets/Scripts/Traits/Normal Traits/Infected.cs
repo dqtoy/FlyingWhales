@@ -45,22 +45,21 @@ namespace Traits {
         public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
             if (traitOwner is Character) {
                 Character targetCharacter = traitOwner as Character;
-                if (!targetCharacter.isDead && !targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name) && !targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-                    GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, target = GOAP_EFFECT_TARGET.TARGET };
-                    if (InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob(characterThatWillDoJob, targetCharacter, null)) {
-                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect, targetCharacter,
-                        new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, }, characterThatWillDoJob);
+                if (!targetCharacter.isDead && !targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name) && !targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)
+                    && !IsResponsibleForTrait(characterThatWillDoJob)) {
+                    if (InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob(characterThatWillDoJob, targetCharacter)) {
+                        GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, target = GOAP_EFFECT_TARGET.TARGET };
+                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect, targetCharacter, characterThatWillDoJob);
+                        job.AddOtherData(INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION });
                         characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                        return true;
                     } else {
-                        if (!IsResponsibleForTrait(characterThatWillDoJob)) {
-                            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect, targetCharacter,
-                        new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, }, characterThatWillDoJob);
-                            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob);
-                            characterThatWillDoJob.specificLocation.AddToAvailableJobs(job);
-                        }
-                        return false;
+                        GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, target = GOAP_EFFECT_TARGET.TARGET };
+                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect, targetCharacter, characterThatWillDoJob);
+                        job.AddOtherData(INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION });
+                        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob);
+                        characterThatWillDoJob.specificLocation.AddToAvailableJobs(job);
                     }
+                    return true;
                 }
             }
             return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
@@ -83,7 +82,7 @@ namespace Traits {
                     //If current action is a roaming action like Hunting To Drink Blood, we must requeue the job after it is removed by StopCurrentAction
                     return hasCreatedJob;
                 }
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
                 owner.jobQueue.AddJobInQueue(job);
                 hasCreatedJob = true;
             }
@@ -101,7 +100,7 @@ namespace Traits {
                     owner.stateComponent.currentState.OnExitThisState();
                 }
 
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.ZOMBIE_DEATH, owner, owner);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.ZOMBIE_DEATH, owner, owner);
                 owner.jobQueue.AddJobInQueue(job);
             }
         }

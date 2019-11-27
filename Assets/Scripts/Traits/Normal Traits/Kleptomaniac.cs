@@ -65,7 +65,7 @@ namespace Traits {
             if (targetPOI is SpecialToken) {
                 SpecialToken token = targetPOI as SpecialToken;
                 if ((token.characterOwner == null || token.characterOwner != characterThatWillDoJob) && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetPOI)) {
-                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.STEAL, INTERACTION_TYPE.STEAL, targetPOI, characterThatWillDoJob);
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.STEAL, INTERACTION_TYPE.STEAL, targetPOI, characterThatWillDoJob);
                     job.SetIsStealth(true);
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                     return true;
@@ -74,7 +74,7 @@ namespace Traits {
                 Character targetCharacter = targetPOI as Character;
                 if (characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.POSITIVE && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetCharacter) && targetCharacter.items.Count > 0) {
                     SpecialToken item = targetCharacter.items[Random.Range(0, targetCharacter.items.Count)];
-                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.STEAL, INTERACTION_TYPE.STEAL, item, characterThatWillDoJob);
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.STEAL, INTERACTION_TYPE.STEAL, item, characterThatWillDoJob);
                     job.SetIsStealth(true);
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                     return true;
@@ -109,7 +109,7 @@ namespace Traits {
                     }
                     if (choices.Count > 0) {
                         IPointOfInterest target = Utilities.GetRandomElement(choices);
-                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEAL, target, character);
+                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEAL, target, character);
                         character.jobQueue.AddJobInQueue(job);
                     }
                     

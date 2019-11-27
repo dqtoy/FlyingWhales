@@ -48,13 +48,13 @@ namespace Traits {
                 if (paramour == null) {
                     if (!character.jobQueue.HasJob(JOB_TYPE.HAVE_AFFAIR)) {
                         //If no paramour yet, the character will create a Have Affair Job which will attempt to have an affair with a viable target.
-                        GoapPlanJob cheatJob = new GoapPlanJob(JOB_TYPE.HAVE_AFFAIR, INTERACTION_TYPE.HAVE_AFFAIR, character, character);
+                        GoapPlanJob cheatJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAVE_AFFAIR, INTERACTION_TYPE.HAVE_AFFAIR, character, character);
                         character.jobQueue.AddJobInQueue(cheatJob);
                     }
                 } else {
                     if (!character.jobQueue.HasJob(JOB_TYPE.CHEAT)) {
                         //If already has a paramour, the character will attempt to make love with one.
-                        GoapPlanJob cheatJob = new GoapPlanJob(JOB_TYPE.CHEAT, INTERACTION_TYPE.INVITE, paramour, character);
+                        GoapPlanJob cheatJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CHEAT, INTERACTION_TYPE.INVITE, paramour, character);
                         character.jobQueue.AddJobInQueue(cheatJob);
                     }
                 }

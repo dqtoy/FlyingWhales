@@ -73,10 +73,10 @@ namespace Traits {
                 if (targetPOI.advertisedActions.Contains(INTERACTION_TYPE.REPAIR)) {
                     GoapPlanJob currentJob = targetPOI.GetJobTargettingThisCharacter(JOB_TYPE.REPAIR);
                     if (currentJob == null) {
-                        GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Burnt", false, GOAP_EFFECT_TARGET.TARGET);
-                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPAIR, effect, targetPOI, characterThatWillDoJob);
                         //job.SetCanBeDoneInLocation(true);
-                        if (InteractionManager.Instance.CanCharacterTakeRepairJob(characterThatWillDoJob, job)) {
+                        if (InteractionManager.Instance.CanCharacterTakeRepairJob(characterThatWillDoJob)) {
+                            GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Burnt", false, GOAP_EFFECT_TARGET.TARGET);
+                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPAIR, effect, targetPOI, characterThatWillDoJob);
                             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                             return true;
                         }

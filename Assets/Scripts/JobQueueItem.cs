@@ -20,15 +20,21 @@ public class JobQueueItem {
     public List<Character> blacklistedCharacters { get; private set; }
     public int priority { get { return GetPriority(); } }
 
+    public System.Func<Character, bool> canTakeThis { get; protected set; }
     public System.Func<Character, JobQueueItem, bool> canTakeThisJob { get; protected set; }
-    public System.Func<Character, Character, JobQueueItem, bool> canTakeThisJobWithTarget { get; protected set; }
+    public System.Func<Character, Character, bool> canTakeThisJobWithTarget { get; protected set; }
     public System.Action<Character, JobQueueItem> onTakeJobAction { get; protected set; }
     protected int _priority; //The lower the amount the higher the priority
 
     //Additional data
     public bool cannotBePushedBack { get; protected set; }
 
-    public JobQueueItem(JOB_TYPE jobType, IJobOwner owner) {
+    public JobQueueItem() {
+        id = -1;
+        blacklistedCharacters = new List<Character>();
+    }
+
+    protected void Initialize(JOB_TYPE jobType, IJobOwner owner) {
         id = Utilities.SetID(this);
         this.jobType = jobType;
         this.originalOwner = owner;
@@ -36,15 +42,15 @@ public class JobQueueItem {
             throw new Exception($"Original owner of job {this.ToString()} is null");
         }
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.jobType.ToString());
-        this.blacklistedCharacters = new List<Character>();
+        //this.blacklistedCharacters = new List<Character>();
         SetInitialPriority();
     }
-    public JobQueueItem(SaveDataJobQueueItem data) {
+    protected void Initialize(SaveDataJobQueueItem data) {
         id = Utilities.SetID(this, data.id);
         name = data.name;
         jobType = data.jobType;
         isNotSavable = data.isNotSavable;
-        blacklistedCharacters = new List<Character>();
+        //blacklistedCharacters = new List<Character>();
         for (int i = 0; i < data.blacklistedCharacterIDs.Count; i++) {
             blacklistedCharacters.Add(CharacterManager.Instance.GetCharacterByID(data.blacklistedCharacterIDs[i]));
         }
@@ -58,18 +64,24 @@ public class JobQueueItem {
     }
 
     #region Virtuals
-    public virtual void UnassignJob(bool shouldDoAfterEffect, string reason) { }
     protected virtual bool CanTakeJob(Character character) {
         return !character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL) && !character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE);
     }
+    public virtual void UnassignJob(bool shouldDoAfterEffect, string reason) { }
     public virtual void OnAddJobToQueue() { }
     public virtual bool OnRemoveJobFromQueue() { return true; }
+    public virtual void AddOtherData(INTERACTION_TYPE actionType, object[] data) { }
     public virtual bool CanCharacterTakeThisJob(Character character) {
         if (originalOwner.ownerType == JOB_OWNER.CHARACTER) {
             //All jobs that are personal will bypass _canTakeThisJob/_canTakeThisJobWithTarget function checkers
             return CanTakeJob(character);
         }
-        if (canTakeThisJob != null) {
+        if(canTakeThis != null) {
+            if (canTakeThis(character)) {
+                return CanTakeJob(character);
+            }
+            return false;
+        } else if (canTakeThisJob != null) {
             if (canTakeThisJob(character, this)) {
                 return CanTakeJob(character);
             }
@@ -158,10 +170,13 @@ public class JobQueueItem {
             OnCharacterUnassignedToJob(previousAssignedCharacter);
         }
     }
+    public void SetCanTakeThisJobChecker(System.Func<Character, bool> function) {
+        canTakeThis = function;
+    }
     public void SetCanTakeThisJobChecker(System.Func<Character, JobQueueItem, bool> function) {
         canTakeThisJob = function;
     }
-    public void SetCanTakeThisJobChecker(System.Func<Character, Character, JobQueueItem, bool> function) {
+    public void SetCanTakeThisJobChecker(System.Func<Character, Character, bool> function) {
         canTakeThisJobWithTarget = function;
     }
     public void SetOnTakeJobAction(System.Action<Character, JobQueueItem> action) {
@@ -223,6 +238,25 @@ public class JobQueueItem {
     }
     public bool IsAnInterruptionJob() {
         return jobType == JOB_TYPE.INTERRUPTION || jobType == JOB_TYPE.DEATH;
+    }
+    #endregion
+
+    #region Job Object Pool
+    public virtual void Reset() {
+        id = -1;
+        originalOwner = null;
+        name = string.Empty;
+        jobType = JOB_TYPE.NONE;
+        isNotSavable = false;
+        blacklistedCharacters.Clear();
+        canTakeThis = null;
+        canTakeThisJob = null;
+        canTakeThisJobWithTarget = null;
+        onTakeJobAction = null;
+        SetAssignedCharacter(null);
+        SetIsStealth(false);
+        SetPriority(-1);
+        SetCannotBePushedBack(false);
     }
     #endregion
 }
@@ -296,7 +330,7 @@ public class SaveDataJobQueueItem {
         if (canTakeThisJobWithTargetMethodName != string.Empty) {
             MethodInfo canTakeThisJobWithTargetMethod = thisType.GetMethod(canTakeThisJobWithTargetMethodName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
             if (canTakeThisJobWithTargetMethod != null) {
-                Func<Character, Character, JobQueueItem, bool> function = (Func<Character, Character, JobQueueItem, bool>) Delegate.CreateDelegate(typeof(Func<Character, Character, JobQueueItem, bool>), canTakeThisJobWithTargetMethod, false);
+                Func<Character, Character, bool> function = (Func<Character, Character, bool>) Delegate.CreateDelegate(typeof(Func<Character, Character, bool>), canTakeThisJobWithTargetMethod, false);
                 job.SetCanTakeThisJobChecker(function);
             }
         }

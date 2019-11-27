@@ -92,10 +92,10 @@ namespace Traits {
                     }
                     GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
                     if (currentJob == null) {
-                        GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, target = GOAP_EFFECT_TARGET.TARGET };
-                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect, targetCharacter,
-                            new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.TOOL } }, }, characterThatWillDoJob);
-                        if (InteractionManager.Instance.CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, job)) {
+                        if (!IsResponsibleForTrait(characterThatWillDoJob) && InteractionManager.Instance.CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter)) {
+                            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, target = GOAP_EFFECT_TARGET.TARGET };
+                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect, targetCharacter, characterThatWillDoJob);
+                            job.AddOtherData(INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.TOOL });
                             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                             return true;
                         }
@@ -125,7 +125,7 @@ namespace Traits {
                 if (_sourceCharacter.currentActionNode.action == null && _sourceCharacter.stateComponent.currentState == null
                     && UnityEngine.Random.Range(0, 100) < 75 && !_sourceCharacter.jobQueue.HasJob(JOB_TYPE.SCREAM)
                     && _sourceCharacter.traitContainer.GetNormalTrait("Unconscious", "Resting") == null) {
-                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SCREAM, INTERACTION_TYPE.SCREAM_FOR_HELP, _sourceCharacter, _sourceCharacter);
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SCREAM, INTERACTION_TYPE.SCREAM_FOR_HELP, _sourceCharacter, _sourceCharacter);
                     _sourceCharacter.jobQueue.AddJobInQueue(job);
                 }
             }
@@ -134,7 +134,7 @@ namespace Traits {
         private void CreateFeedJob() {
             if (!_sourceCharacter.HasJobTargettingThis(JOB_TYPE.FEED)) {
                 GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, target = GOAP_EFFECT_TARGET.TARGET };
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.FEED, goapEffect, _sourceCharacter, _sourceCharacter.specificLocation);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, _sourceCharacter, _sourceCharacter.specificLocation);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRestrainedFeedJob);
                 _sourceCharacter.specificLocation.AddToAvailableJobs(job);
             }
@@ -148,14 +148,14 @@ namespace Traits {
             //    }
             //} else {
             //    GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = _sourceCharacter };
-            //    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.FEED, goapEffect);
+            //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect);
             //    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRestrainedFeedJob);
             //    _sourceCharacter.specificLocation.jobQueue.AddJobInQueue(job);
             //}
         }
         private void CreateJudgementJob() {
             if (!_sourceCharacter.HasJobTargettingThis(JOB_TYPE.JUDGEMENT)) {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.JUDGEMENT, INTERACTION_TYPE.JUDGE_CHARACTER, _sourceCharacter, _sourceCharacter.specificLocation);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGEMENT, INTERACTION_TYPE.JUDGE_CHARACTER, _sourceCharacter, _sourceCharacter.specificLocation);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoJudgementJob);
                 _sourceCharacter.specificLocation.AddToAvailableJobs(job);
             }

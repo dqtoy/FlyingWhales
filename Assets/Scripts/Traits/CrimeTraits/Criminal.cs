@@ -51,11 +51,10 @@ namespace Traits {
                 if (targetCharacter.isAtHomeRegion && !targetCharacter.isDead && targetCharacter.traitContainer.GetNormalTrait("Restrained") == null) {
                     GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.APPREHEND);
                     if (currentJob == null) {
-                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, targetCharacter, new Dictionary<INTERACTION_TYPE, object[]>() {
-                            { INTERACTION_TYPE.DROP, new object[] { characterThatWillDoJob.specificLocation.prison } }
-                        }, characterThatWillDoJob);
-                        //job.SetCanBeDoneInLocation(true);
-                        if (InteractionManager.Instance.CanCharacterTakeApprehendJob(characterThatWillDoJob, targetCharacter, job)) {
+                        if (InteractionManager.Instance.CanCharacterTakeApprehendJob(characterThatWillDoJob, targetCharacter)) {
+                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, targetCharacter, characterThatWillDoJob);
+                            //job.SetCanBeDoneInLocation(true);
+                            job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { characterThatWillDoJob.specificLocation.prison });
                             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                             return true;
                         }

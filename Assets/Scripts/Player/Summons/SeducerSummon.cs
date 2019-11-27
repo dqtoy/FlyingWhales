@@ -65,7 +65,7 @@ public class SeducerSummon : Summon {
             List<TileObject> validBeds = specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.INN).GetTileObjectsOfType(TILE_OBJECT_TYPE.BED);
             if (choices.Count > 0 && validBeds.Count > 0) {
                 Character chosenCharacter = choices[Random.Range(0, choices.Count)];
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SEDUCE, INTERACTION_TYPE.INVITE, chosenCharacter, this);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SEDUCE, INTERACTION_TYPE.INVITE, chosenCharacter, this);
                 jobQueue.AddJobInQueue(job);
             } else {
                 PlanIdleStrollOutside(currentStructure);

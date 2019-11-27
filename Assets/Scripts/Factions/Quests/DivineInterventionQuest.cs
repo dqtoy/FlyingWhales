@@ -136,7 +136,7 @@ public class DivineInterventionQuest : Quest {
     private void CreateBuildGoddessStatueJob() {
         List<TileObject> goddessStatues = region.area.GetTileObjectsOfType(TILE_OBJECT_TYPE.GODDESS_STATUE).Where(x => x.state == POI_STATE.INACTIVE).ToList();
         TileObject target = goddessStatues[Random.Range(0, goddessStatues.Count)];
-        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BUILD_GODDESS_STATUE, INTERACTION_TYPE.CRAFT_TILE_OBJECT, target, this);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_GODDESS_STATUE, INTERACTION_TYPE.CRAFT_TILE_OBJECT, target, this);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeBuildGoddessStatueJob);
         AddToAvailableJobs(job);
 

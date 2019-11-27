@@ -331,13 +331,13 @@ public class InteractionManager : MonoBehaviour {
     }
 
     #region Job Checkers
-    public bool CanDoPatrolAndExplore(Character character, JobQueueItem job) {
+    public bool CanDoPatrolAndExplore(Character character) {
         return character.traitContainer.GetNormalTrait("Injured") == null;
     }
-    public bool IsSuicideJobStillValid(Character character, JobQueueItem item) {
+    public bool IsSuicideJobStillValid(Character character) {
         return character.traitContainer.GetNormalTrait("Forlorn") != null;
     }
-    public bool CanMoveOut(Character character, JobQueueItem item) {
+    public bool CanMoveOut(Character character) {
         TIME_IN_WORDS time = TIME_IN_WORDS.MORNING;
         if (character.traitContainer.GetNormalTrait("Nocturnal") != null) {
             //if nocturnal get after midnight
@@ -350,74 +350,74 @@ public class InteractionManager : MonoBehaviour {
         TILE_OBJECT_TYPE furnitureToCreate = (TILE_OBJECT_TYPE) otherData[1];
         return furnitureToCreate.CanBeCraftedBy(character);
     }
-    public bool CanDoDestroyProfaneJob(Character character, JobQueueItem item) {
+    public bool CanDoDestroyProfaneJob(Character character) {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER;
     }
-    public bool CanDoCombatJob(Character character, JobQueueItem item) {
+    public bool CanDoCombatJob(Character character) {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER;
     }
-    public bool CanDoObtainFoodOutsideJob(Character character, JobQueueItem item) {
+    public bool CanDoObtainFoodOutsideJob(Character character) {
         return character.role.roleType == CHARACTER_ROLE.CIVILIAN;
     }
-    public bool CanDoObtainSupplyOutsideJob(Character character, JobQueueItem item) {
+    public bool CanDoObtainSupplyOutsideJob(Character character) {
         return character.role.roleType == CHARACTER_ROLE.CIVILIAN;
     }
-    public bool CanDoHolyIncantationJob(Character character, JobQueueItem item) {
+    public bool CanDoHolyIncantationJob(Character character) {
         return character.role.roleType == CHARACTER_ROLE.ADVENTURER;
     }
-    public bool CanDoExploreJob(Character character, JobQueueItem item) {
+    public bool CanDoExploreJob(Character character) {
         return character.role.roleType == CHARACTER_ROLE.ADVENTURER;
     }
-    public bool CanDoCleanseRegionJob(Character character, JobQueueItem item) {
+    public bool CanDoCleanseRegionJob(Character character) {
         return true;
     }
-    public bool CanDoClaimRegionJob(Character character, JobQueueItem item) {
+    public bool CanDoClaimRegionJob(Character character) {
         return character.traitContainer.GetNormalTrait("Royalty") != null;
     }
-    public bool CanDoInvadeRegionJob(Character character, JobQueueItem item) {
+    public bool CanDoInvadeRegionJob(Character character) {
         return true;
     }
-    public bool CanDoAttackNonDemonicRegionJob(Character character, JobQueueItem item) {
+    public bool CanDoAttackNonDemonicRegionJob(Character character) {
         return true;
     }
-    public bool CanDoAttackDemonicRegionJob(Character character, JobQueueItem item) {
+    public bool CanDoAttackDemonicRegionJob(Character character) {
         return true;
     }
-    public bool CanDoJudgementJob(Character character, JobQueueItem job) {
+    public bool CanDoJudgementJob(Character character) {
         return character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER;
     }
-    public bool CanDoSabotageFactionJob(Character character, JobQueueItem item) {
+    public bool CanDoSabotageFactionJob(Character character) {
         return character.traitContainer.GetNormalTrait("Cultist") != null;
     }
-    public bool CanCraftTool(Character character, JobQueueItem job) {
+    public bool CanCraftTool(Character character) {
         //return character.HasExtraTokenInInventory(SPECIAL_TOKEN.TOOL);
         return SPECIAL_TOKEN.TOOL.CanBeCraftedBy(character);
     }
-    public bool CanDoObtainSupplyJob(Character character, JobQueueItem job) {
+    public bool CanDoObtainSupplyJob(Character character) {
         return character.role.roleType == CHARACTER_ROLE.CIVILIAN;
     }
-    public bool CanCharacterTakeBuildGoddessStatueJob(Character character, JobQueueItem item) {
+    public bool CanCharacterTakeBuildGoddessStatueJob(Character character) {
         return character.traitContainer.GetNormalTrait("Builder") != null;
     }
-    public bool CanBrewPotion(Character character, JobQueueItem job) {
+    public bool CanBrewPotion(Character character) {
         //return character.HasExtraTokenInInventory(SPECIAL_TOKEN.HEALING_POTION);
         return SPECIAL_TOKEN.HEALING_POTION.CanBeCraftedBy(character);
     }
-    public bool CanTakeBuryJob(Character character, JobQueueItem job) {
+    public bool CanTakeBuryJob(Character character) {
         if (!character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL) && character.isAtHomeRegion && character.isPartOfHomeFaction
                 && character.role.roleType != CHARACTER_ROLE.BEAST) {
             return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
         }
         return false;
     }
-    public bool CanCharacterTakeRemoveTraitJob(Character character, Character targetCharacter, JobQueueItem job) {
+    public bool CanCharacterTakeRemoveTraitJob(Character character, Character targetCharacter) {
         if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeRegion) {
-            if(job != null) {
-                GoapPlanJob goapJob = job as GoapPlanJob;
-                if (targetCharacter.traitContainer.GetNormalTrait((string) goapJob.goal.conditionKey).IsResponsibleForTrait(character)) {
-                    return false;
-                }
-            }
+            //if(job != null) {
+            //    GoapPlanJob goapJob = job as GoapPlanJob;
+            //    if (targetCharacter.traitContainer.GetNormalTrait((string) goapJob.goal.conditionKey).IsResponsibleForTrait(character)) {
+            //        return false;
+            //    }
+            //}
             if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
                 return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.relationshipContainer.HasRelationshipWith(character, RELATIONSHIP_TRAIT.ENEMY);
             }
@@ -425,18 +425,18 @@ public class InteractionManager : MonoBehaviour {
         }
         return false;
     }
-    public bool CanCharacterTakeRemoveIllnessesJob(Character character, Character targetCharacter, JobQueueItem job) {
+    public bool CanCharacterTakeRemoveIllnessesJob(Character character, Character targetCharacter) {
         if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeRegion) {
-            if (job != null) {
-                GoapPlanJob goapJob = job as GoapPlanJob;
-                if (targetCharacter.traitContainer.GetNormalTrait((string) goapJob.goal.conditionKey).IsResponsibleForTrait(character)) {
-                    return false;
-                }
-                //try {
-                //} catch {
-                //    throw new Exception("Problem with CanCharacterTakeRemoveIllnessesJob of " + character.name + ". Target character is " + (targetCharacter?.name ?? "Null") + ". Job is " + (goapJob?.name ?? "Null"));
-                //}
-            }
+            //if (job != null) {
+            //    GoapPlanJob goapJob = job as GoapPlanJob;
+            //    if (targetCharacter.traitContainer.GetNormalTrait((string) goapJob.goal.conditionKey).IsResponsibleForTrait(character)) {
+            //        return false;
+            //    }
+            //    //try {
+            //    //} catch {
+            //    //    throw new Exception("Problem with CanCharacterTakeRemoveIllnessesJob of " + character.name + ". Target character is " + (targetCharacter?.name ?? "Null") + ". Job is " + (goapJob?.name ?? "Null"));
+            //    //}
+            //}
             if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
                 return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.relationshipContainer.HasRelationshipWith(character, RELATIONSHIP_TRAIT.ENEMY);
             }
@@ -444,20 +444,20 @@ public class InteractionManager : MonoBehaviour {
         }
         return false;
     }
-    public bool CanCharacterTakeRemoveSpecialIllnessesJob(Character character, Character targetCharacter, JobQueueItem job) {
+    public bool CanCharacterTakeRemoveSpecialIllnessesJob(Character character, Character targetCharacter) {
         if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeRegion) {
-            if (job != null) {
-                GoapPlanJob goapJob = job as GoapPlanJob;
-                if (targetCharacter.traitContainer.GetNormalTrait((string) goapJob.goal.conditionKey).IsResponsibleForTrait(character)) {
-                    return false;
-                }
-                //try {
-                //} catch {
-                //    return false;
-                //    //throw new Exception("Problem with CanCharacterTakeRemoveSpecialIllnessesJob of " + character.name + ". Target character is " + (targetCharacter?.name ?? "Null") + ". Job is " + (goapJob?.name ?? "Null"));
-                //}
+            //if (job != null) {
+            //    GoapPlanJob goapJob = job as GoapPlanJob;
+            //    if (targetCharacter.traitContainer.GetNormalTrait((string) goapJob.goal.conditionKey).IsResponsibleForTrait(character)) {
+            //        return false;
+            //    }
+            //    //try {
+            //    //} catch {
+            //    //    return false;
+            //    //    //throw new Exception("Problem with CanCharacterTakeRemoveSpecialIllnessesJob of " + character.name + ". Target character is " + (targetCharacter?.name ?? "Null") + ". Job is " + (goapJob?.name ?? "Null"));
+            //    //}
                 
-            }
+            //}
             if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
                 return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.relationshipContainer.HasRelationshipWith(character, RELATIONSHIP_TRAIT.ENEMY);
             }
@@ -465,18 +465,18 @@ public class InteractionManager : MonoBehaviour {
         }
         return false;
     }
-    public bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter, JobQueueItem job) {
+    public bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter) {
         if (character.isAtHomeRegion && !character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL) && character.traitContainer.GetNormalTrait("Coward") == null) {
             return character.role.roleType == CHARACTER_ROLE.SOLDIER && character.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.POSITIVE;
         }
         return false;
     }
-    public bool CanCharacterTakeRestrainJob(Character character, Character targetCharacter, JobQueueItem job) {
+    public bool CanCharacterTakeRestrainJob(Character character, Character targetCharacter) {
         return targetCharacter.faction != character.faction && character.isAtHomeRegion && character.isPartOfHomeFaction
             && (character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN || character.role.roleType == CHARACTER_ROLE.ADVENTURER)
             && character.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.POSITIVE && !character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL);
     }
-    public bool CanCharacterTakeRepairJob(Character character, JobQueueItem job) {
+    public bool CanCharacterTakeRepairJob(Character character) {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN || character.role.roleType == CHARACTER_ROLE.ADVENTURER;
     }
     public bool CanCharacterTakeReplaceTileObjectJob(Character character, JobQueueItem job) {
@@ -484,10 +484,10 @@ public class InteractionManager : MonoBehaviour {
         TileObject removedObj = otherData[0] as TileObject;
         return removedObj.tileObjectType.CanBeCraftedBy(character);
     }
-    public bool CanCharacterTakeParalyzedFeedJob(Character sourceCharacter, Character character, JobQueueItem job) {
+    public bool CanCharacterTakeParalyzedFeedJob(Character sourceCharacter, Character character) {
         return sourceCharacter != character && sourceCharacter.faction == character.faction && sourceCharacter.relationshipContainer.GetRelationshipEffectWith(character.currentAlterEgo) != RELATIONSHIP_EFFECT.NEGATIVE;
     }
-    public bool CanCharacterTakeRestrainedFeedJob(Character sourceCharacter, Character character, JobQueueItem job) {
+    public bool CanCharacterTakeRestrainedFeedJob(Character sourceCharacter, Character character) {
         if (sourceCharacter.specificLocation.region.IsResident(character)) {
             if (character.faction.id != FactionManager.Instance.neutralFaction.id) {
                 return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
@@ -497,10 +497,10 @@ public class InteractionManager : MonoBehaviour {
         }
         return false;
     }
-    public bool CanCharacterTakeDropJob(Character sourceCharacter, Character character, JobQueueItem job) {
+    public bool CanCharacterTakeDropJob(Character sourceCharacter, Character character) {
         return sourceCharacter != character && sourceCharacter.faction == character.faction && character.relationshipContainer.GetRelationshipEffectWith(sourceCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.NEGATIVE;
     }
-    public bool CanCharacterTakeKnockoutJob(Character character, Character targetCharacter, JobQueueItem job) {
+    public bool CanCharacterTakeKnockoutJob(Character character, Character targetCharacter) {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.ADVENTURER; // && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE)
     }
     public void OnTakeBrewPotion(Character character, JobQueueItem job) {

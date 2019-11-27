@@ -75,7 +75,7 @@ namespace Traits {
         //        //Character targetCharacter = targetPOI as Character;
         //        //if (characterThatWillDoJob.currentActionNode.action != null && characterThatWillDoJob.currentActionNode.action.goapType == INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD && !characterThatWillDoJob.currentActionNode.isDone) {
         //        //    if (characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.POSITIVE && targetCharacter.traitContainer.GetNormalTrait("Vampiric") == null && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetCharacter)) {
-        //        //        //TODO: GoapPlanJob job = new GoapPlanJob(characterThatWillDoJob.currentJobNode.jobType, INTERACTION_TYPE.DRINK_BLOOD, targetCharacter);
+        //        //        //TODO: GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(characterThatWillDoJob.currentJobNode.jobType, INTERACTION_TYPE.DRINK_BLOOD, targetCharacter);
         //        //        //job.SetIsStealth(true);
         //        //        //characterThatWillDoJob.currentActionNode.action.parentPlan.job.jobQueueParent.CancelJob(characterThatWillDoJob.currentActionNode.action.parentPlan.job);
         //        //        //characterThatWillDoJob.jobQueue.AddJobInQueue(job, false);
@@ -98,7 +98,7 @@ namespace Traits {
                     triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
                 }
                 if (!triggerGrieving) {
-                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), character, character);
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), character, character);
                     character.jobQueue.AddJobInQueue(job);
                 } else {
                     griefstricken.TriggerGrieving();

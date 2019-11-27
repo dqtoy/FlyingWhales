@@ -105,7 +105,7 @@ public class ProvokeMenu : MonoBehaviour {
                     + " best life. Are you just gonna let your enemy be happy?";
                 targetText = "I will not allow it! I'll take " + Utilities.GetPronounString(chosenCharacter.gender, PRONOUN_TYPE.OBJECTIVE, false) + " down with me!";
 
-                //GoapPlanJob job = new GoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = chosenCharacter });
+                //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = chosenCharacter });
                 //job.SetCannotOverrideJob(true);
                 //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
                 //targetCharacter.jobQueue.AddJobInQueue(job, false);

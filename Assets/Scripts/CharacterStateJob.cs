@@ -10,16 +10,19 @@ public class CharacterStateJob : JobQueueItem {
 
     public List<System.Action<Character>> onUnassignActions { get; private set; }
 
-    public CharacterStateJob(JOB_TYPE jobType, CHARACTER_STATE state, Region targetRegion, IJobOwner owner) : base(jobType, owner) {
+    public CharacterStateJob(JOB_TYPE jobType, CHARACTER_STATE state, Region targetRegion, IJobOwner owner) {
+        Initialize(jobType, owner);
         this.targetState = state;
         this.targetRegion = targetRegion;
         onUnassignActions = new List<System.Action<Character>>();
     }
-    public CharacterStateJob(JOB_TYPE jobType, CHARACTER_STATE state, IJobOwner owner) : base(jobType, owner) {
+    public CharacterStateJob(JOB_TYPE jobType, CHARACTER_STATE state, IJobOwner owner) {
+        Initialize(jobType, owner);
         this.targetState = state;
         onUnassignActions = new List<System.Action<Character>>();
     }
-    public CharacterStateJob(SaveDataCharacterStateJob data) : base(data) {
+    public CharacterStateJob(SaveDataCharacterStateJob data) {
+        Initialize(data);
         targetState = data.targetState;
         if(data.targetRegionID != -1) {
             targetRegion = GridMap.Instance.GetRegionByID(data.targetRegionID);

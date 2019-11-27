@@ -116,8 +116,9 @@ public class JobQueue {
             //if (quest != null) {
             //    quest.OnRemoveJob(job);
             //}
+            bool state = job.OnRemoveJobFromQueue();
             job.originalOwner.OnJobRemovedFromCharacterJobQueue(job, owner);
-            return job.OnRemoveJobFromQueue();
+            return state;
         }
         return false;
     }
@@ -566,7 +567,7 @@ public class JobQueue {
     //    }
     //    GoapNode goalNode = nodes[0];
     //    GoapNode startingNode = nodes[nodes.Count - 1];
-    //    GoapPlanJob job = new GoapPlanJob(jobType, goalNode.action.goapType, goalNode.action.poiTarget);
+    //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, goalNode.action.goapType, goalNode.action.poiTarget);
 
     //    //GOAP_EFFECT_CONDITION[] goalEffects = new GOAP_EFFECT_CONDITION[goalNode.action.expectedEffects.Count];
     //    //for (int i = 0; i < goalNode.action.expectedEffects.Count; i++) {

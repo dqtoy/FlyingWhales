@@ -80,10 +80,10 @@ namespace Traits {
                     }
                     GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
                     if (currentJob == null) {
-                        GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, target = GOAP_EFFECT_TARGET.TARGET };
-                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect, targetCharacter,
-                            new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, }, characterThatWillDoJob);
-                        if (InteractionManager.Instance.CanCharacterTakeRemoveIllnessesJob(characterThatWillDoJob, targetCharacter, job)) {
+                        if (!IsResponsibleForTrait(characterThatWillDoJob) && InteractionManager.Instance.CanCharacterTakeRemoveIllnessesJob(characterThatWillDoJob, targetCharacter)) {
+                            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, target = GOAP_EFFECT_TARGET.TARGET };
+                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect, targetCharacter, characterThatWillDoJob);
+                            job.AddOtherData(INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION });
                             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                             return true;
                         }
@@ -97,15 +97,13 @@ namespace Traits {
                 if (!targetCharacter.isDead && targetCharacter.faction != characterThatWillDoJob.faction && targetCharacter.traitContainer.GetNormalTrait("Restrained") == null) {
                     GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.RESTRAIN);
                     if (currentJob == null) {
-                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, targetCharacter, new Dictionary<INTERACTION_TYPE, object[]>() {
-                            { INTERACTION_TYPE.DROP, new object[] { characterThatWillDoJob.specificLocation.prison } }
-                        }, characterThatWillDoJob);
-                        //job.SetCanBeDoneInLocation(true);
-                        if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, job)) {
+                        if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter)) {
+                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, targetCharacter, characterThatWillDoJob);
+                            job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { characterThatWillDoJob.specificLocation.prison });
+                            //job.SetCanBeDoneInLocation(true);
                             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                             return true;
                         }
-  
                     } 
                     //else {
                     //    if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, currentJob)) {

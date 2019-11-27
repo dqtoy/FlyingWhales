@@ -56,11 +56,9 @@ namespace Traits {
                         if (!targetTable.HasJobTargettingThis(JOB_TYPE.OBTAIN_FOOD)) {
                             int neededFood = 60 - targetTable.food;
                             GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_FOOD, "0", true, GOAP_EFFECT_TARGET.TARGET);
-                            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.OBTAIN_FOOD, effect, targetTable
-                            , new Dictionary<INTERACTION_TYPE, object[]>() {
-                            { INTERACTION_TYPE.DROP_FOOD, new object[] { neededFood } },
-                            { INTERACTION_TYPE.OBTAIN_RESOURCE, new object[] { neededFood } },
-                            }, characterThatWillDoJob);
+                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_FOOD, effect, targetTable, characterThatWillDoJob);
+                            job.AddOtherData(INTERACTION_TYPE.DROP_FOOD, new object[] { neededFood });
+                            job.AddOtherData(INTERACTION_TYPE.OBTAIN_RESOURCE, new object[] { neededFood });
                             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                             return true;
                         }
@@ -71,19 +69,19 @@ namespace Traits {
                 TileObject tileObj = targetPOI as TileObject;
                 if (tileObj.isSummonedByPlayer && characterThatWillDoJob.traitContainer.GetNormalTrait("Suspicious") == null && !alreadyInspectedTileObjects.Contains(tileObj)) {
                     if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.INSPECT, tileObj)) {
-                        GoapPlanJob inspectJob = new GoapPlanJob(JOB_TYPE.INSPECT, INTERACTION_TYPE.INSPECT, tileObj, characterThatWillDoJob);
+                        GoapPlanJob inspectJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INSPECT, INTERACTION_TYPE.INSPECT, tileObj, characterThatWillDoJob);
                         characterThatWillDoJob.jobQueue.AddJobInQueue(inspectJob);
                         return true;
                     }
                 } else if (tileObj is GoddessStatue) {
                     if (Random.Range(0, 100) < 15 && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.PRAY_GODDESS_STATUE, tileObj) && tileObj.state == POI_STATE.ACTIVE) {
-                        GoapPlanJob prayJob = new GoapPlanJob(JOB_TYPE.PRAY_GODDESS_STATUE, INTERACTION_TYPE.PRAY_TILE_OBJECT, tileObj, characterThatWillDoJob);
+                        GoapPlanJob prayJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PRAY_GODDESS_STATUE, INTERACTION_TYPE.PRAY_TILE_OBJECT, tileObj, characterThatWillDoJob);
                         characterThatWillDoJob.jobQueue.AddJobInQueue(prayJob);
                         return true;
                     }
                 } else {
                     if (tileObj.state == POI_STATE.INACTIVE && tileObj.advertisedActions.Contains(INTERACTION_TYPE.CRAFT_TILE_OBJECT)) {
-                        GoapPlanJob buildJob = new GoapPlanJob(JOB_TYPE.BUILD_TILE_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, tileObj, characterThatWillDoJob);
+                        GoapPlanJob buildJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_TILE_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, tileObj, characterThatWillDoJob);
                         characterThatWillDoJob.jobQueue.AddJobInQueue(buildJob);
                         return true;
                     }
@@ -99,7 +97,7 @@ namespace Traits {
                             return false;
                         }
                         if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP)) {
-                            GoapPlanJob pickUpJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP, token, characterThatWillDoJob);
+                            GoapPlanJob pickUpJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP, token, characterThatWillDoJob);
                             characterThatWillDoJob.jobQueue.AddJobInQueue(pickUpJob);
                         }
                         return true;
@@ -215,7 +213,7 @@ namespace Traits {
         }
         private bool CreatePrioritizedShockJob(Character characterThatWillDoJob) {
             if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.SHOCK)) {
-                GoapPlanJob shockJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.SHOCK, characterThatWillDoJob, characterThatWillDoJob);
+                GoapPlanJob shockJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.SHOCK, characterThatWillDoJob, characterThatWillDoJob);
                 characterThatWillDoJob.jobQueue.AddJobInQueue(shockJob);
                 return true;
             }
@@ -223,7 +221,7 @@ namespace Traits {
         }
         private bool CreatePrioritizedCryJob(Character characterThatWillDoJob) {
             if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.CRY)) {
-                GoapPlanJob cryJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.CRY, characterThatWillDoJob, characterThatWillDoJob);
+                GoapPlanJob cryJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.CRY, characterThatWillDoJob, characterThatWillDoJob);
                 characterThatWillDoJob.jobQueue.AddJobInQueue(cryJob);
                 return true;
             }
@@ -231,7 +229,7 @@ namespace Traits {
         }
         private bool CreateLaughAtJob(Character characterThatWillDoJob, Character target) {
             if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT)) {
-                GoapPlanJob laughJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT, target, characterThatWillDoJob);
+                GoapPlanJob laughJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT, target, characterThatWillDoJob);
                 characterThatWillDoJob.jobQueue.AddJobInQueue(laughJob);
                 return true;
             }
@@ -239,7 +237,7 @@ namespace Traits {
         }
         private bool CreateFeelingConcernedJob(Character characterThatWillDoJob, Character target) {
             if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_CONCERNED)) {
-                GoapPlanJob laughJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_CONCERNED, target, characterThatWillDoJob);
+                GoapPlanJob laughJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_CONCERNED, target, characterThatWillDoJob);
                 characterThatWillDoJob.jobQueue.AddJobInQueue(laughJob);
                 return true;
             }

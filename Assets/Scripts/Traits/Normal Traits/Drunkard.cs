@@ -32,7 +32,7 @@ namespace Traits {
                     }
 
                     //TileObject to = character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.INN).GetTileObjectsThatAdvertise(INTERACTION_TYPE.DRINK).First();
-                    GoapPlanJob drinkJob = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.DRINK, character, character);
+                    GoapPlanJob drinkJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.DRINK, character, character);
                     character.jobQueue.AddJobInQueue(drinkJob);
                 } else {
                     heartbroken.TriggerBrokenhearted();

@@ -152,7 +152,7 @@ public class BuryCharacter : GoapAction {
     //                        triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
     //                    }
     //                    if (!triggerBrokenhearted) {
-    //                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, INTERACTION_TYPE.REMEMBER_FALLEN, targetCharacter.grave);
+    //                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, INTERACTION_TYPE.REMEMBER_FALLEN, targetCharacter.grave);
     //                        job.SetCancelOnFail(true);
     //                        recipient.jobQueue.AddJobInQueue(job);
     //                    } else {
@@ -171,7 +171,7 @@ public class BuryCharacter : GoapAction {
     //                        triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
     //                    }
     //                    if (!triggerBrokenhearted) {
-    //                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, INTERACTION_TYPE.SPIT, targetCharacter.grave);
+    //                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, INTERACTION_TYPE.SPIT, targetCharacter.grave);
     //                        job.SetCancelOnFail(true);
     //                        recipient.jobQueue.AddJobInQueue(job);
     //                    } else {

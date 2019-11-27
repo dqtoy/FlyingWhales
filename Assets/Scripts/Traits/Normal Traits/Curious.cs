@@ -29,7 +29,7 @@ namespace Traits {
         //        TileObject objectToBeInspected = targetPOI as TileObject;
         //        if(objectToBeInspected.isSummonedByPlayer && !alreadyInspectedTileObjects.Contains(objectToBeInspected)) {
         //            if(!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.INSPECT, objectToBeInspected)){
-        //                GoapPlanJob inspectJob = new GoapPlanJob(JOB_TYPE.INSPECT, INTERACTION_TYPE.INSPECT, objectToBeInspected);
+        //                GoapPlanJob inspectJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INSPECT, INTERACTION_TYPE.INSPECT, objectToBeInspected);
         //                characterThatWillDoJob.jobQueue.AddJobInQueue(inspectJob);
         //            }
         //        }

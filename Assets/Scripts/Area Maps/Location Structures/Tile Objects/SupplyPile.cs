@@ -41,7 +41,7 @@ public class SupplyPile : ResourcePile {
     private void CheckSupply() {
         if (resourceInPile < 100) {
             if (!structureLocation.location.HasJob(JOB_TYPE.OBTAIN_SUPPLY)) {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.OBTAIN_SUPPLY, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_WOOD, "0", true, GOAP_EFFECT_TARGET.TARGET ), this, structureLocation.location);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_SUPPLY, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_WOOD, "0", true, GOAP_EFFECT_TARGET.TARGET ), this, structureLocation.location);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainSupplyJob);
                 structureLocation.location.AddToAvailableJobs(job);
             }

@@ -88,7 +88,7 @@ public class Stumble : GoapAction {
     //#region Check Up
     //private bool CreateLaughAtJob(Character characterThatWillDoJob, Character target) {
     //    if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT)) {
-    //        GoapPlanJob laughJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT, target);
+    //        GoapPlanJob laughJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT, target);
     //        characterThatWillDoJob.jobQueue.AddJobInQueue(laughJob);
     //        return true;
     //    }
@@ -96,7 +96,7 @@ public class Stumble : GoapAction {
     //}
     //private bool CreateFeelingConcernedJob(Character characterThatWillDoJob, Character target) {
     //    if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_CONCERNED)) {
-    //        GoapPlanJob laughJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_CONCERNED, target);
+    //        GoapPlanJob laughJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_CONCERNED, target);
     //        characterThatWillDoJob.jobQueue.AddJobInQueue(laughJob);
     //        return true;
     //    }
@@ -104,7 +104,7 @@ public class Stumble : GoapAction {
     //}
     //private bool CreateTeaseJob(Character characterThatWillDoJob, Character target) {
     //    if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.TEASE)) {
-    //        GoapPlanJob laughJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.TEASE, target);
+    //        GoapPlanJob laughJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.TEASE, target);
     //        characterThatWillDoJob.jobQueue.AddJobInQueue(laughJob);
     //        return true;
     //    }

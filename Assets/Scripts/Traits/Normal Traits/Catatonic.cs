@@ -47,10 +47,10 @@ namespace Traits {
                         if (targetCharacter.traitContainer.GetNormalTrait("Restrained") == null) {
                             GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.RESTRAIN);
                             if (currentJob == null) {
-                                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, targetCharacter, new Dictionary<INTERACTION_TYPE, object[]>() {
-                                    { INTERACTION_TYPE.DROP, new object[] { characterThatWillDoJob.specificLocation.prison } }
-                                }, characterThatWillDoJob);
-                                if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, job)) {
+                                if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter)) {
+                                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, targetCharacter, characterThatWillDoJob);
+                                    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { characterThatWillDoJob.specificLocation.prison });
+                                    //job.SetCanBeDoneInLocation(true);
                                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                                     return true;
                                 }
@@ -101,20 +101,16 @@ namespace Traits {
 
         #region Carry/Drop
         private bool CreateActualDropJob(Character characterThatWillDoJob, LocationStructure dropLocationStructure) {
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DROP, INTERACTION_TYPE.DROP, owner,
-                            new Dictionary<INTERACTION_TYPE, object[]>() {
-                    { INTERACTION_TYPE.DROP, new object[] { dropLocationStructure }
-                } }, characterThatWillDoJob);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DROP, INTERACTION_TYPE.DROP, owner, characterThatWillDoJob);
             //job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeDropJob);
+            job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { dropLocationStructure });
             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
             return true;
         }
         private bool CreateActualDropJob(Character characterThatWillDoJob, LocationStructure dropLocationStructure, LocationGridTile dropGridTile) {
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DROP, INTERACTION_TYPE.DROP, owner,
-                           new Dictionary<INTERACTION_TYPE, object[]>() {
-                    { INTERACTION_TYPE.DROP, new object[] { dropLocationStructure, dropGridTile }
-                } }, characterThatWillDoJob);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DROP, INTERACTION_TYPE.DROP, owner, characterThatWillDoJob);
             //job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeDropJob);
+            job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { dropLocationStructure, dropGridTile });
             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
             return true;
         }
@@ -137,7 +133,7 @@ namespace Traits {
         private bool CreateFeedJob(Character characterThatWillDoJob) {
             if (characterThatWillDoJob.specificLocation.region.IsResident(owner)) {
                 GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET };
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.FEED, goapEffect, owner, characterThatWillDoJob);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, owner, characterThatWillDoJob);
                 //job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeParalyzedFeedJob);
                 characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                 return true;
@@ -190,8 +186,8 @@ namespace Traits {
                 triggerSpooked = UnityEngine.Random.Range(0, 100) < 20;
             }
             if (!triggerSpooked) {
-                GoapPlanJob job = new GoapPlanJob(jobType, INTERACTION_TYPE.SLEEP, bed, new Dictionary<INTERACTION_TYPE, object[]>() {
-                    { INTERACTION_TYPE.SLEEP, new object[] { ACTION_LOCATION_TYPE.IN_PLACE } } }, owner);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.SLEEP, bed, owner);
+                job.AddOtherData(INTERACTION_TYPE.SLEEP, new object[] { ACTION_LOCATION_TYPE.IN_PLACE });
                 owner.jobQueue.AddJobInQueue(job);
             } else {
                spooked.TriggerFeelingSpooked();

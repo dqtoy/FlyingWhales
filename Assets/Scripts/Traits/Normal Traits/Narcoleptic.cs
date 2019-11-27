@@ -43,7 +43,7 @@ namespace Traits {
             return base.TriggerFlaw(character);
         }
         private void DoNarcolepticNap() {
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.INTERRUPTION, INTERACTION_TYPE.NARCOLEPTIC_NAP, owner, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INTERRUPTION, INTERACTION_TYPE.NARCOLEPTIC_NAP, owner, owner);
             owner.jobQueue.AddJobInQueue(job);
         }
         #endregion

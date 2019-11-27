@@ -234,7 +234,7 @@ namespace Traits {
             if (character.jobQueue.HasJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM)) {
                 return;
             }
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM, INTERACTION_TYPE.RITUAL_KILLING, targetVictim, character);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM, INTERACTION_TYPE.RITUAL_KILLING, targetVictim, character);
             //GoapAction goapAction6 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.BURY_CHARACTER, character, targetVictim);
             //GoapAction goapAction5 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CARRY_CORPSE, character, targetVictim);
             //GoapAction goapAction4 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RITUAL_KILLING, character, targetVictim);

@@ -58,7 +58,7 @@ public class ThiefSummon : Summon {
         //    LocationStructure warehouse = specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
         //    if (warehouse.itemsInStructure.Count > 0) {
         //        SpecialToken chosenItem = warehouse.itemsInStructure[UnityEngine.Random.Range(0, warehouse.itemsInStructure.Count)];
-        //        //GoapPlanJob job = new GoapPlanJob(JOB_TYPE.STEAL, INTERACTION_TYPE.STEAL, chosenItem);
+        //        //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.STEAL, INTERACTION_TYPE.STEAL, chosenItem);
         //        //job.SetCannotOverrideJob(true);
         //        //job.SetCannotCancelJob(true);
         //        //jobQueue.AddJobInQueue(job);

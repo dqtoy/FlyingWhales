@@ -27,7 +27,7 @@ namespace Traits {
                 TileObject tileObject = targetPOI as TileObject;
                 if (UnityEngine.Random.Range(0, 100) < 3) {
                     if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.DESTROY, tileObject)) {
-                        GoapPlanJob destroyJob = new GoapPlanJob(JOB_TYPE.DESTROY, INTERACTION_TYPE.ASSAULT, tileObject, characterThatWillDoJob);
+                        GoapPlanJob destroyJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DESTROY, INTERACTION_TYPE.ASSAULT, tileObject, characterThatWillDoJob);
                         characterThatWillDoJob.jobQueue.AddJobInQueue(destroyJob);
                         return true;
                     }

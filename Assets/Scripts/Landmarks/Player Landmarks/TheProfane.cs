@@ -36,13 +36,13 @@ public class TheProfane : BaseLandmark {
             (targetCharacter.faction.activeQuest as DivineInterventionQuest).CreateSabotageFactionnJob();
         } else if (action == "Destroy Supply") {
             if (!targetCharacter.jobQueue.HasJob(JOB_TYPE.DESTROY_SUPPLY)) {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DESTROY_SUPPLY, INTERACTION_TYPE.DESTROY_RESOURCE, targetCharacter.specificLocation.supplyPile, targetCharacter);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DESTROY_SUPPLY, INTERACTION_TYPE.DESTROY_RESOURCE, targetCharacter.specificLocation.supplyPile, targetCharacter);
                 job.SetIsStealth(true);
                 targetCharacter.jobQueue.AddJobInQueue(job);
             }
         } else if (action == "Destroy Food") {
             if (!targetCharacter.jobQueue.HasJob(JOB_TYPE.DESTROY_FOOD)) {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DESTROY_FOOD, INTERACTION_TYPE.DESTROY_RESOURCE, targetCharacter.specificLocation.foodPile, targetCharacter);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DESTROY_FOOD, INTERACTION_TYPE.DESTROY_RESOURCE, targetCharacter.specificLocation.foodPile, targetCharacter);
                 job.SetIsStealth(true);
                 targetCharacter.jobQueue.AddJobInQueue(job);
             }

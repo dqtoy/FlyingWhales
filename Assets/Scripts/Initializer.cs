@@ -24,6 +24,7 @@ public class Initializer : MonoBehaviour {
         WorldEventsManager.Instance.Initialize();
 
         TokenManager.Instance.Initialize();
+        JobManager.Instance.Initialize();
     }
 
     public void InitializeDataAfterWorldCreation() {
