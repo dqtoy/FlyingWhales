@@ -13,6 +13,7 @@ public struct BuildingSpotData {
     public Vector3Int location; //where in the template grid is this connector placed
     public bool isOpen; //is this connection still open?
     public int[] adjacentSpots;
+    public Vector2Int buildingSpotGridPos; //where in the building spot grid is this spot?
 
     public Vector3Int Difference(BuildingSpotData otherConnector) {
         return new Vector3Int(location.x - otherConnector.location.x, location.y - otherConnector.location.y, 0);

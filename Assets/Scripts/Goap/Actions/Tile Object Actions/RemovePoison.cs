@@ -29,9 +29,9 @@ public class RemovePoison : GoapAction {
     #endregion
 
     #region State Effects
-    public void PreRemovePoisonSuccess(ActualGoapNode goapNode) {
-        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.structure.location, goapNode.poiTarget.gridTileLocation.structure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-    }
+    //public void PreRemovePoisonSuccess(ActualGoapNode goapNode) {
+    //    goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.structure.location, goapNode.poiTarget.gridTileLocation.structure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+    //}
     public void AfterRemovePoisonSuccess(ActualGoapNode goapNode) {
         //**Effect 1**: Remove Poisoned Trait from target table
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Poisoned");

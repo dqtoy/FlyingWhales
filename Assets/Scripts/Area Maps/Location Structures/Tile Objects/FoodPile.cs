@@ -18,6 +18,15 @@ public class FoodPile : ResourcePile {
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);
     }
+    public override void SetGridTileLocation(LocationGridTile tile) {
+        base.SetGridTileLocation(tile);
+        if (tile != null) {
+            //when a food pile is placed, and the area does not yet have a food pile, then set its food pile to this
+            if (tile.parentAreaMap.area.foodPile == null) {
+                tile.parentAreaMap.area.SetFoodPile(this);
+            }
+        }
+    }
     #endregion
 
     public override void AdjustResourceInPile(int adjustment) {

@@ -19,8 +19,24 @@ public class ObjectPoolManager : MonoBehaviour {
         Instance = this;
         allObjectPools = new Dictionary<string, EZObjectPool>();
     }
-
-    internal void InitializeObjectPools() {
+    //public void StartInitializeObjectPoolsCoroutine() {
+    //    StartCoroutine(InitializeObjectPoolsCoroutine());
+    //}
+    public IEnumerator InitializeObjectPoolsCoroutine() {
+        for (int i = 0; i < UIPrefabs.Length; i++) {
+            GameObject currPrefab = UIPrefabs[i];
+            EZObjectPool newUIPool = CreateNewPool(currPrefab, currPrefab.name, 300, true, true, false);
+            newUIPool.transform.SetParent(UIObjectPoolParent.transform, false);
+            yield return null;
+        }
+        for (int i = 0; i < otherPrefabs.Length; i++) {
+            GameObject currPrefab = otherPrefabs[i];
+            CreateNewPool(currPrefab, currPrefab.name, 80, true, true, false);
+            yield return null;
+        }
+        MapGenerator.Instance.SetIsCoroutineRunning(false);
+    }
+    public void InitializeObjectPools() {
         for (int i = 0; i < UIPrefabs.Length; i++) {
             GameObject currPrefab = UIPrefabs[i];
             EZObjectPool newUIPool = CreateNewPool(currPrefab, currPrefab.name, 300, true, true, false);

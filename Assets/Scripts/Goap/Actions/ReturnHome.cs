@@ -35,9 +35,9 @@ public class ReturnHome : GoapAction {
     #endregion
 
     #region State Effects
-    public void PreReturnHomeSuccess(ActualGoapNode goapNode) {
-        goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-    }
+    //public void PreReturnHomeSuccess(ActualGoapNode goapNode) {
+    //    goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+    //}
     #endregion
 }
 

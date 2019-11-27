@@ -60,8 +60,9 @@ public class DropFood : GoapAction {
     #region State Effects
     public void PreDropSuccess(ActualGoapNode goapNode) {
         int givenFood = goapNode.actor.food;
-        GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
+        //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         goapNode.descriptionLog.AddToFillers(null, givenFood.ToString(), LOG_IDENTIFIER.STRING_1);
+        //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterDropSuccess(ActualGoapNode goapNode) {
         int givenFood = goapNode.actor.food;

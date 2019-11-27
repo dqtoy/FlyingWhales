@@ -660,8 +660,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.AddListener<Area, Character>(Signals.CHARACTER_EXITED_AREA, OnCharacterExitedArea);
         Messenger.AddListener<Character, string>(Signals.CANCEL_CURRENT_ACTION, CancelCurrentAction);
         ///Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet); Moved listener for action state set to CharacterManager for optimization <see cref="CharacterManager.OnActionStateSet(GoapAction, GoapActionState)">
-        Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, OnItemPlacedOnTile);
-        Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
+        //Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, OnItemPlacedOnTile);
+        //Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         Messenger.AddListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
@@ -681,8 +681,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.RemoveListener<Area, Character>(Signals.CHARACTER_EXITED_AREA, OnCharacterExitedArea);
         Messenger.RemoveListener<Character, string>(Signals.CANCEL_CURRENT_ACTION, CancelCurrentAction);
         //Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
-        Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, OnItemPlacedOnTile);
-        Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
+        //Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, OnItemPlacedOnTile);
+        //Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
@@ -3931,7 +3931,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
         traitContainer.AddTrait(this, "Character Trait");
         traitContainer.AddTrait(this, "Flammable");
-        //traitContainer.AddTrait(this, "Accident Prone");
+        traitContainer.AddTrait(this, "Accident Prone");
 
         defaultCharacterTrait = traitContainer.GetNormalTrait("Character Trait") as CharacterTrait;
     }
@@ -4958,15 +4958,15 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void DropToken(SpecialToken token, Area location, LocationStructure structure, LocationGridTile gridTile = null, bool clearOwner = true) {
         if (UnobtainToken(token)) {
             if (token.specialTokenType.CreatesObjectWhenDropped()) {
-                if (location.AddSpecialTokenToLocation(token, structure, gridTile)) {
-                    //When items are dropped into the warehouse, make all residents aware of it.
-                    if (structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
-                        for (int i = 0; i < structure.location.region.residents.Count; i++) {
-                            Character resident = structure.location.region.residents[i];
-                            resident.AddAwareness(token);
-                        }
-                    }
-                }
+                location.AddSpecialTokenToLocation(token, structure, gridTile);
+                    //REMOVED: Since all characters are always aware of all objects at all times
+                    ////When items are dropped into the warehouse, make all residents aware of it.
+                    //if (structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
+                    //    for (int i = 0; i < structure.location.region.residents.Count; i++) {
+                    //        Character resident = structure.location.region.residents[i];
+                    //        resident.AddAwareness(token);
+                    //    }
+                    //}
             }
             //if (structure != homeStructure) {
             //    //if this character drops this at a structure that is not his/her home structure, set the owner of the item to null
@@ -5132,17 +5132,17 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         return false;
     }
-    private void OnItemRemovedFromTile(SpecialToken removedItem, LocationGridTile removedFrom) {
-        //whenever an item is removed from a tile, remove all characters that are aware of it to prevent this issue. 
-        //https://trello.com/c/JEg9o5Ox/2352-scrapping-healing-potion-in-outskirts
-        RemoveAwareness(removedItem); 
-    }
-    private void OnItemPlacedOnTile(SpecialToken addedItem, LocationGridTile addedTo) {
-        //if an item is dropped at a warehouse, inform all residents of that area
-        if (addedTo.structure.structureType == STRUCTURE_TYPE.WAREHOUSE && addedTo.parentAreaMap.area == this.specificLocation) { 
-            AddAwareness(addedItem);
-        }
-    }
+    //private void OnItemRemovedFromTile(SpecialToken removedItem, LocationGridTile removedFrom) {
+    //    //whenever an item is removed from a tile, remove all characters that are aware of it to prevent this issue. 
+    //    //https://trello.com/c/JEg9o5Ox/2352-scrapping-healing-potion-in-outskirts
+    //    RemoveAwareness(removedItem); 
+    //}
+    //private void OnItemPlacedOnTile(SpecialToken addedItem, LocationGridTile addedTo) {
+    //    //if an item is dropped at a warehouse, inform all residents of that area
+    //    if (addedTo.structure.structureType == STRUCTURE_TYPE.WAREHOUSE && addedTo.parentAreaMap.area == this.specificLocation) { 
+    //        AddAwareness(addedItem);
+    //    }
+    //}
     #endregion
 
     #region Needs

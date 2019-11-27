@@ -14,13 +14,94 @@ public class EquatorGenerator : MonoBehaviour {
 		Instance = this;
 	}
 
-	internal void GenerateEquator(int width, int height, List<HexTile> tiles){
-		this.equatorLine = GetEquatorLine();
+    public void GenerateEquator(int width, int height, List<HexTile> tiles) {
+        this.equatorLine = GetEquatorLine();
 		this.hexEquatorName = GetHexEquatorName(height);
-		DrawEquator(width, height, tiles);
-	}
+        DrawEquator(width, height, tiles);
+    }
+    public IEnumerator DrawEquatorCoroutine(int width, int height, List<HexTile> tiles) {
+        listEquator.Clear();
 
-	internal void DrawEquator(int width, int height, List<HexTile> tiles){
+        string[] splittedName = hexEquatorName.Split(new char[] { ',' });
+        int[] xy = { int.Parse(splittedName[0]), int.Parse(splittedName[1]) };
+
+        if (this.equatorLine == EQUATOR_LINE.HORIZONTAL) {
+            for (int i = xy[0]; i < width; i++) {
+                listEquator.Add(GetHex(i + "," + xy[1], tiles));
+                yield return null;
+            }
+        }
+        if (this.equatorLine == EQUATOR_LINE.VERTICAL) {
+            for (int i = xy[1]; i < height; i++) {
+                listEquator.Add(GetHex(xy[0] + "," + i, tiles));
+                yield return null;
+            }
+        }
+        if (this.equatorLine == EQUATOR_LINE.DIAGONAL_LEFT) {
+            if (xy[1] == 0) {
+                int x = xy[0];
+                for (int y = xy[1]; y < height; y++) {
+                    listEquator.Add(GetHex(x + "," + y, tiles));
+                    if (y % 2 == 1) {
+                        x += 1;
+                    }
+                    x--;
+                    if (x < 0) {
+                        x = 0;
+                    }
+                    yield return null;
+                }
+            } else {
+                int x = xy[0];
+                for (int y = xy[1]; y >= 0; y--) {
+                    listEquator.Add(GetHex(x + "," + y, tiles));
+                    if (y % 2 == 0) {
+                        x -= 1;
+                    }
+                    x++;
+                    if (x >= width) {
+                        x = width - 1;
+                    }
+                    yield return null;
+                }
+            }
+
+        }
+        if (this.equatorLine == EQUATOR_LINE.DIAGONAL_RIGHT) {
+            if (xy[1] == 0) {
+                int x = xy[0];
+                for (int y = xy[1]; y < height; y++) {
+                    listEquator.Add(GetHex(x + "," + y, tiles));
+                    if (y % 2 == 0) {
+                        x -= 1;
+                    }
+                    x++;
+                    if (x >= width) {
+                        x = width - 1;
+                    }
+                    yield return null;
+                }
+            } else {
+                int x = xy[0];
+                for (int y = xy[1]; y >= 0; y--) {
+                    listEquator.Add(GetHex(x + "," + y, tiles));
+                    if (y % 2 == 1) {
+                        x += 1;
+                    }
+                    x--;
+                    if (x < 0) {
+                        x = 0;
+                    }
+                    yield return null;
+                }
+            }
+        }
+        MapGenerator.Instance.SetIsCoroutineRunning(false);
+        //		for(int i = 0; i < listEquator.Count; i++){
+        ////			listEquator[i].GetComponent<SpriteRenderer>().color = Color.red;
+        //		}
+    }
+    private void DrawEquator(int width, int height, List<HexTile> tiles){
 		listEquator.Clear();
 
 		string[] splittedName = hexEquatorName.Split(new char[]{','});
@@ -92,9 +173,9 @@ public class EquatorGenerator : MonoBehaviour {
 			}
 		}
 
-		for(int i = 0; i < listEquator.Count; i++){
-//			listEquator[i].GetComponent<SpriteRenderer>().color = Color.red;
-		}
+//		for(int i = 0; i < listEquator.Count; i++){
+////			listEquator[i].GetComponent<SpriteRenderer>().color = Color.red;
+//		}
 	}
 
     internal GameObject GetHex(string hexName, List<HexTile> tiles) {

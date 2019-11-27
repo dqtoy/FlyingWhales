@@ -30,7 +30,7 @@ public class JobQueue {
         bool isNewJobTopPriority = false;
         //Push back current top priority first before adding the job
         if (jobsInQueue.Count > 0 && job.priority < jobsInQueue[0].priority) { //This means that the job is inserted as the top most priority //characterOwner.CanCurrentJobBeOverriddenByJob(job))
-            jobsInQueue[0].PushedBack();
+            jobsInQueue[0].PushedBack(job);
             isNewJobTopPriority = true;
         }
 

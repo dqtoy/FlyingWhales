@@ -67,10 +67,6 @@ public enum PATHFINDING_MODE{
 }
 public enum GRID_PATHFINDING_MODE {
     NORMAL,
-    ROADS_ONLY,
-    REALISTIC,
-    MAIN_ROAD_GEN,
-    CAVE_ROAD_GEN,
 }
 
 public enum GENDER{
@@ -1093,6 +1089,7 @@ public enum STRUCTURE_TYPE {
     CEMETERY,
     PRISON,
     POND,
+    CITY_CENTER,
 }
 public enum RELATIONSHIP_TRAIT {
     NONE = 0,
@@ -1156,7 +1153,7 @@ public enum INTERACTION_CHARACTER_EFFECT {
     TIREDNESS_RECOVERY,
 }
 public enum TARGET_POI { ACTOR, TARGET, }
-public enum TileNeighbourDirection { North, South, West, East, North_West,  North_East, South_West, South_East }
+public enum GridNeighbourDirection { North, South, West, East, North_West,  North_East, South_West, South_East }
 public enum TIME_IN_WORDS { AFTER_MIDNIGHT, AFTER_MIDNIGHT_1, AFTER_MIDNIGHT_2, MORNING, MORNING_1, MORNING_2, AFTERNOON, AFTERNOON_1, AFTERNOON_2, EARLY_NIGHT, LATE_NIGHT, NIGHT_1, NIGHT_2, LUNCH_TIME, NONE }
 //public enum CRIME_SEVERITY { NONE, INFRACTION, MISDEMEANOUR, SERIOUS_CRIME, }
 public enum FOOD { BERRY, MUSHROOM, RABBIT, RAT }
@@ -1172,7 +1169,7 @@ public enum JOB_TYPE { NONE, UNDERMINE_ENEMY, TIREDNESS_RECOVERY_EXHAUSTED, HUNG
         , JUDGEMENT, BREAK_UP, SAVE_CHARACTER, ASK_FOR_HELP_SAVE_CHARACTER, TANTRUM, SHARE_INFORMATION, BUILD_FURNITURE, STEAL
         , BERSERK, PATROL, EXPLORE, OBTAIN_ITEM, WATCH, DROP, DEATH, HUNT_SERIAL_KILLER_VICTIM, INSPECT, RESOLVE_CONFLICT, REMOVE_FIRE, MISC, ATTEMPT_TO_STOP_JOB, MOVE_OUT, SUICIDE, SEDUCE, REPAIR
         , DESTROY, OBTAIN_FOOD_OUTSIDE, OBTAIN_SUPPLY_OUTSIDE, IMPROVE, COMBAT, BUILD_GODDESS_STATUE, DESTROY_PROFANE_LANDMARK, PERFORM_HOLY_INCANTATION, PRAY_GODDESS_STATUE, BUILD_TILE_OBJECT, CHEAT, HAVE_AFFAIR, TRIGGER_FLAW, RETURN_HOME
-        , CORRUPT_CULTIST, DESTROY_SUPPLY, DESTROY_FOOD, SABOTAGE_FACTION, SEARCHING_WORLD_EVENT, REACT_TO_SCREAM, SCREAM, CHAT, IDLE}
+        , CORRUPT_CULTIST, DESTROY_SUPPLY, DESTROY_FOOD, SABOTAGE_FACTION, SEARCHING_WORLD_EVENT, REACT_TO_SCREAM, SCREAM, CHAT, IDLE, INTERRUPTION, CLEANSE_REGION, CLAIM_REGION, INVADE_REGION, ATTACK_NON_DEMONIC_REGION, ATTACK_DEMONIC_REGION}
 public enum JOB_OWNER { CHARACTER, LOCATION, QUEST, }
 public enum Cardinal_Direction { North, South, East, West };
 public enum ACTION_LOCATION_TYPE {
@@ -1325,9 +1322,34 @@ public static class Extensions {
             case STRUCTURE_TYPE.CEMETERY:
             case STRUCTURE_TYPE.PRISON:
             case STRUCTURE_TYPE.POND:
+            case STRUCTURE_TYPE.CITY_CENTER:
                 return true;
             default:
                 return false;
+        }
+    }
+    /// <summary>
+    /// Get the priority that each structure should be generated in.
+    /// This determines what order the structures will be created during map generation. <see cref="AreaInnerTileMap.PlaceInitialStructures"/>
+    /// </summary>
+    /// <param name="sub">The type of structure</param>
+    /// <returns>The priority of a given structure type. 0 being the highest priority.</returns>
+    public static int StructureGenerationPriority(this STRUCTURE_TYPE sub) {
+        switch (sub) {
+            case STRUCTURE_TYPE.CITY_CENTER:
+                return 0;
+            case STRUCTURE_TYPE.INN:
+                return 1;
+            case STRUCTURE_TYPE.WAREHOUSE:
+                return 2;
+            case STRUCTURE_TYPE.DWELLING:
+                return 3;
+            case STRUCTURE_TYPE.CEMETERY:
+                return 4;
+            case STRUCTURE_TYPE.PRISON:
+                return 5;
+            default:
+                return 99;
         }
     }
     #endregion
@@ -1346,12 +1368,12 @@ public static class Extensions {
         }
         throw new System.Exception("No opposite direction for " + dir.ToString());
     }
-    public static bool IsCardinalDirection(this TileNeighbourDirection dir) {
+    public static bool IsCardinalDirection(this GridNeighbourDirection dir) {
         switch (dir) {
-            case TileNeighbourDirection.North:
-            case TileNeighbourDirection.South:
-            case TileNeighbourDirection.West:
-            case TileNeighbourDirection.East:
+            case GridNeighbourDirection.North:
+            case GridNeighbourDirection.South:
+            case GridNeighbourDirection.West:
+            case GridNeighbourDirection.East:
                 return true;
             default:
                 return false;

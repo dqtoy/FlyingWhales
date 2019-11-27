@@ -40,18 +40,18 @@ public class Mine : GoapAction {
     #region State Effects
     public void PreMineSuccess(ActualGoapNode goapNode) {
         Ore ore = goapNode.poiTarget as Ore;
-        GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
+        //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         goapNode.descriptionLog.AddToFillers(null, ore.GetSupplyPerMine().ToString(), LOG_IDENTIFIER.STRING_1);
-        goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+        //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterMineSuccess(ActualGoapNode goapNode) {
         Ore ore = goapNode.poiTarget as Ore;
         goapNode.actor.AdjustSupply(ore.GetSupplyPerMine());
         ore.AdjustYield(-1);
     }
-    public void PreTargetMissing(ActualGoapNode goapNode) {
-        goapNode.descriptionLog.AddToFillers(goapNode.actor.currentStructure.location, goapNode.actor.currentStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-    }
+    //public void PreTargetMissing(ActualGoapNode goapNode) {
+    //    goapNode.descriptionLog.AddToFillers(goapNode.actor.currentStructure.location, goapNode.actor.currentStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+    //}
     public void AfterTargetMissing(ActualGoapNode goapNode) {
     }
     #endregion

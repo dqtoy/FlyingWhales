@@ -71,10 +71,10 @@ public class Drop : GoapAction {
     #endregion
 
     #region State Effects
-    public void PreDropSuccess(ActualGoapNode goapNode) {
-        GoapActionState currentState = this.states[goapNode.currentStateName];
-        goapNode.descriptionLog.AddToFillers(goapNode.actor.currentStructure, goapNode.actor.currentStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-    }
+    //public void PreDropSuccess(ActualGoapNode goapNode) {
+    //    //GoapActionState currentState = this.states[goapNode.currentStateName];
+    //    goapNode.descriptionLog.AddToFillers(goapNode.actor.currentStructure, goapNode.actor.currentStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+    //}
     public void AfterDropSuccess(ActualGoapNode goapNode) {
         Character target = goapNode.poiTarget as Character;
         goapNode.actor.currentParty.RemoveCharacter(target);

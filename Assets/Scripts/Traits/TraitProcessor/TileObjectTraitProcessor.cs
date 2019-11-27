@@ -12,7 +12,9 @@ namespace Traits {
         }
 
         public override void OnTraitRemoved(ITraitable traitable, Trait trait, Character removedBy) {
+            TileObject obj = traitable as TileObject;
             DefaultProcessOnRemoveTrait(traitable, trait, removedBy);
+            obj.OnTileObjectLostTrait(trait);
         }
     }
 

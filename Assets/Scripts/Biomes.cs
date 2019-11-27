@@ -74,8 +74,19 @@ public class Biomes : MonoBehaviour {
     void Awake(){
 		Instance = this;
 	}
-
-	internal void GenerateBiome(List<HexTile> tiles){
+    //public void StartGenerateBiomeCoroutine(List<HexTile> tiles) {
+    //    StartCoroutine(GenerateBiomeCoroutine(tiles));
+    //}
+    public IEnumerator GenerateBiomeCoroutine(List<HexTile> tiles) {
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile currentHexTile = tiles[i];
+            BIOMES biomeForTile = GetBiomeSimple(currentHexTile.gameObject);
+            SetBiomeForTile(biomeForTile, currentHexTile);
+            yield return null;
+        }
+        MapGenerator.Instance.SetIsCoroutineRunning(false);
+    }
+    public void GenerateBiome(List<HexTile> tiles){
 		//CalculateNewTemperature();
 		for(int i = 0; i < tiles.Count; i++){
             HexTile currentHexTile = tiles[i];
@@ -89,7 +100,18 @@ public class Biomes : MonoBehaviour {
     internal void SetBiomeForTile(BIOMES biomeForTile, HexTile currentHexTile) {
         currentHexTile.SetBiome(biomeForTile);
     }
-    internal void UpdateTileVisuals(List<HexTile> allTiles) {
+    //public void StartUpdateTileVisualsCoroutine(List<HexTile> allTiles) {
+    //    StartCoroutine(UpdateTileVisualsCoroutine(allTiles));
+    //}
+    public IEnumerator UpdateTileVisualsCoroutine(List<HexTile> allTiles) {
+        for (int i = 0; i < allTiles.Count; i++) {
+            HexTile currentHexTile = allTiles[i];
+            UpdateTileVisuals(currentHexTile);
+            yield return null;
+        }
+        MapGenerator.Instance.SetIsCoroutineRunning(false);
+    }
+    public void UpdateTileVisuals(List<HexTile> allTiles) {
         for (int i = 0; i < allTiles.Count; i++) {
             HexTile currentHexTile = allTiles[i];
             UpdateTileVisuals(currentHexTile);
@@ -384,10 +406,46 @@ public class Biomes : MonoBehaviour {
     private void LoadBeachVisuals(HexTile tile) {
         tile.LoadBeaches();
     }
-	internal void GenerateElevation(List<HexTile> tiles, int mapWidth, int mapHeight) {
-		CalculateElevationAndMoisture(tiles, mapWidth, mapHeight);
-	}
-	private void CalculateElevationAndMoisture(List<HexTile> tiles, int mapWidth, int mapHeight){
+	public void GenerateElevation(List<HexTile> tiles, int mapWidth, int mapHeight) {
+        CalculateElevationAndMoisture(tiles, mapWidth, mapHeight);
+    }
+    public IEnumerator CalculateElevationAndMoistureCoroutine(List<HexTile> tiles, int mapWidth, int mapHeight) {
+        float elevationFrequency = 8.93f; //19.1f//14.93f;//2.66f;
+        float moistureFrequency = 12.34f; //3.34f;//2.94f;
+        float tempFrequency = 2.64f;//2.4f;
+
+        float elevationRand = UnityEngine.Random.Range(500f, 2000f);
+        float moistureRand = UnityEngine.Random.Range(500f, 2000f);
+        float temperatureRand = UnityEngine.Random.Range(500f, 2000f);
+
+        string[] splittedNameEq = EquatorGenerator.Instance.listEquator[0].name.Split(new char[] { ',' });
+        int equatorY = int.Parse(splittedNameEq[1]);
+
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile currTile = tiles[i];
+
+            string[] splittedName = currTile.name.Split(new char[] { ',' });
+            int[] xy = { int.Parse(splittedName[0]), int.Parse(splittedName[1]) };
+
+            float nx = ((float) xy[0] / mapWidth);
+            float ny = ((float) xy[1] / mapHeight);
+
+            float elevationNoise = Mathf.PerlinNoise((nx + elevationRand) * elevationFrequency, (ny + elevationRand) * elevationFrequency);
+            ELEVATION elevationType = GetElevationType(elevationNoise);
+
+            currTile.data.elevationNoise = elevationNoise;
+            currTile.SetElevation(elevationType);
+            currTile.data.moistureNoise = Mathf.PerlinNoise((nx + moistureRand) * moistureFrequency, (ny + moistureRand) * moistureFrequency);
+
+            int distanceToEquator = Mathf.Abs(xy[1] - equatorY);
+            float tempGradient = 1.23f / mapHeight;
+            currTile.data.temperature = distanceToEquator * tempGradient;
+            currTile.data.temperature += (Mathf.PerlinNoise((nx + temperatureRand) * tempFrequency, (ny + temperatureRand) * tempFrequency)) * 0.6f;
+            yield return null;
+        }
+        MapGenerator.Instance.SetIsCoroutineRunning(false);
+    }
+    private void CalculateElevationAndMoisture(List<HexTile> tiles, int mapWidth, int mapHeight){
         float elevationFrequency = 8.93f; //19.1f//14.93f;//2.66f;
         float moistureFrequency = 12.34f; //3.34f;//2.94f;
 		float tempFrequency = 2.64f;//2.4f;

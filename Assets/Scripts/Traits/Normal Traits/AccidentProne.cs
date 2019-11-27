@@ -69,13 +69,13 @@ namespace Traits {
         #endregion
 
         private void DoStumble() {
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.STUMBLE, owner, owner);
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.INTERRUPTION, INTERACTION_TYPE.STUMBLE, owner, owner);
             job.SetCannotBePushedBack(true);
             owner.jobQueue.AddJobInQueue(job);
         }
 
         private void DoAccident(GoapAction action) {
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.ACCIDENT, owner, new Dictionary<INTERACTION_TYPE, object[]>() {
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.INTERRUPTION, INTERACTION_TYPE.ACCIDENT, owner, new Dictionary<INTERACTION_TYPE, object[]>() {
                 { INTERACTION_TYPE.ACCIDENT, new object[] { action }}
             },  owner);
             job.SetCannotBePushedBack(true);

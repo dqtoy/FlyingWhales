@@ -44,27 +44,29 @@ public class DropItem : GoapAction {
 
     #region Preconditions
     private bool IsItemInInventory(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        SpecialToken specialToken;
         if (otherData.Length >= 2) {
-            specialToken = otherData[1] as SpecialToken;
+            SPECIAL_TOKEN tokenType = (SPECIAL_TOKEN)otherData[1];
+            return actor.GetToken(tokenType) != null;
         } else {
-            specialToken = poiTarget as SpecialToken;
+            SpecialToken specialToken = poiTarget as SpecialToken;
+            return actor.GetToken(specialToken) != null;
         }
-        return actor.GetToken(specialToken) != null;
+        
     }
     #endregion
 
     #region State Effects
     public void PreDropSuccess(ActualGoapNode goapNode) {
-        GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
+        //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         goapNode.descriptionLog.AddToFillers(goapNode.poiTarget as SpecialToken, goapNode.poiTarget.name, LOG_IDENTIFIER.ITEM_1);
-        goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+        //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterDropSuccess(ActualGoapNode goapNode) {
         LocationGridTile tile = goapNode.actor.gridTileLocation.GetNearestUnoccupiedTileFromThis();
         SpecialToken specialToken;
         if (goapNode.otherData.Length >= 2) {
-            specialToken = goapNode.otherData[1] as SpecialToken;
+            SPECIAL_TOKEN tokenType = (SPECIAL_TOKEN)goapNode.otherData[1];
+            specialToken = goapNode.actor.GetToken(tokenType);
         } else {
             specialToken = goapNode.poiTarget as SpecialToken;
         }

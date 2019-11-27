@@ -46,7 +46,7 @@ public class Scrap : GoapAction {
         if (satisfied) {
             if (poiTarget is SpecialToken) {
                 SpecialToken token = poiTarget as SpecialToken;
-                if (token.gridTileLocation != null && token.gridTileLocation.structure.location.IsRequiredByWarehouse(token)) {
+                if (token.gridTileLocation != null && token.gridTileLocation.structure.location.IsRequiredByArea(token)) {
                     return false;
                 }
             }
@@ -68,7 +68,7 @@ public class Scrap : GoapAction {
     public void PreScrapSuccess(ActualGoapNode goapNode) {
         SpecialToken item = goapNode.poiTarget as SpecialToken;
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+        //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
         goapNode.descriptionLog.AddToFillers(item, item.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         goapNode.descriptionLog.AddToFillers(null, TokenManager.Instance.itemData[item.specialTokenType].supplyValue.ToString(), LOG_IDENTIFIER.STRING_1);
     }
@@ -89,7 +89,7 @@ public class ScrapData : GoapActionData {
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         if (poiTarget is SpecialToken) {
             SpecialToken token = poiTarget as SpecialToken;
-            if (token.gridTileLocation != null && token.gridTileLocation.structure.location.IsRequiredByWarehouse(token)) {
+            if (token.gridTileLocation != null && token.gridTileLocation.structure.location.IsRequiredByArea(token)) {
                 return false;
             }
         }

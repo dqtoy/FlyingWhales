@@ -17,6 +17,15 @@ public class BuildingSpotItem : MonoBehaviour {
     private void Update() {
         if (buildingSpot != null) {
             text.text = buildingSpot.id.ToString();
+            //text.text += $"\n<size=10%>isOpen {buildingSpot.isOpen.ToString()}, isOccupied {buildingSpot.isOccupied.ToString()}";
+            //if (buildingSpot.neighbours != null) {
+            //    text.text += "\nNeighbours:";
+            //    foreach (KeyValuePair<GridNeighbourDirection, BuildingSpot> keyValuePair in buildingSpot.neighbours) {
+            //        text.text += $"\n\t{keyValuePair.Key.ToString()} - {keyValuePair.Value.id.ToString()}";
+            //    }
+                
+            //}
+            
         }
     }
 

@@ -986,7 +986,7 @@ public class ConsoleMenu : UIMenu {
             AddErrorMessage("Region " + regionParameterString + " has no area!");
             return;
         }
-        region.area.locationClassManager.LogLocationRequirementsData(regionParameterString);
+        region.area.classManager.LogLocationRequirementsData(regionParameterString);
     }
     private void AddNewResident(string[] parameters) {
         if (parameters.Length != 1) {

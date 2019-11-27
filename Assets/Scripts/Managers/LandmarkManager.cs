@@ -196,38 +196,42 @@ public class LandmarkManager : MonoBehaviour {
             currLandmark.Initialize();
         }
     }
-    //public void GenerateMinorLandmarks(List<HexTile> allTiles) {
-    //    Dictionary<BIOMES, LANDMARK_TYPE[]> landmarkChoices = new Dictionary<BIOMES, LANDMARK_TYPE[]>() {
-    //        { BIOMES.GRASSLAND, new LANDMARK_TYPE[] {
-    //            LANDMARK_TYPE.ABANDONED_MINE, LANDMARK_TYPE.OUTPOST, LANDMARK_TYPE.BANDIT_CAMP, LANDMARK_TYPE.ANCIENT_RUIN, LANDMARK_TYPE.PYRAMID, LANDMARK_TYPE.CAVE
-    //        } },
-    //        { BIOMES.FOREST, new LANDMARK_TYPE[] {
-    //            LANDMARK_TYPE.ABANDONED_MINE, LANDMARK_TYPE.OUTPOST, LANDMARK_TYPE.BANDIT_CAMP, LANDMARK_TYPE.ANCIENT_RUIN, LANDMARK_TYPE.PYRAMID, LANDMARK_TYPE.CAVE
-    //        } },
-    //        { BIOMES.DESERT, new LANDMARK_TYPE[] {
-    //            LANDMARK_TYPE.BANDIT_CAMP, LANDMARK_TYPE.ANCIENT_RUIN, LANDMARK_TYPE.PYRAMID, LANDMARK_TYPE.CAVE
-    //        } },
-    //        { BIOMES.SNOW, new LANDMARK_TYPE[] {
-    //            LANDMARK_TYPE.ABANDONED_MINE, LANDMARK_TYPE.OUTPOST, LANDMARK_TYPE.BANDIT_CAMP, LANDMARK_TYPE.ANCIENT_RUIN, LANDMARK_TYPE.ICE_PIT, LANDMARK_TYPE.CAVE
-    //        } },
-    //        { BIOMES.TUNDRA, new LANDMARK_TYPE[] {
-    //            LANDMARK_TYPE.ABANDONED_MINE, LANDMARK_TYPE.OUTPOST, LANDMARK_TYPE.BANDIT_CAMP, LANDMARK_TYPE.ANCIENT_RUIN, LANDMARK_TYPE.ICE_PIT, LANDMARK_TYPE.CAVE
-    //        } },
-    //    };
-    //    for (int i = 0; i < allTiles.Count; i++) {
-    //        HexTile currTile = allTiles[i];
-    //        List<HexTile> tilesInRange = currTile.GetTilesInRange(2);
-    //        if (currTile.landmarkOnTile == null
-    //            && currTile.elevationType == ELEVATION.PLAIN
-    //            && !currTile.IsAtEdgeOfMap()
-    //            && tilesInRange.Where(x => x.landmarkOnTile != null).Count() == 0) {
-    //            LANDMARK_TYPE[] minorLandmarkTypes = landmarkChoices[currTile.biomeType];
-    //            LANDMARK_TYPE chosenLandmarkType = minorLandmarkTypes[Random.Range(0, minorLandmarkTypes.Length)];
-    //            CreateNewLandmarkOnTile(currTile, chosenLandmarkType);
+    //private IEnumerator GenerateLandmarksCoroutine(Region[] regions, ref BaseLandmark portal, ref BaseLandmark settlement) {
+    //    //place portal first
+    //    Region[] corners = GetCornerRegions();
+    //    int portalCorner = Random.Range(0, 4);
+    //    Region portalRegion = corners[portalCorner];
+    //    Area portalArea = CreateNewArea(portalRegion, AREA_TYPE.DEMONIC_INTRUSION, 0);
+    //    BaseLandmark portalLandmark = CreateNewLandmarkOnTile(portalRegion.coreTile, LANDMARK_TYPE.THE_PORTAL, false);
+    //    portalArea.region.SetName("Portal"); //need this so that when player is initialized. This area will be assigned to the player.
+    //    portal = portalLandmark;
+
+    //    //place settlement at opposite corner
+    //    int oppositeCorner = GetOppositeCorner(portalCorner);
+    //    Region settlementRegion = corners[oppositeCorner];
+    //    CreateSettlementArea(settlementRegion);
+    //    settlement = settlementRegion.mainLandmark;
+
+    //    List<Region> availableRegions = new List<Region>(regions);
+    //    availableRegions.Remove(portalRegion);
+    //    availableRegions.Remove(settlementRegion);
+
+    //    //place all other landmarks
+    //    Dictionary<LANDMARK_TYPE, int> landmarks = WorldConfigManager.Instance.GetLandmarksForGeneration(regions.Length - 2); //subtracted 2 because of portal and settlement
+    //    //string otherLandmarkSummary = "Will generate the following landmarks: ";
+    //    foreach (KeyValuePair<LANDMARK_TYPE, int> kvp in landmarks) {
+    //        //otherLandmarkSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
+    //        for (int i = 0; i < kvp.Value; i++) {
+    //            Region chosenRegion = availableRegions[Random.Range(0, availableRegions.Count)];
+    //            CreateNewLandmarkOnTile(chosenRegion.coreTile, kvp.Key, true); //BaseLandmark landmark = 
+    //            availableRegions.Remove(chosenRegion);
+    //            yield return null;
     //        }
+    //        yield return null;
     //    }
+    //    //Debug.Log(otherLandmarkSummary);
     //}
-    public void GenerateLandmarksNew(Region[] regions, out BaseLandmark portal, out BaseLandmark settlement) {
+    public void GenerateLandmarks(Region[] regions, out BaseLandmark portal, out BaseLandmark settlement) {
         //place portal first
         Region[] corners = GetCornerRegions();
         int portalCorner = Random.Range(0, 4);
@@ -240,25 +244,8 @@ public class LandmarkManager : MonoBehaviour {
         //place settlement at opposite corner
         int oppositeCorner = GetOppositeCorner(portalCorner);
         Region settlementRegion = corners[oppositeCorner];
-        AREA_TYPE settlementType = Utilities.RandomSettlementType();
-        int citizenCount = Random.Range(WorldConfigManager.Instance.minCitizenCount, WorldConfigManager.Instance.maxCitizenCount + 1);
-        Area settlementArea = CreateNewArea(settlementRegion, settlementType, citizenCount);
-        SetEnemyPlayerArea(settlementArea);
-        BaseLandmark settlementLandmark = CreateNewLandmarkOnTile(settlementRegion.coreTile, LANDMARK_TYPE.PALACE, true);
-        settlement = settlementLandmark;
-        Faction faction = FactionManager.Instance.CreateNewFaction();
-        if (settlementType == AREA_TYPE.ELVEN_SETTLEMENT) {
-            //faction.SetInitialFactionLeaderClass("Queen");
-            faction.SetInitialFactionLeaderGender(GENDER.FEMALE);
-            faction.SetRace(RACE.ELVES);
-        } else if (settlementType == AREA_TYPE.HUMAN_SETTLEMENT) {
-            //faction.SetInitialFactionLeaderClass("King");
-            faction.SetInitialFactionLeaderGender(GENDER.MALE);
-            faction.SetRace(RACE.HUMANS);
-        }
-        OwnRegion(faction, faction.race, settlementRegion);
-        settlementArea.GenerateStructures(8); //14 //TODO: Revert once character markers have been evaluated
-        faction.GenerateStartingCitizens(2, 1, UnityEngine.Random.Range(5, 8), settlementArea.locationClassManager); //UnityEngine.Random.Range(5, 8) //9,7 //citizenCount
+        CreateSettlementArea(settlementRegion);
+        settlement = settlementRegion.mainLandmark;
 
         List<Region> availableRegions = new List<Region>(regions);
         availableRegions.Remove(portalRegion);
@@ -277,111 +264,57 @@ public class LandmarkManager : MonoBehaviour {
         }
         //Debug.Log(otherLandmarkSummary);
     }
-    //public void GenerateLandmarks(RandomWorld world, out BaseLandmark portal) {
-    //    WeightedDictionary<LANDMARK_YIELD_TYPE> yieldTypeChances = new WeightedDictionary<LANDMARK_YIELD_TYPE>();
-    //    yieldTypeChances.AddElement(LANDMARK_YIELD_TYPE.SUMMON, 15);
-    //    yieldTypeChances.AddElement(LANDMARK_YIELD_TYPE.ARTIFACT, 15);
-    //    yieldTypeChances.AddElement(LANDMARK_YIELD_TYPE.ABILITY, 20);
-    //    yieldTypeChances.AddElement(LANDMARK_YIELD_TYPE.SKIRMISH, 25);
-    //    yieldTypeChances.AddElement(LANDMARK_YIELD_TYPE.STORY_EVENT, 25);
+    public void CreateTwoNewSettlementsAtTheStartOfGame() {
+        Region firstRegion = null;
+        Region secondRegion = null;
 
-    //    int citizenCount = Random.Range(WorldConfigManager.Instance.minCitizenCountFirstSettlement, WorldConfigManager.Instance.maxCitizenCountFirstSettlement + 1);
-    //    //create player portal
-    //    portal = CreateMajorLandmarkOnColumn(world.columns.First(), LANDMARK_TYPE.DEMONIC_PORTAL, AREA_TYPE.DEMONIC_INTRUSION, 0);
+        Region[] allRegions = GridMap.Instance.allRegions;
+        while(firstRegion == null) {
+            Region potentialRegion = allRegions[UnityEngine.Random.Range(0, allRegions.Length)];
+            if (!potentialRegion.HasSettlementConnection()) {
+                firstRegion = potentialRegion;
+            }
+        }
+        while (secondRegion == null) {
+            Region potentialRegion = allRegions[UnityEngine.Random.Range(0, allRegions.Length)];
+            if (!potentialRegion.IsConnectedWith(firstRegion) && !potentialRegion.HasSettlementConnection()) {
+                secondRegion = potentialRegion;
+            }
+        }
 
-    //    for (int i = 0; i < world.columns.Count; i++) {
-    //        TileColumn previousColumn = world.columns.ElementAtOrDefault(i - 1);
-    //        TileColumn currColumn = world.columns[i];
-    //        TileColumn nextColumn = world.columns.ElementAtOrDefault(i + 1);
-    //        if (nextColumn != null) {
-    //            int connections = 0;
-    //            //create connections to nextColumn
-    //            if (currColumn.hasMajorLandmark) {
-    //                //current column has a settlement, create 2 connections outward
-    //                connections = 2;
-    //                //create connections
-    //                TileRow rowWithMajorLandmark = currColumn.GetRowWithMajorLandmark();
-    //                for (int j = 0; j < connections; j++) {
-    //                    //only choose rows that don't have landmarks or rows that have landmarks but are not yet connected to the current columns major landmark
-    //                    List<TileRow> rowChoices = currColumn.GetValidRowsInNextColumnForLandmarks(rowWithMajorLandmark, nextColumn)
-    //                        .Where(x => x.landmark == null || !x.landmark.IsConnectedWith(rowWithMajorLandmark.landmark)).ToList();
-    //                    if (rowChoices.Count == 0) {
-    //                        break;
-    //                    }
-    //                    TileRow chosenRow = rowChoices[Random.Range(0, rowChoices.Count)];
-    //                    BaseLandmark landmark;
-    //                    if (chosenRow.hasLandmark) {
-    //                        //connect to that landmark
-    //                        landmark = chosenRow.landmark;
-    //                    } else {
-    //                        //create landmark on that row, and connect to it.
-    //                        landmark = CreateMinorLandmarkOnRow(chosenRow, yieldTypeChances);
-    //                    }
-    //                    ConnectLandmarks(rowWithMajorLandmark.landmark, landmark);
-    //                }
-    //            } else if (nextColumn.hasMajorLandmark) {
-    //                //create settlement first
-    //                TileRow rowInNextColumnWithMajorLandmark = nextColumn.GetRowWithMajorLandmark();
-    //                if (rowInNextColumnWithMajorLandmark == null) {
-    //                    BaseLandmark landmark = CreateMajorLandmarkOnColumn(nextColumn, LANDMARK_TYPE.PALACE, Utilities.RandomSettlementType(), citizenCount);
-    //                    rowInNextColumnWithMajorLandmark = nextColumn.GetRowWithMajorLandmark();
-    //                    citizenCount += Random.Range(WorldConfigManager.Instance.minCitizenCountIncreasePerSettlement, WorldConfigManager.Instance.maxCitizenCountIncreasePerSettlement + 1);
-    //                }
-    //                //next column has a settlement, connect all landmarks to that
-    //                connections = 1;
-    //                for (int j = 0; j < currColumn.rows.Length; j++) {
-    //                    TileRow currRow = currColumn.rows[j];
-    //                    if (currRow.hasLandmark) {
-    //                        BaseLandmark currLandmark = currRow.landmark;
-    //                        //create connections
-    //                        for (int k = 0; k < connections; k++) {
-    //                            //connect to that settlement
-    //                            ConnectLandmarks(currRow.landmark, rowInNextColumnWithMajorLandmark.landmark);
-    //                        }
-    //                    }
-    //                }
-    //            } else {
-    //                //create connections per Landmark in the current column
-    //                for (int j = 0; j < currColumn.rows.Length; j++) {
-    //                    TileRow currRow = currColumn.rows[j];
-    //                    if (currRow.hasLandmark) {
-    //                        BaseLandmark currLandmark = currRow.landmark;
-    //                        connections = 1; //75% 1 connection
-    //                        if (Random.Range(0, 100) < 25) { //25% 2 connections
-    //                            connections = 2;
-    //                        }
-    //                        //create connections
-    //                        for (int k = 0; k < connections; k++) {
-    //                            List<TileRow> rowChoices = currColumn.GetValidRowsInNextColumnForLandmarks(currRow, nextColumn)
-    //                                .Where(x => x.landmark == null || !x.landmark.IsConnectedWith(currLandmark)).ToList();
-    //                            if (rowChoices.Count == 0) {
-    //                                break;
-    //                            }
-    //                            TileRow chosenRow = rowChoices[Random.Range(0, rowChoices.Count)];
-    //                            BaseLandmark landmark;
-    //                            if (chosenRow.hasLandmark) {
-    //                                landmark = chosenRow.landmark;
-    //                                //connect to that landmark
-    //                            } else {
-    //                                //create landmark on that row, and connect to it.
-    //                                landmark = CreateMinorLandmarkOnRow(chosenRow, yieldTypeChances);
-    //                            }
-    //                            ConnectLandmarks(currLandmark, landmark);
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
+        Area firstArea = CreateSettlementArea(firstRegion);
+        Area secondArea = CreateSettlementArea(secondRegion);
 
-    //        //for (int j = 0; j < currColumn.rows.Length; j++) {
-    //        //    if (currColumn.rows[j] != null && currColumn.rows[j].landmark != null) {
-    //        //        BaseLandmark rowLandmark = currColumn.rows[j].landmark;
-    //        //        rowLandmark.SetSameColumnLandmarks(currColumn.GetAllLandmarksInColumn(rowLandmark));
-    //        //        rowLandmark.SetSameRowTiles(currColumn.rows[j].GetAllTiles(GridMap.Instance.map).ToList());
-    //        //    }
-    //        //}
-    //    }
-    //}
+        GenerateAreaMap(firstArea);
+        GenerateAreaMap(secondArea);
+    }
+    private Area CreateSettlementArea(Region settlementRegion) {
+        AREA_TYPE settlementType = Utilities.RandomSettlementType();
+        int citizenCount = Random.Range(WorldConfigManager.Instance.minCitizenCount, WorldConfigManager.Instance.maxCitizenCount + 1);
+        Area settlementArea = CreateNewArea(settlementRegion, settlementType, citizenCount);
+        SetEnemyPlayerArea(settlementArea);
+        BaseLandmark settlementLandmark = CreateNewLandmarkOnTile(settlementRegion.coreTile, LANDMARK_TYPE.PALACE, true);
+        Faction faction = FactionManager.Instance.CreateNewFaction();
+        if (settlementType == AREA_TYPE.ELVEN_SETTLEMENT) {
+            //faction.SetInitialFactionLeaderClass("Queen");
+            faction.SetInitialFactionLeaderGender(GENDER.FEMALE);
+            faction.SetRace(RACE.ELVES);
+        } else if (settlementType == AREA_TYPE.HUMAN_SETTLEMENT) {
+            //faction.SetInitialFactionLeaderClass("King");
+            faction.SetInitialFactionLeaderGender(GENDER.MALE);
+            faction.SetRace(RACE.HUMANS);
+        }
+        OwnRegion(faction, faction.race, settlementRegion);
+        faction.GenerateStartingCitizens(2, 1, UnityEngine.Random.Range(5, 8), settlementArea.classManager);
+        settlementArea.GenerateStructures(faction.GetNumberOfDwellingsToHouseCharacters(faction.characters));
+
+        //assign characters to their respective homes. No one should be homeless
+        for (int i = 0; i < faction.characters.Count; i++) {
+            Character currCharacter = faction.characters[i];
+            settlementArea.AssignCharacterToDwellingInArea(currCharacter);
+        }
+        return settlementArea;
+    }
     private Region[] GetCornerRegions() {
         //Get the regions in the 4 corners of the map. NOTE: it is possible that there are multiple corners that belong to the same region.
         HexTile topLeftTile = GridMap.Instance.map[0, GridMap.Instance.height - 1]; //0
@@ -441,46 +374,6 @@ public class LandmarkManager : MonoBehaviour {
         island1.regionsInIsland.AddRange(island2.regionsInIsland);
         islands.Remove(island2);
     }
-    //private BaseLandmark CreateMinorLandmarkOnRow(TileRow row, WeightedDictionary<LANDMARK_YIELD_TYPE> yieldTypeChances) {
-    //    LANDMARK_YIELD_TYPE chosenYieldType = yieldTypeChances.PickRandomElementGivenWeights();
-    //    List<HexTile> tiles = row.GetElligibleTilesForLandmark(GridMap.Instance.map);
-    //    HexTile chosenTile = tiles[Random.Range(0, tiles.Count)];
-
-    //    List<LANDMARK_TYPE> landmarkChoices = WorldConfigManager.Instance.GetPossibleLandmarks(chosenTile.biomeType, chosenYieldType);
-    //    LANDMARK_TYPE chosenType = landmarkChoices[Random.Range(0, landmarkChoices.Count)];
-
-    //    BaseLandmark landmark = CreateNewLandmarkOnTile(chosenTile, chosenType);
-    //    row.SetLandmark(landmark);
-    //    return landmark;
-    //}
-    //private BaseLandmark CreateMajorLandmarkOnColumn(TileColumn currColumn, LANDMARK_TYPE type, AREA_TYPE areaType, int citizenCount) {
-    //    int randomRow = Random.Range(0, currColumn.rows.Length);
-    //    TileRow chosenRow = currColumn.rows[randomRow];
-    //    List<HexTile> choices = chosenRow.GetElligibleTilesForLandmark(GridMap.Instance.map);
-    //    HexTile chosenTile = choices[Random.Range(0, choices.Count)];
-
-    //    Area newArea = CreateNewArea(chosenTile, areaType, citizenCount);
-    //    BaseLandmark landmark = CreateNewLandmarkOnTile(chosenTile, type);
-    //    chosenRow.SetLandmark(landmark);
-    //    if (areaType == AREA_TYPE.DEMONIC_INTRUSION) {
-    //        newArea.SetName("Portal"); //need this so that when player is initialized. This area will be assigned to the player.
-    //    } else {
-    //        Faction faction = FactionManager.Instance.CreateNewFaction();
-    //        if (areaType == AREA_TYPE.ELVEN_SETTLEMENT) {
-    //            faction.SetInitialFactionLeaderClass("Queen");
-    //            faction.SetInitialFactionLeaderGender(GENDER.FEMALE);
-    //            faction.SetRace(RACE.ELVES);
-    //        } else if (areaType == AREA_TYPE.HUMAN_SETTLEMENT) {
-    //            faction.SetInitialFactionLeaderClass("King");
-    //            faction.SetInitialFactionLeaderGender(GENDER.MALE);
-    //            faction.SetRace(RACE.HUMANS);
-    //        }
-    //        OwnArea(faction, faction.race, newArea);
-    //        newArea.GenerateStructures(citizenCount);
-    //        faction.GenerateStartingCitizens(2, 1, citizenCount); //9,7
-    //    }
-    //    return landmark;
-    //}
     public void GenerateConnections(BaseLandmark portal, BaseLandmark settlement) {
         List<Region> pendingConnections = new List<Region>();
 
@@ -727,7 +620,7 @@ public class LandmarkManager : MonoBehaviour {
 
         string log = string.Empty;
         areaMap.Initialize(area);
-        TownMapSettings generatedSettings = areaMap.GenerateInnerStructures(out log);
+        TownMapSettings generatedSettings = areaMap.GenerateTownMap(out log);
         areaMap.DrawMap(generatedSettings);
         areaMap.PlaceInitialStructures(area);
 

@@ -96,7 +96,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     //burning
     public List<BurningSource> activeBurningSources { get; private set; }
     //Building spots
-    public List<BuildingSpot> buildingSpots { get; private set; }
+    public BuildingSpot[,] buildingSpots { get; private set; }
     public Character hoveredCharacter { get; private set; }
     public Area area { get; private set; }
     public LocationGridTile[,] map { get; private set; }
@@ -111,6 +111,12 @@ public class AreaInnerTileMap : MonoBehaviour {
     public bool isShowing {
         get { return InteriorMapManager.Instance.currentlyShowingMap == this; }
     }
+
+    #region getters
+    public TileBase tundraSoilAsset {
+        get { return tundraTile; }
+    }
+    #endregion
 
     #region Map Generation
     public void Initialize(Area area) {
@@ -257,7 +263,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     #endregion
 
     #region Structures
-    public TownMapSettings GenerateInnerStructures(out string log) {
+    public TownMapSettings GenerateTownMap(out string log) {
         log = "Generating Inner Structures for " + area.name;
         insideTiles = new List<LocationGridTile>();
         outsideTiles = new List<LocationGridTile>();
@@ -290,9 +296,8 @@ public class AreaInnerTileMap : MonoBehaviour {
             if (area.HasStructure(STRUCTURE_TYPE.WORK_AREA)) {
                 for (int i = 0; i < inTiles.Count; i++) {
                     LocationGridTile currTile = inTiles[i];
-                    if (currTile.structure == null) {
-                        currTile.SetStructure(area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA));
-                    }
+                    currTile.CreateGenericTileObject();
+                    currTile.SetStructure(area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA));
                 }
                 //gate.SetStructure(area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA));
             } else {
@@ -306,11 +311,9 @@ public class AreaInnerTileMap : MonoBehaviour {
                 if (currTile.IsAtEdgeOfMap() || currTile.tileType == LocationGridTile.Tile_Type.Wall) {
                     continue; //skip
                 }
-                if (currTile.structure == null) {
-                    //detailsTilemap.SetTile(currTile.localPlace, outsideDetailTile);
-                    if (!Utilities.IsInRange(currTile.localPlace.x, 0, 7) && !Utilities.IsInRange(currTile.localPlace.x, width - eastEdge, width)) {
-                        currTile.SetStructure(area.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
-                    }
+                if (!Utilities.IsInRange(currTile.localPlace.x, 0, 7) && !Utilities.IsInRange(currTile.localPlace.x, width - eastEdge, width)) {
+                    currTile.CreateGenericTileObject();
+                    currTile.SetStructure(area.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
                 }
 
             }
@@ -346,65 +349,82 @@ public class AreaInnerTileMap : MonoBehaviour {
             pos.y += startPos.y;
             if (!string.IsNullOrEmpty(currData.tileAssetName)) {
                 TileBase assetUsed = InteriorMapManager.Instance.GetTileAsset(currData.tileAssetName, true);
-                tilemap.SetTile(pos, assetUsed);
                 LocationGridTile tile = map[pos.x, pos.y];
-                tile.SetLockedState(true);
-
+                
                 if (tilemap == detailsTilemap) {
                     tile.hasDetail = true;
                     tile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                    tilemap.SetTile(pos, assetUsed);
                 } else if (tilemap == groundTilemap) {
-                    if (assetUsed.name.Contains("cobble")) {
-                        tile.SetGroundType(LocationGridTile.Ground_Type.Cobble);
-                    } else if ((assetUsed.name.Contains("Dirt") || assetUsed.name.Contains("dirt")) && (area.coreTile.biomeType == BIOMES.SNOW || area.coreTile.biomeType == BIOMES.TUNDRA)) {
-                        tile.SetGroundType(LocationGridTile.Ground_Type.Tundra);
-                        tilemap.SetTile(pos, tundraTile);
-                    } else if (assetUsed.name.Contains("water")) {
-                        tile.SetGroundType(LocationGridTile.Ground_Type.Water);
-                    }
+                    tile.SetGroundTilemapVisual(assetUsed);
+                } else {
+                    tilemap.SetTile(pos, assetUsed);
                 }
+                
+                tile.SetLockedState(true);
             }
             tilemap.SetTransformMatrix(pos, currData.matrix);
 
         }
     }
     public void PlaceInitialStructures(Area area) {
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in area.structures) {
+        //order the structures based on their priorities
+        Dictionary<STRUCTURE_TYPE, List<LocationStructure>> ordered = area.structures.OrderBy(x => x.Key.StructureGenerationPriority()).ToDictionary(x => x.Key, x => x.Value);
+
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in ordered) {
             if (keyValuePair.Key.ShouldBeGeneratedFromTemplate()) {
                 for (int i = 0; i < keyValuePair.Value.Count; i++) {
                     LocationStructure structure = keyValuePair.Value[i];
                     List<GameObject> choices = InteriorMapManager.Instance.GetStructurePrefabsForStructure(keyValuePair.Key);
                     GameObject chosenStructurePrefab = Utilities.GetRandomElement(choices);
-                    BuildingSpot chosenBuildingSpot = GetRandomOpenBuildingSpot();
-                    if (chosenBuildingSpot == null) {
-                        //NOTE: This should only happen at the start of the loop, because all the spots are closed at startup.
-                        chosenBuildingSpot = GetRandomBuildingSpot();
-                    }
-                    if (chosenBuildingSpot != null) {
-                        GameObject structurePrefab = ObjectPoolManager.Instance.InstantiateObjectFromPool(chosenStructurePrefab.name, Vector3.zero, Quaternion.identity, structureParent);
-                        structurePrefab.transform.localPosition = chosenBuildingSpot.centeredLocation;
-                        LocationStructureObject structureObject = structurePrefab.GetComponent<LocationStructureObject>();
-                        structureObject.RefreshAllTilemaps();
-                        List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(this);
-                        structureObject.SetTilesInStructure(occupiedTiles.ToArray());
-
-                        structureObject.ClearOutUnimportantObjectsBeforePlacement();
-
-                        for (int j = 0; j < occupiedTiles.Count; j++) {
-                            LocationGridTile tile = occupiedTiles[j];
-                            tile.SetStructure(structure);
+                    LocationStructureObject lso = chosenStructurePrefab.GetComponent<LocationStructureObject>();
+                    BuildingSpot chosenBuildingSpot;
+                    if (TryGetValidBuildSpotForStructure(lso, out chosenBuildingSpot) == false) {
+                        chosenBuildingSpot = GetRandomBuildingSpotAtCenter(0);
+                        if (keyValuePair.Key != STRUCTURE_TYPE.CITY_CENTER) {
+                            throw new System.Exception($"There was no valid spot to place {structure.ToString()} using prefab {chosenStructurePrefab.name} so it was placed at a random spot in the center");
                         }
-                        chosenBuildingSpot.SetIsOpen(false);
-                        chosenBuildingSpot.SetIsOccupied(true);
-                        chosenBuildingSpot.SetAllAdjacentSpotsAsOpen(this);
-                        chosenBuildingSpot.CheckIfAdjacentSpotsCanStillBeOccupied(this);
-
-                        structure.SetStructureObject(structureObject);
-                        structureObject.OnStructureObjectPlaced(this);
+                        Debug.LogWarning($"There was no valid spot to place {structure.ToString()} uso it was placed at a random spot in the center");
+                    }
+                    if (chosenBuildingSpot == null) {
+                        throw new System.Exception($"Could not find valid building spot for { structure.ToString() } using prefab { chosenStructurePrefab.name }");
+                    } else {
+                        bool randomizePlacement = lso.IsBiggerThanBuildSpot() == false; //only randomize placement if structure object is not bigger than the build spot
+                        PlaceStructureObjectAt(chosenBuildingSpot, chosenStructurePrefab, structure, randomizePlacement);
                     }
                 }
             }
         }
+    }
+    private void PlaceStructureObjectAt(BuildingSpot chosenBuildingSpot, GameObject structurePrefab, LocationStructure structure, bool randomizePlacement) {
+        GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structurePrefab.name, Vector3.zero, Quaternion.identity, structureParent);
+        if (randomizePlacement) {
+            LocationStructureObject structureObjectPrefab = structureGO.GetComponent<LocationStructureObject>();
+            //only randomize x position if structure prefab is NOT horizontally big
+            //only randomize y position if structure prefab is NOT vertically big
+            structureGO.transform.localPosition = chosenBuildingSpot.GetRandomTilePositionInBuildSpot(structureObjectPrefab); //chosenBuildingSpot.centeredLocation;
+        } else {
+            structureGO.transform.localPosition = chosenBuildingSpot.centeredLocation;
+        }
+        
+        LocationStructureObject structureObject = structureGO.GetComponent<LocationStructureObject>();
+        structureObject.RefreshAllTilemaps();
+        List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(this);
+        structureObject.SetTilesInStructure(occupiedTiles.ToArray());
+
+        structureObject.ClearOutUnimportantObjectsBeforePlacement();
+
+        for (int j = 0; j < occupiedTiles.Count; j++) {
+            LocationGridTile tile = occupiedTiles[j];
+            tile.SetStructure(structure);
+        }
+        chosenBuildingSpot.SetIsOpen(false);
+        chosenBuildingSpot.SetIsOccupied(true);
+        chosenBuildingSpot.SetAllAdjacentSpotsAsOpen(this);
+        chosenBuildingSpot.CheckIfAdjacentSpotsCanStillBeOccupied(this);
+
+        structure.SetStructureObject(structureObject);
+        structureObject.OnStructureObjectPlaced(this, structure);
     }
     #endregion
 
@@ -432,23 +452,29 @@ public class AreaInnerTileMap : MonoBehaviour {
         DrawTiles(detailsTilemap, settings.detailTiles, startPoint);
     }
     private void CreateBuildingSpots(TownMapSettings settings, Vector3Int startPoint) {
-        buildingSpots = new List<BuildingSpot>();
-        List<BuildingSpotData> orderedData = settings.buildSpots.OrderBy(x => x.id).ToList();
-        for (int i = 0; i < orderedData.Count; i++) {
-            BuildingSpotData currSpotData = orderedData[i];
+        buildingSpots = new BuildingSpot[settings.buildSpots.Max(x => x.buildingSpotGridPos.x + 1), settings.buildSpots.Max(x => x.buildingSpotGridPos.y + 1)];
+        for (int i = 0; i < settings.buildSpots.Count; i++) {
+            BuildingSpotData currSpotData = settings.buildSpots[i];
             Vector3Int pos = new Vector3Int(currSpotData.location.x, currSpotData.location.y, 0);
             pos.x += startPoint.x;
             pos.y += startPoint.y;
             currSpotData.location = pos;
             BuildingSpot actualSpot = new BuildingSpot(currSpotData);
-#if UNITY_EDITOR
             GameObject buildSpotGO = GameObject.Instantiate(buildSpotPrefab, this.structureTilemap.transform);
             BuildingSpotItem spotItem = buildSpotGO.GetComponent<BuildingSpotItem>();
             buildSpotGO.transform.localPosition = new Vector3(pos.x + 0.5f, pos.y + 0.5f, 0f);
             spotItem.SetBuildingSpot(actualSpot);
-#endif
-            buildingSpots.Add(actualSpot);
+            if (buildingSpots[currSpotData.buildingSpotGridPos.x, currSpotData.buildingSpotGridPos.y] != null) {
+                throw new System.Exception($"Problem with building spot array {currSpotData.buildingSpotGridPos.x},{currSpotData.buildingSpotGridPos.y} already has value");
+            }
+            buildingSpots[currSpotData.buildingSpotGridPos.x, currSpotData.buildingSpotGridPos.y] = actualSpot;
             actualSpot.Initialize(this);
+        }
+
+        for (int x = 0; x <= buildingSpots.GetUpperBound(0); x++) {
+            for (int y = 0; y <= buildingSpots.GetUpperBound(1); y++) {
+                buildingSpots[x, y].FindNeighbours(this);
+            }
         }
     }
 
@@ -457,14 +483,15 @@ public class AreaInnerTileMap : MonoBehaviour {
     #region Details
     public void GenerateDetails() {
         //Generate details for the outside map
-        MapPerlinDetails(outsideTiles.Where(x => 
-        x.objHere == null 
-        && (x.structure == null || x.structure.structureType.IsOpenSpace())
-        && x.tileType != LocationGridTile.Tile_Type.Wall
-        && x.tileType != LocationGridTile.Tile_Type.Gate
-        && !x.isLocked
-        && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Gate) 
-        && !x.IsAdjacentTo(typeof(MagicCircle))).ToList()); //Make this better!
+        MapPerlinDetails(
+            outsideTiles.Where(x =>
+                x.objHere == null
+                && (x.structure == null || x.structure.structureType == STRUCTURE_TYPE.WILDERNESS || x.structure.structureType == STRUCTURE_TYPE.WORK_AREA)
+                && x.tileType != LocationGridTile.Tile_Type.Wall
+                && !x.isLocked
+                && !x.IsAdjacentTo(typeof(MagicCircle))
+            ).ToList()
+        ); //Make this better!
 
         if (area.areaType != AREA_TYPE.DUNGEON) {
             if (area.structures.ContainsKey(STRUCTURE_TYPE.WORK_AREA)) {
@@ -476,19 +503,19 @@ public class AreaInnerTileMap : MonoBehaviour {
 
                 //Generate details for inside map (Trees, shrubs, etc.)
                 MapPerlinDetails(area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).tiles
-                    .Where(x => !x.hasDetail && x.tileType != LocationGridTile.Tile_Type.Road
-                    && x.objHere == null && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Gate)
+                    .Where(x => 
+                    !x.hasDetail
+                    && x.objHere == null 
                     && !x.isLocked
-                    && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Structure_Entrance)
-                    && x.tileType != LocationGridTile.Tile_Type.Gate).ToList());
+                    && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Structure_Entrance)).ToList());
 
                 //Generate details for work area (crates, barrels)
                 WorkAreaDetails(area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).tiles
-                    .Where(x => !x.hasDetail && x.tileType != LocationGridTile.Tile_Type.Road
-                    && x.objHere == null && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Gate)
+                    .Where(x => 
+                    !x.hasDetail 
+                    && x.objHere == null 
                     && !x.isLocked
-                    && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Structure_Entrance)
-                    && x.tileType != LocationGridTile.Tile_Type.Gate).ToList());
+                    && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Structure_Entrance)).ToList());
             }
         }
         CreateSeamlessEdges();
@@ -517,31 +544,25 @@ public class AreaInnerTileMap : MonoBehaviour {
             //ground
             if (area.coreTile.biomeType == BIOMES.SNOW || area.coreTile.biomeType == BIOMES.TUNDRA) {
                 if (sample < 0.5f) {
-                    currTile.SetGroundType(LocationGridTile.Ground_Type.Snow);
-                    groundTilemap.SetTile(currTile.localPlace, snowTile);
+                    currTile.SetGroundTilemapVisual(snowTile);
                 } else if (sample >= 0.5f && sample < 0.8f) {
-                    currTile.SetGroundType(LocationGridTile.Ground_Type.Stone);
-                    groundTilemap.SetTile(currTile.localPlace, stoneTile);
+                    currTile.SetGroundTilemapVisual(stoneTile);
                 } else {
-                    currTile.SetGroundType(LocationGridTile.Ground_Type.Snow_Dirt);
-                    groundTilemap.SetTile(currTile.localPlace, snowDirt);
+                    currTile.SetGroundTilemapVisual(snowDirt);
                 }
             } else {
                 if (sample < 0.5f) {
-                    currTile.SetGroundType(LocationGridTile.Ground_Type.Grass);
-                    groundTilemap.SetTile(currTile.localPlace, grassTile);
+                    currTile.SetGroundTilemapVisual(grassTile);
                 } else if (sample >= 0.5f && sample < 0.8f) {
-                    currTile.SetGroundType(LocationGridTile.Ground_Type.Soil);
-                    groundTilemap.SetTile(currTile.localPlace, soilTile);
+                    currTile.SetGroundTilemapVisual(soilTile);
                 } else {
-                    currTile.SetGroundType(LocationGridTile.Ground_Type.Stone);
-                    groundTilemap.SetTile(currTile.localPlace, stoneTile);
+                    currTile.SetGroundTilemapVisual(stoneTile);
                 }
                
             }
-            
+
             //trees and shrubs
-            if (!currTile.hasDetail) {
+            if (!currTile.hasDetail && currTile.HasNeighbouringWalledStructure() == false) {
                 if (sampleDetail < 0.5f) {
                     if (currTile.groundType == LocationGridTile.Ground_Type.Grass || currTile.groundType == LocationGridTile.Ground_Type.Snow) {
                         List<LocationGridTile> overlappedTiles = GetTiles(new Point(2, 2), currTile, tiles);
@@ -599,7 +620,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         //flower, rock and garbage
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile currTile = tiles[i];
-            if (!currTile.hasDetail) {
+            if (!currTile.hasDetail && currTile.HasNeighbouringWalledStructure() == false) {
                 if (Random.Range(0, 100) < 3) {
                     currTile.hasDetail = true;
                     detailsTilemap.SetTile(currTile.localPlace, GetFlowerTile(area));
@@ -631,7 +652,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         List<LocationGridTile> tilesForBarrels = new List<LocationGridTile>();
         for (int i = 0; i < insideTiles.Count; i++) {
             LocationGridTile currTile = insideTiles[i];
-            if (currTile.tileType != LocationGridTile.Tile_Type.Road && currTile.IsAdjacentToWall()) {
+            if (currTile.IsAdjacentToWall()) {
                 tilesForBarrels.Add(currTile);
             }
         }
@@ -649,7 +670,7 @@ public class AreaInnerTileMap : MonoBehaviour {
 
         for (int i = 0; i < insideTiles.Count; i++) {
             LocationGridTile currTile = insideTiles[i];
-            if (currTile.tileType != LocationGridTile.Tile_Type.Road && !currTile.hasDetail && currTile.structure.structureType.IsOpenSpace() && Random.Range(0, 100) < 3) {
+            if (!currTile.hasDetail && currTile.HasNeighbouringWalledStructure() == false && currTile.structure.structureType.IsOpenSpace() && Random.Range(0, 100) < 3) {
                 //3% of tiles should have random garbage
                 currTile.hasDetail = true;
                 detailsTilemap.SetTile(currTile.localPlace, randomGarbTile);
@@ -744,12 +765,12 @@ public class AreaInnerTileMap : MonoBehaviour {
         for (int i = 0; i < allTiles.Count; i++) {
             LocationGridTile tile = allTiles[i];
             if (tile.structure != null && !tile.structure.structureType.IsOpenSpace()) { continue; } //skip non open space structure tiles.
-            Dictionary<TileNeighbourDirection, LocationGridTile> neighbours;
+            Dictionary<GridNeighbourDirection, LocationGridTile> neighbours;
             if (tile.HasCardinalNeighbourOfDifferentGroundType(out neighbours)) {
                 //grass should be higher than dirt
                 //dirt should be higher than cobble
                 //cobble should be higher than grass
-                foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
+                foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
                     LocationGridTile currNeighbour = keyValuePair.Value;
                     if (currNeighbour.structure != null && !currNeighbour.structure.structureType.IsOpenSpace()) { continue; } //skip non open space structure tiles.
                     bool createEdge = false;
@@ -775,16 +796,16 @@ public class AreaInnerTileMap : MonoBehaviour {
                     if (createEdge) {
                         Tilemap mapToUse;
                         switch (keyValuePair.Key) {
-                            case TileNeighbourDirection.North:
+                            case GridNeighbourDirection.North:
                                 mapToUse = northEdgeTilemap;
                                 break;
-                            case TileNeighbourDirection.South:
+                            case GridNeighbourDirection.South:
                                 mapToUse = southEdgeTilemap;
                                 break;
-                            case TileNeighbourDirection.West:
+                            case GridNeighbourDirection.West:
                                 mapToUse = westEdgeTilemap;
                                 break;
-                            case TileNeighbourDirection.East:
+                            case GridNeighbourDirection.East:
                                 mapToUse = eastEdgeTilemap;
                                 break;
                             default:
@@ -995,27 +1016,115 @@ public class AreaInnerTileMap : MonoBehaviour {
 
     #region Building Spots
     private BuildingSpot GetRandomOpenBuildingSpot() {
-        List<BuildingSpot> choices = new List<BuildingSpot>(buildingSpots.Where(x => x.isOpen));
+        List<BuildingSpot> choices = GetOpenBuildingSpots();
         if (choices.Count > 0) {
             return Utilities.GetRandomElement(choices);
         }
         return null;
     }
-    private BuildingSpot GetRandomBuildingSpot() {
-        return Utilities.GetRandomElement(buildingSpots);
+    private bool TryGetValidBuildSpotForStructure(LocationStructureObject structureObject, out BuildingSpot buildingSpot) {
+        if (structureObject.IsBiggerThanBuildSpot()) {
+            List<BuildingSpot> openSpots = GetOpenBuildingSpots();
+            if (openSpots.Count > 0) {
+                List<BuildingSpot> choices = new List<BuildingSpot>();
+                //if the object exceeds a build spot
+                //then first check if it is bigger horizontally or vertically,
+                bool isHorizontallyBig = structureObject.IsHorizontallyBig();
+                bool isVerticallyBig = structureObject.IsVerticallyBig();
+                if (isHorizontallyBig && isVerticallyBig) {
+                    //if it is bigger both horizontally and vertically
+                    //only get build spots that do not have any occupied adjacent spots to their top, bottom, left and right
+                    for (int i = 0; i < openSpots.Count; i++) {
+                        BuildingSpot currSpot = openSpots[i];
+                        bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North) && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false;
+                        bool hasUnoccupiedSouth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.South) && currSpot.neighbours[GridNeighbourDirection.South].isOccupied == false;
+                        bool hasUnoccupiedWest = currSpot.neighbours.ContainsKey(GridNeighbourDirection.West) && currSpot.neighbours[GridNeighbourDirection.West].isOccupied == false;
+                        bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East) && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false;
+                        if (hasUnoccupiedNorth && hasUnoccupiedSouth && hasUnoccupiedEast && hasUnoccupiedWest) {
+                            choices.Add(currSpot);
+                        }
+                    }
+                } else if (isHorizontallyBig) {
+                    //if it is bigger horizontally
+                    //only get build spots that do not have any occupied adjacent spots to their left or right
+                    for (int i = 0; i < openSpots.Count; i++) {
+                        BuildingSpot currSpot = openSpots[i];
+                        bool hasUnoccupiedWest = currSpot.neighbours.ContainsKey(GridNeighbourDirection.West) && currSpot.neighbours[GridNeighbourDirection.West].isOccupied == false;
+                        bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East) && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false;
+                        if (hasUnoccupiedEast || hasUnoccupiedWest) {
+                            choices.Add(currSpot);
+                        }
+                    }
+                } else if (isVerticallyBig) {
+                    //if it is bigger vertically
+                    //only get build spots that do not have any occupied adjacent spots to their top or bottom
+                    for (int i = 0; i < openSpots.Count; i++) {
+                        BuildingSpot currSpot = openSpots[i];
+                        bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North) && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false;
+                        bool hasUnoccupiedSouth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.South) && currSpot.neighbours[GridNeighbourDirection.South].isOccupied == false;
+                        if (hasUnoccupiedNorth || hasUnoccupiedSouth) {
+                            choices.Add(currSpot);
+                        }
+                    }
+                }
+                if (choices.Count > 0) {
+                    buildingSpot = Utilities.GetRandomElement(choices);
+                    return true;
+                }
+            }
+            //could not find any spots
+            buildingSpot = null;
+            return false;
+        } else {
+            //if the object does not exceed the size of a build spot, then just give it a random open build spot
+            buildingSpot = GetRandomOpenBuildingSpot();
+            return buildingSpot != null;
+        }
     }
-    public BuildingSpot[] GetBuildingSpotsWithID(params int[] ids) {
-        BuildingSpot[] spots = new BuildingSpot[ids.Length];
-        int index = 0;
-        for (int i = 0; i < buildingSpots.Count; i++) {
-            BuildingSpot currSpot = buildingSpots[i];
-            if (ids.Contains(currSpot.id)) {
-                spots[index] = currSpot;
-                index++;
+    private BuildingSpot GetRandomBuildingSpotAtCenter(int allowance) {
+        int upperBoundX = buildingSpots.GetUpperBound(0);
+        int upperBoundY = buildingSpots.GetUpperBound(1);
+
+        int centerX = upperBoundX / 2;
+        int centerY = upperBoundY / 2;
+
+        List<BuildingSpot> choices = new List<BuildingSpot>();
+        for (int x = 0; x < upperBoundX; x++) {
+            for (int y = 0; y < upperBoundY; y++) {
+                bool isXSatisfied = x == centerX || Utilities.IsInRange(x, centerX - allowance, centerX + allowance);
+                bool isYSatisfied = y == centerY || Utilities.IsInRange(y, centerY - allowance, centerY + allowance);
+                if (isXSatisfied && isYSatisfied) {
+                    BuildingSpot currSpot = buildingSpots[x, y];
+                    choices.Add(currSpot);
+                }
             }
         }
-        return spots;
+        return Utilities.GetRandomElement(choices);
     }
+    private List<BuildingSpot> GetOpenBuildingSpots() {
+        List<BuildingSpot> open = new List<BuildingSpot>();
+        for (int x = 0; x < buildingSpots.GetUpperBound(0); x++) {
+            for (int y = 0; y < buildingSpots.GetUpperBound(1); y++) {
+                BuildingSpot currSpot = buildingSpots[x, y];
+                if (currSpot.isOpen) {
+                    open.Add(currSpot);
+                }
+            }
+        }
+        return open;
+    }
+    //public BuildingSpot[] GetBuildingSpotsWithID(params int[] ids) {
+    //    BuildingSpot[] spots = new BuildingSpot[ids.Length];
+    //    int index = 0;
+    //    for (int i = 0; i < buildingSpots.Count; i++) {
+    //        BuildingSpot currSpot = buildingSpots[i];
+    //        if (ids.Contains(currSpot.id)) {
+    //            spots[index] = currSpot;
+    //            index++;
+    //        }
+    //    }
+    //    return spots;
+    //}
     #endregion
 
     #region Burning Source

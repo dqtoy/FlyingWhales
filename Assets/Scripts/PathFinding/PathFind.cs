@@ -81,50 +81,6 @@ namespace PathFind {
                                 queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
                             }
                             break;
-                        case GRID_PATHFINDING_MODE.ROADS_ONLY:
-                            foreach (Node n in path.LastStep.RoadTiles) {
-                                d = distance(path.LastStep, n);
-                                newPath = path.AddStep(n, d);
-                                queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
-                            }
-                            break;
-                        case GRID_PATHFINDING_MODE.REALISTIC:
-                            foreach (Node n in path.LastStep.RealisticTiles) {
-                                if (n.structure != null && n.structure.location.areaType != AREA_TYPE.DUNGEON) {
-                                    if (n.tileType == LocationGridTile.Tile_Type.Structure && n.structure != start.structure && n.structure != destination.structure) {
-                                        continue;
-                                    }
-                                }
-                                d = distance(path.LastStep, n);
-                                newPath = path.AddStep(n, d);
-                                queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
-                            }
-                            break;
-                        case GRID_PATHFINDING_MODE.MAIN_ROAD_GEN:
-                            foreach (Node n in path.LastStep.FourNeighbours()) {
-                                if (n.HasNeighbouringStructureOfType(new List<STRUCTURE_TYPE>() {
-                                    STRUCTURE_TYPE.DWELLING, STRUCTURE_TYPE.WAREHOUSE,
-                                    STRUCTURE_TYPE.INN,
-                                }) || n.tileType ==  LocationGridTile.Tile_Type.Wall) {
-                                    continue; //skip
-                                }
-
-                                if (n != start && n != destination && n.tileType == LocationGridTile.Tile_Type.Structure) {
-                                    continue; //skip
-                                }
-
-                                d = distance(path.LastStep, n);
-                                newPath = path.AddStep(n, d);
-                                queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
-                            }
-                            break;
-                        case GRID_PATHFINDING_MODE.CAVE_ROAD_GEN:
-                            foreach (Node n in path.LastStep.FourNeighbours()) {
-                                d = distance(path.LastStep, n);
-                                newPath = path.AddStep(n, d);
-                                queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
-                            }
-                            break;
                         default:
                             foreach (Node n in path.LastStep.ValidTiles) {
                                 d = distance(path.LastStep, n);

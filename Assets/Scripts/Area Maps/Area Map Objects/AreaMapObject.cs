@@ -21,8 +21,11 @@ public abstract class AreaMapObject<T> where T : IPointOfInterest {
         collisionTrigger.gameObject.SetActive(true);
         collisionTrigger.SetLocation(tile);
     }
-    public virtual void DisableGameObject() {
-        areaMapGameObject.gameObject.SetActive(false);
+    public void DisableGameObject() {
+        areaMapGameObject.SetActiveState(false);
+    }
+    public void EnableGameObject() {
+        areaMapGameObject.SetActiveState(true);
     }
     #endregion
 
@@ -30,9 +33,6 @@ public abstract class AreaMapObject<T> where T : IPointOfInterest {
     public void InitializeCollisionTrigger(T obj) {
         SetCollisionTrigger(areaMapGameObject.collisionTrigger);
         collisionTrigger.Initialize(obj);
-    }
-    public virtual void EnableCollisionTrigger() {
-        collisionTrigger.gameObject.SetActive(true);
     }
     public void SetCollisionTrigger(POICollisionTrigger trigger) {
         collisionTrigger = trigger;
