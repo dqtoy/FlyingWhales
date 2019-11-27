@@ -20,10 +20,8 @@ public class CharacterSetup {
     public CharacterClass characterClass {
         get {
             if (_charClass == null) {
-                if (CharacterManager.Instance.classesDictionary.ContainsKey(characterClassName)) {
-                    _charClass = CharacterManager.Instance.classesDictionary[characterClassName];
-                }
-                else {
+                _charClass = CharacterManager.Instance.GetCharacterClass(characterClassName);
+                if(_charClass == null) {
                     throw new Exception("There is no class with the name " + characterClassName);
                 }
             }

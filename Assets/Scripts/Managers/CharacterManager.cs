@@ -4,10 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Traits;
 using System.IO;
+using System;
 
 public class CharacterManager : MonoBehaviour {
 
     public static CharacterManager Instance = null;
+
+    [Header("Sub Managers")]
+    [SerializeField] private CharacterClassManager classManager;
 
     public static readonly string[] sevenDeadlySinsClassNames = { "Lust", "Gluttony", "Greed", "Sloth", "Wrath", "Envy", "Pride" };
     public const int MAX_HISTORY_LOGS = 300;
@@ -24,7 +28,7 @@ public class CharacterManager : MonoBehaviour {
     private List<Character> _allCharacters;
     private List<CharacterAvatar> _allCharacterAvatars;
 
-	public Sprite heroSprite;
+    public Sprite heroSprite;
 
     [Header("Character Portrait Assets")]
     [SerializeField] private GameObject _characterPortraitPrefab;
@@ -50,10 +54,7 @@ public class CharacterManager : MonoBehaviour {
 
     public Dictionary<Character, List<string>> allCharacterLogs { get; private set; }
     public Dictionary<CHARACTER_ROLE, INTERACTION_TYPE[]> characterRoleInteractions { get; private set; }
-    public Dictionary<string, CharacterClass> classesDictionary { get; private set; }
-    public Dictionary<string, List<CharacterClass>> identifierClasses { get; private set; }
     public Dictionary<string, DeadlySin> deadlySins { get; private set; }
-    public List<CharacterClass> normalCombatantClasses { get; private set; }
 
     
     private List<string> deadlySinsRotation = new List<string>();
@@ -77,7 +78,7 @@ public class CharacterManager : MonoBehaviour {
     }
 
     public void Initialize() {
-        ConstructAllClasses();
+        classManager.Initialize();
         CreateDeadlySinsData();
         defaultSleepTicks = GameManager.Instance.GetTicksBasedOnHour(8);
         Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
@@ -214,61 +215,6 @@ public class CharacterManager : MonoBehaviour {
         _allCharacters.Remove(character);
         Messenger.Broadcast<Character>(Signals.CHARACTER_REMOVED, character);
     }
-    private void ConstructAllClasses() {
-        classesDictionary = new Dictionary<string, CharacterClass>();
-        //normalClasses = new Dictionary<string, CharacterClass>();
-        //uniqueClasses = new Dictionary<string, CharacterClass>();
-        //beastClasses = new Dictionary<string, CharacterClass>();
-        //demonClasses = new Dictionary<string, CharacterClass>();
-        normalCombatantClasses = new List<CharacterClass>();
-        identifierClasses = new Dictionary<string, List<CharacterClass>>();
-        identifierClasses.Add("All", new List<CharacterClass>());
-        string path = Utilities.dataPath + "CharacterClasses/";
-        string[] classes = System.IO.Directory.GetFiles(path, "*.json");
-        for (int i = 0; i < classes.Length; i++) {
-            CharacterClass currentClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText(classes[i]));
-            //currentClass.ConstructData();
-            classesDictionary.Add(currentClass.className, currentClass);
-            //if(currentClass.identifier == "Normal") {
-            //    normalClasses.Add(currentClass.className, currentClass);
-            //    //if (!identifierClasses.ContainsKey(currentClass.identifier)) {
-            //    //    identifierClasses.Add(currentClass.identifier, normalClasses);
-            //    //}
-            //}else if (currentClass.identifier == "Unique") {
-            //    uniqueClasses.Add(currentClass.className, currentClass);
-            //    //if (!identifierClasses.ContainsKey(currentClass.identifier)) {
-            //    //    identifierClasses.Add(currentClass.identifier, uniqueClasses);
-            //    //}
-            //} else if (currentClass.identifier == "Beast") {
-            //    beastClasses.Add(currentClass.className, currentClass);
-            //    //if (!identifierClasses.ContainsKey(currentClass.identifier)) {
-            //    //    identifierClasses.Add(currentClass.identifier, beastClasses);
-            //    //}
-            //} else if (currentClass.identifier == "Demon") {
-            //    demonClasses.Add(currentClass.className, currentClass);
-            //    //if (!identifierClasses.ContainsKey(currentClass.identifier)) {
-            //    //    identifierClasses.Add(currentClass.identifier, demonClasses);
-            //    //}
-            //}
-            if (!identifierClasses.ContainsKey(currentClass.identifier)) {
-                identifierClasses.Add(currentClass.identifier, new List<CharacterClass>() { currentClass });
-            } else {
-                identifierClasses[currentClass.identifier].Add(currentClass);
-            }
-            identifierClasses["All"].Add(currentClass);
-            
-            if (!currentClass.isNonCombatant && currentClass.identifier == "Normal") {
-                normalCombatantClasses.Add(currentClass);
-            }
-        }
-
-    }
-    public CharacterClass CreateNewCharacterClass(string className) {
-        if (classesDictionary.ContainsKey(className)) {
-            return classesDictionary[className].CreateNewCopy();
-        }
-        return null;
-    }
     public string GetDeadlySinsClassNameFromRotation() {
         if (deadlySinsRotation.Count == 0) {
             deadlySinsRotation.AddRange(sevenDeadlySinsClassNames);
@@ -276,17 +222,6 @@ public class CharacterManager : MonoBehaviour {
         string nextClass = deadlySinsRotation[0];
         deadlySinsRotation.RemoveAt(0);
         return nextClass;
-    }
-    public string GetRandomClassByIdentifier(string identifier) {
-        if(identifier == "Demon") {
-            return GetDeadlySinsClassNameFromRotation();
-        } else if (identifierClasses.ContainsKey(identifier)) {
-            return GetRandomClassName(identifierClasses[identifier]);
-        }
-        return string.Empty;
-    }
-    public string GetRandomClassName(List<CharacterClass> list) {
-        return list[UnityEngine.Random.Range(0, list.Count)].className;
     }
     public void AddCharacterAvatar(CharacterAvatar characterAvatar) {
         int centerOrderLayer = (_allCharacterAvatars.Count * 2) + 1;
@@ -331,13 +266,40 @@ public class CharacterManager : MonoBehaviour {
         for (int i = 0; i < allCharacters.Count; i++) {
             Character character = allCharacters[i];
             if (character.minion == null) {
-                if (Random.Range(0, 2) == 0) {
+                if (UnityEngine.Random.Range(0, 2) == 0) {
                     SPECIAL_TOKEN randomItem = choices[UnityEngine.Random.Range(0, choices.Count)];
                     SpecialToken token = TokenManager.Instance.CreateSpecialToken(randomItem);
                     character.ObtainToken(token);
                 }
             }
         }
+    }
+    #endregion
+
+    #region Character Class Manager
+    public string RunCharacterIdlePlan(Character character) {
+        return classManager.RunIdlePlanForCharacter(character);
+    }
+    public CharacterClass CreateNewCharacterClass(string className) {
+        return classManager.CreateNewCharacterClass(className);
+    }
+    public string GetRandomClassByIdentifier(string identifier) {
+        if (identifier == "Demon") {
+            return GetDeadlySinsClassNameFromRotation();
+        }
+        return classManager.GetRandomClassByIdentifier(identifier);
+    }
+    public bool HasCharacterClass(string className) {
+        return classManager.classesDictionary.ContainsKey(className);
+    }
+    public CharacterClass GetCharacterClass(string className) {
+        if (HasCharacterClass(className)) {
+            return classManager.classesDictionary[className];
+        }
+        return null;
+    }
+    public List<CharacterClass> GetNormalCombatantClasses() {
+        return classManager.normalCombatantClasses;
     }
     #endregion
 
@@ -529,7 +491,7 @@ public class CharacterManager : MonoBehaviour {
             ps.beard = -1;
             ps.wholeImage = characterClass;
             ps.hairColor = 0f;
-            ps.wholeImageColor = Random.Range(-144f, 144f);
+            ps.wholeImageColor = UnityEngine.Random.Range(-144f, 144f);
         } else {
             ps.head = Utilities.GetRandomIndexInList(pac.head);
             ps.brows = Utilities.GetRandomIndexInList(pac.brows);
@@ -553,7 +515,7 @@ public class CharacterManager : MonoBehaviour {
                 ps.beard = Utilities.GetRandomIndexInList(pac.beard);
             }
             ps.wholeImage = string.Empty;
-            ps.hairColor = Random.Range(-720f, 720f);
+            ps.hairColor = UnityEngine.Random.Range(-720f, 720f);
             ps.wholeImageColor = 0f;
         }
         return ps;
@@ -687,9 +649,9 @@ public class CharacterManager : MonoBehaviour {
     public Sprite GetMarkerHairSprite(GENDER gender) {
         switch (gender) {
             case GENDER.MALE:
-                return maleHairSprite[Random.Range(0, maleHairSprite.Length)];
+                return maleHairSprite[UnityEngine.Random.Range(0, maleHairSprite.Length)];
             case GENDER.FEMALE:
-                return femaleHairSprite[Random.Range(0, femaleHairSprite.Length)];
+                return femaleHairSprite[UnityEngine.Random.Range(0, femaleHairSprite.Length)];
             default:
                 return null;
         }
