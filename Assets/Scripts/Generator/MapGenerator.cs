@@ -73,7 +73,7 @@ public class MapGenerator : MonoBehaviour {
         CharacterManager.Instance.GiveInitialItems();
         //CharacterManager.Instance.GenerateInitialAwareness();
         InteractionManager.Instance.Initialize();
-        StoryEventsManager.Instance.Initialize();
+        WorldEventsManager.Instance.Initialize();
 
         PlayerManager.Instance.InitializePlayer(portal);
 
@@ -143,7 +143,7 @@ public class MapGenerator : MonoBehaviour {
 
         TokenManager.Instance.Initialize();
         //CharacterManager.Instance.GenerateRelationships();
-        StoryEventsManager.Instance.Initialize();
+        WorldEventsManager.Instance.Initialize();
 
         yield return null;
         //LandmarkManager.Instance.GenerateAreaMap(LandmarkManager.Instance.enemyOfPlayerArea, false);

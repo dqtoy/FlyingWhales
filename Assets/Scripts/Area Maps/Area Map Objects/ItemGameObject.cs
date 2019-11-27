@@ -9,7 +9,6 @@ public class ItemGameObject : AreaMapGameObject<SpecialToken> {
         objectVisual.sprite = InteriorMapManager.Instance.GetItemAsset(poi.specialTokenType);
     }
 
-    public override void UpdateTileObjectVisual(SpecialToken specialToken) {
-        //
-    }
+    public override void UpdateTileObjectVisual(SpecialToken specialToken) { }
+    public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
 }

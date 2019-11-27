@@ -44,6 +44,9 @@ public class BaseLandmark {
     public HexTile connectedTile {
         get { return _connectedTile; }
     }
+    public LandmarkNameplate landmarkNameplate {
+        get { return nameplate; }
+    }
     #endregion
 
     public BaseLandmark() {

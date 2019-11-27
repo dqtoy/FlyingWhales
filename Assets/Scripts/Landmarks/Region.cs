@@ -389,6 +389,15 @@ public class Region {
         }
         return false;
     }
+    public bool IsConnectedToRegionOwnedBy(Faction faction) {
+        for (int i = 0; i < connections.Count; i++) {
+            Region region = connections[i];
+            if (region.owner == faction) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Corruption/Invasion
@@ -434,7 +443,7 @@ public class Region {
     }
     public void LoadEvent(SaveDataRegion data) {
         if (data.activeEvent != WORLD_EVENT.NONE) {
-            activeEvent = StoryEventsManager.Instance.GetWorldEvent(data.activeEvent);
+            activeEvent = WorldEventsManager.Instance.GetWorldEvent(data.activeEvent);
             Character spawner = CharacterManager.Instance.GetCharacterByID(data.eventSpawnedByCharacterID);
             SetCharacterEventSpawner(spawner);
             eventData = data.eventData.Load();
@@ -445,27 +454,13 @@ public class Region {
     public void SetCharacterEventSpawner(Character character) {
         eventSpawnedBy = character;
     }
-    //private void SpawnBasicEvent(Character spawner) {
-    //    string summary = GameManager.Instance.TodayLogString() + spawner.name + " arrived at " + name + " will try to spawn random event.";
-    //    List<WorldEvent> events = StoryEventsManager.Instance.GetEventsThatCanSpawnAt(this, true);
-    //    if (events.Count > 0) {
-    //        summary += "\nPossible events are: ";
-    //        for (int i = 0; i < events.Count; i++) {
-    //            summary += "|" + events[i].name + "|";
-    //        }
-    //        WorldEvent chosenEvent = events[Random.Range(0, events.Count)];
-    //        summary += "\nChosen Event is: " + chosenEvent.name;
-    //        SpawnEvent(chosenEvent, spawner);
-    //    } else {
-    //        summary += "\nNo possible events to spawn.";
-    //    }
-    //    Debug.Log(summary);
-    //}
     private void SpawnEventThatCanProvideEffectFor(WORLD_EVENT_EFFECT[] effects, Character spawner) {
-        List<WorldEvent> events = StoryEventsManager.Instance.GetEventsThatCanProvideEffects(this, spawner, effects);
+        List<WorldEvent> events = WorldEventsManager.Instance.GetEventsThatCanProvideEffects(this, spawner, effects);
         if (events.Count > 0) {
             WorldEvent chosenEvent = events[Random.Range(0, events.Count)];
             SpawnEvent(chosenEvent, spawner);
+        } else {
+            Debug.LogWarning($"{GameManager.Instance.TodayLogString()}No spawnable events were found for {spawner.name} at {this.name}");
         }
     }
     public void WorldEventFinished(WorldEvent we) {
@@ -530,23 +525,13 @@ public class Region {
     public void SetEventIcon(GameObject go) {
         eventIconGO = go;
     }
-    //private void AutomaticEventGeneration(Character characterThatArrived) {
-    //    if (activeEvent == null) {
-    //        SpawnBasicEvent(characterThatArrived);
-    //    }
-    //}
     public void JobBasedEventGeneration(Character character) {
         //only trigger event generation if there is no active event and the character that arrived is not a minion
         if (activeEvent == null && character.minion == null) {
             if (character.stateComponent.currentState is MoveOutState) {
-                WORLD_EVENT_EFFECT[] effects = character.stateComponent.currentState.job.jobType.GetAllowedEventEffects();
-                if (effects != null) {
-                    SpawnEventThatCanProvideEffectFor(effects, character);
-                }
+                WORLD_EVENT_EFFECT[] effects = WorldEventsManager.Instance.GetNeededEffectsOfJob(character.stateComponent.currentState.job.jobType);
+                SpawnEventThatCanProvideEffectFor(effects, character);
             }
-            //else {
-            //    throw new System.Exception(GameManager.Instance.TodayLogString() + character.name + " has arrived at " + this.name + " but is not in Move Out State!");
-            //}
         }
     }
     #endregion
@@ -716,6 +701,7 @@ public class Region {
                 tile.SetCorruption(false);
             }
         }
+        mainLandmark.landmarkNameplate.UpdateFactionEmblem();
     }
     public void SetPreviousOwner(Faction faction) {
         previousOwner = faction;

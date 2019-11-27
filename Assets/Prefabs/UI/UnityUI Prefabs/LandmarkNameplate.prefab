@@ -45,7 +45,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1901164652040974
 GameObject:
   m_ObjectHideFlags: 0
@@ -75,7 +75,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d78a263947fcb547940a53ee3811c98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ParentPool: {fileID: 0}
   nameLbl: {fileID: 114730940446739676}
+  factionEmblem: {fileID: 114639283947786148}
 --- !u!114 &114634888069619780
 MonoBehaviour:
   m_ObjectHideFlags: 1

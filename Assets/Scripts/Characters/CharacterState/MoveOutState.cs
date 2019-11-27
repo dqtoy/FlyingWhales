@@ -14,6 +14,9 @@ public class MoveOutState : CharacterState {
             return travel;
         }
     }
+    private bool hasSceduledArriveAtRandomRegion;
+    private Region chosenRegion;
+    public string goHomeSchedID { get; private set; }
 
     public MoveOutState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Move Out State";
@@ -45,14 +48,6 @@ public class MoveOutState : CharacterState {
         stateComponent.character.AdjustDoNotGetLonely(1);
         stateComponent.character.AdjustDoNotGetTired(1);
     }
-    //protected override void DoMovementBehavior() {
-    //    base.DoMovementBehavior();
-    //    if (stateComponent.character.specificLocation == stateComponent.character.homeArea) {
-    //        //if the character is still at his/her home area, go to the nearest edge tile
-    //        LocationGridTile nearestEdgeTile = stateComponent.character.GetNearestUnoccupiedEdgeTileFromThis();
-    //        stateComponent.character.marker.GoTo(nearestEdgeTile, OnArriveAtNearestEdgeTile);
-    //    }
-    //}
     protected override void OnJobSet() {
         base.OnJobSet();
         Region currRegion = stateComponent.character.currentRegion;
@@ -99,8 +94,6 @@ public class MoveOutState : CharacterState {
     }
     #endregion
 
-    bool hasSceduledArriveAtRandomRegion;
-
     private void OnArriveAtNearestEdgeTile() {
         if (hasSceduledArriveAtRandomRegion) {
             return;
@@ -128,13 +121,10 @@ public class MoveOutState : CharacterState {
         PlayerManager.Instance.player.ShowNotification(log);
         thoughtBubbleLog = log;
     }
-
-    private Region chosenRegion;
     private void ArriveAtRegion() {
         chosenRegion = GetRegionToDoJob(stateComponent.character);
         if (chosenRegion != null) {
             stateComponent.character.ownParty.icon.SetIsTravellingOutside(false);
-            //chosenRegion = choices[Random.Range(0, choices.Count)];
             stateComponent.character.specificLocation.RemoveCharacterFromLocation(stateComponent.character);
             chosenRegion.AddCharacterToLocation(stateComponent.character);
             OnArriveAtRegion();
@@ -142,8 +132,6 @@ public class MoveOutState : CharacterState {
             job.CancelJob(false, "no valid regions");
         }
     }
-
-    public string goHomeSchedID { get; private set; }
     private void OnArriveAtRegion() {
         if(job.jobType == JOB_TYPE.RETURN_HOME) {
             //Show log
@@ -170,7 +158,6 @@ public class MoveOutState : CharacterState {
             chosenRegion.JobBasedEventGeneration(stateComponent.character);
         }
     }
-
     public void GoHome() {
         goHomeSchedID = string.Empty;
         stateComponent.character.ownParty.icon.SetIsTravellingOutside(true);
@@ -187,7 +174,6 @@ public class MoveOutState : CharacterState {
         PlayerManager.Instance.player.ShowNotification(log);
         thoughtBubbleLog = log;
     }
-
     private void ArriveHome() {
         OnExitThisState();
         Messenger.Broadcast(Signals.PARTY_DONE_TRAVELLING, stateComponent.character.currentParty);
@@ -202,7 +188,6 @@ public class MoveOutState : CharacterState {
         thoughtBubbleLog = log;
 
     }
-
     private void CheckNeeds() {
         string summary = GameManager.Instance.TodayLogString() + stateComponent.character.name + " has arrived home and will check his/her needs.";
         if (stateComponent.character.isStarving) {
@@ -220,20 +205,18 @@ public class MoveOutState : CharacterState {
         Debug.Log(summary);
     }
 
-    //public override string ToString() {
-    //    return "Move Out State by " + stateComponent.character.name;
-    //}
+    #region Region getters
     private Region GetRegionToDoJob(Character character) {
-        if(job.targetRegion != null) {
+        if (job.targetRegion != null) {
             //If job has a designated region to go to, always use it
             return job.targetRegion;
         }
-        if(job.jobType == JOB_TYPE.RETURN_HOME) {
+        if (job.jobType == JOB_TYPE.RETURN_HOME) {
             return character.homeRegion;
         } else {
             List<Region> regionPool = GetValidRegionsToDoJob(character);
-            if(regionPool.Count > 0) {
-                return regionPool[Random.Range(0, regionPool.Count)];
+            if (regionPool.Count > 0) {
+                return Utilities.GetRandomElement(regionPool);
             }
         }
         return null;
@@ -243,48 +226,46 @@ public class MoveOutState : CharacterState {
             throw new System.Exception(GameManager.Instance.TodayLogString() + character.name + " is checking for valid regions to do job but his/her job is null.");
         }
 
-        List<LANDMARK_TYPE> validLandmarkTypes = new List<LANDMARK_TYPE>();
-        if (job.jobType == JOB_TYPE.DESTROY_PROFANE_LANDMARK) {
-            validLandmarkTypes.Add(LANDMARK_TYPE.THE_PROFANE);
-        } else if (job.jobType == JOB_TYPE.CORRUPT_CULTIST) {
-            validLandmarkTypes.Add(LANDMARK_TYPE.THE_PROFANE);
+        List<LANDMARK_TYPE> validLandmarkTypes = GetValidLandmarkTypesToDoJob();
+        List<Region> choices = new List<Region>();
+        if (WorldEventsManager.Instance.DoesJobProduceWorldEvent(job.jobType)) {
+            //get all valid regions that can spawn the needed effects of the given job
+            for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+                Region currRegion = GridMap.Instance.allRegions[i];
+                if (currRegion.CanSpawnNewEvent() && currRegion != stateComponent.character.homeRegion
+                    && validLandmarkTypes.Contains(currRegion.mainLandmark.specificLandmarkType)
+                    && WorldEventsManager.Instance.CanSpawnEventWithEffects(currRegion, character, WorldEventsManager.Instance.GetNeededEffectsOfJob(job.jobType))) {
+                    choices.Add(currRegion);
+                }
+            }
         } else {
-            validLandmarkTypes.AddRange(Utilities.GetEnumValues<LANDMARK_TYPE>());
+            //just get all valid regions without checking for event effects
+            for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+                Region currRegion = GridMap.Instance.allRegions[i];
+                if (currRegion.CanSpawnNewEvent() && currRegion != stateComponent.character.homeRegion
+                    && validLandmarkTypes.Contains(currRegion.mainLandmark.specificLandmarkType)) {
+                    choices.Add(currRegion);
+                }
+            }
+        }
+        return choices;
+    }
+    private List<LANDMARK_TYPE> GetValidLandmarkTypesToDoJob() {
+        List<LANDMARK_TYPE> validLandmarkTypes = new List<LANDMARK_TYPE>();
+
+        switch (job.jobType) {
+            case JOB_TYPE.DESTROY_PROFANE_LANDMARK:
+            case JOB_TYPE.CORRUPT_CULTIST:
+                validLandmarkTypes.Add(LANDMARK_TYPE.THE_PROFANE);
+                break;
+            default:
+                validLandmarkTypes.AddRange(Utilities.GetEnumValues<LANDMARK_TYPE>());
+                break;
         }
         validLandmarkTypes.Remove(LANDMARK_TYPE.THE_PORTAL); //Always removing the portal for now, to prevent characters going there.
 
-        List<Region> choices = null;
-        if (job.jobType.ProducesWorldEvent()) {
-            choices = GridMap.Instance.allRegions.Where(x =>
-                x.activeEvent == null &&
-                x != stateComponent.character.homeRegion &&
-                validLandmarkTypes.Contains(x.mainLandmark.specificLandmarkType) &&
-                StoryEventsManager.Instance.GetEventsThatCanProvideEffects(x, character, job.jobType.GetAllowedEventEffects()).Count > 0
-            ).ToList();
-        } else {
-            choices = GridMap.Instance.allRegions.Where(x =>
-               x != stateComponent.character.homeRegion &&
-               validLandmarkTypes.Contains(x.mainLandmark.specificLandmarkType)
-            ).ToList();
-        }
-        //else {
-        //    if (job.jobType == JOB_TYPE.RETURN_HOME) { //TODO: Find a way to make getting valid regions per job type prettier.
-        //        if (!LandmarkManager.Instance.TryGetUncorruptedRegionsExcept(out choices)) {
-        //            //there are no uncorrupted regions
-        //            choices = GridMap.Instance.allRegions.Where(x =>
-        //               x.coreTile.areaOfTile != stateComponent.character.homeArea &&
-        //               validLandmarkTypes.Contains(x.mainLandmark.specificLandmarkType)
-        //            ).ToList();
-        //        }
-
-        //    } else {
-        //        choices = GridMap.Instance.allRegions.Where(x =>
-        //           x.coreTile.areaOfTile != stateComponent.character.homeArea &&
-        //           validLandmarkTypes.Contains(x.mainLandmark.specificLandmarkType) 
-        //        ).ToList();
-        //    }
-
-        //}
-        return choices;
+        return validLandmarkTypes;
     }
+    #endregion
+
 }

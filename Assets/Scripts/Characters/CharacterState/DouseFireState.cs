@@ -193,7 +193,7 @@ public class DouseFireState : CharacterState {
                 nearest = dist;
             }
         }
-        if (nearestFire != null && nearestFire != currentTarget) {
+        if (nearestFire != null) {//&& nearestFire != currentTarget
             isDousingFire = true;
             currentTarget = nearestFire;
             stateComponent.character.marker.GoTo(nearestFire, DouseFire);
@@ -210,7 +210,8 @@ public class DouseFireState : CharacterState {
             this.stateComponent.character.ConsumeToken(water);
         }
         currentTarget.traitContainer.AddTrait(currentTarget, "Wet", this.stateComponent.character);
-        isDousingFire = false; 
+        isDousingFire = false;
+        currentTarget = null;
     }
     private bool AddFire(IPointOfInterest poi) {
         Burning burning = poi.traitContainer.GetNormalTrait("Burning") as Burning;

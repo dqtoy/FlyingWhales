@@ -33,5 +33,5 @@ public class FurnitureSpotMono : MonoBehaviour {
 public struct FurnitureSetting {
     public FURNITURE_TYPE type;
     public Vector3 rotation;
-    public string tileAssetName;
+    public Sprite assetToUse;
 }

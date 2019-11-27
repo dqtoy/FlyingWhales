@@ -31,4 +31,9 @@ public class TileObjectGameObject : AreaMapGameObject<TileObject> {
             objectVisual.sprite = bed2Sleeping;
         }
     }
+
+    public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) {
+        this.SetRotation(furnitureSetting.rotation.z);
+        //this.OverrideVisual(furnitureSetting.assetToUse);
+    }
 }

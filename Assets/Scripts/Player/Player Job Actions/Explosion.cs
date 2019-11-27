@@ -30,20 +30,19 @@ public class Explosion : PlayerJobAction {
             ITraitable flammable = flammables[i];
             if (flammable is TileObject) {
                 TileObject obj = flammable as TileObject;
-                obj.AdjustHP(-obj.currentHP);
-                //obj.gridTileLocation.structure.RemovePOI(obj);
                 GameManager.Instance.CreateExplodeEffectAt(obj.gridTileLocation);
+                obj.AdjustHP(-obj.currentHP);
+                
                 continue; //go to next item
             } else if (flammable is SpecialToken) {
                 SpecialToken token = flammable as SpecialToken;
-                token.AdjustHP(-token.currentHP);
                 GameManager.Instance.CreateExplodeEffectAt(token.gridTileLocation);
-                //token.gridTileLocation.structure.RemovePOI(token);
+                token.AdjustHP(-token.currentHP);
                 continue; //go to next item
             } else if (flammable is Character) {
                 Character character = flammable as Character;
-                character.AdjustHP(-(int)(character.maxHP * 0.4f), true);
                 GameManager.Instance.CreateExplodeEffectAt(character.gridTileLocation);
+                character.AdjustHP(-(int)(character.maxHP * 0.4f), true);
             }
             if (Random.Range(0, 100) < 60) {
                 Burning burning = new Burning();

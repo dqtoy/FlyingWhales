@@ -1245,9 +1245,9 @@ public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }
 public enum LANDMARK_YIELD_TYPE { SUMMON, ARTIFACT, ABILITY, SKIRMISH, STORY_EVENT, }
 public enum SERIAL_VICTIM_TYPE { GENDER, ROLE, TRAIT, STATUS }
 public enum SPECIAL_OBJECT_TYPE { DEMON_STONE, SPELL_SCROLL, SKILL_SCROLL }
-public enum WORLD_EVENT { NONE, HARVEST, SLAY_MINION, MINE_SUPPLY, STUDY, PRAY_AT_TEMPLE, DESTROY_DEMONIC_LANDMARK, HOLY_INCANTATION, CORRUPT_CULTIST, DEMONIC_INCANTATION, SEARCHING }
+public enum WORLD_EVENT { NONE, HARVEST, SLAY_MINION, MINE_SUPPLY, STUDY, PRAY_AT_TEMPLE, DESTROY_DEMONIC_LANDMARK, HOLY_INCANTATION, CORRUPT_CULTIST, DEMONIC_INCANTATION, SEARCHING, CLAIM_REGION }
 public enum DEADLY_SIN_ACTION { SPELL_SOURCE, INSTIGATOR, BUILDER, SABOTEUR, INVADER, FIGHTER, RESEARCHER, }
-public enum WORLD_EVENT_EFFECT { GET_FOOD, GET_SUPPLY, GAIN_POSITIVE_TRAIT, REMOVE_NEGATIVE_TRAIT, EXPLORE, COMBAT, DESTROY_LANDMARK, DIVINE_INTERVENTION_SPEED_UP, CORRUPT_CHARACTER, DIVINE_INTERVENTION_SLOW_DOWN, SEARCHING }
+public enum WORLD_EVENT_EFFECT { GET_FOOD, GET_SUPPLY, GAIN_POSITIVE_TRAIT, REMOVE_NEGATIVE_TRAIT, EXPLORE, COMBAT, DESTROY_LANDMARK, DIVINE_INTERVENTION_SPEED_UP, CORRUPT_CHARACTER, DIVINE_INTERVENTION_SLOW_DOWN, SEARCHING, CONQUER_REGION }
 public enum WORLD_OBJECT_TYPE { NONE, ARTIFACT, SUMMON, SPECIAL_OBJECT, }
 public enum REGION_FEATURE_TYPE { PASSIVE, ACTIVE }
 public enum RESOURCE { FOOD, WOOD, STONE, METAL }
@@ -1536,29 +1536,6 @@ public static class Extensions {
                 return false;
         }
     }
-    public static bool IsEmergencyTypeJob(this JOB_TYPE type) {
-        switch (type) {
-            case JOB_TYPE.REMOVE_FIRE:
-                return true;
-            default:
-                return false;
-        }
-    }
-    public static bool ProducesWorldEvent(this JOB_TYPE type) {
-        switch (type) {
-            case JOB_TYPE.COMBAT:
-            case JOB_TYPE.IMPROVE:
-            case JOB_TYPE.OBTAIN_FOOD_OUTSIDE:
-            case JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE:
-            case JOB_TYPE.DESTROY_PROFANE_LANDMARK:
-            case JOB_TYPE.PERFORM_HOLY_INCANTATION:
-            case JOB_TYPE.CORRUPT_CULTIST:
-            case JOB_TYPE.SABOTAGE_FACTION:
-                return true;
-            default:
-                return false;
-        }
-    }
     #endregion
 
     #region Summons
@@ -1661,41 +1638,6 @@ public static class Extensions {
                 return "Empty";
             default:
                 return Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
-        }
-    }
-    #endregion
-
-    #region Hero Events
-    /// <summary>
-    /// Get an array of effects that a job type expects. 
-    /// NOTE: For a world event to be valid, it just needs to meet at least 1 of the allowed effects
-    /// </summary>
-    /// <param name="type">The type of job.</param>
-    /// <returns>Array of world effects.</returns>
-    public static WORLD_EVENT_EFFECT[] GetAllowedEventEffects(this JOB_TYPE type) {
-        switch (type) {
-            case JOB_TYPE.OBTAIN_FOOD_OUTSIDE:
-                return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.GET_FOOD };
-            case JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE:
-                return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.GET_SUPPLY };
-            case JOB_TYPE.IMPROVE:
-                return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.GAIN_POSITIVE_TRAIT, WORLD_EVENT_EFFECT.REMOVE_NEGATIVE_TRAIT };
-            case JOB_TYPE.EXPLORE:
-                return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.EXPLORE };
-            case JOB_TYPE.COMBAT:
-                return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.COMBAT };
-            case JOB_TYPE.DESTROY_PROFANE_LANDMARK:
-                return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.DESTROY_LANDMARK };
-            case JOB_TYPE.PERFORM_HOLY_INCANTATION:
-                return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.DIVINE_INTERVENTION_SPEED_UP };
-            case JOB_TYPE.CORRUPT_CULTIST:
-                return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.CORRUPT_CHARACTER };
-            case JOB_TYPE.SEARCHING_WORLD_EVENT:
-                return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.SEARCHING };
-            case JOB_TYPE.SABOTAGE_FACTION:
-                return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.DIVINE_INTERVENTION_SLOW_DOWN };
-            default:
-                return null;
         }
     }
     #endregion

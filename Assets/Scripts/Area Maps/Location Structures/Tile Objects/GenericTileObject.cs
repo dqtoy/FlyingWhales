@@ -81,6 +81,7 @@ public class GenericTileObject : TileObject {
         Initialize(TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT);
         SetGridTileLocation(tile);
         DisableGameObject();
+        RemoveCommonAdvertisments();
 
         //switch (gridTileLocation.groundType) {
         //    case LocationGridTile.Ground_Type.Grass:

@@ -21,6 +21,7 @@ public class BedObjectGameObject : AreaMapGameObject<Bed> {
         } else if (userCount == 2) {
             objectVisual.sprite = bed2Sleeping;
         }
-        
     }
+
+    public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
 }
