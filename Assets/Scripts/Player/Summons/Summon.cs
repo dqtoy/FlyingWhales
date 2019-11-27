@@ -167,7 +167,7 @@ public class Summon : Character, IWorldObject {
             HPRecovery(0.0025f);
         }
 
-        if (!ownParty.icon.isTravelling) {
+        if (!ownParty.icon.isTravelling && !isInCombat) {
             GoToWorkArea();
         }
 

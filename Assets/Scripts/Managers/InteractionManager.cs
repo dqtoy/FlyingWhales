@@ -187,6 +187,9 @@ public class InteractionManager : MonoBehaviour {
     public int GetInitialPriority(JOB_TYPE jobType) {
         int priority = 0;
         switch (jobType) {
+            case JOB_TYPE.INTERRUPTION:
+                priority = 3;
+                break;
             case JOB_TYPE.TRIGGER_FLAW:
                 priority = 4;
                 break;
@@ -200,7 +203,7 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.SABOTAGE_FACTION:
             case JOB_TYPE.SCREAM:
             case JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM:
-            case JOB_TYPE.INTERRUPTION:
+            //case JOB_TYPE.INTERRUPTION:
                 priority = 5;
                 break;
             case JOB_TYPE.TANTRUM:

@@ -12,6 +12,7 @@ public class MapGenerator : MonoBehaviour {
     private int height;
     private bool isCoroutineRunning;
 
+
     private void Awake() {
         Instance = this;
     }
@@ -38,9 +39,9 @@ public class MapGenerator : MonoBehaviour {
         EquatorGenerator.Instance.GenerateEquator(GridMap.Instance.width, GridMap.Instance.height, GridMap.Instance.hexTiles);
         Biomes.Instance.GenerateElevation(GridMap.Instance.hexTiles, GridMap.Instance.width, GridMap.Instance.height);
 
-        CameraMove.Instance.Initialize();
-        InteriorMapManager.Instance.Initialize();
-        ObjectPoolManager.Instance.InitializeObjectPools();
+        //CameraMove.Instance.Initialize();
+        //InteriorMapManager.Instance.Initialize();
+        //ObjectPoolManager.Instance.InitializeObjectPools();
 
         LevelLoaderManager.UpdateLoadingInfo("Generating Biomes...");
         yield return null;
@@ -66,32 +67,31 @@ public class MapGenerator : MonoBehaviour {
         Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
         CameraMove.Instance.CalculateCameraBounds();
         yield return null;
-        UIManager.Instance.InitializeUI();
+        //UIManager.Instance.InitializeUI();
 
         //RelationshipManager.Instance.GenerateRelationships();
         //CharacterManager.Instance.PlaceInitialCharacters();
         CharacterManager.Instance.GiveInitialItems();
         //CharacterManager.Instance.GenerateInitialAwareness();
-        InteractionManager.Instance.Initialize();
-        StoryEventsManager.Instance.Initialize();
+        //InteractionManager.Instance.Initialize();
+        //StoryEventsManager.Instance.Initialize();
 
         PlayerManager.Instance.InitializePlayer(portal);
-
         yield return null;
         LandmarkManager.Instance.GenerateAreaMap(settlement.tileLocation.areaOfTile);
-        //yield return null;
-        //LandmarkManager.Instance.CreateTwoNewSettlementsAtTheStartOfGame();
+        yield return null;
+        LandmarkManager.Instance.CreateTwoNewSettlementsAtTheStartOfGame();
         yield return null;
         LandmarkManager.Instance.LoadAdditionalAreaData();
         yield return null;
-        TokenManager.Instance.Initialize();
+        //TokenManager.Instance.Initialize();
 
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
         LevelLoaderManager.SetLoadingState(false);
-        Messenger.Broadcast(Signals.GAME_LOADED);
         CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerArea.coreTile.gameObject);
         AudioManager.Instance.TransitionTo("World Music", 10);
+        Messenger.Broadcast(Signals.GAME_LOADED);
         yield return new WaitForSeconds(1f);
         GameManager.Instance.StartProgression();
         UIManager.Instance.SetSpeedTogglesState(false);
@@ -177,20 +177,17 @@ public class MapGenerator : MonoBehaviour {
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
         LevelLoaderManager.SetLoadingState(false);
-        Messenger.Broadcast(Signals.GAME_LOADED);
         CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerArea.coreTile.gameObject);
         AudioManager.Instance.TransitionTo("World Music", 10);
         yield return new WaitForSeconds(1f);
-
         GameManager.Instance.StartProgression();
         UIManager.Instance.SetSpeedTogglesState(true);
         Messenger.Broadcast(Signals.UPDATE_UI);
-
         yield return null;
         UIManager.Instance.Unpause();
         yield return null;
         UIManager.Instance.Pause();
-
+        Messenger.Broadcast(Signals.GAME_LOADED);
         //data.LoadInvasion();
         //PlayerManager.Instance.player.LoadResearchNewInterventionAbility(data.playerSave);
 

@@ -882,6 +882,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void SetCorruption(bool state) {
         if(_isCorrupted != state) {
             _isCorrupted = state;
+            Biomes.Instance.UpdateTileSprite(this, spriteRenderer.sortingOrder);
         }
     }
     public void AdjustUncorruptibleLandmarkNeighbors(int amount) {

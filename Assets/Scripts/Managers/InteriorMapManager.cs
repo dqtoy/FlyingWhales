@@ -188,12 +188,12 @@ public class InteriorMapManager : MonoBehaviour {
     }
     public void OnCreateAreaMap(AreaInnerTileMap newMap) {
         areaMaps.Add(newMap);
+        //newMap.transform.localPosition = nextMapPos;
+        //set the next map position based on the new maps height
         newMap.transform.localPosition = nextMapPos;
-        ////set the next map position based on the new maps height
-        nextMapPos = new Vector3(nextMapPos.x, nextMapPos.y + newMap.height + 10, nextMapPos.z); //all maps now have same positon, because only 1 can exist at a time.
-        newMap.transform.localPosition = nextMapPos;
-        CreatePathfindingGraphForArea(newMap);
         newMap.UpdateTilesWorldPosition();
+        CreatePathfindingGraphForArea(newMap);
+        nextMapPos = new Vector3(nextMapPos.x, nextMapPos.y + newMap.height + 10, nextMapPos.z); //all maps now have same positon, because only 1 can exist at a time.
     }
     public void DestroyAreaMap(Area area) {
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in area.structures) {
@@ -206,6 +206,7 @@ public class InteriorMapManager : MonoBehaviour {
         areaMaps.Remove(area.areaMap);
         GameObject.Destroy(area.areaMap.gameObject);
         area.SetAreaMap(null);
+        Debug.LogError("Area map of " + area.name + " is destroyed!");
     }
     #endregion
 
@@ -232,10 +233,10 @@ public class InteriorMapManager : MonoBehaviour {
         int reducedWidth = newMap.width - (AreaInnerTileMap.westEdge + AreaInnerTileMap.eastEdge);
         int reducedHeight = newMap.height - (AreaInnerTileMap.northEdge + AreaInnerTileMap.southEdge);
 
-        gg.SetDimensions(Mathf.FloorToInt((float)reducedWidth / gg.nodeSize), Mathf.FloorToInt((float)reducedHeight / gg.nodeSize), nodeSize);
+        gg.SetDimensions(Mathf.FloorToInt(reducedWidth / gg.nodeSize), Mathf.FloorToInt(reducedHeight / gg.nodeSize), nodeSize);
         Vector3 pos = this.transform.position;
-        pos.x += ((float)newMap.width / 2f);
-        pos.y += ((float)newMap.height / 2f) + newMap.transform.localPosition.y;
+        pos.x += (newMap.width / 2f);
+        pos.y += (newMap.height / 2f) + newMap.transform.localPosition.y;
         pos.x += (AreaInnerTileMap.westEdge / 2) - 0.5f;
 
         gg.center = pos;

@@ -24,7 +24,7 @@ public class GridMap : MonoBehaviour {
     public float moistureFrequency;
 
     [Space(10)]
-	public List<GameObject> listHexes;
+	//public List<GameObject> listHexes;
     public List<HexTile> outerGridList;
     public List<HexTile> hexTiles;
 	public HexTile[,] map;
@@ -65,7 +65,7 @@ public class GridMap : MonoBehaviour {
         this.transform.localPosition = new Vector2(-newX, -newY);
         //CameraMove.Instance.minimapCamera.transform.position
         map = new HexTile[width, height];
-        listHexes = new List<GameObject>();
+        //listHexes = new List<GameObject>();
         hexTiles = new List<HexTile>();
         allTiles = new List<HexTile>();
         int id = 0;
@@ -90,7 +90,7 @@ public class GridMap : MonoBehaviour {
                 currHex.data.tileName = RandomNameGenerator.Instance.GetTileName();
                 currHex.data.xCoordinate = x;
                 currHex.data.yCoordinate = y;
-                listHexes.Add(hex);
+                //listHexes.Add(hex);
                 allTiles.Add(currHex);
                 map[x, y] = hex.GetComponent<HexTile>();
                 id++;
@@ -102,8 +102,8 @@ public class GridMap : MonoBehaviour {
             yield return null;
         }
         //listHexes.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(map));
-        mapWidth = listHexes[listHexes.Count - 1].transform.position.x;
-        mapHeight = listHexes[listHexes.Count - 1].transform.position.y;
+        mapWidth = hexTiles[hexTiles.Count - 1].transform.position.x;
+        mapHeight = hexTiles[hexTiles.Count - 1].transform.position.y;
         MapGenerator.Instance.SetIsCoroutineRunning(false);
         //listHexes.ForEach(o => Debug.Log(o.name + " id: " + o.GetComponent<HexTile>().id));
     }
@@ -113,7 +113,7 @@ public class GridMap : MonoBehaviour {
         this.transform.localPosition = new Vector2(-newX, -newY);
         //CameraMove.Instance.minimapCamera.transform.position
         map = new HexTile[width, height];
-        listHexes = new List<GameObject>();
+        //listHexes = new List<GameObject>();
         hexTiles = new List<HexTile>();
         allTiles = new List<HexTile>();
         int id = 0;
@@ -138,24 +138,24 @@ public class GridMap : MonoBehaviour {
 				currHex.data.tileName = RandomNameGenerator.Instance.GetTileName();
                 currHex.data.xCoordinate = x;
                 currHex.data.yCoordinate = y;
-                listHexes.Add(hex);
+                //hexTiles.Add(hex);
                 allTiles.Add(currHex);
                 map[x, y] = hex.GetComponent<HexTile>();
                 id++;
             }
         }
         hexTiles.ForEach(o => o.FindNeighbours(map));
-        mapWidth = listHexes[listHexes.Count - 1].transform.position.x;
-        mapHeight = listHexes[listHexes.Count - 1].transform.position.y;
+        mapWidth = hexTiles[hexTiles.Count - 1].transform.position.x;
+        mapHeight = hexTiles[hexTiles.Count - 1].transform.position.y;
         //listHexes.ForEach(o => Debug.Log(o.name + " id: " + o.GetComponent<HexTile>().id));
     }
     internal void GenerateGrid(Save data) {
         this.width = data.width;
         this.height = data.height;
-        float newX = xOffset * ((int) width / 2);
-        float newY = yOffset * ((int) height / 2);
+        float newX = xOffset * (width / 2);
+        float newY = yOffset * (height / 2);
         this.transform.localPosition = new Vector2(-newX, -newY);
-        map = new HexTile[(int) width, (int) height];
+        map = new HexTile[width, height];
         hexTiles = new List<HexTile>();
         //int totalTiles = (int)width * (int)height;
         for (int i = 0; i < data.hextileSaves.Count; i++) {
@@ -169,7 +169,7 @@ public class GridMap : MonoBehaviour {
                 xPosition += xOffset / 2;
             }
 
-            GameObject hex = GameObject.Instantiate(goHex) as GameObject;
+            GameObject hex = Instantiate(goHex) as GameObject;
             hex.transform.parent = this.transform;
             hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
             hex.transform.localScale = new Vector3(tileSize, tileSize, 0f);

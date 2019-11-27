@@ -1090,7 +1090,7 @@ public class PlayerUI : MonoBehaviour {
     private bool isSummoning = false; //if the player has clicked the summon button and is targetting a tile to place the summon on.
     private SummonSlot currentlySelectedSummonSlot; //the summon type that is currently shown in the UI
     private void UpdateSummonsInteraction() {
-        bool state = currentlySelectedSummonSlot != null && currentlySelectedSummonSlot.summon != null && !currentlySelectedSummonSlot.summon.hasBeenUsed;
+        bool state = currentlySelectedSummonSlot != null && currentlySelectedSummonSlot.summon != null && !currentlySelectedSummonSlot.summon.hasBeenUsed && InteriorMapManager.Instance.isAnAreaMapShowing;
         //summonCover.SetActive(!state);
         summonBtn.interactable = state;
     }
@@ -1236,7 +1236,7 @@ public class PlayerUI : MonoBehaviour {
         //isSummoning = true;
     }
     public void TryPlaceSummon(Summon summon) {
-        LocationGridTile mainEntrance = LandmarkManager.Instance.enemyOfPlayerArea.GetRandomUnoccupiedEdgeTile();
+        LocationGridTile mainEntrance = InteriorMapManager.Instance.currentlyShowingArea.GetRandomUnoccupiedEdgeTile();
         //LocationGridTile tile = InteriorMapManager.Instance.GetTileFromMousePosition();
         Summon summonToPlace = summon;
         summonToPlace.CreateMarker();
@@ -1649,6 +1649,9 @@ public class PlayerUI : MonoBehaviour {
         UpdateKillCount();
     }
     private void TransferCharacterFromActiveToInactive(Character character) {
+        if (!WillCharacterBeShownInKillCount(character)) {
+            return;
+        }
         CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
         if (allFilteredCharactersCount == killCountCharacterItems.Count) {
             item.transform.SetAsLastSibling();
@@ -1659,6 +1662,9 @@ public class PlayerUI : MonoBehaviour {
         UpdateKillCount();
     }
     private void TransferCharacterFromInactiveToActive(Character character) {
+        if (!WillCharacterBeShownInKillCount(character)) {
+            return;
+        }
         CharacterNameplateItem item = GetInactiveCharacterNameplateItem(character);
         item.transform.SetSiblingIndex(deadHeader.transform.GetSiblingIndex());
         aliveCount++;
@@ -1741,6 +1747,14 @@ public class PlayerUI : MonoBehaviour {
         if (killSummaryToggle.isOn) {
             killSummaryToggle.isOn = false;
         }
+    }
+    private bool WillCharacterBeShownInKillCount(Character character) {
+        if (character.minion != null || character is Summon || character.faction == PlayerManager.Instance.player.playerFaction
+            || character.faction == FactionManager.Instance.disguisedFaction) {
+            //Do not show minions and summons
+            return false;
+        }
+        return true;
     }
     #endregion
 

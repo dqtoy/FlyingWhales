@@ -462,7 +462,7 @@ public class Area : IJobOwner {
         return citizen;
     }
     public void PlaceNewResidentInInnerMap(Character newResident) {
-        LocationGridTile mainEntrance = LandmarkManager.Instance.enemyOfPlayerArea.GetRandomUnoccupiedEdgeTile();
+        LocationGridTile mainEntrance = GetRandomUnoccupiedEdgeTile();
         newResident.CreateMarker();
         newResident.InitialCharacterPlacement(mainEntrance);
     }

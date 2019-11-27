@@ -22,9 +22,7 @@ public class LandmarkManager : MonoBehaviour {
 
     public List<BaseLandmark> allLandmarks;
     public List<Area> allAreas;
-    public List<Area> allNonPlayerAreas {
-        get { return allAreas.Where(x => x != PlayerManager.Instance.player.playerArea).ToList(); }
-    }
+    public List<Area> allNonPlayerAreas;
 
     [SerializeField] private GameObject landmarkGO;
 
@@ -51,6 +49,7 @@ public class LandmarkManager : MonoBehaviour {
     public void Initialize() {
         corruptedLandmarksCount = 0;
         allAreas = new List<Area>();
+        allNonPlayerAreas = new List<Area>();
         ConstructLandmarkData();
         LoadLandmarkTypeDictionary();
         ConstructAnvilResearchData();
@@ -244,8 +243,10 @@ public class LandmarkManager : MonoBehaviour {
         //place settlement at opposite corner
         int oppositeCorner = GetOppositeCorner(portalCorner);
         Region settlementRegion = corners[oppositeCorner];
-        CreateSettlementArea(settlementRegion);
+        Area area = CreateSettlementArea(settlementRegion);
         settlement = settlementRegion.mainLandmark;
+        SetEnemyPlayerArea(area);
+
 
         List<Region> availableRegions = new List<Region>(regions);
         availableRegions.Remove(portalRegion);
@@ -271,13 +272,13 @@ public class LandmarkManager : MonoBehaviour {
         Region[] allRegions = GridMap.Instance.allRegions;
         while(firstRegion == null) {
             Region potentialRegion = allRegions[UnityEngine.Random.Range(0, allRegions.Length)];
-            if (!potentialRegion.HasSettlementConnection()) {
+            if (!potentialRegion.coreTile.isCorrupted && potentialRegion.area == null && !potentialRegion.HasSettlementOrCorruptedConnection()) {
                 firstRegion = potentialRegion;
             }
         }
         while (secondRegion == null) {
             Region potentialRegion = allRegions[UnityEngine.Random.Range(0, allRegions.Length)];
-            if (!potentialRegion.IsConnectedWith(firstRegion) && !potentialRegion.HasSettlementConnection()) {
+            if (!potentialRegion.coreTile.isCorrupted && potentialRegion.area == null && potentialRegion != firstRegion && !potentialRegion.IsConnectedWith(firstRegion) && !potentialRegion.HasSettlementOrCorruptedConnection()) {
                 secondRegion = potentialRegion;
             }
         }
@@ -292,7 +293,6 @@ public class LandmarkManager : MonoBehaviour {
         AREA_TYPE settlementType = Utilities.RandomSettlementType();
         int citizenCount = Random.Range(WorldConfigManager.Instance.minCitizenCount, WorldConfigManager.Instance.maxCitizenCount + 1);
         Area settlementArea = CreateNewArea(settlementRegion, settlementType, citizenCount);
-        SetEnemyPlayerArea(settlementArea);
         BaseLandmark settlementLandmark = CreateNewLandmarkOnTile(settlementRegion.coreTile, LANDMARK_TYPE.PALACE, true);
         Faction faction = FactionManager.Instance.CreateNewFaction();
         if (settlementType == AREA_TYPE.ELVEN_SETTLEMENT) {
@@ -598,6 +598,9 @@ public class LandmarkManager : MonoBehaviour {
         }
         Messenger.Broadcast(Signals.AREA_CREATED, newArea);
         allAreas.Add(newArea);
+        if(areaType != AREA_TYPE.DEMONIC_INTRUSION) {
+            allNonPlayerAreas.Add(newArea);
+        }
         return newArea;
     }
     public void RemoveArea(Area area) {
@@ -611,6 +614,9 @@ public class LandmarkManager : MonoBehaviour {
         }
         Messenger.Broadcast(Signals.AREA_CREATED, newArea);
         allAreas.Add(newArea);
+        if (saveDataArea.areaType != AREA_TYPE.DEMONIC_INTRUSION) {
+            allNonPlayerAreas.Add(newArea);
+        }
         return newArea;
     }
     public void GenerateAreaMap(Area area) {
@@ -630,6 +636,7 @@ public class LandmarkManager : MonoBehaviour {
         areaMap.OnMapGenerationFinished();
         area.OnMapGenerationFinished();
         InteriorMapManager.Instance.OnCreateAreaMap(areaMap);
+        TokenManager.Instance.LoadSpecialTokens(area);
         CharacterManager.Instance.PlaceInitialCharacters(area);
         area.OnAreaSetAsActive();
     }

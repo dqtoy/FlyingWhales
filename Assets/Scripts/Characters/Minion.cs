@@ -113,7 +113,7 @@ public class Minion {
 
             character.SetIsDead(true);
             character.SetPOIState(POI_STATE.INACTIVE);
-            CombatManager.Instance.ReturnCharacterColorToPool(character.characterColor);
+            //CombatManager.Instance.ReturnCharacterColorToPool(character.characterColor);
 
             if (character.currentParty.specificLocation == null) {
                 throw new Exception("Specific location of " + character.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");

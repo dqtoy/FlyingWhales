@@ -11,12 +11,12 @@ public class Skeleton : Summon {
     public Skeleton(SaveDataCharacter data) : base(data) { }
 
     #region Overrides
-    public override void OnPlaceSummon(LocationGridTile tile) {
-        base.OnPlaceSummon(tile);
-        //CharacterState state = stateComponent.SwitchToState(CHARACTER_STATE.STROLL, null, tile.parentAreaMap.area);
-        //state.SetIsUnending(true);
-        GoToWorkArea();
-    }
+    //public override void OnPlaceSummon(LocationGridTile tile) {
+    //    base.OnPlaceSummon(tile);
+    //    //CharacterState state = stateComponent.SwitchToState(CHARACTER_STATE.STROLL, null, tile.parentAreaMap.area);
+    //    //state.SetIsUnending(true);
+    //    GoToWorkArea();
+    //}
     //protected override void IdlePlans() {
     //    base.IdlePlans();
     //    //CharacterState state = stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, specificLocation);

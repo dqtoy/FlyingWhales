@@ -27,22 +27,22 @@ public class TokenManager : MonoBehaviour {
 
     public void Initialize() {
         ConstructItemData();
-        LoadSpecialTokens();
+        //LoadSpecialTokens();
     }
 
-    private void LoadSpecialTokens() {
+    public void LoadSpecialTokens(Area area) {
         //Reference: https://trello.com/c/Kuqt3ZSP/2610-put-2-healing-potions-in-the-warehouse-at-start-of-the-game
-        LocationStructure mainStorage = LandmarkManager.Instance.enemyOfPlayerArea.mainStorageStructure;
+        LocationStructure mainStorage = area.mainStorageStructure;
         for (int i = 0; i < 4; i++) {
-            LandmarkManager.Instance.enemyOfPlayerArea.AddSpecialTokenToLocation(CreateSpecialToken(SPECIAL_TOKEN.HEALING_POTION), mainStorage);
+            area.AddSpecialTokenToLocation(CreateSpecialToken(SPECIAL_TOKEN.HEALING_POTION), mainStorage);
         }
         for (int i = 0; i < 2; i++) {
-            LandmarkManager.Instance.enemyOfPlayerArea.AddSpecialTokenToLocation(CreateSpecialToken(SPECIAL_TOKEN.TOOL), mainStorage);
+            area.AddSpecialTokenToLocation(CreateSpecialToken(SPECIAL_TOKEN.TOOL), mainStorage);
         }
 
         for (int i = 0; i < specialTokenSettings.Count; i++) {
             SpecialTokenSettings currSetting = specialTokenSettings[i];
-            List<Area> areas = LandmarkManager.Instance.allAreas;
+            List<Area> areas = LandmarkManager.Instance.allNonPlayerAreas;
             for (int j = 0; j < currSetting.quantity; j++) {
                 if (UnityEngine.Random.Range(0, 100) < currSetting.appearanceWeight) {
                     Area chosenArea = areas[UnityEngine.Random.Range(0, areas.Count)];

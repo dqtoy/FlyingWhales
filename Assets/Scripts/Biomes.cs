@@ -161,22 +161,39 @@ public class Biomes : MonoBehaviour {
 #endif
 
         LoadBeachVisuals(currentHexTile);
-        if (currentHexTile.isCorrupted) {
-            CorruptTileVisuals(currentHexTile);
+        UpdateTileSprite(currentHexTile, sortingOrder);
+        //if (currentHexTile.isCorrupted) {
+        //    CorruptTileVisuals(currentHexTile);
+        //} else {
+        //    if (currentHexTile.elevationType == ELEVATION.PLAIN) {
+        //        LoadPlainTileVisuals(currentHexTile, sortingOrder);
+        //    } else if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
+        //        LoadMountainTileVisuals(currentHexTile, sortingOrder);
+        //    } else if (currentHexTile.elevationType == ELEVATION.TREES) {
+        //        LoadTreeTileVisuals(currentHexTile, sortingOrder);
+        //    } else {
+        //        //For Water
+        //        LoadWaterTileVisuals(currentHexTile, sortingOrder);
+        //    }
+        //}
+    }
+    public void UpdateTileSprite(HexTile tile, int sortingOrder) {
+        if (tile.isCorrupted) {
+            CorruptTileVisuals(tile);
         } else {
-            if (currentHexTile.elevationType == ELEVATION.PLAIN) {
-                LoadPlainTileVisuals(currentHexTile, sortingOrder);
-            } else if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
-                LoadMountainTileVisuals(currentHexTile, sortingOrder);
-            } else if (currentHexTile.elevationType == ELEVATION.TREES) {
-                LoadTreeTileVisuals(currentHexTile, sortingOrder);
+            if (tile.elevationType == ELEVATION.PLAIN) {
+                LoadPlainTileVisuals(tile, sortingOrder);
+            } else if (tile.elevationType == ELEVATION.MOUNTAIN) {
+                LoadMountainTileVisuals(tile, sortingOrder);
+            } else if (tile.elevationType == ELEVATION.TREES) {
+                LoadTreeTileVisuals(tile, sortingOrder);
             } else {
                 //For Water
-                LoadWaterTileVisuals(currentHexTile, sortingOrder);
+                LoadWaterTileVisuals(tile, sortingOrder);
             }
         }
     }
-    public void CorruptTileVisuals(HexTile tile) {
+    private void CorruptTileVisuals(HexTile tile) {
         if (tile.elevationType == ELEVATION.PLAIN) {
             LoadCorruptedPlainTileVisuals(tile);
         }else if (tile.elevationType == ELEVATION.MOUNTAIN) {

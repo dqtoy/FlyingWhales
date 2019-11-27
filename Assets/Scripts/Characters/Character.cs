@@ -9,7 +9,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
     protected string _name;
     protected string _firstName;
-    protected string _characterColorCode;
+    //protected string _characterColorCode;
     protected int _id;
     protected int _doNotDisturb;
     protected int _doNotGetHungry;
@@ -27,7 +27,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     protected CharacterParty _ownParty;
     protected CharacterParty _currentParty;
     protected PortraitSettings _portraitSettings;
-    protected Color _characterColor;
+    //protected Color _characterColor;
     protected Minion _minion;
     protected CombatCharacter _currentCombatCharacter;
     protected List<Log> _history;
@@ -242,12 +242,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public Area specificLocation {
         get { return _currentParty.specificLocation; }
     }
-    public Color characterColor {
-        get { return _characterColor; }
-    }
-    public string characterColorCode {
-        get { return _characterColorCode; }
-    }
+    //public Color characterColor {
+    //    get { return _characterColor; }
+    //}
+    //public string characterColorCode {
+    //    get { return _characterColorCode; }
+    //}
     public List<Log> history {
         get { return this._history; }
     }
@@ -435,7 +435,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     public Character(SaveDataCharacter data) {
         _id = Utilities.SetID(this, data.id);
-        _characterColorCode = data.characterColorCode;
+        //_characterColorCode = data.characterColorCode;
         _gender = data.gender;
         SetSexuality(data.sexuality);
         _characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
@@ -443,7 +443,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         _raceSetting = raceSetting.CreateNewCopy();
         AssignRole(CharacterManager.Instance.GetRoleByRoleType(data.roleType), false);
         SetPortraitSettings(data.portraitSettings);
-        _characterColor = data.characterColor;
+        //_characterColor = data.characterColor;
         SetName(data.name);
 
         hSkinColor = data.hSkinColor;
@@ -597,9 +597,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
         //supply
         SetSupply(UnityEngine.Random.Range(10, 61)); //Randomize initial supply per character (Random amount between 10 to 60.)
-#if !WORLD_CREATION_TOOL
-        GetRandomCharacterColor();
-#endif
+//#if !WORLD_CREATION_TOOL
+//        GetRandomCharacterColor();
+//#endif
     }
     public void InitialCharacterPlacement(LocationGridTile tile) {
         tiredness = TIREDNESS_DEFAULT;
@@ -902,7 +902,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             SetIsDead(true);
             UnsubscribeSignals();
             SetPOIState(POI_STATE.INACTIVE);
-            CombatManager.Instance.ReturnCharacterColorToPool(_characterColor);
+            //CombatManager.Instance.ReturnCharacterColorToPool(_characterColor);
 
             if (currentParty.specificLocation == null) {
                 throw new Exception("Specific location of " + this.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
@@ -2418,10 +2418,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
         }
     }
-    private void GetRandomCharacterColor() {
-        _characterColor = CombatManager.Instance.UseRandomCharacterColor();
-        _characterColorCode = ColorUtility.ToHtmlStringRGBA(_characterColor).Substring(0, 6);
-    }
+    //private void GetRandomCharacterColor() {
+    //    _characterColor = CombatManager.Instance.UseRandomCharacterColor();
+    //    _characterColorCode = ColorUtility.ToHtmlStringRGBA(_characterColor).Substring(0, 6);
+    //}
     internal void OnOtherCharacterDied(Character characterThatDied) {
         if (characterThatDied.id != this.id) {
             //RemoveRelationship(characterThatDied); //do not remove relationships when dying
@@ -3931,7 +3931,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
         traitContainer.AddTrait(this, "Character Trait");
         traitContainer.AddTrait(this, "Flammable");
-        traitContainer.AddTrait(this, "Accident Prone");
+        //traitContainer.AddTrait(this, "Accident Prone");
 
         defaultCharacterTrait = traitContainer.GetNormalTrait("Character Trait") as CharacterTrait;
     }

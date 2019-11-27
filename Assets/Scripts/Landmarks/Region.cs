@@ -389,6 +389,15 @@ public class Region {
         }
         return false;
     }
+    public bool HasSettlementOrCorruptedConnection() {
+        for (int i = 0; i < connections.Count; i++) {
+            Region connection = connections[i];
+            if (connection.area != null || connection.coreTile.isCorrupted) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Corruption/Invasion
@@ -695,27 +704,35 @@ public class Region {
             }
             Messenger.Broadcast(Signals.AREA_OWNER_CHANGED, area);
         }
-        if(this.owner != null) {
-            if(this.owner.isPlayerFaction) {
-                for (int i = 0; i < tiles.Count; i++) {
-                    HexTile tile = tiles[i];
-                    Biomes.Instance.CorruptTileVisuals(tile);
-                    tile.SetCorruption(true);
-                }
-            } else {
-                for (int i = 0; i < tiles.Count; i++) {
-                    HexTile tile = tiles[i];
-                    Biomes.Instance.UpdateTileVisuals(tile);
-                    tile.SetCorruption(false);
-                }
-            }
-        } else {
-            for (int i = 0; i < tiles.Count; i++) {
-                HexTile tile = tiles[i];
-                Biomes.Instance.UpdateTileVisuals(tile);
-                tile.SetCorruption(false);
-            }
+        bool setCorruption = false;
+        if(this.owner != null && this.owner.isPlayerFaction) {
+            setCorruption = true;
         }
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile tile = tiles[i];
+            tile.SetCorruption(setCorruption);
+        }
+        //if(this.owner != null) {
+        //    if(this.owner.isPlayerFaction) {
+        //        for (int i = 0; i < tiles.Count; i++) {
+        //            HexTile tile = tiles[i];
+        //            Biomes.Instance.CorruptTileVisuals(tile);
+        //            tile.SetCorruption(true);
+        //        }
+        //    } else {
+        //        for (int i = 0; i < tiles.Count; i++) {
+        //            HexTile tile = tiles[i];
+        //            Biomes.Instance.UpdateTileVisuals(tile);
+        //            tile.SetCorruption(false);
+        //        }
+        //    }
+        //} else {
+        //    for (int i = 0; i < tiles.Count; i++) {
+        //        HexTile tile = tiles[i];
+        //        Biomes.Instance.UpdateTileVisuals(tile);
+        //        tile.SetCorruption(false);
+        //    }
+        //}
     }
     public void SetPreviousOwner(Faction faction) {
         previousOwner = faction;

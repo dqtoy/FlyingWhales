@@ -123,7 +123,7 @@ public class SaveDataCharacter {
     public void Save(Character character) {
         id = character.id;
         name = character.name;
-        characterColorCode = character.characterColorCode;
+        //characterColorCode = character.characterColorCode;
         //doNotDisturb = character.doNotDisturb;
         //doNotGetHungry = character.doNotGetHungry;
         //doNotGetLonely = character.doNotGetLonely;
@@ -159,7 +159,7 @@ public class SaveDataCharacter {
         race = character.race;
         roleType = character.role.roleType;
         portraitSettings = character.portraitSettings;
-        characterColor = character.characterColor;
+        //characterColor = character.characterColor;
         isStoppedByOtherCharacter = character.isStoppedByOtherCharacter;
 
         normalTraits = new List<SaveDataTrait>();
