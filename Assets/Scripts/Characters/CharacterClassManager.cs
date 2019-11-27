@@ -261,8 +261,8 @@ public class CharacterClassManager : MonoBehaviour {
                 character.PlanIdle(INTERACTION_TYPE.STAND, character);
                 //PlanIdleStroll(currentStructure);
                 return log;
-            } else if ((character.currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA || character.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || character.currentStructure.structureType == STRUCTURE_TYPE.CEMETERY) && character.specificLocation == character.homeArea) {
-                log += "\n-" + character.name + " is in the Work Area/Wilderness/Cemetery of home location";
+            } else if ((character.currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA || character.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || character.currentStructure.structureType == STRUCTURE_TYPE.CEMETERY || character.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) && character.specificLocation == character.homeArea) {
+                log += "\n-" + character.name + " is in the Work Area/Wilderness/Cemetery/City Center of home location";
 
                 log += "\n-If it is Morning or Afternoon, 25% chance to enter Stroll Outside Mode";
                 TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(character);
@@ -342,9 +342,10 @@ public class CharacterClassManager : MonoBehaviour {
                 || character.currentStructure.structureType == STRUCTURE_TYPE.INN
                 || character.currentStructure.structureType == STRUCTURE_TYPE.WAREHOUSE
                 || character.currentStructure.structureType == STRUCTURE_TYPE.PRISON
-                || character.currentStructure.structureType == STRUCTURE_TYPE.CEMETERY)
+                || character.currentStructure.structureType == STRUCTURE_TYPE.CEMETERY
+                || character.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER)
                 && character.trapStructure.structure == null) {
-                log += "\n-" + character.name + " is in another Dwelling/Inn/Warehouse/Prison/Cemetery and Base Structure is empty";
+                log += "\n-" + character.name + " is in another Dwelling/Inn/Warehouse/Prison/Cemetery/City Center and Base Structure is empty";
                 log += "\n-100% chance to return home";
                 character.PlanIdleReturnHome();
                 return log;
