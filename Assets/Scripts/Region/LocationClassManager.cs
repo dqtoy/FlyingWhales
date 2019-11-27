@@ -30,7 +30,7 @@ public class LocationClassManager {
     private string GetClassToCreate(int index) {
         string currentClass = characterClassOrder[index];
         if (currentClass == "Combatant") {
-            List<CharacterClass> classes = CharacterManager.Instance.normalCombatantClasses;
+            List<CharacterClass> classes = CharacterManager.Instance.GetNormalCombatantClasses();
             currentClass = classes[UnityEngine.Random.Range(0, classes.Count)].className;
         } else if (currentClass == "Civilian") {
             int i = UnityEngine.Random.Range(0, 3);
