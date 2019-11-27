@@ -38,8 +38,8 @@ public class TileObjectSlotItem : MonoBehaviour {
         UsedPosition();
         user.marker.pathfindingAI.Teleport(this.transform.position);
 
-        if (parentObj is Table && parentObj.areaMapGameObject.usedSprite.name.Contains("Bartop")) {
-            character.marker.Rotate(parentObj.areaMapGameObject.transform.rotation);
+        if (parentObj is Table && parentObj.areaMapGameObject.usedSprite.name.Contains("bartop")) {
+            character.marker.Rotate(Quaternion.Euler(0f, 0f, 0f));
         } else {
             user.marker.LookAt(parentObj.gridTileLocation.centeredWorldLocation);
         }

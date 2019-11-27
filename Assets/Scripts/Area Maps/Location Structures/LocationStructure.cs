@@ -160,24 +160,6 @@ public class LocationStructure {
         }
         return objs;
     }
-    public SupplyPile GetSupplyPile() {
-        for (int i = 0; i < pointsOfInterest.Count; i++) {
-            IPointOfInterest poi = pointsOfInterest[i];
-            if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT && (poi as TileObject).tileObjectType == TILE_OBJECT_TYPE.SUPPLY_PILE) {
-                return poi as SupplyPile;
-            }
-        }
-        return null;
-    }
-    public FoodPile GetFoodPile() {
-        for (int i = 0; i < pointsOfInterest.Count; i++) {
-            IPointOfInterest poi = pointsOfInterest[i];
-            if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT && (poi as TileObject).tileObjectType == TILE_OBJECT_TYPE.FOOD_PILE) {
-                return poi as FoodPile;
-            }
-        }
-        return null;
-    }
     private bool PlaceAreaObjectAtAppropriateTile(IPointOfInterest poi, LocationGridTile tile) {
         if (tile != null) {
             location.areaMap.PlaceObject(poi, tile);
@@ -276,6 +258,8 @@ public class LocationStructure {
             case STRUCTURE_TYPE.EXPLORE_AREA:
             case STRUCTURE_TYPE.POND:
                 return location.name;
+            case STRUCTURE_TYPE.CITY_CENTER:
+                return "the " + location.name + " city center";
             default:
                 return ToString();
         }

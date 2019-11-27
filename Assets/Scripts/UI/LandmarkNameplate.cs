@@ -1,19 +1,21 @@
-﻿using System.Collections;
+﻿using EZObjectPools;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class LandmarkNameplate : MonoBehaviour {
+public class LandmarkNameplate : PooledObject {
 
     private BaseLandmark landmark;
 
     [SerializeField] private TextMeshProUGUI nameLbl;
-
+    [SerializeField] private FactionEmblem factionEmblem;
     public void SetLandmark(BaseLandmark landmark) {
         this.landmark = landmark;
         name = landmark.tileLocation.region.name + " Nameplate";
         UpdateVisuals();
         UpdatePosition();
+        UpdateFactionEmblem();
     }
 
     private void UpdateVisuals() {
@@ -25,6 +27,13 @@ public class LandmarkNameplate : MonoBehaviour {
         //originalPos.y -= 1f;
         //Vector2 ScreenPosition = Camera.main.WorldToScreenPoint(area.nameplatePos);
         this.transform.position = landmark.nameplatePos;
+    }
+
+    public void UpdateFactionEmblem() {
+        factionEmblem.gameObject.SetActive(landmark.tileLocation.region.owner != null);
+        if (factionEmblem.gameObject.activeSelf) {
+            factionEmblem.SetFaction(landmark.tileLocation.region.owner);
+        }
     }
 
     public void LateUpdate() {

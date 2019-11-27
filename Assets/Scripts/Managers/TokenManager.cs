@@ -62,44 +62,70 @@ public class TokenManager : MonoBehaviour {
         return CreateSpecialToken(random);
     }
     public SpecialToken CreateSpecialToken(SPECIAL_TOKEN tokenType, int appearanceWeight = 0) {
+        SpecialToken createdToken;
         switch (tokenType) {
             case SPECIAL_TOKEN.BLIGHTED_POTION:
-                return new BlightedPotion();
+                createdToken = new BlightedPotion();
+                break;
             case SPECIAL_TOKEN.BOOK_OF_THE_DEAD:
-                return new BookOfTheDead();
+                createdToken = new BookOfTheDead();
+                break;
             case SPECIAL_TOKEN.CHARM_SPELL:
-                return new CharmSpell();
+                createdToken = new CharmSpell();
+                break;
             case SPECIAL_TOKEN.FEAR_SPELL:
-                return new FearSpell();
+                createdToken = new FearSpell();
+                break;
             case SPECIAL_TOKEN.MARK_OF_THE_WITCH:
-                return new MarkOfTheWitch();
+                createdToken = new MarkOfTheWitch();
+                break;
             case SPECIAL_TOKEN.BRAND_OF_THE_BEASTMASTER:
-                return new BrandOfTheBeastmaster();
+                createdToken = new BrandOfTheBeastmaster();
+                break;
             case SPECIAL_TOKEN.BOOK_OF_WIZARDRY:
-                return new BookOfWizardry();
+                createdToken = new BookOfWizardry();
+                break;
             case SPECIAL_TOKEN.SECRET_SCROLL:
-                return new SecretScroll();
+                createdToken = new SecretScroll();
+                break;
             case SPECIAL_TOKEN.MUTAGENIC_GOO:
-                return new MutagenicGoo();
+                createdToken = new MutagenicGoo();
+                break;
             case SPECIAL_TOKEN.DISPEL_SCROLL:
-                return new DispelScroll();
+                createdToken = new DispelScroll();
+                break;
             case SPECIAL_TOKEN.PANACEA:
-                return new Panacea();
+                createdToken = new Panacea();
+                break;
             case SPECIAL_TOKEN.ENCHANTED_AMULET:
-                return new EnchantedAmulet();
+                createdToken = new EnchantedAmulet();
+                break;
             case SPECIAL_TOKEN.GOLDEN_NECTAR:
-                return new GoldenNectar();
+                createdToken = new GoldenNectar();
+                break;
             case SPECIAL_TOKEN.SCROLL_OF_POWER:
-                return new ScrollOfPower();
+                createdToken = new ScrollOfPower();
+                break;
             case SPECIAL_TOKEN.ACID_FLASK:
-                return new AcidFlask();
+                createdToken = new AcidFlask();
+                break;
             case SPECIAL_TOKEN.HEALING_POTION:
-                return new HealingPotion();
+                createdToken = new HealingPotion();
+                break;
             case SPECIAL_TOKEN.WATER_BUCKET:
-                return new WaterBucket();
+                createdToken = new WaterBucket();
+                break;
             default:
-                return new SpecialToken(tokenType, appearanceWeight);
+                createdToken = new SpecialToken(tokenType, appearanceWeight);
+                break;
         }
+        if (createdToken != null) {
+            for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                Character character = CharacterManager.Instance.allCharacters[i];
+                character.AddAwareness(createdToken);
+            }
+        }
+        return createdToken;
     }
     public SpecialTokenSettings GetTokenSettings(SPECIAL_TOKEN tokenType) {
         for (int i = 0; i < specialTokenSettings.Count; i++) {

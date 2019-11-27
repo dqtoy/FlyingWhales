@@ -73,7 +73,7 @@ public class BuildingSpot {
     #region Data Setting
     public void SetIsOpen(bool isOpen) {
         this.isOpen = isOpen;
-        Debug.Log($"Set building spot {id.ToString()} is open to {isOpen.ToString()}");
+        //Debug.Log($"Set building spot {id.ToString()} is open to {isOpen.ToString()}");
     }
     public void SetIsOccupied(bool isOccupied) {
         this.isOccupied = isOccupied;
@@ -147,20 +147,26 @@ public class BuildingSpot {
     }
     public Vector3 GetRandomTilePositionInBuildSpot(LocationStructureObject structureObj) {
         int radius = Mathf.FloorToInt(InteriorMapManager.Building_Spot_Size.x / 2f);
-        int limitedRadius = radius - 2; //-2 is to limit the structure from being placed on the border.
-        int randomX = Random.Range(-limitedRadius, limitedRadius);
-        int randomY = Random.Range(-limitedRadius, limitedRadius);
+        if (structureObj.size.x - radius >= radius || structureObj.size.y - radius >= radius) {
+            //do not randomize spot, just place at center.
+            return centeredLocation;
+        } else {
+            int limitedRadius = radius - 2; //-2 is to limit the structure from being placed on the border.
+            int randomX = Random.Range(-limitedRadius, limitedRadius);
+            int randomY = Random.Range(-limitedRadius, limitedRadius);
 
-        int newX = location.x;
-        if (structureObj.IsHorizontallyBig() == false) {
-            newX += randomX;
-        }
-        int newY = location.y;
-        if (structureObj.IsVerticallyBig() == false) {
-            newY += randomY;
-        }
+            int newX = location.x;
+            //if (structureObj.IsHorizontallyBig() == false) {
+                newX += randomX;
+            //}
+            int newY = location.y;
+            //if (structureObj.IsVerticallyBig() == false) {
+                newY += randomY;
+            //}
 
-        return new Vector3(newX + 0.5f, newY + 0.5f);
+            return new Vector3(newX + 0.5f, newY + 0.5f);
+        }
+        
     }
     #endregion
 

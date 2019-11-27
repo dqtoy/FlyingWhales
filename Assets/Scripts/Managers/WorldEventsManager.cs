@@ -5,10 +5,9 @@ using System.Xml.Serialization;
 using System.IO;
 using System.Linq;
 
-public class StoryEventsManager : MonoBehaviour {
+public class WorldEventsManager : MonoBehaviour {
 
-    public static StoryEventsManager Instance = null;
-
+    public static WorldEventsManager Instance = null;
     private WorldEvent[] worldEvents;
 
     //world states
@@ -55,11 +54,26 @@ public class StoryEventsManager : MonoBehaviour {
         List<WorldEvent> events = new List<WorldEvent>();
         for (int i = 0; i < worldEvents.Length; i++) {
             WorldEvent currEvent = worldEvents[i];
-            if (currEvent.CanSpawnEventAt(region, spawner) && currEvent.CanProvideNeededEffects(effects)) {
+            if (currEvent.CanProvideAnyNeededEffects(effects) && currEvent.CanSpawnEventAt(region, spawner)) {
                 events.Add(currEvent);
             }
         }
         return events;
+    }
+    public bool CanSpawnEventWithEffects(Region region, Character spawner, WORLD_EVENT_EFFECT[] effects) {
+        for (int i = 0; i < worldEvents.Length; i++) {
+            WorldEvent currEvent = worldEvents[i];
+            if (currEvent.CanSpawnEventAt(region, spawner) && currEvent.CanProvideAnyNeededEffects(effects)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool DoesJobProduceWorldEvent(JOB_TYPE job) {
+        return WorldEventsDB.jobEventsDB.ContainsKey(job);
+    }
+    public WORLD_EVENT_EFFECT[] GetNeededEffectsOfJob(JOB_TYPE job) {
+        return WorldEventsDB.jobEventsDB[job];
     }
     #endregion
 

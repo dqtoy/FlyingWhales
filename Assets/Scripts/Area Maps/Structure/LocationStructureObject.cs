@@ -62,6 +62,9 @@ public class LocationStructureObject : MonoBehaviour {
     public LocationGridTile[] tiles {
         get { return _tiles; }
     }
+    public Vector2Int size {
+        get { return _size; }
+    }
     #endregion
 
     #region Monobehaviours
@@ -118,7 +121,7 @@ public class LocationStructureObject : MonoBehaviour {
     internal void ReceiveMapObject<T>(AreaMapGameObject<T> areaMapGameObject) where T : IPointOfInterest {
         areaMapGameObject.transform.SetParent(_objectsParent);
     }
-    public void RemovePreplacedObjectSettings() {
+    private void RemovePreplacedObjectSettings() {
         StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
         if (preplacedObjs != null) {
             for (int i = 0; i < preplacedObjs.Length; i++) {
@@ -184,6 +187,18 @@ public class LocationStructureObject : MonoBehaviour {
             TileBase groundTile = _groundTileMap.GetTile(_groundTileMap.WorldToCell(tile.worldLocation));
             //set the ground asset of the parent area map to what this objects ground map uses, then clear this objects ground map
             tile.SetGroundTilemapVisual(groundTile);
+
+            //update tile type based on wall asset.
+            TileBase wallAsset = _wallTileMap.GetTile(_wallTileMap.WorldToCell(tile.worldLocation));
+            if (wallAsset != null) {
+                if (wallAsset.name.Contains("Door")) {
+                    tile.SetTileType(LocationGridTile.Tile_Type.Structure_Entrance);
+                } else {
+                    tile.SetTileType(LocationGridTile.Tile_Type.Wall);
+                }
+            }
+
+            
             tile.parentAreaMap.detailsTilemap.SetTile(tile.localPlace, null);
         }
         _groundTileMap.ClearAllTiles();

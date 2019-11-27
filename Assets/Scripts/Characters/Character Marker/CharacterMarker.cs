@@ -629,11 +629,13 @@ public class CharacterMarker : PooledObject {
     public void BerserkedMarker() {
         if(mainImg.color == Color.white) {
             SetMarkerColor(Color.red);
+            hairImg.color = Color.red;
         }
     }
     public void UnberserkedMarker() {
         if (mainImg.color == Color.red) {
             SetMarkerColor(Color.white);
+            hairImg.color = Color.white;
         }
     }
     public void HighlightMarker(Color color) {
@@ -835,9 +837,8 @@ public class CharacterMarker : PooledObject {
                 animator.runtimeAnimatorController = null;
             }
             mainImg.sprite = assets.defaultSprite;
-            UpdateHairState();
         }
-        
+        UpdateHairState();
     }
     public void UpdatePosition() {
         //This is checked per update, stress test this for performance
@@ -985,7 +986,7 @@ public class CharacterMarker : PooledObject {
     }
     private void UpdateHairState() {
         //TODO: Find another way to unify this
-        if (character.characterClass.className == "Mage" || character.portraitSettings.hair == -1) {
+        if (character.characterClass.className == "Mage" || character.portraitSettings.hair == -1 || character.race == RACE.WOLF) {
             hairImg.gameObject.SetActive(false);
         } else {
             hairImg.gameObject.SetActive(true);

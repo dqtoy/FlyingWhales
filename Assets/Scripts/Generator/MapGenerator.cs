@@ -73,8 +73,6 @@ public class MapGenerator : MonoBehaviour {
         //CharacterManager.Instance.PlaceInitialCharacters();
         CharacterManager.Instance.GiveInitialItems();
         //CharacterManager.Instance.GenerateInitialAwareness();
-        //InteractionManager.Instance.Initialize();
-        //StoryEventsManager.Instance.Initialize();
 
         PlayerManager.Instance.InitializePlayer(portal);
         yield return null;
@@ -98,6 +96,7 @@ public class MapGenerator : MonoBehaviour {
         PlayerUI.Instance.ShowStartingMinionPicker();
         PlayerManager.Instance.player.IncreaseArtifactSlot();
         PlayerManager.Instance.player.IncreaseSummonSlot();
+        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Necronomicon);
     }
     private IEnumerator InitializeWorldCoroutine(Save data) {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
@@ -143,7 +142,7 @@ public class MapGenerator : MonoBehaviour {
 
         TokenManager.Instance.Initialize();
         //CharacterManager.Instance.GenerateRelationships();
-        StoryEventsManager.Instance.Initialize();
+        WorldEventsManager.Instance.Initialize();
 
         yield return null;
         //LandmarkManager.Instance.GenerateAreaMap(LandmarkManager.Instance.enemyOfPlayerArea, false);

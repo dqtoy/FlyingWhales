@@ -174,7 +174,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         TileBase groundAsset = parentAreaMap.groundTilemap.GetTile(this.localPlace);
         if (groundAsset != null) {
             string assetName = groundAsset.name.ToLower();
-            if (assetName.Contains("Structure Floor")) {
+            if (assetName.Contains("structure floor")) {
                 SetGroundType(Ground_Type.Wood);
             } else if (assetName.Contains("cobble")) {
                 SetGroundType(Ground_Type.Cobble);

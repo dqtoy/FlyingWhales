@@ -24,6 +24,13 @@ public class ResolveCombat : GoapAction {
         base.Perform(actionNode);
         SetState("Combat Success", actionNode);
     }
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        string stateName = "Target Missing";
+        bool defaultTargetMissing = false;
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
+        //resolve cannot be invalid
+        return goapActionInvalidity;
+    }
     #endregion
 
     #region Effects

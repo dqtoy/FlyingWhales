@@ -163,14 +163,14 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
     public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost) {
         GoapAction chosenAction = null;
         if (advertisedActions != null && advertisedActions.Count > 0) {//&& IsAvailable()
-            bool isCharacterAvailable = IsAvailable();
+            bool isAvailable = IsAvailable();
             //List<GoapAction> usableActions = new List<GoapAction>();
             GoapAction lowestCostAction = null;
             int currentLowestCost = 0;
             for (int i = 0; i < advertisedActions.Count; i++) {
                 INTERACTION_TYPE currType = advertisedActions[i];
                 GoapAction action = InteractionManager.Instance.goapActionData[currType];
-                if (!isCharacterAvailable && !action.canBeAdvertisedEvenIfActorIsUnavailable) {
+                if (!isAvailable && !action.canBeAdvertisedEvenIfActorIsUnavailable) {
                     //if this character is not available, check if the current action type can be advertised even when the character is inactive.
                     continue; //skip
                 }

@@ -1012,9 +1012,6 @@ public class Area : IJobOwner {
     }
     private void HourlyJobActions() {
         CreatePatrolJobs();
-        //if (UnityEngine.Random.Range(0, 100) < 5 && currentMoveOutJobs < maxMoveOutJobs) {
-        //    CreateMoveOutJobs();
-        //}
     }
     private void CreatePatrolJobs() {
         int patrolChance = UnityEngine.Random.Range(0, 100);
@@ -1116,11 +1113,6 @@ public class Area : IJobOwner {
     }
     private bool CanStillCreateHeroEventJob() {
         return currentHeroEventJobs < maxHeroEventJobs;
-    }
-    private void CreateMoveOutJobs() {
-        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.MOVE_OUT, CHARACTER_STATE.MOVE_OUT, this);
-        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanMoveOut);
-        AddToAvailableJobs(job);
     }
     /// <summary>
     /// Check if this area should create an obtain food outside job.

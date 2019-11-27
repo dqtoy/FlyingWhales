@@ -21,7 +21,7 @@ public class Initializer : MonoBehaviour {
         UIManager.Instance.InitializeUI();
 
         InteractionManager.Instance.Initialize();
-        StoryEventsManager.Instance.Initialize();
+        WorldEventsManager.Instance.Initialize();
 
         TokenManager.Instance.Initialize();
     }

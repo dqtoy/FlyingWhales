@@ -107,6 +107,11 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
         AddAdvertisedAction(INTERACTION_TYPE.POISON);
         AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
     }
+    public void RemoveCommonAdvertisments() {
+        RemoveAdvertisedAction(INTERACTION_TYPE.ASSAULT);
+        RemoveAdvertisedAction(INTERACTION_TYPE.POISON);
+        RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
+    }
 
     #region Area Map Object
     protected override void CreateAreaMapGameObject() {
@@ -470,6 +475,7 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
     #region Tile Object Slots
     protected virtual void OnPlaceObjectAtTile(LocationGridTile tile) {
         removedBy = null;
+        CheckFurnitureSettings();
         if (hasCreatedSlots) {
             RepositionTileSlots(tile);
         } else {
@@ -536,10 +542,12 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
         return false;
     }
     private TileObjectSlotItem GetSlotUsedBy(Character character) {
-        for (int i = 0; i < slots.Length; i++) {
-            TileObjectSlotItem slot = slots[i];
-            if (slot.user == character) {
-                return slot;
+        if (slots != null) {
+            for (int i = 0; i < slots.Length; i++) {
+                TileObjectSlotItem slot = slots[i];
+                if (slot.user == character) {
+                    return slot;
+                }
             }
         }
         return null;
@@ -617,6 +625,17 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
     protected void DestroyExistingGUS() {
         if (this.graphUpdateScene != null) {
             this.graphUpdateScene.Destroy();
+        }
+    }
+    #endregion
+
+    #region Visuals
+    private void CheckFurnitureSettings() {
+        if (gridTileLocation.hasFurnitureSpot) {
+            FurnitureSetting furnitureSetting;
+            if (gridTileLocation.furnitureSpot.TryGetFurnitureSettings(this.tileObjectType.ConvertTileObjectToFurniture(), out furnitureSetting)) {
+                this.areaMapGameObject.ApplyFurnitureSettings(furnitureSetting);
+            }
         }
     }
     #endregion

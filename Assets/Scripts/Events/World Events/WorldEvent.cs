@@ -5,7 +5,7 @@ using UnityEngine;
 
 /// <summary>
 /// Base class for World Events. NOTE: This should be coded in way that no special varaibles are needed for the event to work, 
-/// since World Event Classes are only created on startup and reused everytime to cut down on memory costs from creating a "new" instance every time. <see cref="StoryEventsManager.LoadWorldEvents"/>
+/// since World Event Classes are only created on startup and reused everytime to cut down on memory costs from creating a "new" instance every time. <see cref="WorldEventsManager.LoadWorldEvents"/>
 /// </summary>
 public class WorldEvent  {
 
@@ -118,11 +118,7 @@ public class WorldEvent  {
     #endregion
 
     #region Utilities
-    protected void AddDefaultFillersToLog(Log log, Region region) {
-        log.AddToFillers(region.eventSpawnedBy, region.eventSpawnedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(region, region.name, LOG_IDENTIFIER.LANDMARK_1);
-    }
-    public bool CanProvideNeededEffects(WORLD_EVENT_EFFECT[] neededEffects) {
+    public bool CanProvideAnyNeededEffects(WORLD_EVENT_EFFECT[] neededEffects) {
         if (neededEffects != null && eventEffects != null) {
             for (int i = 0; i < neededEffects.Length; i++) {
                 if (eventEffects.Contains(neededEffects[i])) {
@@ -135,6 +131,18 @@ public class WorldEvent  {
     }
     private bool IsCombatEvent() {
         return eventEffects.Contains(WORLD_EVENT_EFFECT.COMBAT);
+    }
+    #endregion
+
+    #region Logs
+    protected void AddDefaultFillersToLog(Log log, Region region) {
+        log.AddToFillers(region.eventSpawnedBy, region.eventSpawnedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(region, region.name, LOG_IDENTIFIER.LANDMARK_1);
+    }
+    protected Log CreateNewEventLog(string key, Region region) {
+        Log log = new Log(GameManager.Instance.Today(), "WorldEvent", name, key);
+        AddDefaultFillersToLog(log, region);
+        return log;
     }
     #endregion
 

@@ -207,6 +207,7 @@ public class InteractionManager : MonoBehaviour {
                 priority = 5;
                 break;
             case JOB_TYPE.TANTRUM:
+            case JOB_TYPE.CLAIM_REGION:
                 priority = 6;
                 break;
             case JOB_TYPE.IDLE:
@@ -371,7 +372,7 @@ public class InteractionManager : MonoBehaviour {
         return true;
     }
     public bool CanDoClaimRegionJob(Character character, JobQueueItem item) {
-        return true;
+        return character.traitContainer.GetNormalTrait("Royalty") != null;
     }
     public bool CanDoInvadeRegionJob(Character character, JobQueueItem item) {
         return true;

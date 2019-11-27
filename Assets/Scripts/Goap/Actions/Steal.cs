@@ -52,6 +52,15 @@ public class Steal : GoapAction {
         }
         return base.GetTargetStructure(node);
     }
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        string stateName = "Target Missing";
+        bool isInvalid = false;
+        //steal can never be invalid since requirement handle all cases of invalidity.
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(isInvalid, stateName);
+        return goapActionInvalidity;
+    }
     #endregion
 
     #region Requirements

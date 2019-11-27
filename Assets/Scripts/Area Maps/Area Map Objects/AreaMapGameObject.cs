@@ -47,4 +47,7 @@ public abstract class AreaMapGameObject<T> : PooledObject
     }
     #endregion
 
+    #region Furniture Spots
+    public abstract void ApplyFurnitureSettings(FurnitureSetting furnitureSetting);
+    #endregion
 }
