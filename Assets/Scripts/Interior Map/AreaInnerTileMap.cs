@@ -1051,7 +1051,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                         BuildingSpot currSpot = openSpots[i];
                         bool hasUnoccupiedWest = currSpot.neighbours.ContainsKey(GridNeighbourDirection.West) && currSpot.neighbours[GridNeighbourDirection.West].isOccupied == false;
                         bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East) && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false;
-                        if (hasUnoccupiedEast && hasUnoccupiedWest) {
+                        if (hasUnoccupiedEast || hasUnoccupiedWest) {
                             choices.Add(currSpot);
                         }
                     }
@@ -1062,7 +1062,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                         BuildingSpot currSpot = openSpots[i];
                         bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North) && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false;
                         bool hasUnoccupiedSouth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.South) && currSpot.neighbours[GridNeighbourDirection.South].isOccupied == false;
-                        if (hasUnoccupiedNorth && hasUnoccupiedSouth) {
+                        if (hasUnoccupiedNorth || hasUnoccupiedSouth) {
                             choices.Add(currSpot);
                         }
                     }

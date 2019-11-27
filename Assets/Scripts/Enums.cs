@@ -1338,11 +1338,11 @@ public static class Extensions {
         switch (sub) {
             case STRUCTURE_TYPE.CITY_CENTER:
                 return 0;
-            case STRUCTURE_TYPE.DWELLING:
-                return 1;
             case STRUCTURE_TYPE.INN:
-                return 2;
+                return 1;
             case STRUCTURE_TYPE.WAREHOUSE:
+                return 2;
+            case STRUCTURE_TYPE.DWELLING:
                 return 3;
             case STRUCTURE_TYPE.CEMETERY:
                 return 4;
