@@ -94,8 +94,25 @@ namespace Traits {
                     if (character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
                         character.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN);
                     }
-                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR }, character, character);
-                    character.jobQueue.AddJobInQueue(job);
+
+                    //This is just a quick fix, need to figure out a way to ensure that the character will steal.
+                    List<SpecialToken> choices = new List<SpecialToken>();
+                    for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
+                        Character otherCharacter = character.specificLocation.charactersAtLocation[i];
+                        if (otherCharacter == character && character.relationshipContainer.GetRelationshipEffectWith(otherCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
+                            continue; //skip
+                        }
+                        for (int j = 0; j < otherCharacter.items.Count; j++) {
+                            SpecialToken currItem = otherCharacter.items[j];
+                            choices.Add(currItem);
+                        }
+                    }
+                    if (choices.Count > 0) {
+                        IPointOfInterest target = Utilities.GetRandomElement(choices);
+                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEAL, target, character);
+                        character.jobQueue.AddJobInQueue(job);
+                    }
+                    
                 } else {
                     heartbroken.TriggerBrokenhearted();
                 }
@@ -105,6 +122,8 @@ namespace Traits {
         public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref int cost) {
             if (action == INTERACTION_TYPE.STEAL) {
                 cost = 0;//Utilities.rng.Next(5, 10);//5,46
+            } else if (action == INTERACTION_TYPE.PICK_UP) {
+                cost = 10000;//Utilities.rng.Next(5, 10);//5,46
             }
         }
         public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {

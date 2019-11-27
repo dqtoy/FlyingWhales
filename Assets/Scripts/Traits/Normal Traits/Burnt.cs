@@ -23,25 +23,21 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            if (addedTo is LocationGridTile) {
-                LocationGridTile tile = addedTo as LocationGridTile;
-                tile.parentTileMap.SetColor(tile.localPlace, burntColor);
-                tile.SetDefaultTileColor(burntColor);
-                tile.parentAreaMap.detailsTilemap.SetColor(tile.localPlace, burntColor);
-                tile.parentAreaMap.northEdgeTilemap.SetColor(tile.localPlace, burntColor);
-                tile.parentAreaMap.southEdgeTilemap.SetColor(tile.localPlace, burntColor);
-                tile.parentAreaMap.eastEdgeTilemap.SetColor(tile.localPlace, burntColor);
-                tile.parentAreaMap.westEdgeTilemap.SetColor(tile.localPlace, burntColor);
-                if (tile.objHere is TileObject) {
-                    (tile.objHere as TileObject).areaMapGameObject.SetColor(burntColor);
-                } else if (tile.objHere is SpecialToken) {
-                    (tile.objHere as SpecialToken).areaMapGameObject.SetColor(burntColor);
-                }
-            } else if (addedTo is TileObject) {
+            if (addedTo is TileObject) {
                 TileObject obj = addedTo as TileObject;
                 obj.SetPOIState(POI_STATE.INACTIVE);
                 obj.SetSlotColor(burntColor);
                 obj.areaMapGameObject.SetColor(burntColor);
+                if (obj is GenericTileObject) {
+                    LocationGridTile tile = obj.gridTileLocation;
+                    tile.parentTileMap.SetColor(tile.localPlace, burntColor);
+                    tile.SetDefaultTileColor(burntColor);
+                    tile.parentAreaMap.detailsTilemap.SetColor(tile.localPlace, burntColor);
+                    tile.parentAreaMap.northEdgeTilemap.SetColor(tile.localPlace, burntColor);
+                    tile.parentAreaMap.southEdgeTilemap.SetColor(tile.localPlace, burntColor);
+                    tile.parentAreaMap.eastEdgeTilemap.SetColor(tile.localPlace, burntColor);
+                    tile.parentAreaMap.westEdgeTilemap.SetColor(tile.localPlace, burntColor);
+                } 
             } else if (addedTo is SpecialToken) {
                 SpecialToken token = addedTo as SpecialToken;
                 token.SetPOIState(POI_STATE.INACTIVE);
@@ -50,25 +46,21 @@ namespace Traits {
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
-            if (removedFrom is LocationGridTile) {
-                LocationGridTile tile = removedFrom as LocationGridTile;
-                tile.parentTileMap.SetColor(tile.localPlace, Color.white);
-                tile.SetDefaultTileColor(Color.white);
-                tile.parentAreaMap.detailsTilemap.SetColor(tile.localPlace, Color.white);
-                tile.parentAreaMap.northEdgeTilemap.SetColor(tile.localPlace, Color.white);
-                tile.parentAreaMap.southEdgeTilemap.SetColor(tile.localPlace, Color.white);
-                tile.parentAreaMap.eastEdgeTilemap.SetColor(tile.localPlace, Color.white);
-                tile.parentAreaMap.westEdgeTilemap.SetColor(tile.localPlace, Color.white);
-                if (tile.objHere is TileObject) {
-                    (tile.objHere as TileObject).areaMapGameObject.SetColor(Color.white);
-                } else if (tile.objHere is SpecialToken) {
-                    (tile.objHere as SpecialToken).areaMapGameObject.SetColor(Color.white);
-                }
-            } else if (removedFrom is TileObject) {
+            if (removedFrom is TileObject) {
                 TileObject obj = removedFrom as TileObject;
                 obj.SetPOIState(POI_STATE.ACTIVE);
                 obj.SetSlotColor(Color.white);
                 obj.areaMapGameObject.SetColor(Color.white);
+                if (obj is GenericTileObject) {
+                    LocationGridTile tile = obj.gridTileLocation;
+                    tile.parentTileMap.SetColor(tile.localPlace, Color.white);
+                    tile.SetDefaultTileColor(Color.white);
+                    tile.parentAreaMap.detailsTilemap.SetColor(tile.localPlace, Color.white);
+                    tile.parentAreaMap.northEdgeTilemap.SetColor(tile.localPlace, Color.white);
+                    tile.parentAreaMap.southEdgeTilemap.SetColor(tile.localPlace, Color.white);
+                    tile.parentAreaMap.eastEdgeTilemap.SetColor(tile.localPlace, Color.white);
+                    tile.parentAreaMap.westEdgeTilemap.SetColor(tile.localPlace, Color.white);
+                }
             } else if (removedFrom is SpecialToken) {
                 SpecialToken token = removedFrom as SpecialToken;
                 token.SetPOIState(POI_STATE.ACTIVE);

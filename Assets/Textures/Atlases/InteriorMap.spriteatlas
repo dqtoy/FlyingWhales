@@ -257,6 +257,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 9e1774593506f6847b083b3d76db8768, type: 3}
   - {fileID: 21300000, guid: b826fa597d3a712419ec98bb28518ef0, type: 3}
   - {fileID: 21300000, guid: fa615c59373f6de439c570d9cb9d8dc4, type: 3}
+  - {fileID: 21300000, guid: 4aae22799ddcf37429e6268d9f13e95b, type: 3}
   - {fileID: 21300000, guid: 2f82f9790a9c8d44ea9f052678a65e14, type: 3}
   - {fileID: 21300000, guid: ffd7ab79c60f4bd48a80b50626c56326, type: 3}
   - {fileID: 21300000, guid: a0928a890c785c64faa0cd3b3baef349, type: 3}
@@ -281,6 +282,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: e6ef733ac5500434f94bfb1bfd7039fc, type: 3}
   - {fileID: 21300000, guid: b160c63a5b96b784d9b06fd201747971, type: 3}
   - {fileID: 21300000, guid: f35fd05a66d18af4d8eb5c60de0ef61d, type: 3}
+  - {fileID: 21300000, guid: 87f6c55abd2da114ebc141713ab6dba3, type: 3}
   - {fileID: 21300000, guid: 8debf95aba7782c4ea910165a169f349, type: 3}
   - {fileID: 21300000, guid: b067fd5a80c31c04bae92bd785ac8b74, type: 3}
   - {fileID: 21300000, guid: fce6f06a2f748ea42a505460d91dd697, type: 3}
@@ -314,6 +316,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: a045f6db19fb5e549890fe2572a08e69, type: 3}
   - {fileID: 21300000, guid: 43ec19db5860d2e4fb3f5a9f6f1c7e3e, type: 3}
   - {fileID: 21300000, guid: 663109ebdac5c9240a330fe74c781cfc, type: 3}
+  - {fileID: 21300000, guid: 14b3250c3a370374a93e774bffae363b, type: 3}
   - {fileID: 21300000, guid: 98ee2e0c121a79743a87ed361e0e2251, type: 3}
   - {fileID: 21300000, guid: dff3ee0c1766ec543a9e125ffe0eebeb, type: 3}
   - {fileID: 21300000, guid: 9446df3c48b01e7409f52c0e260f7f62, type: 3}
@@ -625,6 +628,7 @@ SpriteAtlas:
   - snow_v01
   - wall0101-door00
   - shore01110001-00
+  - necronomicon_open
   - statue00
   - debrisBones03
   - rocks03
@@ -649,6 +653,7 @@ SpriteAtlas:
   - debrisRocksWood00
   - shore11000111-00
   - wall1001-00
+  - ankh
   - character_hover
   - caveWallA-0111-02
   - tableDecor02_empty
@@ -682,6 +687,7 @@ SpriteAtlas:
   - tableDecor01_occ3
   - shore00010100-00
   - caveWallA-1101-02
+  - chaos_orb
   - wall0101-00
   - water00
   - Empty

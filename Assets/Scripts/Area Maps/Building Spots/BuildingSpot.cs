@@ -73,7 +73,7 @@ public class BuildingSpot {
     #region Data Setting
     public void SetIsOpen(bool isOpen) {
         this.isOpen = isOpen;
-        Debug.Log($"Set building spot {id.ToString()} is open to {isOpen.ToString()}");
+        //Debug.Log($"Set building spot {id.ToString()} is open to {isOpen.ToString()}");
     }
     public void SetIsOccupied(bool isOccupied) {
         this.isOccupied = isOccupied;
