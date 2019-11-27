@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AreaMapGameObjectFactory {
+public class AreaMapGameObjectVisualFactory {
 
     public static readonly string Item_Object_Prefab_Name = "ItemGameObject";
     public static readonly string Tile_Object_Prefab_Name = "TileObjectGameObject";

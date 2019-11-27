@@ -70,25 +70,30 @@ public class ObtainResource : GoapAction {
 
     #region State Effects
     public void PreTakeSuccess(ActualGoapNode goapNode) {
-        FoodPile foodPile = goapNode.poiTarget as FoodPile;
-        int neededFood = (int)goapNode.otherData[0];
-        int takenFood = neededFood - goapNode.actor.food;
-        if(foodPile.resourceInPile < takenFood) {
-            takenFood = foodPile.resourceInPile;
+        ResourcePile resourcePile = goapNode.poiTarget as ResourcePile;
+        int takenResource;
+        if (goapNode.otherData != null) {
+            takenResource = (int)goapNode.otherData[0];
+        } else {
+            takenResource = Mathf.Min(20, resourcePile.resourceInPile);
         }
-        //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-        goapNode.descriptionLog.AddToFillers(null, takenFood.ToString(), LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(null, takenResource.ToString(), LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeString(resourcePile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
     }
     public void AfterTakeSuccess(ActualGoapNode goapNode) {
-        FoodPile foodPile = goapNode.poiTarget as FoodPile;
-        int neededFood = (int)goapNode.otherData[0];
-        int takenFood = neededFood - goapNode.actor.food;
-        if (foodPile.resourceInPile < takenFood) {
-            takenFood = foodPile.resourceInPile;
+        ResourcePile resourcePile = goapNode.poiTarget as ResourcePile;
+        int takenResource;
+        if (goapNode.otherData != null) {
+            takenResource = (int)goapNode.otherData[0];
+        } else {
+            takenResource = Mathf.Min(20, resourcePile.resourceInPile);
         }
-        goapNode.actor.AdjustFood(takenFood);
-        foodPile.AdjustResourceInPile(-takenFood);
+
+        goapNode.actor.AdjustResource(resourcePile.providedResource, takenResource);
+        resourcePile.AdjustResourceInPile(-takenResource);
+
+        goapNode.descriptionLog.AddToFillers(null, takenResource.ToString(), LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeString(resourcePile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
     }
     #endregion
 }

@@ -6,7 +6,7 @@ using Traits;
 public class CraftItem : GoapAction {
 
     public CraftItem() : base(INTERACTION_TYPE.CRAFT_ITEM) {
-        actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
+        actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
@@ -15,8 +15,7 @@ public class CraftItem : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_WOOD, target = GOAP_EFFECT_TARGET.ACTOR }, HasSupply);
-        //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = craftedItem.ToString(), target = GOAP_EFFECT_TARGET.ACTOR });
+        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_WOOD, "0", true, GOAP_EFFECT_TARGET.ACTOR), HasSupply);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -27,8 +26,13 @@ public class CraftItem : GoapAction {
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
-        object[] otherData = node.otherData;
-        SPECIAL_TOKEN craftedItem = (SPECIAL_TOKEN)otherData[0];
+        SPECIAL_TOKEN craftedItem;
+        if (node.poiTarget is SpecialToken) {
+            craftedItem = (node.poiTarget as SpecialToken).specialTokenType;
+        } else {
+            craftedItem = (SPECIAL_TOKEN)node.otherData[0];
+        }
+
         log.AddToFillers(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
         log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
     }
@@ -36,7 +40,12 @@ public class CraftItem : GoapAction {
 
     #region Preconditions
     private bool HasSupply(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        SPECIAL_TOKEN craftedItem = (SPECIAL_TOKEN)otherData[0];
+        SPECIAL_TOKEN craftedItem;
+        if (poiTarget is SpecialToken) {
+            craftedItem = (poiTarget as SpecialToken).specialTokenType;
+        } else {
+            craftedItem = (SPECIAL_TOKEN)otherData[0];
+        }
         return actor.supply >= TokenManager.Instance.itemData[craftedItem].craftCost;
        
     }
@@ -46,13 +55,19 @@ public class CraftItem : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            if (actor != poiTarget) {
-                return false;
+            if (poiTarget is SpecialToken) {
+                if (poiTarget.gridTileLocation == null) {
+                    return false;
+                }
+                return (poiTarget as SpecialToken).specialTokenType.CanBeCraftedBy(actor);
+            } else {
+                if (actor != poiTarget) {
+                    return false;
+                }
+                SPECIAL_TOKEN craftedItem = (SPECIAL_TOKEN)otherData[0];
+                //if the crafted item enum has been set, check if the actor has the needed trait to craft it
+                return craftedItem.CanBeCraftedBy(actor);
             }
-            SPECIAL_TOKEN craftedItem = (SPECIAL_TOKEN)otherData[0];
-            //if the crafted item enum has been set, check if the actor has the needed trait to craft it
-            return craftedItem.CanBeCraftedBy(actor);
-   
         }
         return false;
     }
@@ -60,17 +75,25 @@ public class CraftItem : GoapAction {
 
     #region State Effects
     public void PreCraftSuccess(ActualGoapNode goapNode) {
-        GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        SPECIAL_TOKEN craftedItem = (SPECIAL_TOKEN)goapNode.otherData[0];
+        SPECIAL_TOKEN craftedItem;
+        if (goapNode.poiTarget is SpecialToken) {
+            craftedItem = (goapNode.poiTarget as SpecialToken).specialTokenType;
+        } else {
+            craftedItem = (SPECIAL_TOKEN)goapNode.otherData[0];
+        }
         goapNode.descriptionLog.AddToFillers(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
         goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
 
         goapNode.actor.AdjustSupply(-TokenManager.Instance.itemData[craftedItem].craftCost);
     }
     public void AfterCraftSuccess(ActualGoapNode goapNode) {
-        SPECIAL_TOKEN craftedItem = (SPECIAL_TOKEN)goapNode.otherData[0];
-        SpecialToken tool = TokenManager.Instance.CreateSpecialToken(craftedItem);
-        goapNode.actor.ObtainToken(tool);
+        if (goapNode.poiTarget is SpecialToken) {
+            (goapNode.poiTarget as SpecialToken).SetMapObjectState(MAP_OBJECT_STATE.BUILT);
+        } else {
+            SPECIAL_TOKEN craftedItem = (SPECIAL_TOKEN)goapNode.otherData[0];
+            SpecialToken tool = TokenManager.Instance.CreateSpecialToken(craftedItem);
+            goapNode.actor.ObtainToken(tool);
+        }
     }
     #endregion
 }

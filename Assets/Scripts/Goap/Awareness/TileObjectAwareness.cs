@@ -20,9 +20,9 @@ public class TileObjectAwareness : IAwareness {
     }
 
     public void OnAddAwareness(Character character) {
-        _tileObject.AddAwareCharacter(character);
+        //_tileObject.AddAwareCharacter(character);
     }
     public void OnRemoveAwareness(Character character) {
-        _tileObject.RemoveAwareCharacter(character);
+        //_tileObject.RemoveAwareCharacter(character);
     }
 }

@@ -61,7 +61,7 @@ public class AnkhOfAnubis : Artifact {
         isActivated = true;
         currentDuration = 0;
         Messenger.AddListener(Signals.TICK_ENDED, CheckPerTick);
-        particle = GameManager.Instance.CreateAOEEffectAt(tile, range);
+        particle = GameManager.Instance.CreateAOEEffectAt(gridTileLocation, range);
     }
     public void SetCurrentDuration(int amount) {
         currentDuration = amount;

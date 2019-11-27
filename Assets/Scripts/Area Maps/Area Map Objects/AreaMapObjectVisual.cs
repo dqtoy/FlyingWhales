@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class AreaMapGameObject<T> : PooledObject 
+public abstract class AreaMapObjectVisual<T> : PooledObject 
     where T : IPointOfInterest{
 
     [SerializeField] protected SpriteRenderer objectVisual;
@@ -44,6 +44,11 @@ public abstract class AreaMapGameObject<T> : PooledObject
     }
     public void SetActiveState(bool state) {
         this.gameObject.SetActive(state);
+    }
+    public void SetVisualAlpha(float alpha) {
+        Color color = objectVisual.color;
+        color.a = alpha;
+        SetColor(color);
     }
     #endregion
 

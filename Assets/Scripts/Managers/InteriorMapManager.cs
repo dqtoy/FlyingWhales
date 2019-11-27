@@ -41,7 +41,7 @@ public class InteriorMapManager : MonoBehaviour {
     [SerializeField] private List<TileBase> allTileAssets;
 
     //Area Map Objects
-    public AreaMapGameObjectFactory areaMapObjectFactory;
+    public AreaMapGameObjectVisualFactory areaMapObjectFactory;
 
     //structure templates
     private string templatePath;
@@ -138,7 +138,7 @@ public class InteriorMapManager : MonoBehaviour {
     public void Initialize() {
         allTileObjects = new Dictionary<TILE_OBJECT_TYPE, List<TileObject>>();
         areaMaps = new List<AreaInnerTileMap>();
-        areaMapObjectFactory = new AreaMapGameObjectFactory();
+        areaMapObjectFactory = new AreaMapGameObjectVisualFactory();
         AreaMapCameraMove.Instance.Initialize();
         Messenger.AddListener(Signals.TICK_ENDED, CheckForChangeLight);
     }

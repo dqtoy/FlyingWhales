@@ -12,8 +12,6 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
     public Faction factionOwner { get { return null; } }
     public List<INTERACTION_TYPE> advertisedActions { get; protected set; }
     public Area specificLocation { get { return gridTileLocation.structure.location; } }
-    protected List<Trait> _traits;
-    public List<Character> awareCharacters { get; private set; } //characters that are aware of this object (Used for checking if a ghost trigger should be destroyed)
     public List<string> actionHistory { get; private set; } //list of actions that was done to this object
     public LocationStructure structureLocation { get { return gridTileLocation.structure; } }
     public bool isDisabledByPlayer { get; protected set; }
@@ -42,19 +40,13 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
     private GameObject slotsParent;
     protected bool hasCreatedSlots;
 
-    protected LocationGridTile tile;
-    private POI_STATE _state;
+    public LocationGridTile gridTileLocation { get; protected set; }
+    public POI_STATE state { get; private set; }
     public LocationGridTile previousTile { get; protected set; }
 
-    #region getters/setters
+    #region getters
     public POINT_OF_INTEREST_TYPE poiType {
         get { return POINT_OF_INTEREST_TYPE.TILE_OBJECT; }
-    }
-    public LocationGridTile gridTileLocation {
-        get { return tile; }
-    }
-    public POI_STATE state {
-        get { return _state; }
     }
     public Vector3 worldPosition {
         get { return gridTileLocation.centeredWorldLocation; }
@@ -71,11 +63,8 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
         id = Utilities.SetID(this);
         this.tileObjectType = tileObjectType;
         name = Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectType.ToString());
-        _traits = new List<Trait>();
         actionHistory = new List<string>();
-        awareCharacters = new List<Character>();
         allJobsTargettingThis = new List<JobQueueItem>();
-        //targettedByAction = new List<GoapAction>();
         owners = new List<Character>();
         hasCreatedSlots = false;
         maxHP = TileObjectDB.GetTileObjectData(tileObjectType).maxHP;
@@ -83,22 +72,17 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
         CreateTraitContainer();
         traitContainer.AddTrait(this, "Flammable");
         AddCommonAdvertisments();
-
         InteriorMapManager.Instance.AddTileObject(this);
     }
     protected void Initialize(SaveDataTileObject data) {
         id = Utilities.SetID(this, data.id);
         tileObjectType = data.tileObjectType;
-        _traits = new List<Trait>();
         actionHistory = new List<string>();
-        awareCharacters = new List<Character>();
         allJobsTargettingThis = new List<JobQueueItem>();
         owners = new List<Character>();
-        //targettedByAction = new List<GoapAction>();
         hasCreatedSlots = false;
         CreateTraitContainer();
         AddCommonAdvertisments();
-
         InteriorMapManager.Instance.AddTileObject(this);
     }
 
@@ -113,38 +97,25 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
         RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
     }
 
-    #region Area Map Object
-    protected override void CreateAreaMapGameObject() {
-        GameObject obj = InteriorMapManager.Instance.areaMapObjectFactory.CreateNewTileObjectAreaMapObject(this.tileObjectType);
-        areaMapGameObject = obj.GetComponent<TileObjectGameObject>();
-    }
-    #endregion
-
     #region Virtuals
     /// <summary>
     /// Called when a character starts to do an action towards this object.
     /// </summary>
     /// <param name="action">The current action</param>
-    public virtual void OnDoActionToObject(ActualGoapNode action) {
-        //owner.SetPOIState(POI_STATE.INACTIVE);
-    }
+    public virtual void OnDoActionToObject(ActualGoapNode action) { }
     /// <summary>
     /// Called when a character finished doing an action towards this object.
     /// </summary>
     /// <param name="action">The finished action</param>
-    public virtual void OnDoneActionToObject(ActualGoapNode action) {
-
-    }
+    public virtual void OnDoneActionToObject(ActualGoapNode action) { }
     /// <summary>
     /// Called when a character cancelled doing an action towards this object.
     /// </summary>
     /// <param name="action">The finished action</param>
-    public virtual void OnCancelActionTowardsObject(ActualGoapNode action) {
-
-    }
+    public virtual void OnCancelActionTowardsObject(ActualGoapNode action) { }
     public virtual void SetGridTileLocation(LocationGridTile tile) {
-        previousTile = this.tile;
-        this.tile = tile;
+        previousTile = this.gridTileLocation;
+        this.gridTileLocation = tile;
         if (areaMapGameObject == null) {
             InitializeMapObject(this);
         }
@@ -159,8 +130,8 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
         }
     }
     public virtual void RemoveTileObject(Character removedBy) {
-        LocationGridTile previousTile = this.tile;
-        this.tile = null;
+        LocationGridTile previousTile = this.gridTileLocation;
+        this.gridTileLocation = null;
         DisableGameObject();
         OnRemoveTileObject(removedBy, previousTile);
         SetPOIState(POI_STATE.INACTIVE);
@@ -249,10 +220,7 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
         return false;
     }
     public virtual void SetPOIState(POI_STATE state) {
-        _state = state;
-    }
-    public virtual bool IsOwnedBy(Character character) {
-        return owners.Contains(character);
+        this.state = state;
     }
     /// <summary>
     /// Action to do when the player clicks this object on the map.
@@ -282,7 +250,7 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
 
     #region IPointOfInterest
     public bool IsAvailable() {
-        return _state != POI_STATE.INACTIVE && !isDisabledByPlayer;
+        return state != POI_STATE.INACTIVE && !isDisabledByPlayer;
     }
     public void SetIsDisabledByPlayer(bool state) {
         if(isDisabledByPlayer != state) {
@@ -347,12 +315,6 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
         }
         return null;
     }
-    //public void AddTargettedByAction(GoapAction action) {
-    //    targettedByAction.Add(action);
-    //}
-    //public void RemoveTargettedByAction(GoapAction action) {
-    //    targettedByAction.Remove(action);
-    //}
     public void AdjustHP(int amount, bool triggerDeath = false, object source = null) {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
@@ -390,36 +352,6 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
     }
     #endregion
 
-    #region Awareness
-    public void AddAwareCharacter(Character character) {
-        if (!awareCharacters.Contains(character)) {
-            awareCharacters.Add(character);
-        }
-    }
-    public void RemoveAwareCharacter(Character character) {
-        //anytime a character aware of this object is removed
-        //check if any ghost colliders need to be destroyed
-        //to do that:
-        if (awareCharacters.Remove(character)) {
-            List<LocationGridTile> knownLocations = new List<LocationGridTile>();
-            //loop through all the characters that are currently aware of this object
-            for (int i = 0; i < awareCharacters.Count; i++) {
-                Character currCharacter = awareCharacters[i];
-                //IAwareness awareness = currCharacter.HasAwareness(this);
-                if (gridTileLocation != null && !knownLocations.Contains(gridTileLocation)) {
-                    //for each character, store in a list all their known locations of this object
-                    knownLocations.Add(gridTileLocation);
-                }
-            }
-            //then broadcast that list to all ghost colliders of this object
-            Messenger.Broadcast(Signals.CHECK_GHOST_COLLIDER_VALIDITY, this as IPointOfInterest, knownLocations);
-        }
-        //each ghost collider will then check if it's current location is part of the broadcasted list
-        //if not, it is safe to destroy that ghost object
-        //else keep it
-    }
-    #endregion
-
     #region GOAP
     private void ConstructInitialGoapAdvertisements() {
         advertisedActions.Add(INTERACTION_TYPE.INSPECT);
@@ -444,31 +376,6 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
             }
         }
         return true;
-    }
-    /// <summary>
-    /// Does this tile object advertise a number of types from the given list.
-    /// </summary>
-    /// <param name="count">The number of valid types to consider.</param>
-    /// <param name="types">The list of types to check.</param>
-    /// <returns>If this tile object can meet the needed requirements.</returns>
-    public bool AdvertisesAny(int count = 1, params INTERACTION_TYPE[] types) {
-        int validCount = 0;
-        for (int i = 0; i < types.Length; i++) {
-            if ((Advertises(types[i]))) {
-                validCount++;
-                if (validCount >= count) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public GoapAction Advertise(INTERACTION_TYPE type, Character actor) {
-        GoapAction goapAction = InteractionManager.Instance.goapActionData[type];
-        if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(type, actor, this, null)) {
-            return goapAction;
-        }
-        return null;
     }
     #endregion
 
@@ -597,9 +504,9 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
         traitContainer.RemoveAllTraits(this);
     }
     public void UpdateOwners() {
-        if (tile.structure is Dwelling) {
+        if (gridTileLocation.structure is Dwelling) {
             owners.Clear();
-            owners.AddRange((tile.structure as Dwelling).residents);
+            owners.AddRange((gridTileLocation.structure as Dwelling).residents);
         }
     }
     #endregion
@@ -636,6 +543,22 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
             if (gridTileLocation.furnitureSpot.TryGetFurnitureSettings(this.tileObjectType.ConvertTileObjectToFurniture(), out furnitureSetting)) {
                 this.areaMapGameObject.ApplyFurnitureSettings(furnitureSetting);
             }
+        }
+    }
+    #endregion
+
+    #region Map Object
+    protected override void CreateAreaMapGameObject() {
+        GameObject obj = InteriorMapManager.Instance.areaMapObjectFactory.CreateNewTileObjectAreaMapObject(this.tileObjectType);
+        areaMapGameObject = obj.GetComponent<TileObjectGameObject>();
+    }
+    protected override void OnMapObjectStateChanged() {
+        if (mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
+            areaMapGameObject.SetVisualAlpha(128f / 255f);
+            AddAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
+        } else {
+            areaMapGameObject.SetVisualAlpha(255f / 255f);
+            RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
         }
     }
     #endregion
@@ -716,10 +639,10 @@ public class SaveDataTileObject {
             }
         }
 
-        awareCharactersIDs = new List<int>();
-        for (int i = 0; i < tileObject.awareCharacters.Count; i++) {
-            awareCharactersIDs.Add(tileObject.awareCharacters[i].id);
-        }
+        //awareCharactersIDs = new List<int>();
+        //for (int i = 0; i < tileObject.awareCharacters.Count; i++) {
+        //    awareCharactersIDs.Add(tileObject.awareCharacters[i].id);
+        //}
     }
 
     public virtual TileObject Load() {
@@ -730,9 +653,9 @@ public class SaveDataTileObject {
         //    Area area = LandmarkManager.Instance.GetAreaByID(structureLocationAreaID);
         //    tileObject.SetStructureLocation(area.GetStructureByID(structureLocationType, structureLocationID));
         //}
-        for (int i = 0; i < awareCharactersIDs.Count; i++) {
-            tileObject.AddAwareCharacter(CharacterManager.Instance.GetCharacterByID(awareCharactersIDs[i]));
-        }
+        //for (int i = 0; i < awareCharactersIDs.Count; i++) {
+        //    tileObject.AddAwareCharacter(CharacterManager.Instance.GetCharacterByID(awareCharactersIDs[i]));
+        //}
 
         tileObject.SetIsDisabledByPlayer(isDisabledByPlayer);
         tileObject.SetIsSummonedByPlayer(isSummonedByPlayer);

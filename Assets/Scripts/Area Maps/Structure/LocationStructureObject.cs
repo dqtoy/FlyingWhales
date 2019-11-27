@@ -118,7 +118,7 @@ public class LocationStructureObject : MonoBehaviour {
     private StructureTemplateObjectData[] GetPreplacedObjects() {
         return Utilities.GetComponentsInDirectChildren<StructureTemplateObjectData>(_objectsParent.gameObject);
     }
-    internal void ReceiveMapObject<T>(AreaMapGameObject<T> areaMapGameObject) where T : IPointOfInterest {
+    internal void ReceiveMapObject<T>(AreaMapObjectVisual<T> areaMapGameObject) where T : IPointOfInterest {
         areaMapGameObject.transform.SetParent(_objectsParent);
     }
     private void RemovePreplacedObjectSettings() {

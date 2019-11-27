@@ -239,7 +239,7 @@ public class Area : IJobOwner {
     public void OnAreaSetAsActive() {
         SubscribeToSignals();
         //LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
-        //CheckAreaInventoryJobs(warehouse);
+        CheckAreaInventoryJobs(mainStorageStructure);
     }
     public bool CanInvadeSettlement() {
         return coreTile.region.HasCorruptedConnection() && PlayerManager.Instance.player.currentAreaBeingInvaded == null && PlayerManager.Instance.player.minions.Where(x => x.assignedRegion == null).ToList().Count > 0;
@@ -912,7 +912,8 @@ public class Area : IJobOwner {
     }
     public bool RemoveFromAvailableJobs(JobQueueItem job) {
         if (availableJobs.Remove(job)) {
-            jobManager.OnRemoveFromAvailableJobs(job);
+            Debug.Log($"{GameManager.Instance.TodayLogString()}{job.ToString()} was removed from {this.name}'s available jobs");
+            OnJobRemovedFromAvailableJobs(job);
             return true;
         }
         return false;
@@ -1023,50 +1024,43 @@ public class Area : IJobOwner {
     }
     public void CheckAreaInventoryJobs(LocationStructure affectedStructure) {
         if (affectedStructure == mainStorageStructure) {
-            //TODO:
             //brew potion
             //- If there are less than 2 Healing Potions in the Warehouse, it will create a Brew Potion job
             //- the warehouse stores an inventory count of items it needs to keep in stock. anytime an item is added or removed (claimed by someone, stolen or destroyed), inventory will be checked and missing items will be procured
             //- any character that can produce this item may take this Job
             //- cancel Brew Potion job whenever inventory check occurs and it specified that there are enough Healing Potions already
-            //if (affectedStructure.GetItemsOfTypeCount(SPECIAL_TOKEN.HEALING_POTION) < 2) {
-            //    if (!HasJob(JOB_TYPE.BREW_POTION)) {
-            //        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BREW_POTION, INTERACTION_TYPE.DROP_ITEM, , new Dictionary<INTERACTION_TYPE, object[]>() {
-            //            { INTERACTION_TYPE.DROP_ITEM, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
-            //            { INTERACTION_TYPE.CRAFT_ITEM, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
-            //        }, this);
-            //        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanBrewPotion);
-            //        job.SetOnTakeJobAction(InteractionManager.Instance.OnTakeBrewPotion);
-            //        //job.SetCannotOverrideJob(false);
-            //        AddToAvailableJobs(job);
-            //    }
-            //} else {
-            //    //warehouse has 2 or more healing potions
-            //    JobQueueItem brewJob = GetJob(JOB_TYPE.BREW_POTION);
-            //    if (brewJob != null) {
-            //        ForceCancelJob(brewJob);
-            //    }
-            //}
+            if (affectedStructure.GetItemsOfTypeCount(SPECIAL_TOKEN.HEALING_POTION) < 2) {
+                if (!HasJob(JOB_TYPE.BREW_POTION)) {
+                    //create an un crafted potion and place it at the main storage structure, then use that as the target for the job.
+                    SpecialToken item = TokenManager.Instance.CreateSpecialToken(SPECIAL_TOKEN.HEALING_POTION);
+                    affectedStructure.AddItem(item);
+                    item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
 
-            //TODO:
+                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BREW_POTION, INTERACTION_TYPE.CRAFT_ITEM, item, this);
+                    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanBrewPotion);
+                    AddToAvailableJobs(job);
+                }
+            }
+
             //craft tool
-            //if (affectedStructure.GetItemsOfTypeCount(SPECIAL_TOKEN.TOOL) < 2) {
-            //    if (!HasJob(JOB_TYPE.CRAFT_TOOL)) {
-            //        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.CRAFT_TOOL, INTERACTION_TYPE.DROP_ITEM, new Dictionary<INTERACTION_TYPE, object[]>() {
-            //            { INTERACTION_TYPE.DROP_ITEM, new object[]{ GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE), SPECIAL_TOKEN.TOOL } },
-            //            { INTERACTION_TYPE.CRAFT_ITEM, new object[]{ SPECIAL_TOKEN.TOOL } },
-            //        }, this);
-            //        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCraftTool);
-            //        job.SetOnTakeJobAction(InteractionManager.Instance.OnTakeCraftTool);
-            //        //job.SetCannotOverrideJob(false);
-            //        AddToAvailableJobs(job);
-            //    }
-            //} else {
-            //    JobQueueItem craftToolJob = GetJob(JOB_TYPE.CRAFT_TOOL);
-            //    if (craftToolJob != null) {
-            //        ForceCancelJob(craftToolJob);
-            //    }
-            //}
+            if (affectedStructure.GetItemsOfTypeCount(SPECIAL_TOKEN.TOOL) < 2) {
+                if (!HasJob(JOB_TYPE.CRAFT_TOOL)) {
+                    //create an un crafted potion and place it at the main storage structure, then use that as the target for the job.
+                    SpecialToken item = TokenManager.Instance.CreateSpecialToken(SPECIAL_TOKEN.TOOL);
+                    affectedStructure.AddItem(item);
+                    item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
+
+                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.CRAFT_TOOL, INTERACTION_TYPE.CRAFT_ITEM, item, this);
+                    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCraftTool);
+                    AddToAvailableJobs(job);
+                }
+            }
+        }
+    }
+    private void OnJobRemovedFromAvailableJobs(JobQueueItem job) {
+        jobManager.OnRemoveFromAvailableJobs(job);
+        if (job.jobType == JOB_TYPE.CRAFT_TOOL || job.jobType == JOB_TYPE.BREW_POTION) {
+            CheckAreaInventoryJobs(mainStorageStructure);
         }
     }
     //private void CreateReplaceTileObjectJob(TileObject removedObj, LocationGridTile removedFrom) {

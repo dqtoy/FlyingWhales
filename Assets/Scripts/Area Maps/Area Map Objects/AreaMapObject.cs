@@ -5,22 +5,27 @@ using UnityEngine;
 public abstract class AreaMapObject<T> where T : IPointOfInterest {
 
     public POICollisionTrigger collisionTrigger { get; private set; }
-    public virtual AreaMapGameObject<T> areaMapGameObject { get; protected set; } ///this is set in each inheritors implementation of <see cref="CreateAreaMapGameObject"/>
-            
-    #region Main
+    public virtual AreaMapObjectVisual<T> areaMapGameObject { get; protected set; } ///this is set in each inheritors implementation of <see cref="CreateAreaMapGameObject"/>
+    public MAP_OBJECT_STATE mapObjectState { get; private set; }
+
+    #region Initialization
     protected abstract void CreateAreaMapGameObject();
     protected void InitializeMapObject(T obj) {
         CreateAreaMapGameObject();
         areaMapGameObject.Initialize(obj);
         InitializeCollisionTrigger(obj);
     }
+    #endregion
+
+    #region Placement
     public void PlaceMapObjectAt(LocationGridTile tile) {
         areaMapGameObject.PlaceObjectAt(tile);
-        //collisionTrigger.transform.SetParent(tile.parentAreaMap.objectsParent);
-        //(collisionTrigger.transform as RectTransform).anchoredPosition = tile.centeredLocalLocation;
         collisionTrigger.gameObject.SetActive(true);
         collisionTrigger.SetLocation(tile);
     }
+    #endregion
+
+    #region Visuals
     public void DisableGameObject() {
         areaMapGameObject.SetActiveState(false);
     }
@@ -37,5 +42,16 @@ public abstract class AreaMapObject<T> where T : IPointOfInterest {
     public void SetCollisionTrigger(POICollisionTrigger trigger) {
         collisionTrigger = trigger;
     }
+    #endregion
+
+    #region Object State
+    public void SetMapObjectState(MAP_OBJECT_STATE state) {
+        if (mapObjectState == state) {
+            return; //ignore change
+        }
+        mapObjectState = state;
+        OnMapObjectStateChanged();
+    }
+    protected abstract void OnMapObjectStateChanged();
     #endregion
 }

@@ -22,9 +22,9 @@ public class GenericTileObject : TileObject {
         }
     }
     public override void SetGridTileLocation(LocationGridTile tile) {
-        previousTile = this.tile;
+        previousTile = this.gridTileLocation;
         if (tile != null) {
-            this.tile = tile;
+            this.gridTileLocation = tile;
         }
         if (areaMapGameObject == null) {
             InitializeMapObject(this);
@@ -40,7 +40,7 @@ public class GenericTileObject : TileObject {
         }
     }
     public override void RemoveTileObject(Character removedBy) {
-        LocationGridTile previousTile = this.tile;
+        LocationGridTile previousTile = this.gridTileLocation;
         DisableGameObject();
         OnRemoveTileObject(removedBy, previousTile);
         SetPOIState(POI_STATE.INACTIVE);

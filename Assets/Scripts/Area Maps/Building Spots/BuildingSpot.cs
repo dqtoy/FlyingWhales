@@ -54,7 +54,7 @@ public class BuildingSpot {
         if (neighbours != null) {
             throw new System.Exception($"Build spot {this.id.ToString()} is trying to find neighbours again!");
         }
-        Debug.Log("Finding neighbours for build spot " + id.ToString());
+        //Debug.Log("Finding neighbours for build spot " + id.ToString());
         neighbours = new Dictionary<GridNeighbourDirection, BuildingSpot>();
         int mapUpperBoundX = map.buildingSpots.GetUpperBound(0);
         int mapUpperBoundY = map.buildingSpots.GetUpperBound(1);
@@ -77,7 +77,7 @@ public class BuildingSpot {
     }
     public void SetIsOccupied(bool isOccupied) {
         this.isOccupied = isOccupied;
-        Debug.Log($"Set building spot {id.ToString()} is occupied to {isOccupied.ToString()}");
+        //Debug.Log($"Set building spot {id.ToString()} is occupied to {isOccupied.ToString()}");
     }
     public void SetAllAdjacentSpotsAsOpen(AreaInnerTileMap map) {
         List<BuildingSpot> adjacent = GetNeighbourList();
