@@ -80099,7 +80099,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1490449079
 Transform:
   m_ObjectHideFlags: 0
@@ -92838,7 +92838,7 @@ MonoBehaviour:
     - Pitthize
   - tokenName: Dispel Scroll
     tokenType: 9
-    quantity: 2
+    quantity: 1
     appearanceWeight: 100
     areaLocations:
     - Cardell
@@ -92923,7 +92923,7 @@ MonoBehaviour:
     - Lamina
   - tokenName: Acid Flask
     tokenType: 16
-    quantity: 2
+    quantity: 1
     appearanceWeight: 80
     areaLocations:
     - Cardell

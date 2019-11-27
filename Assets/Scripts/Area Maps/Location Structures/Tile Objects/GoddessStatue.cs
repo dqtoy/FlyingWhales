@@ -18,11 +18,11 @@ public class GoddessStatue : TileObject {
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);
         if (state == POI_STATE.INACTIVE) {
-            advertisedActions.Add(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
-            advertisedActions.Remove(INTERACTION_TYPE.PRAY_TILE_OBJECT);
+            AddAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
+            RemoveAdvertisedAction(INTERACTION_TYPE.PRAY_TILE_OBJECT);
         } else {
-            advertisedActions.Remove(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
-            advertisedActions.Add(INTERACTION_TYPE.PRAY_TILE_OBJECT);
+            RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
+            AddAdvertisedAction(INTERACTION_TYPE.PRAY_TILE_OBJECT);
         }
         if (gridTileLocation != null) {
             areaMapGameObject.UpdateTileObjectVisual(this); //update visual based on state

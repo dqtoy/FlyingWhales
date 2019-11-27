@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemGameObject : AreaMapGameObject<SpecialToken> {
+public class ItemGameObject : AreaMapObjectVisual<SpecialToken> {
 
     public override void Initialize(SpecialToken poi) {
         this.name = poi.ToString();

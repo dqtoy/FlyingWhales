@@ -503,16 +503,6 @@ public class InteractionManager : MonoBehaviour {
     public bool CanCharacterTakeKnockoutJob(Character character, Character targetCharacter) {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.ADVENTURER; // && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE)
     }
-    public void OnTakeBrewPotion(Character character, JobQueueItem job) {
-        //GoapPlanJob j = job as GoapPlanJob;
-        //j.ClearForcedActions();
-        //j.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.HEALING_POTION.ToString(), targetPOI = character }, INTERACTION_TYPE.CRAFT_ITEM);
-    }
-    public void OnTakeCraftTool(Character character, JobQueueItem job) {
-        //GoapPlanJob j = job as GoapPlanJob;
-        //j.ClearForcedActions();
-        //j.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.TOOL.ToString(), targetPOI = character }, INTERACTION_TYPE.CRAFT_ITEM);
-    }
     #endregion
 
     #region Precondition Resolvers

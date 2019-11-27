@@ -27,27 +27,11 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
     public int maxHP { get; protected set; }
     public int currentHP { get; protected set; }
 
-    protected List<Trait> _traits;
     private LocationGridTile tile;
 
     #region getters/setters
     public string tokenName {
         get { return name; }
-    }
-    public virtual string Item_Used {
-        get { return "Item Used"; }
-    }
-    public virtual string Stop_Fail {
-        get { return "Stop Fail"; }
-    }
-    public string ownerName {
-        get {
-            if (owner == null) {
-                return "no one";
-            } else {
-                return owner.name;
-            }
-        }
     }
     public POINT_OF_INTEREST_TYPE poiType {
         get { return POINT_OF_INTEREST_TYPE.ITEM; }
@@ -75,23 +59,16 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.specialTokenType.ToString());
         weight = appearanceRate;
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_UP, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.DROP_ITEM};
-        _traits = new List<Trait>();
         allJobsTargettingThis = new List<JobQueueItem>();
-        //targettedByAction = new List<GoapAction>();
+        maxHP = 50;
+        currentHP = maxHP;
         uses = 1;
         CreateTraitContainer();
         InitializeMapObject(this);
     }
     public void SetID(int id) {
-        id = Utilities.SetID(this, id);
+        this.id = Utilities.SetID(this, id);
     }
-
-    #region Area Map Object
-    protected override void CreateAreaMapGameObject() {
-        GameObject obj = InteriorMapManager.Instance.areaMapObjectFactory.CreateNewItemAreaMapObject(this.poiType);
-        areaMapGameObject = obj.GetComponent<ItemGameObject>();
-    }
-    #endregion
 
     #region Virtuals
     public virtual void OnObtainToken(Character character) { }
@@ -295,6 +272,28 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
     #region Utilities
     public void DoCleanup() {
         RemoveAllTraits();
+    }
+    #endregion
+
+    #region Map Object
+    protected override void CreateAreaMapGameObject() {
+        GameObject obj = InteriorMapManager.Instance.areaMapObjectFactory.CreateNewItemAreaMapObject(this.poiType);
+        areaMapGameObject = obj.GetComponent<ItemGameObject>();
+    }
+    protected override void OnMapObjectStateChanged() {
+        if (mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
+            areaMapGameObject.SetVisualAlpha(128f / 255f);
+            //remove all other interactions
+            advertisedActions = new List<INTERACTION_TYPE>();
+
+            AddAdvertisedAction(INTERACTION_TYPE.CRAFT_ITEM);
+        } else {
+            areaMapGameObject.SetVisualAlpha(255f / 255f);
+            RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_ITEM);
+            //restore default interactions
+            advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_UP, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.DROP_ITEM };
+            Messenger.Broadcast(Signals.ITEM_BUILT, this);
+        }
     }
     #endregion
 }

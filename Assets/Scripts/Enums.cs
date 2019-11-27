@@ -1251,6 +1251,7 @@ public enum WORLD_EVENT_EFFECT { GET_FOOD, GET_SUPPLY, GAIN_POSITIVE_TRAIT, REMO
 public enum WORLD_OBJECT_TYPE { NONE, ARTIFACT, SUMMON, SPECIAL_OBJECT, }
 public enum REGION_FEATURE_TYPE { PASSIVE, ACTIVE }
 public enum RESOURCE { FOOD, WOOD, STONE, METAL }
+public enum MAP_OBJECT_STATE { BUILT, UNBUILT }
 
 /// <summary>
 /// STARTED - actor is moving towards the target but is not yet performing action

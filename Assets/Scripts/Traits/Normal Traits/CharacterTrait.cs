@@ -80,7 +80,7 @@ namespace Traits {
                         return true;
                     }
                 } else {
-                    if (tileObj.state == POI_STATE.INACTIVE && tileObj.advertisedActions.Contains(INTERACTION_TYPE.CRAFT_TILE_OBJECT)) {
+                    if (tileObj.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
                         GoapPlanJob buildJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_TILE_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, tileObj, characterThatWillDoJob);
                         characterThatWillDoJob.jobQueue.AddJobInQueue(buildJob);
                         return true;

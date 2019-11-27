@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BedObjectGameObject : AreaMapGameObject<Bed> {
+public class BedObjectGameObject : AreaMapObjectVisual<Bed> {
 
     [SerializeField] private Sprite bed1Sleeping;
     [SerializeField] private Sprite bed2Sleeping;
