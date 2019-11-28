@@ -199,6 +199,16 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             }
         }
     }
+    public bool TryGetNeighbourDirection(LocationGridTile tile, out GridNeighbourDirection dir) {
+        foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
+            if (keyValuePair.Value == tile) {
+                dir = keyValuePair.Key;
+                return true;
+            }
+        }
+        dir = GridNeighbourDirection.East;
+        return false;
+    }
 
     #region Structures
     public void SetStructure(LocationStructure structure) {
@@ -484,13 +494,16 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public void SetDefaultTileColor(Color color) {
         defaultTileColor = color;
     }
-    public List<ITraitable> GetAllTraitablesOnTileWithTrait(string requiredTrait) {
+    public List<ITraitable> GetAllDestructibleObjectsOnTileWithTrait(string requiredTrait) {
         List<ITraitable> traitables = new List<ITraitable>();
         if (genericTileObject.traitContainer.GetNormalTrait(requiredTrait) != null) {
             traitables.Add(genericTileObject);
         }
         if (objHere != null && objHere.traitContainer.GetNormalTrait(requiredTrait) != null) {
-            traitables.Add(objHere);
+            if ((objHere is TileObject && (objHere as TileObject).mapObjectState == MAP_OBJECT_STATE.BUILT)
+                || (objHere is SpecialToken && (objHere as SpecialToken).mapObjectState == MAP_OBJECT_STATE.BUILT)) {
+                traitables.Add(objHere);
+            }
         }
         for (int i = 0; i < charactersHere.Count; i++) {
             Character character = charactersHere[i];

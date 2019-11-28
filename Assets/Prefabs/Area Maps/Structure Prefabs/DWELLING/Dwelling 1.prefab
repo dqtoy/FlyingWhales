@@ -1071,7 +1071,7 @@ MonoBehaviour:
   furnitureSettings:
   - type: 3
     rotation: {x: 0, y: 0, z: 90}
-    tileAssetName: Desk
+    assetToUse: {fileID: 0}
 --- !u!114 &114318553999556946
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1202,7 +1202,7 @@ MonoBehaviour:
   furnitureSettings:
   - type: 4
     rotation: {x: 0, y: 0, z: 0}
-    tileAssetName: Guitar
+    assetToUse: {fileID: 0}
 --- !u!114 &114394403266513910
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1219,7 +1219,7 @@ MonoBehaviour:
   furnitureSettings:
   - type: 1
     rotation: {x: 0, y: 0, z: 90}
-    tileAssetName: Bed
+    assetToUse: {fileID: 0}
 --- !u!114 &114429643453430808
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1464,7 +1464,7 @@ MonoBehaviour:
   furnitureSettings:
   - type: 2
     rotation: {x: 0, y: 0, z: 0}
-    tileAssetName: Table2
+    assetToUse: {fileID: 0}
 --- !u!114 &114708730083586620
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1499,6 +1499,7 @@ MonoBehaviour:
   _center: {x: 2, y: 2, z: 0}
   _objectsParent: {fileID: 4533669975867286}
   _furnitureSpotsParent: {fileID: 4448418209214788}
+  tilemapCollider: {fileID: 2113883504612695040}
 --- !u!114 &114874922622550226
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1515,7 +1516,7 @@ MonoBehaviour:
   furnitureSettings:
   - type: 3
     rotation: {x: 0, y: 0, z: 90}
-    tileAssetName: Desk
+    assetToUse: {fileID: 0}
 --- !u!114 &114957794713963842
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2325,7 +2326,7 @@ Tilemap:
   - first: {x: 0, y: 0, z: 0}
     second:
       m_TileIndex: 4
-      m_TileSpriteIndex: 1
+      m_TileSpriteIndex: 3
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_ObjectToInstantiate: {fileID: 0}
@@ -2334,7 +2335,7 @@ Tilemap:
   - first: {x: 1, y: 0, z: 0}
     second:
       m_TileIndex: 4
-      m_TileSpriteIndex: 2
+      m_TileSpriteIndex: 0
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_ObjectToInstantiate: {fileID: 0}
@@ -2343,7 +2344,7 @@ Tilemap:
   - first: {x: 2, y: 0, z: 0}
     second:
       m_TileIndex: 4
-      m_TileSpriteIndex: 1
+      m_TileSpriteIndex: 3
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_ObjectToInstantiate: {fileID: 0}
@@ -2370,7 +2371,7 @@ Tilemap:
   - first: {x: 1, y: 1, z: 0}
     second:
       m_TileIndex: 4
-      m_TileSpriteIndex: 3
+      m_TileSpriteIndex: 1
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_ObjectToInstantiate: {fileID: 0}
@@ -2397,7 +2398,7 @@ Tilemap:
   - first: {x: 0, y: 2, z: 0}
     second:
       m_TileIndex: 4
-      m_TileSpriteIndex: 1
+      m_TileSpriteIndex: 3
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_ObjectToInstantiate: {fileID: 0}
@@ -2433,7 +2434,7 @@ Tilemap:
   - first: {x: 1, y: 3, z: 0}
     second:
       m_TileIndex: 4
-      m_TileSpriteIndex: 3
+      m_TileSpriteIndex: 1
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_ObjectToInstantiate: {fileID: 0}
@@ -2470,13 +2471,13 @@ Tilemap:
   - m_RefCount: 15
     m_Data: {fileID: 11400000, guid: 4c0a1b3069ff1ab4eba18e4b8362b997, type: 2}
   m_TileSpriteArray:
-  - m_RefCount: 3
-    m_Data: {fileID: 21300000, guid: 9e70eb347cc091f4194765e6de46ad52, type: 3}
-  - m_RefCount: 3
-    m_Data: {fileID: 21300000, guid: 80deb517aa362ca4692d227826ab98d7, type: 3}
   - m_RefCount: 4
+    m_Data: {fileID: 21300000, guid: 9e70eb347cc091f4194765e6de46ad52, type: 3}
+  - m_RefCount: 2
+    m_Data: {fileID: 21300000, guid: 80deb517aa362ca4692d227826ab98d7, type: 3}
+  - m_RefCount: 3
     m_Data: {fileID: 21300000, guid: 32d101c7287c00b43888ac765c65ea92, type: 3}
-  - m_RefCount: 5
+  - m_RefCount: 6
     m_Data: {fileID: 21300000, guid: acd979997eb35524b8cb032c7c3dd425, type: 3}
   m_TileMatrixArray:
   - m_RefCount: 15

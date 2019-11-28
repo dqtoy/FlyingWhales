@@ -1026,44 +1026,10 @@ public class AreaInnerTileMap : MonoBehaviour {
             List<BuildingSpot> openSpots = GetOpenBuildingSpots();
             if (openSpots.Count > 0) {
                 List<BuildingSpot> choices = new List<BuildingSpot>();
-                //if the object exceeds a build spot
-                //then first check if it is bigger horizontally or vertically,
-                bool isHorizontallyBig = structureObject.IsHorizontallyBig();
-                bool isVerticallyBig = structureObject.IsVerticallyBig();
-                if (isHorizontallyBig && isVerticallyBig) {
-                    //if it is bigger both horizontally and vertically
-                    //only get build spots that do not have any occupied adjacent spots to their top, bottom, left and right
-                    for (int i = 0; i < openSpots.Count; i++) {
-                        BuildingSpot currSpot = openSpots[i];
-                        bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North) && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false;
-                        bool hasUnoccupiedSouth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.South) && currSpot.neighbours[GridNeighbourDirection.South].isOccupied == false;
-                        bool hasUnoccupiedWest = currSpot.neighbours.ContainsKey(GridNeighbourDirection.West) && currSpot.neighbours[GridNeighbourDirection.West].isOccupied == false;
-                        bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East) && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false;
-                        if (hasUnoccupiedNorth && hasUnoccupiedSouth && hasUnoccupiedEast && hasUnoccupiedWest) {
-                            choices.Add(currSpot);
-                        }
-                    }
-                } else if (isHorizontallyBig) {
-                    //if it is bigger horizontally
-                    //only get build spots that do not have any occupied adjacent spots to their left or right
-                    for (int i = 0; i < openSpots.Count; i++) {
-                        BuildingSpot currSpot = openSpots[i];
-                        bool hasUnoccupiedWest = currSpot.neighbours.ContainsKey(GridNeighbourDirection.West) && currSpot.neighbours[GridNeighbourDirection.West].isOccupied == false;
-                        bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East) && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false;
-                        if (hasUnoccupiedEast || hasUnoccupiedWest) {
-                            choices.Add(currSpot);
-                        }
-                    }
-                } else if (isVerticallyBig) {
-                    //if it is bigger vertically
-                    //only get build spots that do not have any occupied adjacent spots to their top or bottom
-                    for (int i = 0; i < openSpots.Count; i++) {
-                        BuildingSpot currSpot = openSpots[i];
-                        bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North) && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false;
-                        bool hasUnoccupiedSouth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.South) && currSpot.neighbours[GridNeighbourDirection.South].isOccupied == false;
-                        if (hasUnoccupiedNorth || hasUnoccupiedSouth) {
-                            choices.Add(currSpot);
-                        }
+                for (int i = 0; i < openSpots.Count; i++) {
+                    BuildingSpot buildSpot = openSpots[i];
+                    if (IsBuildSpotValidFor(structureObject, buildSpot)) {
+                        choices.Add(buildSpot);
                     }
                 }
                 if (choices.Count > 0) {
@@ -1112,18 +1078,82 @@ public class AreaInnerTileMap : MonoBehaviour {
         }
         return open;
     }
-    //public BuildingSpot[] GetBuildingSpotsWithID(params int[] ids) {
-    //    BuildingSpot[] spots = new BuildingSpot[ids.Length];
-    //    int index = 0;
-    //    for (int i = 0; i < buildingSpots.Count; i++) {
-    //        BuildingSpot currSpot = buildingSpots[i];
-    //        if (ids.Contains(currSpot.id)) {
-    //            spots[index] = currSpot;
-    //            index++;
-    //        }
-    //    }
-    //    return spots;
-    //}
+    private BuildSpotTileObject GetRandomOpenBuildSpotTileObject() {
+        List<BuildSpotTileObject> choices = GetOpenBuildpotTileObjects();
+        if (choices.Count > 0) {
+            return Utilities.GetRandomElement(choices);
+        }
+        return null;
+    }
+    public bool TryGetValidBuildSpotTileObjectForStructure(LocationStructureObject structureObject, out BuildSpotTileObject buildingSpot) {
+        if (structureObject.IsBiggerThanBuildSpot()) {
+            List<BuildSpotTileObject> openSpots = GetOpenBuildpotTileObjects();
+            if (openSpots.Count > 0) {
+                List<BuildSpotTileObject> choices = new List<BuildSpotTileObject>();
+                for (int i = 0; i < openSpots.Count; i++) {
+                    BuildSpotTileObject buildSpot = openSpots[i];
+                    if (IsBuildSpotValidFor(structureObject, buildSpot.spot)) {
+                        choices.Add(buildSpot);
+                    }
+                }
+                if (choices.Count > 0) {
+                    buildingSpot = Utilities.GetRandomElement(choices);
+                    return true;
+                }
+            }
+            //could not find any spots
+            buildingSpot = null;
+            return false;
+        } else {
+            //if the object does not exceed the size of a build spot, then just give it a random open build spot
+            buildingSpot = GetRandomOpenBuildSpotTileObject();
+            return buildingSpot != null;
+        }
+    }
+    private List<BuildSpotTileObject> GetOpenBuildpotTileObjects() {
+        List<BuildSpotTileObject> spots = area.GetTileObjectsOfType(TILE_OBJECT_TYPE.BUILD_SPOT_TILE_OBJECT).Select(x => x as BuildSpotTileObject).ToList();
+        List<BuildSpotTileObject> open = new List<BuildSpotTileObject>();
+        for (int i = 0; i < spots.Count; i++) {
+            BuildSpotTileObject buildSpotTileObject = spots[i];
+            if (buildSpotTileObject.spot.isOpen) {
+                open.Add(buildSpotTileObject);
+            }
+        }
+        return open;
+    }
+    private bool IsBuildSpotValidFor(LocationStructureObject structureObject, BuildingSpot spot) {
+        bool isHorizontallyBig = structureObject.IsHorizontallyBig();
+        bool isVerticallyBig = structureObject.IsVerticallyBig();
+        BuildingSpot currSpot = spot;
+        if (isHorizontallyBig && isVerticallyBig) {
+            //if it is bigger both horizontally and vertically
+            //only get build spots that do not have any occupied adjacent spots to their top, bottom, left and right
+            bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North) && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false;
+            bool hasUnoccupiedSouth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.South) && currSpot.neighbours[GridNeighbourDirection.South].isOccupied == false;
+            bool hasUnoccupiedWest = currSpot.neighbours.ContainsKey(GridNeighbourDirection.West) && currSpot.neighbours[GridNeighbourDirection.West].isOccupied == false;
+            bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East) && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false;
+            if (hasUnoccupiedNorth && hasUnoccupiedSouth && hasUnoccupiedEast && hasUnoccupiedWest) {
+                return true;
+            }
+        } else if (isHorizontallyBig) {
+            //if it is bigger horizontally
+            //only get build spots that do not have any occupied adjacent spots to their left or right
+            bool hasUnoccupiedWest = currSpot.neighbours.ContainsKey(GridNeighbourDirection.West) && currSpot.neighbours[GridNeighbourDirection.West].isOccupied == false;
+            bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East) && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false;
+            if (hasUnoccupiedEast || hasUnoccupiedWest) {
+                return true;
+            }
+        } else if (isVerticallyBig) {
+            //if it is bigger vertically
+            //only get build spots that do not have any occupied adjacent spots to their top or bottom
+            bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North) && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false;
+            bool hasUnoccupiedSouth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.South) && currSpot.neighbours[GridNeighbourDirection.South].isOccupied == false;
+            if (hasUnoccupiedNorth || hasUnoccupiedSouth) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Burning Source

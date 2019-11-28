@@ -316,22 +316,11 @@ public class LocationStructure {
         }
         return objs;
     }
-    public TileObject GetUnoccupiedTileObject(TILE_OBJECT_TYPE type) {
+    public TileObject GetUnoccupiedTileObject(params TILE_OBJECT_TYPE[] type) {
         for (int i = 0; i < pointsOfInterest.Count; i++) {
             if (pointsOfInterest[i].IsAvailable() && pointsOfInterest[i] is TileObject) {
                 TileObject tileObj = pointsOfInterest[i] as TileObject;
-                if (tileObj.tileObjectType == type) {
-                    return tileObj;
-                }
-            }
-        }
-        return null;
-    }
-    public TileObject GetUnoccupiedTileObject(TILE_OBJECT_TYPE type1, TILE_OBJECT_TYPE type2) {
-        for (int i = 0; i < pointsOfInterest.Count; i++) {
-            if (pointsOfInterest[i].IsAvailable() && pointsOfInterest[i] is TileObject) {
-                TileObject tileObj = pointsOfInterest[i] as TileObject;
-                if (tileObj.tileObjectType == type1 || tileObj.tileObjectType == type2) {
+                if (type.Contains(tileObj.tileObjectType) && tileObj.mapObjectState == MAP_OBJECT_STATE.BUILT) {
                     return tileObj;
                 }
             }
