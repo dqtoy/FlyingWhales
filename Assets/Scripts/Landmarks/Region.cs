@@ -522,7 +522,7 @@ public class Region {
         }
     }
     public bool CanSpawnNewEvent() {
-        return !coreTile.isCorrupted && activeEvent == null;
+        return activeEvent == null;
     }
     /// <summary>
     /// Force the event to end regardless of its remaining duration.
@@ -689,13 +689,13 @@ public class Region {
             }
             Messenger.Broadcast(Signals.AREA_OWNER_CHANGED, area);
         }
-        bool setCorruption = false;
+        bool isCorrupted = false;
         if(this.owner != null && this.owner.isPlayerFaction) {
-            setCorruption = true;
+            isCorrupted = true;
         }
         for (int i = 0; i < tiles.Count; i++) {
             HexTile tile = tiles[i];
-            tile.SetCorruption(setCorruption);
+            tile.SetCorruption(isCorrupted);
         }
         mainLandmark.landmarkNameplate.UpdateFactionEmblem();
         //if(this.owner != null) {

@@ -70,10 +70,13 @@ public class WorldEventsManager : MonoBehaviour {
         return false;
     }
     public bool DoesJobProduceWorldEvent(JOB_TYPE job) {
-        return WorldEventsDB.jobEventsDB.ContainsKey(job);
+        return WorldEventsDB.jobEventsDB[job].neededEffects != null;
     }
     public WORLD_EVENT_EFFECT[] GetNeededEffectsOfJob(JOB_TYPE job) {
-        return WorldEventsDB.jobEventsDB[job];
+        return WorldEventsDB.jobEventsDB[job].neededEffects;
+    }
+    public Region GetValidRegionToMoveTo(JOB_TYPE job, Character character) {
+        return WorldEventsDB.jobEventsDB[job].validRegionGetter.Invoke(character, job);
     }
     #endregion
 
