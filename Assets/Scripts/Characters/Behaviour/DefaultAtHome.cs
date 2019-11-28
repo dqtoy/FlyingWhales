@@ -14,14 +14,18 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 int chance = UnityEngine.Random.Range(0, 100);
                 log += "\n  -RNG roll: " + chance;
                 if (chance < 35) {
-                    //StartGOAP(INTERACTION_TYPE.DRINK, null, GOAP_CATEGORY.IDLE);
-                    LocationStructure structure = character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.INN);
-                    if (structure != null) {
-                        log += "\n  -Early Night: " + character.name + " will go to Inn and set Base Structure for 2.5 hours";
-                        character.PlanIdle(INTERACTION_TYPE.VISIT, character, new object[] { structure });
-                        return true;
+                    if (character.traitContainer.GetNormalTrait("Agoraphobic") != null) {
+                        log += "\n  -Character is agoraphobic, nott going to inn";
                     } else {
-                        log += "\n  -No Inn Structure in the area";
+                        //StartGOAP(INTERACTION_TYPE.DRINK, null, GOAP_CATEGORY.IDLE);
+                        LocationStructure structure = character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.INN);
+                        if (structure != null) {
+                            log += "\n  -Early Night: " + character.name + " will go to Inn and set Base Structure for 2.5 hours";
+                            character.PlanIdle(INTERACTION_TYPE.VISIT, character, new object[] { structure });
+                            return true;
+                        } else {
+                            log += "\n  -No Inn Structure in the area";
+                        }
                     }
                 }
             } else {
