@@ -737,6 +737,9 @@ public class Area : IJobOwner {
                 BuildSpotTileObject tileObj = new BuildSpotTileObject();
                 tileObj.SetBuildingSpot(spot);
                 LocationGridTile tileLocation = areaMap.map[spot.location.x, spot.location.y];
+                if (tileLocation.objHere != null) {
+                    tileLocation.structure.RemovePOI(tileLocation.objHere);
+                }
                 tileLocation.structure.AddPOI(tileObj, tileLocation);
             }
         }

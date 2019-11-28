@@ -314,6 +314,8 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.OBTAIN_FOOD:
             case JOB_TYPE.DROP:
             case JOB_TYPE.INSPECT:
+            case JOB_TYPE.PLACE_BLUEPRINT:
+            case JOB_TYPE.BUILD_BLUEPRINT:
                 priority = 240;
                 break;
             //case JOB_TYPE.WATCH:
@@ -506,6 +508,9 @@ public class InteractionManager : MonoBehaviour {
     }
     public bool CanCharacterTakeKnockoutJob(Character character, Character targetCharacter) {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.ADVENTURER; // && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE)
+    }
+    public bool CanCharacterTakeBuildJob(Character character) {
+        return character.traitContainer.GetNormalTrait("Builder") != null;
     }
     #endregion
 

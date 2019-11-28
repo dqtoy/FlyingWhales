@@ -226,10 +226,10 @@ namespace Traits {
             if (Random.Range(0, 100) < 15) {
                 List<ITraitable> choices = new List<ITraitable>();
                 LocationGridTile origin = owner.gridTileLocation;
-                choices.AddRange(origin.GetAllTraitablesOnTileWithTrait("Flammable"));
+                choices.AddRange(origin.GetAllDestructibleObjectsOnTileWithTrait("Flammable"));
                 List<LocationGridTile> neighbours = origin.FourNeighbours();
                 for (int i = 0; i < neighbours.Count; i++) {
-                    choices.AddRange(neighbours[i].GetAllTraitablesOnTileWithTrait("Flammable"));
+                    choices.AddRange(neighbours[i].GetAllDestructibleObjectsOnTileWithTrait("Flammable"));
                 }
                 choices = choices.Where(x => x.traitContainer.GetNormalTrait("Burning", "Burnt", "Wet", "Fireproof") == null).ToList();
                 if (choices.Count > 0) {

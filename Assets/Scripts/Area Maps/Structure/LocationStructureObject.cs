@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pathfinding;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,8 @@ public class LocationStructureObject : MonoBehaviour {
     [SerializeField] private Transform _objectsParent;
     [Header("Furniture Spots")]
     [SerializeField] private Transform _furnitureSpotsParent;
+    [Header("Pathfinding")]
+    [SerializeField] private TilemapCollider2D tilemapCollider;
 
     private LocationGridTile[] _tiles;
     private Tilemap[] allTilemaps;
@@ -137,6 +140,11 @@ public class LocationStructureObject : MonoBehaviour {
             }
             tile.parentAreaMap.detailsTilemap.SetTile(tile.localPlace, null);
 
+            tile.parentAreaMap.northEdgeTilemap.SetTile(tile.localPlace, null);
+            tile.parentAreaMap.southEdgeTilemap.SetTile(tile.localPlace, null);
+            tile.parentAreaMap.eastEdgeTilemap.SetTile(tile.localPlace, null);
+            tile.parentAreaMap.westEdgeTilemap.SetTile(tile.localPlace, null);
+
             //clear out any details and objects on tiles adjacent to the built structure
             List<LocationGridTile> differentStructureTiles = tile.neighbourList.Where(x => !_tiles.Contains(x)).ToList();
             for (int j = 0; j < differentStructureTiles.Count; j++) {
@@ -145,6 +153,26 @@ public class LocationStructureObject : MonoBehaviour {
                     diffTile.structure.RemovePOI(diffTile.objHere);
                 }
                 diffTile.parentAreaMap.detailsTilemap.SetTile(diffTile.localPlace, null);
+
+                GridNeighbourDirection dir;
+                if (diffTile.TryGetNeighbourDirection(tile, out dir)) {
+                    switch (dir) {
+                        case GridNeighbourDirection.North:
+                            diffTile.parentAreaMap.northEdgeTilemap.SetTile(diffTile.localPlace, null);
+                            break;
+                        case GridNeighbourDirection.South:
+                            diffTile.parentAreaMap.southEdgeTilemap.SetTile(diffTile.localPlace, null);
+                            break;
+                        case GridNeighbourDirection.West:
+                            diffTile.parentAreaMap.westEdgeTilemap.SetTile(diffTile.localPlace, null);
+                            break;
+                        case GridNeighbourDirection.East:
+                            diffTile.parentAreaMap.eastEdgeTilemap.SetTile(diffTile.localPlace, null);
+                            break;
+                        default:
+                            break;
+                    }
+                }
 
             }
         }
@@ -187,6 +215,8 @@ public class LocationStructureObject : MonoBehaviour {
             TileBase groundTile = _groundTileMap.GetTile(_groundTileMap.WorldToCell(tile.worldLocation));
             //set the ground asset of the parent area map to what this objects ground map uses, then clear this objects ground map
             tile.SetGroundTilemapVisual(groundTile);
+
+           
 
             //update tile type based on wall asset.
             TileBase wallAsset = _wallTileMap.GetTile(_wallTileMap.WorldToCell(tile.worldLocation));
@@ -268,8 +298,9 @@ public class LocationStructureObject : MonoBehaviour {
                 color = Color.white;
                 SetAllTilemapsColor(color);
                 wallCollider.enabled = true;
+                AstarPath.active.UpdateGraphs(tilemapCollider.bounds);
                 //TODO: Scan Pathfinding Graph using Graph Update Scene instead of rescanning the whole grid.
-                PathfindingManager.Instance.RescanGrid(map.pathfindingGraph);
+                //PathfindingManager.Instance.RescanGrid(map.pathfindingGraph);
                 break;
         }
     }

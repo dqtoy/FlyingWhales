@@ -9,10 +9,12 @@ public class BuildSpotTileObject : TileObject {
     public BuildSpotTileObject() {
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PLACE_BLUEPRINT, INTERACTION_TYPE.BUILD_STRUCTURE, };
         Initialize(TILE_OBJECT_TYPE.BUILD_SPOT_TILE_OBJECT);
+        RemoveCommonAdvertisments();
     }
     public BuildSpotTileObject(SaveDataTileObject data) {
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PLACE_BLUEPRINT, INTERACTION_TYPE.BUILD_STRUCTURE, };
         Initialize(data);
+        RemoveCommonAdvertisments();
     }
 
     #region Overrides

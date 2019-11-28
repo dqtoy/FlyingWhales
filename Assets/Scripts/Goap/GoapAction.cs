@@ -198,7 +198,7 @@ public class GoapAction {
                 //summary += "\n Creating state " + state.name;
             }
         }
-        Debug.Log(summary);
+        //Debug.Log(summary);
     }
     protected virtual void ConstructBasePreconditionsAndEffects() { }
     public virtual void Perform(ActualGoapNode actionNode) {
