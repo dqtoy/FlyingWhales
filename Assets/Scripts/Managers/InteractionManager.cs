@@ -346,8 +346,7 @@ public class InteractionManager : MonoBehaviour {
         return character.role.roleType != CHARACTER_ROLE.LEADER && GameManager.GetTimeInWordsOfTick(GameManager.Instance.tick) == time; //Only non-leaders can take move out job, and it must also be in the morning time.
     }
     public bool CanDoCraftFurnitureJob(Character character, JobQueueItem item) {
-        object[] otherData = (item as GoapPlanJob).otherData[INTERACTION_TYPE.CRAFT_FURNITURE];
-        TILE_OBJECT_TYPE furnitureToCreate = (TILE_OBJECT_TYPE) otherData[1];
+        TILE_OBJECT_TYPE furnitureToCreate = ((item as GoapPlanJob).targetPOI as TileObject).tileObjectType;
         return furnitureToCreate.CanBeCraftedBy(character);
     }
     public bool CanDoDestroyProfaneJob(Character character) {

@@ -467,6 +467,16 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
             }
         }
     }
+    public void SetSlotAlpha(float alpha) {
+        if (slots != null) {
+            for (int i = 0; i < slots.Length; i++) {
+                TileObjectSlotItem slot = slots[i];
+                Color color = slot.spriteRenderer.color;
+                color.a = alpha;
+                slot.SetSlotColor(color);
+            }
+        }
+    }
     public void RevalidateTileObjectSlots() {
         if (hasCreatedSlots) {
             DestroyTileSlots();
@@ -552,13 +562,26 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
         GameObject obj = InteriorMapManager.Instance.areaMapObjectFactory.CreateNewTileObjectAreaMapObject(this.tileObjectType);
         areaMapGameObject = obj.GetComponent<TileObjectGameObject>();
     }
+    private INTERACTION_TYPE[] storedActions;
     protected override void OnMapObjectStateChanged() {
         if (mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
             areaMapGameObject.SetVisualAlpha(128f / 255f);
+            SetSlotAlpha(128f / 255f);
+            //store advertised actions
+            storedActions = new INTERACTION_TYPE[advertisedActions.Count];
+            for (int i = 0; i < advertisedActions.Count; i++) {
+                storedActions[i] = advertisedActions[i];
+            }
+            advertisedActions.Clear();
             AddAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
         } else {
             areaMapGameObject.SetVisualAlpha(255f / 255f);
+            SetSlotAlpha(255f / 255f);
             RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
+            for (int i = 0; i < storedActions.Length; i++) {
+                AddAdvertisedAction(storedActions[i]);
+            }
+            storedActions = null;
         }
     }
     #endregion

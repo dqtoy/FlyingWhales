@@ -48,6 +48,11 @@ public class ObtainResource : GoapAction {
         }
         return goapActionInvalidity;
     }
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
+        ResourcePile resourcePile = node.poiTarget as ResourcePile;
+        log.AddToFillers(null, Utilities.NormalizeString(resourcePile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
+    }
     #endregion
 
     #region Requirements

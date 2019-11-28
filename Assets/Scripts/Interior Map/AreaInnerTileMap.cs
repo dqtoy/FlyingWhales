@@ -506,8 +506,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                     .Where(x => 
                     !x.hasDetail
                     && x.objHere == null 
-                    && !x.isLocked
-                    && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Structure_Entrance)).ToList());
+                    && !x.isLocked).ToList());
 
                 //Generate details for work area (crates, barrels)
                 WorkAreaDetails(area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).tiles

@@ -909,6 +909,7 @@ public class Area : IJobOwner {
     public void AddToAvailableJobs(JobQueueItem job) {
         availableJobs.Add(job);
         jobManager.OnAddToAvailableJobs(job);
+        Debug.Log($"{GameManager.Instance.TodayLogString()}{job.ToString()} was added to {this.name}'s available jobs");
     }
     public bool RemoveFromAvailableJobs(JobQueueItem job) {
         if (availableJobs.Remove(job)) {
@@ -961,6 +962,18 @@ public class Area : IJobOwner {
         for (int i = 0; i < availableJobs.Count; i++) {
             if (job == availableJobs[i]) {
                 return true;
+            }
+        }
+        return false;
+    }
+    public bool HasJob(JOB_TYPE job, IPointOfInterest target) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem jqi = availableJobs[i];
+            if (jqi is GoapPlanJob) {
+                GoapPlanJob gpj = jqi as GoapPlanJob;
+                if (job == gpj.jobType && target == gpj.targetPOI) {
+                    return true;
+                }
             }
         }
         return false;

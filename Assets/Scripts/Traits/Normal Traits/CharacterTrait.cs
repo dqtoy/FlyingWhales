@@ -79,13 +79,14 @@ namespace Traits {
                         characterThatWillDoJob.jobQueue.AddJobInQueue(prayJob);
                         return true;
                     }
-                } else {
-                    if (tileObj.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
-                        GoapPlanJob buildJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_TILE_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, tileObj, characterThatWillDoJob);
-                        characterThatWillDoJob.jobQueue.AddJobInQueue(buildJob);
-                        return true;
-                    }
-                }
+                } 
+                //else {
+                //    if (tileObj.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
+                //        GoapPlanJob buildJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_TILE_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, tileObj, characterThatWillDoJob);
+                //        characterThatWillDoJob.jobQueue.AddJobInQueue(buildJob);
+                //        return true;
+                //    }
+                //}
             }
             if (targetPOI is SpecialToken) {
                 if (characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST) {

@@ -10,6 +10,9 @@ public class TileObjectSlotItem : MonoBehaviour {
     [SerializeField] private SpriteRenderer slotVisual;
 
     public Character user { get; private set; }
+    public SpriteRenderer spriteRenderer {
+        get { return slotVisual; }
+    }
 
     public void ApplySettings(TileObject parentObj, TileObjectSlotSetting settings) {
         this.parentObj = parentObj;
