@@ -208,6 +208,10 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case JOB_TYPE.TANTRUM:
             case JOB_TYPE.CLAIM_REGION:
+            case JOB_TYPE.CLEANSE_REGION:
+            case JOB_TYPE.ATTACK_DEMONIC_REGION:
+            case JOB_TYPE.ATTACK_NON_DEMONIC_REGION:
+            case JOB_TYPE.INVADE_REGION:
                 priority = 6;
                 break;
             case JOB_TYPE.IDLE:
@@ -368,6 +372,7 @@ public class InteractionManager : MonoBehaviour {
         return character.role.roleType == CHARACTER_ROLE.ADVENTURER;
     }
     public bool CanDoCleanseRegionJob(Character character) {
+        //return character.traitContainer.GetNormalTrait("Purifier") != null;
         return true;
     }
     public bool CanDoClaimRegionJob(Character character) {

@@ -83,7 +83,7 @@ public class LocationJobManager {
         return hasCreateJob;
     }
     private bool CreateCleanseRegionJob() {
-        if(UnityEngine.Random.Range(0, 2) == 0) {
+        if (UnityEngine.Random.Range(0, 2) == 0) {
             if (HasCorruptedRegionWithoutLandmark()) {
                 CharacterStateJob job = new CharacterStateJob(JOB_TYPE.CLEANSE_REGION, CHARACTER_STATE.MOVE_OUT, location);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCleanseRegionJob);
@@ -119,7 +119,7 @@ public class LocationJobManager {
         List<Region> regions = PlayerManager.Instance.player.playerFaction.ownedRegions;
         for (int i = 0; i < regions.Count; i++) {
             Region region = regions[i];
-            if(region.mainLandmark == null) {
+            if(region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE) {
                 return true;
             }
         }

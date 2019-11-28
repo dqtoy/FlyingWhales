@@ -394,7 +394,7 @@ public class RegionInfoUI : UIMenu {
             HideTheEyeUI();
             HideTheNeedlesUI();
             //activate the neeeded UI for the tab
-            if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE) {
+            if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE && activeRegion.coreTile.isCorrupted) {
                 ShowPlayerBuildLandmarkUI();
             } else if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_SPIRE) {
                 ShowPlayerResearchUI();

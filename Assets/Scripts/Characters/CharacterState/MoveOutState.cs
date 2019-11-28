@@ -211,60 +211,8 @@ public class MoveOutState : CharacterState {
             //If job has a designated region to go to, always use it
             return job.targetRegion;
         }
-        if (job.jobType == JOB_TYPE.RETURN_HOME) {
-            return character.homeRegion;
-        } else {
-            List<Region> regionPool = GetValidRegionsToDoJob(character);
-            if (regionPool.Count > 0) {
-                return Utilities.GetRandomElement(regionPool);
-            }
-        }
-        return null;
-    }
-    private List<Region> GetValidRegionsToDoJob(Character character) {
-        if (job == null) {
-            throw new System.Exception(GameManager.Instance.TodayLogString() + character.name + " is checking for valid regions to do job but his/her job is null.");
-        }
-
-        List<LANDMARK_TYPE> validLandmarkTypes = GetValidLandmarkTypesToDoJob();
-        List<Region> choices = new List<Region>();
-        if (WorldEventsManager.Instance.DoesJobProduceWorldEvent(job.jobType)) {
-            //get all valid regions that can spawn the needed effects of the given job
-            for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-                Region currRegion = GridMap.Instance.allRegions[i];
-                if (currRegion.CanSpawnNewEvent() && currRegion != stateComponent.character.homeRegion
-                    && validLandmarkTypes.Contains(currRegion.mainLandmark.specificLandmarkType)
-                    && WorldEventsManager.Instance.CanSpawnEventWithEffects(currRegion, character, WorldEventsManager.Instance.GetNeededEffectsOfJob(job.jobType))) {
-                    choices.Add(currRegion);
-                }
-            }
-        } else {
-            //just get all valid regions without checking for event effects
-            for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-                Region currRegion = GridMap.Instance.allRegions[i];
-                if (currRegion.CanSpawnNewEvent() && currRegion != stateComponent.character.homeRegion
-                    && validLandmarkTypes.Contains(currRegion.mainLandmark.specificLandmarkType)) {
-                    choices.Add(currRegion);
-                }
-            }
-        }
-        return choices;
-    }
-    private List<LANDMARK_TYPE> GetValidLandmarkTypesToDoJob() {
-        List<LANDMARK_TYPE> validLandmarkTypes = new List<LANDMARK_TYPE>();
-
-        switch (job.jobType) {
-            case JOB_TYPE.DESTROY_PROFANE_LANDMARK:
-            case JOB_TYPE.CORRUPT_CULTIST:
-                validLandmarkTypes.Add(LANDMARK_TYPE.THE_PROFANE);
-                break;
-            default:
-                validLandmarkTypes.AddRange(Utilities.GetEnumValues<LANDMARK_TYPE>());
-                break;
-        }
-        validLandmarkTypes.Remove(LANDMARK_TYPE.THE_PORTAL); //Always removing the portal for now, to prevent characters going there.
-
-        return validLandmarkTypes;
+        return WorldEventsManager.Instance.GetValidRegionToMoveTo(job.jobType, character);
+        
     }
     #endregion
 
