@@ -41,6 +41,13 @@ public class LandmarkManager : MonoBehaviour {
 
     public List<LocationEvent> locationEventsData { get; private set; }
 
+    public STRUCTURE_TYPE[] humanSurvivalStructures { get; private set; }
+    public STRUCTURE_TYPE[] humanUtilityStructures { get; private set; }
+    public STRUCTURE_TYPE[] humanCombatStructures { get; private set; }
+    public STRUCTURE_TYPE[] elfSurvivalStructures { get; private set; }
+    public STRUCTURE_TYPE[] elfUtilityStructures { get; private set; }
+    public STRUCTURE_TYPE[] elfCombatStructures { get; private set; }
+
     //The Anvil
     public Dictionary<string, AnvilResearchData> anvilResearchData;
 
@@ -54,6 +61,7 @@ public class LandmarkManager : MonoBehaviour {
         LoadLandmarkTypeDictionary();
         ConstructAnvilResearchData();
         ConstructLocationEventsData();
+        ConstructRaceStructureRequirements();
     }
 
     #region Monobehaviours
@@ -760,6 +768,26 @@ public class LandmarkManager : MonoBehaviour {
             location.AddStructure(createdStructure);
         }
         return createdStructure;
+    }
+    private void ConstructRaceStructureRequirements() {
+        humanSurvivalStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.CEMETERY, STRUCTURE_TYPE.PRISON, STRUCTURE_TYPE.SMITHY, STRUCTURE_TYPE.BARRACKS, STRUCTURE_TYPE.APOTHECARY };
+        humanUtilityStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.GRANARY, STRUCTURE_TYPE.MINER_CAMP, STRUCTURE_TYPE.INN };
+        humanCombatStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.RAIDER_CAMP, STRUCTURE_TYPE.ASSASSIN_GUILD, STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.MAGE_QUARTERS };
+        elfSurvivalStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.APOTHECARY, STRUCTURE_TYPE.MAGE_QUARTERS };
+        elfUtilityStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.INN, STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.CEMETERY, STRUCTURE_TYPE.PRISON, STRUCTURE_TYPE.GRANARY, STRUCTURE_TYPE.MINER_CAMP };
+        elfCombatStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.SMITHY, STRUCTURE_TYPE.BARRACKS, STRUCTURE_TYPE.RAIDER_CAMP, STRUCTURE_TYPE.ASSASSIN_GUILD };
+    }
+    public STRUCTURE_TYPE[] GetRaceStructureRequirements(RACE race, string category) {
+        if(race == RACE.HUMANS) {
+            if (category == "Survival") { return humanSurvivalStructures; }
+            else if (category == "Utility") { return humanUtilityStructures; }
+            else if (category == "Combat") { return humanCombatStructures; }
+        } else if (race == RACE.ELVES) {
+            if (category == "Survival") { return elfSurvivalStructures; }
+            else if (category == "Utility") { return elfUtilityStructures; }
+            else if (category == "Combat") { return elfCombatStructures; }
+        }
+        return null;
     }
     #endregion
 
