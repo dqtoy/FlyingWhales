@@ -192,6 +192,10 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
                 SetGroundType(Ground_Type.Grass);
             } else if (assetName.Contains("soil")) {
                 SetGroundType(Ground_Type.Soil);
+            } else if (assetName.Contains("tundra")) {
+                SetGroundType(Ground_Type.Tundra);
+                //override tile to use tundra soil
+                parentAreaMap.groundTilemap.SetTile(this.localPlace, parentAreaMap.tundraSoilAsset);
             } else if ((assetName.Contains("Dirt") || assetName.Contains("dirt")) && (parentAreaMap.area.coreTile.biomeType == BIOMES.SNOW || parentAreaMap.area.coreTile.biomeType == BIOMES.TUNDRA)) {
                 SetGroundType(Ground_Type.Tundra);
                 //override tile to use tundra soil

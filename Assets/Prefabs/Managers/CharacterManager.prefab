@@ -1985,6 +1985,7 @@ MonoBehaviour:
           raiseDeadClip: {fileID: 0}
           sleepGroundClip: {fileID: 0}
   baseAnimator: {fileID: 0}
+  corpseSprite: {fileID: 21300000, guid: 5255390e6fedf8140a25b567a5f57b6c, type: 3}
   summonSettings:
     m_keys: 00000000010000000200000003000000040000000500000006000000
     m_values:

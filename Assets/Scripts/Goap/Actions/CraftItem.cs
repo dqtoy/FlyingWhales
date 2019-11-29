@@ -83,17 +83,18 @@ public class CraftItem : GoapAction {
         }
         goapNode.descriptionLog.AddToFillers(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
         goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
-
-        goapNode.actor.AdjustSupply(-TokenManager.Instance.itemData[craftedItem].craftCost);
     }
     public void AfterCraftSuccess(ActualGoapNode goapNode) {
+        SPECIAL_TOKEN craftedItem;
         if (goapNode.poiTarget is SpecialToken) {
+            craftedItem = (goapNode.poiTarget as SpecialToken).specialTokenType;
             (goapNode.poiTarget as SpecialToken).SetMapObjectState(MAP_OBJECT_STATE.BUILT);
         } else {
-            SPECIAL_TOKEN craftedItem = (SPECIAL_TOKEN)goapNode.otherData[0];
+            craftedItem = (SPECIAL_TOKEN)goapNode.otherData[0];
             SpecialToken tool = TokenManager.Instance.CreateSpecialToken(craftedItem);
             goapNode.actor.ObtainToken(tool);
         }
+        goapNode.actor.AdjustSupply(-TokenManager.Instance.itemData[craftedItem].craftCost);
     }
     #endregion
 }
