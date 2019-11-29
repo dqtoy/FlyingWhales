@@ -38,15 +38,15 @@ public class Sleep : GoapAction {
                         IRelationshipData characterRelationshipData = actor.relationshipContainer.GetRelationshipDataWith(resident);
                         if (characterRelationshipData != null) {
                             if (characterRelationshipData.relationshipStatus == RELATIONSHIP_EFFECT.POSITIVE) {
-                                return 15;
+                                return 30;
                             }
                         }
                     }
                 }
-                return 30;
+                return 60;
             }
         } else if (targetStructure.structureType == STRUCTURE_TYPE.INN) {
-            return 30;
+            return 60;
         }
         return 50;
     }

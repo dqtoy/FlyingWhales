@@ -48,10 +48,10 @@ public class LocationClassManager {
     private void CreateCharacterClassOrderAndGuide() {
         characterClassOrder = new string[] {
             "Leader",
-            "Peasant",
+            "Craftsman",
             "Peasant",
             "Combatant",
-            "Craftsman",
+            "Peasant",
 
             "Civilian",
             "Combatant",

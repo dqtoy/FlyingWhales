@@ -12,17 +12,17 @@ public class LocationJobManager {
     public LocationJobManager(Area location) {
         this.location = location;
         jobNames = new List<string>();
-        createJobsTriggerTick = 60;
-        //Messenger.AddListener(Signals.TICK_STARTED, ProcessJobs);
+        createJobsTriggerTick = 60; //150
+        Messenger.AddListener(Signals.TICK_STARTED, ProcessJobs);
     }
 
 
     private void ProcessJobs() {
         if(GameManager.Instance.tick == createJobsTriggerTick && currentExistingJobsCount < 2) {
             if (!JobsPart1()) {
-                if (!JobsPart2()) {
-                    JobsPart3();
-                }
+                //if (!JobsPart2()) {
+                //    JobsPart3();
+                //}
             }
         }else if (GameManager.Instance.IsEndOfDay()) {
             OnEndOfDay();
@@ -139,7 +139,7 @@ public class LocationJobManager {
         List<Region> connectedRegions = location.region.connections;
         for (int i = 0; i < connectedRegions.Count; i++) {
             Region region = connectedRegions[i];
-            if (!region.coreTile.isCorrupted && region.area == null && region.mainLandmark == null && region.owner != null 
+            if (!region.coreTile.isCorrupted && region.area == null && region.owner != null
                 && region.residents.Count <= 0 && region.owner.HasRelationshipStatusWith(FACTION_RELATIONSHIP_STATUS.HOSTILE, location.region.owner)) {
                 return true;
             }
