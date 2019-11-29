@@ -91,12 +91,13 @@ public class MapGenerator : MonoBehaviour {
         AudioManager.Instance.TransitionTo("World Music", 10);
         Messenger.Broadcast(Signals.GAME_LOADED);
         yield return new WaitForSeconds(1f);
+        PlayerManager.Instance.player.IncreaseArtifactSlot();
+        PlayerManager.Instance.player.IncreaseSummonSlot();
         GameManager.Instance.StartProgression();
         UIManager.Instance.SetSpeedTogglesState(false);
         PlayerUI.Instance.ShowStartingMinionPicker();
-        PlayerManager.Instance.player.IncreaseArtifactSlot();
-        PlayerManager.Instance.player.IncreaseSummonSlot();
-        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Necronomicon);
+        
+        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Necronomicon);
     }
     private IEnumerator InitializeWorldCoroutine(Save data) {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();

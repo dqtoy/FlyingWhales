@@ -72,22 +72,22 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
     private void StartBuild(object minionObj, object landmarkObj) {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkObj as string);
         currentTile.region.StartBuildingStructure(landmarkData.landmarkType, (minionObj as Character).minion);
-        UpdateBuildButton();
+        UIManager.Instance.regionInfoUI.UpdateInfo();
     }
     private void UpdateBuildButton() {
-        buildProgress.gameObject.SetActive(false);
-        buildBtn.interactable = currentTile.region.demonicBuildingData.landmarkType == LANDMARK_TYPE.NONE && !currentTile.region.HasFeature(RegionFeatureDB.Hallowed_Ground_Feature);
-        if (!buildBtn.interactable) {
-            if(currentTile.region.demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE) {
-                buildProgress.gameObject.SetActive(true);
-                buildProgress.fillAmount = 0;
-            }
-        }
+        //buildProgress.gameObject.SetActive(false);
+        //buildBtn.interactable = currentTile.region.demonicBuildingData.landmarkType == LANDMARK_TYPE.NONE && !currentTile.region.HasFeature(RegionFeatureDB.Hallowed_Ground_Feature);
+        //if (!buildBtn.interactable) {
+        //    if(currentTile.region.demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE) {
+        //        buildProgress.gameObject.SetActive(true);
+        //        buildProgress.fillAmount = 0;
+        //    }
+        //}
     }
     public void UpdatePlayerBuildLandmarkUI() {
-        if(currentTile.region.demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE) {
-            buildProgress.fillAmount = currentTile.region.demonicBuildingData.currentDuration / (float)currentTile.region.demonicBuildingData.buildDuration;
-        }
+        //if(currentTile.region.demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE) {
+        //    buildProgress.fillAmount = currentTile.region.demonicBuildingData.currentDuration / (float)currentTile.region.demonicBuildingData.buildDuration;
+        //}
     }
     #endregion
 }

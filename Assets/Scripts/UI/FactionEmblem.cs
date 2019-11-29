@@ -39,7 +39,7 @@ public class FactionEmblem : MonoBehaviour, IPointerClickHandler{
             this.gameObject.SetActive(false);   
         } else {
             this.gameObject.SetActive(true);
-            emblemImage.sprite = faction.emblem.GetSpriteForSize(emblemImage);
+            emblemImage.sprite = faction.emblem;
         }
     }
 

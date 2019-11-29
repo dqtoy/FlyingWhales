@@ -17,6 +17,7 @@ public class CharacterRelationshipItem : PooledObject {
         this.data = data;
 
         portrait.GeneratePortrait(alterEgo.owner, false);
+        //portrait.SetSize(70f);
     }
 
     public override void Reset() {

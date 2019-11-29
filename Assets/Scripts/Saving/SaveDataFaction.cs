@@ -41,7 +41,6 @@ public class SaveDataFaction {
         description = faction.description;
         //initialLeaderClass = faction.initialLeaderClass;
         level = faction.level;
-        inventoryTaskWeight = faction.inventoryTaskWeight;
         isPlayerFaction = faction.isPlayerFaction;
         initialLeaderGender = faction.initialLeaderGender;
         initialLeaderRace = faction.initialLeaderRace;
