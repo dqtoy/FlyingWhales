@@ -1638,7 +1638,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (!hasCreatedJob && currentStructure is Dwelling) {
             Dwelling dwelling = currentStructure as Dwelling;
             if (dwelling.HasUnoccupiedFurnitureSpot() && advertisedActions.Contains(INTERACTION_TYPE.CRAFT_FURNITURE)) {
-                if (UnityEngine.Random.Range(0, 100) < 10 || dwelling.HasFacilityDeficit()) { //if the dwelling has a facility deficit(facility at 0) or if chance is met.
+                if (UnityEngine.Random.Range(0, 100) < 10) { //if the dwelling has a facility deficit(facility at 0) or if chance is met.
                     FACILITY_TYPE mostNeededFacility = dwelling.GetMostNeededValidFacility();
                     if (mostNeededFacility != FACILITY_TYPE.NONE) {
                         List<LocationGridTile> validSpots = dwelling.GetUnoccupiedFurnitureSpotsThatCanProvide(mostNeededFacility);

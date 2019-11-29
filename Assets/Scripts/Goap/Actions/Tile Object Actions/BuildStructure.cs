@@ -46,7 +46,6 @@ public class BuildStructure : GoapAction {
     #region Preconditions
     private bool HasSupply(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         return actor.supply >= 50; //TODO: Change this to be per structure
-
     }
     #endregion
 
@@ -59,6 +58,7 @@ public class BuildStructure : GoapAction {
         BuildSpotTileObject spot = goapNode.poiTarget as BuildSpotTileObject;
         spot.BuildBlueprint();
         goapNode.actor.AdjustResource(RESOURCE.WOOD, -50);//TODO: Change this to be per structure
+        PlayerUI.Instance.ShowGeneralConfirmation("New Structure", $"A new {spot.gridTileLocation.structure.name} has been built at {spot.gridTileLocation.structure.location.name}");
     }
     #endregion
 }

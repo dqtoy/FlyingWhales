@@ -78,6 +78,9 @@ public class Sleep : GoapAction {
             //if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             //    return false;
             //}
+            if (CanSleepInBed(actor, poiTarget as TileObject) == false) {
+                return false;
+            }
             return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
         }
         return false;

@@ -715,6 +715,8 @@ public class CharacterMarker : PooledObject {
         }
         if (character.isDead) {
             PlayAnimation("Dead");
+            mainImg.sprite = CharacterManager.Instance.corpseSprite;
+            UpdateHairState();
         } else if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) || character.canMove == false) {
             PlaySleepGround();
         } else if (character.isStoppedByOtherCharacter > 0) {
@@ -738,14 +740,12 @@ public class CharacterMarker : PooledObject {
         animator.speed = 1;
     }
     public void SetAnimationTrigger(string triggerName) {
-        if (animator.runtimeAnimatorController == null) {
-            animationListener.OnAttackExecuted();
-            return;
-        }
         if (triggerName == "Attack" && character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT) {
             return; //because sometime trigger is set even though character is no longer in combat state.
         }
-        animator.SetTrigger(triggerName);
+        if (animator.runtimeAnimatorController != null) {
+            animator.SetTrigger(triggerName);
+        }
         if (triggerName == "Attack") {
             //start coroutine to call 
             animationListener.OnAttackAnimationTriggered();
@@ -995,7 +995,7 @@ public class CharacterMarker : PooledObject {
     }
     private void UpdateHairState() {
         //TODO: Find another way to unify this
-        if (character.characterClass.className == "Mage" || character.portraitSettings.hair == -1 || character.race == RACE.WOLF) {
+        if (character.characterClass.className == "Mage" || character.portraitSettings.hair == -1 || character.race == RACE.WOLF || character.isDead) {
             hairImg.gameObject.SetActive(false);
         } else {
             hairImg.gameObject.SetActive(true);

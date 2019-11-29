@@ -45,6 +45,7 @@ public class CharacterManager : MonoBehaviour {
     [Header("Character Marker Assets")]
     [SerializeField] private List<RaceMarkerAsset> markerAssets;
     [SerializeField] private RuntimeAnimatorController baseAnimator;
+    public Sprite corpseSprite;
 
     [Header("Summon Settings")]
     [SerializeField] private SummonSettingDictionary summonSettings;
