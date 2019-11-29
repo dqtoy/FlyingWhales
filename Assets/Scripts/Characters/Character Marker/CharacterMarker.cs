@@ -738,14 +738,13 @@ public class CharacterMarker : PooledObject {
         animator.speed = 1;
     }
     public void SetAnimationTrigger(string triggerName) {
-        if (animator.runtimeAnimatorController == null) {
-            animationListener.OnAttackExecuted();
-            return;
-        }
+        
         if (triggerName == "Attack" && character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT) {
             return; //because sometime trigger is set even though character is no longer in combat state.
         }
-        animator.SetTrigger(triggerName);
+        if (animator.runtimeAnimatorController != null) {
+            animator.SetTrigger(triggerName);
+        }
         if (triggerName == "Attack") {
             //start coroutine to call 
             animationListener.OnAttackAnimationTriggered();

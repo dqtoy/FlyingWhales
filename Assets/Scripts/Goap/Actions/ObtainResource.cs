@@ -40,8 +40,8 @@ public class ObtainResource : GoapAction {
         GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
         IPointOfInterest poiTarget = node.poiTarget;
         if (goapActionInvalidity.isInvalid == false) {
-            FoodPile foodPile = poiTarget as FoodPile;
-            if (foodPile.resourceInPile <= 0) {
+            ResourcePile pile = poiTarget as ResourcePile;
+            if (pile.resourceInPile <= 0) {
                 goapActionInvalidity.isInvalid = true;
                 goapActionInvalidity.stateName = "Take Fail";
             }
@@ -62,8 +62,8 @@ public class ObtainResource : GoapAction {
             if (poiTarget.gridTileLocation == null) {
                 return false;
             }
-            if (poiTarget is FoodPile) {
-                FoodPile foodPile = poiTarget as FoodPile;
+            if (poiTarget is ResourcePile) {
+                ResourcePile foodPile = poiTarget as ResourcePile;
                 if (foodPile.resourceInPile > 0) {
                     return true;
                 }
