@@ -66,7 +66,7 @@ public class BuildSpotTileObject : TileObject {
         //structureObject.OnStructureObjectPlaced();
     }
 
-    public void BuildBlueprint() {
+    public LocationStructure BuildBlueprint() {
         spot.blueprint.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Built, gridTileLocation.parentAreaMap);
         LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(gridTileLocation.parentAreaMap.area, spot.blueprintType, true);
 
@@ -77,8 +77,11 @@ public class BuildSpotTileObject : TileObject {
             tile.SetStructure(structure);
         }
         structure.SetStructureObject(spot.blueprint);
+        spot.blueprint.PlacePreplacedObjectsAsBlueprints(structure, gridTileLocation.parentAreaMap);
         spot.blueprint.OnStructureObjectPlaced(gridTileLocation.parentAreaMap, structure);
         spot.ClearBlueprints();
+
+        return structure;
         
     }
 
