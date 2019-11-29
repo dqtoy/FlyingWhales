@@ -82,7 +82,8 @@ public class CharacterState {
         if(job != null) {
             //job.SetAssignedCharacter(null);
             //job.SetAssignedState(null);
-            job.assignedCharacter.jobQueue.RemoveJobInQueue(job);
+            //job.assignedCharacter.jobQueue.RemoveJobInQueue(job);
+            job.ForceCancelJob();
         }
         Messenger.Broadcast(Signals.CHARACTER_ENDED_STATE, stateComponent.character, this);
     }
