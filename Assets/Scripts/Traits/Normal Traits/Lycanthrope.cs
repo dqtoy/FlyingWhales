@@ -239,21 +239,23 @@ namespace Traits {
                 //then check if the character is alone, if not pick another random tile,
                 //repeat the process until alone, then transform to wolf
                 LocationStructure wilderness = character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-                LocationGridTile randomWildernessTile = wilderness.tiles[Random.Range(0, wilderness.tiles.Count)];
-                character.marker.GoTo(randomWildernessTile, CheckIfAlone);
+                //LocationGridTile randomWildernessTile = wilderness.tiles[Random.Range(0, wilderness.tiles.Count)];
+                //character.marker.GoTo(randomWildernessTile, CheckIfAlone);
+                character.PlanAction(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, character, new object[] { wilderness });
             }
             return base.TriggerFlaw(character);
         }
 
-        private void CheckIfAlone() {
+        public void CheckIfAlone() {
             if (IsAlone()) {
                 //alone
                 DoTransformWolf();
             } else {
                 //go to a different tile
                 LocationStructure wilderness = _character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-                LocationGridTile randomWildernessTile = wilderness.tiles[Random.Range(0, wilderness.tiles.Count)];
-                _character.marker.GoTo(randomWildernessTile, CheckIfAlone);
+                //LocationGridTile randomWildernessTile = wilderness.tiles[Random.Range(0, wilderness.tiles.Count)];
+                //character.marker.GoTo(randomWildernessTile, CheckIfAlone);
+                _character.PlanAction(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, _character, new object[] { wilderness });
             }
         }
         private bool IsAlone() {
