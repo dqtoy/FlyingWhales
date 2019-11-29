@@ -39,7 +39,7 @@ public class StrollOutsideState : CharacterState {
     public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
         if (stateComponent.character.role.roleType != CHARACTER_ROLE.BEAST && stateComponent.character.race != RACE.SKELETON && targetPOI is SpecialToken) {
             SpecialToken token = targetPOI as SpecialToken;
-            if (token.characterOwner == null) {
+            if (token.characterOwner == null && token.advertisedActions.Contains(INTERACTION_TYPE.PICK_UP)) {
                 stateComponent.character.marker.GoTo(token, () => OnArriveAtPickUpLocation(token));
                 //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_UP, stateComponent.character, targetPOI);
                 //if (goapAction.targetTile != null) {

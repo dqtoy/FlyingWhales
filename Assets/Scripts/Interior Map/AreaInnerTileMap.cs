@@ -1121,7 +1121,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         }
         return open;
     }
-    private bool IsBuildSpotValidFor(LocationStructureObject structureObject, BuildingSpot spot) {
+    public bool IsBuildSpotValidFor(LocationStructureObject structureObject, BuildingSpot spot) {
         bool isHorizontallyBig = structureObject.IsHorizontallyBig();
         bool isVerticallyBig = structureObject.IsVerticallyBig();
         BuildingSpot currSpot = spot;
@@ -1151,6 +1151,9 @@ public class AreaInnerTileMap : MonoBehaviour {
             if (hasUnoccupiedNorth || hasUnoccupiedSouth) {
                 return true;
             }
+        } else {
+            //object is not big
+            return true;
         }
         return false;
     }

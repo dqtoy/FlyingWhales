@@ -443,6 +443,7 @@ MonoBehaviour:
   _center: {x: 5, y: 2, z: 0}
   _objectsParent: {fileID: 4991792328056446}
   _furnitureSpotsParent: {fileID: 0}
+  tilemapCollider: {fileID: 0}
 --- !u!114 &114409053593456092
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1411,7 +1412,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1024382313
   m_SortingLayer: 19
-  m_SortingOrder: 51
+  m_SortingOrder: 52
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
@@ -1453,7 +1454,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1024382313
   m_SortingLayer: 19
-  m_SortingOrder: 52
+  m_SortingOrder: 53
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16

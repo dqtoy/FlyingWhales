@@ -739,25 +739,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #endif
     }
     private void MouseOver() {
-#if WORLD_CREATION_TOOL
-        //Debug.Log("IS MOUSE OVER UI " + worldcreator.WorldCreatorUI.Instance.IsMouseOnUI());
-        Messenger.Broadcast<HexTile>(Signals.TILE_HOVERED_OVER, this);
-        //if (!worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()) {
-        //    Messenger.Broadcast<HexTile>(Signals.TILE_HOVERED_OVER, this);
-        //    if (Input.GetMouseButton(0)) {
-        //        Messenger.Broadcast<HexTile>(Signals.TILE_LEFT_CLICKED, this);
-        //    }
-        //    if (Input.GetMouseButtonUp(1)) {
-        //        Messenger.Broadcast<HexTile>(Signals.TILE_RIGHT_CLICKED, this);
-        //    }
-        //}
-        //ShowHexTileInfo();
-#else
         if (this.landmarkOnTile != null) {
             _hoverHighlightGO.SetActive(true);
         }
         Messenger.Broadcast(Signals.TILE_HOVERED_OVER, this);
-#endif
     }
     private void MouseExit() {
 #if WORLD_CREATION_TOOL
@@ -867,20 +852,23 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         return this.locationName;
     }
     public void ShowTileInfo() {
-        string summary = "Landmark: " + landmarkOnTile?.specificLandmarkType.ToString();
-        summary += "\nRegion: " + region.id + " (Tiles: " + region.tiles.Count.ToString() + ")";
-        summary += "\nConnections: " + region.connections.Count.ToString();
-        for (int i = 0; i < region.connections.Count; i++) {
-            Region connection = region.connections[i];
-            summary += "\n\t- " + connection.mainLandmark.specificLandmarkType.ToString() + " " + connection.coreTile.locationName;
+        if (areaOfTile != null && areaOfTile.areaType != AREA_TYPE.DEMONIC_INTRUSION) {
+            UIManager.Instance.ShowSmallInfo("Double click to view.", areaOfTile.name);
         }
-        summary += "\nArea: " + areaOfTile?.name;
-        //summary += "\nNeighbours: " + AllNeighbours.Count.ToString();
-        //for (int i = 0; i < AllNeighbours.Count; i++) {
-        //    HexTile currNeighbour = AllNeighbours[i];
-        //    summary += "\n\t-" + currNeighbour.name;
+        //string summary = "Landmark: " + landmarkOnTile?.specificLandmarkType.ToString();
+        //summary += "\nRegion: " + region.id + " (Tiles: " + region.tiles.Count.ToString() + ")";
+        //summary += "\nConnections: " + region.connections.Count.ToString();
+        //for (int i = 0; i < region.connections.Count; i++) {
+        //    Region connection = region.connections[i];
+        //    summary += "\n\t- " + connection.mainLandmark.specificLandmarkType.ToString() + " " + connection.coreTile.locationName;
         //}
-        UIManager.Instance.ShowSmallInfo(summary, this.ToString() + " Info: ");
+        //summary += "\nArea: " + areaOfTile?.name;
+        ////summary += "\nNeighbours: " + AllNeighbours.Count.ToString();
+        ////for (int i = 0; i < AllNeighbours.Count; i++) {
+        ////    HexTile currNeighbour = AllNeighbours[i];
+        ////    summary += "\n\t-" + currNeighbour.name;
+        ////}
+        //UIManager.Instance.ShowSmallInfo(summary, this.ToString() + " Info: ");
     }
     #endregion
 

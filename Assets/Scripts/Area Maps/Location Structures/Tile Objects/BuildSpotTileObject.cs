@@ -31,29 +31,42 @@ public class BuildSpotTileObject : TileObject {
 
     public void PlaceBlueprintOnBuildingSpot(STRUCTURE_TYPE structureType) {
         List<GameObject> choices = InteriorMapManager.Instance.GetStructurePrefabsForStructure(structureType);
-        GameObject chosenStructurePrefab = Utilities.GetRandomElement(choices);
+        GameObject chosenStructurePrefab = null;
+        for (int i = 0; i < choices.Count; i++) {
+            GameObject currPrefab = choices[i];
+            LocationStructureObject so = currPrefab.GetComponent<LocationStructureObject>();
+            if (spot.CanPlaceStructureOnSpot(so, gridTileLocation.parentAreaMap)) {
+                chosenStructurePrefab = currPrefab;
+                break;
+            }
 
-        GameObject structurePrefab = ObjectPoolManager.Instance.InstantiateObjectFromPool(chosenStructurePrefab.name, Vector3.zero, Quaternion.identity, gridTileLocation.parentAreaMap.structureParent);
-        structurePrefab.transform.localPosition = spot.centeredLocation;
-        LocationStructureObject structureObject = structurePrefab.GetComponent<LocationStructureObject>();
-        structureObject.RefreshAllTilemaps();
-        List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(gridTileLocation.parentAreaMap);
-        for (int j = 0; j < occupiedTiles.Count; j++) {
-            LocationGridTile tile = occupiedTiles[j];
-            tile.SetHasBlueprint(true);
         }
-        spot.SetIsOpen(false);
-        spot.SetIsOccupied(true);
-        spot.SetAllAdjacentSpotsAsOpen(gridTileLocation.parentAreaMap);
-        spot.CheckIfAdjacentSpotsCanStillBeOccupied(gridTileLocation.parentAreaMap);
-        structureObject.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Blueprint, gridTileLocation.parentAreaMap);
-        spot.SetBlueprint(structureObject, structureType);
-        structureObject.SetTilesInStructure(occupiedTiles.ToArray());
+        if (chosenStructurePrefab != null) {
+            GameObject structurePrefab = ObjectPoolManager.Instance.InstantiateObjectFromPool(chosenStructurePrefab.name, Vector3.zero, Quaternion.identity, gridTileLocation.parentAreaMap.structureParent);
+            structurePrefab.transform.localPosition = spot.centeredLocation;
+            LocationStructureObject structureObject = structurePrefab.GetComponent<LocationStructureObject>();
+            structureObject.RefreshAllTilemaps();
+            List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(gridTileLocation.parentAreaMap);
+            for (int j = 0; j < occupiedTiles.Count; j++) {
+                LocationGridTile tile = occupiedTiles[j];
+                tile.SetHasBlueprint(true);
+            }
+            spot.SetIsOpen(false);
+            spot.SetIsOccupied(true);
+            spot.SetAllAdjacentSpotsAsOpen(gridTileLocation.parentAreaMap);
+            spot.CheckIfAdjacentSpotsCanStillBeOccupied(gridTileLocation.parentAreaMap);
+            structureObject.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Blueprint, gridTileLocation.parentAreaMap);
+            spot.SetBlueprint(structureObject, structureType);
+            structureObject.SetTilesInStructure(occupiedTiles.ToArray());
+        } else {
+            Debug.LogWarning($"Could not find a prefab for structure {structureType.ToString()} on build spot {spot.ToString()}");
+        }
+        
         //structure.SetStructureObject(structureObject);
         //structureObject.OnStructureObjectPlaced();
     }
 
-    public void BuildBlueprint() {
+    public LocationStructure BuildBlueprint() {
         spot.blueprint.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Built, gridTileLocation.parentAreaMap);
         LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(gridTileLocation.parentAreaMap.area, spot.blueprintType, true);
 
@@ -64,8 +77,11 @@ public class BuildSpotTileObject : TileObject {
             tile.SetStructure(structure);
         }
         structure.SetStructureObject(spot.blueprint);
+        spot.blueprint.PlacePreplacedObjectsAsBlueprints(structure, gridTileLocation.parentAreaMap);
         spot.blueprint.OnStructureObjectPlaced(gridTileLocation.parentAreaMap, structure);
         spot.ClearBlueprints();
+
+        return structure;
         
     }
 

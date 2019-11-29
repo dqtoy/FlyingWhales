@@ -121,6 +121,26 @@ public class LocationStructureObject : MonoBehaviour {
         }
         RemovePreplacedObjectSettings();
     }
+    public void PlacePreplacedObjectsAsBlueprints(LocationStructure structure, AreaInnerTileMap areaMap) {
+        StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
+        for (int i = 0; i < preplacedObjs.Length; i++) {
+            StructureTemplateObjectData preplacedObj = preplacedObjs[i];
+            Vector3Int tileCoords = areaMap.groundTilemap.WorldToCell(preplacedObj.transform.position);
+            LocationGridTile tile = areaMap.map[tileCoords.x, tileCoords.y];
+            tile.SetReservedType(preplacedObj.tileObjectType);
+
+            TileObject newTileObject = InteriorMapManager.Instance.CreateNewTileObject(preplacedObj.tileObjectType);
+            structure.AddPOI(newTileObject, tile);
+            newTileObject.areaMapGameObject.OverrideVisual(preplacedObj.spriteRenderer.sprite);
+            newTileObject.areaMapGameObject.SetRotation(preplacedObj.transform.localEulerAngles.z);
+            newTileObject.RevalidateTileObjectSlots();
+            newTileObject.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
+
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_FURNITURE, INTERACTION_TYPE.CRAFT_TILE_OBJECT, newTileObject, areaMap.area);
+            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
+            areaMap.area.AddToAvailableJobs(job);
+        }
+    }
     private StructureTemplateObjectData[] GetPreplacedObjects() {
         return Utilities.GetComponentsInDirectChildren<StructureTemplateObjectData>(_objectsParent.gameObject);
     }
@@ -132,6 +152,14 @@ public class LocationStructureObject : MonoBehaviour {
         if (preplacedObjs != null) {
             for (int i = 0; i < preplacedObjs.Length; i++) {
                 GameObject.Destroy(preplacedObjs[i].gameObject);
+            }
+        }
+    }
+    private void DisablePreplacedObjects() {
+        StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
+        if (preplacedObjs != null) {
+            for (int i = 0; i < preplacedObjs.Length; i++) {
+               preplacedObjs[i].gameObject.SetActive(false);
             }
         }
     }
@@ -295,7 +323,7 @@ public class LocationStructureObject : MonoBehaviour {
                 color.a = 128f / 255f;
                 SetAllTilemapsColor(color);
                 wallCollider.enabled = false;
-                RemovePreplacedObjectSettings();
+                DisablePreplacedObjects();
                 break;
             default:
                 color = Color.white;

@@ -101,6 +101,9 @@ namespace Traits {
                         if (characterThatWillDoJob.currentActionNode != null && characterThatWillDoJob.currentActionNode.poiTarget == token) {
                             return false;
                         }
+                        if (token.advertisedActions.Contains(INTERACTION_TYPE.PICK_UP) == false) {
+                            return false;
+                        }
                         if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP)) {
                             GoapPlanJob pickUpJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP, token, characterThatWillDoJob);
                             characterThatWillDoJob.jobQueue.AddJobInQueue(pickUpJob);
