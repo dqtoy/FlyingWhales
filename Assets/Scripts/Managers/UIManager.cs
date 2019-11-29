@@ -55,6 +55,8 @@ public class UIManager : MonoBehaviour {
     [Header("Other Area Info")]
     public Sprite[] areaCenterSprites;
     public GameObject portalPopup;
+    public GameObject regionNameTopMenuGO;
+    public TextMeshProUGUI regionNameTopMenuText;
 
     [Space(10)]
     [Header("Notification Area")]
@@ -1143,11 +1145,14 @@ public class UIManager : MonoBehaviour {
         //returnToWorldBtn.interactable = true;
         //ShowPlayerNotificationArea();
         worldUIRaycaster.enabled = false;
+        regionNameTopMenuText.text = area.region.name;
+        regionNameTopMenuGO.SetActive(true);
     }
     private void OnAreaMapClosed(Area area) {
         //returnToWorldBtn.interactable = false;
         //HidePlayerNotificationArea();
         worldUIRaycaster.enabled = true;
+        regionNameTopMenuGO.SetActive(false);
     }
     //public void PointerClickWorldMap(BaseEventData bed) {
     //    //PointerEventData ped = bed as PointerEventData;
