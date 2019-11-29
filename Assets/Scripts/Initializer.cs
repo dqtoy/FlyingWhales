@@ -28,5 +28,7 @@ public class Initializer : MonoBehaviour {
     }
 
     public void InitializeDataAfterWorldCreation() {
+        PlayerUI.Instance.Initialize();
+        PlayerUI.Instance.InitializeAfterGameLoaded();
     }
 }

@@ -72,7 +72,7 @@ public class PlayerManager : MonoBehaviour {
     }
     private void OnLoadStartingTile(BaseLandmark portal) {
         player = new Player();
-        PlayerUI.Instance.Initialize();
+        //PlayerUI.Instance.Initialize();
         player.CreatePlayerFaction();
         Area existingPlayerArea = LandmarkManager.Instance.GetAreaByName("Portal");
         if (existingPlayerArea == null) {
@@ -92,7 +92,7 @@ public class PlayerManager : MonoBehaviour {
     }
     public void InitializePlayer(BaseLandmark portal) {
         player = new Player();
-        PlayerUI.Instance.Initialize();
+        //PlayerUI.Instance.Initialize();
         player.CreatePlayerFaction();
         Area existingPlayerArea = LandmarkManager.Instance.GetAreaByName("Portal");
         if (existingPlayerArea == null) {
@@ -121,7 +121,7 @@ public class PlayerManager : MonoBehaviour {
     }
     public void InitializePlayer(SaveDataPlayer data) {
         player = new Player(data);
-        PlayerUI.Instance.Initialize();
+        //PlayerUI.Instance.Initialize();
         player.CreatePlayerFaction(data);
         Area existingPlayerArea = LandmarkManager.Instance.GetAreaByID(data.playerAreaID);
         player.SetPlayerArea(existingPlayerArea);

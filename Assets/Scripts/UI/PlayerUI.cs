@@ -227,16 +227,6 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<ArtifactSlot>(Signals.PLAYER_LOST_ARTIFACT_SLOT, OnPlayerLostArtifactSlot);
         Messenger.AddListener<ArtifactSlot>(Signals.PLAYER_GAINED_ARTIFACT_SLOT, OnPlayerGainedArtifactSlot);
 
-        //Kill Count UI
-        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
-        Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
-        Messenger.AddListener<Character, Faction>(Signals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CREATED, AddedNewCharacter);
-        Messenger.AddListener<Character>(Signals.CHARACTER_BECOMES_MINION_OR_SUMMON, CharacterBecomesMinionOrSummon);
-        Messenger.AddListener<Character>(Signals.CHARACTER_BECOMES_NON_MINION_OR_SUMMON, CharacterBecomesNonMinionOrSummon);
-
-
         //Minion List
         Messenger.AddListener<Minion>(Signals.PLAYER_GAINED_MINION, OnGainedMinion);
         Messenger.AddListener<Minion>(Signals.PLAYER_LOST_MINION, OnLostMinion);
@@ -254,6 +244,19 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<BaseLandmark>(Signals.LANDMARK_CREATED, OnLandmarkCreated);
         //Messenger.AddListener<BaseLandmark>(Signals.LANDMARK_DESTROYED, OnLandmarkDestroyed);
         Messenger.AddListener<Region>(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, OnUpdateRegionUISignal);
+    }
+
+    public void InitializeAfterGameLoaded() {
+        //Kill Count UI
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
+        Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
+        Messenger.AddListener<Character, Faction>(Signals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
+        Messenger.AddListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CREATED, AddedNewCharacter);
+        Messenger.AddListener<Character>(Signals.CHARACTER_BECOMES_MINION_OR_SUMMON, CharacterBecomesMinionOrSummon);
+        Messenger.AddListener<Character>(Signals.CHARACTER_BECOMES_NON_MINION_OR_SUMMON, CharacterBecomesNonMinionOrSummon);
+        Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
     }
 
     #region Listeners
@@ -317,14 +320,16 @@ public class PlayerUI : MonoBehaviour {
         //UpdateKillCount();
         //OrderKillSummaryItems();
         TransferCharacterFromActiveToInactive(character);
-        CheckIfAllCharactersWipedOut();
+        //CheckIfAllCharactersWipedOut();
+        UpdateKillCount();
     }
     private void OnCharacterGainedTrait(Character character, Trait trait) {
         if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
             //UpdateKillCount();
             //OrderKillSummaryItems();
             TransferCharacterFromActiveToInactive(character);
-            CheckIfAllCharactersWipedOut();
+            //CheckIfAllCharactersWipedOut();
+            UpdateKillCount();
         }
     }
     private void OnCharacterLostTrait(Character character, Trait trait) {
@@ -332,19 +337,39 @@ public class PlayerUI : MonoBehaviour {
             //UpdateKillCount();
             //OrderKillSummaryItems();
             TransferCharacterFromInactiveToActive(character);
+            UpdateKillCount();
         }
     }
     private void OnCharacterRemovedFromFaction(Character character, Faction faction) {
         //UpdateKillCount();
         //OrderKillSummaryItems();
-        TransferCharacterFromActiveToInactive(character);
-        CheckIfAllCharactersWipedOut();
+
+        //TODO: This causes inconsistencies since the character will have null faction once he/she is removed from the faction
+        //TransferCharacterFromActiveToInactive(character);
+        //CheckIfAllCharactersWipedOut();
+    }
+    private void OnCharacterAddedToFaction(Character character, Faction faction) {
+        if (faction == FactionManager.Instance.neutralFaction) {
+            TransferCharacterFromActiveToInactive(character);
+        } else if (faction == PlayerManager.Instance.player.playerFaction || faction == FactionManager.Instance.disguisedFaction) {
+            OnCharacterBecomesMinionOrSummon(character);
+        } else {
+            TransferCharacterFromInactiveToActive(character);
+        }
+        UpdateKillCount();
+        //CheckIfAllCharactersWipedOut();
+    }
+    private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass currentClass) {
+        CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
+        if(item != null) {
+            item.SetObject(character);
+        }
     }
     private void AddedNewCharacter(Character character) {
         OnAddNewCharacter(character);
     }
     private void CharacterBecomesMinionOrSummon(Character character) {
-        OnCharacterBecomesMinionOrSummon(character);
+        //OnCharacterBecomesMinionOrSummon(character);
     }
     private void CharacterBecomesNonMinionOrSummon(Character character) {
         OnCharacterBecomesNonMinionOrSummon(character);
@@ -1564,8 +1589,10 @@ public class PlayerUI : MonoBehaviour {
         //        killCountCharacterItems[i].gameObject.SetActive(false);
         //    }
         //}
+        string log = "Initial Kill Count UI";
         for (int i = 0; i < allCharactersCount; i++) {
             Character character = allCharacters[i];
+            log += "\nCharacter: " + character.name;
             if (i >= killCountCharacterItemsCount) {
                 CreateNewKillCountCharacterItem();
             }
@@ -1574,6 +1601,7 @@ public class PlayerUI : MonoBehaviour {
             || character.faction == FactionManager.Instance.disguisedFaction) {
                 //Do not show minions and summons
                 item.gameObject.SetActive(false);
+                log += " - do not show";
                 continue;
             }
             item.SetObject(character);
@@ -1588,9 +1616,11 @@ public class PlayerUI : MonoBehaviour {
                 //|| character.faction == FactionManager.Instance.disguisedFaction
                 || !character.IsAble()) { //added checking for faction in cases that the character was raised from dead (Myk, if the concern here is only from raise dead, I changed the checker to returnedToLife to avoid conflicts with factions, otherwise you can return it to normal. -Chy)
                 dead.Add(item);
+                log += " - dead";
             } else {
                 aliveCount++;
                 alive.Add(item);
+                log += " - alive";
             }
             //GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(killCharacterItemPrefab.name, Vector3.zero, Quaternion.identity, killCountScrollView.content);
             //CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
@@ -1599,6 +1629,7 @@ public class PlayerUI : MonoBehaviour {
             //item.ClearAllOnClickActions();
             //item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, false));
         }
+        Debug.Log(log);
         UpdateKillCount();
 
         aliveHeader.transform.SetAsFirstSibling();
@@ -1659,16 +1690,18 @@ public class PlayerUI : MonoBehaviour {
             item.transform.SetSiblingIndex(allFilteredCharactersCount + 2);
         }
         aliveCount--;
-        UpdateKillCount();
+        //UpdateKillCount();
     }
     private void TransferCharacterFromInactiveToActive(Character character) {
         if (!WillCharacterBeShownInKillCount(character)) {
             return;
         }
         CharacterNameplateItem item = GetInactiveCharacterNameplateItem(character);
-        item.transform.SetSiblingIndex(deadHeader.transform.GetSiblingIndex());
-        aliveCount++;
-        UpdateKillCount();
+        if(item != null) {
+            item.transform.SetSiblingIndex(deadHeader.transform.GetSiblingIndex());
+            aliveCount++;
+        }
+        //UpdateKillCount();
     }
     private void OnCharacterBecomesMinionOrSummon(Character character) {
         CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
@@ -1677,7 +1710,7 @@ public class PlayerUI : MonoBehaviour {
             aliveCount--;
             allFilteredCharactersCount--;
             unusedKillCountCharacterItems++;
-            UpdateKillCount();
+            //UpdateKillCount();
         }
     }
     private void OnCharacterBecomesNonMinionOrSummon(Character character) {
@@ -1714,7 +1747,23 @@ public class PlayerUI : MonoBehaviour {
         return null;
     }
     private void UpdateKillCount() {
+        int aliveCount = 0;
+        //TODO: Optimize this
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.allCharacters[i];
+            if(character.faction != null && character.faction != FactionManager.Instance.neutralFaction
+            && character.IsAble() && WillCharacterBeShownInKillCount(character)) {
+                aliveCount++;
+            }
+        }
         killCountLbl.text = aliveCount + "/" + allFilteredCharactersCount;
+        if(aliveCount <= 0) {
+            //player has won
+            UIManager.Instance.Pause();
+            UIManager.Instance.SetSpeedTogglesState(false);
+            Messenger.Broadcast(Signals.HIDE_MENUS);
+            SuccessfulAreaCorruption();
+        }
     }
     //private void OrderKillSummaryItems() {
     //    CharacterNameplateItem[] items = Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(killCountScrollView.content.gameObject);

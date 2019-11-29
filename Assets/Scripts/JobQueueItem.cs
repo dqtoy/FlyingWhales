@@ -253,7 +253,7 @@ public class JobQueueItem {
         canTakeThisJob = null;
         canTakeThisJobWithTarget = null;
         onTakeJobAction = null;
-        SetAssignedCharacter(null);
+        assignedCharacter = null;
         SetIsStealth(false);
         SetPriority(-1);
         SetCannotBePushedBack(false);
