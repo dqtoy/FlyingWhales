@@ -51,7 +51,7 @@ public class NewResidentEvent : LocationEvent {
                 }
             }
         }
-
+        PlayerUI.Instance.ShowGeneralConfirmation("New Residents", "New residents have arrived at " + location.region.name);
     }
     #endregion
     private void GenerateSingleResident(Area location) {
