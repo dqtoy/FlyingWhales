@@ -4663,33 +4663,32 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             || targetCharacter.faction == PlayerManager.Instance.player.playerFaction
             || faction == PlayerManager.Instance.player.playerFaction
             || targetCharacter.characterClass.className == "Zombie"
-            || characterClass.className == "Zombie") {
+            || characterClass.className == "Zombie"
+            || (currentActionNode != null && currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)
+            || (targetCharacter.currentActionNode != null && targetCharacter.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)) {
             return false;
         }
         if (!IsHostileWith(targetCharacter)) {
             int roll = UnityEngine.Random.Range(0, 100);
             int chance = chatChance;
             if (roll < chance) {
-                if ((currentActionNode == null || currentActionNode.actionStatus != ACTION_STATUS.PERFORMING) 
-                    && (targetCharacter.currentActionNode == null || targetCharacter.currentActionNode.actionStatus != ACTION_STATUS.PERFORMING)) {
-                    int chatPriority = InteractionManager.Instance.GetInitialPriority(JOB_TYPE.CHAT);
-                    JobQueueItem currJob = currentJob;
-                    if (currJob != null) {
-                        if (chatPriority >= currJob.priority) {
-                            return false;
-                        }
+                int chatPriority = InteractionManager.Instance.GetInitialPriority(JOB_TYPE.CHAT);
+                JobQueueItem currJob = currentJob;
+                if (currJob != null) {
+                    if (chatPriority >= currJob.priority) {
+                        return false;
                     }
-                    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.CHAT_CHARACTER], this, targetCharacter, null, 0);
-                    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetCharacter);
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CHAT, INTERACTION_TYPE.CHAT_CHARACTER, targetCharacter, this);
-                    goapPlan.SetDoNotRecalculate(true);
-                    job.SetCannotBePushedBack(true);
-                    job.SetAssignedPlan(goapPlan);
-                    jobQueue.AddJobInQueue(job);
-                    return true;
-                    //ChatCharacter chatAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CHAT_CHARACTER, this, targetCharacter) as ChatCharacter;
-                    //chatAction.Perform();
                 }
+                ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.CHAT_CHARACTER], this, targetCharacter, null, 0);
+                GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetCharacter);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CHAT, INTERACTION_TYPE.CHAT_CHARACTER, targetCharacter, this);
+                goapPlan.SetDoNotRecalculate(true);
+                job.SetCannotBePushedBack(true);
+                job.SetAssignedPlan(goapPlan);
+                jobQueue.AddJobInQueue(job);
+                return true;
+                //ChatCharacter chatAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CHAT_CHARACTER, this, targetCharacter) as ChatCharacter;
+                //chatAction.Perform();
             }
         }
         return false;
