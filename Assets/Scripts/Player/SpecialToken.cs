@@ -88,7 +88,7 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
         this.structureLocation = structureLocation;
     }
     public override string ToString() {
-        return name;
+        return name + " " + id.ToString() + " Carried by " + (carriedByCharacter?.name ?? "no one");
     }
     public void AddJobTargettingThis(JobQueueItem job) {
         allJobsTargettingThis.Add(job);
@@ -108,6 +108,7 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
         return false;
     }
     public void SetCarriedByCharacter(Character character) {
+        Debug.Log($"Set Carried by character of item {this.ToString()} to {(carriedByCharacter?.name ?? "null")}");
         this.carriedByCharacter = character;
     }
 
@@ -117,9 +118,17 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
         if (tile == null) {
             DisableGameObject();
             Messenger.Broadcast<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, this, tile);
+            for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                Character character = CharacterManager.Instance.allCharacters[i];
+                character.RemoveAwareness(this);
+            }
         } else {
             PlaceMapObjectAt(tile);
             Messenger.Broadcast<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, this, tile);
+            for (int i = 0; i < tile.parentAreaMap.area.region.residents.Count; i++) {
+                Character character = tile.parentAreaMap.area.region.residents[i];
+                character.AddAwareness(this);
+            }
         }
     }
     public LocationGridTile GetNearestUnoccupiedTileFromThis() {

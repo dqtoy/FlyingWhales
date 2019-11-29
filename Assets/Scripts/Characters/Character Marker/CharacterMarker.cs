@@ -509,6 +509,11 @@ public class CharacterMarker : PooledObject {
                 } 
                 break;
             default:
+                if (targetPOI == null) {
+                    throw new Exception($"{character.name} is trying to go to a null object");
+                } else if (targetPOI.gridTileLocation == null) {
+                    throw new Exception($"{character.name} is trying to go to a {targetPOI.ToString()} but its tile location is null");
+                }
                 SetDestination(targetPOI.gridTileLocation.centeredWorldLocation);
                 break;
         }
@@ -733,6 +738,10 @@ public class CharacterMarker : PooledObject {
         animator.speed = 1;
     }
     public void SetAnimationTrigger(string triggerName) {
+        if (animator.runtimeAnimatorController == null) {
+            animationListener.OnAttackExecuted();
+            return;
+        }
         if (triggerName == "Attack" && character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT) {
             return; //because sometime trigger is set even though character is no longer in combat state.
         }

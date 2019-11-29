@@ -129,7 +129,6 @@ public class GoapPlanner {
                     actor.trapStructure.SetStructureAndDuration(null, 0);
                 }
             }
-            goapThread.job.CancelJob(false);
             if (goapThread.recalculationPlan == null) {
                 //This means that the planner cannot create a new plan
                 bool logCancelJobNoPlan = true;
@@ -146,6 +145,7 @@ public class GoapPlanner {
                     goapThread.job.AddBlacklistedCharacter(actor);
                 }
             }
+            goapThread.job.CancelJob(false);
         }
         //if (goapThread.createdPlan != null) {
         //    if (goapThread.recalculationPlan == null) {

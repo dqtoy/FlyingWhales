@@ -12,6 +12,9 @@ public class BuildStructure : GoapAction {
     }
 
     #region Overrides
+    protected override void ConstructBasePreconditionsAndEffects() {
+        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_WOOD, "0", true, GOAP_EFFECT_TARGET.ACTOR), HasSupply);
+    }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Build Success", goapNode);
@@ -40,6 +43,13 @@ public class BuildStructure : GoapAction {
     }
     #endregion
 
+    #region Preconditions
+    private bool HasSupply(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return actor.supply >= 50; //TODO: Change this to be per structure
+
+    }
+    #endregion
+
     #region State Effects
     public void PreBuildSuccess(ActualGoapNode goapNode) {
         BuildSpotTileObject target = goapNode.poiTarget as BuildSpotTileObject;
@@ -48,6 +58,7 @@ public class BuildStructure : GoapAction {
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
         BuildSpotTileObject spot = goapNode.poiTarget as BuildSpotTileObject;
         spot.BuildBlueprint();
+        goapNode.actor.AdjustResource(RESOURCE.WOOD, -50);//TODO: Change this to be per structure
     }
     #endregion
 }

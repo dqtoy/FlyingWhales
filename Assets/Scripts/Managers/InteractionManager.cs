@@ -472,13 +472,13 @@ public class InteractionManager : MonoBehaviour {
         return false;
     }
     public bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter) {
-        if (character.isAtHomeRegion && !character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL) && character.traitContainer.GetNormalTrait("Coward") == null) {
+        if (character.isAtHomeRegion && !character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL) && character.traitContainer.GetNormalTrait("Coward") == null && character.specificLocation.prison != null) {
             return character.role.roleType == CHARACTER_ROLE.SOLDIER && character.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.POSITIVE;
         }
         return false;
     }
     public bool CanCharacterTakeRestrainJob(Character character, Character targetCharacter) {
-        return targetCharacter.faction != character.faction && character.isAtHomeRegion && character.isPartOfHomeFaction
+        return targetCharacter.faction != character.faction && character.isAtHomeRegion && character.isPartOfHomeFaction && character.specificLocation.prison != null
             && (character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN || character.role.roleType == CHARACTER_ROLE.ADVENTURER)
             && character.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.POSITIVE && !character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL);
     }

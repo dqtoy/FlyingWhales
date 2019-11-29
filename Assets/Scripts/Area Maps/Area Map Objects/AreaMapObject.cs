@@ -32,6 +32,11 @@ public abstract class AreaMapObject<T> where T : IPointOfInterest {
     public void EnableGameObject() {
         areaMapGameObject.SetActiveState(true);
     }
+    public void DestroyGameObject() {
+        ObjectPoolManager.Instance.DestroyObject(areaMapGameObject.gameObject);
+        areaMapGameObject = null;
+        SetCollisionTrigger(null);
+    }
     #endregion
 
     #region Collision

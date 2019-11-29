@@ -31,14 +31,19 @@ public class Explosion : PlayerJobAction {
             if (flammable is TileObject) {
                 TileObject obj = flammable as TileObject;
                 GameManager.Instance.CreateExplodeEffectAt(obj.gridTileLocation);
-                obj.AdjustHP(-obj.currentHP);
-                
-                continue; //go to next item
+                if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
+                    obj.AdjustHP(-obj.currentHP);
+                    if (obj.gridTileLocation == null) {
+                        continue; //object was destroyed, do not add burning trait
+                    }
+                }
             } else if (flammable is SpecialToken) {
                 SpecialToken token = flammable as SpecialToken;
                 GameManager.Instance.CreateExplodeEffectAt(token.gridTileLocation);
                 token.AdjustHP(-token.currentHP);
-                continue; //go to next item
+                if (token.gridTileLocation == null) {
+                    continue; //object was destroyed, do not add burning trait
+                }
             } else if (flammable is Character) {
                 Character character = flammable as Character;
                 GameManager.Instance.CreateExplodeEffectAt(character.gridTileLocation);

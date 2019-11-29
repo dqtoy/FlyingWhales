@@ -5653,7 +5653,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 if (i > 0) {
                     log += ", ";
                 }
-                log += kvp.Value[i].name;
+                log += kvp.Value[i].ToString();
             }
         }
         Debug.Log(log);

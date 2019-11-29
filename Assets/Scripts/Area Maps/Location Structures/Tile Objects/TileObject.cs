@@ -120,19 +120,30 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
             InitializeMapObject(this);
         }
         if (tile == null) {
-            DisableGameObject();
+            //DisableGameObject();
+            DestroyGameObject();
             OnRemoveTileObject(null, previousTile);
             SetPOIState(POI_STATE.INACTIVE);
+            //TODO: Make This Better!
+            for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                Character character = CharacterManager.Instance.allCharacters[i];
+                character.RemoveAwareness(this);
+            }
         } else {
             PlaceMapObjectAt(tile);
             OnPlaceObjectAtTile(tile);
             SetPOIState(POI_STATE.ACTIVE);
+            for (int i = 0; i < tile.parentAreaMap.area.region.residents.Count; i++) {
+                Character character = tile.parentAreaMap.area.region.residents[i];
+                character.AddAwareness(this);
+            }
         }
     }
     public virtual void RemoveTileObject(Character removedBy) {
         LocationGridTile previousTile = this.gridTileLocation;
         this.gridTileLocation = null;
-        DisableGameObject();
+        //DisableGameObject();
+        DestroyGameObject();
         OnRemoveTileObject(removedBy, previousTile);
         SetPOIState(POI_STATE.INACTIVE);
     }
@@ -285,7 +296,7 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
         advertisedActions.Add(type);
     }
     public void RemoveAdvertisedAction(INTERACTION_TYPE type) {
-        advertisedActions.Add(type);
+        advertisedActions.Remove(type);
     }
     public void AddJobTargettingThis(JobQueueItem job) {
         allJobsTargettingThis.Add(job);

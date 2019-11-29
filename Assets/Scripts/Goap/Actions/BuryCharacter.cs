@@ -115,7 +115,7 @@ public class BuryCharacter : GoapAction {
             if (targetCharacter.grave != null) {
                 return false;
             }
-            return true;
+            return actor.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) != null;
         }
         return false;
     }
