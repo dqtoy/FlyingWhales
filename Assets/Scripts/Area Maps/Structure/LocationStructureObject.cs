@@ -74,6 +74,9 @@ public class LocationStructureObject : MonoBehaviour {
     void Awake() {
         allTilemaps = this.transform.GetComponentsInChildren<Tilemap>();
         wallCollider = _wallTileMap.gameObject.GetComponent<TilemapCollider2D>();
+        if (tilemapCollider == null) {
+            tilemapCollider = wallCollider;
+        }
     }
     #endregion
 

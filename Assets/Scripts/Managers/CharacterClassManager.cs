@@ -117,11 +117,12 @@ public class CharacterClassManager : MonoBehaviour {
     }
     public string RunIdlePlanForCharacter(Character character) {
         System.Type[] actions = GetIdlePlansForCharacter(character.characterClass.className);
-        string log = string.Empty;
+        string log = $"{GameManager.Instance.TodayLogString()}{character.name} Idle Plan Decision Making:";
         for (int i = 0; i < actions.Length; i++) {
             System.Type type = actions[i];
             CharacterBehaviourComponent component = behaviourComponents[type];
             if (component.IsDisabledFor(character)) {
+                log += $"\nBehaviour Component: {component.ToString()} is disabled for {character.name} skipping it...";
                 continue; //skip component
             }
             if (component.TryDoBehaviour(character, ref log)) {

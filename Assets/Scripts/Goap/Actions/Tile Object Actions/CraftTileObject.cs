@@ -13,6 +13,9 @@ public class CraftTileObject : GoapAction {
     }
 
     #region Overrides
+    protected override void ConstructBasePreconditionsAndEffects() {
+        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_WOOD, "0", true, GOAP_EFFECT_TARGET.ACTOR), HasSupply);
+    }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Craft Success", goapNode);
@@ -37,6 +40,13 @@ public class CraftTileObject : GoapAction {
     public void AfterCraftSuccess(ActualGoapNode goapNode) {
         TileObject tileObj = goapNode.poiTarget as TileObject;
         tileObj.SetMapObjectState(MAP_OBJECT_STATE.BUILT);
+        goapNode.actor.AdjustResource(RESOURCE.WOOD, -TileObjectDB.GetTileObjectData((goapNode.poiTarget as TileObject).tileObjectType).constructionCost);
+    }
+    #endregion
+
+    #region Preconditions
+    private bool HasSupply(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return actor.supply >= TileObjectDB.GetTileObjectData((poiTarget as TileObject).tileObjectType).constructionCost;
     }
     #endregion
 

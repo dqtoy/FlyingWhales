@@ -28,7 +28,7 @@ public class Scrap : GoapAction {
     protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, object[] otherData) {
         List <GoapEffect> ee = base.GetExpectedEffects(actor, target, otherData);
         SpecialToken item = target as SpecialToken;
-        ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_WOOD, conditionKey = TokenManager.Instance.itemData[item.specialTokenType].supplyValue.ToString(), isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
+        ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_WOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
         return ee;
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -36,7 +36,7 @@ public class Scrap : GoapAction {
         SetState("Scrap Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 5;
+        return Utilities.rng.Next(15, 31);
     }
     #endregion
 

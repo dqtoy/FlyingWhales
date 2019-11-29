@@ -470,7 +470,7 @@ public class Area : IJobOwner {
 
     #region Special Tokens
     public bool AddSpecialTokenToLocation(SpecialToken token, LocationStructure structure = null, LocationGridTile gridLocation = null) {
-        if (!IsItemInventoryFull() && !itemsInArea.Contains(token)) {
+        if (!itemsInArea.Contains(token)) {
             itemsInArea.Add(token);
             token.SetOwner(this.owner);
             if (areaMap != null) { //if the area map of this area has already been created.
@@ -565,10 +565,10 @@ public class Area : IJobOwner {
         // - wilderness
         // - enough dwellings for it's citizens
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.CITY_CENTER, true);
-        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.INN, true);
-        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WAREHOUSE, true);
-        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.PRISON, true);
-        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.CEMETERY, true);
+        //LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.INN, true);
+        //LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WAREHOUSE, true);
+        //LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.PRISON, true);
+        //LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.CEMETERY, true);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WORK_AREA, true);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WILDERNESS, false);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.POND, true);
@@ -737,10 +737,11 @@ public class Area : IJobOwner {
                 BuildSpotTileObject tileObj = new BuildSpotTileObject();
                 tileObj.SetBuildingSpot(spot);
                 LocationGridTile tileLocation = areaMap.map[spot.location.x, spot.location.y];
-                if (tileLocation.objHere != null) {
-                    tileLocation.structure.RemovePOI(tileLocation.objHere);
-                }
-                tileLocation.structure.AddPOI(tileObj, tileLocation);
+                //if (tileLocation.objHere != null) {
+                //    tileLocation.structure.RemovePOI(tileLocation.objHere);
+                //}
+                tileLocation.structure.AddPOI(tileObj, tileLocation, false);
+                tileObj.SetGridTileLocation(tileLocation); //manually placed so that only the data of the build spot will be set, and the tile will not consider the build spot as objHere
             }
         }
     }
@@ -767,12 +768,12 @@ public class Area : IJobOwner {
             targetStructure = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
         }
         if (supplyPile == null) {
-            SupplyPile pile = new SupplyPile();
+            TileObject pile = InteriorMapManager.Instance.CreateNewTileObject(TILE_OBJECT_TYPE.SUPPLY_PILE);
             targetStructure.AddPOI(pile);
             pile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.SUPPLY_PILE);
         }
         if (foodPile == null) {
-            FoodPile pile = new FoodPile();
+            TileObject pile = InteriorMapManager.Instance.CreateNewTileObject(TILE_OBJECT_TYPE.FOOD_PILE);
             targetStructure.AddPOI(pile);
             pile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
         }
@@ -1069,7 +1070,7 @@ public class Area : IJobOwner {
                 if (!HasJob(JOB_TYPE.BREW_POTION)) {
                     //create an un crafted potion and place it at the main storage structure, then use that as the target for the job.
                     SpecialToken item = TokenManager.Instance.CreateSpecialToken(SPECIAL_TOKEN.HEALING_POTION);
-                    affectedStructure.AddItem(item);
+                    AddSpecialTokenToLocation(item, affectedStructure);
                     item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
 
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BREW_POTION, INTERACTION_TYPE.CRAFT_ITEM, item, this);
@@ -1103,7 +1104,7 @@ public class Area : IJobOwner {
                 if (!HasJob(JOB_TYPE.CRAFT_TOOL)) {
                     //create an un crafted potion and place it at the main storage structure, then use that as the target for the job.
                     SpecialToken item = TokenManager.Instance.CreateSpecialToken(SPECIAL_TOKEN.TOOL);
-                    affectedStructure.AddItem(item);
+                    AddSpecialTokenToLocation(item, affectedStructure);
                     item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
 
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_TOOL, INTERACTION_TYPE.CRAFT_ITEM, item, this);

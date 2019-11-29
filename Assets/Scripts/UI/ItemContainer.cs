@@ -27,6 +27,7 @@ public class ItemContainer : PooledObject, IPointerClickHandler {
         string summary = item.name + " at " + item.structureLocation?.ToString() ?? "No Location";
         string ownerName = item.characterOwner?.ToString() ?? "No one";
         summary += "\nOwned by: " + ownerName;
+        summary += "\nCarried by: " + (item.carriedByCharacter?.name ?? "No one");
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void HideItemInfo() {

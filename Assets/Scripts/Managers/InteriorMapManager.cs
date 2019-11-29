@@ -770,7 +770,8 @@ public class InteriorMapManager : MonoBehaviour {
         var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString());
         System.Type type = System.Type.GetType(typeName);
         if (type != null) {
-            return System.Activator.CreateInstance(type) as TileObject;
+            TileObject obj = System.Activator.CreateInstance(type) as TileObject;
+            return obj;
         }
         throw new System.Exception("Could not create new instance of tile object of type " + tileObjectType.ToString());
     }

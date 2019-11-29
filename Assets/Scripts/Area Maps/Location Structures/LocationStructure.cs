@@ -114,10 +114,12 @@ public class LocationStructure {
     #endregion
 
     #region Points Of Interest
-    public virtual bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null) {
+    public virtual bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null, bool placeObject = true) {
         if (!pointsOfInterest.Contains(poi)) {
-            if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
-                if (!PlaceAreaObjectAtAppropriateTile(poi, tileLocation)) { return false; }
+            if (placeObject) {
+                if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
+                    if (!PlaceAreaObjectAtAppropriateTile(poi, tileLocation)) { return false; }
+                }
             }
             pointsOfInterest.Add(poi);
             return true;
