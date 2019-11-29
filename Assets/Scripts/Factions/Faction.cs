@@ -14,13 +14,12 @@ public class Faction {
     public string description { get; protected set; }
     //public string initialLeaderClass { get; protected set; }
     public int level { get; protected set; }
-    public int inventoryTaskWeight { get; protected set; }
     public bool isPlayerFaction { get; protected set; }
     public GENDER initialLeaderGender { get; protected set; }
     public RACE initialLeaderRace { get; protected set; }
     public RACE race { get; protected set; }
     public ILeader leader { get; protected set; }
-    public FactionEmblemSetting emblem { get; protected set; }
+    public Sprite emblem { get; protected set; }
     public List<BaseLandmark> ownedLandmarks { get; protected set; }
     public Color factionColor { get; protected set; }
     public List<Character> characters { get; protected set; }//List of characters that are part of the faction
@@ -59,7 +58,6 @@ public class Faction {
         SetSize(FACTION_SIZE.MAJOR);
         SetFactionActiveState(true);
         level = 1;
-        inventoryTaskWeight = FactionManager.Instance.GetRandomInventoryTaskWeight();
         factionType = Utilities.GetRandomEnumValue<FACTION_TYPE>();
         characters = new List<Character>();
         ownedLandmarks = new List<BaseLandmark>();
@@ -86,7 +84,6 @@ public class Faction {
         initialLeaderRace = data.initialLeaderRace;
         initialLeaderGender = data.initialLeaderGender;
         level = data.level;
-        inventoryTaskWeight = data.inventoryTaskWeight;
         factionType = data.factionType;
         requirementForJoining = data.requirementForJoining;
 
@@ -563,7 +560,7 @@ public class Faction {
     #endregion
 
     #region Emblems
-    public void SetEmblem(FactionEmblemSetting sprite) {
+    public void SetEmblem(Sprite sprite) {
         emblem = sprite;
     }
     #endregion

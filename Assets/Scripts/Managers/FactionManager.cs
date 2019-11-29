@@ -11,31 +11,15 @@ public class FactionManager : MonoBehaviour {
     public List<Faction> allFactions = new List<Faction>();
     public Faction neutralFaction { get; private set; }
     public Faction disguisedFaction { get; private set; }
-
     private Faction _zombieFaction;
-    
 
     [Space(10)]
     [Header("Visuals")]
-    [SerializeField] private List<FactionEmblemSetting> _factionEmblems;
+    [SerializeField] private List<Sprite> _factionEmblems;
 
-    [SerializeField] private List<EmblemBG> _emblemBGs;
-    [SerializeField] private List<Sprite> _emblemSymbols;
-    //[SerializeField] private List<Sprite> usedEmblems = new List<Sprite>();
-
-    private int[] _inventoryTaskWeights = new int[] { 100, 250, 500 };
-    //private List<int> factionTaskTriggerTicks = new List<int>();
+    private List<Sprite> usedEmblems = new List<Sprite>();
 
     #region getters
-    public List<EmblemBG> emblemBGs {
-        get { return _emblemBGs; }
-    }
-    public List<Sprite> emblemSymbols {
-        get { return _emblemSymbols; }
-    }
-    public List<FactionEmblemSetting> factionEmblems {
-        get { return _factionEmblems; }
-    }
     public Faction zombieFaction {
         get {
             if (_zombieFaction == null) {
@@ -120,19 +104,18 @@ public class FactionManager : MonoBehaviour {
      * This will return a sprite and set that sprite as used.
      * Will return an error if there are no more available emblems.
      * */
-    internal FactionEmblemSetting GenerateFactionEmblem(Faction faction) {
-        //List<Sprite> emblemsToUse = new List<Sprite>(_emblemSymbols);
-        //for (int i = 0; i < emblemsToUse.Count; i++) {
-        //    Sprite currSprite = emblemsToUse[i];
-        //    if (!usedEmblems.Contains(currSprite)) {
-        //        AddEmblemAsUsed(currSprite);
-        //        return currSprite;
-        //    }
-        //}
-        return _factionEmblems[Random.Range(0, _factionEmblems.Count)];
-        //throw new System.Exception("There are no more emblems for kingdom: " + faction.name);
+    internal Sprite GenerateFactionEmblem(Faction faction) {
+        for (int i = 0; i < _factionEmblems.Count; i++) {
+            Sprite currSprite = _factionEmblems[i];
+            if (usedEmblems.Contains(currSprite)) {
+                continue;
+            }
+            usedEmblems.Add(currSprite);
+            return currSprite;
+        }
+        throw new System.Exception("There are no more emblems for faction: " + faction.name);
     }
-    public FactionEmblemSetting GetFactionEmblem(int emblemIndex) {
+    public Sprite GetFactionEmblem(int emblemIndex) {
         return _factionEmblems[emblemIndex];
         //for (int i = 0; i < _emblemBGs.Count; i++) {
         //    EmblemBG currBG = _emblemBGs[i];
@@ -142,9 +125,9 @@ public class FactionManager : MonoBehaviour {
         //}
         //throw new System.Exception("There is no emblem bg with id " + emblemID);
     }
-    public int GetFactionEmblemIndex(FactionEmblemSetting emblem) {
+    public int GetFactionEmblemIndex(Sprite emblem) {
         for (int i = 0; i < _factionEmblems.Count; i++) {
-            FactionEmblemSetting currSetting = _factionEmblems[i];
+            Sprite currSetting = _factionEmblems[i];
             if (currSetting == emblem) {
                 return i;
             }
@@ -185,9 +168,6 @@ public class FactionManager : MonoBehaviour {
         //newHome.AddCharacterHomeOnLandmark(character);
         //Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, _characterInvolved.specificLocation.coreTile.landmarkOnTile);
         //character.SetForcedInteraction(interaction);
-    }
-    public int GetRandomInventoryTaskWeight() {
-        return _inventoryTaskWeights[UnityEngine.Random.Range(0, _inventoryTaskWeights.Length)];
     }
     public List<Character> GetViableRulers(Character previousRuler, GENDER gender, params RELATIONSHIP_TRAIT[] type) {
         List<Character> characters = new List<Character>();

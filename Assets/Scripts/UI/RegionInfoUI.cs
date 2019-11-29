@@ -45,6 +45,10 @@ public class RegionInfoUI : UIMenu {
     [SerializeField] private Button demolishBtn;
     [SerializeField] private Image demolishProgress;
 
+    [Header("Building")]
+    [SerializeField] private Button buildBtn;
+    [SerializeField] private Image buildProgress;
+
     [Header("Demonic Landmark")]
     [SerializeField] private PlayerBuildLandmarkUI playerBuildLandmarkUI;
     [SerializeField] private PlayerResearchUI playerResearchUI;
@@ -62,8 +66,6 @@ public class RegionInfoUI : UIMenu {
         Messenger.AddListener<Character, Region>(Signals.CHARACTER_EXITED_REGION, OnCharacterExitedRegion);
         Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnWorldEventSpawned);
         Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_DESPAWNED, OnWorldEventDespawned);
-        //Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_FINISHED_NORMAL, OnWorldEventFinishedNormally);
-        //Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_FAILED, OnWorldEventFailed);
         Messenger.AddListener<Region>(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, ShowAppropriateContentOnSignal);
     }
 
@@ -79,7 +81,6 @@ public class RegionInfoUI : UIMenu {
         UpdateCharacters();
         UpdateMainBtnState();
         UpdateEventInfo();
-        //UpdateDemonicLandmarkToggleState();
         ShowAppropriateContentOnOpen();
     }
     public override void CloseMenu() {
@@ -210,22 +211,41 @@ public class RegionInfoUI : UIMenu {
         if (activeRegion.coreTile.isCorrupted) {
             invadeBtn.gameObject.SetActive(false);
             invadeProgress.gameObject.SetActive(false);
-            if (activeRegion.mainLandmark.specificLandmarkType != LANDMARK_TYPE.THE_PORTAL && activeRegion.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE) {
+            if (activeRegion.demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE) {
+                //building
+                buildBtn.gameObject.SetActive(true);
+                invadeBtn.gameObject.SetActive(false);
+                buildBtn.interactable = false;
+                buildProgress.gameObject.SetActive(true);
+                buildProgress.fillAmount = ((float)activeRegion.demonicBuildingData.currentDuration / (float)activeRegion.demonicBuildingData.buildDuration);
+            } else if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE) {
+                //if active region is corrupted and landmark type is none
+                //show build button
+                buildBtn.gameObject.SetActive(true);
+                buildBtn.interactable = true;
+                demolishBtn.gameObject.SetActive(false);
+            } else if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL) {
+                //if active region is corrupted and landmark is the portal, just show demolish button, but do not allow interaction
+                demolishBtn.gameObject.SetActive(true);
+                demolishBtn.interactable = false;
+                buildBtn.gameObject.SetActive(false);
+            } else {
                 //if the active region is corrupted and is not the demonic portal, show the demolish button
                 demolishBtn.gameObject.SetActive(true);
                 demolishBtn.interactable = true;
-            } else {
-                demolishBtn.gameObject.SetActive(true);
-                demolishBtn.interactable = false;
+                buildBtn.gameObject.SetActive(false);
             }
         } else {
-            demolishBtn.gameObject.SetActive(false);
             invadeBtn.gameObject.SetActive(true);
+            demolishBtn.gameObject.SetActive(false);
+            buildBtn.gameObject.SetActive(false);
             invadeBtn.interactable = activeRegion.CanBeInvaded();
             if (activeRegion.demonicInvasionData.beingInvaded) {
+                //invading
                 invadeProgress.gameObject.SetActive(true);
                 invadeProgress.fillAmount = ((float)activeRegion.demonicInvasionData.currentDuration / (float)activeRegion.mainLandmark.invasionTicks);
             } else {
+                buildProgress.gameObject.SetActive(false);
                 invadeProgress.gameObject.SetActive(false);
             }
         }

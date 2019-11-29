@@ -48,6 +48,8 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     }
     #endregion
 
+    private bool isPixelPerfect;
+
     private void OnEnable() {
         Messenger.AddListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
         Messenger.AddListener<Character>(Signals.FACTION_SET, OnFactionSet);
@@ -67,6 +69,8 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         SetPortraitAsset("hair", character.portraitSettings.hair, _portraitSettings.race, _portraitSettings.gender, hair);
         SetPortraitAsset("mustache", character.portraitSettings.mustache, _portraitSettings.race, _portraitSettings.gender, mustache);
         SetPortraitAsset("beard", character.portraitSettings.beard, _portraitSettings.race, _portraitSettings.gender, beard);
+
+        isPixelPerfect = makePixelPerfect;
 
         if (makePixelPerfect) {
             head.SetNativeSize();
@@ -149,6 +153,38 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             Image currImage = targets[i];
             currImage.raycastTarget = state;
         }
+    }
+    public void SetSize(float size) {
+        Vector2 newSize = new Vector2(size, size);
+        head.rectTransform.sizeDelta = newSize;
+        brows.rectTransform.sizeDelta = newSize;
+        eyes.rectTransform.sizeDelta = newSize;
+        mouth.rectTransform.sizeDelta = newSize;
+        nose.rectTransform.sizeDelta = newSize;
+        hair.rectTransform.sizeDelta = newSize;
+        mustache.rectTransform.sizeDelta = newSize;
+        beard.rectTransform.sizeDelta = newSize;
+
+        Vector2 newPos = new Vector2(size / 2f, size / 2f);
+
+        head.rectTransform.anchoredPosition = newPos;
+        head.rectTransform.anchorMin = Vector2.zero;
+
+        brows.rectTransform.anchoredPosition = newPos;
+        head.rectTransform.anchorMin = Vector2.zero;
+
+        eyes.rectTransform.anchoredPosition = newPos;
+        head.rectTransform.anchorMin = Vector2.zero;
+
+        mouth.rectTransform.anchoredPosition = newPos;
+        head.rectTransform.anchorMin = Vector2.zero;
+
+        nose.rectTransform.anchoredPosition = newPos;
+        head.rectTransform.anchorMin = Vector2.zero;
+
+        hair.rectTransform.anchoredPosition = newPos;
+        mustache.rectTransform.anchoredPosition = newPos;
+        beard.rectTransform.anchoredPosition = newPos;
     }
     #endregion
 
@@ -244,12 +280,12 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
 
     public void OnCharacterChangedRace(Character character) {
         if (_character != null && _character.id == character.id) {
-            GeneratePortrait(character);
+            GeneratePortrait(character, isPixelPerfect);
         }
     }
     private void OnCharacterChangedRole(Character character) {
         if (_character != null && _character.id == character.id) {
-            GeneratePortrait(character);
+            GeneratePortrait(character, isPixelPerfect);
         }
     }
 

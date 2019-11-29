@@ -15,7 +15,7 @@ public class ExperienceFeature : RegionFeature {
     public override void Activate(Region region) {
         base.Activate(region);
         PlayerManager.Instance.player.LevelUpAllMinions();
-        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "All your minions have levelled up!", () => PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "All your minions gained 1 level."));
+        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "All your minions have levelled up!", () => PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "All your minions gained 1 level.")); 
     }
     #endregion
 }
