@@ -64,7 +64,7 @@ namespace Traits {
         public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is SpecialToken) {
                 SpecialToken token = targetPOI as SpecialToken;
-                if ((token.characterOwner == null || token.characterOwner != characterThatWillDoJob) && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetPOI)) {
+                if ((token.characterOwner == null || token.characterOwner != characterThatWillDoJob) && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetPOI) && token.mapObjectState == MAP_OBJECT_STATE.BUILT) {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.STEAL, INTERACTION_TYPE.STEAL, targetPOI, characterThatWillDoJob);
                     job.SetIsStealth(true);
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
