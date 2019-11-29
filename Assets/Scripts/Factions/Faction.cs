@@ -115,6 +115,7 @@ public class Faction {
             if (previousRuler.characterClass.className != previousRuler.GetClassForRole(previousRuler.role)) {
                 previousRuler.AssignClassByRole(previousRuler.role);
             }
+            previousRuler.UnassignBuildStructureComponent();
         }
         if (leader != null && leader is Character) {
             Character newRuler = leader as Character;
@@ -122,6 +123,7 @@ public class Faction {
                 newRuler.AssignRole(CharacterRole.LEADER);
                 newRuler.AssignClassByRole(newRuler.role);
             }
+            newRuler.AssignBuildStructureComponent();
             //if (newRuler.characterClass.className != initialLeaderClass) {
             //    newRuler.AssignClass(CharacterManager.Instance.CreateNewCharacterClass(initialLeaderClass));
             //}

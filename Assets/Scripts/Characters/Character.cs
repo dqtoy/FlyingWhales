@@ -157,6 +157,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public List<string> locationHistory { get; private set; }
     public List<string> actionHistory { get; private set; }
 
+    public BuildStructureComponent buildStructureComponent { get; private set; }
+
     #region getters / setters
     public virtual string name {
         get {
@@ -7377,6 +7379,15 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public bool ForceCancelJob(JobQueueItem job) {
         //JobManager.Instance.OnFinishGoapPlanJob(job);
         return true;
+    }
+    #endregion
+
+    #region Build Structure Component
+    public void AssignBuildStructureComponent() {
+        buildStructureComponent = new BuildStructureComponent(this);
+    }
+    public void UnassignBuildStructureComponent() {
+        buildStructureComponent = null;
     }
     #endregion
 }
