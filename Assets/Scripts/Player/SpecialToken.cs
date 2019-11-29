@@ -88,7 +88,7 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
         this.structureLocation = structureLocation;
     }
     public override string ToString() {
-        return name + " " + id.ToString() + " Carried by " + (carriedByCharacter?.name ?? "no one");
+        return name + " " + id.ToString();// + " Carried by " + (carriedByCharacter?.name ?? "no one");
     }
     public void AddJobTargettingThis(JobQueueItem job) {
         allJobsTargettingThis.Add(job);

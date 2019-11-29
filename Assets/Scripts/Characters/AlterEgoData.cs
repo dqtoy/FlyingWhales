@@ -211,6 +211,12 @@ public class AlterEgoData : Relatable{
             traits.Add(trait);
         }
     }
+    public void RemoveTrait(Trait trait) {
+        if (owner.isSwitchingAlterEgo) {
+            return; //ignore any changes while the owner is switching alter egos
+        }
+        traits.Remove(trait);
+    }
     #endregion
 
     #region For Testing

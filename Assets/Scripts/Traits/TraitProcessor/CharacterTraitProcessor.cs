@@ -33,7 +33,7 @@ namespace Traits {
             Character character = traitable as Character;
             UnapplyTraitEffects(character, trait);
             UnapplyPOITraitInteractions(character, trait);
-            character.currentAlterEgo.traits.Remove(trait);
+            character.currentAlterEgo.RemoveTrait(trait);
 
             DefaultProcessOnRemoveTrait(traitable, trait, removedBy);
             Messenger.Broadcast(Signals.TRAIT_REMOVED, character, trait);
