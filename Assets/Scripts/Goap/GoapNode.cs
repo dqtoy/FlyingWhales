@@ -260,6 +260,30 @@ public class ActualGoapNode {
         }
         action.Perform(this);
     }
+    public void ActionInterruptedWhilePerforming() {
+        string log = GameManager.Instance.TodayLogString() + actor.name + " is interrupted while doing goap action: " + action.goapName;
+        string result = GoapActionStateDB.GetStateResult(action.goapType, currentState.name);
+        if (result == InteractionManager.Goap_State_Success) {
+            actionStatus = ACTION_STATUS.SUCCESS;
+        } else {
+            actionStatus = ACTION_STATUS.FAIL;
+        }
+        StopPerTickEffect();
+        if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER && !action.doesNotStopTargetCharacter && actor != poiTarget) {
+            Character targetCharacter = poiTarget as Character;
+            if (!targetCharacter.isDead) {
+                targetCharacter.IncreaseCanMove();
+            }
+            targetCharacter.AdjustIsStoppedByOtherCharacter(-1);
+        }
+        OnFinishActionTowardsTarget();
+        GoapPlanJob job = actor.currentJob as GoapPlanJob;
+        if (actor.currentActionNode == this) {
+            actor.SetCurrentActionNode(null, null, null);
+        }
+        job.CancelJob(false);
+        Messenger.Broadcast(Signals.CHARACTER_FINISHED_ACTION, actor, this.action, result);
+    }
     public void ActionResult(GoapActionState actionState) {
         string result = GoapActionStateDB.GetStateResult(action.goapType, actionState.name);
         if (result == InteractionManager.Goap_State_Success) {
@@ -302,11 +326,14 @@ public class ActualGoapNode {
     }
     public void StopActionNode(bool shouldDoAfterEffect) {
         if (actionStatus == ACTION_STATUS.PERFORMING) {
-            OnCancelActionTowardsTarget();
-            //ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
             action.OnStopWhilePerforming(this);
-            EndPerTickEffect(shouldDoAfterEffect);
-
+            if (currentState.duration == 0) { //If action has no duration then do EndPerTickEffect (this will also call the action result)
+                OnCancelActionTowardsTarget();
+                //ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
+                EndPerTickEffect(shouldDoAfterEffect);
+            } else { //If action has duration and interrupted in the middle of the duration then do ActionInterruptedWhilePerforming (this will not call the action result, instead it will call the cancel job so it can be brought back to the settlement list if it is a settlement job)
+                ActionInterruptedWhilePerforming();
+            }
             ////when the action is ended prematurely, make sure to readjust the target character's do not move values
             //if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             //    if (poiTarget != actor) {
