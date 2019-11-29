@@ -79,6 +79,13 @@ public class BuildStructureComponent {
             missingStructures.RemoveAt(0);
             return;
         }
+        if (survivalStructures.Contains(blueprintType)) {
+            survivalStructures.Remove(blueprintType);
+        }else if(utilityStructures.Contains(blueprintType)) {
+            utilityStructures.Remove(blueprintType);
+        }else if (combatStructures.Contains(blueprintType)) {
+            combatStructures.Remove(blueprintType);
+        }
         currentIndex++;
         if (currentIndex >= buildStructureOrder.Count) {
             currentIndex = startLoopIndex;
