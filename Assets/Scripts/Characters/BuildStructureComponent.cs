@@ -26,7 +26,7 @@ public class BuildStructureComponent {
 
     public BuildStructureComponent(Character character) {
         this.character = character;
-        startLoopIndex = 3;
+        startLoopIndex = 0;
         currentIndex = 0;
         survivalStructures = new List<STRUCTURE_TYPE>();
         utilityStructures = new List<STRUCTURE_TYPE>();
@@ -79,6 +79,13 @@ public class BuildStructureComponent {
             missingStructures.RemoveAt(0);
             return;
         }
+        if (survivalStructures.Contains(blueprintType)) {
+            survivalStructures.Remove(blueprintType);
+        }else if(utilityStructures.Contains(blueprintType)) {
+            utilityStructures.Remove(blueprintType);
+        }else if (combatStructures.Contains(blueprintType)) {
+            combatStructures.Remove(blueprintType);
+        }
         currentIndex++;
         if (currentIndex >= buildStructureOrder.Count) {
             currentIndex = startLoopIndex;
@@ -122,9 +129,9 @@ public class BuildStructureComponent {
     }
     private List<string> ElfBuildOrder() {
         return new List<string> {
-            Dwelling,
-            Dwelling,
-            Dwelling,
+            //Dwelling,
+            //Dwelling,
+            //Dwelling,
             Survival_Structures,
             Dwelling,
             Utility_Structures,
@@ -139,9 +146,9 @@ public class BuildStructureComponent {
     }
     private List<string> HumanBuildOrder() {
         return new List<string> {
-            Dwelling,
-            Dwelling,
-            Dwelling,
+            //Dwelling,
+            //Dwelling,
+            //Dwelling,
             Utility_Structures,
             Dwelling,
             Survival_Structures,

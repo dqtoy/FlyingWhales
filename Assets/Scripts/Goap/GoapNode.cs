@@ -403,20 +403,7 @@ public class ActualGoapNode {
         if (actionStatus == ACTION_STATUS.FAIL || actionStatus == ACTION_STATUS.SUCCESS) { //This means that the action is already finished
             return;
         }
-        GoapActionState currentState = action.states[currentStateName];
-        ActionResult(currentState);
-
-        //After effect and logs should be done after processing action result so that we can be sure that the action is completely done before doing anything
         if (shouldDoAfterEffect) {
-            currentState.afterEffect?.Invoke(this);
-            for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
-                Trait currTrait = actor.traitContainer.allTraits[i];
-                currTrait.ExecuteActionAfterEffects(action.goapType, this);
-            }
-            for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
-                Trait currTrait = poiTarget.traitContainer.allTraits[i];
-                currTrait.ExecuteActionAfterEffects(action.goapType, this);
-            }
             if (descriptionLog != null && action.shouldAddLogs) { //only add logs if both the parent action and this state should add logs
                 //if (descriptionLog != null) {
                 //    AddArrangedLog("description", descriptionLog, null);
@@ -441,6 +428,22 @@ public class ActualGoapNode {
                 //    arrangedLogs[i].log.SetDate(GameManager.Instance.Today());
                 //    arrangedLogs[i].log.AddLogToInvolvedObjects();
                 //}
+            }
+        }
+
+        GoapActionState currentState = action.states[currentStateName];
+        ActionResult(currentState);
+
+        //After effect and logs should be done after processing action result so that we can be sure that the action is completely done before doing anything
+        if (shouldDoAfterEffect) {
+            currentState.afterEffect?.Invoke(this);
+            for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
+                Trait currTrait = actor.traitContainer.allTraits[i];
+                currTrait.ExecuteActionAfterEffects(action.goapType, this);
+            }
+            for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
+                Trait currTrait = poiTarget.traitContainer.allTraits[i];
+                currTrait.ExecuteActionAfterEffects(action.goapType, this);
             }
         }
         //else {

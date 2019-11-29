@@ -87,11 +87,32 @@ public static class WorldEventsDB {
                 validRegionGetter = DefaultRegionGetter
             }
         },
-         {
+        {
             JOB_TYPE.CLEANSE_REGION,
             new JobWorldEventData() {
                 neededEffects = new WORLD_EVENT_EFFECT[]{ WORLD_EVENT_EFFECT.REMOVE_CORRUPTION },
                 validRegionGetter = CleanseRegionRegionGetter
+            }
+        },
+        {
+            JOB_TYPE.INVADE_REGION,
+            new JobWorldEventData() {
+                neededEffects = new WORLD_EVENT_EFFECT[]{ WORLD_EVENT_EFFECT.INVADE_REGION },
+                validRegionGetter = InvadeRegionRegionGetter
+            }
+        },
+        {
+            JOB_TYPE.ATTACK_DEMONIC_REGION,
+            new JobWorldEventData() {
+                neededEffects = new WORLD_EVENT_EFFECT[]{ WORLD_EVENT_EFFECT.ATTACK_DEMONIC_REGION },
+                validRegionGetter = AttackDemonicRegionRegionGetter
+            }
+        },
+        {
+            JOB_TYPE.ATTACK_NON_DEMONIC_REGION,
+            new JobWorldEventData() {
+                neededEffects = new WORLD_EVENT_EFFECT[]{ WORLD_EVENT_EFFECT.ATTACK_NON_DEMONIC_REGION },
+                validRegionGetter = AttackNonDemonicRegionRegionGetter
             }
         },
     };
@@ -163,6 +184,56 @@ public static class WorldEventsDB {
             //if still none, just pick from the base choices
             return Utilities.GetRandomElement(baseChoices);
         }
+        return null;
+    }
+    public static Region InvadeRegionRegionGetter(Character character, JOB_TYPE jobType) {
+        List<Region> baseChoices = new List<Region>();
+        //first only get the regions that can spawn the needed event
+        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+            Region currRegion = GridMap.Instance.allRegions[i];
+            if (currRegion.owner != null && currRegion.owner != PlayerManager.Instance.player.playerFaction && currRegion.owner != character.homeRegion.owner
+                && currRegion.IsConnectedToRegionOwnedBy(character.homeRegion.owner) && currRegion.owner.GetRelationshipWith(character.homeRegion.owner).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE
+                && WorldEventsManager.Instance.CanSpawnEventWithEffects(currRegion, character, WorldEventsManager.Instance.GetNeededEffectsOfJob(jobType))) {
+                baseChoices.Add(currRegion);
+            }
+        }
+        if (baseChoices.Count > 0) {
+            return baseChoices[UnityEngine.Random.Range(0, baseChoices.Count)];
+        }
+        return null;
+    }
+    public static Region AttackDemonicRegionRegionGetter(Character character, JOB_TYPE jobType) {
+        //TODO:
+        //List<Region> baseChoices = new List<Region>();
+        ////first only get the regions that can spawn the needed event
+        //for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+        //    Region currRegion = GridMap.Instance.allRegions[i];
+        //    if (currRegion.owner != null && currRegion.owner != PlayerManager.Instance.player.playerFaction && currRegion.owner != character.homeRegion.owner
+        //        && currRegion.IsConnectedToRegionOwnedBy(character.homeRegion.owner) && currRegion.owner.GetRelationshipWith(character.homeRegion.owner).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE
+        //        && WorldEventsManager.Instance.CanSpawnEventWithEffects(currRegion, character, WorldEventsManager.Instance.GetNeededEffectsOfJob(jobType))) {
+        //        baseChoices.Add(currRegion);
+        //    }
+        //}
+        //if (baseChoices.Count > 0) {
+        //    return baseChoices[UnityEngine.Random.Range(0, baseChoices.Count)];
+        //}
+        return null;
+    }
+    public static Region AttackNonDemonicRegionRegionGetter(Character character, JOB_TYPE jobType) {
+        //TODO:
+        //List<Region> baseChoices = new List<Region>();
+        ////first only get the regions that can spawn the needed event
+        //for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+        //    Region currRegion = GridMap.Instance.allRegions[i];
+        //    if (currRegion.owner != null && currRegion.owner != PlayerManager.Instance.player.playerFaction && currRegion.owner != character.homeRegion.owner
+        //        && currRegion.IsConnectedToRegionOwnedBy(character.homeRegion.owner) && currRegion.owner.GetRelationshipWith(character.homeRegion.owner).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE
+        //        && WorldEventsManager.Instance.CanSpawnEventWithEffects(currRegion, character, WorldEventsManager.Instance.GetNeededEffectsOfJob(jobType))) {
+        //        baseChoices.Add(currRegion);
+        //    }
+        //}
+        //if (baseChoices.Count > 0) {
+        //    return baseChoices[UnityEngine.Random.Range(0, baseChoices.Count)];
+        //}
         return null;
     }
     #endregion

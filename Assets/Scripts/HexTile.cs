@@ -781,6 +781,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     private void DoubleLeftClick() {
         //Debug.Log("double click");
         //PlayerUI.Instance.ShowCorruptTileConfirmation(this);
+        if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
+            return;
+        }
+        if(region.area != null) {
+            InteriorMapManager.Instance.TryShowAreaMap(region.area);
+        }
     }
     public void PointerClick(BaseEventData bed) {
         PointerEventData ped = bed as PointerEventData;

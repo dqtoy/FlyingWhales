@@ -374,14 +374,14 @@ public class InteractionManager : MonoBehaviour {
         return character.role.roleType == CHARACTER_ROLE.ADVENTURER;
     }
     public bool CanDoCleanseRegionJob(Character character) {
-        //return character.traitContainer.GetNormalTrait("Purifier") != null;
-        return true;
+        return character.traitContainer.GetNormalTrait("Purifier") != null;
+        //return true;
     }
     public bool CanDoClaimRegionJob(Character character) {
         return character.traitContainer.GetNormalTrait("Royalty") != null;
     }
     public bool CanDoInvadeRegionJob(Character character) {
-        return true;
+        return character.traitContainer.GetNormalTrait("Raider") != null;
     }
     public bool CanDoAttackNonDemonicRegionJob(Character character) {
         return true;
