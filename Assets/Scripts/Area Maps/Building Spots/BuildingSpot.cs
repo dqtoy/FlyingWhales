@@ -135,6 +135,9 @@ public class BuildingSpot {
             }
         }
     }
+    public bool CanPlaceStructureOnSpot(LocationStructureObject obj, AreaInnerTileMap map) {
+        return map.IsBuildSpotValidFor(obj, this);
+    }
     #endregion
 
     #region Building

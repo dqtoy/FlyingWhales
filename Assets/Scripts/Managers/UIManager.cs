@@ -130,19 +130,10 @@ public class UIManager : MonoBehaviour {
     }
     private void Update() {
         if (isHoveringTile) {
-            //if (currentTileHovered.areaOfTile != null && currentTileHovered.areaOfTile.areaType != AREA_TYPE.DEMONIC_INTRUSION) {
-            //    ShowSmallInfo("Double click to view.", currentTileHovered.areaOfTile.name);
-            //    isShowingAreaTooltip = true;
-            //}
-#if UNITY_EDITOR
             if (currentTileHovered.landmarkOnTile != null) {
                 currentTileHovered.ShowTileInfo();
                
             }
-            //else  {
-            //    currentTileHovered.ShowTileInfo();
-            //}
-#endif
             currentTileHovered.region?.OnHoverOverAction();
         }
     }
