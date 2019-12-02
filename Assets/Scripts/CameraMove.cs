@@ -232,19 +232,19 @@ public class CameraMove : MonoBehaviour {
     private Vector3 originMousePos;
     private void Dragging() {
         if (startedOnUI) {
-            if (!Input.GetMouseButton(0)) {
+            if (!Input.GetMouseButton(2)) {
                 ResetDragValues();
             }
             return;
         }
         if (!isDragging) {
-            if (Input.GetMouseButtonDown(0)) {
+            if (Input.GetMouseButtonDown(2)) {
                 if (UIManager.Instance.IsMouseOnUI()) { //if the dragging started on UI, a tileobject or a character, do not allow drag
                     startedOnUI = true;
                     return;
                 }
                 //dragOrigin = Input.mousePosition; //on first press of mouse
-            } else if (Input.GetMouseButton(0)) {
+            } else if (Input.GetMouseButton(2)) {
                 currDragTime += Time.deltaTime; //while the left mouse button is pressed
                 if (currDragTime >= dragThreshold) {
                     if (!hasReachedThreshold) {
@@ -265,12 +265,12 @@ public class CameraMove : MonoBehaviour {
         if (isDragging) {
             Vector3 difference = (Camera.main.ScreenToWorldPoint(Input.mousePosition)) - Camera.main.transform.position;
             Camera.main.transform.position = dragOrigin - difference;
-            if (Input.GetMouseButtonUp(0)) {
+            if (Input.GetMouseButtonUp(2)) {
                 ResetDragValues();
                 CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
             }
         } else {
-            if (!Input.GetMouseButton(0)) {
+            if (!Input.GetMouseButton(2)) {
                 currDragTime = 0f;
                 hasReachedThreshold = false;
             }

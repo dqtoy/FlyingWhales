@@ -389,23 +389,16 @@ public class AreaInnerTileMap : MonoBehaviour {
                     if (chosenBuildingSpot == null) {
                         throw new System.Exception($"Could not find valid building spot for { structure.ToString() } using prefab { chosenStructurePrefab.name }");
                     } else {
-                        bool randomizePlacement = lso.IsBiggerThanBuildSpot() == false; //only randomize placement if structure object is not bigger than the build spot
-                        PlaceStructureObjectAt(chosenBuildingSpot, chosenStructurePrefab, structure, randomizePlacement);
+                        PlaceStructureObjectAt(chosenBuildingSpot, chosenStructurePrefab, structure);
                     }
                 }
             }
         }
     }
-    private void PlaceStructureObjectAt(BuildingSpot chosenBuildingSpot, GameObject structurePrefab, LocationStructure structure, bool randomizePlacement) {
+    private void PlaceStructureObjectAt(BuildingSpot chosenBuildingSpot, GameObject structurePrefab, LocationStructure structure) {
         GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structurePrefab.name, Vector3.zero, Quaternion.identity, structureParent);
-        if (randomizePlacement) {
-            LocationStructureObject structureObjectPrefab = structureGO.GetComponent<LocationStructureObject>();
-            //only randomize x position if structure prefab is NOT horizontally big
-            //only randomize y position if structure prefab is NOT vertically big
-            structureGO.transform.localPosition = chosenBuildingSpot.GetRandomTilePositionInBuildSpot(structureObjectPrefab); //chosenBuildingSpot.centeredLocation;
-        } else {
-            structureGO.transform.localPosition = chosenBuildingSpot.centeredLocation;
-        }
+        LocationStructureObject structureObjectPrefab = structureGO.GetComponent<LocationStructureObject>();
+        structureGO.transform.localPosition = chosenBuildingSpot.GetPositionToPlaceStructure(structureObjectPrefab);
         
         LocationStructureObject structureObject = structureGO.GetComponent<LocationStructureObject>();
         structureObject.RefreshAllTilemaps();
@@ -1028,7 +1021,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                 List<BuildingSpot> choices = new List<BuildingSpot>();
                 for (int i = 0; i < openSpots.Count; i++) {
                     BuildingSpot buildSpot = openSpots[i];
-                    if (IsBuildSpotValidFor(structureObject, buildSpot)) {
+                    if (buildSpot.CanPlaceStructureOnSpot(structureObject, this)) {
                         choices.Add(buildSpot);
                     }
                 }
@@ -1092,7 +1085,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                 List<BuildSpotTileObject> choices = new List<BuildSpotTileObject>();
                 for (int i = 0; i < openSpots.Count; i++) {
                     BuildSpotTileObject buildSpot = openSpots[i];
-                    if (IsBuildSpotValidFor(structureObject, buildSpot.spot)) {
+                    if (buildSpot.spot.CanPlaceStructureOnSpot(structureObject, this)) {
                         choices.Add(buildSpot);
                     }
                 }
@@ -1127,28 +1120,24 @@ public class AreaInnerTileMap : MonoBehaviour {
         BuildingSpot currSpot = spot;
         if (isHorizontallyBig && isVerticallyBig) {
             //if it is bigger both horizontally and vertically
-            //only get build spots that do not have any occupied adjacent spots to their top, bottom, left and right
+            //only get build spots that do not have any occupied adjacent spots at their top and right
             bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North) && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false;
-            bool hasUnoccupiedSouth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.South) && currSpot.neighbours[GridNeighbourDirection.South].isOccupied == false;
-            bool hasUnoccupiedWest = currSpot.neighbours.ContainsKey(GridNeighbourDirection.West) && currSpot.neighbours[GridNeighbourDirection.West].isOccupied == false;
             bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East) && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false;
-            if (hasUnoccupiedNorth && hasUnoccupiedSouth && hasUnoccupiedEast && hasUnoccupiedWest) {
+            if (hasUnoccupiedNorth && hasUnoccupiedEast) {
                 return true;
             }
         } else if (isHorizontallyBig) {
             //if it is bigger horizontally
-            //only get build spots that do not have any occupied adjacent spots to their left or right
-            bool hasUnoccupiedWest = currSpot.neighbours.ContainsKey(GridNeighbourDirection.West) && currSpot.neighbours[GridNeighbourDirection.West].isOccupied == false;
+            //only get build spots that do not have any occupied adjacent spots at their right
             bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East) && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false;
-            if (hasUnoccupiedEast || hasUnoccupiedWest) {
+            if (hasUnoccupiedEast) {
                 return true;
             }
         } else if (isVerticallyBig) {
             //if it is bigger vertically
-            //only get build spots that do not have any occupied adjacent spots to their top or bottom
+            //only get build spots that do not have any occupied adjacent spots at their top
             bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North) && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false;
-            bool hasUnoccupiedSouth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.South) && currSpot.neighbours[GridNeighbourDirection.South].isOccupied == false;
-            if (hasUnoccupiedNorth || hasUnoccupiedSouth) {
+            if (hasUnoccupiedNorth) {
                 return true;
             }
         } else {

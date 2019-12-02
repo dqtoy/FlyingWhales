@@ -16,7 +16,7 @@ namespace Traits {
             type = TRAIT_TYPE.DISABLER;
             effect = TRAIT_EFFECT.NEUTRAL;
             daysDuration = 0;
-            hindersMovement = true;
+            //hindersMovement = true;
             hindersWitness = true;
         }
 
