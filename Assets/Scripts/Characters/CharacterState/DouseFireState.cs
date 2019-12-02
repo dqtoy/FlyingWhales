@@ -16,7 +16,7 @@ public class DouseFireState : CharacterState {
     public DouseFireState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Douse Fire State";
         characterState = CHARACTER_STATE.DOUSE_FIRE;
-        stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
+        //stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
         duration = 0;
         actionIconString = GoapActionStateDB.Drink_Icon;
         fires = new Dictionary<BurningSource, List<IPointOfInterest>>();
@@ -63,7 +63,7 @@ public class DouseFireState : CharacterState {
         } else {
             if (stateComponent.character.currentActionNode == null && stateComponent.currentState == this) {
                 //no more fire, exit state
-                OnExitThisState();
+                stateComponent.ExitCurrentState();
             }
         }
     }
@@ -88,7 +88,7 @@ public class DouseFireState : CharacterState {
         }
         //currentTarget = null;
     }
-    protected override void PerTickInState() {
+    public override void PerTickInState() {
         DetermineAction();
         //if (!StillHasFire() && stateComponent.character.currentAction == null && stateComponent.currentState == this) {
         //    //if there is no longer any fire, and the character is still trying to douse fire, exit this state

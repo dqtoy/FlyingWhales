@@ -400,7 +400,7 @@ public class PlayerManager : MonoBehaviour {
                     IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
                     character.StopCurrentActionNode(false, "Stopped by the player");
                     if (character.stateComponent.currentState != null) {
-                        character.stateComponent.currentState.OnExitThisState();
+                        character.stateComponent.ExitCurrentState();
                     }
                     character.marker.ClearHostilesInRange();
                     character.marker.ClearAvoidInRange();

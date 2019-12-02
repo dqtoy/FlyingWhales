@@ -1034,7 +1034,7 @@ public class Area : IJobOwner {
     private void CreatePatrolJobs() {
         int patrolChance = UnityEngine.Random.Range(0, 100);
         if (patrolChance < 25 && GetNumberOfJobsWith(CHARACTER_STATE.PATROL) < 2) {
-            CharacterStateJob stateJob = new CharacterStateJob(JOB_TYPE.PATROL, CHARACTER_STATE.PATROL, this);
+            CharacterStateJob stateJob = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.PATROL, CHARACTER_STATE.PATROL, this);
             stateJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoPatrolAndExplore);
             AddToAvailableJobs(stateJob);
         }
@@ -1116,7 +1116,7 @@ public class Area : IJobOwner {
     }
     private void OnJobRemovedFromAvailableJobs(JobQueueItem job) {
         jobManager.OnRemoveFromAvailableJobs(job);
-        JobManager.Instance.OnFinishGoapPlanJob(job);
+        JobManager.Instance.OnFinishJob(job);
         if (job.jobType == JOB_TYPE.CRAFT_TOOL || job.jobType == JOB_TYPE.BREW_POTION) {
             CheckAreaInventoryJobs(mainStorageStructure);
         }
@@ -1157,7 +1157,7 @@ public class Area : IJobOwner {
             case JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE:
             case JOB_TYPE.IMPROVE:
             case JOB_TYPE.EXPLORE:
-            case JOB_TYPE.COMBAT:
+            case JOB_TYPE.COMBAT_WORLD_EVENT:
                 return true;
             default:
                 return false;
@@ -1183,7 +1183,7 @@ public class Area : IJobOwner {
         }
     }
     private void CreateObtainFoodOutsideJob() {
-        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.OBTAIN_FOOD_OUTSIDE, CHARACTER_STATE.MOVE_OUT, this);
+        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.OBTAIN_FOOD_OUTSIDE, CHARACTER_STATE.MOVE_OUT, this);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainFoodOutsideJob);
         AddToAvailableJobs(job);
     }
@@ -1204,7 +1204,7 @@ public class Area : IJobOwner {
         }
     }
     private void CreateObtainSupplyOutsideJob() {
-        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE, CHARACTER_STATE.MOVE_OUT, this);
+        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE, CHARACTER_STATE.MOVE_OUT, this);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainSupplyOutsideJob);
         AddToAvailableJobs(job);
     }
@@ -1234,7 +1234,7 @@ public class Area : IJobOwner {
             return; //hero events are maxed.
         }
         if (UnityEngine.Random.Range(0, 100) < 15) {//15
-            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.IMPROVE, CHARACTER_STATE.MOVE_OUT, this);
+            CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.IMPROVE, CHARACTER_STATE.MOVE_OUT, this);
             AddToAvailableJobs(job);
             //expires at midnight
             GameDate expiry = GameManager.Instance.Today();
@@ -1252,7 +1252,7 @@ public class Area : IJobOwner {
             return; //hero events are maxed.
         }
         if (UnityEngine.Random.Range(0, 100) < 15) {//15
-            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.EXPLORE, CHARACTER_STATE.MOVE_OUT, this);
+            CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.EXPLORE, CHARACTER_STATE.MOVE_OUT, this);
             //Used lambda expression instead of new function. Reference: https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/lambda-expressions
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoExploreJob);
             AddToAvailableJobs(job);
@@ -1272,7 +1272,7 @@ public class Area : IJobOwner {
             return; //hero events are maxed.
         }
         if (UnityEngine.Random.Range(0, 100) < 15) {//15
-            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.MOVE_OUT, this);
+            CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT_WORLD_EVENT, CHARACTER_STATE.MOVE_OUT, this);
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCombatJob);
             AddToAvailableJobs(job);
             //expires at midnight

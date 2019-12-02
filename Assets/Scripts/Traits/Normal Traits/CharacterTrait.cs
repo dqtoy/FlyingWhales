@@ -192,7 +192,7 @@ namespace Traits {
                 if (owner.jobQueue.jobsInQueue.Count > 0) {
                     owner.CancelAllJobs();
                 }
-                CharacterStateJob job = new CharacterStateJob(JOB_TYPE.RETURN_HOME, CHARACTER_STATE.MOVE_OUT, owner);
+                CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.RETURN_HOME, CHARACTER_STATE.MOVE_OUT, owner);
                 owner.jobQueue.AddJobInQueue(job);
             } else if (owner.isAtHomeRegion) {
                 SetHasSurvivedApprehension(false);

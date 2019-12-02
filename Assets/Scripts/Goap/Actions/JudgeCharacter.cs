@@ -201,7 +201,7 @@ public class JudgeCharacter : GoapAction {
         target.AddOnLeaveAreaAction(() => target.AdjustIgnoreHostilities(-1));
         target.AddOnLeaveAreaAction(() => target.ClearAllAwarenessOfType(POINT_OF_INTEREST_TYPE.ITEM, POINT_OF_INTEREST_TYPE.TILE_OBJECT));
 
-        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.RETURN_HOME, CHARACTER_STATE.MOVE_OUT, target);
+        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.RETURN_HOME, CHARACTER_STATE.MOVE_OUT, target);
         target.jobQueue.AddJobInQueue(job);
     }
 

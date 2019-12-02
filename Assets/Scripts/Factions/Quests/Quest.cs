@@ -38,7 +38,7 @@ public class Quest : IJobOwner {
     public bool RemoveFromAvailableJobs(JobQueueItem job) {
         if (availableJobs.Remove(job)) {
             OnRemoveJob(job);
-            JobManager.Instance.OnFinishGoapPlanJob(job);
+            JobManager.Instance.OnFinishJob(job);
             return true;
         }
         return false;

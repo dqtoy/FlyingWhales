@@ -68,7 +68,7 @@ public class SeducerSummon : Summon {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SEDUCE, INTERACTION_TYPE.INVITE, chosenCharacter, this);
                 jobQueue.AddJobInQueue(job);
             } else {
-                PlanIdleStrollOutside(currentStructure);
+                PlanIdleStrollOutside(); //currentStructure
             }
         }
         
@@ -100,11 +100,11 @@ public class SeducerSummon : Summon {
     private void Disappear() {
         LocationGridTile disappearTile = gridTileLocation;
         if (stateComponent.currentState != null) {
-            stateComponent.currentState.OnExitThisState();
+            stateComponent.ExitCurrentState();
             //This call is doubled so that it will also exit the previous major state if there's any
-            if (stateComponent.currentState != null) {
-                stateComponent.currentState.OnExitThisState();
-            }
+            //if (stateComponent.currentState != null) {
+            //    stateComponent.currentState.OnExitThisState();
+            //}
         }
         //else if (stateComponent.currentState != null) {
         //    stateComponent.SetStateToDo(null);

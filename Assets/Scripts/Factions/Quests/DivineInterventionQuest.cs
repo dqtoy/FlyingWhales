@@ -149,7 +149,7 @@ public class DivineInterventionQuest : Quest {
 
     #region Destroy Profane
     private void CreateDestroyProfaneJob() {
-        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.DESTROY_PROFANE_LANDMARK, CHARACTER_STATE.MOVE_OUT, this);
+        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.DESTROY_PROFANE_LANDMARK, CHARACTER_STATE.MOVE_OUT, this);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoDestroyProfaneJob);
         AddToAvailableJobs(job);
 
@@ -162,7 +162,7 @@ public class DivineInterventionQuest : Quest {
 
     #region Holy Incantation
     private void CreateHolyIncantationJob() {
-        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.PERFORM_HOLY_INCANTATION, CHARACTER_STATE.MOVE_OUT, this);
+        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.PERFORM_HOLY_INCANTATION, CHARACTER_STATE.MOVE_OUT, this);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoHolyIncantationJob);
         AddToAvailableJobs(job);
 
@@ -176,7 +176,7 @@ public class DivineInterventionQuest : Quest {
     #region Sabotage Faction
     public void CreateSabotageFactionnJob() {
         if (!HasJob(JOB_TYPE.SABOTAGE_FACTION)) {
-            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.SABOTAGE_FACTION, CHARACTER_STATE.MOVE_OUT, this);
+            CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.SABOTAGE_FACTION, CHARACTER_STATE.MOVE_OUT, this);
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoSabotageFactionJob);
             AddToAvailableJobs(job);
         }

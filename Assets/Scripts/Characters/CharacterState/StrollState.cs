@@ -8,7 +8,7 @@ public class StrollState : CharacterState {
     public StrollState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Stroll State";
         characterState = CHARACTER_STATE.STROLL;
-        stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
+        //stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
         duration = GameManager.ticksPerHour;
     }
 
@@ -17,19 +17,17 @@ public class StrollState : CharacterState {
         base.DoMovementBehavior();
         StartStrollMovement();
     }
-    protected override void PerTickInState() {
+    public override void PerTickInState() {
         base.PerTickInState();
-        if (!isDone && !isPaused) {
-            if (_planDuration >= 4) {
-                _planDuration = 0;
-                if (!stateComponent.character.PlanFullnessRecoveryActions()) {
-                    if (!stateComponent.character.PlanTirednessRecoveryActions()) {
-                        stateComponent.character.PlanHappinessRecoveryActions();
-                    }
+        if (_planDuration >= 4) {
+            _planDuration = 0;
+            if (!stateComponent.character.PlanFullnessRecoveryActions()) {
+                if (!stateComponent.character.PlanTirednessRecoveryActions()) {
+                    stateComponent.character.PlanHappinessRecoveryActions();
                 }
-            } else {
-                _planDuration++;
             }
+        } else {
+            _planDuration++;
         }
     }
     public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {

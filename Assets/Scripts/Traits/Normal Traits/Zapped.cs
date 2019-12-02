@@ -26,10 +26,10 @@ namespace Traits {
                     }
                 }
                 if (character.stateComponent.currentState != null) {
-                    character.stateComponent.currentState.OnExitThisState();
-                    if (character.stateComponent.currentState != null) {
-                        character.stateComponent.currentState.OnExitThisState();
-                    }
+                    character.stateComponent.ExitCurrentState();
+                    //if (character.stateComponent.currentState != null) {
+                    //    character.stateComponent.currentState.OnExitThisState();
+                    //}
                 }
                 character.CancelAllJobs("Stopped by the player");
                 //else if(character.currentActionNode.action != null) {

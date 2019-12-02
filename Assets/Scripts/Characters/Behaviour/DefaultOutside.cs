@@ -16,7 +16,7 @@ public class DefaultOutside : CharacterBehaviourComponent {
                 log += "\n  -RNG roll: " + chance;
                 if (chance < 25) {
                     log += "\n  -Morning or Afternoon: " + character.name + " will enter Stroll Outside State";
-                    character.PlanIdleStrollOutside(character.currentStructure);
+                    character.PlanIdleStrollOutside(); //character.currentStructure
                     return true;
                 }
             } else {

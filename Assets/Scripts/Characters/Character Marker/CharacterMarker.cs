@@ -272,7 +272,7 @@ public class CharacterMarker : PooledObject {
         if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
             //if the character gained an unconscious trait, exit current state if it is flee
             if (character.isInCombat) {
-                characterThatGainedTrait.stateComponent.currentState.OnExitThisState();
+                characterThatGainedTrait.stateComponent.ExitCurrentState();
                 gainTraitSummary += "\nGained trait is unconscious, and characters current state is combat, exiting combat state.";
             }
 
@@ -1477,7 +1477,9 @@ public class CharacterMarker : PooledObject {
                     Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
                 } else {
                     if (!character.currentParty.icon.isTravellingOutside) {
-                        character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
+                        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.COMBAT, character);
+                        //character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
+                        character.jobQueue.AddJobInQueue(job);
                     }
                 }
             }
@@ -1652,7 +1654,9 @@ public class CharacterMarker : PooledObject {
         if (character.isInCombat) {
             Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
         } else {
-            this.character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
+            CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.COMBAT, character);
+            character.jobQueue.AddJobInQueue(job);
+            //this.character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
         }
         //execute any external combat actions. This assumes that this character entered combat state.
         onProcessCombat?.Invoke(this.character.stateComponent.currentState as CombatState); 

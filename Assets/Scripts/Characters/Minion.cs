@@ -119,7 +119,7 @@ public class Minion {
                 throw new Exception("Specific location of " + character.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
             }
             if (character.stateComponent.currentState != null) {
-                character.stateComponent.currentState.OnExitThisState();
+                character.stateComponent.ExitCurrentState();
             } 
             //else if (character.stateComponent.stateToDo != null) {
             //    character.stateComponent.SetStateToDo(null);
@@ -329,11 +329,11 @@ public class Minion {
     }
     private void OnSucceedInvadeArea(Area area) {
         if (character.stateComponent.currentState != null) {
-            character.stateComponent.currentState.OnExitThisState();
+            character.stateComponent.ExitCurrentState();
             //This call is doubled so that it will also exit the previous major state if there's any
-            if (character.stateComponent.currentState != null) {
-                character.stateComponent.currentState.OnExitThisState();
-            }
+            //if (character.stateComponent.currentState != null) {
+            //    character.stateComponent.currentState.OnExitThisState();
+            //}
         }
         //else if (character.stateComponent.currentState != null) {
         //    character.stateComponent.SetStateToDo(null);

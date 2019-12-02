@@ -188,6 +188,9 @@ public class InteractionManager : MonoBehaviour {
         int priority = 0;
         switch (jobType) {
             case JOB_TYPE.INTERRUPTION:
+                priority = 2;
+                break;
+            case JOB_TYPE.COMBAT:
                 priority = 3;
                 break;
             case JOB_TYPE.TRIGGER_FLAW:
@@ -273,6 +276,7 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.PRAY_GODDESS_STATUE:
             case JOB_TYPE.REACT_TO_SCREAM:
             case JOB_TYPE.CHAT:
+            case JOB_TYPE.STROLL:
                 priority = 120;
                 break;
             case JOB_TYPE.BREAK_UP:
@@ -328,7 +332,7 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE:
             case JOB_TYPE.IMPROVE:
             case JOB_TYPE.EXPLORE:
-            case JOB_TYPE.COMBAT:
+            case JOB_TYPE.COMBAT_WORLD_EVENT:
             case JOB_TYPE.SEARCHING_WORLD_EVENT:
                 priority = 300;
                 break;
@@ -338,7 +342,7 @@ public class InteractionManager : MonoBehaviour {
 
     #region Job Checkers
     public bool CanDoPatrolAndExplore(Character character) {
-        return character.traitContainer.GetNormalTrait("Injured") == null;
+        return character.canCombat;
     }
     public bool IsSuicideJobStillValid(Character character) {
         return character.traitContainer.GetNormalTrait("Forlorn") != null;

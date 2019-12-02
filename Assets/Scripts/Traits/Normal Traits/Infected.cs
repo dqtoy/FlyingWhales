@@ -97,7 +97,7 @@ namespace Traits {
                 if (owner.currentActionNode.action != null && owner.currentActionNode.action.goapType != INTERACTION_TYPE.ZOMBIE_DEATH) {
                     owner.StopCurrentActionNode(false);
                 } else if (owner.stateComponent.currentState != null) {
-                    owner.stateComponent.currentState.OnExitThisState();
+                    owner.stateComponent.ExitCurrentState();
                 }
 
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.ZOMBIE_DEATH, owner, owner);
