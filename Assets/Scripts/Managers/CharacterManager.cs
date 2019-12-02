@@ -641,10 +641,6 @@ public class CharacterManager : MonoBehaviour {
                 return asset.characterClassAssets[characterClassName];
             }
         }
-        //if (gender == GENDER.FEMALE) {
-        //    return markerAssets[0].femaleAssets;
-        //}
-        //return markerAssets[0].maleAssets;
         return null;
     }
     public Sprite GetMarkerHairSprite(GENDER gender) {
@@ -686,29 +682,15 @@ public class CharacterManager : MonoBehaviour {
                             string[] classFiles = Directory.GetFiles(currCharacterClassPath);
                             CharacterClassAsset characterClassAsset = new CharacterClassAsset();
                             markerAsset.characterClassAssets.Add(className, characterClassAsset);
-                            characterClassAsset.animator = this.baseAnimator;
                             for (int l = 0; l < classFiles.Length; l++) {
                                 string classAssetPath = classFiles[l];
                                 Sprite loadedSprite = (Sprite)UnityEditor.AssetDatabase.LoadAssetAtPath(classAssetPath, typeof(Sprite));
                                 if (loadedSprite != null) {
                                     if (loadedSprite.name.Contains("_body")) {
                                         characterClassAsset.defaultSprite = loadedSprite;
-                                    }
-                                }
-                                AnimationClip animationClip = (AnimationClip)UnityEditor.AssetDatabase.LoadAssetAtPath(classAssetPath, typeof(AnimationClip));
-                                if (animationClip != null) {
-                                    if (animationClip.name.Contains("attack")) {
-                                        characterClassAsset.attackClip = animationClip;
-                                    } else if (animationClip.name.Contains("idle")) {
-                                        characterClassAsset.idleClip = animationClip;
-                                    } else if (animationClip.name.Contains("walk")) {
-                                        characterClassAsset.walkClip = animationClip;
-                                    } else if (animationClip.name.Contains("dead")) {
-                                        characterClassAsset.deadClip = animationClip;
-                                    } else if (animationClip.name.Contains("raise_dead")) {
-                                        characterClassAsset.raiseDeadClip = animationClip;
-                                    } else if (animationClip.name.Contains("sleep_ground")) {
-                                        characterClassAsset.sleepGroundClip = animationClip;
+                                    } else {
+                                        //assume that sprite is for animation
+                                        characterClassAsset.animationSprites.Add(loadedSprite);
                                     }
                                 }
 

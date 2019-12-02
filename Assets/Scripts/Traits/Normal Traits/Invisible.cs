@@ -58,13 +58,9 @@ namespace Traits {
         #endregion
 
         private IEnumerator RetriggerVisionCollision(Character character) {
-            for (int i = 0; i < character.marker.colliders.Length; i++) {
-                character.marker.colliders[i].enabled = false;
-            }
+            character.marker.SetCollidersState(false);
             yield return null;
-            for (int i = 0; i < character.marker.colliders.Length; i++) {
-                character.marker.colliders[i].enabled = true;
-            }
+            character.marker.SetCollidersState(true);
         }
     }
 

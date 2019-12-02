@@ -591,101 +591,93 @@ MonoBehaviour:
         - Envy
         - Gluttony
         - Greed
-        - Idle
         - Lust
         - Pride
         - Sleep Ground
         - Sloth
-        - Walk
         - Wrath
         m_values:
         - defaultSprite: {fileID: 21300000, guid: a21f6902b43448949ad783e9322dc352,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: bff0cdb48f81be2499b3753a213791dd, type: 3}
+          - {fileID: 21300000, guid: 81fb1fe7901b18c478230b0ddfdbcee8, type: 3}
+          - {fileID: 21300000, guid: 6c12b62661e256d46965834837aa7310, type: 3}
+          - {fileID: 21300000, guid: 17118c59ee4992944b9f02cbf8bc26c9, type: 3}
+          - {fileID: 21300000, guid: 9b4cade46fce8d841a3a8767f87d5122, type: 3}
+          - {fileID: 21300000, guid: a8290873b7ea5e74da45504cd305ea7d, type: 3}
+          - {fileID: 21300000, guid: 12b6236243d26c1438300af0d0ca1a15, type: 3}
+          - {fileID: 21300000, guid: eccf621290e865e458b41312a74c6bc5, type: 3}
         - defaultSprite: {fileID: 21300000, guid: c25c995b050bb8f47916d34a8e8475bd,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: cb85b6fde98062644adb67c6b139a24f, type: 3}
+          - {fileID: 21300000, guid: bfb29dbe3f63aee40b7f3288dc57504b, type: 3}
+          - {fileID: 21300000, guid: 2f872eade7477bd45a04c460eaec5930, type: 3}
+          - {fileID: 21300000, guid: 078b9fc5ad97bb44b98539cab7756083, type: 3}
+          - {fileID: 21300000, guid: e5c9687016dd38e4780455ca726126be, type: 3}
+          - {fileID: 21300000, guid: 8bd5c820ecff3424c99a4ad736096e49, type: 3}
+          - {fileID: 21300000, guid: 965fd51f912a3284782af84c7b81511d, type: 3}
+          - {fileID: 21300000, guid: 65a43e9a6986e5543932b65d6ee77d87, type: 3}
         - defaultSprite: {fileID: 21300000, guid: cef7a3952f1b3054da00c3c71442c2eb,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 43c779084ba102946a86a96a84cfcbca, type: 3}
+          - {fileID: 21300000, guid: 8ad971cfe007cdc41b3d9c52182f946b, type: 3}
+          - {fileID: 21300000, guid: 256b66d7c9b74f843889d176a35b9aa1, type: 3}
+          - {fileID: 21300000, guid: c196f60efb1cb6947947275aab2d6a2c, type: 3}
+          - {fileID: 21300000, guid: 820851adba401514f9018fd5ba680060, type: 3}
+          - {fileID: 21300000, guid: ab96b2a41d7126147955d67bdfc748e9, type: 3}
+          - {fileID: 21300000, guid: 5f3d08f7300ae1b49af34cb2fbdf25df, type: 3}
+          - {fileID: 21300000, guid: 8d2f3b1fe2d53cc4cb473483a7b75229, type: 3}
         - defaultSprite: {fileID: 21300000, guid: c7b64dce66d98ac47aae453af832a4c3,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 3f4577e72f7402943b11e90c0ecde6c6, type: 3}
+          - {fileID: 21300000, guid: a04280c8b26d916418ee3ede9966bcdb, type: 3}
+          - {fileID: 21300000, guid: da7158b1e3fd1aa4ba74b8fbb242f3b6, type: 3}
+          - {fileID: 21300000, guid: 771a3051bfc47f541acb5a340fca9f63, type: 3}
+          - {fileID: 21300000, guid: b68b1390bcbd6cd4ab91d93b71569792, type: 3}
+          - {fileID: 21300000, guid: 8ca99443fadc4f4488aea6e0f3eb6af3, type: 3}
+          - {fileID: 21300000, guid: a3ea766bdf9b67a4884744b201019c2a, type: 3}
+          - {fileID: 21300000, guid: cc82605fe904dee458f8503934b45b12, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 30926d55ad1777746b90c5eeb94f86bc,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: c158f97eaccc26b40a260317bfd8f28b, type: 3}
+          - {fileID: 21300000, guid: 07a7c9e5a39238b40a01bc0ccb40da82, type: 3}
+          - {fileID: 21300000, guid: 65ef21bef695dd341b7f784a6892b338, type: 3}
+          - {fileID: 21300000, guid: 62dd4425471d5b2498d761f506de7eb0, type: 3}
+          - {fileID: 21300000, guid: 3adda5d7f322fc640852c0a4946b9d4d, type: 3}
+          - {fileID: 21300000, guid: 10072f5fd89a0564f8e65d05f88d1318, type: 3}
+          - {fileID: 21300000, guid: 686aa9f800020574db997d55c3425a8f, type: 3}
+          - {fileID: 21300000, guid: 4484cbc5f2b41e7418420d3b03a57edc, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 59f4b96213c293c4eb2ccc6572482b1d, type: 3}
+          - {fileID: 21300000, guid: 92d02deaff118724d8bdc814e8c945f6, type: 3}
         - defaultSprite: {fileID: 21300000, guid: f472d172df0c15740842571bf3c35713,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 748eca93fcb78a34ba9c1b8fd2d2ed57, type: 3}
+          - {fileID: 21300000, guid: 655e873ce1a73bb44935f1c207cf0be1, type: 3}
+          - {fileID: 21300000, guid: 4787ac1a3402d76418a33e84a6a250d3, type: 3}
+          - {fileID: 21300000, guid: 58bda8d1d8dce714884b5baf4dc291d8, type: 3}
+          - {fileID: 21300000, guid: cd203aa96575049478106d6d15c15da7, type: 3}
+          - {fileID: 21300000, guid: 74a961af2f1d2ac40a1411ee4295fce3, type: 3}
+          - {fileID: 21300000, guid: c589e808be59ead4eb30e51a1b761515, type: 3}
+          - {fileID: 21300000, guid: 9c86cba726fcfe04aa4451d9d8ef7901, type: 3}
         - defaultSprite: {fileID: 21300000, guid: c6acdf3f21b61f540813ff5ccded32cf,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 5bd47d6c8288dcb40a77eb1a499db8d8, type: 3}
+          - {fileID: 21300000, guid: d53273b7349e5324eb7208162f36a273, type: 3}
+          - {fileID: 21300000, guid: 26fed12189a83d344972019692435501, type: 3}
+          - {fileID: 21300000, guid: f44ddb9a209d9ec44b214abf10c13c3b, type: 3}
+          - {fileID: 21300000, guid: 94d1ad028a810ad4c8e793cba1c5b1c3, type: 3}
+          - {fileID: 21300000, guid: 5db35de14640c8f48856fb1f078cf625, type: 3}
+          - {fileID: 21300000, guid: 41bfb211dfbc0694da1785b34bff38cc, type: 3}
+          - {fileID: 21300000, guid: d0ce25166e86a2c47878d9bd2772d506, type: 3}
     femaleAssets:
       gender: 1
       characterClassAssets:
@@ -693,101 +685,95 @@ MonoBehaviour:
         - Envy
         - Gluttony
         - Greed
-        - Idle
         - Lust
         - Pride
         - Sleep Ground
         - Sloth
-        - Walk
         - Wrath
         m_values:
         - defaultSprite: {fileID: 21300000, guid: ad73e2285731d56408e0a0e9203dd2d4,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 48684fb379ef4954d8b4b02ce990b46f, type: 3}
+          - {fileID: 21300000, guid: 80a6354413800744ba80a76527250799, type: 3}
+          - {fileID: 21300000, guid: abb829d900526ad4facd909308920efe, type: 3}
+          - {fileID: 21300000, guid: 5a01779e9daa34745823549b20eebbc3, type: 3}
+          - {fileID: 21300000, guid: 97e3c1dd241abf1479e8d9744cd248e1, type: 3}
+          - {fileID: 21300000, guid: 417e95540bfde014db7dc9230731d625, type: 3}
+          - {fileID: 21300000, guid: 362f6a4353f205d42ab6392991f527a3, type: 3}
+          - {fileID: 21300000, guid: 2b927468646cf744f8761e37462dc08a, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 46deaa3744e2ee542bae44698286165f,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 644b29cd6aed59a4c850eb5717fd841b, type: 3}
+          - {fileID: 21300000, guid: 7628d166d627dda42a0af28433592ed9, type: 3}
+          - {fileID: 21300000, guid: 82da8cc158b566a4a83b41e87560c0ed, type: 3}
+          - {fileID: 21300000, guid: 4c05da484439163449f3da683b8c9db7, type: 3}
+          - {fileID: 21300000, guid: 8c1fe83fcb793c847afd475ceb7e511e, type: 3}
+          - {fileID: 21300000, guid: bb3da13e67b761d47a11ffb5c958776c, type: 3}
+          - {fileID: 21300000, guid: c14140271bae4c44a973ee48b320513f, type: 3}
+          - {fileID: 21300000, guid: 5c36b8619a088234cbb8d717bd9a5f1f, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 854f8598005ee3248ac713d546d77bdb,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 877ba4420648d934990fb923e5d654de, type: 3}
+          - {fileID: 21300000, guid: c98cdac3c56add64d9e3117d3fb1a8fd, type: 3}
+          - {fileID: 21300000, guid: 587b9b2454f81ca458ae1434bdfe95b4, type: 3}
+          - {fileID: 21300000, guid: 435b1005235269944a7f56883bb53bfb, type: 3}
+          - {fileID: 21300000, guid: 4fd245d7fa9a48940a2902cb7d29004c, type: 3}
+          - {fileID: 21300000, guid: e1ca055e90362a24b93f99ee9ed3950d, type: 3}
+          - {fileID: 21300000, guid: f452e1b7345ce3d47a9db777456b9485, type: 3}
+          - {fileID: 21300000, guid: 937f8640dacc79041ad030af640434a8, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 40cfbdde452c26140a1485b196e4520e,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: ad84522d787bebf4ea1b4d0d3543fb7e, type: 3}
+          - {fileID: 21300000, guid: 6695d7cffeaf9e945887385f26b97683, type: 3}
+          - {fileID: 21300000, guid: 344d6aa2b21a5c84c9281923a773a4bb, type: 3}
+          - {fileID: 21300000, guid: 81cd2b079f6e4ab42a629f43d9357993, type: 3}
+          - {fileID: 21300000, guid: c38524e3b47e32c4598645bc51630d9e, type: 3}
+          - {fileID: 21300000, guid: e803595f67023054dbc7df23e0771db2, type: 3}
+          - {fileID: 21300000, guid: 05e46f487b0bd634385263135ac0067b, type: 3}
+          - {fileID: 21300000, guid: a54a3f1b765b49a4883131286aa87a62, type: 3}
         - defaultSprite: {fileID: 21300000, guid: f2c0de2c865fec5419e1c154e97eea71,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 2ca276dedf8bd9b4d8f5113ed0c0d715, type: 3}
+          - {fileID: 21300000, guid: 24d8c43102202344ca943ca25584485c, type: 3}
+          - {fileID: 21300000, guid: 739207bbe67c54a48bdc2288c92f6eb5, type: 3}
+          - {fileID: 21300000, guid: ce42daf8852a51049b0001bf3c0c808e, type: 3}
+          - {fileID: 21300000, guid: ff5767d40bbe57d49962b3f7bc687f27, type: 3}
+          - {fileID: 21300000, guid: 88da24de11e04a14591bf8f680f2b58e, type: 3}
+          - {fileID: 21300000, guid: 74e6b730823fcd541b7bc0c338ee34c3, type: 3}
+          - {fileID: 21300000, guid: 18c01b965cee2d847aecadc730a9d3ab, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 70fbf35f85f780b4cb2a7f29b1874635, type: 3}
+          - {fileID: 21300000, guid: 5d217321ec517814fb94c9753b939322, type: 3}
+          - {fileID: 21300000, guid: 777abaf3d3cdd1745b77b953aaaa7e2c, type: 3}
+          - {fileID: 21300000, guid: 0f93a8d4d956b1b4a8b41031a4992184, type: 3}
         - defaultSprite: {fileID: 21300000, guid: ab34503ebe9c1c446b9acbbfd6c5efb1,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 1a509f672a11f8241a40f7c1534bd67a, type: 3}
+          - {fileID: 21300000, guid: 2ba8e495257906642b9d6d683cc07286, type: 3}
+          - {fileID: 21300000, guid: ff24823e61a41ee48919529d2ae87f35, type: 3}
+          - {fileID: 21300000, guid: 0c0601eca5e734b45bcc02be63cb3d01, type: 3}
+          - {fileID: 21300000, guid: e7e65cda1cb82b3418af8c62bcca7af5, type: 3}
+          - {fileID: 21300000, guid: c730e4ce98be6934ab3e55160d26e5d7, type: 3}
+          - {fileID: 21300000, guid: 7f732bf513d7aa1458c1dd8b6e3bce5b, type: 3}
+          - {fileID: 21300000, guid: bd52955df42401549aa4259c768acfa1, type: 3}
         - defaultSprite: {fileID: 21300000, guid: d160d2e69b258f64983a9780615936cd,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 0b0659787b991e44498485585ee761f6, type: 3}
+          - {fileID: 21300000, guid: c0cda007320d23040b4e5af895338b36, type: 3}
+          - {fileID: 21300000, guid: 343b6c708b2f5b146bdafcea62dc9526, type: 3}
+          - {fileID: 21300000, guid: acdb96941ecf32a48977119d16f0f864, type: 3}
+          - {fileID: 21300000, guid: 9637c8f6399033449aff9b67802f585e, type: 3}
+          - {fileID: 21300000, guid: a7e3879fdcd659f4aa7498921280b82d, type: 3}
+          - {fileID: 21300000, guid: 88b653d5f686c254e9b75b46fadffeb8, type: 3}
+          - {fileID: 21300000, guid: 606940151ce4a3843aa4fba2cc8a60b1, type: 3}
   - raceName: ELVES
     race: 2
     maleAssets:
@@ -813,164 +799,188 @@ MonoBehaviour:
         - Stalker
         - Walk
         m_values:
-        - defaultSprite: {fileID: 21300000, guid: d8c897e21d75a094bb7430865fe196bf,
+        - defaultSprite: {fileID: 21300000, guid: 6937f30fc1295e24a94a370dee975ca3,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 59f2866097d80de4c9f2a4b4d4645354, type: 3}
+          - {fileID: 21300000, guid: b5ee09f588056114db64596ee6369552, type: 3}
+          - {fileID: 21300000, guid: 56320a3aaeb00aa41acd7352e12f442d, type: 3}
+          - {fileID: 21300000, guid: 6a3f85c52989eaf4e8a0c356f4702d8c, type: 3}
+          - {fileID: 21300000, guid: ae28f0b53179f7c458e31a00acdc324c, type: 3}
+          - {fileID: 21300000, guid: cb54694bc5329b347a0bc33066183340, type: 3}
+          - {fileID: 21300000, guid: 39d16a44ebbad5f44b88d5efab162596, type: 3}
+          - {fileID: 21300000, guid: 22130e4828e8aba4ca9de40a23a8d57e, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: 454ed2ff4ad83b5498ba8572437bcd12,
+          animationSprites: []
+        - defaultSprite: {fileID: 21300000, guid: 07bb960a14785314e9179f3470001c74,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: 86840cf9b0ef1124e90653321cd25a4b,
+          animationSprites:
+          - {fileID: 21300000, guid: fe5fb50e6270e27408482e6984c6d32f, type: 3}
+          - {fileID: 21300000, guid: 699d68d59923bd14f9d3fadeb807abf2, type: 3}
+          - {fileID: 21300000, guid: 671c9e9f19560cc4f952eeb1bf983aa1, type: 3}
+          - {fileID: 21300000, guid: 158c24eb2c5b60a499becf79e8be6ec1, type: 3}
+          - {fileID: 21300000, guid: 8ae3a9db037f2d74982476c3135332fa, type: 3}
+          - {fileID: 21300000, guid: 0f9bec56cb8071e43b05aeec3495f898, type: 3}
+          - {fileID: 21300000, guid: cc040913cace09d489d05cf169207b21, type: 3}
+          - {fileID: 21300000, guid: f2d5721dcb500394481cea85990c57ac, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 4f8da49304849ec4ba382b676d888b09,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: d43cb15d39bcb6a4ba2a7930ec59f2a4,
+          animationSprites:
+          - {fileID: 21300000, guid: 568f19726129d5547809507da4fb93ce, type: 3}
+          - {fileID: 21300000, guid: 7b6f9eecbe1aea2429ab2cbaa171ec93, type: 3}
+          - {fileID: 21300000, guid: 4de254fdfdaaa66419ec420937e986bc, type: 3}
+          - {fileID: 21300000, guid: 39d235cd9d34f0949be5b906efe79406, type: 3}
+          - {fileID: 21300000, guid: ccf078d9810656b4ab9db260b61db31d, type: 3}
+          - {fileID: 21300000, guid: 42165b5405cf3c84d97a4413d69b9c9f, type: 3}
+          - {fileID: 21300000, guid: 3b5fec7309748fe4aac1d28ae718ac24, type: 3}
+          - {fileID: 21300000, guid: fc4995fbc1efd5048b364e504d183f06, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 488aedeead1d3b0408cc58a0828f30f8,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: 5ce09b671ccd3564aa2e1a3f8e87f48b,
+          animationSprites:
+          - {fileID: 21300000, guid: f6b9ec3a020f7274a99572fd22f9456d, type: 3}
+          - {fileID: 21300000, guid: ee5e54ad432d62a46a29b2aa4783e8db, type: 3}
+          - {fileID: 21300000, guid: 1829e8defa386cc40a016671e4d7f27e, type: 3}
+          - {fileID: 21300000, guid: 138c70168783292419cb2bf42797e5a0, type: 3}
+          - {fileID: 21300000, guid: b04cde0fa0de8e242b681bdfcbad1757, type: 3}
+          - {fileID: 21300000, guid: 2bcde44c41effc547a86cce847d9f7d9, type: 3}
+          - {fileID: 21300000, guid: dbccbfeb9acf0264cb74a0bb5c395a03, type: 3}
+          - {fileID: 21300000, guid: b1395741f10512e4f880878d21bcf602, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 11919f65c1b52ef4d852791d830616fc,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: c96dd41f297303549ba1b6738159db9d, type: 3}
+          - {fileID: 21300000, guid: 2eef4eeefd02b2b4fa52b190fd9704bc, type: 3}
+          - {fileID: 21300000, guid: 7aa9ef7bdddc9b047ab087d15bf717ae, type: 3}
+          - {fileID: 21300000, guid: 0d40ab96b7797104099bb5e1e52427ff, type: 3}
+          - {fileID: 21300000, guid: 66827257d3e48a64caad7dc2bbce2de7, type: 3}
+          - {fileID: 21300000, guid: c82b0b745cb3ee942a85b864a69df738, type: 3}
+          - {fileID: 21300000, guid: 56d3c23a69153be4fad9d8938db0738b, type: 3}
+          - {fileID: 21300000, guid: 1b9f87144055c18468430c28a85f605a, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: fc3792262b76c8f4293857b736675b34,
+          animationSprites:
+          - {fileID: 21300000, guid: 5ee65e07929259446ab8e9d27bbf9b9e, type: 3}
+          - {fileID: 21300000, guid: 10c3686f03ceaf84dbd2191ff0d11af3, type: 3}
+          - {fileID: 21300000, guid: 04b7e12732b1dee459fd7d4da50b9004, type: 3}
+          - {fileID: 21300000, guid: 4437bb56608a2d64e8ad9a014ae1035d, type: 3}
+          - {fileID: 21300000, guid: 87ef9529584e406408d60ca360c11737, type: 3}
+          - {fileID: 21300000, guid: c89af43a577300d4ba861afc1fa0864e, type: 3}
+          - {fileID: 21300000, guid: ab7a51574e10793468954f11e31a2b05, type: 3}
+          - {fileID: 21300000, guid: 5d6a22d9925708747a569495c981f000, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 0befebe0af691534a84a7ab6b7cc68c4,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: e4ca4132b8fb3554a86b7ab51a132253,
+          animationSprites:
+          - {fileID: 21300000, guid: 78f8a19c4847280479ef2dc14e20730c, type: 3}
+          - {fileID: 21300000, guid: 315de0dce1b802243978d82cc2e311b2, type: 3}
+          - {fileID: 21300000, guid: 117266197c1636849bdd14236184b471, type: 3}
+          - {fileID: 21300000, guid: 56a7887912cf0a245b35a9dd1f79e6fa, type: 3}
+          - {fileID: 21300000, guid: 206a60340ffa74f40a55a697ba040eea, type: 3}
+          - {fileID: 21300000, guid: 121151086645ad9479337ae8c9c61e36, type: 3}
+          - {fileID: 21300000, guid: bfe53347989fc794e8a73fd486ef6736, type: 3}
+          - {fileID: 21300000, guid: e43ddc9c303231140ae63a8f399c3072, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: e6293859991ab534dbd34501af3c9cff,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: 045716b2b3175fc4fbf004a476f935ae,
+          animationSprites:
+          - {fileID: 21300000, guid: a314ed60583cb55439f8148096386a42, type: 3}
+          - {fileID: 21300000, guid: bf059878d9958eb4896e7ad499e5178d, type: 3}
+          - {fileID: 21300000, guid: c02a00f8844fc1541941057833dd579f, type: 3}
+          - {fileID: 21300000, guid: b91e8bb652fd9784bb444e614fa744d1, type: 3}
+          - {fileID: 21300000, guid: 89a7792cdbf0ccd4db607b6c0fce8073, type: 3}
+          - {fileID: 21300000, guid: f14bc4db03540fc49b37e08ba01b906f, type: 3}
+          - {fileID: 21300000, guid: 6fe7659c19e2d234dbf63b20b95dca5f, type: 3}
+          - {fileID: 21300000, guid: 2b9fad9ca15855f45960882a030d0b24, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: defb633928334474abf8060de5294fd9,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: e3721199cf20a8243b47dbdede3753aa,
+          animationSprites:
+          - {fileID: 21300000, guid: 13b3b7d2bfb8aa94ca4b17d3be902132, type: 3}
+          - {fileID: 21300000, guid: 59c3aa3a535ceb7439fd258a8efaa518, type: 3}
+          - {fileID: 21300000, guid: a7dd315ce10547c4c956512e4b42b73c, type: 3}
+          - {fileID: 21300000, guid: 759ed4393762bf344952bf0b493b2e2f, type: 3}
+          - {fileID: 21300000, guid: 0257d431312524a41a19b33485fbb83a, type: 3}
+          - {fileID: 21300000, guid: 08b7827f76b3bd749a28f6f499386515, type: 3}
+          - {fileID: 21300000, guid: 32d00f4f515a8894d9750b7dfde12216, type: 3}
+          - {fileID: 21300000, guid: 85d17eba16a3a924eb1ef553ddc515cf, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 53f5a01bc10bc23459faed758f574fef,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: 28f546512bc83714db4959ffaba8ff47,
+          animationSprites:
+          - {fileID: 21300000, guid: 681ab5fff04cb2f4ab09c5819aab330e, type: 3}
+          - {fileID: 21300000, guid: 73eded0110b6332469ea512fd033d675, type: 3}
+          - {fileID: 21300000, guid: 30d43055e9d05d84280665eccb153ccd, type: 3}
+          - {fileID: 21300000, guid: 625bc31cecc19894eb5ce219dbf356b4, type: 3}
+          - {fileID: 21300000, guid: 0347e3d9907b87d42ac98950af1878b2, type: 3}
+          - {fileID: 21300000, guid: 8cc11977738b95f4cb1d68ef979708d5, type: 3}
+          - {fileID: 21300000, guid: c6cc1de52cb80cf4398d73ae6c7e348e, type: 3}
+          - {fileID: 21300000, guid: 9763f806eafa4724a8600aaa4c2dcde3, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: c6038c6a0fae73943bd4d5a2a563bea9,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: 1d317344d6576684cb4b9816c890c672,
+          animationSprites:
+          - {fileID: 21300000, guid: bb08a6df77822ff42bd61ba590054cab, type: 3}
+          - {fileID: 21300000, guid: 1551657666691c54c94383b2f0a37601, type: 3}
+          - {fileID: 21300000, guid: acd1d53ed430cba439fcf16985628599, type: 3}
+          - {fileID: 21300000, guid: 9ea75df0a59e29d4e8ea1e6bb1e32ab0, type: 3}
+          - {fileID: 21300000, guid: c62449c9e99b53747af55d2a27e80735, type: 3}
+          - {fileID: 21300000, guid: dc1ab8e4d7f886e42b7591deda0db17a, type: 3}
+          - {fileID: 21300000, guid: 896b2b57bf60b37488d2ae6f75120bb2, type: 3}
+          - {fileID: 21300000, guid: edf0946fa0c5d6140a3ed03ad448eebb, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 7096d4ca948b2214588447b0d1b22a9c,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: 034d2d46b57b2c644b6deefadb0b6921,
+          animationSprites:
+          - {fileID: 21300000, guid: 3e4bf49265af5f644ae3d3247646aa2f, type: 3}
+          - {fileID: 21300000, guid: de4d2a8faa8d5354b88d29422522c5e8, type: 3}
+          - {fileID: 21300000, guid: d9e19c9bb3030a64982bb87127ae87f1, type: 3}
+          - {fileID: 21300000, guid: 1a07d2a868f73dd4bbe4b164f785e007, type: 3}
+          - {fileID: 21300000, guid: 5aaeb81d50d69d04898c1751435fbba1, type: 3}
+          - {fileID: 21300000, guid: 6bdcb130101939d428e8e094ee40e38f, type: 3}
+          - {fileID: 21300000, guid: f9d8c95faaaf95f47b6eca5d50cc0844, type: 3}
+          - {fileID: 21300000, guid: b06a2884aab849446b2d256df485740c, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 450750a631e897243b580577e065063e,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: 94996932d25b4624dad1e821e560443e,
+          animationSprites:
+          - {fileID: 21300000, guid: cdc9c03cae0b40147a3606d146193477, type: 3}
+          - {fileID: 21300000, guid: 0d519ca5c023d814c91adddbb48de5f1, type: 3}
+          - {fileID: 21300000, guid: 6c04e7fd001bf5b4a8f214b3b7d954e0, type: 3}
+          - {fileID: 21300000, guid: 052b3d57bd3c66841bae881fe4cc5a36, type: 3}
+          - {fileID: 21300000, guid: 67364daa94dc8ef4394663e26c0d1918, type: 3}
+          - {fileID: 21300000, guid: 8dbc422a1d7ea4b4690edb189f7a1184, type: 3}
+          - {fileID: 21300000, guid: 756a64e5e34a80344b55b192b6c14893, type: 3}
+          - {fileID: 21300000, guid: cdd876d2959fb604fb491a59d7aa8372, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: aca42dccb4d86914dbe31241b0655372,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: a221df15ae4e1e14c86e01e172ce7f1a, type: 3}
+          - {fileID: 21300000, guid: 53543c1aa26f46c49b8a2f113fa7cba0, type: 3}
+          - {fileID: 21300000, guid: 16aca892c60673c44b7c316cbf5185cd, type: 3}
+          - {fileID: 21300000, guid: 539df904dba230c42a7ffc5a44552883, type: 3}
+          - {fileID: 21300000, guid: b2c56a95d61b86144baa92c1da5b504b, type: 3}
+          - {fileID: 21300000, guid: d3abfc815df0bcf4286a74563df07671, type: 3}
+          - {fileID: 21300000, guid: eae3727c76289da4284b4ec03f1756b2, type: 3}
+          - {fileID: 21300000, guid: 0f21357fda4be1e499606f5958e03ef8, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: bca1d3826fcf4694a9aaff90f17d28e7,
+          animationSprites:
+          - {fileID: 21300000, guid: ce8eaf2449655cb408cb4ea67f061974, type: 3}
+          - {fileID: 21300000, guid: 31478b1586bf5f940afb08423824e38e, type: 3}
+          - {fileID: 21300000, guid: a4f685b410ab72e4984c0cf057da5c60, type: 3}
+          - {fileID: 21300000, guid: d6e78854d8bea874da7a7e0ae495ce26, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: b0e17f42f7d966e4982e39dd4c703e9b,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 1cb0ed2cbfd52564ca1ee703ee3aed8c, type: 3}
+          - {fileID: 21300000, guid: 79f4286734624094cac67941bb1de1bc, type: 3}
+          - {fileID: 21300000, guid: 0cd341636db20b146b61af6a0343e705, type: 3}
+          - {fileID: 21300000, guid: 02ac427d76adabb42907d2b21763e4ae, type: 3}
+          - {fileID: 21300000, guid: d995572289fd4274cb5b3a08646134d2, type: 3}
+          - {fileID: 21300000, guid: f6071065ec1a2884bb1e19f8807cb7d8, type: 3}
+          - {fileID: 21300000, guid: b91625e87273dce43a419e3da09d4bee, type: 3}
+          - {fileID: 21300000, guid: c5c1984a784275348b1d4db9888df75c, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: e35d097e678775248b9ec4ef06c78a40, type: 3}
+          - {fileID: 21300000, guid: b44461f2b46a05844b641b8d6a87a2fa, type: 3}
+          - {fileID: 21300000, guid: 5ed8bc912ecc8ee4693747cca8a05aa4, type: 3}
+          - {fileID: 21300000, guid: dff69e1e92c56e14fa420333630a42ba, type: 3}
+          - {fileID: 21300000, guid: 49feba2e0cd111d44a903f3cdb483022, type: 3}
+          - {fileID: 21300000, guid: 56a40e8ee3ea3804cb269aa0d1a72427, type: 3}
+          - {fileID: 21300000, guid: 969b18d14945a4a42827bc9463bb87ee, type: 3}
+          - {fileID: 21300000, guid: 405896648a6a9684b91e67316481c550, type: 3}
     femaleAssets:
       gender: 1
       characterClassAssets:
@@ -994,164 +1004,188 @@ MonoBehaviour:
         - Stalker
         - Walk
         m_values:
-        - defaultSprite: {fileID: 21300000, guid: c5ca1d00d1f15d244be650f0e58aec8b,
+        - defaultSprite: {fileID: 21300000, guid: 7bb0fbd003370fb4d9cdc9c3777cd1f1,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 6fa17c55df341c347bd6e4e05695235d, type: 3}
+          - {fileID: 21300000, guid: 43b404fb58d7e544195018f5ea1d5635, type: 3}
+          - {fileID: 21300000, guid: 3b3c18bf7c89dd2438983b230d982149, type: 3}
+          - {fileID: 21300000, guid: de592bd4529b26a44aba13257dc3e51f, type: 3}
+          - {fileID: 21300000, guid: 778a90d55282af34a8666eaa92d0e336, type: 3}
+          - {fileID: 21300000, guid: edf88ced9389ed44788b67dc9890cde1, type: 3}
+          - {fileID: 21300000, guid: d47da1d315b871f4dadb5b5372e9d420, type: 3}
+          - {fileID: 21300000, guid: e25c77dd99cb01e428d0d301dcf03c20, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: 9406af7f51aec764ab283bf1bcd063a3,
+          animationSprites: []
+        - defaultSprite: {fileID: 21300000, guid: bca78c9a3cbeb854b887b85433977eb0,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: f8c0383c5caaeb94291cc0209ab57485,
+          animationSprites:
+          - {fileID: 21300000, guid: b1def7f0e8f70fe47abde231b1044567, type: 3}
+          - {fileID: 21300000, guid: f2da17ca75aec554bb220cbba97ca20b, type: 3}
+          - {fileID: 21300000, guid: 1a7c300666847ff41a96ac1d84ab06f5, type: 3}
+          - {fileID: 21300000, guid: 277f2d4c8432300448879bc7cea1638b, type: 3}
+          - {fileID: 21300000, guid: 1d7c147ffb8727f419465e516e253a80, type: 3}
+          - {fileID: 21300000, guid: 7c2770912d0336e45b91e68cdad3d6f6, type: 3}
+          - {fileID: 21300000, guid: d06a9fbda80829f489186bbd5a427284, type: 3}
+          - {fileID: 21300000, guid: e10e84acd0b216b4fa30d76648955866, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: ff8119cf4224be443b284880f2f1da9c,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: 4ec117d0ad7266d4c8bbbecede88023d,
+          animationSprites:
+          - {fileID: 21300000, guid: dfcc321894854014a871ce00433d201a, type: 3}
+          - {fileID: 21300000, guid: e198cee962c69fe4a9f96cd38564ea94, type: 3}
+          - {fileID: 21300000, guid: ac880e38322822f48bad6c110547f231, type: 3}
+          - {fileID: 21300000, guid: 894bb9b3ae580514bb335b92e5b9be0c, type: 3}
+          - {fileID: 21300000, guid: b814ae6a306bb32439352c1f21ce285a, type: 3}
+          - {fileID: 21300000, guid: b0a57c4c1622f50499786db7ae3d84c5, type: 3}
+          - {fileID: 21300000, guid: b81ec49c63b019842ba0dad75fa3fe49, type: 3}
+          - {fileID: 21300000, guid: 19fb848e78ec2134c83af113c1ddc3f5, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: f11f8e3bfcd6c2f4db57ee362049f250,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: 1ee962eef84b61f498f33c395c6cfcf6,
+          animationSprites:
+          - {fileID: 21300000, guid: 1dfbc03de77197143a24f6af59f8ce44, type: 3}
+          - {fileID: 21300000, guid: f204f48075ab76d46ae9cfc45e207257, type: 3}
+          - {fileID: 21300000, guid: 5b4df9764bad02d46be5eabb754152ec, type: 3}
+          - {fileID: 21300000, guid: 6fa9e4133d516fc46bc543c1bf02e779, type: 3}
+          - {fileID: 21300000, guid: 70401a2ae4ffd1b4991b339f6d92199a, type: 3}
+          - {fileID: 21300000, guid: 81e2379c3e850f24aa6231209d9bfa01, type: 3}
+          - {fileID: 21300000, guid: 30c749fd1dc8e9848b4ddfc84a30835f, type: 3}
+          - {fileID: 21300000, guid: 60da041cbd7da304e9a2139235d7e597, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: b48d22f3b2622bc4e921bfe9bdbe18a3,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 60ad7fdf91cbb484fa0ab78dfcbb8602, type: 3}
+          - {fileID: 21300000, guid: 27535b12ea012454385ffb9da9850c66, type: 3}
+          - {fileID: 21300000, guid: d5eacc5c49ebf8749b8d4b1b819164e7, type: 3}
+          - {fileID: 21300000, guid: 9337befc044b6274a886fd0f48224d2b, type: 3}
+          - {fileID: 21300000, guid: 33d58979d27d9084eb81735415443e5f, type: 3}
+          - {fileID: 21300000, guid: 4028fa2be6973da41a5c58fba9f8774e, type: 3}
+          - {fileID: 21300000, guid: a2b1c14838118c7408cea799611174d8, type: 3}
+          - {fileID: 21300000, guid: bb87ea82317e5c04fa969fff7c5d22b9, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: 41679c0d8ac7c5745944d5782f9b9c7e,
+          animationSprites:
+          - {fileID: 21300000, guid: f45afa27e7c2e63428433d14677844b3, type: 3}
+          - {fileID: 21300000, guid: cc74bbc97de951b4280745dd827a960c, type: 3}
+          - {fileID: 21300000, guid: bef602985589fa44298ce978b67c8505, type: 3}
+          - {fileID: 21300000, guid: 6461da94e73d5d148bdb92cdecdf6bad, type: 3}
+          - {fileID: 21300000, guid: 655adf99554c283499cf9d47c1942389, type: 3}
+          - {fileID: 21300000, guid: 2865f4c4806b9164f91cab71bbc3e488, type: 3}
+          - {fileID: 21300000, guid: 1321fd428afa45246b2692426c7e9626, type: 3}
+          - {fileID: 21300000, guid: 7bfac46c163ee54458f60d8f6184eb06, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: b65d8604235b21349988e3c4ad6c5dee,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: 233fd512c26679c438003eabb7264a5b,
+          animationSprites:
+          - {fileID: 21300000, guid: 10a26e9ce3e708e43bf21f3ff278da7e, type: 3}
+          - {fileID: 21300000, guid: 1de8993ba056f6546bc22385f4e0f189, type: 3}
+          - {fileID: 21300000, guid: c1c4033d30e669f438d55ca15b57f938, type: 3}
+          - {fileID: 21300000, guid: d3b35df09ff1ded40b5e427a4e486166, type: 3}
+          - {fileID: 21300000, guid: b72776f216cc7cc4b96ccb3047b5a4f0, type: 3}
+          - {fileID: 21300000, guid: 62177f6ca856fb5418419949b3601f0e, type: 3}
+          - {fileID: 21300000, guid: 893f9720fff7feb41aea83ed716a1d0d, type: 3}
+          - {fileID: 21300000, guid: 2b6a2015cfd877b46ad5d89bfc45cec1, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: e5cba6ea1f26a314190a51faf25f524e,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: 2742a23343299c549872a147caf11b7e,
+          animationSprites:
+          - {fileID: 21300000, guid: 3eaeb9328e9f47742b660debe397ff96, type: 3}
+          - {fileID: 21300000, guid: 222ae18ac64f95049bfd23f84bbc17e2, type: 3}
+          - {fileID: 21300000, guid: df99314acbe32d64e9e6c3df80908d6a, type: 3}
+          - {fileID: 21300000, guid: 93b88ce971187ea4cb34a968796fb7dd, type: 3}
+          - {fileID: 21300000, guid: 29f85e027d5d0e04db71fe830b0ccd79, type: 3}
+          - {fileID: 21300000, guid: e4955b205c2584340b9feab8ead00c25, type: 3}
+          - {fileID: 21300000, guid: a1db4e521d0836d48aeeb005b1476323, type: 3}
+          - {fileID: 21300000, guid: 7c5fe9b82c879c04a9b8f3a5cfcf0a3e, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 63f4170bcf2ca4e44a1df6e032e85bb0,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: b114680f13536f24d9a71e9d79aeaf7e,
+          animationSprites:
+          - {fileID: 21300000, guid: bb1b272be09132e44ab2aa5224e2e386, type: 3}
+          - {fileID: 21300000, guid: 52a76dccc9432eb419f5bc44c990da2b, type: 3}
+          - {fileID: 21300000, guid: 3f09fc7e352adea42bec7afd05292ca7, type: 3}
+          - {fileID: 21300000, guid: 1907ee870be837a46b6818b54db2a682, type: 3}
+          - {fileID: 21300000, guid: c8eb86d60776e5c4bbb21a4c05322fa9, type: 3}
+          - {fileID: 21300000, guid: 8159acfaf1ff57e45be19f6ab99f8866, type: 3}
+          - {fileID: 21300000, guid: b49f0c2c2f4d5574daf2d5de590b1457, type: 3}
+          - {fileID: 21300000, guid: d0df84288eff71e4e92857b417427c3e, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: f1c60f5a0ee566f49ad17150c7c2243a,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: c276566d49dcb8f458f3c4f60ca3a8d7,
+          animationSprites:
+          - {fileID: 21300000, guid: 9e6e7145ad73b2a43a10724c6dbe38ce, type: 3}
+          - {fileID: 21300000, guid: fb2ba9bee785a8243ac1340b7ac8349b, type: 3}
+          - {fileID: 21300000, guid: a6b4edfeb453c6e49aeea17fd3a2500e, type: 3}
+          - {fileID: 21300000, guid: 62a36b8287afd624bac4b69958d120fd, type: 3}
+          - {fileID: 21300000, guid: 8aac54fa1c8291d4b9ffe47c18896252, type: 3}
+          - {fileID: 21300000, guid: e88a7de836123ea4a8e62376de39ea70, type: 3}
+          - {fileID: 21300000, guid: 8ad191f180a39c64ba8853374f8057ef, type: 3}
+          - {fileID: 21300000, guid: e8b2196f5ee418442ae814f2249f97dd, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: f3eac17864768eb48a76df5344eb0736,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: 23259b8a7532a7048819c5ea785f358c,
+          animationSprites:
+          - {fileID: 21300000, guid: 44c76ac663c721541866b862919be525, type: 3}
+          - {fileID: 21300000, guid: 74955a6504cd6454aa95961955726797, type: 3}
+          - {fileID: 21300000, guid: f0896073c42d378489afb92d2045b8dd, type: 3}
+          - {fileID: 21300000, guid: 0e917412e34869c4387af2f9de22785e, type: 3}
+          - {fileID: 21300000, guid: fabfb7fe8f812f44db4aedd99fbe8719, type: 3}
+          - {fileID: 21300000, guid: 2b14577335688dd4488ba6f9873c15a8, type: 3}
+          - {fileID: 21300000, guid: 810dcc14fa6c7bd46b6461152761ee42, type: 3}
+          - {fileID: 21300000, guid: 09ca956493cff8d4f92097e119a87de3, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 9db06ef4a9798dd4fa988b8feb643297,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: e4efe431cb5388043af18b629d97ed52,
+          animationSprites:
+          - {fileID: 21300000, guid: 52059d4197410f94e82950e6ecbb1d91, type: 3}
+          - {fileID: 21300000, guid: 3411580a7cd95764bbc29084a9777a5a, type: 3}
+          - {fileID: 21300000, guid: 78244b6cbd2cb2a4ebaad328e47064eb, type: 3}
+          - {fileID: 21300000, guid: 297de91e1e60083428653f099628ec91, type: 3}
+          - {fileID: 21300000, guid: 5a639f294218631418b8269bdf033a8a, type: 3}
+          - {fileID: 21300000, guid: 47be935f1f1f8934f965c145268135b1, type: 3}
+          - {fileID: 21300000, guid: cfe21b386303c7f43beb240295ce0276, type: 3}
+          - {fileID: 21300000, guid: 492b4d88d0aa96744a793994b5dec0d8, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: db6cf768b80bf514bbafa603bc5917f9,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: c1005c014ead66b4e8a5f1c9d1541b1e,
+          animationSprites:
+          - {fileID: 21300000, guid: 21dadcd1927636d4ba627d75071f527b, type: 3}
+          - {fileID: 21300000, guid: 60647fb4f95f2b54bb58bb2c60664a39, type: 3}
+          - {fileID: 21300000, guid: 5f0ba448fc7779a46a02c185dc26ac1b, type: 3}
+          - {fileID: 21300000, guid: d13730919bd71ad4aac80affb70f0f85, type: 3}
+          - {fileID: 21300000, guid: b784692ba68e87947b48c2727f441463, type: 3}
+          - {fileID: 21300000, guid: f78e20ee3b80fcd419a980f101528de6, type: 3}
+          - {fileID: 21300000, guid: bdb5fca03809fe246a3b8e53e9db271d, type: 3}
+          - {fileID: 21300000, guid: 738296ba7d4178e47ac40651dacfa232, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 4b4c1a52267064b4b99c58d3e6a2f3be,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: a889357a87576134fb1145b6c3afef05, type: 3}
+          - {fileID: 21300000, guid: c87f75a91a8502045a82b7c4d4fb59f6, type: 3}
+          - {fileID: 21300000, guid: b887ad40e9741904bb95c0807e2d6f17, type: 3}
+          - {fileID: 21300000, guid: 6440c9eaff3cfb34b8d762e741e233c3, type: 3}
+          - {fileID: 21300000, guid: 770433456e81ba447bb6f139d46d3345, type: 3}
+          - {fileID: 21300000, guid: d915e5ce6c100b44dbf620ec66653638, type: 3}
+          - {fileID: 21300000, guid: 2f4c86e0783795b418ff84f23fb05486, type: 3}
+          - {fileID: 21300000, guid: f0677cc27c58ae2459e3a3e354853e6e, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: d1268784624d37e479e52956fed00302,
+          animationSprites:
+          - {fileID: 21300000, guid: d51b610e1fda40d45b002aca181195f8, type: 3}
+          - {fileID: 21300000, guid: 4b29eb21fbe5f2f4684548ceac4ec593, type: 3}
+          - {fileID: 21300000, guid: 6b2549e06c50ac54a9ba849223e4c0fb, type: 3}
+          - {fileID: 21300000, guid: 7cfd49b6ed8ea464cba9439908730c36, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 8ffa690bb981de44ca312aa33b60d921,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: bd5f90b885e49254d8e64713f325c723, type: 3}
+          - {fileID: 21300000, guid: 2510b4c79f88c6646b3613c3501b68ba, type: 3}
+          - {fileID: 21300000, guid: 0197270582eb68a47af1e9cf370e126a, type: 3}
+          - {fileID: 21300000, guid: 72dab66a2aa1dca499a11908b6d08dc4, type: 3}
+          - {fileID: 21300000, guid: 5d51c3550c8d112498c9eb150c4f7e45, type: 3}
+          - {fileID: 21300000, guid: 4c50aba7bebe53b43b30e2de1d02a957, type: 3}
+          - {fileID: 21300000, guid: d4e562a9b4269f043abc2e3829be037c, type: 3}
+          - {fileID: 21300000, guid: 242bc3d8f7e1d7443a0364bacf3acaa3, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: ef690a31298175d4387d59fe31b911bb, type: 3}
+          - {fileID: 21300000, guid: a68c28fc9d0813943b2ebd5b1b6ecf40, type: 3}
+          - {fileID: 21300000, guid: 5799a50572532864584c559779a8b0be, type: 3}
+          - {fileID: 21300000, guid: 2f85e832a45571241b5d722f67467696, type: 3}
+          - {fileID: 21300000, guid: c8a670c9b85eebf4e9843cff4d576182, type: 3}
+          - {fileID: 21300000, guid: 55f5e18c1b1c98642ba6c58f05afacb1, type: 3}
+          - {fileID: 21300000, guid: f8358a6f753ae10468d86ea8a389c9a8, type: 3}
+          - {fileID: 21300000, guid: e3ceb4c83b227434194033d1ef368d3e, type: 3}
   - raceName: HUMANS
     race: 1
     maleAssets:
@@ -1175,166 +1209,193 @@ MonoBehaviour:
         - Shaman
         - Sleep Ground
         - Stalker
+        - Walk
         - Walking
         m_values:
         - defaultSprite: {fileID: 21300000, guid: 42b8b686260fbed45bc74a21496f7003,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 3a74ce34c684e9b4d8d9fc73e88cf913, type: 3}
+          - {fileID: 21300000, guid: 2677b30f26dc8a0409306e9fbda2963b, type: 3}
+          - {fileID: 21300000, guid: 10f0381fddb9a1c4fa47e1fcf44a640a, type: 3}
+          - {fileID: 21300000, guid: 6c658932244ff244f89cabc1ca1f4869, type: 3}
+          - {fileID: 21300000, guid: f3c3616e904118e49b822d8c254abd8c, type: 3}
+          - {fileID: 21300000, guid: f73befd67535b7e4fb520272869fd9cf, type: 3}
+          - {fileID: 21300000, guid: 4584ccab6ac2281468491fb2c5a1e22c, type: 3}
+          - {fileID: 21300000, guid: 1eaa20e335d5345438fa13d132d5f970, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites: []
         - defaultSprite: {fileID: 21300000, guid: 9099b2d3d40873d47bdf61454245321f,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 1386819e92b8e184fbacb3671909caf2, type: 3}
+          - {fileID: 21300000, guid: 77d7f117580545e42bb4bf40781f7961, type: 3}
+          - {fileID: 21300000, guid: f9d82a74bb5f50047a87b18eefab5fef, type: 3}
+          - {fileID: 21300000, guid: 8c1902acd1bd87c48bbf239863047b36, type: 3}
+          - {fileID: 21300000, guid: 32f02d8135b9b264ba48dbe275ab2e47, type: 3}
+          - {fileID: 21300000, guid: bca53d382cbd50a4499f7801ac027685, type: 3}
+          - {fileID: 21300000, guid: 0d126f9e7fd1f734aa25b020dde093d7, type: 3}
+          - {fileID: 21300000, guid: ca44b9a20743ba4429d495c2f382c727, type: 3}
         - defaultSprite: {fileID: 21300000, guid: d668e47f9c6b4334daa15149a659701a,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: ccf7aa805884ac248b8bbfe2d652508d, type: 3}
+          - {fileID: 21300000, guid: 65ecc769875b5aa43abf6fc3185716a8, type: 3}
+          - {fileID: 21300000, guid: 93d03ff74d4e3ea43a653a767a158700, type: 3}
+          - {fileID: 21300000, guid: c47fc82c414bb2443af9fd0835d352da, type: 3}
+          - {fileID: 21300000, guid: 0a24ef80f534c5948a4eb15984238286, type: 3}
+          - {fileID: 21300000, guid: daf61b257c4d9014aac4f1b312a844b3, type: 3}
+          - {fileID: 21300000, guid: 2537d527ef5f92c4093a00dba1f6ecba, type: 3}
+          - {fileID: 21300000, guid: ab8e2dd467974824fbf15cb2ec15b631, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 86a4c2ad0d67d1f4cb60098e8864bb7d,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 5fda0abba5e9bcd4294eea40f93cd608, type: 3}
+          - {fileID: 21300000, guid: 7d6749507be540048970cd3fbecb0ecf, type: 3}
+          - {fileID: 21300000, guid: 51ffbfe1ef03fca4a929b672f171ee0c, type: 3}
+          - {fileID: 21300000, guid: 7e9bfd47b86cbf249b83391e1fbea75d, type: 3}
+          - {fileID: 21300000, guid: 7532cf501451ee444a129667b3dd3629, type: 3}
+          - {fileID: 21300000, guid: 3ea84c874f8bef34294cf9bf0c5e7188, type: 3}
+          - {fileID: 21300000, guid: 48b9d50fd39686f478e3ec74d612e90f, type: 3}
+          - {fileID: 21300000, guid: ced008d8073f5ad4ea88a4fada865703, type: 3}
         - defaultSprite: {fileID: 21300000, guid: eddb2d77e75969f48a7ba6d72a99b436,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: f78ab9c9bea663040a096bba6335f350, type: 3}
+          - {fileID: 21300000, guid: ca6dc0256f91976429da43a7378ab926, type: 3}
+          - {fileID: 21300000, guid: a64466ce9be39bd428d5160b4e0aed2a, type: 3}
+          - {fileID: 21300000, guid: 575b11d26f911d341bdc605e2285ee74, type: 3}
+          - {fileID: 21300000, guid: 47dce402e9755424c9c4492a1486deee, type: 3}
+          - {fileID: 21300000, guid: 3c8f2e0ebecfa1b48a1ac9374c4ebb0c, type: 3}
+          - {fileID: 21300000, guid: 1a67c25b31241684fb786b04af07b5c4, type: 3}
+          - {fileID: 21300000, guid: 6a0b1fed9bcf4a74b90112219d11fde8, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 4be5c25435a40c3458fc1fa8801dd63c, type: 3}
+          - {fileID: 21300000, guid: 6b271a8c4ab682f4996f457f67dbe21f, type: 3}
+          - {fileID: 21300000, guid: 648f887a8c462e14e9b3b8e947cad3fa, type: 3}
+          - {fileID: 21300000, guid: e79643ac6c83c524c8971ea07333b8cc, type: 3}
+          - {fileID: 21300000, guid: 45b22988c879646488b23dcc2915bc35, type: 3}
+          - {fileID: 21300000, guid: dbc19c69feaff6a49ad02e284efa82ff, type: 3}
+          - {fileID: 21300000, guid: d100023a8cd7a7c43a03530185cb581c, type: 3}
+          - {fileID: 21300000, guid: 954fa787aea3d4541b3818827d7364ef, type: 3}
         - defaultSprite: {fileID: 21300000, guid: baafac0ffa5564041bef8a690e06ab05,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: bd5f3025cdc9a244a9d755ca8e496377, type: 3}
+          - {fileID: 21300000, guid: f4b791c48d09a7e4da67cc958e7b7133, type: 3}
+          - {fileID: 21300000, guid: 8f75d15247d718843b97a870fd69aed0, type: 3}
+          - {fileID: 21300000, guid: 7451ec52a4e487642add8a167edb0703, type: 3}
+          - {fileID: 21300000, guid: 48a915648de9b824784ee1e1583d075c, type: 3}
+          - {fileID: 21300000, guid: 643670b5e885dec4cbe6b260ed7ae1c5, type: 3}
+          - {fileID: 21300000, guid: d62761437ec29184c8d014e48edd3014, type: 3}
+          - {fileID: 21300000, guid: 2fa2c34ca7a6b36499ddd27db813836d, type: 3}
         - defaultSprite: {fileID: 21300000, guid: bb5b57af335dc824c978e7e846ea25af,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 7b45dbc7b83c932439d080fdc15997b0, type: 3}
+          - {fileID: 21300000, guid: e4eed4d9df295eb43bba8644501056a5, type: 3}
+          - {fileID: 21300000, guid: b2203d06c1dd5104496da1ea8c5c22cc, type: 3}
+          - {fileID: 21300000, guid: e94c05d5acc063048aab55ad4e558ff3, type: 3}
+          - {fileID: 21300000, guid: 7bceea48467ac6f4eb23f12e8eb5b95b, type: 3}
+          - {fileID: 21300000, guid: aec1467fc088b844e9d0111d339b838a, type: 3}
+          - {fileID: 21300000, guid: 683cd1802ef2e654093937d4b519bd8f, type: 3}
+          - {fileID: 21300000, guid: b9b6999108f7a2b4c88d76a99c7dc8e4, type: 3}
         - defaultSprite: {fileID: 21300000, guid: bf319a02a698b174fbb4b6fc79c19a48,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 051d1b657ee6c0d4897454f44ec3198a, type: 3}
+          - {fileID: 21300000, guid: ca131bef18397694ead173aafadb4666, type: 3}
+          - {fileID: 21300000, guid: ab0d198b5e6a97845a9ed96d66181df7, type: 3}
+          - {fileID: 21300000, guid: b34407b29ab487b49b0655f1e5e40469, type: 3}
+          - {fileID: 21300000, guid: e993d9b859e8139458be9e5445ae4f7b, type: 3}
+          - {fileID: 21300000, guid: 23fa54963c61fa646bbe4ebb1f8e1d9b, type: 3}
+          - {fileID: 21300000, guid: ef5b77c944b8f3b4a8aeabe837ded395, type: 3}
+          - {fileID: 21300000, guid: 38253fe1cd22a8f47917795a7f419ea6, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 2372c45f1e8bb69498dbcd3516d0a758,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: c06c3c35db9b6654da5bd84471c09315, type: 3}
+          - {fileID: 21300000, guid: 89879f7df333a4c44900024d8edf0161, type: 3}
+          - {fileID: 21300000, guid: 630b18b117d600b4fbd73e00dedb4a49, type: 3}
+          - {fileID: 21300000, guid: 3b659fedc98104a47808191b34034a7d, type: 3}
+          - {fileID: 21300000, guid: f9ec5dd0d0d78bc408fbaa52697cfc82, type: 3}
+          - {fileID: 21300000, guid: 4a8da653edf365e4788b9e3f87922648, type: 3}
+          - {fileID: 21300000, guid: 99a828f62f3906d48adbb8699563277d, type: 3}
+          - {fileID: 21300000, guid: 077f255003a630041a0f8bf2863f8080, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 395b00c9f0e77c94686e9ee8b620dfbc,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 6559356bdf8b21349b85a3f0583ebf21, type: 3}
+          - {fileID: 21300000, guid: 4b049a2e6b2d62e4ea9783ce09de3f80, type: 3}
+          - {fileID: 21300000, guid: 3b2a44a2ef1130048a8312b803c7a0a8, type: 3}
+          - {fileID: 21300000, guid: f818b94b9466613498adfa663b97d3ad, type: 3}
+          - {fileID: 21300000, guid: c1336a1eae99396419a97354bf25a796, type: 3}
+          - {fileID: 21300000, guid: 2f88cfd2184da18429ba980cb8160396, type: 3}
+          - {fileID: 21300000, guid: 688db087ffa04f7438baba62e2f6e50f, type: 3}
+          - {fileID: 21300000, guid: efe1f7c45ff24f5418ed02bd9120ed3d, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 4791f63a666100d41908c386d86187a5,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 53b5603b03901c7488259c08b8f3b8ea, type: 3}
+          - {fileID: 21300000, guid: 7f922f8363ee3eb4b92b395bce532010, type: 3}
+          - {fileID: 21300000, guid: 372a88b1a778a524c9b2d48cb11e1cd6, type: 3}
+          - {fileID: 21300000, guid: 66c667cc935a6db44af011dfb7e236c9, type: 3}
+          - {fileID: 21300000, guid: b4cc7990369e71d4e952a92bf5d5a773, type: 3}
+          - {fileID: 21300000, guid: 5682ecce8ccac4540bdf55d1c8640887, type: 3}
+          - {fileID: 21300000, guid: 9faa5acddb3fbb147bee53caf17a2b18, type: 3}
+          - {fileID: 21300000, guid: 07f21c39d8cb5a846b6deac6896dcdad, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 2f484486913b56845aafedf02e0d67fc,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 0a799384c1efd2d4d9b636bb2d9bd37a, type: 3}
+          - {fileID: 21300000, guid: c5d1f1bcc91ada24c9790fa20af6c087, type: 3}
+          - {fileID: 21300000, guid: 51007a906cef9f44ab05b93c93a57eaa, type: 3}
+          - {fileID: 21300000, guid: 37e052851ce81cb4f8a80a298536edc3, type: 3}
+          - {fileID: 21300000, guid: bf9e0a7fbb4ce8741ae100f3c86598cd, type: 3}
+          - {fileID: 21300000, guid: 4991e02dcdc3c51479e9ddfb62677052, type: 3}
+          - {fileID: 21300000, guid: d7514c75fef22b048b36b555211e09bf, type: 3}
+          - {fileID: 21300000, guid: ce050d3e54e63eb4d98d51433da744d6, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 86f8749858e6d8c499453b429e2c64b5,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 4758d60411902694ead5dccae6060f2e, type: 3}
+          - {fileID: 21300000, guid: 5204110663cd2a543ba03c37c746e32a, type: 3}
+          - {fileID: 21300000, guid: 2da4201665f0e8445bc3dc8f69bfdb5d, type: 3}
+          - {fileID: 21300000, guid: 04312274f21cb1e438862a7f39bc1a7e, type: 3}
+          - {fileID: 21300000, guid: f696b2b94187ae54a8d8988ebcd3c2b7, type: 3}
+          - {fileID: 21300000, guid: aa3aeb2eef187af4ab00cd75b10211fd, type: 3}
+          - {fileID: 21300000, guid: f76b494b4ec5929438a9133342de7adb, type: 3}
+          - {fileID: 21300000, guid: 050d8f096ea073a4189ab8fd5e9f2840, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 90c0d83e10a64c54cb97b277bddbe68c, type: 3}
+          - {fileID: 21300000, guid: 01e5117d04d78fa4f867869eb6c08070, type: 3}
+          - {fileID: 21300000, guid: e09392e6d677ba143b1c4c5be1739bce, type: 3}
+          - {fileID: 21300000, guid: 69d37d842b2ec0a419bcb4dfb78aae2a, type: 3}
         - defaultSprite: {fileID: 21300000, guid: ebb641c198cad9b4282583960ba20edc,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: b8ad861e1600a2c45aae100d04d39cb4, type: 3}
+          - {fileID: 21300000, guid: 5d6d7b31d73ebc14183438a0158e0e5c, type: 3}
+          - {fileID: 21300000, guid: 5ab82d44f2c31e14db619e9e1f8143f0, type: 3}
+          - {fileID: 21300000, guid: 7959faf9381af4a4aaa185d91c765209, type: 3}
+          - {fileID: 21300000, guid: 7d7bc6e5bd7889741a48195dac597710, type: 3}
+          - {fileID: 21300000, guid: 68f696cb9300a084680b02003fc58d6f, type: 3}
+          - {fileID: 21300000, guid: a9fe984a8ff313c41b932722dce5a188, type: 3}
+          - {fileID: 21300000, guid: e4b8a9ca84e039b4da1aebbe72b9893d, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: e5f4ad59327433d41a9061f137fa7eae, type: 3}
+          - {fileID: 21300000, guid: 0e7cdb34ef480354e9ad428b6d9e8723, type: 3}
+          - {fileID: 21300000, guid: 7de92a9a168d7954193f48bc21da419c, type: 3}
+          - {fileID: 21300000, guid: 03bd1ca569c6ab84fb3c72e9d6e016f8, type: 3}
+        - defaultSprite: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: d1f332aa27640674b96169f5ea7ec243, type: 3}
+          - {fileID: 21300000, guid: 6e98e7305208df84d9a40d1e71f230d0, type: 3}
+          - {fileID: 21300000, guid: dfaabd8072304c74eb5487b3a43d9850, type: 3}
+          - {fileID: 21300000, guid: e1b7a9c4d7d3de24d83f872cbf414216, type: 3}
     femaleAssets:
       gender: 1
       characterClassAssets:
@@ -1360,162 +1421,176 @@ MonoBehaviour:
         m_values:
         - defaultSprite: {fileID: 21300000, guid: 60ed29f4d6ad5b542a109978d4cc294e,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 04a0a584933fd734a95e8c2842d829b9, type: 3}
+          - {fileID: 21300000, guid: 5c93a493cf0381742ae5b3d0ca89a59a, type: 3}
+          - {fileID: 21300000, guid: 2a9b14c3104aa1b45831f5938721b582, type: 3}
+          - {fileID: 21300000, guid: 0cbc9caad89b74745907f902ba997d36, type: 3}
+          - {fileID: 21300000, guid: e921543c6788cb64faa52ab7249c5992, type: 3}
+          - {fileID: 21300000, guid: 5d3ac6d64064de64593e1c7f27c31584, type: 3}
+          - {fileID: 21300000, guid: 9a45f9407cb79cb478421b4b445ea420, type: 3}
+          - {fileID: 21300000, guid: 13ee02a25fa2b064097dc29c72b486b6, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites: []
         - defaultSprite: {fileID: 21300000, guid: 27820d844895ee343a3508e2d658dbc4,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 1c8ee43979048bc458be8f0b5370e7da, type: 3}
+          - {fileID: 21300000, guid: 3ca2c627b29089e48b505e89031939b4, type: 3}
+          - {fileID: 21300000, guid: 820a7f6402182734b9604ff833afee94, type: 3}
+          - {fileID: 21300000, guid: 0a4a5be1d0d57ae43900ee0096783741, type: 3}
+          - {fileID: 21300000, guid: fcb18a014a712d442a09956eef6579d9, type: 3}
+          - {fileID: 21300000, guid: bc5a728bf6a4b1c408b33addd35fee9c, type: 3}
+          - {fileID: 21300000, guid: e77ba47f514d0aa44a22e34bc9d4b1b8, type: 3}
+          - {fileID: 21300000, guid: 03c796813408efd45a3e2e0b94df62e0, type: 3}
         - defaultSprite: {fileID: 21300000, guid: d111b2033998da54dbfeadc44e895174,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 7a426317a0cf64648800dce03425936c, type: 3}
+          - {fileID: 21300000, guid: 80118d1721c46354d962847642901d61, type: 3}
+          - {fileID: 21300000, guid: dcfaeec91e67fd444a184945818db4d3, type: 3}
+          - {fileID: 21300000, guid: 13cb1bc0b1cc12e409b27b8cf89bb843, type: 3}
+          - {fileID: 21300000, guid: 1f2894c168fdc9049989d5bb67429a45, type: 3}
+          - {fileID: 21300000, guid: a2b7aec9441c636438b962c9b182bceb, type: 3}
+          - {fileID: 21300000, guid: b2ecb5654e072e84fb1c18d61b4881c8, type: 3}
+          - {fileID: 21300000, guid: bc4340299e0ed8d459cce716b1221c0e, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 146b05dc8b99c3e41887efe156d7ad55,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 8f530a58a805d184d9f0557e1cd6a36c, type: 3}
+          - {fileID: 21300000, guid: fef649f6f63c52e4893dd076ece44d6e, type: 3}
+          - {fileID: 21300000, guid: 56b4c8170be30484b8da30e43d170ad4, type: 3}
+          - {fileID: 21300000, guid: bc977e5279fafa54b895c9a48f589f72, type: 3}
+          - {fileID: 21300000, guid: 1a1cb0727dcf60e45a25e210b10f59ca, type: 3}
+          - {fileID: 21300000, guid: 0449b18b51671c2439223d53a83716b3, type: 3}
+          - {fileID: 21300000, guid: d088385016410b04da0eced1b4f63bbb, type: 3}
+          - {fileID: 21300000, guid: c9651c4c32f892a43b5b08157299a9e7, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 79a382b34f89aa9459b02d9a54461b9d,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 36fc20a731d9bae46b17ec88752a887b, type: 3}
+          - {fileID: 21300000, guid: f590136566591994ab35b88634568bfa, type: 3}
+          - {fileID: 21300000, guid: 1c8b08b6b1ae5bb48b96f337ea5a32d7, type: 3}
+          - {fileID: 21300000, guid: 5c6c3e5fb16162d4f8778b1169fb2925, type: 3}
+          - {fileID: 21300000, guid: b5740a5bff6669241b6c91d5502638db, type: 3}
+          - {fileID: 21300000, guid: 426c5f5e17ddb9341b22996a1fe407a4, type: 3}
+          - {fileID: 21300000, guid: 7c8bf286451f71f42bc222b7d59888f2, type: 3}
+          - {fileID: 21300000, guid: ea5fae633571eee4abd9daaccaaaad4c, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 633fb2e8b5d890c40959c1167376d4be, type: 3}
+          - {fileID: 21300000, guid: 586fbee221a9f5b47ad90762d0ab9ec9, type: 3}
+          - {fileID: 21300000, guid: 4110c4df7cf393d47992fe735f160123, type: 3}
+          - {fileID: 21300000, guid: da7bd83586668da41b63bd5f848053c8, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 9b6c7f893c796c44e9b2b1955010e1da,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 13a7548f5259bb447812bc2e5a76876d, type: 3}
+          - {fileID: 21300000, guid: d6c9268b0033e7442a07a3ef7e7bfd6a, type: 3}
+          - {fileID: 21300000, guid: 3ff1b318911b3384bacaf3d813063da5, type: 3}
+          - {fileID: 21300000, guid: 87e3cf217dcd56c43a2b4ae71c42a9d4, type: 3}
+          - {fileID: 21300000, guid: b8b1856f1ad8e8648865f1389152118c, type: 3}
+          - {fileID: 21300000, guid: a8160f8e666925d4c8703d2f41c566d2, type: 3}
+          - {fileID: 21300000, guid: 03313112cafd86646b194931eeb611fa, type: 3}
+          - {fileID: 21300000, guid: 88262f59ba48124499bfe7cf71d86fc1, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 033ccc19fd2b5b6468ba95a60bcc2980,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 5a86fbb2274d2b24f9d420862cdc3717, type: 3}
+          - {fileID: 21300000, guid: 683606edfe5982349bbc31e447185c49, type: 3}
+          - {fileID: 21300000, guid: 30756fb07734358438e46d2610a96b44, type: 3}
+          - {fileID: 21300000, guid: 63d987049f0604c44a8dd9a40296714c, type: 3}
+          - {fileID: 21300000, guid: acffe4ee20bb2e944858a31b700c1581, type: 3}
+          - {fileID: 21300000, guid: 7076a0a1efd0b85408f9a1c5e108986e, type: 3}
+          - {fileID: 21300000, guid: 6e9657f26c6ec244b8c7d41a9cc5f861, type: 3}
+          - {fileID: 21300000, guid: 7c31b379e79d54b4ebcaa83c6015b23f, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 2d89631192b9dea4abe2fc1f4fc71fd3,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 4209994d3deb49643b62a2789d15dadd, type: 3}
+          - {fileID: 21300000, guid: 04ea25b4940d8b7469ba9ea975869200, type: 3}
+          - {fileID: 21300000, guid: 1e6cac0cff7f04e4583ee81db219f00e, type: 3}
+          - {fileID: 21300000, guid: 83d20bed47889494c9dcc22d38f0c7de, type: 3}
+          - {fileID: 21300000, guid: 3f9b2bfc4e60efe45bde868552a92fe9, type: 3}
+          - {fileID: 21300000, guid: a4c05a7b6bce88241bb2510ed138a3ed, type: 3}
+          - {fileID: 21300000, guid: 0d36228f63161204d8cb5fcdad3b42fb, type: 3}
+          - {fileID: 21300000, guid: 4881e50e97d70774ca77138b0c3581dd, type: 3}
         - defaultSprite: {fileID: 21300000, guid: e2d8204830427ca46b181693b1602566,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: ad96696580188f54e9318f52df5a8e5f, type: 3}
+          - {fileID: 21300000, guid: 2cf3c4d72c91c134dab62bedcc23dfd4, type: 3}
+          - {fileID: 21300000, guid: 241e988ba967a0047a9ce1a0ad16cefc, type: 3}
+          - {fileID: 21300000, guid: 7e4fadbb26357f24c913d84fad508f8d, type: 3}
+          - {fileID: 21300000, guid: 2f94be5c64502d84db314ec743e520fb, type: 3}
+          - {fileID: 21300000, guid: 79a489a9a746c89438c7377c3f017f3a, type: 3}
+          - {fileID: 21300000, guid: 32754edb33eebfe4a934020cb2f4ee64, type: 3}
+          - {fileID: 21300000, guid: 5015e765bfccc3b42a62d1ff0b4affe5, type: 3}
         - defaultSprite: {fileID: 21300000, guid: c2ce4fcc381765a4f83a67a4cdf37253,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: f6343cd6bc012664d8dc227c262e948c, type: 3}
+          - {fileID: 21300000, guid: 6f7198869cbb44240ad5f4f328811dc2, type: 3}
+          - {fileID: 21300000, guid: 11226a745a679e343bb16e2e4a82b4ba, type: 3}
+          - {fileID: 21300000, guid: ee293efe27740dc48b015e510e0888be, type: 3}
+          - {fileID: 21300000, guid: 6602b821f0e53ab4fa3f833f5aa7ab14, type: 3}
+          - {fileID: 21300000, guid: 2b378e10fbf186c40b3692863b0e5dd0, type: 3}
+          - {fileID: 21300000, guid: fd21286882ae66d41b200d14642c15a3, type: 3}
+          - {fileID: 21300000, guid: df32bff98d127ee44b9d7e84521a10ff, type: 3}
         - defaultSprite: {fileID: 21300000, guid: c37e799ffc3aa0e449051ab4b5df045d,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 7feb250dd5ba1844ca7b6ee0a8368abe, type: 3}
+          - {fileID: 21300000, guid: 9a117566e1e91f1478ffb3b778ef14e4, type: 3}
+          - {fileID: 21300000, guid: 72dc8f7bf4062c246809482d60badaf4, type: 3}
+          - {fileID: 21300000, guid: e36d80a544387534cb3fe7439f2a2eae, type: 3}
+          - {fileID: 21300000, guid: fe6d86b6c9927d344a5211516345a447, type: 3}
+          - {fileID: 21300000, guid: e458468d049987342a7292b1f93d7a67, type: 3}
+          - {fileID: 21300000, guid: e14149d6e806fab4a8a62dcf971d7a50, type: 3}
+          - {fileID: 21300000, guid: 9fa6e32a3b538d24a9c93f8948825033, type: 3}
         - defaultSprite: {fileID: 21300000, guid: c85f2b04b39630c41b6ef5115c8e195a,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 4f2bd8606c1947f42a7942817ad1e717, type: 3}
+          - {fileID: 21300000, guid: 7e566e87b8caba74586157a13bfb9020, type: 3}
+          - {fileID: 21300000, guid: cf1d0316f7ebf9c4f9b49d30e84d2235, type: 3}
+          - {fileID: 21300000, guid: 836ca9aabac1feb44b5e972b2d6ca0bb, type: 3}
+          - {fileID: 21300000, guid: f136d0ed9b8e74e49913e46b807b48c0, type: 3}
+          - {fileID: 21300000, guid: 51b57d1ad8f5cdb4a8a9decab4637ee9, type: 3}
+          - {fileID: 21300000, guid: b9aba09a4d7b35b4895147e3955affa4, type: 3}
+          - {fileID: 21300000, guid: 3d8bd9579c25cf244bc68cfb1d6feefe, type: 3}
         - defaultSprite: {fileID: 21300000, guid: e689b93b6a111d4468beb4c9b715b987,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: de3afab57bf59cc41995a6652b10992f, type: 3}
+          - {fileID: 21300000, guid: d7e235f0f97785742a958a7e2edc5f99, type: 3}
+          - {fileID: 21300000, guid: 9d184c1c2cfdd8741a55bb07efc75d92, type: 3}
+          - {fileID: 21300000, guid: 7723af5a1d911d64086719cdb8e10a12, type: 3}
+          - {fileID: 21300000, guid: 0b74b3e75c3dfd54cbeec3476fcce62e, type: 3}
+          - {fileID: 21300000, guid: b07ade84f253db94691b429d569d5953, type: 3}
+          - {fileID: 21300000, guid: 71109944a5d17524bb7961514cd31c5e, type: 3}
+          - {fileID: 21300000, guid: 16079a2ed988cb54b8a472c2f97cff5e, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 8a53246ff71bce64fa31c217e6f62938, type: 3}
+          - {fileID: 21300000, guid: bf4e213b0dffc5f478831c2182097cdc, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 3d9afd0c084ec324b8762f83b2370daa,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 4e127c2b6f2ab134a89d004a5ba20801, type: 3}
+          - {fileID: 21300000, guid: d5816b21e43aca84086d9c1fcc16d28a, type: 3}
+          - {fileID: 21300000, guid: e1ce3e7f836cdce47af927d0cc5c77cc, type: 3}
+          - {fileID: 21300000, guid: 6213b57af3e0ee84a9df56ebfce4a388, type: 3}
+          - {fileID: 21300000, guid: 59e493df7950e164db40b120b506eb1c, type: 3}
+          - {fileID: 21300000, guid: f76c86552b17bef4c8c323dfd13838f4, type: 3}
+          - {fileID: 21300000, guid: bfe1fc0b406489644befa13862e5282d, type: 3}
+          - {fileID: 21300000, guid: e89c694b84381334982ebe8af4c2fa44, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 4ebda2420b6477148ab6436cfa58dbc0, type: 3}
+          - {fileID: 21300000, guid: 4bc20e6069bd2a34399027e4cc618bc2, type: 3}
+          - {fileID: 21300000, guid: 6fc6aed1faff671429136cccc8493b42, type: 3}
+          - {fileID: 21300000, guid: bc6a8fc8cedacc64ea511731cf7d25a6, type: 3}
   - raceName: SKELETON
     race: 13
     maleAssets:
@@ -1527,10 +1602,10 @@ MonoBehaviour:
         - Barbarian
         - Craftsman
         - Druid
-        - Faction Leader
         - Hunter
         - Idle
         - Knight
+        - Leader
         - Mage
         - Marauder
         - Miner
@@ -1543,162 +1618,198 @@ MonoBehaviour:
         m_values:
         - defaultSprite: {fileID: 21300000, guid: 7f61a59a24f36ac46997f1e576c79da7,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 79bcc40d55b92364d890a7878f0e67ea, type: 3}
+          - {fileID: 21300000, guid: 6b2e2fb673cfd214abbc3bcfa85f7dd7, type: 3}
+          - {fileID: 21300000, guid: 58f91e58634d7c54c8d08333208696b7, type: 3}
+          - {fileID: 21300000, guid: 421096b6029123a49966095d60041f71, type: 3}
+          - {fileID: 21300000, guid: b6abf287d9a3a3f479ab9116342f7d63, type: 3}
+          - {fileID: 21300000, guid: 39b8cbce5912a7c4aae54a91e3ee6559, type: 3}
+          - {fileID: 21300000, guid: d6fbdfd6a3374e547a93c69b1beeceda, type: 3}
+          - {fileID: 21300000, guid: 08b6106f17887b346a09fdd357eb4995, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 199fd9cea9a8ad94c8befe9fc71e4697, type: 3}
+          - {fileID: 21300000, guid: 2e2188857993ce24493f58d8a5b89398, type: 3}
+          - {fileID: 21300000, guid: da8f2473c2b457c429649b8966323dae, type: 3}
+          - {fileID: 21300000, guid: 5e3fe5d6dc8fc124ea4dcea67cff1797, type: 3}
+          - {fileID: 21300000, guid: ca4508dbd9b85e84c897bf5944be3bbe, type: 3}
+          - {fileID: 21300000, guid: b2b4295f29ab6364597566f6164d8eaa, type: 3}
+          - {fileID: 21300000, guid: eff727ede6703bd4caf112ea5e9a5506, type: 3}
+          - {fileID: 21300000, guid: c5b8e64343d2add4bb29eb48010ebb0d, type: 3}
+          - {fileID: 21300000, guid: 3aea9d7fea1526e488df6f547e7b5793, type: 3}
+          - {fileID: 21300000, guid: 45cb6c19cb654d4408d5f6baac359e87, type: 3}
+          - {fileID: 21300000, guid: 92ca0873fa8e1e243a160237e21b476b, type: 3}
+          - {fileID: 21300000, guid: 2399fc3324ee07d4da70f05f94957d33, type: 3}
+          - {fileID: 21300000, guid: 8f0683fdbe613d64797a52670afe85a5, type: 3}
         - defaultSprite: {fileID: 21300000, guid: e19dc72c285ed1748b50319bbacaca24,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 1ad0d480fb9a01d439b9a7cf7bcee2df, type: 3}
+          - {fileID: 21300000, guid: 8295242f33ed081438f8a316d924a9a5, type: 3}
+          - {fileID: 21300000, guid: b947305c7b894f54c8f6a5d92869a2cc, type: 3}
+          - {fileID: 21300000, guid: 3cbedf77688e9c240986360ab3dee070, type: 3}
+          - {fileID: 21300000, guid: dc51515084359bf4d9bff871a1308803, type: 3}
+          - {fileID: 21300000, guid: 49ae25d7fb4e473468f38029b6af7845, type: 3}
+          - {fileID: 21300000, guid: c566478d03d6acb49bfb667d97841ea7, type: 3}
+          - {fileID: 21300000, guid: eee2539f450e96e4eb66f6418978f02f, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 35338548ad70eb04bb420c077882e2f2,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: ab90ab584f3f4ff4181e47d5fa4ab1b0, type: 3}
+          - {fileID: 21300000, guid: 33c2721cebb05e24c8997d35f28019c2, type: 3}
+          - {fileID: 21300000, guid: 2b149333dfb16f246b31bfdaef7bde1f, type: 3}
+          - {fileID: 21300000, guid: 097f62f3727f71f42a4fd73d35c0f15d, type: 3}
+          - {fileID: 21300000, guid: a2c583536745fea4899d1cd7115e63c5, type: 3}
+          - {fileID: 21300000, guid: 168980a66d4c5104eb04e8c22fd2869b, type: 3}
+          - {fileID: 21300000, guid: 909f224267705ce47a2e3d68eb80b85f, type: 3}
+          - {fileID: 21300000, guid: d1865d35fb433944793e7d9710b0abcd, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 64ac2c16bf91d8448b1d4bb523711bed,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: 04cb0dcb13ceff041b9a5e450d130a77,
-            type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 1ca1de771504c9b40a1b9dcadf5796d1, type: 3}
+          - {fileID: 21300000, guid: de9607fa079532f459d2094f203c27df, type: 3}
+          - {fileID: 21300000, guid: 46ff303e8c1047a478e22f60e83c52d5, type: 3}
+          - {fileID: 21300000, guid: d1c8cac1c2bc9654f8318f92e2af8a37, type: 3}
+          - {fileID: 21300000, guid: 546640f1c9dd5dc45a32d7ebecfafbf6, type: 3}
+          - {fileID: 21300000, guid: 0ca0a5d824e17a34fb6f637afc6a98bc, type: 3}
+          - {fileID: 21300000, guid: c66b780582c313b4591a18cc832b8c69, type: 3}
+          - {fileID: 21300000, guid: 71a68f91e37caa444a2303df49d1c564, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 82fc6e8c5b1f819409ce72f43dcca0d4,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: b42631667385aaf4695b658f8f1e16e0, type: 3}
+          - {fileID: 21300000, guid: 70f6faf6af0ba974dbb789318941a651, type: 3}
+          - {fileID: 21300000, guid: d9ec7d56feac00e48a6e9a7be6ee2610, type: 3}
+          - {fileID: 21300000, guid: de9c684bac5abdd43b367e3d477cd778, type: 3}
+          - {fileID: 21300000, guid: d0f6db69da8d08b4f8af14d90cd83a3a, type: 3}
+          - {fileID: 21300000, guid: 04324f29f4cdb6045badd2d7d319cfff, type: 3}
+          - {fileID: 21300000, guid: 3cc58a9b5e344854d890f1487deb60ad, type: 3}
+          - {fileID: 21300000, guid: 8e2d59d9ca419f74bb629b1dc2e28947, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 4e850a7d3fa804d49a4d4e84d90090d9, type: 3}
+          - {fileID: 21300000, guid: aa2bf9dc843539340b41439e5c355ce3, type: 3}
+          - {fileID: 21300000, guid: 293df97b4c0c8414a860290b2568b5f9, type: 3}
+          - {fileID: 21300000, guid: 3f1cb96fb7de9f3419054ea070cbdd50, type: 3}
+          - {fileID: 21300000, guid: 34b5ba703c001de48a65a24aa0ed24a7, type: 3}
+          - {fileID: 21300000, guid: c1e8173cc0dd96a4a84b2a6e0cbc08ff, type: 3}
+          - {fileID: 21300000, guid: cec21c0962de2de42875ca06574966bb, type: 3}
+          - {fileID: 21300000, guid: 75b558212c650bf4bb846ea1e9267bf5, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 2533042823c73a646bb837d2d5ec0599,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: ba1b58a442c88dd45b025734120d39d6, type: 3}
+          - {fileID: 21300000, guid: dc17bc93465ccef46abd2e040072fe05, type: 3}
+          - {fileID: 21300000, guid: 5527e5f3f6e23f5448af78ba9fe8fbd4, type: 3}
+          - {fileID: 21300000, guid: fc1b4abdc91bb5840aea744a22f8de77, type: 3}
+          - {fileID: 21300000, guid: 6941004712efe684bb2fcdcfaa01fd95, type: 3}
+          - {fileID: 21300000, guid: 4776ba6f008a57845aebb5973fa2bd6c, type: 3}
+          - {fileID: 21300000, guid: 152e184e1f0c57540bc6fbcbfbb7570c, type: 3}
+          - {fileID: 21300000, guid: 09f294cbb9ec2e04898dacb2a7020613, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 04cb0dcb13ceff041b9a5e450d130a77,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 10a44478793e0d3459f8bd416478be34, type: 3}
+          - {fileID: 21300000, guid: 092ef52c3992f064ba455cdc40486ebb, type: 3}
+          - {fileID: 21300000, guid: d0813dfae8026794182dfdd71d4fcce2, type: 3}
+          - {fileID: 21300000, guid: b9e2ef7e69619694a8351ff057c13553, type: 3}
+          - {fileID: 21300000, guid: 4a46aa8287695444ea5367b136cedf70, type: 3}
+          - {fileID: 21300000, guid: a630bf5ebd8b59147b51d5937b9c2623, type: 3}
+          - {fileID: 21300000, guid: 522f66dc35a1daa469b11099fc2b2f44, type: 3}
+          - {fileID: 21300000, guid: a61c0f0ee7659fb459a899575262cc6b, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 892f3df44f353084e9d936b8fa089ef0,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 75c33d2985a704f4b9a65c9f179d6a76, type: 3}
+          - {fileID: 21300000, guid: 1cca0fbf172d16b4a98b213530d2787c, type: 3}
+          - {fileID: 21300000, guid: e0f10d81150b02746a9a7fd8fd014932, type: 3}
+          - {fileID: 21300000, guid: dca6415c915f62741aab5b14fa2f03bd, type: 3}
+          - {fileID: 21300000, guid: 69dc2625c69d4cf4b8dd53fcb1abc3e1, type: 3}
+          - {fileID: 21300000, guid: 4ff4f91369e11d94ba228075c48792be, type: 3}
+          - {fileID: 21300000, guid: 40918e35fab48be4399df26b73cf7339, type: 3}
+          - {fileID: 21300000, guid: b19d4d07212ba6344b1e9b75ef6be3f6, type: 3}
         - defaultSprite: {fileID: 21300000, guid: bde26eb0c1c844348ab933273071b502,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: c62b5501ec272554e8255d4eb4fee67e, type: 3}
+          - {fileID: 21300000, guid: 03835617c1fa69d4ea3d9221feff557e, type: 3}
+          - {fileID: 21300000, guid: 6de1c29962f95514e9d1c28411ceb403, type: 3}
+          - {fileID: 21300000, guid: 4be7ee67db8e4db4b9909749b1994d08, type: 3}
+          - {fileID: 21300000, guid: e621e9584344d304697ea9e869c37e40, type: 3}
+          - {fileID: 21300000, guid: d0f28ddce53f8dc489aef9627420a654, type: 3}
+          - {fileID: 21300000, guid: 6e4d48aa77a9cf14da68d13dd119986d, type: 3}
+          - {fileID: 21300000, guid: 9a4e04424c71aa648a4470cac1766d41, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 1a344928e247715489c46b56c6a430e9,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 7bcc92a9b30fa384f85208bff54c2e0e, type: 3}
+          - {fileID: 21300000, guid: 547f6bb913520a54481a58bd8b978c83, type: 3}
+          - {fileID: 21300000, guid: 280171637ac0943479d9c2cb24f2f612, type: 3}
+          - {fileID: 21300000, guid: 914be9ba985e19b4db8b1c83f49fa7a2, type: 3}
+          - {fileID: 21300000, guid: 4822b8ffda09647409e6f56d70286f7e, type: 3}
+          - {fileID: 21300000, guid: 86606eb0261cdb047861c6580664e8d9, type: 3}
+          - {fileID: 21300000, guid: 48c2d97451e296f43acf0642720b0887, type: 3}
+          - {fileID: 21300000, guid: 2c815067a52cacf4bb2acd48499dc1af, type: 3}
         - defaultSprite: {fileID: 21300000, guid: feeb5ea1c368f8440b9066048fb84615,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: b172391f112afd14a91a853be2792170, type: 3}
+          - {fileID: 21300000, guid: fd0e641ffd9326744b1b975fd8251300, type: 3}
+          - {fileID: 21300000, guid: 8be99a302595f1443a29591615f6b64c, type: 3}
+          - {fileID: 21300000, guid: 834af5c8287ff1d45b7cd3fef094e451, type: 3}
+          - {fileID: 21300000, guid: 0c630401bc217584aba83f7cfa9cbda7, type: 3}
+          - {fileID: 21300000, guid: b53eabe0e09b4a74b83136a08a799f93, type: 3}
+          - {fileID: 21300000, guid: b55c7eabb055d264bbc1de12c0eebdaf, type: 3}
+          - {fileID: 21300000, guid: ea5778fb2496a814781d1340c662c63e, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 9c9caeb070a715c448d4f4e49d156c8c,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 6d375fb3b7453354a9cd22021b19b655, type: 3}
+          - {fileID: 21300000, guid: 5df7dfd12fe1c99469af815aa370dea6, type: 3}
+          - {fileID: 21300000, guid: 7b523f934322bf0468e22ba3dd93d8e6, type: 3}
+          - {fileID: 21300000, guid: e6cf8618159838e4d92353754e99a1d2, type: 3}
+          - {fileID: 21300000, guid: ad8ff1fd1dd0b0d45aa35dcceb9c6af8, type: 3}
+          - {fileID: 21300000, guid: 1270c4ff09497124b9d576fd2790cda6, type: 3}
+          - {fileID: 21300000, guid: 458fa4575878be74681d3464e7e26c41, type: 3}
+          - {fileID: 21300000, guid: 616fb7d7878734b47af3565131411639, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 5ed41eb176ba5d142b63bd6b6b109e9f,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: b6944371fabdcd64d9ff6fe9036f7955, type: 3}
+          - {fileID: 21300000, guid: c8511f189d393dd49b2ff22cf6658454, type: 3}
+          - {fileID: 21300000, guid: 3c8ca6c63e458f247ac12c606ea56748, type: 3}
+          - {fileID: 21300000, guid: 6680a00488af62542a64c42351940566, type: 3}
+          - {fileID: 21300000, guid: 51d8f0d2a8b7f844fa39f89c1b249791, type: 3}
+          - {fileID: 21300000, guid: 25bed12b316adff46b7e0cac8c0a2dd3, type: 3}
+          - {fileID: 21300000, guid: 69439d8ce6fd92140901d2a6de22aa79, type: 3}
+          - {fileID: 21300000, guid: aec0ebac7f62eda42828916651850fea, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: e86bc5f001a60784f9135e1365c67ab8,
+          animationSprites:
+          - {fileID: 21300000, guid: fd0eb5f6330d6c6419a1a2c6a95d8c9b, type: 3}
+          - {fileID: 21300000, guid: 47ee06c3b8c854540b1422a3c626f0ad, type: 3}
+          - {fileID: 21300000, guid: 589b825b406a97544a3ffc1df1995da0, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: e284b11a2a09c72488dcb374ce32df62,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 892b82a90289b1f48980df120e92a70f, type: 3}
+          - {fileID: 21300000, guid: cf0a843c1c5a0c544880a0e8a051df00, type: 3}
+          - {fileID: 21300000, guid: 0caafefb8a98bbb4481e2ee14de03f67, type: 3}
+          - {fileID: 21300000, guid: d58179c055cecb64c8e649fd6f4b3de2, type: 3}
+          - {fileID: 21300000, guid: 377ed270ee9594744bd7c4b1304f1e2a, type: 3}
+          - {fileID: 21300000, guid: 066f7d86b0bfa844ab95baf528e48ac8, type: 3}
+          - {fileID: 21300000, guid: 7ce5a031ec59e9e47ba85a06eb5e3d0f, type: 3}
+          - {fileID: 21300000, guid: bbd688223d82d2a4e9727e3842aed479, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: ec1777a0131f34746afc99aeccc65ff7, type: 3}
+          - {fileID: 21300000, guid: 5087feb957cb13f45ad920b8d95c4ea0, type: 3}
+          - {fileID: 21300000, guid: dadc537994b403d4da09916a18be23bc, type: 3}
+          - {fileID: 21300000, guid: bff950d686036f54b90e4dc0c43232b8, type: 3}
+          - {fileID: 21300000, guid: 0f4ee2f7c4c924f4aa59904da1bcd145, type: 3}
+          - {fileID: 21300000, guid: b6c44beaf665b20428ca01c220f4c9af, type: 3}
+          - {fileID: 21300000, guid: 8f461cc9b8e5b49468a0d560db965a78, type: 3}
+          - {fileID: 21300000, guid: f4d34e22bb7b2c9469078519a2e751fc, type: 3}
     femaleAssets:
       gender: 1
       characterClassAssets:
@@ -1708,10 +1819,10 @@ MonoBehaviour:
         - Barbarian
         - Craftsman
         - Druid
-        - Faction Leader
         - Hunter
         - Idle
         - Knight
+        - Leader
         - Mage
         - Marauder
         - Miner
@@ -1724,162 +1835,198 @@ MonoBehaviour:
         m_values:
         - defaultSprite: {fileID: 21300000, guid: a4dab614e27578d47af08bfcdb4f75ba,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 2c81c45faa79cc940bb70dfa0091a2d2, type: 3}
+          - {fileID: 21300000, guid: 725a8722eced5d14fae55d3eaaed4518, type: 3}
+          - {fileID: 21300000, guid: 6b0cd9ab1718ab64fa8df99fb0564a62, type: 3}
+          - {fileID: 21300000, guid: 96d33fe1d2c829a4db6539ecd9645ca5, type: 3}
+          - {fileID: 21300000, guid: 2dda085166619fd429993bfa5f328357, type: 3}
+          - {fileID: 21300000, guid: 879290c945ebb1d4a9ef29333243df07, type: 3}
+          - {fileID: 21300000, guid: ddcf6f58744f74348842445117414185, type: 3}
+          - {fileID: 21300000, guid: f35bd3a4acb6a9d4084f8d3bb7c5c81d, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: f1fa13da4f90bd848a86d428862195d8, type: 3}
+          - {fileID: 21300000, guid: 25959e409d66f5540b8ce60bd60f0361, type: 3}
+          - {fileID: 21300000, guid: 19c338f27eb9b3249815a3acfcbe1fec, type: 3}
+          - {fileID: 21300000, guid: c8d9eae6b61e1ed429203dae2372c5a2, type: 3}
+          - {fileID: 21300000, guid: 7da442699d8be66459edce04c6a684a9, type: 3}
+          - {fileID: 21300000, guid: 22dd43479987b19428aaf37749535f23, type: 3}
+          - {fileID: 21300000, guid: 54759fae988371a4283e62afe91d5fea, type: 3}
+          - {fileID: 21300000, guid: 687d2d816c1df534fa4965cbb69cba2e, type: 3}
+          - {fileID: 21300000, guid: 6db19c6be8751ab4d9d32e0009cb96dd, type: 3}
+          - {fileID: 21300000, guid: 911f89178dc2d1d4ca50f46331e9bc69, type: 3}
+          - {fileID: 21300000, guid: e114f47e74b749740b9f4b1a59861ff2, type: 3}
+          - {fileID: 21300000, guid: 13d8f05f0b25c674ebe652c3ee33350e, type: 3}
+          - {fileID: 21300000, guid: 2b0e34e9e9765d5499e2b44aabaffb9e, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 894755a0013f9ed4ea255f014f63bdf6,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 02d456f5dd2fe5a47a27b1dff59e06bc, type: 3}
+          - {fileID: 21300000, guid: b286408eea4e2cc4d8c3efa25331fa73, type: 3}
+          - {fileID: 21300000, guid: 647ce8c7cb92b004092f1ef7ce1c3af1, type: 3}
+          - {fileID: 21300000, guid: 536ae038127a07345b756142d677e783, type: 3}
+          - {fileID: 21300000, guid: 78fd5c737929190418d8728ea59a1b77, type: 3}
+          - {fileID: 21300000, guid: 36d2df653bda3774fb02f84324c2e770, type: 3}
+          - {fileID: 21300000, guid: a48c7deb35ee75a49b08f9f4e88b66a0, type: 3}
+          - {fileID: 21300000, guid: eaad80b25e534bb47ab31521339bc648, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 3236cd7992f74ed4cb4ca6b47f924e59,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: ecbf9b052e7217a4983a44a58739ef98, type: 3}
+          - {fileID: 21300000, guid: 30be833fee75cfa4c94e544264f11d63, type: 3}
+          - {fileID: 21300000, guid: 683dc7c13197de04a8bf99c80832a5a0, type: 3}
+          - {fileID: 21300000, guid: 2efa8919843245d4fb61b892017637c8, type: 3}
+          - {fileID: 21300000, guid: ba363e0cec239f54f9e4fe44d4d08b4f, type: 3}
+          - {fileID: 21300000, guid: 03ad736e41d39d3498a3d156b1cd2e80, type: 3}
+          - {fileID: 21300000, guid: 6e5e6bf53e904cd4b9db4255e9f6eb39, type: 3}
+          - {fileID: 21300000, guid: e07506ac953ba004c8d2dd9b6e91c853, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 913c1bceb3201714c9793ece071b6dfd,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: a869a0cf148209849bee2c0622555c37,
-            type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 80ebec92b4a37174fb6c8fdb909804a6, type: 3}
+          - {fileID: 21300000, guid: 1e513b53cbc623e4db45926683af7683, type: 3}
+          - {fileID: 21300000, guid: 80ed3478354171a4897688230fc2e5d1, type: 3}
+          - {fileID: 21300000, guid: d06c7d104c963864eab8a9ccb5c63291, type: 3}
+          - {fileID: 21300000, guid: 0447c7b86cd8cc149b57b44e50e45da4, type: 3}
+          - {fileID: 21300000, guid: 42c8c7acf55804644a06740bd61fa777, type: 3}
+          - {fileID: 21300000, guid: 39cbad9ddc0dfc047b044e530ef8670b, type: 3}
+          - {fileID: 21300000, guid: b421ed0ac2312204d98e8f50e6fae12d, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 741deebafdb2d2f409c9705a832ca7e8,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: cee4ca2233984f841a8fb617ff8237c5, type: 3}
+          - {fileID: 21300000, guid: df791d75810b7d542a26f71f13f15a5d, type: 3}
+          - {fileID: 21300000, guid: 53d9ece2b9174974980a76d9d2206dd7, type: 3}
+          - {fileID: 21300000, guid: 32ea352c19bff3b4b8709acc6c23d683, type: 3}
+          - {fileID: 21300000, guid: b723d029f158fd04796f4a898ef9101e, type: 3}
+          - {fileID: 21300000, guid: b8be07b908c9a7040abaadcc529cffba, type: 3}
+          - {fileID: 21300000, guid: 87d90d3ffbc279042ac0a52548ee2dbc, type: 3}
+          - {fileID: 21300000, guid: 7283203b18e80fc41a62a84137502bf4, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 9eff2f1444285b74da149ab93b9fb61b, type: 3}
+          - {fileID: 21300000, guid: 46a58c0af56f68247a495f924ab15246, type: 3}
+          - {fileID: 21300000, guid: 2b40f6c68a757c841a96ee1a88066aa7, type: 3}
+          - {fileID: 21300000, guid: b02375d54f85ee047937e94d27999d98, type: 3}
+          - {fileID: 21300000, guid: 08807c7472456284d9bb74351e54115b, type: 3}
+          - {fileID: 21300000, guid: 0f3f358ef35799d49b26f0a31d581b1f, type: 3}
+          - {fileID: 21300000, guid: fb241157d0acaf9489e7b66f33acdb89, type: 3}
+          - {fileID: 21300000, guid: a99fbf3c2d628e641a599d310557d48c, type: 3}
         - defaultSprite: {fileID: 21300000, guid: d617895ea701b244496a7f7e85f9d0f7,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: b74da4a8bdb57a74db352c5ae3b3238a, type: 3}
+          - {fileID: 21300000, guid: f67405855e358f74ba9d6ec449ace670, type: 3}
+          - {fileID: 21300000, guid: 26785f6a94786dd45826e8e5cf442ff3, type: 3}
+          - {fileID: 21300000, guid: 9311aa73c0d367346991bb28850785b5, type: 3}
+          - {fileID: 21300000, guid: aab207166bb642e4b84372553abc49eb, type: 3}
+          - {fileID: 21300000, guid: 459e02aecfa9f4d499e7a85efe66999e, type: 3}
+          - {fileID: 21300000, guid: 92279723824904c41b55431bda03a864, type: 3}
+          - {fileID: 21300000, guid: 083de7a6377327a42a93fcd0dc0108af, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: a869a0cf148209849bee2c0622555c37,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 5e830675d37a92a42a9e6a5c1629d4ce, type: 3}
+          - {fileID: 21300000, guid: 60463249821571c4984cf3abc82a3f7c, type: 3}
+          - {fileID: 21300000, guid: 672e02152a404e74eb50d5062d00c493, type: 3}
+          - {fileID: 21300000, guid: ffd6fec4d26dc7045890fea03c63d978, type: 3}
+          - {fileID: 21300000, guid: 0e082681c530d8b43bc720675b713b2e, type: 3}
+          - {fileID: 21300000, guid: 8eb509169ce76d249b1c644bbbb8c2b0, type: 3}
+          - {fileID: 21300000, guid: 64e5f56a4bf22db48ba9928c804db62e, type: 3}
+          - {fileID: 21300000, guid: 73dc570fb3125be49a24bfe259c13c14, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 4d92f517225230d4fb970e36539cb799,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 745ec55b5f6f17a4f84ed052d86c3f9e, type: 3}
+          - {fileID: 21300000, guid: 885a0653b467a2547b52b9d21201ecef, type: 3}
+          - {fileID: 21300000, guid: 19378328215035545ae243c84406e0ae, type: 3}
+          - {fileID: 21300000, guid: 78a3c627d10a69e41855a45849940a5c, type: 3}
+          - {fileID: 21300000, guid: de966585256b5784da7b392739dc49e9, type: 3}
+          - {fileID: 21300000, guid: 1daab7079e1e27441bc75af3d0dffd44, type: 3}
+          - {fileID: 21300000, guid: e81f987127e041340a6ff7934cc5cf21, type: 3}
+          - {fileID: 21300000, guid: 23cda5b9591cd064790ff0d46fce253f, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 05648e7138d657a4480a4d3387c49c27,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 05e1716a2ee8a0341aea014ed85448e4, type: 3}
+          - {fileID: 21300000, guid: c6ab3e35df6967140aae46a327ea1191, type: 3}
+          - {fileID: 21300000, guid: 0fc20673d0daed44fba6b057dfee54a1, type: 3}
+          - {fileID: 21300000, guid: 8a557fdd278cb424a9faf0cf8febd188, type: 3}
+          - {fileID: 21300000, guid: f8b32dbd1db0c4f4dbb88c16cfb5141b, type: 3}
+          - {fileID: 21300000, guid: 676a4c87ee8fdaf40bcc655e5e8253bb, type: 3}
+          - {fileID: 21300000, guid: bd677ffcf6544ae41a4a03facba0e2cc, type: 3}
+          - {fileID: 21300000, guid: acb658aa9acefd34a97ae1fe1751bd53, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 59fbb8b8ce7a0d0488b39e4dcf18482b,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 02966a4de21b3b1468a763317f507c00, type: 3}
+          - {fileID: 21300000, guid: 34ff4062403c385449dfdcf0001d32f4, type: 3}
+          - {fileID: 21300000, guid: f1ba3bbb1eed6454698230248ae549db, type: 3}
+          - {fileID: 21300000, guid: 25eed8f2f97c3db4da86573d283ecded, type: 3}
+          - {fileID: 21300000, guid: f34b89435764f95429091da78deaeb87, type: 3}
+          - {fileID: 21300000, guid: 77cc7296d7212914f91fcc185112cc86, type: 3}
+          - {fileID: 21300000, guid: 791ce2b0e66d6f0408914f6a06340791, type: 3}
+          - {fileID: 21300000, guid: 82619879fe552614a884f100ca7d7adb, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 1b533e06abb6f6f4186f4c92e69cb9c4,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 0a2a289bb75507a41ae231484539a431, type: 3}
+          - {fileID: 21300000, guid: 776fde99739562e4eb338c42686217dc, type: 3}
+          - {fileID: 21300000, guid: 195b9b7e4b43775418321e4fbd22fd23, type: 3}
+          - {fileID: 21300000, guid: bfc49f8cdd5005245bc71f35eddf79bb, type: 3}
+          - {fileID: 21300000, guid: 9ff8240dae4eac644bd65251e4e9c0a4, type: 3}
+          - {fileID: 21300000, guid: 7311100721b812d49bc6109648e61f57, type: 3}
+          - {fileID: 21300000, guid: 4e9f16467eeffd34e90e15fc5d43e7a8, type: 3}
+          - {fileID: 21300000, guid: c5a6809999f61ac4096047479d0fa647, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 8e8f0063722efd84c8aa20bdcf6a93e3,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: c1a693c9e4c9325409b398cc2643e884, type: 3}
+          - {fileID: 21300000, guid: a8bf13d798f8b454c99308250811d58d, type: 3}
+          - {fileID: 21300000, guid: 10ffa0beb55b8d04c8f74fd9b488c6b0, type: 3}
+          - {fileID: 21300000, guid: 074b2521586db7243af495d71e081d92, type: 3}
+          - {fileID: 21300000, guid: f7eb5f7102c6fb7458fd2f52a46332a4, type: 3}
+          - {fileID: 21300000, guid: b89d0df5d981f8d4192c155879114157, type: 3}
+          - {fileID: 21300000, guid: bd44767550edf104da47670a9f864ea4, type: 3}
+          - {fileID: 21300000, guid: 40520abb24a6d16438467030726a103c, type: 3}
         - defaultSprite: {fileID: 21300000, guid: b0352ae9959df5d4f8a32aea921ba5ef,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 879bbaff8420cb14d98b45c6538ed609, type: 3}
+          - {fileID: 21300000, guid: 324b9e05fac7f7844a1f4356f083fad9, type: 3}
+          - {fileID: 21300000, guid: 7b91c55c8ab17784882fc1acbaf91588, type: 3}
+          - {fileID: 21300000, guid: 22eccd213fd73d74ca971fcb90de6ba6, type: 3}
+          - {fileID: 21300000, guid: ca44b294d524ee84f8c6bb7550a59da8, type: 3}
+          - {fileID: 21300000, guid: cfdfb1d04476f144ab734736b107864b, type: 3}
+          - {fileID: 21300000, guid: c654f9b729d366f4a9f935f86a1a08f4, type: 3}
+          - {fileID: 21300000, guid: 8e5db85d92e8df34cb256b922b4f49c5, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 21300000, guid: 083cc04684c05d64abaf8716ced522d3,
+          animationSprites:
+          - {fileID: 21300000, guid: 8b5d3a062076acb4ba251b59adf3a744, type: 3}
+          - {fileID: 21300000, guid: 52c225993e816e04d81113e055c3b9be, type: 3}
+          - {fileID: 21300000, guid: 9c29afe8987975e489e027b44e1ea5f1, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: e6a826caef48eb3489328d3acaac20d5,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 16b3dfe0e803b284bbca54cdd10e7be4, type: 3}
+          - {fileID: 21300000, guid: b0632bd38bf6edd409e7cdce32752e61, type: 3}
+          - {fileID: 21300000, guid: d14f817bd0f21b04eafceb3eede1a84f, type: 3}
+          - {fileID: 21300000, guid: fa597028005641644b36c9fad4e5f528, type: 3}
+          - {fileID: 21300000, guid: d885731b2d0a912498eb60b2f892b946, type: 3}
+          - {fileID: 21300000, guid: 76873cf03419a1d4ab85a2ee1f2b31f9, type: 3}
+          - {fileID: 21300000, guid: d1b578a640320fd43963eeaa34521ece, type: 3}
+          - {fileID: 21300000, guid: d09f3bb096f7a4a48b0fceef8ea30afa, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 4766fe025a1999641812f1a01800218f, type: 3}
+          - {fileID: 21300000, guid: 456787d6c0062194d829b374de1af3c6, type: 3}
+          - {fileID: 21300000, guid: 1c26a16f8a9f88f4a956530c24925f51, type: 3}
+          - {fileID: 21300000, guid: 63e0d2a6c27d7ae41864b7dacefe7b16, type: 3}
+          - {fileID: 21300000, guid: 432a8e1218db7e648ab2da0b7cdfd771, type: 3}
+          - {fileID: 21300000, guid: a498b811ec351cd489b7d303b7b12849, type: 3}
+          - {fileID: 21300000, guid: 36e5f3c88312b10458d14faa9a6234cb, type: 3}
+          - {fileID: 21300000, guid: 5dc440500caad6846a89d0608548f3f3, type: 3}
   - raceName: WOLF
     race: 10
     maleAssets:
@@ -1887,103 +2034,51 @@ MonoBehaviour:
       characterClassAssets:
         m_keys:
         - Attack
-        - Idle
         - Ravager
         - Sleep Ground
-        - Walk
         m_values:
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites: []
         - defaultSprite: {fileID: 21300000, guid: 41381973a88100446aea32cc5794bd05,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 7b57e1a9caaae0b4f837523dd4b8b088, type: 3}
+          - {fileID: 21300000, guid: d5511eb3175c1354abec7f2e35c162fd, type: 3}
+          - {fileID: 21300000, guid: 9c406ff63f0b8374f8464e32c432d207, type: 3}
+          - {fileID: 21300000, guid: 00446fcf38af91b45b14d10992177f9c, type: 3}
+          - {fileID: 21300000, guid: e42620bbcd493a642b75981e4bba06af, type: 3}
+          - {fileID: 21300000, guid: 6d16b37e4428a85479f15ddbeb89d6ea, type: 3}
+          - {fileID: 21300000, guid: 116225e411cae314287d4b9ab172dc06, type: 3}
+          - {fileID: 21300000, guid: 14af5f16f894b34469f4bc00de7a86d3, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 88cab1c59280af54bb9c343e54585010, type: 3}
+          - {fileID: 21300000, guid: a2103a6c83ec01e4fa22d80827283a98, type: 3}
     femaleAssets:
       gender: 1
       characterClassAssets:
         m_keys:
         - Attack
-        - Idle
         - Ravager
         - Sleep Ground
-        - Walk
         m_values:
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites: []
         - defaultSprite: {fileID: 21300000, guid: 1b959a7bc06a8bd4292bbb6f2ba4f001,
             type: 3}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: edb75e2005e42d448a5df726edc9f3bf, type: 3}
+          - {fileID: 21300000, guid: 2181b6afc53ef3443ad5b2657799fa03, type: 3}
+          - {fileID: 21300000, guid: 48a80c66473ff5443b31a993c5f98bf0, type: 3}
+          - {fileID: 21300000, guid: 0dc20db007ef0ba4089672586a9af9bf, type: 3}
+          - {fileID: 21300000, guid: 4f6c73d3d8feef94789004c73bf374bb, type: 3}
+          - {fileID: 21300000, guid: 5ce3525323251964c935f0787fd3e6ac, type: 3}
+          - {fileID: 21300000, guid: 27d6a628a4be7d54fabf7480aca30051, type: 3}
+          - {fileID: 21300000, guid: ad6bdabf045effc4cae98611d3d8d19c, type: 3}
         - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
-        - defaultSprite: {fileID: 0}
-          animator: {fileID: 0}
-          idleClip: {fileID: 0}
-          attackClip: {fileID: 0}
-          walkClip: {fileID: 0}
-          deadClip: {fileID: 0}
-          raiseDeadClip: {fileID: 0}
-          sleepGroundClip: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 0ed6bb5a01ff09d419b590feae107432, type: 3}
+          - {fileID: 21300000, guid: 738e6a1cce21562458bbdaea08d07482, type: 3}
   baseAnimator: {fileID: 0}
   corpseSprite: {fileID: 21300000, guid: 5255390e6fedf8140a25b567a5f57b6c, type: 3}
   summonSettings:

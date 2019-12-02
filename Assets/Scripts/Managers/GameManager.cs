@@ -33,12 +33,9 @@ public class GameManager : MonoBehaviour {
     public PROGRESSION_SPEED currProgressionSpeed;
 
 	public float progressionSpeed;
-	public bool isPaused = true;
-    public bool initiallyHideRoads = false;
+	public bool isPaused { get; private set; }
     public bool allowConsole = true;
     public bool displayFPS = true;
-    public bool allCharactersAreVisible = true;
-    public bool inspectAll = false;
     public bool ignoreEventTriggerWeights = false;
     public bool showFullDebug = false;
     public static bool showAllTilesTooltip = false;
@@ -162,7 +159,6 @@ public class GameManager : MonoBehaviour {
 	public void StartProgression(){
         _gameHasStarted = true;
         days = 1;
-        //UIManager.Instance.SetProgressionSpeed1X();
         UIManager.Instance.Pause();
         lastProgressionBeforePausing = "paused";
         SchedulingManager.Instance.StartScheduleCalls ();
@@ -604,14 +600,6 @@ public class GameManager : MonoBehaviour {
     #endregion
 
     #region Utilities
-    public void ToggleCharactersVisibility(bool state) {
-        allCharactersAreVisible = state;
-        Messenger.Broadcast(Signals.TOGGLE_CHARACTERS_VISIBILITY);
-    }
-    public void ToggleInspectAll(bool state) {
-        inspectAll = state;
-        Messenger.Broadcast(Signals.INSPECT_ALL);
-    }
     public void ToggleIgnoreEventTriggerWeights(bool state) {
         ignoreEventTriggerWeights = state;
     }

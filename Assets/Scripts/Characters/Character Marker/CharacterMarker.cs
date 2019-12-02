@@ -70,7 +70,6 @@ public class CharacterMarker : PooledObject {
     public Vector2 anchoredPos { get; private set; }
     public Vector3 centeredWorldPos { get; private set; }
     public LocationGridTile destinationTile { get; private set; }
-    public bool cannotCombat { get; private set; }
     public int useWalkSpeed { get; private set; }
     public int targettedByRemoveNegativeTraitActionsCounter { get; private set; }
     public List<IPointOfInterest> terrifyingObjects { get; private set; } //list of objects that this character is terrified of and must avoid
@@ -102,9 +101,7 @@ public class CharacterMarker : PooledObject {
         }
         Sprite hair = CharacterManager.Instance.GetMarkerHairSprite(character.gender);
         hairImg.sprite = hair;
-        Material hairMat = Instantiate(CharacterManager.Instance.hsvMaterial);
-        hairMat.SetVector("_HSVAAdjust", new Vector4(character.portraitSettings.hairColor / 360f, 0f, 0f, 0f));
-        hairImg.materials = new Material[] { CharacterManager.Instance.spriteLightingMaterial, hairMat };
+        hairImg.materials = new Material[] { CharacterManager.Instance.spriteLightingMaterial, character.visuals.hairMaterial };
         UpdateMarkerVisuals();
         UpdateActionIcon();
 
@@ -119,21 +116,9 @@ public class CharacterMarker : PooledObject {
         avoidReason = string.Empty;
         attackSpeedMeter = 0f;
         OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
-        //flee
-        SetHasFleePath(false);
         UpdateHairState();
 
-        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
-        Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
-        Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
-        Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
-        Messenger.AddListener<Character, string>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
-        Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
-        Messenger.AddListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
-
-        Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
-        Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
+        AddListeners();
 
         PathfindingManager.Instance.AddAgent(pathfindingAI);
     }
@@ -151,6 +136,13 @@ public class CharacterMarker : PooledObject {
                 UpdateAttackSpeedMeter();
             }
         }
+    }
+    void LateUpdate() {
+        string currSpriteName = mainImg.sprite.name;
+        if (character.visuals.markerVisuals.ContainsKey(currSpriteName)) {
+            Sprite newSprite = character.visuals.markerVisuals[currSpriteName];
+            mainImg.sprite = newSprite;
+        } 
     }
     #endregion
 
@@ -189,6 +181,31 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Listeners
+    private void AddListeners() {
+        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
+        Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
+        Messenger.AddListener<Character, string>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
+        Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
+        Messenger.AddListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
+        Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
+        Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
+
+    }
+    private void RemoveListeners() {
+        Messenger.RemoveListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.RemoveListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
+        Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
+        Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
+        Messenger.RemoveListener<Character, string>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
+        Messenger.RemoveListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
+        Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
+        Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
+    }
     public void OnCharacterGainedTrait(Character characterThatGainedTrait, Trait trait) {
         //this will make this character flee when he/she gains an injured trait
         if (characterThatGainedTrait == this.character) {
@@ -389,42 +406,11 @@ public class CharacterMarker : PooledObject {
             }
         }
     }
-    //public void OnCharacterTargettedByAction(GoapAction action) {
-    //    UpdateActionIcon();
-    //    for (int i = 0; i < action.expectedEffects.Count; i++) {
-    //        if(action.expectedEffects[i].conditionType == GOAP_EFFECT_CONDITION.REMOVE_TRAIT) {
-    //            if(action.expectedEffects[i].conditionKey is string) {
-    //                string key = (string) action.expectedEffects[i].conditionKey;
-    //                if(AttributeManager.Instance.allTraits.ContainsKey(key) && AttributeManager.Instance.allTraits[key].effect == TRAIT_EFFECT.NEGATIVE) {
-    //                    AdjustTargettedByRemoveNegativeTraitActions(1);
-    //                } else if (key == "Negative") {
-    //                    AdjustTargettedByRemoveNegativeTraitActions(1);
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
-    //public void OnCharacterRemovedTargettedByAction(GoapAction action) {
-    //    UpdateActionIcon();
-    //    for (int i = 0; i < action.expectedEffects.Count; i++) {
-    //        if (action.expectedEffects[i].conditionType == GOAP_EFFECT_CONDITION.REMOVE_TRAIT) {
-    //            if (action.expectedEffects[i].conditionKey is string) {
-    //                string key = (string) action.expectedEffects[i].conditionKey;
-    //                if (AttributeManager.Instance.allTraits.ContainsKey(key) && AttributeManager.Instance.allTraits[key].effect == TRAIT_EFFECT.NEGATIVE) {
-    //                    AdjustTargettedByRemoveNegativeTraitActions(-1);
-    //                } else if (key == "Negative") {
-    //                    AdjustTargettedByRemoveNegativeTraitActions(-1);
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
     #endregion
 
     #region Object Pool
     public override void Reset() {
         base.Reset();
-        //Debug.Log(GameManager.Instance.TodayLogString() + "reset marker: " + name);
         hoverEnterAction = null;
         hoverExitAction = null;
         destinationTile = null;
@@ -434,26 +420,12 @@ public class CharacterMarker : PooledObject {
         actionIcon.gameObject.SetActive(false);
         StopPerTickFlee();
         PathfindingManager.Instance.RemoveAgent(pathfindingAI);
-        Messenger.RemoveListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.RemoveListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
-        //Messenger.RemoveListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
-        //Messenger.RemoveListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
-        Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
-        Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
-        Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
-        //Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
-        Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
-        Messenger.RemoveListener<Character, string>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
-        Messenger.RemoveListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
-        Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
-        Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
+        RemoveListeners();
 
         visionCollision.Reset();
         GameObject.Destroy(collisionTrigger.gameObject);
         collisionTrigger = null;
-        for (int i = 0; i < colliders.Length; i++) {
-            colliders[i].enabled = false;
-        }
+        SetCollidersState(false);
         pathfindingAI.ResetThis();
         character = null;
     }
@@ -643,37 +615,6 @@ public class CharacterMarker : PooledObject {
             hairImg.color = Color.white;
         }
     }
-    public void HighlightMarker(Color color) {
-        colorHighlight.gameObject.SetActive(true);
-        colorHighlight.color = color;
-    }
-    public void UnhighlightMarker() {
-        colorHighlight.gameObject.SetActive(false);
-    }
-    [ContextMenu("Visuals Forward")]
-    public void PrintForwardPosition() {
-        Debug.Log(visualsParent.up);
-    }
-    [Header("For Testing")]
-    [SerializeField] private string targetCharacterName;
-    [ContextMenu("Check If Path Possible")]
-    private void CheckIfPathIsPossible() {
-        Character targetCharacter = CharacterManager.Instance.GetCharacterByName(targetCharacterName);
-        NNConstraint nodeConstraint = new NNConstraint();
-        nodeConstraint.constrainDistance = false;
-        GraphNode node1 = this.character.gridTileLocation.parentAreaMap.pathfindingGraph.GetNearest(this.transform.position, nodeConstraint).node;
-        GraphNode node2 = targetCharacter.gridTileLocation.parentAreaMap.pathfindingGraph.GetNearest(targetCharacter.marker.transform.position, nodeConstraint).node;
-        if (node1 == null) {
-            Debug.LogWarning("Node1 is null!");
-        }
-        if (node2 == null) {
-            Debug.LogWarning("Node2 is null!");
-        }
-        if (node1 != null && node2 != null) {
-            bool hasPath = PathUtilities.IsPathPossible(node1, node2);
-            Debug.Log(this.character.name + " has path to " + targetCharacter.name + "? " + hasPath.ToString());
-        }
-    }
     #endregion
 
     #region Animation
@@ -696,12 +637,7 @@ public class CharacterMarker : PooledObject {
         PlayAnimation("Sleep Ground");
     }
     public void PlayAnimation(string animation) {
-        //Debug.Log(character.name + " played " + animation + " animation.");
-        if (animator.runtimeAnimatorController == null) {
-            return;
-        }
         animator.Play(animation, 0, 0.5f);
-        //StartCoroutine(PlayAnimation(animation));
     }
     public void UpdateAnimation() {
         //if (isInCombatTick) {
@@ -715,7 +651,6 @@ public class CharacterMarker : PooledObject {
         }
         if (character.isDead) {
             PlayAnimation("Dead");
-            mainImg.sprite = CharacterManager.Instance.corpseSprite;
             UpdateHairState();
         } else if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) || character.canMove == false) {
             PlaySleepGround();
@@ -810,10 +745,6 @@ public class CharacterMarker : PooledObject {
         useWalkSpeed += amount;
         useWalkSpeed = Mathf.Max(0, useWalkSpeed);
     }
-    public void AdjustTargettedByRemoveNegativeTraitActions(int amount) {
-        targettedByRemoveNegativeTraitActionsCounter += amount;
-        targettedByRemoveNegativeTraitActionsCounter = Mathf.Max(0, targettedByRemoveNegativeTraitActionsCounter);
-    }
     public void SetActiveState(bool state) {
         this.gameObject.SetActive(state);
     }
@@ -829,24 +760,24 @@ public class CharacterMarker : PooledObject {
         clickedImg.enabled = state;
     }
     public void UpdateMarkerVisuals() {
-        CharacterClassAsset assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender, character.characterClass.className);
-        if (assets != null) {
-            if (assets.animator != null) {
-                animatorOverrideController = new AnimatorOverrideController(assets.animator);
+        //CharacterClassAsset assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender, character.characterClass.className);
+        //if (assets != null) {
+        //    if (assets.animator != null) {
+        //        animatorOverrideController = new AnimatorOverrideController(assets.animator);
 
-                animatorOverrideController["Idle"] = assets.idleClip;
-                animatorOverrideController["Dead"] = assets.deadClip;
-                animatorOverrideController["Raise Dead"] = assets.raiseDeadClip;
-                animatorOverrideController["Sleep Ground"] = assets.sleepGroundClip;
-                animatorOverrideController["Walk"] = assets.walkClip;
-                animatorOverrideController["Attack"] = assets.attackClip;
+        //        animatorOverrideController["Idle"] = assets.idleClip;
+        //        animatorOverrideController["Dead"] = assets.deadClip;
+        //        animatorOverrideController["Raise Dead"] = assets.raiseDeadClip;
+        //        animatorOverrideController["Sleep Ground"] = assets.sleepGroundClip;
+        //        animatorOverrideController["Walk"] = assets.walkClip;
+        //        animatorOverrideController["Attack"] = assets.attackClip;
 
-                animator.runtimeAnimatorController = animatorOverrideController;
-            } else {
-                animator.runtimeAnimatorController = null;
-            }
-            mainImg.sprite = assets.defaultSprite;
-        }
+        //        animator.runtimeAnimatorController = animatorOverrideController;
+        //    } else {
+        //        animator.runtimeAnimatorController = null;
+        //    }
+        //    mainImg.sprite = assets.defaultSprite;
+        //}
         UpdateHairState();
     }
     public void UpdatePosition() {
@@ -866,9 +797,7 @@ public class CharacterMarker : PooledObject {
     public void InitialPlaceMarkerAt(LocationGridTile tile, bool addToLocation = true) {
         PlaceMarkerAt(tile, addToLocation);
         pathfindingAI.UpdateMe();
-        for (int i = 0; i < colliders.Length; i++) {
-            colliders[i].enabled = true;
-        }
+        SetCollidersState(true);
         visionCollision.Initialize();
         CreateCollisionTrigger();
         UpdateSpeed();
@@ -884,24 +813,7 @@ public class CharacterMarker : PooledObject {
         UpdateAnimation();
         UpdatePosition();
         UpdateActionIcon();
-        for (int i = 0; i < colliders.Length; i++) {
-            if (!colliders[i].enabled) {
-                colliders[i].enabled = true;
-            }
-        }
-        //if (!visionCollision.isInitialized) {
-        //    visionCollision.Initialize();
-            
-        //}
-        //if (collisionTrigger == null) {
-        //    CreateCollisionTrigger();
-        //}
-    }
-    public void PlaceMarkerAt(Vector3 localPos, Vector3 lookAt) {
-        StartCoroutine(Positioner(localPos, lookAt));
-    }
-    public void PlaceMarkerAt(Vector3 localPos, Quaternion lookAt) {
-        StartCoroutine(Positioner(localPos, lookAt));
+        SetCollidersState(true);
     }
     private IEnumerator Positioner(Vector3 localPos, Vector3 lookAt) {
         yield return null;
@@ -917,9 +829,7 @@ public class CharacterMarker : PooledObject {
         if (character.race == RACE.SKELETON || character is Summon || character.minion != null || isOutsideSettlement) {
             character.DestroyMarker();
         } else {
-            for (int i = 0; i < colliders.Length; i++) {
-                colliders[i].enabled = false;
-            }
+            SetCollidersState(false);
             onProcessCombat = null;
             pathfindingAI.ClearAllCurrentPathData();
             UpdateAnimation();
@@ -943,9 +853,7 @@ public class CharacterMarker : PooledObject {
     }
     public void OnReturnToLife() {
         gameObject.SetActive(true);
-        for (int i = 0; i < colliders.Length; i++) {
-            colliders[i].enabled = true;
-        }
+        SetCollidersState(true);
         UpdateAnimation();
         UpdateActionIcon();
     }
@@ -995,7 +903,7 @@ public class CharacterMarker : PooledObject {
     }
     private void UpdateHairState() {
         //TODO: Find another way to unify this
-        if (character.characterClass.className == "Mage" || character.portraitSettings.hair == -1 || character.race == RACE.WOLF || character.isDead) {
+        if (character.characterClass.className == "Mage" || character.visuals.portraitSettings.hair == -1 || character.race == RACE.WOLF || character.isDead || character.race == RACE.SKELETON) {
             hairImg.gameObject.SetActive(false);
         } else {
             hairImg.gameObject.SetActive(true);
@@ -1155,14 +1063,6 @@ public class CharacterMarker : PooledObject {
         } else {
             return true; //allow any other object types
         }
-    }
-    public bool AddHostileInRange(IPointOfInterest poi, out CharacterState reaction, bool checkHostility = true, bool processCombatBehavior = true, bool isLethal = true) {
-        if (AddHostileInRange(poi, checkHostility, processCombatBehavior, isLethal)) {
-            reaction = character.stateComponent.currentState;
-            return true;
-        }
-        reaction = null;
-        return false;
     }
     public void RemoveHostileInRange(IPointOfInterest poi, bool processCombatBehavior = true) {
         if (hostilesInRange.Remove(poi)) {
@@ -1337,17 +1237,6 @@ public class CharacterMarker : PooledObject {
             }
         }
     }
-    //public void RemoveAvoidInRange(Character poi, bool processCombatBehavior = true) {
-    //    if (avoidInRange.Remove(poi)) {
-    //        //Debug.Log("Removed avoid in range " + poi.name + " from " + this.character.name);
-    //        //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
-    //        if (processCombatBehavior) {
-    //            if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
-    //                Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
-    //            } 
-    //        }
-    //    }
-    //}
     public void ClearAvoidInRange(bool processCombatBehavior = true) {
         if(avoidInRange.Count > 0) {
             avoidInRange.Clear();
@@ -1416,11 +1305,6 @@ public class CharacterMarker : PooledObject {
         if (!terrifyingObjects.Contains(obj)) {
             terrifyingObjects.Add(obj);
             //rvoController.avoidedAgents.Add(character.marker.fleeingRVOController.rvoAgent);
-        }
-    }
-    public void AddTerrifyingObject(List<IPointOfInterest> objs) {
-        for (int i = 0; i < objs.Count; i++) {
-            AddTerrifyingObject(objs[i]);
         }
     }
     public void RemoveTerrifyingObject(IPointOfInterest obj) {
@@ -1660,6 +1544,14 @@ public class CharacterMarker : PooledObject {
     }
     public void AddOnProcessCombatAction(OnProcessCombat action) {
         onProcessCombat += action;
+    }
+    #endregion
+
+    #region Colliders
+    public void SetCollidersState(bool state) {
+        for (int i = 0; i < colliders.Length; i++) {
+            colliders[i].enabled = state;
+        }
     }
     #endregion
 }

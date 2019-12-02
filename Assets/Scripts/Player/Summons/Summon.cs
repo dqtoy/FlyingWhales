@@ -42,20 +42,8 @@ public class Summon : Character, IWorldObject {
         fullness = FULLNESS_DEFAULT;
         happiness = HAPPINESS_DEFAULT;
 
-
-        hSkinColor = UnityEngine.Random.Range(-360f, 360f);
-        hHairColor = UnityEngine.Random.Range(-360f, 360f);
-        demonColor = UnityEngine.Random.Range(-144f, 144f);
-
-        //supply
-        //SetSupply(UnityEngine.Random.Range(10, 61)); //Randomize initial supply per character (Random amount between 10 to 60.)
-
         ConstructInitialGoapAdvertisementActions();
         //SubscribeToSignals(); //NOTE: Only made characters subscribe to signals when their area is the one that is currently active. TODO: Also make sure to unsubscribe a character when the player has completed their map.
-        //GetRandomCharacterColor();
-        //GameDate gameDate = GameManager.Instance.Today();
-        //gameDate.AddTicks(1);
-        //SchedulingManager.Instance.AddEntry(gameDate, () => PlanGoapActions());
     }
     public override void OnAfterActionStateSet(string stateName, ActualGoapNode node) { } //overriddn OnActionStateSet so that summons cannot witness other events.
     protected override void OnSuccessInvadeArea(Area area) {

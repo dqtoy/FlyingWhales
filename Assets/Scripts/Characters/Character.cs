@@ -9,7 +9,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
     protected string _name;
     protected string _firstName;
-    //protected string _characterColorCode;
     protected int _id;
     protected int _doNotDisturb;
     protected int _doNotGetHungry;
@@ -26,8 +25,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     protected Faction _faction;
     protected CharacterParty _ownParty;
     protected CharacterParty _currentParty;
-    protected PortraitSettings _portraitSettings;
-    //protected Color _characterColor;
     protected Minion _minion;
     protected CombatCharacter _currentCombatCharacter;
     protected List<Log> _history;
@@ -42,6 +39,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     protected int _maxExperience;
     protected int _sp;
     protected int _maxSP;
+
+    //visuals
+    public CharacterVisuals visuals { get; private set; }
+
     public int doNotRecoverHP { get; protected set; }
     public SEXUALITY sexuality { get; private set; }
     public int attackPowerMod { get; protected set; }
@@ -132,12 +133,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public TIME_IN_WORDS forcedFullnessRecoveryTimeInWords { get; protected set; }
     public TIME_IN_WORDS forcedTirednessRecoveryTimeInWords { get; protected set; }
 
-    public static readonly int TREE_AWARENESS_LIMIT = 5; //The number of Tree Objects a character can have in his awareness, everytime a character adds a new tree object to his/her awareness list, remove the oldest one if this limit is reached
-
-    //portrait
-    public float hSkinColor { get; protected set; }
-    public float hHairColor { get; protected set; }
-    public float demonColor { get; protected set; }
+    public static readonly int TREE_AWARENESS_LIMIT = 5; //The number of Tree Objects a character can have in his awareness, everytime a character adds a new tree object to his/her awareness list, remove the oldest one if this limit is reached   
 
     //hostility
     public virtual int ignoreHostility { get; protected set; }
@@ -244,17 +240,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public Area specificLocation {
         get { return _currentParty.specificLocation; }
     }
-    //public Color characterColor {
-    //    get { return _characterColor; }
-    //}
-    //public string characterColorCode {
-    //    get { return _characterColorCode; }
-    //}
     public List<Log> history {
         get { return this._history; }
-    }
-    public PortraitSettings portraitSettings {
-        get { return _portraitSettings; }
     }
     public int level {
         get { return _level; }
@@ -312,9 +299,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public int doNotGetTired {
         get { return _doNotGetTired; }
     }
-    //public bool isDefender {
-    //    get { return defendingArea != null; }
-    //}
     public CombatCharacter currentCombatCharacter {
         get { return _currentCombatCharacter; }
     }
@@ -357,7 +341,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public bool isHungry { get { return fullness <= FULLNESS_THRESHOLD_1; } }
     public bool isTired { get { return tiredness <= TIREDNESS_THRESHOLD_1; } }
     public bool isLonely { get { return happiness <= HAPPINESS_THRESHOLD_1; } }
-
     public AlterEgoData currentAlterEgo {
         get {
             if (alterEgos == null || !alterEgos.ContainsKey(currentAlterEgoName)) {
@@ -408,6 +391,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         GenerateSexuality();
         StartingLevel();
         InitializeAlterEgos();
+        visuals = new CharacterVisuals(this);
     }
     public Character(CharacterRole role, string className, RACE race, GENDER gender) : this() {
         _id = Utilities.SetID(this);
@@ -421,6 +405,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         GenerateSexuality();
         StartingLevel();
         InitializeAlterEgos();
+        visuals = new CharacterVisuals(this);
     }
     public Character(CharacterRole role, string className, RACE race, GENDER gender, SEXUALITY sexuality) : this() {
         _id = Utilities.SetID(this);
@@ -434,35 +419,26 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         SetSexuality(sexuality);
         StartingLevel();
         InitializeAlterEgos();
+        visuals = new CharacterVisuals(this);
     }
     public Character(SaveDataCharacter data) {
         _id = Utilities.SetID(this, data.id);
-        //_characterColorCode = data.characterColorCode;
         _gender = data.gender;
         SetSexuality(data.sexuality);
         _characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
         RaceSetting raceSetting = RaceManager.Instance.racesDictionary[data.race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
         AssignRole(CharacterManager.Instance.GetRoleByRoleType(data.roleType), false);
-        SetPortraitSettings(data.portraitSettings);
-        //_characterColor = data.characterColor;
         SetName(data.name);
-
-        hSkinColor = data.hSkinColor;
-        hHairColor = data.hHairColor;
-        demonColor = data.demonColor;
+        visuals = new CharacterVisuals(data);
 
         currentAlterEgoName = data.currentAlterEgoName;
         originalClassName = data.originalClassName;
         isStoppedByOtherCharacter = data.isStoppedByOtherCharacter;
 
         _history = new List<Log>();
-        //_elementalWeaknesses = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
-        //_elementalResistances = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
         combatHistory = new Dictionary<int, Combat>();
         advertisedActions = new List<INTERACTION_TYPE>();
-        //allGoapPlans = new List<GoapPlan>();
-        //targettedByAction = new List<GoapAction>();
         stateComponent = new CharacterStateComponent(this);
         items = new List<SpecialToken>();
         jobQueue = new JobQueue(this);
@@ -491,10 +467,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         CreateTraitContainer();
 
         combatHistory = new Dictionary<int, Combat>();
-        //currentInteractionTypes = new List<INTERACTION_TYPE>();
         advertisedActions = new List<INTERACTION_TYPE>();
-        //allGoapPlans = new List<GoapPlan>();
-        //targettedByAction = new List<GoapAction>();
         stateComponent = new CharacterStateComponent(this);
         items = new List<SpecialToken>();
         jobQueue = new JobQueue(this);
@@ -591,17 +564,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         tiredness = TIREDNESS_DEFAULT;
         fullness = FULLNESS_DEFAULT;
         happiness = HAPPINESS_DEFAULT;
-
-
-        hSkinColor = UnityEngine.Random.Range(-360f, 360f);
-        hHairColor = UnityEngine.Random.Range(-360f, 360f);
-        demonColor = UnityEngine.Random.Range(-144f, 144f);
-
         //supply
         SetSupply(UnityEngine.Random.Range(10, 61)); //Randomize initial supply per character (Random amount between 10 to 60.)
-                                                     //#if !WORLD_CREATION_TOOL
-                                                     //        GetRandomCharacterColor();
-                                                     //#endif
     }
     public void InitialCharacterPlacement(LocationGridTile tile) {
         tiredness = TIREDNESS_DEFAULT;
@@ -1098,6 +1062,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         for (int i = 0; i < _characterClass.traitNames.Length; i++) {
             traitContainer.AddTrait(this, _characterClass.traitNames[i]);
         }
+        visuals.UpdateAllVisuals(this);
         if (marker != null) {
             marker.UpdateMarkerVisuals();
         }
@@ -2359,7 +2324,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             traitContainer.AddTrait(this, _raceSetting.traitNames[i]);
         }
         //Update Portrait to use new race
-        _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender, characterClass.className);
+        visuals.UpdateAllVisuals(this);
         if (marker != null) {
             marker.UpdateMarkerVisuals();
         }
@@ -3371,12 +3336,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     #endregion
 
-    #region Portrait Settings
-    public void SetPortraitSettings(PortraitSettings settings) {
-        _portraitSettings = settings;
-    }
-    #endregion
-
     #region RPG
     private void StartingLevel() {
         _level = 1;
@@ -3387,10 +3346,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     private bool hpMagicRangedStatMod;
     public virtual void LevelUp() {
         //Only level up once per day
-        //if (_lastLevelUpDay == GameManager.Instance.continuousDays) {
-        //    return;
-        //}
-        //_lastLevelUpDay = GameManager.Instance.continuousDays;
         if (_level < CharacterManager.Instance.maxLevel) {
             _level += 1;
             //Add stats per level from class
@@ -3423,9 +3378,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             ResetToFullHP();
 
             Messenger.Broadcast(Signals.CHARACTER_LEVEL_CHANGED, this);
-            //if (_playerCharacterItem != null) {
-            //    _playerCharacterItem.UpdateMinionItem();
-            //}
         }
     }
     public void LevelUp(int amount) {
@@ -3952,10 +3904,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         } else if (_minion == null && minion != null) {
             Messenger.Broadcast(Signals.CHARACTER_BECOMES_MINION_OR_SUMMON, this);
         }
-        //else if (_minion != null && minion != null && _minion != minion) {
-        //    Messenger.Broadcast(Signals.CHARACTER_BECOMES_MINION_OR_SUMMON);
-        //}
         _minion = minion;
+        visuals.CreateWholeImageMaterial();
         //UnsubscribeSignals(); //Removed this since character's listeners are not on by default now.
     }
     public void RecruitAsMinion(UnsummonedMinionData minionData) {
@@ -5141,17 +5091,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         return false;
     }
-    //private void OnItemRemovedFromTile(SpecialToken removedItem, LocationGridTile removedFrom) {
-    //    //whenever an item is removed from a tile, remove all characters that are aware of it to prevent this issue. 
-    //    //https://trello.com/c/JEg9o5Ox/2352-scrapping-healing-potion-in-outskirts
-    //    RemoveAwareness(removedItem); 
-    //}
-    //private void OnItemPlacedOnTile(SpecialToken addedItem, LocationGridTile addedTo) {
-    //    //if an item is dropped at a warehouse, inform all residents of that area
-    //    if (addedTo.structure.structureType == STRUCTURE_TYPE.WAREHOUSE && addedTo.parentAreaMap.area == this.specificLocation) { 
-    //        AddAwareness(addedItem);
-    //    }
-    //}
     #endregion
 
     #region Needs
@@ -5751,56 +5690,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         return false;
     }
-    //public List<GoapAction> AdvertiseActionsToActorFromDeadCharacter(Character actor, Dictionary<INTERACTION_TYPE, object[]> otherData) {
-    //    if (advertisedActions != null && advertisedActions.Count > 0) {
-    //        List<GoapAction> usableActions = new List<GoapAction>();
-    //        for (int i = 0; i < advertisedActions.Count; i++) {
-    //            INTERACTION_TYPE currType = advertisedActions[i];
-    //            if (RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
-    //                object[] data = null;
-    //                if (otherData != null) {
-    //                    if (otherData.ContainsKey(currType)) {
-    //                        data = otherData[currType];
-    //                    } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-    //                        data = otherData[INTERACTION_TYPE.NONE];
-    //                    }
-    //                }
-    //                //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
-    //                //if (goapAction == null) {
-    //                //    throw new Exception("Goap action " + currType.ToString() + " is null!");
-    //                //}
-    //                if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currType, actor, this, data)
-    //                    && InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)) {
-
-    //                    GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
-    //                    if (goapAction != null) {
-    //                        if (data != null) {
-    //                            goapAction.InitializeOtherData(data);
-    //                        }
-    //                        usableActions.Add(goapAction);
-    //                    } else {
-    //                        throw new System.Exception("Goap action " + currType.ToString() + " is null!");
-    //                    }
-    //                }
-    //                //if (currType == INTERACTION_TYPE.CRAFT_ITEM) {
-    //                //    Craftsman craftsman = GetTrait("Craftsman") as Craftsman;
-    //                //    for (int j = 0; j < craftsman.craftedItemNames.Length; j++) {
-    //                //        CraftItemGoap goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this, false) as CraftItemGoap;
-    //                //        goapAction.SetCraftedItem(craftsman.craftedItemNames[j]);
-    //                //        goapAction.Initialize();
-    //                //        if (goapAction.CanSatisfyRequirements()) {
-    //                //            usableActions.Add(goapAction);
-    //                //        }
-    //                //    }
-    //                //} else {
-
-    //                //}
-    //            }
-    //        }
-    //        return usableActions;
-    //    }
-    //    return null;
-    //}
     public void SetPOIState(POI_STATE state) {
         _state = state;
     }
@@ -7339,6 +7228,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
             currentAlterEgoName = alterEgoName;
             isSwitchingAlterEgo = false;
+            visuals.UpdateAllVisuals(this);
             Messenger.Broadcast(Signals.CHARACTER_SWITCHED_ALTER_EGO, this);
         } else {
             throw new Exception(this.name + " is trying to switch to alter ego " + alterEgoName + " but doesn't have an alter ego of that name!");

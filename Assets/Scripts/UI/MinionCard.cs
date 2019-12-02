@@ -105,28 +105,15 @@ public class MinionCard : MonoBehaviour {
             }
 
             //tint
-            portraitImg.material.SetVector("_HSVAAdjust", new Vector4(minion.character.demonColor / 360f, 0f, 0f, 0f));
+            portraitImg.material = minion.character.visuals.wholeImageMaterial;
         }
     }
-
-    //public void OnHoverInterventionAbility1() {
-    //    UIManager.Instance.ShowSmallInfo(minion.interventionAbilities[0].dynamicDescription);
-    //}
     public void OnExitHoverInterventionAbility1() {
         UIManager.Instance.HideSmallInfo();
     }
-    //public void OnHoverInterventionAbility2() {
-    //    UIManager.Instance.ShowSmallInfo(minion.interventionAbilities[1].dynamicDescription);
-    //}
     public void OnExitHoverInterventionAbility2() {
         UIManager.Instance.HideSmallInfo();
     }
-    //public void OnHoverCombatAbility() {
-    //    UIManager.Instance.ShowSmallInfo(minion.combatAbility.dynamicDescription);
-    //}
-    //public void OnExitHoverCombatAbility() {
-    //    UIManager.Instance.HideSmallInfo();
-    //}
 
     public void OnHoverActionAbility(object obj) {
         if (obj is string) {

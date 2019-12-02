@@ -59,16 +59,16 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
 
     public void GeneratePortrait(Character character, bool makePixelPerfect = true) {
         _character = character;
-        _portraitSettings = character.portraitSettings;
+        _portraitSettings = character.visuals.portraitSettings;
 
-        SetPortraitAsset("head", character.portraitSettings.head, _portraitSettings.race, _portraitSettings.gender, head);
-        SetPortraitAsset("brows", character.portraitSettings.brows, _portraitSettings.race, _portraitSettings.gender, brows);
-        SetPortraitAsset("eyes", character.portraitSettings.eyes, _portraitSettings.race, _portraitSettings.gender, eyes);
-        SetPortraitAsset("mouth", character.portraitSettings.mouth, _portraitSettings.race, _portraitSettings.gender, mouth);
-        SetPortraitAsset("nose", character.portraitSettings.nose, _portraitSettings.race, _portraitSettings.gender, nose);
-        SetPortraitAsset("hair", character.portraitSettings.hair, _portraitSettings.race, _portraitSettings.gender, hair);
-        SetPortraitAsset("mustache", character.portraitSettings.mustache, _portraitSettings.race, _portraitSettings.gender, mustache);
-        SetPortraitAsset("beard", character.portraitSettings.beard, _portraitSettings.race, _portraitSettings.gender, beard);
+        SetPortraitAsset("head", character.visuals.portraitSettings.head, _portraitSettings.race, _portraitSettings.gender, head);
+        SetPortraitAsset("brows", character.visuals.portraitSettings.brows, _portraitSettings.race, _portraitSettings.gender, brows);
+        SetPortraitAsset("eyes", character.visuals.portraitSettings.eyes, _portraitSettings.race, _portraitSettings.gender, eyes);
+        SetPortraitAsset("mouth", character.visuals.portraitSettings.mouth, _portraitSettings.race, _portraitSettings.gender, mouth);
+        SetPortraitAsset("nose", character.visuals.portraitSettings.nose, _portraitSettings.race, _portraitSettings.gender, nose);
+        SetPortraitAsset("hair", character.visuals.portraitSettings.hair, _portraitSettings.race, _portraitSettings.gender, hair);
+        SetPortraitAsset("mustache", character.visuals.portraitSettings.mustache, _portraitSettings.race, _portraitSettings.gender, mustache);
+        SetPortraitAsset("beard", character.visuals.portraitSettings.beard, _portraitSettings.race, _portraitSettings.gender, beard);
 
         isPixelPerfect = makePixelPerfect;
 
@@ -82,23 +82,23 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             mustache.SetNativeSize();
             beard.SetNativeSize();
 
-            (head.transform as RectTransform).anchoredPosition = new Vector2(55f, 55f);
-            (brows.transform as RectTransform).anchoredPosition = new Vector2(55f, 55f);
-            (eyes.transform as RectTransform).anchoredPosition = new Vector2(55f, 55f);
-            (mouth.transform as RectTransform).anchoredPosition = new Vector2(55f, 55f);
-            (nose.transform as RectTransform).anchoredPosition = new Vector2(55f, 55f);
-            (hair.transform as RectTransform).anchoredPosition = new Vector2(55f, 55f);
-            (mustache.transform as RectTransform).anchoredPosition = new Vector2(55f, 55f);
-            (beard.transform as RectTransform).anchoredPosition = new Vector2(55f, 55f);
+            head.rectTransform.anchoredPosition = new Vector2(55f, 55f);
+            brows.rectTransform.anchoredPosition = new Vector2(55f, 55f);
+            eyes.rectTransform.anchoredPosition = new Vector2(55f, 55f);
+            mouth.rectTransform.anchoredPosition = new Vector2(55f, 55f);
+            nose.rectTransform.anchoredPosition = new Vector2(55f, 55f);
+            hair.rectTransform.anchoredPosition = new Vector2(55f, 55f);
+            mustache.rectTransform.anchoredPosition = new Vector2(55f, 55f);
+            beard.rectTransform.anchoredPosition = new Vector2(55f, 55f);
         }
 
         if (string.IsNullOrEmpty(_portraitSettings.wholeImage) == false) {
             //use whole image
             SetWholeImageSprite(CharacterManager.Instance.GetWholeImagePortraitSprite(_portraitSettings.wholeImage));
-            SetWholeImageColor(_portraitSettings.wholeImageColor);
+            SetWholeImageMaterial(character.visuals.wholeImageMaterial);
         } else {
             SetWholeImageSprite(null);
-            SetHairColor(_portraitSettings.hairColor);
+            SetHairMaterial(character.visuals.hairMaterial);
         }
         UpdateLvl();
         UpdateFrame();
@@ -265,16 +265,13 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     #endregion
 
     #region Shader
-    private void SetHairColor(float hairColor) {
-        Material mat = Instantiate(CharacterManager.Instance.hsvMaterial);
-        mat.SetVector("_HSVAAdjust", new Vector4(hairColor / 360f, 0f, 0f, 0f));
-        hair.material = mat;
-        mustache.material = mat;
-        beard.material = mat;
+    private void SetHairMaterial(Material material) {
+        hair.material = material;
+        mustache.material = material;
+        beard.material = material;
     }
-    private void SetWholeImageColor(float wholeImageColor) {
-        wholeImage.material = Instantiate(CharacterManager.Instance.hsvMaterial);
-        wholeImage.material.SetVector("_HSVAAdjust", new Vector4(wholeImageColor / 360f, 0f, 0f, 0f));
+    private void SetWholeImageMaterial(Material material) {
+        wholeImage.material = material;
     }
     #endregion
 

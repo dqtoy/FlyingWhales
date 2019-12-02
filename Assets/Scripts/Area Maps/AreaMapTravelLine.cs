@@ -54,8 +54,7 @@ public class AreaMapTravelLine : MonoBehaviour {
         //SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddDays(5), () => DestroyLine());
     }
     private void UpdateVisibility() {
-        if ((UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == owner.id)
-            || GameManager.Instance.inspectAll) {
+        if ((UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == owner.id)) {
             this.gameObject.SetActive(true);
         } else {
             this.gameObject.SetActive(false);

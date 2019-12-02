@@ -26,16 +26,13 @@ public class Minion {
         this.character = character;
         this.exp = 0;
         traitsToAdd = new List<string>();
-        //SetUnlockedInterventionSlots(0);
         character.SetMinion(this);
         SetLevel(1);
-        //character.characterToken.SetObtainedState(true);
         SetAssignedDeadlySinName(character.characterClass.className);
         character.ownParty.icon.SetVisualState(true);
         if (!keepData) {
             character.SetName(RandomNameGenerator.Instance.GenerateMinionName());
         }
-        //SetRandomResearchInterventionAbilities(CharacterManager.Instance.Get3RandomResearchInterventionAbilities(deadlySin));
     }
     public Minion(SaveDataMinion data) {
         this.character = CharacterManager.Instance.GetCharacterByID(data.characterID);
@@ -43,7 +40,6 @@ public class Minion {
         traitsToAdd = data.traitsToAdd;
         interventionAbilitiesToResearch = data.interventionAbilitiesToResearch;
         SetIndexDefaultSort(data.indexDefaultSort);
-        //SetUnlockedInterventionSlots(data.unlockedInterventionSlots);
         character.SetMinion(this);
         character.ownParty.icon.SetVisualState(true);
         SetAssignedDeadlySinName(character.characterClass.className);

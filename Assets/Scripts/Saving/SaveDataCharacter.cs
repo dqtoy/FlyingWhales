@@ -158,7 +158,7 @@ public class SaveDataCharacter {
         className = character.characterClass.className;
         race = character.race;
         roleType = character.role.roleType;
-        portraitSettings = character.portraitSettings;
+        portraitSettings = character.visuals.portraitSettings;
         //characterColor = character.characterColor;
         isStoppedByOtherCharacter = character.isStoppedByOtherCharacter;
 
@@ -208,10 +208,6 @@ public class SaveDataCharacter {
         fullnessDecreaseRate = character.fullnessDecreaseRate;
         tirednessDecreaseRate = character.tirednessDecreaseRate;
         happinessDecreaseRate = character.happinessDecreaseRate;
-
-        hSkinColor = character.hSkinColor;
-        hHairColor = character.hHairColor;
-        demonColor = character.demonColor;
 
         ignoreHostility = character.ignoreHostility;
         originalClassName = character.originalClassName;
