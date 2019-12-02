@@ -769,7 +769,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
             return;
         }
-        if(region.area != null) {
+        if(region.area != null && region.area != PlayerManager.Instance.player.playerArea) {
             InteriorMapManager.Instance.TryShowAreaMap(region.area);
         }
     }

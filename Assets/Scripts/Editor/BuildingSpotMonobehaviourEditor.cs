@@ -15,7 +15,7 @@ public class BuildingSpotDataMonobehaviourEditor : Editor {
         } else {
             Gizmos.color = Color.red;
         }
-        Gizmos.DrawWireCube(position, InteriorMapManager.Building_Spot_Size);
+        Gizmos.DrawWireCube(position, new Vector3(InteriorMapManager.Building_Spot_Size.x, InteriorMapManager.Building_Spot_Size.y, 0));
     }
 }
 #endif

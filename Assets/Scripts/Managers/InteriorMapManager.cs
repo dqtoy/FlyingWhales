@@ -12,7 +12,9 @@ public class InteriorMapManager : MonoBehaviour {
 
     public static InteriorMapManager Instance = null;
 
-    public static readonly Vector2 Building_Spot_Size = new Vector2(7, 7);
+    public static readonly Vector2Int Building_Spot_Size = new Vector2Int(7, 7);
+    public static readonly int Building_Spot_Border_Size = 1; //how many tiles, per side of the build spot, should not be occupied by the structure.
+
     public const int Default_Character_Sorting_Order = 82;
     public const int Ground_Tilemap_Sorting_Order = 10;
     public const int Details_Tilemap_Sorting_Order = 40;

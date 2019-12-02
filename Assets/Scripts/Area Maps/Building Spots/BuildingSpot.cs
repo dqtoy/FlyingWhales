@@ -148,28 +148,41 @@ public class BuildingSpot {
     public void ClearBlueprints() {
         this.blueprint = null;
     }
-    public Vector3 GetRandomTilePositionInBuildSpot(LocationStructureObject structureObj) {
-        int radius = Mathf.FloorToInt(InteriorMapManager.Building_Spot_Size.x / 2f);
-        if (structureObj.size.x - radius >= radius || structureObj.size.y - radius >= radius) {
-            //do not randomize spot, just place at center.
-            return centeredLocation;
-        } else {
-            int limitedRadius = radius - 2; //-2 is to limit the structure from being placed on the border.
-            int randomX = Random.Range(-limitedRadius, limitedRadius);
-            int randomY = Random.Range(-limitedRadius, limitedRadius);
-
-            int newX = location.x;
-            //if (structureObj.IsHorizontallyBig() == false) {
-                newX += randomX;
-            //}
-            int newY = location.y;
-            //if (structureObj.IsVerticallyBig() == false) {
-                newY += randomY;
-            //}
-
-            return new Vector3(newX + 0.5f, newY + 0.5f);
-        }
+    public Vector3 GetPositionToPlaceStructure(LocationStructureObject structureObj) {
+        int maxSizeX = InteriorMapManager.Building_Spot_Size.x - (InteriorMapManager.Building_Spot_Border_Size * 2);
+        int maxSizeY = InteriorMapManager.Building_Spot_Size.y - (InteriorMapManager.Building_Spot_Border_Size * 2);
         
+        //if the structure objects width or height exceeds the max size, then it's position cannot be randomized in that axis.
+        //if the structure can occupy more than 1 spot
+        //adjust the maxSize depending on the number of slots it can occupy 
+        //i.e (if structure occupies 2 spots horizontally then its max size X) = (Building_Spot_Size.x * 2) - (Building_Spot_Border_Size * 2)
+        if (structureObj.IsHorizontallyBig()) {
+            maxSizeX = (InteriorMapManager.Building_Spot_Size.x * 2) - (InteriorMapManager.Building_Spot_Border_Size * 2);
+        }
+        if (structureObj.IsVerticallyBig()) {
+            maxSizeY = (InteriorMapManager.Building_Spot_Size.y * 2) - (InteriorMapManager.Building_Spot_Border_Size * 2);
+        }
+
+        int xPos = 0;
+        int yPos = 0;
+
+        if (structureObj.size.x < maxSizeX) {
+            //if structure size is less than the max size of the given axis
+            //then the structure can be randomly placed by the difference between the max size and the size of the given structure
+            //i.e. if max size is 15 and the structure size is 10, then that structure can be randomly placed between 0 - 5 units in the given axis.
+            int difference = maxSizeX - structureObj.size.x;
+            xPos = Random.Range(0, difference);
+        }
+
+        if (structureObj.size.y < maxSizeY) {
+            int difference = maxSizeY - structureObj.size.y;
+            yPos = Random.Range(0, difference);
+        }
+
+        Vector3 randomPos = new Vector3(xPos, yPos, 0);
+        randomPos += centeredLocation;
+
+        return randomPos;
     }
     #endregion
 

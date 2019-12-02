@@ -43,8 +43,9 @@ public class BuildSpotTileObject : TileObject {
         }
         if (chosenStructurePrefab != null) {
             GameObject structurePrefab = ObjectPoolManager.Instance.InstantiateObjectFromPool(chosenStructurePrefab.name, Vector3.zero, Quaternion.identity, gridTileLocation.parentAreaMap.structureParent);
-            structurePrefab.transform.localPosition = spot.centeredLocation;
             LocationStructureObject structureObject = structurePrefab.GetComponent<LocationStructureObject>();
+            structurePrefab.transform.localPosition = spot.GetPositionToPlaceStructure(structureObject);
+            
             structureObject.RefreshAllTilemaps();
             List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(gridTileLocation.parentAreaMap);
             for (int j = 0; j < occupiedTiles.Count; j++) {
