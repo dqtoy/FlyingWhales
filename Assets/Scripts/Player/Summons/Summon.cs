@@ -32,7 +32,6 @@ public class Summon : Character, IWorldObject {
     public override void Initialize() {
         OnUpdateRace();
         OnUpdateCharacterClass();
-        UpdateIsCombatantState();
 
         SetMoodValue(90);
 
@@ -66,7 +65,7 @@ public class Summon : Character, IWorldObject {
             //    throw new Exception("Specific location of " + this.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
             //}
             if (stateComponent.currentState != null) {
-                stateComponent.currentState.OnExitThisState();
+                stateComponent.ExitCurrentState();
             }
             //else if (stateComponent.stateToDo != null) {
             //    stateComponent.SetStateToDo(null);

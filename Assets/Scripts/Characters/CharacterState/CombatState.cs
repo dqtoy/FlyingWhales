@@ -22,7 +22,7 @@ public class CombatState : CharacterState {
     public CombatState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Combat State";
         characterState = CHARACTER_STATE.COMBAT;
-        stateCategory = CHARACTER_STATE_CATEGORY.MINOR;
+        //stateCategory = CHARACTER_STATE_CATEGORY.MINOR;
         duration = 0;
         actionIconString = GoapActionStateDB.Hostile_Icon;
         _currentAttackTimer = 0;
@@ -36,18 +36,18 @@ public class CombatState : CharacterState {
         base.DoMovementBehavior();
         StartCombatMovement();
     }
-    protected override void PerTickInState() {
-        if (isPaused) {
-            return;
-        }
-        if (stateComponent.currentState != this) {
-            return; //to prevent exiting from this function, when this state was already exited by another funtion in the same stack.
-        }
-        if (stateComponent.character.doNotDisturb > 0) {
-            StopStatePerTick();
-            OnExitThisState();
-            return;
-        }
+    public override void PerTickInState() {
+        //if (isPaused) {
+        //    return;
+        //}
+        //if (stateComponent.currentState != this) {
+        //    return; //to prevent exiting from this function, when this state was already exited by another funtion in the same stack.
+        //}
+        //if (stateComponent.character.doNotDisturb > 0) {
+        //    StopStatePerTick();
+        //    OnExitThisState();
+        //    return;
+        //}
         //if the character is away from home and is at an edge tile, go to home location
         //if (!isAttacking && stateComponent.character.homeArea != null && stateComponent.character.homeArea != stateComponent.character.specificLocation && stateComponent.character.gridTileLocation.IsAtEdgeOfWalkableMap()) {
         //    StopStatePerTick();
@@ -95,26 +95,31 @@ public class CombatState : CharacterState {
         stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
     }
     protected override void EndState() {
+        stateComponent.character.marker.pathfindingAI.ClearAllCurrentPathData();
+        stateComponent.character.marker.SetHasFleePath(false);
+
         stateComponent.character.IncreaseCanWitness();
         stateComponent.character.marker.StopCoroutine(CheckIfCurrentHostileIsInRange());
-        base.EndState();
+
         stateComponent.character.marker.HideHPBar();
         stateComponent.character.marker.SetAnimationBool("InCombat", false);
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Ending combat state for " + stateComponent.character.name);
         Messenger.RemoveListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
+
+        base.EndState();
     }
-    public override void OnExitThisState() {
-        stateComponent.character.marker.pathfindingAI.ClearAllCurrentPathData();
-        stateComponent.character.marker.SetHasFleePath(false);
-        base.OnExitThisState();
-    }
-    public override void SetOtherDataOnStartState(object otherData) {
-        //Notice I didn't call the SetIsAttackingState because I only want to change the value of the boolean, I do not want to process the combat behavior
-        if(otherData != null) {
-            isAttacking = (bool) otherData;
-        }
-    }
+    //public override void OnExitThisState() {
+    //    stateComponent.character.marker.pathfindingAI.ClearAllCurrentPathData();
+    //    stateComponent.character.marker.SetHasFleePath(false);
+    //    base.OnExitThisState();
+    //}
+    //public override void SetOtherDataOnStartState(object otherData) {
+    //    //Notice I didn't call the SetIsAttackingState because I only want to change the value of the boolean, I do not want to process the combat behavior
+    //    if(otherData != null) {
+    //        isAttacking = (bool) otherData;
+    //    }
+    //}
     public override void AfterExitingState() {
         base.AfterExitingState();
         if (!stateComponent.character.isDead) {
@@ -174,8 +179,8 @@ public class CombatState : CharacterState {
     /// </summary>
     /// <param name="character">The character that should determine a reaction.</param>
     private void DetermineReaction(Character character) {
-        DetermineIsBeingApprehended();
-        if (stateComponent.character == character) {
+        if (stateComponent.character == character && stateComponent.currentState == this && !isPaused && !isDone) {
+            DetermineIsBeingApprehended();
             string summary = character.name + " will determine a combat reaction";
             if (stateComponent.character.marker.hostilesInRange.Count > 0) {
                 summary += "\nStill has hostiles, will attack...";
@@ -200,12 +205,12 @@ public class CombatState : CharacterState {
                 } else {
                     summary += "\nNo more hostile or avoid characters, exiting combat state...";
                     stateComponent.character.PrintLogIfActive(summary);
-                    OnExitThisState();
+                    stateComponent.ExitCurrentState();
                 }
             } else {
                 summary += "\nNo more hostile or avoid characters, exiting combat state...";
                 stateComponent.character.PrintLogIfActive(summary);
-                OnExitThisState();
+                stateComponent.ExitCurrentState();
             }
         }
     }
@@ -268,6 +273,9 @@ public class CombatState : CharacterState {
     }
     //Returns true if there is a hostile left, otherwise, returns false
     private void DoCombatBehavior(Character newTarget = null) {
+        if(stateComponent.currentState != this) {
+            return;
+        }
         string log = GameManager.Instance.TodayLogString() + "Reevaluating combat behavior of " + stateComponent.character.name;
         if (isAttacking) {
             stateComponent.character.marker.StopPerTickFlee();
@@ -298,7 +306,7 @@ public class CombatState : CharacterState {
             }
             if (currentClosestHostile == null) {
                 log += "\nNo more hostile characters, exiting combat state...";
-                OnExitThisState();
+                stateComponent.ExitCurrentState();
             } else {
                 float distance = Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.worldPosition);
                 if (distance > stateComponent.character.characterClass.attackRange || !stateComponent.character.marker.IsCharacterInLineOfSightWith(currentClosestHostile)) {
@@ -314,7 +322,7 @@ public class CombatState : CharacterState {
             if (stateComponent.character.marker.avoidInRange.Count <= 0) {
                 log += "\nNo more avoid characters, exiting combat state...";
                 stateComponent.character.PrintLogIfActive(log);
-                OnExitThisState();
+                stateComponent.ExitCurrentState();
                 return;
             }
             if (stateComponent.character.marker.hasFleePath) {

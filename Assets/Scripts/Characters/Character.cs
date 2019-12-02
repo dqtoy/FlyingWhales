@@ -75,7 +75,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public JobQueue jobQueue { get; private set; }
     public List<JobQueueItem> allJobsTargettingThis { get; private set; }
     public int moodValue { get; private set; }
-    public bool isCombatant { get; private set; } //This should only be a getter but since we need to know when the value changes it now has a setter
+    public bool canCombat { get; private set; } //This should only be a getter but since we need to know when the value changes it now has a setter
     public List<Trait> traitsNeededToBeRemoved { get; private set; }
     public TrapStructure trapStructure { get; private set; }
     public bool isDisabledByPlayer { get; protected set; }
@@ -523,7 +523,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //currentInteractionTypes = data.currentInteractionTypes;
         supply = data.supply;
         moodValue = data.moodValue;
-        isCombatant = data.isCombatant;
+        canCombat = data.isCombatant;
         isDisabledByPlayer = data.isDisabledByPlayer;
         speedModifier = data.speedModifier;
         deathStr = data.deathStr;
@@ -555,7 +555,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public virtual void Initialize() {
         OnUpdateRace();
         OnUpdateCharacterClass();
-        UpdateIsCombatantState();
 
         SetMoodValue(90);
         CreateOwnParty();
@@ -682,7 +681,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (specificLocation == area && minion == null) {
             StopCurrentActionNode(false);
             if (stateComponent.currentState != null) {
-                stateComponent.currentState.OnExitThisState();
+                stateComponent.ExitCurrentState();
             }
             //else if (stateComponent.stateToDo != null) {
             //    stateComponent.SetStateToDo(null);
@@ -874,10 +873,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 throw new Exception("Specific location of " + this.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
             }
             if (stateComponent.currentState != null) {
-                stateComponent.currentState.OnExitThisState();
-                if (stateComponent.currentState != null) {
-                    stateComponent.currentState.OnExitThisState();
-                }
+                stateComponent.ExitCurrentState();
+                //if (stateComponent.currentState != null) {
+                //    stateComponent.currentState.OnExitThisState();
+                //}
             }
             //else if (stateComponent.stateToDo != null) {
             //    stateComponent.SetStateToDo(null);
@@ -1024,9 +1023,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (wasRoleChanged) {
             Messenger.Broadcast(Signals.ROLE_CHANGED, this);
         }
-        if (updateCombatantState) {
-            UpdateIsCombatantState();
-        }
+        //if (updateCombatantState) {
+        //    UpdateCanCombatantState();
+        //}
     }
     #endregion
 
@@ -1059,6 +1058,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
     }
     protected void OnUpdateCharacterClass() {
+        if (_currentHP > maxHP) {
+            _currentHP = maxHP;
+        }
+        if (_sp > _maxSP) {
+            _sp = _maxSP;
+        }
         for (int i = 0; i < _characterClass.traitNames.Length; i++) {
             traitContainer.AddTrait(this, _characterClass.traitNames[i]);
         }
@@ -1066,10 +1071,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (marker != null) {
             marker.UpdateMarkerVisuals();
         }
-        OnCharacterClassChange();
         if (minion != null) {
             minion.SetAssignedDeadlySinName(_characterClass.className);
         }
+        UpdateCanCombatState();
     }
     public void AssignClass(CharacterClass characterClass) {
         CharacterClass previousClass = _characterClass;
@@ -2484,16 +2489,14 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //}
 
     }
-    public void UpdateIsCombatantState() {
+    public void UpdateCanCombatState() {
         bool state = false;
-        if (_role.roleType == CHARACTER_ROLE.CIVILIAN || _role.roleType == CHARACTER_ROLE.LEADER || _role.roleType == CHARACTER_ROLE.NOBLE) {
-            state = true;
-        } else if (traitContainer.GetNormalTrait("Injured") != null) {
+        if (!_characterClass.isNonCombatant && traitContainer.GetNormalTrait("Injured") == null) {
             state = true;
         }
-        if (isCombatant != state) {
-            isCombatant = state;
-            if (isCombatant && marker != null) {
+        if (canCombat != state) {
+            canCombat = state;
+            if (canCombat && marker != null) {
                 marker.ClearTerrifyingObjects();
             }
         }
@@ -3501,14 +3504,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //_experience = 0;
         //RecomputeMaxExperience();
     }
-    public void OnCharacterClassChange() {
-        if (_currentHP > maxHP) {
-            _currentHP = maxHP;
-        }
-        if (_sp > _maxSP) {
-            _sp = _maxSP;
-        }
-    }
     public void AdjustExperience(int amount) {
         _experience += amount;
         if (_experience >= _maxExperience) {
@@ -3910,7 +3905,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     public void RecruitAsMinion(UnsummonedMinionData minionData) {
         if (stateComponent.currentState != null) {
-            stateComponent.currentState.OnExitThisState();
+            stateComponent.ExitCurrentState();
         }
         //else if (stateComponent.stateToDo != null) {
         //    stateComponent.SetStateToDo(null);
@@ -4055,7 +4050,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //SetHasAlreadyAskedForPlan(true);
         if (returnedToLife) {
             //characters that have returned to life will just stroll.
-            PlanIdleStrollOutside(currentStructure);
+            PlanIdleStrollOutside(); //currentStructure
             return;
         }
         if (!PlanJobQueueFirst()) {
@@ -4449,19 +4444,23 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         return false;
     }
     public bool PlanIdleStroll(LocationStructure targetStructure, LocationGridTile targetTile = null) {
-        if (currentStructure == targetStructure) {
-            stateComponent.SwitchToState(CHARACTER_STATE.STROLL);
-        } else {
-            MoveToAnotherStructure(targetStructure, targetTile, null, () => stateComponent.SwitchToState(CHARACTER_STATE.STROLL));
-        }
+        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.STROLL, CHARACTER_STATE.STROLL, this);
+        jobQueue.AddJobInQueue(job);
+        //if (currentStructure == targetStructure) {
+        //    stateComponent.SwitchToState(CHARACTER_STATE.STROLL);
+        //} else {
+        //    MoveToAnotherStructure(targetStructure, targetTile, null, () => stateComponent.SwitchToState(CHARACTER_STATE.STROLL));
+        //}
         return true;
     }
-    public bool PlanIdleStrollOutside(LocationStructure targetStructure, LocationGridTile targetTile = null) {
-        if (currentStructure == targetStructure) {
-            stateComponent.SwitchToState(CHARACTER_STATE.STROLL_OUTSIDE);
-        } else {
-            MoveToAnotherStructure(targetStructure, targetTile, null, () => stateComponent.SwitchToState(CHARACTER_STATE.STROLL_OUTSIDE));
-        }
+    public bool PlanIdleStrollOutside() {
+        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.STROLL, CHARACTER_STATE.STROLL_OUTSIDE, this);
+        jobQueue.AddJobInQueue(job);
+        //if (currentStructure == targetStructure) {
+        //    stateComponent.SwitchToState(CHARACTER_STATE.STROLL_OUTSIDE);
+        //} else {
+        //    MoveToAnotherStructure(targetStructure, targetTile, null, () => stateComponent.SwitchToState(CHARACTER_STATE.STROLL_OUTSIDE));
+        //}
         return true;
     }
     public bool PlanIdleReturnHome() { //bool forceDoAction = false
@@ -7271,7 +7270,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void OnJobAddedToCharacterJobQueue(JobQueueItem job, Character character) {
     }
     public void OnJobRemovedFromCharacterJobQueue(JobQueueItem job, Character character) {
-        JobManager.Instance.OnFinishGoapPlanJob(job);
+        JobManager.Instance.OnFinishJob(job);
     }
     public bool ForceCancelJob(JobQueueItem job) {
         //JobManager.Instance.OnFinishGoapPlanJob(job);

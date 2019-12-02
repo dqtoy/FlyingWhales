@@ -78,7 +78,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 log += "\n  -RNG roll: " + chance;
                 if (chance < 25) {
                     log += "\n  -Morning, Afternoon, or Early Night: " + character.name + " will enter Stroll Outside Mode";
-                    character.PlanIdleStrollOutside(character.currentStructure);
+                    character.PlanIdleStrollOutside(); //character.currentStructure
                     return true;
                 }
             } else {

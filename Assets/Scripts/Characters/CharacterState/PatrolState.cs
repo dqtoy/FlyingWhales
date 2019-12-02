@@ -8,7 +8,7 @@ public class PatrolState : CharacterState {
     public PatrolState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Patrol State";
         characterState = CHARACTER_STATE.PATROL;
-        stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
+        //stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
         duration = 24;
         actionIconString = GoapActionStateDB.Patrol_Icon;
     }
@@ -44,24 +44,21 @@ public class PatrolState : CharacterState {
     //    }
     //    return base.OnEnterVisionWith(targetPOI);
     //}
-    protected override void PerTickInState() {
+    public override void PerTickInState() {
         base.PerTickInState();
-        if (!isDone && !isPaused) {
-            if(stateComponent.character.traitContainer.GetNormalTrait("Injured") != null) {
-                StopStatePerTick();
-                OnExitThisState();
-                return;
-            }
-            if (_planDuration >= 4) {
-                _planDuration = 0;
-                if (!stateComponent.character.PlanFullnessRecoveryActions()) {
-                    if (!stateComponent.character.PlanTirednessRecoveryActions()) {
-                        stateComponent.character.PlanHappinessRecoveryActions();
-                    }
+        if (!stateComponent.character.canCombat) {
+            stateComponent.ExitCurrentState();
+            return;
+        }
+        if (_planDuration >= 4) {
+            _planDuration = 0;
+            if (!stateComponent.character.PlanFullnessRecoveryActions()) {
+                if (!stateComponent.character.PlanTirednessRecoveryActions()) {
+                    stateComponent.character.PlanHappinessRecoveryActions();
                 }
-            } else {
-                _planDuration++;
             }
+        } else {
+            _planDuration++;
         }
     }
     #endregion

@@ -85,7 +85,7 @@ public class LocationJobManager {
     private bool CreateCleanseRegionJob() {
         if (UnityEngine.Random.Range(0, 2) == 0) {
             if (HasCorruptedRegionWithoutLandmark()) {
-                CharacterStateJob job = new CharacterStateJob(JOB_TYPE.CLEANSE_REGION, CHARACTER_STATE.MOVE_OUT, location);
+                CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.CLEANSE_REGION, CHARACTER_STATE.MOVE_OUT, location);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCleanseRegionJob);
                 location.AddToAvailableJobs(job);
                 return true;
@@ -96,7 +96,7 @@ public class LocationJobManager {
     private bool CreateClaimRegionJob() {
         if (UnityEngine.Random.Range(0, 2) == 0) {
             if (HasOneAdjacentRegionWithoutFactionOwner()) {
-                CharacterStateJob job = new CharacterStateJob(JOB_TYPE.CLAIM_REGION, CHARACTER_STATE.MOVE_OUT, location);
+                CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.CLAIM_REGION, CHARACTER_STATE.MOVE_OUT, location);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoClaimRegionJob);
                 location.AddToAvailableJobs(job);
                 return true;
@@ -107,7 +107,7 @@ public class LocationJobManager {
     private bool CreateInvadeRegionJob() {
         if (UnityEngine.Random.Range(0, 2) == 0) {
             if (HasOneAdjacentRegionAtWarWithThisLocation()) {
-                CharacterStateJob job = new CharacterStateJob(JOB_TYPE.INVADE_REGION, CHARACTER_STATE.MOVE_OUT, location);
+                CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.INVADE_REGION, CHARACTER_STATE.MOVE_OUT, location);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoInvadeRegionJob);
                 location.AddToAvailableJobs(job);
                 return true;
@@ -172,7 +172,7 @@ public class LocationJobManager {
     private bool CreateAttackNonDemonicRegionJobPart2() {
         if (UnityEngine.Random.Range(0, 2) == 0) {
             if (HasOccupiedNonSettlementTileAtWarWithThisLocation()) {
-                CharacterStateJob job = new CharacterStateJob(JOB_TYPE.ATTACK_NON_DEMONIC_REGION, CHARACTER_STATE.MOVE_OUT, location);
+                CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.ATTACK_NON_DEMONIC_REGION, CHARACTER_STATE.MOVE_OUT, location);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoAttackNonDemonicRegionJob);
                 location.AddToAvailableJobs(job);
                 return true;
@@ -183,7 +183,7 @@ public class LocationJobManager {
     private bool CreateAttackDemonicRegionJobPart2() {
         if (UnityEngine.Random.Range(0, 2) == 0) {
             if (!HasCorruptedRegionWithoutLandmark()) {
-                CharacterStateJob job = new CharacterStateJob(JOB_TYPE.ATTACK_DEMONIC_REGION, CHARACTER_STATE.MOVE_OUT, location);
+                CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.ATTACK_DEMONIC_REGION, CHARACTER_STATE.MOVE_OUT, location);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoAttackDemonicRegionJob);
                 location.AddToAvailableJobs(job);
                 return true;
@@ -227,7 +227,7 @@ public class LocationJobManager {
     private bool CreateAttackNonDemonicRegionJobPart3() {
         if (UnityEngine.Random.Range(0, 4) == 0) {
             if (IsAtWarWithFactionThatSettlementNotBlockedByGarrison()) {
-                CharacterStateJob job = new CharacterStateJob(JOB_TYPE.ATTACK_NON_DEMONIC_REGION, CHARACTER_STATE.MOVE_OUT, location);
+                CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.ATTACK_NON_DEMONIC_REGION, CHARACTER_STATE.MOVE_OUT, location);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoAttackNonDemonicRegionJob);
                 location.AddToAvailableJobs(job);
                 return true;
@@ -238,7 +238,7 @@ public class LocationJobManager {
     private bool CreateAttackDemonicRegionJobPart3() {
         if (UnityEngine.Random.Range(0, 2) == 0) {
             if (IsPlayerOnlyRemainingStructureIsPortal()) {
-                CharacterStateJob job = new CharacterStateJob(JOB_TYPE.ATTACK_DEMONIC_REGION, CHARACTER_STATE.MOVE_OUT, location);
+                CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.ATTACK_DEMONIC_REGION, CHARACTER_STATE.MOVE_OUT, location);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoAttackDemonicRegionJob);
                 location.AddToAvailableJobs(job);
                 return true;

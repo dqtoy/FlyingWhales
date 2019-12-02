@@ -266,7 +266,7 @@ namespace Traits {
                 _character.StopCurrentActionNode(false);
             }
             if (_character.stateComponent.currentState != null) {
-                _character.stateComponent.currentState.OnExitThisState();
+                _character.stateComponent.ExitCurrentState();
             }
 
             PlanTransformToWolf();

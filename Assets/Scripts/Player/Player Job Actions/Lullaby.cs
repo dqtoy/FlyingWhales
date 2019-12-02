@@ -34,11 +34,11 @@ public class Lullaby : PlayerJobAction {
 
             if(character.traitContainer.GetNormalTrait("Resting") == null) {
                 if (character.stateComponent.currentState != null) {
-                    character.stateComponent.currentState.OnExitThisState();
+                    character.stateComponent.ExitCurrentState();
                     //This call is doubled so that it will also exit the previous major state if there's any
-                    if (character.stateComponent.currentState != null) {
-                        character.stateComponent.currentState.OnExitThisState();
-                    }
+                    //if (character.stateComponent.currentState != null) {
+                    //    character.stateComponent.currentState.OnExitThisState();
+                    //}
                 } 
                 //else if (character.stateComponent.stateToDo != null) {
                 //    character.stateComponent.SetStateToDo(null);

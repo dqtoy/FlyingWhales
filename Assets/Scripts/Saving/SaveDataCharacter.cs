@@ -188,7 +188,7 @@ public class SaveDataCharacter {
         //currentInteractionTypes = character.currentInteractionTypes;
         supply = character.supply;
         moodValue = character.moodValue;
-        isCombatant = character.isCombatant;
+        isCombatant = character.canCombat;
         isDisabledByPlayer = character.isDisabledByPlayer;
         speedModifier = character.speedModifier;
         deathStr = character.deathStr;
@@ -380,7 +380,7 @@ public class SaveDataCharacter {
             //}
             CharacterState loadedState = character.stateComponent.SwitchToState(currentState.characterState, targetCharacter, targetArea, currentState.duration, currentState.level);
             loadedState.SetCurrentDuration(currentState.currentDuration);
-            loadedState.SetIsUnending(currentState.isUnending);
+            //loadedState.SetIsUnending(currentState.isUnending);
 
             if (currentState.isPaused) {
                 loadedState.PauseState();

@@ -68,7 +68,7 @@ namespace Traits {
                         character.StopCurrentActionNode(false);
                     }
                     if (character.stateComponent.currentState != null) {
-                        character.stateComponent.currentState.OnExitThisState();
+                        character.stateComponent.ExitCurrentState();
                     } 
                     //else if (character.stateComponent.stateToDo != null) {
                     //    character.stateComponent.SetStateToDo(null, false, false);

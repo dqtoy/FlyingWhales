@@ -21,7 +21,7 @@ public class MoveOutState : CharacterState {
     public MoveOutState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Move Out State";
         characterState = CHARACTER_STATE.MOVE_OUT;
-        stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
+        //stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
         duration = 0;
         actionIconString = GoapActionStateDB.Explore_Icon;
     }
@@ -33,6 +33,29 @@ public class MoveOutState : CharacterState {
         stateComponent.character.AdjustDoNotGetHungry(1);
         stateComponent.character.AdjustDoNotGetLonely(1);
         stateComponent.character.AdjustDoNotGetTired(1);
+    }
+    protected override void EndState() {
+        base.EndState();
+        if (!string.IsNullOrEmpty(goHomeSchedID)) { //if this state is exited, and its goHomeSchedID is not empty (Usually because character died mid way). Cancel that schedule.
+            SchedulingManager.Instance.RemoveSpecificEntry(goHomeSchedID);
+        }
+        stateComponent.character.SetPOIState(POI_STATE.ACTIVE);
+        stateComponent.character.ownParty.icon.SetIsTravellingOutside(false);
+
+        Region currRegion = stateComponent.character.currentRegion;
+        if (currRegion == null) {
+            currRegion = stateComponent.character.specificLocation.region;
+        }
+        if (currRegion.area != null) {
+            if (!stateComponent.character.marker.gameObject.activeSelf) {
+                stateComponent.character.marker.PlaceMarkerAt(currRegion.area.GetRandomUnoccupiedEdgeTile());
+            }
+        }
+        stateComponent.character.AdjustDoNotDisturb(-1);
+        stateComponent.character.AdjustDoNotGetHungry(-1);
+        stateComponent.character.AdjustDoNotGetLonely(-1);
+        stateComponent.character.AdjustDoNotGetTired(-1);
+        SchedulingManager.Instance.ClearAllSchedulesBy(this);
     }
     public override void PauseState() {
         base.PauseState();
@@ -62,30 +85,7 @@ public class MoveOutState : CharacterState {
             OnArriveAtNearestEdgeTile();
         }
     }
-    public override void OnExitThisState() {
-        base.OnExitThisState();
-        if (!string.IsNullOrEmpty(goHomeSchedID)) { //if this state is exited, and its goHomeSchedID is not empty (Usually because character died mid way). Cancel that schedule.
-            SchedulingManager.Instance.RemoveSpecificEntry(goHomeSchedID);
-        }
-        stateComponent.character.SetPOIState(POI_STATE.ACTIVE);
-        stateComponent.character.ownParty.icon.SetIsTravellingOutside(false);
-
-        Region currRegion = stateComponent.character.currentRegion;
-        if (currRegion == null) {
-            currRegion = stateComponent.character.specificLocation.region;
-        }
-        if (currRegion.area != null) {
-            if (!stateComponent.character.marker.gameObject.activeSelf) {
-                stateComponent.character.marker.PlaceMarkerAt(currRegion.area.GetRandomUnoccupiedEdgeTile());
-            }
-        }
-        stateComponent.character.AdjustDoNotDisturb(-1);
-        stateComponent.character.AdjustDoNotGetHungry(-1);
-        stateComponent.character.AdjustDoNotGetLonely(-1);
-        stateComponent.character.AdjustDoNotGetTired(-1);
-        SchedulingManager.Instance.ClearAllSchedulesBy(this);
-    }
-    protected override void PerTickInState() { }
+    //protected override void PerTickInState() { }
     protected override void CreateThoughtBubbleLog() {
         base.CreateThoughtBubbleLog();
         if (thoughtBubbleLog != null) {
@@ -142,7 +142,8 @@ public class MoveOutState : CharacterState {
             PlayerManager.Instance.player.ShowNotification(log);
             thoughtBubbleLog = log;
 
-            OnExitThisState();
+            //OnExitThisState();
+            stateComponent.ExitCurrentState();
         } else {
             //schedule go home
             GameDate dueDate = GameManager.Instance.Today();
@@ -175,7 +176,8 @@ public class MoveOutState : CharacterState {
         thoughtBubbleLog = log;
     }
     private void ArriveHome() {
-        OnExitThisState();
+        //OnExitThisState();
+        stateComponent.ExitCurrentState();
         Messenger.Broadcast(Signals.PARTY_DONE_TRAVELLING, stateComponent.character.currentParty);
         CheckNeeds();
         

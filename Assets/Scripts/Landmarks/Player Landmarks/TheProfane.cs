@@ -29,7 +29,7 @@ public class TheProfane : BaseLandmark {
             targetCharacter.traitContainer.AddTrait(targetCharacter,"Cultist");
         } else if (action == "Corrupt") {
             if (!targetCharacter.jobQueue.HasJob(JOB_TYPE.CORRUPT_CULTIST)) {
-                CharacterStateJob job = new CharacterStateJob(JOB_TYPE.CORRUPT_CULTIST, CHARACTER_STATE.MOVE_OUT, targetCharacter);
+                CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.CORRUPT_CULTIST, CHARACTER_STATE.MOVE_OUT, targetCharacter);
                 targetCharacter.jobQueue.AddJobInQueue(job);
             }
         } else if (action == "Sabotage Faction Quest") {

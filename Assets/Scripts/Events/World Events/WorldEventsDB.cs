@@ -34,7 +34,7 @@ public static class WorldEventsDB {
             }
         },
         {
-            JOB_TYPE.COMBAT, 
+            JOB_TYPE.COMBAT_WORLD_EVENT, 
             new JobWorldEventData() {
                 neededEffects = new WORLD_EVENT_EFFECT[]{ WORLD_EVENT_EFFECT.COMBAT },
                 validRegionGetter = DefaultRegionGetter

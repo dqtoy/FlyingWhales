@@ -13,7 +13,7 @@ public class CharacterStateComponent {
 
     public Character character { get; private set; }
     //If a major state is replaced by a minor state, must be stored in order for the character to go back to this state after doing the minor state
-    public CharacterState previousMajorState { get; private set; }
+    //public CharacterState previousMajorState { get; private set; }
     //This is the character's current state
     public CharacterState currentState { get; private set; }
     //Right now this is only for Explore State so that we can store the state even when the character is still moving to the area that will be explored
@@ -21,8 +21,17 @@ public class CharacterStateComponent {
 
     public CharacterStateComponent(Character character) {
         this.character = character;
+        //Messenger.RemoveListener(Signals.TICK_ENDED, PerTickCurrentState);
     }
 
+    public void OnTickEnded() {
+        PerTickCurrentState();
+    }
+    //public void OnDeath() {
+    //    if(currentState != null) {
+    //        ExitCurrentState();
+    //    }
+    //}
     public void SetCurrentState(CharacterState state) {
         currentState = state;
         //Debug.Log(character.name + " set state to " + currentState?.stateName ?? "Null");
@@ -66,26 +75,29 @@ public class CharacterStateComponent {
             }
         }
 
+        if(currentState != null) {
+            ExitCurrentState();
+        }
         //Create the new state
         CharacterState newState = CreateNewState(state);
-        if (currentState != null) {
-            if (currentState.stateCategory == CHARACTER_STATE_CATEGORY.MAJOR) {
-                if(newState.stateCategory == CHARACTER_STATE_CATEGORY.MAJOR) {
-                    //If the new state is a major state, automatically end current major state, do not just pause it
-                    //Also, do not store the previous major state because since the new state is a major state, it must not go back to the previous major state
-                    previousMajorState = null;
-                    currentState.ExitState();
-                } else {
-                    //Store current state as previous major state so the character will go back to that state after doing the minor state
-                    //Pause the previous major state so that the timer will not tick, if there's any
-                    previousMajorState = currentState;
-                    previousMajorState.PauseState();
-                }
-            } else {
-                //If current state is a minor state, simply end it
-                currentState.ExitState();
-            }
-        }
+        //if (currentState != null) {
+        //    if (currentState.stateCategory == CHARACTER_STATE_CATEGORY.MAJOR) {
+        //        if(newState.stateCategory == CHARACTER_STATE_CATEGORY.MAJOR) {
+        //            //If the new state is a major state, automatically end current major state, do not just pause it
+        //            //Also, do not store the previous major state because since the new state is a major state, it must not go back to the previous major state
+        //            previousMajorState = null;
+        //            currentState.ExitState();
+        //        } else {
+        //            //Store current state as previous major state so the character will go back to that state after doing the minor state
+        //            //Pause the previous major state so that the timer will not tick, if there's any
+        //            previousMajorState = currentState;
+        //            previousMajorState.PauseState();
+        //        }
+        //    } else {
+        //        //If current state is a minor state, simply end it
+        //        currentState.ExitState();
+        //    }
+        //}
         //else if (stateToDo != null) {
         //    if(stateToDo.stateCategory == CHARACTER_STATE_CATEGORY.MAJOR) {
         //        previousMajorState = stateToDo;
@@ -102,7 +114,7 @@ public class CharacterStateComponent {
         //newState.SetStartStateAction(startStateAction);
         //newState.SetEndStateAction(endStateAction);
         //newState.SetOtherDataOnStartState(otherData);
-        newState.SetTargetCharacter(targetCharacter);
+        //newState.SetTargetCharacter(targetCharacter);
         //newState.SetTargetArea(targetArea);
         newState.EnterState();
         return newState;
@@ -126,95 +138,113 @@ public class CharacterStateComponent {
     /// </summary>
     /// <param name="state">The state to be exited.</param>
     /// <param name="stopMovement">Should this character stop his/her current movement when exiting his/her current state?/param>
-    public void ExitCurrentState(CharacterState state, bool stopMovement = true) {
-        //CODE IS REALLY CONFUSING! REWORK THIS CHY!
-        if (this.currentState == null) {
-            throw new System.Exception(character.name + " is trying to exit his/her current state but it is null, Passed state is " + state?.stateName);
+    public void ExitCurrentState() {
+        if (currentState == null) {
+            throw new System.Exception(character.name + " is trying to exit his/her current state but it is null");
         }
 
-        //Stops movement unless told otherwise
-        if (stopMovement) {
-            if(!(this.currentState != null && character.currentActionNode != null)) { //&& character.currentActionNode.parentPlan == null -- removed this?
-                if (character.currentParty.icon.isTravelling) {
-                    if (character.currentParty.icon.travelLine == null) {
-                        character.marker.StopMovement();
-                    }
+        //if(!(this.currentState != null && character.currentActionNode != null)) { //&& character.currentActionNode.parentPlan == null -- removed this?
+            if (character.currentParty.icon.isTravelling) {
+                if (character.currentParty.icon.travelLine == null) {
+                    character.marker.StopMovement();
                 }
             }
-        }
-        CharacterState currState = this.currentState; //local variable for currentState
-        if (currState != null) {
-            //This ends the current state but I added a checker that the parameter state must be the same as the current state to avoid inconsistencies
-            if(currState != state) {
-                Debug.LogError("Inconsistency! The current state " + currState.stateName + " of " + character.name + " does not match the state " + state.stateName);
-                //return;
+        //}
+
+        CharacterState currState = currentState;
+        currState.ExitState();
+        SetCurrentState(null);
+        currState.AfterExitingState();
+
+        //CharacterState currState = this.currentState; //local variable for currentState
+        //if (currState != null) {
+        //    //This ends the current state but I added a checker that the parameter state must be the same as the current state to avoid inconsistencies
+        //    if(currState != state) {
+        //        Debug.LogError("Inconsistency! The current state " + currState.stateName + " of " + character.name + " does not match the state " + state.stateName);
+        //        //return;
+        //    }
+        //    currState.ExitState();
+        //}
+        //CharacterState previousState = currState;
+        //if (character.isDead) {
+        //    if(previousMajorState != null) {
+        //        previousMajorState.ExitState();
+        //    }
+        //    previousMajorState = null;
+        //    SetCurrentState(null);
+        //    //currState.endStateAction?.Invoke();
+        //    previousState.AfterExitingState();
+        //    return;
+        //}
+        ////If the current state is a minor state and there is a previous major state, resume that major state
+        //if(currState.stateCategory == CHARACTER_STATE_CATEGORY.MINOR && previousMajorState != null) {
+        //    if(previousMajorState.duration > 0 && previousMajorState.currentDuration >= previousMajorState.duration) {
+        //        //In a rare case that the previous major state has already timed out, end that state and do not resume it
+        //        //This goes back to normal
+        //        previousMajorState.ExitState();
+        //        SetCurrentState(null);
+        //        //currState.endStateAction?.Invoke();
+        //    } else {
+        //        if(character.doNotDisturb > 0) {
+        //            previousMajorState.ExitState();
+        //            SetCurrentState(null);
+        //            //currState.endStateAction?.Invoke();
+        //        } else {
+        //            bool resumeState = true;
+        //            if(currState.characterState == CHARACTER_STATE.COMBAT && previousMajorState.characterState == CHARACTER_STATE.BERSERKED) {
+        //                //if (!previousMajorState.isUnending) {
+        //                    if (previousMajorState.hasStarted) {
+        //                        previousMajorState.ExitState();
+        //                    }
+        //                    SetCurrentState(null);
+        //                    //currState.endStateAction?.Invoke();
+        //                    resumeState = false;
+        //                //}
+        //            }
+        //            if (resumeState) {
+        //                if (previousMajorState.hasStarted) {
+        //                    //Resumes previous major state
+        //                    if (previousMajorState.CanResumeState()) {
+        //                        SetCurrentState(previousMajorState);
+        //                        //currState.endStateAction?.Invoke();
+        //                        previousMajorState.ResumeState();
+        //                    } else {
+        //                        previousMajorState = null;
+        //                        SetCurrentState(null);
+        //                        //currState.endStateAction?.Invoke();
+        //                    }
+        //                } else {
+        //                    SetCurrentState(null);
+        //                    //currState.endStateAction?.Invoke();
+        //                    previousMajorState.EnterState();
+        //                }
+        //            }
+        //        }
+        //    }
+        //    previousMajorState = null;
+        //} else {
+        //    //This goes back to normal
+        //    previousMajorState = null;
+        //    SetCurrentState(null);
+        //    //currState.endStateAction?.Invoke();
+        //}
+        //previousState.AfterExitingState();
+    }
+    private void PerTickCurrentState() {
+        if(currentState != null && !currentState.isPaused && !currentState.isDone) {
+            if(character.doNotDisturb > 0) {
+                ExitCurrentState();
+                return;
             }
-            currState.ExitState();
-        }
-        CharacterState previousState = currState;
-        if (character.isDead) {
-            if(previousMajorState != null) {
-                previousMajorState.ExitState();
-            }
-            previousMajorState = null;
-            SetCurrentState(null);
-            currState.endStateAction?.Invoke();
-            previousState.AfterExitingState();
-            return;
-        }
-        //If the current state is a minor state and there is a previous major state, resume that major state
-        if(currState.stateCategory == CHARACTER_STATE_CATEGORY.MINOR && previousMajorState != null) {
-            if(previousMajorState.duration > 0 && previousMajorState.currentDuration >= previousMajorState.duration) {
-                //In a rare case that the previous major state has already timed out, end that state and do not resume it
-                //This goes back to normal
-                previousMajorState.ExitState();
-                SetCurrentState(null);
-                currState.endStateAction?.Invoke();
-            } else {
-                if(character.doNotDisturb > 0) {
-                    previousMajorState.ExitState();
-                    SetCurrentState(null);
-                    currState.endStateAction?.Invoke();
-                } else {
-                    bool resumeState = true;
-                    if(currState.characterState == CHARACTER_STATE.COMBAT && previousMajorState.characterState == CHARACTER_STATE.BERSERKED) {
-                        if (!previousMajorState.isUnending) {
-                            if (previousMajorState.hasStarted) {
-                                previousMajorState.ExitState();
-                            }
-                            SetCurrentState(null);
-                            currState.endStateAction?.Invoke();
-                            resumeState = false;
-                        }
-                    }
-                    if (resumeState) {
-                        if (previousMajorState.hasStarted) {
-                            //Resumes previous major state
-                            if (previousMajorState.CanResumeState()) {
-                                SetCurrentState(previousMajorState);
-                                currState.endStateAction?.Invoke();
-                                previousMajorState.ResumeState();
-                            } else {
-                                previousMajorState = null;
-                                SetCurrentState(null);
-                                currState.endStateAction?.Invoke();
-                            }
-                        } else {
-                            SetCurrentState(null);
-                            currState.endStateAction?.Invoke();
-                            previousMajorState.EnterState();
-                        }
-                    }
+            if(currentState.duration > 0) {
+                //Current state has duration
+                if (currentState.currentDuration >= currentState.duration) {
+                    ExitCurrentState();
+                    return;
                 }
             }
-            previousMajorState = null;
-        } else {
-            //This goes back to normal
-            previousMajorState = null;
-            SetCurrentState(null);
-            currState.endStateAction?.Invoke();
+            currentState.PerTickInState();
         }
-        previousState.AfterExitingState();
     }
 
     public CharacterState CreateNewState(CHARACTER_STATE state) {
@@ -254,7 +284,7 @@ public class CharacterStateComponent {
         return newState;
     }
 
-    public void ClearPreviousState() {
-        previousMajorState = null;
-    }
+    //public void ClearPreviousState() {
+    //    previousMajorState = null;
+    //}
 }

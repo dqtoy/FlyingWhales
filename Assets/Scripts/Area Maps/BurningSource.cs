@@ -47,7 +47,7 @@ public class BurningSource {
     //        Character currDouser = dousers[i];
     //        CharacterStateJob existingJob = currDouser.jobQueue.GetJob(JOB_TYPE.REMOVE_FIRE) as CharacterStateJob;
     //        if (existingJob == null) {
-    //            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.REMOVE_FIRE, CHARACTER_STATE.DOUSE_FIRE);
+    //            CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.REMOVE_FIRE, CHARACTER_STATE.DOUSE_FIRE);
     //            existingJob = job;
     //            currDouser.jobQueue.AddJobInQueue(job);
     //        }

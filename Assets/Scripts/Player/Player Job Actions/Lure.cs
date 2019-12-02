@@ -71,7 +71,7 @@ public class Lure : PlayerJobAction {
     private void GoToRegion(object r) {
         Region region = r as Region;
         base.ActivateAction(targetCharacter);
-        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.SEARCHING_WORLD_EVENT, CHARACTER_STATE.MOVE_OUT, region, targetCharacter);
+        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.SEARCHING_WORLD_EVENT, CHARACTER_STATE.MOVE_OUT, region, targetCharacter);
         targetCharacter.jobQueue.AddJobInQueue(job);
         UIManager.Instance.HideObjectPicker();
         GameManager.Instance.SetPausedState(isGamePausedOnLure);

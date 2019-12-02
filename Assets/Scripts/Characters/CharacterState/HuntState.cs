@@ -7,7 +7,7 @@ public class HuntState : CharacterState {
     public HuntState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Hunt State";
         characterState = CHARACTER_STATE.HUNT;
-        stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
+        //stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
         duration = 48;
     }
 
@@ -58,14 +58,14 @@ public class HuntState : CharacterState {
     //    stateComponent.character.currentActionNode.SetEndAction(HuntAgain);
     //    stateComponent.character.currentActionNode.Perform();
     //}
-    private void HuntAgain(string result, GoapAction goapAction) {
-        SetCurrentlyDoingAction(null);
-        if (stateComponent.currentState != this) {
-            return;
-        }
-        stateComponent.character.SetCurrentActionNode(null, null, null);
-        StartHuntMovement();
-    }
+    //private void HuntAgain(string result, GoapAction goapAction) {
+    //    //SetCurrentlyDoingAction(null);
+    //    if (stateComponent.currentState != this) {
+    //        return;
+    //    }
+    //    stateComponent.character.SetCurrentActionNode(null, null, null);
+    //    StartHuntMovement();
+    //}
     private void StartHuntMovement() {
         stateComponent.character.marker.GoTo(PickRandomTileToGoTo(), StartHuntMovement);
     }

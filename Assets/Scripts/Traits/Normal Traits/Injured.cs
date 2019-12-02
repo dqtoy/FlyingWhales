@@ -31,7 +31,7 @@ namespace Traits {
             base.OnAddTrait(sourceCharacter);
             if (sourceCharacter is Character) {
                 _sourceCharacter = sourceCharacter as Character;
-                _sourceCharacter.UpdateIsCombatantState();
+                _sourceCharacter.UpdateCanCombatState();
                 _sourceCharacter.AdjustSpeedModifier(-0.15f);
                 //_sourceCharacter.CreateRemoveTraitJob(name);
                 _sourceCharacter.AddTraitNeededToBeRemoved(this);
@@ -49,7 +49,7 @@ namespace Traits {
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
-            _sourceCharacter.UpdateIsCombatantState();
+            _sourceCharacter.UpdateCanCombatState();
             _sourceCharacter.AdjustSpeedModifier(0.15f);
             //if (_removeTraitJob != null) {
             //    _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);

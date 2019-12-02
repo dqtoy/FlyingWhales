@@ -33,7 +33,7 @@ namespace Traits {
                     character.StopCurrentActionNode(false);
                 }
                 if (character.stateComponent.currentState != null) {
-                    character.stateComponent.currentState.OnExitThisState();
+                    character.stateComponent.ExitCurrentState();
                 }
 
                 bool triggerBrokenhearted = false;

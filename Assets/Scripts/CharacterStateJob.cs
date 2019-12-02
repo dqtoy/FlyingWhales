@@ -7,21 +7,23 @@ public class CharacterStateJob : JobQueueItem {
     public CHARACTER_STATE targetState { get; protected set; }
     public CharacterState assignedState { get; protected set; }
     public Region targetRegion { get; protected set; }
-
     public List<System.Action<Character>> onUnassignActions { get; private set; }
 
-    public CharacterStateJob(JOB_TYPE jobType, CHARACTER_STATE state, Region targetRegion, IJobOwner owner) {
+    public CharacterStateJob() : base() {
+        onUnassignActions = new List<System.Action<Character>>();
+    }
+    public void Initialize(JOB_TYPE jobType, CHARACTER_STATE state, Region targetRegion, IJobOwner owner) {
         Initialize(jobType, owner);
         this.targetState = state;
         this.targetRegion = targetRegion;
-        onUnassignActions = new List<System.Action<Character>>();
+        //onUnassignActions = new List<System.Action<Character>>();
     }
-    public CharacterStateJob(JOB_TYPE jobType, CHARACTER_STATE state, IJobOwner owner) {
+    public void Initialize(JOB_TYPE jobType, CHARACTER_STATE state, IJobOwner owner) {
         Initialize(jobType, owner);
         this.targetState = state;
-        onUnassignActions = new List<System.Action<Character>>();
+        //onUnassignActions = new List<System.Action<Character>>();
     }
-    public CharacterStateJob(SaveDataCharacterStateJob data) {
+    public void Initialize(SaveDataCharacterStateJob data) {
         Initialize(data);
         targetState = data.targetState;
         if(data.targetRegionID != -1) {
@@ -29,53 +31,80 @@ public class CharacterStateJob : JobQueueItem {
         } else {
             targetRegion = null;
         }
-        onUnassignActions = new List<System.Action<Character>>();
+        //onUnassignActions = new List<System.Action<Character>>();
     }
 
     #region Overrides
     public override bool ProcessJob() {
-        Character characterOwner = assignedCharacter as Character;
-        CharacterState newState = characterOwner.stateComponent.SwitchToState(targetState);
-        if (newState != null) {
-            SetAssignedState(newState);
-            return true;
+        if (assignedState == null) {
+            CharacterState newState = assignedCharacter.stateComponent.SwitchToState(targetState);
+            if (newState != null) {
+                SetAssignedState(newState);
+                return true;
+            } else {
+                throw new System.Exception(assignedCharacter.name + " tried doing state " + targetState.ToString() + " but was unable to do so! This must not happen!");
+            }
         } else {
-            throw new System.Exception(characterOwner.name + " tried doing state " + targetState.ToString() + " but was unable to do so! This must not happen!");
+            if(assignedState.isPaused && !assignedState.isDone) {
+                assignedState.ResumeState();
+                return true;
+            }
         }
-        //return base.ProcessJob();
+        return base.ProcessJob();
+    }
+    public override void PushedBack(JobQueueItem jobThatPushedBack) {
+        if (cannotBePushedBack) {
+            //If job is cannot be pushed back and it is pushed back, cancel it instead
+            CancelJob(false);
+        } else {
+            assignedState.PauseState();
+            assignedCharacter.stateComponent.SetCurrentState(null);
+        }
     }
     public override void UnassignJob(bool shouldDoAfterEffect, string reason) {
         base.UnassignJob(shouldDoAfterEffect, reason);
-        if(assignedState != null && assignedCharacter != null) {
+        if(assignedCharacter != null) {
             //if(assignedCharacter.stateComponent.stateToDo == assignedState) {
             //    assignedCharacter.stateComponent.SetStateToDo(null);
             //}
-            if (assignedCharacter.stateComponent.currentState == assignedState) {
-                assignedCharacter.stateComponent.currentState.OnExitThisState();
-            } else {
-                if(assignedCharacter.stateComponent.previousMajorState == assignedState) {
-                    Character character = assignedCharacter;
-                    character.stateComponent.currentState.OnExitThisState();
-                    if(character.stateComponent.currentState != null) {
-                        //This happens because the character switched back to the previous major state
-                        character.stateComponent.currentState.OnExitThisState();
-                    }
+            if(assignedState != null) {
+                if (assignedCharacter.stateComponent.currentState == assignedState) {
+                    assignedCharacter.stateComponent.ExitCurrentState();
                 }
+                SetAssignedState(null);
             }
+            SetAssignedCharacter(null);
+            //else {
+            //    if(assignedCharacter.stateComponent.previousMajorState == assignedState) {
+            //        Character character = assignedCharacter;
+            //        character.stateComponent.currentState.OnExitThisState();
+            //        if(character.stateComponent.currentState != null) {
+            //            //This happens because the character switched back to the previous major state
+            //            character.stateComponent.currentState.OnExitThisState();
+            //        }
+            //    }
+            //}
         }
     }
-    protected override bool CanTakeJob(Character character) {
-        if(targetState == CHARACTER_STATE.PATROL) {
-            if(character.role.roleType == CHARACTER_ROLE.SOLDIER) {
-                return true;
-            }
-            return false;
-        }
-        return base.CanTakeJob(character);
-    }
+    //protected override bool CanTakeJob(Character character) {
+    //    if(targetState == CHARACTER_STATE.PATROL) {
+    //        if(character.role.roleType == CHARACTER_ROLE.SOLDIER) {
+    //            return true;
+    //        }
+    //        return false;
+    //    }
+    //    return base.CanTakeJob(character);
+    //}
     public override void OnCharacterUnassignedToJob(Character character) {
         base.OnCharacterAssignedToJob(character);
         ExecuteUnassignActions(character);
+    }
+    public override void Reset() {
+        base.Reset();
+        targetState = CHARACTER_STATE.NONE;
+        assignedState = null;
+        targetRegion = null;
+        onUnassignActions.Clear();
     }
     #endregion
 

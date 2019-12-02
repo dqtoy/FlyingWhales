@@ -128,10 +128,10 @@ namespace Traits {
                     if (targetVictim != null) {
                         character.CancelAllJobs();
                         if (character.stateComponent.currentState != null) {
-                            character.stateComponent.currentState.OnExitThisState();
-                            if (character.stateComponent.currentState != null) {
-                                character.stateComponent.currentState.OnExitThisState();
-                            }
+                            character.stateComponent.ExitCurrentState();
+                            //if (character.stateComponent.currentState != null) {
+                            //    character.stateComponent.currentState.OnExitThisState();
+                            //}
                         }
                         FollowTargetVictim();
                         SetHasStartedFollowing(true);
@@ -164,10 +164,10 @@ namespace Traits {
             if (targetVictim != null) {
                 character.CancelAllJobs();
                 if (character.stateComponent.currentState != null) {
-                    character.stateComponent.currentState.OnExitThisState();
-                    if (character.stateComponent.currentState != null) {
-                        character.stateComponent.currentState.OnExitThisState();
-                    }
+                    character.stateComponent.ExitCurrentState();
+                    //if (character.stateComponent.currentState != null) {
+                    //    character.stateComponent.currentState.OnExitThisState();
+                    //}
                 }
                 FollowTargetVictim();
                 SetHasStartedFollowing(true);

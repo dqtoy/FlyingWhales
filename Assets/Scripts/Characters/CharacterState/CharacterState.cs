@@ -6,40 +6,40 @@ public class CharacterState {
     public CharacterStateComponent stateComponent { get; protected set; }
     public string stateName { get; protected set; }
     public CHARACTER_STATE characterState { get; protected set; }
-    public CHARACTER_STATE_CATEGORY stateCategory { get; protected set; }
+    //public CHARACTER_STATE_CATEGORY stateCategory { get; protected set; }
     public int duration { get; protected set; } // 0 means no duration - end state immediately
     public int currentDuration { get; protected set; }
-    public int level { get; protected set; } //Right now, only used in berserk to know what level BerserkBuff will be
+    //public int level { get; protected set; } //Right now, only used in berserk to know what level BerserkBuff will be
     public bool isDone { get; protected set; }
     public bool hasStarted { get; protected set; }
     public bool isPaused { get; protected set; }
     public Log thoughtBubbleLog { get; protected set; }
     public CharacterStateJob job { get; protected set; }
     public string actionIconString { get; protected set; }
-    public GoapAction currentlyDoingAction { get; protected set; }
-    public Character targetCharacter { get; protected set; } //Target character of current state
+    //public GoapAction currentlyDoingAction { get; protected set; }
+    //public Character targetCharacter { get; protected set; } //Target character of current state
     //public Area targetArea { get; protected set; }
-    public bool isUnending { get; protected set; } //is this state unending?
+    //public bool isUnending { get; protected set; } //is this state unending?
     //public CharacterState parentMajorState { get; protected set; }
 
-    public System.Action startStateAction { get; protected set; }
-    public System.Action endStateAction { get; protected set; }
+    //public System.Action startStateAction { get; protected set; }
+    //public System.Action endStateAction { get; protected set; }
 
     public CharacterState(CharacterStateComponent characterComp) {
         this.stateComponent = characterComp;
         actionIconString = GoapActionStateDB.No_Icon;
-        isUnending = false;
-        AddDefaultListeners();
+        //isUnending = false;
+        //AddDefaultListeners();
     }
 
     #region Virtuals
     public virtual void Load(SaveDataCharacterState saveData) {
         this.SetCurrentDuration(saveData.currentDuration);
-        this.SetIsUnending(saveData.isUnending);
-        if (saveData.targetCharacterID != -1) {
-            Character targetCharacter = CharacterManager.Instance.GetCharacterByID(saveData.targetCharacterID);
-            this.SetTargetCharacter(targetCharacter);
-        }
+        //this.SetIsUnending(saveData.isUnending);
+        //if (saveData.targetCharacterID != -1) {
+        //    Character targetCharacter = CharacterManager.Instance.GetCharacterByID(saveData.targetCharacterID);
+        //    this.SetTargetCharacter(targetCharacter);
+        //}
         //if (saveData.targetAreaID != -1) {
         //    Area targetArea = LandmarkManager.Instance.GetAreaByID(saveData.targetAreaID);
         //    this.SetTargetArea(targetArea);
@@ -49,18 +49,18 @@ public class CharacterState {
     protected virtual void StartState() {
         hasStarted = true;
         //stateComponent.SetStateToDo(null, false, false);
-        stateComponent.SetCurrentState(this);
         currentDuration = 0;
-        StartStatePerTick();
+        //StartStatePerTick();
 
         CreateStartStateLog();
         CreateThoughtBubbleLog();
         DoMovementBehavior();
+        stateComponent.SetCurrentState(this);
         Messenger.Broadcast(Signals.CHARACTER_STARTED_STATE, stateComponent.character, this);
         ProcessInVisionPOIsOnStartState();
-        if(startStateAction != null) {
-            startStateAction();
-        }
+        //if(startStateAction != null) {
+        //    startStateAction();
+        //}
         //stateComponent.character.JustDropAllPlansOfType(INTERACTION_TYPE.WATCH);
     }
     /// <summary>
@@ -77,8 +77,8 @@ public class CharacterState {
         //    SetCurrentlyDoingAction(null);
         //}
         isDone = true;
-        StopStatePerTick();
-        RemoveDefaultListeners();
+        //StopStatePerTick();
+        //RemoveDefaultListeners();
         if(job != null) {
             //job.SetAssignedCharacter(null);
             //job.SetAssignedState(null);
@@ -87,18 +87,19 @@ public class CharacterState {
         }
         Messenger.Broadcast(Signals.CHARACTER_ENDED_STATE, stateComponent.character, this);
     }
-    //This is called per TICK_ENDED if the state has a duration, can be overriden
-    protected virtual void PerTickInState() {
-        if (!isPaused && !isUnending && !isDone) {
-            if (currentDuration >= duration) {
-                StopStatePerTick();
-                OnExitThisState();
-            } else if (stateComponent.character.doNotDisturb > 0) {
-                StopStatePerTick();
-                OnExitThisState();
-            }
-            currentDuration++;
-        }
+    //Only call this base function if state has duration
+    public virtual void PerTickInState() {
+        currentDuration++;
+        //if (!isPaused /*&& !isUnending*/ && !isDone) {
+        //    if (currentDuration >= duration) {
+        //        StopStatePerTick();
+        //        OnExitThisState();
+        //    } else if (stateComponent.character.doNotDisturb > 0) {
+        //        StopStatePerTick();
+        //        OnExitThisState();
+        //    }
+        //    currentDuration++;
+        //}
     }
     //Character will do the movement behavior of this state, can be overriden
     protected virtual void DoMovementBehavior() {}
@@ -112,26 +113,26 @@ public class CharacterState {
         return false;
     }
     //This is called for exiting current state, I made it a virtual because some states still requires something before exiting current state
-    public virtual void OnExitThisState() {
-        stateComponent.ExitCurrentState(this);
-    }
+    //public virtual void OnExitThisState() {
+    //    stateComponent.ExitCurrentState(this);
+    //}
     //Typically used if there are other data that is needed to be set for this state when it starts
     //Currently used only in combat state so we can set the character's behavior if attacking or not when it enters the state
-    public virtual void SetOtherDataOnStartState(object otherData) { }
+    //public virtual void SetOtherDataOnStartState(object otherData) { }
     //This is called on ExitCurrentState function in CharacterStateComponent after all exit processing is finished
     public virtual void AfterExitingState() {
         stateComponent.character.marker.UpdateActionIcon();
     }
-    public virtual bool CanResumeState() {
-        return true;
-    }
+    //public virtual bool CanResumeState() {
+    //    return true;
+    //}
     /// <summary>
     /// Pauses this state, used in switching states if this is a major state
     /// </summary>
     public virtual void PauseState() {
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Pausing " + stateName + " for " + stateComponent.character.name);
         isPaused = true;
-        StopStatePerTick();
+        //StopStatePerTick();
     }
     /// <summary>
     /// Resumes the state and its movement behavior
@@ -145,7 +146,7 @@ public class CharacterState {
         }
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Resuming " + stateName + " for " + stateComponent.character.name);
         isPaused = false;
-        StartStatePerTick();
+        //StartStatePerTick();
         DoMovementBehavior();
     }
     protected virtual void OnJobSet() { }
@@ -153,9 +154,9 @@ public class CharacterState {
         if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", stateName, "thought_bubble")) {
             thoughtBubbleLog = new Log(GameManager.Instance.Today(), "CharacterState", stateName, "thought_bubble");
             thoughtBubbleLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            if (targetCharacter != null) {
-                thoughtBubbleLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
-            }
+            //if (targetCharacter != null) {
+            //    thoughtBubbleLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
+            //}
         }
     }
     #endregion
@@ -166,29 +167,29 @@ public class CharacterState {
     //}
 
     //Stops the timer of this state
-    public void StopStatePerTick() {
-        if (Messenger.eventTable.ContainsKey(Signals.TICK_ENDED)) {
-            Messenger.RemoveListener(Signals.TICK_ENDED, PerTickInState);
-        }
-    }
+    //public void StopStatePerTick() {
+    //    if (Messenger.eventTable.ContainsKey(Signals.TICK_ENDED)) {
+    //        Messenger.RemoveListener(Signals.TICK_ENDED, PerTickInState);
+    //    }
+    //}
     //Starts the timer of this state
-    public void StartStatePerTick() {
-        //if(duration > 0) {
-            Messenger.AddListener(Signals.TICK_ENDED, PerTickInState);
-        //}
-    }
+    //public void StartStatePerTick() {
+    //    //if(duration > 0) {
+    //        Messenger.AddListener(Signals.TICK_ENDED, PerTickInState);
+    //    //}
+    //}
     //Sets the target character of this state, if there's any
-    public void SetTargetCharacter(Character target) {
-        targetCharacter = target;
-    }
+    //public void SetTargetCharacter(Character target) {
+    //    targetCharacter = target;
+    //}
     ////Sets the target area of this state, if there's any
     //public void SetTargetArea(Area target) {
     //    targetArea = target;
     //}
     //This is the action that is currently being done while in this state, ex. pick up item
-    public void SetCurrentlyDoingAction(GoapAction action) {
-        currentlyDoingAction = action;
-    }
+    //public void SetCurrentlyDoingAction(GoapAction action) {
+    //    currentlyDoingAction = action;
+    //}
     //public void SetParentMajorState(CharacterState majorState) {
     //    parentMajorState = majorState;
     //}
@@ -198,7 +199,7 @@ public class CharacterState {
             return;
         }
         //stateComponent.SetStateToDo(this, stopMovement: false);
-        stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name + " targetting " + targetCharacter?.name);
+        //stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name + " targetting " + targetCharacter?.name);
         StartState();
         ////targetArea = area;
         //if (targetArea == null || targetArea == stateComponent.character.specificLocation) {
@@ -234,7 +235,7 @@ public class CharacterState {
     //}
     //This is the one must be called to exit and end this state
     public void ExitState() {
-        stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Exiting " + stateName + " for " + stateComponent.character.name + " targetting " + targetCharacter?.name ?? "No One");
+        stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Exiting " + stateName + " for " + stateComponent.character.name /*+ " targetting " + targetCharacter?.name ?? "No One"*/);
         EndState();
     }
     public void SetJob(CharacterStateJob job) {
@@ -252,9 +253,9 @@ public class CharacterState {
         if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", stateName, "start")) {
             Log log = new Log(GameManager.Instance.Today(), "CharacterState", stateName, "start");
             log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            if (targetCharacter != null) {
-                log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
-            }
+            //if (targetCharacter != null) {
+            //    log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
+            //}
             //if(targetArea != null) {
             //    log.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
             //}
@@ -270,28 +271,28 @@ public class CharacterState {
             thoughtBubbleLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         }
     }
-    public void SetStartStateAction(System.Action action) {
-        startStateAction = action;
-    }
-    public void SetEndStateAction(System.Action action) {
-        endStateAction = action;
-    }
+    //public void SetStartStateAction(System.Action action) {
+    //    startStateAction = action;
+    //}
+    //public void SetEndStateAction(System.Action action) {
+    //    endStateAction = action;
+    //}
 
-    #region Listeners
-    private void AddDefaultListeners() {
-        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-    }
-    private void RemoveDefaultListeners() {
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-    }
-    //handler for when the character that owns this dies
-    private void OnCharacterDied(Character character) {
-        if (character.id == stateComponent.character.id) {
-            StopStatePerTick();
-            RemoveDefaultListeners();
-        }
-    }
-    #endregion
+    //#region Listeners
+    //private void AddDefaultListeners() {
+    //    Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+    //}
+    //private void RemoveDefaultListeners() {
+    //    Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+    //}
+    ////handler for when the character that owns this dies
+    //private void OnCharacterDied(Character character) {
+    //    if (character.id == stateComponent.character.id) {
+    //        StopStatePerTick();
+    //        RemoveDefaultListeners();
+    //    }
+    //}
+    //#endregion
 
     #region Utilities
     internal void ChangeDuration(int newDuration) {
@@ -304,9 +305,9 @@ public class CharacterState {
     /// Set if this state only has a specific duration, or will it run indefinitely until stopped.
     /// </summary>
     /// <param name="state">If the state should be unending or not.</param>
-    public void SetIsUnending(bool state) {
-        isUnending = state;
-    }
+    //public void SetIsUnending(bool state) {
+    //    isUnending = state;
+    //}
     public override string ToString() {
         return stateName + " by " + stateComponent.character.name + " with job : " + (job?.name ?? "None");
     }
@@ -333,15 +334,15 @@ public class SaveDataCharacterState {
         duration = state.duration;
         currentDuration = state.currentDuration;
         isPaused = state.isPaused;
-        isUnending = state.isUnending;
+        //isUnending = state.isUnending;
         hasStarted = state.hasStarted;
-        level = state.level;
+        //level = state.level;
 
-        if(state.targetCharacter != null) {
-            targetCharacterID = state.targetCharacter.id;
-        } else {
-            targetCharacterID = -1;
-        }
+        //if(state.targetCharacter != null) {
+        //    targetCharacterID = state.targetCharacter.id;
+        //} else {
+        //    targetCharacterID = -1;
+        //}
         //if (state.targetArea != null) {
         //    targetAreaID = state.targetArea.id;
         //} else {
