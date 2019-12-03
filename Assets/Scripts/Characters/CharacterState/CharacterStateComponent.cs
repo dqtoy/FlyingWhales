@@ -21,7 +21,6 @@ public class CharacterStateComponent {
 
     public CharacterStateComponent(Character character) {
         this.character = character;
-        //Messenger.RemoveListener(Signals.TICK_ENDED, PerTickCurrentState);
     }
 
     public void OnTickEnded() {
@@ -151,10 +150,15 @@ public class CharacterStateComponent {
             }
         //}
 
+        CharacterStateJob stateJob = currentState.job;
         CharacterState currState = currentState;
         currState.ExitState();
         SetCurrentState(null);
         currState.AfterExitingState();
+
+        if(stateJob != null) {
+            stateJob.ForceCancelJob();
+        }
 
         //CharacterState currState = this.currentState; //local variable for currentState
         //if (currState != null) {

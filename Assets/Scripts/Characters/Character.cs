@@ -26,7 +26,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     protected CharacterParty _ownParty;
     protected CharacterParty _currentParty;
     protected Minion _minion;
-    protected CombatCharacter _currentCombatCharacter;
+    //protected CombatCharacter _currentCombatCharacter;
     protected List<Log> _history;
     private LocationStructure _currentStructure; //what structure is this character currently in.
 
@@ -61,7 +61,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         get { return currentAlterEgo.relationshipValidator; }
     }
     public List<INTERACTION_TYPE> advertisedActions { get; private set; }
-    public GoapPlanner planner { get; set; }
     public int supply { get; set; }
     public int food { get; set; }
     public CharacterMarker marker { get; private set; }
@@ -70,7 +69,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public ActualGoapNode currentActionNode { get; private set; }
     public ActualGoapNode previousCurrentActionNode { get; private set; }
     public Character lastAssaultedCharacter { get; private set; }
-    public CharacterStateComponent stateComponent { get; private set; }
     public List<SpecialToken> items { get; private set; }
     public JobQueue jobQueue { get; private set; }
     public List<JobQueueItem> allJobsTargettingThis { get; private set; }
@@ -153,7 +151,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public List<string> locationHistory { get; private set; }
     public List<string> actionHistory { get; private set; }
 
+    //Components / Managers
+    public GoapPlanner planner { get; set; }
     public BuildStructureComponent buildStructureComponent { get; private set; }
+    public CharacterStateComponent stateComponent { get; private set; }
+    public NonActionEventsComponent nonActionEventsComponent { get; private set; }
+    public OpinionComponent opinionComponent { get; private set; }
 
     #region getters / setters
     public virtual string name {
@@ -299,9 +302,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public int doNotGetTired {
         get { return _doNotGetTired; }
     }
-    public CombatCharacter currentCombatCharacter {
-        get { return _currentCombatCharacter; }
-    }
+    //public CombatCharacter currentCombatCharacter {
+    //    get { return _currentCombatCharacter; }
+    //}
     public POINT_OF_INTEREST_TYPE poiType {
         get { return POINT_OF_INTEREST_TYPE.CHARACTER; }
     }
@@ -468,14 +471,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
         combatHistory = new Dictionary<int, Combat>();
         advertisedActions = new List<INTERACTION_TYPE>();
-        stateComponent = new CharacterStateComponent(this);
         items = new List<SpecialToken>();
-        jobQueue = new JobQueue(this);
         allJobsTargettingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
         onLeaveAreaActions = new List<Action>();
         pendingActionsAfterMultiThread = new List<Action>();
-        trapStructure = new TrapStructure();
         tirednessLowerBound = 0;
         fullnessLowerBound = 0;
         happinessLowerBound = 0;
@@ -489,10 +489,17 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //for testing
         locationHistory = new List<string>();
         actionHistory = new List<string>();
-        planner = new GoapPlanner(this);
 
         //hostiltiy
         ignoreHostility = 0;
+
+        //Components
+        stateComponent = new CharacterStateComponent(this);
+        jobQueue = new JobQueue(this);
+        trapStructure = new TrapStructure();
+        planner = new GoapPlanner(this);
+        nonActionEventsComponent = new NonActionEventsComponent(this);
+        opinionComponent = new OpinionComponent(this);
     }
 
     //This is done separately after all traits have been loaded so that the data will be accurate
@@ -856,7 +863,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 SwitchAlterEgo(CharacterManager.Original_Alter_Ego); //revert the character to his/her original alter ego
             }
             SetIsChatting(false);
-            SetIsFlirting(false);
+            //SetIsFlirting(false);
             Area deathLocation = ownParty.specificLocation;
             LocationStructure deathStructure = currentStructure;
             LocationGridTile deathTile = gridTileLocation;
@@ -1804,14 +1811,14 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //    //return null;
     //}
 
-    public GoapPlanJob CreateBreakupJob(Character targetCharacter) {
-        if (jobQueue.HasJob(JOB_TYPE.BREAK_UP, targetCharacter)) {
-            return null; //already has break up job targetting targetCharacter
-        }
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BREAK_UP, INTERACTION_TYPE.BREAK_UP, targetCharacter, this);
-        jobQueue.AddJobInQueue(job);
-        return job;
-    }
+    //public GoapPlanJob CreateBreakupJob(Character targetCharacter) {
+    //    if (jobQueue.HasJob(JOB_TYPE.BREAK_UP, targetCharacter)) {
+    //        return null; //already has break up job targetting targetCharacter
+    //    }
+    //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BREAK_UP, INTERACTION_TYPE.BREAK_UP, targetCharacter, this);
+    //    jobQueue.AddJobInQueue(job);
+    //    return job;
+    //}
     public void CreateShareInformationJob(Character targetCharacter, GoapAction info) {
         if (!IsHostileWith(targetCharacter) && !jobQueue.HasJobWithOtherData(JOB_TYPE.SHARE_INFORMATION, info)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SHARE_INFORMATION, INTERACTION_TYPE.SHARE_INFORMATION, targetCharacter, this);
@@ -3213,9 +3220,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     #endregion
 
     #region Combat Handlers
-    public void SetCombatCharacter(CombatCharacter combatCharacter) {
-        _currentCombatCharacter = combatCharacter;
-    }
+    //public void SetCombatCharacter(CombatCharacter combatCharacter) {
+    //    _currentCombatCharacter = combatCharacter;
+    //}
     /// <summary>
     /// This character was hit by an attack.
     /// </summary>
@@ -3986,6 +3993,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         StartTickGoapPlanGeneration();
     }
     protected virtual void OnTickEnded() {
+        stateComponent.OnTickEnded();
         EndTickPerformJobs();
     }
     protected void StartTickGoapPlanGeneration() {
@@ -4603,45 +4611,45 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             SetLastAssaultedCharacter(null);
         }
     }
-    public bool ChatCharacter(Character targetCharacter, int chatChance) {
-        if (targetCharacter.isDead
-            || !targetCharacter.canWitness
-            || !canWitness
-            || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
-            || role.roleType == CHARACTER_ROLE.BEAST
-            || targetCharacter.faction == PlayerManager.Instance.player.playerFaction
-            || faction == PlayerManager.Instance.player.playerFaction
-            || targetCharacter.characterClass.className == "Zombie"
-            || characterClass.className == "Zombie"
-            || (currentActionNode != null && currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)
-            || (targetCharacter.currentActionNode != null && targetCharacter.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)) {
-            return false;
-        }
-        if (!IsHostileWith(targetCharacter)) {
-            int roll = UnityEngine.Random.Range(0, 100);
-            int chance = chatChance;
-            if (roll < chance) {
-                int chatPriority = InteractionManager.Instance.GetInitialPriority(JOB_TYPE.CHAT);
-                JobQueueItem currJob = currentJob;
-                if (currJob != null) {
-                    if (chatPriority >= currJob.priority) {
-                        return false;
-                    }
-                }
-                ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.CHAT_CHARACTER], this, targetCharacter, null, 0);
-                GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetCharacter);
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CHAT, INTERACTION_TYPE.CHAT_CHARACTER, targetCharacter, this);
-                goapPlan.SetDoNotRecalculate(true);
-                job.SetCannotBePushedBack(true);
-                job.SetAssignedPlan(goapPlan);
-                jobQueue.AddJobInQueue(job);
-                return true;
-                //ChatCharacter chatAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CHAT_CHARACTER, this, targetCharacter) as ChatCharacter;
-                //chatAction.Perform();
-            }
-        }
-        return false;
-    }
+    //public bool ChatCharacter(Character targetCharacter, int chatChance) {
+    //    if (targetCharacter.isDead
+    //        || !targetCharacter.canWitness
+    //        || !canWitness
+    //        || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
+    //        || role.roleType == CHARACTER_ROLE.BEAST
+    //        || targetCharacter.faction == PlayerManager.Instance.player.playerFaction
+    //        || faction == PlayerManager.Instance.player.playerFaction
+    //        || targetCharacter.characterClass.className == "Zombie"
+    //        || characterClass.className == "Zombie"
+    //        || (currentActionNode != null && currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)
+    //        || (targetCharacter.currentActionNode != null && targetCharacter.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)) {
+    //        return false;
+    //    }
+    //    if (!IsHostileWith(targetCharacter)) {
+    //        int roll = UnityEngine.Random.Range(0, 100);
+    //        int chance = chatChance;
+    //        if (roll < chance) {
+    //            int chatPriority = InteractionManager.Instance.GetInitialPriority(JOB_TYPE.CHAT);
+    //            JobQueueItem currJob = currentJob;
+    //            if (currJob != null) {
+    //                if (chatPriority >= currJob.priority) {
+    //                    return false;
+    //                }
+    //            }
+    //            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.CHAT_CHARACTER], this, targetCharacter, null, 0);
+    //            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetCharacter);
+    //            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CHAT, INTERACTION_TYPE.CHAT_CHARACTER, targetCharacter, this);
+    //            goapPlan.SetDoNotRecalculate(true);
+    //            job.SetCannotBePushedBack(true);
+    //            job.SetAssignedPlan(goapPlan);
+    //            jobQueue.AddJobInQueue(job);
+    //            return true;
+    //            //ChatCharacter chatAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CHAT_CHARACTER, this, targetCharacter) as ChatCharacter;
+    //            //chatAction.Perform();
+    //        }
+    //    }
+    //    return false;
+    //}
     public float GetFlirtationWeightWith(Character targetCharacter, IRelationshipData relData, params CHARACTER_MOOD[] moods) {
         float positiveFlirtationWeight = 0;
         float negativeFlirtationWeight = 0;
@@ -4836,20 +4844,23 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         return positiveWeight + negativeWeight;
     }
-    public void EndChatCharacter() {
-        SetIsChatting(false);
-        //targetCharacter.SetIsChatting(false);
-        SetIsFlirting(false);
-        //targetCharacter.SetIsFlirting(false);
-        marker.UpdateActionIcon();
-        //targetCharacter.marker.UpdateActionIcon();
-    }
+    //public void EndChatCharacter() {
+    //    SetIsChatting(false);
+    //    //targetCharacter.SetIsChatting(false);
+    //    //SetIsFlirting(false);
+    //    //targetCharacter.SetIsFlirting(false);
+    //    marker.UpdateActionIcon();
+    //    //targetCharacter.marker.UpdateActionIcon();
+    //}
     public void SetIsChatting(bool state) {
         _isChatting = state;
+        if(marker != null) {
+            marker.UpdateActionIcon();
+        }
     }
-    public void SetIsFlirting(bool state) {
-        _isFlirting = state;
-    }
+    //public void SetIsFlirting(bool state) {
+    //    _isFlirting = state;
+    //}
     public void AddAdvertisedAction(INTERACTION_TYPE type) {
         advertisedActions.Add(type);
     }
@@ -5726,7 +5737,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         advertisedActions.Add(INTERACTION_TYPE.INVITE);
         advertisedActions.Add(INTERACTION_TYPE.MAKE_LOVE);
         advertisedActions.Add(INTERACTION_TYPE.TANTRUM);
-        advertisedActions.Add(INTERACTION_TYPE.BREAK_UP);
+        //advertisedActions.Add(INTERACTION_TYPE.BREAK_UP);
         advertisedActions.Add(INTERACTION_TYPE.PUKE);
         advertisedActions.Add(INTERACTION_TYPE.SEPTIC_SHOCK);
         advertisedActions.Add(INTERACTION_TYPE.CARRY);

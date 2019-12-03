@@ -113,7 +113,11 @@ public class InteriorMapManager : MonoBehaviour {
                 }
             } else {
                 if (hoveredTile.objHere != null || hoveredTile.parentAreaMap.hoveredCharacter != null) {
-                    ShowTileData(hoveredTile);
+                    if(hoveredTile.objHere != null) {
+                        ShowTileData(hoveredTile);
+                    } else {
+                        ShowCharacterData(hoveredTile.parentAreaMap.hoveredCharacter);
+                    }
                     if (Input.GetMouseButtonDown(0)) {
                         hoveredTile.OnClickTileActions(PointerEventData.InputButton.Left);
                     } else if (Input.GetMouseButtonDown(1)) {
@@ -495,7 +499,12 @@ public class InteriorMapManager : MonoBehaviour {
         }
 #endif
     }
+    public void ShowCharacterData(Character character) {
+        string summary = "<b>" + character.name + "</b>";
+        summary += "\n\t" + GetCharacterHoverData(character) + "\n";
+    }
     private string GetCharacterHoverData(Character character) {
+        Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter;
         string summary = "Character: " + character.name;
         summary += "\n\tMood: " + character.currentMoodType.ToString();
         summary += "\n\tSupply: " + character.supply.ToString();
@@ -508,6 +517,17 @@ public class InteriorMapManager : MonoBehaviour {
         summary += "\n\tAttack Speed: " + character.attackSpeed.ToString();
         summary += "\n\tTarget POI: " + character.marker.targetPOI?.ToString() ?? "None";
         summary += "\n\tBase Structure: " + (character.trapStructure.structure != null ? character.trapStructure.structure.ToString() : "None");
+        if (activeCharacter != null && activeCharacter != character) {
+            summary += "\n\tOpinion of " + activeCharacter.name + ":";
+            if (activeCharacter.opinionComponent.HasOpinion(character)) {
+                Dictionary<string, int> opinion = activeCharacter.opinionComponent.GetOpinion(character);
+                foreach (KeyValuePair<string, int> kvp in opinion) {
+                    summary += "\n\t\t" + kvp.Key + ": " + kvp.Value;
+                }
+            } else {
+                summary += " None";
+            }
+        }
         summary += "\n\tDestination Tile: ";
         if (character.marker.destinationTile == null) {
             summary += "None";

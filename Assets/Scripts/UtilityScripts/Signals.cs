@@ -168,6 +168,11 @@ public static class Signals {
     public static string CHARACTER_RETURNED_TO_LIFE = "OnCharacterReturnedToLife";
     public static string CHARACTER_BECOMES_MINION_OR_SUMMON = "OnCharacterBecomesMinionOrSummon";
     public static string CHARACTER_BECOMES_NON_MINION_OR_SUMMON = "OnCharacterBecomesNonMinionOrSummon";
+
+    //Opinion
+    public static string OPINION_INCREASED = "OnOpinionIncreased";
+    public static string OPINION_DECREASED = "OnOpinionDecreased";
+
     #endregion
 
     #region UI

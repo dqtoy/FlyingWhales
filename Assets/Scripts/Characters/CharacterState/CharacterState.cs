@@ -78,12 +78,12 @@ public class CharacterState {
         isDone = true;
         //StopStatePerTick();
         //RemoveDefaultListeners();
-        if(job != null) {
-            //job.SetAssignedCharacter(null);
-            //job.SetAssignedState(null);
-            //job.assignedCharacter.jobQueue.RemoveJobInQueue(job);
-            job.ForceCancelJob();
-        }
+        //if(job != null) {
+        //    //job.SetAssignedCharacter(null);
+        //    //job.SetAssignedState(null);
+        //    //job.assignedCharacter.jobQueue.RemoveJobInQueue(job);
+        //    job.ForceCancelJob();
+        //}
         Messenger.Broadcast(Signals.CHARACTER_ENDED_STATE, stateComponent.character, this);
     }
     //Only call this base function if state has duration

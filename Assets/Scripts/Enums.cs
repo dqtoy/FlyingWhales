@@ -1113,6 +1113,7 @@ public enum RELATIONSHIP_TRAIT {
     SERVANT = 7,
     SAVER = 8,
     SAVE_TARGET = 9,
+    EX_LOVER = 10,
 }
 
 public enum POINT_OF_INTEREST_TYPE {

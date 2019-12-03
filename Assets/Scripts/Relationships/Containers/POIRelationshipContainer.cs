@@ -45,6 +45,22 @@ public class POIRelationshipContainer : IRelationshipContainer {
         }
         return false;
     }
+    public bool HasRelationshipWith(Relatable alterEgo, params RELATIONSHIP_TRAIT[] relType) {
+        if (HasRelationshipWith(alterEgo)) {
+            IRelationshipData data = relationships[alterEgo];
+            for (int i = 0; i < relType.Length; i++) {
+                RELATIONSHIP_TRAIT rel = relType[i];
+                for (int j = 0; j < data.relationships.Count; j++) {
+                    RELATIONSHIP_TRAIT dataRel = data.relationships[j];
+                    if(rel == dataRel) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        return false;
+    }
     #endregion
 
     #region Getting
@@ -86,5 +102,22 @@ public class POIRelationshipContainer : IRelationshipContainer {
         }
         return null;
     }
+    public RELATIONSHIP_TRAIT GetRelationshipFromParametersWith(Relatable alterEgo, params RELATIONSHIP_TRAIT[] relType) {
+        if (HasRelationshipWith(alterEgo)) {
+            IRelationshipData data = relationships[alterEgo];
+            for (int i = 0; i < relType.Length; i++) {
+                RELATIONSHIP_TRAIT rel = relType[i];
+                for (int j = 0; j < data.relationships.Count; j++) {
+                    RELATIONSHIP_TRAIT dataRel = data.relationships[j];
+                    if (rel == dataRel) {
+                        return rel;
+                    }
+                }
+            }
+            return RELATIONSHIP_TRAIT.NONE;
+        }
+        return RELATIONSHIP_TRAIT.NONE;
+    }
+
     #endregion
 }

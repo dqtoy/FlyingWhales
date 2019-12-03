@@ -34,6 +34,10 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
                     }
                 }
                 break;
+            case RELATIONSHIP_TRAIT.EX_LOVER:
+                character1.opinionComponent.AdjustOpinion(character2, "Ex-Lover", -25);
+                character2.opinionComponent.AdjustOpinion(character1, "Ex-Lover", -25);
+                break;
             default:
                 break;
         }
@@ -49,6 +53,10 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
                 break;
             case RELATIONSHIP_TRAIT.FRIEND:
                 CreateRelationshipLog("not_friend", character1, character2);
+                break;
+            case RELATIONSHIP_TRAIT.EX_LOVER:
+                character1.opinionComponent.RemoveOpinion(character2, "Ex-Lover");
+                character2.opinionComponent.RemoveOpinion(character1, "Ex-Lover");
                 break;
             default:
                 break;

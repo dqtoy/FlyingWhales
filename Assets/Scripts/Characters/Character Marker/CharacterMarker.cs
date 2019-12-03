@@ -990,7 +990,7 @@ public class CharacterMarker : PooledObject {
                     if(character.stateComponent.currentState == null || !character.stateComponent.currentState.OnEnterVisionWith(poi)) {
                         if (!character.CreateJobsOnEnterVisionWith(poi)) {
                             if (poi is Character) {
-                                character.ChatCharacter(poi as Character, 8);
+                                character.nonActionEventsComponent.NormalChatCharacter(poi as Character);
                             }
                         }
                     }

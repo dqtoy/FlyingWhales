@@ -103,14 +103,14 @@ public class NewCombat : MonoBehaviour {
                 CombatCharacter combatCharacter = new CombatCharacter(leftSide.slots[i].character, leftSide.slots[i].gridNumber, SIDES.A);
                 _combatOrder.Add(combatCharacter);
                 _leftSideCombatOrder.Add(combatCharacter);
-                leftSide.slots[i].character.SetCombatCharacter(combatCharacter);
+                //leftSide.slots[i].character.SetCombatCharacter(combatCharacter);
                 leftSide.slots[i].character.AdjustDoNotDisturb(1);
             }
             if (rightSide.slots[i].isOccupied && !IsInCombatOrder(rightSide.slots[i].character)) {
                 CombatCharacter combatCharacter = new CombatCharacter(rightSide.slots[i].character, rightSide.slots[i].gridNumber, SIDES.B);
                 _combatOrder.Add(combatCharacter);
                 _rightSideCombatOrder.Add(combatCharacter);
-                rightSide.slots[i].character.SetCombatCharacter(combatCharacter);
+                //rightSide.slots[i].character.SetCombatCharacter(combatCharacter);
                 rightSide.slots[i].character.AdjustDoNotDisturb(1);
             }
         }
@@ -315,10 +315,10 @@ public class NewCombat : MonoBehaviour {
             for (int j = 0; j < targetIndexes[chosenIndex].Length; j++) {
                 Character targetCharacter = gridToBeChecked.slots[targetIndexes[chosenIndex][j]].character;
                 if (targetCharacter != null && !_deadCharacters.Contains(targetCharacter)) {
-                    CombatCharacter targetCombatCharacter = targetCharacter.currentCombatCharacter;
-                    if (!targets.Contains(targetCombatCharacter)) {
-                        targets.Add(targetCombatCharacter);
-                    }
+                    //CombatCharacter targetCombatCharacter = targetCharacter.currentCombatCharacter;
+                    //if (!targets.Contains(targetCombatCharacter)) {
+                    //    targets.Add(targetCombatCharacter);
+                    //}
                 }
             }
         }

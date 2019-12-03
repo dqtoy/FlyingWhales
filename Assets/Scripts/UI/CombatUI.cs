@@ -133,13 +133,13 @@ public class CombatUI : MonoBehaviour {
         if (combatSlotItem.side == SIDES.A) {
             for (int i = 0; i < leftSlots.Length; i++) {
                 if (leftSlots[i].character != null && leftSlots[i].isTargetable) {
-                    targetCharacters.Add(leftSlots[i].character.currentCombatCharacter);
+                    //targetCharacters.Add(leftSlots[i].character.currentCombatCharacter);
                 }
             }
         } else {
             for (int i = 0; i < rightSlots.Length; i++) {
                 if (rightSlots[i].character != null && rightSlots[i].isTargetable) {
-                    targetCharacters.Add(rightSlots[i].character.currentCombatCharacter);
+                    //targetCharacters.Add(rightSlots[i].character.currentCombatCharacter);
                 }
             }
         }

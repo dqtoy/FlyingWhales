@@ -69,11 +69,11 @@ public class CharacterStateJob : JobQueueItem {
             //}
             if(assignedState != null) {
                 if (assignedCharacter.stateComponent.currentState == assignedState) {
+                    SetAssignedCharacter(null);
+                    SetAssignedState(null);
                     assignedCharacter.stateComponent.ExitCurrentState();
                 }
-                SetAssignedState(null);
             }
-            SetAssignedCharacter(null);
             //else {
             //    if(assignedCharacter.stateComponent.previousMajorState == assignedState) {
             //        Character character = assignedCharacter;

@@ -85,7 +85,7 @@ public class MoveOutState : CharacterState {
             OnArriveAtNearestEdgeTile();
         }
     }
-    //protected override void PerTickInState() { }
+    public override void PerTickInState() { }
     protected override void CreateThoughtBubbleLog() {
         base.CreateThoughtBubbleLog();
         if (thoughtBubbleLog != null) {

@@ -908,37 +908,37 @@ public class RelationshipManager : MonoBehaviour {
         //    return hasDegraded;
         //}
         //If Actor and Target are Lovers, 25% chance to create a Break Up Job with the Lover.
-        if (target.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
-            summary += "\n" + actorAlterEgo.owner.name + " and " + target.name + " are  lovers. Rolling for chance to create break up job...";
-            int roll = UnityEngine.Random.Range(0, 100);
-            summary += "\nRoll is " + roll.ToString();
-            if (roll < 25) {
-                summary += "\n" + target.name + " created break up job targetting " + actorAlterEgo.owner.name;
-                target.CreateBreakupJob(actorAlterEgo.owner);
+        //if (target.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
+        //    summary += "\n" + actorAlterEgo.owner.name + " and " + target.name + " are  lovers. Rolling for chance to create break up job...";
+        //    int roll = UnityEngine.Random.Range(0, 100);
+        //    summary += "\nRoll is " + roll.ToString();
+        //    if (roll < 25) {
+        //        summary += "\n" + target.name + " created break up job targetting " + actorAlterEgo.owner.name;
+        //        target.CreateBreakupJob(actorAlterEgo.owner);
 
-                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "break_up");
-                log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
-                hasDegraded = true;
-            }
-        }
-        //If Actor and Target are Paramours, 25% chance to create a Break Up Job with the Paramour.
-        else if (target.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
-            summary += "\n" + actorAlterEgo.owner.name + " and " + target.name + " are  paramours. Rolling for chance to create break up job...";
-            int roll = UnityEngine.Random.Range(0, 100);
-            summary += "\nRoll is " + roll.ToString();
-            if (roll < 25) {
-                summary += "\n" + target.name + " created break up job targetting " + actorAlterEgo.owner.name;
-                target.CreateBreakupJob(actorAlterEgo.owner);
+        //        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "break_up");
+        //        log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //        log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //        PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
+        //        hasDegraded = true;
+        //    }
+        //}
+        ////If Actor and Target are Paramours, 25% chance to create a Break Up Job with the Paramour.
+        //else if (target.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+        //    summary += "\n" + actorAlterEgo.owner.name + " and " + target.name + " are  paramours. Rolling for chance to create break up job...";
+        //    int roll = UnityEngine.Random.Range(0, 100);
+        //    summary += "\nRoll is " + roll.ToString();
+        //    if (roll < 25) {
+        //        summary += "\n" + target.name + " created break up job targetting " + actorAlterEgo.owner.name;
+        //        target.CreateBreakupJob(actorAlterEgo.owner);
 
-                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "break_up");
-                log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
-                hasDegraded = true;
-            }
-        }
+        //        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "break_up");
+        //        log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //        log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //        PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
+        //        hasDegraded = true;
+        //    }
+        //}
 
         //If Target considers Actor a Friend, remove that. If Target is in Bad or Dark Mood, Target now considers Actor an Enemy. Otherwise, they are just no longer friends.
         if (target.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND)) {
