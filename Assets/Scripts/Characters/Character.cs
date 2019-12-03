@@ -970,9 +970,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             marker.OnDeath(deathTile, wasOutsideSettlement);
 
             //SetNumWaitingForGoapThread(0); //for raise dead
-            Dead dead = new Dead();
+            //Dead dead = new Dead();
             //dead.SetCharacterResponsibleForTrait(responsibleCharacter);
-            traitContainer.AddTrait(this, dead, responsibleCharacter, gainedFromDoing: deathFromAction);
+            traitContainer.AddTrait(this, "Dead", responsibleCharacter, gainedFromDoing: deathFromAction);
 
             CancelAllJobs();
 

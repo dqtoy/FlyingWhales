@@ -51,11 +51,10 @@ public class CharacterState {
         //stateComponent.SetStateToDo(null, false, false);
         currentDuration = 0;
         //StartStatePerTick();
-
+        stateComponent.SetCurrentState(this);
         CreateStartStateLog();
         CreateThoughtBubbleLog();
         DoMovementBehavior();
-        stateComponent.SetCurrentState(this);
         Messenger.Broadcast(Signals.CHARACTER_STARTED_STATE, stateComponent.character, this);
         ProcessInVisionPOIsOnStartState();
         //if(startStateAction != null) {

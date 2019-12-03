@@ -124,7 +124,11 @@ public class JobQueueItem {
     }
     public virtual bool ForceCancelJob(bool shouldDoAfterEffect = true, string cause = "", string reason = "") {
         if (assignedCharacter != null) {
-            assignedCharacter.jobQueue.RemoveJobInQueue(this, shouldDoAfterEffect, reason);
+            JOB_OWNER ownerType = originalOwner.ownerType;
+            bool hasBeenRemoved = assignedCharacter.jobQueue.RemoveJobInQueue(this, shouldDoAfterEffect, reason);
+            if (ownerType == JOB_OWNER.CHARACTER) {
+                return hasBeenRemoved;
+            }
         }
         return originalOwner.ForceCancelJob(this);
     }
