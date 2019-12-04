@@ -6,6 +6,7 @@ using UnityEngine;
 public class PathfindingManager : MonoBehaviour {
 
     public static PathfindingManager Instance = null;
+    private const float nodeSize = 0.3f;
 
     [SerializeField] private AstarPath aStarPath;
 
@@ -68,6 +69,36 @@ public class PathfindingManager : MonoBehaviour {
     public void RemoveAgent(CharacterAIPath agent) {
         _allAgents.Remove(agent);
     }
+
+    #region Map Creation
+    public void CreatePathfindingGraphForArea(AreaInnerTileMap newMap) {
+        GridGraph gg = aStarPath.data.AddGraph(typeof(GridGraph)) as GridGraph;
+        gg.cutCorners = false;
+        gg.rotation = new Vector3(-90f, 0f, 0f);
+        gg.nodeSize = nodeSize;
+
+        int reducedWidth = newMap.width - (AreaInnerTileMap.westEdge + AreaInnerTileMap.eastEdge);
+        int reducedHeight = newMap.height - (AreaInnerTileMap.northEdge + AreaInnerTileMap.southEdge);
+
+        gg.SetDimensions(Mathf.FloorToInt(reducedWidth / gg.nodeSize), Mathf.FloorToInt(reducedHeight / gg.nodeSize), nodeSize);
+        Vector3 pos = InteriorMapManager.Instance.transform.position;
+        pos.x += (newMap.width / 2f);
+        pos.y += (newMap.height / 2f) + newMap.transform.localPosition.y;
+        pos.x += (AreaInnerTileMap.westEdge / 2) - 0.5f;
+
+        gg.center = pos;
+        gg.collision.use2D = true;
+        gg.collision.type = ColliderType.Sphere;
+        if (newMap.area.areaType == AREA_TYPE.DUNGEON) {
+            gg.collision.diameter = 2f;
+        } else {
+            gg.collision.diameter = 0.9f;
+        }
+        gg.collision.mask = LayerMask.GetMask("Unpassable");
+        AstarPath.active.Scan(gg);
+        newMap.pathfindingGraph = gg;
+    }
+    #endregion
 
     private void OnGamePaused(bool state) {
         if (state) {

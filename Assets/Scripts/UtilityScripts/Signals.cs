@@ -406,6 +406,12 @@ public static class Signals {
     public static string TRAITABLE_LOST_TRAIT = "OnTraitableLostTrait";
     #endregion
 
+    #region Structures
+    public static string WALL_DESTROYED = "OnWallDestroyed";
+    public static string WALL_DAMAGED = "OnWallDamaged";
+    public static string WALL_REPAIRED = "OnWallRepaired";
+    #endregion
+
     public static Dictionary<string, SignalMethod[]> orderedSignalExecution = new Dictionary<string, SignalMethod[]>() {
         { HOUR_STARTED, new SignalMethod[] {
             new SignalMethod() { methodName = "HourlyJobActions", objectType = typeof(Area) },

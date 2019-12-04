@@ -11,50 +11,60 @@ public class LocationStructure {
     public STRUCTURE_TYPE structureType { get; private set; }
     public bool isInside { get; private set; }
     public List<Character> charactersHere { get; private set; }
-    [System.NonSerialized]
-    private Area _location;
-    private List<SpecialToken> _itemsHere;
+    public Area location { get; private set; }
+    public List<SpecialToken> itemsInStructure { get; private set; }
     public List<IPointOfInterest> pointsOfInterest { get; private set; }
     public POI_STATE state { get; private set; }
     public LocationStructureObject structureObj {get; private set;}
+    public BuildSpotTileObject occupiedBuildSpot { get; private set; }
 
     //Inner Map
     public List<LocationGridTile> tiles { get; private set; }
     public List<LocationGridTile> unoccupiedTiles { get; private set; }
     public LocationGridTile entranceTile { get; private set; }
 
-    #region getters
-    public Area location {
-        get { return _location; }
-    }
-    public List<SpecialToken> itemsInStructure {
-        get { return _itemsHere; }
-    }
-    #endregion
-
     public LocationStructure(STRUCTURE_TYPE structureType, Area location, bool isInside) {
         id = Utilities.SetID(this);
         this.structureType = structureType;
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
         this.isInside = isInside;
-        _location = location;
+        this.location = location;
         charactersHere = new List<Character>();
-        _itemsHere = new List<SpecialToken>();
+        itemsInStructure = new List<SpecialToken>();
         pointsOfInterest = new List<IPointOfInterest>();
         tiles = new List<LocationGridTile>();
         unoccupiedTiles = new List<LocationGridTile>();
+        SubscribeListeners();
     }
     public LocationStructure(Area location, SaveDataLocationStructure data) {
-        _location = location;
+        this.location = location;
         id = Utilities.SetID(this, data.id);
         this.structureType = data.structureType;
         this.name = data.name;
         this.isInside = data.isInside;
         charactersHere = new List<Character>();
-        _itemsHere = new List<SpecialToken>();
+        itemsInStructure = new List<SpecialToken>();
         pointsOfInterest = new List<IPointOfInterest>();
         tiles = new List<LocationGridTile>();
+        SubscribeListeners();
     }
+
+    #region Listeners
+    private void SubscribeListeners() {
+        if (structureType.IsOpenSpace() == false) {
+            Messenger.AddListener<WallObject>(Signals.WALL_DAMAGED, OnWallDamaged);
+            Messenger.AddListener<WallObject>(Signals.WALL_DESTROYED, OnWallDestroyed);
+            Messenger.AddListener<WallObject>(Signals.WALL_REPAIRED, OnWallRepaired);
+        }
+    }
+    private void UnsubscribeListeners() {
+        if (structureType.IsOpenSpace() == false) {
+            Messenger.RemoveListener<WallObject>(Signals.WALL_DAMAGED, OnWallDamaged);
+            Messenger.RemoveListener<WallObject>(Signals.WALL_DESTROYED, OnWallDestroyed);
+            Messenger.RemoveListener<WallObject>(Signals.WALL_REPAIRED, OnWallRepaired);
+        }
+    }
+    #endregion
 
     #region Residents
     public virtual bool IsOccupied() {
@@ -85,27 +95,27 @@ public class LocationStructure {
 
     #region Items/Special Tokens
     public void AddItem(SpecialToken token, LocationGridTile gridLocation = null) {
-        if (!_itemsHere.Contains(token)) {
-            _itemsHere.Add(token);
+        if (!itemsInStructure.Contains(token)) {
+            itemsInStructure.Add(token);
             token.SetStructureLocation(this);
             AddPOI(token, gridLocation);
         }
     }
     public void RemoveItem(SpecialToken token) {
-        if (_itemsHere.Remove(token)) {
+        if (itemsInStructure.Remove(token)) {
             token.SetStructureLocation(null);
             RemovePOI(token);
         }
     }
     public void OwnItemsInLocation(Faction owner) {
-        for (int i = 0; i < _itemsHere.Count; i++) {
-            _itemsHere[i].SetOwner(owner);
+        for (int i = 0; i < itemsInStructure.Count; i++) {
+            itemsInStructure[i].SetOwner(owner);
         }
     }
     public int GetItemsOfTypeCount(SPECIAL_TOKEN type) {
         int count = 0;
-        for (int i = 0; i < _itemsHere.Count; i++) {
-            if (_itemsHere[i].specialTokenType == type) {
+        for (int i = 0; i < itemsInStructure.Count; i++) {
+            if (itemsInStructure[i].specialTokenType == type) {
                 count++;
             }
         }
@@ -334,6 +344,142 @@ public class LocationStructure {
     #region Structure Objects
     public void SetStructureObject(LocationStructureObject structureObj) {
         this.structureObj = structureObj;
+    }
+    public void SetOccupiedBuildSpot(BuildSpotTileObject buildSpotTileObject) {
+        this.occupiedBuildSpot = buildSpotTileObject;
+    }
+    #endregion
+
+    #region Destroy
+    private void DestroyStructure() {
+        //transfer tiles to either the wilderness or work area
+        List<LocationGridTile> tiles = new List<LocationGridTile>(this.tiles);
+        LocationStructure workArea = location.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
+        LocationStructure wilderness = location.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+        for (int i = 0; i < tiles.Count; i++) {
+            LocationGridTile tile = tiles[i];
+            LocationStructure transferTo;
+            if (tile.isInside) {
+                transferTo = workArea;
+            } else {
+                transferTo = wilderness;
+            }
+
+            tile.ClearWallObjects();
+
+            transferTo.AddTile(tile);
+            if (tile.objHere != null) {
+                if (tile.objHere is SpecialToken) {
+                    AddItem(tile.objHere as SpecialToken, tile);
+                } else {
+                    AddPOI(tile.objHere, tile);
+                }
+            }
+        }
+        ObjectPoolManager.Instance.DestroyObject(structureObj.gameObject);
+        location.RemoveStructure(this);
+    }
+    private bool CheckIfStructureDestroyed() {
+        //check walls and floors, if all of them are destroyed consider this structure as destroyed
+        bool allObjectsDestroyed = true;
+        for (int i = 0; i < structureObj.walls.Length; i++) {
+            WallObject wall = structureObj.walls[i];
+            if (wall.currentHP > 0) {
+                //wall is not yet destroyed
+                allObjectsDestroyed = false;
+                break;
+            }
+        }
+
+        if (allObjectsDestroyed) {
+            //check floor tiles
+            for (int i = 0; i < tiles.Count; i++) {
+                LocationGridTile tile = tiles[i];
+                if (tile.genericTileObject.currentHP > 0) {
+                    allObjectsDestroyed = false;
+                    break;
+                }
+            }
+        }
+
+        //if at end of checking, all objects are destroyed, then consider this structure as destroyed
+        if (allObjectsDestroyed) {
+            DestroyStructure();
+        }
+        return allObjectsDestroyed;
+    }
+    #endregion
+
+    #region Walls
+    public void OnWallDestroyed(WallObject wall) {
+        //check if structure destroyed
+        if (structureObj.walls.Contains(wall)) {
+            CheckIfStructureDestroyed();
+        }
+    }
+    public void OnWallRepaired(WallObject wall) {
+        //remove repair job
+        if (structureObj.walls.Contains(wall)) {
+
+        }
+    }
+    public void OnWallDamaged(WallObject wall) {
+        if (structureObj.walls.Contains(wall)) {
+            //create repair job
+            OnStructureDamaged();
+        }
+    }
+    public void OnTileDamaged() {
+        OnStructureDamaged();
+    }
+    public void OnTileRepaired() {
+
+    }
+    public void OnTileDestroyed() {
+        if (structureType.IsOpenSpace()) {
+            return; //do not check for damage if structure is open space (Wilderness, Work Area, Cemetery, etc.)
+        }
+        CheckIfStructureDestroyed();
+    }
+    private void OnStructureDamaged() {
+        if (structureType.IsOpenSpace()) {
+            return; //do not check for damage if structure is open space (Wilderness, Work Area, Cemetery, etc.)
+        }
+        if (occupiedBuildSpot.advertisedActions.Contains(INTERACTION_TYPE.REPAIR_STRUCTURE) == false) {
+            occupiedBuildSpot.AddAdvertisedAction(INTERACTION_TYPE.REPAIR_STRUCTURE);
+        }
+        if (location.HasJob(JOB_TYPE.REPAIR, occupiedBuildSpot) == false) {
+            CreateRepairJob();
+        }
+    }
+    private bool StillHasObjectsToRepair() {
+        for (int i = 0; i < tiles.Count; i++) {
+            LocationGridTile tile = tiles[i];
+            if (tile.genericTileObject.currentHP < tile.genericTileObject.maxHP) {
+                return true;
+            }
+            for (int j = 0; j < tile.walls.Count; j++) {
+                WallObject wall = tile.walls[j];
+                if (wall.currentHP < wall.maxHP) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    #endregion
+
+    #region Repair
+    private void CreateRepairJob() {
+        GoapPlanJob repairJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPAIR, INTERACTION_TYPE.REPAIR_STRUCTURE, occupiedBuildSpot, location);
+        repairJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRepairStructureJob);
+        location.AddToAvailableJobs(repairJob);
+    }
+    #endregion
+
+    #region Resource
+    public void ChangeResourceMadeOf(RESOURCE resource) {
+        structureObj.ChangeResourceMadeOf(resource);
     }
     #endregion
 

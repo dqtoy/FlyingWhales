@@ -48,9 +48,10 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
     public bool isDead {
         get { return gridTileLocation == null; } //Consider the object as dead if it no longer has a tile location (has been removed)
     }
-    public ProjectileReceiver projectileReciever {
-        get { return collisionTrigger.projectileReciever; }
+    public ProjectileReceiver projectileReceiver {
+        get { return areaMapVisual.collisionTrigger.projectileReceiver; }
     }
+    public Transform worldObject { get { return areaMapVisual.transform; } }
     #endregion
 
     public SpecialToken(SPECIAL_TOKEN specialTokenType, int appearanceRate) : base() {
@@ -267,7 +268,7 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
     #region Traits
     public ITraitContainer traitContainer { get; private set; }
     public TraitProcessor traitProcessor { get { return TraitManager.specialTokenTraitProcessor; } }
-    private void CreateTraitContainer() {
+    public void CreateTraitContainer() {
         traitContainer = new TraitContainer();
     }
     private void RemoveAllTraits() {
@@ -287,17 +288,17 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
     #region Map Object
     protected override void CreateAreaMapGameObject() {
         GameObject obj = InteriorMapManager.Instance.areaMapObjectFactory.CreateNewItemAreaMapObject(this.poiType);
-        areaMapGameObject = obj.GetComponent<ItemGameObject>();
+        areaMapVisual = obj.GetComponent<ItemGameObject>();
     }
     protected override void OnMapObjectStateChanged() {
         if (mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
-            areaMapGameObject.SetVisualAlpha(128f / 255f);
+            areaMapVisual.SetVisualAlpha(128f / 255f);
             //remove all other interactions
             advertisedActions = new List<INTERACTION_TYPE>();
 
             AddAdvertisedAction(INTERACTION_TYPE.CRAFT_ITEM);
         } else {
-            areaMapGameObject.SetVisualAlpha(255f / 255f);
+            areaMapVisual.SetVisualAlpha(255f / 255f);
             RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_ITEM);
             //restore default interactions
             advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_UP, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.DROP_ITEM };

@@ -48,17 +48,18 @@ namespace Traits {
 
         public void BeShellshocked(BurningSource source, Character character) {
             string summary = GameManager.Instance.TodayLogString() + character.name + " saw burning source " + source.ToString();
-            if (character.marker.AddAvoidsInRange(source.objectsOnFire)) {
-                summary += "\nStarted fleeing";
-                //TODO:character.CancelAllJobsAndPlans();
-                Log log = new Log(GameManager.Instance.Today(), "Trait", name, "flee");
-                log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddLogToInvolvedObjects();
-                PlayerManager.Instance.player.ShowNotificationFrom(character, log);
-                character.traitContainer.AddTrait(character, "Shellshocked");
-            } else {
-                summary += "\nDid not flee because already fleeing.";
-            }
+            //TODO:
+            //if (character.marker.AddAvoidsInRange(source.objectsOnFire)) {
+            //    summary += "\nStarted fleeing";
+            //    //TODO:character.CancelAllJobsAndPlans();
+            //    Log log = new Log(GameManager.Instance.Today(), "Trait", name, "flee");
+            //    log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            //    log.AddLogToInvolvedObjects();
+            //    PlayerManager.Instance.player.ShowNotificationFrom(character, log);
+            //    character.traitContainer.AddTrait(character, "Shellshocked");
+            //} else {
+            //    summary += "\nDid not flee because already fleeing.";
+            //}
             Debug.Log(summary);
         }
         public void BeCatatonic(BurningSource source, Character character) {
@@ -69,10 +70,10 @@ namespace Traits {
             character.traitContainer.AddTrait(character, "Catatonic");
         }
 
-        private void OnObjectStartedBurning(IPointOfInterest poi) {
+        private void OnObjectStartedBurning(ITraitable poi) {
             //owner.marker.AddTerrifyingObject(poi);
         }
-        private void OnObjectStoppedBurning(IPointOfInterest poi) {
+        private void OnObjectStoppedBurning(ITraitable poi) {
             //owner.marker.RemoveTerrifyingObject(poi);
         }
     }

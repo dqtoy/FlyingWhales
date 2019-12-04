@@ -444,26 +444,26 @@ public class CombatState : CharacterState {
         //Debug.Log(summary);
     }
     public bool isExecutingAttack;
-    public void OnAttackHit(IPointOfInterest poi) {
-        if (poi == null) {
+    public void OnAttackHit(IDamageable damageable) {
+        if (damageable == null) {
             return; //NOTE: Sometimes this happens even though the passed value is this character's currentClosestHostile.
         }
-        string attackSummary = GameManager.Instance.TodayLogString() + stateComponent.character.name + " hit " + poi.name;
-        if (poi != currentClosestHostile) {
-            attackSummary = stateComponent.character.name + " hit " + poi.name + " instead of " + currentClosestHostile.name + "!";
+        string attackSummary = GameManager.Instance.TodayLogString() + stateComponent.character.name + " hit " + damageable.name;
+        if (damageable != currentClosestHostile) {
+            attackSummary = stateComponent.character.name + " hit " + damageable.name + " instead of " + currentClosestHostile.name + "!";
         }
 
         //Reset Attack Speed
         stateComponent.character.marker.ResetAttackSpeed();
-        poi.OnHitByAttackFrom(stateComponent.character, this, ref attackSummary);
+        damageable.OnHitByAttackFrom(stateComponent.character, this, ref attackSummary);
 
         //If the hostile reaches 0 hp, evalueate if he/she dies, get knock out, or get injured
-        if (poi.currentHP > 0) {
-            attackSummary += "\n" + poi.name + " still has remaining hp " + poi.currentHP.ToString() + "/" + poi.maxHP.ToString();
-            if (poi is Character) {
-                Character hitCharacter = poi as Character;
+        if (damageable.currentHP > 0) {
+            attackSummary += "\n" + damageable.name + " still has remaining hp " + damageable.currentHP.ToString() + "/" + damageable.maxHP.ToString();
+            if (damageable is Character) {
+                Character hitCharacter = damageable as Character;
                 //if the character that was hit is not the actual target of this combat, do not make him/her enter combat state
-                if (poi == currentClosestHostile) {
+                if (damageable == currentClosestHostile) {
                     //When the target is hit and it is still alive, add hostile
                     hitCharacter.marker.AddHostileInRange(stateComponent.character, false, isLethal: stateComponent.character.marker.IsLethalCombatForTarget(hitCharacter));
                     //also add the hit character as degraded rel, so that when the character that owns this state is hit by the other character because of retaliation, relationship degradation will no longer happen

@@ -34,7 +34,7 @@ public class SmallAnimal : TileObject {
         base.SetPOIState(state);
         if (gridTileLocation != null) {
             //Debug.Log(GameManager.Instance.TodayLogString() + "Set " + this.ToString() + "' state to " + state.ToString());
-            areaMapGameObject.UpdateTileObjectVisual(this); //update visual based on state
+            areaMapVisual.UpdateTileObjectVisual(this); //update visual based on state
             if (!IsAvailable()) {
                 ScheduleCooldown();
             }

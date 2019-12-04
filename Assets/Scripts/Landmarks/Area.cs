@@ -742,6 +742,9 @@ public class Area : IJobOwner {
                 //}
                 tileLocation.structure.AddPOI(tileObj, tileLocation, false);
                 tileObj.SetGridTileLocation(tileLocation); //manually placed so that only the data of the build spot will be set, and the tile will not consider the build spot as objHere
+                if (tileLocation.structure.structureType != STRUCTURE_TYPE.WORK_AREA && tileLocation.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
+                    tileLocation.structure.SetOccupiedBuildSpot(tileObj);
+                }
             }
         }
     }

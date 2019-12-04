@@ -18,6 +18,7 @@ public class TraitManager : MonoBehaviour {
     public static TraitProcessor characterTraitProcessor;
     public static TraitProcessor tileObjectTraitProcessor;
     public static TraitProcessor specialTokenTraitProcessor;
+    public static TraitProcessor defaultTraitProcessor;
 
     #region getters/setters
     public Dictionary<string, Trait> allTraits {
@@ -213,6 +214,7 @@ public class TraitManager : MonoBehaviour {
         characterTraitProcessor = new CharacterTraitProcessor();
         tileObjectTraitProcessor = new TileObjectTraitProcessor();
         specialTokenTraitProcessor = new SpecialTokenTraitProcessor();
+        defaultTraitProcessor = new DefaultTraitProcessor();
     }
     #endregion
 }

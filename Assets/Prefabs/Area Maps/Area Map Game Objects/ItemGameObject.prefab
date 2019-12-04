@@ -20,9 +20,9 @@ GameObject:
   m_Component:
   - component: {fileID: 224155710861411930}
   - component: {fileID: 61937110159980142}
-  - component: {fileID: 114491490136684016}
+  - component: {fileID: 114270590656571810}
   m_Layer: 15
-  m_Name: POICollisionTrigger
+  m_Name: CollisionTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -69,7 +69,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4354192304601110}
   - component: {fileID: 58134246518725810}
-  - component: {fileID: 114566842326697210}
+  - component: {fileID: 114385229440589574}
   m_Layer: 17
   m_Name: ProjectileCollider
   m_TagString: Untagged
@@ -158,7 +158,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.7, y: 0.7}
   m_EdgeRadius: 0
---- !u!114 &114491490136684016
+--- !u!114 &114270590656571810
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -166,11 +166,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1219275906965758}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bba4df8e044363646826d9718d0d075e, type: 3}
+  m_Script: {fileID: 11500000, guid: 9408d007d1797454caeeb5daf1dc281d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectileReciever: {fileID: 114566842326697210}
---- !u!114 &114566842326697210
+  _projectileReciever: {fileID: 114385229440589574}
+  mainCollider: {fileID: 61937110159980142}
+--- !u!114 &114385229440589574
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -178,7 +179,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1751430644342564}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d99989d31b83d164784384b4299aca3c, type: 3}
+  m_Script: {fileID: 11500000, guid: 3af45c1e8289cd646a3b50358d8eeff2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114899346445621078
@@ -194,7 +195,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212863651679988608}
-  collisionTrigger: {fileID: 114491490136684016}
 --- !u!212 &212863651679988608
 SpriteRenderer:
   m_ObjectHideFlags: 1

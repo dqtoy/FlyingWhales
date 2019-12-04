@@ -316,6 +316,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.STEALTH_TRANSFORM, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Transform Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.REPAIR_STRUCTURE, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Repair Success", status = InteractionManager.Goap_State_Success, duration = 10 },
+        } },
     };
 }
 

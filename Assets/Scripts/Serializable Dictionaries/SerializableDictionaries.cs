@@ -47,6 +47,10 @@ public class InterventionAbilityTierDictionary : SerializableDictionary<INTERVEN
 public class CharacterClassAssetDictionary : SerializableDictionary<string, CharacterClassAsset> { }
 [System.Serializable]
 public class LocationStructurePrefabDictionary : SerializableDictionary<STRUCTURE_TYPE, List<GameObject>, GameObjectListStorage> { }
+[System.Serializable]
+public class WallResourceAssetDictionary : SerializableDictionary<RESOURCE, WallResouceAssets> { }
+[System.Serializable]
+public class WallAssetDictionary : SerializableDictionary<string, WallAsset> { }
 
 //List storage
 [System.Serializable]

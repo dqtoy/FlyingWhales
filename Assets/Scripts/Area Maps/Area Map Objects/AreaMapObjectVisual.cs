@@ -4,11 +4,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class AreaMapObjectVisual<T> : PooledObject 
-    where T : IPointOfInterest{
+/// <summary>
+/// Base class to be used for the visuals of any objects that are Area Map Objects.
+/// </summary>
+public abstract class AreaMapObjectVisual<T> : PooledObject where T : IDamageable {
 
     [SerializeField] protected SpriteRenderer objectVisual;
-    public POICollisionTrigger collisionTrigger;
+    public BaseCollisionTrigger<T> collisionTrigger { get; protected set; }
 
     #region getters
     public Sprite usedSprite {

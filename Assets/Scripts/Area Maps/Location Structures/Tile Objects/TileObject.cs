@@ -54,9 +54,10 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
     public bool isDead {
         get { return gridTileLocation == null; } //Consider the object as dead if it no longer has a tile location (has been removed)
     }
-    public ProjectileReceiver projectileReciever {
-        get { return collisionTrigger.projectileReciever; }
+    public ProjectileReceiver projectileReceiver {
+        get { return areaMapVisual.collisionTrigger.projectileReceiver; }
     }
+    public Transform worldObject { get { return areaMapVisual.transform; } }
     #endregion
 
     protected void Initialize(TILE_OBJECT_TYPE tileObjectType) {
@@ -116,7 +117,7 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
     public virtual void SetGridTileLocation(LocationGridTile tile) {
         previousTile = this.gridTileLocation;
         this.gridTileLocation = tile;
-        if (areaMapGameObject == null) {
+        if (areaMapVisual == null) {
             InitializeMapObject(this);
         }
         if (tile == null) {
@@ -326,7 +327,7 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
         }
         return null;
     }
-    public void AdjustHP(int amount, bool triggerDeath = false, object source = null) {
+    public virtual void AdjustHP(int amount, bool triggerDeath = false, object source = null) {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
@@ -358,8 +359,11 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
     #region Traits
     public ITraitContainer traitContainer { get; private set; }
     public TraitProcessor traitProcessor { get { return TraitManager.tileObjectTraitProcessor; } }
-    private void CreateTraitContainer() {
+    public void CreateTraitContainer() {
         traitContainer = new TraitContainer();
+    }
+    public LocationGridTile GetGridTileLocation(AreaInnerTileMap map) {
+        return gridTileLocation;
     }
     #endregion
 
@@ -403,10 +407,10 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
         Messenger.Broadcast(Signals.TILE_OBJECT_PLACED, this, tile);
     }
     private void CreateTileObjectSlots() {
-        Sprite usedAsset = areaMapGameObject.usedSprite;
+        Sprite usedAsset = areaMapVisual.usedSprite;
         if (tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT && usedAsset != null && InteriorMapManager.Instance.HasSettingForTileObjectAsset(usedAsset)) {
             List<TileObjectSlotSetting> slotSettings = InteriorMapManager.Instance.GetTileObjectSlotSettings(usedAsset);
-            slotsParent = GameObject.Instantiate(InteriorMapManager.Instance.tileObjectSlotsParentPrefab, areaMapGameObject.transform);
+            slotsParent = GameObject.Instantiate(InteriorMapManager.Instance.tileObjectSlotsParentPrefab, areaMapVisual.transform);
             slotsParent.transform.localPosition = Vector3.zero;
             slotsParent.name = this.ToString() + " Slots";
             slots = new TileObjectSlotItem[slotSettings.Count];
@@ -562,7 +566,7 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
         if (gridTileLocation.hasFurnitureSpot) {
             FurnitureSetting furnitureSetting;
             if (gridTileLocation.furnitureSpot.TryGetFurnitureSettings(this.tileObjectType.ConvertTileObjectToFurniture(), out furnitureSetting)) {
-                this.areaMapGameObject.ApplyFurnitureSettings(furnitureSetting);
+                this.areaMapVisual.ApplyFurnitureSettings(furnitureSetting);
             }
         }
     }
@@ -571,12 +575,12 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
     #region Map Object
     protected override void CreateAreaMapGameObject() {
         GameObject obj = InteriorMapManager.Instance.areaMapObjectFactory.CreateNewTileObjectAreaMapObject(this.tileObjectType);
-        areaMapGameObject = obj.GetComponent<TileObjectGameObject>();
+        areaMapVisual = obj.GetComponent<TileObjectGameObject>();
     }
     private INTERACTION_TYPE[] storedActions;
     protected override void OnMapObjectStateChanged() {
         if (mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
-            areaMapGameObject.SetVisualAlpha(128f / 255f);
+            areaMapVisual.SetVisualAlpha(128f / 255f);
             SetSlotAlpha(128f / 255f);
             //store advertised actions
             storedActions = new INTERACTION_TYPE[advertisedActions.Count];
@@ -586,7 +590,7 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
             advertisedActions.Clear();
             AddAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
         } else {
-            areaMapGameObject.SetVisualAlpha(255f / 255f);
+            areaMapVisual.SetVisualAlpha(255f / 255f);
             SetSlotAlpha(255f / 255f);
             RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
             for (int i = 0; i < storedActions.Length; i++) {

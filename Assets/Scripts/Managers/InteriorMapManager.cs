@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Traits;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Experimental.GlobalIllumination;
@@ -18,7 +19,7 @@ public class InteriorMapManager : MonoBehaviour {
     public const int Default_Character_Sorting_Order = 82;
     public const int Ground_Tilemap_Sorting_Order = 10;
     public const int Details_Tilemap_Sorting_Order = 40;
-    private const float nodeSize = 0.3f;
+   
 
     private Vector3 nextMapPos = Vector3.zero;
     public GameObject characterCollisionTriggerPrefab;
@@ -40,6 +41,7 @@ public class InteriorMapManager : MonoBehaviour {
     [Header("Tilemap Assets")]
     [SerializeField] private ItemAsseteDictionary itemTiles;
     [SerializeField] private TileObjectAssetDictionary tileObjectTiles;
+    [SerializeField] private WallResourceAssetDictionary wallResourceAssets; //wall assets categorized by resource.
     [SerializeField] private List<TileBase> allTileAssets;
 
     //Area Map Objects
@@ -198,7 +200,7 @@ public class InteriorMapManager : MonoBehaviour {
         //set the next map position based on the new maps height
         newMap.transform.localPosition = nextMapPos;
         newMap.UpdateTilesWorldPosition();
-        CreatePathfindingGraphForArea(newMap);
+        PathfindingManager.Instance.CreatePathfindingGraphForArea(newMap);
         nextMapPos = new Vector3(nextMapPos.x, nextMapPos.y + newMap.height + 10, nextMapPos.z); //all maps now have same positon, because only 1 can exist at a time.
     }
     public void DestroyAreaMap(Area area) {
@@ -226,36 +228,6 @@ public class InteriorMapManager : MonoBehaviour {
             return currentlyShowingMap.map[coordinate.x, coordinate.y];
         }
         return null;
-    }
-    #endregion
-
-    #region Pathfinding
-    private void CreatePathfindingGraphForArea(AreaInnerTileMap newMap) {
-        GridGraph gg = pathfinder.data.AddGraph(typeof(GridGraph)) as GridGraph;
-        gg.cutCorners = false;
-        gg.rotation = new Vector3(-90f, 0f, 0f);
-        gg.nodeSize = nodeSize;
-
-        int reducedWidth = newMap.width - (AreaInnerTileMap.westEdge + AreaInnerTileMap.eastEdge);
-        int reducedHeight = newMap.height - (AreaInnerTileMap.northEdge + AreaInnerTileMap.southEdge);
-
-        gg.SetDimensions(Mathf.FloorToInt(reducedWidth / gg.nodeSize), Mathf.FloorToInt(reducedHeight / gg.nodeSize), nodeSize);
-        Vector3 pos = this.transform.position;
-        pos.x += (newMap.width / 2f);
-        pos.y += (newMap.height / 2f) + newMap.transform.localPosition.y;
-        pos.x += (AreaInnerTileMap.westEdge / 2) - 0.5f;
-
-        gg.center = pos;
-        gg.collision.use2D = true;
-        gg.collision.type = ColliderType.Sphere;
-        if (newMap.area.areaType == AREA_TYPE.DUNGEON) {
-            gg.collision.diameter = 2f;
-        } else {
-            gg.collision.diameter = 0.9f;
-        }
-        gg.collision.mask = LayerMask.GetMask("Unpassable");
-        AstarPath.active.Scan(gg);
-        newMap.pathfindingGraph = gg;
     }
     #endregion
 
@@ -411,6 +383,15 @@ public class InteriorMapManager : MonoBehaviour {
         if (tile.hasFurnitureSpot) {
             summary += "\nFurniture Spot: " + tile.furnitureSpot.ToString();
         }
+        //summary += "\nWalls: " + tile.walls.Count;
+        //for (int i = 0; i < tile.walls.Count; i++) {
+        //    WallObject wall = tile.walls[i];
+        //    summary += "\n\t" + wall.name;
+        //    for (int j = 0; j < wall.traitContainer.allTraits.Count; j++) {
+        //        Trait trait = wall.traitContainer.allTraits[j];
+        //        summary += "\n\t\t" + trait.name;
+        //    }
+        //}
         summary += "\nTile Traits: ";
         if (tile.normalTraits.Count > 0) {
             summary += "\n";
@@ -854,6 +835,9 @@ public class InteriorMapManager : MonoBehaviour {
             return biomeSetting.inactiveTile;
         }
         
+    }
+    public WallAsset GetWallAsset(RESOURCE wallResource, string assetName) {
+        return wallResourceAssets[wallResource].GetWallAsset(assetName);
     }
     #endregion
 }

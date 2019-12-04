@@ -38,7 +38,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         if (!parentMarker.character.IsInOwnParty()) {
             return;
         }
-        POICollisionTrigger collidedWith = collision.gameObject.GetComponent<POICollisionTrigger>();
+        IVisibleCollider collidedWith = collision.gameObject.GetComponent<IVisibleCollider>();
         if (collidedWith != null && collidedWith.poi != null
             && collidedWith.poi != parentMarker.character) {
             if (collidedWith.poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -48,44 +48,42 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                 }
             }
             
-            if (!(collidedWith is GhostCollisionTrigger)) {
-                string collisionSummary = parentMarker.name + " collided with " + collidedWith.poi.name;
-                if (collidedWith.poi.gridTileLocation == null) {
-                    return; //ignore, Usually happens if an item is picked up just as this character sees it.
-                }
-                //when this collides with a poi trigger
-                //check if the poi trigger is in the same structure as this
-                if (collidedWith.poi.gridTileLocation.structure == parentMarker.character.gridTileLocation.structure) {
-                    //if it is, just follow the normal procedure when a poi becomes in range
-                    collisionSummary += "\n-has same structure as " + parentMarker.character.name + " adding as in range";
-                    NormalEnterHandling(collidedWith.poi);
-                } else {
-                    //if it is not, check both character's structure types
-
-                    //if both characters are in an open space, add them as normal
-                    if (collidedWith.poi.gridTileLocation != null && collidedWith.poi.gridTileLocation.structure != null 
-                        && parentMarker.character.gridTileLocation != null && parentMarker.character.gridTileLocation.structure != null
-                        && collidedWith.poi.gridTileLocation.structure.structureType.IsOpenSpace() && parentMarker.character.gridTileLocation.structure.structureType.IsOpenSpace()) {
-                        collisionSummary += "\n-has different structure with " + parentMarker.character.name + " but both are in open space, allowing vision collision.";
-                        NormalEnterHandling(collidedWith.poi);
-                    }
-                    //if not, add the poi to the list of pois in different structures instead
-                    //once there, it can only be removed from there if the poi exited this trigger or the poi moved 
-                    //to the same structure that this character is in
-                    else {
-                        collisionSummary += "\n-has different structure with " + parentMarker.character.name + " queuing...";
-                        AddPOIAsInRangeButDifferentStructure(collidedWith.poi);
-                    }
-                }
-                //if (collidedWith.poi is Character) {
-                //    Debug.Log(collisionSummary);
-                //}
+            string collisionSummary = parentMarker.name + " collided with " + collidedWith.poi.name;
+            if (collidedWith.poi.gridTileLocation == null) {
+                return; //ignore, Usually happens if an item is picked up just as this character sees it.
             }
+            //when this collides with a poi trigger
+            //check if the poi trigger is in the same structure as this
+            if (collidedWith.poi.gridTileLocation.structure == parentMarker.character.gridTileLocation.structure) {
+                //if it is, just follow the normal procedure when a poi becomes in range
+                collisionSummary += "\n-has same structure as " + parentMarker.character.name + " adding as in range";
+                NormalEnterHandling(collidedWith.poi);
+            } else {
+                //if it is not, check both character's structure types
+
+                //if both characters are in an open space, add them as normal
+                if (collidedWith.poi.gridTileLocation != null && collidedWith.poi.gridTileLocation.structure != null 
+                    && parentMarker.character.gridTileLocation != null && parentMarker.character.gridTileLocation.structure != null
+                    && collidedWith.poi.gridTileLocation.structure.structureType.IsOpenSpace() && parentMarker.character.gridTileLocation.structure.structureType.IsOpenSpace()) {
+                    collisionSummary += "\n-has different structure with " + parentMarker.character.name + " but both are in open space, allowing vision collision.";
+                    NormalEnterHandling(collidedWith.poi);
+                }
+                //if not, add the poi to the list of pois in different structures instead
+                //once there, it can only be removed from there if the poi exited this trigger or the poi moved 
+                //to the same structure that this character is in
+                else {
+                    collisionSummary += "\n-has different structure with " + parentMarker.character.name + " queuing...";
+                    AddPOIAsInRangeButDifferentStructure(collidedWith.poi);
+                }
+            }
+            //if (collidedWith.poi is Character) {
+            //    Debug.Log(collisionSummary);
+            //}
             
         }
     }
     public void OnTriggerExit2D(Collider2D collision) {
-        POICollisionTrigger collidedWith = collision.gameObject.GetComponent<POICollisionTrigger>();
+        IVisibleCollider collidedWith = collision.gameObject.GetComponent<IVisibleCollider>();
         if (collidedWith != null && collidedWith.poi != null
             && collidedWith.poi != parentMarker.character) {
             parentMarker.RemovePOIFromInVisionRange(collidedWith.poi);

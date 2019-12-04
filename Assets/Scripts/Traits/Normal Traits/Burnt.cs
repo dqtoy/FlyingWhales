@@ -27,7 +27,7 @@ namespace Traits {
                 TileObject obj = addedTo as TileObject;
                 obj.SetPOIState(POI_STATE.INACTIVE);
                 obj.SetSlotColor(burntColor);
-                obj.areaMapGameObject.SetColor(burntColor);
+                obj.areaMapVisual.SetColor(burntColor);
                 if (obj is GenericTileObject) {
                     LocationGridTile tile = obj.gridTileLocation;
                     tile.parentTileMap.SetColor(tile.localPlace, burntColor);
@@ -41,7 +41,7 @@ namespace Traits {
             } else if (addedTo is SpecialToken) {
                 SpecialToken token = addedTo as SpecialToken;
                 token.SetPOIState(POI_STATE.INACTIVE);
-                token.areaMapGameObject.SetColor(burntColor);
+                token.areaMapVisual.SetColor(burntColor);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
@@ -50,7 +50,7 @@ namespace Traits {
                 TileObject obj = removedFrom as TileObject;
                 obj.SetPOIState(POI_STATE.ACTIVE);
                 obj.SetSlotColor(Color.white);
-                obj.areaMapGameObject.SetColor(Color.white);
+                obj.areaMapVisual.SetColor(Color.white);
                 if (obj is GenericTileObject) {
                     LocationGridTile tile = obj.gridTileLocation;
                     tile.parentTileMap.SetColor(tile.localPlace, Color.white);
@@ -64,7 +64,7 @@ namespace Traits {
             } else if (removedFrom is SpecialToken) {
                 SpecialToken token = removedFrom as SpecialToken;
                 token.SetPOIState(POI_STATE.ACTIVE);
-                token.areaMapGameObject.SetColor(Color.white);
+                token.areaMapVisual.SetColor(Color.white);
             }
         }
         public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {

@@ -38,7 +38,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4827360900830300}
   - component: {fileID: 58447884994967556}
-  - component: {fileID: 114266033730266946}
+  - component: {fileID: 114765870824739766}
   m_Layer: 17
   m_Name: ProjectileCollider
   m_TagString: Untagged
@@ -119,17 +119,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.7, y: 0.7}
   m_EdgeRadius: 0
---- !u!114 &114266033730266946
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1981966609609654}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d99989d31b83d164784384b4299aca3c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114357732100700906
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -141,7 +130,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d412649be34fd34f923a4c4fea7fa7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectileReciever: {fileID: 114266033730266946}
+  _projectileReciever: {fileID: 114765870824739766}
+  mainCollider: {fileID: 61644342554161036}
+--- !u!114 &114765870824739766
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1981966609609654}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3af45c1e8289cd646a3b50358d8eeff2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &224478728328472912
 RectTransform:
   m_ObjectHideFlags: 1
