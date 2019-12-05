@@ -199,7 +199,7 @@ public class JudgeCharacter : GoapAction {
         Character target = goapNode.poiTarget as Character;
         target.AdjustIgnoreHostilities(1); //target should ignore hostilities or be ignored by other hostiles, until it returns home.
         target.AddOnLeaveAreaAction(() => target.AdjustIgnoreHostilities(-1));
-        target.AddOnLeaveAreaAction(() => target.ClearAllAwarenessOfType(POINT_OF_INTEREST_TYPE.ITEM, POINT_OF_INTEREST_TYPE.TILE_OBJECT));
+        //target.AddOnLeaveAreaAction(() => target.ClearAllAwarenessOfType(POINT_OF_INTEREST_TYPE.ITEM, POINT_OF_INTEREST_TYPE.TILE_OBJECT));
 
         CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.RETURN_HOME, CHARACTER_STATE.MOVE_OUT, target);
         target.jobQueue.AddJobInQueue(job);

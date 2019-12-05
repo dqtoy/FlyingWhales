@@ -73,7 +73,7 @@ public class HermesStatue : Artifact {
         inspectedBy.SetPOIState(POI_STATE.ACTIVE);
 
         inspectedBy.UnsubscribeSignals();
-        inspectedBy.ClearAllAwareness(); //so teleported character won't revisit old area.
+        //inspectedBy.ClearAllAwareness(); //so teleported character won't revisit old area.
         ////remove character from other character's awareness
         //for (int i = 0; i < gridTileLocation.parentAreaMap.area.charactersAtLocation.Count; i++) {
         //    Character currCharacter = gridTileLocation.parentAreaMap.area.charactersAtLocation[i];

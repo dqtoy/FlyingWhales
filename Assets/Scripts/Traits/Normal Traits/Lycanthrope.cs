@@ -39,19 +39,19 @@ namespace Traits {
                 lycanthropeAlterEgo.SetCharacterClass(CharacterManager.Instance.CreateNewCharacterClass(Utilities.GetRespectiveBeastClassNameFromByRace(RACE.WOLF)));
                 lycanthropeAlterEgo.SetLevel(level);
                 lycanthropeAlterEgo.AddTrait(new Nocturnal());
-                foreach (List<LocationStructure> structures in _character.specificLocation.structures.Values) {
-                    for (int i = 0; i < structures.Count; i++) {
-                        for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
-                            IPointOfInterest poi = structures[i].pointsOfInterest[j];
-                            if (poi is TileObject) {
-                                TileObject tileObj = poi as TileObject;
-                                if (tileObj.tileObjectType == TILE_OBJECT_TYPE.SMALL_ANIMAL || tileObj.tileObjectType == TILE_OBJECT_TYPE.EDIBLE_PLANT) {
-                                    lycanthropeAlterEgo.AddAwareness(tileObj);
-                                }
-                            }
-                        }
-                    }
-                }
+                //foreach (List<LocationStructure> structures in _character.specificLocation.structures.Values) {
+                //    for (int i = 0; i < structures.Count; i++) {
+                //        for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
+                //            IPointOfInterest poi = structures[i].pointsOfInterest[j];
+                //            if (poi is TileObject) {
+                //                TileObject tileObj = poi as TileObject;
+                //                if (tileObj.tileObjectType == TILE_OBJECT_TYPE.SMALL_ANIMAL || tileObj.tileObjectType == TILE_OBJECT_TYPE.EDIBLE_PLANT) {
+                //                    lycanthropeAlterEgo.AddAwareness(tileObj);
+                //                }
+                //            }
+                //        }
+                //    }
+                //}
             }
 
             base.OnAddTrait(sourceCharacter);
@@ -291,7 +291,7 @@ namespace Traits {
             this.tiredness = character.tiredness;
             this.happiness = character.happiness;
             this.faction = character.faction;
-            this.awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>>(character.awareness);
+            //this.awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>>(character.awareness);
             this.homeStructure = character.homeStructure;
             this.race = character.race;
             this.role = character.role;

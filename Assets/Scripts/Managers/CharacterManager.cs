@@ -234,12 +234,12 @@ public class CharacterManager : MonoBehaviour {
     public void RemoveCharacterAvatar(CharacterAvatar characterAvatar) {
         _allCharacterAvatars.Remove(characterAvatar);
     }
-    public void GenerateInitialAwareness() {
-        for (int i = 0; i < allCharacters.Count; i++) {
-            Character character = allCharacters[i];
-            character.AddInitialAwareness();
-        }
-    }
+    //public void GenerateInitialAwareness() {
+    //    for (int i = 0; i < allCharacters.Count; i++) {
+    //        Character character = allCharacters[i];
+    //        character.AddInitialAwareness();
+    //    }
+    //}
     public void PlaceInitialCharacters(Area area) {
         for (int i = 0; i < area.charactersAtLocation.Count; i++) {
             Character character = area.charactersAtLocation[i];

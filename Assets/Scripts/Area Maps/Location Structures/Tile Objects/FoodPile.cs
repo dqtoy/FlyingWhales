@@ -7,7 +7,7 @@ public class FoodPile : ResourcePile {
 
     public FoodPile() : base(RESOURCE.FOOD) {
         Initialize(TILE_OBJECT_TYPE.FOOD_PILE);
-        SetResourceInPile(50); //
+        //SetResourceInPile(50);
         traitContainer.RemoveTrait(this, "Flammable");
         Messenger.AddListener(Signals.HOUR_STARTED, CheckSupply);
     }

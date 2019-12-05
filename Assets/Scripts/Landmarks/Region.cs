@@ -50,6 +50,8 @@ public class Region {
     private List<System.Action> otherAfterInvasionActions; //list of other things to do when this landmark is invaded.
     private string activeEventAfterEffectScheduleID;
 
+    public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; private set; }
+
     #region getter/setter
     public BaseLandmark mainLandmark {
         get { return coreTile.landmarkOnTile; }
@@ -63,6 +65,7 @@ public class Region {
         factionsHere = new List<Faction>();
         features = new List<RegionFeature>();
         residents = new List<Character>();
+        awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>>();
     }
     public Region(HexTile coreTile) : this() {
         id = Utilities.SetID(this);
@@ -841,6 +844,55 @@ public class Region {
                 RemoveFeature(f);
             }
         }
+    }
+    #endregion
+
+    #region Awareness
+    public bool AddAwareness(IPointOfInterest pointOfInterest) {
+        if (!HasAwareness(pointOfInterest)) {
+            if (!awareness.ContainsKey(pointOfInterest.poiType)) {
+                awareness.Add(pointOfInterest.poiType, new List<IPointOfInterest>());
+            }
+            awareness[pointOfInterest.poiType].Add(pointOfInterest);
+            //if (pointOfInterest is TreeObject) {
+            //    List<IPointOfInterest> treeAwareness = GetTileObjectAwarenessOfType(TILE_OBJECT_TYPE.TREE_OBJECT);
+            //    if (treeAwareness.Count >= Character.TREE_AWARENESS_LIMIT) {
+            //        RemoveAwareness(treeAwareness[0]);
+            //    }
+            //}
+            return true;
+        }
+        return false;
+    }
+    public void RemoveAwareness(IPointOfInterest pointOfInterest) {
+        if (awareness.ContainsKey(pointOfInterest.poiType)) {
+            List<IPointOfInterest> awarenesses = awareness[pointOfInterest.poiType];
+            for (int i = 0; i < awarenesses.Count; i++) {
+                IPointOfInterest iawareness = awarenesses[i];
+                if (iawareness == pointOfInterest) {
+                    awarenesses.RemoveAt(i);
+                    break;
+                }
+            }
+        }
+    }
+    public void RemoveAwareness(POINT_OF_INTEREST_TYPE poiType) {
+        if (awareness.ContainsKey(poiType)) {
+            awareness.Remove(poiType);
+        }
+    }
+    public bool HasAwareness(IPointOfInterest poi) {
+        if (awareness.ContainsKey(poi.poiType)) {
+            List<IPointOfInterest> awarenesses = awareness[poi.poiType];
+            for (int i = 0; i < awarenesses.Count; i++) {
+                IPointOfInterest currPOI = awarenesses[i];
+                if (currPOI == poi) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return false;
     }
     #endregion
 }

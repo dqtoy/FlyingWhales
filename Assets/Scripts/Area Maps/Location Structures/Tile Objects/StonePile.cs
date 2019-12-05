@@ -7,7 +7,7 @@ public class StonePile : ResourcePile {
 
     public StonePile() : base(RESOURCE.STONE) {
         Initialize(TILE_OBJECT_TYPE.STONE_PILE);
-        SetResourceInPile(50);
+        //SetResourceInPile(50);
         traitContainer.RemoveTrait(this, "Flammable");
         Messenger.AddListener(Signals.HOUR_STARTED, CheckSupply);
     }

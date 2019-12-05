@@ -23,7 +23,7 @@ public class ThiefSummon : Summon {
     #region Overrides
     public override void OnPlaceSummon(LocationGridTile tile) {
         base.OnPlaceSummon(tile);
-        AddInitialAwareness(tile.parentAreaMap.area);
+        //AddInitialAwareness(tile.parentAreaMap.area);
         //Messenger.AddListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration);
         ////add all characters that are not part of the player faction to this character's terrifying characters list, so this character can avoid them.
         //for (int i = 0; i < tile.parentAreaMap.area.charactersAtLocation.Count; i++) {
@@ -84,19 +84,22 @@ public class ThiefSummon : Summon {
         }
         return canBeInstructed;
     }
+    public override bool IsStillConsideredPartOfAwarenessByCharacter(Character character) {
+        return marker != null;
+    }
     #endregion
 
     private void OnReachExitAction() {
         //remove character from other character's awareness
-        for (int i = 0; i < gridTileLocation.parentAreaMap.area.charactersAtLocation.Count; i++) {
-            Character currCharacter = gridTileLocation.parentAreaMap.area.charactersAtLocation[i];
-            currCharacter.RemoveAwareness(this);
-        }
+        //for (int i = 0; i < gridTileLocation.parentAreaMap.area.charactersAtLocation.Count; i++) {
+        //    Character currCharacter = gridTileLocation.parentAreaMap.area.charactersAtLocation[i];
+        //    currCharacter.RemoveAwareness(this);
+        //}
 
         marker.ClearTerrifyingObjects();
         specificLocation.RemoveCharacterFromLocation(this);
         DestroyMarker();
         UnsubscribeSignals();
-        ClearAllAwareness();
+        //ClearAllAwareness();
     }
 }

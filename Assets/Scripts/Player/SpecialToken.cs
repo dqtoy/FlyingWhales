@@ -22,12 +22,14 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
     public int uses { get; protected set; } //how many times can this item be used?
     public List<JobQueueItem> allJobsTargettingThis { get; private set; }
     public Character carriedByCharacter { get; private set; }
+    public bool isDestroyed { get; private set; }
 
     //hp
     public int maxHP { get; protected set; }
     public int currentHP { get; protected set; }
 
     private LocationGridTile tile;
+    public LocationGridTile previousTile { get; protected set; }
 
     #region getters/setters
     public string tokenName {
@@ -65,7 +67,6 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
         currentHP = maxHP;
         uses = 1;
         CreateTraitContainer();
-        InitializeMapObject(this);
     }
     public void SetID(int id) {
         this.id = Utilities.SetID(this, id);
@@ -115,6 +116,7 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
 
     #region Area Map
     public void SetGridTileLocation(LocationGridTile tile) {
+        previousTile = this.tile;
         this.tile = tile;
         //if (tile == null) {
 
@@ -123,20 +125,26 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
         //}
     }
     public void OnPlacePOI() {
+        if(areaMapVisual == null) {
+            InitializeMapObject(this);
+            gridTileLocation.structure.location.region.AddAwareness(this);
+        }
+        isDestroyed = false;
         PlaceMapObjectAt(tile);
         Messenger.Broadcast<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, this, tile);
-        for (int i = 0; i < tile.parentAreaMap.area.region.residents.Count; i++) {
-            Character character = tile.parentAreaMap.area.region.residents[i];
-            character.AddAwareness(this);
-        }
+        //for (int i = 0; i < tile.parentAreaMap.area.region.residents.Count; i++) {
+        //    Character character = tile.parentAreaMap.area.region.residents[i];
+        //    character.AddAwareness(this);
+        //}
     }
     public void OnDestroyPOI() {
+        isDestroyed = true;
         DisableGameObject();
         Messenger.Broadcast<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, this, tile);
-        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-            Character character = CharacterManager.Instance.allCharacters[i];
-            character.RemoveAwareness(this);
-        }
+        //for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+        //    Character character = CharacterManager.Instance.allCharacters[i];
+        //    character.RemoveAwareness(this);
+        //}
     }
     public LocationGridTile GetNearestUnoccupiedTileFromThis() {
         if (gridTileLocation != null) {
@@ -268,6 +276,9 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
     }
     public bool IsValidCombatTarget() {
         return gridTileLocation != null;
+    }
+    public bool IsStillConsideredPartOfAwarenessByCharacter(Character character) {
+        return !isDestroyed || carriedByCharacter != null;
     }
     #endregion
 

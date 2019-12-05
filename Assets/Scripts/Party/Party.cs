@@ -159,6 +159,7 @@ public class Party {
     private bool AddTileObject(TileObject tileObject) {
         if (carriedPOI == null) {
             carriedPOI = tileObject;
+            tileObject.SetIsBeingCarriedBy(owner);
             if (tileObject.gridTileLocation != null) {
                 tileObject.gridTileLocation.structure.RemovePOIWithoutDestroying(tileObject);
             }
@@ -217,7 +218,8 @@ public class Party {
     private void RemoveTileObject(TileObject tileObject, bool addToLocation, LocationGridTile dropLocation) {
         if (IsPOICarried(tileObject)) {
             carriedPOI = null;
-            if(tileObject.gridTileLocation != null) {
+            tileObject.SetIsBeingCarriedBy(null);
+            if (tileObject.gridTileLocation != null) {
                 tileObject.gridTileLocation.structure.RemovePOI(tileObject);
             } else if (tileObject.areaMapVisual != null) {
                 tileObject.OnDestroyPOI();
