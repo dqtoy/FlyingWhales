@@ -21,23 +21,19 @@ public class GenericTileObject : TileObject {
             DestroyTileSlots();
         }
     }
-    public override void SetGridTileLocation(LocationGridTile tile) {
-        previousTile = this.gridTileLocation;
-        if (tile != null) {
-            this.gridTileLocation = tile;
-        }
+
+    public override void OnPlacePOI() {
         if (areaMapVisual == null) {
             InitializeMapObject(this);
         }
-        if (tile == null) {
-            DisableGameObject();
-            OnRemoveTileObject(null, previousTile);
-            SetPOIState(POI_STATE.INACTIVE);
-        } else {
-            PlaceMapObjectAt(tile);
-            OnPlaceObjectAtTile(tile);
-            SetPOIState(POI_STATE.ACTIVE);
-        }
+        PlaceMapObjectAt(gridTileLocation);
+        OnPlaceObjectAtTile(gridTileLocation);
+        SetPOIState(POI_STATE.ACTIVE);
+    }
+    public override void OnDestroyPOI() {
+        DisableGameObject();
+        OnRemoveTileObject(null, previousTile);
+        SetPOIState(POI_STATE.INACTIVE);
     }
     public override void RemoveTileObject(Character removedBy) {
         LocationGridTile previousTile = this.gridTileLocation;
@@ -97,6 +93,7 @@ public class GenericTileObject : TileObject {
         hasBeenInitialized = true;
         Initialize(TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT);
         SetGridTileLocation(tile);
+        OnPlacePOI();
         DisableGameObject();
         RemoveCommonAdvertisments();
 

@@ -39,11 +39,12 @@ public class LandmarkCharacterItem : PooledObject {
         if (character == null) {
             return;
         }
-        if (character.currentParty.characters.Count > 1) {
-            UIManager.Instance.ShowSmallInfo(character.currentParty.name);
-        } else {
-            UIManager.Instance.ShowSmallInfo(character.name);
-        }
+        UIManager.Instance.ShowSmallInfo(character.name);
+        //if (character.currentParty.characters.Count > 1) {
+        //    UIManager.Instance.ShowSmallInfo(character.currentParty.name);
+        //} else {
+        //    UIManager.Instance.ShowSmallInfo(character.name);
+        //}
     }
     public void HideItemInfo() {
         UIManager.Instance.HideSmallInfo();

@@ -151,6 +151,17 @@ public class LocationStructure {
         }
         return false;
     }
+    public virtual bool RemovePOIWithoutDestroying(IPointOfInterest poi) {
+        if (pointsOfInterest.Remove(poi)) {
+            if (poi.gridTileLocation != null) {
+                if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
+                    location.areaMap.RemoveObjectWithoutDestroying(poi.gridTileLocation);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
     public List<IPointOfInterest> GetPOIsOfType(POINT_OF_INTEREST_TYPE type) {
         List<IPointOfInterest> pois = new List<IPointOfInterest>();
         for (int i = 0; i < pointsOfInterest.Count; i++) {
@@ -171,6 +182,22 @@ public class LocationStructure {
             }
         }
         return objs;
+    }
+    public ResourcePile GetResourcePileObjectWithLowestCount(TILE_OBJECT_TYPE type) {
+        ResourcePile chosenPile = null;
+        int lowestCount = 0;
+        for (int i = 0; i < pointsOfInterest.Count; i++) {
+            if (pointsOfInterest[i] is ResourcePile) {
+                ResourcePile obj = pointsOfInterest[i] as ResourcePile;
+                if (obj.tileObjectType == type) {
+                    if(chosenPile == null || obj.resourceInPile < lowestCount) {
+                        chosenPile = obj;
+                        lowestCount = obj.resourceInPile;
+                    }
+                }
+            }
+        }
+        return chosenPile;
     }
     private bool PlaceAreaObjectAtAppropriateTile(IPointOfInterest poi, LocationGridTile tile) {
         if (tile != null) {

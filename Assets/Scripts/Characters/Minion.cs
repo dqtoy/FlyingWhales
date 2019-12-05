@@ -139,7 +139,7 @@ public class Minion {
             }
 
             if (!character.IsInOwnParty()) {
-                character.currentParty.RemoveCharacter(character);
+                character.currentParty.RemovePOI(character);
             }
             character.ownParty.PartyDeath();
 

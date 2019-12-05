@@ -40,8 +40,10 @@ public class Carry : GoapAction {
             }
         }
         if (goapActionInvalidity.isInvalid == false) {
-            if ((poiTarget as Character).IsInOwnParty() == false) {
-                goapActionInvalidity.isInvalid = true;
+            if(poiTarget is Character) {
+                if ((poiTarget as Character).IsInOwnParty() == false) {
+                    goapActionInvalidity.isInvalid = true;
+                }
             }
         }
         return goapActionInvalidity;
@@ -63,14 +65,17 @@ public class Carry : GoapAction {
 
     #region State Effects
     public void AfterCarrySuccess(ActualGoapNode goapNode) {
-        Character target = goapNode.poiTarget as Character;
-        goapNode.actor.ownParty.AddCharacter(target);
+        //Character target = goapNode.poiTarget as Character;
+        goapNode.actor.ownParty.AddPOI(goapNode.poiTarget);
     }
     #endregion
 
     #region Precondition
     private bool TargetCannotMove(Character actor, IPointOfInterest target, object[] otherData) {
-        return (target as Character).canMove == false;
+        if(target is Character) {
+            return (target as Character).canMove == false;
+        }
+        return true;
     }
     #endregion
 

@@ -31,7 +31,7 @@ public class Invite : GoapAction {
             Character targetCharacter = poiTarget as Character;
             if (actor is SeducerSummon) {
                 SeducerSummon seducer = actor as SeducerSummon;
-                if (UnityEngine.Random.Range(0, 100) > seducer.seduceChance || targetCharacter.HasOtherCharacterInParty()
+                if (UnityEngine.Random.Range(0, 100) > seducer.seduceChance || targetCharacter.ownParty.isCarryingAnyPOI
                      || targetCharacter.stateComponent.currentState != null || targetCharacter.IsAvailable() == false) {
                     goapActionInvalidity.isInvalid = true;
                     goapActionInvalidity.stateName = "Invite Fail";
@@ -42,7 +42,7 @@ public class Invite : GoapAction {
                     acceptChance = 25;
                 }
                 if (UnityEngine.Random.Range(0, 100) > acceptChance || targetCharacter.isStarving || targetCharacter.isExhausted
-                || targetCharacter.traitContainer.GetNormalTrait("Annoyed") != null || targetCharacter.HasOtherCharacterInParty()
+                || targetCharacter.traitContainer.GetNormalTrait("Annoyed") != null || targetCharacter.ownParty.isCarryingAnyPOI
                 || targetCharacter.stateComponent.currentState != null || targetCharacter.IsAvailable() == false) {
                     goapActionInvalidity.isInvalid = true;
                     goapActionInvalidity.stateName = "Invite Fail";
@@ -56,7 +56,7 @@ public class Invite : GoapAction {
     #region Effects
     public void PreInviteSuccess(ActualGoapNode goapNode) {
         goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Wooed", goapNode.actor);
-        goapNode.actor.ownParty.AddCharacter(goapNode.poiTarget as Character);
+        goapNode.actor.ownParty.AddPOI(goapNode.poiTarget);
     }
     //public void PreInviteFail(ActualGoapNode goapNode) {
     //    currentState.SetIntelReaction(InviteFailReactions);

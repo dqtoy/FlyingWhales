@@ -8,12 +8,12 @@ public class EdiblePlant : TileObject {
     private const int Replenishment_Countdown = 96;
 
     public EdiblePlant() {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.HARVEST_PLANT };
         Initialize(TILE_OBJECT_TYPE.EDIBLE_PLANT);
         traitContainer.AddTrait(this, "Edible");
     }
     public EdiblePlant(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.HARVEST_PLANT };
         Initialize(data);
         traitContainer.AddTrait(this, "Edible");
     }

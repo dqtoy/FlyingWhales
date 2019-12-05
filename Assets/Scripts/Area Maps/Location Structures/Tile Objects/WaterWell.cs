@@ -15,18 +15,14 @@ public class WaterWell : TileObject {
     public WaterWell(SaveDataTileObject data) {
         Initialize(data);
     }
-
-    public override void SetGridTileLocation(LocationGridTile tile) {
-        base.SetGridTileLocation(tile);
-        if (tile != null) {
-            if (structureLocation.structureType != STRUCTURE_TYPE.POND) {
-                advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.WELL_JUMP, INTERACTION_TYPE.REPAIR };
-            } else {
-                advertisedActions = new List<INTERACTION_TYPE>();
-            }
+    public override void OnPlacePOI() {
+        base.OnPlacePOI();
+        if (structureLocation.structureType != STRUCTURE_TYPE.POND) {
+            advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.WELL_JUMP, INTERACTION_TYPE.REPAIR };
+        } else {
+            advertisedActions = new List<INTERACTION_TYPE>();
         }
     }
-
     public override string ToString() {
         return "Well " + id.ToString();
     }

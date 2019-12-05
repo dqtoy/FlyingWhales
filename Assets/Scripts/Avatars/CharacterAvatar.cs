@@ -81,7 +81,7 @@ public class CharacterAvatar : MonoBehaviour {
         _isInitialized = true;
         _hasArrived = true;
         SetVisualState(true);
-        SetSprite(_party.mainCharacter.role.roleType);
+        SetSprite(_party.owner.role.roleType);
         SetIsPlaceCharacterAsTileObject(true);
 
         this.name = party.owner.name + "'s Avatar";
@@ -89,7 +89,7 @@ public class CharacterAvatar : MonoBehaviour {
 #if !WORLD_CREATION_TOOL
         GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, this.transform);
         characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
-        characterPortrait.GeneratePortrait(_party.mainCharacter);
+        characterPortrait.GeneratePortrait(_party.owner);
         portraitGO.SetActive(false);
 
         CharacterManager.Instance.AddCharacterAvatar(this);
@@ -159,9 +159,13 @@ public class CharacterAvatar : MonoBehaviour {
     }
     private void StartTravelling() {
         SetIsTravellingOutside(true);
-        for (int i = 0; i < _party.characters.Count; i++) {
-            _party.characters[i].SetPOIState(POI_STATE.INACTIVE);
+        _party.owner.SetPOIState(POI_STATE.INACTIVE);
+        if (_party.isCarryingAnyPOI) {
+            _party.carriedPOI.SetPOIState(POI_STATE.INACTIVE);
         }
+        ////for (int i = 0; i < _party.characters.Count; i++) {
+        ////    _party.characters[i].SetPOIState(POI_STATE.INACTIVE);
+        ////}
         _distanceToTarget = PathGenerator.Instance.GetTravelTime(_party.specificLocation.coreTile, targetLocation.coreTile);
         _travelLine = _party.specificLocation.coreTile.CreateTravelLine(targetLocation.coreTile, _distanceToTarget, _party.owner);
         _travelLine.SetActiveMeter(isVisualShowing);
@@ -227,17 +231,25 @@ public class CharacterAvatar : MonoBehaviour {
 
         _party.owner.marker.pathfindingAI.SetIsStopMovement(true);
         //Debug.Log(GameManager.Instance.TodayLogString() + _party.name + " has arrived at " + targetLocation.name + " on " + _party.owner.gridTileLocation.ToString());
-        if(_party.characters.Count > 0) {
-            Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
-            for (int i = 0; i < _party.characters.Count; i++) {
-                Character character = party.characters[i];
-                character.SetPOIState(POI_STATE.ACTIVE);
-                //character.SetDailyInteractionGenerationTick();
-                arriveLog.AddToFillers(character, character.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
-            }
-            arriveLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
-            arriveLog.AddLogToInvolvedObjects();
+        Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
+        _party.owner.SetPOIState(POI_STATE.ACTIVE);
+        arriveLog.AddToFillers(_party.owner, _party.owner.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
+        if (_party.isCarryingAnyPOI) {
+            arriveLog.AddToFillers(_party.carriedPOI, _party.carriedPOI.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
         }
+        arriveLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+        arriveLog.AddLogToInvolvedObjects();
+        //if (_party.characters.Count > 0) {
+        //    for (int i = 0; i < _party.characters.Count; i++) {
+        //        Character character = party.characters[i];
+        //        character.SetPOIState(POI_STATE.ACTIVE);
+        //        //character.SetDailyInteractionGenerationTick();
+        //        arriveLog.AddToFillers(character, character.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
+        //    }
+        //    arriveLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+        //    arriveLog.AddLogToInvolvedObjects();
+        //}
+
         Messenger.Broadcast(Signals.PARTY_DONE_TRAVELLING, this.party);
         if(onArriveAction != null) {
             onArriveAction();

@@ -6,12 +6,12 @@ using UnityEngine;
 public class TreeObject : TileObject {
     public int yield { get; private set; }
 
-    private const int Supply_Per_Mine = 25;
+    //private const int Supply_Per_Mine = 25;
 
     public TreeObject() {
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CHOP_WOOD, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.REPAIR };
         Initialize(TILE_OBJECT_TYPE.TREE_OBJECT);
-        SetYield(Random.Range(15, 36));
+        SetYield(100);
     }
     public TreeObject(SaveDataTileObject data) {
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CHOP_WOOD, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.REPAIR };
@@ -22,12 +22,12 @@ public class TreeObject : TileObject {
         return "Tree " + id.ToString();
     }
 
-    public int GetSupplyPerMine() {
-        if (yield < Supply_Per_Mine) {
-            return yield;
-        }
-        return Supply_Per_Mine;
-    }
+    //public int GetSupplyPerMine() {
+    //    if (yield < Supply_Per_Mine) {
+    //        return yield;
+    //    }
+    //    return Supply_Per_Mine;
+    //}
     public void AdjustYield(int amount) {
         yield += amount;
         yield = Mathf.Max(0, yield);

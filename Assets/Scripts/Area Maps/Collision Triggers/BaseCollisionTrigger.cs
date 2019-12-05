@@ -19,5 +19,9 @@ public abstract class BaseCollisionTrigger<T> : MonoBehaviour where T: IDamageab
         _projectileReciever.gameObject.SetActive(true);
         _projectileReciever.Initialize(owner);
     }
+
+    public virtual void SetMainColliderState(bool state) {
+        mainCollider.enabled = state;
+    }
 }
 

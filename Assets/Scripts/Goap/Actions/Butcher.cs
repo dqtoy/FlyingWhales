@@ -8,14 +8,14 @@ public class Butcher : GoapAction {
     public Butcher() : base(INTERACTION_TYPE.BUTCHER) {
         actionIconString = GoapActionStateDB.Work_Icon;
         canBeAdvertisedEvenIfActorIsUnavailable = true;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
     }
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, target = GOAP_EFFECT_TARGET.TARGET }, IsTargetDead);
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_FOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.PRODUCE_FOOD, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -27,11 +27,10 @@ public class Butcher : GoapAction {
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
         IPointOfInterest poiTarget = node.poiTarget;
-        Character deadCharacter = poiTarget as Character;
-        if (deadCharacter == null) {
-            deadCharacter = (poiTarget as Tombstone).character;
+        if(node.poiTarget is Tombstone) {
+            poiTarget = (node.poiTarget as Tombstone).character;
         }
-        log.AddToFillers(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         Character actor = node.actor;
@@ -42,7 +41,7 @@ public class Butcher : GoapAction {
     }
     private bool IsTargetMissing(Character actor, IPointOfInterest poiTarget) {
         return poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
-              || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) || !(poiTarget as Character).isDead;
+              || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) || (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER && !(poiTarget as Character).isDead);
     }
     #endregion
 
@@ -54,17 +53,13 @@ public class Butcher : GoapAction {
                 return false;
             }
             Character deadCharacter = GetDeadCharacter(poiTarget);
-            if (deadCharacter != null) {
-                if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
-                    //return true;
-                    if (actor.traitContainer.GetNormalTrait("Cannibal") != null) {
-                        return true;
-                    }
-                    return false;
+            if (deadCharacter != null && (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES)) {
+                if (actor.traitContainer.GetNormalTrait("Cannibal") != null) {
+                    return true;
                 }
-                return true;
+                return false;
             }
-            
+            return true;
         }
         return false;
     }
@@ -75,7 +70,7 @@ public class Butcher : GoapAction {
         if (poiTarget is Character) {
             return (poiTarget as Character).isDead;
         }
-        return false;
+        return true;
     }
     #endregion
 
@@ -90,40 +85,57 @@ public class Butcher : GoapAction {
 
     #region State Effects
     public void PreTransformSuccess(ActualGoapNode goapNode) {
-        Character deadCharacter = GetDeadCharacter(goapNode.poiTarget);
         int transformedFood = 0;
-        if (deadCharacter.race == RACE.WOLF) {
-            transformedFood = 80;
-        } else if (deadCharacter.race == RACE.HUMANS) {
-            transformedFood = 140;
-        } else if (deadCharacter.race == RACE.ELVES) {
-            transformedFood = 120;
+        Character deadCharacter = GetDeadCharacter(goapNode.poiTarget);
+        if (deadCharacter != null) {
+            if (deadCharacter.race == RACE.WOLF) {
+                transformedFood = 150;
+            } else if (deadCharacter.race == RACE.HUMANS) {
+                transformedFood = 200;
+            } else if (deadCharacter.race == RACE.ELVES) {
+                transformedFood = 200;
+            }
+        } else {
+            transformedFood = 100;
         }
+
         //if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
         //    currentState.SetIntelReaction(CannibalTransformSuccessIntelReaction);
         //} else {
         //    currentState.SetIntelReaction(NormalTransformSuccessIntelReaction);
         //}
-        goapNode.descriptionLog.AddToFillers(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         goapNode.descriptionLog.AddToFillers(null, transformedFood.ToString(), LOG_IDENTIFIER.STRING_1);
     }
     public void AfterTransformSuccess(ActualGoapNode goapNode) {
-        Character deadCharacter = GetDeadCharacter(goapNode.poiTarget);
+        IPointOfInterest poiTarget = goapNode.poiTarget;
+        LocationGridTile tileLocation = poiTarget.gridTileLocation;
         int transformedFood = 0;
-        if (deadCharacter.race == RACE.WOLF) {
-            transformedFood = 80;
-        } else if (deadCharacter.race == RACE.HUMANS) {
-            transformedFood = 140;
-        } else if (deadCharacter.race == RACE.ELVES) {
-            transformedFood = 120;
+        Character deadCharacter = GetDeadCharacter(poiTarget);
+        if (deadCharacter != null) {
+            if (deadCharacter.race == RACE.WOLF) {
+                transformedFood = 150;
+            } else if (deadCharacter.race == RACE.HUMANS) {
+                transformedFood = 200;
+            } else if (deadCharacter.race == RACE.ELVES) {
+                transformedFood = 200;
+            }
+        } else {
+            transformedFood = 100;
         }
         //TODO: deadCharacter.CancelAllJobsTargettingThisCharacter(JOB_TYPE.BURY);
-        goapNode.actor.AdjustFood(transformedFood);
-        if (goapNode.poiTarget is Tombstone) {
-            goapNode.poiTarget.gridTileLocation.structure.RemovePOI(goapNode.poiTarget, goapNode.actor);
-        } else if (goapNode.poiTarget is Character) {
-            (goapNode.poiTarget as Character).DestroyMarker();
+        //goapNode.actor.AdjustFood(transformedFood);
+
+        if (poiTarget is Character) {
+            (poiTarget as Character).DestroyMarker();
+        } else {
+            tileLocation.structure.RemovePOI(poiTarget, goapNode.actor);
         }
+
+        TileObject metalPile = InteriorMapManager.Instance.CreateNewTileObject(TILE_OBJECT_TYPE.FOOD_PILE);
+        (metalPile as FoodPile).SetResourceInPile(transformedFood);
+        tileLocation.structure.AddPOI(metalPile, tileLocation);
+        metalPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
     }
     //public void PreTargetMissing() {
     //    goapNode.descriptionLog.AddToFillers(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

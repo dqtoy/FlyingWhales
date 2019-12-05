@@ -251,7 +251,7 @@ public class CharacterMarker : PooledObject {
     private void OnCharacterAreaTravelling(Party travellingParty) {
         if (targetPOI is Character) {
             Character targetCharacter = targetPOI as Character;
-            if (travellingParty.characters.Contains(targetCharacter)) {
+            if (travellingParty.IsPOICarried(targetCharacter)) {
                 Action action = this.arrivalAction;
                 if(action != null) {
                     if (character.currentParty.icon.isTravelling) {
@@ -267,15 +267,22 @@ public class CharacterMarker : PooledObject {
                 action?.Invoke();
             }
         }
-        for (int i = 0; i < travellingParty.characters.Count; i++) {
-            Character traveller = travellingParty.characters[i];
-            if(traveller != character) {
-                RemoveHostileInRange(traveller); //removed hostile because he/she left the area.
-                RemoveAvoidInRange(traveller);
-                RemovePOIFromInVisionRange(traveller);
-                visionCollision.RemovePOIAsInRangeButDifferentStructure(traveller);
-            }
+        if (travellingParty.isCarryingAnyPOI && travellingParty.carriedPOI is Character) {
+            Character carriedCharacter = travellingParty.carriedPOI as Character;
+            RemoveHostileInRange(carriedCharacter); //removed hostile because he/she left the area.
+            RemoveAvoidInRange(carriedCharacter);
+            RemovePOIFromInVisionRange(carriedCharacter);
+            visionCollision.RemovePOIAsInRangeButDifferentStructure(carriedCharacter);
         }
+        //for (int i = 0; i < travellingParty.characters.Count; i++) {
+        //    Character traveller = travellingParty.characters[i];
+        //    if(traveller != character) {
+        //        RemoveHostileInRange(traveller); //removed hostile because he/she left the area.
+        //        RemoveAvoidInRange(traveller);
+        //        RemovePOIFromInVisionRange(traveller);
+        //        visionCollision.RemovePOIAsInRangeButDifferentStructure(traveller);
+        //    }
+        //}
 
     }
     private void SelfGainedTrait(Character characterThatGainedTrait, Trait trait) {
@@ -489,7 +496,6 @@ public class CharacterMarker : PooledObject {
                 SetDestination(targetPOI.gridTileLocation.centeredWorldLocation);
                 break;
         }
-
         StartMovement();
     }
     public void GoTo(ITraitable target, Action arrivalAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {

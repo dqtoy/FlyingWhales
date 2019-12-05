@@ -63,7 +63,9 @@ public static class Signals {
     /// <summary>
     /// Parameters: Supply Pile (affected supply pile)
     /// </summary>
-    public static string SUPPLY_IN_PILE_REDUCED = "OnSupplyInPileReduced";
+    public static string WOOD_IN_PILE_REDUCED = "OnWoodInPileReduced";
+    public static string STONE_IN_PILE_REDUCED = "OnStoneInPileReduced";
+    public static string METAL_IN_PILE_REDUCED = "OnMetalInPileReduced";
     #endregion
 
     #region Landmarks
@@ -419,7 +421,7 @@ public static class Signals {
             new SignalMethod() { methodName = "PerHour", objectType = typeof(Infected) },
         }},
         { TICK_STARTED, new SignalMethod[] {
-            new SignalMethod() { methodName = "CheckSupply", objectType = typeof(SupplyPile) },
+            new SignalMethod() { methodName = "CheckSupply", objectType = typeof(WoodPile) },
             new SignalMethod() { methodName = "CheckFood", objectType = typeof(FoodPile) },
             new SignalMethod() { methodName = "PerTick", objectType = typeof(TimerHubUI) },
             new SignalMethod() { methodName = string.Empty, objectType = typeof(Trait) },

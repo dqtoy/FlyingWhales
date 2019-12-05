@@ -23,14 +23,14 @@ public class Scrap : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAS_WOOD, GOAP_EFFECT_TARGET.ACTOR));
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.PRODUCE_STONE, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR });
     }
-    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, object[] otherData) {
-        List <GoapEffect> ee = base.GetExpectedEffects(actor, target, otherData);
-        SpecialToken item = target as SpecialToken;
-        ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_WOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
-        return ee;
-    }
+    //protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, object[] otherData) {
+    //    List <GoapEffect> ee = base.GetExpectedEffects(actor, target, otherData);
+    //    SpecialToken item = target as SpecialToken;
+    //    ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_WOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
+    //    return ee;
+    //}
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Scrap Success", goapNode);
@@ -65,17 +65,24 @@ public class Scrap : GoapAction {
     #endregion
 
     #region State Effects
-    public void PreScrapSuccess(ActualGoapNode goapNode) {
-        SpecialToken item = goapNode.poiTarget as SpecialToken;
-        GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-        goapNode.descriptionLog.AddToFillers(item, item.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        goapNode.descriptionLog.AddToFillers(null, TokenManager.Instance.itemData[item.specialTokenType].supplyValue.ToString(), LOG_IDENTIFIER.STRING_1);
-    }
+    //public void PreScrapSuccess(ActualGoapNode goapNode) {
+    //    SpecialToken item = goapNode.poiTarget as SpecialToken;
+    //    GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
+    //    //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+    //    goapNode.descriptionLog.AddToFillers(item, item.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //    goapNode.descriptionLog.AddToFillers(null, TokenManager.Instance.itemData[item.specialTokenType].supplyValue.ToString(), LOG_IDENTIFIER.STRING_1);
+    //}
     public void AfterScrapSuccess(ActualGoapNode goapNode) {
         SpecialToken item = goapNode.poiTarget as SpecialToken;
-        goapNode.actor.AdjustSupply(TokenManager.Instance.itemData[item.specialTokenType].supplyValue);
+        LocationGridTile tile = item.gridTileLocation;
+        int craftCost = item.craftCost;
+        //goapNode.actor.AdjustSupply(TokenManager.Instance.itemData[item.specialTokenType].supplyValue);
         goapNode.actor.DestroyToken(item);
+
+        TileObject stonePile = InteriorMapManager.Instance.CreateNewTileObject(TILE_OBJECT_TYPE.STONE_PILE);
+        (stonePile as StonePile).SetResourceInPile(Mathf.CeilToInt(craftCost * 0.5f));
+        tile.structure.AddPOI(stonePile, tile);
+        stonePile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.STONE_PILE);
     }
     #endregion
 }

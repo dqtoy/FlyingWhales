@@ -116,20 +116,26 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
     #region Area Map
     public void SetGridTileLocation(LocationGridTile tile) {
         this.tile = tile;
-        if (tile == null) {
-            DisableGameObject();
-            Messenger.Broadcast<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, this, tile);
-            for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-                Character character = CharacterManager.Instance.allCharacters[i];
-                character.RemoveAwareness(this);
-            }
-        } else {
-            PlaceMapObjectAt(tile);
-            Messenger.Broadcast<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, this, tile);
-            for (int i = 0; i < tile.parentAreaMap.area.region.residents.Count; i++) {
-                Character character = tile.parentAreaMap.area.region.residents[i];
-                character.AddAwareness(this);
-            }
+        //if (tile == null) {
+
+        //} else {
+
+        //}
+    }
+    public void OnPlacePOI() {
+        PlaceMapObjectAt(tile);
+        Messenger.Broadcast<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, this, tile);
+        for (int i = 0; i < tile.parentAreaMap.area.region.residents.Count; i++) {
+            Character character = tile.parentAreaMap.area.region.residents[i];
+            character.AddAwareness(this);
+        }
+    }
+    public void OnDestroyPOI() {
+        DisableGameObject();
+        Messenger.Broadcast<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, this, tile);
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.allCharacters[i];
+            character.RemoveAwareness(this);
         }
     }
     public LocationGridTile GetNearestUnoccupiedTileFromThis() {

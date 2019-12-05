@@ -18,17 +18,17 @@ public class CharacterParty : Party {
     }
 
     #region Overrides
-    public void DisbandPartyKeepOwner() {
-        while (characters.Count != 1) {
-            for (int i = 0; i < characters.Count; i++) {
-                Character currCharacter = characters[i];
-                if (currCharacter.id != owner.id) {
-                    RemoveCharacter(currCharacter);
-                    break;
-                }
-            }
-        }
-    }
+    //public void DisbandPartyKeepOwner() {
+    //    while (characters.Count != 1) {
+    //        for (int i = 0; i < characters.Count; i++) {
+    //            Character currCharacter = characters[i];
+    //            if (currCharacter.id != owner.id) {
+    //                RemoveCharacter(currCharacter);
+    //                break;
+    //            }
+    //        }
+    //    }
+    //}
     /*
         Create a new icon for this character.
         Each character owns 1 icon.
@@ -59,7 +59,8 @@ public class CharacterParty : Party {
     public void OnCharacterDied(Character diedCharacter) {
         if (diedCharacter.id == _owner.id) {
             //character that died was the main character of this party, disband it
-            DisbandPartyKeepOwner();
+            //DisbandPartyKeepOwner();
+            RemoveCarriedPOI();
         }
     }
     #endregion

@@ -29,11 +29,9 @@ public class GoddessStatue : TileObject {
         }
 
     }
-    public override void SetGridTileLocation(LocationGridTile tile) {
-        base.SetGridTileLocation(tile);
-        if (tile != null) {
-            SetPOIState(POI_STATE.INACTIVE);
-        }
+    public override void OnPlacePOI() {
+        base.OnPlacePOI();
+        SetPOIState(POI_STATE.INACTIVE);
     }
     public override string ToString() {
         return "Goddess Statue " + id.ToString();

@@ -70,11 +70,11 @@ public class PartyInfoUI : UIMenu {
         partyEmblem.SetParty(currentlyShowingParty);
     }
     private void UpdatePartyCharacters() {
-        for (int i = 0; i < partySlots.Length; i++) {
-            SlotItem currItem = partySlots[i];
-            Character character = currentlyShowingParty.characters.ElementAtOrDefault(i);
-            currItem.PlaceObject(character);
-        }
+        //for (int i = 0; i < partySlots.Length; i++) {
+        //    SlotItem currItem = partySlots[i];
+        //    Character character = currentlyShowingParty.characters.ElementAtOrDefault(i);
+        //    currItem.PlaceObject(character);
+        //}
     }
 
     private void UpdateEditableItems() {
@@ -249,61 +249,61 @@ public class PartyInfoUI : UIMenu {
         OnChangesMade();
     }
     public void OnClickSave() {
-        if (currentlyShowingParty != null) {
-            List<Character> charactersToRemove = new List<Character>();
-            for (int i = 0; i < currentlyShowingParty.characters.Count; i++) {
-                Character currCharacter = currentlyShowingParty.characters[i];
-                if (!partyHolder.characters.Contains(currCharacter)) {
-                    charactersToRemove.Add(currCharacter);
-                }
-            }
-            if (charactersToRemove.Contains(currentlyShowingParty.owner)) {
-                //the party owner was removed from the party
-                //remove all other characters instead
-                charactersToRemove = new List<Character>(currentlyShowingParty.characters);
-                charactersToRemove.Remove(currentlyShowingParty.owner);
-            }
-            for (int i = 0; i < charactersToRemove.Count; i++) {
-                currentlyShowingParty.RemoveCharacter(charactersToRemove[i]);
-            }
-        }
+        //if (currentlyShowingParty != null) {
+        //    List<Character> charactersToRemove = new List<Character>();
+        //    for (int i = 0; i < currentlyShowingParty.characters.Count; i++) {
+        //        Character currCharacter = currentlyShowingParty.characters[i];
+        //        if (!partyHolder.characters.Contains(currCharacter)) {
+        //            charactersToRemove.Add(currCharacter);
+        //        }
+        //    }
+        //    if (charactersToRemove.Contains(currentlyShowingParty.owner)) {
+        //        //the party owner was removed from the party
+        //        //remove all other characters instead
+        //        charactersToRemove = new List<Character>(currentlyShowingParty.characters);
+        //        charactersToRemove.Remove(currentlyShowingParty.owner);
+        //    }
+        //    for (int i = 0; i < charactersToRemove.Count; i++) {
+        //        currentlyShowingParty.RemoveCharacter(charactersToRemove[i]);
+        //    }
+        //}
         
 
-        Party partyToUse = partyHolder.characters[0].ownParty;
-        partyToUse.SetPartyName(partyHolder.name);
-        for (int i = 1; i < partyHolder.characters.Count; i++) {
-            Character currCharacter = partyHolder.characters[i];
-            partyToUse.AddCharacter(currCharacter);
-        }
-        SetData(partyToUse);
-        OnChangesMade();
-        Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE, "Saved party!", true);
+        //Party partyToUse = partyHolder.characters[0].ownParty;
+        //partyToUse.SetPartyName(partyHolder.name);
+        //for (int i = 1; i < partyHolder.characters.Count; i++) {
+        //    Character currCharacter = partyHolder.characters[i];
+        //    partyToUse.AddPOI(currCharacter);
+        //}
+        //SetData(partyToUse);
+        //OnChangesMade();
+        //Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE, "Saved party!", true);
     }
     public void SetPartyHolderName(string name) {
         partyHolder.SetName(name);
     }
     private bool HasSameCharacters(Party party, PartyHolder other) {
-        for (int i = 0; i < party.characters.Count; i++) {
-            Character partyCharacter = party.characters[i];
-            if (!other.characters.Contains(partyCharacter)) {
-                return false;
-            }
-        }
-        for (int i = 0; i < other.characters.Count; i++) {
-            Character otherPartyCharacter = other.characters[i];
-            if (!party.characters.Contains(otherPartyCharacter)) {
-                return false;
-            }
-        }
+        //for (int i = 0; i < party.characters.Count; i++) {
+        //    Character partyCharacter = party.characters[i];
+        //    if (!other.characters.Contains(partyCharacter)) {
+        //        return false;
+        //    }
+        //}
+        //for (int i = 0; i < other.characters.Count; i++) {
+        //    Character otherPartyCharacter = other.characters[i];
+        //    if (!party.characters.Contains(otherPartyCharacter)) {
+        //        return false;
+        //    }
+        //}
         return true;
     }
     private void CopyValues(Party party) {
         partyHolder.characters.Clear();
         partyHolder.SetEmblemSettings(party.emblemBG, party.emblem, party.partyColor);
         partyHolder.SetName(party.partyName);
-        for (int i = 0; i < party.characters.Count; i++) {
-            partyHolder.AddCharacter(party.characters[i]);
-        }
+        //for (int i = 0; i < party.characters.Count; i++) {
+        //    partyHolder.AddCharacter(party.characters[i]);
+        //}
     }
     #endregion
 }

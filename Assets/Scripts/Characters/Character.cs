@@ -284,9 +284,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public int attackSpeed {
         get { return _characterClass.baseAttackSpeed; } //in milliseconds, The lower the amount the faster the attack rate
     }
-    public float computedPower {
-        get { return GetComputedPower(); }
-    }
+    //public float computedPower {
+    //    get { return GetComputedPower(); }
+    //}
     public Minion minion {
         get { return _minion; }
     }
@@ -630,7 +630,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //Messenger.AddListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
-        Messenger.AddListener<Area, Character>(Signals.CHARACTER_EXITED_AREA, OnCharacterExitedArea);
+        //Messenger.AddListener<Area, Character>(Signals.CHARACTER_EXITED_AREA, OnCharacterExitedArea);
         Messenger.AddListener<Character, string>(Signals.CANCEL_CURRENT_ACTION, CancelCurrentAction);
         ///Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet); Moved listener for action state set to CharacterManager for optimization <see cref="CharacterManager.OnActionStateSet(GoapAction, GoapActionState)">
         //Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, OnItemPlacedOnTile);
@@ -651,7 +651,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //Messenger.RemoveListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.RemoveListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
-        Messenger.RemoveListener<Area, Character>(Signals.CHARACTER_EXITED_AREA, OnCharacterExitedArea);
+        //Messenger.RemoveListener<Area, Character>(Signals.CHARACTER_EXITED_AREA, OnCharacterExitedArea);
         Messenger.RemoveListener<Character, string>(Signals.CANCEL_CURRENT_ACTION, CancelCurrentAction);
         //Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         //Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, OnItemPlacedOnTile);
@@ -675,9 +675,13 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
             //remove the character that left the area from anyone elses list of terrifying characters.
             if (marker.terrifyingObjects.Count > 0) {
-                for (int i = 0; i < party.characters.Count; i++) {
-                    marker.RemoveTerrifyingObject(party.characters[i]);
+                marker.RemoveTerrifyingObject(party.owner);
+                if (party.isCarryingAnyPOI) {
+                    marker.RemoveTerrifyingObject(party.carriedPOI);
                 }
+                //for (int i = 0; i < party.characters.Count; i++) {
+                //    marker.RemoveTerrifyingObject(party.characters[i]);
+                //}
             }
         }
     }
@@ -922,7 +926,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
 
             if (!IsInOwnParty()) {
-                _currentParty.RemoveCharacter(this);
+                _currentParty.RemovePOI(this);
             }
             _ownParty.PartyDeath();
 
@@ -2093,12 +2097,13 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Create a new Party with this character as the leader.
             */
     public virtual Party CreateOwnParty() {
-        if (_ownParty != null) {
-            _ownParty.RemoveCharacter(this);
-        }
+        //if (_ownParty != null) {
+        //    _ownParty.RemoveCharacter(this);
+        //}
         CharacterParty newParty = new CharacterParty(this);
         SetOwnedParty(newParty);
-        newParty.AddCharacter(this, true);
+        SetCurrentParty(newParty);
+        //newParty.AddCharacter(this, true);
         //newParty.CreateCharacterObject();
         return newParty;
     }
@@ -2128,10 +2133,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
     }
     public bool IsInParty() {
-        if (currentParty.characters.Count > 1) {
-            return true; //if the character is in a party that has more than 1 characters
-        }
-        return false;
+        return currentParty.isCarryingAnyPOI;
+        //if (currentParty.characters.Count > 1) {
+        //    return true; //if the character is in a party that has more than 1 characters
+        //}
+        //return false;
     }
     public bool IsInOwnParty() {
         if (currentParty.id == ownParty.id) {
@@ -2139,9 +2145,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         return false;
     }
-    public bool HasOtherCharacterInParty() {
-        return ownParty.characters.Count > 1;
-    }
+    //public bool HasOtherCharacterInParty() {
+    //    return ownParty.characters.Count > 1;
+    //}
     #endregion
 
     #region Location
@@ -2263,15 +2269,23 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             ExecuteLeaveAreaActions();
         } else {
             if (marker.terrifyingObjects.Count > 0) {
-                for (int i = 0; i < party.characters.Count; i++) {
-                    marker.RemoveTerrifyingObject(party.characters[i]);
+                marker.RemoveTerrifyingObject(party.owner);
+                if (party.isCarryingAnyPOI) {
+                    marker.RemoveTerrifyingObject(party.carriedPOI);
                 }
+                //for (int i = 0; i < party.characters.Count; i++) {
+                //    marker.RemoveTerrifyingObject(party.characters[i]);
+                //}
             }
-            //remove character from awareness
-            for (int i = 0; i < party.characters.Count; i++) {
-                Character character = party.characters[i];
-                RemoveAwareness(character);
+            RemoveAwareness(party.owner);
+            if (party.isCarryingAnyPOI) {
+                RemoveAwareness(party.carriedPOI);
             }
+            ////remove character from awareness
+            //for (int i = 0; i < party.characters.Count; i++) {
+            //    Character character = party.characters[i];
+            //    RemoveAwareness(character);
+            //}
         }
     }
     private void OnArrivedAtArea(Party party) {
@@ -2288,10 +2302,14 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //    //}
             //}
         } else {
-            for (int i = 0; i < party.characters.Count; i++) {
-                Character character = party.characters[i];
-                AddAwareness(character); //become re aware of character
+            AddAwareness(party.owner);
+            if (party.isCarryingAnyPOI) {
+                AddAwareness(party.carriedPOI);
             }
+            //for (int i = 0; i < party.characters.Count; i++) {
+            //    Character character = party.characters[i];
+            //    AddAwareness(character); //become re aware of character
+            //}
         }
     }
     public void OnArriveAtAreaStopMovement() {
@@ -3544,13 +3562,13 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void ResetToFullSP() {
         AdjustSP(_maxSP);
     }
-    private float GetComputedPower() {
-        float compPower = 0f;
-        for (int i = 0; i < currentParty.characters.Count; i++) {
-            compPower += currentParty.characters[i].attackPower;
-        }
-        return compPower;
-    }
+    //private float GetComputedPower() {
+    //    float compPower = 0f;
+    //    for (int i = 0; i < currentParty.characters.Count; i++) {
+    //        compPower += currentParty.characters[i].attackPower;
+    //    }
+    //    return compPower;
+    //}
     public void SetHP(int amount) {
         this._currentHP = amount;
     }
@@ -3927,7 +3945,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //}
 
         if (!IsInOwnParty()) {
-            _currentParty.RemoveCharacter(this);
+            _currentParty.RemovePOI(this);
         }
         ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
         MigrateHomeTo(PlayerManager.Instance.player.playerArea.region);
@@ -5710,6 +5728,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void SetIsDisabledByPlayer(bool state) {
         isDisabledByPlayer = state;
     }
+    public void OnPlacePOI() { /*FOR INTERFACE ONLY*/ }
+    public void OnDestroyPOI() { /*FOR INTERFACE ONLY*/ }
     #endregion
 
     #region Goap

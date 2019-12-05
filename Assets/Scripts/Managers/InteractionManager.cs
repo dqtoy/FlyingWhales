@@ -67,9 +67,11 @@ public class InteractionManager : MonoBehaviour {
             INTERACTION_TYPE currType = allGoapActions[i];
             var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(currType.ToString());
             System.Type type = System.Type.GetType(typeName);
-            if(type != null) {
+            if (type != null) {
                 GoapAction data = System.Activator.CreateInstance(type) as GoapAction;
                 goapActionData.Add(currType, data);
+            } else {
+                Debug.LogWarning(currType.ToString() + " has no data!");
             }
         }
     }
@@ -310,12 +312,15 @@ public class InteractionManager : MonoBehaviour {
                 priority = 220;
                 break;
             case JOB_TYPE.SUICIDE:
+            case JOB_TYPE.HAUL:
                 priority = 230;
                 break;
             case JOB_TYPE.CRAFT_TOOL:
             case JOB_TYPE.BREW_POTION:
-            case JOB_TYPE.OBTAIN_SUPPLY:
             case JOB_TYPE.OBTAIN_FOOD:
+            case JOB_TYPE.OBTAIN_WOOD:
+            case JOB_TYPE.OBTAIN_STONE:
+            case JOB_TYPE.OBTAIN_METAL:
             case JOB_TYPE.DROP:
             case JOB_TYPE.INSPECT:
             case JOB_TYPE.PLACE_BLUEPRINT:
@@ -404,7 +409,7 @@ public class InteractionManager : MonoBehaviour {
         return SPECIAL_TOKEN.TOOL.CanBeCraftedBy(character);
     }
     public bool CanDoObtainSupplyJob(Character character) {
-        return character.role.roleType == CHARACTER_ROLE.CIVILIAN;
+        return character.role.roleType == CHARACTER_ROLE.SOLDIER;
     }
     public bool CanCharacterTakeBuildGoddessStatueJob(Character character) {
         return character.traitContainer.GetNormalTrait("Builder") != null;
