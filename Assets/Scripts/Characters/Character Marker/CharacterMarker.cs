@@ -833,6 +833,7 @@ public class CharacterMarker : PooledObject {
         UpdatePosition();
         UpdateActionIcon();
         SetCollidersState(true);
+        tile.structure.location.region.AddAwareness(character);
     }
     private IEnumerator Positioner(Vector3 localPos, Vector3 lookAt) {
         yield return null;
@@ -944,7 +945,7 @@ public class CharacterMarker : PooledObject {
             if (poi is Character) {
                 inVisionCharacters.Add(poi as Character);
             }
-            character.AddAwareness(poi);
+            //character.AddAwareness(poi);
             OnAddPOIAsInVisionRange(poi);
         }
     }

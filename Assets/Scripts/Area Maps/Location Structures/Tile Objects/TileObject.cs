@@ -43,6 +43,7 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
     public LocationGridTile gridTileLocation { get; protected set; }
     public POI_STATE state { get; private set; }
     public LocationGridTile previousTile { get; protected set; }
+    public Character isBeingCarriedBy { get; protected set; }
 
     #region getters
     public POINT_OF_INTEREST_TYPE poiType {
@@ -121,22 +122,23 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
         OnRemoveTileObject(null, previousTile);
         SetPOIState(POI_STATE.INACTIVE);
         //TODO: Make This Better!
-        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-            Character character = CharacterManager.Instance.allCharacters[i];
-            character.RemoveAwareness(this);
-        }
+        //for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+        //    Character character = CharacterManager.Instance.allCharacters[i];
+        //    character.RemoveAwareness(this);
+        //}
     }
     public virtual void OnPlacePOI() {
         if (areaMapVisual == null) {
             InitializeMapObject(this);
+            gridTileLocation.structure.location.region.AddAwareness(this);
         }
         PlaceMapObjectAt(gridTileLocation);
         OnPlaceObjectAtTile(gridTileLocation);
         SetPOIState(POI_STATE.ACTIVE);
-        for (int i = 0; i < gridTileLocation.parentAreaMap.area.region.residents.Count; i++) {
-            Character character = gridTileLocation.parentAreaMap.area.region.residents[i];
-            character.AddAwareness(this);
-        }
+        //for (int i = 0; i < gridTileLocation.parentAreaMap.area.region.residents.Count; i++) {
+        //    Character character = gridTileLocation.parentAreaMap.area.region.residents[i];
+        //    character.AddAwareness(this);
+        //}
     }
     public virtual void RemoveTileObject(Character removedBy) {
         LocationGridTile previousTile = this.gridTileLocation;
@@ -255,6 +257,17 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
     public virtual void OnTileObjectLostTrait(Trait trait) { }
     public virtual bool IsValidCombatTarget() {
         return gridTileLocation != null;
+    }
+    public virtual bool IsStillConsideredPartOfAwarenessByCharacter(Character character) {
+        if(areaMapVisual == null) {
+            return false;
+        }
+        if(gridTileLocation != null && specificLocation == character.specificLocation) {
+            return true;
+        }else if (isBeingCarriedBy != null && isBeingCarriedBy.specificLocation == character.specificLocation) {
+            return true;
+        }
+        return false;
     }
     #endregion
 
@@ -535,6 +548,9 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
             owners.Clear();
             owners.AddRange((gridTileLocation.structure as Dwelling).residents);
         }
+    }
+    public void SetIsBeingCarriedBy(Character carrier) {
+        isBeingCarriedBy = carrier;
     }
     #endregion
 

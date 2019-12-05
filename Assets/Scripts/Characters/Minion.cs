@@ -345,7 +345,7 @@ public class Minion {
         //character.marker.ClearHostilesInRange(false);
         //character.marker.ClearPOIsInVisionRange();
         PlayerManager.Instance.player.playerArea.AddCharacterToLocation(character);
-        character.ClearAllAwareness();
+        //character.ClearAllAwareness();
         character.CancelAllJobs();
         character.traitContainer.RemoveAllNonPersistentTraits(character);
         character.ResetToFullHP();

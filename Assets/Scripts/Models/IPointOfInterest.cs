@@ -29,6 +29,7 @@ public interface IPointOfInterest : ITraitable {
     GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost);
     bool CanAdvertiseActionToActor(Character actor, GoapAction action, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost);
     bool IsValidCombatTarget();
+    bool IsStillConsideredPartOfAwarenessByCharacter(Character character);
     void OnPlacePOI();
     void OnDestroyPOI();
 }

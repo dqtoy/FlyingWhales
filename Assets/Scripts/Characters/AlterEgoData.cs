@@ -26,7 +26,7 @@ public class AlterEgoData : Relatable{
     public int maxHPPercentMod { get; protected set; }
 
     //Awareness
-    public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; private set; }
+    //public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; private set; }
 
     //Traits
     public List<Trait> traits { get; private set; }
@@ -39,7 +39,7 @@ public class AlterEgoData : Relatable{
         role = null;
         characterClass = null;
         homeStructure = null;
-        awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>>();
+        //awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>>();
         traits = new List<Trait>();
         level = 1;
     }
@@ -118,88 +118,88 @@ public class AlterEgoData : Relatable{
     }
 
     #region Awareness
-    public void SetAwareness(Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness) {
-        if (owner.isSwitchingAlterEgo) {
-            return; //ignore any changes while the owner is switching alter egos
-        }
-        this.awareness = awareness;
-    }
-    public bool AddAwareness(IPointOfInterest pointOfInterest) {
-        if (!HasAwareness(pointOfInterest)) {
-            if (!awareness.ContainsKey(pointOfInterest.poiType)) {
-                awareness.Add(pointOfInterest.poiType, new List<IPointOfInterest>());
-            }
-            awareness[pointOfInterest.poiType].Add(pointOfInterest);
+    //public void SetAwareness(Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness) {
+    //    if (owner.isSwitchingAlterEgo) {
+    //        return; //ignore any changes while the owner is switching alter egos
+    //    }
+    //    this.awareness = awareness;
+    //}
+    //public bool AddAwareness(IPointOfInterest pointOfInterest) {
+    //    if (!HasAwareness(pointOfInterest)) {
+    //        if (!awareness.ContainsKey(pointOfInterest.poiType)) {
+    //            awareness.Add(pointOfInterest.poiType, new List<IPointOfInterest>());
+    //        }
+    //        awareness[pointOfInterest.poiType].Add(pointOfInterest);
 
-            if (pointOfInterest is TreeObject) {
-                List<IPointOfInterest> treeAwareness = GetTileObjectAwarenessOfType(TILE_OBJECT_TYPE.TREE_OBJECT);
-                if (treeAwareness.Count >= Character.TREE_AWARENESS_LIMIT) {
-                    RemoveAwareness(treeAwareness[0]);
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-    public void RemoveAwareness(IPointOfInterest pointOfInterest) {
-        if (awareness.ContainsKey(pointOfInterest.poiType)) {
-            List<IPointOfInterest> awarenesses = awareness[pointOfInterest.poiType];
-            for (int i = 0; i < awarenesses.Count; i++) {
-                IPointOfInterest iawareness = awarenesses[i];
-                if (iawareness == pointOfInterest) {
-                    awarenesses.RemoveAt(i);
-                    break;
-                }
-            }
-        }
-    }
-    public void RemoveAwareness(POINT_OF_INTEREST_TYPE poiType) {
-        if (awareness.ContainsKey(poiType)) {
-            awareness.Remove(poiType);
-        }
-    }
-    public bool HasAwareness(IPointOfInterest poi) {
-        if (awareness.ContainsKey(poi.poiType)) {
-            List<IPointOfInterest> awarenesses = awareness[poi.poiType];
-            for (int i = 0; i < awarenesses.Count; i++) {
-                IPointOfInterest currPOI = awarenesses[i];
-                if (currPOI == poi) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        return false;
-    }
-    public List<IPointOfInterest> GetTileObjectAwarenessOfType(TILE_OBJECT_TYPE tileObjectType) {
-        List<IPointOfInterest> objects = new List<IPointOfInterest>();
-        if (awareness.ContainsKey(POINT_OF_INTEREST_TYPE.TILE_OBJECT)) {
-            List<IPointOfInterest> awarenesses = awareness[POINT_OF_INTEREST_TYPE.TILE_OBJECT];
-            for (int i = 0; i < awarenesses.Count; i++) {
-                TileObject iawareness = awarenesses[i] as TileObject;
-                if (iawareness.tileObjectType == tileObjectType) {
-                    objects.Add(iawareness);
-                }
-            }
-        }
-        return objects;
-    }
-    private IAwareness CreateNewAwareness(IPointOfInterest poi) {
-        if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            return new CharacterAwareness(poi as Character);
-        } else if (poi.poiType == POINT_OF_INTEREST_TYPE.ITEM) {
-            return new ItemAwareness(poi as SpecialToken);
-        } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-            return new TileObjectAwareness(poi);
-        }
-        return null;
-    }
-    public void ClearAllAwareness() {
-        POINT_OF_INTEREST_TYPE[] types = Utilities.GetEnumValues<POINT_OF_INTEREST_TYPE>();
-        for (int i = 0; i < types.Length; i++) {
-            RemoveAwareness(types[i]);
-        }
-    }
+    //        if (pointOfInterest is TreeObject) {
+    //            List<IPointOfInterest> treeAwareness = GetTileObjectAwarenessOfType(TILE_OBJECT_TYPE.TREE_OBJECT);
+    //            if (treeAwareness.Count >= Character.TREE_AWARENESS_LIMIT) {
+    //                RemoveAwareness(treeAwareness[0]);
+    //            }
+    //        }
+    //        return true;
+    //    }
+    //    return false;
+    //}
+    //public void RemoveAwareness(IPointOfInterest pointOfInterest) {
+    //    if (awareness.ContainsKey(pointOfInterest.poiType)) {
+    //        List<IPointOfInterest> awarenesses = awareness[pointOfInterest.poiType];
+    //        for (int i = 0; i < awarenesses.Count; i++) {
+    //            IPointOfInterest iawareness = awarenesses[i];
+    //            if (iawareness == pointOfInterest) {
+    //                awarenesses.RemoveAt(i);
+    //                break;
+    //            }
+    //        }
+    //    }
+    //}
+    //public void RemoveAwareness(POINT_OF_INTEREST_TYPE poiType) {
+    //    if (awareness.ContainsKey(poiType)) {
+    //        awareness.Remove(poiType);
+    //    }
+    //}
+    //public bool HasAwareness(IPointOfInterest poi) {
+    //    if (awareness.ContainsKey(poi.poiType)) {
+    //        List<IPointOfInterest> awarenesses = awareness[poi.poiType];
+    //        for (int i = 0; i < awarenesses.Count; i++) {
+    //            IPointOfInterest currPOI = awarenesses[i];
+    //            if (currPOI == poi) {
+    //                return true;
+    //            }
+    //        }
+    //        return false;
+    //    }
+    //    return false;
+    //}
+    //public List<IPointOfInterest> GetTileObjectAwarenessOfType(TILE_OBJECT_TYPE tileObjectType) {
+    //    List<IPointOfInterest> objects = new List<IPointOfInterest>();
+    //    if (awareness.ContainsKey(POINT_OF_INTEREST_TYPE.TILE_OBJECT)) {
+    //        List<IPointOfInterest> awarenesses = awareness[POINT_OF_INTEREST_TYPE.TILE_OBJECT];
+    //        for (int i = 0; i < awarenesses.Count; i++) {
+    //            TileObject iawareness = awarenesses[i] as TileObject;
+    //            if (iawareness.tileObjectType == tileObjectType) {
+    //                objects.Add(iawareness);
+    //            }
+    //        }
+    //    }
+    //    return objects;
+    //}
+    //private IAwareness CreateNewAwareness(IPointOfInterest poi) {
+    //    if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+    //        return new CharacterAwareness(poi as Character);
+    //    } else if (poi.poiType == POINT_OF_INTEREST_TYPE.ITEM) {
+    //        return new ItemAwareness(poi as SpecialToken);
+    //    } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+    //        return new TileObjectAwareness(poi);
+    //    }
+    //    return null;
+    //}
+    //public void ClearAllAwareness() {
+    //    POINT_OF_INTEREST_TYPE[] types = Utilities.GetEnumValues<POINT_OF_INTEREST_TYPE>();
+    //    for (int i = 0; i < types.Length; i++) {
+    //        RemoveAwareness(types[i]);
+    //    }
+    //}
     #endregion
 
     #region Traits

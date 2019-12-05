@@ -25,6 +25,7 @@ public class GenericTileObject : TileObject {
     public override void OnPlacePOI() {
         if (areaMapVisual == null) {
             InitializeMapObject(this);
+            //gridTileLocation.structure.location.region.AddAwareness(this);
         }
         PlaceMapObjectAt(gridTileLocation);
         OnPlaceObjectAtTile(gridTileLocation);

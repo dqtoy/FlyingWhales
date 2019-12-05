@@ -96,7 +96,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public bool canMove { get { return canMoveValue >= 0; } }
     public bool canBeAtttacked { get { return canBeAtttackedValue >= 0; } }
 
-
     //Tiredness
     public int tiredness { get; protected set; }
     public int tirednessDecreaseRate { get; protected set; }
@@ -131,7 +130,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public TIME_IN_WORDS forcedFullnessRecoveryTimeInWords { get; protected set; }
     public TIME_IN_WORDS forcedTirednessRecoveryTimeInWords { get; protected set; }
 
-    public static readonly int TREE_AWARENESS_LIMIT = 5; //The number of Tree Objects a character can have in his awareness, everytime a character adds a new tree object to his/her awareness list, remove the oldest one if this limit is reached   
+    //public static readonly int TREE_AWARENESS_LIMIT = 5; //The number of Tree Objects a character can have in his awareness, everytime a character adds a new tree object to his/her awareness list, remove the oldest one if this limit is reached   
 
     //hostility
     public virtual int ignoreHostility { get; protected set; }
@@ -353,11 +352,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             return alterEgos[currentAlterEgoName];
         }
     }
-    public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness {
-        get {
-            return currentAlterEgo.awareness;
-        }
-    }
+    //public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness {
+    //    get {
+    //        return currentAlterEgo.awareness;
+    //    }
+    //}
     public LocationStructure currentStructure {
         get {
             if (!IsInOwnParty()) {
@@ -595,7 +594,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //        SchedulingManager.Instance.AddEntry(gameDate, () => PlanGoapActions(), this);
         //#endif
         marker.InitialPlaceMarkerAt(tile, false); //since normal characters are already placed in their areas.
-        AddInitialAwareness();
+        //AddInitialAwareness();
         SubscribeToSignals();
         for (int i = 0; i < traitContainer.allTraits.Count; i++) {
             traitContainer.allTraits[i].OnOwnerInitiallyPlaced(this);
@@ -609,7 +608,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //        SchedulingManager.Instance.AddEntry(gameDate, () => PlanGoapActions(), this);
         //#endif
         marker.InitialPlaceMarkerAt(tile, false); //since normal characters are already placed in their areas.
-        AddInitialAwareness();
+        //AddInitialAwareness();
         SubscribeToSignals();
         for (int i = 0; i < traitContainer.allTraits.Count; i++) {
             traitContainer.allTraits[i].OnOwnerInitiallyPlaced(this);
@@ -705,7 +704,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
             UnsubscribeSignals();
             traitContainer.RemoveAllNonPersistentTraits(this);
-            ClearAllAwareness();
+            //ClearAllAwareness();
             CancelAllJobs();
             SchedulingManager.Instance.ClearAllSchedulesBy(this);
             if (marker != null) {
@@ -845,7 +844,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 traitContainer.allTraits[i].OnReturnToLife(this);
             }
             //RemoveAllNonPersistentTraits();
-            ClearAllAwareness();
+            //ClearAllAwareness();
             //Area gloomhollow = LandmarkManager.Instance.GetAreaByName("Gloomhollow");
             MigrateHomeStructureTo(null);
             SetTirednessForcedTick(0);
@@ -2277,10 +2276,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 //    marker.RemoveTerrifyingObject(party.characters[i]);
                 //}
             }
-            RemoveAwareness(party.owner);
-            if (party.isCarryingAnyPOI) {
-                RemoveAwareness(party.carriedPOI);
-            }
+            //RemoveAwareness(party.owner);
+            //if (party.isCarryingAnyPOI) {
+            //    RemoveAwareness(party.carriedPOI);
+            //}
             ////remove character from awareness
             //for (int i = 0; i < party.characters.Count; i++) {
             //    Character character = party.characters[i];
@@ -2302,10 +2301,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //    //}
             //}
         } else {
-            AddAwareness(party.owner);
-            if (party.isCarryingAnyPOI) {
-                AddAwareness(party.carriedPOI);
-            }
+            //AddAwareness(party.owner);
+            //if (party.isCarryingAnyPOI) {
+            //    AddAwareness(party.carriedPOI);
+            //}
             //for (int i = 0; i < party.characters.Count; i++) {
             //    Character character = party.characters[i];
             //    AddAwareness(character); //become re aware of character
@@ -5500,129 +5499,129 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     #endregion
 
     #region Awareness
-    public bool AddAwareness(IPointOfInterest pointOfInterest) {
-        return currentAlterEgo.AddAwareness(pointOfInterest);
-    }
-    public void RemoveAwareness(IPointOfInterest pointOfInterest) {
-        if (planner.status == GOAP_PLANNING_STATUS.RUNNING) {
-            pendingActionsAfterMultiThread.Add(() => RemoveAwareness(pointOfInterest));
-            return;
-        }
-        currentAlterEgo.RemoveAwareness(pointOfInterest);
-        //Debug.Log(GameManager.Instance.TodayLogString() + this.name + " removed awareness of " + pointOfInterest.name);
-        //if (awareness.ContainsKey(pointOfInterest.poiType)) {
-        //    List<IAwareness> awarenesses = awareness[pointOfInterest.poiType];
-        //    for (int i = 0; i < awarenesses.Count; i++) {
-        //        IAwareness iawareness = awarenesses[i];
-        //        if (iawareness.poi == pointOfInterest) {
-        //            awarenesses.RemoveAt(i);
-        //            iawareness.OnRemoveAwareness(this);
-        //            break;
-        //        }
-        //    }
-        //}
-    }
-    public bool HasAwareness(IPointOfInterest poi) {
-        return currentAlterEgo.HasAwareness(poi);
-        //if (awareness.ContainsKey(poi.poiType)) {
-        //    List<IAwareness> awarenesses = awareness[poi.poiType];
-        //    for (int i = 0; i < awarenesses.Count; i++) {
-        //        IAwareness iawareness = awarenesses[i];
-        //        if (iawareness.poi == poi) {
-        //            return iawareness;
-        //        }
-        //    }
-        //    return null;
-        //}
-        //return null;
-    }
-    public void AddInitialAwareness() {
-        AddAwareness(this);
-        if (faction == FactionManager.Instance.neutralFaction) {
-            foreach (List<LocationStructure> structures in specificLocation.structures.Values) {
-                for (int i = 0; i < structures.Count; i++) {
-                    for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
-                        IPointOfInterest poi = structures[i].pointsOfInterest[j];
-                        if (poi != this) {
-                            AddAwareness(poi);
-                        }
-                    }
-                }
-            }
-        } else {
-            List<IPointOfInterest> treeObjects = new List<IPointOfInterest>();
-            foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in specificLocation.structures) {
-                for (int i = 0; i < keyValuePair.Value.Count; i++) {
-                    LocationStructure structure = keyValuePair.Value[i];
-                    for (int j = 0; j < structure.pointsOfInterest.Count; j++) {
-                        IPointOfInterest poi = structure.pointsOfInterest[j];
-                        if (poi != this) {
-                            if (poi is TreeObject) {
-                                treeObjects.Add(poi);
-                                continue;
-                            }
-                            AddAwareness(poi);
-                        }
-                    }
-                }
-                //order the tree objects, then only add the first n to this character
-                treeObjects = treeObjects.OrderBy(x => Vector3Int.Distance(x.gridTileLocation.localPlace, this.gridTileLocation.localPlace)).ToList();
-                for (int i = 0; i < TREE_AWARENESS_LIMIT; i++) {
-                    if (treeObjects.Count <= i) {
-                        break; //no more tree objects left
-                    }
-                    IPointOfInterest tree = treeObjects[i];
-                    AddAwareness(tree);
-                }
-            }
-        }
-    }
-    public void AddInitialAwareness(Area area) {
-        AddAwareness(this);
-        if (faction == FactionManager.Instance.neutralFaction) {
-            foreach (List<LocationStructure> structures in area.structures.Values) {
-                for (int i = 0; i < structures.Count; i++) {
-                    for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
-                        IPointOfInterest poi = structures[i].pointsOfInterest[j];
-                        if (poi != this) {
-                            AddAwareness(poi);
-                        }
-                    }
-                }
-            }
-        } else {
-            List<IPointOfInterest> treeObjects = new List<IPointOfInterest>();
-            foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in specificLocation.structures) {
-                for (int i = 0; i < keyValuePair.Value.Count; i++) {
-                    LocationStructure structure = keyValuePair.Value[i];
-                    for (int j = 0; j < structure.pointsOfInterest.Count; j++) {
-                        IPointOfInterest poi = structure.pointsOfInterest[j];
-                        if (poi != this) {
-                            if (poi is TreeObject) {
-                                treeObjects.Add(poi);
-                                continue;
-                            }
-                            AddAwareness(poi);
-                        }
-                    }
-                }
-                //order the tree objects, then only add the first n to this character
-                treeObjects = treeObjects.OrderBy(x => Vector3Int.Distance(x.gridTileLocation.localPlace, this.gridTileLocation.localPlace)).ToList();
-                for (int i = 0; i < TREE_AWARENESS_LIMIT; i++) {
-                    if (treeObjects.Count <= i) {
-                        break; //no more tree objects left
-                    }
-                    IPointOfInterest tree = treeObjects[i];
-                    AddAwareness(tree);
-                }
+    //public bool AddAwareness(IPointOfInterest pointOfInterest) {
+    //    return currentAlterEgo.AddAwareness(pointOfInterest);
+    //}
+    //public void RemoveAwareness(IPointOfInterest pointOfInterest) {
+    //    if (planner.status == GOAP_PLANNING_STATUS.RUNNING) {
+    //        pendingActionsAfterMultiThread.Add(() => RemoveAwareness(pointOfInterest));
+    //        return;
+    //    }
+    //    currentAlterEgo.RemoveAwareness(pointOfInterest);
+    //    //Debug.Log(GameManager.Instance.TodayLogString() + this.name + " removed awareness of " + pointOfInterest.name);
+    //    //if (awareness.ContainsKey(pointOfInterest.poiType)) {
+    //    //    List<IAwareness> awarenesses = awareness[pointOfInterest.poiType];
+    //    //    for (int i = 0; i < awarenesses.Count; i++) {
+    //    //        IAwareness iawareness = awarenesses[i];
+    //    //        if (iawareness.poi == pointOfInterest) {
+    //    //            awarenesses.RemoveAt(i);
+    //    //            iawareness.OnRemoveAwareness(this);
+    //    //            break;
+    //    //        }
+    //    //    }
+    //    //}
+    //}
+    //public bool HasAwareness(IPointOfInterest poi) {
+    //    return currentAlterEgo.HasAwareness(poi);
+    //    //if (awareness.ContainsKey(poi.poiType)) {
+    //    //    List<IAwareness> awarenesses = awareness[poi.poiType];
+    //    //    for (int i = 0; i < awarenesses.Count; i++) {
+    //    //        IAwareness iawareness = awarenesses[i];
+    //    //        if (iawareness.poi == poi) {
+    //    //            return iawareness;
+    //    //        }
+    //    //    }
+    //    //    return null;
+    //    //}
+    //    //return null;
+    //}
+    //public void AddInitialAwareness() {
+    //    AddAwareness(this);
+    //    if (faction == FactionManager.Instance.neutralFaction) {
+    //        foreach (List<LocationStructure> structures in specificLocation.structures.Values) {
+    //            for (int i = 0; i < structures.Count; i++) {
+    //                for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
+    //                    IPointOfInterest poi = structures[i].pointsOfInterest[j];
+    //                    if (poi != this) {
+    //                        AddAwareness(poi);
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    } else {
+    //        List<IPointOfInterest> treeObjects = new List<IPointOfInterest>();
+    //        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in specificLocation.structures) {
+    //            for (int i = 0; i < keyValuePair.Value.Count; i++) {
+    //                LocationStructure structure = keyValuePair.Value[i];
+    //                for (int j = 0; j < structure.pointsOfInterest.Count; j++) {
+    //                    IPointOfInterest poi = structure.pointsOfInterest[j];
+    //                    if (poi != this) {
+    //                        if (poi is TreeObject) {
+    //                            treeObjects.Add(poi);
+    //                            continue;
+    //                        }
+    //                        AddAwareness(poi);
+    //                    }
+    //                }
+    //            }
+    //            //order the tree objects, then only add the first n to this character
+    //            treeObjects = treeObjects.OrderBy(x => Vector3Int.Distance(x.gridTileLocation.localPlace, this.gridTileLocation.localPlace)).ToList();
+    //            for (int i = 0; i < TREE_AWARENESS_LIMIT; i++) {
+    //                if (treeObjects.Count <= i) {
+    //                    break; //no more tree objects left
+    //                }
+    //                IPointOfInterest tree = treeObjects[i];
+    //                AddAwareness(tree);
+    //            }
+    //        }
+    //    }
+    //}
+    //public void AddInitialAwareness(Area area) {
+    //    AddAwareness(this);
+    //    if (faction == FactionManager.Instance.neutralFaction) {
+    //        foreach (List<LocationStructure> structures in area.structures.Values) {
+    //            for (int i = 0; i < structures.Count; i++) {
+    //                for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
+    //                    IPointOfInterest poi = structures[i].pointsOfInterest[j];
+    //                    if (poi != this) {
+    //                        AddAwareness(poi);
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    } else {
+    //        List<IPointOfInterest> treeObjects = new List<IPointOfInterest>();
+    //        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in specificLocation.structures) {
+    //            for (int i = 0; i < keyValuePair.Value.Count; i++) {
+    //                LocationStructure structure = keyValuePair.Value[i];
+    //                for (int j = 0; j < structure.pointsOfInterest.Count; j++) {
+    //                    IPointOfInterest poi = structure.pointsOfInterest[j];
+    //                    if (poi != this) {
+    //                        if (poi is TreeObject) {
+    //                            treeObjects.Add(poi);
+    //                            continue;
+    //                        }
+    //                        AddAwareness(poi);
+    //                    }
+    //                }
+    //            }
+    //            //order the tree objects, then only add the first n to this character
+    //            treeObjects = treeObjects.OrderBy(x => Vector3Int.Distance(x.gridTileLocation.localPlace, this.gridTileLocation.localPlace)).ToList();
+    //            for (int i = 0; i < TREE_AWARENESS_LIMIT; i++) {
+    //                if (treeObjects.Count <= i) {
+    //                    break; //no more tree objects left
+    //                }
+    //                IPointOfInterest tree = treeObjects[i];
+    //                AddAwareness(tree);
+    //            }
 
-            }
+    //        }
 
-        }
-    }
+    //    }
+    //}
     public void LogAwarenessList() {
         string log = "--------------AWARENESS LIST OF " + name + "-----------------";
-        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> kvp in awareness) {
+        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> kvp in specificLocation.region.awareness) {
             log += "\n" + kvp.Key.ToString() + ": ";
             for (int i = 0; i < kvp.Value.Count; i++) {
                 if (i > 0) {
@@ -5633,17 +5632,17 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         Debug.Log(log);
     }
-    public void ClearAllAwareness() {
-        currentAlterEgo.ClearAllAwareness();
-        //Debug.Log("Cleared all awareness of " + this.name);
-    }
-    public void ClearAllAwarenessOfType(params POINT_OF_INTEREST_TYPE[] types) {
-        for (int i = 0; i < types.Length; i++) {
-            POINT_OF_INTEREST_TYPE currType = types[i];
-            currentAlterEgo.RemoveAwareness(currType);
-            //Debug.Log("Cleared all awareness of type " + currType.ToString() + " of " + this.name);
-        }
-    }
+    //public void ClearAllAwareness() {
+    //    currentAlterEgo.ClearAllAwareness();
+    //    //Debug.Log("Cleared all awareness of " + this.name);
+    //}
+    //public void ClearAllAwarenessOfType(params POINT_OF_INTEREST_TYPE[] types) {
+    //    for (int i = 0; i < types.Length; i++) {
+    //        POINT_OF_INTEREST_TYPE currType = types[i];
+    //        currentAlterEgo.RemoveAwareness(currType);
+    //        //Debug.Log("Cleared all awareness of type " + currType.ToString() + " of " + this.name);
+    //    }
+    //}
     #endregion
 
     #region Point Of Interest
@@ -5730,6 +5729,15 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     public void OnPlacePOI() { /*FOR INTERFACE ONLY*/ }
     public void OnDestroyPOI() { /*FOR INTERFACE ONLY*/ }
+    public virtual bool IsStillConsideredPartOfAwarenessByCharacter(Character character) {
+        if(character.specificLocation == specificLocation) {
+            if (!isDead && currentParty.icon.isTravellingOutside) {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
     #endregion
 
     #region Goap

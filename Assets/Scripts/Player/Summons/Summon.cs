@@ -209,7 +209,7 @@ public class Summon : Character, IWorldObject {
             ownParty.CreateIcon();
         }
         traitContainer.RemoveAllNonPersistentTraits(this);
-        ClearAllAwareness();
+        //ClearAllAwareness();
         CancelAllJobs();
         ResetToFullHP();
     }

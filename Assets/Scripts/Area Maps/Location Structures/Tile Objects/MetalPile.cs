@@ -7,7 +7,7 @@ public class MetalPile : ResourcePile {
 
     public MetalPile() : base(RESOURCE.METAL) {
         Initialize(TILE_OBJECT_TYPE.METAL_PILE);
-        SetResourceInPile(50);
+        //SetResourceInPile(50);
         traitContainer.RemoveTrait(this, "Flammable");
         Messenger.AddListener(Signals.HOUR_STARTED, CheckSupply);
     }

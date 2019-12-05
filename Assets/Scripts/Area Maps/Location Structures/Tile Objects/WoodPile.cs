@@ -7,7 +7,7 @@ public class WoodPile : ResourcePile {
 
     public WoodPile() : base(RESOURCE.WOOD) {
         Initialize(TILE_OBJECT_TYPE.WOOD_PILE);
-        SetResourceInPile(50);
+        //SetResourceInPile(50);
         traitContainer.RemoveTrait(this, "Flammable");
         Messenger.AddListener(Signals.HOUR_STARTED, CheckSupply);
     }
