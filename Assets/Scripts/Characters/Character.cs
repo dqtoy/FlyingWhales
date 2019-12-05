@@ -7318,4 +7318,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         buildStructureComponent = null;
     }
     #endregion
+
+    #region IDamageable
+    public bool CanBeDamaged() {
+        return true;
+    }
+    #endregion
 }

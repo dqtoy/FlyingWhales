@@ -83,11 +83,12 @@ public class WallObject : AreaMapObject<WallObject>, ITraitable {
         areaMapVisual = visual;
     }
     protected override void OnMapObjectStateChanged() { }
-    #endregion
-
-    #region Data Setting
-    public void SetTileLocation(LocationGridTile tileLocation) {
-        gridTileLocation = tileLocation;
+    public void SetGridTileLocation(LocationGridTile tile) {
+        gridTileLocation = tile;
     }
     #endregion
+
+    public bool CanBeDamaged() {
+        return mapObjectState != MAP_OBJECT_STATE.UNBUILT;
+    }
 }

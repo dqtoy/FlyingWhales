@@ -54,7 +54,7 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
     public Transform worldObject { get { return areaMapVisual.transform; } }
     #endregion
 
-    public SpecialToken(SPECIAL_TOKEN specialTokenType, int appearanceRate) : base() {
+    public SpecialToken(SPECIAL_TOKEN specialTokenType, int appearanceRate) {
         id = Utilities.SetID(this);
         this.specialTokenType = specialTokenType;
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.specialTokenType.ToString());
@@ -310,6 +310,9 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
             advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_UP, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.DROP_ITEM };
             Messenger.Broadcast(Signals.ITEM_BUILT, this);
         }
+    }
+    public bool CanBeDamaged() {
+        return mapObjectState != MAP_OBJECT_STATE.UNBUILT;
     }
     #endregion
 }

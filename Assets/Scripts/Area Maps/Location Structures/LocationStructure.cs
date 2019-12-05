@@ -379,6 +379,7 @@ public class LocationStructure {
 
     #region Destroy
     private void DestroyStructure() {
+        Debug.Log($"{GameManager.Instance.TodayLogString()}{this.ToString()} was destroyed!");
         //transfer tiles to either the wilderness or work area
         List<LocationGridTile> tiles = new List<LocationGridTile>(this.tiles);
         LocationStructure workArea = location.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
@@ -394,7 +395,7 @@ public class LocationStructure {
 
             tile.ClearWallObjects();
 
-            transferTo.AddTile(tile);
+            tile.SetStructure(transferTo);
             if (tile.objHere != null) {
                 if (tile.objHere is SpecialToken) {
                     AddItem(tile.objHere as SpecialToken, tile);
@@ -403,16 +404,23 @@ public class LocationStructure {
                 }
             }
         }
+        JobQueueItem existingRepairJob = location.GetJob(JOB_TYPE.REPAIR, occupiedBuildSpot);
+        if (existingRepairJob != null) {
+            location.RemoveFromAvailableJobs(existingRepairJob);
+        }
+        occupiedBuildSpot.RemoveOccupyingStructure(this);
         ObjectPoolManager.Instance.DestroyObject(structureObj.gameObject);
         location.RemoveStructure(this);
     }
     private bool CheckIfStructureDestroyed() {
+        string summary = $"Checking if {this.ToString()} has been destroyed...";
         //check walls and floors, if all of them are destroyed consider this structure as destroyed
         bool allObjectsDestroyed = true;
         for (int i = 0; i < structureObj.walls.Length; i++) {
             WallObject wall = structureObj.walls[i];
             if (wall.currentHP > 0) {
                 //wall is not yet destroyed
+                summary += $"\n{this.ToString()} still has an intact wall. Not yet destroyed.";
                 allObjectsDestroyed = false;
                 break;
             }
@@ -423,6 +431,7 @@ public class LocationStructure {
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile tile = tiles[i];
                 if (tile.genericTileObject.currentHP > 0) {
+                    summary += $"\n{this.ToString()} still has an intact floor. Not yet destroyed.";
                     allObjectsDestroyed = false;
                     break;
                 }
@@ -431,8 +440,10 @@ public class LocationStructure {
 
         //if at end of checking, all objects are destroyed, then consider this structure as destroyed
         if (allObjectsDestroyed) {
+            summary += $"\n{this.ToString()} has no intact walls or floors. It has been destroyed.";
             DestroyStructure();
         }
+        Debug.Log(summary);
         return allObjectsDestroyed;
     }
     #endregion
@@ -441,6 +452,7 @@ public class LocationStructure {
     public void OnWallDestroyed(WallObject wall) {
         //check if structure destroyed
         if (structureObj.walls.Contains(wall)) {
+            structureObj.RescanPathfindingGridOfStructure();
             CheckIfStructureDestroyed();
         }
     }
@@ -464,7 +476,7 @@ public class LocationStructure {
     }
     public void OnTileDestroyed() {
         if (structureType.IsOpenSpace()) {
-            return; //do not check for damage if structure is open space (Wilderness, Work Area, Cemetery, etc.)
+            return; //do not check for destruction if structure is open space (Wilderness, Work Area, Cemetery, etc.)
         }
         CheckIfStructureDestroyed();
     }

@@ -1027,6 +1027,18 @@ public class Area : IJobOwner {
         }
         return null;
     }
+    public JobQueueItem GetJob(JOB_TYPE job, IPointOfInterest target) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem jqi = availableJobs[i];
+            if (jqi is GoapPlanJob) {
+                GoapPlanJob gpj = jqi as GoapPlanJob;
+                if (job == gpj.jobType && target == gpj.targetPOI) {
+                    return gpj;
+                }
+            }
+        }
+        return null;
+    }
     public bool AddFirstUnassignedJobToCharacterJob(Character character) {
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];

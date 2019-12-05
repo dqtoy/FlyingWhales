@@ -7,7 +7,6 @@ public class TornadoObject : MonoBehaviour {
 
     [SerializeField] private ParticleSystem[] particles;
 
-
     [Header("Movement")]
     // Movement speed in units per second.
     [SerializeField] private float baseSpeed = 1.0F;
@@ -18,8 +17,8 @@ public class TornadoObject : MonoBehaviour {
     private Vector3 startPosition;
 
     private float speed;
-
     private bool isSpawned;
+    private int radius;
 
     #region getters/setters
     public LocationGridTile gridTileLocation {
@@ -38,6 +37,7 @@ public class TornadoObject : MonoBehaviour {
 
     public void Initialize(LocationGridTile location, float size, int durationInTicks) {
         this.transform.localPosition = location.centeredLocalLocation;
+        this.radius = (int)size;
         areaLocation = location.parentAreaMap.area;
         float scale = size / 10f;
         for (int i = 0; i < particles.Length; i++) {
@@ -143,13 +143,15 @@ public class TornadoObject : MonoBehaviour {
         if (isSpawned == false) {
             return;
         }
-        List<LocationGridTile> tiles = gridTileLocation.parentAreaMap.GetTilesInRadius(gridTileLocation, 2, includeCenterTile: true, includeTilesInDifferentStructure: true);
+        List<LocationGridTile> tiles = gridTileLocation.parentAreaMap.GetTilesInRadius(gridTileLocation, radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
             List<IDamageable> damageables = tile.GetDamageablesOnTile();
             for (int j = 0; j < damageables.Count; j++) {
                 IDamageable damageable = damageables[j];
-                damageable.AdjustHP(-(int)(damageable.maxHP * 0.35f), true, this);
+                if (damageable.CanBeDamaged()) {
+                    damageable.AdjustHP(-(int)(damageable.maxHP * 0.35f), true, this);
+                }
             }
         }
     }

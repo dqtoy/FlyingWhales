@@ -414,7 +414,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         chosenBuildingSpot.SetIsOpen(false);
         chosenBuildingSpot.SetIsOccupied(true);
         chosenBuildingSpot.SetAllAdjacentSpotsAsOpen(this);
-        chosenBuildingSpot.CheckIfAdjacentSpotsCanStillBeOccupied(this);
+        chosenBuildingSpot.UpdateAdjacentSpotsOccupancy(this);
 
         structure.SetStructureObject(structureObject);
         structureObject.OnStructureObjectPlaced(this, structure);
@@ -587,15 +587,17 @@ public class AreaInnerTileMap : MonoBehaviour {
                             } else {
                                 //Crates, Barrels, Ore, Stone and Tree tiles should be impassable. They should all be placed in spots adjacent to at least three passable tiles.
                                 if (currTile.IsAdjacentToPasssableTiles(3) && !currTile.WillMakeNeighboursPassableTileInvalid(3)) {
-                                    //normal tree
-                                    currTile.hasDetail = true;
-                                    detailsTilemap.SetTile(currTile.localPlace, GetTreeTile(area));
-                                    currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
-                                    Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Vector3.one);
-                                    detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
-                                    detailsTilemap.SetTransformMatrix(currTile.localPlace, m);
                                     if (currTile.structure != null) {
                                         currTile.structure.AddPOI(new TreeObject(), currTile);
+                                    } else {
+                                        //this is for details on tiles on the border.
+                                        //normal tree
+                                        currTile.hasDetail = true;
+                                        detailsTilemap.SetTile(currTile.localPlace, GetTreeTile(area));
+                                        currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                                        Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Vector3.one);
+                                        detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
+                                        detailsTilemap.SetTransformMatrix(currTile.localPlace, m);
                                     }
                                 }
                             }

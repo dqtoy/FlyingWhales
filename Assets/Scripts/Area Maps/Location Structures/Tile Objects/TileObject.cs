@@ -536,6 +536,9 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
             owners.AddRange((gridTileLocation.structure as Dwelling).residents);
         }
     }
+    public bool CanBeDamaged() {
+        return mapObjectState != MAP_OBJECT_STATE.UNBUILT;
+    }
     #endregion
 
     #region Inspect

@@ -9,7 +9,4 @@ public class CharacterCollisionTrigger : BaseCollisionTrigger<Character>, IVisib
         base.Initialize(character);
         this.poi = character;
     }
-    public void SetMainColliderState(bool state) {
-        mainCollider.enabled = state;
-    }
 }

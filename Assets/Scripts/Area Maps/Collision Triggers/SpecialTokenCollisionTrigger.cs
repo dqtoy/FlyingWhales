@@ -10,7 +10,4 @@ public class SpecialTokenCollisionTrigger : BaseCollisionTrigger<SpecialToken>, 
         base.Initialize(poi);
         this.poi = poi;
     }
-    public void SetMainColliderState(bool state) {
-        mainCollider.enabled = state;
-    }
 }

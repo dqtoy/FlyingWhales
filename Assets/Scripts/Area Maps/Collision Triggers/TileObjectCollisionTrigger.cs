@@ -13,7 +13,4 @@ public class TileObjectCollisionTrigger : BaseCollisionTrigger<TileObject>, IVis
             projectileReceiver?.gameObject.SetActive(false);
         }
     }
-    public void SetMainColliderState(bool state) {
-        mainCollider.enabled = state;
-    }
 }

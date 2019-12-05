@@ -28,7 +28,6 @@ public class BuildSpotTileObject : TileObject {
     public void SetBuildingSpot(BuildingSpot spot) {
         this.spot = spot;
     }
-
     public void PlaceBlueprintOnBuildingSpot(STRUCTURE_TYPE structureType) {
         List<GameObject> choices = InteriorMapManager.Instance.GetStructurePrefabsForStructure(structureType);
         GameObject chosenStructurePrefab = null;
@@ -55,7 +54,7 @@ public class BuildSpotTileObject : TileObject {
             spot.SetIsOpen(false);
             spot.SetIsOccupied(true);
             spot.SetAllAdjacentSpotsAsOpen(gridTileLocation.parentAreaMap);
-            spot.CheckIfAdjacentSpotsCanStillBeOccupied(gridTileLocation.parentAreaMap);
+            spot.UpdateAdjacentSpotsOccupancy(gridTileLocation.parentAreaMap);
             structureObject.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Blueprint, gridTileLocation.parentAreaMap);
             spot.SetBlueprint(structureObject, structureType);
             structureObject.SetTilesInStructure(occupiedTiles.ToArray());
@@ -63,7 +62,6 @@ public class BuildSpotTileObject : TileObject {
             Debug.LogWarning($"Could not find a prefab for structure {structureType.ToString()} on build spot {spot.ToString()}");
         }
     }
-
     public LocationStructure BuildBlueprint() {
         spot.blueprint.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Built, gridTileLocation.parentAreaMap);
         LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(gridTileLocation.parentAreaMap.area, spot.blueprintType, true);
@@ -83,6 +81,11 @@ public class BuildSpotTileObject : TileObject {
 
         return structure;
         
+    }
+    public void RemoveOccupyingStructure(LocationStructure structure) {
+        spot.SetIsOpen(true);
+        spot.SetIsOccupied(false);
+        spot.UpdateAdjacentSpotsOccupancy(structure.location.areaMap);
     }
 
 }

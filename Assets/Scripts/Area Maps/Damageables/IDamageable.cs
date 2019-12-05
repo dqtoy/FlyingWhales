@@ -12,4 +12,5 @@ public interface IDamageable {
 
     void AdjustHP(int amount, bool triggerDeath = false, object source = null);
     void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary);
+    bool CanBeDamaged();
 }

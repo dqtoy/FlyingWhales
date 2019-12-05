@@ -21,7 +21,7 @@ public class Tornado : PlayerJobAction {
         base.ActivateAction(targetTile);
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool("TornadoObject", Vector3.zero, Quaternion.identity, targetTile.parentAreaMap.objectsParent);
         TornadoObject obj = go.GetComponent<TornadoObject>();
-        obj.Initialize(targetTile, radius + (radius * 2), durationInTicks);
+        obj.Initialize(targetTile, radius * 2, durationInTicks);
        
     }
     protected override void OnLevelUp() {

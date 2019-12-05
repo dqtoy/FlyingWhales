@@ -485,6 +485,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
                 traitables.Add(objHere);
             }
         }
+        
         for (int i = 0; i < charactersHere.Count; i++) {
             Character character = charactersHere[i];
             if (character.traitContainer.GetNormalTrait(requiredTrait) != null) {
@@ -527,10 +528,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
 #if UNITY_EDITOR
             if (inputButton == PointerEventData.InputButton.Right) {
                 UIManager.Instance.poiTestingUI.ShowUI(this);
-                //if (InteriorMapManager.Instance.IsHoldingPOI()) {
-                //    InteriorMapManager.Instance.PlaceHeldPOI(this);
-                //}
-                //this.AddTrait("Burning");
             } else {
                 Messenger.Broadcast(Signals.HIDE_MENUS);
             }
@@ -542,8 +539,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             if (inputButton == PointerEventData.InputButton.Right) {
                 if (objHere is TileObject) {
                     UIManager.Instance.poiTestingUI.ShowUI(objHere);
-                    structure.RemovePOI(objHere);
-                    //objHere.AddTrait("Burning");
                 }
             } else {
                 if (objHere is TileObject) {

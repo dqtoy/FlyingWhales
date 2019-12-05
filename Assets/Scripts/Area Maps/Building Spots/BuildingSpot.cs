@@ -116,7 +116,7 @@ public class BuildingSpot {
     #endregion
 
     #region Checkers
-    public void CheckIfAdjacentSpotsCanStillBeOccupied(AreaInnerTileMap map) {
+    public void UpdateAdjacentSpotsOccupancy(AreaInnerTileMap map) {
         List<BuildingSpot> adjacent = GetNeighbourList();
         for (int i = 0; i < adjacent.Count; i++) {
             BuildingSpot currSpot = adjacent[i];
@@ -124,15 +124,22 @@ public class BuildingSpot {
         }
     }
     public void CheckIfOccupied(AreaInnerTileMap map) {
+        bool occupied = false;
         for (int i = 0; i < tilesInTerritory.Length; i++) {
             LocationGridTile currTile = tilesInTerritory[i];
             if (currTile.hasBlueprint || (currTile.structure != null && currTile.structure.structureType != STRUCTURE_TYPE.WILDERNESS && currTile.structure.structureType != STRUCTURE_TYPE.WORK_AREA)) {
                 //the spot is now occupied. set that
-                SetIsOccupied(true);
-                SetIsOpen(false);
-                SetAllAdjacentSpotsAsOpen(map); //set all adjacent unoccupied spots as open
+                occupied = true;
                 break;
             }
+        }
+        if (occupied) {
+            SetIsOccupied(true);
+            SetIsOpen(false);
+            SetAllAdjacentSpotsAsOpen(map); //set all adjacent unoccupied spots as open
+        } else {
+            SetIsOccupied(false);
+            SetIsOpen(true);
         }
     }
     public bool CanPlaceStructureOnSpot(LocationStructureObject obj, AreaInnerTileMap map) {

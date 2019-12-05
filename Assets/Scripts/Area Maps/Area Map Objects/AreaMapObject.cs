@@ -6,7 +6,7 @@ using UnityEngine;
 /// Base class for anything in the area map that can be damaged and has a physical object to be shown.
 /// </summary>
 public abstract class AreaMapObject<T> where T: IDamageable {
-
+    public IDamageable damageable { get; private set; }
     public BaseCollisionTrigger<T> collisionTrigger { get { return areaMapVisual.collisionTrigger; } }
     public virtual AreaMapObjectVisual<T> areaMapVisual { get; protected set; } ///this is set in each inheritors implementation of <see cref="CreateAreaMapGameObject"/>
     public MAP_OBJECT_STATE mapObjectState { get; private set; }
@@ -14,6 +14,7 @@ public abstract class AreaMapObject<T> where T: IDamageable {
     #region Initialization
     protected abstract void CreateAreaMapGameObject();
     protected void InitializeMapObject(T obj) {
+        damageable = obj;
         CreateAreaMapGameObject();
         areaMapVisual.Initialize(obj);
         InitializeCollisionTrigger(obj);
