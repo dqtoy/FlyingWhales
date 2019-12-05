@@ -1272,6 +1272,7 @@ public enum WORLD_OBJECT_TYPE { NONE, ARTIFACT, SUMMON, SPECIAL_OBJECT, }
 public enum REGION_FEATURE_TYPE { PASSIVE, ACTIVE }
 public enum RESOURCE { FOOD, WOOD, STONE, METAL }
 public enum MAP_OBJECT_STATE { BUILT, UNBUILT }
+public enum FACTION_IDEOLOGY { INCLUSIVE, EXCLUSIVE, MILITARIST, ECONOMIST, DIVINE_WORSHIP, NATURE_WORSHIP }
 
 /// <summary>
 /// STARTED - actor is moving towards the target but is not yet performing action

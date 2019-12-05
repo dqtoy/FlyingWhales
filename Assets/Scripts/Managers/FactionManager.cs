@@ -72,6 +72,7 @@ public class FactionManager : MonoBehaviour {
             newFaction.SetName(factionName);
         }
         if (!isPlayerFaction) {
+            newFaction.ideologyComponent.SwitchToIdeology(FACTION_IDEOLOGY.INCLUSIVE);
             Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
         }
         return newFaction;

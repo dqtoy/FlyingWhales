@@ -60,6 +60,9 @@ public class Player : ILeader {
     public RACE race {
         get { return RACE.HUMANS; }
     }
+    public GENDER gender {
+        get { return GENDER.MALE; }
+    }
     public Area specificLocation {
         get { return playerFaction.mainRegion.area; }
     }
