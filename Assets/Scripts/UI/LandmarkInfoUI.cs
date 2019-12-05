@@ -161,11 +161,11 @@ public class LandmarkInfoUI : UIMenu {
         //    landmarkTypeLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters(_activeLandmark.specificLandmarkType.ToString());
         //}
         
-        if(_activeLandmark.tileLocation.areaOfTile != null) {
-            suppliesNameLbl.text = _activeLandmark.tileLocation.areaOfTile.suppliesInBank.ToString();
-        } else {
-            suppliesNameLbl.text = "0";
-        }
+        //if(_activeLandmark.tileLocation.areaOfTile != null) {
+        //    suppliesNameLbl.text = _activeLandmark.tileLocation.areaOfTile.suppliesInBank.ToString();
+        //} else {
+        //    suppliesNameLbl.text = "0";
+        //}
 
         //if (_activeLandmark.owner == null) {
         //    factionEmblem.gameObject.SetActive(false);

@@ -37,18 +37,18 @@ public class Combat {
         if(party1 == null) {
             _charactersSideA = null;
         } else {
-            this._charactersSideA = new List<Character>(party1.characters);
-            for (int i = 0; i < _charactersSideA.Count; i++) {
-                _charactersSideA[i].SetSide(SIDES.A); //also puts the current stat variables to combat variables
-            }
+            //this._charactersSideA = new List<Character>(party1.characters);
+            //for (int i = 0; i < _charactersSideA.Count; i++) {
+            //    _charactersSideA[i].SetSide(SIDES.A); //also puts the current stat variables to combat variables
+            //}
         }
         if(party2 == null) {
             _charactersSideB = null;
         } else {
-            this._charactersSideB = new List<Character>(party2.characters);
-            for (int i = 0; i < _charactersSideB.Count; i++) {
-                _charactersSideB[i].SetSide(SIDES.B); //also puts the current stat variables to combat variables
-            }
+            //this._charactersSideB = new List<Character>(party2.characters);
+            //for (int i = 0; i < _charactersSideB.Count; i++) {
+            //    _charactersSideB[i].SetSide(SIDES.B); //also puts the current stat variables to combat variables
+            //}
         }
         _location = location;
         //this.resultsLog = new List<string>();

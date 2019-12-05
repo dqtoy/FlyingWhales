@@ -436,11 +436,9 @@ public class InteriorMapManager : MonoBehaviour {
                 summary += "\n\tYield: " + (poi as TreeObject).yield.ToString();
             } else if (poi is Ore) {
                 summary += "\n\tYield: " + (poi as Ore).yield.ToString();
-            } else if (poi is SupplyPile) {
-                summary += "\n\tSupplies in Pile: " + (poi as SupplyPile).resourceInPile.ToString();
-            } else if (poi is FoodPile) {
-                summary += "\n\tFood in Pile: " + (poi as FoodPile).resourceInPile.ToString();
-            } else if (poi is Table) {
+            } else if (poi is ResourcePile) {
+                summary += "\n\tResource in Pile: " + (poi as ResourcePile).resourceInPile.ToString();
+            }  else if (poi is Table) {
                 summary += "\n\tFood in Table: " + (poi as Table).food.ToString();
             } else if (poi is SpecialToken) {
                 summary += "\n\tCharacter Owner: " + (poi as SpecialToken).characterOwner?.name ?? "None";
@@ -502,6 +500,7 @@ public class InteriorMapManager : MonoBehaviour {
     public void ShowCharacterData(Character character) {
         string summary = "<b>" + character.name + "</b>";
         summary += "\n\t" + GetCharacterHoverData(character) + "\n";
+        UIManager.Instance.ShowSmallInfo(summary);
     }
     private string GetCharacterHoverData(Character character) {
         Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter;

@@ -15,6 +15,8 @@ public class ObtainResource : GoapAction {
     protected override void ConstructBasePreconditionsAndEffects() {
         AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAS_FOOD, GOAP_EFFECT_TARGET.ACTOR));
         AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAS_WOOD, GOAP_EFFECT_TARGET.ACTOR));
+        AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAS_STONE, GOAP_EFFECT_TARGET.ACTOR));
+        AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAS_METAL, GOAP_EFFECT_TARGET.ACTOR));
     }
     protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, object[] otherData) {
         List<GoapEffect> ee = base.GetExpectedEffects(actor, target, otherData);
@@ -25,6 +27,12 @@ public class ObtainResource : GoapAction {
                 break;
             case RESOURCE.WOOD:
                 ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_WOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
+                break;
+            case RESOURCE.STONE:
+                ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_STONE, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
+                break;
+            case RESOURCE.METAL:
+                ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_METAL, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
                 break;
         }
         return ee;

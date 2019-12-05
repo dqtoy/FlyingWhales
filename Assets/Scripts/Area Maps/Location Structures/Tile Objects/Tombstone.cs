@@ -18,16 +18,11 @@ public class Tombstone : TileObject {
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMEMBER_FALLEN, INTERACTION_TYPE.SPIT, INTERACTION_TYPE.BUTCHER };
         //Initialize(data);
     }
-
-    public override void SetGridTileLocation(LocationGridTile tile) {
-        base.SetGridTileLocation(tile);
-        if (tile != null) {
-            //when a tombstone of a character has been placed, assume that his/her marker needs to be disabled
-            character.DisableMarker();
-            character.SetGrave(this);
-        }
+    public override void OnPlacePOI() {
+        base.OnPlacePOI();
+        character.DisableMarker();
+        character.SetGrave(this);
     }
-
     public override void OnClickAction() {
         base.OnClickAction();
         UIManager.Instance.ShowCharacterInfo(character, true);

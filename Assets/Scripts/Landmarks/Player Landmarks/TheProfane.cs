@@ -34,19 +34,21 @@ public class TheProfane : BaseLandmark {
             }
         } else if (action == "Sabotage Faction Quest") {
             (targetCharacter.faction.activeQuest as DivineInterventionQuest).CreateSabotageFactionnJob();
-        } else if (action == "Destroy Supply") {
-            if (!targetCharacter.jobQueue.HasJob(JOB_TYPE.DESTROY_SUPPLY)) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DESTROY_SUPPLY, INTERACTION_TYPE.DESTROY_RESOURCE, targetCharacter.specificLocation.supplyPile, targetCharacter);
-                job.SetIsStealth(true);
-                targetCharacter.jobQueue.AddJobInQueue(job);
-            }
-        } else if (action == "Destroy Food") {
-            if (!targetCharacter.jobQueue.HasJob(JOB_TYPE.DESTROY_FOOD)) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DESTROY_FOOD, INTERACTION_TYPE.DESTROY_RESOURCE, targetCharacter.specificLocation.foodPile, targetCharacter);
-                job.SetIsStealth(true);
-                targetCharacter.jobQueue.AddJobInQueue(job);
-            }
-        }
+        } 
+        //else if (action == "Destroy Supply") {
+        //    if (!targetCharacter.jobQueue.HasJob(JOB_TYPE.DESTROY_SUPPLY)) {
+        //        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DESTROY_SUPPLY, INTERACTION_TYPE.DESTROY_RESOURCE, targetCharacter.specificLocation.supplyPile, targetCharacter);
+        //        job.SetIsStealth(true);
+        //        targetCharacter.jobQueue.AddJobInQueue(job);
+        //    }
+        //} 
+        //else if (action == "Destroy Food") {
+        //    if (!targetCharacter.jobQueue.HasJob(JOB_TYPE.DESTROY_FOOD)) {
+        //        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DESTROY_FOOD, INTERACTION_TYPE.DESTROY_RESOURCE, targetCharacter.specificLocation.foodPile, targetCharacter);
+        //        job.SetIsStealth(true);
+        //        targetCharacter.jobQueue.AddJobInQueue(job);
+        //    }
+        //}
         StartCooldown();
         Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
     }

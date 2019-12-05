@@ -113,30 +113,27 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
     /// </summary>
     /// <param name="action">The finished action</param>
     public virtual void OnCancelActionTowardsObject(ActualGoapNode action) { }
-    public virtual void SetGridTileLocation(LocationGridTile tile) {
-        previousTile = this.gridTileLocation;
-        this.gridTileLocation = tile;
+    public virtual void OnDestroyPOI() {
+        //DisableGameObject();
+        DestroyGameObject();
+        OnRemoveTileObject(null, previousTile);
+        SetPOIState(POI_STATE.INACTIVE);
+        //TODO: Make This Better!
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.allCharacters[i];
+            character.RemoveAwareness(this);
+        }
+    }
+    public virtual void OnPlacePOI() {
         if (areaMapGameObject == null) {
             InitializeMapObject(this);
         }
-        if (tile == null) {
-            //DisableGameObject();
-            DestroyGameObject();
-            OnRemoveTileObject(null, previousTile);
-            SetPOIState(POI_STATE.INACTIVE);
-            //TODO: Make This Better!
-            for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-                Character character = CharacterManager.Instance.allCharacters[i];
-                character.RemoveAwareness(this);
-            }
-        } else {
-            PlaceMapObjectAt(tile);
-            OnPlaceObjectAtTile(tile);
-            SetPOIState(POI_STATE.ACTIVE);
-            for (int i = 0; i < tile.parentAreaMap.area.region.residents.Count; i++) {
-                Character character = tile.parentAreaMap.area.region.residents[i];
-                character.AddAwareness(this);
-            }
+        PlaceMapObjectAt(gridTileLocation);
+        OnPlaceObjectAtTile(gridTileLocation);
+        SetPOIState(POI_STATE.ACTIVE);
+        for (int i = 0; i < gridTileLocation.parentAreaMap.area.region.residents.Count; i++) {
+            Character character = gridTileLocation.parentAreaMap.area.region.residents[i];
+            character.AddAwareness(this);
         }
     }
     public virtual void RemoveTileObject(Character removedBy) {
@@ -352,6 +349,10 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
             attackSummary += "\n" + this.name + "'s hp has reached 0.";
         }
         //Messenger.Broadcast(Signals.CHARACTER_WAS_HIT, this, characterThatAttacked);
+    }
+    public void SetGridTileLocation(LocationGridTile tile) {
+        previousTile = this.gridTileLocation;
+        this.gridTileLocation = tile;
     }
     #endregion
 

@@ -87,7 +87,7 @@ public class Projectile : MonoBehaviour {
     }
     private void OnCharacterAreaTravelling(Party party) {
         if (targetPOI is Character) {
-            if (party.characters.Contains(targetPOI as Character)) {
+            if (party.owner == targetPOI || party.carriedPOI == targetPOI) { //party.characters.Contains(targetPOI as Character)
                 DestroyProjectile();
             }
         }

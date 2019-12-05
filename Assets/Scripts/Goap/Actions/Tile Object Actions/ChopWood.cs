@@ -4,7 +4,7 @@ using UnityEngine;
 using Traits;
 
 public class ChopWood : GoapAction {
-    private const int MAX_SUPPLY = 50;
+    //private const int MAX_SUPPLY = 50;
 
     public ChopWood() : base(INTERACTION_TYPE.CHOP_WOOD) {
         actionIconString = GoapActionStateDB.Work_Icon;
@@ -15,7 +15,8 @@ public class ChopWood : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_WOOD, conditionKey = MAX_SUPPLY.ToString(), isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
+        //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_WOOD, conditionKey = MAX_SUPPLY.ToString(), isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.PRODUCE_WOOD, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -40,13 +41,20 @@ public class ChopWood : GoapAction {
     public void PreChopSuccess(ActualGoapNode goapNode) {
         TreeObject tree = goapNode.poiTarget as TreeObject;
         //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        goapNode.descriptionLog.AddToFillers(null, tree.GetSupplyPerMine().ToString(), LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(null, tree.yield.ToString(), LOG_IDENTIFIER.STRING_1);
         //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterChopSuccess(ActualGoapNode goapNode) {
         TreeObject tree = goapNode.poiTarget as TreeObject;
-        goapNode.actor.AdjustSupply(tree.GetSupplyPerMine());
-        tree.AdjustYield(-1);
+        //goapNode.actor.AdjustSupply(tree.GetSupplyPerMine());
+        int wood = tree.yield;
+        LocationGridTile tile = tree.gridTileLocation;
+        tree.AdjustYield(-wood);
+
+        TileObject woodPile = InteriorMapManager.Instance.CreateNewTileObject(TILE_OBJECT_TYPE.WOOD_PILE);
+        (woodPile as WoodPile).SetResourceInPile(wood);
+        tile.structure.AddPOI(woodPile, tile);
+        woodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.WOOD_PILE);
     }
     //public void PreTargetMissing(ActualGoapNode goapNode) {
     //    goapNode.descriptionLog.AddToFillers(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);

@@ -10,6 +10,7 @@ public class Area : IJobOwner {
     public AREA_TYPE areaType { get; private set; }
     public Region region { get; private set; }
     public LocationStructure prison { get; private set; }
+    public LocationStructure mainStorage { get; private set; }
     public int citizenCount { get; private set; }
 
     //Data that are only referenced from this area's region
@@ -44,16 +45,16 @@ public class Area : IJobOwner {
     public List<Character> visitors {
         get { return charactersAtLocation.Where(x => !region.residents.Contains(x)).ToList(); }
     }
-    public int suppliesInBank {
-        get {
-            if (this.supplyPile == null) {
-                return 0;
-            }
-            return this.supplyPile.resourceInPile;
-        }
-    }
-    public SupplyPile supplyPile { get; private set; }
-    public FoodPile foodPile { get; private set; }
+    //public int suppliesInBank {
+    //    get {
+    //        if (this.supplyPile == null) {
+    //            return 0;
+    //        }
+    //        return this.supplyPile.resourceInPile;
+    //    }
+    //}
+    //public WoodPile supplyPile { get; private set; }
+    //public FoodPile foodPile { get; private set; }
     public int residentCapacity {
         get {
             if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
@@ -104,7 +105,7 @@ public class Area : IJobOwner {
         Messenger.AddListener(Signals.HOUR_STARTED, HourlyJobActions);
         Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         Messenger.AddListener<FoodPile>(Signals.FOOD_IN_PILE_REDUCED, OnFoodInPileReduced);
-        Messenger.AddListener<SupplyPile>(Signals.SUPPLY_IN_PILE_REDUCED, OnSupplyInPileReduced);
+        Messenger.AddListener<WoodPile>(Signals.WOOD_IN_PILE_REDUCED, OnWoodInPileReduced);
         Messenger.AddListener(Signals.DAY_STARTED, PerDayHeroEventCreation);
         Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
     }
@@ -112,7 +113,7 @@ public class Area : IJobOwner {
         Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyJobActions);
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         Messenger.RemoveListener<FoodPile>(Signals.FOOD_IN_PILE_REDUCED, OnFoodInPileReduced);
-        Messenger.RemoveListener<SupplyPile>(Signals.SUPPLY_IN_PILE_REDUCED, OnSupplyInPileReduced);
+        Messenger.RemoveListener<WoodPile>(Signals.WOOD_IN_PILE_REDUCED, OnWoodInPileReduced);
         Messenger.RemoveListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
     }
     private void OnTileObjectRemoved(TileObject removedObj, Character character, LocationGridTile removedFrom) {
@@ -148,14 +149,14 @@ public class Area : IJobOwner {
         }
     }
     private void OnFoodInPileReduced(FoodPile pile) {
-        if (foodPile == pile) {
-            TryCreateObtainFoodOutsideJob();
-        }
+        //if (foodPile == pile) {
+        //    TryCreateObtainFoodOutsideJob();
+        //}
     }
-    private void OnSupplyInPileReduced(SupplyPile pile) {
-        if (supplyPile == pile) {
-            TryCreateObtainSupplyOutsideJob();
-        }
+    private void OnWoodInPileReduced(WoodPile pile) {
+        //if (supplyPile == pile) {
+        //    TryCreateObtainSupplyOutsideJob();
+        //}
     }
     #endregion
 
@@ -247,33 +248,33 @@ public class Area : IJobOwner {
     #endregion
 
     #region Supplies
-    public void AdjustSuppliesInBank(int amount) {
-        if (supplyPile == null) {
-            return;
-        }
-        supplyPile.AdjustResourceInPile(amount);
-        Messenger.Broadcast(Signals.AREA_SUPPLIES_CHANGED, this);
-        //suppliesInBank = Mathf.Clamp(suppliesInBank, 0, supplyCapacity);
-    }
+    //public void AdjustSuppliesInBank(int amount) {
+    //    if (supplyPile == null) {
+    //        return;
+    //    }
+    //    supplyPile.AdjustResourceInPile(amount);
+    //    Messenger.Broadcast(Signals.AREA_SUPPLIES_CHANGED, this);
+    //    //suppliesInBank = Mathf.Clamp(suppliesInBank, 0, supplyCapacity);
+    //}
     #endregion
 
     #region Food
-    public void SetFoodInBank(int amount) {
-        FoodPile currFoodPile = foodPile;
-        if (currFoodPile == null) {
-            return;
-        }
-        currFoodPile.SetResourceInPile(amount);
-        Messenger.Broadcast(Signals.AREA_FOOD_CHANGED, this);
-    }
-    public void AdjustFoodInBank(int amount) {
-        FoodPile currFoodPile = foodPile;
-        if (currFoodPile == null) {
-            return;
-        }
-        currFoodPile.AdjustResourceInPile(amount);
-        Messenger.Broadcast(Signals.AREA_FOOD_CHANGED, this);
-    }
+    //public void SetFoodInBank(int amount) {
+    //    FoodPile currFoodPile = foodPile;
+    //    if (currFoodPile == null) {
+    //        return;
+    //    }
+    //    currFoodPile.SetResourceInPile(amount);
+    //    Messenger.Broadcast(Signals.AREA_FOOD_CHANGED, this);
+    //}
+    //public void AdjustFoodInBank(int amount) {
+    //    FoodPile currFoodPile = foodPile;
+    //    if (currFoodPile == null) {
+    //        return;
+    //    }
+    //    currFoodPile.AdjustResourceInPile(amount);
+    //    Messenger.Broadcast(Signals.AREA_FOOD_CHANGED, this);
+    //}
     #endregion
 
     #region Characters
@@ -761,22 +762,26 @@ public class Area : IJobOwner {
         }
     }
     private void PlaceResourcePiles() {
-        LocationStructure targetStructure;
         if (structures.ContainsKey(STRUCTURE_TYPE.WAREHOUSE)) {
-            targetStructure = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
+            mainStorage = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
         } else {
-            targetStructure = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+            mainStorage = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
         }
-        if (supplyPile == null) {
-            TileObject pile = InteriorMapManager.Instance.CreateNewTileObject(TILE_OBJECT_TYPE.SUPPLY_PILE);
-            targetStructure.AddPOI(pile);
-            pile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.SUPPLY_PILE);
-        }
-        if (foodPile == null) {
-            TileObject pile = InteriorMapManager.Instance.CreateNewTileObject(TILE_OBJECT_TYPE.FOOD_PILE);
-            targetStructure.AddPOI(pile);
-            pile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
-        }
+        TileObject woodPile = InteriorMapManager.Instance.CreateNewTileObject(TILE_OBJECT_TYPE.WOOD_PILE);
+        mainStorage.AddPOI(woodPile);
+        woodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.WOOD_PILE);
+
+        TileObject stonePile = InteriorMapManager.Instance.CreateNewTileObject(TILE_OBJECT_TYPE.STONE_PILE);
+        mainStorage.AddPOI(stonePile);
+        stonePile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.STONE_PILE);
+
+        TileObject metalPile = InteriorMapManager.Instance.CreateNewTileObject(TILE_OBJECT_TYPE.METAL_PILE);
+        mainStorage.AddPOI(metalPile);
+        metalPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.METAL_PILE);
+
+        TileObject foodPile = InteriorMapManager.Instance.CreateNewTileObject(TILE_OBJECT_TYPE.FOOD_PILE);
+        mainStorage.AddPOI(foodPile);
+        foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
     }
     private void SpawnFoodObjects() {
         if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
@@ -856,12 +861,12 @@ public class Area : IJobOwner {
             }
         }
     }
-    public void SetSupplyPile(SupplyPile supplyPile) {
-        this.supplyPile = supplyPile;
-    }
-    public void SetFoodPile(FoodPile foodPile) {
-        this.foodPile = foodPile;
-    }
+    //public void SetSupplyPile(WoodPile supplyPile) {
+    //    this.supplyPile = supplyPile;
+    //}
+    //public void SetFoodPile(FoodPile foodPile) {
+    //    this.foodPile = foodPile;
+    //}
     public void OnLocationStructureObjectPlaced(LocationStructure structure) {
         if (structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
             //if a warehouse was placed, and this area does not yet have a main storage structure, or is using the city center as their main storage structure, then use the new warehouse instead.
@@ -1171,16 +1176,17 @@ public class Area : IJobOwner {
     /// Criteria can be found at: https://trello.com/c/cICMVSch/2706-hero-events
     /// </summary>
     private void TryCreateObtainFoodOutsideJob() {
-        if (!CanStillCreateHeroEventJob()) {
-            return; //hero events are maxed.
-        }
-        int obtainFoodOutsideJobs = GetNumberOfJobsWith(JOB_TYPE.OBTAIN_FOOD_OUTSIDE);
-        if (obtainFoodOutsideJobs == 0 && foodPile.resourceInPile < 1000) {
-            CreateObtainFoodOutsideJob();
-        } else  if (obtainFoodOutsideJobs == 1 && foodPile.resourceInPile < 500) { //there is at least 1 existing obtain food outside job.
-            //allow the creation of a second obtain food outside job
-            CreateObtainFoodOutsideJob();
-        }
+        //TODO:
+        //if (!CanStillCreateHeroEventJob()) {
+        //    return; //hero events are maxed.
+        //}
+        //int obtainFoodOutsideJobs = GetNumberOfJobsWith(JOB_TYPE.OBTAIN_FOOD_OUTSIDE);
+        //if (obtainFoodOutsideJobs == 0 && foodPile.resourceInPile < 1000) {
+        //    CreateObtainFoodOutsideJob();
+        //} else  if (obtainFoodOutsideJobs == 1 && foodPile.resourceInPile < 500) { //there is at least 1 existing obtain food outside job.
+        //    //allow the creation of a second obtain food outside job
+        //    CreateObtainFoodOutsideJob();
+        //}
     }
     private void CreateObtainFoodOutsideJob() {
         CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.OBTAIN_FOOD_OUTSIDE, CHARACTER_STATE.MOVE_OUT, this);
@@ -1192,16 +1198,17 @@ public class Area : IJobOwner {
     /// Criteria can be found at: https://trello.com/c/cICMVSch/2706-hero-events
     /// </summary>
     private void TryCreateObtainSupplyOutsideJob() {
-        if (!CanStillCreateHeroEventJob()) {
-            return; //hero events are maxed.
-        }
-        int obtainSupplyOutsideJobs = GetNumberOfJobsWith(JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE);
-        if (obtainSupplyOutsideJobs == 0 && supplyPile.resourceInPile < 1000) {
-            CreateObtainSupplyOutsideJob();
-        } else if (obtainSupplyOutsideJobs == 1 && supplyPile.resourceInPile < 500) { //there is at least 1 existing obtain supply outside job.
-            //allow the creation of a second obtain supply outside job
-            CreateObtainSupplyOutsideJob();
-        }
+        //TODO:
+        //if (!CanStillCreateHeroEventJob()) {
+        //    return; //hero events are maxed.
+        //}
+        //int obtainSupplyOutsideJobs = GetNumberOfJobsWith(JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE);
+        //if (obtainSupplyOutsideJobs == 0 && supplyPile.resourceInPile < 1000) {
+        //    CreateObtainSupplyOutsideJob();
+        //} else if (obtainSupplyOutsideJobs == 1 && supplyPile.resourceInPile < 500) { //there is at least 1 existing obtain supply outside job.
+        //    //allow the creation of a second obtain supply outside job
+        //    CreateObtainSupplyOutsideJob();
+        //}
     }
     private void CreateObtainSupplyOutsideJob() {
         CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE, CHARACTER_STATE.MOVE_OUT, this);

@@ -6,12 +6,12 @@ using UnityEngine;
 public class Ore : TileObject {
     public int yield { get; private set; }
 
-    private const int Supply_Per_Mine = 50;
+    //private const int Supply_Per_Mine = 50;
 
     public Ore() {
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE, INTERACTION_TYPE.ASSAULT, };
         Initialize(TILE_OBJECT_TYPE.ORE);
-        yield = Random.Range(15, 36);
+        yield = 50;
     }
     public Ore(SaveDataTileObject data) {
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE, INTERACTION_TYPE.ASSAULT, };
@@ -30,12 +30,12 @@ public class Ore : TileObject {
     }
     #endregion
 
-    public int GetSupplyPerMine() {
-        if (yield < Supply_Per_Mine) {
-            return yield;
-        }
-        return Supply_Per_Mine;
-    }
+    //public int GetSupplyPerMine() {
+    //    if (yield < Supply_Per_Mine) {
+    //        return yield;
+    //    }
+    //    return Supply_Per_Mine;
+    //}
     public void AdjustYield(int amount) {
         yield += amount;
         yield = Mathf.Max(0, yield);

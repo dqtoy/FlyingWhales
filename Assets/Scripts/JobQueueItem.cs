@@ -23,7 +23,9 @@ public class JobQueueItem {
     public System.Func<Character, bool> canTakeThis { get; protected set; }
     public System.Func<Character, JobQueueItem, bool> canTakeThisJob { get; protected set; }
     public System.Func<Character, Character, bool> canTakeThisJobWithTarget { get; protected set; }
+    public System.Func<bool> stillApplicable { get; protected set; }
     public System.Action<Character, JobQueueItem> onTakeJobAction { get; protected set; }
+
     protected int _priority; //The lower the amount the higher the priority
 
     //Additional data
@@ -132,7 +134,10 @@ public class JobQueueItem {
         }
         return originalOwner.ForceCancelJob(this);
     }
-    public virtual bool IsJobStillApplicable() {
+    public bool IsJobStillApplicable() {
+        if(stillApplicable != null) {
+            return stillApplicable();
+        }
         return true;
     }
     public virtual void PushedBack(JobQueueItem jobThatPushedBack) {
@@ -182,6 +187,9 @@ public class JobQueueItem {
     }
     public void SetCanTakeThisJobChecker(System.Func<Character, Character, bool> function) {
         canTakeThisJobWithTarget = function;
+    }
+    public void SetStillApplicableChecker(System.Func<bool> function) {
+        stillApplicable = function;
     }
     public void SetOnTakeJobAction(System.Action<Character, JobQueueItem> action) {
         onTakeJobAction = action;

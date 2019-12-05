@@ -7,7 +7,7 @@ public static class TileObjectDB {
 
     //tile objects
     public static Dictionary<TILE_OBJECT_TYPE, TileObjectData> tileObjectData = new Dictionary<TILE_OBJECT_TYPE, TileObjectData>() {
-        { TILE_OBJECT_TYPE.SUPPLY_PILE, new TileObjectData() {
+        { TILE_OBJECT_TYPE.WOOD_PILE, new TileObjectData() {
             constructionCost = 10,
             constructionTime = 12,
             maxHP = 10000,

@@ -90,7 +90,7 @@ public class AreaInfoUI : UIMenu {
         Messenger.AddListener<Area, Character>(Signals.CHARACTER_ENTERED_AREA, OnCharacterEnteredArea);
         Messenger.AddListener<Area, Character>(Signals.CHARACTER_EXITED_AREA, OnCharacterExitedArea);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.AddListener<Area>(Signals.AREA_SUPPLIES_CHANGED, OnAreaSuppliesSet);
+        //Messenger.AddListener<Area>(Signals.AREA_SUPPLIES_CHANGED, OnAreaSuppliesSet);
         Messenger.AddListener<Area>(Signals.AREA_OWNER_CHANGED, OnAreaOwnerChanged);
         //Messenger.AddListener<Area, Character>(Signals.AREA_RESIDENT_ADDED, OnAreaResidentAdded);
         //Messenger.AddListener<Area, Character>(Signals.AREA_RESIDENT_REMOVED, OnAreaResidentRemoved);
@@ -187,7 +187,7 @@ public class AreaInfoUI : UIMenu {
         }
     }
     private void UpdateSupplies() {
-        suppliesNameLbl.text = activeArea.suppliesInBank.ToString();
+        //suppliesNameLbl.text = activeArea.suppliesInBank.ToString();
     }
     private void OnAreaOwnerChanged(Area area) {
         if (this.isShowing && activeTile.id == area.id) {
@@ -269,10 +269,14 @@ public class AreaInfoUI : UIMenu {
         List<Character> charactersToShow = new List<Character>();
         for (int i = 0; i < activeTile.region.charactersAtLocation.Count; i++) {
             Character character = activeTile.region.charactersAtLocation[i];
-            for (int j = 0; j < character.ownParty.characters.Count; j++) {
-                Character currCharacter = character.ownParty.characters[j];
-                charactersToShow.Add(currCharacter);
+            charactersToShow.Add(character);
+            if(character.ownParty.isCarryingAnyPOI && character.ownParty.carriedPOI is Character) {
+                charactersToShow.Add(character.ownParty.carriedPOI as Character);
             }
+            //for (int j = 0; j < character.ownParty.characters.Count; j++) {
+            //    Character currCharacter = character.ownParty.characters[j];
+            //    charactersToShow.Add(currCharacter);
+            //}
         }
 
         for (int i = 0; i < activeArea.region.residents.Count; i++) {

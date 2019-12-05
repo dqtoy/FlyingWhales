@@ -88,7 +88,7 @@ public class Summon : Character, IWorldObject {
             traitsNeededToBeRemoved.Clear();
 
             if (!IsInOwnParty()) {
-                _currentParty.RemoveCharacter(this);
+                _currentParty.RemovePOI(this);
             }
             _ownParty.PartyDeath();
 

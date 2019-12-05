@@ -713,6 +713,9 @@ public class AreaInnerTileMap : MonoBehaviour {
     public void RemoveObject(LocationGridTile tile, Character removedBy = null) {
         tile.RemoveObjectHere(removedBy);
     }
+    public void RemoveObjectWithoutDestroying(LocationGridTile tile) {
+        tile.RemoveObjectHereWithoutDestroying();
+    }
     private void OnPlaceCharacterOnTile(Character character, LocationGridTile tile) {
         if (character.marker.gameObject.transform.parent != objectsParent) {
             //This means that the character travelled to a different area

@@ -292,7 +292,9 @@ public class GoapAction {
     public virtual IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
         return goapNode.poiTarget;
     }
-
+    public virtual LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {
+        return goapNode.poiTarget.gridTileLocation;
+    }
     ///<summary>
     ///This is called when the actor decides to do this specific action.
     ///All movement related actions should be done here.
@@ -467,6 +469,11 @@ public class GoapAction {
         if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET) {
             //if the action type is NEAR_TARGET, then check if the actor is near the target, if not, this action is invalid.
             if (actor.gridTileLocation != poiTarget.gridTileLocation && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation) == false) {
+                return true;
+            }
+        } else if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET) {
+            //if the action type is NEAR_TARGET, then check if the actor is near the target, if not, this action is invalid.
+            if (actor.gridTileLocation != node.targetTile && actor.gridTileLocation.IsNeighbour(node.targetTile) == false) {
                 return true;
             }
         }

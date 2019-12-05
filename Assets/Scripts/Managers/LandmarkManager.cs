@@ -12,6 +12,7 @@ public class LandmarkManager : MonoBehaviour {
     public static readonly int Max_Connections = 3;
     public const int DELAY_DIVINE_INTERVENTION_DURATION = 144;
     public const int SUMMON_MINION_DURATION = 96;
+    public const int MAX_RESOURCE_PILE = 500;
 
     public int initialLandmarkCount;
 

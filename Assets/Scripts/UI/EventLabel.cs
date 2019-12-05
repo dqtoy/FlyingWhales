@@ -112,7 +112,7 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
                     UIManager.Instance.ShowCombatLog(obj as Combat);
                 } else if (obj is Party) {
                     Party party = obj as Party;
-                    UIManager.Instance.ShowCharacterInfo(party.mainCharacter, true);
+                    UIManager.Instance.ShowCharacterInfo(party.owner, true);
                 } else if (obj is IPointOfInterest) {
                     IPointOfInterest poi = obj as IPointOfInterest;
                     if (poi is Character) {

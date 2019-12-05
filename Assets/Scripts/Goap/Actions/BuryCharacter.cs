@@ -41,7 +41,7 @@ public class BuryCharacter : GoapAction {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         Character targetCharacter = poiTarget as Character;
-        actor.ownParty.RemoveCharacter(targetCharacter, false);
+        actor.ownParty.RemovePOI(targetCharacter, false);
         targetCharacter.SetCurrentStructureLocation(targetCharacter.gridTileLocation.structure, false);
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -72,7 +72,7 @@ public class BuryCharacter : GoapAction {
 
         Character targetCharacter = goapNode.poiTarget as Character;
         //**After Effect 1**: Remove Target from Actor's Party.
-        goapNode.actor.ownParty.RemoveCharacter(targetCharacter, false);
+        goapNode.actor.ownParty.RemovePOI(goapNode.poiTarget, false);
         //**After Effect 2**: Place a Tombstone tile object in adjacent unoccupied tile, link it with Target.
         LocationGridTile chosenLocation = goapNode.actor.gridTileLocation;
         if (chosenLocation.isOccupied) {

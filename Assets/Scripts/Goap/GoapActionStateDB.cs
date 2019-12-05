@@ -316,6 +316,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.STEALTH_TRANSFORM, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Transform Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.HARVEST_PLANT, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Harvest Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
+        } },
     };
 }
 

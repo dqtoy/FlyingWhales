@@ -36,7 +36,7 @@ public class MakeLove : GoapAction {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         Character targetCharacter = poiTarget as Character;
-        actor.ownParty.RemoveCharacter(targetCharacter);
+        actor.ownParty.RemovePOI(targetCharacter);
         actor.AdjustDoNotGetLonely(-1);
         targetCharacter.AdjustDoNotGetLonely(-1);
 
@@ -53,7 +53,7 @@ public class MakeLove : GoapAction {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         Character targetCharacter = poiTarget as Character;
-        actor.ownParty.RemoveCharacter(targetCharacter);
+        actor.ownParty.RemovePOI(targetCharacter);
         actor.AdjustDoNotGetLonely(-1);
         targetCharacter.AdjustDoNotGetLonely(-1);
 
@@ -120,7 +120,7 @@ public class MakeLove : GoapAction {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Ashamed", targetCharacter);
             targetCharacter.traitContainer.AddTrait(targetCharacter, "Ashamed", goapNode.actor);
         }
-        goapNode.actor.ownParty.RemoveCharacter(targetCharacter);
+        goapNode.actor.ownParty.RemovePOI(targetCharacter);
         targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Wooed");
 
         //targetCharacter.RemoveTargettedByAction(this);
@@ -132,7 +132,7 @@ public class MakeLove : GoapAction {
 
     #region Preconditions
     private bool IsTargetInvited(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor.ownParty.characters.Contains(poiTarget as Character);
+        return actor.ownParty.IsPOICarried(poiTarget);
     }
     #endregion
 

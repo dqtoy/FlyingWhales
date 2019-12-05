@@ -258,6 +258,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public void SetObjectHere(IPointOfInterest poi) {
         objHere = poi;
         poi.SetGridTileLocation(this);
+        poi.OnPlacePOI();
         SetTileState(Tile_State.Occupied);
         Messenger.Broadcast(Signals.OBJECT_PLACED_ON_TILE, this, poi);
     }
@@ -269,7 +270,18 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
                 (objHere as TileObject).RemoveTileObject(removedBy);
             } else {
                 objHere.SetGridTileLocation(null);
+                objHere.OnDestroyPOI();
             }
+            objHere = null;
+            SetTileState(Tile_State.Empty);
+            return removedObj;
+        }
+        return null;
+    }
+    public IPointOfInterest RemoveObjectHereWithoutDestroying() {
+        if (objHere != null) {
+            IPointOfInterest removedObj = objHere;
+            objHere.SetGridTileLocation(null);
             objHere = null;
             SetTileState(Tile_State.Empty);
             return removedObj;

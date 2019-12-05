@@ -192,7 +192,11 @@ public class GoapPlanJob : JobQueueItem {
                 return hasBeenRemoved;
             }
         }
-        return originalOwner.ForceCancelJob(this);
+        if(originalOwner != null) {
+            return originalOwner.ForceCancelJob(this);
+        } else {
+            return true;
+        }
     }
     public override void UnassignJob(bool shouldDoAfterEffect, string reason) {
         //if (id == -1) { return; }

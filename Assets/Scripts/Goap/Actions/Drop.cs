@@ -42,14 +42,14 @@ public class Drop : GoapAction {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         Character targetCharacter = poiTarget as Character;
-        actor.currentParty.RemoveCharacter(targetCharacter);
+        actor.currentParty.RemovePOI(targetCharacter);
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         Character targetCharacter = poiTarget as Character;
-        actor.currentParty.RemoveCharacter(targetCharacter);
+        actor.currentParty.RemovePOI(targetCharacter);
     }
     #endregion
 
@@ -76,8 +76,8 @@ public class Drop : GoapAction {
     //    goapNode.descriptionLog.AddToFillers(goapNode.actor.currentStructure, goapNode.actor.currentStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     //}
     public void AfterDropSuccess(ActualGoapNode goapNode) {
-        Character target = goapNode.poiTarget as Character;
-        goapNode.actor.currentParty.RemoveCharacter(target);
+        //Character target = goapNode.poiTarget as Character;
+        goapNode.actor.currentParty.RemovePOI(goapNode.poiTarget);
     }
     #endregion
 }
