@@ -771,22 +771,22 @@ public class Area : IJobOwner {
             mainStorage = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
         }
         TileObject woodPile = InteriorMapManager.Instance.CreateNewTileObject(TILE_OBJECT_TYPE.WOOD_PILE);
-        (woodPile as WoodPile).SetResourceInPile(LandmarkManager.MAX_RESOURCE_PILE);
+        (woodPile as WoodPile).SetResourceInPile(51);
         mainStorage.AddPOI(woodPile);
         woodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.WOOD_PILE);
 
         TileObject stonePile = InteriorMapManager.Instance.CreateNewTileObject(TILE_OBJECT_TYPE.STONE_PILE);
-        (stonePile as StonePile).SetResourceInPile(LandmarkManager.MAX_RESOURCE_PILE);
+        (stonePile as StonePile).SetResourceInPile(51);
         mainStorage.AddPOI(stonePile);
         stonePile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.STONE_PILE);
 
         TileObject metalPile = InteriorMapManager.Instance.CreateNewTileObject(TILE_OBJECT_TYPE.METAL_PILE);
-        (metalPile as MetalPile).SetResourceInPile(LandmarkManager.MAX_RESOURCE_PILE);
+        (metalPile as MetalPile).SetResourceInPile(51);
         mainStorage.AddPOI(metalPile);
         metalPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.METAL_PILE);
 
         TileObject foodPile = InteriorMapManager.Instance.CreateNewTileObject(TILE_OBJECT_TYPE.FOOD_PILE);
-        (foodPile as FoodPile).SetResourceInPile(LandmarkManager.MAX_RESOURCE_PILE);
+        (foodPile as FoodPile).SetResourceInPile(51);
         mainStorage.AddPOI(foodPile);
         foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
     }
