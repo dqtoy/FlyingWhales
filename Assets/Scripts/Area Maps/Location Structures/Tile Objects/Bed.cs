@@ -52,7 +52,7 @@ public class Bed : TileObject {
                 UpdateUsedBedAsset();
             } else {
                 if (gridTileLocation != null) {
-                    areaMapGameObject.UpdateTileObjectVisual(this);
+                    areaMapVisual.UpdateTileObjectVisual(this);
                 }
             }
         }
@@ -205,7 +205,7 @@ public class Bed : TileObject {
         if (gridTileLocation == null) {
             return;
         }
-        areaMapGameObject.UpdateTileObjectVisual(this);
+        areaMapVisual.UpdateTileObjectVisual(this);
         //int userCount = GetActiveUserCount();
         //if (userCount == 1) {
         //    gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.bed1SleepingVariant);

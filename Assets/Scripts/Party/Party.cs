@@ -163,10 +163,10 @@ public class Party {
                 tileObject.gridTileLocation.structure.RemovePOIWithoutDestroying(tileObject);
             }
             //tileObject.SetGridTileLocation(owner.gridTileLocation);
-            tileObject.areaMapGameObject.collisionTrigger.SetMainColliderState(false);
-            tileObject.areaMapGameObject.transform.SetParent(_owner.marker.visualsParent);
-            tileObject.areaMapGameObject.transform.localPosition = new Vector3(0f, 0.5f, 0f);
-            tileObject.areaMapGameObject.transform.eulerAngles = Vector3.zero;
+            tileObject.collisionTrigger.SetMainColliderState(false);
+            tileObject.areaMapVisual.transform.SetParent(_owner.marker.visualsParent);
+            tileObject.areaMapVisual.transform.localPosition = new Vector3(0f, 0.5f, 0f);
+            tileObject.areaMapVisual.transform.eulerAngles = Vector3.zero;
             return true;
         }
         return false;
@@ -219,11 +219,11 @@ public class Party {
             carriedPOI = null;
             if(tileObject.gridTileLocation != null) {
                 tileObject.gridTileLocation.structure.RemovePOI(tileObject);
-            } else if (tileObject.areaMapGameObject != null) {
+            } else if (tileObject.areaMapVisual != null) {
                 tileObject.OnDestroyPOI();
             }
             if (addToLocation) {
-                //tileObject.areaMapGameObject.collisionTrigger.SetMainColliderState(true);
+                //tileObject.areaMapVisual.collisionTrigger.SetMainColliderState(true);
                 if (dropLocation == null) {
                     if (_owner.gridTileLocation.isOccupied) {
                         LocationGridTile chosenTile = _owner.gridTileLocation.GetRandomUnoccupiedNeighbor();
@@ -240,8 +240,8 @@ public class Party {
                     _owner.gridTileLocation.structure.AddPOI(tileObject, dropLocation);
                 }
             }
-            if(tileObject.areaMapGameObject != null) {
-                tileObject.areaMapGameObject.transform.eulerAngles = Vector3.zero;
+            if(tileObject.areaMapVisual != null) {
+                tileObject.areaMapVisual.transform.eulerAngles = Vector3.zero;
             }
             //character.ownParty.icon.transform.position = this.specificLocation.coreTile.transform.position;
             //Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);

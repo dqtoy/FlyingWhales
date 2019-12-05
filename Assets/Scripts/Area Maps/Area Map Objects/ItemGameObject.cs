@@ -7,6 +7,7 @@ public class ItemGameObject : AreaMapObjectVisual<SpecialToken> {
     public override void Initialize(SpecialToken poi) {
         this.name = poi.ToString();
         objectVisual.sprite = InteriorMapManager.Instance.GetItemAsset(poi.specialTokenType);
+        collisionTrigger = transform.GetComponentInChildren<SpecialTokenCollisionTrigger>();
     }
 
     public override void UpdateTileObjectVisual(SpecialToken specialToken) { }

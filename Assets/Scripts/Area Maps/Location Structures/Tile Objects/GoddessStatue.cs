@@ -25,7 +25,7 @@ public class GoddessStatue : TileObject {
             AddAdvertisedAction(INTERACTION_TYPE.PRAY_TILE_OBJECT);
         }
         if (gridTileLocation != null) {
-            areaMapGameObject.UpdateTileObjectVisual(this); //update visual based on state
+            areaMapVisual.UpdateTileObjectVisual(this); //update visual based on state
         }
 
     }

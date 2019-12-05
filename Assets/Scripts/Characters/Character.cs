@@ -375,11 +375,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public Vector3 worldPosition {
         get { return marker.transform.position; }
     }
-    public ProjectileReceiver projectileReciever {
-        get { return marker.collisionTrigger.projectileReciever; }
+    public ProjectileReceiver projectileReceiver {
+        get { return marker.collisionTrigger.projectileReceiver; }
     }
     public JOB_OWNER ownerType { get { return JOB_OWNER.CHARACTER; } }
     public bool isInCombat { get { return stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT; } }
+    public Transform worldObject { get { return marker.transform; } }
     #endregion
 
     public Character(CharacterRole role, RACE race, GENDER gender) : this() {
@@ -3779,7 +3780,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     #region Traits
     public ITraitContainer traitContainer { get; private set; }
     public TraitProcessor traitProcessor { get { return TraitManager.characterTraitProcessor; } }
-    private void CreateTraitContainer() {
+    public void CreateTraitContainer() {
         traitContainer = new TraitContainer();
     }
     public void CreateInitialTraitsByClass() {

@@ -14,7 +14,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public enum Tile_Access { Passable, Impassable, }
     public enum Ground_Type { Soil, Grass, Stone, Snow, Tundra, Cobble, Wood, Snow_Dirt, Water }
     public bool hasDetail { get; set; }
-    public string name { get { return localPlace.ToString(); } }
     public AreaInnerTileMap parentAreaMap { get; private set; }
     public Tilemap parentTileMap { get; private set; }
     public Vector3Int localPlace { get; private set; }
@@ -40,16 +39,15 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public List<Trait> normalTraits {
         get { return genericTileObject.traitContainer.allTraits; }
     }
-    public LocationGridTile gridTileLocation { get { return this; } }
     public bool hasBlueprint { get; private set; }
 
     private Color defaultTileColor;
 
     public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty).ToList(); } }
-    public List<LocationGridTile> RealisticTiles { get { return FourNeighbours().Where(o => o.tileAccess == Tile_Access.Passable && (o.structure != null)).ToList(); } }
     public List<LocationGridTile> UnoccupiedNeighbours { get { return neighbours.Values.Where(o => !o.isOccupied && o.structure == this.structure).ToList(); } }
 
     public GenericTileObject genericTileObject { get; private set; }
+    public List<WallObject> walls { get; private set; }
 
     public LocationGridTile(int x, int y, Tilemap tilemap, AreaInnerTileMap parentAreaMap) {
         this.parentAreaMap = parentAreaMap;
@@ -63,6 +61,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         tileState = Tile_State.Empty;
         tileAccess = Tile_Access.Passable;
         charactersHere = new List<Character>();
+        walls = new List<WallObject>();
         SetLockedState(false);
         SetReservedType(TILE_OBJECT_TYPE.NONE);
         defaultTileColor = Color.white;
@@ -81,6 +80,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         SetLockedState(data.isLocked);
         SetReservedType(data.reservedObjectType);
         charactersHere = new List<Character>();
+        walls = new List<WallObject>();
         defaultTileColor = Color.white;
     }
 
@@ -166,10 +166,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             }
         }
     }
-    public void SetGroundTilemapVisual(TileBase tileBase) {
-        parentAreaMap.groundTilemap.SetTile(this.localPlace, tileBase);
-        UpdateGroundTypeBasedOnAsset();
-    }
     private void UpdateGroundTypeBasedOnAsset() {
         TileBase groundAsset = parentAreaMap.groundTilemap.GetTile(this.localPlace);
         if (groundAsset != null) {
@@ -213,6 +209,13 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         dir = GridNeighbourDirection.East;
         return false;
     }
+
+    #region Visuals
+    public void SetGroundTilemapVisual(TileBase tileBase) {
+        parentAreaMap.groundTilemap.SetTile(this.localPlace, tileBase);
+        UpdateGroundTypeBasedOnAsset();
+    }
+    #endregion
 
     #region Structures
     public void SetStructure(LocationStructure structure) {
@@ -361,20 +364,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         }
         return false;
     }
-    public bool IsAdjacentTo(IPointOfInterest poi) {
-        foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
-            if (poi is Character) {
-                if (keyValuePair.Value.charactersHere.Contains(poi)) {
-                    return true;
-                }
-            } else {
-                if (keyValuePair.Value.objHere == poi) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
     public bool IsAdjacentTo(System.Type type) {
         foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
             if ((keyValuePair.Value.objHere != null && keyValuePair.Value.objHere.GetType() == type)) {
@@ -406,26 +395,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             }
         }
         SetTileAccess(Tile_Access.Passable);
-        return false;
-    }
-    public bool HasNeighbouringStructureOfType(STRUCTURE_TYPE type, bool useFourNeighbours = false) {
-        Dictionary<GridNeighbourDirection, LocationGridTile> n = neighbours;
-        if (useFourNeighbours) {
-            n = FourNeighboursDictionary();
-        }
-        foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in n) {
-            if (keyValuePair.Value.structure != null && keyValuePair.Value.structure.structureType == type) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public bool HasNeighbouringStructureOfType(params STRUCTURE_TYPE[] types) {
-        foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
-            if (keyValuePair.Value.structure != null && types.Contains(keyValuePair.Value.structure.structureType)) {
-                return true;
-            }
-        }
         return false;
     }
     public bool HasNeighbouringWalledStructure() {
@@ -466,17 +435,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         }
         return null;
     }
-    public Vector3[] GetVertices() {
-        Vector3[] vertices = new Vector3[4];
-        float allowance = 0.15f;
-        float adjustment = 0.5f + allowance;
-
-        vertices[0] = new Vector3(centeredWorldLocation.x - adjustment, centeredWorldLocation.y + adjustment, 0f); //top left corner
-        vertices[1] = new Vector3(centeredWorldLocation.x + adjustment, centeredWorldLocation.y + adjustment, 0f); //top right corner
-        vertices[2] = new Vector3(centeredWorldLocation.x + adjustment, centeredWorldLocation.y - adjustment, 0f); //bot right corner
-        vertices[3] = new Vector3(centeredWorldLocation.x - adjustment, centeredWorldLocation.y - adjustment, 0f); //bot left corner
-        return vertices;
-    }
     public void SetLockedState(bool state) {
         isLocked = state;
     }
@@ -510,10 +468,16 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public void SetDefaultTileColor(Color color) {
         defaultTileColor = color;
     }
-    public List<ITraitable> GetAllDestructibleObjectsOnTileWithTrait(string requiredTrait) {
+    public List<ITraitable> GetTraitablesOnTileWithTrait(string requiredTrait) {
         List<ITraitable> traitables = new List<ITraitable>();
         if (genericTileObject.traitContainer.GetNormalTrait(requiredTrait) != null) {
             traitables.Add(genericTileObject);
+        }
+        for (int i = 0; i < walls.Count; i++) {
+            WallObject wallObject = walls[i];
+            if (wallObject.traitContainer.GetNormalTrait(requiredTrait) != null) {
+                traitables.Add(wallObject);
+            }
         }
         if (objHere != null && objHere.traitContainer.GetNormalTrait(requiredTrait) != null) {
             if ((objHere is TileObject && (objHere as TileObject).mapObjectState == MAP_OBJECT_STATE.BUILT)
@@ -528,6 +492,29 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             }
         }
         return traitables;
+    }
+    public List<IDamageable> GetDamageablesOnTile() {
+        List<IDamageable> damagables = new List<IDamageable>();
+        if (structure.structureType.IsOpenSpace() == false) {
+            //only add floor and walls if structure is not open space
+            damagables.Add(genericTileObject);
+            for (int i = 0; i < walls.Count; i++) {
+                WallObject wallObject = walls[i];
+                damagables.Add(wallObject);
+            }
+        }
+        
+        if (objHere != null) {
+            if ((objHere is TileObject && (objHere as TileObject).mapObjectState == MAP_OBJECT_STATE.BUILT)
+                || (objHere is SpecialToken && (objHere as SpecialToken).mapObjectState == MAP_OBJECT_STATE.BUILT)) {
+                damagables.Add(objHere);
+            }
+        }
+        for (int i = 0; i < charactersHere.Count; i++) {
+            Character character = charactersHere[i];
+            damagables.Add(character);
+        }
+        return damagables;
     }
     #endregion
 
@@ -612,6 +599,18 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     #region Building
     public void SetHasBlueprint(bool hasBlueprint) {
         this.hasBlueprint = hasBlueprint;
+    }
+    #endregion
+
+    #region Walls
+    public void AddWallObject(WallObject wallObject) {
+        walls.Add(wallObject);
+    }
+    public void RemoveWallObject(WallObject wallObject) {
+        walls.Remove(wallObject);
+    }
+    public void ClearWallObjects() {
+        walls.Clear();
     }
     #endregion
 }

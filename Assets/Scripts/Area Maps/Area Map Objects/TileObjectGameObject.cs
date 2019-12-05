@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class TileObjectGameObject : AreaMapObjectVisual<TileObject> {
 
+
     [SerializeField] private Sprite bed1Sleeping;
     [SerializeField] private Sprite bed2Sleeping;
 
     public override void Initialize(TileObject tileObject) {
         this.name = tileObject.ToString();
         objectVisual.sprite = InteriorMapManager.Instance.GetTileObjectAsset(tileObject.tileObjectType, tileObject.state, tileObject.structureLocation.location.coreTile.biomeType);
+        collisionTrigger = this.transform.GetComponentInChildren<TileObjectCollisionTrigger>();
     }
 
     public override void UpdateTileObjectVisual(TileObject tileObject) {

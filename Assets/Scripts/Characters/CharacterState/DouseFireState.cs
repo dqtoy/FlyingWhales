@@ -6,9 +6,9 @@ using Traits;
 
 public class DouseFireState : CharacterState {
 
-    private IPointOfInterest currentTarget;
+    private ITraitable currentTarget;
     private BurningSource currentTargetSource;
-    public Dictionary<BurningSource, List<IPointOfInterest>> fires;
+    public Dictionary<BurningSource, List<ITraitable>> fires;
 
     private bool isFetchingWater;
     private bool isDousingFire;
@@ -19,7 +19,7 @@ public class DouseFireState : CharacterState {
         //stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
         duration = 0;
         actionIconString = GoapActionStateDB.Drink_Icon;
-        fires = new Dictionary<BurningSource, List<IPointOfInterest>>();
+        fires = new Dictionary<BurningSource, List<ITraitable>>();
     }
 
     #region Overrides
@@ -175,10 +175,10 @@ public class DouseFireState : CharacterState {
         if (isDousingFire) {
             return;
         }
-        IPointOfInterest nearestFire = currentTarget;
+        ITraitable nearestFire = currentTarget;
         float nearest = 99999f;
         if (nearestFire != null) {
-            nearest = Vector2.Distance(stateComponent.character.gridTileLocation.localLocation, currentTarget.gridTileLocation.localLocation);
+            nearest = Vector2.Distance(stateComponent.character.worldObject.transform.position, currentTarget.worldObject.transform.position);
         }
         
         if (currentTargetSource == null) {
@@ -186,8 +186,8 @@ public class DouseFireState : CharacterState {
         }
 
         for (int i = 0; i < fires[currentTargetSource].Count; i++) {
-            IPointOfInterest currFire = fires[currentTargetSource][i];
-            float dist = Vector2.Distance(stateComponent.character.gridTileLocation.localLocation, currFire.gridTileLocation.localLocation);
+            ITraitable currFire = fires[currentTargetSource][i];
+            float dist = Vector2.Distance(stateComponent.character.worldObject.transform.position, currFire.worldObject.transform.position);
             if (dist < nearest) {
                 nearestFire = currFire;
                 nearest = dist;
@@ -217,7 +217,7 @@ public class DouseFireState : CharacterState {
         Burning burning = poi.traitContainer.GetNormalTrait("Burning") as Burning;
         if (burning != null) {
             if (!fires.ContainsKey(burning.sourceOfBurning)) {
-                fires.Add(burning.sourceOfBurning, new List<IPointOfInterest>());
+                fires.Add(burning.sourceOfBurning, new List<ITraitable>());
             }
             if (!fires[burning.sourceOfBurning].Contains(poi)) {
                 fires[burning.sourceOfBurning].Add(poi);
@@ -240,10 +240,10 @@ public class DouseFireStateSaveDataCharacterState : SaveDataCharacterState {
         DouseFireState dfState = state as DouseFireState;
         fires = new POIData[dfState.fires.Sum(x => x.Value.Count)];
         int count = 0;
-        foreach (KeyValuePair<BurningSource, List<IPointOfInterest>> kvp in dfState.fires) {
+        foreach (KeyValuePair<BurningSource, List<ITraitable>> kvp in dfState.fires) {
             for (int i = 0; i < kvp.Value.Count; i++) {
-                IPointOfInterest poi = kvp.Value[i];
-                fires[count] = new POIData(poi);
+                ITraitable poi = kvp.Value[i];
+                //TODO: fires[count] = new POIData(poi);
                 count++;
             }
         }

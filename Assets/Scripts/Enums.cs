@@ -925,6 +925,7 @@ public enum INTERACTION_TYPE {
     BUILD_STRUCTURE,
     STEALTH_TRANSFORM,
     HARVEST_PLANT,
+    REPAIR_STRUCTURE,
 }
 public enum INTERACTION_ALIGNMENT {
     EVIL,
@@ -1322,16 +1323,14 @@ public static class Extensions {
     /// <returns>True or false</returns>
     public static bool IsOpenSpace(this STRUCTURE_TYPE sub) {
         switch (sub) {
-            case STRUCTURE_TYPE.INN:
-            case STRUCTURE_TYPE.WAREHOUSE:
-            case STRUCTURE_TYPE.DWELLING:
-            case STRUCTURE_TYPE.EXPLORE_AREA:
-            case STRUCTURE_TYPE.PRISON:
-            //case STRUCTURE_TYPE.POND:
-                //case STRUCTURE_TYPE.CEMETERY:
-                return false;
-            default:
+            case STRUCTURE_TYPE.WILDERNESS:
+            case STRUCTURE_TYPE.WORK_AREA:
+            case STRUCTURE_TYPE.CEMETERY:
+            case STRUCTURE_TYPE.POND:
+            case STRUCTURE_TYPE.CITY_CENTER:
                 return true;
+            default:
+                return false;
         }
     }
     public static bool ShouldBeGeneratedFromTemplate(this STRUCTURE_TYPE sub) {

@@ -80,7 +80,7 @@ public class Table : TileObject {
     }
     protected override void OnPlaceObjectAtTile(LocationGridTile tile) {
         base.OnPlaceObjectAtTile(tile);
-        if (areaMapGameObject.usedSprite.name.Contains("Bartop")) {
+        if (areaMapVisual.usedSprite.name.Contains("Bartop")) {
             CreateNewGUS(new Vector2(0f, 0.5f), new Vector2(1f, 0.5f));
         } else {
             CreateNewGUS(Vector2.zero, new Vector2(0.5f, 0.5f));

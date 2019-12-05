@@ -1,12 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Traits;
 using UnityEngine;
 
 public class BurningSource {
 
     public int id { get; private set; }
     public List<Character> dousers { get; private set; }
-    public List<IPointOfInterest> objectsOnFire { get; private set; }
+    public List<ITraitable> objectsOnFire { get; private set; }
     public DelegateTypes.OnAllBurningExtinguished onAllBurningExtinguished { get; private set; }
     public DelegateTypes.OnBurningObjectAdded onBurningObjectAdded { get; private set; }
     public DelegateTypes.OnBurningObjectRemoved onBurningObjectRemoved { get; private set; }
@@ -16,7 +17,7 @@ public class BurningSource {
     public BurningSource(Area location) {
         id = Utilities.SetID(this);
         dousers = new List<Character>();
-        objectsOnFire = new List<IPointOfInterest>();
+        objectsOnFire = new List<ITraitable>();
         this.location = location;
         location.areaMap.AddActiveBurningSource(this);
     }
@@ -24,7 +25,7 @@ public class BurningSource {
     public BurningSource(Area location, SaveDataBurningSource source) {
         id = source.id;
         dousers = new List<Character>();
-        objectsOnFire = new List<IPointOfInterest>();
+        objectsOnFire = new List<ITraitable>();
         this.location = location;
         location.areaMap.AddActiveBurningSource(this);
         //LoadCharactersDousingFire(source); //This will just add the characters dousing the fires to the list.
@@ -87,11 +88,11 @@ public class BurningSource {
         }
         return nearest;
     }
-    public void AddObjectOnFire(IPointOfInterest poi) {
+    public void AddObjectOnFire(ITraitable poi) {
         objectsOnFire.Add(poi);
         onBurningObjectAdded?.Invoke(poi);
     }
-    public void RemoveObjectOnFire(IPointOfInterest poi) {
+    public void RemoveObjectOnFire(ITraitable poi) {
         if (objectsOnFire.Remove(poi)) {
             onBurningObjectRemoved?.Invoke(poi);
             if (objectsOnFire.Count == 0) {

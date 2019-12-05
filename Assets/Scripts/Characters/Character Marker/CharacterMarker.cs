@@ -66,7 +66,7 @@ public class CharacterMarker : PooledObject {
 
     //movement
     public IPointOfInterest targetPOI { get; private set; }
-    public POICollisionTrigger collisionTrigger { get; private set; }
+    public CharacterCollisionTrigger collisionTrigger { get; private set; }
     public Vector2 anchoredPos { get; private set; }
     public Vector3 centeredWorldPos { get; private set; }
     public LocationGridTile destinationTile { get; private set; }
@@ -498,6 +498,19 @@ public class CharacterMarker : PooledObject {
         }
         StartMovement();
     }
+    public void GoTo(ITraitable target, Action arrivalAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
+        if (target is IPointOfInterest) {
+            GoTo(target as IPointOfInterest, arrivalAction, notAllowedStructures);
+        } else {
+            pathfindingAI.ClearAllCurrentPathData();
+            pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
+            this.arrivalAction = arrivalAction;
+            this.targetPOI = null;
+            SetTargetTransform(target.worldObject);
+            StartMovement();
+        }
+        
+    }
     public void GoTo(Vector3 destination, Action arrivalAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
         pathfindingAI.ClearAllCurrentPathData();
         pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
@@ -921,7 +934,7 @@ public class CharacterMarker : PooledObject {
     private void CreateCollisionTrigger() {
         GameObject collisionTriggerGO = GameObject.Instantiate(InteriorMapManager.Instance.characterCollisionTriggerPrefab, this.transform);
         collisionTriggerGO.transform.localPosition = Vector3.zero;
-        collisionTrigger = collisionTriggerGO.GetComponent<POICollisionTrigger>();
+        collisionTrigger = collisionTriggerGO.GetComponent<CharacterCollisionTrigger>();
         collisionTrigger.Initialize(character);
     }
     public void AddPOIAsInVisionRange(IPointOfInterest poi) {
@@ -1482,7 +1495,7 @@ public class CharacterMarker : PooledObject {
                 if(hit.collider.gameObject.name == "Structure_Tilemap" || hit.collider.gameObject.name == "Walls_Tilemap") {
                     return false;
                 } else {
-                    POICollisionTrigger collisionTrigger = hit.collider.gameObject.GetComponent<POICollisionTrigger>();
+                    IVisibleCollider collisionTrigger = hit.collider.gameObject.GetComponent<IVisibleCollider>();
                     if (collisionTrigger != null) {
                         if (collisionTrigger.poi == target) {
                             return true;

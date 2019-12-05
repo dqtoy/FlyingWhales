@@ -49,6 +49,10 @@ public class InterventionAbilityTierDictionaryPropertyDrawer : SerializableDicti
 public class CharacterClassAssetDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(LocationStructurePrefabDictionary))]
 public class LocationStructurePrefabDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(WallResourceAssetDictionary))]
+public class WallResourceAssetDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(WallAssetDictionary))]
+public class WallAssetDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 //list storage
 [CustomPropertyDrawer(typeof(LandmarkSpriteListStorage))]

@@ -21,8 +21,9 @@ public class GenericTileObject : TileObject {
             DestroyTileSlots();
         }
     }
+
     public override void OnPlacePOI() {
-        if (areaMapGameObject == null) {
+        if (areaMapVisual == null) {
             InitializeMapObject(this);
         }
         PlaceMapObjectAt(gridTileLocation);
@@ -57,6 +58,23 @@ public class GenericTileObject : TileObject {
     }
     public override string ToString() {
         return "Generic Obj at tile " + gridTileLocation?.ToString();
+    }
+    public override void AdjustHP(int amount, bool triggerDeath = false, object source = null) {
+        if (currentHP == 0 && amount < 0) {
+            return; //hp is already at minimum, do not allow any more negative adjustments
+        }
+        this.currentHP += amount;
+        this.currentHP = Mathf.Clamp(this.currentHP, 0, maxHP);
+        if (currentHP <= 0) {
+            //floor has been destroyed
+            structureLocation.OnTileDestroyed();
+        } else if (amount < 0 && currentHP < maxHP) {
+            //floor has been damaged
+            structureLocation.OnTileDamaged();
+        } else if (currentHP == maxHP) {
+            //floor has been fully repaired
+            structureLocation.OnTileRepaired();
+        }
     }
     #endregion
 

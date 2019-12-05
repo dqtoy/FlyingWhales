@@ -6,8 +6,6 @@ using UnityEngine;
 public class TornadoObject : MonoBehaviour {
 
     [SerializeField] private ParticleSystem[] particles;
-    [SerializeField] private Rigidbody2D rigidBody;
-    [SerializeField] private string targetTileName;
 
 
     [Header("Movement")]
@@ -19,8 +17,9 @@ public class TornadoObject : MonoBehaviour {
     private float journeyLength;
     private Vector3 startPosition;
 
-    private List<IPointOfInterest> poisInTornado;
     private float speed;
+
+    private bool isSpawned;
 
     #region getters/setters
     public LocationGridTile gridTileLocation {
@@ -30,11 +29,6 @@ public class TornadoObject : MonoBehaviour {
         get { return _destinationTile; }
         set {
             _destinationTile = value;
-            if (_destinationTile != null) {
-                targetTileName = _destinationTile.name;
-            } else {
-                targetTileName = string.Empty;
-            }
         }
     }
     #endregion
@@ -44,12 +38,12 @@ public class TornadoObject : MonoBehaviour {
 
     public void Initialize(LocationGridTile location, float size, int durationInTicks) {
         this.transform.localPosition = location.centeredLocalLocation;
-        poisInTornado = new List<IPointOfInterest>();
         areaLocation = location.parentAreaMap.area;
         float scale = size / 10f;
         for (int i = 0; i < particles.Length; i++) {
             particles[i].transform.localScale = new Vector3(scale, scale, scale);
         }
+        isSpawned = true;
         GoToRandomTileInRadius();
         SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(durationInTicks), Expire, this);
         Messenger.AddListener(Signals.TICK_ENDED, PerTick);
@@ -112,12 +106,13 @@ public class TornadoObject : MonoBehaviour {
     #endregion
 
     private void Expire() {
+        isSpawned = false;
         destinationTile = null;
         areaLocation = null;
-        ObjectPoolManager.Instance.DestroyObject(this.gameObject);
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTick);
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
+        ObjectPoolManager.Instance.DestroyObject(this.gameObject);
     }
 
     #region Monobehaviours
@@ -144,48 +139,18 @@ public class TornadoObject : MonoBehaviour {
     }
     #endregion
 
-    #region Triggers
-    public void OnTriggerEnter2D(Collider2D collision) {
-        POICollisionTrigger collidedWith = collision.gameObject.GetComponent<POICollisionTrigger>();
-        if (collidedWith != null) {
-            Debug.Log("Tornado collision enter with " + collidedWith.name);
-            AddPOI(collidedWith.poi);
-        }
-        
-    }
-    public void OnTriggerExit2D(Collider2D collision) {
-        POICollisionTrigger collidedWith = collision.gameObject.GetComponent<POICollisionTrigger>();
-        if (collidedWith != null) {
-            Debug.Log("Tornado collision exit with " + collidedWith.name);
-            RemovePOI(collidedWith.poi);
-        }
-    }
-    #endregion
-
-    #region POI's
-    private void AddPOI(IPointOfInterest poi) {
-        if (!poisInTornado.Contains(poi)) {
-            poisInTornado.Add(poi);
-            OnAddPOIActions(poi);
-        }
-    }
-    private void RemovePOI(IPointOfInterest poi) {
-        if (poisInTornado.Remove(poi)) {
-            
-        }
-    }
-    private void OnAddPOIActions(IPointOfInterest poi) {
-        if (poi is Character) {
-            Character character = poi as Character;
-            character.AdjustHP(-100, true, this);
-        }
-    }
-    #endregion
-
     private void PerTick() {
-        for (int i = 0; i < poisInTornado.Count; i++) {
-            IPointOfInterest poi = poisInTornado[i];
-            poi.AdjustHP(-100, true, this);
+        if (isSpawned == false) {
+            return;
+        }
+        List<LocationGridTile> tiles = gridTileLocation.parentAreaMap.GetTilesInRadius(gridTileLocation, 2, includeCenterTile: true, includeTilesInDifferentStructure: true);
+        for (int i = 0; i < tiles.Count; i++) {
+            LocationGridTile tile = tiles[i];
+            List<IDamageable> damageables = tile.GetDamageablesOnTile();
+            for (int j = 0; j < damageables.Count; j++) {
+                IDamageable damageable = damageables[j];
+                damageable.AdjustHP(-(int)(damageable.maxHP * 0.35f), true, this);
+            }
         }
     }
 

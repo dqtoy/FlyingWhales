@@ -521,6 +521,9 @@ public class InteractionManager : MonoBehaviour {
     public bool CanCharacterTakeBuildJob(Character character) {
         return character.traitContainer.GetNormalTrait("Builder") != null;
     }
+    public bool CanCharacterTakeRepairStructureJob(Character character) {
+        return character.traitContainer.GetNormalTrait("Builder") != null;
+    }
     #endregion
 
     #region Precondition Resolvers

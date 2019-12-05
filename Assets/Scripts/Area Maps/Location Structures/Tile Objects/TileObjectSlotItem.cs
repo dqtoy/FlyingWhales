@@ -41,7 +41,7 @@ public class TileObjectSlotItem : MonoBehaviour {
         UsedPosition();
         user.marker.pathfindingAI.Teleport(this.transform.position);
 
-        if (parentObj is Table && parentObj.areaMapGameObject.usedSprite.name.Contains("bartop")) {
+        if (parentObj is Table && parentObj.areaMapVisual.usedSprite.name.Contains("bartop")) {
             character.marker.Rotate(Quaternion.Euler(0f, 0f, 0f));
         } else {
             user.marker.LookAt(parentObj.gridTileLocation.centeredWorldLocation);

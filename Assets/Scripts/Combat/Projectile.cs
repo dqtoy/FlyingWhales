@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour {
 
-    public Transform target;
+    public Transform targetTransform;
     public Rigidbody2D rigidBody;
     public float rotateSpeed = 200f;
     public float speed = 5f;
 
-    public IPointOfInterest targetPOI { get; private set; }
+    public IDamageable targetObject { get; private set; }
 
-    public System.Action<IPointOfInterest, CombatState> onHitAction;
+    public System.Action<IDamageable, CombatState> onHitAction;
 
     private Vector3 _pausedVelocity;
     private float _pausedAngularVelocity;
@@ -27,20 +27,20 @@ public class Projectile : MonoBehaviour {
     }
     #endregion
 
-    public void SetTarget(Transform target, IPointOfInterest targetPOI, CombatState createdBy) {
+    public void SetTarget(Transform target, IDamageable targetObject, CombatState createdBy) {
         Vector3 diff = target.position - transform.position;
         diff.Normalize();
         float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
-        this.target = target;
-        this.targetPOI = targetPOI;
+        this.targetTransform = target;
+        this.targetObject = targetObject;
         this.createdBy = createdBy;
-        if (targetPOI is Character) {
+        if (targetObject is Character) {
             Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
             Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        } else if (targetPOI is TileObject) {
+        } else if (targetObject is TileObject) {
             Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
-        } else if (targetPOI is SpecialToken) {
+        } else if (targetObject is SpecialToken) {
             Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         }
 
@@ -48,20 +48,20 @@ public class Projectile : MonoBehaviour {
     }
 
     private void FixedUpdate() {
-        if (target == null) {
+        if (targetTransform == null) {
             return;
         }
         if (GameManager.Instance.isPaused) {
             return;
         }
-        Vector2 direction = (Vector2)target.position - rigidBody.position;
+        Vector2 direction = (Vector2)targetTransform.position - rigidBody.position;
         direction.Normalize();
         float rotateAmount = Vector3.Cross(direction, transform.up).z;
         rigidBody.angularVelocity = -rotateAmount * rotateSpeed;
         rigidBody.velocity = transform.up * speed;
     }
 
-    public void OnProjectileHit(IPointOfInterest poi) {
+    public void OnProjectileHit(IDamageable poi) {
         //Debug.Log("Hit character " + character?.name);
         onHitAction?.Invoke(poi, createdBy);
         DestroyProjectile();
@@ -86,24 +86,24 @@ public class Projectile : MonoBehaviour {
         }
     }
     private void OnCharacterAreaTravelling(Party party) {
-        if (targetPOI is Character) {
-            if (party.owner == targetPOI || party.carriedPOI == targetPOI) { //party.characters.Contains(targetPOI as Character)
+        if (targetObject is Character) {
+            if (party.owner == targetObject || party.carriedPOI == targetObject) { //party.characters.Contains(targetPOI as Character)
                 DestroyProjectile();
             }
         }
     }
     private void OnCharacterDied(Character character) {
-        if (character == targetPOI) {
+        if (character == targetObject) {
             DestroyProjectile();
         }
     }
     private void OnTileObjectRemoved(TileObject obj, Character removedBy, LocationGridTile removedFrom) {
-        if (obj == targetPOI) {
+        if (obj == targetObject) {
             DestroyProjectile();
         }
     }
     private void OnItemRemovedFromTile(SpecialToken item, LocationGridTile removedFrom) {
-        if (item == targetPOI) {
+        if (item == targetObject) {
             DestroyProjectile();
         }
     }

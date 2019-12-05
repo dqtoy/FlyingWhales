@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Traits {
     public class Burning : Trait {
 
-        public IPointOfInterest owner { get; private set; }
+        public ITraitable owner { get; private set; }
         public override bool isPersistent { get { return true; } }
         private GameObject burningEffect;
 
@@ -23,31 +23,18 @@ namespace Traits {
 
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
-            if (addedTo is LocationGridTile) {
-                LocationGridTile tile = addedTo as LocationGridTile;
-                burningEffect = GameManager.Instance.CreateBurningEffectAt(tile);
-                if (tile.genericTileObject == null) {
-                    throw new System.Exception("Generic Tile Object of " + tile.ToString() + " is null!");
-                }
-                owner = tile.genericTileObject;
-            } else if (addedTo is IPointOfInterest) {
-                owner = addedTo as IPointOfInterest;
-                if (addedTo is TileObject) {
-                    TileObject obj = addedTo as TileObject;
-                    burningEffect = GameManager.Instance.CreateBurningEffectAt(obj);
-                    obj.SetPOIState(POI_STATE.INACTIVE);
-                } else if (addedTo is SpecialToken) {
-                    SpecialToken token = addedTo as SpecialToken;
-                    burningEffect = GameManager.Instance.CreateBurningEffectAt(token);
-                    token.SetPOIState(POI_STATE.INACTIVE);
-                } else if (addedTo is Character) {
+            owner = addedTo;
+            burningEffect = GameManager.Instance.CreateBurningEffectAt(addedTo);
+            if (addedTo is IPointOfInterest) {
+                if (addedTo is Character) {
                     Character character = addedTo as Character;
-                    burningEffect = GameManager.Instance.CreateBurningEffectAt(character);
                     character.AdjustDoNotRecoverHP(1);
                     CreateJobsOnEnterVisionBasedOnTrait(character, character);
+                } else {
+                    IPointOfInterest obj = addedTo as IPointOfInterest;
+                    obj.SetPOIState(POI_STATE.INACTIVE);
                 }
             }
-
             if (sourceOfBurning != null && !sourceOfBurning.objectsOnFire.Contains(owner)) {
                 SetSourceOfBurning(sourceOfBurning, owner);
             }
@@ -85,7 +72,7 @@ namespace Traits {
                         }
                         //It will trigger one of the following:
                         if (!characterThatWillDoJob.marker.hasFleePath && characterThatWillDoJob.traitContainer.GetNormalTrait("Catatonic") == null) { //if not already fleeing or catatonic
-                                                                                                                                        //50% gain Shellshocked and Flee from fire. Log "[Actor Name] saw a fire and fled from it."
+                            //50% gain Shellshocked and Flee from fire. Log "[Actor Name] saw a fire and fled from it."
                             if (UnityEngine.Random.Range(0, 100) < 50) {
                                 pyrophobic.BeShellshocked(sourceOfBurning, characterThatWillDoJob);
                             }
@@ -197,39 +184,16 @@ namespace Traits {
             }
         }
         private void PerTick() {
-            //Burning characters reduce their current hp by 2% of maxhp every tick. 
-            //They also have a 6% chance to remove Burning effect but will not gain a Burnt trait afterwards. 
-            //If a character dies and becomes a corpse, it may still continue to burn.
-            if (owner is Character) {
-                Character character = owner as Character;
-                if (!character.isDead) {
-                    character.AdjustHP(-(int)(character.maxHP * 0.02f), true, this);
-                }
-                if (Random.Range(0, 100) < 6) {
-                    owner.traitContainer.RemoveTrait(owner, this);
-                }
-            } else {
-                //Every tick, a Burning tile or object also has a 3% chance to remove Burning effect. 
-                //Afterwards, it will have a Burnt trait, which disables its Flammable trait (meaning it can no longer gain a Burning status).
-                if (!(owner is GenericTileObject)) {
-                    owner.AdjustHP(-(int)(owner.maxHP * 0.02f), true, this);
-                }
-                if (owner.gridTileLocation != null && Random.Range(0, 100) < 3) {
-                    owner.traitContainer.RemoveTrait(owner, this);
-                    owner.traitContainer.AddTrait(owner, "Burnt");
-                    return; //do not execute other effecs.
-                }
-            }
 
             //Every tick, a Burning tile, object or character has a 15% chance to spread to an adjacent flammable tile, flammable character, 
             //flammable object or the object in the same tile. 
-            if (Random.Range(0, 100) < 15) {
+            if (Random.Range(0, 100) < 5) {
                 List<ITraitable> choices = new List<ITraitable>();
                 LocationGridTile origin = owner.gridTileLocation;
-                choices.AddRange(origin.GetAllDestructibleObjectsOnTileWithTrait("Flammable"));
+                choices.AddRange(origin.GetTraitablesOnTileWithTrait("Flammable"));
                 List<LocationGridTile> neighbours = origin.FourNeighbours();
                 for (int i = 0; i < neighbours.Count; i++) {
-                    choices.AddRange(neighbours[i].GetAllDestructibleObjectsOnTileWithTrait("Flammable"));
+                    choices.AddRange(neighbours[i].GetTraitablesOnTileWithTrait("Flammable"));
                 }
                 choices = choices.Where(x => x.traitContainer.GetNormalTrait("Burning", "Burnt", "Wet", "Fireproof") == null).ToList();
                 if (choices.Count > 0) {
@@ -238,6 +202,29 @@ namespace Traits {
                     burning.SetSourceOfBurning(sourceOfBurning, chosen);
                     chosen.traitContainer.AddTrait(chosen, burning);
                 }
+            }
+
+            owner.AdjustHP(-(int)(owner.maxHP * 0.02f), true, this);
+            if (owner is Character) {
+                //Burning characters reduce their current hp by 2% of maxhp every tick. 
+                //They also have a 6% chance to remove Burning effect but will not gain a Burnt trait afterwards. 
+                //If a character dies and becomes a corpse, it may still continue to burn.
+                if (Random.Range(0, 100) < 6) {
+                    owner.traitContainer.RemoveTrait(owner, this);
+                }
+            } else {
+                if (owner.currentHP == 0) {
+                    owner.traitContainer.RemoveTrait(owner, this);
+                    owner.traitContainer.AddTrait(owner, "Burnt");
+                } else {
+                    //Every tick, a Burning tile or object also has a 3% chance to remove Burning effect. 
+                    //Afterwards, it will have a Burnt trait, which disables its Flammable trait (meaning it can no longer gain a Burning status).
+                    if (Random.Range(0, 100) < 3) {
+                        owner.traitContainer.RemoveTrait(owner, this);
+                        owner.traitContainer.AddTrait(owner, "Burnt");
+                    }
+                }
+                
             }
         }
 

@@ -62,9 +62,6 @@ public class BuildSpotTileObject : TileObject {
         } else {
             Debug.LogWarning($"Could not find a prefab for structure {structureType.ToString()} on build spot {spot.ToString()}");
         }
-        
-        //structure.SetStructureObject(structureObject);
-        //structureObject.OnStructureObjectPlaced();
     }
 
     public LocationStructure BuildBlueprint() {
@@ -81,6 +78,8 @@ public class BuildSpotTileObject : TileObject {
         spot.blueprint.PlacePreplacedObjectsAsBlueprints(structure, gridTileLocation.parentAreaMap);
         spot.blueprint.OnStructureObjectPlaced(gridTileLocation.parentAreaMap, structure);
         spot.ClearBlueprints();
+
+        structure.SetOccupiedBuildSpot(this);
 
         return structure;
         

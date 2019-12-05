@@ -22,7 +22,7 @@ public class Explosion : PlayerJobAction {
         List<LocationGridTile> tiles = targetTile.parentAreaMap.GetTilesInRadius(targetTile, radius, 0, true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
-            flammables.AddRange(tile.GetAllDestructibleObjectsOnTileWithTrait("Flammable"));
+            flammables.AddRange(tile.GetTraitablesOnTileWithTrait("Flammable"));
         }
         flammables = flammables.Where(x => x.traitContainer.GetNormalTrait("Burning", "Burnt", "Wet", "Fireproof") == null).ToList();
         BurningSource bs = new BurningSource(targetTile.parentAreaMap.area);

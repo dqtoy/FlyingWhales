@@ -4,21 +4,18 @@ using UnityEngine;
 using Traits;
 
 public interface IPointOfInterest : ITraitable {
-
+    new string name { get; }
     int id { get; } //Be careful with how you handle this since this can duplicate depending on its poiType
     POINT_OF_INTEREST_TYPE poiType { get; }
     POI_STATE state { get; }
     Area specificLocation { get; }
-    LocationGridTile gridTileLocation { get; }
+    new LocationGridTile gridTileLocation { get; }
     List<INTERACTION_TYPE> advertisedActions { get; }
     List<JobQueueItem> allJobsTargettingThis { get; }
     Faction factionOwner { get; }
     bool isDisabledByPlayer { get; }
-    int maxHP { get; }
-    int currentHP { get; }
     Vector3 worldPosition { get; }
     bool isDead { get; }
-    ProjectileReceiver projectileReciever { get; }
     void SetGridTileLocation(LocationGridTile tile);
     void AddAdvertisedAction(INTERACTION_TYPE actionType);
     void RemoveAdvertisedAction(INTERACTION_TYPE actionType);
@@ -31,8 +28,6 @@ public interface IPointOfInterest : ITraitable {
     LocationGridTile GetNearestUnoccupiedTileFromThis();
     GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost);
     bool CanAdvertiseActionToActor(Character actor, GoapAction action, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost);
-    void AdjustHP(int amount, bool triggerDeath = false, object source = null);
-    void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary);
     bool IsValidCombatTarget();
     void OnPlacePOI();
     void OnDestroyPOI();
