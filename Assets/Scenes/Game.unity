@@ -81249,7 +81249,7 @@ MonoBehaviour:
         - activeTile: {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
           inactiveTile: {fileID: 0}
   wallResourceAssets:
-    m_keys: 0100000002000000
+    m_keys: 010000000200000003000000
     m_values:
     - wallAssets:
         m_keys:
@@ -81275,6 +81275,18 @@ MonoBehaviour:
           undamaged: {fileID: 21300000, guid: 0818c7b5e1bcc58428dcec02d83c1750, type: 3}
         - damaged: {fileID: 21300000, guid: e043d61ae7e287e499fcc70d473269c1, type: 3}
           undamaged: {fileID: 21300000, guid: b5761337a77ed174c84274ccb2d26535, type: 3}
+    - wallAssets:
+        m_keys:
+        - vertical_1
+        - horizontal_1
+        - corner_1
+        m_values:
+        - damaged: {fileID: 21300000, guid: f65b842f0c897ce4086fd329d6cf8369, type: 3}
+          undamaged: {fileID: 21300000, guid: db879b28f1a2d814fa15c191afa0fa53, type: 3}
+        - damaged: {fileID: 21300000, guid: 57fc4959e73f2be439586231a532aeca, type: 3}
+          undamaged: {fileID: 21300000, guid: dc30e0e162d93854db99983f2914be7b, type: 3}
+        - damaged: {fileID: 21300000, guid: 2d4a8e3bf9824d7459df6adbdc9e7446, type: 3}
+          undamaged: {fileID: 21300000, guid: a9160550daf18ea40a1a164c35502248, type: 3}
   allTileAssets:
   - {fileID: 11400000, guid: 0aea801102e59e348ab2bb7724ad9da6, type: 2}
   - {fileID: 11400000, guid: ab12e88eb7994f141842ccf32417172c, type: 2}

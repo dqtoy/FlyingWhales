@@ -35,6 +35,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: c4d2540034623a6489f39b6d2ccc421b, type: 3}
   - {fileID: 21300000, guid: 52361f104f8be4a4ea181dbfc14fecdd, type: 3}
   - {fileID: 21300000, guid: 4b131730eb05bb44c9782bfe8a99f06d, type: 3}
+  - {fileID: 21300000, guid: a9160550daf18ea40a1a164c35502248, type: 3}
   - {fileID: 21300000, guid: 6e2a2460d8dc9444087020003b5b50f7, type: 3}
   - {fileID: 21300000, guid: 62bdb5601a163dd46808f7f81b62a984, type: 3}
   - {fileID: 21300000, guid: 58a5576055dde95498c878f2b0aba27f, type: 3}
@@ -65,6 +66,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: a8409da1cfb8eec4c86e6259651c3262, type: 3}
   - {fileID: 21300000, guid: 0344b0b1eb67c9642b641429694f6025, type: 3}
   - {fileID: 21300000, guid: b1495ac1579e6c041a8f9bcfd014c6cf, type: 3}
+  - {fileID: 21300000, guid: dc30e0e162d93854db99983f2914be7b, type: 3}
   - {fileID: 21300000, guid: faf88fe157e6b274095fe1c97e56a706, type: 3}
   - {fileID: 21300000, guid: 8b6793f1e99ffb247aa2adf8bd2b9807, type: 3}
   - {fileID: 21300000, guid: da448402c93477e43af355d647b7e607, type: 3}
@@ -236,6 +238,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 6d7df8d7a4577234a911a1b17e8b0773, type: 3}
   - {fileID: 21300000, guid: 6dba6dd726ad4cf4899bcf6f5a2ef09a, type: 3}
   - {fileID: 21300000, guid: 72a1eb18646efa64f9c1d8bf2a859f90, type: 3}
+  - {fileID: 21300000, guid: db879b28f1a2d814fa15c191afa0fa53, type: 3}
   - {fileID: 21300000, guid: 6715003821868bb40a4e286c453778d5, type: 3}
   - {fileID: 21300000, guid: 3e450938b85ae154ba26d1d712a0de2d, type: 3}
   - {fileID: 21300000, guid: 3ae05e38a27cf6649bff4837de03ed84, type: 3}
@@ -262,6 +265,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: fe44eb493c3bcf5469fa584116794486, type: 3}
   - {fileID: 21300000, guid: cb749159d0b308045aa0f6f8fc65e779, type: 3}
   - {fileID: 21300000, guid: 9e1774593506f6847b083b3d76db8768, type: 3}
+  - {fileID: 21300000, guid: 57fc4959e73f2be439586231a532aeca, type: 3}
   - {fileID: 21300000, guid: b826fa597d3a712419ec98bb28518ef0, type: 3}
   - {fileID: 21300000, guid: fa615c59373f6de439c570d9cb9d8dc4, type: 3}
   - {fileID: 21300000, guid: 4aae22799ddcf37429e6268d9f13e95b, type: 3}
@@ -309,6 +313,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 4b7142ead174e9341bc69017d2cb815c, type: 3}
   - {fileID: 21300000, guid: fbdf443ba2b2b6b48984cb614f9d6297, type: 3}
   - {fileID: 21300000, guid: 03ddf53b6351efe4ca05ed2590881383, type: 3}
+  - {fileID: 21300000, guid: 2d4a8e3bf9824d7459df6adbdc9e7446, type: 3}
   - {fileID: 21300000, guid: da282d4b3382ab94abbd6ab4c9d1defb, type: 3}
   - {fileID: 21300000, guid: 1d4c825b7e27475458e36989cf618aef, type: 3}
   - {fileID: 21300000, guid: 33cf6e5bea4751c4ca860912d52e1ee2, type: 3}
@@ -402,6 +407,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 3c153beeb29c1854db47e9bf536f443b, type: 3}
   - {fileID: 21300000, guid: 99d0b1fe44fb06140a363f47ebd6c47d, type: 3}
   - {fileID: 21300000, guid: 85ba5ffebaddc6340b23ac01f681b234, type: 3}
+  - {fileID: 21300000, guid: f65b842f0c897ce4086fd329d6cf8369, type: 3}
   - {fileID: 21300000, guid: 4063392f9ace263439214fbf01821fbc, type: 3}
   - {fileID: 21300000, guid: 2014ba3f4c03fd04ea1484a4c6bc602c, type: 3}
   - {fileID: 21300000, guid: f4d1837f151599448a160024ffc0e04f, type: 3}
@@ -418,6 +424,7 @@ SpriteAtlas:
   - well02
   - wall1010-00 - Copy
   - caveWallA-1010-05
+  - corner_1
   - shore01111100-00
   - statueWall00
   - shore01110101-00
@@ -448,6 +455,7 @@ SpriteAtlas:
   - snow_h00
   - stone_h01
   - caveWallA-0101-05
+  - horizontal_1
   - stains01
   - wall0101-01
   - wallA-0101-00
@@ -619,6 +627,7 @@ SpriteAtlas:
   - caveWallA-0110-01
   - character_clicked
   - barrel00
+  - vertical_1
   - wall0101-00-bottom
   - debrisBones00
   - crates02
@@ -645,6 +654,7 @@ SpriteAtlas:
   - tableDecor00
   - shore00011111-00
   - snow_v01
+  - horizontal_1
   - wall0101-door00
   - shore01110001-00
   - necronomicon_open
@@ -692,6 +702,7 @@ SpriteAtlas:
   - floorRuins00
   - femaleAvatar
   - shore01111111-00
+  - corner_1
   - caveWallA-1110-02 - Copy
   - bartop_right_empty
   - Tornado
@@ -785,6 +796,7 @@ SpriteAtlas:
   - wall1101-00
   - well
   - event_button_hover
+  - vertical_1
   - debrisRocks01
   - caveWallA-1110-00
   - caveWallA-1010-04
