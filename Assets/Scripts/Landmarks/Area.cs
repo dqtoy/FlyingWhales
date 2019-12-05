@@ -754,7 +754,7 @@ public class Area : IJobOwner {
             LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][0];
             int oreCount = 4;
             for (int i = 0; i < oreCount; i++) {
-                List<LocationGridTile> validTiles = structure.unoccupiedTiles.Where(x => x.IsAdjacentToPasssableTiles(3)).ToList();
+                List<LocationGridTile> validTiles = structure.unoccupiedTiles.ToList();
                 if (validTiles.Count > 0) {
                     LocationGridTile chosenTile = validTiles[UnityEngine.Random.Range(0, validTiles.Count)];
                     structure.AddPOI(new Ore(), chosenTile);
@@ -799,7 +799,7 @@ public class Area : IJobOwner {
             int ediblePlantsCount = 6;
 
             for (int i = 0; i < smallAnimalCount; i++) {
-                List<LocationGridTile> validTiles = structure.unoccupiedTiles.Where(x => x.IsAdjacentToPasssableTiles(3)).ToList();
+                List<LocationGridTile> validTiles = structure.unoccupiedTiles.ToList();
                 if (validTiles.Count > 0) {
                     LocationGridTile chosenTile = validTiles[UnityEngine.Random.Range(0, validTiles.Count)];
                     structure.AddPOI(new SmallAnimal(), chosenTile);
@@ -809,7 +809,7 @@ public class Area : IJobOwner {
             }
 
             for (int i = 0; i < ediblePlantsCount; i++) {
-                List<LocationGridTile> validTiles = structure.unoccupiedTiles.Where(x => x.IsAdjacentToPasssableTiles(3)).ToList();
+                List<LocationGridTile> validTiles = structure.unoccupiedTiles.ToList();
                 if (validTiles.Count > 0) {
                     LocationGridTile chosenTile = validTiles[UnityEngine.Random.Range(0, validTiles.Count)];
                     structure.AddPOI(new EdiblePlant(), chosenTile);

@@ -42,6 +42,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 049def90b7d485943b439bb2c774a025, type: 3}
   - {fileID: 21300000, guid: 26a960b077921124b9e61433b11d623d, type: 3}
   - {fileID: 21300000, guid: 8fd312c0b85c41e469fd69c58ab0652f, type: 3}
+  - {fileID: 21300000, guid: 7d54a9c0e1a5fec49a32e0fa61f0f3a2, type: 3}
   - {fileID: 21300000, guid: 1fbda9d0786a8e04caafa19bd1606c66, type: 3}
   - {fileID: 21300000, guid: 89966dd0fee7fab4abe474ffa1727756, type: 3}
   - {fileID: 21300000, guid: 63d253e0c6b317d4395379a46b5ad2f2, type: 3}
@@ -50,6 +51,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 9d1349113684fd348ab6dd814eaf5ae4, type: 3}
   - {fileID: 21300000, guid: 9e5a5121dd7f87b4588732fd1023f379, type: 3}
   - {fileID: 21300000, guid: 853896217a4c5284fb22d2a86424455e, type: 3}
+  - {fileID: 21300000, guid: 62e32331efd4f9f4caf4940e35eb18a6, type: 3}
   - {fileID: 21300000, guid: 2c62e84120580274a82d38c10c5d3c10, type: 3}
   - {fileID: 21300000, guid: b28beb5196942b34984bb238cb6e4bf6, type: 3}
   - {fileID: 21300000, guid: 11103371ec1406a4d890082ae331e6ac, type: 3}
@@ -72,6 +74,8 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 01c20cb296d250d448114309f0a42d5d, type: 3}
   - {fileID: 21300000, guid: 66e430c20799c3848917240b6ef2dd7c, type: 3}
   - {fileID: 21300000, guid: 8fc6c8c25a38f11409c86fb32bdb77fb, type: 3}
+  - {fileID: 21300000, guid: eabb72e2175d03445ba4d172329f8182, type: 3}
+  - {fileID: 21300000, guid: 92eb0be28e661c942a66388373f757ef, type: 3}
   - {fileID: 21300000, guid: b33478330d7d21b43a301e404f23c462, type: 3}
   - {fileID: 21300000, guid: 55bb6f63a3ebd304f92d283de70a4c00, type: 3}
   - {fileID: 21300000, guid: cc73a0831f7d58744ab50c9a69e06a2e, type: 3}
@@ -98,6 +102,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 860532f412f5a6145999cebb832fe57a, type: 3}
   - {fileID: 21300000, guid: e32359f40cb114d4f9bc3d0d10e0fdc0, type: 3}
   - {fileID: 21300000, guid: 234e6925ebef61f49b0f4cd54e1b3959, type: 3}
+  - {fileID: 21300000, guid: 21802235ff0a602429196707da27d26d, type: 3}
   - {fileID: 21300000, guid: bdd65f353669e3b499809ce1890c1fc9, type: 3}
   - {fileID: 21300000, guid: 7828e545f69833d49a9b79ab03928852, type: 3}
   - {fileID: 21300000, guid: 87ee9e45287a3f04eaea062f53833f5a, type: 3}
@@ -112,6 +117,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 285a7d164ae2c8b4d99da56cf0121ca0, type: 3}
   - {fileID: 21300000, guid: 85a0cd260bc3a304ea9c12fa4c06c78e, type: 3}
   - {fileID: 21300000, guid: 2c7c653655e480e4c9c5f90f34576d0b, type: 3}
+  - {fileID: 21300000, guid: e0010266e8331b544a6909157482f712, type: 3}
   - {fileID: 21300000, guid: a41a24867a6731e4f9bf372de50136f4, type: 3}
   - {fileID: 21300000, guid: 65cd2e8691df5aa408946fb5b873bdd3, type: 3}
   - {fileID: 21300000, guid: 8b326c962728b624abba32e9ef63bc02, type: 3}
@@ -133,6 +139,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 11c57538a3ffecc49ad821485e450088, type: 3}
   - {fileID: 21300000, guid: 1b9c2e3866c9dcc46ba88340a11eb721, type: 3}
   - {fileID: 21300000, guid: a24a4c482448a1643894757785ced446, type: 3}
+  - {fileID: 21300000, guid: 60b9c85866b04ef45a003ba02d9f0185, type: 3}
   - {fileID: 21300000, guid: bc0fdc68227150c488e1d5988e09871d, type: 3}
   - {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
   - {fileID: 21300000, guid: 1e0fdd988149ee240884a34af7089f94, type: 3}
@@ -146,12 +153,14 @@ SpriteAtlas:
   - {fileID: 21300000, guid: ab7ea309573094a46aefe91b9d263e85, type: 3}
   - {fileID: 21300000, guid: a35ec4294aacc5d45a5062db0a45d55d, type: 3}
   - {fileID: 21300000, guid: 5cb4b5297a08e8740bc9e39b9aab3675, type: 3}
+  - {fileID: 21300000, guid: cc192639c4c27fa4d9cbe9f90801d4aa, type: 3}
   - {fileID: 21300000, guid: 9217873999dba6b48a82477ab29489a7, type: 3}
   - {fileID: 21300000, guid: 671a2939fda30b34898a8299cebcfcd7, type: 3}
   - {fileID: 21300000, guid: 31fa4a49ce63af346a03d8c8de46adb2, type: 3}
   - {fileID: 21300000, guid: ef7eab49213b7c84187862ee7fea26af, type: 3}
   - {fileID: 21300000, guid: f507075921d82e440bf0ea67cd7b95b4, type: 3}
   - {fileID: 21300000, guid: 3f6795696539fd94fb404d417796b014, type: 3}
+  - {fileID: 21300000, guid: e5c5ed69ba827ca4a817571c30021e1a, type: 3}
   - {fileID: 21300000, guid: a5b8617980b353148baf297aca6066c9, type: 3}
   - {fileID: 21300000, guid: 2493e979cf333fa4ca27056f39bdc05d, type: 3}
   - {fileID: 21300000, guid: 97be908950d991c49b0092d3a14acceb, type: 3}
@@ -170,6 +179,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: b3f01d3a455768649a5f7fc35215220c, type: 3}
   - {fileID: 21300000, guid: 39d5be4ad33cb634c844f7a7136f2cc8, type: 3}
   - {fileID: 21300000, guid: a0187f6a258dc2e4abcfa7f679c52497, type: 3}
+  - {fileID: 21300000, guid: 22ba5a8aee59f304099310af3231dbde, type: 3}
   - {fileID: 21300000, guid: 6b1f2c8a016859143b61f1cb6005250e, type: 3}
   - {fileID: 21300000, guid: a604559ae21e21d4587f9b3832399931, type: 3}
   - {fileID: 21300000, guid: 42bed2aaba83cdc46b35711933357a81, type: 3}
@@ -203,6 +213,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: d3a2e2ddb49d1d944b77269b7348f9d4, type: 3}
   - {fileID: 21300000, guid: 30d1610ec4c70c449a8963e6ae699add, type: 3}
   - {fileID: 21300000, guid: 9f89551edef6d6743a2486dea9f60a21, type: 3}
+  - {fileID: 21300000, guid: 38b6324e2d87c4f43b715ebe2c513aef, type: 3}
   - {fileID: 21300000, guid: 6b15ab4e0c664d94f906a2b783906619, type: 3}
   - {fileID: 21300000, guid: f0bb285e50b7c2e4ba3d8b9df4663978, type: 3}
   - {fileID: 21300000, guid: 98dbae7ea4933304e99ce222fa122a1c, type: 3}
@@ -217,10 +228,12 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 455f303fb578b4841ae48fd16107beb2, type: 3}
   - {fileID: 21300000, guid: 687c0e4ffac0706448de1f0b5176972e, type: 3}
   - {fileID: 21300000, guid: efd39a7f54e2d2341991f315c1a04cd6, type: 3}
+  - {fileID: 21300000, guid: 8192909faf03b5a4b99b97fa6ca4e988, type: 3}
   - {fileID: 21300000, guid: a91e30af2a6b66f46b5761c31f4735b8, type: 3}
   - {fileID: 21300000, guid: 910b40bfb3081b149a0638b507b0eb88, type: 3}
   - {fileID: 21300000, guid: dce980df86557994483727bab006f16d, type: 3}
   - {fileID: 21300000, guid: e51888dfb7058024aa3d4cc54418c6cd, type: 3}
+  - {fileID: 21300000, guid: d80c2fdf85dd0e14fa50b1813e017f26, type: 3}
   - {fileID: 21300000, guid: 19d390ff61693604a87ef5891fc0c5d8, type: 3}
   - {fileID: 21300000, guid: 0856d6ffc6ee4d74fa139ea6dd68bf9a, type: 3}
   - {fileID: 21300000, guid: 99997bff53b6d7042a70307d331e1d3f, type: 3}
@@ -236,6 +249,7 @@ SpriteAtlas:
   - ice_pit_00051
   - mountains_green2_cave
   - portal_00122
+  - Rear Finger_00000
   - giant_skeleton_left
   - human_item_shop
   - monster_lair
@@ -244,6 +258,7 @@ SpriteAtlas:
   - human_mine_gold_colour
   - ice_pit_00066
   - ice_pit_00005
+  - Rear Finger_00006
   - monster lair_00010
   - ice_pit_00065
   - monster lair_00012
@@ -266,6 +281,8 @@ SpriteAtlas:
   - ice_pit_00080
   - elven_capitol_colour
   - ice_pit_00056
+  - Rear Finger_00008
+  - Rear Finger_00010
   - monster lair_00011
   - ice_pit_00003
   - ice_pit_00021
@@ -292,6 +309,7 @@ SpriteAtlas:
   - ice_pit_00087
   - portal_00120
   - the_needle
+  - Rear Finger_00012
   - ice_pit_00032
   - human_item_shop_colour
   - portal_00125
@@ -306,6 +324,7 @@ SpriteAtlas:
   - ice_pit_00085
   - elven_town2_colour
   - portal_00118
+  - Rear Finger_00002
   - mountains_green3_cave
   - abandoned_mine
   - elven_capitol_base
@@ -327,6 +346,7 @@ SpriteAtlas:
   - ice_pit_00070
   - pyramid_jungle
   - ice_pit_00004
+  - Rear Finger_00003
   - the_kennel
   - catacombs_snow
   - ice_pit_00018
@@ -340,12 +360,14 @@ SpriteAtlas:
   - elven_town1_colour
   - elven_garrison
   - ice_pit_00024
+  - Rear Finger_00001
   - ice_pit_00042
   - mountains_desert1_cave
   - the_pit
   - ice_pit_00068
   - ice_pit_00047
   - ice_pit_00045
+  - Rear Finger_00011
   - portal_00111
   - ice_pit_00020
   - human_garrison
@@ -364,6 +386,7 @@ SpriteAtlas:
   - ice_pit_00088
   - ice_pit_00030
   - ice_pit_00033
+  - Rear Finger_00005
   - human_mine_gold
   - ice_pit_00073
   - ice_pit_00034
@@ -397,6 +420,7 @@ SpriteAtlas:
   - ice_pit_00041
   - ice_pit_00061
   - elven_town3_colour
+  - Rear Finger_00007
   - human_town1
   - mountains_snow1_cave
   - mountains_green1_cave
@@ -411,10 +435,12 @@ SpriteAtlas:
   - human_farm_colour
   - ice_pit_00071
   - ice_pit_00010
+  - Rear Finger_00009
   - ice_pit_00008
   - ice_pit_00037
   - mountains_desert2_cave
   - demon_portal
+  - Rear Finger_00004
   - ice_pit_00059
   - monster lair_00003
   - human_tavern

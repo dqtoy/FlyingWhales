@@ -14,6 +14,7 @@ public class GenericTileObject : TileObject {
         advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(data);
     }
+
     #region Override
     protected override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom) {
         Messenger.Broadcast(Signals.TILE_OBJECT_REMOVED, this as TileObject, removedBy, removedFrom);
@@ -21,7 +22,6 @@ public class GenericTileObject : TileObject {
             DestroyTileSlots();
         }
     }
-
     public override void OnPlacePOI() {
         if (areaMapVisual == null) {
             InitializeMapObject(this);
@@ -69,12 +69,14 @@ public class GenericTileObject : TileObject {
         if (currentHP <= 0) {
             //floor has been destroyed
             structureLocation.OnTileDestroyed();
+            gridTileLocation.RevertToPreviousGroundVisual();
         } else if (amount < 0 && currentHP < maxHP) {
             //floor has been damaged
             structureLocation.OnTileDamaged();
         } else if (currentHP == maxHP) {
             //floor has been fully repaired
             structureLocation.OnTileRepaired();
+            gridTileLocation.RevertToPreviousGroundVisual();
         }
     }
     #endregion
@@ -97,15 +99,5 @@ public class GenericTileObject : TileObject {
         OnPlacePOI();
         DisableGameObject();
         RemoveCommonAdvertisments();
-
-        //switch (gridTileLocation.groundType) {
-        //    case LocationGridTile.Ground_Type.Grass:
-        //    case LocationGridTile.Ground_Type.Wood:
-        //            traitContainer.AddTrait(this, "Flammable");
-        //        break;
-        //    default:
-        //        traitContainer.RemoveTrait(this, "Flammable");
-        //        break;
-        //}
     }
 }

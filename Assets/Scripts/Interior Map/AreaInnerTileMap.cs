@@ -88,7 +88,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     public Tilemap southEdgeTilemap;
     public Tilemap westEdgeTilemap;
     public Tilemap eastEdgeTilemap;
-    [SerializeField] private SeamlessEdgeAssetsDictionary edgeAssets; //0-north, 1-south, 2-west, 3-east
+    public SeamlessEdgeAssetsDictionary edgeAssets; //0-north, 1-south, 2-west, 3-east
 
     [Header("For Testing")]
     [SerializeField] private LineRenderer pathLineRenderer;
@@ -559,7 +559,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                     if (currTile.groundType == LocationGridTile.Ground_Type.Grass || currTile.groundType == LocationGridTile.Ground_Type.Snow) {
                         List<LocationGridTile> overlappedTiles = GetTiles(new Point(2, 2), currTile, tiles);
                         int invalidOverlap = overlappedTiles.Where(t => t.hasDetail || !tiles.Contains(t) || t.objHere != null).Count();
-                        if (currTile.IsAdjacentToPasssableTiles(3) && !currTile.IsAtEdgeOfMap() 
+                        if (!currTile.IsAtEdgeOfMap() 
                             && !currTile.HasNeighborAtEdgeOfMap() && invalidOverlap == 0 
                             && overlappedTiles.Count == 4 && Random.Range(0, 100) < 5) {
                             //big tree
@@ -586,19 +586,17 @@ public class AreaInnerTileMap : MonoBehaviour {
                                 }
                             } else {
                                 //Crates, Barrels, Ore, Stone and Tree tiles should be impassable. They should all be placed in spots adjacent to at least three passable tiles.
-                                if (currTile.IsAdjacentToPasssableTiles(3) && !currTile.WillMakeNeighboursPassableTileInvalid(3)) {
-                                    if (currTile.structure != null) {
-                                        currTile.structure.AddPOI(new TreeObject(), currTile);
-                                    } else {
-                                        //this is for details on tiles on the border.
-                                        //normal tree
-                                        currTile.hasDetail = true;
-                                        detailsTilemap.SetTile(currTile.localPlace, GetTreeTile(area));
-                                        currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
-                                        Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Vector3.one);
-                                        detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
-                                        detailsTilemap.SetTransformMatrix(currTile.localPlace, m);
-                                    }
+                                if (currTile.structure != null) {
+                                    currTile.structure.AddPOI(new TreeObject(), currTile);
+                                } else {
+                                    //this is for details on tiles on the border.
+                                    //normal tree
+                                    currTile.hasDetail = true;
+                                    detailsTilemap.SetTile(currTile.localPlace, GetTreeTile(area));
+                                    currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                                    Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Vector3.one);
+                                    detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
+                                    detailsTilemap.SetTransformMatrix(currTile.localPlace, m);
                                 }
                             }
                         }
@@ -621,12 +619,10 @@ public class AreaInnerTileMap : MonoBehaviour {
                     currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
                 } else if (Random.Range(0, 100) < 4) {
                     //Crates, Barrels, Ore, Stone and Tree tiles should be impassable. They should all be placed in spots adjacent to at least three passable tiles.
-                    if (currTile.IsAdjacentToPasssableTiles(3)) {
-                        currTile.hasDetail = true;
-                        detailsTilemap.SetTile(currTile.localPlace, rockTile);
-                        currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
-                        //currTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
-                    }
+                    currTile.hasDetail = true;
+                    detailsTilemap.SetTile(currTile.localPlace, rockTile);
+                    currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                    //currTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
                 } else if (Random.Range(0, 100) < 3) {
                     currTile.hasDetail = true;
                     detailsTilemap.SetTile(currTile.localPlace, GetGarbTile(area));
@@ -762,57 +758,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         for (int i = 0; i < allTiles.Count; i++) {
             LocationGridTile tile = allTiles[i];
             if (tile.structure != null && !tile.structure.structureType.IsOpenSpace()) { continue; } //skip non open space structure tiles.
-            Dictionary<GridNeighbourDirection, LocationGridTile> neighbours;
-            if (tile.HasCardinalNeighbourOfDifferentGroundType(out neighbours)) {
-                //grass should be higher than dirt
-                //dirt should be higher than cobble
-                //cobble should be higher than grass
-                foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
-                    LocationGridTile currNeighbour = keyValuePair.Value;
-                    if (currNeighbour.structure != null && !currNeighbour.structure.structureType.IsOpenSpace()) { continue; } //skip non open space structure tiles.
-                    bool createEdge = false;
-                    //if (tile.groundType == currNeighbour.groundType) {
-                    //    createEdge = true;
-                    //} else 
-                    if (tile.groundType != LocationGridTile.Ground_Type.Water && currNeighbour.groundType == LocationGridTile.Ground_Type.Water) {
-                        createEdge = true;
-                    } else if (tile.groundType == LocationGridTile.Ground_Type.Snow) {
-                        createEdge = true;
-                    } else if (tile.groundType == LocationGridTile.Ground_Type.Cobble && currNeighbour.groundType != LocationGridTile.Ground_Type.Snow) {
-                        createEdge = true;
-                    } else if ((tile.groundType == LocationGridTile.Ground_Type.Tundra || tile.groundType == LocationGridTile.Ground_Type.Snow_Dirt) && 
-                        (currNeighbour.groundType == LocationGridTile.Ground_Type.Stone || currNeighbour.groundType == LocationGridTile.Ground_Type.Soil)) {
-                        createEdge = true;
-                    } else if (tile.groundType == LocationGridTile.Ground_Type.Grass && currNeighbour.groundType == LocationGridTile.Ground_Type.Soil) {
-                        createEdge = true;
-                    } else if (tile.groundType == LocationGridTile.Ground_Type.Soil && currNeighbour.groundType == LocationGridTile.Ground_Type.Stone) {
-                        createEdge = true;
-                    } else if (tile.groundType == LocationGridTile.Ground_Type.Stone && currNeighbour.groundType == LocationGridTile.Ground_Type.Grass) {
-                        createEdge = true;
-                    }
-                    if (createEdge) {
-                        Tilemap mapToUse;
-                        switch (keyValuePair.Key) {
-                            case GridNeighbourDirection.North:
-                                mapToUse = northEdgeTilemap;
-                                break;
-                            case GridNeighbourDirection.South:
-                                mapToUse = southEdgeTilemap;
-                                break;
-                            case GridNeighbourDirection.West:
-                                mapToUse = westEdgeTilemap;
-                                break;
-                            case GridNeighbourDirection.East:
-                                mapToUse = eastEdgeTilemap;
-                                break;
-                            default:
-                                mapToUse = null;
-                                break;
-                        }
-                        mapToUse.SetTile(tile.localPlace, edgeAssets[tile.groundType][(int)keyValuePair.Key]);
-                    }
-                }
-            }
+            tile.CreateSeamlessEdgesForTile(this);
         }
     }
     #endregion
@@ -960,7 +906,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                         continue;
                     }
                     LocationGridTile result = map[dx, dy];
-                    if ((!includeTilesInDifferentStructure && result.structure != centerTile.structure) || result.isOccupied || result.charactersHere.Count > 0 || result.tileAccess == LocationGridTile.Tile_Access.Impassable) { continue; }
+                    if ((!includeTilesInDifferentStructure && result.structure != centerTile.structure) || result.isOccupied || result.charactersHere.Count > 0) { continue; }
                     tiles.Add(result);
                 }
             }

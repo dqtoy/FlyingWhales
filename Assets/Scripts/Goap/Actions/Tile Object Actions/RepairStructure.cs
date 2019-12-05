@@ -40,31 +40,17 @@ public class RepairStructure : GoapAction {
     #region State Effects
     public void PreRepairSuccess(ActualGoapNode goapNode) {
         goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.structure, goapNode.poiTarget.gridTileLocation.structure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-        //TODO:
-        //int gainedHPPerTick = 20;
-        //int missingHP = goapNode.poiTarget.maxHP - goapNode.poiTarget.currentHP;
-        //int ticksToRecpverMissingHP = missingHP / gainedHPPerTick;
-        //currentState.OverrideDuration(ticksToRecpverMissingHP);
-    }
-    public void PerTickRepairSuccess(ActualGoapNode goapNode) {
-        LocationStructure structure = goapNode.poiTarget.gridTileLocation.structure;
-        for (int i = 0; i < structure.tiles.Count; i++) {
-            LocationGridTile tile = structure.tiles[i];
-            tile.genericTileObject.AdjustHP(20);
-            for (int j = 0; j < tile.walls.Count; j++) {
-                WallObject wall = tile.walls[j];
-                wall.AdjustHP(20);
-            }
-        }
     }
     public void AfterRepairSuccess(ActualGoapNode goapNode) {
         LocationStructure structure = goapNode.poiTarget.gridTileLocation.structure;
         for (int i = 0; i < structure.tiles.Count; i++) {
             LocationGridTile tile = structure.tiles[i];
+            tile.genericTileObject.AdjustHP(tile.genericTileObject.maxHP);
             tile.genericTileObject.traitContainer.RemoveTrait(tile.genericTileObject, "Burnt");
             for (int j = 0; j < tile.walls.Count; j++) {
                 WallObject wall = tile.walls[j];
                 wall.traitContainer.RemoveTrait(wall, "Burnt");
+                wall.AdjustHP(wall.maxHP);
             }
         }
     }

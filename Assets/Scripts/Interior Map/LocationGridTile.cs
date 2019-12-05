@@ -11,7 +11,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
 
     public enum Tile_Type { Empty, Wall, Structure_Entrance }
     public enum Tile_State { Empty, Occupied }
-    public enum Tile_Access { Passable, Impassable, }
     public enum Ground_Type { Soil, Grass, Stone, Snow, Tundra, Cobble, Wood, Snow_Dirt, Water }
     public bool hasDetail { get; set; }
     public AreaInnerTileMap parentAreaMap { get; private set; }
@@ -24,7 +23,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public bool isInside { get; private set; }
     public Tile_Type tileType { get; private set; }
     public Tile_State tileState { get; private set; }
-    public Tile_Access tileAccess { get; private set; }
     public Ground_Type groundType { get; private set; }
     public LocationStructure structure { get; private set; }
     public Dictionary<GridNeighbourDirection, LocationGridTile> neighbours { get; private set; }
@@ -59,7 +57,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         centeredWorldLocation = new Vector3(worldLocation.x + 0.5f, worldLocation.y + 0.5f, worldLocation.z);
         tileType = Tile_Type.Empty;
         tileState = Tile_State.Empty;
-        tileAccess = Tile_Access.Passable;
         charactersHere = new List<Character>();
         walls = new List<WallObject>();
         SetLockedState(false);
@@ -76,7 +73,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         centeredWorldLocation = data.centeredWorldLocation;
         tileType = data.tileType;
         tileState = data.tileState;
-        tileAccess = data.tileAccess;
         SetLockedState(data.isLocked);
         SetReservedType(data.reservedObjectType);
         charactersHere = new List<Character>();
@@ -146,11 +142,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     }
     public void SetTileType(Tile_Type tileType) {
         this.tileType = tileType;
-        switch (tileType) {
-            case Tile_Type.Wall:
-                SetTileAccess(Tile_Access.Impassable);
-                break;
-        }
     }
     private void SetGroundType(Ground_Type groundType) {
         this.groundType = groundType;
@@ -176,6 +167,10 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
                 SetGroundType(Ground_Type.Cobble);
             } else if (assetName.Contains("water") || assetName.Contains("pond")) {
                 SetGroundType(Ground_Type.Water);
+            } else if ((assetName.Contains("Dirt") || assetName.Contains("dirt") || assetName.Contains("snowoutside")) && (parentAreaMap.area.coreTile.biomeType == BIOMES.SNOW || parentAreaMap.area.coreTile.biomeType == BIOMES.TUNDRA)) {
+                SetGroundType(Ground_Type.Tundra);
+                //override tile to use tundra soil
+                parentAreaMap.groundTilemap.SetTile(this.localPlace, parentAreaMap.tundraSoilAsset);
             } else if (assetName.Contains("snow")) {
                 if (assetName.Contains("dirt")) {
                     SetGroundType(Ground_Type.Snow_Dirt);
@@ -192,11 +187,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
                 SetGroundType(Ground_Type.Tundra);
                 //override tile to use tundra soil
                 parentAreaMap.groundTilemap.SetTile(this.localPlace, parentAreaMap.tundraSoilAsset);
-            } else if ((assetName.Contains("Dirt") || assetName.Contains("dirt")) && (parentAreaMap.area.coreTile.biomeType == BIOMES.SNOW || parentAreaMap.area.coreTile.biomeType == BIOMES.TUNDRA)) {
-                SetGroundType(Ground_Type.Tundra);
-                //override tile to use tundra soil
-                parentAreaMap.groundTilemap.SetTile(this.localPlace, parentAreaMap.tundraSoilAsset);
-            }
+            } 
         }
     }
     public bool TryGetNeighbourDirection(LocationGridTile tile, out GridNeighbourDirection dir) {
@@ -211,9 +202,81 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     }
 
     #region Visuals
+    public TileBase previousGroundVisual { get; private set; }
     public void SetGroundTilemapVisual(TileBase tileBase) {
+        previousGroundVisual = parentAreaMap.groundTilemap.GetTile(this.localPlace);
         parentAreaMap.groundTilemap.SetTile(this.localPlace, tileBase);
         UpdateGroundTypeBasedOnAsset();
+    }
+    public void RevertToPreviousGroundVisual() {
+        SetGroundTilemapVisual(previousGroundVisual);
+    }
+    public void CreateSeamlessEdgesForSelfAndNeighbours() {
+        CreateSeamlessEdgesForTile(parentAreaMap);
+        for (int i = 0; i < neighbourList.Count; i++) {
+            LocationGridTile neighbour = neighbourList[i];
+            neighbour.CreateSeamlessEdgesForTile(parentAreaMap);
+        }
+    }
+    public void CreateSeamlessEdgesForTile(AreaInnerTileMap map) {
+        string summary = $"Creating seamless edges for tile {this.ToString()}";
+        Dictionary<GridNeighbourDirection, LocationGridTile> neighbours;
+        if (HasCardinalNeighbourOfDifferentGroundType(out neighbours)) {
+            summary += $"\nHas Neighbour of different ground type. Checking neighbours {neighbours.Count.ToString()}";
+            //grass should be higher than dirt
+            //dirt should be higher than cobble
+            //cobble should be higher than grass
+            foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
+                LocationGridTile currNeighbour = keyValuePair.Value;
+                //if (currNeighbour.structure != null && !currNeighbour.structure.structureType.IsOpenSpace()) { continue; } //skip non open space structure tiles.
+                bool createEdge = false;
+                //if (tile.groundType == currNeighbour.groundType) {
+                //    createEdge = true;
+                //} else 
+                summary += $"\n\tChecking {currNeighbour.ToString()}. Ground type is {groundType.ToString()}. Neighbour Ground Type is {currNeighbour.groundType.ToString()}";
+                if (currNeighbour.tileType == Tile_Type.Wall || currNeighbour.tileType == Tile_Type.Structure_Entrance) {
+                    createEdge = false;
+                } else if (groundType != LocationGridTile.Ground_Type.Water && currNeighbour.groundType == LocationGridTile.Ground_Type.Water) {
+                    createEdge = true;
+                } else if (groundType == LocationGridTile.Ground_Type.Snow) {
+                    createEdge = true;
+                } else if (groundType == LocationGridTile.Ground_Type.Cobble && currNeighbour.groundType != LocationGridTile.Ground_Type.Snow) {
+                    createEdge = true;
+                } else if ((groundType == LocationGridTile.Ground_Type.Tundra || groundType == LocationGridTile.Ground_Type.Snow_Dirt) &&
+                    (currNeighbour.groundType == LocationGridTile.Ground_Type.Stone || currNeighbour.groundType == LocationGridTile.Ground_Type.Soil)) {
+                    createEdge = true;
+                } else if (groundType == LocationGridTile.Ground_Type.Grass && currNeighbour.groundType == LocationGridTile.Ground_Type.Soil) {
+                    createEdge = true;
+                } else if (groundType == LocationGridTile.Ground_Type.Soil && currNeighbour.groundType == LocationGridTile.Ground_Type.Stone) {
+                    createEdge = true;
+                } else if (groundType == LocationGridTile.Ground_Type.Stone && currNeighbour.groundType == LocationGridTile.Ground_Type.Grass) {
+                    createEdge = true;
+                }
+                summary += $"\n\tWill create edge? {createEdge.ToString()}. At {keyValuePair.Key.ToString()}";
+                if (createEdge) {
+                    Tilemap mapToUse;
+                    switch (keyValuePair.Key) {
+                        case GridNeighbourDirection.North:
+                            mapToUse = map.northEdgeTilemap;
+                            break;
+                        case GridNeighbourDirection.South:
+                            mapToUse = map.southEdgeTilemap;
+                            break;
+                        case GridNeighbourDirection.West:
+                            mapToUse = map.westEdgeTilemap;
+                            break;
+                        case GridNeighbourDirection.East:
+                            mapToUse = map.eastEdgeTilemap;
+                            break;
+                        default:
+                            mapToUse = null;
+                            break;
+                    }
+                    mapToUse.SetTile(localPlace, map.edgeAssets[groundType][(int)keyValuePair.Key]);
+                }
+            }
+        }
+        //Debug.Log(summary);
     }
     #endregion
 
@@ -240,9 +303,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         //if (state == Tile_State.Occupied) {
         //    Messenger.Broadcast(Signals.TILE_OCCUPIED, this, objHere);
         //}
-    }
-    public void SetTileAccess(Tile_Access state) {
-        this.tileAccess = state;
     }
     #endregion
 
@@ -370,31 +430,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
                 return true;
             }
         }
-        return false;
-    }
-    public bool IsAdjacentToPasssableTiles(int count = 1) {
-        int passableCount = 0;
-        foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> kvp in neighbours) {
-            if (kvp.Value.tileAccess == Tile_Access.Passable && kvp.Value.structure == structure) {
-                passableCount++;
-            }
-            if (passableCount >= count) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public bool WillMakeNeighboursPassableTileInvalid(int neededPassable = 1) {
-        SetTileAccess(Tile_Access.Impassable);
-        foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> kvp in neighbours) {
-            if (kvp.Value.structure == structure) {
-                if (!kvp.Value.IsAdjacentToPasssableTiles(neededPassable)) {
-                    SetTileAccess(Tile_Access.Passable);
-                    return true;
-                }
-            }
-        }
-        SetTileAccess(Tile_Access.Passable);
         return false;
     }
     public bool HasNeighbouringWalledStructure() {
@@ -631,7 +666,6 @@ public class SaveDataLocationGridTile {
     public Vector3Save centeredLocalLocation;
     public LocationGridTile.Tile_Type tileType;
     public LocationGridTile.Tile_State tileState;
-    public LocationGridTile.Tile_Access tileAccess;
     public LocationGridTile.Ground_Type groundType;
     //public LocationStructure structure { get; private set; }
     //public Dictionary<TileNeighbourDirection, LocationGridTile> neighbours { get; private set; }
@@ -679,7 +713,6 @@ public class SaveDataLocationGridTile {
         centeredLocalLocation = gridTile.centeredLocalLocation;
         tileType = gridTile.tileType;
         tileState = gridTile.tileState;
-        tileAccess = gridTile.tileAccess;
         groundType = gridTile.groundType;
         reservedObjectType = gridTile.reservedObjectType;
         furnitureSpot = gridTile.furnitureSpot;

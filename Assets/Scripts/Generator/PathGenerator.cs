@@ -93,20 +93,20 @@ public class PathGenerator : MonoBehaviour {
 		return null;
 	}
     public List<LocationGridTile> GetPath(LocationGridTile startingTile, LocationGridTile destinationTile, GRID_PATHFINDING_MODE pathMode = GRID_PATHFINDING_MODE.NORMAL, bool includeFirstTile = false) {
-        LocationGridTile.Tile_Type startType = startingTile.tileType;
-        LocationGridTile.Tile_Type destinationType = destinationTile.tileType;
-        LocationGridTile.Tile_Access startAccess = startingTile.tileAccess;
-        LocationGridTile.Tile_Access destinationAccess = destinationTile.tileAccess;
-        switch (pathMode) {
-            case GRID_PATHFINDING_MODE.NORMAL:
-                startingTile.SetTileType(LocationGridTile.Tile_Type.Empty);
-                destinationTile.SetTileType(LocationGridTile.Tile_Type.Empty);
-                break;
-            default:
-                startingTile.SetTileType(LocationGridTile.Tile_Type.Empty);
-                destinationTile.SetTileType(LocationGridTile.Tile_Type.Empty);
-                break;
-        }
+        //LocationGridTile.Tile_Type startType = startingTile.tileType;
+        //LocationGridTile.Tile_Type destinationType = destinationTile.tileType;
+        //LocationGridTile.Tile_Access startAccess = startingTile.tileAccess;
+        //LocationGridTile.Tile_Access destinationAccess = destinationTile.tileAccess;
+        //switch (pathMode) {
+        //    case GRID_PATHFINDING_MODE.NORMAL:
+        //        startingTile.SetTileType(LocationGridTile.Tile_Type.Empty);
+        //        destinationTile.SetTileType(LocationGridTile.Tile_Type.Empty);
+        //        break;
+        //    default:
+        //        startingTile.SetTileType(LocationGridTile.Tile_Type.Empty);
+        //        destinationTile.SetTileType(LocationGridTile.Tile_Type.Empty);
+        //        break;
+        //}
 
 
         List<LocationGridTile> path = null;
@@ -162,10 +162,10 @@ public class PathGenerator : MonoBehaviour {
             
         }
 
-        startingTile.SetTileType(startType);
-        destinationTile.SetTileType(destinationType);
-        startingTile.SetTileAccess(startAccess);
-        destinationTile.SetTileAccess(destinationAccess);
+        //startingTile.SetTileType(startType);
+        //destinationTile.SetTileType(destinationType);
+        //startingTile.SetTileAccess(startAccess);
+        //destinationTile.SetTileAccess(destinationAccess);
 
         if (path != null) {
             path.Reverse();
@@ -214,9 +214,9 @@ public class PathGenerator : MonoBehaviour {
         List<LocationGridTile> neighbours = tile.FourNeighbours();
         for (int i = 0; i < neighbours.Count; i++) {
             LocationGridTile currTile = neighbours[i];
-            if (currTile == startingTile || currTile == destinationTile || (currTile.tileAccess == LocationGridTile.Tile_Access.Passable && currTile.structure == structure)) {
-                tiles.Add(currTile);
-            }
+            //if (currTile == startingTile || currTile == destinationTile || (currTile.tileAccess == LocationGridTile.Tile_Access.Passable && currTile.structure == structure)) {
+            //    tiles.Add(currTile);
+            //}
         }
         return tiles;
     }
@@ -229,9 +229,9 @@ public class PathGenerator : MonoBehaviour {
         List<LocationGridTile> neighbours = tile.FourNeighbours();
         for (int i = 0; i < neighbours.Count; i++) {
             LocationGridTile currTile = neighbours[i];
-            if (currTile == startingTile || currTile == destinationTile || (currTile.tileAccess == LocationGridTile.Tile_Access.Passable && currTile.structure != null && allowedTypes.Contains(currTile.structure.structureType))) {
-                tiles.Add(currTile);
-            }
+            //if (currTile == startingTile || currTile == destinationTile || (currTile.tileAccess == LocationGridTile.Tile_Access.Passable && currTile.structure != null && allowedTypes.Contains(currTile.structure.structureType))) {
+            //    tiles.Add(currTile);
+            //}
         }
         return tiles;
     }

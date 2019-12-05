@@ -452,14 +452,14 @@ public class LocationStructure {
     public void OnWallDestroyed(WallObject wall) {
         //check if structure destroyed
         if (structureObj.walls.Contains(wall)) {
+            wall.gridTileLocation.SetTileType(LocationGridTile.Tile_Type.Empty);
             structureObj.RescanPathfindingGridOfStructure();
             CheckIfStructureDestroyed();
         }
     }
     public void OnWallRepaired(WallObject wall) {
-        //remove repair job
         if (structureObj.walls.Contains(wall)) {
-
+            wall.gridTileLocation.SetTileType(LocationGridTile.Tile_Type.Wall);
         }
     }
     public void OnWallDamaged(WallObject wall) {

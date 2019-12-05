@@ -29,7 +29,7 @@ public class WallObject : AreaMapObject<WallObject>, ITraitable {
 
     #region HP
     public void AdjustHP(int amount, bool triggerDeath = false, object source = null) {
-        if (currentHP <= 0) {
+        if (currentHP <= 0 && amount < 0) {
             return; //ignore
         }
         currentHP += amount;
@@ -38,6 +38,7 @@ public class WallObject : AreaMapObject<WallObject>, ITraitable {
             //wall has been destroyed
             visual.UpdateWallState(this);
             Messenger.Broadcast(Signals.WALL_DESTROYED, this);
+            gridTileLocation.CreateSeamlessEdgesForSelfAndNeighbours();
         } else if (amount < 0 && currentHP < maxHP) {
             //wall has been damaged
             visual.UpdateWallAssets(this);

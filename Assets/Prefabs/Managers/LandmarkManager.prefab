@@ -382,7 +382,7 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 373c75d3584925743ac4245df8a2bbcb, type: 3}
       tintSprite: {fileID: 0}
-      animation: {fileID: 0}
+      animation: {fileID: 9100000, guid: ba45c35fc4e3c8d48b66c100d61ef5b2, type: 2}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: The Eye

@@ -380,18 +380,11 @@ public class InteriorMapManager : MonoBehaviour {
         summary += "\nTile Type: " + tile.tileType.ToString();
         summary += "\nTile State: " + tile.tileState.ToString();
         summary += "\nReserved Tile Object Type: " + tile.reservedObjectType.ToString();
+        summary += "\nPrevious Tile Asset: " + (tile.previousGroundVisual?.name ?? "Null");
+        summary += "\nCurrent Tile Asset: " + (tile.parentTileMap.GetTile(tile.localPlace)?.name ?? "Null");
         if (tile.hasFurnitureSpot) {
             summary += "\nFurniture Spot: " + tile.furnitureSpot.ToString();
         }
-        //summary += "\nWalls: " + tile.walls.Count;
-        //for (int i = 0; i < tile.walls.Count; i++) {
-        //    WallObject wall = tile.walls[i];
-        //    summary += "\n\t" + wall.name;
-        //    for (int j = 0; j < wall.traitContainer.allTraits.Count; j++) {
-        //        Trait trait = wall.traitContainer.allTraits[j];
-        //        summary += "\n\t\t" + trait.name;
-        //    }
-        //}
         summary += "\nTile Traits: ";
         if (tile.normalTraits.Count > 0) {
             summary += "\n";

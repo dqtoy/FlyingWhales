@@ -23,6 +23,9 @@ public class WaterWell : TileObject {
             advertisedActions = new List<INTERACTION_TYPE>();
         }
     }
+    public override bool CanBeDamaged() {
+        return structureLocation.structureType != STRUCTURE_TYPE.POND;
+    }
     public override string ToString() {
         return "Well " + id.ToString();
     }

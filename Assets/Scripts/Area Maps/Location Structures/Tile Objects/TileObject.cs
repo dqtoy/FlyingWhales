@@ -552,7 +552,7 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
     public void SetIsBeingCarriedBy(Character carrier) {
         isBeingCarriedBy = carrier;
     }
-    public bool CanBeDamaged() {
+    public virtual bool CanBeDamaged() {
         return mapObjectState != MAP_OBJECT_STATE.UNBUILT;
     }
     #endregion

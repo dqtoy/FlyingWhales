@@ -100,6 +100,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 34a6f5e2ed4f9844ca33ede5d41c5d98, type: 3}
   - {fileID: 21300000, guid: a8c399e29ee60eb45b0856050f07ac8f, type: 3}
   - {fileID: 21300000, guid: e2250ae249624ce43a49fb7189bb3814, type: 3}
+  - {fileID: 21300000, guid: 2a43bee26a8ecef47bd5bd0799ca709a, type: 3}
   - {fileID: 21300000, guid: a14722f2c7f16334498ad25d1f5d815c, type: 3}
   - {fileID: 21300000, guid: e905b903d82b2994195880c0355ee2f2, type: 3}
   - {fileID: 21300000, guid: dba2db03a9806054a80deaacdb6184a0, type: 3}
@@ -232,11 +233,13 @@ SpriteAtlas:
   - {fileID: 21300000, guid: f22e03b755914164c8228109afebca51, type: 3}
   - {fileID: 21300000, guid: 711d3fb7a2e987149b56455b1fc25858, type: 3}
   - {fileID: 21300000, guid: 32d101c7287c00b43888ac765c65ea92, type: 3}
+  - {fileID: 21300000, guid: aa10dfc76002394428480256299305c6, type: 3}
   - {fileID: 21300000, guid: 221f45d73efa56143a0d985295f71935, type: 3}
   - {fileID: 21300000, guid: e4c666d72d7843c43aa5405320f75147, type: 3}
   - {fileID: 21300000, guid: 5d9748d7deff06443b2a493abd02760d, type: 3}
   - {fileID: 21300000, guid: 6d7df8d7a4577234a911a1b17e8b0773, type: 3}
   - {fileID: 21300000, guid: 6dba6dd726ad4cf4899bcf6f5a2ef09a, type: 3}
+  - {fileID: 21300000, guid: 563ffe08668c57d4db353ac29e91781c, type: 3}
   - {fileID: 21300000, guid: 72a1eb18646efa64f9c1d8bf2a859f90, type: 3}
   - {fileID: 21300000, guid: db879b28f1a2d814fa15c191afa0fa53, type: 3}
   - {fileID: 21300000, guid: 6715003821868bb40a4e286c453778d5, type: 3}
@@ -489,6 +492,7 @@ SpriteAtlas:
   - caveWallA-1100-00
   - shore11011101-00
   - rocks01
+  - metal_pile
   - shore11000101-00
   - well01
   - wallA-1001-00
@@ -621,11 +625,13 @@ SpriteAtlas:
   - shore00000100-00
   - barrels00
   - floorA02
+  - stone_pile
   - vertical_1
   - shelfDecor01
   - tree01
   - caveWallA-0110-01
   - character_clicked
+  - wood_pile
   - barrel00
   - vertical_1
   - wall0101-00-bottom

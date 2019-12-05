@@ -274,8 +274,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
 
         if (sprites.animation == null) {
+            mainStructure.enabled = true;
             structureAnimation.gameObject.SetActive(false);
         } else {
+            if (landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.MONSTER_LAIR) {
+                mainStructure.enabled = true; //SPECIAL CASE FOR MONSTER LAIR
+            } else {
+                mainStructure.enabled = false;
+            }
             structureAnimation.gameObject.SetActive(true);
             structureAnimation.runtimeAnimatorController = sprites.animation;
         }
