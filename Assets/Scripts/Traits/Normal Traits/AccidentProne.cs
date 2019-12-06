@@ -69,16 +69,31 @@ namespace Traits {
         #endregion
 
         private void DoStumble() {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.STUMBLE], owner, owner, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INTERRUPTION, INTERACTION_TYPE.STUMBLE, owner, owner);
+            goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
             owner.jobQueue.AddJobInQueue(job);
+            //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INTERRUPTION, INTERACTION_TYPE.STUMBLE, owner, owner);
+            //job.SetCannotBePushedBack(true);
+            //owner.jobQueue.AddJobInQueue(job);
         }
 
         private void DoAccident(GoapAction action) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ACCIDENT], owner, owner, new object[] { action }, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INTERRUPTION, INTERACTION_TYPE.ACCIDENT, owner, owner);
-            job.AddOtherData(INTERACTION_TYPE.ACCIDENT, new object[] { action });
+            goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
             owner.jobQueue.AddJobInQueue(job);
+
+            //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INTERRUPTION, INTERACTION_TYPE.ACCIDENT, owner, owner);
+            //job.AddOtherData(INTERACTION_TYPE.ACCIDENT, new object[] { action });
+            //job.SetCannotBePushedBack(true);
+            //owner.jobQueue.AddJobInQueue(job);
         }
     }
 }

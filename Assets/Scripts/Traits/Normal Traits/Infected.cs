@@ -82,8 +82,15 @@ namespace Traits {
                     //If current action is a roaming action like Hunting To Drink Blood, we must requeue the job after it is removed by StopCurrentAction
                     return hasCreatedJob;
                 }
+                ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PUKE], owner, owner, null, 0);
+                GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
+                goapPlan.SetDoNotRecalculate(true);
+                job.SetCannotBePushedBack(true);
+                job.SetAssignedPlan(goapPlan);
                 owner.jobQueue.AddJobInQueue(job);
+                //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
+                //owner.jobQueue.AddJobInQueue(job);
                 hasCreatedJob = true;
             }
             return hasCreatedJob;

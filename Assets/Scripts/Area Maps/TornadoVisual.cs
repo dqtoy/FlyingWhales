@@ -115,6 +115,7 @@ public class TornadoVisual : AreaMapObjectVisual<TileObject> {
     #endregion
 
     private void Expire() {
+        tornado.OnExpire();
         ObjectPoolManager.Instance.DestroyObject(this.gameObject);
     }
 

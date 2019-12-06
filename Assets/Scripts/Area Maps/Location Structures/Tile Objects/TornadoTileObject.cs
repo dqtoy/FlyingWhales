@@ -32,4 +32,8 @@ public class TornadoTileObject : TileObject {
     public void SetDuration(int duration) {
         this.durationInTicks = duration;
     }
+
+    public void OnExpire() {
+        Messenger.Broadcast<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, this, null, base.gridTileLocation);
+    }
 }
