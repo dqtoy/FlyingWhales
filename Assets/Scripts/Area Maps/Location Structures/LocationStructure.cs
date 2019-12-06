@@ -403,6 +403,8 @@ public class LocationStructure {
                     AddPOI(tile.objHere, tile);
                 }
             }
+            tile.SetPreviousGroundVisual(null); //so that the tile will never revert to the structure tile, unless a new structure is put on it.
+            tile.genericTileObject.AdjustHP(tile.genericTileObject.maxHP);
         }
         JobQueueItem existingRepairJob = location.GetJob(JOB_TYPE.REPAIR, occupiedBuildSpot);
         if (existingRepairJob != null) {
@@ -468,13 +470,13 @@ public class LocationStructure {
             OnStructureDamaged();
         }
     }
-    public void OnTileDamaged() {
+    public void OnTileDamaged(LocationGridTile tile) {
         OnStructureDamaged();
     }
-    public void OnTileRepaired() {
-
+    public void OnTileRepaired(LocationGridTile tile) {
+        structureObj.ApplyGroundTileAssetForTile(tile);
     }
-    public void OnTileDestroyed() {
+    public void OnTileDestroyed(LocationGridTile tile) {
         if (structureType.IsOpenSpace()) {
             return; //do not check for destruction if structure is open space (Wilderness, Work Area, Cemetery, etc.)
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Collider2D))]
 public class DefaultProjectileReceiver : ProjectileReceiver {
 
     public override void OnTriggerEnter2D(Collider2D collision) {

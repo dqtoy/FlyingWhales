@@ -9,6 +9,7 @@ public interface IDamageable {
     int maxHP { get; }
     ProjectileReceiver projectileReceiver { get; } //the object to be targeted when a character decides to do damage to this object
     LocationGridTile gridTileLocation { get; }
+    IMapObjectVisual mapObjectVisual { get; }
 
     void AdjustHP(int amount, bool triggerDeath = false, object source = null);
     void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary);

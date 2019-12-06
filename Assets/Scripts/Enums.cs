@@ -1150,6 +1150,7 @@ public enum TILE_OBJECT_TYPE {
     BUILD_SPOT_TILE_OBJECT = 24,
     STONE_PILE = 25,
     METAL_PILE = 26,
+    TORNADO = 27,
 }
 public enum POI_STATE {
     ACTIVE,

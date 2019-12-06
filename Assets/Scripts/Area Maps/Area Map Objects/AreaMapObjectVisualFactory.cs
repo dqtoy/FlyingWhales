@@ -15,6 +15,9 @@ public class AreaMapGameObjectVisualFactory {
     public GameObject CreateNewTileObjectAreaMapObject(TILE_OBJECT_TYPE objType) {
         GameObject obj = null;
         switch (objType) {
+            case TILE_OBJECT_TYPE.TORNADO:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("TornadoVisualObject", Vector3.zero, Quaternion.identity, null);
+                break;
             default:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(Tile_Object_Prefab_Name, Vector3.zero, Quaternion.identity, null);
                 break;

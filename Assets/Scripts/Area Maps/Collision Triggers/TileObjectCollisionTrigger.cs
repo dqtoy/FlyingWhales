@@ -6,6 +6,13 @@ public class TileObjectCollisionTrigger : BaseCollisionTrigger<TileObject>, IVis
 
     public IPointOfInterest poi { get; private set; }
 
+    public bool IgnoresStructureDifference() {
+        if (poi is TornadoTileObject) {
+            return true;
+        }
+        return false;
+    }
+
     public override void Initialize(TileObject poi) {
         base.Initialize(poi);
         this.poi = poi;

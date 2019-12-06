@@ -13,6 +13,8 @@ public class WallObject : AreaMapObject<WallObject>, ITraitable {
     public TraitProcessor traitProcessor { get { return TraitManager.defaultTraitProcessor; } }
     public Transform worldObject { get { return visual.transform; } }
     public LocationGridTile gridTileLocation { get; private set; }
+    public override AreaMapObjectVisual<WallObject> areaMapVisual { get { return visual; } }
+    public IMapObjectVisual mapObjectVisual { get { return areaMapVisual; } }
 
     private WallVisual visual;
 
@@ -32,6 +34,9 @@ public class WallObject : AreaMapObject<WallObject>, ITraitable {
         if (currentHP <= 0 && amount < 0) {
             return; //ignore
         }
+        if (amount < 0) {
+            GameManager.Instance.CreateHitEffectAt(this);
+        }
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
         if (currentHP <= 0) {
@@ -50,6 +55,7 @@ public class WallObject : AreaMapObject<WallObject>, ITraitable {
         } else if (currentHP == maxHP) {
             //wall has been fully repaired
             visual.UpdateWallAssets(this);
+            visual.UpdateWallState(this);
             Messenger.Broadcast(Signals.WALL_REPAIRED, this);
         }
     }

@@ -68,16 +68,18 @@ public class GenericTileObject : TileObject {
         this.currentHP = Mathf.Clamp(this.currentHP, 0, maxHP);
         if (currentHP <= 0) {
             //floor has been destroyed
-            structureLocation.OnTileDestroyed();
             gridTileLocation.RevertToPreviousGroundVisual();
+            structureLocation.OnTileDestroyed(gridTileLocation);
         } else if (amount < 0 && currentHP < maxHP) {
             //floor has been damaged
-            structureLocation.OnTileDamaged();
+            structureLocation.OnTileDamaged(gridTileLocation);
         } else if (currentHP == maxHP) {
             //floor has been fully repaired
-            structureLocation.OnTileRepaired();
-            gridTileLocation.RevertToPreviousGroundVisual();
+            structureLocation.OnTileRepaired(gridTileLocation);
         }
+    }
+    public override bool CanBeDamaged() {
+        return structureLocation.structureType.IsOpenSpace() == false; //only damage tiles that are part of non open space structures i.e structures with walls.
     }
     #endregion
 

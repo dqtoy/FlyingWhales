@@ -9,4 +9,8 @@ public class CharacterCollisionTrigger : BaseCollisionTrigger<Character>, IVisib
         base.Initialize(character);
         this.poi = character;
     }
+
+    public bool IgnoresStructureDifference() {
+        return false;
+    }
 }

@@ -381,7 +381,7 @@ public class InteriorMapManager : MonoBehaviour {
         summary += "\nTile State: " + tile.tileState.ToString();
         summary += "\nReserved Tile Object Type: " + tile.reservedObjectType.ToString();
         summary += "\nPrevious Tile Asset: " + (tile.previousGroundVisual?.name ?? "Null");
-        summary += "\nCurrent Tile Asset: " + (tile.parentTileMap.GetTile(tile.localPlace)?.name ?? "Null");
+        summary += "\nCurrent Tile Asset: " + (tile.parentTileMap.GetSprite(tile.localPlace)?.name ?? "Null");
         if (tile.hasFurnitureSpot) {
             summary += "\nFurniture Spot: " + tile.furnitureSpot.ToString();
         }

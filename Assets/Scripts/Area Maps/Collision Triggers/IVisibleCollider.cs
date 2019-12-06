@@ -9,4 +9,6 @@ using UnityEngine;
 /// </summary>
 public interface IVisibleCollider { 
     IPointOfInterest poi { get; }
+
+    bool IgnoresStructureDifference();
 }

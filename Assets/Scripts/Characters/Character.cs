@@ -42,6 +42,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
     //visuals
     public CharacterVisuals visuals { get; private set; }
+    public IMapObjectVisual mapObjectVisual { get { return marker; } }
 
     public int doNotRecoverHP { get; protected set; }
     public SEXUALITY sexuality { get; private set; }
@@ -328,7 +329,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             if (marker == null) {
                 throw new Exception(this.name + " marker is null!");
             }
-            return new Vector2Int((int) marker.anchoredPos.x, (int) marker.anchoredPos.y);
+            return new Vector2Int(Mathf.FloorToInt(marker.anchoredPos.x), Mathf.FloorToInt(marker.anchoredPos.y));
         }
     }
     public POI_STATE state {
@@ -6193,7 +6194,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 log += "\nThis action is the end of plan.";
                 if (job.originalOwner.ownerType != JOB_OWNER.CHARACTER && traitContainer.GetNormalTrait("Hardworking") != null) {
                     log += "\nFinished a settlement job and character is hardworking, increase happiness by 3000...";
-                    AdjustHappiness(3000);
+                    AdjustHappiness(3000); //TODO: Move this to hardworking trait.
                 }
                 PrintLogIfActive(log);
                 //bool forceRemoveJobInQueue = true;
@@ -6203,6 +6204,15 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 //}
                 //this means that this is the end goal so end this plan now
                 job.ForceCancelJob(false);
+
+                //after doing an extreme needs type job, check again if the character needs to recover more of that need.
+                if (job.jobType == JOB_TYPE.HAPPINESS_RECOVERY_FORLORN) {
+                    PlanHappinessRecoveryActions();
+                } else if (job.jobType == JOB_TYPE.HUNGER_RECOVERY_STARVING) {
+                    PlanFullnessRecoveryActions();
+                } else if (job.jobType == JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED) {
+                    PlanTirednessRecoveryActions();
+                }
             } else {
                 log += "\nNext action for this plan: " + plan.currentActualNode.goapName;
                 //if (plan.job != null && plan.job.assignedCharacter != this) {

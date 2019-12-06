@@ -27,6 +27,7 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
         }
     }//array of characters, currently using the tile object
     public Character removedBy { get; private set; }
+    public IMapObjectVisual mapObjectVisual { get { return areaMapVisual; } }
 
     //hp
     public int maxHP { get; protected set; }
@@ -40,7 +41,7 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
     private GameObject slotsParent;
     protected bool hasCreatedSlots;
 
-    public LocationGridTile gridTileLocation { get; protected set; }
+    public virtual LocationGridTile gridTileLocation { get; protected set; }
     public POI_STATE state { get; private set; }
     public LocationGridTile previousTile { get; protected set; }
     public Character isBeingCarriedBy { get; protected set; }
@@ -341,6 +342,9 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
     public virtual void AdjustHP(int amount, bool triggerDeath = false, object source = null) {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
+        }
+        if (amount < 0 && source != null) {
+            GameManager.Instance.CreateHitEffectAt(this);
         }
         this.currentHP += amount;
         this.currentHP = Mathf.Clamp(this.currentHP, 0, maxHP);

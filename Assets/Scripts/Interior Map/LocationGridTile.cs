@@ -158,10 +158,10 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         }
     }
     private void UpdateGroundTypeBasedOnAsset() {
-        TileBase groundAsset = parentAreaMap.groundTilemap.GetTile(this.localPlace);
+        Sprite groundAsset = parentAreaMap.groundTilemap.GetSprite(this.localPlace);
         if (groundAsset != null) {
             string assetName = groundAsset.name.ToLower();
-            if (assetName.Contains("structure floor")) {
+            if (assetName.Contains("structure floor") || assetName.Contains("wood")) {
                 SetGroundType(Ground_Type.Wood);
             } else if (assetName.Contains("cobble")) {
                 SetGroundType(Ground_Type.Cobble);
@@ -181,7 +181,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
                 SetGroundType(Ground_Type.Stone);
             } else if (assetName.Contains("grass")) {
                 SetGroundType(Ground_Type.Grass);
-            } else if (assetName.Contains("soil")) {
+            } else if (assetName.Contains("soil") || assetName.Contains("outside") || assetName.Contains("dirt")) {
                 SetGroundType(Ground_Type.Soil);
             } else if (assetName.Contains("tundra")) {
                 SetGroundType(Ground_Type.Tundra);
@@ -204,12 +204,17 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     #region Visuals
     public TileBase previousGroundVisual { get; private set; }
     public void SetGroundTilemapVisual(TileBase tileBase) {
-        previousGroundVisual = parentAreaMap.groundTilemap.GetTile(this.localPlace);
+        SetPreviousGroundVisual(parentAreaMap.groundTilemap.GetTile(this.localPlace));
         parentAreaMap.groundTilemap.SetTile(this.localPlace, tileBase);
         UpdateGroundTypeBasedOnAsset();
     }
+    public void SetPreviousGroundVisual(TileBase tileBase) {
+        previousGroundVisual = tileBase;
+    }
     public void RevertToPreviousGroundVisual() {
-        SetGroundTilemapVisual(previousGroundVisual);
+        if (previousGroundVisual != null) {
+            SetGroundTilemapVisual(previousGroundVisual);
+        }
     }
     public void CreateSeamlessEdgesForSelfAndNeighbours() {
         CreateSeamlessEdgesForTile(parentAreaMap);
@@ -276,7 +281,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
                 }
             }
         }
-        //Debug.Log(summary);
+        Debug.Log(summary);
     }
     #endregion
 

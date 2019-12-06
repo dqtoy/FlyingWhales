@@ -19,9 +19,15 @@ public class Tornado : PlayerJobAction {
     #region Overrides
     public override void ActivateAction(LocationGridTile targetTile) {
         base.ActivateAction(targetTile);
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool("TornadoObject", Vector3.zero, Quaternion.identity, targetTile.parentAreaMap.objectsParent);
-        TornadoObject obj = go.GetComponent<TornadoObject>();
-        obj.Initialize(targetTile, radius * 2, durationInTicks);
+        TornadoTileObject tornadoTileObject = new TornadoTileObject();
+        tornadoTileObject.SetRadius(radius);
+        tornadoTileObject.SetDuration(durationInTicks);
+        tornadoTileObject.SetGridTileLocation(targetTile);
+        tornadoTileObject.OnPlacePOI();
+        //targetTile.structure.AddPOI(tornadoTileObject, targetTile);
+        //GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool("TornadoObject", Vector3.zero, Quaternion.identity, targetTile.parentAreaMap.objectsParent);
+        //TornadoVisual obj = go.GetComponent<TornadoVisual>();
+        //obj.Initialize(targetTile, radius * 2, durationInTicks);
        
     }
     protected override void OnLevelUp() {

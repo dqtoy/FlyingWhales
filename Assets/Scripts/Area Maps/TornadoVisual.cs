@@ -3,22 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TornadoObject : MonoBehaviour {
+public class TornadoVisual : AreaMapObjectVisual<TileObject> {
 
     [SerializeField] private ParticleSystem[] particles;
 
     [Header("Movement")]
-    // Movement speed in units per second.
-    [SerializeField] private float baseSpeed = 1.0F;
-    // Time when the movement started.
-    private float startTime;
-    // Total distance between the markers.
-    private float journeyLength;
+    [SerializeField] private float baseSpeed = 1.0F; // Movement speed in units per second.
+    private float startTime;  // Time when the movement started.
+    private float journeyLength; // Total distance between the markers.
     private Vector3 startPosition;
 
     private float speed;
-    private bool isSpawned;
+    public bool isSpawned { get; private set; }
     private int radius;
+
+    private List<IDamageable> damagablesInTornado;
 
     #region getters/setters
     public LocationGridTile gridTileLocation {
@@ -35,22 +34,26 @@ public class TornadoObject : MonoBehaviour {
     private Area areaLocation;
     private LocationGridTile _destinationTile;
 
-    public void Initialize(LocationGridTile location, float size, int durationInTicks) {
-        this.transform.localPosition = location.centeredLocalLocation;
-        this.radius = (int)size;
-        areaLocation = location.parentAreaMap.area;
-        float scale = size / 10f;
+    public override void Initialize(TileObject poi) {
+        TornadoTileObject tornado = poi as TornadoTileObject;
+        this.transform.localPosition = poi.gridTileLocation.centeredLocalLocation;
+        this.radius = tornado.radius;
+        areaLocation = poi.gridTileLocation.parentAreaMap.area;
+        float scale = tornado.radius / 5f;
         for (int i = 0; i < particles.Length; i++) {
             particles[i].transform.localScale = new Vector3(scale, scale, scale);
         }
-        isSpawned = true;
+        damagablesInTornado = new List<IDamageable>();
+        collisionTrigger = transform.GetComponentInChildren<TileObjectCollisionTrigger>();
         GoToRandomTileInRadius();
-        SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(durationInTicks), Expire, this);
+        SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(tornado.durationInTicks), Expire, this);
         Messenger.AddListener(Signals.TICK_ENDED, PerTick);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
+        isSpawned = true;
     }
-
+    public override void UpdateTileObjectVisual(TileObject obj) { }
+    public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
     private void GoToRandomTileInRadius() {
         List<LocationGridTile> tilesInRadius = gridTileLocation.parentAreaMap.GetTilesInRadius(gridTileLocation, 8, 6, false, true);
         LocationGridTile chosen = tilesInRadius[Random.Range(0, tilesInRadius.Count)];
@@ -71,6 +74,12 @@ public class TornadoObject : MonoBehaviour {
             throw new System.Exception(e.Message + "\n " + this.name + "(" + x.ToString() + ", " + y.ToString() + ")");
         }
 
+    }
+
+    public override void PlaceObjectAt(LocationGridTile tile) {
+        this.transform.SetParent(tile.parentAreaMap.structureParent);
+        Vector3 worldPos = tile.centeredWorldLocation;
+        this.transform.position = worldPos;
     }
 
     #region Pathfinding
@@ -106,13 +115,20 @@ public class TornadoObject : MonoBehaviour {
     #endregion
 
     private void Expire() {
+        ObjectPoolManager.Instance.DestroyObject(this.gameObject);
+    }
+
+    public override void Reset() {
+        base.Reset();
         isSpawned = false;
         destinationTile = null;
         areaLocation = null;
+        journeyLength = 0f;
+        startPosition = Vector3.zero;
+        startTime = 0f;
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTick);
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
-        ObjectPoolManager.Instance.DestroyObject(this.gameObject);
     }
 
     #region Monobehaviours
@@ -137,6 +153,52 @@ public class TornadoObject : MonoBehaviour {
             GoToRandomTileInRadius();
         }
     }
+    void FixedUpdate() {
+        for (int i = 0; i < damagablesInTornado.Count; i++) {
+            IDamageable damageable = damagablesInTornado[i];
+            if (damageable.mapObjectVisual != null && damageable.CanBeDamaged()) {
+                iTween.ShakeRotation(damageable.mapObjectVisual.gameObjectVisual, new Vector3(5f, 5f, 5f), 0.5f);
+            }
+        }
+    }
+    #endregion
+
+    #region Triggers
+    public void OnTriggerEnter2D(Collider2D collision) {
+        IBaseCollider collidedWith = collision.gameObject.GetComponent<IBaseCollider>();
+        if (collidedWith != null) {
+            if (collidedWith.damageable == null) {
+                throw new System.Exception("Tornado collided with " + collidedWith.ToString() + " but damagable was null!");
+            }
+            Debug.Log("Tornado collision enter with " + collidedWith.damageable.name);
+            AddDamageable(collidedWith.damageable);
+        }
+
+    }
+    public void OnTriggerExit2D(Collider2D collision) {
+        IBaseCollider collidedWith = collision.gameObject.GetComponent<IBaseCollider>();
+        if (collidedWith != null) {
+            Debug.Log("Tornado collision exit with " + collidedWith.damageable.name);
+            RemoveDamageable(collidedWith.damageable);
+        }
+    }
+    #endregion
+
+    #region POI's
+    private void AddDamageable(IDamageable poi) {
+        if (!damagablesInTornado.Contains(poi)) {
+            damagablesInTornado.Add(poi);
+            OnAddPOIActions(poi);
+        }
+    }
+    private void RemoveDamageable(IDamageable poi) {
+        if (damagablesInTornado.Remove(poi)) {
+
+        }
+    }
+    private void OnAddPOIActions(IDamageable poi) {
+        //DealDamage(poi);
+    }
     #endregion
 
     private void PerTick() {
@@ -146,14 +208,36 @@ public class TornadoObject : MonoBehaviour {
         List<LocationGridTile> tiles = gridTileLocation.parentAreaMap.GetTilesInRadius(gridTileLocation, radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
-            List<IDamageable> damageables = tile.GetDamageablesOnTile();
-            for (int j = 0; j < damageables.Count; j++) {
-                IDamageable damageable = damageables[j];
-                if (damageable.CanBeDamaged()) {
-                    damageable.AdjustHP(-(int)(damageable.maxHP * 0.35f), true, this);
+            if (tile.genericTileObject.CanBeDamaged()) {
+                tile.genericTileObject.AdjustHP(-(int)(tile.genericTileObject.maxHP * 0.35f), true, this);
+            }
+        }
+        for (int i = 0; i < damagablesInTornado.Count; i++) {
+            IDamageable damageable = damagablesInTornado[i];
+            if (damageable.mapObjectVisual != null) {
+                Vector3 distance = transform.position - damageable.mapObjectVisual.gameObjectVisual.transform.position;
+                if (distance.magnitude < 2f) {
+                    DealDamage(damageable);
+                } else {
+                    //check for suck in
+                    //TrySuckIn(damageable);
                 }
             }
         }
     }
 
+    private void DealDamage(IDamageable damageable) {
+        if (damageable.CanBeDamaged()) {
+            damageable.AdjustHP(-(int)(damageable.maxHP * 0.35f), true, this);
+        }
+    }
+
+    private void TrySuckIn(IDamageable damageable) {
+        FollowerComponent fc = damageable.mapObjectVisual.gameObjectVisual.AddComponent<FollowerComponent>();
+        fc.SetTarget(this.transform, () => OnDamagableReachedThis(damageable));
+    }
+
+    private void OnDamagableReachedThis(IDamageable damageable) {
+        damageable.AdjustHP(-damageable.maxHP);
+    }
 }
