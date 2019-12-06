@@ -51,7 +51,7 @@ public class SaveDataFaction {
         size = faction.size;
         factionType = faction.factionType;
         isActive = faction.isActive;
-        requirementForJoining = faction.requirementForJoining;
+        //requirementForJoining = faction.requirementForJoining;
 
         ownedLandmarkIDs = new List<int>();
         for (int i = 0; i < faction.ownedLandmarks.Count; i++) {

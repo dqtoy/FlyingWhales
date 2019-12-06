@@ -35,8 +35,7 @@ public class Faction {
     public List<Log> history { get; private set; }
     public Region mainRegion { get { return ownedRegions[0]; } }
     public Quest activeQuest { get; protected set; }
-
-    public string requirementForJoining { get; private set; }
+    public FactionIdeologyComponent ideologyComponent { get; protected set; }
 
     #region getters/setters
     public string urlName {
@@ -66,7 +65,7 @@ public class Faction {
         recruitableRaces = new List<RACE>();
         startingFollowers = new List<RACE>();
         history = new List<Log>();
-        GenerateFactionRequirementForJoining();
+        ideologyComponent = new FactionIdeologyComponent(this);
         AddListeners();
     }
     public Faction(SaveDataFaction data) {
@@ -85,7 +84,6 @@ public class Faction {
         initialLeaderGender = data.initialLeaderGender;
         level = data.level;
         factionType = data.factionType;
-        requirementForJoining = data.requirementForJoining;
 
         characters = new List<Character>();
         ownedLandmarks = new List<BaseLandmark>();
@@ -94,6 +92,7 @@ public class Faction {
         recruitableRaces = new List<RACE>();
         startingFollowers = new List<RACE>();
         history = new List<Log>();
+        ideologyComponent = new FactionIdeologyComponent(this);
         AddListeners();
     }
 
@@ -121,6 +120,10 @@ public class Faction {
                 newRuler.AssignClassByRole(newRuler.role);
             }
             newRuler.AssignBuildStructureComponent();
+
+            //Every time the leader changes, faction ideology changes
+            //ideologyComponent.SwitchToIdeology(FACTION_IDEOLOGY.INCLUSIVE); //Inclusive only right now
+
             //if (newRuler.characterClass.className != initialLeaderClass) {
             //    newRuler.AssignClass(CharacterManager.Instance.CreateNewCharacterClass(initialLeaderClass));
             //}
@@ -141,8 +144,8 @@ public class Faction {
     #endregion
 
     #region Characters
-    public void JoinFaction(Character character, bool processRequirement = true) {
-        if(!processRequirement || DoesCharacterFitFactionRequirement(character)) {
+    public void JoinFaction(Character character) {
+        if(ideologyComponent.DoesCharacterFitCurrentIdeology(character)) {
             if (!characters.Contains(character)) {
                 characters.Add(character);
                 character.SetFaction(this);
@@ -155,6 +158,11 @@ public class Faction {
                 }
                 Messenger.Broadcast(Signals.CHARACTER_ADDED_TO_FACTION, character, this);
             }
+        } else {
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cannot_join_faction");
+            log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
+            character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
         }
     }
     public void LeaveFaction(Character character) {
@@ -168,17 +176,6 @@ public class Faction {
         //if (_leader != null && character.id == _leader.id) {
         //    SetLeader(null);
         //}
-    }
-    public bool DoesCharacterFitFactionRequirement(Character character) {
-        if(requirementForJoining == string.Empty) {
-            return true;
-        }
-        //TODO: must meet requirement
-        return true;
-    }
-    private void GenerateFactionRequirementForJoining() {
-        //TODO
-        requirementForJoining = string.Empty;
     }
 
     public List<Character> GetCharactersOfType(CHARACTER_ROLE role) {
@@ -303,11 +300,29 @@ public class Faction {
     public void OnlySetLeader(ILeader leader) {
         this.leader = leader;
     }
+    private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass currentClass) {
+        CheckIfCharacterStillFitsIdeology(character);
+    }
+    private void OnCharacterRaceChange(Character character) {
+        CheckIfCharacterStillFitsIdeology(character);
+    }
+    private void CheckIfCharacterStillFitsIdeology(Character character) {
+        if (character.faction == this && !ideologyComponent.DoesCharacterFitCurrentIdeology(character)) {
+            LeaveFaction(character);
+
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "left_faction_not_fit");
+            log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
+            character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+        }
+    }
     #endregion
 
     #region Utilities
     private void AddListeners() {
         Messenger.AddListener<Character>(Signals.CHARACTER_REMOVED, LeaveFaction);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
+        Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         //if (!_isPlayerFaction) {
         //    Messenger.AddListener(Signals.TICK_STARTED, DailyInteractionGeneration);
@@ -315,6 +330,8 @@ public class Faction {
     }
     private void RemoveListeners() {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_REMOVED, LeaveFaction);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
+        Messenger.RemoveListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         //Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         //if (!_isPlayerFaction) {
         //    Messenger.RemoveListener(Signals.TICK_STARTED, DailyInteractionGeneration);
