@@ -190,6 +190,15 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
         }
     }
+    public bool isFriendlyFactionless { //is the character part of the neutral faction? or no faction?
+        get {
+            if (faction == null || FactionManager.Instance.friendlyNeutralFaction == faction) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
     public bool isLeader {
         get { return characterClass.className == "Leader"; }
     }

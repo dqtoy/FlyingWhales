@@ -35,14 +35,14 @@ public class CharacterRelationshipItem : PooledObject {
         //    summary += $"\n- {data.relationships[i].ToString()}";
         //}
         int opinionOfOther = target.opinionComponent.GetTotalOpinion(owner);
-        string summary = "<color=" + OpinionColor(opinionOfOther) + ">(" + GetOpinionText(opinionOfOther) + ")</color>";
+        string summary = target.name;
         summary += "\n---------------------";
         Dictionary<string, int> opinions = owner.opinionComponent.GetOpinion(target);
         foreach (KeyValuePair<string, int> kvp in opinions) {
             summary += "\n" + kvp.Key + ": " + "<color=" + OpinionColor(kvp.Value) + ">" + GetOpinionText(kvp.Value) + "</color>";
         }
         summary += "\n---------------------";
-        summary += "\nTotal: " + owner.opinionComponent.GetTotalOpinion(target);
+        summary += "\nTotal: <color=" + OpinionColor(opinionOfOther) + ">" + GetOpinionText(owner.opinionComponent.GetTotalOpinion(target)) + "</color> <color=" + OpinionColor(opinionOfOther) + ">(" + GetOpinionText(opinionOfOther) + ")</color>";
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void HideSmallInfo() {

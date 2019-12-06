@@ -1797,7 +1797,7 @@ public class PlayerUI : MonoBehaviour {
     }
     private bool WillCharacterBeShownInKillCount(Character character) {
         if (character.minion != null || character is Summon || character.faction == PlayerManager.Instance.player.playerFaction
-            || character.faction == FactionManager.Instance.friendlyNeutralFaction) {
+            /*|| character.faction == FactionManager.Instance.friendlyNeutralFaction*/) {
             //Do not show minions and summons
             return false;
         }
