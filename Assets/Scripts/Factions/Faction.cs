@@ -129,8 +129,10 @@ public class Faction {
         OnlySetLeader(leader);
 
         //Every time the leader changes, faction ideology changes
-        FACTION_IDEOLOGY newIdeology = Utilities.GetRandomEnumValue<FACTION_IDEOLOGY>();
-        ideologyComponent.SwitchToIdeology(newIdeology); //Inclusive only right now
+        if(leader is Character) {
+            FACTION_IDEOLOGY newIdeology = Utilities.GetRandomEnumValue<FACTION_IDEOLOGY>();
+            ideologyComponent.SwitchToIdeology(newIdeology); //Inclusive only right now
+        }
     }
     #endregion
 
@@ -161,15 +163,16 @@ public class Faction {
                 Messenger.Broadcast(Signals.CHARACTER_ADDED_TO_FACTION, character, this);
             }
             return true;
-        } else {
-            if (GameManager.Instance.gameHasStarted) {
-                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cannot_join_faction");
-                log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
-                character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
-            }
-            return false;
         }
+        //else {
+        //  if (GameManager.Instance.gameHasStarted) {
+        //      Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cannot_join_faction");
+        //      log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //      log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
+        //      character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+        //  }
+        //}
+        return false;
     }
     public bool LeaveFaction(Character character) {
         if (characters.Remove(character)) {
@@ -426,7 +429,8 @@ public class Faction {
         isActive = state;
         Messenger.Broadcast(Signals.FACTION_ACTIVE_CHANGED, this);
     }
-    public void GenerateStartingCitizens(int leaderLevel, int citizensLevel, int citizenCount, LocationClassManager classManager) {
+    public List<Character> GenerateStartingCitizens(int leaderLevel, int citizensLevel, int citizenCount, LocationClassManager classManager) {
+        List<Character> createdCharacters = new List<Character>();
         for (int i = 0; i < citizenCount; i++) {
             string className = classManager.GetCurrentClassToCreate();
             Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, Utilities.GetRandomGender(), this, mainRegion);
@@ -436,9 +440,11 @@ public class Faction {
             } else {
                 citizen.LevelUp(citizensLevel - 1);
             }
+            createdCharacters.Add(citizen);
         }
         mainRegion.area.SetInitialResidentCount(citizenCount);
         RelationshipManager.Instance.GenerateRelationships(this.characters);
+        return createdCharacters;
     }
     public int GetNumberOfDwellingsToHouseCharacters(List<Character> characters) {
         //To get number of dwellings needed,
