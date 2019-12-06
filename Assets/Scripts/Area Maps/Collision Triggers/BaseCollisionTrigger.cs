@@ -8,7 +8,7 @@ using UnityEngine;
 public abstract class BaseCollisionTrigger<T> : MonoBehaviour, IBaseCollider where T: IDamageable{
 
     [SerializeField] private ProjectileReceiver _projectileReciever;
-    [SerializeField] protected BoxCollider2D mainCollider;
+    [SerializeField] protected Collider2D mainCollider;
     
     public T owner { get; private set; }
     public ProjectileReceiver projectileReceiver { get { return _projectileReciever; } }

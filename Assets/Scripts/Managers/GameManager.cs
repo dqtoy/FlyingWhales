@@ -481,7 +481,7 @@ public class GameManager : MonoBehaviour {
         go.SetActive(true);
     }
     public void CreateHitEffectAt(IDamageable poi) {
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(hitEffectPrefab.name, Vector3.zero, Quaternion.identity, poi.projectileReceiver.transform);
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(hitEffectPrefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentAreaMap.objectsParent);
         go.transform.position = poi.projectileReceiver.transform.position;
         go.SetActive(true);
        

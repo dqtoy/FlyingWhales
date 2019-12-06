@@ -470,13 +470,13 @@ public class LocationStructure {
             OnStructureDamaged();
         }
     }
-    public void OnTileDamaged() {
+    public void OnTileDamaged(LocationGridTile tile) {
         OnStructureDamaged();
     }
-    public void OnTileRepaired() {
-
+    public void OnTileRepaired(LocationGridTile tile) {
+        structureObj.ApplyGroundTileAssetForTile(tile);
     }
-    public void OnTileDestroyed() {
+    public void OnTileDestroyed(LocationGridTile tile) {
         if (structureType.IsOpenSpace()) {
             return; //do not check for destruction if structure is open space (Wilderness, Work Area, Cemetery, etc.)
         }

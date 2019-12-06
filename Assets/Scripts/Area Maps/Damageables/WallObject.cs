@@ -55,6 +55,7 @@ public class WallObject : AreaMapObject<WallObject>, ITraitable {
         } else if (currentHP == maxHP) {
             //wall has been fully repaired
             visual.UpdateWallAssets(this);
+            visual.UpdateWallState(this);
             Messenger.Broadcast(Signals.WALL_REPAIRED, this);
         }
     }

@@ -8,11 +8,13 @@ public class WallVisual : AreaMapObjectVisual<WallObject> {
 
     void Awake() {
         spriteRenderers = this.transform.GetComponentsInChildren<SpriteRenderer>();
+        collisionTrigger = transform.GetComponentInChildren<WallObjectCollisionTrigger>();
+        collisionTrigger.gameObject.SetActive(false);
     }
 
     public override void Initialize(WallObject wallObject) {
-        collisionTrigger = transform.GetComponentInChildren<WallObjectCollisionTrigger>();
         collisionTrigger.Initialize(wallObject);
+        collisionTrigger.gameObject.SetActive(true);
         UpdateWallAssets(wallObject);
     }
     public void UpdateWallAssets(WallObject wallObject) {
@@ -54,6 +56,11 @@ public class WallVisual : AreaMapObjectVisual<WallObject> {
             SpriteRenderer spriteRenderer = spriteRenderers[i];
             spriteRenderer.color = color;
         }
+    }
+
+    public override void Reset() {
+        base.Reset();
+        collisionTrigger.gameObject.SetActive(false);
     }
 
     public override void UpdateTileObjectVisual(WallObject obj) {

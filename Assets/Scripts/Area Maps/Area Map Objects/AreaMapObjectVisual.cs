@@ -24,7 +24,7 @@ public abstract class AreaMapObjectVisual<T> : PooledObject, IMapObjectVisual wh
     public abstract void Initialize(T poi);
 
     #region Placement
-    public void PlaceObjectAt(LocationGridTile tile) {
+    public virtual void PlaceObjectAt(LocationGridTile tile) {
         if (tile.structure.structureObj != null) {
             tile.structure.structureObj.ReceiveMapObject(this);
         } else {

@@ -54,7 +54,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             }
             //when this collides with a poi trigger
             //check if the poi trigger is in the same structure as this
-            if (collidedWith.poi.gridTileLocation.structure == parentMarker.character.gridTileLocation.structure) {
+            if (collidedWith.poi.gridTileLocation.structure == parentMarker.character.gridTileLocation.structure || collidedWith.IgnoresStructureDifference()) {
                 //if it is, just follow the normal procedure when a poi becomes in range
                 collisionSummary += "\n-has same structure as " + parentMarker.character.name + " adding as in range";
                 NormalEnterHandling(collidedWith.poi);
@@ -158,6 +158,8 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         parentMarker.AddPOIAsInVisionRange(poi);
         if(targetCharacter != null && parentMarker.character.traitContainer.GetNormalTrait("Resting", "Unconscious") == null) {
             parentMarker.AddHostileInRange(targetCharacter);
+        } else if (poi is TornadoTileObject) {
+            parentMarker.AddAvoidInRange(poi);
         }
         //if (GameManager.Instance.gameHasStarted) {
         //    if (parentMarker.character.stateComponent.currentState != null) {

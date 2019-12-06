@@ -357,6 +357,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                     tilemap.SetTile(pos, assetUsed);
                 } else if (tilemap == groundTilemap) {
                     tile.SetGroundTilemapVisual(assetUsed);
+                    tile.SetPreviousGroundVisual(null);
                 } else {
                     tilemap.SetTile(pos, assetUsed);
                 }
@@ -552,6 +553,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                 }
                
             }
+            currTile.SetPreviousGroundVisual(null);
 
             //trees and shrubs
             if (!currTile.hasDetail && currTile.HasNeighbouringWalledStructure() == false) {

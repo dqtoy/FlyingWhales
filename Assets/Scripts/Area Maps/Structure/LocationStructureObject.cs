@@ -208,9 +208,8 @@ public class LocationStructureObject : PooledObject {
                 tile.SetTileState(LocationGridTile.Tile_State.Occupied);
             }
 
-            TileBase groundTile = _groundTileMap.GetTile(_groundTileMap.WorldToCell(tile.worldLocation));
             //set the ground asset of the parent area map to what this objects ground map uses, then clear this objects ground map
-            tile.SetGroundTilemapVisual(groundTile);
+            ApplyGroundTileAssetForTile(tile);
             
             tile.parentAreaMap.detailsTilemap.SetTile(tile.localPlace, null);
         }
@@ -219,18 +218,6 @@ public class LocationStructureObject : PooledObject {
         RegisterFurnitureSpots(areaMap);
         areaMap.area.OnLocationStructureObjectPlaced(structure);
         UpdateSortingOrders();
-
-        //if (structure.structureType.IsOpenSpace() == false) {
-        //    int random = UnityEngine.Random.Range(0, 3);
-        //    if (random == 0) {
-        //        structure.ChangeResourceMadeOf(RESOURCE.METAL);
-        //    } else if (random == 1) {
-        //        structure.ChangeResourceMadeOf(RESOURCE.STONE);
-        //    } else {
-        //        structure.ChangeResourceMadeOf(RESOURCE.WOOD);
-        //    }
-        //}
-        
     }
     #endregion
 
@@ -296,6 +283,12 @@ public class LocationStructureObject : PooledObject {
                 RescanPathfindingGridOfStructure();
                 break;
         }
+    }
+    public void ApplyGroundTileAssetForTile(LocationGridTile tile) {
+        tile.SetGroundTilemapVisual(GetGroundTileAssetForTile(tile));
+    }
+    private TileBase GetGroundTileAssetForTile(LocationGridTile tile) {
+        return _groundTileMap.GetTile(_groundTileMap.WorldToCell(tile.worldLocation));
     }
     #endregion
 

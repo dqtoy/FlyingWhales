@@ -41,7 +41,7 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
     private GameObject slotsParent;
     protected bool hasCreatedSlots;
 
-    public LocationGridTile gridTileLocation { get; protected set; }
+    public virtual LocationGridTile gridTileLocation { get; protected set; }
     public POI_STATE state { get; private set; }
     public LocationGridTile previousTile { get; protected set; }
     public Character isBeingCarriedBy { get; protected set; }

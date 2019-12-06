@@ -10,4 +10,8 @@ public class SpecialTokenCollisionTrigger : BaseCollisionTrigger<SpecialToken>, 
         base.Initialize(poi);
         this.poi = poi;
     }
+
+    public bool IgnoresStructureDifference() {
+        return false;
+    }
 }
