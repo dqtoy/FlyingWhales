@@ -198,7 +198,7 @@ public class TornadoObject : MonoBehaviour {
                     DealDamage(damageable);
                 } else {
                     //check for suck in
-                    TrySuckIn(damageable);
+                    //TrySuckIn(damageable);
                 }
             }
         }

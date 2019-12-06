@@ -252,7 +252,7 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
-        if (amount < 0) {
+        if (amount < 0 && source != null) {
             GameManager.Instance.CreateHitEffectAt(this);
         }
         this.currentHP += amount;
