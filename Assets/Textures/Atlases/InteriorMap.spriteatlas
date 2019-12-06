@@ -529,7 +529,7 @@ SpriteAtlas:
   - floorStone01
   - road00
   - shore01110111-00
-  - floorA03
+  - wood_floorA03
   - caveWallA-0011-01
   - shore00000001-00
   - wallA-0101-01
@@ -604,7 +604,7 @@ SpriteAtlas:
   - grass_h01
   - caveWallA-1010-00
   - tableDecor00_empty
-  - floorA00
+  - wood_floorA00
   - tundraDirt_h01
   - barrels01
   - pineSnow00
@@ -624,7 +624,7 @@ SpriteAtlas:
   - femaleAvatar_hover
   - shore00000100-00
   - barrels00
-  - floorA02
+  - wood_floorA02
   - stone_pile
   - vertical_1
   - shelfDecor01
@@ -667,7 +667,7 @@ SpriteAtlas:
   - statue00
   - debrisBones03
   - rocks03
-  - floorA01
+  - wood_floorA01
   - caveWallA-1010-02
   - supplies
   - wallA-1111-00

@@ -177,7 +177,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
                 } else {
                     SetGroundType(Ground_Type.Snow);
                 }
-            } else if (assetName.Contains("stone")) {
+            } else if (assetName.Contains("stone") || assetName.Contains("road")) {
                 SetGroundType(Ground_Type.Stone);
             } else if (assetName.Contains("grass")) {
                 SetGroundType(Ground_Type.Grass);

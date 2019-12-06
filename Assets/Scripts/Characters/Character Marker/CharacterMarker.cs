@@ -339,6 +339,9 @@ public class CharacterMarker : AreaMapObjectVisual<Character> {
         if (hostilesInRange.Contains(obj)) {
             RemoveHostileInRange(obj);
         }
+        if (avoidInRange.Contains(obj)) {
+            RemoveAvoidInRange(obj);
+        }
     }
     #endregion
 

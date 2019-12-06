@@ -13,11 +13,13 @@ public class TornadoVisual : AreaMapObjectVisual<TileObject> {
     private float journeyLength; // Total distance between the markers.
     private Vector3 startPosition;
 
-    private float speed;
     public bool isSpawned { get; private set; }
+    private float speed;
     private int radius;
-
     private List<IDamageable> damagablesInTornado;
+    private Area areaLocation;
+    private LocationGridTile _destinationTile;
+    private TornadoTileObject tornado;
 
     #region getters/setters
     public LocationGridTile gridTileLocation {
@@ -29,13 +31,10 @@ public class TornadoVisual : AreaMapObjectVisual<TileObject> {
             _destinationTile = value;
         }
     }
-    #endregion
-
-    private Area areaLocation;
-    private LocationGridTile _destinationTile;
+    #endregion    
 
     public override void Initialize(TileObject poi) {
-        TornadoTileObject tornado = poi as TornadoTileObject;
+        this.tornado = poi as TornadoTileObject;
         this.transform.localPosition = poi.gridTileLocation.centeredLocalLocation;
         this.radius = tornado.radius;
         areaLocation = poi.gridTileLocation.parentAreaMap.area;
@@ -45,12 +44,6 @@ public class TornadoVisual : AreaMapObjectVisual<TileObject> {
         }
         damagablesInTornado = new List<IDamageable>();
         collisionTrigger = transform.GetComponentInChildren<TileObjectCollisionTrigger>();
-        GoToRandomTileInRadius();
-        SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(tornado.durationInTicks), Expire, this);
-        Messenger.AddListener(Signals.TICK_ENDED, PerTick);
-        Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
-        Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
-        isSpawned = true;
     }
     public override void UpdateTileObjectVisual(TileObject obj) { }
     public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
@@ -80,6 +73,13 @@ public class TornadoVisual : AreaMapObjectVisual<TileObject> {
         this.transform.SetParent(tile.parentAreaMap.structureParent);
         Vector3 worldPos = tile.centeredWorldLocation;
         this.transform.position = worldPos;
+
+        GoToRandomTileInRadius();
+        SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(tornado.durationInTicks), Expire, this);
+        Messenger.AddListener(Signals.TICK_ENDED, PerTick);
+        Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
+        isSpawned = true;
     }
 
     #region Pathfinding
@@ -220,24 +220,31 @@ public class TornadoVisual : AreaMapObjectVisual<TileObject> {
                     DealDamage(damageable);
                 } else {
                     //check for suck in
-                    //TrySuckIn(damageable);
+                    TrySuckIn(damageable);
                 }
             }
         }
     }
-
     private void DealDamage(IDamageable damageable) {
         if (damageable.CanBeDamaged()) {
             damageable.AdjustHP(-(int)(damageable.maxHP * 0.35f), true, this);
         }
     }
-
     private void TrySuckIn(IDamageable damageable) {
-        FollowerComponent fc = damageable.mapObjectVisual.gameObjectVisual.AddComponent<FollowerComponent>();
-        fc.SetTarget(this.transform, () => OnDamagableReachedThis(damageable));
+        if (CanBeSuckedIn(damageable) && Random.Range(0, 100) < 25) {
+            FollowerComponent fc = damageable.mapObjectVisual.gameObjectVisual.AddComponent<FollowerComponent>();
+            fc.SetTarget(this.transform, () => OnDamagableReachedThis(damageable));
+            if (damageable is IPointOfInterest) {
+                IPointOfInterest poi = damageable as IPointOfInterest;
+                poi.SetPOIState(POI_STATE.INACTIVE);
+            }
+        }
     }
-
     private void OnDamagableReachedThis(IDamageable damageable) {
         damageable.AdjustHP(-damageable.maxHP);
+    }
+
+    private bool CanBeSuckedIn(IDamageable damageable) {
+        return damageable.CanBeDamaged() && (damageable is GenericTileObject) == false && (damageable is Character) == false;
     }
 }
