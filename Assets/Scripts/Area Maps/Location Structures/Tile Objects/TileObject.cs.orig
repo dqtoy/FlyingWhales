@@ -27,7 +27,6 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
         }
     }//array of characters, currently using the tile object
     public Character removedBy { get; private set; }
-    public IMapObjectVisual mapObjectVisual { get { return areaMapVisual; } }
 
     //hp
     public int maxHP { get; protected set; }
@@ -343,9 +342,6 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
-        if (amount < 0) {
-            GameManager.Instance.CreateHitEffectAt(this);
-        }
         this.currentHP += amount;
         this.currentHP = Mathf.Clamp(this.currentHP, 0, maxHP);
         if (currentHP == 0) {
@@ -553,11 +549,13 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
             owners.AddRange((gridTileLocation.structure as Dwelling).residents);
         }
     }
+<<<<<<< HEAD
+    public bool CanBeDamaged() {
+        return mapObjectState != MAP_OBJECT_STATE.UNBUILT;
+=======
     public void SetIsBeingCarriedBy(Character carrier) {
         isBeingCarriedBy = carrier;
-    }
-    public virtual bool CanBeDamaged() {
-        return mapObjectState != MAP_OBJECT_STATE.UNBUILT;
+>>>>>>> 529ce55279d3fa8ad02ab1500b3955b908afa313
     }
     #endregion
 

@@ -4,4 +4,10 @@ using UnityEngine;
 
 public class WallObjectCollisionTrigger : BaseCollisionTrigger<WallObject> {
     
+    void Awake() {
+        mainCollider = gameObject.AddComponent<BoxCollider2D>();
+        gameObject.layer = LayerMask.NameToLayer("Area Maps Collision");
+        mainCollider.size = new Vector2(0.7f, 0.7f);
+    }
+
 }

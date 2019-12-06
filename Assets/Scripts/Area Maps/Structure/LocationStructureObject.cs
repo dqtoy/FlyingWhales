@@ -220,16 +220,16 @@ public class LocationStructureObject : PooledObject {
         areaMap.area.OnLocationStructureObjectPlaced(structure);
         UpdateSortingOrders();
 
-        if (structure.structureType.IsOpenSpace() == false) {
-            int random = UnityEngine.Random.Range(0, 3);
-            if (random == 0) {
-                structure.ChangeResourceMadeOf(RESOURCE.METAL);
-            } else if (random == 1) {
-                structure.ChangeResourceMadeOf(RESOURCE.STONE);
-            } else {
-                structure.ChangeResourceMadeOf(RESOURCE.WOOD);
-            }
-        }
+        //if (structure.structureType.IsOpenSpace() == false) {
+        //    int random = UnityEngine.Random.Range(0, 3);
+        //    if (random == 0) {
+        //        structure.ChangeResourceMadeOf(RESOURCE.METAL);
+        //    } else if (random == 1) {
+        //        structure.ChangeResourceMadeOf(RESOURCE.STONE);
+        //    } else {
+        //        structure.ChangeResourceMadeOf(RESOURCE.WOOD);
+        //    }
+        //}
         
     }
     #endregion

@@ -143,7 +143,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 1
 --- !u!114 &114231252610835808
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -172,8 +172,6 @@ MonoBehaviour:
   particles:
   - {fileID: 198164080446869112}
   - {fileID: 198983414748264842}
-  rigidBody: {fileID: 50213978046532624}
-  targetTileName: 
   baseSpeed: 1
 --- !u!114 &114613813232875902
 MonoBehaviour:

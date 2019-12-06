@@ -7,10 +7,13 @@ using UnityEngine;
 /// <summary>
 /// Base class to be used for the visuals of any objects that are Area Map Objects.
 /// </summary>
-public abstract class AreaMapObjectVisual<T> : PooledObject where T : IDamageable {
+public abstract class AreaMapObjectVisual<T> : PooledObject, IMapObjectVisual where T : IDamageable {
 
     [SerializeField] protected SpriteRenderer objectVisual;
     public BaseCollisionTrigger<T> collisionTrigger { get; protected set; }
+    public GameObject gameObjectVisual {
+        get { return this.gameObject; }
+    }
 
     #region getters
     public Sprite usedSprite {

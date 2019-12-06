@@ -13,6 +13,8 @@ public class WallObject : AreaMapObject<WallObject>, ITraitable {
     public TraitProcessor traitProcessor { get { return TraitManager.defaultTraitProcessor; } }
     public Transform worldObject { get { return visual.transform; } }
     public LocationGridTile gridTileLocation { get; private set; }
+    public override AreaMapObjectVisual<WallObject> areaMapVisual { get { return visual; } }
+    public IMapObjectVisual mapObjectVisual { get { return areaMapVisual; } }
 
     private WallVisual visual;
 
@@ -31,6 +33,9 @@ public class WallObject : AreaMapObject<WallObject>, ITraitable {
     public void AdjustHP(int amount, bool triggerDeath = false, object source = null) {
         if (currentHP <= 0 && amount < 0) {
             return; //ignore
+        }
+        if (amount < 0) {
+            GameManager.Instance.CreateHitEffectAt(this);
         }
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);

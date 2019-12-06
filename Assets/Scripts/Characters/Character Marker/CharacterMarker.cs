@@ -10,7 +10,7 @@ using Pathfinding;
 using System.Linq;
 using Traits;
 
-public class CharacterMarker : PooledObject {
+public class CharacterMarker : AreaMapObjectVisual<Character> {
 
     public delegate void HoverMarkerAction(Character character, LocationGridTile location);
     public HoverMarkerAction hoverEnterAction;
@@ -66,7 +66,7 @@ public class CharacterMarker : PooledObject {
 
     //movement
     public IPointOfInterest targetPOI { get; private set; }
-    public CharacterCollisionTrigger collisionTrigger { get; private set; }
+    //public CharacterCollisionTrigger collisionTrigger { get; private set; }
     public Vector2 anchoredPos { get; private set; }
     public Vector3 centeredWorldPos { get; private set; }
     public LocationGridTile destinationTile { get; private set; }
@@ -1578,4 +1578,14 @@ public class CharacterMarker : PooledObject {
         }
     }
     #endregion
+
+    public override void Initialize(Character poi) {
+        throw new NotImplementedException();
+    }
+    public override void UpdateTileObjectVisual(Character obj) {
+        throw new NotImplementedException();
+    }
+    public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) {
+        throw new NotImplementedException();
+    }
 }

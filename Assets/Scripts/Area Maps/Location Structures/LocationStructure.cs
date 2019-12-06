@@ -403,6 +403,8 @@ public class LocationStructure {
                     AddPOI(tile.objHere, tile);
                 }
             }
+            tile.SetPreviousGroundVisual(null); //so that the tile will never revert to the structure tile, unless a new structure is put on it.
+            tile.genericTileObject.AdjustHP(tile.genericTileObject.maxHP);
         }
         JobQueueItem existingRepairJob = location.GetJob(JOB_TYPE.REPAIR, occupiedBuildSpot);
         if (existingRepairJob != null) {

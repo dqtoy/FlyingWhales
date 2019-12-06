@@ -12,7 +12,7 @@ public class WallVisual : AreaMapObjectVisual<WallObject> {
 
     public override void Initialize(WallObject wallObject) {
         collisionTrigger = transform.GetComponentInChildren<WallObjectCollisionTrigger>();
-        collisionTrigger.projectileReceiver.Initialize(wallObject);
+        collisionTrigger.Initialize(wallObject);
         UpdateWallAssets(wallObject);
     }
     public void UpdateWallAssets(WallObject wallObject) {

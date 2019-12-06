@@ -23,6 +23,7 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
     public List<JobQueueItem> allJobsTargettingThis { get; private set; }
     public Character carriedByCharacter { get; private set; }
     public bool isDestroyed { get; private set; }
+    public IMapObjectVisual mapObjectVisual { get { return areaMapVisual; } }
 
     //hp
     public int maxHP { get; protected set; }
@@ -250,6 +251,9 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
     public void AdjustHP(int amount, bool triggerDeath = false, object source = null) {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
+        }
+        if (amount < 0) {
+            GameManager.Instance.CreateHitEffectAt(this);
         }
         this.currentHP += amount;
         this.currentHP = Mathf.Clamp(this.currentHP, 0, maxHP);

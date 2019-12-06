@@ -204,9 +204,12 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     #region Visuals
     public TileBase previousGroundVisual { get; private set; }
     public void SetGroundTilemapVisual(TileBase tileBase) {
-        previousGroundVisual = parentAreaMap.groundTilemap.GetTile(this.localPlace);
+        SetPreviousGroundVisual(parentAreaMap.groundTilemap.GetTile(this.localPlace));
         parentAreaMap.groundTilemap.SetTile(this.localPlace, tileBase);
         UpdateGroundTypeBasedOnAsset();
+    }
+    public void SetPreviousGroundVisual(TileBase tileBase) {
+        previousGroundVisual = tileBase;
     }
     public void RevertToPreviousGroundVisual() {
         SetGroundTilemapVisual(previousGroundVisual);
