@@ -11,8 +11,10 @@ public class FactionIdeologyComponent {
     }
 
     public void SwitchToIdeology(FACTION_IDEOLOGY ideologyType) {
+        if(currentIdeology != null && currentIdeology.ideologyType == FACTION_IDEOLOGY.INCLUSIVE && ideologyType == FACTION_IDEOLOGY.INCLUSIVE) { return; }
         currentIdeology = CreateIdeology(ideologyType);
         currentIdeology.SetRequirements(owner);
+        ReEvaluateFactionMembers();
     }
     public bool DoesCharacterFitCurrentIdeology(Character character) {
         if(currentIdeology == null) { return true; }
@@ -28,6 +30,14 @@ public class FactionIdeologyComponent {
             return data;
         } else {
             throw new System.Exception(ideologyStr + " has no data!");
+        }
+    }
+
+    private void ReEvaluateFactionMembers() {
+        for (int i = 0; i < owner.characters.Count; i++) {
+            Character member = owner.characters[i];
+            if(member == owner.leader) { continue; }
+            owner.CheckIfCharacterStillFitsIdeology(member);
         }
     }
 }

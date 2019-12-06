@@ -104,8 +104,10 @@ public class CharacterInfoUI : UIMenu {
         Messenger.AddListener<SpecialToken, Character>(Signals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<SpecialToken, Character>(Signals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<Character>(Signals.CHARACTER_SWITCHED_ALTER_EGO, OnCharacterChangedAlterEgo);
-        Messenger.AddListener<Relatable, Relatable>(Signals.RELATIONSHIP_ADDED, OnRelationshipAdded);
-        Messenger.AddListener<Relatable, RELATIONSHIP_TRAIT, Relatable>(Signals.RELATIONSHIP_REMOVED, OnRelationshipRemoved);
+        //Messenger.AddListener<Relatable, Relatable>(Signals.RELATIONSHIP_ADDED, OnRelationshipAdded);
+        //Messenger.AddListener<Relatable, RELATIONSHIP_TRAIT, Relatable>(Signals.RELATIONSHIP_REMOVED, OnRelationshipRemoved);
+        Messenger.AddListener<Character, Character>(Signals.OPINION_ADDED, OnOpinionAdded);
+        Messenger.AddListener<Character, Character>(Signals.OPINION_REMOVED, OnOpinionRemoved);
         inventoryItemContainers = Utilities.GetComponentsInDirectChildren<ItemContainer>(itemsScrollView.content.gameObject);
 
         normalTraitsEventLbl.SetOnClickAction(OnClickTrait);
@@ -726,28 +728,43 @@ public class CharacterInfoUI : UIMenu {
     private void UpdateRelationships() {
         //CharacterRelationshipItem[] items = Utilities.GetComponentsInDirectChildren<CharacterRelationshipItem>(relationshipTraitsScrollView.content.gameObject);
         Utilities.DestroyChildren(relationshipTraitsScrollView.content);
-        foreach (KeyValuePair<Relatable, IRelationshipData> keyValuePair in activeCharacter.relationshipContainer.relationships) {
+        foreach (Character target in activeCharacter.opinionComponent.opinions.Keys) {
             GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(relationshipItemPrefab.name, Vector3.zero, Quaternion.identity, relationshipTraitsScrollView.content);
             CharacterRelationshipItem item = go.GetComponent<CharacterRelationshipItem>();
-            if (keyValuePair.Key is AlterEgoData) {
-                item.Initialize(keyValuePair.Key as AlterEgoData, keyValuePair.Value);
-            }
+            item.Initialize(activeCharacter, target);
+        }
+        //foreach (KeyValuePair<Relatable, IRelationshipData> keyValuePair in activeCharacter.relationshipContainer.relationships) {
+        //    GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(relationshipItemPrefab.name, Vector3.zero, Quaternion.identity, relationshipTraitsScrollView.content);
+        //    CharacterRelationshipItem item = go.GetComponent<CharacterRelationshipItem>();
+        //    if (keyValuePair.Key is AlterEgoData) {
+        //        item.Initialize(keyValuePair.Key as AlterEgoData, keyValuePair.Value);
+        //    }
+        //}
+    }
+    private void OnOpinionAdded(Character owner, Character target) {
+        if (isShowing && owner == activeCharacter) {
+            UpdateRelationships();
         }
     }
-    private void OnRelationshipAdded(Relatable gainedBy, Relatable rel) {
-        if (isShowing) {
-            if (gainedBy == activeCharacter.currentAlterEgo || rel == activeCharacter.currentAlterEgo) {
-                UpdateRelationships();
-            }
-        }
-        
-    }
-    private void OnRelationshipRemoved(Relatable gainedBy, RELATIONSHIP_TRAIT trait, Relatable rel) {
-        if (isShowing) {
-            if (gainedBy == activeCharacter.currentAlterEgo || rel == activeCharacter.currentAlterEgo) {
-                UpdateRelationships();
-            }
+    private void OnOpinionRemoved(Character owner, Character target) {
+        if (isShowing && owner == activeCharacter) {
+            UpdateRelationships();
         }
     }
+    //private void OnRelationshipAdded(Relatable gainedBy, Relatable rel) {
+    //    if (isShowing) {
+    //        if (gainedBy == activeCharacter.currentAlterEgo || rel == activeCharacter.currentAlterEgo) {
+    //            UpdateRelationships();
+    //        }
+    //    }
+
+    //}
+    //private void OnRelationshipRemoved(Relatable gainedBy, RELATIONSHIP_TRAIT trait, Relatable rel) {
+    //    if (isShowing) {
+    //        if (gainedBy == activeCharacter.currentAlterEgo || rel == activeCharacter.currentAlterEgo) {
+    //            UpdateRelationships();
+    //        }
+    //    }
+    //}
     #endregion
 }

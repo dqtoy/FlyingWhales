@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DefaultOtherStructure : CharacterBehaviourComponent {
+    public DefaultOtherStructure() {
+        attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.INSIDE_SETTLEMENT_ONLY };
+    }
     public override bool TryDoBehaviour(Character character, ref string log) {
         if (((character.currentStructure.structureType == STRUCTURE_TYPE.DWELLING && character.currentStructure != character.homeStructure)
                 || character.currentStructure.structureType == STRUCTURE_TYPE.INN

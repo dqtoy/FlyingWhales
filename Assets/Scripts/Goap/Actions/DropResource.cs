@@ -118,22 +118,27 @@ public class DropResource : GoapAction {
         }
         return goapActionInvalidity;
     }
+    public override void AddFillersToLog(Log log, ActualGoapNode goapNode) {
+        base.AddFillersToLog(log, goapNode);
+        ResourcePile pile = goapNode.poiTarget as ResourcePile;
+        log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(pile.providedResource.ToString()), LOG_IDENTIFIER.STRING_1);
+    }
     #endregion
 
     #region Preconditions
-    private bool IsActorWoodEnough(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (actor.supply > actor.role.reservedSupply) {
-            WoodPile supplyPile = poiTarget as WoodPile;
-            int supplyToBeDeposited = actor.supply - actor.role.reservedSupply;
-            if((supplyToBeDeposited + supplyPile.resourceInPile) >= 100) {
-                return true;
-            }
-        }
-        return false;
-    }
-    private bool IsActorFoodEnough(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor.food > 0;
-    }
+    //private bool IsActorWoodEnough(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    //    if (actor.supply > actor.role.reservedSupply) {
+    //        WoodPile supplyPile = poiTarget as WoodPile;
+    //        int supplyToBeDeposited = actor.supply - actor.role.reservedSupply;
+    //        if((supplyToBeDeposited + supplyPile.resourceInPile) >= 100) {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
+    //private bool IsActorFoodEnough(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    //    return actor.food > 0;
+    //}
     private bool IsResourcePileCarried(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         return actor.ownParty.IsPOICarried(poiTarget);
     }
@@ -164,12 +169,14 @@ public class DropResource : GoapAction {
     #endregion
 
     #region State Effects
-    //public void PreDropSuccess(ActualGoapNode goapNode) {
-    //    //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-    //    int givenSupply = goapNode.actor.supply - goapNode.actor.role.reservedSupply;
-    //    //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-    //    goapNode.descriptionLog.AddToFillers(null, givenSupply.ToString(), LOG_IDENTIFIER.STRING_1);
-    //}
+    public void PreDropSuccess(ActualGoapNode goapNode) {
+        ResourcePile pile = goapNode.poiTarget as ResourcePile;
+        //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
+        //int givenSupply = goapNode.actor.supply - goapNode.actor.role.reservedSupply;
+        //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+        goapNode.descriptionLog.AddToFillers(null, pile.resourceInPile.ToString(), LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(pile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
+    }
     public void AfterDropSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
         ResourcePile poiTarget = goapNode.poiTarget as ResourcePile;

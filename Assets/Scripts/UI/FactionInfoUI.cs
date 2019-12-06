@@ -332,14 +332,21 @@ public class FactionInfoUI : UIMenu {
         }
     }
     public void ShowFactionTestingInfo() {
+        string summary = string.Empty;
         if (activeFaction.activeQuest != null) {
-            string questSummary = activeFaction.activeQuest.name;
+            summary += activeFaction.activeQuest.name;
             for (int i = 0; i < activeFaction.activeQuest.availableJobs.Count; i++) {
                 JobQueueItem item = activeFaction.activeQuest.availableJobs[i];
-                questSummary += "\n\t- " + item.jobType.ToString() + ": " + item.assignedCharacter?.name;
+                summary += "\n\t- " + item.jobType.ToString() + ": " + item.assignedCharacter?.name;
             }
-            UIManager.Instance.ShowSmallInfo(questSummary);
         }
+        //if (!string.IsNullOrEmpty(summary)) {
+        //    summary += "\n";
+        //}
+        summary += "\n" + activeFaction.ideologyComponent.currentIdeology.name;
+        summary += "\nRequirements for joining:";
+        summary += "\n\t" + activeFaction.ideologyComponent.currentIdeology.GetRequirementsForJoiningAsString();
+        UIManager.Instance.ShowSmallInfo(summary);
     }
     public void HideFactionTestingInfo() {
         UIManager.Instance.HideSmallInfo();

@@ -174,7 +174,8 @@ public static class Signals {
     //Opinion
     public static string OPINION_INCREASED = "OnOpinionIncreased";
     public static string OPINION_DECREASED = "OnOpinionDecreased";
-
+    public static string OPINION_ADDED = "OnOpinionAdded";
+    public static string OPINION_REMOVED = "OnOpinionRemoved";
     #endregion
 
     #region UI

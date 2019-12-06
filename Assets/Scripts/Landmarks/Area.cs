@@ -63,7 +63,7 @@ public class Area : IJobOwner {
             return 0;
         }
     }
-    public LocationStructure mainStorageStructure { get; private set; }
+    //public LocationStructure mainStorageStructure { get; private set; }
     #endregion
 
     public Area(Region region, AREA_TYPE areaType, int citizenCount) {
@@ -240,7 +240,7 @@ public class Area : IJobOwner {
     public void OnAreaSetAsActive() {
         SubscribeToSignals();
         //LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
-        CheckAreaInventoryJobs(mainStorageStructure);
+        CheckAreaInventoryJobs(mainStorage);
     }
     public bool CanInvadeSettlement() {
         return coreTile.region.HasCorruptedConnection() && PlayerManager.Instance.player.currentAreaBeingInvaded == null && PlayerManager.Instance.player.minions.Where(x => x.assignedRegion == null).ToList().Count > 0;
@@ -283,11 +283,11 @@ public class Area : IJobOwner {
             Debug.LogWarning(this.name + " doesn't have any dwellings for " + character.name + " because structrues have not been generated yet");
             return;
         }
-        if (character.faction != FactionManager.Instance.neutralFaction && !structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
+        if (!character.isFactionless && !structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
             Debug.LogWarning(this.name + " doesn't have any dwellings for " + character.name);
             return;
         }
-        if (character.faction == FactionManager.Instance.neutralFaction) {
+        if (character.isFactionless) {
             character.SetHomeStructure(null);
             return;
         }
@@ -543,11 +543,11 @@ public class Area : IJobOwner {
         CheckAreaInventoryJobs(structure);
     }
     public bool IsRequiredByArea(SpecialToken token) {
-        if (token.gridTileLocation != null && token.gridTileLocation.structure == mainStorageStructure) {
+        if (token.gridTileLocation != null && token.gridTileLocation.structure == mainStorage) {
             if (token.specialTokenType == SPECIAL_TOKEN.HEALING_POTION) {
-                return mainStorageStructure.GetItemsOfTypeCount(SPECIAL_TOKEN.HEALING_POTION) <= 2; //item is required by warehouse.
+                return mainStorage.GetItemsOfTypeCount(SPECIAL_TOKEN.HEALING_POTION) <= 2; //item is required by warehouse.
             } else if (token.specialTokenType == SPECIAL_TOKEN.TOOL) {
-                return mainStorageStructure.GetItemsOfTypeCount(SPECIAL_TOKEN.TOOL) <= 2; //item is required by warehouse.
+                return mainStorage.GetItemsOfTypeCount(SPECIAL_TOKEN.TOOL) <= 2; //item is required by warehouse.
             }
         }
         return false;
@@ -877,17 +877,17 @@ public class Area : IJobOwner {
     public void OnLocationStructureObjectPlaced(LocationStructure structure) {
         if (structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
             //if a warehouse was placed, and this area does not yet have a main storage structure, or is using the city center as their main storage structure, then use the new warehouse instead.
-            if (mainStorageStructure == null || mainStorageStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
-                SetMainStorageStructure(structure);
+            if (mainStorage == null || mainStorage.structureType == STRUCTURE_TYPE.CITY_CENTER) {
+                SetMainStorage(structure);
             }
         } else if (structure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
-            if (mainStorageStructure == null) {
-                SetMainStorageStructure(structure);
+            if (mainStorage == null) {
+                SetMainStorage(structure);
             }
         }
     }
-    private void SetMainStorageStructure(LocationStructure structure) {
-        mainStorageStructure = structure;
+    private void SetMainStorage(LocationStructure structure) {
+        mainStorage = structure;
     }
     #endregion
 
@@ -1064,7 +1064,7 @@ public class Area : IJobOwner {
         }
     }
     public void CheckAreaInventoryJobs(LocationStructure affectedStructure) {
-        if (affectedStructure == mainStorageStructure) {
+        if (affectedStructure == mainStorage) {
             //brew potion
             //- If there are less than 2 Healing Potions in the Warehouse, it will create a Brew Potion job
             //- the warehouse stores an inventory count of items it needs to keep in stock. anytime an item is added or removed (claimed by someone, stolen or destroyed), inventory will be checked and missing items will be procured
@@ -1142,7 +1142,7 @@ public class Area : IJobOwner {
         jobManager.OnRemoveFromAvailableJobs(job);
         JobManager.Instance.OnFinishJob(job);
         if (job.jobType == JOB_TYPE.CRAFT_TOOL || job.jobType == JOB_TYPE.BREW_POTION) {
-            CheckAreaInventoryJobs(mainStorageStructure);
+            CheckAreaInventoryJobs(mainStorage);
         }
     }
     //private void CreateReplaceTileObjectJob(TileObject removedObj, LocationGridTile removedFrom) {

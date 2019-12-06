@@ -28,7 +28,7 @@ public class Provoke : PlayerJobAction {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
+        if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.isFactionless) {
             return false;
         }
         if (targetCharacter.traitContainer.GetNormalTrait("Unconscious") != null) {
@@ -44,7 +44,7 @@ public class Provoke : PlayerJobAction {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
+        if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.isFactionless) {
             return false;
         }
         if (targetCharacter.traitContainer.GetNormalTrait("Unconscious") != null) {

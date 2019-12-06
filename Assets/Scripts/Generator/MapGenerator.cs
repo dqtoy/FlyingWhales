@@ -48,16 +48,17 @@ public class MapGenerator : MonoBehaviour {
         Biomes.Instance.GenerateBiome(GridMap.Instance.hexTiles);
         Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
         yield return null;
-        BaseLandmark portal;
+        FactionManager.Instance.CreateNeutralFaction();
+        FactionManager.Instance.CreateFriendlyNeutralFaction();
 
+        BaseLandmark portal;
         //New Map Generation
         BaseLandmark settlement;
         GridMap.Instance.DivideToRegions(GridMap.Instance.hexTiles, regionCount, width * height);
         LandmarkManager.Instance.GenerateLandmarks(GridMap.Instance.allRegions, out portal, out settlement);
         LandmarkManager.Instance.GenerateConnections(portal, settlement);
 
-        FactionManager.Instance.CreateNeutralFaction();
-        FactionManager.Instance.CreateDisguisedFaction();
+
         //LandmarkManager.Instance.SetCascadingLevelsForAllCharacters(portal.tileLocation);
         //LandmarkManager.Instance.GenerateRegionFeatures();
         yield return null;

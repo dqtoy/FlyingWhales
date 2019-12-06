@@ -145,14 +145,19 @@ public class JudgeCharacter : GoapAction {
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Restrained");
     }
     private void TargetReleased(ActualGoapNode goapNode) {
+        Character targetCharacter = goapNode.poiTarget as Character;
         //**Effect 2**: If target is from a different faction or unaligned, target is not hostile with characters from the Actor's faction until Target leaves the location. Target is forced to create a Return Home plan
-        if (goapNode.poiTarget.factionOwner == FactionManager.Instance.neutralFaction || goapNode.poiTarget.factionOwner != goapNode.actor.faction) {
+        //if (goapNode.poiTarget.factionOwner == FactionManager.Instance.neutralFaction || goapNode.poiTarget.factionOwner != goapNode.actor.faction) {
+        //    ForceTargetReturnHome(goapNode);
+        //}
+        goapNode.poiTarget.traitContainer.RemoveAllTraitsByType(goapNode.poiTarget, TRAIT_TYPE.CRIMINAL);
+        if (!targetCharacter.isAtHomeRegion) {
             ForceTargetReturnHome(goapNode);
         }
-        //**Effect 3**: If target is from the same faction, remove any Criminal type trait from him.
-        else {
-            goapNode.poiTarget.traitContainer.RemoveAllTraitsByType(goapNode.poiTarget, TRAIT_TYPE.CRIMINAL);
-        }
+        ////**Effect 3**: If target is from the same faction, remove any Criminal type trait from him.
+        //else {
+        //    goapNode.poiTarget.traitContainer.RemoveAllTraitsByType(goapNode.poiTarget, TRAIT_TYPE.CRIMINAL);
+        //}
         //**Effect 1**: Remove target's Restrained trait
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Restrained");
     }

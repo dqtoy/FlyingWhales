@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DefaultJustReturnedHome : CharacterBehaviourComponent {
+    public DefaultJustReturnedHome() {
+        attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.INSIDE_SETTLEMENT_ONLY };
+    }
     public override bool TryDoBehaviour(Character character, ref string log) {
         if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.action.goapType == INTERACTION_TYPE.RETURN_HOME && character.currentStructure == character.homeStructure) {
             log += "\n-" + character.name + " is in home structure and just returned home";

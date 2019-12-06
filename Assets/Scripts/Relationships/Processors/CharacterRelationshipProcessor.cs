@@ -13,6 +13,10 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
     public void OnRelationshipAdded(Relatable rel1, Relatable rel2, RELATIONSHIP_TRAIT relType) {
         Character character1 = (rel1 as AlterEgoData).owner;
         Character character2 = (rel2 as AlterEgoData).owner;
+        string relString = Utilities.NormalizeStringUpperCaseFirstLetters(relType.ToString());
+
+        character1.opinionComponent.AdjustOpinion(character2, relString, 0);
+        character2.opinionComponent.AdjustOpinion(character1, relString, 0);
 
         switch (relType) {
             case RELATIONSHIP_TRAIT.ENEMY:
@@ -35,8 +39,8 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
                 }
                 break;
             case RELATIONSHIP_TRAIT.EX_LOVER:
-                character1.opinionComponent.AdjustOpinion(character2, "Ex-Lover", -25);
-                character2.opinionComponent.AdjustOpinion(character1, "Ex-Lover", -25);
+                character1.opinionComponent.AdjustOpinion(character2, "Ex Lover", -25);
+                character2.opinionComponent.AdjustOpinion(character1, "Ex Lover", -25);
                 break;
             default:
                 break;

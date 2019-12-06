@@ -9,14 +9,18 @@ public class CharacterRelationshipItem : PooledObject {
 
     [SerializeField] private CharacterPortrait portrait;
 
-    private AlterEgoData alterEgo;
-    private IRelationshipData data;
+    //private AlterEgoData alterEgo;
+    //private IRelationshipData data;
+    private Character target;
+    private Character owner;
 
-    public void Initialize(AlterEgoData alterEgo, IRelationshipData data) {
-        this.alterEgo = alterEgo;
-        this.data = data;
+    public void Initialize(Character owner, Character target) {
+        this.owner = owner;
+        this.target = target;
+        //this.alterEgo = alterEgo;
+        //this.data = data;
 
-        portrait.GeneratePortrait(alterEgo.owner, false);
+        portrait.GeneratePortrait(target, false);
         //portrait.SetSize(70f);
     }
 
@@ -25,14 +29,36 @@ public class CharacterRelationshipItem : PooledObject {
     }
 
     public void ShowRelationshipData() {
-        string summary = $"Relationships with {alterEgo.owner.name} ({alterEgo.name})";
-        summary += $"\nStatus: {data.relationshipStatus.ToString()}";
-        for (int i = 0; i < data.relationships.Count; i++) {
-            summary += $"\n- {data.relationships[i].ToString()}";
+        //string summary = $"Relationships with {alterEgo.owner.name} ({alterEgo.name})";
+        //summary += $"\nStatus: {data.relationshipStatus.ToString()}";
+        //for (int i = 0; i < data.relationships.Count; i++) {
+        //    summary += $"\n- {data.relationships[i].ToString()}";
+        //}
+        int opinionOfOther = target.opinionComponent.GetTotalOpinion(owner);
+        string summary = "<color=" + OpinionColor(opinionOfOther) + ">(" + GetOpinionText(opinionOfOther) + ")</color>";
+        summary += "\n---------------------";
+        Dictionary<string, int> opinions = owner.opinionComponent.GetOpinion(target);
+        foreach (KeyValuePair<string, int> kvp in opinions) {
+            summary += "\n" + kvp.Key + ": " + "<color=" + OpinionColor(kvp.Value) + ">" + GetOpinionText(kvp.Value) + "</color>";
         }
+        summary += "\n---------------------";
+        summary += "\nTotal: " + owner.opinionComponent.GetTotalOpinion(target);
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void HideSmallInfo() {
         UIManager.Instance.HideSmallInfo();
+    }
+
+    private string OpinionColor(int number) {
+        if(number < 0) {
+            return "red";
+        }
+        return "green";
+    }
+    private string GetOpinionText(int number) {
+        if (number < 0) {
+            return "" + number;
+        }
+        return "+" + number;
     }
 }

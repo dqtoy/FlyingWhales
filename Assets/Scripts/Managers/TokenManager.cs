@@ -32,7 +32,7 @@ public class TokenManager : MonoBehaviour {
 
     public void LoadSpecialTokens(Area area) {
         ////Reference: https://trello.com/c/Kuqt3ZSP/2610-put-2-healing-potions-in-the-warehouse-at-start-of-the-game
-        LocationStructure mainStorage = area.mainStorageStructure;
+        LocationStructure mainStorage = area.mainStorage;
         //for (int i = 0; i < 4; i++) {
         //    area.AddSpecialTokenToLocation(CreateSpecialToken(SPECIAL_TOKEN.HEALING_POTION), mainStorage);
         //}

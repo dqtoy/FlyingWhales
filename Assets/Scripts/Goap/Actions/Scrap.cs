@@ -46,19 +46,26 @@ public class Scrap : GoapAction {
         if (satisfied) {
             if (poiTarget is SpecialToken) {
                 SpecialToken token = poiTarget as SpecialToken;
-                if (token.gridTileLocation != null && token.gridTileLocation.structure.location.IsRequiredByArea(token)) {
+                if(token.characterOwner != null && token.characterOwner != actor) {
                     return false;
                 }
-            }
-            if (poiTarget.gridTileLocation != null) {
-                if (poiTarget.factionOwner != null) {
-                    if (actor.faction == poiTarget.factionOwner) {
-                        return true;
-                    }
-                } else {
-                    return true;
+                if (token.gridTileLocation == null) {
+                    return false;
                 }
+                if (token.gridTileLocation.structure.location.IsRequiredByArea(token)) {
+                    return false;
+                }
+                return true;
             }
+            //if (poiTarget.gridTileLocation != null) {
+            //    if (poiTarget.factionOwner != null) {
+            //        if (actor.faction == poiTarget.factionOwner) {
+            //            return true;
+            //        }
+            //    } else {
+            //        return true;
+            //    }
+            //}
         }
         return false;
     }

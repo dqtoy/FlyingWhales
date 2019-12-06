@@ -41,4 +41,10 @@ public abstract class ResourcePile : TileObject {
             structureLocation.location.AddToAvailableJobs(job);
         }
     }
+    protected void ForceCancelNotAssignedProduceJob(JOB_TYPE jobType) {
+        JobQueueItem job = structureLocation.location.GetJob(jobType);
+        if (job != null && job.assignedCharacter == null) {
+            structureLocation.location.ForceCancelJob(job);
+        }
+    }
 }

@@ -314,14 +314,15 @@ public class LandmarkManager : MonoBehaviour {
             faction.SetRace(RACE.HUMANS);
         }
         OwnRegion(faction, faction.race, settlementRegion);
-        faction.GenerateStartingCitizens(2, 1, UnityEngine.Random.Range(3, 7), settlementArea.classManager);
-        settlementArea.GenerateStructures(faction.GetNumberOfDwellingsToHouseCharacters(faction.characters));
+        int randomizedNumberOfResident = UnityEngine.Random.Range(3, 7);
+        settlementArea.GenerateStructures(randomizedNumberOfResident);
+        faction.GenerateStartingCitizens(2, 1, randomizedNumberOfResident, settlementArea.classManager);
 
         //assign characters to their respective homes. No one should be homeless
-        for (int i = 0; i < faction.characters.Count; i++) {
-            Character currCharacter = faction.characters[i];
-            settlementArea.AssignCharacterToDwellingInArea(currCharacter);
-        }
+        //for (int i = 0; i < faction.characters.Count; i++) {
+        //    Character currCharacter = faction.characters[i];
+        //    settlementArea.AssignCharacterToDwellingInArea(currCharacter);
+        //}
         return settlementArea;
     }
     private Region[] GetCornerRegions() {

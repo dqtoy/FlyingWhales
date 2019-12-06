@@ -87,7 +87,7 @@ public class CombatState : CharacterState {
         //stateComponent.character.StopCurrentActionNode(false);
         stateComponent.character.currentParty.RemoveCarriedPOI(); //Drop characters when entering combat
         if(stateComponent.character is SeducerSummon) { //If succubus/incubus enters a combat, automatically change its faction to the player faction if faction is still disguised
-            if(stateComponent.character.faction == FactionManager.Instance.disguisedFaction) {
+            if(stateComponent.character.faction == FactionManager.Instance.friendlyNeutralFaction) {
                 stateComponent.character.ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
             }
         }
@@ -125,7 +125,7 @@ public class CombatState : CharacterState {
         if (!stateComponent.character.isDead) {
             if(isBeingApprehended && stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL) && !stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
                 //If this criminal character is being apprehended and survived (meaning he did not die, or is not unconscious or restrained)
-                if (stateComponent.character.faction != FactionManager.Instance.neutralFaction) {
+                if (!stateComponent.character.isFactionless) {
                     //Leave current faction
                     stateComponent.character.ChangeFactionTo(FactionManager.Instance.neutralFaction);
                 }

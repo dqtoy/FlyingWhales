@@ -7,7 +7,7 @@ public class NewResidentEvent : LocationEvent {
 	public NewResidentEvent() {
         name = "New Resident Event";
         triggerTick = 96;
-        triggerChance = 100;
+        triggerChance = 35;
         triggerCondition = Condition;
     }
 

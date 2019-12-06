@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DefaultExtraCatcher : CharacterBehaviourComponent {
+    public DefaultExtraCatcher() {
+        attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.INSIDE_SETTLEMENT_ONLY };
+    }
     public override bool TryDoBehaviour(Character character, ref string log) {
         if (character.specificLocation != character.homeArea && character.trapStructure.structure == null) {
             log += "\n-" + character.name + " is in another area and Base Structure is empty";

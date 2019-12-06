@@ -121,14 +121,16 @@ public class Faction {
             }
             newRuler.AssignBuildStructureComponent();
 
-            //Every time the leader changes, faction ideology changes
-            //ideologyComponent.SwitchToIdeology(FACTION_IDEOLOGY.INCLUSIVE); //Inclusive only right now
 
             //if (newRuler.characterClass.className != initialLeaderClass) {
             //    newRuler.AssignClass(CharacterManager.Instance.CreateNewCharacterClass(initialLeaderClass));
             //}
         }
         OnlySetLeader(leader);
+
+        //Every time the leader changes, faction ideology changes
+        FACTION_IDEOLOGY newIdeology = Utilities.GetRandomEnumValue<FACTION_IDEOLOGY>();
+        ideologyComponent.SwitchToIdeology(newIdeology); //Inclusive only right now
     }
     #endregion
 
@@ -144,7 +146,7 @@ public class Faction {
     #endregion
 
     #region Characters
-    public void JoinFaction(Character character) {
+    public bool JoinFaction(Character character) {
         if(ideologyComponent.DoesCharacterFitCurrentIdeology(character)) {
             if (!characters.Contains(character)) {
                 characters.Add(character);
@@ -158,21 +160,27 @@ public class Faction {
                 }
                 Messenger.Broadcast(Signals.CHARACTER_ADDED_TO_FACTION, character, this);
             }
+            return true;
         } else {
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cannot_join_faction");
-            log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
-            character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            if (GameManager.Instance.gameHasStarted) {
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cannot_join_faction");
+                log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
+                character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            }
+            return false;
         }
     }
-    public void LeaveFaction(Character character) {
+    public bool LeaveFaction(Character character) {
         if (characters.Remove(character)) {
             if (leader == character) {
                 SetNewLeader(); //so a new leader can be set if the leader is ever removed from the list of characters of this faction
             }
             character.SetFaction(null);
             Messenger.Broadcast(Signals.CHARACTER_REMOVED_FROM_FACTION, character, this);
+            return true;
         }
+        return false;
         //if (_leader != null && character.id == _leader.id) {
         //    SetLeader(null);
         //}
@@ -306,9 +314,12 @@ public class Faction {
     private void OnCharacterRaceChange(Character character) {
         CheckIfCharacterStillFitsIdeology(character);
     }
-    private void CheckIfCharacterStillFitsIdeology(Character character) {
+    private void OnCharacterRemoved(Character character) {
+        LeaveFaction(character);
+    }
+    public void CheckIfCharacterStillFitsIdeology(Character character) {
         if (character.faction == this && !ideologyComponent.DoesCharacterFitCurrentIdeology(character)) {
-            LeaveFaction(character);
+            character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
 
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "left_faction_not_fit");
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -320,7 +331,7 @@ public class Faction {
 
     #region Utilities
     private void AddListeners() {
-        Messenger.AddListener<Character>(Signals.CHARACTER_REMOVED, LeaveFaction);
+        Messenger.AddListener<Character>(Signals.CHARACTER_REMOVED, OnCharacterRemoved);
         Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
         Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
@@ -329,7 +340,7 @@ public class Faction {
         //}
     }
     private void RemoveListeners() {
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_REMOVED, LeaveFaction);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_REMOVED, OnCharacterRemoved);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
         Messenger.RemoveListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         //Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
