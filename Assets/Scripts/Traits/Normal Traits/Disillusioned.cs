@@ -19,7 +19,7 @@ namespace Traits {
         #region Overrides
         public override string TriggerFlaw(Character character) {
             string logKey = base.TriggerFlaw(character);
-            if (character.faction != FactionManager.Instance.neutralFaction) {
+            if (!character.isFactionless) {
                 character.ChangeFactionTo(FactionManager.Instance.neutralFaction);
                 return logKey;
             } else {

@@ -15,6 +15,7 @@ public class CharacterClassManager : MonoBehaviour {
     private Dictionary<string, System.Type[]> classIdlePlans = new Dictionary<string, Type[]>() {
         { "Default",
             new Type[]{
+                typeof(DefaultJoinFaction),
                 typeof(DefaultJustReturnedHome),
                 typeof(DefaultAtHome),
                 typeof(DefaultOutside),
@@ -125,8 +126,12 @@ public class CharacterClassManager : MonoBehaviour {
                 log += $"\nBehaviour Component: {component.ToString()} is disabled for {character.name} skipping it...";
                 continue; //skip component
             }
+            if (!component.CanDoBehaviour(character)) {
+                continue; //skip component
+            }
             if (component.TryDoBehaviour(character, ref log)) {
-                break;
+                component.PostProcessAfterSucessfullDoBehaviour(character);
+                if (!component.WillContinueProcess()) { break; }
             }
         }
         return log;

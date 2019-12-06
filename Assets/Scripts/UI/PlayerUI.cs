@@ -351,7 +351,7 @@ public class PlayerUI : MonoBehaviour {
     private void OnCharacterAddedToFaction(Character character, Faction faction) {
         if (faction == FactionManager.Instance.neutralFaction) {
             TransferCharacterFromActiveToInactive(character);
-        } else if (faction == PlayerManager.Instance.player.playerFaction || faction == FactionManager.Instance.disguisedFaction) {
+        } else if (faction == PlayerManager.Instance.player.playerFaction /*|| faction == FactionManager.Instance.friendlyNeutralFaction*/) {
             OnCharacterBecomesMinionOrSummon(character);
         } else {
             TransferCharacterFromInactiveToActive(character);
@@ -1597,8 +1597,7 @@ public class PlayerUI : MonoBehaviour {
                 CreateNewKillCountCharacterItem();
             }
             CharacterNameplateItem item = killCountCharacterItems[i];
-            if (character.minion != null || character is Summon || character.faction == PlayerManager.Instance.player.playerFaction
-            || character.faction == FactionManager.Instance.disguisedFaction) {
+            if (!WillCharacterBeShownInKillCount(character)) {
                 //Do not show minions and summons
                 item.gameObject.SetActive(false);
                 log += " - do not show";
@@ -1611,7 +1610,7 @@ public class PlayerUI : MonoBehaviour {
             item.gameObject.SetActive(true);
             allFilteredCharactersCount++;
             unusedKillCountCharacterItems--;
-            if (character.faction == FactionManager.Instance.neutralFaction 
+            if (character.isFactionless
                 //|| character.faction == PlayerManager.Instance.player.playerFaction 
                 //|| character.faction == FactionManager.Instance.disguisedFaction
                 || !character.IsAble()) { //added checking for faction in cases that the character was raised from dead (Myk, if the concern here is only from raise dead, I changed the checker to returnedToLife to avoid conflicts with factions, otherwise you can return it to normal. -Chy)
@@ -1646,8 +1645,7 @@ public class PlayerUI : MonoBehaviour {
         //UpdateKillCount();
     }
     private void OnAddNewCharacter(Character character) {
-        if (character.minion != null || character is Summon || character.faction == PlayerManager.Instance.player.playerFaction
-            || character.faction == FactionManager.Instance.disguisedFaction) {
+        if (!WillCharacterBeShownInKillCount(character)) {
             //Do not show minions and summons
             return;
         }
@@ -1664,7 +1662,7 @@ public class PlayerUI : MonoBehaviour {
         item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, false));
         item.gameObject.SetActive(true);
         unusedKillCountCharacterItems--;
-        if (character.faction == FactionManager.Instance.neutralFaction 
+        if (character.isFactionless
             //|| character.faction == PlayerManager.Instance.player.playerFaction
             //|| character.faction == FactionManager.Instance.disguisedFaction
             || !character.IsAble()) { //added checking for faction in cases that the character was raised from dead (Myk, if the concern here is only from raise dead, I changed the checker to returnedToLife to avoid conflicts with factions, otherwise you can return it to normal. -Chy)
@@ -1751,7 +1749,7 @@ public class PlayerUI : MonoBehaviour {
         //TODO: Optimize this
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
-            if(character.faction != null && character.faction != FactionManager.Instance.neutralFaction
+            if(!character.isFactionless
             && character.IsAble() && WillCharacterBeShownInKillCount(character)) {
                 aliveCount++;
             }
@@ -1799,7 +1797,7 @@ public class PlayerUI : MonoBehaviour {
     }
     private bool WillCharacterBeShownInKillCount(Character character) {
         if (character.minion != null || character is Summon || character.faction == PlayerManager.Instance.player.playerFaction
-            || character.faction == FactionManager.Instance.disguisedFaction) {
+            || character.faction == FactionManager.Instance.friendlyNeutralFaction) {
             //Do not show minions and summons
             return false;
         }

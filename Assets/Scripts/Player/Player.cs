@@ -849,7 +849,7 @@ public class Player : ILeader {
     public void GainSummon(SUMMON_TYPE type, int level = 1, bool showNewSummonUI = false) {
         Faction faction = playerFaction;
         if (type == SUMMON_TYPE.Incubus || type == SUMMON_TYPE.Succubus) {
-            faction = FactionManager.Instance.disguisedFaction;
+            faction = FactionManager.Instance.friendlyNeutralFaction;
         }
         Summon newSummon = CharacterManager.Instance.CreateNewSummon(type, faction, playerArea.region);
         newSummon.SetLevel(level);

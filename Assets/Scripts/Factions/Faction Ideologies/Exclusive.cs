@@ -19,17 +19,17 @@ public class Exclusive : FactionIdeology {
     #region Overrides
     public override void SetRequirements(Faction faction) {
         int chance = UnityEngine.Random.Range(0, 3);
-        identifier = TRAIT;
-        if(chance == 0) {
-            identifier = GENDER;
-            genderRequirement = faction.leader.gender;
-        } else if (chance == 1) {
-            identifier = RACE;
-            raceRequirement = faction.leader.race;
-        } else {
+        //identifier = TRAIT;
+        //if(chance == 0) {
+        //    identifier = GENDER;
+        //    genderRequirement = faction.leader.gender;
+        //} else if (chance == 1) {
+        //    identifier = RACE;
+        //    raceRequirement = faction.leader.race;
+        //} else {
             identifier = TRAIT;
             traitRequirement = GetRandomTraitRequirement();
-        }
+        //}
     }
     public override bool DoesCharacterFitIdeology(Character character) {
         if(identifier == GENDER) {
@@ -39,8 +39,20 @@ public class Exclusive : FactionIdeology {
         }
         return character.traitContainer.GetNormalTrait(traitRequirement) != null;
     }
+    public override string GetRequirementsForJoiningAsString() {
+        return identifier + ": " + GetRequirementAsString();
+    }
+
     #endregion
 
+    private string GetRequirementAsString() {
+        if (identifier == GENDER) {
+            return genderRequirement.ToString();
+        } else if (identifier == RACE) {
+            return raceRequirement.ToString();
+        }
+        return traitRequirement;
+    }
     private string GetRandomTraitRequirement() {
         int chance = UnityEngine.Random.Range(0, 3);
         if (chance == 0) {

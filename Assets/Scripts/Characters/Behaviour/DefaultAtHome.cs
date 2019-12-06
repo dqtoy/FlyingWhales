@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DefaultAtHome : CharacterBehaviourComponent {
+    public DefaultAtHome() {
+        attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.INSIDE_SETTLEMENT_ONLY };
+    }
     public override bool TryDoBehaviour(Character character, ref string log) {
         if (character.currentStructure == character.homeStructure) {
             log += "\n-" + character.name + " is in home structure and previous action is not returned home";

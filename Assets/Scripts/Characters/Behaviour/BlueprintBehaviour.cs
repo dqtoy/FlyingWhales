@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BlueprintBehaviour : CharacterBehaviourComponent {
+    public BlueprintBehaviour() {
+        attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.INSIDE_SETTLEMENT_ONLY, BEHAVIOUR_COMPONENT_ATTRIBUTE.ONCE_PER_DAY };
+    }
+
     public override bool TryDoBehaviour(Character character, ref string log) {
         log += $"\n-{character.name} will try to place blueprint";
         if (character.homeArea.GetNumberOfJobsWith(JOB_TYPE.BUILD_BLUEPRINT) < 2 && HasCharacterWithPlaceBlueprintJobInSettlement(character.homeArea) == false) {
@@ -31,14 +35,14 @@ public class BlueprintBehaviour : CharacterBehaviourComponent {
                 job.AddOtherData(INTERACTION_TYPE.PLACE_BLUEPRINT, new object[] { neededStructure });
                 character.jobQueue.AddJobInQueue(job);
 
-                //disable component for character
-                DisableFor(character);
+                ////disable component for character
+                //DisableFor(character);
 
-                //schedule enable for start of next day
-                GameDate today = GameManager.Instance.Today();
-                GameDate nextDay = today.AddDays(1);
-                nextDay.SetTicks(1);
-                SchedulingManager.Instance.AddEntry(nextDay, () => EnableFor(character), this);
+                ////schedule enable for start of next day
+                //GameDate today = GameManager.Instance.Today();
+                //GameDate nextDay = today.AddDays(1);
+                //nextDay.SetTicks(1);
+                //SchedulingManager.Instance.AddEntry(nextDay, () => EnableFor(character), this);
 
                 return true;
             }

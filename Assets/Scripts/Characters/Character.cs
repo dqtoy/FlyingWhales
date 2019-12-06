@@ -191,7 +191,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
     }
     public bool isLeader {
-        get { return role == CharacterRole.LEADER; }
+        get { return characterClass.className == "Leader"; }
     }
     public bool isHoldingItem {
         get { return items.Count > 0; }
@@ -4522,7 +4522,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             log += this.name + " is already dead not planning other idle plans.";
             return log;
         }
-        if (faction.id != FactionManager.Instance.neutralFaction.id) {
+        if (!isFactionless) {
             CreatePersonalJobs();
         }
         string classIdlePlanLog = CharacterManager.Instance.RunCharacterIdlePlan(this);
@@ -6753,14 +6753,18 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //if either the character in question or this character should ignore hostility, return false.
             return false;
         }
-        if (this.faction.id == FactionManager.Instance.neutralFaction.id) {
+        if (isFactionless || character.isFactionless) {
             //this character is unaligned
             //if unaligned, hostile to all other characters, except those of same race
             return character.race != this.race;
         } else {
             //this character has a faction
             //if has a faction, is hostile to characters of every other faction
-            return this.faction.id != character.faction.id;
+            //return this.faction.id != character.faction.id;
+            if(faction == character.faction) {
+                return false;
+            }
+            return faction.GetRelationshipWith(character.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE;
         }
     }
     /// <summary>
@@ -6949,24 +6953,24 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             case CHARACTER_ROLE.CIVILIAN:
             case CHARACTER_ROLE.ADVENTURER:
                 //- If the character is a Civilian or Adventurer, he will enter Flee mode (fleeing the criminal) and will create a Report Crime Job Type in his personal job queue
-                if (this.faction != FactionManager.Instance.neutralFaction && criminal.faction == this.faction) {
-                    //only make character flee, if he/she actually witnessed the crime (not share intel)
-                    //GoapAction crimeToReport = informedCrime;
-                    //if (witnessedCrime != null) {
-                    //    crimeToReport = witnessedCrime;
-                    //    ////if a character has no negative disabler traits. Do not Flee. This is so that the character will not also add a Report hostile job
-                    //    //if (!this.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) { 
-                    //    //    this.marker.AddHostileInRange(criminal.owner, false);
-                    //    //}
-                    //}
-                    //TODO: job = CreateReportCrimeJob(committedCrime, crimeToReport, criminal);
-                }
+                //if (this.faction != FactionManager.Instance.neutralFaction && criminal.faction == this.faction) {
+                //    //only make character flee, if he/she actually witnessed the crime (not share intel)
+                //    //GoapAction crimeToReport = informedCrime;
+                //    //if (witnessedCrime != null) {
+                //    //    crimeToReport = witnessedCrime;
+                //    //    ////if a character has no negative disabler traits. Do not Flee. This is so that the character will not also add a Report hostile job
+                //    //    //if (!this.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) { 
+                //    //    //    this.marker.AddHostileInRange(criminal.owner, false);
+                //    //    //}
+                //    //}
+                //    //TODO: job = CreateReportCrimeJob(committedCrime, crimeToReport, criminal);
+                //}
                 break;
             case CHARACTER_ROLE.LEADER:
             case CHARACTER_ROLE.NOBLE:
                 //- If the character is a Noble or Faction Leader, the criminal will gain the relevant Crime-type trait
                 //If he is a Noble or Faction Leader, he will create the Apprehend Job Type in the Location job queue instead.
-                if (this.faction != FactionManager.Instance.neutralFaction && criminal.faction == this.faction) {
+                if (!isFactionless && criminal.faction == this.faction) {
                     //only add apprehend job if the criminal is part of this characters faction
                     criminal.owner.AddCriminalTrait(committedCrime, crimeAction);
                     CreateApprehendJobFor(criminal.owner);
@@ -6981,7 +6985,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             case CHARACTER_ROLE.SOLDIER:
             case CHARACTER_ROLE.BANDIT:
                 //- If the character is a Soldier, the criminal will gain the relevant Crime-type trait
-                if (this.faction != FactionManager.Instance.neutralFaction && criminal.faction == this.faction) {
+                if (!isFactionless && criminal.faction == this.faction) {
                     //only add apprehend job if the criminal is part of this characters faction
                     criminal.owner.AddCriminalTrait(committedCrime, crimeAction);
                     //- If the character is a Soldier, he will also create an Apprehend Job Type in his personal job queue.

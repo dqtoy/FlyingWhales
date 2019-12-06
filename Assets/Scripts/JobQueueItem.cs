@@ -158,6 +158,7 @@ public class JobQueueItem {
             }
         }
     }
+    public virtual bool CanBeInterrupted() { return true; }
     #endregion
 
     public void SetAssignedCharacter(Character character) {

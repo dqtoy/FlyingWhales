@@ -29,9 +29,14 @@ public class JobQueue {
 
         bool isNewJobTopPriority = false;
         //Push back current top priority first before adding the job
-        if (jobsInQueue.Count > 0 && job.priority < jobsInQueue[0].priority) { //This means that the job is inserted as the top most priority //characterOwner.CanCurrentJobBeOverriddenByJob(job))
-            jobsInQueue[0].PushedBack(job);
-            isNewJobTopPriority = true;
+        if (jobsInQueue.Count > 0) { //This means that the job is inserted as the top most priority //characterOwner.CanCurrentJobBeOverriddenByJob(job))
+            JobQueueItem topJob = jobsInQueue[0];
+            if (job.priority < topJob.priority) {
+                if(topJob.CanBeInterrupted() || job.IsAnInterruptionJob()) {
+                    topJob.PushedBack(job);
+                    isNewJobTopPriority = true;
+                }
+            }
         }
 
         if (isNewJobTopPriority) {
@@ -39,11 +44,13 @@ public class JobQueue {
             job.ProcessJob();
         } else {
             bool hasBeenInserted = false;
-            for (int i = 0; i < jobsInQueue.Count; i++) {
-                if (job.priority < jobsInQueue[i].priority) {
-                    jobsInQueue.Insert(i, job);
-                    hasBeenInserted = true;
-                    break;
+            if(jobsInQueue.Count > 1) {
+                for (int i = 1; i < jobsInQueue.Count; i++) {
+                    if (job.priority < jobsInQueue[i].priority) {
+                        jobsInQueue.Insert(i, job);
+                        hasBeenInserted = true;
+                        break;
+                    }
                 }
             }
             if (!hasBeenInserted) {

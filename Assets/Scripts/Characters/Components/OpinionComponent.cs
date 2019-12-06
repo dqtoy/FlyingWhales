@@ -13,19 +13,22 @@ public class OpinionComponent {
     }
 
     public void AdjustOpinion(Character target, string opinionText, int opinionValue) {
-        if (HasOpinion(target)) {
-            if (opinions[target].ContainsKey(opinionText)) {
-                opinions[target][opinionText] += opinionValue;
-            } else {
-                opinions[target].Add(opinionText, opinionValue);
-            }
-        } else {
-            opinions.Add(target, new Dictionary<string, int>() { { opinionText, opinionValue } });
+        if (!HasOpinion(target)) {
+            opinions.Add(target, new Dictionary<string, int>() { { "Base", 0 } });
+            Messenger.Broadcast(Signals.OPINION_ADDED, owner, target);
         }
-        if(opinionValue > 0) {
+        if (opinions[target].ContainsKey(opinionText)) {
+            opinions[target][opinionText] += opinionValue;
+        } else {
+            opinions[target].Add(opinionText, opinionValue);
+        }
+        if (opinionValue > 0) {
             Messenger.Broadcast(Signals.OPINION_INCREASED, owner, target);
         } else if (opinionValue < 0) {
             Messenger.Broadcast(Signals.OPINION_DECREASED, owner, target);
+        }
+        if (!target.opinionComponent.HasOpinion(owner)) {
+            target.opinionComponent.AdjustOpinion(owner, "Base", 0);
         }
     }
 
@@ -39,6 +42,7 @@ public class OpinionComponent {
     public void RemoveOpinion(Character target) {
         if (HasOpinion(target)) {
             opinions.Remove(target);
+            Messenger.Broadcast(Signals.OPINION_REMOVED, owner, target);
         }
     }
     public bool HasOpinion(Character target) {

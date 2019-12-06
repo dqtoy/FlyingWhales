@@ -433,7 +433,7 @@ public class InteractionManager : MonoBehaviour {
             //        return false;
             //    }
             //}
-            if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
+            if (character.isFactionless) {
                 return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.relationshipContainer.HasRelationshipWith(character, RELATIONSHIP_TRAIT.ENEMY);
             }
             return !character.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
@@ -452,7 +452,7 @@ public class InteractionManager : MonoBehaviour {
             //    //    throw new Exception("Problem with CanCharacterTakeRemoveIllnessesJob of " + character.name + ". Target character is " + (targetCharacter?.name ?? "Null") + ". Job is " + (goapJob?.name ?? "Null"));
             //    //}
             //}
-            if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
+            if (character.isFactionless) {
                 return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.relationshipContainer.HasRelationshipWith(character, RELATIONSHIP_TRAIT.ENEMY);
             }
             return !character.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY); //&& character.traitContainer.GetNormalTrait("Healer") != null;
@@ -473,7 +473,7 @@ public class InteractionManager : MonoBehaviour {
             //    //}
                 
             //}
-            if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
+            if (character.isFactionless) {
                 return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.relationshipContainer.HasRelationshipWith(character, RELATIONSHIP_TRAIT.ENEMY);
             }
             return !character.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY) && character.traitContainer.GetNormalTrait("Healer") != null;
@@ -504,7 +504,7 @@ public class InteractionManager : MonoBehaviour {
     }
     public bool CanCharacterTakeRestrainedFeedJob(Character sourceCharacter, Character character) {
         if (sourceCharacter.specificLocation.region.IsResident(character)) {
-            if (character.faction.id != FactionManager.Instance.neutralFaction.id) {
+            if (!character.isFactionless) {
                 return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
             } else {
                 return character.role.roleType != CHARACTER_ROLE.BEAST && sourceCharacter.currentStructure.structureType.IsOpenSpace();

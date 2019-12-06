@@ -313,6 +313,12 @@ public class GoapPlanJob : JobQueueItem {
             Debug.LogError("Job " + name + " already has other data for " + actionType.ToString());
         }
     }
+    public override bool CanBeInterrupted() {
+        if(assignedPlan != null && assignedPlan.currentActualNode.actionStatus == ACTION_STATUS.PERFORMING) {
+            return false;
+        }
+        return base.CanBeInterrupted();
+    }
     #endregion
 
     #region Forced Actions

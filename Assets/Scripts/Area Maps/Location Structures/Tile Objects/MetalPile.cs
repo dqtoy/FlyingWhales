@@ -48,7 +48,7 @@ public class MetalPile : ResourcePile {
                         structureLocation.location.AddToAvailableJobs(job);
                     }
                 } else {
-                    structureLocation.location.ForceCancelJob(structureLocation.location.GetJob(JOB_TYPE.OBTAIN_METAL));
+                    ForceCancelNotAssignedProduceJob(JOB_TYPE.OBTAIN_METAL);
                 }
             } else {
                 CreateHaulJob();

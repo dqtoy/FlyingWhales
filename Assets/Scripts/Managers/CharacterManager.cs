@@ -103,7 +103,9 @@ public class CharacterManager : MonoBehaviour {
         //Party party = newCharacter.CreateOwnParty();
         newCharacter.Initialize();
         if (faction != null) {
-            faction.JoinFaction(newCharacter);
+            if (!faction.JoinFaction(newCharacter)) {
+                FactionManager.Instance.friendlyNeutralFaction.JoinFaction(newCharacter);
+            }
         }
         else {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
@@ -125,7 +127,9 @@ public class CharacterManager : MonoBehaviour {
         Character newCharacter = new Character(role, className, race, gender);
         newCharacter.Initialize();
         if (faction != null) {
-            faction.JoinFaction(newCharacter);
+            if (!faction.JoinFaction(newCharacter)) {
+                FactionManager.Instance.friendlyNeutralFaction.JoinFaction(newCharacter);
+            }
         } else {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
         }
@@ -144,7 +148,9 @@ public class CharacterManager : MonoBehaviour {
         Character newCharacter = new Character(role, className, race, gender, sexuality);
         newCharacter.Initialize();
         if (faction != null) {
-            faction.JoinFaction(newCharacter);
+            if (!faction.JoinFaction(newCharacter)) {
+                FactionManager.Instance.friendlyNeutralFaction.JoinFaction(newCharacter);
+            }
         } else {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
         }

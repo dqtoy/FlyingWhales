@@ -48,7 +48,7 @@ public class WoodPile : ResourcePile {
                         structureLocation.location.AddToAvailableJobs(job);
                     }
                 } else {
-                    structureLocation.location.ForceCancelJob(structureLocation.location.GetJob(JOB_TYPE.OBTAIN_WOOD));
+                    ForceCancelNotAssignedProduceJob(JOB_TYPE.OBTAIN_WOOD);
                 }
             } else {
                 CreateHaulJob();

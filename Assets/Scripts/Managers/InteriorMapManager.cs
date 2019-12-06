@@ -490,17 +490,17 @@ public class InteriorMapManager : MonoBehaviour {
         summary += "\n\tAttack Speed: " + character.attackSpeed.ToString();
         summary += "\n\tTarget POI: " + character.marker.targetPOI?.ToString() ?? "None";
         summary += "\n\tBase Structure: " + (character.trapStructure.structure != null ? character.trapStructure.structure.ToString() : "None");
-        if (activeCharacter != null && activeCharacter != character) {
-            summary += "\n\tOpinion of " + activeCharacter.name + ":";
-            if (activeCharacter.opinionComponent.HasOpinion(character)) {
-                Dictionary<string, int> opinion = activeCharacter.opinionComponent.GetOpinion(character);
-                foreach (KeyValuePair<string, int> kvp in opinion) {
-                    summary += "\n\t\t" + kvp.Key + ": " + kvp.Value;
-                }
-            } else {
-                summary += " None";
-            }
-        }
+        //if (activeCharacter != null && activeCharacter != character) {
+        //    summary += "\n\tOpinion of " + activeCharacter.name + ":";
+        //    if (activeCharacter.opinionComponent.HasOpinion(character)) {
+        //        Dictionary<string, int> opinion = activeCharacter.opinionComponent.GetOpinion(character);
+        //        foreach (KeyValuePair<string, int> kvp in opinion) {
+        //            summary += "\n\t\t" + kvp.Key + ": " + kvp.Value;
+        //        }
+        //    } else {
+        //        summary += " None";
+        //    }
+        //}
         summary += "\n\tDestination Tile: ";
         if (character.marker.destinationTile == null) {
             summary += "None";

@@ -93,7 +93,7 @@ namespace Traits {
                     SpecialToken token = targetPOI as SpecialToken;
                     if (token.characterOwner == null) {
                         //Patrollers should not pick up items from their main storage structure
-                        if (token.structureLocation != null && token.structureLocation == characterThatWillDoJob.homeArea.mainStorageStructure
+                        if (token.structureLocation != null && token.structureLocation == characterThatWillDoJob.homeArea.mainStorage
                             && token.specificLocation.region == characterThatWillDoJob.homeRegion) {
                             return false;
                         }
