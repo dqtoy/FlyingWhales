@@ -34,6 +34,42 @@ public class Repair : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 2;
     }
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        string stateName = "Target Missing";
+        bool defaultTargetMissing = IsRepairTargetMissing(node);
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
+        if (defaultTargetMissing == false) {
+            //check the target's traits, if any of them can make this action invalid
+            for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
+                Trait trait = poiTarget.traitContainer.allTraits[i];
+                if (trait.TryStopAction(goapType, actor, poiTarget, ref goapActionInvalidity)) {
+                    break; //a trait made this action invalid, stop loop
+                }
+            }
+        }
+        return goapActionInvalidity;
+    }
+    private bool IsRepairTargetMissing(ActualGoapNode node) {
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        if (poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation) {
+            return true;
+        }
+        if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET) {
+            //if the action type is NEAR_TARGET, then check if the actor is near the target, if not, this action is invalid.
+            if (actor.gridTileLocation != poiTarget.gridTileLocation && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation) == false) {
+                return true;
+            }
+        } else if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET) {
+            //if the action type is NEAR_TARGET, then check if the actor is near the target, if not, this action is invalid.
+            if (actor.gridTileLocation != node.targetTile && actor.gridTileLocation.IsNeighbour(node.targetTile) == false) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region State Effects
