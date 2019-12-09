@@ -122,7 +122,7 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private GameObject killCharacterItemPrefab;
     [SerializeField] private ScrollRect killCountScrollView;
     [SerializeField] private RectTransform aliveHeader;
-    [SerializeField] private RectTransform deadHeader;
+    public RectTransform deadHeader;
     private List<CharacterNameplateItem> killCountCharacterItems;
     private int unusedKillCountCharacterItems;
     private int aliveCount;
@@ -351,7 +351,7 @@ public class PlayerUI : MonoBehaviour {
     private void OnCharacterAddedToFaction(Character character, Faction faction) {
         if (faction == FactionManager.Instance.neutralFaction) {
             TransferCharacterFromActiveToInactive(character);
-        } else if (faction == PlayerManager.Instance.player.playerFaction /*|| faction == FactionManager.Instance.friendlyNeutralFaction*/) {
+        } else if (faction.isPlayerFaction /*|| faction == FactionManager.Instance.friendlyNeutralFaction*/) {
             OnCharacterBecomesMinionOrSummon(character);
         } else {
             TransferCharacterFromInactiveToActive(character);
@@ -379,9 +379,9 @@ public class PlayerUI : MonoBehaviour {
             return; //player has initiated invasion of settlement, all checking of win condition will be executed in PerTickInvasion() in Player script. TODO: Unify them!
         }
         bool stillHasResidents = false;
-        for (int i = 0; i < PlayerManager.Instance.player.currentTargetFaction.characters.Count; i++) { //Changed checking to faction members, because some characters may still consider the area as their home, but are no longer part of the faction
-            Character currCharacter = PlayerManager.Instance.player.currentTargetFaction.characters[i];
-            if (currCharacter.IsAble() && currCharacter.faction == PlayerManager.Instance.player.currentTargetFaction) {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) { //Changed checking to faction members, because some characters may still consider the area as their home, but are no longer part of the faction
+            Character currCharacter = CharacterManager.Instance.allCharacters[i];
+            if (currCharacter.IsAble() && currCharacter.isStillConsideredAlive && currCharacter.faction.isMajorFriendlyNeutral) {
                 stillHasResidents = true;
                 break;
             }
@@ -926,7 +926,14 @@ public class PlayerUI : MonoBehaviour {
         }
         startingAbilities = null;
         UIManager.Instance.SetSpeedTogglesState(true);
-        PlayerManager.Instance.player.StartDivineIntervention();
+        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+            Faction faction = FactionManager.Instance.allFactions[i];
+            if (faction.isMajorNonPlayer) {
+                faction.CreateAndSetActiveQuest("Divine Intervention", faction.ownedRegions[0]);
+                break;
+            }
+        }
+        //PlayerManager.Instance.player.StartDivineIntervention();
         //PlayerManager.Instance.player.StartResearchNewInterventionAbility();
     }
     private void ShowSelectMinionLeader() {
@@ -1523,8 +1530,8 @@ public class PlayerUI : MonoBehaviour {
         Utilities.DestroyChildren(combatAbilityGO.transform);
         for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
             Minion currMinion = PlayerManager.Instance.player.minions[i];
-            if (currMinion.assignedRegion == null || currMinion.assignedRegion == LandmarkManager.Instance.enemyOfPlayerArea.coreTile.region) {
-                GameObject go = GameObject.Instantiate(combatAbilityButtonPrefab, combatAbilityGO.transform);
+            if (currMinion.assignedRegion != null && currMinion.assignedRegion.area != null && PlayerManager.Instance.player.currentAreaBeingInvaded == currMinion.assignedRegion.area) {
+                GameObject go = Instantiate(combatAbilityButtonPrefab, combatAbilityGO.transform);
                 CombatAbilityButton abilityButton = go.GetComponent<CombatAbilityButton>();
                 abilityButton.SetCombatAbility(currMinion.combatAbility);
                 currentCombatAbilityButtons.Add(abilityButton);
@@ -1796,12 +1803,13 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     private bool WillCharacterBeShownInKillCount(Character character) {
-        if (character.minion != null || character is Summon || character.faction == PlayerManager.Instance.player.playerFaction
-            /*|| character.faction == FactionManager.Instance.friendlyNeutralFaction*/) {
-            //Do not show minions and summons
-            return false;
-        }
-        return true;
+        return character.isStillConsideredAlive;
+        //if (character.minion != null || character is Summon || character.faction == PlayerManager.Instance.player.playerFaction
+        //    /*|| character.faction == FactionManager.Instance.friendlyNeutralFaction*/) {
+        //    //Do not show minions and summons
+        //    return false;
+        //}
+        //return true;
     }
     #endregion
 

@@ -168,13 +168,15 @@ public class Save {
     public void LoadPlayerAreaItems() {
         playerAreaSave.LoadAreaItems();
     }
-    public void SaveNonPlayerAreas(List<Area> areas) {
+    public void SaveNonPlayerAreas() {
         nonPlayerAreaSaves = new List<SaveDataArea>();
-        for (int i = 0; i < areas.Count; i++) {
-            Area area = areas[i];
-            SaveDataArea saveDataArea = new SaveDataArea();
-            saveDataArea.Save(area);
-            nonPlayerAreaSaves.Add(saveDataArea);
+        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+            Area area = LandmarkManager.Instance.allAreas[i];
+            if(area != PlayerManager.Instance.player.playerArea) {
+                SaveDataArea saveDataArea = new SaveDataArea();
+                saveDataArea.Save(area);
+                nonPlayerAreaSaves.Add(saveDataArea);
+            }
         }
     }
     public void LoadNonPlayerAreas() {

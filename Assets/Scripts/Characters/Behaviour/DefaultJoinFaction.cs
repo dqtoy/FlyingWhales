@@ -15,7 +15,7 @@ public class DefaultJoinFaction : CharacterBehaviourComponent {
                 if(character.currentRegion != null) {
                     log += "\n-" + character.name + " is factionless and in a non settlement region: " + character.currentRegion.name + ", will try to join a faction...";
                     Region potentialRegion = character.currentRegion;
-                    if(potentialRegion.owner != null && potentialRegion.owner != PlayerManager.Instance.player.playerFaction && potentialRegion.owner.ideologyComponent.DoesCharacterFitCurrentIdeology(character)) {
+                    if(potentialRegion.owner != null && !potentialRegion.owner.isPlayerFaction && potentialRegion.owner.ideologyComponent.DoesCharacterFitCurrentIdeology(character)) {
                         if(viableFactions == null) { viableFactions = new List<Faction>(); }
                         if (!viableFactions.Contains(potentialRegion.owner)) {
                             viableFactions.Add(potentialRegion.owner);
@@ -23,7 +23,7 @@ public class DefaultJoinFaction : CharacterBehaviourComponent {
                     }
                     for (int i = 0; i < character.currentRegion.connections.Count; i++) {
                         potentialRegion = character.currentRegion.connections[i];
-                        if (potentialRegion.owner != null && potentialRegion.owner != PlayerManager.Instance.player.playerFaction && potentialRegion.owner.ideologyComponent.DoesCharacterFitCurrentIdeology(character)) {
+                        if (potentialRegion.owner != null && !potentialRegion.owner.isPlayerFaction && potentialRegion.owner.ideologyComponent.DoesCharacterFitCurrentIdeology(character)) {
                             if (viableFactions == null) { viableFactions = new List<Faction>(); }
                             if (!viableFactions.Contains(potentialRegion.owner)) {
                                 viableFactions.Add(potentialRegion.owner);
@@ -35,7 +35,7 @@ public class DefaultJoinFaction : CharacterBehaviourComponent {
                     log += "\n-" + character.name + " is factionless and in a settlement region: " + potentialRegion.name + ", will try to join a faction...";
                     for (int i = 0; i < potentialRegion.factionsHere.Count; i++) {
                         Faction potentialFaction = potentialRegion.factionsHere[i];
-                        if (potentialFaction != PlayerManager.Instance.player.playerFaction && potentialFaction.ideologyComponent.DoesCharacterFitCurrentIdeology(character)) {
+                        if (!potentialFaction.isPlayerFaction && potentialFaction.ideologyComponent.DoesCharacterFitCurrentIdeology(character)) {
                             if (viableFactions == null) { viableFactions = new List<Faction>(); }
                             if (!viableFactions.Contains(potentialFaction)) {
                                 viableFactions.Add(potentialFaction);

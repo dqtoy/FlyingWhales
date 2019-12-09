@@ -11,6 +11,7 @@ public class FactionManager : MonoBehaviour {
     public List<Faction> allFactions = new List<Faction>();
     public Faction neutralFaction { get; private set; }
     public Faction friendlyNeutralFaction { get; private set; }
+    public Faction disguisedFaction { get; private set; }
     private Faction _zombieFaction;
 
     [Space(10)]
@@ -57,11 +58,25 @@ public class FactionManager : MonoBehaviour {
         //CreateFavorsForFaction(newFaction);
         Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
     }
+    public void CreateDisguisedFaction() {
+        Faction newFaction = new Faction();
+        newFaction.SetName("Disguised");
+        newFaction.SetFactionActiveState(false);
+        newFaction.SetEmblem(GetFactionEmblem(4));
+        allFactions.Add(newFaction);
+        SetDisguisedFaction(newFaction);
+        CreateRelationshipsForFaction(newFaction);
+        //CreateFavorsForFaction(newFaction);
+        Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
+    }
     public void SetNeutralFaction(Faction faction) {
         neutralFaction = faction;
     }
     public void SetFriendlyNeutralFaction(Faction faction) {
         friendlyNeutralFaction = faction;
+    }
+    public void SetDisguisedFaction(Faction faction) {
+        disguisedFaction = faction;
     }
     public Faction CreateNewFaction(bool isPlayerFaction = false, string factionName = "") {
         Faction newFaction = new Faction(isPlayerFaction);
@@ -71,6 +86,7 @@ public class FactionManager : MonoBehaviour {
         if (!string.IsNullOrEmpty(factionName)) {
             newFaction.SetName(factionName);
         }
+        newFaction.SetIsMajorFaction(true);
         if (!isPlayerFaction) {
             newFaction.ideologyComponent.SwitchToIdeology(FACTION_IDEOLOGY.INCLUSIVE);
             Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
@@ -213,7 +229,8 @@ public class FactionManager : MonoBehaviour {
         faction1.AddNewRelationship(faction2, newRel);
         faction2.AddNewRelationship(faction1, newRel);
         if(faction1.isPlayerFaction || faction2.isPlayerFaction) {
-            if(faction1 != friendlyNeutralFaction && faction2 != friendlyNeutralFaction) {
+            if(faction1 != friendlyNeutralFaction && faction2 != friendlyNeutralFaction
+                && faction1 != disguisedFaction && faction2 != disguisedFaction) {
                 faction1.SetRelationshipFor(faction2, FACTION_RELATIONSHIP_STATUS.HOSTILE);
                 faction2.SetRelationshipFor(faction1, FACTION_RELATIONSHIP_STATUS.HOSTILE);
             }

@@ -94,9 +94,9 @@ public class SaveDataArea {
     public void Load() {
         Area newArea = LandmarkManager.Instance.CreateNewArea(this);
         newArea.region.SetArea(newArea); //Set area of region here not on SaveDataRegion because SaveDataRegion will be the first to load, there will be no areas there yet
-        if(newArea.areaType != AREA_TYPE.DEMONIC_INTRUSION) {
-            LandmarkManager.Instance.SetEnemyPlayerArea(newArea);
-        }
+        //if(newArea.areaType != AREA_TYPE.DEMONIC_INTRUSION) {
+        //    LandmarkManager.Instance.SetEnemyPlayerArea(newArea);
+        //}
     }
     //Loading area items is called separately because of sequencing issues
     //Since loading an item requires faction owner, if this is called in Load(), there is still no faction owner yet, so it will be an issue

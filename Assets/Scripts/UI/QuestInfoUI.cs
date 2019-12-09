@@ -46,10 +46,11 @@ public class QuestInfoUI : MonoBehaviour {
 
         string remainingDaysText = string.Empty;
         if(quest is DivineInterventionQuest) {
-            if (PlayerManager.Instance.player.currentDivineInterventionTick > GameManager.ticksPerDay) {
-                remainingDaysText = "Remaining Days: <b>" + GameManager.Instance.GetCeilingDaysBasedOnTicks(PlayerManager.Instance.player.currentDivineInterventionTick) + "</b>";
+            int currentTime = quest.duration - quest.currentDuration;
+            if (currentTime > GameManager.ticksPerDay) {
+                remainingDaysText = "Remaining Days: <b>" + GameManager.Instance.GetCeilingDaysBasedOnTicks(currentTime) + "</b>";
             } else {
-                remainingDaysText = "Remaining Hours: <b>" + GameManager.Instance.GetCeilingHoursBasedOnTicks(PlayerManager.Instance.player.currentDivineInterventionTick) + "</b>";
+                remainingDaysText = "Remaining Hours: <b>" + GameManager.Instance.GetCeilingHoursBasedOnTicks(currentTime) + "</b>";
             }
         }
         infoText.text = remainingDaysText;

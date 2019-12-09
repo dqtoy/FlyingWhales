@@ -31,7 +31,7 @@ public class HarvestPlant : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null /*&& actor.traitContainer.GetNormalTrait("Miner") != null*/;
+            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.traitContainer.GetNormalTrait("Worker") != null;
         }
         return false;
     }

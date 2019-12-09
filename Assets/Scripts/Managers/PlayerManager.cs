@@ -84,7 +84,7 @@ public class PlayerManager : MonoBehaviour {
         //player.CreateInitialMinions();
         //player.PreAssignJobSlots();
         LandmarkManager.Instance.OwnRegion(player.playerFaction, RACE.DEMON, portal.tileLocation.region);
-        player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
+        //player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
         GameManager.Instance.StartProgression();
         UIManager.Instance.SetSpeedTogglesState(true);
         PlayerUI.Instance.UpdateUI();
@@ -106,7 +106,7 @@ public class PlayerManager : MonoBehaviour {
         //    regionTile.SetCorruption(true);
         //}
         LandmarkManager.Instance.OwnRegion(player.playerFaction, RACE.DEMON, portal.tileLocation.region);
-        player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
+        //player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
         PlayerUI.Instance.UpdateUI();
 
         //Add an adjacent region to the player at the start of the game.
@@ -148,7 +148,7 @@ public class PlayerManager : MonoBehaviour {
                 player.SetMinionLeader(player.minions[i]);
             }
         }
-        player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
+        //player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
     }
     //public void AddTileToPlayerArea(HexTile tile) {
     //    player.playerArea.AddTile(tile);

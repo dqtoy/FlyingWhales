@@ -52,6 +52,15 @@ public class TimerHubUI : MonoBehaviour {
             }
         }
     }
+    public void SetItemTimeDuration(string itemText, int newTicks) {
+        for (int i = 0; i < timerHubItems.Count; i++) {
+            TimerHubItem timerHubItem = timerHubItems[i];
+            if (timerHubItem.descriptionText.text == itemText) {
+                timerHubItem.SetDuration(newTicks);
+                break;
+            }
+        }
+    }
     private void RemoveItemAt(int index) {
         ObjectPoolManager.Instance.DestroyObject(timerHubItems[index].gameObject);
         timerHubItems.RemoveAt(index);

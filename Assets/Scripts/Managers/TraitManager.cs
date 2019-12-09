@@ -190,7 +190,7 @@ public class TraitManager : MonoBehaviour {
         if (character.isDead) {
             return false;
         }
-        if (character.faction == PlayerManager.Instance.player.playerFaction) {
+        if (character.faction.isPlayerFaction) {
             return false;
         }
         if (character.role.roleType == CHARACTER_ROLE.BEAST) {

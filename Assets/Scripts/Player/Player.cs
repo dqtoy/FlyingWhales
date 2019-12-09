@@ -37,10 +37,10 @@ public class Player : ILeader {
     public Intel currentActiveIntel { get; private set; }
     public int maxSummonSlots { get; private set; } //how many summons can the player have
     public int maxArtifactSlots { get; private set; } //how many artifacts can the player have
-    public Faction currentTargetFaction { get; private set; } //the current faction that the player is targeting.
+    //public Faction currentTargetFaction { get; private set; } //the current faction that the player is targeting.
     public PlayerJobActionSlot[] interventionAbilitySlots { get; private set; }
     //public Region invadingRegion { get; private set; }
-    public int currentDivineInterventionTick { get; private set; }
+    //public int currentDivineInterventionTick { get; private set; }
     public UnsummonedMinionData[] minionsToSummon { get; private set; }
     //public int currentInterventionAbilityTimerTick { get; private set; }
     //public int newInterventionAbilityTimerTicks { get; private set; }
@@ -230,9 +230,9 @@ public class Player : ILeader {
     private void SetPlayerFaction(Faction faction) {
         playerFaction = faction;
     }
-    public void SetPlayerTargetFaction(Faction faction) {
-        currentTargetFaction = faction;
-    }
+    //public void SetPlayerTargetFaction(Faction faction) {
+    //    currentTargetFaction = faction;
+    //}
     #endregion
 
     #region Minions
@@ -654,7 +654,7 @@ public class Player : ILeader {
                 hoverText = "Blessed/Catatonic characters cannot be targetted.";
                 return false;
             }
-            if(character.faction != PlayerManager.Instance.player.playerFaction && character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER) {
+            if(!character.faction.isPlayerFaction && character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER) {
                 return true;
             }
         }
@@ -849,7 +849,7 @@ public class Player : ILeader {
     public void GainSummon(SUMMON_TYPE type, int level = 1, bool showNewSummonUI = false) {
         Faction faction = playerFaction;
         if (type == SUMMON_TYPE.Incubus || type == SUMMON_TYPE.Succubus) {
-            faction = FactionManager.Instance.friendlyNeutralFaction;
+            faction = FactionManager.Instance.disguisedFaction;
         }
         Summon newSummon = CharacterManager.Instance.CreateNewSummon(type, faction, playerArea.region);
         newSummon.SetLevel(level);
@@ -1352,7 +1352,7 @@ public class Player : ILeader {
         bool stillHasMinions = false;
         for (int i = 0; i < minions.Count; i++) {
             Minion currMinion = minions[i];
-            if (currMinion.assignedRegion != LandmarkManager.Instance.enemyOfPlayerArea.coreTile.region) {
+            if (currMinion.assignedRegion != currentAreaBeingInvaded.region) {
                 continue; //do not include minions that are not invading the main settlement.
             }
             if(currMinion.character.currentHP > 0 && !currMinion.character.isDead && currMinion.character.doNotDisturb <= 0) {
@@ -1366,8 +1366,8 @@ public class Player : ILeader {
         }
 
         bool stillHasResidents = false;
-        for (int i = 0; i < currentTargetFaction.characters.Count; i++) { //Changed checking to faction members, because some characters may still consider the area as their home, but are no longer part of the faction
-            Character currCharacter = currentTargetFaction.characters[i];
+        for (int i = 0; i < currentAreaBeingInvaded.region.residents.Count; i++) { //Changed checking to faction members, because some characters may still consider the area as their home, but are no longer part of the faction
+            Character currCharacter = currentAreaBeingInvaded.region.residents[i];
             if (currCharacter.specificLocation == currentAreaBeingInvaded && currCharacter.IsAble()) {
                 stillHasResidents = true;
                 break;
@@ -1638,46 +1638,6 @@ public class Player : ILeader {
     //    else if (currentNewInterventionAbilityCycleIndex == 3) return 1;
     //    return 3;
     //}
-    #endregion
-
-    #region Divine Intervention
-    public void StartDivineIntervention() {
-        LandmarkManager.Instance.enemyOfPlayerArea.region.owner.CreateAndSetActiveQuest("Divine Intervention", LandmarkManager.Instance.enemyOfPlayerArea.region);
-        currentDivineInterventionTick = PlayerManager.DIVINE_INTERVENTION_DURATION;
-        TimerHubUI.Instance.AddItem("Until Divine Intervention", currentDivineInterventionTick, () => UIManager.Instance.ShowQuestInfo(LandmarkManager.Instance.enemyOfPlayerArea.region.owner.activeQuest));
-        Messenger.AddListener(Signals.TICK_STARTED, PerTickDivineIntervention);
-    }
-    public void LoadDivineIntervention(SaveDataPlayer data) {
-        currentDivineInterventionTick = data.currentDivineInterventionTick;
-        if(currentDivineInterventionTick > 0) {
-            TimerHubUI.Instance.AddItem("Until Divine Intervention", currentDivineInterventionTick, () => UIManager.Instance.ShowQuestInfo(LandmarkManager.Instance.enemyOfPlayerArea.region.owner.activeQuest));
-            Messenger.AddListener(Signals.TICK_STARTED, PerTickDivineIntervention);
-        }
-    }
-    public void AdjustDivineInterventionDuration(int amount) {
-        if (currentDivineInterventionTick > 0) {
-            currentDivineInterventionTick += amount;
-            TimerHubUI.Instance.RemoveItem("Until Divine Intervention");
-            if (currentDivineInterventionTick > 0) {
-                TimerHubUI.Instance.AddItem("Until Divine Intervention", currentDivineInterventionTick, () => UIManager.Instance.ShowQuestInfo(LandmarkManager.Instance.enemyOfPlayerArea.region.owner.activeQuest));
-            } else {
-                currentDivineInterventionTick = 0;
-                //TODO: What happens if divine intervention happens
-                PlayerUI.Instance.GameOver("The gods have arrived and wiped you off from the face of this planet!");
-            }
-        } 
-        //else {
-        //    Debug.LogError("Cannot adjust divine intervention duration becuuase it is already done!");
-        //}
-    }
-    private void PerTickDivineIntervention() {
-        currentDivineInterventionTick--;
-        if(currentDivineInterventionTick <= 0) {
-            currentDivineInterventionTick = 0;
-            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickDivineIntervention);
-            PlayerUI.Instance.GameOver("The gods have arrived and wiped you off from the face of this planet!");
-        }
-    }
     #endregion
 
     #region The Eye

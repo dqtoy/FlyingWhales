@@ -75,6 +75,8 @@ public class DropResource : GoapAction {
             if(poiToBeDeposited.gridTileLocation != null) {
                 return poiToBeDeposited.gridTileLocation.structure;
             } else {
+                //if the poi where the actor is supposed to deposit his carried pile has no grid tile location, this must mean that the pile is either destroyed or carried by another character
+                //return the main storage so that the main storage will become the target structure
                 return node.actor.specificLocation.mainStorage;
             }
         } else {
@@ -85,12 +87,21 @@ public class DropResource : GoapAction {
     public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
         object[] otherData = goapNode.otherData;
         if (otherData != null && otherData.Length == 1 && otherData[0] is IPointOfInterest) {
-            return otherData[0] as IPointOfInterest;
+            IPointOfInterest poiToBeDeposited = otherData[0] as IPointOfInterest;
+            if(poiToBeDeposited.gridTileLocation == null) {
+                //if the poi where the actor is supposed to deposit his carried pile has no grid tile location, this must mean that the pile is either destroyed or carried by another character
+                //return null so that the actor will get a random tile from the target structure instead
+                return null;
+            } else {
+                return poiToBeDeposited;
+            }
         }
         return null;
     }
     public override LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {
-        List<LocationGridTile> unoccupiedTiles = goapNode.actor.specificLocation.mainStorage.unoccupiedTiles;
+        //if the process goes through here, this must mean that the target poi where the actor is supposed to go has no grid tile location or is destroyed or is carried by another character
+        //so, just return a random unoccupied tile from the target structure
+        List<LocationGridTile> unoccupiedTiles = goapNode.targetStructure.unoccupiedTiles;
         return unoccupiedTiles[UnityEngine.Random.Range(0, unoccupiedTiles.Count)];
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
@@ -190,7 +201,7 @@ public class DropResource : GoapAction {
         if (otherData != null && otherData.Length == 1 && otherData[0] is ResourcePile) {
             poiToBeDeposited = otherData[0] as ResourcePile;
         }
-        if(poiToBeDeposited.gridTileLocation == goapNode.targetTile) {
+        if(poiToBeDeposited != null && poiToBeDeposited.gridTileLocation == goapNode.targetTile) {
             //Deposit resource pile
             if(poiToBeDeposited.resourceInPile < LandmarkManager.MAX_RESOURCE_PILE) {
                 poiToBeDeposited.AdjustResourceInPile(poiTarget.resourceInPile);

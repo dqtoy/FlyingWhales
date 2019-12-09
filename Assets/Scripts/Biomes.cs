@@ -155,8 +155,11 @@ public class Biomes : MonoBehaviour {
             sortingOrder = (mapHeight -  yCoordinate) * 10; //10 is the number of sorting order between rows
         }
 
-        if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerFaction == currentHexTile.region.owner) {
-            return;
+        if (PlayerManager.Instance.player != null) {
+            Faction factionOwner = currentHexTile.region.owner;
+            if (factionOwner != null && factionOwner.isPlayerFaction) {
+                return;
+            }
         }
 #endif
 

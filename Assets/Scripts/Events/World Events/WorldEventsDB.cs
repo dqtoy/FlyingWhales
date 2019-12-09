@@ -191,7 +191,7 @@ public static class WorldEventsDB {
         //first only get the regions that can spawn the needed event
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             Region currRegion = GridMap.Instance.allRegions[i];
-            if (currRegion.owner != null && currRegion.owner != PlayerManager.Instance.player.playerFaction && currRegion.owner != character.homeRegion.owner
+            if (currRegion.owner != null && !currRegion.owner.isPlayerFaction && currRegion.owner != character.homeRegion.owner
                 && currRegion.IsConnectedToRegionOwnedBy(character.homeRegion.owner) && currRegion.owner.GetRelationshipWith(character.homeRegion.owner).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE
                 && WorldEventsManager.Instance.CanSpawnEventWithEffects(currRegion, character, WorldEventsManager.Instance.GetNeededEffectsOfJob(jobType))) {
                 baseChoices.Add(currRegion);

@@ -190,7 +190,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
         }
     }
-    public bool isFriendlyFactionless { //is the character part of the neutral faction? or no faction?
+    public bool isFriendlyFactionless { //is the character part of the friendly neutral faction? or no faction?
         get {
             if (faction == null || FactionManager.Instance.friendlyNeutralFaction == faction) {
                 return true;
@@ -381,6 +381,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public JOB_OWNER ownerType { get { return JOB_OWNER.CHARACTER; } }
     public bool isInCombat { get { return stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT; } }
     public Transform worldObject { get { return marker.transform; } }
+    public bool isStillConsideredAlive {
+        get { return minion == null && !(this is Summon) && !faction.isPlayerFaction; }
+    }
     #endregion
 
     public Character(CharacterRole role, RACE race, GENDER gender) : this() {
@@ -2584,7 +2587,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     /// </summary>
     /// <returns>True or false.</returns>
     public virtual bool CanBeInstructedByPlayer() {
-        if (PlayerManager.Instance.player.playerFaction != this.faction) {
+        if (!faction.isPlayerFaction) {
             return false;
         }
         if (isDead) {
@@ -2944,7 +2947,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         witnessLog.AddToFillers(witnessedEvent.descriptionLog.fillers);
         AddHistory(witnessLog);
 
-        if (faction == PlayerManager.Instance.player.playerFaction) {
+        if (faction.isPlayerFaction) {
             //Player characters cannot react to witnessed events
             return;
         }
@@ -2996,7 +2999,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     /// <param name="action">The action that was performed.</param>
     /// <param name="state">The state the action was in when this character watched it.</param>
     public void ThisCharacterWatchEvent(Character targetCharacter, GoapAction action, GoapActionState state) {
-        if (faction == PlayerManager.Instance.player.playerFaction) {
+        if (faction.isPlayerFaction) {
             //Player characters cannot watch events
             return;
         }

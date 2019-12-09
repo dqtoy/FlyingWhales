@@ -1156,14 +1156,18 @@ public class UIManager : MonoBehaviour {
             InteriorMapManager.Instance.HideAreaMap();
             OnCameraOutOfFocus();
         } else {
-            InteriorMapManager.Instance.TryShowAreaMap(LandmarkManager.Instance.enemyOfPlayerArea);
+            if(regionInfoUI.activeRegion != null && regionInfoUI.activeRegion.area != null) {
+                InteriorMapManager.Instance.TryShowAreaMap(regionInfoUI.activeRegion.area);
+            }
         }
     }
     public void ToggleMapsHover() {
-        if (InteriorMapManager.Instance.currentlyShowingArea != null) {
+        if (InteriorMapManager.Instance.isAnAreaMapShowing) {
             ShowSmallInfo("Click to exit " + InteriorMapManager.Instance.currentlyShowingArea.name + ".", returnToWorldBtnTooltipPos);
         } else {
-            ShowSmallInfo("Click to enter " + LandmarkManager.Instance.enemyOfPlayerArea.name + ".", returnToWorldBtnTooltipPos);
+            if (regionInfoUI.activeRegion != null && regionInfoUI.activeRegion.area != null) {
+                ShowSmallInfo("Click to enter " + regionInfoUI.activeRegion.area.name + ".", returnToWorldBtnTooltipPos);
+            }
         }
     }
     #endregion

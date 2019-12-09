@@ -321,6 +321,7 @@ public class GoapPlanner {
             GoapAction lowestCostAction = null;
             IPointOfInterest lowestCostTarget = null;
             int lowestCost = 0;
+
             foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<GoapAction>> kvp in allGoapActionAdvertisements) {
                 //First loop through all actions that can be advertised (it is grouped by the poi type that can advertise the actions)
                 if (awareness.ContainsKey(kvp.Key)) {
@@ -338,9 +339,26 @@ public class GoapPlanner {
                                 }
                             }
                             //Further optimize this by creating a list of all poi that currently advertises this action, and loop that
+                            bool isJobTargetEvaluated = false;
                             List<IPointOfInterest> poisThatAdvertisesCurrentAction = awareness[kvp.Key];
                             for (int k = 0; k < poisThatAdvertisesCurrentAction.Count; k++) {
                                 IPointOfInterest poiTarget = poisThatAdvertisesCurrentAction[k];
+                                if(poiTarget == target) { isJobTargetEvaluated = true; }
+                                if (poiTarget == job.targetPOI || poiTarget.IsStillConsideredPartOfAwarenessByCharacter(actor)) { //POI must either be the job's target or the actor is still aware of it
+                                    int cost = 0;
+                                    bool canDoAction = poiTarget.CanAdvertiseActionToActor(actor, currentAction, otherData, ref cost)
+                                        && currentAction.WillEffectsSatisfyPrecondition(goalEffect, actor, poiTarget, otherActionData);
+                                    if (canDoAction) {
+                                        if (lowestCostAction == null || cost < lowestCost) {
+                                            lowestCostAction = currentAction;
+                                            lowestCostTarget = poiTarget;
+                                            lowestCost = cost;
+                                        }
+                                    }
+                                }
+                            }
+                            if(!isJobTargetEvaluated && kvp.Key == target.poiType) {
+                                IPointOfInterest poiTarget = target;
                                 if (poiTarget == job.targetPOI || poiTarget.IsStillConsideredPartOfAwarenessByCharacter(actor)) { //POI must either be the job's target or the actor is still aware of it
                                     int cost = 0;
                                     bool canDoAction = poiTarget.CanAdvertiseActionToActor(actor, currentAction, otherData, ref cost)
@@ -613,9 +631,26 @@ public class GoapPlanner {
                                         }
 
                                         //Further optimize this by creating a list of all poi that currently advertises this action, and loop that
+                                        bool isJobTargetEvaluated = false;
                                         List<IPointOfInterest> poisThatAdvertisesCurrentAction = awareness[kvp.Key];
                                         for (int k = 0; k < poisThatAdvertisesCurrentAction.Count; k++) {
                                             IPointOfInterest poiTarget = poisThatAdvertisesCurrentAction[k];
+                                            if (poiTarget == target) { isJobTargetEvaluated = true; }
+                                            if (poiTarget == job.targetPOI || poiTarget.IsStillConsideredPartOfAwarenessByCharacter(actor)) { //POI must either be the job's target or the actor is still aware of it
+                                                int cost = 0;
+                                                bool canDoAction = poiTarget.CanAdvertiseActionToActor(actor, currentAction, job.otherData, ref cost)
+                                                    && currentAction.WillEffectsSatisfyPrecondition(preconditionEffect, actor, poiTarget, otherActionData);
+                                                if (canDoAction) {
+                                                    if (lowestCostAction == null || cost < lowestCost) {
+                                                        lowestCostAction = currentAction;
+                                                        lowestCostTarget = poiTarget;
+                                                        lowestCost = cost;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        if (!isJobTargetEvaluated && kvp.Key == target.poiType) {
+                                            IPointOfInterest poiTarget = target;
                                             if (poiTarget == job.targetPOI || poiTarget.IsStillConsideredPartOfAwarenessByCharacter(actor)) { //POI must either be the job's target or the actor is still aware of it
                                                 int cost = 0;
                                                 bool canDoAction = poiTarget.CanAdvertiseActionToActor(actor, currentAction, job.otherData, ref cost)

@@ -580,7 +580,7 @@ public class Region {
                 character.SetRegionLocation(null);
                 Messenger.Broadcast(Signals.CHARACTER_EXITED_REGION, character, this);
             } else {
-                if (character.currentStructure == null && owner != PlayerManager.Instance.player.playerFaction) {
+                if (character.currentStructure == null && !owner.isPlayerFaction) {
                     throw new System.Exception(character.name + " doesn't have a current structure at " + area.name);
                 }
                 if (character.currentStructure != null) {

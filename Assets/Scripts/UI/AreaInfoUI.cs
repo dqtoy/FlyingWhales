@@ -68,7 +68,7 @@ public class AreaInfoUI : UIMenu {
     public HexTile activeTile { get; private set; }
     public Area activeArea {
         get {
-            if(activeTile.region.owner == PlayerManager.Instance.player.playerFaction) {
+            if(activeTile.region.owner.isPlayerFaction) {
                 return PlayerManager.Instance.player.playerArea;
             }
             return activeTile.region.area;

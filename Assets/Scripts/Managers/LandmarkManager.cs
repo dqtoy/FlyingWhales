@@ -38,7 +38,7 @@ public class LandmarkManager : MonoBehaviour {
     [Header("Connections")]
     [SerializeField] private GameObject landmarkConnectionPrefab;
 
-    public Area enemyOfPlayerArea { get; private set; }
+    //public Area enemyOfPlayerArea { get; private set; }
 
     public List<LocationEvent> locationEventsData { get; private set; }
 
@@ -254,7 +254,7 @@ public class LandmarkManager : MonoBehaviour {
         Region settlementRegion = corners[oppositeCorner];
         Area area = CreateSettlementArea(settlementRegion);
         settlement = settlementRegion.mainLandmark;
-        SetEnemyPlayerArea(area);
+        //SetEnemyPlayerArea(area);
 
 
         List<Region> availableRegions = new List<Region>(regions);
@@ -726,9 +726,9 @@ public class LandmarkManager : MonoBehaviour {
         defaultPos.y -= 1.25f;
         return defaultPos;
     }
-    public void SetEnemyPlayerArea(Area area) {
-        enemyOfPlayerArea = area;
-    }
+    //public void SetEnemyPlayerArea(Area area) {
+    //    enemyOfPlayerArea = area;
+    //}
     #endregion
 
     #region Burning Source
