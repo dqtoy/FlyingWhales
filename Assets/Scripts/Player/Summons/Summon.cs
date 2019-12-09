@@ -88,9 +88,9 @@ public class Summon : Character, IWorldObject {
             traitsNeededToBeRemoved.Clear();
 
             if (!IsInOwnParty()) {
-                _currentParty.RemovePOI(this);
+                currentParty.RemovePOI(this);
             }
-            _ownParty.PartyDeath();
+            ownParty.PartyDeath();
 
             if (_role != null) {
                 _role.OnDeath(this);
@@ -204,7 +204,7 @@ public class Summon : Character, IWorldObject {
     public void Reset() {
         hasBeenUsed = false;
         SetIsDead(false);
-        if (_ownParty == null) {
+        if (ownParty == null) {
             CreateOwnParty();
             ownParty.CreateIcon();
         }

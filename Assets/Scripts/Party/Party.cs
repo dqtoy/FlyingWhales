@@ -102,7 +102,13 @@ public class Party {
     //}
 
     #region Virtuals
-    public virtual void CreateIcon() { }
+    public virtual void CreateIcon() {
+        GameObject characterIconGO = GameObject.Instantiate(CharacterManager.Instance.characterIconPrefab,
+        Vector3.zero, Quaternion.identity, CharacterManager.Instance.characterIconsParent);
+
+        _icon = characterIconGO.GetComponent<CharacterAvatar>();
+        _icon.Init(this);
+    }
     public virtual void ReturnToLife() {
         if (_isDead) {
             _isDead = false;
