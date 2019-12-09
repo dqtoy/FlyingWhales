@@ -16,10 +16,16 @@ public abstract class ResourcePile : TileObject {
     public virtual void SetResourceInPile(int amount) {
         resourceInPile = amount;
         resourceInPile = Mathf.Max(0, resourceInPile);
+        if(resourceInPile <= 0 && gridTileLocation != null && isBeingCarriedBy == null) {
+            gridTileLocation.structure.RemovePOI(this);
+        }
     }
     public virtual void AdjustResourceInPile(int adjustment) {
         resourceInPile += adjustment;
         resourceInPile = Mathf.Max(0, resourceInPile);
+        if (resourceInPile <= 0 && gridTileLocation != null && isBeingCarriedBy == null) {
+            gridTileLocation.structure.RemovePOI(this);
+        }
     }
     public virtual bool HasResource() {
         return resourceInPile > 0;

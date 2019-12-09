@@ -55,12 +55,12 @@ public class MetalPile : ResourcePile {
             }
         }
     }
-    public override void AdjustResourceInPile(int adjustment) {
-        base.AdjustResourceInPile(adjustment);
-        if (adjustment < 0) {
-            Messenger.Broadcast(Signals.METAL_IN_PILE_REDUCED, this);
-        }
-    }
+    //public override void AdjustResourceInPile(int adjustment) {
+    //    base.AdjustResourceInPile(adjustment);
+    //    if (adjustment < 0) {
+    //        Messenger.Broadcast(Signals.METAL_IN_PILE_REDUCED, this);
+    //    }
+    //}
     public override string ToString() {
         return "Metal Pile " + id.ToString();
     }

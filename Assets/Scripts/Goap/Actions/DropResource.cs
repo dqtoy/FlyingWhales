@@ -71,7 +71,12 @@ public class DropResource : GoapAction {
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
         object[] otherData = node.otherData;
         if (otherData != null && otherData.Length == 1 && otherData[0] is IPointOfInterest) {
-            return (otherData[0] as IPointOfInterest).gridTileLocation.structure;
+            IPointOfInterest poiToBeDeposited = otherData[0] as IPointOfInterest;
+            if(poiToBeDeposited.gridTileLocation != null) {
+                return poiToBeDeposited.gridTileLocation.structure;
+            } else {
+                return node.actor.specificLocation.mainStorage;
+            }
         } else {
             return node.actor.specificLocation.mainStorage;
         }
@@ -92,7 +97,7 @@ public class DropResource : GoapAction {
         base.OnStopWhileStarted(node);
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
-        actor.ownParty.RemovePOI(poiTarget);
+        actor.ownParty.RemovePOI(poiTarget, dropLocation: actor.gridTileLocation);
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);

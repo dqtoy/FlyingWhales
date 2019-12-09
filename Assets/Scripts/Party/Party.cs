@@ -219,11 +219,6 @@ public class Party {
         if (IsPOICarried(tileObject)) {
             carriedPOI = null;
             tileObject.SetIsBeingCarriedBy(null);
-            if (tileObject.gridTileLocation != null) {
-                tileObject.gridTileLocation.structure.RemovePOI(tileObject);
-            } else if (tileObject.areaMapVisual != null) {
-                tileObject.OnDestroyPOI();
-            }
             if (addToLocation) {
                 //tileObject.areaMapVisual.collisionTrigger.SetMainColliderState(true);
                 if (dropLocation == null) {
@@ -240,6 +235,12 @@ public class Party {
                     }
                 } else {
                     _owner.gridTileLocation.structure.AddPOI(tileObject, dropLocation);
+                }
+            } else {
+                if (tileObject.gridTileLocation != null) {
+                    tileObject.gridTileLocation.structure.RemovePOI(tileObject);
+                } else if (tileObject.areaMapVisual != null) {
+                    tileObject.OnDestroyPOI();
                 }
             }
             if(tileObject.areaMapVisual != null) {
