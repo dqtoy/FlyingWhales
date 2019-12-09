@@ -580,17 +580,18 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
                 if (objHere is TileObject) {
                     UIManager.Instance.poiTestingUI.ShowUI(objHere);
                 }
-            } else {
-                if (objHere is TileObject) {
-                    UIManager.Instance.ShowTileObjectInfo(objHere as TileObject);
-                }
-            }
+            } 
+            //else {
+            //    if (objHere is TileObject) {
+            //        UIManager.Instance.ShowTileObjectInfo(objHere as TileObject);
+            //    }
+            //}
 #else
-             if (inputButton == PointerEventData.InputButton.Left) {
-                if (objHere is TileObject) {
-                    UIManager.Instance.ShowTileObjectInfo(objHere as TileObject);
-                }
-             }
+             //if (inputButton == PointerEventData.InputButton.Left) {
+             //   if (objHere is TileObject) {
+             //       UIManager.Instance.ShowTileObjectInfo(objHere as TileObject);
+             //   }
+             //}
 #endif
         }
     }

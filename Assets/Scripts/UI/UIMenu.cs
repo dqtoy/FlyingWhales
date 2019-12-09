@@ -11,11 +11,14 @@ public class UIMenu : MonoBehaviour {
     protected object _data;
 
     #region virtuals
-    internal virtual void Initialize() { }
+    internal virtual void Initialize() {
+        Messenger.AddListener<UIMenu>(Signals.BEFORE_MENU_OPENED, BeforeMenuOpens);
+    }
     /*
      When a menu is opened from being closed
          */
     public virtual void OpenMenu() {
+        Messenger.Broadcast(Signals.BEFORE_MENU_OPENED, this);
         isShowing = true;
         this.gameObject.SetActive(true);
         if (openMenuAction != null) {
@@ -76,48 +79,16 @@ public class UIMenu : MonoBehaviour {
                 UIManager.Instance.ShowRegionInfo(data as Region);
             } else if (data is HexTile) {
                 UIManager.Instance.ShowRegionInfo((data as HexTile).region);
+            } else if (data is SpecialToken) {
+                UIManager.Instance.ShowItemInfo(data as SpecialToken);
             }
         }
     }
 
-    //public void ApplyUnifiedSettings(UnifiedUISettings settings) {
-    //    if (bgImage != null && outlineImage != null) {
-    //        float bgWidth = bgImage.rectTransform.sizeDelta.x;
-    //        float bgHeight = bgImage.rectTransform.sizeDelta.y;
+    private void BeforeMenuOpens(UIMenu menuToOpen) {
+        if (this.isShowing && menuToOpen != this) {
+            CloseMenu();
+        }
+    }
 
-    //        float outlineWidth = bgWidth + settings.outlineThickness;
-    //        float outlineHeight = bgHeight + settings.outlineThickness;
-
-    //        outlineImage.rectTransform.sizeDelta = new Vector2(outlineWidth, outlineHeight);
-    //        outlineImage.rectTransform.localPosition = bgImage.rectTransform.localPosition;
-
-    //        bgImage.color = settings.bgColor;
-    //        outlineImage.color = settings.outlineColor;
-
-    //        if (innerHeader != null && outerHeader != null) {
-    //            innerHeader.rectTransform.sizeDelta = new Vector2(bgWidth, settings.headerHeight);
-    //            outerHeader.rectTransform.sizeDelta = new Vector2(outlineWidth, settings.headerHeight + settings.outlineThickness);
-    //            innerHeader.rectTransform.localPosition = new Vector3(bgImage.rectTransform.localPosition.x, innerHeader.rectTransform.localPosition.y, 0f);
-    //            outerHeader.rectTransform.localPosition = innerHeader.rectTransform.localPosition;
-
-    //            innerHeader.color = settings.innerHeaderColor;
-    //            outerHeader.color = settings.outerHeaderColor;
-
-    //            if (closeBtn != null) {
-    //                (closeBtn.transform as RectTransform).sizeDelta = new Vector2(settings.closeBtnSize, settings.closeBtnSize);
-    //                closeBtn.transform.localPosition = new Vector3(closeBtn.transform.localPosition.x, innerHeader.transform.localPosition.y, 0f);
-    //            }
-    //        }
-    //    }
-    //    ScrollRect[] scrollViews = this.GetComponentsInChildren<ScrollRect>(true);
-    //    if (scrollViews != null) {
-    //        for (int i = 0; i < scrollViews.Length; i++) {
-    //            ScrollRect sr = scrollViews[i];
-    //            sr.movementType = settings.scrollMovementType;
-    //            sr.scrollSensitivity = settings.scrollSensitivity;
-    //            sr.horizontalScrollbarVisibility = settings.scrollbarVisibility;
-    //            sr.verticalScrollbarVisibility = settings.scrollbarVisibility;
-    //        }
-    //    }
-    //}
 }

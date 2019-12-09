@@ -190,6 +190,7 @@ public static class Signals {
     public static string HISTORY_ADDED = "OnHistoryAdded"; //Parameters (object itemThatHadHistoryAdded) either a character or a landmark
     public static string PAUSED = "OnPauseChanged"; //Parameters (bool isGamePaused)
     public static string PROGRESSION_SPEED_CHANGED = "OnProgressionSpeedChanged"; //Parameters (PROGRESSION_SPEED progressionSpeed)
+    public static string BEFORE_MENU_OPENED = "BeforeMenuOpened"; //Parameters (UIMenu openedMenu)
     public static string MENU_OPENED = "OnMenuOpened"; //Parameters (UIMenu openedMenu)
     public static string MENU_CLOSED = "OnMenuClosed"; //Parameters (UIMenu closedMenu)
     public static string INTERACTION_MENU_OPENED = "OnInteractionMenuOpened"; //Parameters ()

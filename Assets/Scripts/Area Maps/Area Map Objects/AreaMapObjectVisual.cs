@@ -3,17 +3,20 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// Base class to be used for the visuals of any objects that are Area Map Objects.
 /// </summary>
-public abstract class AreaMapObjectVisual<T> : PooledObject, IMapObjectVisual where T : IDamageable {
+public abstract class AreaMapObjectVisual<T> : PooledObject, IMapObjectVisual, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler where T : IDamageable {
 
     [SerializeField] protected SpriteRenderer objectVisual;
+    [SerializeField] private GameObject hoverObject;
     public BaseCollisionTrigger<T> collisionTrigger { get; protected set; }
     public GameObject gameObjectVisual {
         get { return this.gameObject; }
     }
+    protected System.Action onClickAction;
 
     #region getters
     public Sprite usedSprite {
@@ -59,5 +62,17 @@ public abstract class AreaMapObjectVisual<T> : PooledObject, IMapObjectVisual wh
 
     #region Furniture Spots
     public abstract void ApplyFurnitureSettings(FurnitureSetting furnitureSetting);
+    #endregion
+
+    #region Pointer Functions
+    public virtual void OnPointerEnter(PointerEventData eventData) {
+        hoverObject.SetActive(true);
+    }
+    public virtual void OnPointerExit(PointerEventData eventData) {
+        hoverObject.SetActive(false);
+    }
+    public virtual void OnPointerClick(PointerEventData eventData) {
+        onClickAction?.Invoke();
+    }
     #endregion
 }

@@ -574,7 +574,7 @@ public abstract class TileObject : AreaMapObject<TileObject>, IPointOfInterest {
 
     #region Graph Updates
     protected void CreateNewGUS(Vector2 offset, Vector2 size) {
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool("LocationGridTileGUS", Vector3.zero, Quaternion.identity, gridTileLocation.parentAreaMap.graphUpdateScenesParent);
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool("LocationGridTileGUS", Vector3.zero, Quaternion.identity, areaMapVisual.transform);//gridTileLocation.parentAreaMap.graphUpdateScenesParent
         LocationGridTileGUS gus = go.GetComponent<LocationGridTileGUS>();
         gus.Initialize(offset, size, this);
         this.graphUpdateScene = gus;

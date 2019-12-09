@@ -211,6 +211,9 @@ public class UIManager : MonoBehaviour {
         if (tileObjectInfoUI.isShowing) {
             tileObjectInfoUI.CloseMenu();
         }
+        if (itemInfoUI.isShowing) {
+            itemInfoUI.CloseMenu();
+        }
         if (objectPicker.gameObject.activeSelf) {
             HideObjectPicker();
         }
@@ -768,18 +771,6 @@ public class UIManager : MonoBehaviour {
         //if (PlayerManager.Instance.player.homeArea == area) {
         //    portalPopup.SetActive(true);
         //} else {
-        if (factionInfoUI.isShowing) {
-            factionInfoUI.CloseMenu();
-        }
-        if (characterInfoUI.isShowing) {
-            characterInfoUI.CloseMenu();
-        }
-        if (tileObjectInfoUI.isShowing) {
-            tileObjectInfoUI.CloseMenu();
-        }
-        if (regionInfoUI.isShowing) {
-            regionInfoUI.CloseMenu();
-        }
         areaInfoUI.SetData(tile);
         areaInfoUI.OpenMenu();
         areaInfoUI.CenterOnTile();
@@ -810,18 +801,6 @@ public class UIManager : MonoBehaviour {
             SetTempDisableShowInfoUI(false);
             return;
         }
-        if (areaInfoUI.isShowing) {
-            areaInfoUI.CloseMenu();
-        }
-        if (characterInfoUI.isShowing) {
-            characterInfoUI.CloseMenu();
-        }
-        if (tileObjectInfoUI.isShowing) {
-            tileObjectInfoUI.CloseMenu();
-        }
-        if (regionInfoUI.isShowing) {
-            regionInfoUI.CloseMenu();
-        }
         factionInfoUI.SetData(faction);
         factionInfoUI.OpenMenu();
     }
@@ -840,18 +819,6 @@ public class UIManager : MonoBehaviour {
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
             return;
-        }
-        if (areaInfoUI.isShowing) {
-            areaInfoUI.CloseMenu();
-        }
-        if (factionInfoUI.isShowing) {
-            factionInfoUI.CloseMenu();
-        }
-        if (tileObjectInfoUI.isShowing) {
-            tileObjectInfoUI.CloseMenu();
-        }
-        if (regionInfoUI.isShowing) {
-            regionInfoUI.CloseMenu();
         }
         characterInfoUI.SetData(character);
         characterInfoUI.OpenMenu();
@@ -886,18 +853,6 @@ public class UIManager : MonoBehaviour {
     [Header("Region Info")]
     public RegionInfoUI regionInfoUI;
     public void ShowRegionInfo(Region region, bool centerOnRegion = true) {
-        if (factionInfoUI.isShowing) {
-            factionInfoUI.CloseMenu();
-        }
-        if (characterInfoUI.isShowing) {
-            characterInfoUI.CloseMenu();
-        }
-        if (tileObjectInfoUI.isShowing) {
-            tileObjectInfoUI.CloseMenu();
-        }
-        if (areaInfoUI.isShowing) {
-            areaInfoUI.CloseMenu();
-        }
         regionInfoUI.SetData(region);
         regionInfoUI.OpenMenu();
 
@@ -913,35 +868,6 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-    #region Hextile Info
-    //public bool ShowRegionInfo(HexTile hexTile) {
-    //    if (hexTile.region != null && hexTile == hexTile.region.coreTile) {
-    //        //if (hexTile.areaOfTile != null && hexTile.areaOfTile.areaType.IsSettlementType()) {
-    //        //    //if (hexTile.areaOfTile.coreTile == hexTile && hexTile.areaOfTile == PlayerManager.Instance.player.playerArea) {
-    //        //    //    portalPopup.SetActive(true);
-    //        //    //    return true;
-    //        //    //}
-    //        //    ShowAreaInfo(hexTile);
-    //        //    return true;
-    //        //} else {
-    //            //This is an exception in showing area info ui
-    //            //Usually, area info ui must only be shown if the tile's region has an area
-    //            //But for demonic landmarks, even if the region has no area, area info ui will still be shown
-    //            //The area that will become active is the playerArea
-    //            //This is done so that the player can build, research, etc.
-    //            //if (hexTile.region.owner == PlayerManager.Instance.player.playerFaction) {
-    //            //    ShowAreaInfo(hexTile);
-    //            //    return true;
-    //            //} else {
-    //                ShowRegionInfo(hexTile.region);
-    //                return true;
-    //            //}
-    //        //}
-    //    }
-    //    return false;
-    //}
-    #endregion
-
     #region Tile Object Info
     [Space(10)]
     [Header("Tile Object Info")]
@@ -952,24 +878,31 @@ public class UIManager : MonoBehaviour {
             SetTempDisableShowInfoUI(false);
             return;
         }
-        if (factionInfoUI.isShowing) {
-            factionInfoUI.CloseMenu();
-        }
-        if (characterInfoUI.isShowing) {
-            characterInfoUI.CloseMenu();
-        }
-        if (areaInfoUI.isShowing) {
-            areaInfoUI.CloseMenu();
-        }
-        if (regionInfoUI.isShowing) {
-            regionInfoUI.CloseMenu();
-        }
         tileObjectInfoUI.SetData(tileObject);
         tileObjectInfoUI.OpenMenu();
     }
     public void UpdateTileObjectInfo() {
         if (tileObjectInfoUI.isShowing) {
             tileObjectInfoUI.UpdateTileObjectInfo();
+        }
+    }
+    #endregion
+
+    #region Item Info
+    [Space(10)]
+    [Header("Item Object Info")]
+    [SerializeField] internal ItemInfoUI itemInfoUI;
+    public void ShowItemInfo(SpecialToken item) {
+        if (tempDisableShowInfoUI) {
+            SetTempDisableShowInfoUI(false);
+            return;
+        }
+        itemInfoUI.SetData(item);
+        itemInfoUI.OpenMenu();
+    }
+    public void UpdateItemInfo() {
+        if (itemInfoUI.isShowing) {
+            itemInfoUI.UpdateTileObjectInfo();
         }
     }
     #endregion

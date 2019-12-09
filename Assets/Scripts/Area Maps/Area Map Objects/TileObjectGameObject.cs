@@ -12,6 +12,7 @@ public class TileObjectGameObject : AreaMapObjectVisual<TileObject> {
         this.name = tileObject.ToString();
         objectVisual.sprite = InteriorMapManager.Instance.GetTileObjectAsset(tileObject.tileObjectType, tileObject.state, tileObject.structureLocation.location.coreTile.biomeType);
         collisionTrigger = this.transform.GetComponentInChildren<TileObjectCollisionTrigger>();
+        onClickAction = () => UIManager.Instance.ShowTileObjectInfo(tileObject);
     }
 
     public override void UpdateTileObjectVisual(TileObject tileObject) {

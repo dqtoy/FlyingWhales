@@ -151,23 +151,7 @@ public class CharacterMarker : AreaMapObjectVisual<Character> {
         this.hoverEnterAction = hoverEnterAction;
         this.hoverExitAction = hoverExitAction;
     }
-    public void HoverAction() {
-        if (hoverEnterAction != null) {
-            hoverEnterAction.Invoke(character, character.gridTileLocation);
-        }
-        //show hovered image
-        hoveredImg.gameObject.SetActive(true);
-    }
-    public void HoverExitAction() {
-        if (hoverExitAction != null) {
-            hoverExitAction.Invoke(character, character.gridTileLocation);
-        }
-        //hide hovered image
-        hoveredImg.gameObject.SetActive(false);
-    }
-    public void OnPointerClick(BaseEventData bd) {
-        PointerEventData ped = bd as PointerEventData;
-        //character.gridTileLocation.OnClickTileActions(ped.button);
+    public override void OnPointerClick(PointerEventData ped) {
         if(ped.button == PointerEventData.InputButton.Left) {
             //This checker is used so that when a character is clicked and it is because there is a player ability that will target that character, the character info ui will not show
             UIManager.Instance.ShowCharacterInfo(character, true);
@@ -177,6 +161,18 @@ public class CharacterMarker : AreaMapObjectVisual<Character> {
             UIManager.Instance.poiTestingUI.ShowUI(character);
         }
 #endif
+    }
+    public override void OnPointerEnter(PointerEventData eventData) {
+        base.OnPointerEnter(eventData);
+        if (hoverEnterAction != null) {
+            hoverEnterAction.Invoke(character, character.gridTileLocation);
+        }
+    }
+    public override void OnPointerExit(PointerEventData eventData) {
+        base.OnPointerExit(eventData);
+        if (hoverExitAction != null) {
+            hoverExitAction.Invoke(character, character.gridTileLocation);
+        }
     }
     #endregion
 

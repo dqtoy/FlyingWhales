@@ -28,12 +28,12 @@ public class TileObjectInfoUI : UIMenu {
         if(activeTileObject.gridTileLocation != null) {
             bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != activeTileObject.specificLocation;
             AreaMapCameraMove.Instance.CenterCameraOn(activeTileObject.collisionTrigger.gameObject, instantCenter);
-            base.OpenMenu();
-            UIManager.Instance.HideObjectPicker();
-            //UpdateBasicInfo();
-            UpdateTileObjectInfo();
-            UpdateCharacters();
         }
+        base.OpenMenu();
+        UIManager.Instance.HideObjectPicker();
+        //UpdateBasicInfo();
+        UpdateTileObjectInfo();
+        UpdateCharacters();
     }
     #endregion
 
