@@ -8,7 +8,7 @@ namespace Traits {
             description = "This character has been branded as an Aberration by his/her own faction.";
             type = TRAIT_TYPE.CRIMINAL;
             effect = TRAIT_EFFECT.NEGATIVE;
-            daysDuration = 0;
+            ticksDuration = 0;
             crimeSeverity = CRIME_CATEGORY.SERIOUS;
         }
     }

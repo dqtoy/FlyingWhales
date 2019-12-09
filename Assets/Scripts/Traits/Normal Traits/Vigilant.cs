@@ -10,7 +10,7 @@ namespace Traits {
             description = "Vigilant characters cannot be stealthily knocked out or pickpocketed.";
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.NEUTRAL;
-            daysDuration = 0;
+            ticksDuration = 0;
         }
 
         #region Overrides

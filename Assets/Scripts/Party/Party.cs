@@ -102,7 +102,13 @@ public class Party {
     //}
 
     #region Virtuals
-    public virtual void CreateIcon() { }
+    public virtual void CreateIcon() {
+        GameObject characterIconGO = GameObject.Instantiate(CharacterManager.Instance.characterIconPrefab,
+        Vector3.zero, Quaternion.identity, CharacterManager.Instance.characterIconsParent);
+
+        _icon = characterIconGO.GetComponent<CharacterAvatar>();
+        _icon.Init(this);
+    }
     public virtual void ReturnToLife() {
         if (_isDead) {
             _isDead = false;
@@ -219,11 +225,6 @@ public class Party {
         if (IsPOICarried(tileObject)) {
             carriedPOI = null;
             tileObject.SetIsBeingCarriedBy(null);
-            if (tileObject.gridTileLocation != null) {
-                tileObject.gridTileLocation.structure.RemovePOI(tileObject);
-            } else if (tileObject.areaMapVisual != null) {
-                tileObject.OnDestroyPOI();
-            }
             if (addToLocation) {
                 //tileObject.areaMapVisual.collisionTrigger.SetMainColliderState(true);
                 if (dropLocation == null) {
@@ -240,6 +241,12 @@ public class Party {
                     }
                 } else {
                     _owner.gridTileLocation.structure.AddPOI(tileObject, dropLocation);
+                }
+            } else {
+                if (tileObject.gridTileLocation != null) {
+                    tileObject.gridTileLocation.structure.RemovePOI(tileObject);
+                } else if (tileObject.areaMapVisual != null) {
+                    tileObject.OnDestroyPOI();
                 }
             }
             if(tileObject.areaMapVisual != null) {

@@ -12,7 +12,7 @@ namespace Traits {
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             
-            daysDuration = 0;
+            ticksDuration = 0;
             //effects = new List<TraitEffect>();
         }
 

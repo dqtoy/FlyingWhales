@@ -13,7 +13,7 @@ namespace Traits {
             description = "This object is poisoned.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            daysDuration = 0;
+            ticksDuration = 0;
             //effects = new List<TraitEffect>();
             awareCharacters = new List<Character>();
             mutuallyExclusive = new string[] { "Robust" };

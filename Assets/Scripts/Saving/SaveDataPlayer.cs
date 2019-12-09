@@ -42,7 +42,7 @@ public class SaveDataPlayer {
         mana = player.mana;
         maxSummonSlots = player.maxSummonSlots;
         maxArtifactSlots = player.maxArtifactSlots;
-        currentDivineInterventionTick = player.currentDivineInterventionTick;
+        //currentDivineInterventionTick = player.currentDivineInterventionTick;
         minionsToSummon = player.minionsToSummon;
         constructionRatePercentageModifier = player.constructionRatePercentageModifier;
         maxMana = player.maxMana;
@@ -98,7 +98,7 @@ public class SaveDataPlayer {
     }
     public void Load() {
         PlayerManager.Instance.InitializePlayer(this);
-        PlayerManager.Instance.player.LoadDivineIntervention(this);
+        //PlayerManager.Instance.player.LoadDivineIntervention(this);
         PlayerManager.Instance.player.LoadIntels(this);
     }
     //public void LoadInvasion(Save save) {

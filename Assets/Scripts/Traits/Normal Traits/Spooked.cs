@@ -13,7 +13,7 @@ namespace Traits {
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             
-            daysDuration = GameManager.Instance.GetTicksBasedOnHour(12);
+            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);
             //effects = new List<TraitEffect>();
             //terrifyingCharacters = new List<Character>();
         }

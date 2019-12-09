@@ -8,6 +8,8 @@ public class DivineInterventionQuest : Quest {
     public DivineInterventionQuest(Faction factionOwner, Region region) : base(factionOwner, region) {
         name = "Divine Intervention Quest";
         description = factionOwner.name + " has begun the ritual that will call for the Goddess's Return. If the ritual finishes, this Divine Intervention will cleanse the world of all the Ruinarch's corruption and banish the demons back to the Nether Realm.";
+        SetDuration(PlayerManager.DIVINE_INTERVENTION_DURATION);
+        SetCurrentDuration(0);
     }
 
     public DivineInterventionQuest(SaveDataQuest data) : base(data) {
@@ -16,15 +18,14 @@ public class DivineInterventionQuest : Quest {
     #region Overrides
     public override void ActivateQuest() {
         base.ActivateQuest();
-        Messenger.AddListener(Signals.TICK_STARTED, PerTickOnQuest);
+        TimerHubUI.Instance.AddItem("Until Divine Intervention", duration, () => UIManager.Instance.ShowQuestInfo(this));
     }
     public override void FinishQuest() {
         base.FinishQuest();
-        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickOnQuest);
+        TimerHubUI.Instance.RemoveItem("Until Divine Intervention");
+        PlayerUI.Instance.GameOver("The gods have arrived and wiped you off from the face of this planet!");
     }
-    #endregion
-
-    private void PerTickOnQuest() {
+    protected override void PerTickOnQuest() {
         //Remove jobs at the end of the day if it hasn't been taken
         //if (GameManager.Instance.tick == GameManager.ticksPerDay) {
         //    for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
@@ -56,7 +57,15 @@ public class DivineInterventionQuest : Quest {
         TryCreateBuildGoddessStatueJob();
         TryCreateDestroyProfaneLandmarkJob();
         TryCreatePerformHolyIncantationJob();
+        base.PerTickOnQuest();
     }
+    public override void AdjustCurrentDuration(int amount) {
+        base.AdjustCurrentDuration(amount);
+        if(currentDuration < duration) {
+            TimerHubUI.Instance.SetItemTimeDuration("Until Divine Intervention", duration - currentDuration);
+        }
+    }
+    #endregion
 
     private void TryCreateBuildGoddessStatueJob() {
         if (GameManager.Instance.tick == 72 || GameManager.Instance.tick == 132) { //72 = 6:00AM, 132 = 11:00AM

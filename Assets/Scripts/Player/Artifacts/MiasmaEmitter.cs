@@ -32,7 +32,7 @@ public class MiasmaEmitter : Artifact {
         currentDuration = 0;
         for (int i = 0; i < tile.parentAreaMap.area.charactersAtLocation.Count; i++) {
             Character currCharacter = tile.parentAreaMap.area.charactersAtLocation[i];
-            if (currCharacter.faction != PlayerManager.Instance.player.playerFaction) { //only characters that are not part of the player faction will be terrified by this
+            if (!currCharacter.faction.isPlayerFaction) { //only characters that are not part of the player faction will be terrified by this
                 currCharacter.marker.AddTerrifyingObject(this);
             }
         }
@@ -74,7 +74,7 @@ public class MiasmaEmitter : Artifact {
         }
         for (int i = 0; i < previousTile.parentAreaMap.area.charactersAtLocation.Count; i++) {
             Character currCharacter = previousTile.parentAreaMap.area.charactersAtLocation[i];
-            if (currCharacter.faction != PlayerManager.Instance.player.playerFaction) {
+            if (!currCharacter.faction.isPlayerFaction) {
                 currCharacter.marker.RemoveTerrifyingObject(this);
             }
         }

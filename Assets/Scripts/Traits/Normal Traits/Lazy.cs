@@ -14,7 +14,7 @@ namespace Traits {
             
             
             
-            daysDuration = 0;
+            ticksDuration = 0;
             canBeTriggered = true;
             mutuallyExclusive = new string[] { "Hardworking" };
         }

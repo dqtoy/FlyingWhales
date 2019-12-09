@@ -15,7 +15,7 @@ namespace Traits {
             
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.NARCOLEPTIC_NAP };
             
-            daysDuration = 0;
+            ticksDuration = 0;
             canBeTriggered = true;
         }
 

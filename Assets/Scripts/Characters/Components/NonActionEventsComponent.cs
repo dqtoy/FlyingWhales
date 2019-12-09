@@ -17,8 +17,8 @@ public class NonActionEventsComponent {
             || !owner.canWitness
             || target.role.roleType == CHARACTER_ROLE.BEAST
             || owner.role.roleType == CHARACTER_ROLE.BEAST
-            || target.faction == PlayerManager.Instance.player.playerFaction
-            || owner.faction == PlayerManager.Instance.player.playerFaction
+            || target.faction.isPlayerFaction
+            || owner.faction.isPlayerFaction
             || target.characterClass.className == "Zombie"
             || owner.characterClass.className == "Zombie"
             || (owner.currentActionNode != null && owner.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)
@@ -41,8 +41,8 @@ public class NonActionEventsComponent {
             || !owner.canWitness
             || target.role.roleType == CHARACTER_ROLE.BEAST
             || owner.role.roleType == CHARACTER_ROLE.BEAST
-            || target.faction == PlayerManager.Instance.player.playerFaction
-            || owner.faction == PlayerManager.Instance.player.playerFaction
+            || target.faction.isPlayerFaction
+            || owner.faction.isPlayerFaction
             || target.characterClass.className == "Zombie"
             || owner.characterClass.className == "Zombie"
             || (owner.currentActionNode != null && owner.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)

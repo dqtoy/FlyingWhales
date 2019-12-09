@@ -19,7 +19,7 @@ namespace Traits {
             
             
             
-            daysDuration = 0;
+            ticksDuration = 0;
             canBeTriggered = true;
             //effects = new List<TraitEffect>();
             //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TRANSFORM_TO_WOLF, INTERACTION_TYPE.REVERT_TO_NORMAL };

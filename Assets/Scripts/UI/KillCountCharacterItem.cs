@@ -31,7 +31,7 @@ public class KillCountCharacterItem : CharacterNameplateItem {
         StopScroll();
     }
     private void UpdateInfo() {
-        SetSupportingLabelState(!character.IsAble() || !LandmarkManager.Instance.enemyOfPlayerArea.region.IsFactionHere(character.faction));
+        SetSupportingLabelState(!character.IsAble() || transform.GetSiblingIndex() > PlayerUI.Instance.deadHeader.GetSiblingIndex()); // !LandmarkManager.Instance.enemyOfPlayerArea.region.IsFactionHere(character.faction)
         if (character.isDead) {
             supportingLbl.text = "\"" + character.deathStr + "\"";
         } else {
@@ -39,11 +39,16 @@ public class KillCountCharacterItem : CharacterNameplateItem {
             Trait negDisTrait = character.traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE).FirstOrDefault();
             if (negDisTrait != null) {
                 if (negDisTrait is Unconscious) {
-                    text = "\"" + character.name + " was knocked out by " + negDisTrait.responsibleCharacter.name + ".\"";
+                    text = "\"" + character.name + " was knocked out";
                 } else if (negDisTrait is Restrained) {
                     text = "\"" + character.name + " was restrained by " + negDisTrait.responsibleCharacter.name + ".\"";
                 } else if (negDisTrait is Paralyzed) {
                     text = "\"" + character.name + " became paralyzed.\"";
+                }
+                if(negDisTrait.responsibleCharacter != null) {
+                    text += " by " + negDisTrait.responsibleCharacter.name + ".\"";
+                } else {
+                    text += ".\"";
                 }
             } else {
                 if (character.returnedToLife) {

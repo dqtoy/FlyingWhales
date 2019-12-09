@@ -20,7 +20,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             
             
-            daysDuration = 0;
+            ticksDuration = 0;
             //effects = new List<TraitEffect>();
         }
 

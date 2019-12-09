@@ -15,7 +15,7 @@ namespace Traits {
             type = TRAIT_TYPE.DISABLER;
             effect = TRAIT_EFFECT.NEGATIVE;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.RELEASE_CHARACTER };
-            daysDuration = 0;
+            ticksDuration = 0;
             hindersMovement = true;
         }
 

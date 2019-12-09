@@ -201,7 +201,7 @@ public class TraitPanelUI : MonoBehaviour {
             thoughtText = thoughtInput.text,
             type = (TRAIT_TYPE)System.Enum.Parse(typeof(TRAIT_TYPE), traitTypeOptions.options[traitTypeOptions.value].text),
             effect = (TRAIT_EFFECT)System.Enum.Parse(typeof(TRAIT_EFFECT), traitEffectOptions.options[traitEffectOptions.value].text),
-            daysDuration = int.Parse(durationInput.text),
+            ticksDuration = int.Parse(durationInput.text),
             effects = _effects,
             isHidden = _isHidden.isOn,
             mutuallyExclusive = GetMutuallyExclusiveTraits(),
@@ -239,7 +239,7 @@ public class TraitPanelUI : MonoBehaviour {
         thoughtInput.text = trait.thoughtText;
         traitTypeOptions.value = GetOptionIndex(trait.type.ToString(), traitTypeOptions);
         traitEffectOptions.value = GetOptionIndex(trait.effect.ToString(), traitEffectOptions);
-        durationInput.text = trait.daysDuration.ToString();
+        durationInput.text = trait.ticksDuration.ToString();
         mutuallyExclusiveInput.text = ConvertMutuallyExclusiveTraitsToText(trait);
         _advertisedInteractions = trait.advertisedInteractions;
         UpdateAdvertisedInteractionsText();

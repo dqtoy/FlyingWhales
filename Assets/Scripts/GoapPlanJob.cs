@@ -375,7 +375,11 @@ public class GoapPlanJob : JobQueueItem {
         switch (jobType) {
             case JOB_TYPE.OBTAIN_ITEM:
             case JOB_TYPE.REMOVE_TRAIT:
-                return Utilities.NormalizeStringUpperCaseFirstLetters(jobType.ToString()); // + " " + Utilities.NormalizeStringUpperCaseFirstLetters(goals.conditionKey.ToString());
+                string text = Utilities.NormalizeStringUpperCaseFirstLetters(jobType.ToString());
+                if (!string.IsNullOrEmpty(goal.conditionKey)) {
+                    text += " " + goal.conditionKey;
+                }
+                return text;
             case JOB_TYPE.HUNGER_RECOVERY:
             case JOB_TYPE.HUNGER_RECOVERY_STARVING:
                 return "Hunger Recovery";

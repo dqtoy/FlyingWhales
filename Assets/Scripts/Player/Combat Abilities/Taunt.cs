@@ -14,7 +14,7 @@ public class Taunt : CombatAbility {
     public override bool CanTarget(IPointOfInterest targetPOI) {
         if (targetPOI is Character) {
             Character character = targetPOI as Character;
-            if (character.faction == PlayerManager.Instance.player.playerFaction) {
+            if (character.faction.isPlayerFaction) {
                 return true;
             }
         }
@@ -39,7 +39,7 @@ public class Taunt : CombatAbility {
             List<Character> affectedByTaunt = new List<Character>();
             for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
                 Character currCharacter = character.specificLocation.charactersAtLocation[i];
-                if (currCharacter != character && currCharacter.faction != PlayerManager.Instance.player.playerFaction) {
+                if (currCharacter != character && !currCharacter.faction.isPlayerFaction) {
                     if (tilesInRadius.Contains(currCharacter.gridTileLocation) && character.marker.IsCharacterInLineOfSightWith(currCharacter)) {
                         affectedByTaunt.Add(currCharacter);
                     }

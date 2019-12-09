@@ -14,7 +14,7 @@ namespace Traits {
             description = "This character has the zombie virus.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            daysDuration = 0;
+            ticksDuration = 0;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CURE_CHARACTER, };
             mutuallyExclusive = new string[] { "Robust" };
         }

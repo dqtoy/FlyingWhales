@@ -36,12 +36,12 @@ public class FoodPile : ResourcePile {
     //        }
     //    }
     //}
-    public override void AdjustResourceInPile(int adjustment) {
-        base.AdjustResourceInPile(adjustment);
-        if (adjustment < 0) {
-            Messenger.Broadcast(Signals.FOOD_IN_PILE_REDUCED, this);
-        }
-    }
+    //public override void AdjustResourceInPile(int adjustment) {
+    //    base.AdjustResourceInPile(adjustment);
+    //    if (adjustment < 0) {
+    //        Messenger.Broadcast(Signals.FOOD_IN_PILE_REDUCED, this);
+    //    }
+    //}
     public override string ToString() {
         return "Food Pile " + id.ToString();
     }
@@ -54,13 +54,13 @@ public class FoodPile : ResourcePile {
         if (gridTileLocation != null) {
             if (structureLocation == structureLocation.location.mainStorage) {
                 if (resourceInPile < 100) {
-                    if (!structureLocation.location.HasJob(JOB_TYPE.OBTAIN_FOOD)) {
-                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_FOOD, new GoapEffect(GOAP_EFFECT_CONDITION.PRODUCE_FOOD, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), this, structureLocation.location);
+                    if (!structureLocation.location.HasJob(JOB_TYPE.PRODUCE_FOOD)) {
+                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PRODUCE_FOOD, new GoapEffect(GOAP_EFFECT_CONDITION.PRODUCE_FOOD, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), this, structureLocation.location);
                         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainSupplyJob);
                         structureLocation.location.AddToAvailableJobs(job);
                     }
                 } else {
-                    ForceCancelNotAssignedProduceJob(JOB_TYPE.OBTAIN_FOOD);
+                    ForceCancelNotAssignedProduceJob(JOB_TYPE.PRODUCE_FOOD);
                     //structureLocation.location.ForceCancelJob(structureLocation.location.GetJob(JOB_TYPE.OBTAIN_FOOD));
                 }
             } else {

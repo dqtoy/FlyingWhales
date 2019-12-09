@@ -17,7 +17,7 @@ namespace Traits {
             thoughtText = "[Character] sucks blood.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
-            daysDuration = 0;
+            ticksDuration = 0;
             _flatHPMod = 500;
             canBeTriggered = true;
         }

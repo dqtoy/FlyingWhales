@@ -15,6 +15,7 @@ public class Faction {
     //public string initialLeaderClass { get; protected set; }
     public int level { get; protected set; }
     public bool isPlayerFaction { get; protected set; }
+    public bool isMajorFaction { get; protected set; }
     public GENDER initialLeaderGender { get; protected set; }
     public RACE initialLeaderRace { get; protected set; }
     public RACE race { get; protected set; }
@@ -43,6 +44,12 @@ public class Faction {
     }
     public bool isDestroyed {
         get { return leader == null; }
+    }
+    public bool isMajorFriendlyNeutral {
+        get { return isMajorFaction || this == FactionManager.Instance.friendlyNeutralFaction; }
+    }
+    public bool isMajorNonPlayer {
+        get { return isMajorFaction && !isPlayerFaction; }
     }
     #endregion
 
@@ -369,6 +376,9 @@ public class Faction {
     public void SetInitialFactionLeaderGender(GENDER gender) {
         initialLeaderGender = gender;
     }
+    public void SetIsMajorFaction(bool state) {
+        isMajorFaction = state;
+    }
     //public void SetInitialFactionLeaderClass(string className) {
     //    initialLeaderClass = className;
     //}
@@ -490,7 +500,7 @@ public class Faction {
     }
     public bool HasRelationshipStatus(FACTION_RELATIONSHIP_STATUS stat, bool excludePlayer = true) {
         foreach (KeyValuePair<Faction, FactionRelationship> kvp in relationships) {
-            if (excludePlayer && kvp.Key.id == PlayerManager.Instance.player.playerFaction.id) {
+            if (excludePlayer && kvp.Key.isPlayerFaction) {
                 continue; //exclude player faction
             }
             if (kvp.Value.relationshipStatus == stat) {
@@ -507,7 +517,7 @@ public class Faction {
     }
     public Faction GetFactionWithRelationship(FACTION_RELATIONSHIP_STATUS stat, bool excludePlayer = true) {
         foreach (KeyValuePair<Faction, FactionRelationship> kvp in relationships) {
-            if (excludePlayer && kvp.Key.id == PlayerManager.Instance.player.playerFaction.id) {
+            if (excludePlayer && kvp.Key.isPlayerFaction) {
                 continue; //exclude player faction
             }
             if (kvp.Value.relationshipStatus == stat) {
@@ -519,7 +529,7 @@ public class Faction {
     public List<Faction> GetFactionsWithRelationship(FACTION_RELATIONSHIP_STATUS stat, bool excludePlayer = true) {
         List<Faction> factions = new List<Faction>();
         foreach (KeyValuePair<Faction, FactionRelationship> kvp in relationships) {
-            if (excludePlayer && kvp.Key.id == PlayerManager.Instance.player.playerFaction.id) {
+            if (excludePlayer && kvp.Key.isPlayerFaction) {
                 continue; //exclude player faction
             }
             if (kvp.Value.relationshipStatus == stat) {

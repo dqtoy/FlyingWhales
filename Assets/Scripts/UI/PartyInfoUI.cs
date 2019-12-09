@@ -80,19 +80,17 @@ public class PartyInfoUI : UIMenu {
     private void UpdateEditableItems() {
         partyNameErrorLbl.gameObject.SetActive(false);
         partyMembersErrorLbl.gameObject.SetActive(false);
-        if (currentlyShowingParty is CharacterParty) {
-            CharacterParty party = currentlyShowingParty as CharacterParty;
-            if (party.owner.minion != null) {
-                //the owner of the party is a minion, and they are not busy, allow editing
-                partyField.interactable = true;
-                for (int i = 0; i < partySlots.Length; i++) {
-                    SlotItem currSlot = partySlots[i];
-                    currSlot.dropZone.SetEnabledState(true);
-                    currSlot.draggable.SetDraggable(true);
-                }
-                CopyValues(currentlyShowingParty);
-                return;
+        Party party = currentlyShowingParty;
+        if (party.owner.minion != null) {
+            //the owner of the party is a minion, and they are not busy, allow editing
+            partyField.interactable = true;
+            for (int i = 0; i < partySlots.Length; i++) {
+                SlotItem currSlot = partySlots[i];
+                currSlot.dropZone.SetEnabledState(true);
+                currSlot.draggable.SetDraggable(true);
             }
+            CopyValues(currentlyShowingParty);
+            return;
         }
         //the owner of the party is NOT a minion, disable editing
         partyField.interactable = false;

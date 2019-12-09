@@ -18,7 +18,7 @@ namespace Traits {
         public TRAIT_TYPE type;
         public TRAIT_EFFECT effect;
         public List<INTERACTION_TYPE> advertisedInteractions;
-        public int daysDuration; //Zero (0) means Permanent
+        public int ticksDuration; //Zero (0) means Permanent
         public int level;
         public List<TraitEffect> effects;
         public bool isHidden;
@@ -150,7 +150,7 @@ namespace Traits {
             gainedFromDoing = action;
         }
         public void OverrideDuration(int newDuration) {
-            daysDuration = newDuration;
+            ticksDuration = newDuration;
         }
         public void AddCharacterResponsibleForTrait(Character character) {
             if (responsibleCharacters == null) {

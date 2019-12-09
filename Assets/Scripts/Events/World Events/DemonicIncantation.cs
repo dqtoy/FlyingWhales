@@ -16,7 +16,14 @@ public class DemonicIncantation : WorldEvent {
         log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(region.mainLandmark.specificLandmarkType.ToString()), LOG_IDENTIFIER.STRING_1);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
-        PlayerManager.Instance.player.AdjustDivineInterventionDuration(GameManager.ticksPerDay);
+        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+            Faction faction = FactionManager.Instance.allFactions[i];
+            if(faction.activeQuest != null && faction.activeQuest is DivineInterventionQuest) {
+                faction.activeQuest.AdjustCurrentDuration(-GameManager.ticksPerDay);
+                break;
+            }
+        }
+        //PlayerManager.Instance.player.AdjustDivineInterventionDuration(GameManager.ticksPerDay);
         base.ExecuteAfterEffect(region, spawner);
     }
     public override bool CanSpawnEventAt(Region region, Character spawner) {

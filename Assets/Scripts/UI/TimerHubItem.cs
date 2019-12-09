@@ -15,12 +15,15 @@ public class TimerHubItem : PooledObject {
     public System.Action onClickAction { get; private set; }
 
     public void Initialize(string description, int durationInTicks, System.Action onClickAction) {
-        this.durationInTicks = durationInTicks;
         descriptionText.text = description;
         this.onClickAction = onClickAction;
-        UpdateTime();
+        SetDuration(durationInTicks);
     }
 
+    public void SetDuration(int amount) {
+        durationInTicks = amount;
+        UpdateTime();
+    }
     public void UpdateTime() {
         if(durationInTicks > GameManager.ticksPerDay) {
             timeText.text = GameManager.Instance.GetCeilingDaysBasedOnTicks(durationInTicks).ToString();
@@ -35,8 +38,7 @@ public class TimerHubItem : PooledObject {
     public bool PerTick() {
         durationInTicks--;
         if(durationInTicks <= 0) {
-            durationInTicks = 0;
-            UpdateTime();
+            SetDuration(0);
             return true;
         }
         UpdateTime();
@@ -52,7 +54,7 @@ public class TimerHubItem : PooledObject {
     #region Overrides
     public override void Reset() {
         base.Reset();
-        durationInTicks = 0;
+        SetDuration(0);
     }
     #endregion
 }

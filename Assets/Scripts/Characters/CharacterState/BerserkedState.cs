@@ -43,7 +43,7 @@ public class BerserkedState : CharacterState {
     }
     public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
         if(targetPOI is Character) {
-            if (stateComponent.character.faction == PlayerManager.Instance.player.playerFaction) {
+            if (stateComponent.character.faction.isPlayerFaction) {
                 return stateComponent.character.marker.AddHostileInRange(targetPOI as Character, isLethal: areCombatsLethal); //check hostility if from player faction, so as not to attack other characters that are also from the same faction.
             } else {
                 if (hostileChecker != null) {

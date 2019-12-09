@@ -14,7 +14,7 @@ namespace Traits {
             thoughtText = "[Character] has irresistible urge to steal.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEGATIVE;
-            daysDuration = 0;
+            ticksDuration = 0;
             //effects = new List<TraitEffect>();
             noItemCharacters = new List<Character>();
             canBeTriggered = true;

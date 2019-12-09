@@ -23,7 +23,7 @@ public class SaveDataTrait {
     public virtual void Save(Trait trait) {
         name = trait.name;
         level = trait.level;
-        daysDuration = trait.daysDuration;
+        daysDuration = trait.ticksDuration;
         
         if(trait.responsibleCharacter == null) {
             responsibleCharacterID = -1;

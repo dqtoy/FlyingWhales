@@ -15,7 +15,7 @@ namespace Traits {
             type = TRAIT_TYPE.DISABLER;
             effect = TRAIT_EFFECT.NEGATIVE;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED };
-            daysDuration = 0;
+            ticksDuration = 0;
             charactersThatKnow = new List<Character>();
             hindersMovement = true;
         }

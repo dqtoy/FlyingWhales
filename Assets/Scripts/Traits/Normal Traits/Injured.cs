@@ -21,7 +21,7 @@ namespace Traits {
             
             
             
-            daysDuration = 480;
+            ticksDuration = 480;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FIRST_AID_CHARACTER, };
             //effects = new List<TraitEffect>();
         }

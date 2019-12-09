@@ -15,7 +15,7 @@ namespace Traits {
             
             
             
-            daysDuration = 0;
+            ticksDuration = 0;
             SetJobIDReplacementForHappinessRecovery(0);
             mutuallyExclusive = new string[] { "Lazy" };
         }

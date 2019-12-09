@@ -13,7 +13,7 @@ namespace Traits {
             description = "This can be eaten.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
-            daysDuration = 0;
+            ticksDuration = 0;
         }
 
 

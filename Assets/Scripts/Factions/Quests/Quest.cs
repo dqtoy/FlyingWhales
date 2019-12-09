@@ -10,6 +10,8 @@ public class Quest : IJobOwner {
     public Region region { get; protected set; }
     //public JobQueue jobQueue { get; protected set; }
     public bool isActivated { get; protected set; }
+    public int duration { get; protected set; }
+    public int currentDuration { get; protected set; }
     public List<JobQueueItem> availableJobs { get; protected set; }
 
     public Quest(Faction factionOwner, Region region) {
@@ -52,21 +54,48 @@ public class Quest : IJobOwner {
         }
         return false;
     }
+    public bool HasJob(JOB_TYPE jobType) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem jqi = availableJobs[i];
+            if (jqi.jobType == jobType) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Virtuals
     //On its own, when quest is made, it is still not active, this must be called to activate quest
     public virtual void ActivateQuest() {
         isActivated = true;
+        Messenger.AddListener(Signals.TICK_STARTED, PerTickOnQuest);
     }
     public virtual void FinishQuest() {
         isActivated = false;
+        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickOnQuest);
+    }
+    protected virtual void PerTickOnQuest() {
+        if(duration > 0) {
+            currentDuration++;
+            if (currentDuration >= duration) {
+                FinishQuest();
+            }
+        }
     }
     protected virtual void OnAddJob(JobQueueItem job) {
         Messenger.Broadcast(Signals.ADD_QUEST_JOB, this, job);
     }
     protected virtual void OnRemoveJob(JobQueueItem job) {
         Messenger.Broadcast(Signals.REMOVE_QUEST_JOB, this, job);
+    }
+    public virtual void AdjustCurrentDuration(int amount) {
+        //int prevCurrDuration = currentDuration;
+        currentDuration += amount;
+        //currentDuration = Mathf.Max(0, currentDuration);
+        //if(currentDuration < 0) {
+        //    Debug.LogError("Adjusted current duration(" + prevCurrDuration + ") of " + name + " by " + amount + ", but the result is a negative value: " + currentDuration);
+        //}
     }
     #endregion
 
@@ -84,15 +113,14 @@ public class Quest : IJobOwner {
     }
     #endregion
 
-    public bool HasJob(JOB_TYPE jobType) {
-        for (int i = 0; i < availableJobs.Count; i++) {
-            JobQueueItem jqi = availableJobs[i];
-            if (jqi.jobType == jobType) {
-                return true;
-            }
-        }
-        return false;
+    #region General
+    public void SetCurrentDuration(int amount) {
+        currentDuration = amount;
     }
+    public void SetDuration(int amount) {
+        duration = amount;
+    }
+    #endregion
 }
 
 [System.Serializable]

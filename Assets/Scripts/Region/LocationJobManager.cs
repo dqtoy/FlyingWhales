@@ -249,7 +249,7 @@ public class LocationJobManager {
     private bool IsAtWarWithFactionThatSettlementNotBlockedByGarrison() {
         //TODO: Is blocked by garrison checker
         foreach (KeyValuePair<Faction, FactionRelationship> kvp in location.region.owner.relationships) {
-            if (kvp.Key.id == PlayerManager.Instance.player.playerFaction.id) {
+            if (kvp.Key.isPlayerFaction) {
                 continue; //exclude player faction
             }
             if (kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE && kvp.Key.HasOwnedRegionWithSettlement()) {

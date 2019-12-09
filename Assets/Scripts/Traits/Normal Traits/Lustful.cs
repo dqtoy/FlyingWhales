@@ -10,7 +10,7 @@ namespace Traits {
             description = "Lustful characters enjoy frequent lovemaking.";
             type = TRAIT_TYPE.PERSONALITY;
             effect = TRAIT_EFFECT.NEUTRAL;
-            daysDuration = 0;
+            ticksDuration = 0;
         }
 
         #region Overrides

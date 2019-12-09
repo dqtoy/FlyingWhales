@@ -14,7 +14,7 @@ namespace Traits {
             relType = RELATIONSHIP_TRAIT.ENEMY;
             type = TRAIT_TYPE.RELATIONSHIP;
             effect = TRAIT_EFFECT.NEGATIVE;
-            daysDuration = 0;
+            ticksDuration = 0;
             //effects = new List<TraitEffect>();
         }
 

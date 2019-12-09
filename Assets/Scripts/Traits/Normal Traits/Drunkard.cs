@@ -13,7 +13,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEGATIVE;
             
             
-            daysDuration = 0;
+            ticksDuration = 0;
             canBeTriggered = true;
         }
 

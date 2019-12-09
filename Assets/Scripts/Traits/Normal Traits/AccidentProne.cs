@@ -21,7 +21,7 @@ namespace Traits {
             
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ACCIDENT, INTERACTION_TYPE.STUMBLE };
             
-            daysDuration = 0;
+            ticksDuration = 0;
             canBeTriggered = true;
 
         }

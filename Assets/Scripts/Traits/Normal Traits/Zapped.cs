@@ -10,7 +10,7 @@ namespace Traits {
             description = "This character cannot move.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
-            daysDuration = 3;
+            ticksDuration = 3;
             hindersMovement = true;
         }
 

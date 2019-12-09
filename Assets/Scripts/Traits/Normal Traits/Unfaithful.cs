@@ -13,7 +13,7 @@ namespace Traits {
             description = "Unfaithful characters are prone to having illicit love affairs.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEGATIVE;
-            daysDuration = 0;
+            ticksDuration = 0;
             canBeTriggered = true;
             //effects = new List<TraitEffect>();
         }

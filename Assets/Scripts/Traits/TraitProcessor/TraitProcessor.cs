@@ -12,9 +12,9 @@ namespace Traits {
             //trait.SetOnRemoveAction(onRemoveAction);
             trait.AddCharacterResponsibleForTrait(characterResponsible);
             trait.AddCharacterResponsibleForTrait(characterResponsible);
-            if (trait.daysDuration > 0) {
+            if (trait.ticksDuration > 0) {
                 GameDate removeDate = GameManager.Instance.Today();
-                removeDate.AddTicks(trait.daysDuration);
+                removeDate.AddTicks(trait.ticksDuration);
                 string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => traitable.traitContainer.RemoveTraitOnSchedule(traitable, trait), this);
                 trait.SetExpiryTicket(traitable, ticket);
             }

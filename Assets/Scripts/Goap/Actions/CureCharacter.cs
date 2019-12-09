@@ -48,7 +48,7 @@ public class CureCharacter : GoapAction {
     #endregion
 
     #region State Effects
-    public void PreCureSuccess(ActualGoapNode goapNode) { }
+    //public void PreCureSuccess(ActualGoapNode goapNode) { }
     public void AfterCureSuccess(ActualGoapNode goapNode) {
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Sick", goapNode.actor);
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Plagued", goapNode.actor);

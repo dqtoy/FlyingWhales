@@ -15,7 +15,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             relType = RELATIONSHIP_TRAIT.RELATIVE;
             
-            daysDuration = 0;
+            ticksDuration = 0;
             //effects = new List<TraitEffect>();
         }
 

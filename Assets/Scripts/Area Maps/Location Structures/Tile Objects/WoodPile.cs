@@ -42,25 +42,25 @@ public class WoodPile : ResourcePile {
         if (gridTileLocation != null) {
             if (structureLocation == structureLocation.location.mainStorage) {
                 if (resourceInPile < 100) {
-                    if (!structureLocation.location.HasJob(JOB_TYPE.OBTAIN_WOOD)) {
-                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_WOOD, new GoapEffect(GOAP_EFFECT_CONDITION.PRODUCE_WOOD, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), this, structureLocation.location);
+                    if (!structureLocation.location.HasJob(JOB_TYPE.PRODUCE_WOOD)) {
+                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PRODUCE_WOOD, new GoapEffect(GOAP_EFFECT_CONDITION.PRODUCE_WOOD, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), this, structureLocation.location);
                         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainSupplyJob);
                         structureLocation.location.AddToAvailableJobs(job);
                     }
                 } else {
-                    ForceCancelNotAssignedProduceJob(JOB_TYPE.OBTAIN_WOOD);
+                    ForceCancelNotAssignedProduceJob(JOB_TYPE.PRODUCE_WOOD);
                 }
             } else {
                 CreateHaulJob();
             }
         }
     }
-    public override void AdjustResourceInPile(int adjustment) {
-        base.AdjustResourceInPile(adjustment);
-        if (adjustment < 0) {
-            Messenger.Broadcast(Signals.WOOD_IN_PILE_REDUCED, this);
-        }
-    }
+    //public override void AdjustResourceInPile(int adjustment) {
+    //    base.AdjustResourceInPile(adjustment);
+    //    if (adjustment < 0) {
+    //        Messenger.Broadcast(Signals.WOOD_IN_PILE_REDUCED, this);
+    //    }
+    //}
     public override string ToString() {
         return "Wood Pile " + id.ToString();
     }

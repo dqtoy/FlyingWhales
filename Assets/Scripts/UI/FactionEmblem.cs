@@ -35,7 +35,7 @@ public class FactionEmblem : MonoBehaviour, IPointerClickHandler{
     }
 
     private void UpdateEmblem() {
-        if (faction == null || faction == FactionManager.Instance.neutralFaction || faction == FactionManager.Instance.friendlyNeutralFaction) {
+        if (faction == null || !faction.isMajorFaction) {
             this.gameObject.SetActive(false);   
         } else {
             this.gameObject.SetActive(true);

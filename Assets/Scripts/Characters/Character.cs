@@ -23,8 +23,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     protected RaceSetting _raceSetting;
     protected CharacterRole _role;
     protected Faction _faction;
-    protected CharacterParty _ownParty;
-    protected CharacterParty _currentParty;
     protected Minion _minion;
     //protected CombatCharacter _currentCombatCharacter;
     protected List<Log> _history;
@@ -84,6 +82,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public Region currentRegion { get; private set; } //current Region Location
     public CharacterTrait defaultCharacterTrait { get; private set; }
     public int isStoppedByOtherCharacter { get; private set; } //this is increased, when the action of another character stops this characters movement
+    public Party ownParty { get; protected set; }
+    public Party currentParty { get; protected set; }
 
     private List<System.Action> onLeaveAreaActions;
     private POI_STATE _state;
@@ -190,7 +190,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
         }
     }
-    public bool isFriendlyFactionless { //is the character part of the neutral faction? or no faction?
+    public bool isFriendlyFactionless { //is the character part of the friendly neutral faction? or no faction?
         get {
             if (faction == null || FactionManager.Instance.friendlyNeutralFaction == faction) {
                 return true;
@@ -240,17 +240,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public Faction factionOwner {
         get { return _faction; }
     }
-    public virtual Party ownParty {
-        get { return _ownParty; }
-    }
-    public CharacterParty party {
-        get { return _ownParty; }
-    }
-    public virtual Party currentParty {
-        get { return _currentParty; }
-    }
     public Area specificLocation {
-        get { return _currentParty.specificLocation; }
+        get { return currentParty.specificLocation; }
     }
     public List<Log> history {
         get { return this._history; }
@@ -390,6 +381,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public JOB_OWNER ownerType { get { return JOB_OWNER.CHARACTER; } }
     public bool isInCombat { get { return stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT; } }
     public Transform worldObject { get { return marker.transform; } }
+    public bool isStillConsideredAlive {
+        get { return minion == null && !(this is Summon) && !faction.isPlayerFaction; }
+    }
     #endregion
 
     public Character(CharacterRole role, RACE race, GENDER gender) : this() {
@@ -684,9 +678,16 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
             //remove the character that left the area from anyone elses list of terrifying characters.
             if (marker.terrifyingObjects.Count > 0) {
-                marker.RemoveTerrifyingObject(party.owner);
-                if (party.isCarryingAnyPOI) {
-                    marker.RemoveTerrifyingObject(party.carriedPOI);
+                if (character.IsInOwnParty()) {
+                    marker.RemoveTerrifyingObject(character);
+                    if (character.ownParty.isCarryingAnyPOI) {
+                        marker.RemoveTerrifyingObject(character.ownParty.carriedPOI);
+                    }
+                } else {
+                    marker.RemoveTerrifyingObject(character.currentParty.owner);
+                    if (character.currentParty.isCarryingAnyPOI) {
+                        marker.RemoveTerrifyingObject(character.currentParty.carriedPOI);
+                    }
                 }
                 //for (int i = 0; i < party.characters.Count; i++) {
                 //    marker.RemoveTerrifyingObject(party.characters[i]);
@@ -842,7 +843,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             ResetFullnessMeter();
             ResetTirednessMeter();
             ResetHappinessMeter();
-            _ownParty.ReturnToLife();
+            ownParty.ReturnToLife();
             marker.OnReturnToLife();
             if (grave != null) {
                 marker.PlaceMarkerAt(grave.gridTileLocation);
@@ -935,9 +936,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
 
             if (!IsInOwnParty()) {
-                _currentParty.RemovePOI(this);
+                currentParty.RemovePOI(this);
             }
-            _ownParty.PartyDeath();
+            ownParty.PartyDeath();
 
             //if (this.race != RACE.SKELETON) {
             //    deathLocation.AddCorpse(this, deathStructure, deathTile);
@@ -2109,7 +2110,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //if (_ownParty != null) {
         //    _ownParty.RemoveCharacter(this);
         //}
-        CharacterParty newParty = new CharacterParty(this);
+        Party newParty = new Party(this);
         SetOwnedParty(newParty);
         SetCurrentParty(newParty);
         //newParty.AddCharacter(this, true);
@@ -2117,10 +2118,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         return newParty;
     }
     public virtual void SetOwnedParty(Party party) {
-        _ownParty = party as CharacterParty;
+        ownParty = party;
     }
     public virtual void SetCurrentParty(Party party) {
-        _currentParty = party as CharacterParty;
+        currentParty = party;
     }
     public void OnRemovedFromParty() {
         SetCurrentParty(ownParty); //set the character's party to it's own party
@@ -2586,7 +2587,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     /// </summary>
     /// <returns>True or false.</returns>
     public virtual bool CanBeInstructedByPlayer() {
-        if (PlayerManager.Instance.player.playerFaction != this.faction) {
+        if (!faction.isPlayerFaction) {
             return false;
         }
         if (isDead) {
@@ -2946,7 +2947,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         witnessLog.AddToFillers(witnessedEvent.descriptionLog.fillers);
         AddHistory(witnessLog);
 
-        if (faction == PlayerManager.Instance.player.playerFaction) {
+        if (faction.isPlayerFaction) {
             //Player characters cannot react to witnessed events
             return;
         }
@@ -2998,7 +2999,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     /// <param name="action">The action that was performed.</param>
     /// <param name="state">The state the action was in when this character watched it.</param>
     public void ThisCharacterWatchEvent(Character targetCharacter, GoapAction action, GoapActionState state) {
-        if (faction == PlayerManager.Instance.player.playerFaction) {
+        if (faction.isPlayerFaction) {
             //Player characters cannot watch events
             return;
         }
@@ -3954,7 +3955,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //}
 
         if (!IsInOwnParty()) {
-            _currentParty.RemovePOI(this);
+            currentParty.RemovePOI(this);
         }
         ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
         MigrateHomeTo(PlayerManager.Instance.player.playerArea.region);

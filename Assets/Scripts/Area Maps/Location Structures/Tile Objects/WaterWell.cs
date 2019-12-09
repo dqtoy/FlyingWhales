@@ -9,7 +9,7 @@ public class WaterWell : TileObject {
         Initialize(TILE_OBJECT_TYPE.WATER_WELL);
         traitContainer.RemoveTrait(this, "Flammable");
         Wet wet = new Wet();
-        wet.daysDuration = 0;
+        wet.ticksDuration = 0;
         traitContainer.AddTrait(this, wet);
     }
     public WaterWell(SaveDataTileObject data) {

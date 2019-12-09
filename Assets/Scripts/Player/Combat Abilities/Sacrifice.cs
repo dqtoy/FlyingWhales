@@ -15,7 +15,7 @@ public class Sacrifice : CombatAbility {
     public override bool CanTarget(IPointOfInterest targetPOI) {
         if (targetPOI is Character) {
             Character character = targetPOI as Character;
-            if (character.faction == PlayerManager.Instance.player.playerFaction) {
+            if (character.faction.isPlayerFaction) {
                 return true;
             }
         }

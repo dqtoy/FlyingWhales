@@ -13,7 +13,7 @@ namespace Traits {
             
             
             
-            daysDuration = GameManager.ticksPerDay;
+            ticksDuration = GameManager.ticksPerDay;
             //effects = new List<TraitEffect>();
             //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TRANSFORM_TO_WOLF, INTERACTION_TYPE.REVERT_TO_NORMAL };
         }

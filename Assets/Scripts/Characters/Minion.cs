@@ -295,7 +295,7 @@ public class Minion {
         Messenger.AddListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, character.OnCharacterEndedState);
-        SetAssignedRegion(area.coreTile.region);
+        SetAssignedRegion(area.region);
     }
     public void StopInvasionProtocol(Area area) {
         if(area != null && assignedRegion != null && assignedRegion.area == area) {

@@ -48,7 +48,6 @@ public class CharacterRelationshipItem : PooledObject {
     public void HideSmallInfo() {
         UIManager.Instance.HideSmallInfo();
     }
-
     private string OpinionColor(int number) {
         if(number < 0) {
             return "red";

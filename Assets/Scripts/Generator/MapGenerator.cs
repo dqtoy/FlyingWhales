@@ -46,10 +46,11 @@ public class MapGenerator : MonoBehaviour {
         LevelLoaderManager.UpdateLoadingInfo("Generating Biomes...");
         yield return null;
         Biomes.Instance.GenerateBiome(GridMap.Instance.hexTiles);
-        Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
+        //Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
         yield return null;
         FactionManager.Instance.CreateNeutralFaction();
         FactionManager.Instance.CreateFriendlyNeutralFaction();
+        FactionManager.Instance.CreateDisguisedFaction();
 
         BaseLandmark portal;
         //New Map Generation
