@@ -12,7 +12,7 @@ namespace Traits {
             description = "Music Haters dislike playing instruments and hearing any music.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEGATIVE;
-            daysDuration = 0;
+            ticksDuration = 0;
             mutuallyExclusive = new string[] { "Music Lover" };
         }
 

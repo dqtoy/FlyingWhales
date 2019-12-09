@@ -28,7 +28,7 @@ public class ChaosOrb : Artifact {
     private void OnInspectActionDone(Character inspectedBy) {
         //action.actor.GoapActionResult(result, action);
         //Characters that inspect the Chaos Orb may be permanently berserked.
-        inspectedBy.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED); //CharacterState state = 
+        inspectedBy.traitContainer.AddTrait(inspectedBy, "Berserked");
         //state.SetIsUnending(true);
     }
 

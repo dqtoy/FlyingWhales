@@ -11,7 +11,7 @@ namespace Traits {
             description = "This character is grieving and may refuse to eat.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            daysDuration = GameManager.Instance.GetTicksBasedOnHour(24);
+            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);
         }
 
         #region Overrides

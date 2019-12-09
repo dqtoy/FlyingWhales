@@ -37,6 +37,14 @@ public class CharacterClassManager : MonoBehaviour {
         },
     };
 
+    private Dictionary<string, System.Type[]> traitIdlePlans = new Dictionary<string, Type[]>() {
+        { "Berserked",
+            new Type[]{
+                typeof(BerserkBehaviour),
+            }
+        },
+    };
+
     public void Initialize() {
         ConstructAllClasses();
         ConstructCharacterBehaviours();
@@ -117,7 +125,7 @@ public class CharacterClassManager : MonoBehaviour {
         }
     }
     public string RunIdlePlanForCharacter(Character character) {
-        System.Type[] actions = GetIdlePlansForCharacter(character.characterClass.className);
+        System.Type[] actions = GetIdlePlansForCharacter(character);
         string log = $"{GameManager.Instance.TodayLogString()}{character.name} Idle Plan Decision Making:";
         for (int i = 0; i < actions.Length; i++) {
             System.Type type = actions[i];
@@ -130,13 +138,22 @@ public class CharacterClassManager : MonoBehaviour {
                 continue; //skip component
             }
             if (component.TryDoBehaviour(character, ref log)) {
-                component.PostProcessAfterSucessfullDoBehaviour(character);
+                component.PostProcessAfterSucessfulDoBehaviour(character);
                 if (!component.WillContinueProcess()) { break; }
             }
         }
         return log;
     }
-    private System.Type[] GetIdlePlansForCharacter(string className) {
+    private System.Type[] GetIdlePlansForCharacter(Character character) {
+        //In getting an idle plan for a character, check for idle plans given by traits, once an idle plan for a trait has bee found, disregard class idle plan and just do the trait idle plan
+        for (int i = 0; i < character.traitContainer.allTraits.Count; i++) {
+            Traits.Trait trait = character.traitContainer.allTraits[i];
+            if (traitIdlePlans.ContainsKey(trait.name)) {
+                return traitIdlePlans[trait.name];
+            }
+        }
+
+        string className = character.characterClass.className;
         if (classIdlePlans.ContainsKey(className)) {
             return classIdlePlans[className];
         } else {

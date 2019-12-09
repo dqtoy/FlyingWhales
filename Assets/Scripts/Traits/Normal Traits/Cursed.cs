@@ -14,7 +14,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEGATIVE;
             
             
-            daysDuration = GameManager.ticksPerDay;
+            ticksDuration = GameManager.ticksPerDay;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DISPEL_MAGIC, };
             cursedInteractions = new List<CursedInteraction>();
             //effects = new List<TraitEffect>();

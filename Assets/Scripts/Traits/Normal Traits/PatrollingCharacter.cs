@@ -12,7 +12,7 @@ namespace Traits {
             type = TRAIT_TYPE.ABILITY;
             effect = TRAIT_EFFECT.POSITIVE;
             
-            daysDuration = 0;
+            ticksDuration = 0;
             //effects = new List<TraitEffect>();
         }
 
@@ -23,7 +23,7 @@ namespace Traits {
             type = TRAIT_TYPE.ABILITY;
             effect = TRAIT_EFFECT.POSITIVE;
             
-            daysDuration = 0;
+            ticksDuration = 0;
             //effects = new List<TraitEffect>();
         }
 

@@ -9,7 +9,7 @@ namespace Traits {
             description = "Herbalists can create Healing Potions.";
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.NEUTRAL;
-            daysDuration = 0;
+            ticksDuration = 0;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CRAFT_ITEM };
         }
     }

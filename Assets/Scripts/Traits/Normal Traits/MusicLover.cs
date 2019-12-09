@@ -12,7 +12,7 @@ namespace Traits {
             description = "Music Lovers enjoy playing instruments and listening to music.";
             type = TRAIT_TYPE.SPECIAL;
             effect = TRAIT_EFFECT.POSITIVE;
-            daysDuration = 0;
+            ticksDuration = 0;
             mutuallyExclusive = new string[] { "Music Hater" };
         }
 

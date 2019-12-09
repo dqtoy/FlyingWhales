@@ -10,7 +10,7 @@ namespace Traits {
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
             
-            daysDuration = GameManager.Instance.GetTicksBasedOnMinutes(30);
+            ticksDuration = GameManager.Instance.GetTicksBasedOnMinutes(30);
             //effects = new List<TraitEffect>();
         }
 

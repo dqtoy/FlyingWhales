@@ -13,7 +13,7 @@ namespace Traits {
             
             
             
-            daysDuration = 0;
+            ticksDuration = 0;
             canBeTriggered = true;
             //effects = new List<TraitEffect>();
         }

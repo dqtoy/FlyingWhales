@@ -16,7 +16,7 @@ namespace Traits {
             
             
             
-            daysDuration = 0;
+            ticksDuration = 0;
             //effects = new List<TraitEffect>();
             charactersThatCanSee = new List<Character>();
             inRangeOfVisionCharacters = new List<Character>();

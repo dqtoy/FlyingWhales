@@ -15,7 +15,7 @@ namespace Traits {
             description = "This is a placeholder trait";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            daysDuration = 0;
+            ticksDuration = 0;
             //effects = new List<TraitEffect>();
         }
 
@@ -25,7 +25,7 @@ namespace Traits {
             description = "This character holds a grudge against " + targetCharacter.name;
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            daysDuration = 0;
+            ticksDuration = 0;
             //effects = new List<TraitEffect>();
         }
     }

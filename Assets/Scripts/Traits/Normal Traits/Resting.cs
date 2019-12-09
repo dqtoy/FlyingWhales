@@ -15,7 +15,7 @@ namespace Traits {
             thoughtText = "[Character] is resting.";
             type = TRAIT_TYPE.DISABLER;
             effect = TRAIT_EFFECT.NEUTRAL;
-            daysDuration = 0;
+            ticksDuration = 0;
             //hindersMovement = true;
             hindersWitness = true;
         }

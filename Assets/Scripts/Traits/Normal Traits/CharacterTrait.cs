@@ -18,7 +18,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             
             
-            daysDuration = 0;
+            ticksDuration = 0;
             isHidden = true;
             alreadyInspectedTileObjects = new List<TileObject>();
         }

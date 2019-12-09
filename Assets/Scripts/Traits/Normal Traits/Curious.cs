@@ -13,7 +13,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             
             
-            daysDuration = 0;
+            ticksDuration = 0;
             //alreadyInspectedTileObjects = new List<TileObject>();
             //effects = new List<TraitEffect>();
         }

@@ -11,7 +11,7 @@ namespace Traits {
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
             
-            daysDuration = 10; //if this trait is only temporary, then it should not advertise GET_WATER
+            ticksDuration = 10; //if this trait is only temporary, then it should not advertise GET_WATER
             effects = new List<TraitEffect>();
         }
 

@@ -10,7 +10,7 @@ namespace Traits {
             description = "Suspicious characters will destroy Artifacts placed by the Ruinarch instead of inspecting them.";
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.NEUTRAL;
-            daysDuration = 0;
+            ticksDuration = 0;
             //effects = new List<TraitEffect>();
         }
 

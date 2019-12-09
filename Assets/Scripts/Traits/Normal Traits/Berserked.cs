@@ -14,9 +14,7 @@ namespace Traits {
             description = "This character will attack anyone at random and may destroy objects.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            
-            
-            daysDuration = 0;
+            ticksDuration = 24;
         }
 
         #region Overrides
@@ -27,7 +25,8 @@ namespace Traits {
                 if (character.marker != null) {
                     character.marker.BerserkedMarker();
                 }
-                character.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED);
+                character.CancelAllJobs();
+                //character.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {

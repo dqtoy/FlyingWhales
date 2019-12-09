@@ -15,7 +15,7 @@ namespace Traits {
             description = "This character has a terrible disease.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            daysDuration = GameManager.ticksPerDay * 3;
+            ticksDuration = GameManager.ticksPerDay * 3;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CURE_CHARACTER, };
             mutuallyExclusive = new string[] { "Robust" };
         }

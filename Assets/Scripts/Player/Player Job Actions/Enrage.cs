@@ -27,7 +27,7 @@ public class Enrage : PlayerJobAction {
             for (int i = 0; i < targets.Count; i++) {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(currTarget)) {
-                    currTarget.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, null, GameManager.Instance.GetTicksBasedOnMinutes(_durationInMinutes), level);
+                    currTarget.traitContainer.AddTrait(currTarget, "Berserked");
                     if (UIManager.Instance.characterInfoUI.isShowing) {
                         UIManager.Instance.characterInfoUI.UpdateThoughtBubble();
                     }

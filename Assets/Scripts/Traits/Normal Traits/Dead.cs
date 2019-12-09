@@ -10,7 +10,7 @@ namespace Traits {
             description = "This character's life has been extinguished.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
-            daysDuration = 0;
+            ticksDuration = 0;
             //effects = new List<TraitEffect>();
             //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TRANSFORM_FOOD };
             charactersThatSawThisDead = new List<Character>();
