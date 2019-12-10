@@ -2558,11 +2558,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 return false;
             }
         }
-        if (traitContainer.GetNormalTrait("Berserked") != null) { //|| (stateComponent.stateToDo != null && stateComponent.stateToDo.characterState == CHARACTER_STATE.BERSERKED && !stateComponent.stateToDo.isDone)
-            //Character must not react if he/she is in berserked state
-            //Returns true so that it will create an impression that the character actually created a job even if he/she didn't, so that the character will not chat, etc.
-            return false;
-        }
+        //if (traitContainer.GetNormalTrait("Berserked") != null) { //|| (stateComponent.stateToDo != null && stateComponent.stateToDo.characterState == CHARACTER_STATE.BERSERKED && !stateComponent.stateToDo.isDone)
+        //    //Character must not react if he/she is in berserked state
+        //    //Returns true so that it will create an impression that the character actually created a job even if he/she didn't, so that the character will not chat, etc.
+        //    return false;
+        //}
         if (traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
             return false;
         }
@@ -4090,18 +4090,20 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             PlanIdleStrollOutside(); //currentStructure
             return;
         }
-        if (!PlanJobQueueFirst()) {
-            if (!PlanFullnessRecoveryActions()) {
-                if (!PlanTirednessRecoveryActions()) {
-                    if (!PlanHappinessRecoveryActions()) {
-                        if (!PlanWorkActions()) {
-                            string idleLog = OtherIdlePlans();
-                            PrintLogIfActive(idleLog);
-                        }
-                    }
-                }
-            }
-        }
+        string idleLog = OtherIdlePlans();
+        PrintLogIfActive(idleLog);
+        //if (!PlanJobQueueFirst()) {
+        //    if (!PlanFullnessRecoveryActions()) {
+        //        if (!PlanTirednessRecoveryActions()) {
+        //            if (!PlanHappinessRecoveryActions()) {
+        //                if (!PlanWorkActions()) {
+        //                    string idleLog = OtherIdlePlans();
+        //                    PrintLogIfActive(idleLog);
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
     }
     //private bool OtherPlanCreations() {
     //    int chance = UnityEngine.Random.Range(0, 100);
@@ -4423,7 +4425,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void SetHasCancelledSleepSchedule(bool state) {
         hasCancelledSleepSchedule = state;
     }
-    private bool PlanWorkActions() { //ref bool hasAddedToGoapPlans
+    public bool PlanWorkActions() { //ref bool hasAddedToGoapPlans
         if (isAtHomeRegion && isPartOfHomeFaction) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
             bool triggerLazy = false;
             Lazy lazy = traitContainer.GetNormalTrait("Lazy") as Lazy;
@@ -4474,7 +4476,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //    }
         //}
     }
-    private bool PlanJobQueueFirst() {
+    public bool PlanJobQueueFirst() {
         if (!isStarving && !isExhausted && !isForlorn) {
             return PlanWorkActions();
         }
