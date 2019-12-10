@@ -51,8 +51,8 @@ public class ChopWood : GoapAction {
         LocationGridTile tile = tree.gridTileLocation;
         tree.AdjustYield(-wood);
 
-        TileObject woodPile = InteriorMapManager.Instance.CreateNewTileObject(TILE_OBJECT_TYPE.WOOD_PILE);
-        (woodPile as WoodPile).SetResourceInPile(wood);
+        WoodPile woodPile = InteriorMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
+        woodPile.SetResourceInPile(wood);
         tile.structure.AddPOI(woodPile, tile);
         woodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.WOOD_PILE);
     }

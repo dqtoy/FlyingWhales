@@ -721,14 +721,7 @@ public class Area : IJobOwner {
         //magic circle
         if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
             LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][0];
-            structure.AddPOI(new MagicCircle());
-        }
-        //Goddess Statue
-        if (structures.ContainsKey(STRUCTURE_TYPE.WORK_AREA)) {
-            for (int i = 0; i < 4; i++) {
-                LocationStructure structure = structures[STRUCTURE_TYPE.WORK_AREA][0];
-                structure.AddPOI(new GoddessStatue());
-            }
+            structure.AddPOI(InteriorMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.MAGIC_CIRCLE));
         }
     }
     private void PlaceBuildSpots() {
@@ -770,23 +763,23 @@ public class Area : IJobOwner {
         } else {
             mainStorage = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
         }
-        TileObject woodPile = InteriorMapManager.Instance.CreateNewTileObject(TILE_OBJECT_TYPE.WOOD_PILE);
-        (woodPile as WoodPile).SetResourceInPile(51);
+        WoodPile woodPile = InteriorMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
+        woodPile.SetResourceInPile(51);
         mainStorage.AddPOI(woodPile);
         woodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.WOOD_PILE);
 
-        TileObject stonePile = InteriorMapManager.Instance.CreateNewTileObject(TILE_OBJECT_TYPE.STONE_PILE);
-        (stonePile as StonePile).SetResourceInPile(51);
+        StonePile stonePile = InteriorMapManager.Instance.CreateNewTileObject<StonePile>(TILE_OBJECT_TYPE.STONE_PILE);
+        stonePile.SetResourceInPile(51);
         mainStorage.AddPOI(stonePile);
         stonePile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.STONE_PILE);
 
-        TileObject metalPile = InteriorMapManager.Instance.CreateNewTileObject(TILE_OBJECT_TYPE.METAL_PILE);
-        (metalPile as MetalPile).SetResourceInPile(51);
+        MetalPile metalPile = InteriorMapManager.Instance.CreateNewTileObject<MetalPile>(TILE_OBJECT_TYPE.METAL_PILE);
+        metalPile.SetResourceInPile(51);
         mainStorage.AddPOI(metalPile);
         metalPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.METAL_PILE);
 
-        TileObject foodPile = InteriorMapManager.Instance.CreateNewTileObject(TILE_OBJECT_TYPE.FOOD_PILE);
-        (foodPile as FoodPile).SetResourceInPile(51);
+        FoodPile foodPile = InteriorMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.FOOD_PILE);
+        foodPile.SetResourceInPile(51);
         mainStorage.AddPOI(foodPile);
         foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
     }

@@ -115,7 +115,7 @@ Transform:
   m_GameObject: {fileID: 1097581491230862}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 10, y: 10, z: 1}
+  m_LocalScale: {x: 1.2, y: 1.2, z: 1}
   m_Children: []
   m_Father: {fileID: 4932280101310078}
   m_RootOrder: 1
@@ -227,7 +227,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
   objectVisual: {fileID: 212487511842338434}
-  hoverObject: {fileID: 1097581491230862}
+  hoverObject: {fileID: 212489938902139980}
   bed1Sleeping: {fileID: 21300000, guid: fd2146d69e98e394f8dc1ce405b2ab76, type: 3}
   bed2Sleeping: {fileID: 21300000, guid: c4fff26a111b1064ba5d9df5e610fd7a, type: 3}
 --- !u!114 &114540296650639094
@@ -334,8 +334,8 @@ SpriteRenderer:
   m_SortingLayerID: 1024382313
   m_SortingLayer: 19
   m_SortingOrder: 44
-  m_Sprite: {fileID: 21300000, guid: 97100a36482594f42bae6772c15c234a, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 079ce5cc13bbd324fa99a5820bda0d54, type: 3}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

@@ -10,17 +10,17 @@ public class BedObjectGameObject : AreaMapObjectVisual<Bed> {
 
     public override void Initialize(Bed bed) {
         this.name = bed.ToString();
-        objectVisual.sprite = InteriorMapManager.Instance.GetTileObjectAsset(bed.tileObjectType, bed.state, bed.structureLocation.location.coreTile.biomeType);
+        SetVisual(InteriorMapManager.Instance.GetTileObjectAsset(bed.tileObjectType, bed.state, bed.structureLocation.location.coreTile.biomeType));
     }
 
     public override void UpdateTileObjectVisual(Bed bed) {
         int userCount = bed.GetActiveUserCount();
         if (userCount == 0) {
-            objectVisual.sprite = InteriorMapManager.Instance.GetTileObjectAsset(bed.tileObjectType, bed.state, bed.structureLocation.location.coreTile.biomeType);
+            SetVisual(InteriorMapManager.Instance.GetTileObjectAsset(bed.tileObjectType, bed.state, bed.structureLocation.location.coreTile.biomeType));
         } else if (userCount == 1) {
-            objectVisual.sprite = bed1Sleeping;
+            SetVisual(bed1Sleeping);
         } else if (userCount == 2) {
-            objectVisual.sprite = bed2Sleeping;
+            SetVisual(bed2Sleeping);
         }
     }
 

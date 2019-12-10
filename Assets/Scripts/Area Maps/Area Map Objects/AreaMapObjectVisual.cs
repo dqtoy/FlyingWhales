@@ -10,8 +10,8 @@ using UnityEngine.EventSystems;
 /// </summary>
 public abstract class AreaMapObjectVisual<T> : PooledObject, IMapObjectVisual, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler where T : IDamageable {
 
-    [SerializeField] protected SpriteRenderer objectVisual;
-    [SerializeField] private GameObject hoverObject;
+    [SerializeField] private SpriteRenderer objectVisual;
+    [SerializeField] private SpriteRenderer hoverObject;
     public BaseCollisionTrigger<T> collisionTrigger { get; protected set; }
     public GameObject gameObjectVisual {
         get { return this.gameObject; }
@@ -43,8 +43,9 @@ public abstract class AreaMapObjectVisual<T> : PooledObject, IMapObjectVisual, I
     #endregion
 
     #region Visuals
-    public void OverrideVisual(Sprite sprite) {
+    public void SetVisual(Sprite sprite) {
         objectVisual.sprite = sprite;
+        hoverObject.sprite = sprite;
     }
     public abstract void UpdateTileObjectVisual(T obj);
     public void SetColor(Color color) {
@@ -66,10 +67,10 @@ public abstract class AreaMapObjectVisual<T> : PooledObject, IMapObjectVisual, I
 
     #region Pointer Functions
     public virtual void OnPointerEnter(PointerEventData eventData) {
-        hoverObject.SetActive(true);
+        hoverObject.gameObject.SetActive(true);
     }
     public virtual void OnPointerExit(PointerEventData eventData) {
-        hoverObject.SetActive(false);
+        hoverObject.gameObject.SetActive(false);
     }
     public virtual void OnPointerClick(PointerEventData eventData) {
         onClickAction?.Invoke();

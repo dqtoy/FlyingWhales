@@ -6,7 +6,7 @@ public class ItemGameObject : AreaMapObjectVisual<SpecialToken> {
 
     public override void Initialize(SpecialToken poi) {
         this.name = poi.ToString();
-        objectVisual.sprite = InteriorMapManager.Instance.GetItemAsset(poi.specialTokenType);
+        SetVisual(InteriorMapManager.Instance.GetItemAsset(poi.specialTokenType));
         collisionTrigger = transform.GetComponentInChildren<SpecialTokenCollisionTrigger>();
         onClickAction = () => UIManager.Instance.ShowItemInfo(poi);
     }

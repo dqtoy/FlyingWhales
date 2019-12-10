@@ -51,8 +51,8 @@ public class Mine : GoapAction {
         LocationGridTile tile = ore.gridTileLocation;
         ore.AdjustYield(-metal);
 
-        TileObject metalPile = InteriorMapManager.Instance.CreateNewTileObject(TILE_OBJECT_TYPE.METAL_PILE);
-        (metalPile as MetalPile).SetResourceInPile(metal);
+        MetalPile metalPile = InteriorMapManager.Instance.CreateNewTileObject<MetalPile>(TILE_OBJECT_TYPE.METAL_PILE);
+        metalPile.SetResourceInPile(metal);
         tile.structure.AddPOI(metalPile, tile);
         metalPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.METAL_PILE);
     }

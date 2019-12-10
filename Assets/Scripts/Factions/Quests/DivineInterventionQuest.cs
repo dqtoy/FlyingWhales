@@ -42,7 +42,7 @@ public class DivineInterventionQuest : Quest {
         //Will improve later
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
-            if(job.jobType == JOB_TYPE.BUILD_GODDESS_STATUE && !IsThereStillEmptyGoddessStatueSpot()) {
+            if(job.jobType == JOB_TYPE.BUILD_GODDESS_STATUE && !CanStillCreateGoddessStatues()) {
                 job.CancelJob();
                 i--;
             }else if (job.jobType == JOB_TYPE.DESTROY_PROFANE_LANDMARK && !AreThereProfaneLandmarks()) {
@@ -72,11 +72,11 @@ public class DivineInterventionQuest : Quest {
             string summary = GameManager.Instance.TodayLogString() + " Will try to create build goddess statue job";
             int roll = UnityEngine.Random.Range(0, 100);
             bool hasExistingJob = HasJob(JOB_TYPE.BUILD_GODDESS_STATUE);
-            bool hasEmptyGoddessStatue = IsThereStillEmptyGoddessStatueSpot();
+            bool canStillCreateGoddessStatue = CanStillCreateGoddessStatues();
             summary += "\nRoll is: " + roll.ToString();
             summary += "\nHas Existing Job?: " + hasExistingJob.ToString();
-            summary += "\nHas empty goddess statue?: " + hasEmptyGoddessStatue.ToString();
-            if (roll < 20 && !hasExistingJob && hasEmptyGoddessStatue) {
+            summary += "\nHas empty goddess statue?: " + canStillCreateGoddessStatue.ToString();
+            if (roll < 20 && !hasExistingJob && canStillCreateGoddessStatue) {
                 summary += "\nMet all requirements, creating build goddess statue job.";
                 //Create Job Here
                 CreateBuildGoddessStatueJob();
@@ -84,8 +84,8 @@ public class DivineInterventionQuest : Quest {
             Debug.Log(summary);
         }
     }
-    private bool IsThereStillEmptyGoddessStatueSpot() {
-        return region.area.GetTileObjectsOfType(TILE_OBJECT_TYPE.GODDESS_STATUE).Where(x => x.state == POI_STATE.INACTIVE).ToList().Count > 0;
+    private bool CanStillCreateGoddessStatues() {
+        return region.area.GetTileObjectsOfType(TILE_OBJECT_TYPE.GODDESS_STATUE).Count < 4;
     }
 
     private void TryCreateDestroyProfaneLandmarkJob() {
@@ -143,9 +143,10 @@ public class DivineInterventionQuest : Quest {
 
     #region Build Goddess Statue
     private void CreateBuildGoddessStatueJob() {
-        List<TileObject> goddessStatues = region.area.GetTileObjectsOfType(TILE_OBJECT_TYPE.GODDESS_STATUE).Where(x => x.state == POI_STATE.INACTIVE).ToList();
-        TileObject target = goddessStatues[Random.Range(0, goddessStatues.Count)];
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_GODDESS_STATUE, INTERACTION_TYPE.CRAFT_TILE_OBJECT, target, this);
+        LocationStructure structure = region.area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
+        GoddessStatue goddessStatue = InteriorMapManager.Instance.CreateNewTileObject<GoddessStatue>(TILE_OBJECT_TYPE.GODDESS_STATUE);
+        goddessStatue.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_GODDESS_STATUE, INTERACTION_TYPE.CRAFT_TILE_OBJECT, goddessStatue, this);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeBuildGoddessStatueJob);
         AddToAvailableJobs(job);
 

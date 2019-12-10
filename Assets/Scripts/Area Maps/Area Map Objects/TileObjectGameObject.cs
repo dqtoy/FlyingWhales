@@ -10,7 +10,7 @@ public class TileObjectGameObject : AreaMapObjectVisual<TileObject> {
 
     public override void Initialize(TileObject tileObject) {
         this.name = tileObject.ToString();
-        objectVisual.sprite = InteriorMapManager.Instance.GetTileObjectAsset(tileObject.tileObjectType, tileObject.state, tileObject.structureLocation.location.coreTile.biomeType);
+        SetVisual(InteriorMapManager.Instance.GetTileObjectAsset(tileObject.tileObjectType, tileObject.state, tileObject.structureLocation.location.coreTile.biomeType));
         collisionTrigger = this.transform.GetComponentInChildren<TileObjectCollisionTrigger>();
         onClickAction = () => UIManager.Instance.ShowTileObjectInfo(tileObject);
     }
@@ -19,7 +19,7 @@ public class TileObjectGameObject : AreaMapObjectVisual<TileObject> {
         if (tileObject is Bed) {
             UpdateBedVisual(tileObject as Bed); //TODO: Transfer this to it's own object
         } else {
-            objectVisual.sprite = InteriorMapManager.Instance.GetTileObjectAsset(tileObject.tileObjectType, tileObject.state, tileObject.structureLocation.location.coreTile.biomeType);
+            SetVisual(InteriorMapManager.Instance.GetTileObjectAsset(tileObject.tileObjectType, tileObject.state, tileObject.structureLocation.location.coreTile.biomeType));
         }
         
     }
@@ -27,11 +27,11 @@ public class TileObjectGameObject : AreaMapObjectVisual<TileObject> {
     private void UpdateBedVisual(Bed bed) {
         int userCount = bed.GetActiveUserCount();
         if (userCount == 0) {
-            objectVisual.sprite = InteriorMapManager.Instance.GetTileObjectAsset(bed.tileObjectType, bed.state, bed.structureLocation.location.coreTile.biomeType);
+            SetVisual(InteriorMapManager.Instance.GetTileObjectAsset(bed.tileObjectType, bed.state, bed.structureLocation.location.coreTile.biomeType));
         } else if (userCount == 1) {
-            objectVisual.sprite = bed1Sleeping;
+            SetVisual(bed1Sleeping);
         } else if (userCount == 2) {
-            objectVisual.sprite = bed2Sleeping;
+            SetVisual(bed2Sleeping);
         }
     }
 

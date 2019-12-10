@@ -86,8 +86,8 @@ public class Scrap : GoapAction {
         //goapNode.actor.AdjustSupply(TokenManager.Instance.itemData[item.specialTokenType].supplyValue);
         goapNode.actor.DestroyToken(item);
 
-        TileObject stonePile = InteriorMapManager.Instance.CreateNewTileObject(TILE_OBJECT_TYPE.STONE_PILE);
-        (stonePile as StonePile).SetResourceInPile(Mathf.CeilToInt(craftCost * 0.5f));
+        StonePile stonePile = InteriorMapManager.Instance.CreateNewTileObject<StonePile>(TILE_OBJECT_TYPE.STONE_PILE);
+        stonePile.SetResourceInPile(Mathf.CeilToInt(craftCost * 0.5f));
         tile.structure.AddPOI(stonePile, tile);
         stonePile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.STONE_PILE);
     }

@@ -87,9 +87,9 @@ public class LocationStructureObject : PooledObject {
             LocationGridTile tile = areaMap.map[tileCoords.x, tileCoords.y];
             tile.SetReservedType(preplacedObj.tileObjectType);
 
-            TileObject newTileObject = InteriorMapManager.Instance.CreateNewTileObject(preplacedObj.tileObjectType);
+            TileObject newTileObject = InteriorMapManager.Instance.CreateNewTileObject<TileObject>(preplacedObj.tileObjectType);
             structure.AddPOI(newTileObject, tile);
-            newTileObject.areaMapVisual.OverrideVisual(preplacedObj.spriteRenderer.sprite);
+            newTileObject.areaMapVisual.SetVisual(preplacedObj.spriteRenderer.sprite);
             newTileObject.areaMapVisual.SetRotation(preplacedObj.transform.localEulerAngles.z);
             newTileObject.RevalidateTileObjectSlots();
         }
@@ -103,9 +103,9 @@ public class LocationStructureObject : PooledObject {
             LocationGridTile tile = areaMap.map[tileCoords.x, tileCoords.y];
             tile.SetReservedType(preplacedObj.tileObjectType);
 
-            TileObject newTileObject = InteriorMapManager.Instance.CreateNewTileObject(preplacedObj.tileObjectType);
+            TileObject newTileObject = InteriorMapManager.Instance.CreateNewTileObject<TileObject>(preplacedObj.tileObjectType);
             structure.AddPOI(newTileObject, tile);
-            newTileObject.areaMapVisual.OverrideVisual(preplacedObj.spriteRenderer.sprite);
+            newTileObject.areaMapVisual.SetVisual(preplacedObj.spriteRenderer.sprite);
             newTileObject.areaMapVisual.SetRotation(preplacedObj.transform.localEulerAngles.z);
             newTileObject.RevalidateTileObjectSlots();
             newTileObject.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);

@@ -761,11 +761,11 @@ public class InteriorMapManager : MonoBehaviour {
         }
         return null;
     }
-    public TileObject CreateNewTileObject(TILE_OBJECT_TYPE tileObjectType) {
+    public T CreateNewTileObject<T>(TILE_OBJECT_TYPE tileObjectType) where T : TileObject {
         var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString());
         System.Type type = System.Type.GetType(typeName);
         if (type != null) {
-            TileObject obj = System.Activator.CreateInstance(type) as TileObject;
+            T obj = System.Activator.CreateInstance(type) as T;
             return obj;
         }
         throw new System.Exception("Could not create new instance of tile object of type " + tileObjectType.ToString());

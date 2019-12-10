@@ -1639,7 +1639,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                         TILE_OBJECT_TYPE tileObj = furnitureToCreate.ConvertFurnitureToTileObject();
 
                         //create new unbuilt furniture on spot, and target that in the job
-                        TileObject furniture = InteriorMapManager.Instance.CreateNewTileObject(tileObj);
+                        TileObject furniture = InteriorMapManager.Instance.CreateNewTileObject<TileObject>(tileObj);
                         dwelling.AddPOI(furniture, chosenTile);
                         furniture.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
                         Debug.Log($"Created new unbuilt {furniture.name} at {chosenTile}");
