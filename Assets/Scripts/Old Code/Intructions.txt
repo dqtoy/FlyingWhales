@@ -1,8 +1,0 @@
-How to replace all code in this folder to .old
-
-1. Open cmd (Command Prompt)
-2. Change the directory of the command prompt to the old code folder by entering command : cd C:\Users\USERNAME\REPOSITORY_LOCATION\FlyingWhales\Assets\Scripts\Old Code. Replace USERNAME with Computer Username and REPOSITORY_LOCATION to the location of your repository.
-3. Run code - FOR /R %f IN (*.cs) DO REN "%f" *.old
-4. Done, all the code in the old code folder should now be .old
-
-Reference: https://www.computerhope.com/issues/ch000323.htm
