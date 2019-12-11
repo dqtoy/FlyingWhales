@@ -15,6 +15,7 @@ public class CharacterClassManager : MonoBehaviour {
     private Dictionary<string, System.Type[]> classIdlePlans = new Dictionary<string, Type[]>() {
         { "Default",
             new Type[]{
+                typeof(WorkBehaviour),
                 typeof(DefaultJoinFaction),
                 typeof(DefaultJustReturnedHome),
                 typeof(DefaultAtHome),
@@ -26,6 +27,7 @@ public class CharacterClassManager : MonoBehaviour {
         },
         { "Leader",
             new Type[]{
+                typeof(WorkBehaviour),
                 typeof(DefaultJustReturnedHome),
                 typeof(BlueprintBehaviour),
                 typeof(DefaultAtHome),

@@ -38,6 +38,22 @@ namespace Traits {
                 }
             }
         }
+        public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
+            if (targetPOI is Character) {
+                Character targetCharacter = targetPOI as Character;
+                if (!targetCharacter.isDead) {
+                    if (characterThatWillDoJob.faction.isPlayerFaction) {
+                        return characterThatWillDoJob.marker.AddHostileInRange(targetCharacter, isLethal: true); //check hostility if from player faction, so as not to attack other characters that are also from the same faction.
+                    } else {
+                        return characterThatWillDoJob.marker.AddHostileInRange(targetCharacter, checkHostility: false, isLethal: false);
+                    }
+                }
+            }
+            else if (targetPOI is TileObject || targetPOI is SpecialToken) {
+                return characterThatWillDoJob.marker.AddHostileInRange(targetPOI, checkHostility: false, isLethal: false);
+            } 
+            return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
+        }
         #endregion
     }
 }
