@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine.UI;
 using System.Text.RegularExpressions;
 using System.IO;
+using Inner_Maps;
 using UnityEngine.Events;
 
 public class ConsoleMenu : UIMenu {
@@ -777,12 +778,12 @@ public class ConsoleMenu : UIMenu {
         }
         string fullnessParameterString = parameters[1];
 
-        int fullness = character.fullness;
+        int fullness = character.needsComponent.fullness;
         if (!int.TryParse(fullnessParameterString, out fullness)) {
             AddErrorMessage("Fullness parameter is not an integer: " + fullnessParameterString);
             return;
         }
-        character.SetFullness(fullness);
+        character.needsComponent.SetFullness(fullness);
         AddSuccessMessage("Set Fullness Value of " + character.name + " to " + fullness);
     }
     private void SetHappiness(string[] parameters) {
@@ -801,12 +802,12 @@ public class ConsoleMenu : UIMenu {
         }
         string happinessParameterString = parameters[1];
 
-        int happiness = character.happiness;
+        int happiness = character.needsComponent.happiness;
         if (!int.TryParse(happinessParameterString, out happiness)) {
             AddErrorMessage("Happiness parameter is not an integer: " + happinessParameterString);
             return;
         }
-        character.SetHappiness(happiness);
+        character.needsComponent.SetHappiness(happiness);
         AddSuccessMessage("Set Happiness Value of " + character.name + " to " + happiness);
     }
     private void SetTiredness(string[] parameters) {
@@ -825,12 +826,12 @@ public class ConsoleMenu : UIMenu {
         }
         string tirednessParameterString = parameters[1];
 
-        int tiredness = character.tiredness;
+        int tiredness = character.needsComponent.tiredness;
         if (!int.TryParse(tirednessParameterString, out tiredness)) {
             AddErrorMessage("Tiredness parameter is not an integer: " + tirednessParameterString);
             return;
         }
-        character.SetTiredness(tiredness);
+        character.needsComponent.SetTiredness(tiredness);
         AddSuccessMessage("Set Tiredness Value of " + character.name + " to " + tiredness);
     }
     private void LogAwareness(string[] parameters) {
@@ -1292,7 +1293,7 @@ public class ConsoleMenu : UIMenu {
             return;
         }
 
-        LocationStructure structure = InteriorMapManager.Instance.currentlyShowingMap.area.GetStructureByID(structureType, id);
+        LocationStructure structure = InnerMapManager.Instance.currentlyShowingMap.area.GetStructureByID(structureType, id);
         if (structure == null) {
             AddErrorMessage("There is no " + structureType.ToString() + " with id " + id.ToString());
             return;

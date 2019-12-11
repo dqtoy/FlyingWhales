@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 public class Flamestrike : CombatAbility {
@@ -25,7 +26,7 @@ public class Flamestrike : CombatAbility {
         }
     }
     public override void ActivateAbility(List<IPointOfInterest> targetPOIs) {
-        GameManager.Instance.CreateAOEEffectAt(InteriorMapManager.Instance.GetTileFromMousePosition(), abilityRadius, true);
+        GameManager.Instance.CreateAOEEffectAt(InnerMapManager.Instance.GetTileFromMousePosition(), abilityRadius, true);
         for (int i = 0; i < targetPOIs.Count; i++) {
             if (targetPOIs[i] is Character) {
                 Character character = targetPOIs[i] as Character;

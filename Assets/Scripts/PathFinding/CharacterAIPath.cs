@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
 using System.Linq;
+using Inner_Maps;
 
 public class CharacterAIPath : AILerp {
     public CharacterMarker marker;

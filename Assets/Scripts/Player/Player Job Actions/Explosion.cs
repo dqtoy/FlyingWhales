@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Inner_Maps;
 using UnityEngine;
 using Traits;
 
@@ -19,13 +20,13 @@ public class Explosion : PlayerJobAction {
     public override void ActivateAction(LocationGridTile targetTile) {
         base.ActivateAction(targetTile);
         List<ITraitable> flammables = new List<ITraitable>();
-        List<LocationGridTile> tiles = targetTile.parentAreaMap.GetTilesInRadius(targetTile, radius, 0, true);
+        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, radius, 0, true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
             flammables.AddRange(tile.GetTraitablesOnTileWithTrait("Flammable"));
         }
         flammables = flammables.Where(x => x.traitContainer.GetNormalTrait("Burning", "Burnt", "Wet", "Fireproof") == null).ToList();
-        BurningSource bs = new BurningSource(targetTile.parentAreaMap.area);
+        BurningSource bs = new BurningSource(InnerMapManager.Instance.currentlyShowingArea);
         for (int i = 0; i < flammables.Count; i++) {
             ITraitable flammable = flammables[i];
             if (flammable is TileObject) {
@@ -62,13 +63,13 @@ public class Explosion : PlayerJobAction {
     }
     public override void ShowRange(LocationGridTile targetTile) {
         base.ShowRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.parentAreaMap.GetTilesInRadius(targetTile, radius, 0, true);
-        InteriorMapManager.Instance.HighlightTiles(tiles);
+        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, radius, 0, true);
+        InnerMapManager.Instance.HighlightTiles(tiles);
     }
     public override void HideRange(LocationGridTile targetTile) {
         base.HideRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.parentAreaMap.GetTilesInRadius(targetTile, radius, 0, true);
-        InteriorMapManager.Instance.UnhighlightTiles(tiles);
+        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, radius, 0, true);
+        InnerMapManager.Instance.UnhighlightTiles(tiles);
     }
     #endregion
 }

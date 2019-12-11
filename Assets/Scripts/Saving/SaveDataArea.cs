@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using BayatGames.SaveGameFree.Types;
+using UnityEngine.Serialization;
 
 [System.Serializable]
 public class SaveDataArea {
     public int id;
     //public bool isDead;
-    public AREA_TYPE areaType;
+    [FormerlySerializedAs("areaType")] public LOCATION_TYPE locationType;
     public int citizenCount;
     public int regionID;
     //public int coreTileID;
@@ -30,7 +31,7 @@ public class SaveDataArea {
     public void Save(Area area) {
         id = area.id;
         //isDead = area.isDead;
-        areaType = area.areaType;
+        locationType = area.locationType;
         citizenCount = area.citizenCount;
         regionID = area.region.id;
         //coreTileID = area.coreTile.id;

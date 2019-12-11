@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Inner_Maps;
 using UnityEngine;
 
 namespace Traits {
@@ -68,7 +69,7 @@ namespace Traits {
                         summary += "\nDid not create douse fire job because character is pyrophobic!";
                         //When he sees a fire source for the first time, reduce Happiness by 2000. Do not create Douse Fire job. It should always Flee from fire. Add log showing reason for fleeing is Pyrophobia
                         if (pyrophobic.AddKnownBurningSource(sourceOfBurning)) {
-                            characterThatWillDoJob.AdjustHappiness(-2000);
+                            characterThatWillDoJob.needsComponent.AdjustHappiness(-2000);
                         }
                         //It will trigger one of the following:
                         if (!characterThatWillDoJob.marker.hasFleePath && characterThatWillDoJob.traitContainer.GetNormalTrait("Catatonic") == null) { //if not already fleeing or catatonic

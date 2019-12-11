@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using Events.World_Events;
+using Inner_Maps;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -1085,18 +1087,18 @@ public class UIManager : MonoBehaviour {
     //    //}
     //}
     public void ToggleBetweenMaps() {
-        if (InteriorMapManager.Instance.isAnAreaMapShowing) {
-            InteriorMapManager.Instance.HideAreaMap();
+        if (InnerMapManager.Instance.isAnAreaMapShowing) {
+            InnerMapManager.Instance.HideAreaMap();
             OnCameraOutOfFocus();
         } else {
             if(regionInfoUI.activeRegion != null && regionInfoUI.activeRegion.area != null) {
-                InteriorMapManager.Instance.TryShowAreaMap(regionInfoUI.activeRegion.area);
+                InnerMapManager.Instance.TryShowAreaMap(regionInfoUI.activeRegion.area);
             }
         }
     }
     public void ToggleMapsHover() {
-        if (InteriorMapManager.Instance.isAnAreaMapShowing) {
-            ShowSmallInfo("Click to exit " + InteriorMapManager.Instance.currentlyShowingArea.name + ".", returnToWorldBtnTooltipPos);
+        if (InnerMapManager.Instance.isAnAreaMapShowing) {
+            ShowSmallInfo("Click to exit " + InnerMapManager.Instance.currentlyShowingArea.name + ".", returnToWorldBtnTooltipPos);
         } else {
             if (regionInfoUI.activeRegion != null && regionInfoUI.activeRegion.area != null) {
                 ShowSmallInfo("Click to enter " + regionInfoUI.activeRegion.area.name + ".", returnToWorldBtnTooltipPos);
@@ -1284,7 +1286,7 @@ public class UIManager : MonoBehaviour {
         region.SetEventIcon(go);
     }
     private void OnWorldEventDespawned(Region region, WorldEvent we) {
-        ObjectPoolManager.Instance.DestroyObject(region.eventIconGO);
+        ObjectPoolManager.Instance.DestroyObject(region.eventIconGo);
     }
     #endregion
 

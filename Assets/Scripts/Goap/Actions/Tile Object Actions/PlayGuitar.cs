@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;  
 using Traits;
 
@@ -59,7 +60,7 @@ public class PlayGuitar : GoapAction {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
-        actor.AdjustDoNotGetLonely(-1);
+        actor.needsComponent.AdjustDoNotGetLonely(-1);
         poiTarget.SetPOIState(POI_STATE.ACTIVE);
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -77,15 +78,15 @@ public class PlayGuitar : GoapAction {
 
     #region State Effects
     public void PrePlaySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.AdjustDoNotGetLonely(1);
+        goapNode.actor.needsComponent.AdjustDoNotGetLonely(1);
         goapNode.poiTarget.SetPOIState(POI_STATE.INACTIVE);
         //TODO: currentState.SetIntelReaction(PlaySuccessIntelReaction);
     }
     public void PerTickPlaySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.AdjustHappiness(500);
+        goapNode.actor.needsComponent.AdjustHappiness(500);
     }
     public void AfterPlaySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.AdjustDoNotGetLonely(-1);
+        goapNode.actor.needsComponent.AdjustDoNotGetLonely(-1);
         goapNode.poiTarget.SetPOIState(POI_STATE.ACTIVE);
     }
     //public void PreTargetMissing() {

@@ -33,20 +33,20 @@ public class Sing : GoapAction {
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
-        actor.AdjustDoNotGetLonely(-1);
+        actor.needsComponent.AdjustDoNotGetLonely(-1);
     }
     #endregion
 
     #region Effects
     public void PreSingSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.AdjustDoNotGetLonely(1);
+        goapNode.actor.needsComponent.AdjustDoNotGetLonely(1);
         //currentState.SetIntelReaction(SingSuccessIntelReaction);
     }
     public void PerTickSingSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.AdjustHappiness(1000);
+        goapNode.actor.needsComponent.AdjustHappiness(1000);
     }
     public void AfterSingSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.AdjustDoNotGetLonely(-1);
+        goapNode.actor.needsComponent.AdjustDoNotGetLonely(-1);
     }
     #endregion
 

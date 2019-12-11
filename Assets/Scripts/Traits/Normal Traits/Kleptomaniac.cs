@@ -24,7 +24,7 @@ namespace Traits {
         public override void OnAddTrait(ITraitable sourceCharacter) {
             //(sourceCharacter as Character).RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "afflicted", null, "Kleptomania");
             owner = sourceCharacter as Character;
-            owner.AdjustHappinessDecreaseRate(_happinessDecreaseRate);
+            owner.needsComponent.AdjustHappinessDecreaseRate(_happinessDecreaseRate);
             base.OnAddTrait(sourceCharacter);
             //owner.AddInteractionType(INTERACTION_TYPE.STEAL);
             Messenger.AddListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
@@ -32,7 +32,7 @@ namespace Traits {
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             base.OnRemoveTrait(sourceCharacter, removedBy);
             //owner.RemoveInteractionType(INTERACTION_TYPE.STEAL);
-            owner.AdjustHappinessDecreaseRate(-_happinessDecreaseRate);
+            owner.needsComponent.AdjustHappinessDecreaseRate(-_happinessDecreaseRate);
             Messenger.RemoveListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
         }
         public override void OnDeath(Character character) {
@@ -129,7 +129,7 @@ namespace Traits {
         public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
             base.ExecuteActionAfterEffects(action, goapNode);
             if (action == INTERACTION_TYPE.STEAL) {
-                owner.AdjustHappiness(6000);
+                owner.needsComponent.AdjustHappiness(6000);
             }
         }
         public override void ExecuteExpectedEffectModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref List<GoapEffect> effects) {

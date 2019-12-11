@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 
@@ -398,7 +399,7 @@ public class PlayerManager : MonoBehaviour {
                     if (!character.CanBeInstructedByPlayer()) {
                         continue;
                     }
-                    IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
+                    IPointOfInterest hoveredPOI = InnerMapManager.Instance.currentlyHoveredPoi;
                     character.StopCurrentActionNode(false, "Stopped by the player");
                     if (character.stateComponent.currentState != null) {
                         character.stateComponent.ExitCurrentState();
@@ -421,7 +422,7 @@ public class PlayerManager : MonoBehaviour {
                             Debug.Log(character.name + " is not combat ready or is not hostile with " + target.name + ". Ignoring command.");
                         }
                     } else {
-                        character.marker.GoTo(InteriorMapManager.Instance.currentlyShowingMap.worldUICanvas.worldCamera.ScreenToWorldPoint(Input.mousePosition), () => OnFinishInstructionFromPlayer(character));
+                        character.marker.GoTo(InnerMapManager.Instance.currentlyShowingMap.worldUiCanvas.worldCamera.ScreenToWorldPoint(Input.mousePosition), () => OnFinishInstructionFromPlayer(character));
                     }
                     character.SetIsFollowingPlayerInstruction(true);
                 }

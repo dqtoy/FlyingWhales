@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Inner_Maps;
 using UnityEngine;
 using Traits;
 
@@ -20,7 +21,7 @@ public class Ignite : PlayerJobAction {
         base.ActivateAction(targetTile);
         List<LocationGridTile> tiles = GetTargetTiles(targetTile);
         if (tiles.Count > 0) {
-            BurningSource bs = new BurningSource(targetTile.parentAreaMap.area);
+            BurningSource bs = new BurningSource(InnerMapManager.Instance.currentlyShowingArea);
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile tile = tiles[i];
                 Burning burning = new Burning();
@@ -40,11 +41,11 @@ public class Ignite : PlayerJobAction {
     public override void ShowRange(LocationGridTile targetTile) {
         base.ShowRange(targetTile);
         highlightedTiles = GetTargetTiles(targetTile);
-        InteriorMapManager.Instance.HighlightTiles(highlightedTiles);
+        InnerMapManager.Instance.HighlightTiles(highlightedTiles);
     }
     public override void HideRange(LocationGridTile targetTile) {
         base.HideRange(targetTile);
-        InteriorMapManager.Instance.UnhighlightTiles(highlightedTiles);
+        InnerMapManager.Instance.UnhighlightTiles(highlightedTiles);
         highlightedTiles.Clear();
     }
     #endregion

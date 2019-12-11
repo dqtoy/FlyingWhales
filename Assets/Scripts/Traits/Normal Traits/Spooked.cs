@@ -44,8 +44,8 @@ namespace Traits {
         #endregion
 
         public GoapPlanJob TriggerFeelingSpooked() {
-            owner.SetHasCancelledSleepSchedule(false);
-            owner.ResetSleepTicks();
+            owner.needsComponent.SetHasCancelledSleepSchedule(false);
+            owner.needsComponent.ResetSleepTicks();
             owner.jobQueue.CancelAllJobs(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED);
 
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_SPOOKED, owner, owner);

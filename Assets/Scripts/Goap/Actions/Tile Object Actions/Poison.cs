@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
 using System.Linq;
+using Inner_Maps;
 
 public class Poison : GoapAction {
 

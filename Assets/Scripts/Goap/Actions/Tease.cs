@@ -33,7 +33,7 @@ public class Tease : GoapAction {
 
     #region State Effects
     public void PerTickTeaseSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.AdjustHappiness(500);
+        goapNode.actor.needsComponent.AdjustHappiness(500);
     }
     #endregion   
 }

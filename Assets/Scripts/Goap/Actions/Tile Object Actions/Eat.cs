@@ -30,7 +30,7 @@ public class Eat : GoapAction {
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
-        actor.AdjustDoNotGetHungry(-1);
+        actor.needsComponent.AdjustDoNotGetHungry(-1);
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
@@ -49,14 +49,14 @@ public class Eat : GoapAction {
     public void PreEatSuccess(ActualGoapNode goapNode) {
         //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
         //goapNode.poiTarget.SetPOIState(POI_STATE.INACTIVE);
-        goapNode.actor.AdjustDoNotGetHungry(1);
+        goapNode.actor.needsComponent.AdjustDoNotGetHungry(1);
         //actor.traitContainer.AddTrait(actor,"Eating");
     }
     public void PerTickEatSuccess(ActualGoapNode goapNode) {
         //goapNode.actor.AdjustFullness(520);
     }
     public void AfterEatSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.AdjustDoNotGetHungry(-1);
+        goapNode.actor.needsComponent.AdjustDoNotGetHungry(-1);
         //goapNode.poiTarget.SetPOIState(POI_STATE.ACTIVE);
     }
     //public void PreEatFail(ActualGoapNode goapNode) {

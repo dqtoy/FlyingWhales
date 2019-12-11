@@ -41,7 +41,7 @@ public class Invite : GoapAction {
                 if (targetCharacter.traitContainer.GetNormalTrait("Chaste") != null) {
                     acceptChance = 25;
                 }
-                if (UnityEngine.Random.Range(0, 100) > acceptChance || targetCharacter.isStarving || targetCharacter.isExhausted
+                if (UnityEngine.Random.Range(0, 100) > acceptChance || targetCharacter.needsComponent.isStarving || targetCharacter.needsComponent.isExhausted
                 || targetCharacter.traitContainer.GetNormalTrait("Annoyed") != null || targetCharacter.ownParty.isCarryingAnyPOI
                 || targetCharacter.stateComponent.currentState != null || targetCharacter.IsAvailable() == false) {
                     goapActionInvalidity.isInvalid = true;

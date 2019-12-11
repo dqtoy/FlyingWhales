@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 public class Taunt : CombatAbility {
@@ -35,7 +36,7 @@ public class Taunt : CombatAbility {
             Character character = targetPOI as Character;
 
             character.AdjustHP(1000);
-            List<LocationGridTile> tilesInRadius = character.gridTileLocation.parentAreaMap.GetTilesInRadius(character.gridTileLocation, 3, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            List<LocationGridTile> tilesInRadius = character.gridTileLocation.parentMap.GetTilesInRadius(character.gridTileLocation, 3, includeCenterTile: true, includeTilesInDifferentStructure: true);
             List<Character> affectedByTaunt = new List<Character>();
             for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {
                 Character currCharacter = character.specificLocation.charactersAtLocation[i];

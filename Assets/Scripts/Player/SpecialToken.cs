@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Inner_Maps;
 using UnityEngine;
 using Traits;
 
-public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
+public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
     public int id { get; private set; }
     public string name { get; private set; }
     public SPECIAL_TOKEN specialTokenType;
@@ -16,14 +17,14 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
     public int supplyValue { get { return TokenManager.Instance.itemData[specialTokenType].supplyValue; } }
     public int craftCost { get { return TokenManager.Instance.itemData[specialTokenType].craftCost; } }
     public int purchaseCost { get { return TokenManager.Instance.itemData[specialTokenType].purchaseCost; } }
-    public Area specificLocation { get { return gridTileLocation.structure.location; } }
+    public Area specificLocation { get { return gridTileLocation.structure.location as Area; } }
     public bool isDisabledByPlayer { get; protected set; }
     public POI_STATE state { get; protected set; }
     public int uses { get; protected set; } //how many times can this item be used?
     public List<JobQueueItem> allJobsTargettingThis { get; private set; }
     public Character carriedByCharacter { get; private set; }
     public bool isDestroyed { get; private set; }
-    public IMapObjectVisual mapObjectVisual { get { return areaMapVisual; } }
+    public IMapObjectVisual mapObjectVisual { get { return mapVisual; } }
 
     //hp
     public int maxHP { get; protected set; }
@@ -52,9 +53,9 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
         get { return gridTileLocation == null; } //Consider the object as dead if it no longer has a tile location (has been removed)
     }
     public ProjectileReceiver projectileReceiver {
-        get { return areaMapVisual.collisionTrigger.projectileReceiver; }
+        get { return mapVisual.collisionTrigger.projectileReceiver; }
     }
-    public Transform worldObject { get { return areaMapVisual.transform; } }
+    public Transform worldObject { get { return mapVisual.transform; } }
     #endregion
 
     public SpecialToken(SPECIAL_TOKEN specialTokenType, int appearanceRate) {
@@ -126,9 +127,9 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
         //}
     }
     public void OnPlacePOI() {
-        if(areaMapVisual == null) {
+        if(mapVisual == null) {
             InitializeMapObject(this);
-            gridTileLocation.structure.location.region.AddAwareness(this);
+            gridTileLocation.structure.location.AddAwareness(this);
         }
         isDestroyed = false;
         PlaceMapObjectAt(tile);
@@ -308,18 +309,18 @@ public class SpecialToken : AreaMapObject<SpecialToken>, IPointOfInterest {
 
     #region Map Object
     protected override void CreateAreaMapGameObject() {
-        GameObject obj = InteriorMapManager.Instance.areaMapObjectFactory.CreateNewItemAreaMapObject(this.poiType);
-        areaMapVisual = obj.GetComponent<ItemGameObject>();
+        GameObject obj = InnerMapManager.Instance.mapObjectFactory.CreateNewItemAreaMapObject(this.poiType);
+        mapVisual = obj.GetComponent<ItemGameObject>();
     }
     protected override void OnMapObjectStateChanged() {
         if (mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
-            areaMapVisual.SetVisualAlpha(128f / 255f);
+            mapVisual.SetVisualAlpha(128f / 255f);
             //remove all other interactions
             advertisedActions = new List<INTERACTION_TYPE>();
 
             AddAdvertisedAction(INTERACTION_TYPE.CRAFT_ITEM);
         } else {
-            areaMapVisual.SetVisualAlpha(255f / 255f);
+            mapVisual.SetVisualAlpha(255f / 255f);
             RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_ITEM);
             //restore default interactions
             advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_UP, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.DROP_ITEM };

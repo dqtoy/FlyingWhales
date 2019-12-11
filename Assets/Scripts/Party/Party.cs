@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using Inner_Maps;
 using UnityEngine;
 using Traits;
 
@@ -171,9 +172,9 @@ public class Party {
             }
             //tileObject.SetGridTileLocation(owner.gridTileLocation);
             tileObject.collisionTrigger.SetMainColliderState(false);
-            tileObject.areaMapVisual.transform.SetParent(_owner.marker.visualsParent);
-            tileObject.areaMapVisual.transform.localPosition = new Vector3(0f, 0.5f, 0f);
-            tileObject.areaMapVisual.transform.eulerAngles = Vector3.zero;
+            tileObject.mapVisual.transform.SetParent(_owner.marker.visualsParent);
+            tileObject.mapVisual.transform.localPosition = new Vector3(0f, 0.5f, 0f);
+            tileObject.mapVisual.transform.eulerAngles = Vector3.zero;
             return true;
         }
         return false;
@@ -245,12 +246,12 @@ public class Party {
             } else {
                 if (tileObject.gridTileLocation != null) {
                     tileObject.gridTileLocation.structure.RemovePOI(tileObject);
-                } else if (tileObject.areaMapVisual != null) {
+                } else if (tileObject.mapVisual != null) {
                     tileObject.OnDestroyPOI();
                 }
             }
-            if(tileObject.areaMapVisual != null) {
-                tileObject.areaMapVisual.transform.eulerAngles = Vector3.zero;
+            if(tileObject.mapVisual != null) {
+                tileObject.mapVisual.transform.eulerAngles = Vector3.zero;
             }
             //character.ownParty.icon.transform.position = this.specificLocation.coreTile.transform.position;
             //Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
@@ -313,7 +314,7 @@ public class Party {
     public void SetPartyName(string name) {
         _partyName = name;
     }
-    public void GoToLocation(Region targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
+    public void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
         Action doneAction = null, Action actionOnStartOfMovement = null, IPointOfInterest targetPOI = null, LocationGridTile targetTile = null) {
         if (_icon.isTravelling && _icon.travelLine != null) {
             return;
@@ -326,10 +327,10 @@ public class Party {
         } else {
             //_icon.SetActionOnTargetReached(doneAction);
             LocationGridTile exitTile = owner.GetNearestUnoccupiedEdgeTileFromThis();
-            owner.marker.GoTo(exitTile, () => MoveToAnotherArea(targetLocation, pathfindingMode, targetStructure, doneAction, actionOnStartOfMovement, targetPOI, targetTile));
+            owner.marker.GoTo(exitTile, () => MoveToAnotherLocation(targetLocation.coreTile.region, pathfindingMode, targetStructure, doneAction, actionOnStartOfMovement, targetPOI, targetTile));
         }
     }
-    private void MoveToAnotherArea(Region targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
+    private void MoveToAnotherLocation(Region targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
         Action doneAction = null, Action actionOnStartOfMovement = null, IPointOfInterest targetPOI = null, LocationGridTile targetTile = null) {
         _icon.SetTarget(targetLocation, targetStructure, targetPOI, targetTile);
         _icon.StartPath(PATHFINDING_MODE.PASSABLE, doneAction, actionOnStartOfMovement);

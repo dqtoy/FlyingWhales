@@ -113,9 +113,9 @@ namespace Traits {
 
         private void CheckRestrainTrait() {
             if (isPrisoner && _sourceCharacter.IsInOwnParty()) {
-                if (_sourceCharacter.isStarving) {
+                if (_sourceCharacter.needsComponent.isStarving) {
                     MoveFeedJobToTopPriority();
-                } else if (_sourceCharacter.isHungry) {
+                } else if (_sourceCharacter.needsComponent.isHungry) {
                     CreateFeedJob();
                 }
             }

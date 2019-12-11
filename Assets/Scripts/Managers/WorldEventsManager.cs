@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Xml.Serialization;
 using System.IO;
 using System.Linq;
+using Events.World_Events;
 
 public class WorldEventsManager : MonoBehaviour {
 
@@ -38,7 +39,9 @@ public class WorldEventsManager : MonoBehaviour {
         }
     }
     private WorldEvent CreateNewWorldEvent(WORLD_EVENT eventType) {
-        var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(eventType.ToString());
+        var eventName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(eventType.ToString());
+        string noSpacesTraitName = Utilities.RemoveAllWhiteSpace(eventName);
+        string typeName = $"Events.World_Events.{ noSpacesTraitName }";
         return System.Activator.CreateInstance(System.Type.GetType(typeName)) as WorldEvent;
     }
     public WorldEvent GetWorldEvent(WORLD_EVENT eventType) {

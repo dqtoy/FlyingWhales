@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using Traits;
 using UnityEngine;
 
@@ -36,11 +37,9 @@ public class Summon : Character, IWorldObject {
         SetMoodValue(90);
 
         CreateOwnParty();
-
-        tiredness = TIREDNESS_DEFAULT;
-        fullness = FULLNESS_DEFAULT;
-        happiness = HAPPINESS_DEFAULT;
-
+        
+        needsComponent.Initialize();
+        
         ConstructInitialGoapAdvertisementActions();
         //SubscribeToSignals(); //NOTE: Only made characters subscribe to signals when their area is the one that is currently active. TODO: Also make sure to unsubscribe a character when the player has completed their map.
     }
@@ -191,7 +190,7 @@ public class Summon : Character, IWorldObject {
     public virtual void OnPlaceSummon(LocationGridTile tile) {
         hasBeenUsed = true;
         SubscribeToSignals();
-        Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseNeeds); //do not make summons decrease needs
+        Messenger.RemoveListener(Signals.HOUR_STARTED, () => needsComponent.DecreaseNeeds()); //do not make summons decrease needs
         //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration); //do not make summons plan goap actions by default
         if (GameManager.Instance.isPaused) {
             DecreaseCanMove(); //TODO: Handle this somehwere better?

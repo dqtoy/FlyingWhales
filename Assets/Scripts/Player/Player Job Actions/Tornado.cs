@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Inner_Maps;
 using UnityEngine;
 
 public class Tornado : PlayerJobAction {
@@ -42,13 +43,13 @@ public class Tornado : PlayerJobAction {
     }
     public override void ShowRange(LocationGridTile targetTile) {
         base.ShowRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.parentAreaMap.GetTilesInRadius(targetTile, radius, 0, true);
-        InteriorMapManager.Instance.HighlightTiles(tiles);
+        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, radius, 0, true);
+        InnerMapManager.Instance.HighlightTiles(tiles);
     }
     public override void HideRange(LocationGridTile targetTile) {
         base.HideRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.parentAreaMap.GetTilesInRadius(targetTile, radius, 0, true);
-        InteriorMapManager.Instance.UnhighlightTiles(tiles);
+        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, radius, 0, true);
+        InnerMapManager.Instance.UnhighlightTiles(tiles);
     }
     #endregion
 }

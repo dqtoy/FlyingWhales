@@ -1,6 +1,7 @@
 ﻿using Pathfinding;
 using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 public class PathfindingManager : MonoBehaviour {
@@ -71,25 +72,25 @@ public class PathfindingManager : MonoBehaviour {
     }
 
     #region Map Creation
-    public void CreatePathfindingGraphForArea(AreaInnerTileMap newMap) {
+    public void CreatePathfindingGraphForLocation(InnerTileMap newMap) {
         GridGraph gg = aStarPath.data.AddGraph(typeof(GridGraph)) as GridGraph;
         gg.cutCorners = false;
         gg.rotation = new Vector3(-90f, 0f, 0f);
         gg.nodeSize = nodeSize;
 
-        int reducedWidth = newMap.width - (AreaInnerTileMap.westEdge + AreaInnerTileMap.eastEdge);
-        int reducedHeight = newMap.height - (AreaInnerTileMap.northEdge + AreaInnerTileMap.southEdge);
+        int reducedWidth = newMap.width - (InnerTileMap.WestEdge + InnerTileMap.EastEdge);
+        int reducedHeight = newMap.height - (InnerTileMap.NorthEdge + InnerTileMap.SouthEdge);
 
         gg.SetDimensions(Mathf.FloorToInt(reducedWidth / gg.nodeSize), Mathf.FloorToInt(reducedHeight / gg.nodeSize), nodeSize);
-        Vector3 pos = InteriorMapManager.Instance.transform.position;
+        Vector3 pos = InnerMapManager.Instance.transform.position;
         pos.x += (newMap.width / 2f);
         pos.y += (newMap.height / 2f) + newMap.transform.localPosition.y;
-        pos.x += (AreaInnerTileMap.westEdge / 2) - 0.5f;
+        pos.x += (InnerTileMap.WestEdge / 2f) - 0.5f;
 
         gg.center = pos;
         gg.collision.use2D = true;
         gg.collision.type = ColliderType.Sphere;
-        if (newMap.area.areaType == AREA_TYPE.DUNGEON) {
+        if (newMap.location.locationType == LOCATION_TYPE.DUNGEON) {
             gg.collision.diameter = 2f;
         } else {
             gg.collision.diameter = 0.9f;

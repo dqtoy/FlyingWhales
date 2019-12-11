@@ -51,6 +51,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3676c156a6b3f34fad647c5ec1114de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  areaInnerStructurePrefab: {fileID: 1759440644899536, guid: 7407aafc2a0663f41bb2d8117cd23be6,
+    type: 2}
+  innerMapsParent: {fileID: 0}
+  regionInnerStructurePrefab: {fileID: 1270177099527346, guid: 4c0e5f8f8429325428e5a8cfcd5f4174,
+    type: 2}
   initialLandmarkCount: 60
   landmarkData:
   - landmarkTypeString: The Portal
@@ -567,8 +572,5 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 9cf9fb20030d8b6408dd1563a08e2045, type: 3}
     - {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094, type: 3}
     - {fileID: 21300000, guid: 4f117727fece67040a6c3082f72b0111, type: 3}
-  innerStructurePrefab: {fileID: 1759440644899536, guid: 7407aafc2a0663f41bb2d8117cd23be6,
-    type: 2}
-  areaMapsParent: {fileID: 0}
   landmarkConnectionPrefab: {fileID: 1106109158628960, guid: 343358a3457dd1b41821d416eb9a50a2,
     type: 2}

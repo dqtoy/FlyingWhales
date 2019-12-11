@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Inner_Maps;
 using UnityEngine;
 using Traits;
 
@@ -162,8 +163,8 @@ public class ActualGoapNode {
         }
         //Only create thought bubble log when characters starts the action/moves to do the action so we can pass the target structure
         CreateThoughtBubbleLog(targetStructure);
-        if (actor.specificLocation != targetStructure.location) {
-            actor.currentParty.GoToLocation(targetStructure.location.region, PATHFINDING_MODE.NORMAL, doneAction: MoveToDoAction);
+        if (actor.currentRegion != targetStructure.location && actor.specificLocation != targetStructure.location) {
+            actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, doneAction: MoveToDoAction);
         } else {
             if (action.actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET || action.actionLocationType == ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET) {
                 IPointOfInterest targetToGoTo = action.GetTargetToGoTo(this);

@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 public class TileObjectAwareness : IAwareness {
     public IPointOfInterest poi { get { return _tileObject; } }
     public TileObject tileObject { get { return _tileObject; } }
-    public Area knownLocation { get { return knownGridLocation.parentAreaMap.area; } }
     public LocationGridTile knownGridLocation { get; private set; }
 
     private TileObject _tileObject;

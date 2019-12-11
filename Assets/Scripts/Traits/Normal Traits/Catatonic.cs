@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 namespace Traits {
@@ -26,14 +27,14 @@ namespace Traits {
             if (addedTo is Character) {
                 owner = addedTo as Character;
                 owner.AdjustMoodValue(-15, this);
-                owner.AdjustDoNotGetLonely(1);
+                owner.needsComponent.AdjustDoNotGetLonely(1);
                 Messenger.AddListener(Signals.TICK_STARTED, CheckTrait);
                 Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             if (owner != null) {
-                owner.AdjustDoNotGetLonely(1);
+                owner.needsComponent.AdjustDoNotGetLonely(1);
                 Messenger.RemoveListener(Signals.TICK_STARTED, CheckTrait);
                 Messenger.RemoveListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
@@ -125,7 +126,7 @@ namespace Traits {
 
         #region Fullness Recovery
         private bool PlanFullnessRecovery(Character characterThatWillDoJob) {
-            if (owner.isStarving || owner.isHungry) {
+            if (owner.needsComponent.isStarving || owner.needsComponent.isHungry) {
                 return CreateFeedJob(characterThatWillDoJob);
             }
             return false;
@@ -144,7 +145,7 @@ namespace Traits {
 
         #region Tiredness Recovery
         private bool CreateDropJobForTirednessRecovery(Character characterThatWillDoJob) {
-            if (owner.isExhausted || owner.isTired) {
+            if (owner.needsComponent.isExhausted || owner.needsComponent.isTired) {
                 if (owner.homeStructure != null && (owner.gridTileLocation.objHere == null || !(owner.gridTileLocation.objHere is Bed))) {
                     TileObject bed = owner.homeStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED);
                     if (bed != null) {
@@ -155,7 +156,7 @@ namespace Traits {
             return false;
         }
         private bool PlanTirednessRecovery() {
-            if ((owner.isExhausted || owner.isTired) && !owner.HasJobTargettingThis(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
+            if ((owner.needsComponent.isExhausted || owner.needsComponent.isTired) && !owner.HasJobTargettingThis(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
                 return CreateSleepJob();
             }
             return false;
@@ -177,7 +178,7 @@ namespace Traits {
         }
         private void CreateActualSleepJob(Bed bed) {
             JOB_TYPE jobType = JOB_TYPE.TIREDNESS_RECOVERY;
-            if (owner.isExhausted) {
+            if (owner.needsComponent.isExhausted) {
                 jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
             }
             bool triggerSpooked = false;

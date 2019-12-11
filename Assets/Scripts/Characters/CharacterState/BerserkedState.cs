@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 using Traits;
 
@@ -18,9 +19,9 @@ public class BerserkedState : CharacterState {
 
     #region Overrides
     protected override void StartState() {
-        stateComponent.character.AdjustDoNotGetHungry(1);
-        stateComponent.character.AdjustDoNotGetLonely(1);
-        stateComponent.character.AdjustDoNotGetTired(1);
+        stateComponent.character.needsComponent.AdjustDoNotGetHungry(1);
+        stateComponent.character.needsComponent.AdjustDoNotGetLonely(1);
+        stateComponent.character.needsComponent.AdjustDoNotGetTired(1);
         //stateComponent.character.traitContainer.AddTrait(stateComponent.character, "Berserked");
         //BerserkBuff berserkBuff = new BerserkBuff();
         //berserkBuff.SetLevel(level);
@@ -28,11 +29,11 @@ public class BerserkedState : CharacterState {
         base.StartState();
     }
     protected override void EndState() {
-        stateComponent.character.AdjustDoNotGetHungry(-1);
-        stateComponent.character.AdjustDoNotGetLonely(-1);
-        stateComponent.character.AdjustDoNotGetTired(-1);
-        stateComponent.character.AdjustHappiness(50);
-        stateComponent.character.AdjustTiredness(50);
+        stateComponent.character.needsComponent.AdjustDoNotGetHungry(-1);
+        stateComponent.character.needsComponent.AdjustDoNotGetLonely(-1);
+        stateComponent.character.needsComponent.AdjustDoNotGetTired(-1);
+        stateComponent.character.needsComponent.AdjustHappiness(50);
+        stateComponent.character.needsComponent.AdjustTiredness(50);
         base.EndState();
         //stateComponent.character.traitContainer.RemoveTrait(stateComponent.character, "Berserked");
         //stateComponent.character.traitContainer.RemoveTrait(stateComponent.character, "Berserk Buff");

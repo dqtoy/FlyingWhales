@@ -3,15 +3,13 @@ using System.Collections;
 using System.Linq;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using Inner_Maps;
 
 public class MapGenerator : MonoBehaviour {
 
-    public static MapGenerator Instance = null;
+    public static MapGenerator Instance;
 
-    private int width;
-    private int height;
     private bool isCoroutineRunning;
-
 
     private void Awake() {
         Instance = this;
@@ -33,20 +31,15 @@ public class MapGenerator : MonoBehaviour {
         int width;
         int height;
         GenerateMapWidthAndHeightFromRegionCount(regionCount, out width, out height);
-        Debug.Log("Width: " + width + " Height: " + height + " Region Count: " + regionCount);
+        Debug.Log($"Width: {width.ToString()} Height: {height.ToString()} Region Count: {regionCount.ToString()}");
         GridMap.Instance.SetupInitialData(width, height);
         GridMap.Instance.GenerateGrid();
         EquatorGenerator.Instance.GenerateEquator(GridMap.Instance.width, GridMap.Instance.height, GridMap.Instance.hexTiles);
         Biomes.Instance.GenerateElevation(GridMap.Instance.hexTiles, GridMap.Instance.width, GridMap.Instance.height);
 
-        //CameraMove.Instance.Initialize();
-        //InteriorMapManager.Instance.Initialize();
-        //ObjectPoolManager.Instance.InitializeObjectPools();
-
         LevelLoaderManager.UpdateLoadingInfo("Generating Biomes...");
         yield return null;
         Biomes.Instance.GenerateBiome(GridMap.Instance.hexTiles);
-        //Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
         yield return null;
         FactionManager.Instance.CreateNeutralFaction();
         FactionManager.Instance.CreateFriendlyNeutralFaction();
@@ -58,10 +51,6 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.DivideToRegions(GridMap.Instance.hexTiles, regionCount, width * height);
         LandmarkManager.Instance.GenerateLandmarks(GridMap.Instance.allRegions, out portal, out settlement);
         LandmarkManager.Instance.GenerateConnections(portal, settlement);
-
-
-        //LandmarkManager.Instance.SetCascadingLevelsForAllCharacters(portal.tileLocation);
-        //LandmarkManager.Instance.GenerateRegionFeatures();
         yield return null;
 
 
@@ -69,12 +58,8 @@ public class MapGenerator : MonoBehaviour {
         Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
         CameraMove.Instance.CalculateCameraBounds();
         yield return null;
-        //UIManager.Instance.InitializeUI();
-
-        //RelationshipManager.Instance.GenerateRelationships();
-        //CharacterManager.Instance.PlaceInitialCharacters();
+        
         CharacterManager.Instance.GiveInitialItems();
-        //CharacterManager.Instance.GenerateInitialAwareness();
 
         PlayerManager.Instance.InitializePlayer(portal);
         yield return null;
@@ -84,10 +69,10 @@ public class MapGenerator : MonoBehaviour {
         yield return null;
         LandmarkManager.Instance.LoadAdditionalAreaData();
         yield return null;
-        //TokenManager.Instance.Initialize();
+        LandmarkManager.Instance.GenerateRegionInnerMaps();
 
         loadingWatch.Stop();
-        Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
+        Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds.ToString()));
         LevelLoaderManager.SetLoadingState(false);
         CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerArea.coreTile.gameObject);
         AudioManager.Instance.TransitionTo("World Music", 10);
@@ -110,7 +95,7 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.SetupInitialData(data.width, data.height);
         yield return null;
         CameraMove.Instance.Initialize();
-        InteriorMapManager.Instance.Initialize();
+        InnerMapManager.Instance.Initialize();
         InteractionManager.Instance.Initialize();
         ObjectPoolManager.Instance.InitializeObjectPools();
         yield return null;
@@ -177,7 +162,7 @@ public class MapGenerator : MonoBehaviour {
         data.LoadNotifications();
 
         loadingWatch.Stop();
-        Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
+        Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds.ToString()));
         LevelLoaderManager.SetLoadingState(false);
         CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerArea.coreTile.gameObject);
         AudioManager.Instance.TransitionTo("World Music", 10);
@@ -194,58 +179,7 @@ public class MapGenerator : MonoBehaviour {
         //PlayerManager.Instance.player.LoadResearchNewInterventionAbility(data.playerSave);
 
     }
-    internal void ReloadScene() {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-    private void StartGenerateMapWidthAndHeightFromRegionCountCoroutine(int regionCount) {
-        //StartCoroutine(GenerateMapWidthAndHeightFromRegionCountCoroutine(regionCount));
-    }
-    private IEnumerator GenerateMapWidthAndHeightFromRegionCountCoroutine(int regionCount) {
-        width = 0;
-        height = 0;
 
-        int maxColumns = 6;
-        int currColumn = 0;
-
-        int currentRowWidth = 0;
-
-        string summary = "Map Size Generation: ";
-        for (int i = 0; i < regionCount; i++) {
-            int regionWidth = Random.Range(WorldConfigManager.Instance.minRegionWidthCount, WorldConfigManager.Instance.maxRegionWidthCount + 1);
-            int regionHeight = Random.Range(WorldConfigManager.Instance.minRegionHeightCount, WorldConfigManager.Instance.maxRegionHeightCount + 1);
-            if (currColumn < maxColumns) {
-                //only directly add to width
-                currentRowWidth += regionWidth;
-                if (currentRowWidth > width) {
-                    width = currentRowWidth;
-                }
-                if (regionHeight > height) {
-                    height = regionHeight;
-                }
-                currColumn++;
-            } else {
-                //place next set into next row
-                currColumn = 1;
-                currentRowWidth = 0;
-                height += regionHeight;
-            }
-
-            //if (Utilities.IsEven(i)) {
-            //    width += regionWidth;
-            //} else {
-            //    height += regionHeight;
-            //}
-
-            //totalTiles += regionWidth * regionHeight;
-            summary += "\n" + i + " - Width: " + regionWidth + " Height: " + regionHeight;
-            yield return null;
-        }
-        //summary += "\nComputed total tiles : " + totalTiles.ToString();
-        summary += "\nTotal tiles : " + (width * height).ToString();
-
-        Debug.Log(summary);
-        SetIsCoroutineRunning(false);
-    }
     private void GenerateMapWidthAndHeightFromRegionCount(int regionCount, out int width, out int height) {
         width = 0;
         height = 0;

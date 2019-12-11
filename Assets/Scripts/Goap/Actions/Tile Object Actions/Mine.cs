@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;  
 using Traits;
 
@@ -51,7 +52,7 @@ public class Mine : GoapAction {
         LocationGridTile tile = ore.gridTileLocation;
         ore.AdjustYield(-metal);
 
-        MetalPile metalPile = InteriorMapManager.Instance.CreateNewTileObject<MetalPile>(TILE_OBJECT_TYPE.METAL_PILE);
+        MetalPile metalPile = InnerMapManager.Instance.CreateNewTileObject<MetalPile>(TILE_OBJECT_TYPE.METAL_PILE);
         metalPile.SetResourceInPile(metal);
         tile.structure.AddPOI(metalPile, tile);
         metalPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.METAL_PILE);

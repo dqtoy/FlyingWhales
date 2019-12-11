@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 public class AnkhOfAnubis : Artifact {
@@ -75,7 +76,7 @@ public class AnkhOfAnubis : Artifact {
             gridTileLocation.structure.RemovePOI(this);
         } else {
             currentDuration++;
-            List<LocationGridTile> tilesInRange = gridTileLocation.parentAreaMap.GetTilesInRadius(gridTileLocation, range);
+            List<LocationGridTile> tilesInRange = gridTileLocation.parentMap.GetTilesInRadius(gridTileLocation, range);
             List<Character> characters = new List<Character>();
             for (int i = 0; i < tilesInRange.Count; i++) {
                 LocationGridTile currTile = tilesInRange[i];

@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System;
+using Inner_Maps;
 
 public class TileObjectInfoUI : UIMenu {
 
@@ -26,7 +27,7 @@ public class TileObjectInfoUI : UIMenu {
     public override void OpenMenu() {
         activeTileObject = _data as TileObject;
         if(activeTileObject.gridTileLocation != null) {
-            bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != activeTileObject.specificLocation;
+            bool instantCenter = InnerMapManager.Instance.currentlyShowingArea != activeTileObject.specificLocation;
             AreaMapCameraMove.Instance.CenterCameraOn(activeTileObject.collisionTrigger.gameObject, instantCenter);
         }
         base.OpenMenu();

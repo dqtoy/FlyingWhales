@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 public class BlueprintBehaviour : CharacterBehaviourComponent {
@@ -9,7 +10,7 @@ public class BlueprintBehaviour : CharacterBehaviourComponent {
 
     public override bool TryDoBehaviour(Character character, ref string log) {
         log += $"\n-{character.name} will try to place blueprint";
-        if (character.homeArea.GetNumberOfJobsWith(JOB_TYPE.BUILD_BLUEPRINT) < 2 && HasCharacterWithPlaceBlueprintJobInSettlement(character.homeArea) == false) {
+        if (character.isAtHomeRegion && character.homeArea.GetNumberOfJobsWith(JOB_TYPE.BUILD_BLUEPRINT) < 2 && HasCharacterWithPlaceBlueprintJobInSettlement(character.homeArea) == false) {
             log += $"\n-{character.name} will roll for blueprint placement.";
             int chance = 35;
             int roll = Random.Range(0, 100);
@@ -19,7 +20,7 @@ public class BlueprintBehaviour : CharacterBehaviourComponent {
                 STRUCTURE_TYPE neededStructure = character.buildStructureComponent.GetCurrentStructureToBuild();
                 log += $"\n-Structure Type to build is {neededStructure.ToString()}";
 
-                List<GameObject> choices = InteriorMapManager.Instance.GetStructurePrefabsForStructure(neededStructure);
+                List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(neededStructure);
                 GameObject chosenStructurePrefab = Utilities.GetRandomElement(choices);
                 log += $"\n-Structure Prefab chosen is {chosenStructurePrefab.name}";
 

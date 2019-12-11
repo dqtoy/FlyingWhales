@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;  
 using Traits;
 
@@ -52,7 +53,7 @@ public class Scrap : GoapAction {
                 if (token.gridTileLocation == null) {
                     return false;
                 }
-                if (token.gridTileLocation.structure.location.IsRequiredByArea(token)) {
+                if (token.gridTileLocation.structure.location.IsRequiredByLocation(token)) {
                     return false;
                 }
                 return true;
@@ -86,7 +87,7 @@ public class Scrap : GoapAction {
         //goapNode.actor.AdjustSupply(TokenManager.Instance.itemData[item.specialTokenType].supplyValue);
         goapNode.actor.DestroyToken(item);
 
-        StonePile stonePile = InteriorMapManager.Instance.CreateNewTileObject<StonePile>(TILE_OBJECT_TYPE.STONE_PILE);
+        StonePile stonePile = InnerMapManager.Instance.CreateNewTileObject<StonePile>(TILE_OBJECT_TYPE.STONE_PILE);
         stonePile.SetResourceInPile(Mathf.CeilToInt(craftCost * 0.5f));
         tile.structure.AddPOI(stonePile, tile);
         stonePile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.STONE_PILE);
@@ -103,7 +104,7 @@ public class ScrapData : GoapActionData {
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         if (poiTarget is SpecialToken) {
             SpecialToken token = poiTarget as SpecialToken;
-            if (token.gridTileLocation != null && token.gridTileLocation.structure.location.IsRequiredByArea(token)) {
+            if (token.gridTileLocation != null && token.gridTileLocation.structure.location.IsRequiredByLocation(token)) {
                 return false;
             }
         }

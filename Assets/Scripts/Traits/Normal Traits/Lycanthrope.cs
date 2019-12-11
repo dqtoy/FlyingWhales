@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 namespace Traits {
@@ -287,9 +288,9 @@ namespace Traits {
         public RACE race { get; private set; }
 
         public void SetData(Character character) {
-            this.fullness = character.fullness;
-            this.tiredness = character.tiredness;
-            this.happiness = character.happiness;
+            this.fullness = character.needsComponent.fullness;
+            this.tiredness = character.needsComponent.tiredness;
+            this.happiness = character.needsComponent.happiness;
             this.faction = character.faction;
             //this.awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>>(character.awareness);
             this.homeStructure = character.homeStructure;

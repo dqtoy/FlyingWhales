@@ -654,14 +654,14 @@ public class CharacterInfoUI : UIMenu {
         summary += "\nCurrent structure: " + activeCharacter.currentStructure?.ToString() ?? "None";
         summary += "\nPOI State: " + activeCharacter.state.ToString();
         summary += "\nDo Not Disturb: " + activeCharacter.doNotDisturb.ToString();
-        summary += "\nDo Not Get Hungry: " + activeCharacter.doNotGetHungry.ToString();
-        summary += "\nDo Not Get Tired: " + activeCharacter.doNotGetTired.ToString();
-        summary += "\nDo Not Get Lonely: " + activeCharacter.doNotGetLonely.ToString();
-        summary += "\nDo Not Recover HP: " + activeCharacter.doNotRecoverHP;
-        summary += "\nFullness Time: " + (activeCharacter.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.fullnessForcedTick));
-        summary += "\nTiredness Time: " + (activeCharacter.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.tirednessForcedTick));
-        summary += "\nRemaining Sleep Ticks: " + activeCharacter.currentSleepTicks;
-        summary += "\nFood: " + activeCharacter.food;
+        summary += "\nDo Not Get Hungry: " + activeCharacter.needsComponent.doNotGetHungry.ToString();
+        summary += "\nDo Not Get Tired: " + activeCharacter.needsComponent.doNotGetTired.ToString();
+        summary += "\nDo Not Get Lonely: " + activeCharacter.needsComponent.doNotGetLonely.ToString();
+        summary += "\nDo Not Recover HP: " + activeCharacter.doNotRecoverHP.ToString();
+        summary += "\nFullness Time: " + (activeCharacter.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.fullnessForcedTick));
+        summary += "\nTiredness Time: " + (activeCharacter.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.tirednessForcedTick));
+        summary += "\nRemaining Sleep Ticks: " + activeCharacter.needsComponent.currentSleepTicks.ToString();
+        summary += "\nFood: " + activeCharacter.food.ToString();
         summary += "\nRole: " + activeCharacter.role.roleType.ToString();
         summary += "\nSexuality: " + activeCharacter.sexuality.ToString();
         summary += "\nMood: " + activeCharacter.moodValue.ToString() + "(" + activeCharacter.currentMoodType.ToString() + ")";
@@ -687,7 +687,7 @@ public class CharacterInfoUI : UIMenu {
         //} else {
         //    summary += "None";
         //}
-        summary += "\n" + activeCharacter.GetNeedsSummary();
+        summary += "\n" + activeCharacter.needsComponent.GetNeedsSummary();
         summary += "\n\nAlter Egos: ";
         for (int i = 0; i < activeCharacter.alterEgos.Values.Count; i++) {
             summary += "\n" + activeCharacter.alterEgos.Values.ElementAt(i).GetAlterEgoSummary();

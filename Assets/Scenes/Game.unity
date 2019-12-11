@@ -83285,7 +83285,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
         type: 2}
-      propertyPath: areaMapsParent
+      propertyPath: innerMapsParent
       value: 
       objectReference: {fileID: 1536722383}
     m_RemovedComponents: []
@@ -86430,8 +86430,9 @@ GameObject:
   - component: {fileID: 1536722383}
   - component: {fileID: 1536722384}
   - component: {fileID: 1536722385}
+  - component: {fileID: 1536722386}
   m_Layer: 14
-  m_Name: InteriorAreaMaps
+  m_Name: InnerMaps
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -86459,7 +86460,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1536722382}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5cb685a75a7ffda41884635f2b58fc01, type: 3}
+  m_Script: {fileID: 11500000, guid: 19859e4ff2f9ee74e99426d52b76b328, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   characterCollisionTriggerPrefab: {fileID: 1745477595920248, guid: b561293b149dfb44a8798a971c7596c6,
@@ -86574,6 +86575,7 @@ MonoBehaviour:
       - {fileID: 1730934131256638, guid: aeabf6803503802489065897e35c53e5, type: 2}
     - data:
       - {fileID: 1357548140527432, guid: 9f7d5cd7007b73e4a9053a133e441266, type: 2}
+  assetManager: {fileID: 1536722386}
   itemTiles:
     m_keys: 000000000100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f00000010000000110000001200000013000000
     m_values:
@@ -86598,7 +86600,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
     - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
   tileObjectTiles:
-    m_keys: 0000000002000000030000000400000005000000060000000700000008000000090000000b0000000c0000000e0000000f000000100000001100000012000000130000001400000015000000160000001700000018000000190000001a0000001b000000
+    m_keys: 0000000002000000030000000400000005000000060000000700000008000000090000000b0000000c0000000e0000000f000000100000001100000012000000130000001400000015000000160000001700000018000000190000001a0000001b0000001c000000
     m_values:
     - biomeAssets:
         m_keys: 06000000
@@ -86733,6 +86735,12 @@ MonoBehaviour:
         m_values:
         - activeTile: {fileID: 21300000, guid: 33cf6e5bea4751c4ca860912d52e1ee2, type: 3}
           inactiveTile: {fileID: 0}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
+          inactiveTile: {fileID: 21300000, guid: c236f4926fa5e114ea5b76f7125fe18a,
+            type: 3}
   wallResourceAssets:
     m_keys: 010000000200000003000000
     m_values:
@@ -87092,6 +87100,79 @@ MonoBehaviour:
     pivotPointRoot: {fileID: 0}
     spreadOutCount: 1
   showGraphs: 1
+--- !u!114 &1536722386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1536722382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85419986e1774078ade2f7ca74adbb9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outsideTile: {fileID: 11400000, guid: eb3f0a06db068d04f86d266316b14e08, type: 2}
+  snowOutsideTile: {fileID: 11400000, guid: b19fb3108a794684e9cd863789e30c5a, type: 2}
+  grassTile: {fileID: 11400000, guid: 5d1dfc24b82640c44bf0dd6e37c21a5f, type: 2}
+  soilTile: {fileID: 11400000, guid: 9730174dcd21daf4f9643570dea4e144, type: 2}
+  stoneTile: {fileID: 11400000, guid: 1eadf98aa5a55484f8390f237ea1f0f4, type: 2}
+  snowTile: {fileID: 11400000, guid: 9c49ed01e47d38948bdb1fa1595e8183, type: 2}
+  tundraTile: {fileID: 11400000, guid: d50f2fc723074ad4d91fea1cde34cbba, type: 2}
+  snowDirt: {fileID: 11400000, guid: f661c32973f40b2459dd33272f6fd9c3, type: 2}
+  bigTreeTile: {fileID: 11400000, guid: 9a1c438dfdf8358469ee6162915febde, type: 2}
+  treeTile: {fileID: 11400000, guid: 2e58fd5b2fae6c04d9113fc8182a44ae, type: 2}
+  shrubTile: {fileID: 11400000, guid: 07b6bc752c932e947966bff1fa3f91b9, type: 2}
+  flowerTile: {fileID: 11400000, guid: 018979e46fbb797468feed511c0f7539, type: 2}
+  rockTile: {fileID: 11400000, guid: 0dcf24bb189c1f643a2a4866a9ccd93c, type: 2}
+  randomGarbTile: {fileID: 11400000, guid: 3080d1b756b2fa040bc7e7fd078bf0d5, type: 2}
+  snowBigTreeTile: {fileID: 11400000, guid: b2e6e204cee079643ad3b5b524b81402, type: 2}
+  snowTreeTile: {fileID: 11400000, guid: 9aa14f340a5d11c46874b6d59511a8de, type: 2}
+  snowFlowerTile: {fileID: 11400000, guid: 3a26ac8bd15ceab4abc13380b567719f, type: 2}
+  snowGarbTile: {fileID: 11400000, guid: 4d9222c9a540e774ea6034291606bd57, type: 2}
+  crateBarrelTile: {fileID: 11400000, guid: 6b086f52f77704c46a54b33f4dffaedd, type: 2}
+  edgeAssets:
+    m_keys: 0000000001000000020000000300000004000000050000000700000008000000
+    m_values:
+    - data:
+      - {fileID: 11400000, guid: 5feee36b7595b4b43b002f0537da2a11, type: 2}
+      - {fileID: 11400000, guid: 2832bbe09ed174649ae1e7432d36399a, type: 2}
+      - {fileID: 11400000, guid: 67f60cbfadebda249831d480cdd4de12, type: 2}
+      - {fileID: 11400000, guid: 59b66f096b15a2741aa7bb5d58373211, type: 2}
+    - data:
+      - {fileID: 11400000, guid: 5f5d103960aee5b4ba5ff30798d87e1c, type: 2}
+      - {fileID: 11400000, guid: 1b6e106ebe6fa7c429177126525d9f01, type: 2}
+      - {fileID: 11400000, guid: ac69c01830683ff49b45fdc5423c15be, type: 2}
+      - {fileID: 11400000, guid: 75f91c90a39ad634eaf8f5d992ade69e, type: 2}
+    - data:
+      - {fileID: 11400000, guid: b730e05c386e66e428299fc6e5be4937, type: 2}
+      - {fileID: 11400000, guid: 3b3ecd590fad67840ac38e06eec6f28a, type: 2}
+      - {fileID: 11400000, guid: cb8412c37c764f54c928cb9cceb3dfac, type: 2}
+      - {fileID: 11400000, guid: 8b7ffca4a2906bb4db3f4198b7debe23, type: 2}
+    - data:
+      - {fileID: 11400000, guid: 2a4b37ba517e6434db743b7b84dfb039, type: 2}
+      - {fileID: 11400000, guid: f668d2d1bf694464da37a248dd175bd1, type: 2}
+      - {fileID: 11400000, guid: 8f4852fde8ae56048b407eac69808ee5, type: 2}
+      - {fileID: 11400000, guid: 461a31f8687bbeb4ca299dadfa27ef1f, type: 2}
+    - data:
+      - {fileID: 11400000, guid: c84dcaddc85c726408dd1a3714e4fcbf, type: 2}
+      - {fileID: 11400000, guid: 6a7f1d6d6cb01a14abe1705c7f94c04a, type: 2}
+      - {fileID: 11400000, guid: 9ce5f8384ca8aef47abef1d424565c26, type: 2}
+      - {fileID: 11400000, guid: f4f0c62b08d6c8846b1d9af318ae4b9c, type: 2}
+    - data:
+      - {fileID: 11400000, guid: a355a998929a7e44a92743b605e77f54, type: 2}
+      - {fileID: 11400000, guid: a355a998929a7e44a92743b605e77f54, type: 2}
+      - {fileID: 11400000, guid: 5409e79fb4b2c7444aee567133a3dda2, type: 2}
+      - {fileID: 11400000, guid: 5409e79fb4b2c7444aee567133a3dda2, type: 2}
+    - data:
+      - {fileID: 11400000, guid: 6cbb5edb889dcba4291c859ace37a439, type: 2}
+      - {fileID: 11400000, guid: 11423206383496e459fbf151edef22c4, type: 2}
+      - {fileID: 11400000, guid: 37274f75ef63c0f4292e508426bfef2e, type: 2}
+      - {fileID: 11400000, guid: d520aa2b48359b042afccd326dfb1ab0, type: 2}
+    - data:
+      - {fileID: 0}
+      - {fileID: 0}
+      - {fileID: 0}
+      - {fileID: 0}
 --- !u!1 &1538653383
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 public class EventIntel : Intel {
@@ -27,7 +28,7 @@ public class EventIntel : Intel {
             } else if (data.targetPOIType == POINT_OF_INTEREST_TYPE.ITEM) {
                 target = TokenManager.Instance.GetSpecialTokenByID(data.targetID);
             } else if (data.targetPOIType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-                target = InteriorMapManager.Instance.GetTileObject(data.targetTileObjectType, data.targetID);
+                target = InnerMapManager.Instance.GetTileObject(data.targetTileObjectType, data.targetID);
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -61,7 +62,7 @@ public class PlayerJobActionButton : MonoBehaviour {
     public void UpdateInteractableState() {
         SetInteractableState(
             //!action.parentData.hasActionInCooldown &&
-            InteriorMapManager.Instance.isAnAreaMapShowing 
+            InnerMapManager.Instance.isAnAreaMapShowing 
             && actionSlot.ability != null
             && PlayerManager.Instance.player.currentActivePlayerJobAction != this.actionSlot.ability && !actionSlot.ability.isInCooldown
         );

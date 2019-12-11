@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 namespace Traits {
@@ -134,17 +135,17 @@ namespace Traits {
                         if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
                             characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Heartbroken");
                             bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
-                            characterThatWillDoJob.AdjustHappiness(-6000);
+                            characterThatWillDoJob.needsComponent.AdjustHappiness(-6000);
                             return hasCreatedJob;
                         } else if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.RELATIVE)) {
                             characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Griefstricken");
                             bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
-                            characterThatWillDoJob.AdjustHappiness(-4000);
+                            characterThatWillDoJob.needsComponent.AdjustHappiness(-4000);
                             return hasCreatedJob;
                         } else if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.FRIEND)) {
                             characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Griefstricken");
                             bool hasCreatedJob = CreatePrioritizedShockJob(characterThatWillDoJob);
-                            characterThatWillDoJob.AdjustHappiness(-2000);
+                            characterThatWillDoJob.needsComponent.AdjustHappiness(-2000);
                             return hasCreatedJob;
                         }
                     }
@@ -277,7 +278,7 @@ namespace Traits {
             CharacterTrait derivedTrait = trait as CharacterTrait;
             for (int i = 0; i < alreadyInspectedTileObjects.Count; i++) {
                 TileObjectSerializableData toData = alreadyInspectedTileObjects[i];
-                derivedTrait.AddAlreadyInspectedObject(InteriorMapManager.Instance.GetTileObject(toData.type, toData.id));
+                derivedTrait.AddAlreadyInspectedObject(InnerMapManager.Instance.GetTileObject(toData.type, toData.id));
             }
             derivedTrait.SetHasSurvivedApprehension(hasSurvivedApprehension);
             return trait;

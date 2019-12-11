@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 public class PoisonTableIntel : EventIntel {
@@ -19,7 +20,7 @@ public class PoisonTableIntel : EventIntel {
     public PoisonTableIntel(SaveDataPoisonTableIntel data) : base(data) {
         if (data.poisonedTableID != -1) {
             //Area area = LandmarkManager.Instance.GetAreaByID(data.poisonedTableAreaID);
-            poisonedTable = InteriorMapManager.Instance.GetTileObject(TILE_OBJECT_TYPE.TABLE, data.poisonedTableID) as Table;
+            poisonedTable = InnerMapManager.Instance.GetTileObject(TILE_OBJECT_TYPE.TABLE, data.poisonedTableID) as Table;
         }
 
         if (data.targetDwellingID != -1) {

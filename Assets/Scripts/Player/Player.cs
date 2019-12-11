@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using System.Linq;
+using Events.World_Events;
+using Inner_Maps;
 
 public class Player : ILeader {
 
@@ -178,7 +180,7 @@ public class Player : ILeader {
     //    //OnTileAddedToPlayerArea(playerArea, chosenCoreTile);
     //}
     public void CreatePlayerArea(BaseLandmark portal) {
-        Area playerArea = LandmarkManager.Instance.CreateNewArea(portal.tileLocation.region, AREA_TYPE.DEMONIC_INTRUSION, 0);
+        Area playerArea = LandmarkManager.Instance.CreateNewArea(portal.tileLocation.region, LOCATION_TYPE.DEMONIC_INTRUSION, 0);
         playerArea.LoadAdditionalData();
         //Biomes.Instance.CorruptTileVisuals(portal.tileLocation);
         //portal.tileLocation.SetCorruption(true);
@@ -445,7 +447,7 @@ public class Player : ILeader {
             jobActionButton?.UpdateInteractableState();
             jobActionButton?.SetSelectedIconState(false);
             if (previousActiveAction != null) {
-                previousActiveAction.HideRange(InteriorMapManager.Instance.GetTileFromMousePosition());
+                previousActiveAction.HideRange(InnerMapManager.Instance.GetTileFromMousePosition());
             }
         } else {
             PlayerJobActionButton jobActionButton = PlayerUI.Instance.GetPlayerJobActionButton(currentActivePlayerJobAction);
@@ -473,9 +475,9 @@ public class Player : ILeader {
                 case JOB_ACTION_TARGET.NONE:
                     break;
                 case JOB_ACTION_TARGET.CHARACTER:
-                    if (InteriorMapManager.Instance.currentlyShowingMap != null && InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter != null) {
-                        if (currentActivePlayerJobAction.CanPerformActionTowards(InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter)) {
-                            currentActivePlayerJobAction.ActivateAction(InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter);
+                    if (InnerMapManager.Instance.currentlyShowingMap != null && InnerMapManager.Instance.currentlyShowingMap.hoveredCharacter != null) {
+                        if (currentActivePlayerJobAction.CanPerformActionTowards(InnerMapManager.Instance.currentlyShowingMap.hoveredCharacter)) {
+                            currentActivePlayerJobAction.ActivateAction(InnerMapManager.Instance.currentlyShowingMap.hoveredCharacter);
                             activatedAction = true;
                         } else {
                         }
@@ -483,7 +485,7 @@ public class Player : ILeader {
                     }
                     break;
                 case JOB_ACTION_TARGET.TILE_OBJECT:
-                    hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
+                    hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
                     if (hoveredTile != null && hoveredTile.objHere != null) {
                         if (currentActivePlayerJobAction.CanPerformActionTowards(hoveredTile.objHere)) {
                             currentActivePlayerJobAction.ActivateAction(hoveredTile.objHere);
@@ -493,7 +495,7 @@ public class Player : ILeader {
                     }
                     break;
                 case JOB_ACTION_TARGET.TILE:
-                    hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
+                    hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
                     if (hoveredTile != null) {
                         if (currentActivePlayerJobAction.CanPerformActionTowards(hoveredTile)) {
                             currentActivePlayerJobAction.ActivateAction(hoveredTile);
@@ -634,8 +636,8 @@ public class Player : ILeader {
     }
     private void TryExecuteCurrentActiveIntel() {
         string hoverText = string.Empty;
-        if (CanShareIntel(InteriorMapManager.Instance.currentlyHoveredPOI, ref hoverText)) {
-            Character targetCharacter = InteriorMapManager.Instance.currentlyHoveredPOI as Character;
+        if (CanShareIntel(InnerMapManager.Instance.currentlyHoveredPoi, ref hoverText)) {
+            Character targetCharacter = InnerMapManager.Instance.currentlyHoveredPoi as Character;
             if(currentActiveIntel is EventIntel) {
                 if((currentActiveIntel as EventIntel).action == null) {
                     //If intel has no action, do not execute intel, just remove it instead
@@ -1310,7 +1312,7 @@ public class Player : ILeader {
         }
 
         if(currentMinions.Count > 0) {
-            LocationGridTile mainEntrance = area.GetRandomUnoccupiedEdgeTile();
+            LocationGridTile mainEntrance = area.innerMap.GetRandomUnoccupiedEdgeTile();
             entrances.Add(mainEntrance);
             //int neededEntrances = currentMinions.Count - 1;
 
@@ -1435,7 +1437,7 @@ public class Player : ILeader {
             CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
             CombatAbilityButton abilityButton = PlayerUI.Instance.GetCombatAbilityButton(previousAbility);
             abilityButton?.UpdateInteractableState();
-            InteriorMapManager.Instance.UnhighlightTiles();
+            InnerMapManager.Instance.UnhighlightTiles();
             CursorManager.Instance.ClearLeftClickActions();
             CursorManager.Instance.ClearRightClickActions();
             //GameManager.Instance.SetPausedState(false);
@@ -1453,15 +1455,15 @@ public class Player : ILeader {
     private void TryExecuteCurrentActiveCombatAbility() {
         //string summary = "Mouse was clicked. Will try to execute " + currentActiveCombatAbility.name;
         if (currentActiveCombatAbility.abilityRadius == 0) {
-            if (currentActiveCombatAbility.CanTarget(InteriorMapManager.Instance.currentlyHoveredPOI)) {
-                currentActiveCombatAbility.ActivateAbility(InteriorMapManager.Instance.currentlyHoveredPOI);
+            if (currentActiveCombatAbility.CanTarget(InnerMapManager.Instance.currentlyHoveredPoi)) {
+                currentActiveCombatAbility.ActivateAbility(InnerMapManager.Instance.currentlyHoveredPoi);
             }
         } else {
-            List<LocationGridTile> highlightedTiles = InteriorMapManager.Instance.currentlyHighlightedTiles;
+            List<LocationGridTile> highlightedTiles = InnerMapManager.Instance.currentlyHighlightedTiles;
             if (highlightedTiles != null) {
                 List<IPointOfInterest> poisInHighlightedTiles = new List<IPointOfInterest>();
-                for (int i = 0; i < InteriorMapManager.Instance.currentlyShowingArea.charactersAtLocation.Count; i++) {
-                    Character currCharacter = InteriorMapManager.Instance.currentlyShowingArea.charactersAtLocation[i];
+                for (int i = 0; i < InnerMapManager.Instance.currentlyShowingArea.charactersAtLocation.Count; i++) {
+                    Character currCharacter = InnerMapManager.Instance.currentlyShowingArea.charactersAtLocation[i];
                     if (highlightedTiles.Contains(currCharacter.gridTileLocation)) {
                         poisInHighlightedTiles.Add(currCharacter);
                     }

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;  
 using Traits;
 
@@ -74,7 +75,7 @@ public class CraftFurniture : GoapAction {
         TILE_OBJECT_TYPE furnitureToCreate = (TILE_OBJECT_TYPE)goapNode.otherData[1];
         goapNode.actor.AdjustSupply(-TileObjectDB.GetTileObjectData(furnitureToCreate).constructionCost);
         if (targetSpot.objHere == null) {
-            targetSpot.structure.AddPOI(InteriorMapManager.Instance.CreateNewTileObject<TileObject>(furnitureToCreate), targetSpot);
+            targetSpot.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(furnitureToCreate), targetSpot);
         }
     }
     #endregion

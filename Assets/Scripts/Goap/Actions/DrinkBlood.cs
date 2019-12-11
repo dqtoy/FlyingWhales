@@ -31,7 +31,7 @@ public class DrinkBlood : GoapAction {
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
-        actor.AdjustDoNotGetHungry(-1);
+        actor.needsComponent.AdjustDoNotGetHungry(-1);
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         GoapActionInvalidity actionInvalidity = base.IsInvalid(node);
@@ -70,15 +70,15 @@ public class DrinkBlood : GoapAction {
 
     #region Effects
     public void PreDrinkSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.AdjustDoNotGetHungry(1);
+        goapNode.actor.needsComponent.AdjustDoNotGetHungry(1);
         //TODO: currentState.SetIntelReaction(DrinkBloodSuccessIntelReaction);
     }
     public void PerTickDrinkSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.AdjustFullness(1100);
+        goapNode.actor.needsComponent.AdjustFullness(1100);
     }
     public void AfterDrinkSuccess(ActualGoapNode goapNode) {
         //poiTarget.SetPOIState(POI_STATE.ACTIVE);
-        goapNode.actor.AdjustDoNotGetHungry(-1);
+        goapNode.actor.needsComponent.AdjustDoNotGetHungry(-1);
         int chance = UnityEngine.Random.Range(0, 100);
         if(chance < 85) {
             Lethargic lethargic = new Lethargic();
