@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 public static class SaveUtilities {
@@ -35,7 +36,7 @@ public static class SaveUtilities {
                     Area area = LandmarkManager.Instance.GetAreaByID(data.areaID);
                     return area.areaMap.map[(int)data.genericTileObjectPlace.x, (int)data.genericTileObjectPlace.y].genericTileObject;
                 } else {
-                    return InteriorMapManager.Instance.GetTileObject(data.tileObjectType, data.poiID);
+                    return InnerMapManager.Instance.GetTileObject(data.tileObjectType, data.poiID);
                 }
             default:
                 return null;

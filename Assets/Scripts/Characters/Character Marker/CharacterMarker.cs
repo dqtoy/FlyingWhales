@@ -8,9 +8,10 @@ using System;
 using TMPro;
 using Pathfinding;
 using System.Linq;
+using Inner_Maps;
 using Traits;
 
-public class CharacterMarker : AreaMapObjectVisual<Character> {
+public class CharacterMarker : MapObjectVisual<Character> {
 
     public delegate void HoverMarkerAction(Character character, LocationGridTile location);
     public HoverMarkerAction hoverEnterAction;
@@ -88,7 +89,7 @@ public class CharacterMarker : AreaMapObjectVisual<Character> {
         this.name = character.name + "'s Marker";
         nameLbl.SetText(character.name);
         this.character = character;
-        mainImg.sortingOrder = InteriorMapManager.Default_Character_Sorting_Order + character.id;
+        mainImg.sortingOrder = InnerMapManager.DefaultCharacterSortingOrder + character.id;
         hairImg.sortingOrder = mainImg.sortingOrder + 1;
         nameLbl.sortingOrder = mainImg.sortingOrder;
         actionIcon.sortingOrder = mainImg.sortingOrder;
@@ -821,7 +822,7 @@ public class CharacterMarker : AreaMapObjectVisual<Character> {
         UpdateSpeed();
     }
     public void PlaceMarkerAt(LocationGridTile tile, bool addToLocation = true) {
-        this.gameObject.transform.SetParent(tile.parentAreaMap.objectsParent);
+        this.gameObject.transform.SetParent(tile.parentMap.objectsParent);
         pathfindingAI.Teleport(tile.centeredWorldLocation);
         if (addToLocation) {
             tile.structure.location.AddCharacterToLocation(character);
@@ -832,7 +833,7 @@ public class CharacterMarker : AreaMapObjectVisual<Character> {
         UpdatePosition();
         UpdateActionIcon();
         SetCollidersState(true);
-        tile.structure.location.region.AddAwareness(character);
+        tile.parentMap.location.AddAwareness(character);
     }
     private IEnumerator Positioner(Vector3 localPos, Vector3 lookAt) {
         yield return null;
@@ -853,7 +854,7 @@ public class CharacterMarker : AreaMapObjectVisual<Character> {
             pathfindingAI.ClearAllCurrentPathData();
             UpdateAnimation();
             UpdateActionIcon();
-            gameObject.transform.SetParent(deathTileLocation.parentAreaMap.objectsParent);
+            gameObject.transform.SetParent(deathTileLocation.parentMap.objectsParent);
             LocationGridTile placeMarkerAt = deathTileLocation;
             if (deathTileLocation.isOccupied) {
                 placeMarkerAt = deathTileLocation.GetNearestUnoccupiedTileFromThis();
@@ -932,7 +933,7 @@ public class CharacterMarker : AreaMapObjectVisual<Character> {
 
     #region Vision Collision
     private void CreateCollisionTrigger() {
-        GameObject collisionTriggerGO = GameObject.Instantiate(InteriorMapManager.Instance.characterCollisionTriggerPrefab, this.transform);
+        GameObject collisionTriggerGO = GameObject.Instantiate(InnerMapManager.Instance.characterCollisionTriggerPrefab, this.transform);
         collisionTriggerGO.transform.localPosition = Vector3.zero;
         collisionTrigger = collisionTriggerGO.GetComponent<CharacterCollisionTrigger>();
         collisionTrigger.Initialize(character);

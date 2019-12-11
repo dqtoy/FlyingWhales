@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using EZObjectPools;
 using System;
+using Inner_Maps;
 
 
 public class CharacterAvatar : MonoBehaviour {

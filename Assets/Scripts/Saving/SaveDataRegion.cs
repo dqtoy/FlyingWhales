@@ -77,7 +77,7 @@ public class SaveDataRegion {
         } else {
             activeEvent = WORLD_EVENT.NONE;
         }
-        hasEventIconGO = region.eventIconGO != null;
+        hasEventIconGO = region.eventIconGo != null;
 
         features = new List<string>();
         for (int i = 0; i < region.features.Count; i++) {

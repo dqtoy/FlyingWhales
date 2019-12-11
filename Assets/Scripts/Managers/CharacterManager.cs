@@ -5,6 +5,7 @@ using System.Linq;
 using Traits;
 using System.IO;
 using System;
+using Inner_Maps;
 
 public class CharacterManager : MonoBehaviour {
 

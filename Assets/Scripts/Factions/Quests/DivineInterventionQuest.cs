@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Inner_Maps;
 using UnityEngine;
 
 public class DivineInterventionQuest : Quest {
@@ -144,7 +145,7 @@ public class DivineInterventionQuest : Quest {
     #region Build Goddess Statue
     private void CreateBuildGoddessStatueJob() {
         LocationStructure structure = region.area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
-        GoddessStatue goddessStatue = InteriorMapManager.Instance.CreateNewTileObject<GoddessStatue>(TILE_OBJECT_TYPE.GODDESS_STATUE);
+        GoddessStatue goddessStatue = InnerMapManager.Instance.CreateNewTileObject<GoddessStatue>(TILE_OBJECT_TYPE.GODDESS_STATUE);
         goddessStatue.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_GODDESS_STATUE, INTERACTION_TYPE.CRAFT_TILE_OBJECT, goddessStatue, this);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeBuildGoddessStatueJob);

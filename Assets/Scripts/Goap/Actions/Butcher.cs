@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;  
 using Traits;
 
@@ -132,7 +133,7 @@ public class Butcher : GoapAction {
             tileLocation.structure.RemovePOI(poiTarget, goapNode.actor);
         }
 
-        FoodPile foodPile = InteriorMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.FOOD_PILE);
+        FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.FOOD_PILE);
         foodPile.SetResourceInPile(transformedFood);
         tileLocation.structure.AddPOI(foodPile, tileLocation);
         foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);

@@ -1,4 +1,6 @@
-﻿#if UNITY_EDITOR
+﻿
+using Inner_Maps;
+#if UNITY_EDITOR
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -15,7 +17,7 @@ public class BuildingSpotDataMonobehaviourEditor : Editor {
         } else {
             Gizmos.color = Color.red;
         }
-        Gizmos.DrawWireCube(position, new Vector3(InteriorMapManager.Building_Spot_Size.x, InteriorMapManager.Building_Spot_Size.y, 0));
+        Gizmos.DrawWireCube(position, new Vector3(InnerMapManager.BuildingSpotSize.x, InnerMapManager.BuildingSpotSize.y, 0));
     }
 }
 #endif

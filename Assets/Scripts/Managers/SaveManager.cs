@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using BayatGames.SaveGameFree;
+using Inner_Maps;
 using Traits;
 
 public class SaveManager : MonoBehaviour {
@@ -32,9 +33,9 @@ public class SaveManager : MonoBehaviour {
         save.SaveFactions(FactionManager.Instance.allFactions);
         save.SaveCharacters(CharacterManager.Instance.allCharacters);
         save.SavePlayer(PlayerManager.Instance.player);
-        save.SaveTileObjects(InteriorMapManager.Instance.allTileObjects);
+        save.SaveTileObjects(InnerMapManager.Instance.allTileObjects);
         save.SaveSpecialObjects(TokenManager.Instance.specialObjects);
-        save.SaveAreaMaps(InteriorMapManager.Instance.areaMaps);
+//        save.SaveAreaMaps(InnerMapManager.Instance.innerMaps); TODO: Saving for new generic inner map
         save.SaveCurrentDate();
         save.SaveNotifications();
 

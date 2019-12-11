@@ -1,6 +1,7 @@
 ﻿using EZObjectPools;
 using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -70,9 +71,9 @@ public class ItemContainer : PooledObject, IPointerClickHandler {
         //center camera on item location
         LocationGridTile tileLocation = item.gridTileLocation;
         if (tileLocation != null) {
-            bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != tileLocation.structure.location;
-            if (!tileLocation.parentAreaMap.isShowing) {
-                InteriorMapManager.Instance.ShowAreaMap(tileLocation.parentAreaMap.area);
+            bool instantCenter = InnerMapManager.Instance.currentlyShowingArea != tileLocation.structure.location;
+            if (InnerMapManager.Instance.currentlyShowingMap == tileLocation.parentMap) {
+                InnerMapManager.Instance.ShowAreaMap(tileLocation.structure.areaLocation);
             }
             AreaMapCameraMove.Instance.CenterCameraOn(item.collisionTrigger.gameObject, instantCenter);
         }

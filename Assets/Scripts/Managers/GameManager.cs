@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Inner_Maps;
 using UnityEngine.Events;
 using Traits;
 
@@ -165,7 +166,7 @@ public class GameManager : MonoBehaviour {
         SchedulingManager.Instance.StartScheduleCalls ();
         Messenger.Broadcast(Signals.DAY_STARTED); //for the first day
         Messenger.Broadcast(Signals.MONTH_START); //for the first month
-        InteriorMapManager.Instance.UpdateLightBasedOnTime(Today());
+        InnerMapManager.Instance.UpdateLightBasedOnTime(Today());
         //TimerHubUI.Instance.AddItem("Until Divine Intervention", 4320, null);
     }
 
@@ -481,7 +482,7 @@ public class GameManager : MonoBehaviour {
         go.SetActive(true);
     }
     public void CreateHitEffectAt(IDamageable poi) {
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(hitEffectPrefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentAreaMap.objectsParent);
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(hitEffectPrefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentMap.objectsParent);
         go.transform.position = poi.projectileReceiver.transform.position;
         go.SetActive(true);
        
@@ -493,7 +494,7 @@ public class GameManager : MonoBehaviour {
             if (poi.gridTileLocation == null) {
                 return;
             }
-            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(fireEffectPrefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentAreaMap.objectsParent);
+            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(fireEffectPrefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentMap.objectsParent);
             go.transform.localPosition = poi.gridTileLocation.centeredLocalLocation;
             go.SetActive(true);
         }
@@ -510,16 +511,16 @@ public class GameManager : MonoBehaviour {
     public AOEParticle CreateAOEEffectAt(LocationGridTile tile, int range, bool autoDestroy = false) {
         GameObject go;
         if (autoDestroy) {
-            go = ObjectPoolManager.Instance.InstantiateObjectFromPool(aoeParticlesAutoDestroyPrefab.name, Vector3.zero, Quaternion.identity, tile.parentAreaMap.objectsParent);
+            go = ObjectPoolManager.Instance.InstantiateObjectFromPool(aoeParticlesAutoDestroyPrefab.name, Vector3.zero, Quaternion.identity, tile.parentMap.objectsParent);
         } else {
-            go = ObjectPoolManager.Instance.InstantiateObjectFromPool(aoeParticlesPrefab.name, Vector3.zero, Quaternion.identity, tile.parentAreaMap.objectsParent);
+            go = ObjectPoolManager.Instance.InstantiateObjectFromPool(aoeParticlesPrefab.name, Vector3.zero, Quaternion.identity, tile.parentMap.objectsParent);
         }
         AOEParticle particle = go.GetComponent<AOEParticle>();
         particle.PlaceParticleEffect(tile, range, autoDestroy);
         return particle;
     }
     public GameObject CreateBurningEffectAt(LocationGridTile tile) {
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(burningEffectPrefab.name, Vector3.zero, Quaternion.identity, tile.parentAreaMap.objectsParent);
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(burningEffectPrefab.name, Vector3.zero, Quaternion.identity, tile.parentMap.objectsParent);
         go.transform.localPosition = tile.centeredLocalLocation;
         go.SetActive(true);
         return go;
@@ -539,7 +540,7 @@ public class GameManager : MonoBehaviour {
         go.SetActive(true);
     }
     public void CreateExplodeEffectAt(LocationGridTile tile) {
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(hitEffectPrefab.name, Vector3.zero, Quaternion.identity, tile.parentAreaMap.objectsParent);
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(hitEffectPrefab.name, Vector3.zero, Quaternion.identity, tile.parentMap.objectsParent);
         go.transform.localPosition = tile.centeredLocalLocation;
         go.SetActive(true);
     }

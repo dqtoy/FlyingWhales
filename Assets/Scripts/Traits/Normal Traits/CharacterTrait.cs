@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 namespace Traits {
@@ -277,7 +278,7 @@ namespace Traits {
             CharacterTrait derivedTrait = trait as CharacterTrait;
             for (int i = 0; i < alreadyInspectedTileObjects.Count; i++) {
                 TileObjectSerializableData toData = alreadyInspectedTileObjects[i];
-                derivedTrait.AddAlreadyInspectedObject(InteriorMapManager.Instance.GetTileObject(toData.type, toData.id));
+                derivedTrait.AddAlreadyInspectedObject(InnerMapManager.Instance.GetTileObject(toData.type, toData.id));
             }
             derivedTrait.SetHasSurvivedApprehension(hasSurvivedApprehension);
             return trait;

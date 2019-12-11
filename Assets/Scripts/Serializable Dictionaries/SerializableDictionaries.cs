@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -32,7 +33,7 @@ public class TileObjectSlotDictionary : SerializableDictionary<Sprite, List<Tile
 [System.Serializable]
 public class CursorTextureDictionary : SerializableDictionary<CursorManager.Cursor_Type, Texture2D> { }
 [System.Serializable]
-public class AreaTypeSpriteDictionary : SerializableDictionary<AREA_TYPE, Sprite> { }
+public class AreaTypeSpriteDictionary : SerializableDictionary<LOCATION_TYPE, Sprite> { }
 [System.Serializable]
 public class SummonSettingDictionary : SerializableDictionary<SUMMON_TYPE, SummonSettings> { }
 [System.Serializable]

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Inner_Maps;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -253,7 +254,7 @@ public class RegionInfoUI : UIMenu {
     public void OnClickInvade() {
         if (activeRegion.area != null) {
             //simulate as if clicking the invade button while inside the are map
-            InteriorMapManager.Instance.ShowAreaMap(activeRegion.area);
+            InnerMapManager.Instance.ShowAreaMap(activeRegion.area);
             StartSettlementInvasion(activeRegion.area);
         } else {
             chosenMinionToInvade = null;

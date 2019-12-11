@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 namespace Traits {
@@ -27,21 +28,21 @@ namespace Traits {
                 TileObject obj = addedTo as TileObject;
                 obj.SetPOIState(POI_STATE.INACTIVE);
                 obj.SetSlotColor(burntColor);
-                obj.areaMapVisual.SetColor(burntColor);
+                obj.mapVisual.SetColor(burntColor);
                 if (obj is GenericTileObject) {
                     LocationGridTile tile = obj.gridTileLocation;
                     tile.parentTileMap.SetColor(tile.localPlace, burntColor);
                     tile.SetDefaultTileColor(burntColor);
-                    tile.parentAreaMap.detailsTilemap.SetColor(tile.localPlace, burntColor);
-                    tile.parentAreaMap.northEdgeTilemap.SetColor(tile.localPlace, burntColor);
-                    tile.parentAreaMap.southEdgeTilemap.SetColor(tile.localPlace, burntColor);
-                    tile.parentAreaMap.eastEdgeTilemap.SetColor(tile.localPlace, burntColor);
-                    tile.parentAreaMap.westEdgeTilemap.SetColor(tile.localPlace, burntColor);
+                    tile.parentMap.detailsTilemap.SetColor(tile.localPlace, burntColor);
+                    tile.parentMap.northEdgeTilemap.SetColor(tile.localPlace, burntColor);
+                    tile.parentMap.southEdgeTilemap.SetColor(tile.localPlace, burntColor);
+                    tile.parentMap.eastEdgeTilemap.SetColor(tile.localPlace, burntColor);
+                    tile.parentMap.westEdgeTilemap.SetColor(tile.localPlace, burntColor);
                 } 
             } else if (addedTo is SpecialToken) {
                 SpecialToken token = addedTo as SpecialToken;
                 token.SetPOIState(POI_STATE.INACTIVE);
-                token.areaMapVisual.SetColor(burntColor);
+                token.mapVisual.SetColor(burntColor);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
@@ -50,21 +51,21 @@ namespace Traits {
                 TileObject obj = removedFrom as TileObject;
                 obj.SetPOIState(POI_STATE.ACTIVE);
                 obj.SetSlotColor(Color.white);
-                obj.areaMapVisual.SetColor(Color.white);
+                obj.mapVisual.SetColor(Color.white);
                 if (obj is GenericTileObject) {
                     LocationGridTile tile = obj.gridTileLocation;
                     tile.parentTileMap.SetColor(tile.localPlace, Color.white);
                     tile.SetDefaultTileColor(Color.white);
-                    tile.parentAreaMap.detailsTilemap.SetColor(tile.localPlace, Color.white);
-                    tile.parentAreaMap.northEdgeTilemap.SetColor(tile.localPlace, Color.white);
-                    tile.parentAreaMap.southEdgeTilemap.SetColor(tile.localPlace, Color.white);
-                    tile.parentAreaMap.eastEdgeTilemap.SetColor(tile.localPlace, Color.white);
-                    tile.parentAreaMap.westEdgeTilemap.SetColor(tile.localPlace, Color.white);
+                    tile.parentMap.detailsTilemap.SetColor(tile.localPlace, Color.white);
+                    tile.parentMap.northEdgeTilemap.SetColor(tile.localPlace, Color.white);
+                    tile.parentMap.southEdgeTilemap.SetColor(tile.localPlace, Color.white);
+                    tile.parentMap.eastEdgeTilemap.SetColor(tile.localPlace, Color.white);
+                    tile.parentMap.westEdgeTilemap.SetColor(tile.localPlace, Color.white);
                 }
             } else if (removedFrom is SpecialToken) {
                 SpecialToken token = removedFrom as SpecialToken;
                 token.SetPOIState(POI_STATE.ACTIVE);
-                token.areaMapVisual.SetColor(Color.white);
+                token.mapVisual.SetColor(Color.white);
             }
         }
         public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {

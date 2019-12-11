@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine.UI;
 using System.Text.RegularExpressions;
 using System.IO;
+using Inner_Maps;
 using UnityEngine.Events;
 
 public class ConsoleMenu : UIMenu {
@@ -1292,7 +1293,7 @@ public class ConsoleMenu : UIMenu {
             return;
         }
 
-        LocationStructure structure = InteriorMapManager.Instance.currentlyShowingMap.area.GetStructureByID(structureType, id);
+        LocationStructure structure = InnerMapManager.Instance.currentlyShowingMap.area.GetStructureByID(structureType, id);
         if (structure == null) {
             AddErrorMessage("There is no " + structureType.ToString() + " with id " + id.ToString());
             return;

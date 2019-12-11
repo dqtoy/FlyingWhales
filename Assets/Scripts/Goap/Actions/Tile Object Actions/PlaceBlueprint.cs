@@ -51,9 +51,10 @@ public class PlaceBlueprint : GoapAction {
         spot.PlaceBlueprintOnBuildingSpot(structureType);
 
         //create new build job at settlement
-        GoapPlanJob buildJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_BLUEPRINT, INTERACTION_TYPE.BUILD_STRUCTURE, spot, spot.gridTileLocation.parentAreaMap.area);
+        Area area = spot.structureLocation.location as Area;
+        GoapPlanJob buildJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_BLUEPRINT, INTERACTION_TYPE.BUILD_STRUCTURE, spot, area);
         buildJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeBuildJob);
-        spot.gridTileLocation.parentAreaMap.area.AddToAvailableJobs(buildJob);
+        area.AddToAvailableJobs(buildJob);
 
         goapNode.actor.buildStructureComponent.OnCreateBlueprint(structureType);
     }

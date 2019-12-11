@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using TMPro;
 using UnityEngine;
 
@@ -18,7 +19,7 @@ public class ItemInfoUI : UIMenu {
     public override void OpenMenu() {
         activeItem = _data as SpecialToken;
         if (activeItem.gridTileLocation != null) {
-            bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != activeItem.specificLocation;
+            bool instantCenter = InnerMapManager.Instance.currentlyShowingArea != activeItem.specificLocation;
             AreaMapCameraMove.Instance.CenterCameraOn(activeItem.collisionTrigger.gameObject, instantCenter);
         }
         base.OpenMenu();

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using Inner_Maps;
 
 public class PathGenerator : MonoBehaviour {
 
@@ -18,20 +19,7 @@ public class PathGenerator : MonoBehaviour {
     [SerializeField] private Vector2Int destLocGrid;
     public PATHFINDING_MODE modeToUse;
     public GRID_PATHFINDING_MODE gridModeToUse;
-
-    [ContextMenu("Get Path")]
-    public void GetPathForTesting() {
-        List<HexTile> path = GetPath(startTile, targetTile, modeToUse);
-        if (path != null) {
-            Debug.Log("========== Path from " + startTile.name + " to " + targetTile.name + "============");
-            for (int i = 0; i < path.Count; i++) {
-                Debug.Log(path[i].name, path[i]);
-            }
-        } else {
-            Debug.LogError("Cannot get path from " + startTile.name + " to " + targetTile.name + " using " + modeToUse.ToString());
-        }
-    }
- 
+    
     [ContextMenu("Get Distance")]
     public void GetDistance() {
         Debug.Log(Vector2.Distance(startTile.transform.position, targetTile.transform.position));
@@ -50,7 +38,7 @@ public class PathGenerator : MonoBehaviour {
     }
     [ContextMenu("Get Loc GridPath")]
     public void GetLocGridPathForTesting() {
-        List<LocationGridTile> path = GetPath(InteriorMapManager.Instance.currentlyShowingMap.map[startLocGrid.x, startLocGrid.y], InteriorMapManager.Instance.currentlyShowingMap.map[destLocGrid.x, destLocGrid.y], gridModeToUse);
+        List<LocationGridTile> path = GetPath(InnerMapManager.Instance.currentlyShowingMap.map[startLocGrid.x, startLocGrid.y], InnerMapManager.Instance.currentlyShowingMap.map[destLocGrid.x, destLocGrid.y], gridModeToUse);
         if (path != null) {
             Debug.Log("========== Path from " + startTile.name + " to " + targetTile.name + "============");
             for (int i = 0; i < path.Count; i++) {
@@ -65,50 +53,7 @@ public class PathGenerator : MonoBehaviour {
     void Awake(){
 		Instance = this;
 	}
-
-	/*
-	 * Get List of tiles (Path) that will connect 2 city tiles
-	 * */
-	public List<HexTile> GetPath(ILocation startingTile, ILocation destinationTile, PATHFINDING_MODE pathfindingMode, object data = null){
-		if(startingTile == null || destinationTile == null){
-			return null;
-		}
-
-        Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
-		Func<HexTile, double> estimate = t => Math.Sqrt (Math.Pow (t.xCoordinate - destinationTile.tileLocation.xCoordinate, 2) + Math.Pow (t.yCoordinate - destinationTile.tileLocation.yCoordinate, 2));
-
-		var path = PathFind.PathFind.FindPath (startingTile.tileLocation, destinationTile.tileLocation, distance, estimate, pathfindingMode, data);
-
-        if (path != null) {
-			if (pathfindingMode == PATHFINDING_MODE.UNRESTRICTED) {
-				return path.Reverse().ToList();
-			} else {
-				List<HexTile> newPath = path.Reverse().ToList();
-				if (newPath.Count > 1) {
-					newPath.RemoveAt(0);
-				}
-				return newPath;
-			}
-		}
-		return null;
-	}
     public List<LocationGridTile> GetPath(LocationGridTile startingTile, LocationGridTile destinationTile, GRID_PATHFINDING_MODE pathMode = GRID_PATHFINDING_MODE.NORMAL, bool includeFirstTile = false) {
-        //LocationGridTile.Tile_Type startType = startingTile.tileType;
-        //LocationGridTile.Tile_Type destinationType = destinationTile.tileType;
-        //LocationGridTile.Tile_Access startAccess = startingTile.tileAccess;
-        //LocationGridTile.Tile_Access destinationAccess = destinationTile.tileAccess;
-        //switch (pathMode) {
-        //    case GRID_PATHFINDING_MODE.NORMAL:
-        //        startingTile.SetTileType(LocationGridTile.Tile_Type.Empty);
-        //        destinationTile.SetTileType(LocationGridTile.Tile_Type.Empty);
-        //        break;
-        //    default:
-        //        startingTile.SetTileType(LocationGridTile.Tile_Type.Empty);
-        //        destinationTile.SetTileType(LocationGridTile.Tile_Type.Empty);
-        //        break;
-        //}
-
-
         List<LocationGridTile> path = null;
 
         
@@ -161,12 +106,6 @@ public class PathGenerator : MonoBehaviour {
             }
             
         }
-
-        //startingTile.SetTileType(startType);
-        //destinationTile.SetTileType(destinationType);
-        //startingTile.SetTileAccess(startAccess);
-        //destinationTile.SetTileAccess(destinationAccess);
-
         if (path != null) {
             path.Reverse();
             if (!includeFirstTile) {

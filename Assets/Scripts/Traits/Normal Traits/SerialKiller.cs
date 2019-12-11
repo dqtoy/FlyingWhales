@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 namespace Traits {
@@ -102,7 +103,7 @@ namespace Traits {
         }
 
         private void CheckSerialKiller() {
-            if (character.isDead || character.doNotDisturb > 0 || character.specificLocation != InteriorMapManager.Instance.currentlyShowingArea) {
+            if (character.isDead || character.doNotDisturb > 0 || character.specificLocation != InnerMapManager.Instance.currentlyShowingArea) {
                 if (hasStartedFollowing) {
                     StopFollowing();
                     SetHasStartedFollowing(false);

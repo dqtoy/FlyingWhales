@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 public class BlueprintBehaviour : CharacterBehaviourComponent {
@@ -19,7 +20,7 @@ public class BlueprintBehaviour : CharacterBehaviourComponent {
                 STRUCTURE_TYPE neededStructure = character.buildStructureComponent.GetCurrentStructureToBuild();
                 log += $"\n-Structure Type to build is {neededStructure.ToString()}";
 
-                List<GameObject> choices = InteriorMapManager.Instance.GetStructurePrefabsForStructure(neededStructure);
+                List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(neededStructure);
                 GameObject chosenStructurePrefab = Utilities.GetRandomElement(choices);
                 log += $"\n-Structure Prefab chosen is {chosenStructurePrefab.name}";
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 public class StrollState : CharacterState {
@@ -70,7 +71,7 @@ public class StrollState : CharacterState {
         //Debug.Log(stateComponent.character.name + " will stroll to " + target.ToString());
     }
     private LocationGridTile PickRandomTileToGoTo() {
-        List<LocationGridTile> tiles = stateComponent.character.gridTileLocation.parentAreaMap.GetUnoccupiedTilesInRadius(stateComponent.character.gridTileLocation, 4, 3, false, true);
+        List<LocationGridTile> tiles = stateComponent.character.gridTileLocation.parentMap.GetUnoccupiedTilesInRadius(stateComponent.character.gridTileLocation, 4, 3, false, true);
         if (tiles.Count > 0) {
             return tiles[UnityEngine.Random.Range(0, tiles.Count)];
         } else {

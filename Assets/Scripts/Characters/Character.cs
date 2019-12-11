@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Inner_Maps;
 using UnityEngine;
 using Traits;
 
@@ -753,7 +754,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
     #region Marker
     public void CreateMarker() {
-        GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterMarker", Vector3.zero, Quaternion.identity, InteriorMapManager.Instance.transform);
+        GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterMarker", Vector3.zero, Quaternion.identity, InnerMapManager.Instance.transform);
         //RectTransform rect = portraitGO.transform as RectTransform;
         //portraitGO.transform.localPosition = pos;
         CharacterMarker marker = portraitGO.GetComponent<CharacterMarker>();
@@ -780,11 +781,13 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     private void OnHoverMarker(Character character, LocationGridTile location) {
         //InteriorMapManager.Instance.ShowTileData(this, gridTileLocation);
-        location.parentAreaMap.SetHoveredCharacter(character);
+//        location.parentMap.SetHoveredCharacter(character);
+        InnerMapManager.Instance.ShowTileData(location, character);
     }
     private void OnHoverExit(Character character, LocationGridTile location) {
         //InteriorMapManager.Instance.ShowTileData(this, gridTileLocation);
-        location.parentAreaMap.SetHoveredCharacter(null);
+//        location.parentMap.SetHoveredCharacter(null);
+        InnerMapManager.Instance.ShowTileData(location);
     }
     public void AdjustSpeedModifier(float amount) {
         speedModifier += amount;
@@ -1639,7 +1642,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                         TILE_OBJECT_TYPE tileObj = furnitureToCreate.ConvertFurnitureToTileObject();
 
                         //create new unbuilt furniture on spot, and target that in the job
-                        TileObject furniture = InteriorMapManager.Instance.CreateNewTileObject<TileObject>(tileObj);
+                        TileObject furniture = InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObj);
                         dwelling.AddPOI(furniture, chosenTile);
                         furniture.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
                         Debug.Log($"Created new unbuilt {furniture.name} at {chosenTile}");
@@ -2397,29 +2400,29 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (marker != null) {
             if (currentParty.icon.isTravellingOutside) {
                 if (specificLocation.areaMap.isShowing) {
-                    InteriorMapManager.Instance.HideAreaMap();
+                    InnerMapManager.Instance.HideAreaMap();
                 }
                 //CameraMove.Instance.CenterCameraOn(currentParty.icon.travelLine.iconImg.gameObject);
                 CameraMove.Instance.CenterCameraOn(homeRegion.coreTile.gameObject);
             } else if (currentParty.icon.isTravelling) {
                 if (marker.gameObject.activeInHierarchy) {
-                    bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != specificLocation;
+                    bool instantCenter = InnerMapManager.Instance.currentlyShowingArea != specificLocation;
                     if (!specificLocation.areaMap.isShowing) {
-                        InteriorMapManager.Instance.ShowAreaMap(specificLocation, false);
+                        InnerMapManager.Instance.ShowAreaMap(specificLocation, false);
                     }
                     AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
                 }
             } else if (currentRegion != null) {
                 CameraMove.Instance.CenterCameraOn(currentRegion.coreTile.gameObject);
             } else {
-                bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != specificLocation;
+                bool instantCenter = InnerMapManager.Instance.currentlyShowingArea != specificLocation;
                 if (specificLocation.areaMap != null) {
                     if (!specificLocation.areaMap.isShowing) {
-                        InteriorMapManager.Instance.ShowAreaMap(specificLocation, false);
+                        InnerMapManager.Instance.ShowAreaMap(specificLocation, false);
                     }
                     AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
                 } else {
-                    InteriorMapManager.Instance.HideAreaMap();
+                    InnerMapManager.Instance.HideAreaMap();
                     CameraMove.Instance.CenterCameraOn(specificLocation.region.coreTile.gameObject);
                 }
             }
@@ -4953,23 +4956,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         return false;
     }
-    public void DropToken(SpecialToken token, Area location, LocationStructure structure, LocationGridTile gridTile = null, bool clearOwner = true) {
+    public void DropToken(SpecialToken token, ILocation location, LocationStructure structure, LocationGridTile gridTile = null, bool clearOwner = true) {
         if (UnobtainToken(token)) {
             if (token.specialTokenType.CreatesObjectWhenDropped()) {
                 location.AddSpecialTokenToLocation(token, structure, gridTile);
-                    //REMOVED: Since all characters are always aware of all objects at all times
-                    ////When items are dropped into the warehouse, make all residents aware of it.
-                    //if (structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
-                    //    for (int i = 0; i < structure.location.region.residents.Count; i++) {
-                    //        Character resident = structure.location.region.residents[i];
-                    //        resident.AddAwareness(token);
-                    //    }
-                    //}
             }
-            //if (structure != homeStructure) {
-            //    //if this character drops this at a structure that is not his/her home structure, set the owner of the item to null
-            //    token.SetCharacterOwner(null);
-            //}
             if (clearOwner) {
                 token.SetCharacterOwner(null);
             }

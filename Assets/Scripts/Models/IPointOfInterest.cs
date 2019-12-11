@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 using Traits;
 
@@ -56,7 +57,7 @@ public class POIData {
         if (poi.gridTileLocation == null) {
             areaID = -1;
         } else {
-            areaID = poi.gridTileLocation.parentAreaMap.area.id;
+            areaID = poi.gridTileLocation.parentMap.location.id;
         }
         poiType = poi.poiType;
         tileObjectType = TILE_OBJECT_TYPE.NONE;

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Inner_Maps;
 
 public struct LogFiller {
 	public object obj;
@@ -81,7 +82,7 @@ public struct SaveDataLogFiller {
             } else if (objIdentifier == "special object") {
                 tempFiller.obj = TokenManager.Instance.GetSpecialObjectByID(objID);
             } else if (objIdentifier == "tile object") {
-                tempFiller.obj = InteriorMapManager.Instance.GetTileObject(objTileObjectType, objID);
+                tempFiller.obj = InnerMapManager.Instance.GetTileObject(objTileObjectType, objID);
             }
             filler = tempFiller;
         }

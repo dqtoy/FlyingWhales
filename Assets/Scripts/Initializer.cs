@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 public class Initializer : MonoBehaviour {
@@ -15,7 +16,7 @@ public class Initializer : MonoBehaviour {
         TimerHubUI.Instance.Initialize();
 
         CameraMove.Instance.Initialize();
-        InteriorMapManager.Instance.Initialize();
+        InnerMapManager.Instance.Initialize();
         ObjectPoolManager.Instance.InitializeObjectPools();
 
         UIManager.Instance.InitializeUI();

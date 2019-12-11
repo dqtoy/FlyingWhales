@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Inner_Maps;
 using UnityEngine.EventSystems;
 
 public class AreaMapCameraMove : MonoBehaviour {
@@ -141,8 +142,8 @@ public class AreaMapCameraMove : MonoBehaviour {
             Vector3 center = new Vector3((MIN_X + MAX_X) * 0.5f, (MIN_Y + MAX_Y) * 0.5f);
             MoveCamera(center);
         } else {
-            InteriorMapManager.Instance.currentlyShowingMap.centerGO.transform.position = new Vector3((MIN_X + MAX_X) * 0.5f, (MIN_Y + MAX_Y) * 0.5f);
-            target = InteriorMapManager.Instance.currentlyShowingMap.centerGO.transform;
+            InnerMapManager.Instance.currentlyShowingMap.centerGo.transform.position = new Vector3((MIN_X + MAX_X) * 0.5f, (MIN_Y + MAX_Y) * 0.5f);
+            target = InnerMapManager.Instance.currentlyShowingMap.centerGo.transform;
         }
     }
     public void CenterCameraOn(GameObject GO, bool instantCenter = false) {
@@ -228,7 +229,7 @@ public class AreaMapCameraMove : MonoBehaviour {
         }
         if (!isDragging) {
             if (Input.GetMouseButtonDown(2)) {
-                if (UIManager.Instance.IsMouseOnUI() || InteriorMapManager.Instance.currentlyHoveredPOI != null) { //if the dragging started on UI, a tileobject or a character, do not allow drag
+                if (UIManager.Instance.IsMouseOnUI() || InnerMapManager.Instance.currentlyHoveredPoi != null) { //if the dragging started on UI, a tileobject or a character, do not allow drag
                     startedOnUI = true;
                     return;
                 }
@@ -317,14 +318,14 @@ public class AreaMapCameraMove : MonoBehaviour {
 
     #region Bounds
     public void CalculateCameraBounds() {
-        if (InteriorMapManager.Instance.currentlyShowingMap == null) {
+        if (InnerMapManager.Instance.currentlyShowingMap == null) {
             return;
         }
-        Vector2 topRightCornerCoordinates = InteriorMapManager.Instance.currentlyShowingMap.map
-            [InteriorMapManager.Instance.currentlyShowingMap.width - 1, InteriorMapManager.Instance.currentlyShowingMap.height - 1].localLocation;
+        Vector2 topRightCornerCoordinates = InnerMapManager.Instance.currentlyShowingMap.map
+            [InnerMapManager.Instance.currentlyShowingMap.width - 1, InnerMapManager.Instance.currentlyShowingMap.height - 1].localLocation;
         //LocationGridTile leftMostTile = InteriorMapManager.Instance.currentlyShowingMap.map[0, InteriorMapManager.Instance.currentlyShowingMap.height / 2];
-        LocationGridTile rightMostTile = InteriorMapManager.Instance.currentlyShowingMap.map[InteriorMapManager.Instance.currentlyShowingMap.width - 1, InteriorMapManager.Instance.currentlyShowingMap.height / 2];
-        LocationGridTile topMostTile = InteriorMapManager.Instance.currentlyShowingMap.map[InteriorMapManager.Instance.currentlyShowingMap.width/2, InteriorMapManager.Instance.currentlyShowingMap.height - 1];
+        LocationGridTile rightMostTile = InnerMapManager.Instance.currentlyShowingMap.map[InnerMapManager.Instance.currentlyShowingMap.width - 1, InnerMapManager.Instance.currentlyShowingMap.height / 2];
+        LocationGridTile topMostTile = InnerMapManager.Instance.currentlyShowingMap.map[InnerMapManager.Instance.currentlyShowingMap.width/2, InnerMapManager.Instance.currentlyShowingMap.height - 1];
         //LocationGridTile botMostTile = InteriorMapManager.Instance.currentlyShowingMap.map[InteriorMapManager.Instance.currentlyShowingMap.width/2, 0];
 
         //float mapX = Mathf.Floor(topRightCornerCoordinates.x);

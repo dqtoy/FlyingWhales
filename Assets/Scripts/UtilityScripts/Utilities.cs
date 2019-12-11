@@ -1623,11 +1623,11 @@ public class Utilities : MonoBehaviour {
     //             return BASE_LANDMARK_TYPE.NONE;
     //     }
     // }
-    public static AREA_TYPE RandomSettlementType() {
+    public static LOCATION_TYPE RandomSettlementType() {
         if (UnityEngine.Random.Range(0, 2) == 0) {
-            return AREA_TYPE.ELVEN_SETTLEMENT;
+            return LOCATION_TYPE.ELVEN_SETTLEMENT;
         }
-        return AREA_TYPE.HUMAN_SETTLEMENT;
+        return LOCATION_TYPE.HUMAN_SETTLEMENT;
     }
     #endregion
 

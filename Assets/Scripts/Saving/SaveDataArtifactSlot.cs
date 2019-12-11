@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 [System.Serializable]
@@ -22,7 +23,7 @@ public class SaveDataArtifactSlot {
         ArtifactSlot slot = new ArtifactSlot();
         slot.SetLevel(level);
         if(id != -1) {
-            Artifact artifact = InteriorMapManager.Instance.GetTileObject(type, id) as Artifact;
+            Artifact artifact = InnerMapManager.Instance.GetTileObject(type, id) as Artifact;
             slot.SetArtifact(artifact);
         }
         return slot;

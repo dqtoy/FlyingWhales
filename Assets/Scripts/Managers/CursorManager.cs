@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -49,12 +50,12 @@ public class CursorManager : MonoBehaviour {
     private void Update() {
         if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
             if (PlayerManager.Instance.player.currentActivePlayerJobAction != null) {
-                LocationGridTile hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
+                LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
                 if (previousHoveredTile != null && previousHoveredTile != hoveredTile) {
                     PlayerManager.Instance.player.currentActivePlayerJobAction.HideRange(previousHoveredTile);
                 }
                 bool canTarget = false;
-                IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
+                IPointOfInterest hoveredPOI = InnerMapManager.Instance.currentlyHoveredPoi;
                 string hoverText = string.Empty;
                 for (int i = 0; i < PlayerManager.Instance.player.currentActivePlayerJobAction.targetTypes.Length; i++) {
                     switch (PlayerManager.Instance.player.currentActivePlayerJobAction.targetTypes[i]) {
@@ -116,7 +117,7 @@ public class CursorManager : MonoBehaviour {
                 UIManager.Instance.HideSmallInfo();
                 CombatAbility ability = PlayerManager.Instance.player.currentActiveCombatAbility;
                 if (ability.abilityRadius == 0) {
-                    IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
+                    IPointOfInterest hoveredPOI = InnerMapManager.Instance.currentlyHoveredPoi;
                     if (hoveredPOI != null) {
                         if (ability.CanTarget(hoveredPOI)) {
                             SetCursorTo(Cursor_Type.Check);
@@ -125,20 +126,20 @@ public class CursorManager : MonoBehaviour {
                         }
                     }
                 } else {
-                    LocationGridTile hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
+                    LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
                     if (hoveredTile != null) {
                         SetCursorTo(Cursor_Type.Check);
-                        List<LocationGridTile> highlightTiles = hoveredTile.parentAreaMap.GetTilesInRadius(hoveredTile, ability.abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
-                        if (InteriorMapManager.Instance.currentlyHighlightedTiles != null) {
-                            InteriorMapManager.Instance.UnhighlightTiles();
-                            InteriorMapManager.Instance.HighlightTiles(highlightTiles);
+                        List<LocationGridTile> highlightTiles = hoveredTile.parentMap.GetTilesInRadius(hoveredTile, ability.abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+                        if (InnerMapManager.Instance.currentlyHighlightedTiles != null) {
+                            InnerMapManager.Instance.UnhighlightTiles();
+                            InnerMapManager.Instance.HighlightTiles(highlightTiles);
                         } else {
-                            InteriorMapManager.Instance.HighlightTiles(highlightTiles);
+                            InnerMapManager.Instance.HighlightTiles(highlightTiles);
                         }
                     }
                 }
             } else if (PlayerManager.Instance.player.currentActiveIntel != null) {
-                IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
+                IPointOfInterest hoveredPOI = InnerMapManager.Instance.currentlyHoveredPoi;
                 if (hoveredPOI != null) {
                     string hoverText = string.Empty;
                     if (PlayerManager.Instance.player.CanShareIntel(hoveredPOI, ref hoverText)) {

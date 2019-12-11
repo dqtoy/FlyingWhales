@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Inner_Maps;
 
 public enum PROGRESSION_SPEED {
     X1,
@@ -647,13 +648,12 @@ public enum BASE_AREA_TYPE {
     DUNGEON,
     PLAYER,
 }
-public enum AREA_TYPE {
+public enum LOCATION_TYPE {
     ELVEN_SETTLEMENT,
     HUMAN_SETTLEMENT,
-    WILDLANDS,
-    DEMONIC_INTRUSION, //Player area
-    ANCIENT_RUINS,
+    DEMONIC_INTRUSION,
     DUNGEON,
+    EMPTY,
 }
 public enum ELEMENT {
     NONE,
@@ -1151,6 +1151,7 @@ public enum TILE_OBJECT_TYPE {
     STONE_PILE = 25,
     METAL_PILE = 26,
     TORNADO = 27,
+    REGION_TILE_OBJECT = 28,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -1665,10 +1666,10 @@ public static class Extensions {
     #endregion
 
     #region Areas
-    public static bool IsSettlementType(this AREA_TYPE type) {
+    public static bool IsSettlementType(this LOCATION_TYPE type) {
         switch (type) {
-            case AREA_TYPE.ELVEN_SETTLEMENT:
-            case AREA_TYPE.HUMAN_SETTLEMENT:
+            case LOCATION_TYPE.ELVEN_SETTLEMENT:
+            case LOCATION_TYPE.HUMAN_SETTLEMENT:
                 return true;
             default:
                 return false;

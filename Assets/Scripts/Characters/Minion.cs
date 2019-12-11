@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Inner_Maps;
 using Traits;
 
 public class Minion {
@@ -373,7 +374,7 @@ public class Minion {
     /// Add trait function for minions. Added handling for when a minion gains a trait while outside of an area map. All traits are stored and will be added once the minion is placed at an area map.
     /// </summary>
     public bool AddTrait(string traitName, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
-        if (InteriorMapManager.Instance.isAnAreaMapShowing) {
+        if (InnerMapManager.Instance.isAnAreaMapShowing) {
             return character.traitContainer.AddTrait(character, traitName, characterResponsible, gainedFromDoing);
         } else {
             traitsToAdd.Add(traitName);

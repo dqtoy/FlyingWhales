@@ -3,11 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using PathFind;
 using System.Linq;
+using Inner_Maps;
 using SpriteGlow;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
+public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
 
     public HexTileData data;
     private Area _areaOfTile;
@@ -201,9 +202,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #endif
         RACE race = RACE.NONE;
         if (areaOfTile != null) {
-            if (areaOfTile.areaType == AREA_TYPE.ELVEN_SETTLEMENT) {
+            if (areaOfTile.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT) {
                 race = RACE.ELVES;
-            } else if (areaOfTile.areaType == AREA_TYPE.HUMAN_SETTLEMENT) {
+            } else if (areaOfTile.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT) {
                 race = RACE.HUMANS;
             }
         }
@@ -776,7 +777,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             return;
         }
         if(region.area != null && region.area != PlayerManager.Instance.player.playerArea) {
-            InteriorMapManager.Instance.TryShowAreaMap(region.area);
+            InnerMapManager.Instance.TryShowAreaMap(region.area);
         }
     }
     public void PointerClick(BaseEventData bed) {
@@ -805,8 +806,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         MouseExit();
     }
     public void CenterCameraHere() {
-        if (InteriorMapManager.Instance.isAnAreaMapShowing) {
-            InteriorMapManager.Instance.HideAreaMap();
+        if (InnerMapManager.Instance.isAnAreaMapShowing) {
+            InnerMapManager.Instance.HideAreaMap();
             UIManager.Instance.OnCameraOutOfFocus();
         }
         CameraMove.Instance.CenterCameraOn(gameObject);
@@ -858,7 +859,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         return this.locationName;
     }
     public void ShowTileInfo() {
-        if (areaOfTile != null && areaOfTile.areaType != AREA_TYPE.DEMONIC_INTRUSION) {
+        if (areaOfTile != null && areaOfTile.locationType != LOCATION_TYPE.DEMONIC_INTRUSION) {
             UIManager.Instance.ShowSmallInfo("Double click to view.", areaOfTile.name);
         }
         //string summary = "Landmark: " + landmarkOnTile?.specificLandmarkType.ToString();

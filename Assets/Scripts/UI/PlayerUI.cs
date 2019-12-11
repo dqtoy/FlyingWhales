@@ -6,6 +6,7 @@ using UnityEngine.UI.Extensions;
 using TMPro;
 using System.Linq;
 using System;
+using Inner_Maps;
 using Traits;
 
 public class PlayerUI : MonoBehaviour {
@@ -1072,7 +1073,7 @@ public class PlayerUI : MonoBehaviour {
             //}
         }
         if (PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile != null) {
-            InteriorMapManager.Instance.TryShowAreaMap(PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile);
+            InnerMapManager.Instance.TryShowAreaMap(PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile);
         } else {
             //PlayerManager.Instance.player.currentTileBeingCorrupted.landmarkOnTile.ShowEventBasedOnYieldType();
             PlayerManager.Instance.player.InvadeATile();
@@ -1122,7 +1123,7 @@ public class PlayerUI : MonoBehaviour {
     private bool isSummoning = false; //if the player has clicked the summon button and is targetting a tile to place the summon on.
     private SummonSlot currentlySelectedSummonSlot; //the summon type that is currently shown in the UI
     private void UpdateSummonsInteraction() {
-        bool state = currentlySelectedSummonSlot != null && currentlySelectedSummonSlot.summon != null && !currentlySelectedSummonSlot.summon.hasBeenUsed && InteriorMapManager.Instance.isAnAreaMapShowing;
+        bool state = currentlySelectedSummonSlot != null && currentlySelectedSummonSlot.summon != null && !currentlySelectedSummonSlot.summon.hasBeenUsed && InnerMapManager.Instance.isAnAreaMapShowing;
         //summonCover.SetActive(!state);
         summonBtn.interactable = state;
     }
@@ -1268,7 +1269,7 @@ public class PlayerUI : MonoBehaviour {
         //isSummoning = true;
     }
     public void TryPlaceSummon(Summon summon) {
-        LocationGridTile mainEntrance = InteriorMapManager.Instance.currentlyShowingArea.GetRandomUnoccupiedEdgeTile();
+        LocationGridTile mainEntrance = InnerMapManager.Instance.currentlyShowingArea.GetRandomUnoccupiedEdgeTile();
         //LocationGridTile tile = InteriorMapManager.Instance.GetTileFromMousePosition();
         Summon summonToPlace = summon;
         summonToPlace.CreateMarker();
@@ -1315,7 +1316,7 @@ public class PlayerUI : MonoBehaviour {
     private ArtifactSlot currentlySelectedArtifactSlot; //the artifact that is currently shown in the UI
     private void UpdateArtifactsInteraction() {
         bool state = currentlySelectedArtifactSlot != null && currentlySelectedArtifactSlot.artifact != null && !currentlySelectedArtifactSlot.artifact.hasBeenUsed;
-        summonArtifactBtn.interactable = state && InteriorMapManager.Instance.isAnAreaMapShowing;
+        summonArtifactBtn.interactable = state && InnerMapManager.Instance.isAnAreaMapShowing;
         summonArtifactCover.SetActive(!summonArtifactBtn.interactable);
     }
     private void OnPlayerGainedArtifactSlot(ArtifactSlot slot) {
@@ -1451,7 +1452,7 @@ public class PlayerUI : MonoBehaviour {
     private void TryPlaceArtifact() {
         isSummoningArtifact = false;
         if (!UIManager.Instance.IsMouseOnUI()) {
-            LocationGridTile tile = InteriorMapManager.Instance.GetTileFromMousePosition();
+            LocationGridTile tile = InnerMapManager.Instance.GetTileFromMousePosition();
             if (tile.objHere == null) {
                 Artifact artifactToPlace = currentlySelectedArtifactSlot.artifact;
                 if (tile.structure.AddPOI(artifactToPlace, tile)) {
@@ -1505,11 +1506,11 @@ public class PlayerUI : MonoBehaviour {
     }
     public void BackToWorld() {
         Utilities.DestroyChildren(killSummaryScrollView.content);
-        Area closedArea = InteriorMapManager.Instance.HideAreaMap();
+        Area closedArea = InnerMapManager.Instance.HideAreaMap();
         SetCurrentlySelectedSummonSlot(PlayerManager.Instance.player.summonSlots.FirstOrDefault());
         SetCurrentlySelectedArtifactSlot(PlayerManager.Instance.player.artifactSlots.FirstOrDefault());
         successfulAreaCorruptionGO.SetActive(false);
-        InteriorMapManager.Instance.DestroyAreaMap(closedArea);
+        InnerMapManager.Instance.DestroyAreaMap(closedArea);
 
         if (LandmarkManager.Instance.AreAllNonPlayerAreasCorrupted()) {
             GameOver("You have conquered all settlements! This world is now yours! Congratulations!");
@@ -1558,7 +1559,7 @@ public class PlayerUI : MonoBehaviour {
     public bool isShowingKillSummary { get { return killCountGO.activeSelf; } }
     [SerializeField] private Toggle killSummaryToggle;
     private void UpdateKillCountActiveState() {
-        bool state = InteriorMapManager.Instance.isAnAreaMapShowing;
+        bool state = InnerMapManager.Instance.isAnAreaMapShowing;
         killCountGO.SetActive(state);
         killSummaryGO.SetActive(false);
     }

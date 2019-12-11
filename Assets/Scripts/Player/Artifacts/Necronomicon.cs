@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 public class Necronomicon : Artifact {
@@ -11,9 +12,6 @@ public class Necronomicon : Artifact {
 	public Necronomicon() : base(ARTIFACT_TYPE.Necronomicon) {
         raiseDeadLevel = 5;
     }
-    //public Necronomicon(SaveDataArtifactSlot data) : base(data) {
-    //    raiseDeadLevel = 5;
-    //}
     public Necronomicon(SaveDataArtifact data) : base(data) {
         raiseDeadLevel = 5;
     }
@@ -52,7 +50,7 @@ public class Necronomicon : Artifact {
     }
     public void Activate() {
         isActivated = true;
-        List<Character> characters = gridTileLocation.structure.location.GetAllDeadCharactersInArea();
+        List<Character> characters = LandmarkManager.Instance.GetAllDeadCharactersInLocation(gridTileLocation.parentMap.location);
         for (int i = 0; i < characters.Count; i++) {
             Character currCharacter = characters[i];
             if (currCharacter is Summon) {
