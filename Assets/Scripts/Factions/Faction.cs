@@ -25,8 +25,9 @@ public class Faction {
     public Color factionColor { get; protected set; }
     public List<Character> characters { get; protected set; }//List of characters that are part of the faction
     public List<Region> ownedRegions { get; protected set; }
-    public List<RACE> recruitableRaces { get; protected set; }
-    public List<RACE> startingFollowers { get; protected set; }
+    //public List<RACE> recruitableRaces { get; protected set; }
+    //public List<RACE> startingFollowers { get; protected set; }
+    public List<Character> bannedCharacters { get; protected set; }
     public Dictionary<Faction, FactionRelationship> relationships { get; protected set; }
 
     public MORALITY morality { get; private set; }
@@ -69,8 +70,8 @@ public class Faction {
         ownedLandmarks = new List<BaseLandmark>();
         relationships = new Dictionary<Faction, FactionRelationship>();
         ownedRegions = new List<Region>();
-        recruitableRaces = new List<RACE>();
-        startingFollowers = new List<RACE>();
+        //recruitableRaces = new List<RACE>();
+        //startingFollowers = new List<RACE>();
         history = new List<Log>();
         ideologyComponent = new FactionIdeologyComponent(this);
         AddListeners();
@@ -96,8 +97,8 @@ public class Faction {
         ownedLandmarks = new List<BaseLandmark>();
         relationships = new Dictionary<Faction, FactionRelationship>();
         ownedRegions = new List<Region>();
-        recruitableRaces = new List<RACE>();
-        startingFollowers = new List<RACE>();
+        //recruitableRaces = new List<RACE>();
+        //startingFollowers = new List<RACE>();
         history = new List<Log>();
         ideologyComponent = new FactionIdeologyComponent(this);
         AddListeners();
@@ -108,10 +109,10 @@ public class Faction {
      Set the leader of this faction, change this per faction type if needed.
      This creates relationships between the leader and it's village heads by default.
          */
-    public virtual void SetLeader(ILeader leader) {
+    public virtual void SetLeader(ILeader leader, bool setIdeology = true) {
         if (this.leader != null && this.leader is Character) {
             Character previousRuler = this.leader as Character;
-            if(previousRuler.role.roleType != CHARACTER_ROLE.NOBLE) {
+            if (previousRuler.role.roleType != CHARACTER_ROLE.NOBLE) {
                 previousRuler.AssignRole(CharacterRole.NOBLE);
                 previousRuler.AssignClassByRole(previousRuler.role);
             }
@@ -122,7 +123,7 @@ public class Faction {
         }
         if (leader != null && leader is Character) {
             Character newRuler = leader as Character;
-            if(newRuler.role.roleType != CHARACTER_ROLE.LEADER) {
+            if (newRuler.role.roleType != CHARACTER_ROLE.LEADER) {
                 newRuler.AssignRole(CharacterRole.LEADER);
                 newRuler.AssignClassByRole(newRuler.role);
             }
@@ -136,9 +137,17 @@ public class Faction {
         OnlySetLeader(leader);
 
         //Every time the leader changes, faction ideology changes
-        if(leader is Character) {
-            FACTION_IDEOLOGY newIdeology = Utilities.GetRandomEnumValue<FACTION_IDEOLOGY>();
-            ideologyComponent.SwitchToIdeology(newIdeology); //Inclusive only right now
+        if (leader is Character) {
+            if (setIdeology) {
+                FACTION_IDEOLOGY newIdeology = Utilities.GetRandomEnumValue<FACTION_IDEOLOGY>();
+                ideologyComponent.SwitchToIdeology(newIdeology); //Inclusive only right now
+            }
+            Character characterLeader = leader as Character;
+            if(characterLeader.currentRegion != null) {
+                characterLeader.currentRegion.AddFactionHere(characterLeader.faction);
+            } else if (characterLeader.specificLocation != null) {
+                characterLeader.specificLocation.region.AddFactionHere(characterLeader.faction);
+            }
         }
     }
     #endregion
@@ -156,7 +165,7 @@ public class Faction {
 
     #region Characters
     public bool JoinFaction(Character character) {
-        if(ideologyComponent.DoesCharacterFitCurrentIdeology(character)) {
+        if (ideologyComponent.DoesCharacterFitCurrentIdeology(character)) {
             if (!characters.Contains(character)) {
                 characters.Add(character);
                 character.SetFaction(this);
@@ -212,7 +221,7 @@ public class Faction {
             Character currCharacter = characters[i];
             if (currCharacter.gender == gender && !currCharacter.isDead && !currCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && !currCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
                 for (int j = 0; j < role.Length; j++) {
-                    if(currCharacter.role.roleType == role[j]) {
+                    if (currCharacter.role.roleType == role[j]) {
                         chars.Add(currCharacter);
                         break;
                     }
@@ -237,20 +246,20 @@ public class Faction {
         return chars;
     }
     public void SetNewLeader() {
-        if(leader != null) {
+        if (leader != null) {
             Character previousRuler = leader as Character;
             Character newRuler = null;
             string log = GameManager.Instance.TodayLogString() + name + " faction is deciding a new leader...";
 
             log += "\nChecking male relatives of the king...";
             List<Character> maleRelatives = FactionManager.Instance.GetViableRulers(previousRuler, GENDER.MALE, RELATIONSHIP_TRAIT.RELATIVE);
-            if(maleRelatives.Count > 0) {
+            if (maleRelatives.Count > 0) {
                 newRuler = maleRelatives[UnityEngine.Random.Range(0, maleRelatives.Count)];
                 log += "\nNew Ruler: " + newRuler.name;
             } else {
                 log += "\nChecking male nobles...";
                 List<Character> maleNobles = GetViableCharacters(GENDER.MALE, "Noble");
-                if(maleNobles.Count > 0) {
+                if (maleNobles.Count > 0) {
                     newRuler = maleNobles[UnityEngine.Random.Range(0, maleNobles.Count)];
                     log += "\nNew Ruler: " + newRuler.name;
                 } else {
@@ -299,7 +308,7 @@ public class Faction {
             }
 
             previousRuler.PrintLogIfActive(log);
-            if(newRuler != null) {
+            if (newRuler != null) {
                 SetLeader(newRuler);
 
                 Log logNotif = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_faction_leader");
@@ -307,7 +316,7 @@ public class Faction {
                 logNotif.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
                 newRuler.AddHistory(logNotif);
                 PlayerManager.Instance.player.ShowNotification(logNotif);
-            } 
+            }
             //else {
             //    Debug.LogError(GameManager.Instance.TodayLogString() + name + " couldn't set a new leader replacing " + previousRuler.name);
             //}
@@ -332,6 +341,36 @@ public class Faction {
             character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
 
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "left_faction_not_fit");
+            log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
+            character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+        }
+    }
+    public bool IsCharacterBannedFromJoining(Character character) {
+        return HasCharacterBeenBanned(character);
+    }
+    public bool HasCharacterBeenBanned(Character character) {
+        for (int i = 0; i < bannedCharacters.Count; i++) {
+            if (character == bannedCharacters[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public void AddBannedCharacter(Character character) {
+        if (!HasCharacterBeenBanned(character)) {
+            bannedCharacters.Add(character);
+        }
+    }
+    public bool RemoveBannedCharacter(Character character) {
+        return bannedCharacters.Remove(character);
+    }
+    public void KickOutCharacter(Character character) {
+        if(character.faction == this) {
+            character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
+            AddBannedCharacter(character);
+
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "kick_out_faction_character");
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
             character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
@@ -439,11 +478,11 @@ public class Faction {
         isActive = state;
         Messenger.Broadcast(Signals.FACTION_ACTIVE_CHANGED, this);
     }
-    public List<Character> GenerateStartingCitizens(int leaderLevel, int citizensLevel, int citizenCount, LocationClassManager classManager) {
+    public List<Character> GenerateStartingCitizens(int leaderLevel, int citizensLevel, int citizenCount, LocationClassManager classManager, Region region) {
         List<Character> createdCharacters = new List<Character>();
         for (int i = 0; i < citizenCount; i++) {
             string className = classManager.GetCurrentClassToCreate();
-            Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, Utilities.GetRandomGender(), this, mainRegion);
+            Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, Utilities.GetRandomGender(), this, region);
             if(className == "Leader") {
                 citizen.LevelUp(leaderLevel - 1);
                 SetLeader(citizen);
@@ -452,7 +491,7 @@ public class Faction {
             }
             createdCharacters.Add(citizen);
         }
-        mainRegion.area.SetInitialResidentCount(citizenCount);
+        region.area.SetInitialResidentCount(citizenCount);
         RelationshipManager.Instance.GenerateRelationships(this.characters);
         return createdCharacters;
     }

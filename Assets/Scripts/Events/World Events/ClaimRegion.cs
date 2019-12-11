@@ -15,7 +15,8 @@ public class ClaimRegion : WorldEvent {
         Log log = CreateNewEventLog("after_effect", region);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
-        LandmarkManager.Instance.OwnRegion(spawner.faction, spawner.faction.race, region);
+        region.AddFactionHere(spawner.faction);
+        //LandmarkManager.Instance.OwnRegion(spawner.faction, spawner.faction.race, region);
         base.ExecuteAfterEffect(region, spawner);
     }
     public override bool CanSpawnEventAt(Region region, Character spawner) {

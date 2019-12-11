@@ -401,6 +401,8 @@ public class RegionInfoUI : UIMenu {
             UpdateTheNeedlesUI();
         } else if (theEyeUI.gameObject.activeSelf) {
             UpdateTheEyeUI();
+        } else if (fingersUI.gameObject.activeSelf) {
+            UpdateTheFingersUI();
         }
     }
     public void OnDemonicToggleStateChanged(bool isOn) {
@@ -413,6 +415,7 @@ public class RegionInfoUI : UIMenu {
             HidePlayerSummonMinionUI();
             HideTheEyeUI();
             HideTheNeedlesUI();
+            HideTheFingersUI();
             //activate the neeeded UI for the tab
             if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE && activeRegion.coreTile.isCorrupted) {
                 ShowPlayerBuildLandmarkUI();
@@ -428,6 +431,8 @@ public class RegionInfoUI : UIMenu {
                 ShowTheEyeUI();
             } else if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_NEEDLES) {
                 ShowTheNeedlesUI();
+            } else if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_FINGERS) {
+                ShowTheFingersUI();
             }
         } else {
             //deactivate the UI for the tab
@@ -438,6 +443,7 @@ public class RegionInfoUI : UIMenu {
             HidePlayerSummonMinionUI();
             HideTheEyeUI();
             HideTheNeedlesUI();
+            HideTheFingersUI();
         }
     }
 
@@ -530,6 +536,19 @@ public class RegionInfoUI : UIMenu {
     }
     private void UpdateTheNeedlesUI() {
         needlesUI.UpdateUI();
+    }
+    #endregion
+
+    #region The Needles
+    [SerializeField] private TheFingersUI fingersUI;
+    private void ShowTheFingersUI() {
+        fingersUI.ShowTheFingersUI(activeRegion.mainLandmark as TheFingers);
+    }
+    private void HideTheFingersUI() {
+        fingersUI.HideTheFingersUI();
+    }
+    private void UpdateTheFingersUI() {
+        fingersUI.UpdateTheFingersUI();
     }
     #endregion
 

@@ -3,11 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Exclusive : FactionIdeology {
-    private const string GENDER = "Gender";
-    private const string RACE = "Race";
-    private const string TRAIT = "Trait";
-
-    public string identifier { get; private set; }
+    public EXCLUSIVE_IDEOLOGY_CATEGORIES category { get; private set; }
     public RACE raceRequirement { get; private set; }
     public GENDER genderRequirement { get; private set; }
     public string traitRequirement { get; private set; }
@@ -19,47 +15,51 @@ public class Exclusive : FactionIdeology {
     #region Overrides
     public override void SetRequirements(Faction faction) {
         int chance = UnityEngine.Random.Range(0, 3);
-        //identifier = TRAIT;
-        //if(chance == 0) {
-        //    identifier = GENDER;
-        //    genderRequirement = faction.leader.gender;
-        //} else if (chance == 1) {
-        //    identifier = RACE;
-        //    raceRequirement = faction.leader.race;
-        //} else {
-            identifier = TRAIT;
+        category = EXCLUSIVE_IDEOLOGY_CATEGORIES.TRAIT;
+        if (chance == 0) {
+            category = EXCLUSIVE_IDEOLOGY_CATEGORIES.GENDER;
+            genderRequirement = faction.leader.gender;
+        } else if (chance == 1) {
+            category = EXCLUSIVE_IDEOLOGY_CATEGORIES.RACE;
+            raceRequirement = faction.leader.race;
+        } else {
+            category = EXCLUSIVE_IDEOLOGY_CATEGORIES.TRAIT;
             traitRequirement = GetRandomTraitRequirement();
-        //}
+        }
     }
     public override bool DoesCharacterFitIdeology(Character character) {
-        if(identifier == GENDER) {
+        if(category == EXCLUSIVE_IDEOLOGY_CATEGORIES.GENDER) {
             return character.gender == genderRequirement;
-        } else if (identifier == RACE) {
+        } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.RACE) {
             return character.race == raceRequirement;
         }
         return character.traitContainer.GetNormalTrait(traitRequirement) != null;
     }
     public override string GetRequirementsForJoiningAsString() {
-        return identifier + ": " + GetRequirementAsString();
+        return category + ": " + GetRequirementAsString();
     }
-
     #endregion
 
+    public void SetIndividualRequirements(EXCLUSIVE_IDEOLOGY_CATEGORIES category, string requirement) {
+        if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.GENDER) {
+            genderRequirement = (GENDER) System.Enum.Parse(typeof(GENDER), requirement);
+        } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.RACE) {
+            raceRequirement = (RACE) System.Enum.Parse(typeof(RACE), requirement);
+        } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.TRAIT) {
+            traitRequirement = requirement;
+        }
+    }
+
     private string GetRequirementAsString() {
-        if (identifier == GENDER) {
+        if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.GENDER) {
             return genderRequirement.ToString();
-        } else if (identifier == RACE) {
+        } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.RACE) {
             return raceRequirement.ToString();
         }
         return traitRequirement;
     }
     private string GetRandomTraitRequirement() {
-        int chance = UnityEngine.Random.Range(0, 3);
-        if (chance == 0) {
-            return "Worker";
-        } else if (chance == 1) {
-            return "Combatant";
-        }
-        return "Royalty";
+        string[] requirements = FactionManager.Instance.exclusiveIdeologyTraitRequirements;
+        return requirements[UnityEngine.Random.Range(0, requirements.Length)];
     }
 }

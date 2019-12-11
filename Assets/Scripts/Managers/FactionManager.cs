@@ -20,6 +20,8 @@ public class FactionManager : MonoBehaviour {
 
     private List<Sprite> usedEmblems = new List<Sprite>();
 
+    public readonly string[] exclusiveIdeologyTraitRequirements = new string[] { "Worker", "Combatant", "Royalty" };
+
     #region getters
     public Faction zombieFaction {
         get {

@@ -313,9 +313,10 @@ public class LandmarkManager : MonoBehaviour {
             faction.SetInitialFactionLeaderGender(GENDER.MALE);
             faction.SetRace(RACE.HUMANS);
         }
-        OwnRegion(faction, faction.race, settlementRegion);
+        //settlementRegion.AddFactionHere(faction); //This is removed because when a character sets his home it automatically adds his faction to the location
+        //OwnRegion(faction, faction.race, settlementRegion);
         int randomizedNumberOfResident = UnityEngine.Random.Range(3, 7);
-        List<Character> createdCharacters = faction.GenerateStartingCitizens(2, 1, randomizedNumberOfResident, settlementArea.classManager);
+        List<Character> createdCharacters = faction.GenerateStartingCitizens(2, 1, randomizedNumberOfResident, settlementArea.classManager, settlementRegion);
         settlementArea.GenerateStructures(faction.GetNumberOfDwellingsToHouseCharacters(createdCharacters));
 
         //assign characters to their respective homes. No one should be homeless
