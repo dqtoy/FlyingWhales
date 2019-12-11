@@ -12,7 +12,7 @@ public class LocationJobManager {
     public LocationJobManager(Area location) {
         this.location = location;
         jobNames = new List<string>();
-        createJobsTriggerTick = 60; //150
+        createJobsTriggerTick = GameManager.Instance.GetTicksBasedOnHour(9); //150
         Messenger.AddListener(Signals.TICK_STARTED, ProcessJobs);
     }
 
@@ -83,9 +83,10 @@ public class LocationJobManager {
         return hasCreateJob;
     }
     private bool CreateCleanseRegionJob() {
-        if (UnityEngine.Random.Range(0, 2) == 0) {
-            if (HasCorruptedRegionWithoutLandmark()) {
-                CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.CLEANSE_REGION, CHARACTER_STATE.MOVE_OUT, location);
+        if (UnityEngine.Random.Range(0, 2) <= 0) {
+            Region region;
+            if (TryGetCorruptedRegionWithoutLandmark(out region)) {
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CLEANSE_REGION, INTERACTION_TYPE.CLEANSE_REGION, region.regionTileObject, location);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCleanseRegionJob);
                 location.AddToAvailableJobs(job);
                 return true;
@@ -95,8 +96,9 @@ public class LocationJobManager {
     }
     private bool CreateClaimRegionJob() {
         if (UnityEngine.Random.Range(0, 2) == 0) {
-            if (HasOneAdjacentRegionWithoutFactionOwner()) {
-                CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.CLAIM_REGION, CHARACTER_STATE.MOVE_OUT, location);
+            Region region;
+            if (TryGetAdjacentRegionWithoutFactionOwner(out region)) {
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CLAIM_REGION, INTERACTION_TYPE.CLAIM_REGION, region.regionTileObject, location);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoClaimRegionJob);
                 location.AddToAvailableJobs(job);
                 return true;
@@ -106,8 +108,9 @@ public class LocationJobManager {
     }
     private bool CreateInvadeRegionJob() {
         if (UnityEngine.Random.Range(0, 2) == 0) {
-            if (HasOneAdjacentRegionAtWarWithThisLocation()) {
-                CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.INVADE_REGION, CHARACTER_STATE.MOVE_OUT, location);
+            Region region;
+            if (TryGetAdjacentRegionAtWarWithThisLocation(out region)) {
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INVADE_REGION, INTERACTION_TYPE.INVADE_REGION, region.regionTileObject, location);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoInvadeRegionJob);
                 location.AddToAvailableJobs(job);
                 return true;
@@ -115,35 +118,41 @@ public class LocationJobManager {
         }
         return false;
     }
-    private bool HasCorruptedRegionWithoutLandmark() {
+    private bool TryGetCorruptedRegionWithoutLandmark(out Region validRegion) {
         List<Region> regions = PlayerManager.Instance.player.playerFaction.ownedRegions;
         for (int i = 0; i < regions.Count; i++) {
             Region region = regions[i];
             if(region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE) {
+                validRegion = region;
                 return true;
             }
         }
+        validRegion = null;
         return false;
     }
-    private bool HasOneAdjacentRegionWithoutFactionOwner() {
+    private bool TryGetAdjacentRegionWithoutFactionOwner(out Region validRegion) {
         List<Region> connectedRegions = location.region.connections;
         for (int i = 0; i < connectedRegions.Count; i++) {
             Region region = connectedRegions[i];
             if (!region.coreTile.isCorrupted && region.owner == null) {
+                validRegion = region;
                 return true;
             }
         }
+        validRegion = null;
         return false;
     }
-    private bool HasOneAdjacentRegionAtWarWithThisLocation() {
+    private bool TryGetAdjacentRegionAtWarWithThisLocation(out Region validRegion) {
         List<Region> connectedRegions = location.region.connections;
         for (int i = 0; i < connectedRegions.Count; i++) {
             Region region = connectedRegions[i];
             if (!region.coreTile.isCorrupted && region.area == null && region.owner != null
                 && region.residents.Count <= 0 && region.owner.HasRelationshipStatusWith(FACTION_RELATIONSHIP_STATUS.HOSTILE, location.region.owner)) {
+                validRegion = region;
                 return true;
             }
         }
+        validRegion = null;
         return false;
     }
     #endregion
@@ -182,12 +191,12 @@ public class LocationJobManager {
     }
     private bool CreateAttackDemonicRegionJobPart2() {
         if (UnityEngine.Random.Range(0, 2) == 0) {
-            if (!HasCorruptedRegionWithoutLandmark()) {
-                CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.ATTACK_DEMONIC_REGION, CHARACTER_STATE.MOVE_OUT, location);
-                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoAttackDemonicRegionJob);
-                location.AddToAvailableJobs(job);
-                return true;
-            }
+//            if (!TryGetCorruptedRegionWithoutLandmark()) {
+//                CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.ATTACK_DEMONIC_REGION, CHARACTER_STATE.MOVE_OUT, location);
+//                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoAttackDemonicRegionJob);
+//                location.AddToAvailableJobs(job);
+//                return true;
+//            }
         }
         return false;
     }

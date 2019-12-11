@@ -201,6 +201,18 @@ namespace Inner_Maps {
             }
             return tiles;
         }
+        public LocationGridTile GetRandomUnoccupiedEdgeTile() {
+            List<LocationGridTile> unoccupiedEdgeTiles = new List<LocationGridTile>();
+            for (int i = 0; i < allEdgeTiles.Count; i++) {
+                if (!allEdgeTiles[i].isOccupied && allEdgeTiles[i].structure != null) { // - There should not be a checker for structure, fix the generation of allEdgeTiles in AreaInnerTileMap's GenerateGrid
+                    unoccupiedEdgeTiles.Add(allEdgeTiles[i]);
+                }
+            }
+            if (unoccupiedEdgeTiles.Count > 0) {
+                return unoccupiedEdgeTiles[UnityEngine.Random.Range(0, unoccupiedEdgeTiles.Count)];
+            }
+            return null;
+        }
         #endregion
         
         #region Points of Interest

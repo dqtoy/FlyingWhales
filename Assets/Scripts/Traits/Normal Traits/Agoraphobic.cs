@@ -89,8 +89,8 @@ namespace Traits {
 
         private void ApplyAgoraphobicEffect(Character character, bool processCombat) {
             character.marker.AddAvoidsInRange(character.marker.inVisionCharacters, processCombat, "agoraphobia");
-            character.AdjustHappiness(-50);
-            character.AdjustTiredness(-150);
+            character.needsComponent.AdjustHappiness(-50);
+            character.needsComponent.AdjustTiredness(-150);
         }
     }
 }

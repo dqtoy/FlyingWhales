@@ -178,9 +178,13 @@ public class GoapAction {
     protected bool IsTargetMissing(ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
-        if (poiTarget.IsAvailable() == false || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation) {
+        if (poiTarget.IsAvailable() == false || poiTarget.gridTileLocation == null) {
             return true;
         }
+        if (poiTarget.gridTileLocation.structure.location != actor.specificLocation  && poiTarget.gridTileLocation.structure.location != actor.currentRegion) {
+            return true;
+        }
+        
         if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET) {
             //if the action type is NEAR_TARGET, then check if the actor is near the target, if not, this action is invalid.
             if (actor.gridTileLocation != poiTarget.gridTileLocation && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation) == false) {

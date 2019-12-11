@@ -203,12 +203,12 @@ public class SaveDataCharacter {
             items.Add(newSaveDataItem);
         }
 
-        tiredness = character.tiredness;
-        fullness = character.fullness;
-        happiness = character.happiness;
-        fullnessDecreaseRate = character.fullnessDecreaseRate;
-        tirednessDecreaseRate = character.tirednessDecreaseRate;
-        happinessDecreaseRate = character.happinessDecreaseRate;
+        tiredness = character.needsComponent.tiredness;
+        fullness = character.needsComponent.fullness;
+        happiness = character.needsComponent.happiness;
+        fullnessDecreaseRate = character.needsComponent.fullnessDecreaseRate;
+        tirednessDecreaseRate = character.needsComponent.tirednessDecreaseRate;
+        happinessDecreaseRate = character.needsComponent.happinessDecreaseRate;
 
         ignoreHostility = character.ignoreHostility;
         originalClassName = character.originalClassName;
@@ -227,10 +227,10 @@ public class SaveDataCharacter {
             alterEgos.Add(saveDataAlterEgo);
         }
 
-        fullnessForcedTick = character.fullnessForcedTick;
-        tirednessForcedTick = character.tirednessForcedTick;
-        forcedFullnessRecoveryTimeInWords = character.forcedFullnessRecoveryTimeInWords;
-        forcedTirednessRecoveryTimeInWords = character.forcedTirednessRecoveryTimeInWords;
+        fullnessForcedTick = character.needsComponent.fullnessForcedTick;
+        tirednessForcedTick = character.needsComponent.tirednessForcedTick;
+        forcedFullnessRecoveryTimeInWords = character.needsComponent.forcedFullnessRecoveryTimeInWords;
+        forcedTirednessRecoveryTimeInWords = character.needsComponent.forcedTirednessRecoveryTimeInWords;
 
         returnedToLife = character.returnedToLife;
 
@@ -285,9 +285,9 @@ public class SaveDataCharacter {
             jobs.Add(data);
         }
 
-        currentSleepTicks = character.currentSleepTicks;
-        sleepScheduleJobID = character.sleepScheduleJobID;
-        hasCancelledSleepSchedule = character.hasCancelledSleepSchedule;
+        currentSleepTicks = character.needsComponent.currentSleepTicks;
+        sleepScheduleJobID = character.needsComponent.sleepScheduleJobID;
+        hasCancelledSleepSchedule = character.needsComponent.hasCancelledSleepSchedule;
 
         history = new List<SaveDataLog>();
         for (int i = 0; i < character.history.Count; i++) {

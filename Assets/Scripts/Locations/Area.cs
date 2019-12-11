@@ -413,7 +413,7 @@ public class Area : IJobOwner, ILocation {
         return citizen;
     }
     public void PlaceNewResidentInInnerMap(Character newResident) {
-        LocationGridTile mainEntrance = GetRandomUnoccupiedEdgeTile();
+        LocationGridTile mainEntrance = areaMap.GetRandomUnoccupiedEdgeTile();
         newResident.CreateMarker();
         newResident.InitialCharacterPlacement(mainEntrance);
     }
@@ -696,18 +696,6 @@ public class Area : IJobOwner, ILocation {
         }
         if (tileObjects.Count > 0) {
             return tileObjects[UnityEngine.Random.Range(0, tileObjects.Count)];
-        }
-        return null;
-    }
-    public LocationGridTile GetRandomUnoccupiedEdgeTile() {
-        List<LocationGridTile> unoccupiedEdgeTiles = new List<LocationGridTile>();
-        for (int i = 0; i < areaMap.allEdgeTiles.Count; i++) {
-            if (!areaMap.allEdgeTiles[i].isOccupied && areaMap.allEdgeTiles[i].structure != null) { // - There should not be a checker for structure, fix the generation of allEdgeTiles in AreaInnerTileMap's GenerateGrid
-                unoccupiedEdgeTiles.Add(areaMap.allEdgeTiles[i]);
-            }
-        }
-        if (unoccupiedEdgeTiles.Count > 0) {
-            return unoccupiedEdgeTiles[UnityEngine.Random.Range(0, unoccupiedEdgeTiles.Count)];
         }
         return null;
     }
@@ -1011,50 +999,6 @@ public class Area : IJobOwner, ILocation {
     }
     private bool CanStillCreateHeroEventJob() {
         return currentHeroEventJobs < maxHeroEventJobs;
-    }
-    /// <summary>
-    /// Check if this area should create an obtain food outside job.
-    /// Criteria can be found at: https://trello.com/c/cICMVSch/2706-hero-events
-    /// </summary>
-    private void TryCreateObtainFoodOutsideJob() {
-        //TODO:
-        //if (!CanStillCreateHeroEventJob()) {
-        //    return; //hero events are maxed.
-        //}
-        //int obtainFoodOutsideJobs = GetNumberOfJobsWith(JOB_TYPE.OBTAIN_FOOD_OUTSIDE);
-        //if (obtainFoodOutsideJobs == 0 && foodPile.resourceInPile < 1000) {
-        //    CreateObtainFoodOutsideJob();
-        //} else  if (obtainFoodOutsideJobs == 1 && foodPile.resourceInPile < 500) { //there is at least 1 existing obtain food outside job.
-        //    //allow the creation of a second obtain food outside job
-        //    CreateObtainFoodOutsideJob();
-        //}
-    }
-    private void CreateObtainFoodOutsideJob() {
-        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.OBTAIN_FOOD_OUTSIDE, CHARACTER_STATE.MOVE_OUT, this);
-        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainFoodOutsideJob);
-        AddToAvailableJobs(job);
-    }
-    /// <summary>
-    /// Check if this area should create an obtain supply outside job.
-    /// Criteria can be found at: https://trello.com/c/cICMVSch/2706-hero-events
-    /// </summary>
-    private void TryCreateObtainSupplyOutsideJob() {
-        //TODO:
-        //if (!CanStillCreateHeroEventJob()) {
-        //    return; //hero events are maxed.
-        //}
-        //int obtainSupplyOutsideJobs = GetNumberOfJobsWith(JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE);
-        //if (obtainSupplyOutsideJobs == 0 && supplyPile.resourceInPile < 1000) {
-        //    CreateObtainSupplyOutsideJob();
-        //} else if (obtainSupplyOutsideJobs == 1 && supplyPile.resourceInPile < 500) { //there is at least 1 existing obtain supply outside job.
-        //    //allow the creation of a second obtain supply outside job
-        //    CreateObtainSupplyOutsideJob();
-        //}
-    }
-    private void CreateObtainSupplyOutsideJob() {
-        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE, CHARACTER_STATE.MOVE_OUT, this);
-        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainSupplyOutsideJob);
-        AddToAvailableJobs(job);
     }
     private void PerDayHeroEventCreation() {
         //improve job at 8 am

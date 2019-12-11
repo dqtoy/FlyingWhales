@@ -35,7 +35,7 @@ public class Dance : GoapAction {
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
-        actor.AdjustDoNotGetLonely(-1);
+        actor.needsComponent.AdjustDoNotGetLonely(-1);
     }
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, object[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, target, otherData);
@@ -49,13 +49,13 @@ public class Dance : GoapAction {
 
     #region Effects
     public void PreDanceSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.AdjustDoNotGetLonely(1);
+        goapNode.actor.needsComponent.AdjustDoNotGetLonely(1);
     }
     public void PerTickDanceSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.AdjustHappiness(1000);
+        goapNode.actor.needsComponent.AdjustHappiness(1000);
     }
     public void AfterDanceSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.AdjustDoNotGetLonely(-1);
+        goapNode.actor.needsComponent.AdjustDoNotGetLonely(-1);
     }
     #endregion
 }

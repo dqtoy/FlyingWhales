@@ -1318,6 +1318,7 @@
             <e p="CharacterBattleTracker.cs" t="Include" />
             <e p="CharacterClass.cs" t="Include" />
             <e p="CharacterFilter.cs" t="Include" />
+            <e p="CharacterNeedsComponent.cs" t="Include" />
             <e p="CharacterSim.cs" t="Include" />
             <e p="CharacterState" t="Include">
               <e p="BerserkedState.cs" t="Include" />
@@ -1468,6 +1469,12 @@
               <e p="Play.cs" t="Include" />
               <e p="Pray.cs" t="Include" />
               <e p="Puke.cs" t="Include" />
+              <e p="Region Actions" t="Include">
+                <e p="ClaimRegion.cs" t="Include" />
+                <e p="CleanseRegion.cs" t="Include" />
+                <e p="HarvestFoodRegion.cs" t="Include" />
+                <e p="InvadeRegion.cs" t="Include" />
+              </e>
               <e p="ReleaseCharacter.cs" t="Include" />
               <e p="ResolveCombat.cs" t="Include" />
               <e p="ResolveConflict.cs" t="Include" />
@@ -1533,6 +1540,8 @@
             <e p="GoapNode.cs" t="Include" />
             <e p="GoapPlan.cs" t="Include" />
             <e p="GoapPlanner.cs" t="Include" />
+            <e p="InteractionManager.cs" t="Include" />
+            <e p="JobCheckers.cs" t="Include" />
             <e p="Precondition.cs" t="Include" />
           </e>
           <e p="GoapPlanJob.cs" t="Include" />
@@ -1695,6 +1704,7 @@
                 </e>
               </e>
               <e p="Region.cs" t="Include" />
+              <e p="RegionConnectionData.cs" t="Include" />
             </e>
           </e>
           <e p="Managers" t="Include">
@@ -1703,12 +1713,10 @@
             <e p="BezierCurveManager.cs" t="Include" />
             <e p="CharacterClassManager.cs" t="Include" />
             <e p="CharacterManager.cs" t="Include" />
-            <e p="Class1.cs" t="Include" />
             <e p="CombatSimManager.cs" t="Include" />
             <e p="CursorManager.cs" t="Include" />
             <e p="FactionManager.cs" t="Include" />
             <e p="GameManager.cs" t="Include" />
-            <e p="InteractionManager.cs" t="Include" />
             <e p="JobManager.cs" t="Include" />
             <e p="LevelLoaderManager.cs" t="Include" />
             <e p="MainMenuManager.cs" t="Include" />
@@ -1739,9 +1747,6 @@
             <e p="IPointOfInterest.cs" t="Include" />
             <e p="ITraitable.cs" t="Include" />
             <e p="IWorldObject.cs" t="Include" />
-          </e>
-          <e p="Old Code" t="Include">
-            <e p="Intructions.txt" t="Include" />
           </e>
           <e p="Particle Effects" t="Include">
             <e p="AOEParticle.cs" t="Include" />

@@ -1269,7 +1269,7 @@ public class PlayerUI : MonoBehaviour {
         //isSummoning = true;
     }
     public void TryPlaceSummon(Summon summon) {
-        LocationGridTile mainEntrance = InnerMapManager.Instance.currentlyShowingArea.GetRandomUnoccupiedEdgeTile();
+        LocationGridTile mainEntrance = InnerMapManager.Instance.currentlyShowingMap.GetRandomUnoccupiedEdgeTile();
         //LocationGridTile tile = InteriorMapManager.Instance.GetTileFromMousePosition();
         Summon summonToPlace = summon;
         summonToPlace.CreateMarker();

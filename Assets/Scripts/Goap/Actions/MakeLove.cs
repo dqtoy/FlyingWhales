@@ -37,8 +37,8 @@ public class MakeLove : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         Character targetCharacter = poiTarget as Character;
         actor.ownParty.RemovePOI(targetCharacter);
-        actor.AdjustDoNotGetLonely(-1);
-        targetCharacter.AdjustDoNotGetLonely(-1);
+        actor.needsComponent.AdjustDoNotGetLonely(-1);
+        targetCharacter.needsComponent.AdjustDoNotGetLonely(-1);
 
         Bed bed = actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).First() as Bed;
         bed.OnDoneActionToObject(actor.currentActionNode);
@@ -54,8 +54,8 @@ public class MakeLove : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         Character targetCharacter = poiTarget as Character;
         actor.ownParty.RemovePOI(targetCharacter);
-        actor.AdjustDoNotGetLonely(-1);
-        targetCharacter.AdjustDoNotGetLonely(-1);
+        actor.needsComponent.AdjustDoNotGetLonely(-1);
+        targetCharacter.needsComponent.AdjustDoNotGetLonely(-1);
 
         targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Wooed");
         if (targetCharacter.currentActionNode.action == this) {
@@ -85,8 +85,8 @@ public class MakeLove : GoapAction {
         bed.OnDoActionToObject(goapNode);
 
         Character targetCharacter = goapNode.poiTarget as Character;
-        goapNode.actor.AdjustDoNotGetLonely(1);
-        targetCharacter.AdjustDoNotGetLonely(1);
+        goapNode.actor.needsComponent.AdjustDoNotGetLonely(1);
+        targetCharacter.needsComponent.AdjustDoNotGetLonely(1);
 
         targetCharacter.SetCurrentActionNode(goapNode.actor.currentActionNode, goapNode.actor.currentJob, goapNode.actor.currentPlan);
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
@@ -95,17 +95,17 @@ public class MakeLove : GoapAction {
     }
     public void PerTickMakeLoveSuccess(ActualGoapNode goapNode) {
         //**Per Tick Effect 1 * *: Actor's Happiness Meter +500
-        goapNode.actor.AdjustHappiness(500);
+        goapNode.actor.needsComponent.AdjustHappiness(500);
         //**Per Tick Effect 2**: Target's Happiness Meter +500
         Character targetCharacter = goapNode.poiTarget as Character;
-        targetCharacter.AdjustHappiness(500);
+        targetCharacter.needsComponent.AdjustHappiness(500);
     }
     public void AfterMakeLoveSuccess(ActualGoapNode goapNode) {
         Bed bed = goapNode.actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).First() as Bed;
         bed.OnDoneActionToObject(goapNode);
         Character targetCharacter = goapNode.poiTarget as Character;
-        goapNode.actor.AdjustDoNotGetLonely(-1);
-        targetCharacter.AdjustDoNotGetLonely(-1);
+        goapNode.actor.needsComponent.AdjustDoNotGetLonely(-1);
+        targetCharacter.needsComponent.AdjustDoNotGetLonely(-1);
 
         //**After Effect 1**: If Actor and Target are Lovers, they both gain Cheery trait. If Actor and Target are Paramours, they both gain Ashamed trait.
         if (goapNode.actor is SeducerSummon) {

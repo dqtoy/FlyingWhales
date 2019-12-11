@@ -34,19 +34,19 @@ public class Pray : GoapAction {
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
-        actor.AdjustDoNotGetLonely(-1);
+        actor.needsComponent.AdjustDoNotGetLonely(-1);
     }
     #endregion
 
     #region State Effects
     public void PrePraySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.AdjustDoNotGetLonely(1);
+        goapNode.actor.needsComponent.AdjustDoNotGetLonely(1);
     }
     public void PerTickPraySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.AdjustHappiness(400);
+        goapNode.actor.needsComponent.AdjustHappiness(400);
     }
     public void AfterPraySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.AdjustDoNotGetLonely(-1);
+        goapNode.actor.needsComponent.AdjustDoNotGetLonely(-1);
     }
     #endregion
 

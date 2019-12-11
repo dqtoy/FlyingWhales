@@ -55,9 +55,9 @@ namespace Traits {
         }
         public override void ExecuteActionPerTickEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
             if (action == INTERACTION_TYPE.SING && owner == goapNode.actor) {
-                owner.AdjustHappiness(200);
+                owner.needsComponent.AdjustHappiness(200);
             } else if (action == INTERACTION_TYPE.PLAY_GUITAR && owner == goapNode.actor) {
-                owner.AdjustHappiness(100);
+                owner.needsComponent.AdjustHappiness(100);
             }
         }
         public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref int cost) {
@@ -94,8 +94,8 @@ namespace Traits {
 
         private void OnHearGuitarPlaying(Character guitarPlayer) {
             owner.traitContainer.AddTrait(owner, "Satisfied");
-            owner.AdjustTiredness(20);
-            owner.AdjustHappiness(40);
+            owner.needsComponent.AdjustTiredness(20);
+            owner.needsComponent.AdjustHappiness(40);
             //Debug.Log(GameManager.Instance.TodayLogString() + owner.name + " heard " + guitarPlayer.name + " playing a guitar, and became happier.");
             Log log = new Log(GameManager.Instance.Today(), "Trait", "MusicLover", "heard_guitar");
             log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -105,8 +105,8 @@ namespace Traits {
         }
         private void OnHearSinging(Character singer) {
             owner.traitContainer.AddTrait(owner, "Satisfied");
-            owner.AdjustTiredness(20);
-            owner.AdjustHappiness(40);
+            owner.needsComponent.AdjustTiredness(20);
+            owner.needsComponent.AdjustHappiness(40);
             //Debug.Log(GameManager.Instance.TodayLogString() + owner.name + " heard " + guitarPlayer.name + " playing a guitar, and became happier.");
             Log log = new Log(GameManager.Instance.Today(), "Trait", "MusicLover", "heard_sing");
             log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

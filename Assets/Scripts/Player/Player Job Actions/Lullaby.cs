@@ -56,7 +56,7 @@ public class Lullaby : PlayerJobAction {
                 }
                 character.marker.UpdateActionIcon();
             }
-            character.ExhaustCharacter();
+            character.needsComponent.ExhaustCharacter(character);
         }
     }
     public override void ShowRange(LocationGridTile targetTile) {

@@ -94,8 +94,8 @@ public class Sleep : GoapAction {
         //goapNode.action.states[goapNode.currentStateName].OverrideDuration(goapNode.actor.currentSleepTicks);
     }
     public void PerTickRestSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.AdjustTiredness(75);
-        goapNode.actor.AdjustSleepTicks(-1);
+        goapNode.actor.needsComponent.AdjustTiredness(75);
+        goapNode.actor.needsComponent.AdjustSleepTicks(-1);
     }
     public void AfterRestSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Resting");

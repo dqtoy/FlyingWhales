@@ -10,7 +10,7 @@ public class BlueprintBehaviour : CharacterBehaviourComponent {
 
     public override bool TryDoBehaviour(Character character, ref string log) {
         log += $"\n-{character.name} will try to place blueprint";
-        if (character.homeArea.GetNumberOfJobsWith(JOB_TYPE.BUILD_BLUEPRINT) < 2 && HasCharacterWithPlaceBlueprintJobInSettlement(character.homeArea) == false) {
+        if (character.isAtHomeRegion && character.homeArea.GetNumberOfJobsWith(JOB_TYPE.BUILD_BLUEPRINT) < 2 && HasCharacterWithPlaceBlueprintJobInSettlement(character.homeArea) == false) {
             log += $"\n-{character.name} will roll for blueprint placement.";
             int chance = 35;
             int roll = Random.Range(0, 100);

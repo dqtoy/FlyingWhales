@@ -23,7 +23,7 @@ namespace Traits {
         public override void ExecuteActionPerTickEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
             base.ExecuteActionPerTickEffects(action, goapNode);
             if (action == INTERACTION_TYPE.MAKE_LOVE) {
-                goapNode.actor.AdjustHappiness(-100);
+                goapNode.actor.needsComponent.AdjustHappiness(-100);
             }
         }
         #endregion

@@ -130,19 +130,6 @@ public class CharacterAvatar : MonoBehaviour {
         onArriveAction = action;
     }
     public void StartPath(PATHFINDING_MODE pathFindingMode, Action actionOnPathFinished = null, Action actionOnPathStart = null) {
-        //if (smoothMovement.isMoving) {
-        //    smoothMovement.ForceStopMovement();
-        //}
-        //     Reset();
-        //     if (this.targetLocation != null) {
-        //         SetHasArrivedState(false);
-        //         _pathfindingMode = pathFindingMode;
-        //         _trackTarget = trackTarget;
-        //         onPathFinished = actionOnPathFinished;
-        //         onPathReceived = actionOnPathReceived;
-        //Faction faction = _party.faction;
-        //_currPathfindingRequest = PathGenerator.Instance.CreatePath(this, _party.specificLocation.tileLocation, targetLocation.tileLocation, pathFindingMode, faction);
-        //     }
         Reset();
         if (targetLocation != null) {
             SetOnPathFinished(actionOnPathFinished);
@@ -164,9 +151,15 @@ public class CharacterAvatar : MonoBehaviour {
         if (_party.isCarryingAnyPOI) {
             _party.carriedPOI.SetPOIState(POI_STATE.INACTIVE);
         }
-        ////for (int i = 0; i < _party.characters.Count; i++) {
-        ////    _party.characters[i].SetPOIState(POI_STATE.INACTIVE);
-        ////}
+        
+        Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "left_location");
+        arriveLog.AddToFillers(_party.owner, _party.owner.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
+        if (_party.isCarryingAnyPOI) {
+            arriveLog.AddToFillers(_party.carriedPOI, _party.carriedPOI.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
+        }
+        arriveLog.AddToFillers(_party.specificLocation.coreTile.region, _party.specificLocation.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
+        arriveLog.AddLogToInvolvedObjects();
+        
         _distanceToTarget = PathGenerator.Instance.GetTravelTime(_party.specificLocation.coreTile, targetLocation.coreTile);
         _travelLine = _party.specificLocation.coreTile.CreateTravelLine(targetLocation.coreTile, _distanceToTarget, _party.owner);
         _travelLine.SetActiveMeter(isVisualShowing);
@@ -224,11 +217,8 @@ public class CharacterAvatar : MonoBehaviour {
         _party.owner.marker.ClearPOIsInVisionRange();
 
         //place marker at edge tile of target location
-        if (targetLocation.area != null) {
-            LocationGridTile entrance = targetLocation.area.GetRandomUnoccupiedEdgeTile();
-            _party.owner.marker.PlaceMarkerAt(entrance);
-        }
-        //_party.owner.marker.gameObject.SetActive(true);
+        LocationGridTile entrance = targetLocation.innerMap.GetRandomUnoccupiedEdgeTile();
+        _party.owner.marker.PlaceMarkerAt(entrance);
 
         _party.owner.marker.pathfindingAI.SetIsStopMovement(true);
         //Debug.Log(GameManager.Instance.TodayLogString() + _party.name + " has arrived at " + targetLocation.name + " on " + _party.owner.gridTileLocation.ToString());

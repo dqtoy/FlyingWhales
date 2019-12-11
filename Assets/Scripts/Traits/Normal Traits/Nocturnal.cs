@@ -22,20 +22,20 @@ namespace Traits {
             base.OnAddTrait(sourcePOI);
             if (sourcePOI is Character) {
                 Character character = sourcePOI as Character;
-                character.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.EARLY_NIGHT);
-                character.SetForcedTirednessRecoveryTimeInWords(TIME_IN_WORDS.MORNING);
-                character.SetFullnessForcedTick();
-                character.SetTirednessForcedTick();
+                character.needsComponent.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.EARLY_NIGHT);
+                character.needsComponent.SetForcedTirednessRecoveryTimeInWords(TIME_IN_WORDS.MORNING);
+                character.needsComponent.SetFullnessForcedTick();
+                character.needsComponent.SetTirednessForcedTick();
             }
         }
         public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
             base.OnRemoveTrait(sourcePOI, removedBy);
             if (sourcePOI is Character) {
                 Character character = sourcePOI as Character;
-                character.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LUNCH_TIME);
-                character.SetForcedTirednessRecoveryTimeInWords(TIME_IN_WORDS.LATE_NIGHT);
-                character.SetFullnessForcedTick();
-                character.SetTirednessForcedTick();
+                character.needsComponent.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LUNCH_TIME);
+                character.needsComponent.SetForcedTirednessRecoveryTimeInWords(TIME_IN_WORDS.LATE_NIGHT);
+                character.needsComponent.SetFullnessForcedTick();
+                character.needsComponent.SetTirednessForcedTick();
             }
         }
         #endregion

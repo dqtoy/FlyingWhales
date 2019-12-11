@@ -322,6 +322,18 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.REPAIR_STRUCTURE, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Repair Success", status = InteractionManager.Goap_State_Success, duration = 10 },
         } },
+        {INTERACTION_TYPE.HARVEST_FOOD_REGION, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Harvest Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(2) },
+        } },
+        {INTERACTION_TYPE.CLEANSE_REGION, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Cleanse Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(4) },
+        } },
+        {INTERACTION_TYPE.CLAIM_REGION, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Claim Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(4) },
+        } },
+        {INTERACTION_TYPE.INVADE_REGION, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Invade Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(4) },
+        } },
     };
 }
 

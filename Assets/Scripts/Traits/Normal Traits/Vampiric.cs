@@ -41,11 +41,11 @@ namespace Traits {
             if (sourceCharacter is Character) {
                 Character character = sourceCharacter as Character;
                 character.jobQueue.CancelAllJobs(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING, JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED);
-                character.SetTirednessForcedTick(0);
-                character.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LATE_NIGHT);
-                character.SetFullnessForcedTick();
-                character.AdjustDoNotGetTired(1);
-                character.ResetTirednessMeter();
+                character.needsComponent.SetTirednessForcedTick(0);
+                character.needsComponent.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LATE_NIGHT);
+                character.needsComponent.SetFullnessForcedTick();
+                character.needsComponent.AdjustDoNotGetTired(1);
+                character.needsComponent.ResetTirednessMeter();
                 //character.AdjustAttackMod(_flatAttackMod);
                 character.AdjustMaxHPMod(_flatHPMod);
                 //character.AdjustSpeedMod(_flatSpeedMod);
@@ -55,10 +55,10 @@ namespace Traits {
             if (sourceCharacter is Character) {
                 Character character = sourceCharacter as Character;
                 character.jobQueue.CancelAllJobs(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING);
-                character.SetTirednessForcedTick();
-                character.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LUNCH_TIME);
-                character.SetFullnessForcedTick();
-                character.AdjustDoNotGetTired(-1);
+                character.needsComponent.SetTirednessForcedTick();
+                character.needsComponent.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LUNCH_TIME);
+                character.needsComponent.SetFullnessForcedTick();
+                character.needsComponent.AdjustDoNotGetTired(-1);
                 //character.AdjustAttackMod(-_flatAttackMod);
                 character.AdjustMaxHPMod(-_flatHPMod);
                 //character.AdjustSpeedMod(-_flatSpeedMod);

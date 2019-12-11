@@ -165,15 +165,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public override void OnPointerEnter(PointerEventData eventData) {
         base.OnPointerEnter(eventData);
-        if (hoverEnterAction != null) {
-            hoverEnterAction.Invoke(character, character.gridTileLocation);
-        }
+        hoverEnterAction?.Invoke(character, character.gridTileLocation);
     }
     public override void OnPointerExit(PointerEventData eventData) {
         base.OnPointerExit(eventData);
-        if (hoverExitAction != null) {
-            hoverExitAction.Invoke(character, character.gridTileLocation);
-        }
+        hoverExitAction?.Invoke(character, character.gridTileLocation);
     }
     #endregion
 
@@ -765,6 +761,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         useWalkSpeed = Mathf.Max(0, useWalkSpeed);
     }
     public void SetActiveState(bool state) {
+        Debug.Log($"Set active state of {this.name} to {state.ToString()}");
         this.gameObject.SetActive(state);
     }
     /// <summary>
@@ -1539,11 +1536,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //    //- fear-type status effect
         //    willTransfer = true;
         //} 
-        else if (character.isStarving && character.traitContainer.GetNormalTrait("Vampiric") == null) {
+        else if (character.needsComponent.isStarving && character.traitContainer.GetNormalTrait("Vampiric") == null) {
             //-character is starving and is not a vampire
             willTransfer = true;
             reason = "starving";
-        } else if (character.isExhausted) {
+        } else if (character.needsComponent.isExhausted) {
             //-character is exhausted
             willTransfer = true;
             reason = "exhausted";

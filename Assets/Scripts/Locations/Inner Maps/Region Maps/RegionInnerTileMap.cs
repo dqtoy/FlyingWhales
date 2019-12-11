@@ -9,6 +9,7 @@ namespace Inner_Maps {
         private const int MapHeight = 15;
         
         public void Initialize(Region region) {
+            this.name = $"{region.name}'s Inner Map";
             region.SetRegionInnerMap(this);
             ClearAllTilemaps();
             GenerateGrid(MapWidth, MapHeight, region);

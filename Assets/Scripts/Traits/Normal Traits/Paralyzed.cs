@@ -106,7 +106,7 @@ namespace Traits {
         private void CheckParalyzedTraitPerHour() {
             if (character.IsInOwnParty()) {
                 if (character.CanPlanGoap() && character.stateComponent.currentState == null
-                    && (character.isStarving || character.isExhausted || character.isForlorn)
+                    && (character.needsComponent.isStarving || character.needsComponent.isExhausted || character.needsComponent.isForlorn)
                     && UnityEngine.Random.Range(0, 100) < 75 && !character.jobQueue.HasJob(JOB_TYPE.SCREAM)
                     && character.traitContainer.GetNormalTrait("Unconscious", "Resting") == null && !character.HasJobTargettingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SCREAM, INTERACTION_TYPE.SCREAM_FOR_HELP, character, character);
@@ -146,7 +146,7 @@ namespace Traits {
 
         #region Fullness Recovery
         private bool PlanFullnessRecovery(Character characterThatWillDoJob) {
-            if (character.isStarving || character.isHungry) {
+            if (character.needsComponent.isStarving || character.needsComponent.isHungry) {
                 return CreateFeedJob(characterThatWillDoJob);
             }
             return false;
@@ -165,7 +165,7 @@ namespace Traits {
 
         #region Happiness Recovery
         private bool CreateDropJobForHappinessRecovery(Character characterThatWillDoJob) {
-            if (character.isForlorn || character.isLonely) {
+            if (character.needsComponent.isForlorn || character.needsComponent.isLonely) {
                 if ((character.homeStructure != null && character.currentStructure != character.homeStructure) &&
                     (character.specificLocation.HasStructure(STRUCTURE_TYPE.WORK_AREA) && character.currentStructure.structureType != STRUCTURE_TYPE.WORK_AREA)) {
                     int chance = UnityEngine.Random.Range(0, 2);
@@ -179,7 +179,7 @@ namespace Traits {
             return false;
         }
         private bool PlanHappinessRecovery() {
-            if ((character.isForlorn || character.isLonely) && !character.HasJobTargettingThis(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
+            if ((character.needsComponent.isForlorn || character.needsComponent.isLonely) && !character.HasJobTargettingThis(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
                 return CreateDaydreamOrPrayJob();
             }
             return false;
@@ -239,7 +239,7 @@ namespace Traits {
         }
         private void CreateActualHappinessRecoveryJob(INTERACTION_TYPE actionType) {
             JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY;
-            if (character.isForlorn) {
+            if (character.needsComponent.isForlorn) {
                 jobType = JOB_TYPE.HAPPINESS_RECOVERY_FORLORN;
             }
             bool triggerBrokenhearted = false;
@@ -259,7 +259,7 @@ namespace Traits {
 
         #region Tiredness Recovery
         private bool CreateDropJobForTirednessRecovery(Character characterThatWillDoJob) {
-            if (character.isExhausted || character.isTired) {
+            if (character.needsComponent.isExhausted || character.needsComponent.isTired) {
                 if (character.homeStructure != null && (character.gridTileLocation.objHere == null || !(character.gridTileLocation.objHere is Bed))) {
                     TileObject bed = character.homeStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED);
                     if (bed != null) {
@@ -270,7 +270,7 @@ namespace Traits {
             return false;
         }
         private bool PlanTirednessRecovery() {
-            if ((character.isExhausted || character.isTired) && !character.HasJobTargettingThis(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
+            if ((character.needsComponent.isExhausted || character.needsComponent.isTired) && !character.HasJobTargettingThis(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
                 return CreateSleepJob();
             }
             return false;
@@ -292,7 +292,7 @@ namespace Traits {
         }
         private void CreateActualSleepJob(Bed bed) {
             JOB_TYPE jobType = JOB_TYPE.TIREDNESS_RECOVERY;
-            if (character.isExhausted) {
+            if (character.needsComponent.isExhausted) {
                 jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
             }
             bool triggerSpooked = false;

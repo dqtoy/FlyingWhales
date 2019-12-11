@@ -28,7 +28,7 @@ public class LaughAt : GoapAction {
 
     #region State Effects
     public void PerTickLaughSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.AdjustHappiness(500);
+        goapNode.actor.needsComponent.AdjustHappiness(500);
     }
     public void AfterLaughSuccess(ActualGoapNode goapNode) {
         if (goapNode.poiTarget.traitContainer.GetNormalTrait("Unconscious") == null) {

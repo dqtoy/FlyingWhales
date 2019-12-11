@@ -12,9 +12,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     protected string _firstName;
     protected int _id;
     protected int _doNotDisturb;
-    protected int _doNotGetHungry;
-    protected int _doNotGetTired;
-    protected int _doNotGetLonely;
     protected float _actRate;
     protected bool _isDead;
     protected bool _isChatting;
@@ -25,7 +22,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     protected CharacterRole _role;
     protected Faction _faction;
     protected Minion _minion;
-    //protected CombatCharacter _currentCombatCharacter;
     protected List<Log> _history;
     private LocationStructure _currentStructure; //what structure is this character currently in.
 
@@ -98,41 +94,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public bool canMove { get { return canMoveValue >= 0; } }
     public bool canBeAtttacked { get { return canBeAtttackedValue >= 0; } }
 
-    //Tiredness
-    public int tiredness { get; protected set; }
-    public int tirednessDecreaseRate { get; protected set; }
-    public int tirednessForcedTick { get; protected set; }
-    public int currentSleepTicks { get; protected set; }
-    public int sleepScheduleJobID { get; protected set; }
-    public bool hasCancelledSleepSchedule { get; protected set; }
-    private int tirednessLowerBound; //how low can this characters tiredness go
-    public const int TIREDNESS_DEFAULT = 15000;
-    public const int TIREDNESS_THRESHOLD_1 = 10000;
-    public const int TIREDNESS_THRESHOLD_2 = 5000;
-
-    //Fullness
-    public int fullness { get; protected set; }
-    public int fullnessDecreaseRate { get; protected set; }
-    public int fullnessForcedTick { get; protected set; }
-    private int fullnessLowerBound; //how low can this characters fullness go
-    public const int FULLNESS_DEFAULT = 15000;
-    public const int FULLNESS_THRESHOLD_1 = 10000;
-    public const int FULLNESS_THRESHOLD_2 = 5000;
-
-    //Happiness
-    public int happiness { get; protected set; }
-    public int happinessDecreaseRate { get; protected set; }
-    private int happinessLowerBound; //how low can this characters happiness go
-    public const int HAPPINESS_DEFAULT = 15000;
-    public const int HAPPINESS_THRESHOLD_1 = 10000;
-    public const int HAPPINESS_THRESHOLD_2 = 5000;
-
-    public bool hasForcedFullness { get; protected set; }
-    public bool hasForcedTiredness { get; protected set; }
-    public TIME_IN_WORDS forcedFullnessRecoveryTimeInWords { get; protected set; }
-    public TIME_IN_WORDS forcedTirednessRecoveryTimeInWords { get; protected set; }
-
-    //public static readonly int TREE_AWARENESS_LIMIT = 5; //The number of Tree Objects a character can have in his awareness, everytime a character adds a new tree object to his/her awareness list, remove the oldest one if this limit is reached   
+    //Needs
+    public CharacterNeedsComponent needsComponent { get; protected set; }
 
     //hostility
     public virtual int ignoreHostility { get; protected set; }
@@ -285,27 +248,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public int attackSpeed {
         get { return _characterClass.baseAttackSpeed; } //in milliseconds, The lower the amount the faster the attack rate
     }
-    //public float computedPower {
-    //    get { return GetComputedPower(); }
-    //}
     public Minion minion {
         get { return _minion; }
     }
     public int doNotDisturb {
         get { return _doNotDisturb; }
     }
-    public int doNotGetHungry {
-        get { return _doNotGetHungry; }
-    }
-    public int doNotGetLonely {
-        get { return _doNotGetLonely; }
-    }
-    public int doNotGetTired {
-        get { return _doNotGetTired; }
-    }
-    //public CombatCharacter currentCombatCharacter {
-    //    get { return _currentCombatCharacter; }
-    //}
     public POINT_OF_INTEREST_TYPE poiType {
         get { return POINT_OF_INTEREST_TYPE.CHARACTER; }
     }
@@ -339,12 +287,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public CHARACTER_MOOD currentMoodType {
         get { return ConvertCurrentMoodValueToType(); }
     }
-    public bool isStarving { get { return fullness <= FULLNESS_THRESHOLD_2; } }
-    public bool isExhausted { get { return tiredness <= TIREDNESS_THRESHOLD_2; } }
-    public bool isForlorn { get { return happiness <= HAPPINESS_THRESHOLD_2; } }
-    public bool isHungry { get { return fullness <= FULLNESS_THRESHOLD_1; } }
-    public bool isTired { get { return tiredness <= TIREDNESS_THRESHOLD_1; } }
-    public bool isLonely { get { return happiness <= HAPPINESS_THRESHOLD_1; } }
     public AlterEgoData currentAlterEgo {
         get {
             if (alterEgos == null || !alterEgos.ContainsKey(currentAlterEgoName)) {
@@ -467,7 +409,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public Character() {
         SetIsDead(false);
         _history = new List<Log>();
-
+        
+        //Needs
+        needsComponent = new CharacterNeedsComponent(this);
+        
         //RPG
         SetExperience(0);
 
@@ -481,15 +426,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         traitsNeededToBeRemoved = new List<Trait>();
         onLeaveAreaActions = new List<Action>();
         pendingActionsAfterMultiThread = new List<Action>();
-        tirednessLowerBound = 0;
-        fullnessLowerBound = 0;
-        happinessLowerBound = 0;
         SetPOIState(POI_STATE.ACTIVE);
-        SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LUNCH_TIME);
-        SetForcedTirednessRecoveryTimeInWords(TIME_IN_WORDS.LATE_NIGHT);
-        SetFullnessForcedTick();
-        SetTirednessForcedTick();
-        ResetSleepTicks();
+        needsComponent.ResetSleepTicks();
 
         //for testing
         locationHistory = new List<string>();
@@ -541,24 +479,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         deathStr = data.deathStr;
         _state = data.state;
 
-        tiredness = data.tiredness;
-        fullness = data.fullness;
-        happiness = data.happiness;
-        fullnessDecreaseRate = data.fullnessDecreaseRate;
-        tirednessDecreaseRate = data.tirednessDecreaseRate;
-        happinessDecreaseRate = data.happinessDecreaseRate;
+        needsComponent.LoadAllStatsOfCharacter(data);
 
         ignoreHostility = data.ignoreHostility;
-
-        SetForcedFullnessRecoveryTimeInWords(data.forcedFullnessRecoveryTimeInWords);
-        SetForcedTirednessRecoveryTimeInWords(data.forcedTirednessRecoveryTimeInWords);
-        SetFullnessForcedTick(data.fullnessForcedTick);
-        SetTirednessForcedTick(data.tirednessForcedTick);
-
         returnedToLife = data.returnedToLife;
-        currentSleepTicks = data.currentSleepTicks;
-        sleepScheduleJobID = data.sleepScheduleJobID;
-        hasCancelledSleepSchedule = data.hasCancelledSleepSchedule;
+        
     }
     /// <summary>
     /// Initialize data for this character that is not safe to put in the constructor.
@@ -571,33 +496,14 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         SetMoodValue(90);
         CreateOwnParty();
 
-        //NOTE: These values will be randomized when this character is placed in his/her area map.
-        tiredness = TIREDNESS_DEFAULT;
-        fullness = FULLNESS_DEFAULT;
-        happiness = HAPPINESS_DEFAULT;
+        needsComponent.Initialize();
+        
         //supply
         SetSupply(UnityEngine.Random.Range(10, 61)); //Randomize initial supply per character (Random amount between 10 to 60.)
     }
     public void InitialCharacterPlacement(LocationGridTile tile) {
-        tiredness = TIREDNESS_DEFAULT;
-        if (role.roleType != CHARACTER_ROLE.MINION) {
-            ////Fullness value between 2600 and full.
-            //SetFullness(UnityEngine.Random.Range(2600, FULLNESS_DEFAULT + 1));
-            ////Happiness value between 2600 and full.
-            //SetHappiness(UnityEngine.Random.Range(2600, HAPPINESS_DEFAULT + 1));
-            fullness = FULLNESS_DEFAULT;
-            happiness = HAPPINESS_DEFAULT;
-        } else {
-            fullness = FULLNESS_DEFAULT;
-            happiness = HAPPINESS_DEFAULT;
-        }
-
+        needsComponent.InitialCharacterPlacement();
         ConstructInitialGoapAdvertisementActions();
-        //#if !WORLD_CREATION_TOOL
-        //        GameDate gameDate = GameManager.Instance.Today();
-        //        gameDate.AddTicks(1);
-        //        SchedulingManager.Instance.AddEntry(gameDate, () => PlanGoapActions(), this);
-        //#endif
         marker.InitialPlaceMarkerAt(tile, false); //since normal characters are already placed in their areas.
         //AddInitialAwareness();
         SubscribeToSignals();
@@ -626,45 +532,33 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             Debug.LogError(name + " is a minion and has subscribed to the signals!");
         }
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
-        //Messenger.AddListener(Signals.TICK_STARTED, DailyInteractionGeneration);
         Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.AddListener(Signals.DAY_STARTED, DailyGoapProcesses);
-        Messenger.AddListener(Signals.HOUR_STARTED, DecreaseNeeds);
-        //Messenger.AddListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
-        //Messenger.AddListener<Area, Character>(Signals.CHARACTER_EXITED_AREA, OnCharacterExitedArea);
         Messenger.AddListener<Character, string>(Signals.CANCEL_CURRENT_ACTION, CancelCurrentAction);
-        ///Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet); Moved listener for action state set to CharacterManager for optimization <see cref="CharacterManager.OnActionStateSet(GoapAction, GoapActionState)">
-        //Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, OnItemPlacedOnTile);
-        //Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         Messenger.AddListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         Messenger.AddListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
         Messenger.AddListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
+        needsComponent.SubscribeToSignals();
     }
     public virtual void UnsubscribeSignals() {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
-        //Messenger.RemoveListener(Signals.TICK_STARTED, DailyInteractionGeneration);
         Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStarted);
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.RemoveListener(Signals.DAY_STARTED, DailyGoapProcesses);
-        Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseNeeds);
-        //Messenger.RemoveListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.RemoveListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
-        //Messenger.RemoveListener<Area, Character>(Signals.CHARACTER_EXITED_AREA, OnCharacterExitedArea);
         Messenger.RemoveListener<Character, string>(Signals.CANCEL_CURRENT_ACTION, CancelCurrentAction);
-        //Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
-        //Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, OnItemPlacedOnTile);
-        //Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         Messenger.RemoveListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
         Messenger.RemoveListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
+        needsComponent.UnsubscribeToSignals();
     }
     #endregion
 
@@ -843,9 +737,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             } else {
                 AssignClass(className);
             }
-            ResetFullnessMeter();
-            ResetTirednessMeter();
-            ResetHappinessMeter();
+            needsComponent.ResetFullnessMeter();
+            needsComponent.ResetTirednessMeter();
+            needsComponent.ResetHappinessMeter();
             ownParty.ReturnToLife();
             marker.OnReturnToLife();
             if (grave != null) {
@@ -861,10 +755,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //ClearAllAwareness();
             //Area gloomhollow = LandmarkManager.Instance.GetAreaByName("Gloomhollow");
             MigrateHomeStructureTo(null);
-            SetTirednessForcedTick(0);
-            SetFullnessForcedTick(0);
-            SetHasCancelledSleepSchedule(false);
-            ResetSleepTicks();
+            needsComponent.SetTirednessForcedTick(0);
+            needsComponent.SetFullnessForcedTick(0);
+            needsComponent.SetHasCancelledSleepSchedule(false);
+            needsComponent.ResetSleepTicks();
             ForceCancelAllJobsTargettingThisCharacter();
             //MigrateHomeTo(null);
             //AddInitialAwareness(gloomhollow);
@@ -2027,7 +1921,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         ////If nothing applies, always overridable
         //return true;
     }
-    private GoapPlanJob CreateSuicideJob() {
+    public GoapPlanJob CreateSuicideJob() {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SUICIDE, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), this, this);
         //job.SetCanTakeThisJobChecker(InteractionManager.Instance.IsSuicideJobStillValid);
         jobQueue.AddJobInQueue(job);
@@ -2280,25 +2174,14 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             ForceCancelAllJobsTargettingThisCharacter();
             marker.ClearTerrifyingObjects();
             ExecuteLeaveAreaActions();
+            needsComponent.OnCharacterLeftLocation(currentRegion);
         } else {
             if (marker.terrifyingObjects.Count > 0) {
                 marker.RemoveTerrifyingObject(party.owner);
                 if (party.isCarryingAnyPOI) {
                     marker.RemoveTerrifyingObject(party.carriedPOI);
                 }
-                //for (int i = 0; i < party.characters.Count; i++) {
-                //    marker.RemoveTerrifyingObject(party.characters[i]);
-                //}
             }
-            //RemoveAwareness(party.owner);
-            //if (party.isCarryingAnyPOI) {
-            //    RemoveAwareness(party.carriedPOI);
-            //}
-            ////remove character from awareness
-            //for (int i = 0; i < party.characters.Count; i++) {
-            //    Character character = party.characters[i];
-            //    RemoveAwareness(character);
-            //}
         }
     }
     private void OnArrivedAtArea(Party party) {
@@ -2314,6 +2197,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //    //    }
             //    //}
             //}
+            needsComponent.OnCharacterArrivedAtLocation(currentRegion);
         } else {
             //AddAwareness(party.owner);
             //if (party.isCarryingAnyPOI) {
@@ -2443,18 +2327,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         _doNotDisturb = Math.Max(_doNotDisturb, 0);
         //Debug.Log(GameManager.Instance.TodayLogString() + " adjusted do not disturb of " + this.name + " by " + amount + " new value is " + _doNotDisturb.ToString());
     }
-    public void AdjustDoNotGetHungry(int amount) {
-        _doNotGetHungry += amount;
-        _doNotGetHungry = Math.Max(_doNotGetHungry, 0);
-    }
-    public void AdjustDoNotGetLonely(int amount) {
-        _doNotGetLonely += amount;
-        _doNotGetLonely = Math.Max(_doNotGetLonely, 0);
-    }
-    public void AdjustDoNotGetTired(int amount) {
-        _doNotGetTired += amount;
-        _doNotGetTired = Math.Max(_doNotGetTired, 0);
-    }
     public void AdjustDoNotRecoverHP(int amount) {
         doNotRecoverHP += amount;
         doNotRecoverHP = Math.Max(doNotRecoverHP, 0);
@@ -2512,7 +2384,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //    }
     //}
     public LocationGridTile GetLocationGridTileByXY(int x, int y, bool throwOnException = true) {
-        return specificLocation.areaMap.map[x, y];
+        if (currentRegion != null) {
+            return currentRegion.innerMap.map[x, y];    
+        } else {
+            return specificLocation.innerMap.map[x, y];
+        }
+        
         //try {
         //    if (throwOnException) {
         //        return specificLocation.areaMap.map[x, y];
@@ -3362,18 +3239,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (IsHealthCriticallyLow()) {
             return false;
         }
-        if (isStarving && traitContainer.GetNormalTrait("Vampiric") == null) {
+        if (needsComponent.isStarving && traitContainer.GetNormalTrait("Vampiric") == null) {
             return false; //only characters that are not vampires will flee if they are starving
         }
-        if (isExhausted) {
+        if (needsComponent.isExhausted) {
             return false;
         }
-        //if (GetNormalTrait("Spooked") != null) {
-        //    return false;
-        //}
-        //if (GetNormalTrait("Injured") != null) {
-        //    return false;
-        //}
         return true;
     }
     #endregion
@@ -3966,9 +3837,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         specificLocation.RemoveCharacterFromLocation(this.currentParty);
         currentRegion?.RemoveCharacterFromLocation(this);
 
-        ResetFullnessMeter();
-        ResetHappinessMeter();
-        ResetTirednessMeter();
+        needsComponent.ResetFullnessMeter();
+        needsComponent.ResetHappinessMeter();
+        needsComponent.ResetTirednessMeter();
         //PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(this.currentParty);
 
         Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(this, false);
@@ -4008,8 +3879,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
     #region Action Planning and Job Processing
     private void DailyGoapProcesses() {
-        hasForcedFullness = false;
-        hasForcedTiredness = false;
+        needsComponent.DailyGoapProcesses();
     }
     protected virtual void OnTickStarted() {
         //What happens every start of tick
@@ -4132,7 +4002,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (doNotDisturb > 0 || !canWitness) {
             return false;
         }
-        if (isStarving) {
+        if (needsComponent.isStarving) {
             if (!jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY_STARVING)) {
                 //If there is already a HUNGER_RECOVERY JOB and the character becomes Starving, replace HUNGER_RECOVERY with HUNGER_RECOVERY_STARVING only if that character is not doing the job already
                 JobQueueItem hungerRecoveryJob = jobQueue.GetJob(JOB_TYPE.HUNGER_RECOVERY);
@@ -4166,7 +4036,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 }
                 return true;
             }
-        } else if (isHungry) {
+        } else if (needsComponent.isHungry) {
             if (UnityEngine.Random.Range(0, 2) == 0 && traitContainer.GetNormalTrait("Glutton") != null) {
                 if (!jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY)) {
                     JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY;
@@ -4198,7 +4068,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (doNotDisturb > 0 || !canWitness) {
             return false;
         }
-        if (isExhausted) {
+        if (needsComponent.isExhausted) {
             if (!jobQueue.HasJob(JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
                 //If there is already a TIREDNESS_RECOVERY JOB and the character becomes Exhausted, replace TIREDNESS_RECOVERY with TIREDNESS_RECOVERY_STARVING only if that character is not doing the job already
                 JobQueueItem tirednessRecoveryJob = jobQueue.GetJob(JOB_TYPE.TIREDNESS_RECOVERY);
@@ -4233,7 +4103,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (doNotDisturb > 0 || !canWitness) {
             return false;
         }
-        if (isForlorn) {
+        if (needsComponent.isForlorn) {
             if (!jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
                 //If there is already a HUNGER_RECOVERY JOB and the character becomes Starving, replace HUNGER_RECOVERY with HUNGER_RECOVERY_STARVING only if that character is not doing the job already
                 JobQueueItem happinessRecoveryJob = jobQueue.GetJob(JOB_TYPE.HAPPINESS_RECOVERY);
@@ -4268,7 +4138,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 }
                 return true;
             }
-        } else if (isLonely) {
+        } else if (needsComponent.isLonely) {
             if (!jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
                 JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY;
                 int chance = UnityEngine.Random.Range(0, 100);
@@ -4312,10 +4182,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         return false;
     }
     private void PlanScheduledFullnessRecovery() {
-        if (!hasForcedFullness && fullnessForcedTick != 0 && GameManager.Instance.tick >= fullnessForcedTick && _doNotDisturb <= 0) {
+        if (!needsComponent.hasForcedFullness && needsComponent.fullnessForcedTick != 0 && GameManager.Instance.tick >= needsComponent.fullnessForcedTick && _doNotDisturb <= 0) {
             if (!jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING)) {
                 JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY;
-                if (isStarving) {
+                if (needsComponent.isStarving) {
                     jobType = JOB_TYPE.HUNGER_RECOVERY_STARVING;
                 }
                 bool triggerGrieving = false;
@@ -4338,15 +4208,15 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                     griefstricken.TriggerGrieving();
                 }
             }
-            hasForcedFullness = true;
-            SetFullnessForcedTick();
+            needsComponent.hasForcedFullness = true;
+            needsComponent.SetFullnessForcedTick();
         }
     }
     private void PlanScheduledTirednessRecovery() {
-        if (!hasForcedTiredness && tirednessForcedTick != 0 && GameManager.Instance.tick >= tirednessForcedTick && _doNotDisturb <= 0) {
+        if (!needsComponent.hasForcedTiredness && needsComponent.tirednessForcedTick != 0 && GameManager.Instance.tick >= needsComponent.tirednessForcedTick && _doNotDisturb <= 0) {
             if (!jobQueue.HasJob(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
                 JOB_TYPE jobType = JOB_TYPE.TIREDNESS_RECOVERY;
-                if (isExhausted) {
+                if (needsComponent.isExhausted) {
                     jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
                 }
 
@@ -4359,22 +4229,22 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), this, this);
                     //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this });
                     //job.SetCancelOnFail(true);
-                    sleepScheduleJobID = job.id;
+                    needsComponent.sleepScheduleJobID = job.id;
                     //bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0 /*|| stateComponent.stateToDo != null*/;
                     jobQueue.AddJobInQueue(job); //, !willNotProcess
                 } else {
                     spooked.TriggerFeelingSpooked();
                 }
             }
-            hasForcedTiredness = true;
-            SetTirednessForcedTick();
+            needsComponent.hasForcedTiredness = true;
+            needsComponent.SetTirednessForcedTick();
         }
         //If a character current sleep ticks is less than the default, this means that the character already started sleeping but was awaken midway that is why he/she did not finish the allotted sleeping time
         //When this happens, make sure to queue tiredness recovery again so he can finish the sleeping time
-        else if ((hasCancelledSleepSchedule || currentSleepTicks < CharacterManager.Instance.defaultSleepTicks) && _doNotDisturb <= 0) {
+        else if ((needsComponent.hasCancelledSleepSchedule || needsComponent.currentSleepTicks < CharacterManager.Instance.defaultSleepTicks) && _doNotDisturb <= 0) {
             if (!jobQueue.HasJob(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
                 JOB_TYPE jobType = JOB_TYPE.TIREDNESS_RECOVERY;
-                if (isExhausted) {
+                if (needsComponent.isExhausted) {
                     jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
                 }
                 bool triggerSpooked = false;
@@ -4385,7 +4255,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 if (!triggerSpooked) {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), this, this);
                     //job.SetCancelOnFail(true);
-                    sleepScheduleJobID = job.id;
+                    needsComponent.sleepScheduleJobID = job.id;
                     //bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
                     //    || stateComponent.currentState != null || stateComponent.stateToDo != null;
                     jobQueue.AddJobInQueue(job); //!willNotProcess
@@ -4393,7 +4263,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                     spooked.TriggerFeelingSpooked();
                 }
             }
-            SetHasCancelledSleepSchedule(false);
+            needsComponent.SetHasCancelledSleepSchedule(false);
         }
     }
     /// <summary>
@@ -4422,9 +4292,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         } else {
             griefstricken.TriggerGrieving();
         }
-    }
-    public void SetHasCancelledSleepSchedule(bool state) {
-        hasCancelledSleepSchedule = state;
     }
     private bool PlanWorkActions() { //ref bool hasAddedToGoapPlans
         if (isAtHomeRegion && isPartOfHomeFaction) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
@@ -4478,7 +4345,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //}
     }
     private bool PlanJobQueueFirst() {
-        if (!isStarving && !isExhausted && !isForlorn) {
+        if (!needsComponent.isStarving && !needsComponent.isExhausted && !needsComponent.isForlorn) {
             return PlanWorkActions();
         }
         return false;
@@ -5123,290 +4990,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     #endregion
 
-    #region Needs
-    public bool HasNeeds() {
-        return race != RACE.SKELETON && characterClass.className != "Zombie" && !returnedToLife;
-    }
-    protected void DecreaseNeeds() {
-        if (!HasNeeds()) {
-            return;
-        }
-        if (homeRegion.area == null) {
-            return; //Characters living on a region without a settlement must not decrease needs
-        }
-        if (_doNotGetHungry <= 0) {
-            AdjustFullness(-(CharacterManager.FULLNESS_DECREASE_RATE + fullnessDecreaseRate));
-        }
-        if (_doNotGetTired <= 0) {
-            AdjustTiredness(-(CharacterManager.TIREDNESS_DECREASE_RATE + tirednessDecreaseRate));
-        }
-        if (_doNotGetLonely <= 0) {
-            AdjustHappiness(-(CharacterManager.HAPPINESS_DECREASE_RATE + happinessDecreaseRate));
-        }
-    }
-    public string GetNeedsSummary() {
-        string summary = "Fullness: " + fullness.ToString() + "/" + FULLNESS_DEFAULT.ToString();
-        summary += "\nTiredness: " + tiredness + "/" + TIREDNESS_DEFAULT.ToString();
-        summary += "\nHappiness: " + happiness + "/" + HAPPINESS_DEFAULT.ToString();
-        return summary;
-    }
-    public void AdjustFullnessDecreaseRate(int amount) {
-        fullnessDecreaseRate += amount;
-    }
-    public void AdjustTirednessDecreaseRate(int amount) {
-        tirednessDecreaseRate += amount;
-    }
-    public void AdjustHappinessDecreaseRate(int amount) {
-        happinessDecreaseRate += amount;
-    }
-    private void SetTirednessLowerBound(int amount) {
-        tirednessLowerBound = amount;
-    }
-    private void SetFullnessLowerBound(int amount) {
-        fullnessLowerBound = amount;
-    }
-    private void SetHappinessLowerBound(int amount) {
-        happinessLowerBound = amount;
-    }
-    #endregion
-
-    #region Tiredness
-    public void ResetTirednessMeter() {
-        tiredness = TIREDNESS_DEFAULT;
-        RemoveTiredOrExhausted();
-    }
-    public void AdjustTiredness(int adjustment) {
-        tiredness += adjustment;
-        tiredness = Mathf.Clamp(tiredness, tirednessLowerBound, TIREDNESS_DEFAULT);
-        if (tiredness == 0) {
-            Death("exhaustion");
-        } else if (isExhausted) {
-            traitContainer.RemoveTrait(this, "Tired");
-            if (traitContainer.AddTrait(this, "Exhausted")) {
-                Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "exhausted");
-                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "exhausted");
-            }
-            //PlanTirednessRecoveryActions();
-        } else if (isTired) {
-            traitContainer.RemoveTrait(this, "Exhausted");
-            if (traitContainer.AddTrait(this, "Tired")) {
-                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "tired");
-            }
-            //PlanTirednessRecoveryActions();
-        } else {
-            //tiredness is higher than both thresholds
-            RemoveTiredOrExhausted();
-        }
-    }
-    public void ExhaustCharacter() {
-        if (!isExhausted) {
-            int diff = tiredness - TIREDNESS_THRESHOLD_2;
-            AdjustTiredness(-diff);
-        }
-    }
-    public void SetTiredness(int amount) {
-        tiredness = amount;
-        tiredness = Mathf.Clamp(tiredness, tirednessLowerBound, TIREDNESS_DEFAULT);
-        if (tiredness == 0) {
-            Death("exhaustion");
-        } else if (isExhausted) {
-            traitContainer.RemoveTrait(this, "Tired");
-            if (traitContainer.AddTrait(this, "Exhausted")) {
-                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "exhausted");
-            }
-            //PlanTirednessRecoveryActions();
-        } else if (isTired) {
-            traitContainer.RemoveTrait(this, "Exhausted");
-            if (traitContainer.AddTrait(this, "Tired")) {
-                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "tired");
-            }
-            //PlanTirednessRecoveryActions();
-        } else {
-            //tiredness is higher than both thresholds
-            RemoveTiredOrExhausted();
-        }
-    }
-    private void RemoveTiredOrExhausted() {
-        if (traitContainer.RemoveTrait(this, "Tired") == false) {
-            if (traitContainer.RemoveTrait(this, "Exhausted")) {
-                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "exhausted");
-            }
-        } else {
-            //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "tired");
-        }
-    }
-    public void SetTirednessForcedTick() {
-        if (!hasForcedTiredness) {
-            if (forcedTirednessRecoveryTimeInWords == GameManager.GetCurrentTimeInWordsOfTick()) {
-                //If the forced recovery job has not been done yet and the character is already on the time of day when it is supposed to be done,
-                //the tick that will be assigned will be ensured that the character will not miss it
-                //Example if the time of day is Afternoon, the supposed tick range for it is 145 - 204
-                //So if the current tick of the game is already in 160, the range must be adjusted to 161 - 204, so as to ensure that the character will hit it
-                //But if the current tick of the game is already in 204, it cannot be 204 - 204, so, it will revert back to 145 - 204 
-                int newTick = GameManager.GetRandomTickFromTimeInWords(forcedTirednessRecoveryTimeInWords, GameManager.Instance.tick + 1);
-                TIME_IN_WORDS timeInWords = GameManager.GetTimeInWordsOfTick(newTick);
-                if(timeInWords != forcedTirednessRecoveryTimeInWords) {
-                    newTick = GameManager.GetRandomTickFromTimeInWords(forcedTirednessRecoveryTimeInWords);
-                }
-                tirednessForcedTick = newTick;
-                return;
-            }
-        }
-        tirednessForcedTick = GameManager.GetRandomTickFromTimeInWords(forcedTirednessRecoveryTimeInWords);
-    }
-    public void SetTirednessForcedTick(int tick) {
-        tirednessForcedTick = tick;
-    }
-    public void SetForcedTirednessRecoveryTimeInWords(TIME_IN_WORDS timeInWords) {
-        forcedTirednessRecoveryTimeInWords = timeInWords;
-    }
-    #endregion
-
-    #region Fullness
-    public void ResetFullnessMeter() {
-        fullness = FULLNESS_DEFAULT;
-        RemoveHungryOrStarving();
-    }
-    public void AdjustFullness(int adjustment) {
-        fullness += adjustment;
-        fullness = Mathf.Clamp(fullness, fullnessLowerBound, FULLNESS_DEFAULT);
-        if(adjustment > 0) {
-            HPRecovery(0.02f);
-        }
-        if (fullness == 0) {
-            Death("starvation");
-        } else if (isStarving) {
-            traitContainer.RemoveTrait(this, "Hungry");
-            if (traitContainer.AddTrait(this, "Starving") && traitContainer.GetNormalTrait("Vampiric") == null) { //only characters that are not vampires will flee when they are starving
-                Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "starving");
-                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "starving");
-            }
-            //PlanFullnessRecoveryActions();
-        } else if (isHungry) {
-            traitContainer.RemoveTrait(this, "Starving");
-            if (traitContainer.AddTrait(this, "Hungry")) {
-                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "hungry");
-            }
-            //PlanFullnessRecoveryActions();
-        } else {
-            //fullness is higher than both thresholds
-            RemoveHungryOrStarving();
-        }
-    }
-    public void SetFullness(int amount) {
-        fullness = amount;
-        fullness = Mathf.Clamp(fullness, fullnessLowerBound, FULLNESS_DEFAULT);
-        if (fullness == 0) {
-            Death("starvation");
-        } else if (isStarving) {
-            traitContainer.RemoveTrait(this, "Hungry");
-            if (traitContainer.AddTrait(this, "Starving")) {
-                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "starving");
-            }
-            //PlanFullnessRecoveryActions();
-        } else if (isHungry) {
-            traitContainer.RemoveTrait(this, "Starving");
-            if (traitContainer.AddTrait(this, "Hungry")) {
-                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "hungry");
-            }
-            //PlanFullnessRecoveryActions();
-        } else {
-            //fullness is higher than both thresholds
-            RemoveHungryOrStarving();
-        }
-    }
-    private void RemoveHungryOrStarving() {
-        if (traitContainer.RemoveTrait(this, "Hungry") == false) {
-            if (traitContainer.RemoveTrait(this, "Starving")) {
-                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "starving");
-            }
-        } else {
-            //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "hungry");
-        }
-    }
-    public void SetFullnessForcedTick() {
-        if (!hasForcedFullness) {
-            if (forcedFullnessRecoveryTimeInWords == GameManager.GetCurrentTimeInWordsOfTick()) {
-                //If the forced recovery job has not been done yet and the character is already on the time of day when it is supposed to be done,
-                //the tick that will be assigned will be ensured that the character will not miss it
-                //Example if the time of day is Afternoon, the supposed tick range for it is 145 - 204
-                //So if the current tick of the game is already in 160, the range must be adjusted to 161 - 204, so as to ensure that the character will hit it
-                //But if the current tick of the game is already in 204, it cannot be 204 - 204, so, it will revert back to 145 - 204 
-                int newTick = GameManager.GetRandomTickFromTimeInWords(forcedFullnessRecoveryTimeInWords, GameManager.Instance.tick + 1);
-                TIME_IN_WORDS timeInWords = GameManager.GetTimeInWordsOfTick(newTick);
-                if (timeInWords != forcedFullnessRecoveryTimeInWords) {
-                    newTick = GameManager.GetRandomTickFromTimeInWords(forcedFullnessRecoveryTimeInWords);
-                }
-                fullnessForcedTick = newTick;
-                return;
-            }
-        }
-        fullnessForcedTick = GameManager.GetRandomTickFromTimeInWords(forcedFullnessRecoveryTimeInWords);
-    }
-    public void SetFullnessForcedTick(int tick) {
-        fullnessForcedTick = tick;
-    }
-    public void SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS timeInWords) {
-        forcedFullnessRecoveryTimeInWords = timeInWords;
-    }
-    #endregion
-
-    #region Happiness
-    public void ResetHappinessMeter() {
-        happiness = HAPPINESS_DEFAULT;
-        OnHappinessAdjusted();
-    }
-    public void AdjustHappiness(int adjustment) {
-        happiness += adjustment;
-        happiness = Mathf.Clamp(happiness, happinessLowerBound, HAPPINESS_DEFAULT);
-        OnHappinessAdjusted();
-    }
-    public void SetHappiness(int amount) {
-        happiness = amount;
-        happiness = Mathf.Clamp(happiness, happinessLowerBound, HAPPINESS_DEFAULT);
-        OnHappinessAdjusted();
-    }
-    private void RemoveLonelyOrForlorn() {
-        if (traitContainer.RemoveTrait(this, "Lonely") == false) {
-            if (traitContainer.RemoveTrait(this, "Forlorn")) {
-                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "depressed");
-            }
-        } else {
-            //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "lonely");
-        }
-    }
-    private void OnHappinessAdjusted() {
-        if (isForlorn) {
-            traitContainer.RemoveTrait(this, "Lonely");
-            if (traitContainer.AddTrait(this, "Forlorn")) {
-                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "depressed");
-            }
-            //PlanHappinessRecoveryActions();
-        } else if (isLonely) {
-            traitContainer.RemoveTrait(this, "Forlorn");
-            if (traitContainer.AddTrait(this, "Lonely")) {
-                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "lonely");
-            }
-            //PlanHappinessRecoveryActions();
-        } else {
-            RemoveLonelyOrForlorn();
-        }
-        JobQueueItem suicideJob = jobQueue.GetJob(JOB_TYPE.SUICIDE);
-        if (happiness <= 0 && suicideJob == null) {
-            //When Happiness meter is reduced to 0, the character will create a Commit Suicide Job.
-            Debug.Log(GameManager.Instance.TodayLogString() + this.name + "'s happiness is " + happiness.ToString() + ", creating suicide job");
-            CreateSuicideJob();
-        } else if (happiness > HAPPINESS_THRESHOLD_2 && suicideJob != null) {
-            Debug.Log(GameManager.Instance.TodayLogString() + this.name + "'s happiness is " + happiness.ToString() + ", canceling suicide job");
-            suicideJob.CancelJob(false, reason: "no longer forlorn");
-            //if (!suicideJob.CancelJob(suicideJob, "no longer forlorn", false)) {
-            //    suicideJob.UnassignJob(false);
-            //    jobQueue.RemoveJobInQueue(suicideJob);
-            //}
-        }
-    }
-    #endregion
-
     #region Share Intel
     public List<string> ShareIntel(Intel intel) {
         List<string> dialogReactions = new List<string>();
@@ -5501,126 +5084,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     #endregion
 
     #region Awareness
-    //public bool AddAwareness(IPointOfInterest pointOfInterest) {
-    //    return currentAlterEgo.AddAwareness(pointOfInterest);
-    //}
-    //public void RemoveAwareness(IPointOfInterest pointOfInterest) {
-    //    if (planner.status == GOAP_PLANNING_STATUS.RUNNING) {
-    //        pendingActionsAfterMultiThread.Add(() => RemoveAwareness(pointOfInterest));
-    //        return;
-    //    }
-    //    currentAlterEgo.RemoveAwareness(pointOfInterest);
-    //    //Debug.Log(GameManager.Instance.TodayLogString() + this.name + " removed awareness of " + pointOfInterest.name);
-    //    //if (awareness.ContainsKey(pointOfInterest.poiType)) {
-    //    //    List<IAwareness> awarenesses = awareness[pointOfInterest.poiType];
-    //    //    for (int i = 0; i < awarenesses.Count; i++) {
-    //    //        IAwareness iawareness = awarenesses[i];
-    //    //        if (iawareness.poi == pointOfInterest) {
-    //    //            awarenesses.RemoveAt(i);
-    //    //            iawareness.OnRemoveAwareness(this);
-    //    //            break;
-    //    //        }
-    //    //    }
-    //    //}
-    //}
-    //public bool HasAwareness(IPointOfInterest poi) {
-    //    return currentAlterEgo.HasAwareness(poi);
-    //    //if (awareness.ContainsKey(poi.poiType)) {
-    //    //    List<IAwareness> awarenesses = awareness[poi.poiType];
-    //    //    for (int i = 0; i < awarenesses.Count; i++) {
-    //    //        IAwareness iawareness = awarenesses[i];
-    //    //        if (iawareness.poi == poi) {
-    //    //            return iawareness;
-    //    //        }
-    //    //    }
-    //    //    return null;
-    //    //}
-    //    //return null;
-    //}
-    //public void AddInitialAwareness() {
-    //    AddAwareness(this);
-    //    if (faction == FactionManager.Instance.neutralFaction) {
-    //        foreach (List<LocationStructure> structures in specificLocation.structures.Values) {
-    //            for (int i = 0; i < structures.Count; i++) {
-    //                for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
-    //                    IPointOfInterest poi = structures[i].pointsOfInterest[j];
-    //                    if (poi != this) {
-    //                        AddAwareness(poi);
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    } else {
-    //        List<IPointOfInterest> treeObjects = new List<IPointOfInterest>();
-    //        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in specificLocation.structures) {
-    //            for (int i = 0; i < keyValuePair.Value.Count; i++) {
-    //                LocationStructure structure = keyValuePair.Value[i];
-    //                for (int j = 0; j < structure.pointsOfInterest.Count; j++) {
-    //                    IPointOfInterest poi = structure.pointsOfInterest[j];
-    //                    if (poi != this) {
-    //                        if (poi is TreeObject) {
-    //                            treeObjects.Add(poi);
-    //                            continue;
-    //                        }
-    //                        AddAwareness(poi);
-    //                    }
-    //                }
-    //            }
-    //            //order the tree objects, then only add the first n to this character
-    //            treeObjects = treeObjects.OrderBy(x => Vector3Int.Distance(x.gridTileLocation.localPlace, this.gridTileLocation.localPlace)).ToList();
-    //            for (int i = 0; i < TREE_AWARENESS_LIMIT; i++) {
-    //                if (treeObjects.Count <= i) {
-    //                    break; //no more tree objects left
-    //                }
-    //                IPointOfInterest tree = treeObjects[i];
-    //                AddAwareness(tree);
-    //            }
-    //        }
-    //    }
-    //}
-    //public void AddInitialAwareness(Area area) {
-    //    AddAwareness(this);
-    //    if (faction == FactionManager.Instance.neutralFaction) {
-    //        foreach (List<LocationStructure> structures in area.structures.Values) {
-    //            for (int i = 0; i < structures.Count; i++) {
-    //                for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
-    //                    IPointOfInterest poi = structures[i].pointsOfInterest[j];
-    //                    if (poi != this) {
-    //                        AddAwareness(poi);
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    } else {
-    //        List<IPointOfInterest> treeObjects = new List<IPointOfInterest>();
-    //        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in specificLocation.structures) {
-    //            for (int i = 0; i < keyValuePair.Value.Count; i++) {
-    //                LocationStructure structure = keyValuePair.Value[i];
-    //                for (int j = 0; j < structure.pointsOfInterest.Count; j++) {
-    //                    IPointOfInterest poi = structure.pointsOfInterest[j];
-    //                    if (poi != this) {
-    //                        if (poi is TreeObject) {
-    //                            treeObjects.Add(poi);
-    //                            continue;
-    //                        }
-    //                        AddAwareness(poi);
-    //                    }
-    //                }
-    //            }
-    //            //order the tree objects, then only add the first n to this character
-    //            treeObjects = treeObjects.OrderBy(x => Vector3Int.Distance(x.gridTileLocation.localPlace, this.gridTileLocation.localPlace)).ToList();
-    //            for (int i = 0; i < TREE_AWARENESS_LIMIT; i++) {
-    //                if (treeObjects.Count <= i) {
-    //                    break; //no more tree objects left
-    //                }
-    //                IPointOfInterest tree = treeObjects[i];
-    //                AddAwareness(tree);
-    //            }
-
-    //        }
-
-    //    }
-    //}
     public void LogAwarenessList() {
         string log = "--------------AWARENESS LIST OF " + name + "-----------------";
         foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> kvp in specificLocation.region.awareness) {
@@ -5634,17 +5097,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         Debug.Log(log);
     }
-    //public void ClearAllAwareness() {
-    //    currentAlterEgo.ClearAllAwareness();
-    //    //Debug.Log("Cleared all awareness of " + this.name);
-    //}
-    //public void ClearAllAwarenessOfType(params POINT_OF_INTEREST_TYPE[] types) {
-    //    for (int i = 0; i < types.Length; i++) {
-    //        POINT_OF_INTEREST_TYPE currType = types[i];
-    //        currentAlterEgo.RemoveAwareness(currType);
-    //        //Debug.Log("Cleared all awareness of type " + currType.ToString() + " of " + this.name);
-    //    }
-    //}
     #endregion
 
     #region Point Of Interest
@@ -6195,7 +5647,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 log += "\nThis action is the end of plan.";
                 if (job.originalOwner.ownerType != JOB_OWNER.CHARACTER && traitContainer.GetNormalTrait("Hardworking") != null) {
                     log += "\nFinished a settlement job and character is hardworking, increase happiness by 3000...";
-                    AdjustHappiness(3000); //TODO: Move this to hardworking trait.
+                    needsComponent.AdjustHappiness(3000); //TODO: Move this to hardworking trait.
                 }
                 PrintLogIfActive(log);
                 //bool forceRemoveJobInQueue = true;
@@ -6609,15 +6061,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             } else {
                 stillContinueCurrentAction = true;
             }
-        }
-    }
-    public void ResetSleepTicks() {
-        currentSleepTicks = CharacterManager.Instance.defaultSleepTicks;
-    }
-    public void AdjustSleepTicks(int amount) {
-        currentSleepTicks += amount;
-        if(currentSleepTicks <= 0) {
-            ResetSleepTicks();
         }
     }
     private void HeardAScream(Character characterThatScreamed) {
@@ -7138,11 +6581,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             if (state.characterState.IsCombatState()) {
                 ClearIgnoreHostilities();
             }
-            if (state.characterState == CHARACTER_STATE.MOVE_OUT) {
-                SetTirednessLowerBound(TIREDNESS_THRESHOLD_2);
-                SetFullnessLowerBound(FULLNESS_THRESHOLD_2);
-                SetHappinessLowerBound(HAPPINESS_THRESHOLD_2);
-            }
         } else {
             if (state.characterState == CHARACTER_STATE.COMBAT && traitContainer.GetNormalTrait("Unconscious", "Resting") == null && isAtHomeRegion && !ownParty.icon.isTravellingOutside) {
                 //Reference: https://trello.com/c/2ZppIBiI/2428-combat-available-npcs-should-be-able-to-be-aware-of-hostiles-quickly
@@ -7180,19 +6618,15 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             if (state is CombatState && marker != null) {
                 marker.OnThisCharacterEndedCombatState();
             }
-            if (state.characterState == CHARACTER_STATE.MOVE_OUT) {
-                SetTirednessLowerBound(0);
-                SetFullnessLowerBound(0);
-                SetHappinessLowerBound(0);
-            }
         }
     }
     #endregion
 
     #region Alter Egos
     private void InitializeAlterEgos() {
-        alterEgos = new Dictionary<string, AlterEgoData>();
-        alterEgos.Add(CharacterManager.Original_Alter_Ego, new AlterEgoData(this, CharacterManager.Original_Alter_Ego));
+        alterEgos = new Dictionary<string, AlterEgoData> {
+            {CharacterManager.Original_Alter_Ego, new AlterEgoData(this, CharacterManager.Original_Alter_Ego)}
+        };
         currentAlterEgoName = CharacterManager.Original_Alter_Ego;
         currentAlterEgo.SetFaction(faction);
         currentAlterEgo.SetCharacterClass(characterClass);
@@ -7208,7 +6642,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         AddAlterEgo(newData);
         return newData;
     }
-    public void AddAlterEgo(AlterEgoData data) {
+    private void AddAlterEgo(AlterEgoData data) {
         if (!alterEgos.ContainsKey(data.name)) {
             alterEgos.Add(data.name, data);
         }
@@ -7252,13 +6686,13 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
 
             if(alterEgoName == "Lycanthrope") {
-                hasForcedTiredness = true;
+                needsComponent.hasForcedTiredness = true;
             }
-            SetHasCancelledSleepSchedule(false);
-            ResetSleepTicks();
-            ResetFullnessMeter();
-            ResetHappinessMeter();
-            ResetTirednessMeter();
+            needsComponent.SetHasCancelledSleepSchedule(false);
+            needsComponent.ResetSleepTicks();
+            needsComponent.ResetFullnessMeter();
+            needsComponent.ResetHappinessMeter();
+            needsComponent.ResetTirednessMeter();
 
             SetHomeStructure(alterEgoData.homeStructure);
             ChangeFactionTo(alterEgoData.faction);

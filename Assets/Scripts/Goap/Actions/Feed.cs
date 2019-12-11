@@ -35,7 +35,7 @@ public class Feed : GoapAction {
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
         IPointOfInterest poiTarget = node.poiTarget;
-        (poiTarget as Character).AdjustDoNotGetHungry(-1);
+        (poiTarget as Character).needsComponent.AdjustDoNotGetHungry(-1);
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
@@ -52,17 +52,17 @@ public class Feed : GoapAction {
     #region Effects
     public void PreFeedSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
-        targetCharacter.AdjustDoNotGetHungry(1);
+        targetCharacter.needsComponent.AdjustDoNotGetHungry(1);
         goapNode.actor.AdjustFood(-20);
         //TODO: goapNode.action.states[goapNode.currentStateName].SetIntelReaction(FeedSuccessReactions);
     }
     public void PerTickFeedSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
-        targetCharacter.AdjustFullness(585);
+        targetCharacter.needsComponent.AdjustFullness(585);
     }
     public void AfterFeedSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
-        targetCharacter.AdjustDoNotGetHungry(-1);
+        targetCharacter.needsComponent.AdjustDoNotGetHungry(-1);
     }
     #endregion
 

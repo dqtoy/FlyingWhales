@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using System.Linq;
+using Events.World_Events;
 using Inner_Maps;
 
 public class Player : ILeader {
@@ -1311,7 +1312,7 @@ public class Player : ILeader {
         }
 
         if(currentMinions.Count > 0) {
-            LocationGridTile mainEntrance = area.GetRandomUnoccupiedEdgeTile();
+            LocationGridTile mainEntrance = area.innerMap.GetRandomUnoccupiedEdgeTile();
             entrances.Add(mainEntrance);
             //int neededEntrances = currentMinions.Count - 1;
 

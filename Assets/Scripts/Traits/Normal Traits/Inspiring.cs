@@ -21,7 +21,7 @@ namespace Traits {
                 Character targetCharacter = targetPOI as Character;
                 //Anyone from same faction that sees this character gains +100 Happiness Recovery. Exclude those that consider him enemy.
                 if (targetCharacter.faction == characterThatWillDoJob.faction && !targetCharacter.relationshipContainer.HasRelationshipWith(characterThatWillDoJob, RELATIONSHIP_TRAIT.ENEMY)) {
-                    characterThatWillDoJob.AdjustHappiness(100);
+                    characterThatWillDoJob.needsComponent.AdjustHappiness(100);
                     Debug.Log(GameManager.Instance.TodayLogString() + characterThatWillDoJob.name + " saw " + targetCharacter.name + " and became a bit happier!");
                 }
             }

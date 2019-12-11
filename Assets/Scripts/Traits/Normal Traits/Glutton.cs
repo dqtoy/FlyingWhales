@@ -24,16 +24,16 @@ namespace Traits {
             if (addedTo is Character) {
                 additionalFullnessDecreaseRate = Mathf.CeilToInt(CharacterManager.FULLNESS_DECREASE_RATE * 0.5f);
                 Character character = addedTo as Character;
-                character.SetFullnessForcedTick(0);
-                character.AdjustFullnessDecreaseRate(additionalFullnessDecreaseRate);
+                character.needsComponent.SetFullnessForcedTick(0);
+                character.needsComponent.AdjustFullnessDecreaseRate(additionalFullnessDecreaseRate);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is Character) {
                 Character character = removedFrom as Character;
-                character.SetFullnessForcedTick();
-                character.AdjustFullnessDecreaseRate(-additionalFullnessDecreaseRate);
+                character.needsComponent.SetFullnessForcedTick();
+                character.needsComponent.AdjustFullnessDecreaseRate(-additionalFullnessDecreaseRate);
             }
         }
         public override string TriggerFlaw(Character character) {

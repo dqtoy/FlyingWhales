@@ -122,7 +122,7 @@ namespace Traits {
 
 
         private void HuntVictim() {
-            if (character.isForlorn || character.isLonely) {
+            if (character.needsComponent.isForlorn || character.needsComponent.isLonely) {
                 int chance = UnityEngine.Random.Range(0, 100);
                 if (chance < 20) {
                     CheckTargetVictimIfStillAvailable();

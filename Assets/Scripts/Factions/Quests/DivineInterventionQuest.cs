@@ -146,6 +146,7 @@ public class DivineInterventionQuest : Quest {
     private void CreateBuildGoddessStatueJob() {
         LocationStructure structure = region.area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
         GoddessStatue goddessStatue = InnerMapManager.Instance.CreateNewTileObject<GoddessStatue>(TILE_OBJECT_TYPE.GODDESS_STATUE);
+        structure.AddPOI(goddessStatue);
         goddessStatue.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_GODDESS_STATUE, INTERACTION_TYPE.CRAFT_TILE_OBJECT, goddessStatue, this);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeBuildGoddessStatueJob);

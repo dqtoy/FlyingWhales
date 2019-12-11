@@ -31,9 +31,9 @@ public class MoveOutState : CharacterState {
     protected override void StartState() {
         base.StartState();
         stateComponent.character.AdjustDoNotDisturb(1);
-        stateComponent.character.AdjustDoNotGetHungry(1);
-        stateComponent.character.AdjustDoNotGetLonely(1);
-        stateComponent.character.AdjustDoNotGetTired(1);
+        stateComponent.character.needsComponent.AdjustDoNotGetHungry(1);
+        stateComponent.character.needsComponent.AdjustDoNotGetLonely(1);
+        stateComponent.character.needsComponent.AdjustDoNotGetTired(1);
     }
     protected override void EndState() {
         base.EndState();
@@ -49,28 +49,28 @@ public class MoveOutState : CharacterState {
         }
         if (currRegion.area != null) {
             if (!stateComponent.character.marker.gameObject.activeSelf) {
-                stateComponent.character.marker.PlaceMarkerAt(currRegion.area.GetRandomUnoccupiedEdgeTile());
+                stateComponent.character.marker.PlaceMarkerAt(currRegion.innerMap.GetRandomUnoccupiedEdgeTile());
             }
         }
         stateComponent.character.AdjustDoNotDisturb(-1);
-        stateComponent.character.AdjustDoNotGetHungry(-1);
-        stateComponent.character.AdjustDoNotGetLonely(-1);
-        stateComponent.character.AdjustDoNotGetTired(-1);
+        stateComponent.character.needsComponent.AdjustDoNotGetHungry(-1);
+        stateComponent.character.needsComponent.AdjustDoNotGetLonely(-1);
+        stateComponent.character.needsComponent.AdjustDoNotGetTired(-1);
         SchedulingManager.Instance.ClearAllSchedulesBy(this);
     }
     public override void PauseState() {
         base.PauseState();
         stateComponent.character.AdjustDoNotDisturb(-1);
-        stateComponent.character.AdjustDoNotGetHungry(-1);
-        stateComponent.character.AdjustDoNotGetLonely(-1);
-        stateComponent.character.AdjustDoNotGetTired(-1);
+        stateComponent.character.needsComponent.AdjustDoNotGetHungry(-1);
+        stateComponent.character.needsComponent.AdjustDoNotGetLonely(-1);
+        stateComponent.character.needsComponent.AdjustDoNotGetTired(-1);
     }
     public override void ResumeState() {
         base.ResumeState();
         stateComponent.character.AdjustDoNotDisturb(1);
-        stateComponent.character.AdjustDoNotGetHungry(1);
-        stateComponent.character.AdjustDoNotGetLonely(1);
-        stateComponent.character.AdjustDoNotGetTired(1);
+        stateComponent.character.needsComponent.AdjustDoNotGetHungry(1);
+        stateComponent.character.needsComponent.AdjustDoNotGetLonely(1);
+        stateComponent.character.needsComponent.AdjustDoNotGetTired(1);
     }
     protected override void OnJobSet() {
         base.OnJobSet();
@@ -193,15 +193,15 @@ public class MoveOutState : CharacterState {
     }
     private void CheckNeeds() {
         string summary = GameManager.Instance.TodayLogString() + stateComponent.character.name + " has arrived home and will check his/her needs.";
-        if (stateComponent.character.isStarving) {
+        if (stateComponent.character.needsComponent.isStarving) {
             summary += "\n" + stateComponent.character.name + " is starving. Planning fullness recovery actions...";
             stateComponent.character.PlanFullnessRecoveryActions();
         }
-        if (stateComponent.character.isExhausted) {
+        if (stateComponent.character.needsComponent.isExhausted) {
             summary += "\n" + stateComponent.character.name + " is exhausted. Planning tiredness recovery actions...";
             stateComponent.character.PlanTirednessRecoveryActions();
         }
-        if (stateComponent.character.isForlorn) {
+        if (stateComponent.character.needsComponent.isForlorn) {
             summary += "\n" + stateComponent.character.name + " is forlorn. Planning happiness recovery actions...";
             stateComponent.character.PlanHappinessRecoveryActions();
         }
