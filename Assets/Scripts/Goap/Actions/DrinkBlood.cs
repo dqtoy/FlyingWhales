@@ -64,7 +64,7 @@ public class DrinkBlood : GoapAction {
     #region Preconditions
     private bool HasUnconsciousOrRestingTarget(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         Character target = poiTarget as Character;
-        return target.traitContainer.GetNormalTrait("Unconscious", "Resting") != null;
+        return target.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") != null;
     }
     #endregion
 
@@ -99,7 +99,7 @@ public class DrinkBlood : GoapAction {
     //private List<string> DrinkBloodSuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
     //    List<string> reactions = new List<string>();
     //    Character targetCharacter = poiTarget as Character;
-    //    bool isRecipientVampire = recipient.traitContainer.GetNormalTrait("Vampiric") != null;
+    //    bool isRecipientVampire = recipient.traitContainer.GetNormalTrait<Trait>("Vampiric") != null;
 
     //    if (isOldNews) {
     //        //Old News

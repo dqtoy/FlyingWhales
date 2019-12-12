@@ -161,7 +161,8 @@ public class DivineInterventionQuest : Quest {
 
     #region Destroy Profane
     private void CreateDestroyProfaneJob() {
-        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.DESTROY_PROFANE_LANDMARK, CHARACTER_STATE.MOVE_OUT, this);
+        Region target = LandmarkManager.Instance.GetLandmarkOfType(LANDMARK_TYPE.THE_PROFANE).tileLocation.region;
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DESTROY_PROFANE_LANDMARK, INTERACTION_TYPE.ATTACK_REGION, target.regionTileObject, this);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoDestroyProfaneJob);
         AddToAvailableJobs(job);
 
@@ -174,7 +175,8 @@ public class DivineInterventionQuest : Quest {
 
     #region Holy Incantation
     private void CreateHolyIncantationJob() {
-        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.PERFORM_HOLY_INCANTATION, CHARACTER_STATE.MOVE_OUT, this);
+        Region target = LandmarkManager.Instance.GetRandomRegionWithFeature(RegionFeatureDB.Hallowed_Ground_Feature);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PERFORM_HOLY_INCANTATION, INTERACTION_TYPE.HOLY_INCANTATION, target.regionTileObject, this);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoHolyIncantationJob);
         AddToAvailableJobs(job);
 
@@ -186,9 +188,10 @@ public class DivineInterventionQuest : Quest {
     #endregion
 
     #region Sabotage Faction
-    public void CreateSabotageFactionnJob() {
+    public void CreateSabotageFactionJob() {
         if (!HasJob(JOB_TYPE.SABOTAGE_FACTION)) {
-            CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.SABOTAGE_FACTION, CHARACTER_STATE.MOVE_OUT, this);
+            Region target = LandmarkManager.Instance.GetRandomRegionWithFeature(RegionFeatureDB.Hallowed_Ground_Feature);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SABOTAGE_FACTION, INTERACTION_TYPE.DEMONIC_INCANTATION, target.regionTileObject, this);
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoSabotageFactionJob);
             AddToAvailableJobs(job);
         }

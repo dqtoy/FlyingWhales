@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Traits;
 using UnityEngine;
 
 public class GoapPlanJob : JobQueueItem {
@@ -266,7 +267,7 @@ public class GoapPlanJob : JobQueueItem {
             //    return false;
             //}
         }
-        if(jobType == JOB_TYPE.REMOVE_TRAIT && !string.IsNullOrEmpty(goal.conditionKey) && targetPOI.traitContainer.GetNormalTrait((string) goal.conditionKey).IsResponsibleForTrait(character)) {
+        if(jobType == JOB_TYPE.REMOVE_TRAIT && !string.IsNullOrEmpty(goal.conditionKey) && targetPOI.traitContainer.GetNormalTrait<Trait>((string) goal.conditionKey).IsResponsibleForTrait(character)) {
             return false;
         }
         //if(character.HasTraitOf(TRAIT_TYPE.CRIMINAL) || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {

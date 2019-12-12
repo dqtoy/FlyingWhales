@@ -71,10 +71,11 @@ public class Lure : PlayerJobAction {
     private void GoToRegion(object r) {
         Region region = r as Region;
         base.ActivateAction(targetCharacter);
-        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.SEARCHING_WORLD_EVENT, CHARACTER_STATE.MOVE_OUT, region, targetCharacter);
-        targetCharacter.jobQueue.AddJobInQueue(job);
-        UIManager.Instance.HideObjectPicker();
-        GameManager.Instance.SetPausedState(isGamePausedOnLure);
+        //TODO:
+        // CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.SEARCHING_WORLD_EVENT, CHARACTER_STATE.MOVE_OUT, region, targetCharacter);
+        // targetCharacter.jobQueue.AddJobInQueue(job);
+        // UIManager.Instance.HideObjectPicker();
+        // GameManager.Instance.SetPausedState(isGamePausedOnLure);
     }
 
     private bool CanTarget(Character targetCharacter, ref string hoverText) {

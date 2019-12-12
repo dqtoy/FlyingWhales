@@ -1,4 +1,5 @@
 ﻿using Inner_Maps;
+using Traits;
 
 public class ForageFoodRegion : GoapAction {
     
@@ -30,7 +31,7 @@ public class ForageFoodRegion : GoapAction {
             //**Requirements:** Actor is a Hunter. Region has a Game feature.
             var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
             return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null &&
-                   actor.traitContainer.GetNormalTrait("Hunter") != null && 
+                   actor.traitContainer.GetNormalTrait<Trait>("Hunter") != null && 
                    region.HasFeature(RegionFeatureDB.Game_Feature);
         }
         return false;

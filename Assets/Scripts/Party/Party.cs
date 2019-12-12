@@ -192,7 +192,7 @@ public class Party {
             character.marker.transform.eulerAngles = Vector3.zero;
             character.marker.nameLbl.gameObject.SetActive(false);
 
-            Plagued targetPlagued = character.traitContainer.GetNormalTrait("Plagued") as Plagued;
+            Plagued targetPlagued = character.traitContainer.GetNormalTrait<Trait>("Plagued") as Plagued;
             if (targetPlagued != null) {
                 string plaguedSummary = owner.name + " carried a plagued character. Rolling for infection.";
                 int roll = UnityEngine.Random.Range(0, 100);

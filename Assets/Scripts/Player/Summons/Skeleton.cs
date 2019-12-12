@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Traits;
 using UnityEngine;
 
 /// <summary>
@@ -24,7 +25,7 @@ public class Skeleton : Summon {
     //    GoToWorkArea();
     //}
     public override List<ActualGoapNode> ThisCharacterSaw(IPointOfInterest target) {
-        if (traitContainer.GetNormalTrait("Unconscious", "Resting") != null) {
+        if (traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") != null) {
             return null;
         }
         for (int i = 0; i < traitContainer.allTraits.Count; i++) {
@@ -33,10 +34,10 @@ public class Skeleton : Summon {
         return null;
     }
     protected override void OnSeenBy(Character character) {
-        if (traitContainer.GetNormalTrait("Unconscious", "Resting") != null) {
+        if (traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") != null) {
             return;
         }
-        //if (character.role.roleType == CHARACTER_ROLE.CIVILIAN && character.traitContainer.GetNormalTrait("Spooked") == null) {
+        //if (character.role.roleType == CHARACTER_ROLE.CIVILIAN && character.traitContainer.GetNormalTrait<Trait>("Spooked") == null) {
         //    character.AddTrait("Spooked", this);
         //}
     }

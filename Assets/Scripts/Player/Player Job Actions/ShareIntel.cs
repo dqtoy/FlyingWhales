@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Traits;
 using UnityEngine;
 
 public class ShareIntel : PlayerJobAction {
@@ -53,7 +54,7 @@ public class ShareIntel : PlayerJobAction {
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait("Unconscious", "Resting") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") != null) {
             return false;
         }
         return base.CanPerformActionTowards(targetCharacter);
@@ -75,7 +76,7 @@ public class ShareIntel : PlayerJobAction {
         if (PlayerManager.Instance.player.allIntel.Count == 0) {
             return false;
         }
-        if(targetCharacter.traitContainer.GetNormalTrait("Unconscious", "Resting") != null) {
+        if(targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") != null) {
             return false;
         }
         return base.CanTarget(targetCharacter, ref hoverText);

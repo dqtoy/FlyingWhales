@@ -23,13 +23,13 @@ public class Spoil : PlayerJobAction {
         }
     }
     public override bool CanTarget(IPointOfInterest poi, ref string hoverText) {
-        if (poi is Table && !(poi.traitContainer.GetNormalTrait("Poisoned", "Robust") != null)) {
+        if (poi is Table && !(poi.traitContainer.GetNormalTrait<Trait>("Poisoned", "Robust") != null)) {
             return true;
         }
         return false;
     }
     protected override bool CanPerformActionTowards(IPointOfInterest targetPOI) {
-        if (targetPOI is Table && !(targetPOI.traitContainer.GetNormalTrait("Poisoned", "Robust") != null)) {
+        if (targetPOI is Table && !(targetPOI.traitContainer.GetNormalTrait<Trait>("Poisoned", "Robust") != null)) {
             return true;
         }
         return false;

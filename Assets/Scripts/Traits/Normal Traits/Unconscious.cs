@@ -73,7 +73,7 @@ namespace Traits {
             if (traitOwner is Character) {
                 Character targetCharacter = traitOwner as Character;
                 if (!targetCharacter.isDead && targetCharacter.faction == characterThatWillDoJob.faction && !targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-                    SerialKiller serialKiller = characterThatWillDoJob.traitContainer.GetNormalTrait("Serial Killer") as SerialKiller;
+                    SerialKiller serialKiller = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Serial Killer") as SerialKiller;
                     if (serialKiller != null) {
                         serialKiller.SerialKillerSawButWillNotAssist(targetCharacter, this);
                         return false;
@@ -94,7 +94,7 @@ namespace Traits {
                     //    }
                     //}
                 }
-                if (!targetCharacter.isDead && targetCharacter.faction != characterThatWillDoJob.faction && targetCharacter.traitContainer.GetNormalTrait("Restrained") == null) {
+                if (!targetCharacter.isDead && targetCharacter.faction != characterThatWillDoJob.faction && targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null) {
                     GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.RESTRAIN);
                     if (currentJob == null) {
                         if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter)) {

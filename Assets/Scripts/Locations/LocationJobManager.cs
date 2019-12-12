@@ -178,8 +178,9 @@ public class LocationJobManager {
     }
     private bool CreateAttackNonDemonicRegionJobPart2() {
         if (UnityEngine.Random.Range(0, 2) == 0) {
-            if (HasOccupiedNonSettlementTileAtWarWithThisLocation()) {
-                CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.ATTACK_NON_DEMONIC_REGION, CHARACTER_STATE.MOVE_OUT, location);
+            Region validRegion;
+            if (TryGetOccupiedNonSettlementTileAtWarWithThisLocation(out validRegion)) {
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ATTACK_NON_DEMONIC_REGION, INTERACTION_TYPE.ATTACK_REGION, validRegion.regionTileObject, location);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoAttackNonDemonicRegionJob);
                 location.AddToAvailableJobs(job);
                 return true;
@@ -198,14 +199,16 @@ public class LocationJobManager {
         }
         return false;
     }
-    private bool HasOccupiedNonSettlementTileAtWarWithThisLocation() {
+    private bool TryGetOccupiedNonSettlementTileAtWarWithThisLocation(out Region validRegion) {
         Region[] regions = GridMap.Instance.allRegions;
         for (int i = 0; i < regions.Length; i++) {
             Region region = regions[i];
             if (region.residents.Count > 0 && region.area == null && region.owner.HasRelationshipStatusWith(FACTION_RELATIONSHIP_STATUS.HOSTILE, location.region.owner)) {
+                validRegion = region;
                 return true;
             }
         }
+        validRegion = null;
         return false;
     }
     #endregion
@@ -245,7 +248,8 @@ public class LocationJobManager {
     private bool CreateAttackDemonicRegionJobPart3() {
         if (UnityEngine.Random.Range(0, 2) == 0) {
             if (IsPlayerOnlyRemainingStructureIsPortal()) {
-                CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.ATTACK_DEMONIC_REGION, CHARACTER_STATE.MOVE_OUT, location);
+                Region target = PlayerManager.Instance.player.playerArea.region;
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ATTACK_DEMONIC_REGION, INTERACTION_TYPE.ATTACK_REGION, target.regionTileObject, location);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoAttackDemonicRegionJob);
                 location.AddToAvailableJobs(job);
                 return true;
@@ -274,6 +278,43 @@ public class LocationJobManager {
             }
         }
         return false;
+    }
+    #endregion
+
+    #region Region Getters
+    private Region AttackNonDemonicRegionRegionGetter(Character character) {
+        //TODO:
+        //List<Region> baseChoices = new List<Region>();
+        ////first only get the regions that can spawn the needed event
+        //for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+        //    Region currRegion = GridMap.Instance.allRegions[i];
+        //    if (currRegion.owner != null && currRegion.owner != PlayerManager.Instance.player.playerFaction && currRegion.owner != character.homeRegion.owner
+        //        && currRegion.IsConnectedToRegionOwnedBy(character.homeRegion.owner) && currRegion.owner.GetRelationshipWith(character.homeRegion.owner).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE
+        //        && WorldEventsManager.Instance.CanSpawnEventWithEffects(currRegion, character, WorldEventsManager.Instance.GetNeededEffectsOfJob(jobType))) {
+        //        baseChoices.Add(currRegion);
+        //    }
+        //}
+        //if (baseChoices.Count > 0) {
+        //    return baseChoices[UnityEngine.Random.Range(0, baseChoices.Count)];
+        //}
+        return null;
+    }
+    private Region AttackDemonicRegionRegionGetter(Character character) {
+        //TODO:
+        //List<Region> baseChoices = new List<Region>();
+        ////first only get the regions that can spawn the needed event
+        //for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+        //    Region currRegion = GridMap.Instance.allRegions[i];
+        //    if (currRegion.owner != null && currRegion.owner != PlayerManager.Instance.player.playerFaction && currRegion.owner != character.homeRegion.owner
+        //        && currRegion.IsConnectedToRegionOwnedBy(character.homeRegion.owner) && currRegion.owner.GetRelationshipWith(character.homeRegion.owner).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE
+        //        && WorldEventsManager.Instance.CanSpawnEventWithEffects(currRegion, character, WorldEventsManager.Instance.GetNeededEffectsOfJob(jobType))) {
+        //        baseChoices.Add(currRegion);
+        //    }
+        //}
+        //if (baseChoices.Count > 0) {
+        //    return baseChoices[UnityEngine.Random.Range(0, baseChoices.Count)];
+        //}
+        return null;
     }
     #endregion
 }

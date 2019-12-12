@@ -104,7 +104,7 @@ public class PlayGuitar : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
                 return false;
             }
-            if (actor.traitContainer.GetNormalTrait("MusicHater") != null) {
+            if (actor.traitContainer.GetNormalTrait<Trait>("MusicHater") != null) {
                 return false; //music haters will never play guitar
             }
             if (poiTarget.gridTileLocation == null) {
@@ -144,7 +144,7 @@ public class PlayGuitar : GoapAction {
     //private List<string> PlaySuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
     //    List<string> reactions = new List<string>();
 
-    //    if(status == SHARE_INTEL_STATUS.WITNESSED && recipient.traitContainer.GetNormalTrait("Music Hater") != null) {
+    //    if(status == SHARE_INTEL_STATUS.WITNESSED && recipient.traitContainer.GetNormalTrait<Trait>("Music Hater") != null) {
     //        recipient.traitContainer.AddTrait(recipient, "Annoyed");
     //        if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) || recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
     //            if (recipient.CreateBreakupJob(actor) != null) {
@@ -182,7 +182,7 @@ public class PlayGuitarData : GoapActionData {
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
-        if (actor.traitContainer.GetNormalTrait("MusicHater") != null) {
+        if (actor.traitContainer.GetNormalTrait<Trait>("MusicHater") != null) {
             return false; //music haters will never play guitar
         }
         if (poiTarget.gridTileLocation == null) {

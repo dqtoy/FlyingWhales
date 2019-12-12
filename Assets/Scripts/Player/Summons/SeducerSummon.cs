@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
+using Traits;
 using UnityEngine;
 
 public class SeducerSummon : Summon {
@@ -45,7 +46,7 @@ public class SeducerSummon : Summon {
         AdjustIgnoreHostilities(1);
     }
     public override List<ActualGoapNode> ThisCharacterSaw(IPointOfInterest target) {
-        if (traitContainer.GetNormalTrait("Unconscious", "Resting") != null) {
+        if (traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") != null) {
             return null;
         }
         for (int i = 0; i < traitContainer.allTraits.Count; i++) {

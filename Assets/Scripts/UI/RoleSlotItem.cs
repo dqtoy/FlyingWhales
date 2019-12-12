@@ -14,7 +14,7 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
     [SerializeField] private Image jobIcon;
     [SerializeField] private TextMeshProUGUI jobNameLbl;
     [SerializeField] private Image cooldownProgress;
-    [SerializeField] private UIHoverHandler portraitHover;
+    [SerializeField] private HoverHandler portraitHover;
 
 
     [SerializeField] private GameObject validPortraitGO;

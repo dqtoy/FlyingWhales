@@ -19,7 +19,7 @@ public class CharacterItem : PooledObject {
     [SerializeField] private Button itemBtn;
     [SerializeField] private Toggle toggle;
     [SerializeField] private EventTrigger toggleEventTrigger;
-    public UIHoverHandler hoverHandler;
+    public HoverHandler hoverHandler;
 
     private List<System.Action> _toggleClickActions;
 

@@ -54,9 +54,10 @@ GameObject:
   - component: {fileID: 4599941315759244}
   - component: {fileID: 114899346445621078}
   - component: {fileID: 61673993730748910}
+  - component: {fileID: 114634211200672300}
   m_Layer: 14
   m_Name: ItemGameObject
-  m_TagString: Untagged
+  m_TagString: Map Object
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -238,6 +239,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3af45c1e8289cd646a3b50358d8eeff2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114634211200672300
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1237125448053210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 0
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114899346445621078
 MonoBehaviour:
   m_ObjectHideFlags: 1

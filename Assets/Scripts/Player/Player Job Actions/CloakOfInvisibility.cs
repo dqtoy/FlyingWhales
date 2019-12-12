@@ -56,7 +56,7 @@ public class CloakOfInvisibility : PlayerJobAction {
         //if (character.id == targetCharacter.id) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
         //    return false;
         //}
-        if (targetCharacter.traitContainer.GetNormalTrait("Invisible") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Invisible") != null) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -90,7 +90,7 @@ public class CloakOfInvisibility : PlayerJobAction {
         //if (targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES) {
         //    return false;
         //}
-        if (targetCharacter.traitContainer.GetNormalTrait("Invisible") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Invisible") != null) {
             return false;
         }
         return base.CanTarget(targetCharacter, ref hoverText);

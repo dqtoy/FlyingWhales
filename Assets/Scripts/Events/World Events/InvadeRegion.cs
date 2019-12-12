@@ -18,7 +18,7 @@
         }
         public override bool CanSpawnEventAt(Region region, Character spawner) {
             //- requirement: Actor is Purifier  + Region Criteria from Job
-            //if (spawner.traitContainer.GetNormalTrait("Purifier") == null) {
+            //if (spawner.traitContainer.GetNormalTrait<Trait>("Purifier") == null) {
             //    return false;
             //}
             //- region is corrupted

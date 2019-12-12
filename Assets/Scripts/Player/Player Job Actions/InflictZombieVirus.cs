@@ -60,7 +60,7 @@ public class ZombieVirus : PlayerJobAction {
         if (targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait("Infected", "Robust") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Infected", "Robust") != null) {
             return false;
         }
         return base.CanPerformActionTowards(targetCharacter);
@@ -91,7 +91,7 @@ public class ZombieVirus : PlayerJobAction {
         if (targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait("Infected", "Robust") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Infected", "Robust") != null) {
             return false;
         }
         return base.CanTarget(targetCharacter, ref hoverText);

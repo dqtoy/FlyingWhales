@@ -38,8 +38,8 @@ namespace Traits {
             base.OnSeePOI(targetPOI, character);
             if (targetPOI is Character) {
                 Character targetCharacter = targetPOI as Character;
-                Paralyzed paralyzed = targetCharacter.traitContainer.GetNormalTrait("Paralyzed") as Paralyzed;
-                Catatonic catatonic = targetCharacter.traitContainer.GetNormalTrait("Catatonic") as Catatonic;
+                Paralyzed paralyzed = targetCharacter.traitContainer.GetNormalTrait<Trait>("Paralyzed") as Paralyzed;
+                Catatonic catatonic = targetCharacter.traitContainer.GetNormalTrait<Trait>("Catatonic") as Catatonic;
                 if (paralyzed != null) {
                     paralyzed.AddCharacterThatKnows(character);
                 }
@@ -68,7 +68,7 @@ namespace Traits {
             }
             if (targetPOI is TileObject) {
                 TileObject tileObj = targetPOI as TileObject;
-                if (tileObj.isSummonedByPlayer && characterThatWillDoJob.traitContainer.GetNormalTrait("Suspicious") == null && !alreadyInspectedTileObjects.Contains(tileObj)) {
+                if (tileObj.isSummonedByPlayer && characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Suspicious") == null && !alreadyInspectedTileObjects.Contains(tileObj)) {
                     if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.INSPECT, tileObj)) {
                         GoapPlanJob inspectJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INSPECT, INTERACTION_TYPE.INSPECT, tileObj, characterThatWillDoJob);
                         characterThatWillDoJob.jobQueue.AddJobInQueue(inspectJob);
@@ -121,7 +121,7 @@ namespace Traits {
                     targetCharacter = (targetPOI as Tombstone).character;
                 }
                 if (targetCharacter.isDead) {
-                    Dead deadTrait = targetCharacter.traitContainer.GetNormalTrait("Dead") as Dead;
+                    Dead deadTrait = targetCharacter.traitContainer.GetNormalTrait<Trait>("Dead") as Dead;
                     if (deadTrait.responsibleCharacter != characterThatWillDoJob && !deadTrait.charactersThatSawThisDead.Contains(characterThatWillDoJob)) {
                         deadTrait.AddCharacterThatSawThisDead(characterThatWillDoJob);
 
@@ -153,7 +153,7 @@ namespace Traits {
                          //When someone sees another character carrying a character that is unconscious or restrained, and that character is not a branded criminal, and not the carrier's lover or relative, the carrier will be branded as Assaulter and Crime Handling will take place.
                          //if (targetCharacter.IsInOwnParty() && targetCharacter.currentParty.characters.Count > 1 && !targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) { //This means that this character is carrrying another character
                          //    Character carriedCharacter = targetCharacter.currentParty.characters[1];
-                         //    if (characterThatWillDoJob != carriedCharacter && !carriedCharacter.isDead && carriedcharacter.traitContainer.GetNormalTrait("Unconscious", "Restrained") != null) {
+                         //    if (characterThatWillDoJob != carriedCharacter && !carriedCharacter.isDead && carriedcharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Restrained") != null) {
                          //        if (!targetCharacter.HasRelationshipOfTypeWith(carriedCharacter, false, RELATIONSHIP_TRAIT.RELATIVE, RELATIONSHIP_TRAIT.LOVER)) {
                          //            if (targetCharacter.currentActionNode.action != null && !targetCharacter.currentActionNode.action.hasCrimeBeenReported) {
                          //                characterThatWillDoJob.ReactToCrime(CRIME.ASSAULT, targetCharacter.currentActionNode.action, targetCharacter.currentAlterEgo, SHARE_INTEL_STATUS.WITNESSED);
@@ -168,7 +168,7 @@ namespace Traits {
                     //- unconscious, catatonic, restrained, puked, stumbled
                     ///NOTE: Puke and Stumble Reactions can be found at <see cref="Puke.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/> and <see cref="Stumble.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/> respectively
                     //They will trigger a personal https://trello.com/c/uCbLBXsF/2846-character-laugh-at job
-                    if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY) && targetCharacter.traitContainer.GetNormalTrait("Unconscious", "Catatonic", "Restrained") != null && characterThatWillDoJob.faction == targetCharacter.faction
+                    if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY) && targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Catatonic", "Restrained") != null && characterThatWillDoJob.faction == targetCharacter.faction
                         && (characterThatWillDoJob.currentActionNode == null || characterThatWillDoJob.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)) {
                         return CreateLaughAtJob(characterThatWillDoJob, targetCharacter);
                     }
@@ -177,7 +177,7 @@ namespace Traits {
                     //catatonic, unconscious, restrained, puked
                     ///NOTE: Puke Reactions can be found at <see cref="Puke.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/>
                     //They will trigger a personal https://trello.com/c/iDsfwQ7d/2845-character-feeling-concerned job
-                    else if (characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE && targetCharacter.traitContainer.GetNormalTrait("Unconscious", "Catatonic", "Restrained") != null
+                    else if (characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE && targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Catatonic", "Restrained") != null
                         && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.REMOVE_TRAIT, targetCharacter) && characterThatWillDoJob.faction == targetCharacter.faction
                          && (characterThatWillDoJob.currentActionNode == null || characterThatWillDoJob.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)) {
                         return CreateFeelingConcernedJob(characterThatWillDoJob, targetCharacter);

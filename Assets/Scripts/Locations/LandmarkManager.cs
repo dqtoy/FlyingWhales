@@ -3,9 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
+using JetBrains.Annotations;
 using UnityEngine.Tilemaps;
 using Unity.Jobs;
 using Unity.Collections;
+using Debug = System.Diagnostics.Debug;
 
 public partial class LandmarkManager : MonoBehaviour {
 
@@ -653,13 +655,27 @@ public partial class LandmarkManager : MonoBehaviour {
     #endregion
 
     #region Regions
-    public RegionFeature CreateRegionFeature(string featureName) {
+    public RegionFeature CreateRegionFeature([NotNull] string featureName) {
         try {
+            Debug.Assert(featureName != null, nameof(featureName) + " != null");
             return System.Activator.CreateInstance(System.Type.GetType(featureName)) as RegionFeature;
         } catch {
             throw new System.Exception("Cannot create region feature with name " + featureName);
         }
         
+    }
+    public Region GetRandomRegionWithFeature(string feature) {
+        List<Region> choices = new List<Region>();
+        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+            Region region = GridMap.Instance.allRegions[i];
+            if (region.HasFeature(feature)) {
+                choices.Add(region);
+            }
+        }
+        if (choices.Count > 0) {
+            return Utilities.GetRandomElement(choices);
+        }
+        return null;
     }
     #endregion
 

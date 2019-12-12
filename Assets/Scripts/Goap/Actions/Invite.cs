@@ -38,11 +38,11 @@ public class Invite : GoapAction {
                 }
             } else {
                 int acceptChance = 100;
-                if (targetCharacter.traitContainer.GetNormalTrait("Chaste") != null) {
+                if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Chaste") != null) {
                     acceptChance = 25;
                 }
                 if (UnityEngine.Random.Range(0, 100) > acceptChance || targetCharacter.needsComponent.isStarving || targetCharacter.needsComponent.isExhausted
-                || targetCharacter.traitContainer.GetNormalTrait("Annoyed") != null || targetCharacter.ownParty.isCarryingAnyPOI
+                || targetCharacter.traitContainer.GetNormalTrait<Trait>("Annoyed") != null || targetCharacter.ownParty.isCarryingAnyPOI
                 || targetCharacter.stateComponent.currentState != null || targetCharacter.IsAvailable() == false) {
                     goapActionInvalidity.isInvalid = true;
                     goapActionInvalidity.stateName = "Invite Fail";

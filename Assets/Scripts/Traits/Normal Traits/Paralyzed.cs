@@ -45,7 +45,7 @@ namespace Traits {
                 Character targetCharacter = traitOwner as Character;
                 if (!targetCharacter.isDead) {
                     if (targetCharacter.faction != characterThatWillDoJob.faction) {
-                        if (targetCharacter.traitContainer.GetNormalTrait("Restrained") == null) {
+                        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null) {
                             GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.RESTRAIN);
                             if (currentJob == null) {
                                 if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter)) {
@@ -108,7 +108,7 @@ namespace Traits {
                 if (character.CanPlanGoap() && character.stateComponent.currentState == null
                     && (character.needsComponent.isStarving || character.needsComponent.isExhausted || character.needsComponent.isForlorn)
                     && UnityEngine.Random.Range(0, 100) < 75 && !character.jobQueue.HasJob(JOB_TYPE.SCREAM)
-                    && character.traitContainer.GetNormalTrait("Unconscious", "Resting") == null && !character.HasJobTargettingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
+                    && character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") == null && !character.HasJobTargettingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SCREAM, INTERACTION_TYPE.SCREAM_FOR_HELP, character, character);
                     character.jobQueue.AddJobInQueue(job);
                 }
@@ -243,7 +243,7 @@ namespace Traits {
                 jobType = JOB_TYPE.HAPPINESS_RECOVERY_FORLORN;
             }
             bool triggerBrokenhearted = false;
-            Heartbroken heartbroken = character.traitContainer.GetNormalTrait("Heartbroken") as Heartbroken;
+            Heartbroken heartbroken = character.traitContainer.GetNormalTrait<Trait>("Heartbroken") as Heartbroken;
             if (heartbroken != null) {
                 triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
             }
@@ -296,7 +296,7 @@ namespace Traits {
                 jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
             }
             bool triggerSpooked = false;
-            Spooked spooked = character.traitContainer.GetNormalTrait("Spooked") as Spooked;
+            Spooked spooked = character.traitContainer.GetNormalTrait<Trait>("Spooked") as Spooked;
             if (spooked != null) {
                 triggerSpooked = UnityEngine.Random.Range(0, 100) < 20;
             }

@@ -28,7 +28,7 @@ public class TransformToWolfForm : GoapAction {
     #region State Effects
     public void PreTransformSuccess(ActualGoapNode goapNode) { }
     public void AfterTransformSuccess(ActualGoapNode goapNode) {
-        Lycanthrope lycanthropy = goapNode.actor.traitContainer.GetNormalTrait("Lycanthrope") as Lycanthrope;
+        Lycanthrope lycanthropy = goapNode.actor.traitContainer.GetNormalTrait<Trait>("Lycanthrope") as Lycanthrope;
         lycanthropy.TurnToWolf();
     }
     #endregion

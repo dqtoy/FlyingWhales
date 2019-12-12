@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Traits;
 using UnityEngine;
 
 public class PlayerJobAction {
@@ -134,7 +135,7 @@ public class PlayerJobAction {
         return CanPerformAction();
     }
     protected virtual bool CanPerformActionTowards(Character targetCharacter) {
-        if (targetCharacter.traitContainer.GetNormalTrait("Blessed") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Blessed") != null) {
             return false;
         }
         //Quick fix only, remove this later
@@ -162,7 +163,7 @@ public class PlayerJobAction {
     /// <param name="poi">The target poi</param>
     /// <returns>true or false</returns>
     public virtual bool CanTarget(IPointOfInterest poi, ref string hoverText) {
-        if (poi.traitContainer.GetNormalTrait("Blessed") != null) {
+        if (poi.traitContainer.GetNormalTrait<Trait>("Blessed") != null) {
             hoverText = "Blessed characters cannot be targetted.";
             return false;
         }

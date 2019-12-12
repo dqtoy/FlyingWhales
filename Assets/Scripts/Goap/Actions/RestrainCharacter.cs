@@ -45,7 +45,7 @@ public class RestrainCharacter : GoapAction {
         if (satisfied) {
             if (actor != poiTarget) {
                 Character target = poiTarget as Character;
-                return target.traitContainer.GetNormalTrait("Restrained") == null;
+                return target.traitContainer.GetNormalTrait<Trait>("Restrained") == null;
             }
             return false;
         }
@@ -220,7 +220,7 @@ public class RestrainCharacterData : GoapActionData {
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         if (actor != poiTarget) {
             Character target = poiTarget as Character;
-            return target.traitContainer.GetNormalTrait("Restrained") == null;
+            return target.traitContainer.GetNormalTrait<Trait>("Restrained") == null;
         }
         return false;
     }

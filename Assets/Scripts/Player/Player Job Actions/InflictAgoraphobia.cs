@@ -57,7 +57,7 @@ public class Agoraphobia : PlayerJobAction {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait("Agoraphobic") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Agoraphobic") != null) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -88,7 +88,7 @@ public class Agoraphobia : PlayerJobAction {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait("Agoraphobic") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Agoraphobic") != null) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {

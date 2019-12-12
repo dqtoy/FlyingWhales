@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(UIHoverHandler))]
+[RequireComponent(typeof(HoverHandler))]
 public class PartyEmblem : MonoBehaviour {
 
     private Party party;

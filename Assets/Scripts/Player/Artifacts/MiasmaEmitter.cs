@@ -47,7 +47,7 @@ public class MiasmaEmitter : Artifact {
             }
             //if (currTile.objHere is TileObject) {
             //    TileObject obj = currTile.objHere as TileObject;
-            //    Trait existing = obj.traitContainer.GetNormalTrait("Disabled");
+            //    Trait existing = obj.traitContainer.GetNormalTrait<Trait>("Disabled");
             //    //if (existing != null) {
             //    //    existing.OverrideDuration(0);
             //    //    obj.RefreshTraitExpiry(existing);
@@ -110,7 +110,7 @@ public class MiasmaEmitter : Artifact {
 
     private void OnTileObjectPlaced(TileObject obj, LocationGridTile tile) {
         if (tilesInRange.Contains(tile)) {
-            //Trait existing = obj.GetNormalTrait("Disabled");
+            //Trait existing = obj.GetNormalTrait<Trait>("Disabled");
             //if (existing != null) {
             //    existing.OverrideDuration(0);
             //    obj.RefreshTraitExpiry(existing);

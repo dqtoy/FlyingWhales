@@ -9,13 +9,16 @@ using UnityEngine.EventSystems;
 /// <summary>
 /// Base class to be used for the visuals of any objects that are Area Map Objects.
 /// </summary>
-public abstract class MapObjectVisual<T> : PooledObject, IMapObjectVisual, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler where T : IDamageable {
+[RequireComponent(typeof(HoverHandler))]
+public abstract class MapObjectVisual<T> : PooledObject, IMapObjectVisual, IPointerClickHandler where T : IDamageable {
 
     [SerializeField] private SpriteRenderer objectVisual;
     [SerializeField] private SpriteRenderer hoverObject;
+    private HoverHandler _hoverHandler;
     public BaseCollisionTrigger<T> collisionTrigger { get; protected set; }
     public GameObject gameObjectVisual => this.gameObject;
-    protected System.Action onClickAction;
+    private System.Action onLeftClickAction;
+    private System.Action onRightClickAction;
 
     #region getters
     public Sprite usedSprite {
@@ -23,7 +26,15 @@ public abstract class MapObjectVisual<T> : PooledObject, IMapObjectVisual, IPoin
     }
     #endregion
 
-    public abstract void Initialize(T poi);
+    private void Awake() {
+        _hoverHandler = GetComponent<HoverHandler>();
+    }
+    public virtual void Initialize(T poi) {
+        _hoverHandler.SetOnHoverAction(() => OnPointerEnter(poi));
+        _hoverHandler.SetOnHoverOutAction(() => OnPointerExit(poi));
+        onLeftClickAction = () => OnPointerLeftClick(poi);
+        onRightClickAction = () => OnPointerRightClick(poi);
+    }
 
     #region Placement
     public virtual void PlaceObjectAt(LocationGridTile tile) {
@@ -65,14 +76,21 @@ public abstract class MapObjectVisual<T> : PooledObject, IMapObjectVisual, IPoin
     #endregion
 
     #region Pointer Functions
-    public virtual void OnPointerEnter(PointerEventData eventData) {
+    protected virtual void OnPointerEnter(T poi) {
         hoverObject.gameObject.SetActive(true);
     }
-    public virtual void OnPointerExit(PointerEventData eventData) {
+    protected virtual void OnPointerExit(T poi) {
         hoverObject.gameObject.SetActive(false);
     }
-    public virtual void OnPointerClick(PointerEventData eventData) {
-        onClickAction?.Invoke();
+    protected virtual void OnPointerLeftClick(T poi) { }
+    protected virtual void OnPointerRightClick(T poi) { }
+    public void OnPointerClick(PointerEventData eventData) {
+        if (eventData.button == PointerEventData.InputButton.Left) {
+            onLeftClickAction?.Invoke();    
+        }else if (eventData.button == PointerEventData.InputButton.Right) {
+            onRightClickAction?.Invoke();
+        }
+        
     }
     #endregion
 }

@@ -5,7 +5,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
+public class HoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
 
     protected bool isHovering;
 
@@ -25,9 +25,7 @@ public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     private void OnDisable() {
         isHovering = false;
-        if (onHoverExitAction != null) {
-            onHoverExitAction.Invoke();
-        }
+        onHoverExitAction?.Invoke();
     }
     private void OnDestroy() {
         isHovering = false;
@@ -48,9 +46,7 @@ public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             }
         }
         isHovering = false;
-        if (onHoverExitAction != null) {
-            onHoverExitAction.Invoke();
-        }
+        onHoverExitAction?.Invoke();
     }
 
 
@@ -71,9 +67,7 @@ public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     void Update() {
         if (isHovering) {
-            if (onHoverOverAction != null) {
-                onHoverOverAction.Invoke();
-            }
+            onHoverOverAction?.Invoke();
         }
     }
 

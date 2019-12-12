@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Traits;
 using UnityEngine;
 
 public class DefaultJoinFaction : CharacterBehaviourComponent {
@@ -61,7 +62,7 @@ public class DefaultJoinFaction : CharacterBehaviourComponent {
         } else if (UnityEngine.Random.Range(0, 100) < 10) {
             if (character.isFriendlyFactionless) {
                 log += "\n-" + character.name + " is factionless, 10% chance to create faction";
-                if (character.traitContainer.GetNormalTrait("Inspiring", "Ambitious") != null) {
+                if (character.traitContainer.GetNormalTrait<Trait>("Inspiring", "Ambitious") != null) {
                     log += "\n-" + character.name + " is Ambitious or Inspiring, creating new faction...";
                     Faction newFaction = FactionManager.Instance.CreateNewFaction();
                     character.ChangeFactionTo(newFaction);

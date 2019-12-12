@@ -52,7 +52,7 @@ public class LandmarkCharacterItem : PooledObject {
 
     private void UpdateLocationIcons() {
         if (parentMenu is AreaInfoUI) {
-            if(character.traitContainer.GetNormalTrait("Abducted", "Restrained") != null) {
+            if(character.traitContainer.GetNormalTrait<Trait>("Abducted", "Restrained") != null) {
                 restrainedIcon.SetActive(true);
                 unrestrainedGO.SetActive(false);
             } else {
@@ -80,7 +80,7 @@ public class LandmarkCharacterItem : PooledObject {
             }
             (parentMenu as AreaInfoUI).OrderCharacterItems();
         } else if (parentMenu is RegionInfoUI) {
-            if (character.traitContainer.GetNormalTrait("Abducted", "Restrained") != null) {
+            if (character.traitContainer.GetNormalTrait<Trait>("Abducted", "Restrained") != null) {
                 restrainedIcon.SetActive(true);
                 unrestrainedGO.SetActive(false);
             } else {
@@ -97,7 +97,7 @@ public class LandmarkCharacterItem : PooledObject {
                 coverGO.SetActive(false);
             }
         } else if (parentMenu is TileObjectInfoUI) {
-            if (character.traitContainer.GetNormalTrait("Abducted", "Restrained") != null) {
+            if (character.traitContainer.GetNormalTrait<Trait>("Abducted", "Restrained") != null) {
                 restrainedIcon.SetActive(true);
                 unrestrainedGO.SetActive(false);
             } else {
@@ -147,8 +147,8 @@ public class LandmarkCharacterItem : PooledObject {
     }
     public void ShowRestrainedTooltip() {
         string info = string.Empty;
-        Trait abductedTrait = character.traitContainer.GetNormalTrait("Abducted");
-        Trait restrainedTrait = character.traitContainer.GetNormalTrait("Restrained");
+        Trait abductedTrait = character.traitContainer.GetNormalTrait<Trait>("Abducted");
+        Trait restrainedTrait = character.traitContainer.GetNormalTrait<Trait>("Restrained");
         if (abductedTrait != null) {
             info += abductedTrait.GetToolTipText();
         }
@@ -193,7 +193,7 @@ public class LandmarkCharacterItem : PooledObject {
     private void OnTraitRemoved(Character character, Trait trait) {
         if (character.id == this.character.id) {
             if (trait.name == "Abducted" || trait.name == "Restrained") {
-                if(character.traitContainer.GetNormalTrait("Abducted", "Restrained") == null) {
+                if(character.traitContainer.GetNormalTrait<Trait>("Abducted", "Restrained") == null) {
                     restrainedIcon.SetActive(false);
                     unrestrainedGO.SetActive(true);
                 }

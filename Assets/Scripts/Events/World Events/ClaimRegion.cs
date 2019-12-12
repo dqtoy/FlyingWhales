@@ -1,4 +1,5 @@
-﻿namespace Events.World_Events {
+﻿using Traits;
+namespace Events.World_Events {
     public class ClaimRegion : WorldEvent {
 
         public ClaimRegion() : base(WORLD_EVENT.CLAIM_REGION) {
@@ -17,7 +18,7 @@
         }
         public override bool CanSpawnEventAt(Region region, Character spawner) {
             //requirement: Actor is Royalty + Region Criteria from Job
-            if (spawner.traitContainer.GetNormalTrait("Royalty") == null) {
+            if (spawner.traitContainer.GetNormalTrait<Trait>("Royalty") == null) {
                 return false;
             }
             //- not owned by any faction

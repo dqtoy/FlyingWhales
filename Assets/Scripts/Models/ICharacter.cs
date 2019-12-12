@@ -80,7 +80,7 @@ public interface ICharacter {
     bool IsInOwnParty();
     bool RemoveTrait(Trait combatAttribute, bool triggerOnRemove = true, Character removedBy = null);
     Party CreateOwnParty();
-    Trait GetNormalTrait(params string[] name);
+    Trait GetNormalTrait<Trait>(params string[] name);
     void ConstructBuffs();
     void SetPlayerCharacterItem(PlayerCharacterItem item);
 }

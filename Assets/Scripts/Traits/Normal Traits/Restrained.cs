@@ -85,7 +85,7 @@ namespace Traits {
                     return false;
                 }
                 if (!targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-                    SerialKiller serialKiller = characterThatWillDoJob.traitContainer.GetNormalTrait("Serial Killer") as SerialKiller;
+                    SerialKiller serialKiller = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Serial Killer") as SerialKiller;
                     if (serialKiller != null) {
                         serialKiller.SerialKillerSawButWillNotAssist(targetCharacter, this);
                         return false;
@@ -124,7 +124,7 @@ namespace Traits {
             if (!isPrisoner && _sourceCharacter.IsInOwnParty()) { //applies even if character is being Carried: so just remove the _sourceCharacter.IsInOwnParty(), right now it cannot happen while character is being carried
                 if (_sourceCharacter.currentActionNode.action == null && _sourceCharacter.stateComponent.currentState == null
                     && UnityEngine.Random.Range(0, 100) < 75 && !_sourceCharacter.jobQueue.HasJob(JOB_TYPE.SCREAM)
-                    && _sourceCharacter.traitContainer.GetNormalTrait("Unconscious", "Resting") == null) {
+                    && _sourceCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") == null) {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SCREAM, INTERACTION_TYPE.SCREAM_FOR_HELP, _sourceCharacter, _sourceCharacter);
                     _sourceCharacter.jobQueue.AddJobInQueue(job);
                 }

@@ -55,7 +55,7 @@ public class Butcher : GoapAction {
             }
             Character deadCharacter = GetDeadCharacter(poiTarget);
             if (deadCharacter != null && (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES)) {
-                if (actor.traitContainer.GetNormalTrait("Cannibal") != null) {
+                if (actor.traitContainer.GetNormalTrait<Trait>("Cannibal") != null) {
                     return true;
                 }
                 return false;
@@ -265,7 +265,7 @@ public class ButcherData : GoapActionData {
         if (targetCharacter != null) {
             if (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES) {
                 //return true;
-                if (actor.traitContainer.GetNormalTrait("Cannibal") != null) {
+                if (actor.traitContainer.GetNormalTrait<Trait>("Cannibal") != null) {
                     return true;
                 }
                 return false;

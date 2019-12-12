@@ -63,7 +63,7 @@ public class Daydream : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
                 return false;
             }
-            if (actor.traitContainer.GetNormalTrait("Disillusioned") != null) {
+            if (actor.traitContainer.GetNormalTrait<Trait>("Disillusioned") != null) {
                 return false;
             }
             return actor == poiTarget;

@@ -1301,7 +1301,7 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private Button closeBtn;
     [SerializeField] private TextMeshProUGUI yesBtnLbl;
     [SerializeField] private TextMeshProUGUI noBtnLbl;
-    [SerializeField] private UIHoverHandler yesBtnUnInteractableHoverHandler;
+    [SerializeField] private HoverHandler yesBtnUnInteractableHoverHandler;
     public void ShowYesNoConfirmation(string header, string question, System.Action onClickYesAction = null, System.Action onClickNoAction = null,
         bool showCover = false, int layer = 21, string yesBtnText = "Yes", string noBtnText = "No", bool yesBtnInteractable = true, bool noBtnInteractable = true, bool pauseAndResume = false, 
         bool yesBtnActive = true, bool noBtnActive = true, System.Action yesBtnInactiveHoverAction = null, System.Action yesBtnInactiveHoverExitAction = null) {

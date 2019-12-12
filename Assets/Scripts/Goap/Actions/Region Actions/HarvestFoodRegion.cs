@@ -1,5 +1,6 @@
 ﻿using System;
 using Inner_Maps;
+using Traits;
 
 public class HarvestFoodRegion : GoapAction {
     
@@ -30,7 +31,7 @@ public class HarvestFoodRegion : GoapAction {
         if (satisfied) {
             //**Requirements:** Actor is a Worker. Region has Farm Landmark. Region is owned by Actor's Faction or Actor's Home's Ruling Faction.
             var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
-            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.traitContainer.GetNormalTrait("Worker") != null 
+            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.traitContainer.GetNormalTrait<Trait>("Worker") != null 
                    && region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.FARM && (region.owner == actor.faction || region.owner == actor.homeRegion.owner);
         }
         return false;

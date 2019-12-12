@@ -114,6 +114,6 @@ public class FirstAidCharacterData : GoapActionData {
         requirementAction = Requirement;
     }
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return poiTarget.traitContainer.GetNormalTrait("Injured", "Unconscious") != null;
+        return poiTarget.traitContainer.GetNormalTrait<Trait>("Injured", "Unconscious") != null;
     }
 }

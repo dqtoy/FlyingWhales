@@ -50,7 +50,7 @@ public class StealthTransform : GoapAction {
     //}
     public void AfterTransformSuccess(ActualGoapNode goapNode) {
         //goapNode.actor.trapStructure.SetStructureAndDuration(goapNode.targetStructure, GameManager.Instance.GetTicksBasedOnHour(2) + GameManager.Instance.GetTicksBasedOnMinutes(30));
-        Lycanthrope lycanthrope = goapNode.actor.traitContainer.GetNormalTrait("Lycanthrope") as Lycanthrope;
+        Lycanthrope lycanthrope = goapNode.actor.traitContainer.GetNormalTrait<Trait>("Lycanthrope") as Lycanthrope;
         if(lycanthrope != null) {
             lycanthrope.CheckIfAlone();
         }

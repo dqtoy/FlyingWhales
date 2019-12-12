@@ -57,7 +57,7 @@ public class Poison : GoapAction {
                 if (d.residents.Count == 0) {
                     return false;
                 }
-                Poisoned poisonedTrait = poiTarget.traitContainer.GetNormalTrait("Poisoned") as Poisoned;
+                Poisoned poisonedTrait = poiTarget.traitContainer.GetNormalTrait<Trait>("Poisoned") as Poisoned;
                 if (poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
                     return false; //to prevent poisoning a table that has been already poisoned by this character
                 }
@@ -82,7 +82,7 @@ public class Poison : GoapAction {
     //    //NOTE: Poisoned trait has a list of characters that poisoned it. If the poisoned trait that is currently on the table has the actor of this action in it's list
     //    //this action is still valid for reactions where the table is currently poisoned.
     //    //PoisonTableIntel pti = sharedIntel as PoisonTableIntel;
-    //    Poisoned poisonedTrait = poiTarget.traitContainer.GetNormalTrait("Poisoned") as Poisoned;
+    //    Poisoned poisonedTrait = poiTarget.traitContainer.GetNormalTrait<Trait>("Poisoned") as Poisoned;
     //    Dwelling targetDwelling = poiTarget.gridTileLocation.structure as Dwelling;
 
     //    if(poisonedTrait != null) {
@@ -133,8 +133,8 @@ public class Poison : GoapAction {
     //        }
     //    } else {
     //        Character targetCharacter = assumedTargetCharacter;
-    //        Sick sickTrait = targetCharacter.traitContainer.GetNormalTrait("Sick") as Sick;
-    //        Dead deadTrait = targetCharacter.traitContainer.GetNormalTrait("Dead") as Dead;
+    //        Sick sickTrait = targetCharacter.traitContainer.GetNormalTrait<Trait>("Sick") as Sick;
+    //        Dead deadTrait = targetCharacter.traitContainer.GetNormalTrait<Trait>("Dead") as Dead;
     //        bool targetIsSick = sickTrait != null && sickTrait.gainedFromDoing != null && sickTrait.gainedFromDoing.poiTarget == poiTarget;
     //        bool targetIsDead = deadTrait != null && deadTrait.gainedFromDoing != null && deadTrait.gainedFromDoing.poiTarget == poiTarget;
 
@@ -497,7 +497,7 @@ public class PoisonTableData : GoapActionData {
             if (d.residents.Count == 0) {
                 return false;
             }
-            Poisoned poisonedTrait = poiTarget.traitContainer.GetNormalTrait("Poisoned") as Poisoned;
+            Poisoned poisonedTrait = poiTarget.traitContainer.GetNormalTrait<Trait>("Poisoned") as Poisoned;
             if (poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
                 return false; //to prevent poisoning a table that has been already poisoned by this character
             }

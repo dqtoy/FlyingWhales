@@ -141,11 +141,11 @@ public class Assault : GoapAction {
     //    Character target = poiTarget as Character;
     //    loser = target;
     //    //winner = actor; // TODO: How to determine if actor won?
-    //    if (target.traitContainer.GetNormalTrait("Dead") != null) {
+    //    if (target.traitContainer.GetNormalTrait<Trait>("Dead") != null) {
     //        SetState("Target Killed");
-    //    } else if (target.traitContainer.GetNormalTrait("Unconscious") != null) {
+    //    } else if (target.traitContainer.GetNormalTrait<Trait>("Unconscious") != null) {
     //        SetState("Target Knocked Out");
-    //    } else if (target.traitContainer.GetNormalTrait("Injured") != null) {
+    //    } else if (target.traitContainer.GetNormalTrait<Trait>("Injured") != null) {
     //        SetState("Target Injured");
     //    } else if (actor.specificLocation != target.specificLocation) {
     //        SetState("Target Missing");
@@ -290,10 +290,10 @@ public class Assault : GoapAction {
     //    //10 Weight: Gain Injured trait and enter Flee mode (reduce to 0 if already Injured)
     //    //5 Weight: death
     //    WeightedDictionary<string> loserResults = new WeightedDictionary<string>();
-    //    if (loser.traitContainer.GetNormalTrait("Unconscious") == null) {
+    //    if (loser.traitContainer.GetNormalTrait<Trait>("Unconscious") == null) {
     //        loserResults.AddElement("Unconscious", 40);
     //    }
-    //    if (loser.traitContainer.GetNormalTrait("Injured") == null) {
+    //    if (loser.traitContainer.GetNormalTrait<Trait>("Injured") == null) {
     //        loserResults.AddElement("Injured", 10);
     //    }
     //    loserResults.AddElement("Death", 5);

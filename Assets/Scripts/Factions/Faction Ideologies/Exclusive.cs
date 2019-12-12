@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Traits;
 using UnityEngine;
 
 public class Exclusive : FactionIdeology {
@@ -33,7 +34,7 @@ public class Exclusive : FactionIdeology {
         } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.RACE) {
             return character.race == raceRequirement;
         }
-        return character.traitContainer.GetNormalTrait(traitRequirement) != null;
+        return character.traitContainer.GetNormalTrait<Trait>(traitRequirement) != null;
     }
     public override string GetRequirementsForJoiningAsString() {
         return category + ": " + GetRequirementAsString();

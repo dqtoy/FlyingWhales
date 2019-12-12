@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using Inner_Maps;
+using Traits;
 
 public enum PROGRESSION_SPEED {
     X1,
@@ -941,6 +942,7 @@ public enum INTERACTION_TYPE {
     HOLY_INCANTATION,
     STUDY,
     OUTSIDE_SETTLEMENT_IDLE,
+    ATTACK_REGION
 }
 public enum INTERACTION_ALIGNMENT {
     EVIL,
@@ -1192,7 +1194,12 @@ public enum TIME_IN_WORDS { AFTER_MIDNIGHT, AFTER_MIDNIGHT_1, AFTER_MIDNIGHT_2, 
 public enum FOOD { BERRY, MUSHROOM, RABBIT, RAT }
 public enum GOAP_EFFECT_CONDITION { NONE, REMOVE_TRAIT, HAS_TRAIT, HAS_WOOD, HAS_STONE, HAS_METAL, HAS_ITEM, FULLNESS_RECOVERY, TIREDNESS_RECOVERY, HAPPINESS_RECOVERY, CANNOT_MOVE, IN_PARTY, REMOVE_FROM_PARTY, DESTROY, DEATH, PATROL, EXPLORE, REMOVE_ITEM, HAS_TRAIT_EFFECT, HAS_PLAN, HAS_FOOD
         , TARGET_REMOVE_RELATIONSHIP, TARGET_STOP_ACTION_AND_JOB, RESTRAIN_CARRY, REMOVE_FROM_PARTY_NO_CONSENT, IN_VISION, REDUCE_HP, INVITED, MAKE_NOISE, STARTS_COMBAT, CHANGE_CLASS
-        , PRODUCE_FOOD, PRODUCE_WOOD, PRODUCE_STONE, PRODUCE_METAL, DEPOSIT_RESOURCE, REMOVE_REGION_CORRUPTION, CLEAR_REGION_FACTION_OWNER, REGION_OWNED_BY_ACTOR_FACTION}
+        , PRODUCE_FOOD, PRODUCE_WOOD, PRODUCE_STONE, PRODUCE_METAL, DEPOSIT_RESOURCE, REMOVE_REGION_CORRUPTION, CLEAR_REGION_FACTION_OWNER, REGION_OWNED_BY_ACTOR_FACTION,
+        FACTION_QUEST_DURATION_INCREASE,
+        FACTION_QUEST_DURATION_DECREASE,
+        DESTROY_REGION_LANDMARK,
+        CHARACTER_TO_MINION
+}
 public enum GOAP_EFFECT_TARGET { ACTOR, TARGET, }
 public enum GOAP_PLAN_STATE { IN_PROGRESS, SUCCESS, FAILED, CANCELLED, }
 public enum GOAP_PLANNING_STATUS { NONE, RUNNING, PROCESSING_RESULT }
@@ -1503,7 +1510,7 @@ public static class Extensions {
                 return true;
             }
             for (int i = 0; i < data.canBeCraftedBy.Length; i++) {
-                if (character.traitContainer.GetNormalTrait(data.canBeCraftedBy[i]) != null) {
+                if (character.traitContainer.GetNormalTrait<Trait>(data.canBeCraftedBy[i]) != null) {
                     return true;
                 }
             }
@@ -1538,7 +1545,7 @@ public static class Extensions {
             if (string.IsNullOrEmpty(data.neededTraitType)) {
                 return true;
             }
-            return character.traitContainer.GetNormalTrait(data.neededTraitType) != null;
+            return character.traitContainer.GetNormalTrait<Trait>(data.neededTraitType) != null;
         }
         return true;
     }
