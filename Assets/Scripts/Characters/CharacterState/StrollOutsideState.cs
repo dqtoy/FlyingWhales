@@ -75,7 +75,7 @@ public class StrollOutsideState : CharacterState {
         //Debug.Log(stateComponent.character.name + " will stroll to " + target.ToString());
     }
     private LocationGridTile PickRandomTileToGoTo() {
-        LocationStructure structure = stateComponent.character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
+        LocationStructure structure = stateComponent.character.currentArea.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
         LocationGridTile tile = structure.GetRandomTile();
         if(tile != null) {
             return tile;

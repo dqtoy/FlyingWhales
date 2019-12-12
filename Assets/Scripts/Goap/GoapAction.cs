@@ -113,7 +113,7 @@ public class GoapAction {
         if (targetStructure != null) {
             log.AddToFillers(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         } else {
-            log.AddToFillers(actor.specificLocation, actor.specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+            log.AddToFillers(actor.currentArea, actor.currentArea.name, LOG_IDENTIFIER.LANDMARK_1);
         }
     }
     public virtual GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -181,7 +181,7 @@ public class GoapAction {
         if (poiTarget.IsAvailable() == false || poiTarget.gridTileLocation == null) {
             return true;
         }
-        if (poiTarget.gridTileLocation.structure.location != actor.specificLocation  && poiTarget.gridTileLocation.structure.location != actor.currentRegion) {
+        if (poiTarget.gridTileLocation.structure.location != actor.currentRegion) { //poiTarget.gridTileLocation.structure.location != actor.currentArea && 
             return true;
         }
         
@@ -214,14 +214,14 @@ public class GoapAction {
         return false;
     }
     private int GetDistanceCost(Character actor, IPointOfInterest poiTarget) {
-        if (actor.specificLocation == null) {
+        if (actor.currentArea == null) {
             return 1;
         }
         LocationGridTile tile = poiTarget.gridTileLocation;
         if (actor.gridTileLocation != null && tile != null) {
             int distance = Mathf.RoundToInt(Vector2.Distance(actor.gridTileLocation.centeredWorldLocation, tile.centeredWorldLocation));
             distance = (int) (distance * 0.25f);
-            if (actor.specificLocation != tile.structure.location) {
+            if (actor.currentArea != tile.structure.location) {
                 return distance + 100;
             }
             return distance;

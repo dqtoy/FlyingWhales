@@ -65,7 +65,7 @@ public class Player : ILeader {
     public GENDER gender {
         get { return GENDER.MALE; }
     }
-    public Area specificLocation {
+    public Area currentArea {
         get { return playerFaction.mainRegion.area; }
     }
     public Area homeArea {
@@ -1370,7 +1370,7 @@ public class Player : ILeader {
         bool stillHasResidents = false;
         for (int i = 0; i < currentAreaBeingInvaded.region.residents.Count; i++) { //Changed checking to faction members, because some characters may still consider the area as their home, but are no longer part of the faction
             Character currCharacter = currentAreaBeingInvaded.region.residents[i];
-            if (currCharacter.specificLocation == currentAreaBeingInvaded && currCharacter.IsAble()) {
+            if (currCharacter.currentArea == currentAreaBeingInvaded && currCharacter.IsAble()) {
                 stillHasResidents = true;
                 break;
             }

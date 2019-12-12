@@ -28,7 +28,7 @@ public class Strangle : GoapAction {
         if (actor.homeStructure != null) {
             return actor.homeStructure;
         } else {
-            return actor.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            return actor.currentArea.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
         }
     }
     #endregion

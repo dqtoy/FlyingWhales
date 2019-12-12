@@ -50,7 +50,7 @@ namespace Traits {
                             if (currentJob == null) {
                                 if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter)) {
                                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, targetCharacter, characterThatWillDoJob);
-                                    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { characterThatWillDoJob.specificLocation.prison });
+                                    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { characterThatWillDoJob.currentArea.prison });
                                     //job.SetCanBeDoneInLocation(true);
                                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                                     return true;
@@ -152,7 +152,7 @@ namespace Traits {
             return false;
         }
         private bool CreateFeedJob(Character characterThatWillDoJob) {
-            if (characterThatWillDoJob.specificLocation.region.IsResident(character)) {
+            if (characterThatWillDoJob.currentArea.region.IsResident(character)) {
                 GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, target = GOAP_EFFECT_TARGET.TARGET };
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, characterThatWillDoJob, characterThatWillDoJob);
                 //job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeParalyzedFeedJob);
@@ -167,12 +167,12 @@ namespace Traits {
         private bool CreateDropJobForHappinessRecovery(Character characterThatWillDoJob) {
             if (character.needsComponent.isForlorn || character.needsComponent.isLonely) {
                 if ((character.homeStructure != null && character.currentStructure != character.homeStructure) &&
-                    (character.specificLocation.HasStructure(STRUCTURE_TYPE.WORK_AREA) && character.currentStructure.structureType != STRUCTURE_TYPE.WORK_AREA)) {
+                    (character.currentArea.HasStructure(STRUCTURE_TYPE.WORK_AREA) && character.currentStructure.structureType != STRUCTURE_TYPE.WORK_AREA)) {
                     int chance = UnityEngine.Random.Range(0, 2);
                     if (chance == 0) {
                         return CreateActualDropJob(characterThatWillDoJob, character.homeStructure);
                     } else {
-                        return CreateActualDropJob(characterThatWillDoJob, character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA));
+                        return CreateActualDropJob(characterThatWillDoJob, character.currentArea.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA));
                     }
                 }
             }
@@ -185,8 +185,8 @@ namespace Traits {
             return false;
         }
         private bool CreateDaydreamOrPrayJob() {
-            if (character.specificLocation.region.IsResident(character)) {
-                if (character.homeStructure != null && character.specificLocation.HasStructure(STRUCTURE_TYPE.WORK_AREA)) {
+            if (character.currentArea.region.IsResident(character)) {
+                if (character.homeStructure != null && character.currentArea.HasStructure(STRUCTURE_TYPE.WORK_AREA)) {
                     if (character.currentStructure == character.homeStructure) {
                         CreateActualHappinessRecoveryJob(INTERACTION_TYPE.PRAY);
                         return true;
@@ -222,7 +222,7 @@ namespace Traits {
             return false;
         }
         private bool CreateDaydreamJob() {
-            if (character.currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA || !character.specificLocation.HasStructure(STRUCTURE_TYPE.WORK_AREA)) {
+            if (character.currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA || !character.currentArea.HasStructure(STRUCTURE_TYPE.WORK_AREA)) {
                 CreateActualHappinessRecoveryJob(INTERACTION_TYPE.DAYDREAM);
                 return true;
             }

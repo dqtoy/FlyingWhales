@@ -223,9 +223,9 @@ public class CharacterInfoUI : UIMenu {
             }
             return;
         }
-        if (_activeCharacter.specificLocation.areaMap == null) {
+        if (_activeCharacter.currentArea.areaMap == null) {
             //area map has not yet been generated
-            plansLbl.text = "Visit " + _activeCharacter.specificLocation.name + " to find out what " + _activeCharacter.name + " is doing.";
+            plansLbl.text = "Visit " + _activeCharacter.currentArea.name + " to find out what " + _activeCharacter.name + " is doing.";
             return;
         }
         //Action
@@ -301,13 +301,15 @@ public class CharacterInfoUI : UIMenu {
             plansLbl.text = _activeCharacter.name + " is in " + _activeCharacter.currentStructure.GetNameRelativeTo(_activeCharacter);
         }
 
-        if (_activeCharacter.currentRegion != null || _activeCharacter.specificLocation != null) {
-            Region region = _activeCharacter.currentRegion;
-            if(region == null) {
-                region = _activeCharacter.specificLocation.region;
-            }
-            plansLbl.text = _activeCharacter.name + " is in " + region.name;
-        }
+        plansLbl.text = _activeCharacter.name + " is in " + _activeCharacter.currentRegion.name;
+
+        //if (_activeCharacter.currentRegion != null || _activeCharacter.currentArea != null) {
+        //    Region region = _activeCharacter.currentRegion;
+        //    if(region == null) {
+        //        region = _activeCharacter.currentArea.region;
+        //    }
+        //    plansLbl.text = _activeCharacter.name + " is in " + region.name;
+        //}
     }
     public bool IsCharacterInfoShowing(Character character) {
         return (isShowing && _activeCharacter == character);
@@ -393,11 +395,12 @@ public class CharacterInfoUI : UIMenu {
 
     #region Location
     private void UpdateLocationInfo() {
-        if (_activeCharacter.currentRegion != null) {
-            visitorLocationPortrait.SetLocation(_activeCharacter.currentRegion);
-        } else {
-            visitorLocationPortrait.SetLocation(_activeCharacter.specificLocation.region);
-        }
+        //if (_activeCharacter.currentRegion != null) {
+        //    visitorLocationPortrait.SetLocation(_activeCharacter.currentRegion);
+        //} else {
+        //    visitorLocationPortrait.SetLocation(_activeCharacter.currentArea.region);
+        //}
+        visitorLocationPortrait.SetLocation(_activeCharacter.currentRegion);
         residentLocationPortrait.SetLocation(_activeCharacter.homeRegion);
     }
     #endregion
@@ -709,8 +712,8 @@ public class CharacterInfoUI : UIMenu {
     }
     public void AssaultACharacter() {
         List<Character> characterPool = new List<Character>();
-        for (int i = 0; i < _activeCharacter.specificLocation.charactersAtLocation.Count; i++) {
-            Character character = _activeCharacter.specificLocation.charactersAtLocation[i];
+        for (int i = 0; i < _activeCharacter.currentArea.charactersAtLocation.Count; i++) {
+            Character character = _activeCharacter.currentArea.charactersAtLocation[i];
             if (!character.isDead && !(character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine != null)) {
                 characterPool.Add(character);
             }

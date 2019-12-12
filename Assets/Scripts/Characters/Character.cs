@@ -23,7 +23,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     protected Faction _faction;
     protected Minion _minion;
     protected List<Log> _history;
-    private LocationStructure _currentStructure; //what structure is this character currently in.
+    protected LocationStructure _currentStructure; //what structure is this character currently in.
+    protected Region _currentRegion;
 
     //Stats
     protected SIDES _currentSide;
@@ -33,7 +34,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     protected int _experience;
     protected int _maxExperience;
     protected int _sp;
-    protected int _maxSP;
 
     //visuals
     public CharacterVisuals visuals { get; private set; }
@@ -76,7 +76,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public float speedModifier { get; private set; }
     public string deathStr { get; private set; }
     public TileObject tileObjectLocation { get; private set; }
-    public Region currentRegion { get; private set; } //current Region Location
     public CharacterTrait defaultCharacterTrait { get; private set; }
     public int isStoppedByOtherCharacter { get; private set; } //this is increased, when the action of another character stops this characters movement
     public Party ownParty { get; protected set; }
@@ -170,9 +169,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         get { return items.Count > 0; }
     }
     public bool isAtHomeRegion {
-        //TODO: REDO THIS! REMOVE CURRENT REGION
-        get { return (currentRegion != null && currentRegion == homeRegion)
-                || (currentRegion == null && specificLocation.region.id == homeRegion.id && !currentParty.icon.isTravellingOutside); }
+        get { return currentRegion == homeRegion && !currentParty.icon.isTravellingOutside; }
     }
     public bool isPartOfHomeFaction { //is this character part of the faction that owns his home area
         get { return homeRegion != null && faction != null && homeRegion.IsFactionHere(faction); }
@@ -204,8 +201,16 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public Faction factionOwner {
         get { return _faction; }
     }
-    public Area specificLocation {
-        get { return currentParty.specificLocation; }
+    public Area currentArea {
+        get { return currentRegion.area; }
+    }
+    public Region currentRegion {
+        get {
+            if (!IsInOwnParty()) {
+                return currentParty.owner.currentRegion;
+            }
+            return _currentRegion;
+        }
     }
     public List<Log> history {
         get { return this._history; }
@@ -595,7 +600,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     /// </summary>
     /// <param name="area">The invaded area.</param>
     protected virtual void OnSuccessInvadeArea(Area area) {
-        if (specificLocation == area && minion == null) {
+        if (currentArea == area && minion == null) {
             StopCurrentActionNode(false);
             if (stateComponent.currentState != null) {
                 stateComponent.ExitCurrentState();
@@ -603,7 +608,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //else if (stateComponent.stateToDo != null) {
             //    stateComponent.SetStateToDo(null);
             //}
-            specificLocation.RemoveCharacterFromLocation(this);
+            currentArea.RemoveCharacterFromLocation(this);
             //marker.ClearAvoidInRange(false);
             //marker.ClearHostilesInRange(false);
             //marker.ClearPOIsInVisionRange();
@@ -776,7 +781,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
             SetIsChatting(false);
             //SetIsFlirting(false);
-            Area deathLocation = ownParty.specificLocation;
+            Region deathLocation = currentRegion;
             LocationStructure deathStructure = currentStructure;
             LocationGridTile deathTile = gridTileLocation;
             for (int i = 0; i < traitContainer.allTraits.Count; i++) {
@@ -788,8 +793,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             SetPOIState(POI_STATE.INACTIVE);
             //CombatManager.Instance.ReturnCharacterColorToPool(_characterColor);
 
-            if (currentParty.specificLocation == null) {
-                throw new Exception("Specific location of " + this.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
+            if (currentRegion == null) {
+                throw new Exception("Current Region Location of " + this.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
             }
             if (stateComponent.currentState != null) {
                 stateComponent.ExitCurrentState();
@@ -811,31 +816,52 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             if (jobQueue.jobsInQueue.Count > 0) {
                 jobQueue.CancelAllJobs();
             }
-            if (currentRegion == null) {
-                if (ownParty.specificLocation != null && isHoldingItem) {
-                    DropAllTokens(ownParty.specificLocation, currentStructure, deathTile, true);
-                }
+            if (currentArea != null && isHoldingItem) {
+                DropAllTokens(currentArea, currentStructure, deathTile, true);
             } else {
-                List<SpecialToken> all = new List<SpecialToken>(items);
-                for (int i = 0; i < all.Count; i++) {
-                    RemoveToken(all[i]);
+                for (int i = 0; i < items.Count; i++) {
+                    if (RemoveToken(i)) {
+                        i--;
+                    }
                 }
             }
+            //if (currentRegion == null) {
+            //    if (currentArea != null && isHoldingItem) {
+            //        DropAllTokens(currentArea, currentStructure, deathTile, true);
+            //    } else {
+            //        for (int i = 0; i < items.Count; i++) {
+            //            if (RemoveToken(i)) {
+            //                i--;
+            //            }
+            //        }
+            //    }
+            //} else {
+            //    List<SpecialToken> all = new List<SpecialToken>(items);
+            //    for (int i = 0; i < all.Count; i++) {
+            //        RemoveToken(all[i]);
+            //    }
+            //}
 
 
             //clear traits that need to be removed
             traitsNeededToBeRemoved.Clear();
 
-            bool wasOutsideSettlement = false;
-            if (currentRegion != null) {
-                wasOutsideSettlement = true;
-                currentRegion.RemoveCharacterFromLocation(this);
-            }
+            bool wasOutsideSettlement = currentArea == null;
+
+            //bool wasOutsideSettlement = false;
+            //if (currentRegion != null) {
+            //    wasOutsideSettlement = true;
+            //    currentRegion.RemoveCharacterFromLocation(this);
+            //}
 
             if (!IsInOwnParty()) {
                 currentParty.RemovePOI(this);
             }
             ownParty.PartyDeath();
+
+            currentRegion?.RemoveCharacterFromLocation(this);
+            SetRegionLocation(deathLocation); //set the specific location of this party, to the location it died at
+            SetCurrentStructureLocation(deathStructure, false);
 
             //if (this.race != RACE.SKELETON) {
             //    deathLocation.AddCorpse(this, deathStructure, deathTile);
@@ -980,9 +1006,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (_currentHP > maxHP) {
             _currentHP = maxHP;
         }
-        if (_sp > _maxSP) {
-            _sp = _maxSP;
-        }
+        //if (_sp > _maxSP) {
+        //    _sp = _maxSP;
+        //}
         for (int i = 0; i < _characterClass.traitNames.Length; i++) {
             traitContainer.AddTrait(this, _characterClass.traitNames[i]);
         }
@@ -1489,9 +1515,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     /// <returns>The created job.</returns>
     public GoapPlanJob CreateApprehendJobFor(Character targetCharacter, bool assignSelfToJob = false) {
         //if (homeArea.id == specificLocation.id) {
-        if (homeArea != null && specificLocation == homeArea && !targetCharacter.HasJobTargettingThis(JOB_TYPE.APPREHEND) && targetCharacter.traitContainer.GetNormalTrait("Restrained") == null && !traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+        if (homeArea != null && currentArea == homeArea && !targetCharacter.HasJobTargettingThis(JOB_TYPE.APPREHEND) && targetCharacter.traitContainer.GetNormalTrait("Restrained") == null && !traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, targetCharacter, homeArea);
-            job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { specificLocation.prison });
+            job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { currentArea.prison });
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeApprehendJob);
             homeArea.AddToAvailableJobs(job);
             if (assignSelfToJob) {
@@ -2034,7 +2060,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     public void OnAddedToParty() {
         if (currentParty.id != ownParty.id) {
-            ownParty.specificLocation.RemoveCharacterFromLocation(this);
+            currentRegion.RemoveCharacterFromLocation(this); //Why are we removing the character from location if it is added to a party
+            //ownParty.specificLocation.RemoveCharacterFromLocation(this);
             //ownParty.icon.SetVisualState(false);
             marker.collisionTrigger.SetMainColliderState(false);
         }
@@ -2154,8 +2181,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         if (nearestEdgeTile == null) {
             float nearestDist = -999f;
-            for (int i = 0; i < specificLocation.areaMap.allEdgeTiles.Count; i++) {
-                LocationGridTile currTile = specificLocation.areaMap.allEdgeTiles[i];
+            for (int i = 0; i < currentArea.areaMap.allEdgeTiles.Count; i++) {
+                LocationGridTile currTile = currentArea.areaMap.allEdgeTiles[i];
                 float dist = Vector2.Distance(currTile.localLocation, currentGridTile.localLocation);
                 if (nearestDist == -999f || dist < nearestDist) {
                     if (currTile.structure != null) {
@@ -2223,7 +2250,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         onLeaveAreaActions.Clear();
     }
     public void SetRegionLocation(Region region) {
-        currentRegion = region;
+        _currentRegion = region;
     }
     #endregion
 
@@ -2283,32 +2310,32 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void CenterOnCharacter() {
         if (marker != null) {
             if (currentParty.icon.isTravellingOutside) {
-                if (specificLocation.areaMap.isShowing) {
+                if (currentArea.areaMap.isShowing) {
                     InnerMapManager.Instance.HideAreaMap();
                 }
                 //CameraMove.Instance.CenterCameraOn(currentParty.icon.travelLine.iconImg.gameObject);
                 CameraMove.Instance.CenterCameraOn(homeRegion.coreTile.gameObject);
             } else if (currentParty.icon.isTravelling) {
                 if (marker.gameObject.activeInHierarchy) {
-                    bool instantCenter = InnerMapManager.Instance.currentlyShowingArea != specificLocation;
-                    if (!specificLocation.areaMap.isShowing) {
-                        InnerMapManager.Instance.ShowAreaMap(specificLocation, false);
+                    bool instantCenter = InnerMapManager.Instance.currentlyShowingArea != currentArea;
+                    if (!currentArea.areaMap.isShowing) {
+                        InnerMapManager.Instance.ShowAreaMap(currentArea, false);
                     }
                     AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
                 }
-            } else if (currentRegion != null) {
-                CameraMove.Instance.CenterCameraOn(currentRegion.coreTile.gameObject);
-            } else {
-                bool instantCenter = InnerMapManager.Instance.currentlyShowingArea != specificLocation;
-                if (specificLocation.areaMap != null) {
-                    if (!specificLocation.areaMap.isShowing) {
-                        InnerMapManager.Instance.ShowAreaMap(specificLocation, false);
+            } else if (currentArea != null) {
+                bool instantCenter = InnerMapManager.Instance.currentlyShowingArea != currentArea;
+                if (currentArea.areaMap != null) {
+                    if (!currentArea.areaMap.isShowing) {
+                        InnerMapManager.Instance.ShowAreaMap(currentArea, false);
                     }
                     AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
                 } else {
                     InnerMapManager.Instance.HideAreaMap();
-                    CameraMove.Instance.CenterCameraOn(specificLocation.region.coreTile.gameObject);
+                    CameraMove.Instance.CenterCameraOn(currentArea.region.coreTile.gameObject);
                 }
+            } else {
+                CameraMove.Instance.CenterCameraOn(currentRegion.coreTile.gameObject);
             }
         }
     }
@@ -2384,11 +2411,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //    }
     //}
     public LocationGridTile GetLocationGridTileByXY(int x, int y, bool throwOnException = true) {
-        if (currentRegion != null) {
-            return currentRegion.innerMap.map[x, y];    
-        } else {
-            return specificLocation.innerMap.map[x, y];
-        }
+        return currentRegion.innerMap.map[x, y];
+        //if (currentRegion != null) {
+        //    return currentRegion.innerMap.map[x, y];    
+        //} else {
+        //    return currentArea.innerMap.map[x, y];
+        //}
         
         //try {
         //    if (throwOnException) {
@@ -3436,16 +3464,16 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //public void AdjustElementalResistance(ELEMENT element, float amount) {
     //    _elementalResistances[element] += amount;
     //}
-    public void AdjustSP(int amount) {
-        _sp += amount;
-        _sp = Mathf.Clamp(_sp, 0, _maxSP);
-    }
+    //public void AdjustSP(int amount) {
+    //    _sp += amount;
+    //    _sp = Mathf.Clamp(_sp, 0, _maxSP);
+    //}
     public void ResetToFullHP() {
         SetHP(maxHP);
     }
-    public void ResetToFullSP() {
-        AdjustSP(_maxSP);
-    }
+    //public void ResetToFullSP() {
+    //    AdjustSP(_maxSP);
+    //}
     //private float GetComputedPower() {
     //    float compPower = 0f;
     //    for (int i = 0; i < currentParty.characters.Count; i++) {
@@ -3834,7 +3862,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
         MigrateHomeTo(PlayerManager.Instance.player.playerArea.region);
 
-        specificLocation.RemoveCharacterFromLocation(this.currentParty);
+        currentArea.RemoveCharacterFromLocation(this.currentParty);
         currentRegion?.RemoveCharacterFromLocation(this);
 
         needsComponent.ResetFullnessMeter();
@@ -4825,6 +4853,15 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         return false;
     }
+    private bool RemoveToken(int index) {
+        SpecialToken token = items[index];
+        if (token != null) {
+            items.RemoveAt(index);
+            Messenger.Broadcast(Signals.CHARACTER_LOST_ITEM, token, this);
+            return true;
+        }
+        return false;
+    }
     public void DropToken(SpecialToken token, ILocation location, LocationStructure structure, LocationGridTile gridTile = null, bool clearOwner = true) {
         if (UnobtainToken(token)) {
             if (token.specialTokenType.CreatesObjectWhenDropped()) {
@@ -5088,7 +5125,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     #region Awareness
     public void LogAwarenessList() {
         string log = "--------------AWARENESS LIST OF " + name + "-----------------";
-        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> kvp in specificLocation.region.awareness) {
+        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> kvp in currentArea.region.awareness) {
             log += "\n" + kvp.Key.ToString() + ": ";
             for (int i = 0; i < kvp.Value.Count; i++) {
                 if (i > 0) {
@@ -5186,7 +5223,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void OnPlacePOI() { /*FOR INTERFACE ONLY*/ }
     public void OnDestroyPOI() { /*FOR INTERFACE ONLY*/ }
     public virtual bool IsStillConsideredPartOfAwarenessByCharacter(Character character) {
-        if(character.specificLocation == specificLocation) {
+        if(character.currentArea == currentArea) {
             if (!isDead && currentParty.icon.isTravellingOutside) {
                 return false;
             }
@@ -6543,8 +6580,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     #region Pathfinding
     public List<LocationGridTile> GetTilesInRadius(int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
         List<LocationGridTile> tiles = new List<LocationGridTile>();
-        int mapSizeX = specificLocation.areaMap.map.GetUpperBound(0);
-        int mapSizeY = specificLocation.areaMap.map.GetUpperBound(1);
+        int mapSizeX = currentArea.areaMap.map.GetUpperBound(0);
+        int mapSizeY = currentArea.areaMap.map.GetUpperBound(1);
         int x = gridTileLocation.localPlace.x;
         int y = gridTileLocation.localPlace.y;
         if (includeCenterTile) {
@@ -6565,7 +6602,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                     if (radiusLimit > 0 && dx > xLimitLower && dx < xLimitUpper && dy > yLimitLower && dy < yLimitUpper) {
                         continue;
                     }
-                    LocationGridTile result = specificLocation.areaMap.map[dx, dy];
+                    LocationGridTile result = currentArea.areaMap.map[dx, dy];
                     if (!includeTilesInDifferentStructure && result.structure != gridTileLocation.structure) { continue; }
                     tiles.Add(result);
                 }

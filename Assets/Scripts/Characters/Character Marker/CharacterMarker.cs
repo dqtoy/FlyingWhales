@@ -476,7 +476,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 SetTargetTransform(targetCharacter.marker.transform);
                 //if the target is a character, 
                 //check first if he/she is still at the location, 
-                if (targetCharacter.specificLocation != character.specificLocation) {
+                if (targetCharacter.currentArea != character.currentArea) {
                     this.arrivalAction?.Invoke();
                     ClearArrivalAction();
                 } else if (targetCharacter.currentParty != null && targetCharacter.currentParty.icon != null && targetCharacter.currentParty.icon.isTravellingOutside) {
@@ -802,7 +802,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         anchoredPos = transform.localPosition;
 
         if (_previousGridTile != character.gridTileLocation) {
-            character.specificLocation.areaMap.OnCharacterMovedTo(character, character.gridTileLocation, _previousGridTile);
+            character.currentArea.areaMap.OnCharacterMovedTo(character, character.gridTileLocation, _previousGridTile);
             _previousGridTile = character.gridTileLocation;
         }
     }

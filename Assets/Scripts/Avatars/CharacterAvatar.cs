@@ -58,14 +58,14 @@ public class CharacterAvatar : MonoBehaviour {
     }
     public bool isVisualShowing {
         get {
-            if (_isVisualShowing) {
-                return _isVisualShowing;
-            } else {
-                //check if this characters current location area is being tracked
-                if (party.specificLocation != null ) { //&& party.specificLocation.isBeingTracked
-                    return true;
-                }
-            }
+            //if (_isVisualShowing) {
+            //    return _isVisualShowing;
+            //} else {
+            //    //check if this characters current location area is being tracked
+            //    if (party.specificLocation != null ) { //&& party.specificLocation.isBeingTracked
+            //        return true;
+            //    }
+            //}
             return _isVisualShowing;
         }
     }
@@ -157,11 +157,11 @@ public class CharacterAvatar : MonoBehaviour {
         if (_party.isCarryingAnyPOI) {
             arriveLog.AddToFillers(_party.carriedPOI, _party.carriedPOI.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
         }
-        arriveLog.AddToFillers(_party.specificLocation.coreTile.region, _party.specificLocation.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
+        arriveLog.AddToFillers(_party.owner.currentRegion, _party.owner.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
         arriveLog.AddLogToInvolvedObjects();
         
-        _distanceToTarget = PathGenerator.Instance.GetTravelTime(_party.specificLocation.coreTile, targetLocation.coreTile);
-        _travelLine = _party.specificLocation.coreTile.CreateTravelLine(targetLocation.coreTile, _distanceToTarget, _party.owner);
+        _distanceToTarget = PathGenerator.Instance.GetTravelTime(_party.owner.currentRegion.coreTile, targetLocation.coreTile);
+        _travelLine = _party.owner.currentRegion.coreTile.CreateTravelLine(targetLocation.coreTile, _distanceToTarget, _party.owner);
         _travelLine.SetActiveMeter(isVisualShowing);
         _party.owner.marker.gameObject.SetActive(false);
         Messenger.AddListener(Signals.TICK_STARTED, TraverseCurveLine);
@@ -209,7 +209,7 @@ public class CharacterAvatar : MonoBehaviour {
         GameObject.Destroy(_travelLine.gameObject);
         _travelLine = null;
         SetHasArrivedState(true);
-        _party.specificLocation.RemoveCharacterFromLocation(_party);
+        _party.owner.currentRegion.RemoveCharacterFromLocation(_party);
         targetLocation.AddCharacterToLocation(_party.owner);
 
         _party.owner.marker.ClearHostilesInRange();
@@ -267,7 +267,7 @@ public class CharacterAvatar : MonoBehaviour {
             }
         }
         if (path == null) {
-            Debug.LogError(_party.name + ". There is no path from " + _party.specificLocation.name + " to " + targetLocation.name, this);
+            Debug.LogError(_party.name + ". There is no path from " + _party.owner.currentRegion.name + " to " + targetLocation.name, this);
             return;
         }
         if (path != null && path.Count > 0) {
@@ -302,7 +302,7 @@ public class CharacterAvatar : MonoBehaviour {
     public virtual void OnMoveFinished() {
 		if(this.path == null){
 			Debug.LogError (GameManager.Instance.Today ().ToStringDate());
-			Debug.LogError ("Location: " + _party.specificLocation.name);
+			Debug.LogError ("Location: " + _party.owner.currentRegion.name);
 		}
         //if (_trackTarget != null) {
         //    if(_trackTarget.currentParty.specificLocation.id != targetLocation.id) {
@@ -320,7 +320,7 @@ public class CharacterAvatar : MonoBehaviour {
         HasArrivedAtTargetLocation();
     }
     public virtual void HasArrivedAtTargetLocation() {
-		if (_party.specificLocation.coreTile.id == targetLocation.coreTile.id) {
+		if (_party.owner.currentRegion.coreTile.id == targetLocation.coreTile.id) {
             if (!this._hasArrived) {
                 SetIsTravelling(false);
                 //_trackTarget = null;

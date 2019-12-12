@@ -27,7 +27,7 @@ public class TileObjectInfoUI : UIMenu {
     public override void OpenMenu() {
         activeTileObject = _data as TileObject;
         if(activeTileObject.gridTileLocation != null) {
-            bool instantCenter = InnerMapManager.Instance.currentlyShowingArea != activeTileObject.specificLocation;
+            bool instantCenter = InnerMapManager.Instance.currentlyShowingArea != activeTileObject.currentArea;
             AreaMapCameraMove.Instance.CenterCameraOn(activeTileObject.collisionTrigger.gameObject, instantCenter);
         }
         base.OpenMenu();

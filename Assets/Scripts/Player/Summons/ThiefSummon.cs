@@ -98,7 +98,7 @@ public class ThiefSummon : Summon {
         //}
 
         marker.ClearTerrifyingObjects();
-        specificLocation.RemoveCharacterFromLocation(this);
+        currentArea.RemoveCharacterFromLocation(this);
         DestroyMarker();
         UnsubscribeSignals();
         //ClearAllAwareness();

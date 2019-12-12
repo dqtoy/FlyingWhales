@@ -59,11 +59,11 @@ public class SeducerSummon : Summon {
             Disappear();
         } else if (!jobQueue.HasJob(JOB_TYPE.SEDUCE)){
             //pick a random character that is sexually compatible with this character, to seduce. Exclude characters that this succubus has already invited.
-            List<Character> choices = specificLocation.charactersAtLocation.Where(x => x.faction != this.faction
+            List<Character> choices = currentArea.charactersAtLocation.Where(x => x.faction != this.faction
             && !doneCharacters.Contains(x)
             && RelationshipManager.Instance.IsSexuallyCompatibleOneSided(x, this)
             && !x.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)).ToList();
-            List<TileObject> validBeds = specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.INN).GetTileObjectsOfType(TILE_OBJECT_TYPE.BED);
+            List<TileObject> validBeds = currentArea.GetRandomStructureOfType(STRUCTURE_TYPE.INN).GetTileObjectsOfType(TILE_OBJECT_TYPE.BED);
             if (choices.Count > 0 && validBeds.Count > 0) {
                 Character chosenCharacter = choices[Random.Range(0, choices.Count)];
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SEDUCE, INTERACTION_TYPE.INVITE, chosenCharacter, this);
@@ -117,9 +117,10 @@ public class SeducerSummon : Summon {
         //AdjustIsWaitingForInteraction(1);
         //StopCurrentAction(false);
         //AdjustIsWaitingForInteraction(-1);
-        specificLocation.RemoveCharacterFromLocation(this);
+        currentArea.RemoveCharacterFromLocation(this);
         PlayerManager.Instance.player.playerArea.AddCharacterToLocation(this);
-        ownParty.SetSpecificLocation(PlayerManager.Instance.player.playerArea);
+        SetRegionLocation(PlayerManager.Instance.player.playerArea.region);
+        //ownParty.SetSpecificLocation(PlayerManager.Instance.player.playerArea);
         //ClearAllAwareness();
         CancelAllJobs();
         traitContainer.RemoveAllNonPersistentTraits(this);

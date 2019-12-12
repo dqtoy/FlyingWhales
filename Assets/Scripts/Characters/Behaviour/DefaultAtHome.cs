@@ -21,7 +21,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                         log += "\n  -Character is agoraphobic, nott going to inn";
                     } else {
                         //StartGOAP(INTERACTION_TYPE.DRINK, null, GOAP_CATEGORY.IDLE);
-                        LocationStructure structure = character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.INN);
+                        LocationStructure structure = character.currentArea.GetRandomStructureOfType(STRUCTURE_TYPE.INN);
                         if (structure != null) {
                             log += "\n  -Early Night: " + character.name + " will go to Inn and set Base Structure for 2.5 hours";
                             character.PlanIdle(INTERACTION_TYPE.VISIT, character, new object[] { structure });

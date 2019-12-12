@@ -134,7 +134,7 @@ public class GoapThread : Multithread {
         }
     }
     private void CreateNewPlan() {
-        log = "-----------------RECEIVING NEW PLAN FROM OTHER THREAD OF " + actor.name + " WITH TARGET " + target?.name ?? "None" + " (" + actor.specificLocation.name + ")-----------------------";
+        log = "-----------------RECEIVING NEW PLAN FROM OTHER THREAD OF " + actor.name + " WITH TARGET " + target?.name ?? "None" + " (" + actor.currentArea.name + ")-----------------------";
         if (goalType != INTERACTION_TYPE.NONE) {
             log += "\nGOAL: " + goalType.ToString();
         } else {
@@ -457,7 +457,7 @@ public class GoapThread : Multithread {
         //log += usableLog;
     }
     private void RecalculatePlan() {
-        log = "-----------------RECALCULATING PLAN OF " + actor.name + " WITH TARGET " + recalculationPlan.target.name + " (" + actor.specificLocation.name + ")-----------------------";
+        log = "-----------------RECALCULATING PLAN OF " + actor.name + " WITH TARGET " + recalculationPlan.target.name + " (" + actor.currentArea.name + ")-----------------------";
         if (recalculationPlan.isEnd) {
             log += "\nPlan has already ended! Cannot recalculate!";
             return;

@@ -547,7 +547,7 @@ namespace Inner_Maps {
         #region Movement & Mouse Interaction
         public void Update() {
             if (UIManager.Instance.characterInfoUI.isShowing 
-                && UIManager.Instance.characterInfoUI.activeCharacter.specificLocation == this.area
+                && UIManager.Instance.characterInfoUI.activeCharacter.currentArea == this.area
                 && !UIManager.Instance.characterInfoUI.activeCharacter.isDead
                 //&& UIManager.Instance.characterInfoUI.activeCharacter.isWaitingForInteraction <= 0
                 && UIManager.Instance.characterInfoUI.activeCharacter.marker != null

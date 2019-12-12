@@ -30,7 +30,7 @@ public class HermesStatue : Artifact {
     public override void OnInspect(Character inspectedBy) { //, out Log result
         base.OnInspect(inspectedBy); //, out result
         List<Region> choices = GridMap.Instance.allRegions.Where(x => !x.coreTile.isCorrupted).ToList();
-        choices.Remove(inspectedBy.specificLocation.region);
+        choices.Remove(inspectedBy.currentArea.region);
         if (choices.Count > 0 && currentUses < uses) {
             chosenRegion = choices[Random.Range(0, choices.Count)];
             OnInspectActionDone(inspectedBy);
@@ -67,7 +67,7 @@ public class HermesStatue : Artifact {
         inspectedBy.marker.gameObject.SetActive(false);
         inspectedBy.marker.StopMovement();
         Messenger.Broadcast(Signals.PARTY_STARTED_TRAVELLING, inspectedBy.ownParty);
-        inspectedBy.specificLocation.RemoveCharacterFromLocation(inspectedBy);
+        inspectedBy.currentArea.RemoveCharacterFromLocation(inspectedBy);
         //inspectedBy.DestroyMarker();
         chosenRegion.AddCharacterToLocation(inspectedBy);
         inspectedBy.SetPOIState(POI_STATE.ACTIVE);

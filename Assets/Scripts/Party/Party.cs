@@ -15,8 +15,8 @@ public class Party {
     protected bool _isDefending;
     protected CharacterAvatar _icon;
     protected Faction _attackedByFaction;
-    protected Combat _currentCombat;
-    protected Area _specificLocation;
+    //protected Combat _currentCombat;
+    //protected Area _specificLocation;
     protected Character _owner;
     //protected int _maxCharacters;
 
@@ -25,7 +25,7 @@ public class Party {
     public Sprite emblem { get; private set; }
     public Color partyColor { get; private set; }
 
-    public List<string> specificLocationHistory { get; private set; } //limited to only 50 items
+    //public List<string> specificLocationHistory { get; private set; } //limited to only 50 items
 
     #region getters/setters
     public int id {
@@ -54,9 +54,9 @@ public class Party {
     //public Character mainCharacter {
     //    get { return _characters[0]; }
     //}
-    public Area specificLocation {
-        get { return _specificLocation; }
-    }
+    //public Area specificLocation {
+    //    get { return _specificLocation; }
+    //}
     public virtual Character owner {
         get { return _owner; }
     }
@@ -91,7 +91,7 @@ public class Party {
         _id = Utilities.SetID(this);
         _isDead = false;
         //_characters = new List<Character>();
-        specificLocationHistory = new List<string>();
+        //specificLocationHistory = new List<string>();
         //SetMaxCharacters(4);
         //if (owner.specificLocation != null) {
         //    owner.specificLocation.AddCharacterToLocation(owner);
@@ -124,12 +124,11 @@ public class Party {
         _isDead = true;
         //For now, when a party dies and there still members besides the owner of this party, kick them out of the party first before applying death
         RemoveCarriedPOI();
-
-        Area deathLocation = this.specificLocation;
-        LocationStructure deathStructure = owner.currentStructure;
-        this.specificLocation?.RemoveCharacterFromLocation(this);
-        SetSpecificLocation(deathLocation); //set the specific location of this party, to the location it died at
-        owner.SetCurrentStructureLocation(deathStructure, false);
+        //Area deathLocation = this.specificLocation;
+        //LocationStructure deathStructure = owner.currentStructure;
+        //this.specificLocation?.RemoveCharacterFromLocation(this);
+        //SetSpecificLocation(deathLocation); //set the specific location of this party, to the location it died at
+        //owner.SetCurrentStructureLocation(deathStructure, false);
         RemoveListeners();
         if (_icon.party.owner.race == RACE.SKELETON) {
             GameObject.Destroy(_icon.gameObject);
@@ -138,7 +137,7 @@ public class Party {
             _icon.gameObject.SetActive(false);
         }        
 
-        _currentCombat = null;
+        //_currentCombat = null;
 
         //Messenger.Broadcast<Party>(Signals.PARTY_DIED, this);
     }
@@ -146,15 +145,15 @@ public class Party {
     #endregion
 
     #region Interface
-    public void SetSpecificLocation(Area location) {
-        if (_specificLocation == location) {
-            return; //ignore change
-        }
-        _specificLocation = location;
-        if (specificLocationHistory.Count >= 50) {
-            specificLocationHistory.RemoveAt(0);
-        }
-    }
+    //public void SetSpecificLocation(Area location) {
+    //    if (_specificLocation == location) {
+    //        return; //ignore change
+    //    }
+    //    _specificLocation = location;
+    //    if (specificLocationHistory.Count >= 50) {
+    //        specificLocationHistory.RemoveAt(0);
+    //    }
+    //}
     public bool AddPOI(IPointOfInterest poi, bool isOwner = false) {
         if(poi is Character) {
             return AddCharacter(poi as Character, isOwner);
@@ -285,7 +284,7 @@ public class Party {
             character.marker.transform.eulerAngles = Vector3.zero;
             character.marker.nameLbl.gameObject.SetActive(true);
 
-            character.ownParty.icon.transform.position = this.specificLocation.coreTile.transform.position;
+            character.ownParty.icon.transform.position = owner.currentRegion.coreTile.transform.position;
             Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
         }
     }
@@ -319,7 +318,7 @@ public class Party {
         if (_icon.isTravelling && _icon.travelLine != null) {
             return;
         }
-        if (specificLocation.region == targetLocation) {
+        if (owner.currentRegion == targetLocation) {
             //action doer is already at the target location
             if (doneAction != null) {
                 doneAction();

@@ -26,7 +26,7 @@ public class BlueprintBehaviour : CharacterBehaviourComponent {
 
                 LocationStructureObject lso = chosenStructurePrefab.GetComponent<LocationStructureObject>();
                 BuildSpotTileObject chosenBuildingSpot;
-                if (character.specificLocation.areaMap.TryGetValidBuildSpotTileObjectForStructure(lso, out chosenBuildingSpot) == false) {
+                if (character.currentArea.areaMap.TryGetValidBuildSpotTileObjectForStructure(lso, out chosenBuildingSpot) == false) {
                     log += $"\n-Could not find spot that can house new structure. Abandoning...";
                     return false;
                 }

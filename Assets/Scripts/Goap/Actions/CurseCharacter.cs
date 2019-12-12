@@ -20,7 +20,7 @@ public class CurseCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
-        List<TileObject> magicCircle = goapNode.actor.specificLocation.GetTileObjectsOfType(TILE_OBJECT_TYPE.MAGIC_CIRCLE);
+        List<TileObject> magicCircle = goapNode.actor.currentArea.GetTileObjectsOfType(TILE_OBJECT_TYPE.MAGIC_CIRCLE);
         TileObject chosen = magicCircle[Random.Range(0, magicCircle.Count)];
         return chosen;
     }
@@ -48,7 +48,7 @@ public class CurseCharacter : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            return actor != poiTarget && actor.specificLocation.GetTileObjectsOfType(TILE_OBJECT_TYPE.MAGIC_CIRCLE).Count > 0;
+            return actor != poiTarget && actor.currentArea.GetTileObjectsOfType(TILE_OBJECT_TYPE.MAGIC_CIRCLE).Count > 0;
         }
         return false;
     }

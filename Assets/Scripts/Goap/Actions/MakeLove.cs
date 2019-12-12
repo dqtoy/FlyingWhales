@@ -159,7 +159,7 @@ public class MakeLove : GoapAction {
             if (target.returnedToLife) { //do not woo characters that have been raised from the dead
                 return false;
             }
-            if (target.currentParty.icon.isTravellingOutside || target.currentRegion != null) {
+            if (target.currentParty.icon.isTravellingOutside || target.currentRegion != actor.currentRegion) {
                 return false; //target is outside the map
             }
             if (actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).Count <= 0) {

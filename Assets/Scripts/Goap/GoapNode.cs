@@ -163,7 +163,7 @@ public class ActualGoapNode {
         }
         //Only create thought bubble log when characters starts the action/moves to do the action so we can pass the target structure
         CreateThoughtBubbleLog(targetStructure);
-        if (actor.currentRegion != targetStructure.location && actor.specificLocation != targetStructure.location) {
+        if (actor.currentRegion != targetStructure.location && actor.currentArea != targetStructure.location) {
             actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, doneAction: MoveToDoAction);
         } else {
             if (action.actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET || action.actionLocationType == ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET) {
@@ -179,7 +179,7 @@ public class ActualGoapNode {
                 targetTile = actor.gridTileLocation;
                 actor.PerformGoapAction();
             } else if (action.actionLocationType == ACTION_LOCATION_TYPE.NEARBY) {
-                List<LocationGridTile> choices = actor.specificLocation.areaMap.GetTilesInRadius(actor.gridTileLocation, 3);
+                List<LocationGridTile> choices = actor.currentArea.areaMap.GetTilesInRadius(actor.gridTileLocation, 3);
                 if (choices.Count > 0) {
                     targetTile = choices[Utilities.rng.Next(0, choices.Count)];
                     actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);

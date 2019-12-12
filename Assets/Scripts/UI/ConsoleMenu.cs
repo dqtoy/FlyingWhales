@@ -140,7 +140,7 @@ public class ConsoleMenu : UIMenu {
         text += "\n<b>Home Location:</b> " + character.homeStructure?.ToString() ?? "None";
 
         text += "\n<b>LOCATION INFO:</b>";
-        text += "\n\t<b>Area Location:</b> " + character.specificLocation?.name ?? "None";
+        text += "\n\t<b>Area Location:</b> " + character.currentArea?.name ?? "None";
         text += "\n\t<b>Structure Location:</b> " + character.currentStructure?.ToString() ?? "None";
         text += "\n\t<b>Grid Location:</b> " + character.gridTileLocation?.localPlace.ToString() ?? "None";
 
@@ -609,10 +609,10 @@ public class ConsoleMenu : UIMenu {
         }
 
         string logSummary = character.name + "'s location history: ";
-        List<string> logs = character.ownParty.specificLocationHistory;
-        for (int i = 0; i < logs.Count; i++) {
-            logSummary += "\n" + logs[i];
-        }
+        //List<string> logs = character.ownParty.specificLocationHistory;
+        //for (int i = 0; i < logs.Count; i++) {
+        //    logSummary += "\n" + logs[i];
+        //}
         AddSuccessMessage(logSummary);
     }
     private void GetCharactersWithItem(string[] parameters) {

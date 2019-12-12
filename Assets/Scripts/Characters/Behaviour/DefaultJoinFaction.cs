@@ -12,12 +12,26 @@ public class DefaultJoinFaction : CharacterBehaviourComponent {
             if (character.isFriendlyFactionless) {
                 log += "\n-" + character.name + " is factionless, 15% chance to join faction";
                 List<Faction> viableFactions = null;
-                if(character.currentRegion != null) {
+                if (character.currentArea != null) {
+                    Region potentialRegion = character.currentArea.region;
+                    log += "\n-" + character.name + " is factionless and in a settlement region: " + potentialRegion.name + ", will try to join a faction...";
+                    for (int i = 0; i < potentialRegion.factionsHere.Count; i++) {
+                        Faction potentialFaction = potentialRegion.factionsHere[i];
+                        if (!potentialFaction.isPlayerFaction
+                            && !potentialRegion.owner.IsCharacterBannedFromJoining(character) 
+                            && potentialFaction.ideologyComponent.DoesCharacterFitCurrentIdeology(character)) {
+                            if (viableFactions == null) { viableFactions = new List<Faction>(); }
+                            if (!viableFactions.Contains(potentialFaction)) {
+                                viableFactions.Add(potentialFaction);
+                            }
+                        }
+                    }
+                }else if (character.currentRegion != null) {
                     log += "\n-" + character.name + " is factionless and in a non settlement region: " + character.currentRegion.name + ", will try to join a faction...";
                     Region potentialRegion = character.currentRegion;
-                    if(potentialRegion.owner != null && !potentialRegion.owner.isPlayerFaction 
+                    if (potentialRegion.owner != null && !potentialRegion.owner.isPlayerFaction
                         && !potentialRegion.owner.IsCharacterBannedFromJoining(character) && potentialRegion.owner.ideologyComponent.DoesCharacterFitCurrentIdeology(character)) {
-                        if(viableFactions == null) { viableFactions = new List<Faction>(); }
+                        if (viableFactions == null) { viableFactions = new List<Faction>(); }
                         if (!viableFactions.Contains(potentialRegion.owner)) {
                             viableFactions.Add(potentialRegion.owner);
                         }
@@ -32,22 +46,8 @@ public class DefaultJoinFaction : CharacterBehaviourComponent {
                             }
                         }
                     }
-                } else if (character.specificLocation.areaMap != null) {
-                    Region potentialRegion = character.specificLocation.region;
-                    log += "\n-" + character.name + " is factionless and in a settlement region: " + potentialRegion.name + ", will try to join a faction...";
-                    for (int i = 0; i < potentialRegion.factionsHere.Count; i++) {
-                        Faction potentialFaction = potentialRegion.factionsHere[i];
-                        if (!potentialFaction.isPlayerFaction
-                            && !potentialRegion.owner.IsCharacterBannedFromJoining(character) 
-                            && potentialFaction.ideologyComponent.DoesCharacterFitCurrentIdeology(character)) {
-                            if (viableFactions == null) { viableFactions = new List<Faction>(); }
-                            if (!viableFactions.Contains(potentialFaction)) {
-                                viableFactions.Add(potentialFaction);
-                            }
-                        }
-                    }
                 }
-                if(viableFactions != null && viableFactions.Count > 0) {
+                if (viableFactions != null && viableFactions.Count > 0) {
                     Faction chosenFaction = viableFactions[UnityEngine.Random.Range(0, viableFactions.Count)];
                     chosenFaction.JoinFaction(character);
                     log += "\n-Chosen faction to join: " + chosenFaction.name;

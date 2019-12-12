@@ -95,7 +95,7 @@ namespace Traits {
                     if (token.characterOwner == null) {
                         //Patrollers should not pick up items from their main storage structure
                         if (token.structureLocation != null && token.structureLocation == characterThatWillDoJob.homeArea.mainStorage
-                            && token.specificLocation.region == characterThatWillDoJob.homeRegion) {
+                            && token.currentArea.region == characterThatWillDoJob.homeRegion) {
                             return false;
                         }
                         //characters should not pick up items if that item is the target of it's current action

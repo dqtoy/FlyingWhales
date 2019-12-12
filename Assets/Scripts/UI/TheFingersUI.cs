@@ -90,12 +90,12 @@ public class TheFingersUI : MonoBehaviour {
                 exclusiveIdeology.SetIndividualRequirements((EXCLUSIVE_IDEOLOGY_CATEGORIES) exclusiveIdeologyCategoryDropdown.value, exclusiveIdeologyRequirementDropdown.options[exclusiveIdeologyRequirementDropdown.value].text);
             }
 
-            Region regionLocation = null;
-            if (chosenLeader.currentRegion != null) {
-                regionLocation = chosenLeader.currentRegion;
-            } else if (chosenLeader.specificLocation != null) {
-                regionLocation = chosenLeader.specificLocation.region;
-            }
+            Region regionLocation = chosenLeader.currentRegion;
+            //if (chosenLeader.currentRegion != null) {
+            //    regionLocation = chosenLeader.currentRegion;
+            //} else if (chosenLeader.currentArea != null) {
+            //    regionLocation = chosenLeader.currentArea.region;
+            //}
 
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_create_faction");
             log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

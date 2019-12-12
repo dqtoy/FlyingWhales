@@ -140,8 +140,8 @@ public class SaveDataCharacter {
         } else {
             homeID = -1;
         }
-        if (character.specificLocation != null) {
-            currentLocationID = character.specificLocation.id;
+        if (character.currentRegion != null) {
+            currentLocationID = character.currentRegion.id;
         } else {
             currentLocationID = -1;
         }
@@ -307,6 +307,12 @@ public class SaveDataCharacter {
         if (!isMinion && !isSummon && isDead) {
             //Do not process dead save data if character is a minion or summon, there is a separate process for that in Player
             character.ownParty.PartyDeath();
+            Region deathLocation = character.currentRegion;
+            LocationStructure deathStructure = character.currentStructure;
+            deathLocation?.RemoveCharacterFromLocation(character);
+            character.SetRegionLocation(deathLocation); //set the specific location of this party, to the location it died at
+            character.SetCurrentStructureLocation(deathStructure, false);
+
             if (character.role != null) {
                 character.role.OnDeath(character);
             }

@@ -5,7 +5,7 @@ using Events.World_Events;
 using Inner_Maps;
 using UnityEngine;
 
-public class Region : ILocation{
+public class Region : ILocation {
 
     private const float HoveredBorderAlpha = 0f / 255f;
     private const float UnhoveredBorderAlpha = 0f / 255f;
@@ -543,44 +543,57 @@ public class Region : ILocation{
     #region Characters
     public void LoadCharacterHere(Character character) {
         charactersAtLocation.Add(character);
-        if (area == null) {
-            character.SetRegionLocation(this);
-            //JobBasedEventGeneration(character);
-            Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
-        } else {
-            //character.ownParty.SetSpecificLocation(area);
-            Messenger.Broadcast(Signals.CHARACTER_ENTERED_AREA, area, character);
-        }
+        character.SetRegionLocation(this);
+        Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
+        //if (area == null) {
+        //    //JobBasedEventGeneration(character);
+        //    Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
+        //} else {
+        //    //character.ownParty.SetSpecificLocation(area);
+        //    Messenger.Broadcast(Signals.CHARACTER_ENTERED_AREA, area, character);
+        //}
         //character.SetLandmarkLocation(this.mainLandmark);
         //Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
     }
     public void AddCharacterToLocation(Character character, LocationGridTile tileOverride = null, bool isInitial = false) {
         if (!charactersAtLocation.Contains(character)) {
             charactersAtLocation.Add(character);
-            if(area == null) {
-                character.SetRegionLocation(this);
-                Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
-            } else {
-                character.ownParty.SetSpecificLocation(area);
-                Messenger.Broadcast(Signals.CHARACTER_ENTERED_AREA, area, character);
-            }
+            character.SetRegionLocation(this);
+            Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
+            //if (area == null) {
+            //    Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
+            //} else {
+            //    //character.ownParty.SetSpecificLocation(area);
+            //    Messenger.Broadcast(Signals.CHARACTER_ENTERED_AREA, area, character);
+            //}
         }
     }
     public void RemoveCharacterFromLocation(Character character) {
         if (charactersAtLocation.Remove(character)) {
-            if (area == null) {
-                character.SetRegionLocation(null);
-                Messenger.Broadcast(Signals.CHARACTER_EXITED_REGION, character, this);
-            } else {
-                if (character.currentStructure == null && !owner.isPlayerFaction) {
-                    throw new System.Exception(character.name + " doesn't have a current structure at " + area.name);
-                }
-                if (character.currentStructure != null) {
-                    character.currentStructure.RemoveCharacterAtLocation(character);
-
-                }
-                Messenger.Broadcast(Signals.CHARACTER_EXITED_AREA, area, character);
+            if (character.currentStructure == null && area != null && !owner.isPlayerFaction) {
+                throw new System.Exception(character.name + " doesn't have a current structure at " + name);
             }
+            if (character.currentStructure != null && area == null) {
+                throw new System.Exception(character.name + " has a current structure at a location which has no area: " + name);
+            }
+            if (character.currentStructure != null) {
+                character.currentStructure.RemoveCharacterAtLocation(character);
+            }
+            character.SetRegionLocation(null);
+            Messenger.Broadcast(Signals.CHARACTER_EXITED_REGION, character, this);
+            //if (area == null) {
+            //    character.SetRegionLocation(null);
+            //    Messenger.Broadcast(Signals.CHARACTER_EXITED_REGION, character, this);
+            //} else {
+            //    if (character.currentStructure == null && !owner.isPlayerFaction) {
+            //        throw new System.Exception(character.name + " doesn't have a current structure at " + area.name);
+            //    }
+            //    if (character.currentStructure != null) {
+            //        character.currentStructure.RemoveCharacterAtLocation(character);
+
+            //    }
+            //    Messenger.Broadcast(Signals.CHARACTER_EXITED_AREA, area, character);
+            //}
         }
     }
     public void RemoveCharacterFromLocation(Party party) {

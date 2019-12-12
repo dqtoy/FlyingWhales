@@ -78,10 +78,10 @@ public class DropResource : GoapAction {
             } else {
                 //if the poi where the actor is supposed to deposit his carried pile has no grid tile location, this must mean that the pile is either destroyed or carried by another character
                 //return the main storage so that the main storage will become the target structure
-                return node.actor.specificLocation.mainStorage;
+                return node.actor.currentArea.mainStorage;
             }
         } else {
-            return node.actor.specificLocation.mainStorage;
+            return node.actor.currentArea.mainStorage;
         }
         //return base.GetTargetStructure(node);
     }
@@ -223,7 +223,7 @@ public class DropResource : GoapAction {
         if (actor.ownParty.IsPOICarried(poiTarget)) {
             return false;
         }
-        if (poiTarget.IsAvailable() == false || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation) {
+        if (poiTarget.IsAvailable() == false || poiTarget.gridTileLocation == null || actor.currentArea != poiTarget.currentArea) {
             return true;
         }
         if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET) {

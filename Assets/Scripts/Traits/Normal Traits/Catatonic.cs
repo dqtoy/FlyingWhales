@@ -50,7 +50,7 @@ namespace Traits {
                             if (currentJob == null) {
                                 if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter)) {
                                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, targetCharacter, characterThatWillDoJob);
-                                    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { characterThatWillDoJob.specificLocation.prison });
+                                    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { characterThatWillDoJob.currentArea.prison });
                                     //job.SetCanBeDoneInLocation(true);
                                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                                     return true;
@@ -132,7 +132,7 @@ namespace Traits {
             return false;
         }
         private bool CreateFeedJob(Character characterThatWillDoJob) {
-            if (characterThatWillDoJob.specificLocation.region.IsResident(owner)) {
+            if (characterThatWillDoJob.currentArea.region.IsResident(owner)) {
                 GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET };
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, owner, characterThatWillDoJob);
                 //job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeParalyzedFeedJob);

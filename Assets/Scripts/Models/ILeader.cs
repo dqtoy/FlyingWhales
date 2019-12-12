@@ -8,7 +8,7 @@ public interface ILeader {
     string name { get; }
     RACE race { get; }
     GENDER gender { get; }
-    Area specificLocation { get; }
+    Area currentArea { get; }
     Area homeArea { get; }
 
     void LevelUp();

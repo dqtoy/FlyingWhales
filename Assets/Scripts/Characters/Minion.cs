@@ -104,7 +104,7 @@ public class Minion {
     }
     public void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
         if (!character.isDead) {
-            Area deathLocation = character.ownParty.specificLocation;
+            Region deathLocation = character.currentRegion;
             LocationStructure deathStructure = character.currentStructure;
             LocationGridTile deathTile = character.gridTileLocation;
 
@@ -112,7 +112,7 @@ public class Minion {
             character.SetPOIState(POI_STATE.INACTIVE);
             //CombatManager.Instance.ReturnCharacterColorToPool(character.characterColor);
 
-            if (character.currentParty.specificLocation == null) {
+            if (character.currentRegion == null) {
                 throw new Exception("Specific location of " + character.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
             }
             if (character.stateComponent.currentState != null) {
@@ -126,23 +126,28 @@ public class Minion {
             if (character.currentActionNode != null) {
                 character.currentActionNode.StopActionNode(false);
             }
-            if (character.ownParty.specificLocation != null && character.isHoldingItem) {
-                character.DropAllTokens(character.ownParty.specificLocation, character.currentStructure, deathTile, true);
+            if (character.currentArea != null && character.isHoldingItem) {
+                character.DropAllTokens(character.currentArea, character.currentStructure, deathTile, true);
             }
 
             //clear traits that need to be removed
             character.traitsNeededToBeRemoved.Clear();
 
-            bool wasOutsideSettlement = false;
-            if (character.currentRegion != null) {
-                wasOutsideSettlement = true;
-                character.currentRegion.RemoveCharacterFromLocation(this.character);
-            }
+            bool wasOutsideSettlement = character.currentArea == null;
+            //bool wasOutsideSettlement = false;
+            //if (character.currentRegion != null) {
+            //    wasOutsideSettlement = true;
+            //    character.currentRegion.RemoveCharacterFromLocation(this.character);
+            //}
 
             if (!character.IsInOwnParty()) {
                 character.currentParty.RemovePOI(character);
             }
             character.ownParty.PartyDeath();
+            character.currentRegion?.RemoveCharacterFromLocation(character);
+            character.SetRegionLocation(deathLocation); //set the specific location of this party, to the location it died at
+            character.SetCurrentStructureLocation(deathStructure, false);
+
 
             if (character.role != null) {
                 character.role.OnDeath(character);
@@ -320,7 +325,7 @@ public class Minion {
         GoToWorkArea();
     }
     private void GoToWorkArea() {
-        LocationStructure structure = character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
+        LocationStructure structure = character.currentArea.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
         LocationGridTile tile = structure.GetRandomTile();
         character.marker.GoTo(tile);
     }
@@ -341,7 +346,7 @@ public class Minion {
         }
         character.StopCurrentActionNode(false);
 
-        character.specificLocation.RemoveCharacterFromLocation(character);
+        character.currentArea.RemoveCharacterFromLocation(character);
         //character.marker.ClearAvoidInRange(false);
         //character.marker.ClearHostilesInRange(false);
         //character.marker.ClearPOIsInVisionRange();

@@ -103,7 +103,7 @@ namespace Traits {
         }
 
         private void CheckSerialKiller() {
-            if (character.isDead || character.doNotDisturb > 0 || character.specificLocation != InnerMapManager.Instance.currentlyShowingArea) {
+            if (character.isDead || character.doNotDisturb > 0 || character.currentArea != InnerMapManager.Instance.currentlyShowingArea) {
                 if (hasStartedFollowing) {
                     StopFollowing();
                     SetHasStartedFollowing(false);
@@ -148,7 +148,7 @@ namespace Traits {
             if (targetVictim == null) {
                 for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
                     Character potentialVictim = CharacterManager.Instance.allCharacters[i];
-                    if (potentialVictim.specificLocation != this.character.specificLocation || potentialVictim.isDead || potentialVictim is Summon) {
+                    if (potentialVictim.currentArea != this.character.currentArea || potentialVictim.isDead || potentialVictim is Summon) {
                         continue;
                     }
                     if (DoesCharacterFitAnyVictimRequirements(potentialVictim)) {
@@ -222,7 +222,7 @@ namespace Traits {
         }
         private void CheckTargetVictimIfStillAvailable() {
             if (targetVictim != null) {
-                if (targetVictim.specificLocation != this.character.specificLocation || targetVictim.isDead || targetVictim is Summon) {
+                if (targetVictim.currentArea != this.character.currentArea || targetVictim.isDead || targetVictim is Summon) {
                     SetTargetVictim(null);
                     if (hasStartedFollowing) {
                         StopFollowing();

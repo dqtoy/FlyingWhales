@@ -143,11 +143,12 @@ public class Faction {
                 ideologyComponent.SwitchToIdeology(newIdeology); //Inclusive only right now
             }
             Character characterLeader = leader as Character;
-            if(characterLeader.currentRegion != null) {
-                characterLeader.currentRegion.AddFactionHere(characterLeader.faction);
-            } else if (characterLeader.specificLocation != null) {
-                characterLeader.specificLocation.region.AddFactionHere(characterLeader.faction);
-            }
+            characterLeader.currentRegion.AddFactionHere(characterLeader.faction);
+            //if(characterLeader.currentRegion != null) {
+            //    characterLeader.currentRegion.AddFactionHere(characterLeader.faction);
+            //} else if (characterLeader.currentArea != null) {
+            //    characterLeader.currentArea.region.AddFactionHere(characterLeader.faction);
+            //}
         }
     }
     #endregion

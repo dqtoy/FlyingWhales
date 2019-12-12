@@ -146,7 +146,7 @@
     }
     public bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter) {
         if (character.isAtHomeRegion && !character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL) &&
-            character.traitContainer.GetNormalTrait("Coward") == null && character.specificLocation.prison != null) {
+            character.traitContainer.GetNormalTrait("Coward") == null && character.currentArea.prison != null) {
             return character.role.roleType == CHARACTER_ROLE.SOLDIER &&
                    character.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) !=
                    RELATIONSHIP_EFFECT.POSITIVE;
@@ -155,7 +155,7 @@
     }
     public bool CanCharacterTakeRestrainJob(Character character, Character targetCharacter) {
         return targetCharacter.faction != character.faction && character.isAtHomeRegion &&
-               character.isPartOfHomeFaction && character.specificLocation.prison != null
+               character.isPartOfHomeFaction && character.currentArea.prison != null
                && (character.role.roleType == CHARACTER_ROLE.SOLDIER ||
                    character.role.roleType == CHARACTER_ROLE.CIVILIAN ||
                    character.role.roleType == CHARACTER_ROLE.ADVENTURER)
@@ -178,7 +178,7 @@
                RELATIONSHIP_EFFECT.NEGATIVE;
     }
     public bool CanCharacterTakeRestrainedFeedJob(Character sourceCharacter, Character character) {
-        if (sourceCharacter.specificLocation.region.IsResident(character)) {
+        if (sourceCharacter.currentArea.region.IsResident(character)) {
             if (!character.isFactionless) {
                 return character.role.roleType == CHARACTER_ROLE.SOLDIER ||
                        character.role.roleType == CHARACTER_ROLE.CIVILIAN;

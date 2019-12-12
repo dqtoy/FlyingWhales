@@ -60,12 +60,12 @@ public class Lure : PlayerJobAction {
     #endregion
 
     private bool CanChooseRegion(Region region) {
-        bool isCharacterAlreadyInRegion = false;
-        if(targetCharacter.currentRegion != null) {
-            isCharacterAlreadyInRegion = targetCharacter.currentRegion == region;
-        } else {
-            isCharacterAlreadyInRegion = targetCharacter.specificLocation.region == region;
-        }
+        bool isCharacterAlreadyInRegion = targetCharacter.currentRegion == region;
+        //if(targetCharacter.currentRegion != null) {
+        //    isCharacterAlreadyInRegion = targetCharacter.currentRegion == region;
+        //} else {
+        //    isCharacterAlreadyInRegion = targetCharacter.currentArea.region == region;
+        //}
         return !region.coreTile.isCorrupted && !isCharacterAlreadyInRegion;
     }
     private void GoToRegion(object r) {

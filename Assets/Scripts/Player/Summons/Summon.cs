@@ -53,7 +53,7 @@ public class Summon : Character, IWorldObject {
     }
     public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
         if (!_isDead) {
-            Area deathLocation = ownParty.specificLocation;
+            Region deathLocation = currentRegion;
             LocationStructure deathStructure = currentStructure;
             LocationGridTile deathTile = gridTileLocation;
 
@@ -79,9 +79,12 @@ public class Summon : Character, IWorldObject {
             if (currentActionNode != null) {
                 currentActionNode.StopActionNode(false);
             }
-            if (ownParty.specificLocation != null && isHoldingItem) {
-                DropAllTokens(ownParty.specificLocation, currentStructure, deathTile, true);
+            if (currentArea != null && isHoldingItem) {
+                DropAllTokens(currentArea, currentStructure, deathTile, true);
             }
+            //if (ownParty.specificLocation != null && isHoldingItem) {
+            //    DropAllTokens(ownParty.specificLocation, currentStructure, deathTile, true);
+            //}
 
             //clear traits that need to be removed
             traitsNeededToBeRemoved.Clear();
@@ -90,6 +93,9 @@ public class Summon : Character, IWorldObject {
                 currentParty.RemovePOI(this);
             }
             ownParty.PartyDeath();
+            currentRegion?.RemoveCharacterFromLocation(this);
+            SetRegionLocation(deathLocation); //set the specific location of this party, to the location it died at
+            SetCurrentStructureLocation(deathStructure, false);
 
             if (_role != null) {
                 _role.OnDeath(this);
@@ -222,7 +228,7 @@ public class Summon : Character, IWorldObject {
 
     #region Utilities
     protected void GoToWorkArea() {
-        LocationStructure structure = this.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
+        LocationStructure structure = this.currentArea.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
         LocationGridTile tile = structure.GetRandomTile();
         this.marker.GoTo(tile);
     }

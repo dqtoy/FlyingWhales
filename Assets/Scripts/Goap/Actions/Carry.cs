@@ -82,7 +82,7 @@ public class Carry : GoapAction {
     private bool TargetMissingForCarry(ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
-        return poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
+        return poiTarget.gridTileLocation == null || actor.currentArea != poiTarget.currentArea
                     || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation));
     }
 }
