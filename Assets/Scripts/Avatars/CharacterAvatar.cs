@@ -209,7 +209,7 @@ public class CharacterAvatar : MonoBehaviour {
         GameObject.Destroy(_travelLine.gameObject);
         _travelLine = null;
         SetHasArrivedState(true);
-        _party.owner.currentRegion.RemoveCharacterFromLocation(_party);
+        _party.owner.currentRegion.RemoveCharacterFromLocation(_party.owner);
         targetLocation.AddCharacterToLocation(_party.owner);
 
         _party.owner.marker.ClearHostilesInRange();
@@ -320,7 +320,7 @@ public class CharacterAvatar : MonoBehaviour {
         HasArrivedAtTargetLocation();
     }
     public virtual void HasArrivedAtTargetLocation() {
-		if (_party.owner.currentRegion.coreTile.id == targetLocation.coreTile.id) {
+		if (_party.owner.currentRegion == targetLocation) {
             if (!this._hasArrived) {
                 SetIsTravelling(false);
                 //_trackTarget = null;

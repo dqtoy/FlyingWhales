@@ -858,7 +858,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 currentParty.RemovePOI(this);
             }
             ownParty.PartyDeath();
-
             currentRegion?.RemoveCharacterFromLocation(this);
             SetRegionLocation(deathLocation); //set the specific location of this party, to the location it died at
             SetCurrentStructureLocation(deathStructure, false);
@@ -2060,7 +2059,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     public void OnAddedToParty() {
         if (currentParty.id != ownParty.id) {
-            currentRegion.RemoveCharacterFromLocation(this); //Why are we removing the character from location if it is added to a party
+            //currentRegion.RemoveCharacterFromLocation(this); //Why are we removing the character from location if it is added to a party
             //ownParty.specificLocation.RemoveCharacterFromLocation(this);
             //ownParty.icon.SetVisualState(false);
             marker.collisionTrigger.SetMainColliderState(false);
@@ -3859,10 +3858,13 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (!IsInOwnParty()) {
             currentParty.RemovePOI(this);
         }
+        if (ownParty.isCarryingAnyPOI) {
+            ownParty.RemoveCarriedPOI();
+        }
         ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
         MigrateHomeTo(PlayerManager.Instance.player.playerArea.region);
 
-        currentArea.RemoveCharacterFromLocation(this.currentParty);
+        //currentArea.RemoveCharacterFromLocation(this.currentParty);
         currentRegion?.RemoveCharacterFromLocation(this);
 
         needsComponent.ResetFullnessMeter();

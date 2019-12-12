@@ -140,7 +140,7 @@ public class Faction {
         if (leader is Character) {
             if (setIdeology) {
                 FACTION_IDEOLOGY newIdeology = Utilities.GetRandomEnumValue<FACTION_IDEOLOGY>();
-                ideologyComponent.SwitchToIdeology(newIdeology); //Inclusive only right now
+                ideologyComponent.SwitchToIdeology(newIdeology);
             }
             Character characterLeader = leader as Character;
             characterLeader.currentRegion.AddFactionHere(characterLeader.faction);

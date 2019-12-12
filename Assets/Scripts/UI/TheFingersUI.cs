@@ -8,10 +8,10 @@ public class TheFingersUI : MonoBehaviour {
     public Button createBtn;
     public Image createProgress;
 
-    [Header("Minion")]
-    public TextMeshProUGUI minionName;
-    public CharacterPortrait minionPortrait;
-    public Button selectMinionBtn;
+    //[Header("Minion")]
+    //public TextMeshProUGUI minionName;
+    //public CharacterPortrait minionPortrait;
+    //public Button selectMinionBtn;
 
     [Header("Faction")]
     public GameObject createNewFactionGO;
@@ -29,7 +29,7 @@ public class TheFingersUI : MonoBehaviour {
     public TMP_Dropdown exclusiveIdeologyRequirementDropdown;
 
     public TheFingers fingers { get; private set; }
-    public Minion chosenMinion { get; private set; }
+    //public Minion chosenMinion { get; private set; }
     public Character chosenLeader { get; private set; }
 
     #region General
@@ -38,13 +38,15 @@ public class TheFingersUI : MonoBehaviour {
         if (characterNameplateItems == null) {
             characterNameplateItems = new List<CharacterNameplateItem>();
         }
+        //ideologyDropdown.onValueChanged.AddListener(OnChangeIdeology);
+        //exclusiveIdeologyCategoryDropdown.onValueChanged.AddListener(OnChangeExclusiveIdeologyCategory);
         if (!fingers.hasBeenActivated) {
-            chosenMinion = null;
-            createBtn.interactable = false;
+            //chosenMinion = null;
+            createBtn.interactable = true;
             createProgress.fillAmount = 0;
-            minionName.gameObject.SetActive(false);
-            minionPortrait.gameObject.SetActive(false);
-            selectMinionBtn.interactable = true;
+            //minionName.gameObject.SetActive(false);
+            //minionPortrait.gameObject.SetActive(false);
+            //selectMinionBtn.interactable = true;
         } else {
             SetChosenMinion(fingers.tileLocation.region.assignedMinion.character);
             UpdateSelectMinionBtn();
@@ -62,8 +64,8 @@ public class TheFingersUI : MonoBehaviour {
         }
     }
     public void OnClickCreate() {
-        fingers.tileLocation.region.SetAssignedMinion(chosenMinion);
-        chosenMinion.SetAssignedRegion(fingers.tileLocation.region);
+        //fingers.tileLocation.region.SetAssignedMinion(chosenMinion);
+        //chosenMinion.SetAssignedRegion(fingers.tileLocation.region);
         //fingers.StartDelay(0);
         ShowCreateNewFactionUI();
         UpdateCreateButton();
@@ -71,7 +73,7 @@ public class TheFingersUI : MonoBehaviour {
     }
     private void UpdateCreateButton() {
         createProgress.gameObject.SetActive(false);
-        createBtn.interactable = chosenMinion != null && !fingers.hasBeenActivated && !createNewFactionGO.activeSelf;
+        createBtn.interactable = /*chosenMinion != null &&*/ !fingers.hasBeenActivated && !createNewFactionGO.activeSelf;
         if (!createBtn.interactable) {
             if (fingers.hasBeenActivated) {
                 createProgress.gameObject.SetActive(true);
@@ -97,8 +99,8 @@ public class TheFingersUI : MonoBehaviour {
             //    regionLocation = chosenLeader.currentArea.region;
             //}
 
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_create_faction");
-            log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "character_create_faction");
+            log.AddToFillers(chosenLeader, chosenLeader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(newFaction, newFaction.name, LOG_IDENTIFIER.FACTION_1);
             log.AddToFillers(regionLocation, regionLocation.name, LOG_IDENTIFIER.LANDMARK_1);
             log.AddLogToInvolvedObjects();
@@ -109,7 +111,7 @@ public class TheFingersUI : MonoBehaviour {
             HideCreateNewFactionUI();
             UpdateSelectMinionBtn();
             UpdateCreateButton();
-            PlayerUI.Instance.ShowGeneralConfirmation("New Faction", "Foung New Faction!");
+            PlayerUI.Instance.ShowGeneralConfirmation("New Faction", "Found New Faction!");
 
         }
     }
@@ -146,16 +148,16 @@ public class TheFingersUI : MonoBehaviour {
     }
     private void SetChosenMinion(object c) {
         Character character = c as Character;
-        chosenMinion = character.minion;
-        minionPortrait.GeneratePortrait(chosenMinion.character);
-        minionName.text = chosenMinion.character.name;
-        minionPortrait.gameObject.SetActive(true);
-        minionName.gameObject.SetActive(true);
+        //chosenMinion = character.minion;
+        //minionPortrait.GeneratePortrait(chosenMinion.character);
+        //minionName.text = chosenMinion.character.name;
+        //minionPortrait.gameObject.SetActive(true);
+        //minionName.gameObject.SetActive(true);
         UpdateCreateButton();
         UIManager.Instance.HideObjectPicker();
     }
     private void UpdateSelectMinionBtn() {
-        selectMinionBtn.interactable = !fingers.hasBeenActivated && !createNewFactionGO.activeSelf;
+        //selectMinionBtn.interactable = !fingers.hasBeenActivated && !createNewFactionGO.activeSelf;
     }
     #endregion
 
@@ -169,6 +171,7 @@ public class TheFingersUI : MonoBehaviour {
     }
     public void HideCreateNewFactionUI() {
         createNewFactionGO.SetActive(false);
+        UpdateCreateButton();
     }
     private void ShowChooseIdeology() {
         ideologyHolder.SetActive(true);
@@ -183,7 +186,7 @@ public class TheFingersUI : MonoBehaviour {
         Utilities.DestroyChildren(characterScrollRect.content);
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
-            if(character.faction.isMajorFriendlyNeutral && !character.faction.isPlayerFaction) {
+            if(/*character.isFriendlyFactionless*/ character.faction.leader != character) {
                 CharacterNameplateItem item = CreateNewCharacterNameplateItem();
                 item.SetObject(character);
                 item.AddOnClickAction(OnClickCharacter);
@@ -221,6 +224,7 @@ public class TheFingersUI : MonoBehaviour {
         for (int i = 0; i < ideologies.Length; i++) {
             ideologyDropdown.options.Add(new TMP_Dropdown.OptionData(ideologies[i]));
         }
+        ideologyDropdown.RefreshShownValue();
         ideologyDropdown.value = 0;
     }
     private void ShowAppropriateIdeologyContent() {
@@ -238,6 +242,7 @@ public class TheFingersUI : MonoBehaviour {
     #region Exclusive Ideology
     private void ShowExclusiveIdeology() {
         PopulateExclusiveIdeologyCategory();
+        PopulateExclusiveIdeologyRequirements();
         exclusiveIdeologyHolder.SetActive(true);
     }
     private void HideExclusiveIdeology() {
@@ -249,6 +254,7 @@ public class TheFingersUI : MonoBehaviour {
         for (int i = 0; i < exclusiveIdeologyCategories.Length; i++) {
             exclusiveIdeologyCategoryDropdown.options.Add(new TMP_Dropdown.OptionData(exclusiveIdeologyCategories[i]));
         }
+        exclusiveIdeologyCategoryDropdown.RefreshShownValue();
         exclusiveIdeologyCategoryDropdown.value = 0;
     }
     private void PopulateExclusiveIdeologyRequirements() {
@@ -270,6 +276,7 @@ public class TheFingersUI : MonoBehaviour {
                 exclusiveIdeologyRequirementDropdown.options.Add(new TMP_Dropdown.OptionData(traits[i]));
             }
         }
+        exclusiveIdeologyRequirementDropdown.RefreshShownValue();
         exclusiveIdeologyRequirementDropdown.value = 0;
     }
     public void OnChangeExclusiveIdeologyCategory(int index) {

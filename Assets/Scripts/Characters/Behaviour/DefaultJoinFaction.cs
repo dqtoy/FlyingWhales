@@ -58,6 +58,23 @@ public class DefaultJoinFaction : CharacterBehaviourComponent {
                 character.currentRegion.owner.JoinFaction(character);
             }
             return true;
+        } else if (UnityEngine.Random.Range(0, 100) < 10) {
+            if (character.isFriendlyFactionless) {
+                log += "\n-" + character.name + " is factionless, 10% chance to create faction";
+                if (character.traitContainer.GetNormalTrait("Inspiring", "Ambitious") != null) {
+                    log += "\n-" + character.name + " is Ambitious or Inspiring, creating new faction...";
+                    Faction newFaction = FactionManager.Instance.CreateNewFaction();
+                    character.ChangeFactionTo(newFaction);
+                    newFaction.SetLeader(character);
+
+                    Log createFactionLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "character_create_faction");
+                    createFactionLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    createFactionLog.AddToFillers(newFaction, newFaction.name, LOG_IDENTIFIER.FACTION_1);
+                    createFactionLog.AddToFillers(character.currentRegion, character.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
+                    character.RegisterLogAndShowNotifToThisCharacterOnly(createFactionLog, onlyClickedCharacter: false);
+                }
+            }
+            return true;
         }
 
         return false;
