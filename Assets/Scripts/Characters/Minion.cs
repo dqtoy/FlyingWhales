@@ -122,7 +122,7 @@ public class Minion {
             //    character.stateComponent.SetStateToDo(null);
             //}
             character.ForceCancelAllJobsTargettingThisCharacter(false, "target is already dead");
-            Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, character, "target is already dead");
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, character, "target is already dead");
             if (character.currentActionNode != null) {
                 character.currentActionNode.StopActionNode(false);
             }

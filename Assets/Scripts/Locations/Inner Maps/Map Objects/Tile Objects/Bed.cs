@@ -103,7 +103,7 @@ public class Bed : TileObject {
             for (int i = 0; i < bedUsers.Length; i++) {
                 if (bedUsers[i] != null) {
                     Character currUser = bedUsers[i];
-                    Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, currUser, "bed is burning");
+                    Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, currUser, "bed is burning");
                 }
             }
         }

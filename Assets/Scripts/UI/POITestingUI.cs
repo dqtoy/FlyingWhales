@@ -36,6 +36,13 @@ public class POITestingUI : MonoBehaviour {
     public void KnockoutThisCharacter() {
         if(poi is Character) {
             UIManager.Instance.characterInfoUI.activeCharacter.CreateKnockoutJob(poi as Character);
+        } else if (poi is Bed) {
+            Bed bed = poi as Bed;
+            if(bed.users[0] != null) {
+                UIManager.Instance.characterInfoUI.activeCharacter.CreateKnockoutJob(bed.users[0]);
+            }else if (bed.users[1] != null) {
+                UIManager.Instance.characterInfoUI.activeCharacter.CreateKnockoutJob(bed.users[1]);
+            }
         } else {
             Debug.LogError(poi.name + " is not a character!");
         }

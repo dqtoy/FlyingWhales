@@ -542,7 +542,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.AddListener(Signals.DAY_STARTED, DailyGoapProcesses);
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
-        Messenger.AddListener<Character, string>(Signals.CANCEL_CURRENT_ACTION, CancelCurrentAction);
+        Messenger.AddListener<Character, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, CancelCurrentAction);
         Messenger.AddListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
@@ -557,7 +557,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.RemoveListener(Signals.DAY_STARTED, DailyGoapProcesses);
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.RemoveListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
-        Messenger.RemoveListener<Character, string>(Signals.CANCEL_CURRENT_ACTION, CancelCurrentAction);
+        Messenger.RemoveListener<Character, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, CancelCurrentAction);
         Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
@@ -810,9 +810,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //} else {
             //    CancelAllJobsTargettingThisCharacter("target is already dead", false);
             //}
+            StopCurrentActionNode();
             ForceCancelAllJobsTargettingThisCharacter(false, "target is already dead");
             //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target is already dead");
-            StopCurrentActionNode();
             if (jobQueue.jobsInQueue.Count > 0) {
                 jobQueue.CancelAllJobs();
             }
@@ -1113,10 +1113,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //        }
     //    }
     //}
-    public void ForceCancelAllJobsTargettingThisCharacter(bool shouldDoAfterEffect = true, string cause = "") {
+    public void ForceCancelAllJobsTargettingThisCharacter(bool shouldDoAfterEffect = true, string reason = "") {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
-            if (job.ForceCancelJob(shouldDoAfterEffect, cause)) {
+            if (job.ForceCancelJob(shouldDoAfterEffect, reason)) {
                 i--;
             }
         }
@@ -1822,12 +1822,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
         }
     }
-    public void CancelAllJobsExceptForCurrent() {
+    public void CancelAllJobsExceptForCurrent(bool shouldDoAfterEffect = true) {
         if (currentJob != null) {
             for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
                 JobQueueItem job = jobQueue.jobsInQueue[i];
                 if (job != currentJob) {
-                    if (job.CancelJob()) {
+                    if (job.CancelJob(shouldDoAfterEffect)) {
                         i--;
                     }
                 }
@@ -3849,7 +3849,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //}
 
         ForceCancelAllJobsTargettingThisCharacter(false, "target became a minion");
-        Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target became a minion");
+        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this, "target became a minion");
         StopCurrentActionNode(reason: "Became a minion");
         //if (currentActionNode != null && !currentActionNode.cannotCancelAction) {
         //    currentActionNode.StopAction(reason: "Became a minion");
@@ -5989,7 +5989,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if(currentActionNode == null) {
             return false;
         }
-        if (reason != "") {
+        if (reason != "" && currentActionNode.poiTarget != this) {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "current_action_abandoned_reason");
             log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(null, currentActionNode.action.goapName, LOG_IDENTIFIER.STRING_1);
@@ -6060,8 +6060,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //}
     private void CancelCurrentAction(Character target, string cause) {
         if (this != target && !isDead && currentActionNode != null && currentActionNode.poiTarget == target && currentActionNode.action.goapType != INTERACTION_TYPE.WATCH) {
-            RegisterLogAndShowNotifToThisCharacterOnly("Generic", "action_cancelled_cause", null, cause);
-            StopCurrentActionNode();
+            //RegisterLogAndShowNotifToThisCharacterOnly("Generic", "action_cancelled_cause", null, cause);
+            StopCurrentActionNode(reason: cause);
         }
     }
     //This will only stop the current action of this character, this is different from StopAction because this will not drop the plan if the actor is not performing it but is on the way
@@ -6750,7 +6750,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             traitContainer.RemoveAllNonPersistentTraits(this); //remove all non persistent traits (include alter ego: false)
 
             ForceCancelAllJobsTargettingThisCharacter(false, "target is not found");
-            Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target is not found");
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this, "target is not found");
 
             for (int i = 0; i < alterEgoData.traits.Count; i++) {
                 traitContainer.AddTrait(this, alterEgoData.traits[i]);

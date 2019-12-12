@@ -163,31 +163,32 @@ public class GoapPlanJob : JobQueueItem {
         }
         return base.ProcessJob();
     }
-    public override bool CancelJob(bool shouldDoAfterEffect = true, string cause = "", string reason = "") {
+    public override bool CancelJob(bool shouldDoAfterEffect = true, string reason = "") {
         //if (id == -1) { return false; }
         if (assignedCharacter == null) {
             //Can only cancel jobs that are in character job queue
             return false;
         }
-        if (assignedCharacter.jobQueue.RemoveJobInQueue(this, shouldDoAfterEffect, reason)) {
-            if(cause != "") {
-                assignedCharacter.RegisterLogAndShowNotifToThisCharacterOnly("Generic", "job_cancelled_cause", null, cause);
-            }
-            return true;
-        }
-        return false;
+        return assignedCharacter.jobQueue.RemoveJobInQueue(this, shouldDoAfterEffect, reason);
+        //if (assignedCharacter.jobQueue.RemoveJobInQueue(this, shouldDoAfterEffect, reason)) {
+        //    if(reason != "") {
+        //        assignedCharacter.RegisterLogAndShowNotifToThisCharacterOnly("Generic", "job_cancelled_cause", null, reason);
+        //    }
+        //    return true;
+        //}
+        //return false;
     }
-    public override bool ForceCancelJob(bool shouldDoAfterEffect = true, string cause = "", string reason = "") {
+    public override bool ForceCancelJob(bool shouldDoAfterEffect = true, string reason = "") {
         //if (id == -1) { return false; }
         if (assignedCharacter != null) {
             Character assignedCharacter = this.assignedCharacter;
             JOB_OWNER ownerType = originalOwner.ownerType;
             bool hasBeenRemoved = assignedCharacter.jobQueue.RemoveJobInQueue(this, shouldDoAfterEffect, reason);
-            if (hasBeenRemoved) {
-                if (cause != "") {
-                    assignedCharacter.RegisterLogAndShowNotifToThisCharacterOnly("Generic", "job_cancelled_cause", null, cause);
-                }
-            }
+            //if (hasBeenRemoved) {
+            //    if (cause != "") {
+            //        assignedCharacter.RegisterLogAndShowNotifToThisCharacterOnly("Generic", "job_cancelled_cause", null, cause);
+            //    }
+            //}
             if(ownerType == JOB_OWNER.CHARACTER) {
                 return hasBeenRemoved;
             }
