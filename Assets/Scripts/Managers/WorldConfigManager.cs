@@ -33,7 +33,9 @@ public class WorldConfigManager : MonoBehaviour {
         //The world must have the following landmarks:
         Dictionary<LANDMARK_TYPE, int> landmarks = new Dictionary<LANDMARK_TYPE, int>() {
             { LANDMARK_TYPE.FARM, 3 },  //-3 farm regions
-            { LANDMARK_TYPE.MINES, 2 }, //-2 mine regions
+            // { LANDMARK_TYPE.MINES, 2 }, //-2 mine regions
+            { LANDMARK_TYPE.QUARRY, 1 }, 
+            { LANDMARK_TYPE.LUMBERYARD, 1 }, 
             { LANDMARK_TYPE.BARRACKS, 1 },//-1 barracks region
             { LANDMARK_TYPE.WORKSHOP, 1 }, //-1 workshop region
             { LANDMARK_TYPE.TEMPLE, 1 }, //-1 temple region
@@ -53,7 +55,7 @@ public class WorldConfigManager : MonoBehaviour {
         int remaining = regionCount - totalLandmarks;
         if (remaining > 0) {
             //-the rest should be randomly determined: farm / mine / barracks / lair / outpost / temple / bandit camp
-            choices = new LANDMARK_TYPE[] { LANDMARK_TYPE.FARM, LANDMARK_TYPE.MINES, LANDMARK_TYPE.BARRACKS, LANDMARK_TYPE.MONSTER_LAIR, LANDMARK_TYPE.MAGE_TOWER, LANDMARK_TYPE.TEMPLE, LANDMARK_TYPE.BANDIT_CAMP };
+            choices = new LANDMARK_TYPE[] { LANDMARK_TYPE.FARM, LANDMARK_TYPE.QUARRY, LANDMARK_TYPE.LUMBERYARD, LANDMARK_TYPE.BARRACKS, LANDMARK_TYPE.MONSTER_LAIR, LANDMARK_TYPE.MAGE_TOWER, LANDMARK_TYPE.TEMPLE, LANDMARK_TYPE.BANDIT_CAMP };
             for (int i = 0; i < remaining; i++) {
                 LANDMARK_TYPE chosenType = choices[Random.Range(0, choices.Length)];
                 if (!landmarks.ContainsKey(chosenType)) {

@@ -121,7 +121,7 @@ public class CharacterAIPath : AILerp {
                 }
             }
         }
-        if (marker.character != null && marker.character.currentActionNode != null) {//&& marker.character.currentActionNode.willAvoidCharactersWhileMoving
+        if (marker.character != null && marker.character.currentActionNode != null && marker.character.currentArea != null) {//&& marker.character.currentActionNode.willAvoidCharactersWhileMoving
             for (int i = 0; i < marker.character.currentArea.charactersAtLocation.Count; i++) {
                 Character terrifyingCharacter = marker.character.currentArea.charactersAtLocation[i];
                 terrifyingCharacter.marker.UpdateCenteredWorldPos();

@@ -148,7 +148,7 @@ public class SaveDataCharacter {
         if (character.homeStructure != null) {
             homeStructureID = character.homeStructure.id;
             homeStructureType = character.homeStructure.structureType;
-            homeStructureAreaID = character.homeStructure.location.id;
+            homeStructureAreaID = character.homeStructure.location.id; //TODO: Refactor this, because structure location is no longer guaranteed to be an area.
         } else {
             homeStructureID = -1;
         }
@@ -236,7 +236,7 @@ public class SaveDataCharacter {
 
         if (character.gridTileLocation != null) {
             gridTileLocation = new Vector3Save(character.gridTileLocation.localPlace.x, character.gridTileLocation.localPlace.y, 0f);
-            gridTileLocationAreaID = character.gridTileLocation.structure.location.id;
+            gridTileLocationAreaID = character.gridTileLocation.structure.location.id; //TODO: Refactor this, because structure location is no longer guaranteed to be an area.
         } else {
             gridTileLocation = new Vector3Save(0f, 0f, -1f);
         }

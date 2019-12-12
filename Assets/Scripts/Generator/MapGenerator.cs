@@ -70,6 +70,7 @@ public class MapGenerator : MonoBehaviour {
         LandmarkManager.Instance.LoadAdditionalAreaData();
         yield return null;
         LandmarkManager.Instance.GenerateRegionInnerMaps();
+        LandmarkManager.Instance.MakeAllRegionsAwareOfEachOther();
 
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds.ToString()));

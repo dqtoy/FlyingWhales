@@ -224,6 +224,8 @@ public enum LANDMARK_TYPE {
     THE_PROFANE = 54,
     THE_NEEDLES = 55,
     THE_PIT = 56,
+    LUMBERYARD = 57,
+    QUARRY = 58,
 }
 public enum TECHNOLOGY {
     //Weapon Production

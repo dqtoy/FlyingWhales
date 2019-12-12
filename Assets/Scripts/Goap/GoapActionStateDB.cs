@@ -334,6 +334,21 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.INVADE_REGION, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Invade Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(4) },
         } },
+        {INTERACTION_TYPE.STUDY, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Study Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(2) },
+        } },
+        {INTERACTION_TYPE.FORAGE_FOOD_REGION, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Forage Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(2) },
+        } },
+        {INTERACTION_TYPE.CHOP_WOOD_REGION, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Chop Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(2) },
+        } },
+        {INTERACTION_TYPE.MINE_METAL_REGION, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Mine Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(2) },
+        } },
+        {INTERACTION_TYPE.MINE_STONE_REGION, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Mine Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(2) },
+        } },
     };
 }
 

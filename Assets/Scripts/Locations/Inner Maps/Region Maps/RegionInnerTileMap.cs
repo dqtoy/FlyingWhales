@@ -18,6 +18,8 @@ namespace Inner_Maps {
             RegionTileObject rto = InnerMapManager.Instance.CreateNewTileObject<RegionTileObject>(TILE_OBJECT_TYPE.REGION_TILE_OBJECT); 
             structure.AddPOI(rto);
             region.SetRegionTileObject(rto);
+            rto.SetName(region);
+            rto.UpdateAdvertisements(region);
         }
         private void AssignStructures() {
             LocationStructure structure = location.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS); //since regions only have wilderness

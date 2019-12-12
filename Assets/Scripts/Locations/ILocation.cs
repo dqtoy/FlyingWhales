@@ -38,4 +38,10 @@ public interface ILocation {
     bool AddSpecialTokenToLocation(SpecialToken token, LocationStructure structure = null, LocationGridTile gridLocation = null);
     void RemoveSpecialTokenFromLocation(SpecialToken token);
     bool IsRequiredByLocation(SpecialToken token);
+    /// <summary>
+    /// Does the given location share the same core tile as this location?
+    /// </summary>
+    /// <param name="location">The location to query.</param>
+    /// <returns>True or false</returns>
+    bool IsSameCoreLocationAs(ILocation location);
 }

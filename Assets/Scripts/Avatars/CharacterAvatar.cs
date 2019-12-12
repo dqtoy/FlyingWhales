@@ -110,9 +110,7 @@ public class CharacterAvatar : MonoBehaviour {
         if (_isTravelling) {
             CancelledDeparture();
         }
-#if !WORLD_CREATION_TOOL
         CharacterManager.Instance.RemoveCharacterAvatar(this);
-#endif
     }
     #endregion
 
@@ -189,9 +187,7 @@ public class CharacterAvatar : MonoBehaviour {
     }
     private void CancelTravelDeparture() {
         CancelledDeparture();
-        if(onPathCancelled != null) {
-            onPathCancelled();
-        }
+        onPathCancelled?.Invoke();
     }
     private void CancelledDeparture() {
         if(_travelLine != null) {
@@ -270,7 +266,7 @@ public class CharacterAvatar : MonoBehaviour {
             Debug.LogError(_party.name + ". There is no path from " + _party.owner.currentRegion.name + " to " + targetLocation.name, this);
             return;
         }
-        if (path != null && path.Count > 0) {
+        if (path.Count > 0) {
             this.path = path;
             _currPathfindingRequest = null;
             SetIsTravelling(true);
@@ -347,9 +343,7 @@ public class CharacterAvatar : MonoBehaviour {
                 //        }
                 //    }
                 //}
-                if(onPathFinished != null) {
-                    onPathFinished();
-                }
+                onPathFinished?.Invoke();
             }
 			if(queuedAction != null){
 				queuedAction ();

@@ -481,6 +481,9 @@ public class Area : IJobOwner, ILocation {
         }
         return false;
     }
+    public bool IsSameCoreLocationAs(ILocation location) {
+        return location.coreTile == this.coreTile;
+    }
     #endregion
 
     #region Structures
@@ -979,12 +982,8 @@ public class Area : IJobOwner, ILocation {
     #endregion
 
     #region Hero Event Jobs
-    private int maxHeroEventJobs {
-        get { return region.residents.Count / 5; } //There should be at most 1 Move Out Job per 5 residents
-    }
-    private int currentHeroEventJobs {
-        get { return GetNumberOfJobsWith(IsJobTypeAHeroEventJob); }
-    }
+    private int maxHeroEventJobs => region.residents.Count / 5; //There should be at most 1 Move Out Job per 5 residents
+    private int currentHeroEventJobs => GetNumberOfJobsWith(IsJobTypeAHeroEventJob);
     private bool IsJobTypeAHeroEventJob(JobQueueItem item) {
         switch (item.jobType) {
             case JOB_TYPE.OBTAIN_FOOD_OUTSIDE:
@@ -1025,14 +1024,34 @@ public class Area : IJobOwner, ILocation {
         if (!CanStillCreateHeroEventJob()) {
             return; //hero events are maxed.
         }
-        if (UnityEngine.Random.Range(0, 100) < 15) {//15
-            CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.IMPROVE, CHARACTER_STATE.MOVE_OUT, this);
+        Region validRegion;
+        if (UnityEngine.Random.Range(0, 100) < 15 && TryGetRegionToStudyAt(out validRegion)) {//15
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IMPROVE, 
+                new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Buff", false, GOAP_EFFECT_TARGET.ACTOR),
+                validRegion.regionTileObject, this) ;
             AddToAvailableJobs(job);
             //expires at midnight
             GameDate expiry = GameManager.Instance.Today();
             expiry.SetTicks(GameManager.Instance.GetTicksBasedOnHour(24));
             SchedulingManager.Instance.AddEntry(expiry, () => CheckIfJobWillExpire(job), this);
         }
+    }
+    private bool TryGetRegionToStudyAt(out Region validRegion) {
+        var validRegions = new List<Region>();
+        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+            Region currRegion = GridMap.Instance.allRegions[i];
+            if (region.mainLandmark.specificLandmarkType.IsPlayerLandmark() == false && region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE) {
+                validRegions.Add(currRegion);
+            }
+        }
+        if (validRegions.Count > 0) {
+            validRegion = Utilities.GetRandomElement(validRegions);
+            return true;
+        } else {
+            validRegion = null;
+            return false;    
+        }
+        
     }
     /// <summary>
     /// Try and create an explore job. This checks chances and max hero event jobs.
