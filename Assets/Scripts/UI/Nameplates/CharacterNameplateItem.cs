@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Traits;
 using UnityEngine;
 
 public class CharacterNameplateItem : NameplateItem<Character> {
@@ -62,7 +63,7 @@ public class CharacterNameplateItem : NameplateItem<Character> {
             travellingIcon.SetActive(false);
             arrivedIcon.SetActive(true);
             restrainedIcon.SetActive(false);
-        } else if (character.traitContainer.GetNormalTrait("Restrained") != null) {
+        } else if (character.traitContainer.GetNormalTrait<Trait>("Restrained") != null) {
             //character is restrained
             travellingIcon.SetActive(false);
             arrivedIcon.SetActive(false);

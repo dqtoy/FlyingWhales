@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Traits;
 using UnityEngine;
 
 public class AnkhOfAnubis : Artifact {
@@ -86,7 +87,7 @@ public class AnkhOfAnubis : Artifact {
             for (int i = 0; i < characters.Count; i++) {
                 Character currCharacter = characters[i];
                 if (Random.Range(0, 100) > currCharacter.speed) {
-                    if (currCharacter.traitContainer.GetNormalTrait("Encumbered") == null) {
+                    if (currCharacter.traitContainer.GetNormalTrait<Trait>("Encumbered") == null) {
                         currCharacter.traitContainer.AddTrait(currCharacter, "Encumbered");
                     } else {
                         //roll for death

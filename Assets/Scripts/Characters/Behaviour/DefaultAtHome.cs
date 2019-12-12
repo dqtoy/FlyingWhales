@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Traits;
 using UnityEngine;
 
 public class DefaultAtHome : CharacterBehaviourComponent {
@@ -17,7 +18,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 int chance = UnityEngine.Random.Range(0, 100);
                 log += "\n  -RNG roll: " + chance;
                 if (chance < 35) {
-                    if (character.traitContainer.GetNormalTrait("Agoraphobic") != null) {
+                    if (character.traitContainer.GetNormalTrait<Trait>("Agoraphobic") != null) {
                         log += "\n  -Character is agoraphobic, nott going to inn";
                     } else {
                         //StartGOAP(INTERACTION_TYPE.DRINK, null, GOAP_CATEGORY.IDLE);
@@ -42,7 +43,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 if (chance < 25) {
                     TileObject bed = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED);
                     if (bed != null) {
-                        if (character.traitContainer.GetNormalTrait("Vampiric") != null) {
+                        if (character.traitContainer.GetNormalTrait<Trait>("Vampiric") != null) {
                             log += "\n  -Character is vampiric, cannot do nap action";
                         } else {
                             log += "\n  -Afternoon: " + character.name + " will do action Nap on " + bed.ToString();

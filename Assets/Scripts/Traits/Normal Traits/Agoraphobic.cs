@@ -42,7 +42,7 @@ namespace Traits {
             base.OnSeePOI(targetPOI, character);
             if (targetPOI.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 //Character targetCharacter = targetPOI as Character;
-                if (character.traitContainer.GetNormalTrait("Berserked") != null) {
+                if (character.traitContainer.GetNormalTrait<Trait>("Berserked") != null) {
                     return;
                 }
                 if (!character.isInCombat) {

@@ -32,7 +32,7 @@ public class ChopWood : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.traitContainer.GetNormalTrait("Logger") != null;
+            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.traitContainer.GetNormalTrait<Trait>("Logger") != null;
         }
         return false;
     }

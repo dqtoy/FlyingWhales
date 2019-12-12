@@ -371,7 +371,7 @@ public class GameManager : MonoBehaviour {
         } else if (GameManager.Instance.tick >= 241 && GameManager.Instance.tick <= 264) {
             time = TIME_IN_WORDS.LATE_NIGHT;
         }
-        if(relativeTo != null && relativeTo.traitContainer.GetNormalTrait("Nocturnal") != null) {
+        if(relativeTo != null && relativeTo.traitContainer.GetNormalTrait<Trait>("Nocturnal") != null) {
             time = ConvertTimeInWordsWhenNocturnal(time);
         }
         return time;

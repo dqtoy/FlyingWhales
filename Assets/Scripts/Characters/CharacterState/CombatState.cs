@@ -280,7 +280,7 @@ public class CombatState : CharacterState {
         if (isAttacking) {
             stateComponent.character.marker.StopPerTickFlee();
             log += "\n" + stateComponent.character.name + " is attacking!";
-            Trait taunted = stateComponent.character.traitContainer.GetNormalTrait("Taunted");
+            Trait taunted = stateComponent.character.traitContainer.GetNormalTrait<Trait>("Taunted");
             if (forcedTarget != null) {
                 log += "\n" + stateComponent.character.name + " has a forced target. Setting " + forcedTarget.name + " as target.";
                 SetClosestHostile(forcedTarget);

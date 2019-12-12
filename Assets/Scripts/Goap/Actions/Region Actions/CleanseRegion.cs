@@ -1,4 +1,6 @@
-﻿public class CleanseRegion : GoapAction {
+﻿using Traits;
+
+public class CleanseRegion : GoapAction {
     
     public CleanseRegion() : base(INTERACTION_TYPE.CLEANSE_REGION) {
         actionIconString = GoapActionStateDB.Work_Icon;
@@ -32,7 +34,7 @@
         if (satisfied) {
             //**Requirements:** Actor has Purifier trait. Region is corrupted. Region does not have a landmark.
             var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
-            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.traitContainer.GetNormalTrait("Purifier") != null
+            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.traitContainer.GetNormalTrait<Trait>("Purifier") != null
                    && region.coreTile.isCorrupted && region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE;
         }
         return false;

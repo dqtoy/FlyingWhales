@@ -1005,15 +1005,15 @@ public class Area : IJobOwner, ILocation {
         improveJobDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(8));
         SchedulingManager.Instance.AddEntry(improveJobDate, TryCreateImproveJob, this);
 
-        //explore job at 8 am
-        GameDate exploreJobDate = GameManager.Instance.Today();
-        exploreJobDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(8));
-        SchedulingManager.Instance.AddEntry(exploreJobDate, TryCreateExploreJob, this);
+        // //explore job at 8 am
+        // GameDate exploreJobDate = GameManager.Instance.Today();
+        // exploreJobDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(8));
+        // SchedulingManager.Instance.AddEntry(exploreJobDate, TryCreateExploreJob, this);
 
-        //combat job at 8 am
-        GameDate combatJobDate = GameManager.Instance.Today();
-        combatJobDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(8));
-        SchedulingManager.Instance.AddEntry(combatJobDate, TryCreateCombatJob, this);
+        // //combat job at 8 am
+        // GameDate combatJobDate = GameManager.Instance.Today();
+        // combatJobDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(8));
+        // SchedulingManager.Instance.AddEntry(combatJobDate, TryCreateCombatJob, this);
     }
     /// <summary>
     /// Try and create an improve job. This checks chances and max hero event jobs.

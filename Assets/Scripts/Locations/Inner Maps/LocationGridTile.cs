@@ -513,16 +513,16 @@ namespace Inner_Maps {
         }
         public List<ITraitable> GetTraitablesOnTileWithTrait(string requiredTrait) {
             List<ITraitable> traitables = new List<ITraitable>();
-            if (genericTileObject.traitContainer.GetNormalTrait(requiredTrait) != null) {
+            if (genericTileObject.traitContainer.GetNormalTrait<Trait>(requiredTrait) != null) {
                 traitables.Add(genericTileObject);
             }
             for (int i = 0; i < walls.Count; i++) {
                 WallObject wallObject = walls[i];
-                if (wallObject.traitContainer.GetNormalTrait(requiredTrait) != null) {
+                if (wallObject.traitContainer.GetNormalTrait<Trait>(requiredTrait) != null) {
                     traitables.Add(wallObject);
                 }
             }
-            if (objHere != null && objHere.traitContainer.GetNormalTrait(requiredTrait) != null) {
+            if (objHere != null && objHere.traitContainer.GetNormalTrait<Trait>(requiredTrait) != null) {
                 if ((objHere is TileObject && (objHere as TileObject).mapObjectState == MAP_OBJECT_STATE.BUILT)
                     || (objHere is SpecialToken && (objHere as SpecialToken).mapObjectState == MAP_OBJECT_STATE.BUILT)) {
                     traitables.Add(objHere);
@@ -531,7 +531,7 @@ namespace Inner_Maps {
         
             for (int i = 0; i < charactersHere.Count; i++) {
                 Character character = charactersHere[i];
-                if (character.traitContainer.GetNormalTrait(requiredTrait) != null) {
+                if (character.traitContainer.GetNormalTrait<Trait>(requiredTrait) != null) {
                     traitables.Add(character);
                 }
             }
@@ -563,41 +563,41 @@ namespace Inner_Maps {
         #endregion
 
         #region Mouse Actions
-        public void OnClickTileActions(PointerEventData.InputButton inputButton) {
-            if (InnerMapManager.Instance.IsMouseOnMarker()) {
-                return;
-            }
-            if (objHere == null) {
-#if UNITY_EDITOR
-                if (inputButton == PointerEventData.InputButton.Right) {
-                    UIManager.Instance.poiTestingUI.ShowUI(this);
-                } else {
-                    Messenger.Broadcast(Signals.HIDE_MENUS);
-                }
-#else
-            Messenger.Broadcast(Signals.HIDE_MENUS);
-#endif
-            } else if (objHere is TileObject || objHere is SpecialToken) {
-#if UNITY_EDITOR
-                if (inputButton == PointerEventData.InputButton.Right) {
-                    if (objHere is TileObject) {
-                        UIManager.Instance.poiTestingUI.ShowUI(objHere);
-                    }
-                } 
-                //else {
-                //    if (objHere is TileObject) {
-                //        UIManager.Instance.ShowTileObjectInfo(objHere as TileObject);
-                //    }
-                //}
-#else
-             //if (inputButton == PointerEventData.InputButton.Left) {
-             //   if (objHere is TileObject) {
-             //       UIManager.Instance.ShowTileObjectInfo(objHere as TileObject);
-             //   }
-             //}
-#endif
-            }
-        }
+//         public void OnClickTileActions(PointerEventData.InputButton inputButton) {
+//             if (InnerMapManager.Instance.IsMouseOnMarker()) {
+//                 return;
+//             }
+//             if (objHere == null) {
+// #if UNITY_EDITOR
+//                 if (inputButton == PointerEventData.InputButton.Right) {
+//                     UIManager.Instance.poiTestingUI.ShowUI(this);
+//                 } else {
+//                     Messenger.Broadcast(Signals.HIDE_MENUS);
+//                 }
+// #else
+//             Messenger.Broadcast(Signals.HIDE_MENUS);
+// #endif
+//             } else if (objHere is TileObject || objHere is SpecialToken) {
+// #if UNITY_EDITOR
+//                 if (inputButton == PointerEventData.InputButton.Right) {
+//                     if (objHere is TileObject) {
+//                         UIManager.Instance.poiTestingUI.ShowUI(objHere);
+//                     }
+//                 } 
+//                 //else {
+//                 //    if (objHere is TileObject) {
+//                 //        UIManager.Instance.ShowTileObjectInfo(objHere as TileObject);
+//                 //    }
+//                 //}
+// #else
+//              //if (inputButton == PointerEventData.InputButton.Left) {
+//              //   if (objHere is TileObject) {
+//              //       UIManager.Instance.ShowTileObjectInfo(objHere as TileObject);
+//              //   }
+//              //}
+// #endif
+//             }
+//         }
         #endregion
 
         #region Tile Objects

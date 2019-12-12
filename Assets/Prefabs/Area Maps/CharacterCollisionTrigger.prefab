@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 114357732100700906}
   m_Layer: 15
   m_Name: CharacterCollisionTrigger
-  m_TagString: Untagged
+  m_TagString: Character Marker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 114765870824739766}
   m_Layer: 17
   m_Name: ProjectileCollider
-  m_TagString: Untagged
+  m_TagString: Character Marker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

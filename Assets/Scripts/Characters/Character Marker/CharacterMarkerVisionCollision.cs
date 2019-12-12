@@ -156,7 +156,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             targetCharacter = poi as Character;
         }
         parentMarker.AddPOIAsInVisionRange(poi);
-        if(targetCharacter != null && parentMarker.character.traitContainer.GetNormalTrait("Resting", "Unconscious") == null) {
+        if(targetCharacter != null && parentMarker.character.traitContainer.GetNormalTrait<Trait>("Resting", "Unconscious") == null) {
             parentMarker.AddHostileInRange(targetCharacter);
         } else if (poi is TornadoTileObject) {
             parentMarker.AddAvoidInRange(poi);

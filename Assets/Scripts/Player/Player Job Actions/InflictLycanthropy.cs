@@ -65,7 +65,7 @@ public class Lycanthropy : PlayerJobAction {
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait("Lycanthrope") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Lycanthrope") != null) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -109,7 +109,7 @@ public class Lycanthropy : PlayerJobAction {
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait("Lycanthrope") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Lycanthrope") != null) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {

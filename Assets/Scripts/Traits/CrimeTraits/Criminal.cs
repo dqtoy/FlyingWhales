@@ -48,7 +48,7 @@ namespace Traits {
             if (traitOwner is Character) {
                 Character targetCharacter = traitOwner as Character;
                 //TODO: (gainedFromDoing == null || gainedFromDoing.awareCharactersOfThisAction.Contains(characterThatWillDoJob)) &&
-                if (targetCharacter.isAtHomeRegion && !targetCharacter.isDead && targetCharacter.traitContainer.GetNormalTrait("Restrained") == null) {
+                if (targetCharacter.isAtHomeRegion && !targetCharacter.isDead && targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null) {
                     GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.APPREHEND);
                     if (currentJob == null) {
                         if (InteractionManager.Instance.CanCharacterTakeApprehendJob(characterThatWillDoJob, targetCharacter)) {

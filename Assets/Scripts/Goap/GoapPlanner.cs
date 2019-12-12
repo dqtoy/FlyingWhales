@@ -150,7 +150,7 @@ public class GoapPlanner {
         //if (goapThread.createdPlan != null) {
         //    if (goapThread.recalculationPlan == null) {
         //        int count = traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE).Count;
-        //        if (count >= 2 || (count == 1 && traitContainer.GetNormalTrait("Paralyzed") == null)) {
+        //        if (count >= 2 || (count == 1 && traitContainer.GetNormalTrait<Trait>("Paralyzed") == null)) {
         //            PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping plan since " + name + " has a negative disabler trait. " + goapThread.job.name + " is the job.");
         //            if (goapThread.job != null) {
         //                if (goapThread.job.assignedCharacter == this) {
@@ -217,7 +217,7 @@ public class GoapPlanner {
         //        //Receive plan recalculation
         //        goapThread.createdPlan.SetIsBeingRecalculated(false);
         //        int count = traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE).Count;
-        //        if (count >= 2 || (count == 1 && traitContainer.GetNormalTrait("Paralyzed") == null)) {
+        //        if (count >= 2 || (count == 1 && traitContainer.GetNormalTrait<Trait>("Paralyzed") == null)) {
         //            PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping recalculated plan since " + name + " has a negative disabler trait. " + goapThread.job.name + " is the job.");
         //            DropPlan(goapThread.recalculationPlan, true);
         //            return;

@@ -1,0 +1,49 @@
+﻿public class AttackRegion : GoapAction {
+    
+    public AttackRegion() : base(INTERACTION_TYPE.ATTACK_REGION) {
+        actionIconString = GoapActionStateDB.Hostile_Icon;
+        isNotificationAnIntel = false;
+        advertisedBy = new[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        racesThatCanDoAction = new[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
+    }
+
+    #region Overrides
+    protected override void ConstructBasePreconditionsAndEffects() {
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.DESTROY_REGION_LANDMARK, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
+    }
+    public override void Perform(ActualGoapNode goapNode) {
+        base.Perform(goapNode);
+        SetState("Attack Success", goapNode);
+    }
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+        return 1;
+    }
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
+        log.AddToFillers(node.poiTarget.gridTileLocation.structure.location, node.poiTarget.gridTileLocation.structure.location.name, LOG_IDENTIFIER.LANDMARK_1);
+    }
+    #endregion
+
+    #region Requirements
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            //**Requirement:** Region has a landmark
+            var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
+            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null &&
+                   region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE;
+        }
+        return false;
+    }
+    #endregion
+
+    #region State Effects
+    public void PreAttackSuccess(ActualGoapNode goapNode) {
+        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.structure.location, goapNode.poiTarget.gridTileLocation.structure.location.name, LOG_IDENTIFIER.LANDMARK_1);
+    }
+    public void AfterAttackSuccess(ActualGoapNode goapNode) {
+        LandmarkManager.Instance.CreateNewLandmarkOnTile(goapNode.poiTarget.gridTileLocation.structure.location.coreTile, LANDMARK_TYPE.NONE, false);
+    }
+    #endregion
+}

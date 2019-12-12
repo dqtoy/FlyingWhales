@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 
-public class ActionOptionHoverHandler : UIHoverHandler {
+public class ActionOptionHoverHandler : HoverHandler {
     public override void OnPointerEnter(PointerEventData eventData) {
         //if (selectable != null) {
         //    if (!selectable.IsInteractable()) {

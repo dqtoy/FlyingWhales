@@ -63,7 +63,7 @@ public class TheProfaneUI : MonoBehaviour {
 
     private void OnClickConvert(bool isOn) {
         if (isOn) {
-            List<Character> convertibleCharacters = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => !x.returnedToLife && !x.isDead && x.traitContainer.GetNormalTrait("Disillusioned", "Evil", "Treacherous") != null && x.traitContainer.GetNormalTrait("Blessed") == null && x.traitContainer.GetNormalTrait("Cultist") == null));
+            List<Character> convertibleCharacters = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => !x.returnedToLife && !x.isDead && x.traitContainer.GetNormalTrait<Trait>("Disillusioned", "Evil", "Treacherous") != null && x.traitContainer.GetNormalTrait<Trait>("Blessed") == null && x.traitContainer.GetNormalTrait<Trait>("Cultist") == null));
             UIManager.Instance.dualObjectPicker.ShowDualObjectPicker<Character, Character>(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), convertibleCharacters,
                 "Choose a Minion", "Choose a character to turn to Cultist",
                 null, CanBeConvertedToCultist,
@@ -82,7 +82,7 @@ public class TheProfaneUI : MonoBehaviour {
             if (PlayerManager.Instance.player.mana < manaCost) {
                 message += "\n\t- Insufficient Mana. Cost is " + manaCost;
             }
-            if (character.traitContainer.GetNormalTrait("Treacherous") != null) {
+            if (character.traitContainer.GetNormalTrait<Trait>("Treacherous") != null) {
                 Character factionLeader = character.faction.leader as Character;
                 if (!character.relationshipContainer.HasRelationshipWith(factionLeader, RELATIONSHIP_TRAIT.ENEMY)) {
                     message += "\n\t- Treacherous characters must be enemies with their faction leader to be converted to a cultist.";
@@ -100,7 +100,7 @@ public class TheProfaneUI : MonoBehaviour {
     }
     private void OnClickInstruct(bool isOn) {
         if (isOn) {
-            List<Character> cultists = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => !x.returnedToLife && !x.isDead && x.traitContainer.GetNormalTrait("Cultist") != null && x.role.roleType != CHARACTER_ROLE.MINION));
+            List<Character> cultists = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => !x.returnedToLife && !x.isDead && x.traitContainer.GetNormalTrait<Trait>("Cultist") != null && x.role.roleType != CHARACTER_ROLE.MINION));
             UIManager.Instance.dualObjectPicker.ShowDualObjectPicker<Character>(cultists, "Choose cultist to instruct", CanDoActionsToCharacter, null, null, OnChooseCultistToInstruct, OnConfirmInstruct, "Instruct");
         }
     }
@@ -145,11 +145,11 @@ public class TheProfaneUI : MonoBehaviour {
         if (PlayerManager.Instance.player.mana < manaCost) {
             return false;
         }
-        if (character.traitContainer.GetNormalTrait("Evil") != null) {
+        if (character.traitContainer.GetNormalTrait<Trait>("Evil") != null) {
             return true;
-        } else if (character.traitContainer.GetNormalTrait("Disillusioned") != null) {
+        } else if (character.traitContainer.GetNormalTrait<Trait>("Disillusioned") != null) {
             return true;
-        } else if (character.traitContainer.GetNormalTrait("Treacherous") != null) {
+        } else if (character.traitContainer.GetNormalTrait<Trait>("Treacherous") != null) {
             Character factionLeader = character.faction.leader as Character;
             return character.relationshipContainer.HasRelationshipWith(factionLeader, RELATIONSHIP_TRAIT.ENEMY);
         }
@@ -160,7 +160,7 @@ public class TheProfaneUI : MonoBehaviour {
     }
     private void ShowActionTooltip(string action) {
         if (action == "Corrupt") {
-            UIManager.Instance.ShowSmallInfo("Turn this character into a minion. This character will become a demon of " + (chosenCultist.traitContainer.GetNormalTrait("Cultist") as Cultist).minionData.className);
+            UIManager.Instance.ShowSmallInfo("Turn this character into a minion. This character will become a demon of " + (chosenCultist.traitContainer.GetNormalTrait<Trait>("Cultist") as Cultist).minionData.className);
         }
     }
     private void HideActionTooltip(string action) {

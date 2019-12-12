@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Traits;
 using UnityEngine;
 
 public class Alcoholic : PlayerJobAction {
@@ -57,7 +58,7 @@ public class Alcoholic : PlayerJobAction {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait("Drunkard") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Drunkard") != null) {
             return false;
         }
         return base.CanTarget(targetCharacter, ref hoverText);
@@ -66,7 +67,7 @@ public class Alcoholic : PlayerJobAction {
         if (targetPOI.isDead) {
             return false;
         }
-        if (!(targetPOI is Character) || targetPOI.traitContainer.GetNormalTrait("Drunkard") != null) {
+        if (!(targetPOI is Character) || targetPOI.traitContainer.GetNormalTrait<Trait>("Drunkard") != null) {
             return false;
         }
         return base.CanPerformActionTowards(targetPOI);

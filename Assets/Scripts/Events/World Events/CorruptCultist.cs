@@ -9,7 +9,7 @@ namespace Events.World_Events {
 
         #region Overrides
         protected override void ExecuteAfterEffect(Region region, Character spawner) {
-            Cultist cultist = spawner.traitContainer.GetNormalTrait("Cultist") as Cultist;
+            Cultist cultist = spawner.traitContainer.GetNormalTrait<Trait>("Cultist") as Cultist;
             spawner.RecruitAsMinion(cultist.minionData);
             Log log = new Log(GameManager.Instance.Today(), "WorldEvent", name, "after_effect");
             AddDefaultFillersToLog(log, region);

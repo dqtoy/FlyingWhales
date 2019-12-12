@@ -431,9 +431,9 @@ namespace Traits {
             } else if (victimType == SERIAL_VICTIM_TYPE.ROLE) {
                 return victimDesc == character.role.roleType.ToString();
             } else if (victimType == SERIAL_VICTIM_TYPE.TRAIT) {
-                return character.traitContainer.GetNormalTrait(victimDesc) != null;
+                return character.traitContainer.GetNormalTrait<Trait>(victimDesc) != null;
             } else if (victimType == SERIAL_VICTIM_TYPE.STATUS) {
-                return character.traitContainer.GetNormalTrait(victimDesc) != null;
+                return character.traitContainer.GetNormalTrait<Trait>(victimDesc) != null;
             }
             return false;
         }

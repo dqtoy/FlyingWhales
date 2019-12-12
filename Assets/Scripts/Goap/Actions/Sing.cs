@@ -54,7 +54,7 @@ public class Sing : GoapAction {
     //private List<string> SingSuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
     //    List<string> reactions = new List<string>();
 
-    //    if (status == SHARE_INTEL_STATUS.WITNESSED && recipient.traitContainer.GetNormalTrait("Music Hater") != null) {
+    //    if (status == SHARE_INTEL_STATUS.WITNESSED && recipient.traitContainer.GetNormalTrait<Trait>("Music Hater") != null) {
     //        recipient.traitContainer.AddTrait(recipient, "Annoyed");
     //        if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) || recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
     //            if (recipient.CreateBreakupJob(actor) != null) {
@@ -86,6 +86,6 @@ public class SingData : GoapActionData {
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor == poiTarget && actor.traitContainer.GetNormalTrait("Music Hater") == null && (actor.currentMoodType == CHARACTER_MOOD.GOOD || actor.currentMoodType == CHARACTER_MOOD.GREAT);
+        return actor == poiTarget && actor.traitContainer.GetNormalTrait<Trait>("Music Hater") == null && (actor.currentMoodType == CHARACTER_MOOD.GOOD || actor.currentMoodType == CHARACTER_MOOD.GREAT);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Inner_Maps;
+using Traits;
 
 public class MineStoneRegion : GoapAction {
     
@@ -30,7 +31,7 @@ public class MineStoneRegion : GoapAction {
             //**Requirements:** Actor has Logger trait. Region has Lumberyard Landmark. Region is owned by Actor's Faction or Actor's Home's Ruling Faction.
             var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
             return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null &&
-                   actor.traitContainer.GetNormalTrait("Miner") != null &&
+                   actor.traitContainer.GetNormalTrait<Trait>("Miner") != null &&
                    region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.QUARRY &&
                    (region.owner == actor.faction || region.owner == actor.homeRegion.owner);
         }

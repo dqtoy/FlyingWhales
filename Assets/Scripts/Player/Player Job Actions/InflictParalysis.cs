@@ -56,7 +56,7 @@ public class Paralysis : PlayerJobAction {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait("Paralyzed") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Paralyzed") != null) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -87,7 +87,7 @@ public class Paralysis : PlayerJobAction {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait("Paralyzed") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Paralyzed") != null) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {

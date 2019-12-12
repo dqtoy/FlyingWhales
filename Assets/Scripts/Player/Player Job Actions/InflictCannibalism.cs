@@ -61,7 +61,7 @@ public class Cannibalism : PlayerJobAction {
         if (targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait("Cannibal", "Vampiric") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Cannibal", "Vampiric") != null) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -95,7 +95,7 @@ public class Cannibalism : PlayerJobAction {
         if (targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait("Cannibal", "Vampiric") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Cannibal", "Vampiric") != null) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {

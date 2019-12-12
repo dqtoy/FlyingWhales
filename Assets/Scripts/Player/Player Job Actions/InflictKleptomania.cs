@@ -59,7 +59,7 @@ public class Kleptomania : PlayerJobAction {
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait("Kleptomaniac") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Kleptomaniac") != null) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -93,7 +93,7 @@ public class Kleptomania : PlayerJobAction {
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait("Kleptomaniac") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Kleptomaniac") != null) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Traits;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -73,7 +74,7 @@ public class ProvokeMenu : MonoBehaviour {
             }
         } else {
             actorText = "You should take revenge on your enemies.";
-            if(targetCharacter.traitContainer.GetNormalTrait("Diplomatic") != null) {
+            if(targetCharacter.traitContainer.GetNormalTrait<Trait>("Diplomatic") != null) {
                 targetText = "Sorry, I don't do that. I am a very peaceful person.";
             } else {
                 targetText = "Sorry, I don't have any.";

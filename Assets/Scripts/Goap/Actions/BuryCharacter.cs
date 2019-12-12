@@ -148,7 +148,7 @@ public class BuryCharacter : GoapAction {
     //                recipient.traitContainer.AddTrait(recipient, "Heartbroken");
     //                if (UnityEngine.Random.Range(0, 2) == 0) {
     //                    bool triggerBrokenhearted = false;
-    //                    Heartbroken heartbroken = recipient.traitContainer.GetNormalTrait("Heartbroken") as Heartbroken;
+    //                    Heartbroken heartbroken = recipient.traitContainer.GetNormalTrait<Trait>("Heartbroken") as Heartbroken;
     //                    if (heartbroken != null) {
     //                        triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
     //                    }
@@ -167,7 +167,7 @@ public class BuryCharacter : GoapAction {
     //                recipient.traitContainer.AddTrait(recipient, "Satisfied");
     //                if (UnityEngine.Random.Range(0, 2) == 0) {
     //                    bool triggerBrokenhearted = false;
-    //                    Heartbroken heartbroken = recipient.traitContainer.GetNormalTrait("Heartbroken") as Heartbroken;
+    //                    Heartbroken heartbroken = recipient.traitContainer.GetNormalTrait<Trait>("Heartbroken") as Heartbroken;
     //                    if (heartbroken != null) {
     //                        triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
     //                    }

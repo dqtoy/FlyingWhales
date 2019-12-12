@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Traits;
 using UnityEngine;
 
 public class Lullaby : PlayerJobAction {
@@ -33,7 +34,7 @@ public class Lullaby : PlayerJobAction {
         for (int i = 0; i < charactersInHighlightedTiles.Count; i++) {
             Character character = charactersInHighlightedTiles[i];
 
-            if(character.traitContainer.GetNormalTrait("Resting") == null) {
+            if(character.traitContainer.GetNormalTrait<Trait>("Resting") == null) {
                 if (character.stateComponent.currentState != null) {
                     character.stateComponent.ExitCurrentState();
                     //This call is doubled so that it will also exit the previous major state if there's any

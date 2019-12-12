@@ -11,6 +11,7 @@ TagManager:
   - Character Marker
   - Avatar
   - Landmark
+  - Map Object
   layers:
   - Default
   - TransparentFX

@@ -29,7 +29,7 @@ namespace Traits {
         #endregion
 
         #region Getting
-        Trait GetNormalTrait(params string[] traitNames);
+        T GetNormalTrait<T>(params string[] traitNames) where T : Trait;
         bool HasTraitOf(TRAIT_TYPE traitType);
         bool HasTraitOf(TRAIT_TYPE type, TRAIT_EFFECT effect);
         bool HasTraitOf(TRAIT_EFFECT traitEffect);

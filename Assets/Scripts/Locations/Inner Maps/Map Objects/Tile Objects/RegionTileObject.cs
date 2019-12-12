@@ -35,15 +35,24 @@ public class RegionTileObject : TileObject {
             }
             
             //landmark types
+            if (region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE) {
+                advertisedActions.Add(INTERACTION_TYPE.ATTACK_REGION);
+            }
             if (region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.FARM) {
                 advertisedActions.Add(INTERACTION_TYPE.HARVEST_FOOD_REGION);
             } else if (region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.LUMBERYARD) {
                 advertisedActions.Add(INTERACTION_TYPE.CHOP_WOOD_REGION);
+            }else if (region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_PROFANE) {
+                advertisedActions.Add(INTERACTION_TYPE.CORRUPT_CULTIST);
             }
             
             //features
             if (region.HasFeature(RegionFeatureDB.Game_Feature)) {
                 advertisedActions.Add(INTERACTION_TYPE.FORAGE_FOOD_REGION);
+            } 
+            if (region.HasFeature(RegionFeatureDB.Hallowed_Ground_Feature)) {
+                advertisedActions.Add(INTERACTION_TYPE.HOLY_INCANTATION);
+                advertisedActions.Add(INTERACTION_TYPE.DEMONIC_INCANTATION);
             }
         }
     }

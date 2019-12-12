@@ -31,7 +31,7 @@ public class LaughAt : GoapAction {
         goapNode.actor.needsComponent.AdjustHappiness(500);
     }
     public void AfterLaughSuccess(ActualGoapNode goapNode) {
-        if (goapNode.poiTarget.traitContainer.GetNormalTrait("Unconscious") == null) {
+        if (goapNode.poiTarget.traitContainer.GetNormalTrait<Trait>("Unconscious") == null) {
             goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Ashamed");
         }
     }

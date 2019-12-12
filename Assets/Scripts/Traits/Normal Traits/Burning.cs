@@ -63,7 +63,7 @@ namespace Traits {
             if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.REMOVE_FIRE) && (characterThatWillDoJob.stateComponent.currentState == null || characterThatWillDoJob.stateComponent.currentState.characterState != CHARACTER_STATE.DOUSE_FIRE)) {
                 string summary = GameManager.Instance.TodayLogString() + characterThatWillDoJob.name + " saw a fire from source " + sourceOfBurning.ToString();
                 if (!TryToCreateDouseFireJob(traitOwner, characterThatWillDoJob)) {
-                    Pyrophobic pyrophobic = characterThatWillDoJob.traitContainer.GetNormalTrait("Pyrophobic") as Pyrophobic;
+                    Pyrophobic pyrophobic = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Pyrophobic") as Pyrophobic;
                     if (pyrophobic != null) {
                         //pyrophobic
                         summary += "\nDid not create douse fire job because character is pyrophobic!";
@@ -72,7 +72,7 @@ namespace Traits {
                             characterThatWillDoJob.needsComponent.AdjustHappiness(-2000);
                         }
                         //It will trigger one of the following:
-                        if (!characterThatWillDoJob.marker.hasFleePath && characterThatWillDoJob.traitContainer.GetNormalTrait("Catatonic") == null) { //if not already fleeing or catatonic
+                        if (!characterThatWillDoJob.marker.hasFleePath && characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Catatonic") == null) { //if not already fleeing or catatonic
                             //50% gain Shellshocked and Flee from fire. Log "[Actor Name] saw a fire and fled from it."
                             if (UnityEngine.Random.Range(0, 100) < 50) {
                                 pyrophobic.BeShellshocked(sourceOfBurning, characterThatWillDoJob);
@@ -113,7 +113,7 @@ namespace Traits {
         }
         private bool TryToCreateDouseFireJob(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
             //only create a remove fire job if the characters dousing the fire of a specific source is less than the required amount
-            if (sourceOfBurning.dousers.Count < 3 && characterThatWillDoJob.traitContainer.GetNormalTrait("Pyrophobic") == null) {  //3
+            if (sourceOfBurning.dousers.Count < 3 && characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Pyrophobic") == null) {  //3
                 bool willCreateDouseFireJob = false;
                 if (traitOwner is Character) {
                     Character targetCharacter = traitOwner as Character;
@@ -177,11 +177,11 @@ namespace Traits {
                     return true;
                 } else {
                     //if burning character is other character, make sure that the character that will do the job is not burning.
-                    return character.traitContainer.GetNormalTrait("Burning") == null && !character.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
+                    return character.traitContainer.GetNormalTrait<Trait>("Burning") == null && !character.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
                 }
             } else {
                 //make sure that the character that will do the job is not burning.
-                return character.traitContainer.GetNormalTrait("Burning") == null;
+                return character.traitContainer.GetNormalTrait<Trait>("Burning") == null;
             }
         }
         private void PerTick() {
@@ -196,7 +196,7 @@ namespace Traits {
                 for (int i = 0; i < neighbours.Count; i++) {
                     choices.AddRange(neighbours[i].GetTraitablesOnTileWithTrait("Flammable"));
                 }
-                choices = choices.Where(x => x.traitContainer.GetNormalTrait("Burning", "Burnt", "Wet", "Fireproof") == null).ToList();
+                choices = choices.Where(x => x.traitContainer.GetNormalTrait<Trait>("Burning", "Burnt", "Wet", "Fireproof") == null).ToList();
                 if (choices.Count > 0) {
                     ITraitable chosen = choices[Random.Range(0, choices.Count)];
                     Burning burning = new Burning();

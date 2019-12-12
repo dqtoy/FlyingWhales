@@ -102,7 +102,7 @@ namespace Traits {
             return PlayerManager.Instance.player.mana >= manaCost
                 && character.canWitness
                 //&& !character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER) //disabled characters cannot be triggered
-                && character.traitContainer.GetNormalTrait("Blessed") == null
+                && character.traitContainer.GetNormalTrait<Trait>("Blessed") == null
                 && !character.currentParty.icon.isTravellingOutside; //characters travelling outside cannot be triggered
         }
         public virtual string GetRequirementDescription(Character character) {
@@ -113,7 +113,7 @@ namespace Traits {
             if (PlayerManager.Instance.player.mana < GetTriggerFlawManaCost(character)) {
                 reasons.Add("You do not have enough mana.");
             }
-            if (character.traitContainer.GetNormalTrait("Blessed") != null) {
+            if (character.traitContainer.GetNormalTrait<Trait>("Blessed") != null) {
                 reasons.Add("Blessed characters cannot be targeted by Trigger Flaw.");
             }
             if (!character.canWitness) {

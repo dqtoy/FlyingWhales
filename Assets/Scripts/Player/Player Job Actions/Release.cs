@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Traits;
 using UnityEngine;
 
 public class Release : PlayerJobAction {
@@ -30,7 +31,7 @@ public class Release : PlayerJobAction {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait("Restrained") == null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null) {
             return false;
         }
         return base.CanPerformActionTowards(targetCharacter);
@@ -47,7 +48,7 @@ public class Release : PlayerJobAction {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait("Restrained") == null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null) {
             return false;
         }
         return base.CanTarget(targetCharacter, ref hoverText);

@@ -12,10 +12,6 @@ using Inner_Maps;
 using Traits;
 
 public class CharacterMarker : MapObjectVisual<Character> {
-
-    public delegate void HoverMarkerAction(Character character, LocationGridTile location);
-    public HoverMarkerAction hoverEnterAction;
-    public HoverMarkerAction hoverExitAction;
     public Character character { get; private set; }
 
     public Transform visualsParent;
@@ -86,17 +82,19 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public float attackExecutedTime { get; private set; } //how long into the attack animation is this character's attack actually executed.
 
     public void SetCharacter(Character character) {
+        base.Initialize(character);
         this.name = character.name + "'s Marker";
         nameLbl.SetText(character.name);
         this.character = character;
-        mainImg.sortingOrder = InnerMapManager.DefaultCharacterSortingOrder + character.id;
-        hairImg.sortingOrder = mainImg.sortingOrder + 1;
-        nameLbl.sortingOrder = mainImg.sortingOrder;
-        actionIcon.sortingOrder = mainImg.sortingOrder;
-        hoveredImg.sortingOrder = mainImg.sortingOrder - 1;
-        clickedImg.sortingOrder = mainImg.sortingOrder - 1;
-        colorHighlight.sortingOrder = mainImg.sortingOrder - 1;
-        hpBarGO.GetComponent<Canvas>().sortingOrder = mainImg.sortingOrder;
+        var sortingOrder = InnerMapManager.DefaultCharacterSortingOrder + character.id;
+        mainImg.sortingOrder = sortingOrder;
+        hairImg.sortingOrder = sortingOrder + 1;
+        nameLbl.sortingOrder = sortingOrder;
+        actionIcon.sortingOrder = sortingOrder;
+        hoveredImg.sortingOrder = sortingOrder - 1;
+        clickedImg.sortingOrder = sortingOrder - 1;
+        colorHighlight.sortingOrder = sortingOrder - 1;
+        hpBarGO.GetComponent<Canvas>().sortingOrder = sortingOrder;
         if (UIManager.Instance.characterInfoUI.isShowing) {
             clickedImg.gameObject.SetActive(UIManager.Instance.characterInfoUI.activeCharacter.id == character.id);
         }
@@ -148,28 +146,23 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #endregion
 
     #region Pointer Functions
-    public void SetHoverAction(HoverMarkerAction hoverEnterAction, HoverMarkerAction hoverExitAction) {
-        this.hoverEnterAction = hoverEnterAction;
-        this.hoverExitAction = hoverExitAction;
+    protected override void OnPointerLeftClick(Character poi) {
+        base.OnPointerLeftClick(poi);
+        UIManager.Instance.ShowCharacterInfo(character, true);
     }
-    public override void OnPointerClick(PointerEventData ped) {
-        if(ped.button == PointerEventData.InputButton.Left) {
-            //This checker is used so that when a character is clicked and it is because there is a player ability that will target that character, the character info ui will not show
-            UIManager.Instance.ShowCharacterInfo(character, true);
-        }
+    protected override void OnPointerRightClick(Character poi) {
+        base.OnPointerRightClick(poi);
 #if UNITY_EDITOR
-        else if (ped.button == PointerEventData.InputButton.Right) {
-            UIManager.Instance.poiTestingUI.ShowUI(character);
-        }
+        UIManager.Instance.poiTestingUI.ShowUI(character);
 #endif
     }
-    public override void OnPointerEnter(PointerEventData eventData) {
-        base.OnPointerEnter(eventData);
-        hoverEnterAction?.Invoke(character, character.gridTileLocation);
+    protected override void OnPointerEnter(Character poi) {
+        base.OnPointerEnter(poi);
+        InnerMapManager.Instance.ShowTileData(character.gridTileLocation, character);
     }
-    public override void OnPointerExit(PointerEventData eventData) {
-        base.OnPointerExit(eventData);
-        hoverExitAction?.Invoke(character, character.gridTileLocation);
+    protected override void OnPointerExit(Character poi) {
+        base.OnPointerExit(poi);
+        UIManager.Instance.HideSmallInfo();
     }
     #endregion
 
@@ -374,7 +367,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             return;
         }
         int negativeDisablerCount = character.traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE).Count;
-        if ((negativeDisablerCount >= 2 || (negativeDisablerCount == 1 && character.traitContainer.GetNormalTrait("Paralyzed") == null)) || character.isDead) {
+        if ((negativeDisablerCount >= 2 || (negativeDisablerCount == 1 && character.traitContainer.GetNormalTrait<Trait>("Paralyzed") == null)) || character.isDead) {
             actionIcon.gameObject.SetActive(false);
             return;
         }
@@ -414,8 +407,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #region Object Pool
     public override void Reset() {
         base.Reset();
-        hoverEnterAction = null;
-        hoverExitAction = null;
         destinationTile = null;
         onProcessCombat = null;
         fleeSpeedModifier = 0;
@@ -802,7 +793,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         anchoredPos = transform.localPosition;
 
         if (_previousGridTile != character.gridTileLocation) {
-            character.currentArea.areaMap.OnCharacterMovedTo(character, character.gridTileLocation, _previousGridTile);
+            character.gridTileLocation.parentMap.location.innerMap.OnCharacterMovedTo(character, character.gridTileLocation, _previousGridTile);
             _previousGridTile = character.gridTileLocation;
         }
     }
@@ -976,7 +967,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     private void ProcessAllUnprocessedVisionPOIs() {
         if(unprocessedVisionPOIs.Count > 0) { //&& (character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)
             string log = GameManager.Instance.TodayLogString() + character.name + " tick ended! Processing all unprocessed in visions...";
-            if (!character.isDead && character.canWitness) { //character.traitContainer.GetNormalTrait("Unconscious", "Resting", "Zapped") == null
+            if (!character.isDead && character.canWitness) { //character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting", "Zapped") == null
                 for (int i = 0; i < unprocessedVisionPOIs.Count; i++) {
                     IPointOfInterest poi = unprocessedVisionPOIs[i];
                     log += "\n - Reacting to " + poi.name;
@@ -1045,7 +1036,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public bool AddHostileInRange(IPointOfInterest poi, bool checkHostility = true, bool processCombatBehavior = true, bool isLethal = true) {
         if (!hostilesInRange.Contains(poi)) {
             //&& !this.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) 
-            if (this.character.traitContainer.GetNormalTrait("Zapped") == null && !this.character.isFollowingPlayerInstruction && CanAddPOIAsHostile(poi, checkHostility, isLethal)) {
+            if (this.character.traitContainer.GetNormalTrait<Trait>("Zapped") == null && !this.character.isFollowingPlayerInstruction && CanAddPOIAsHostile(poi, checkHostility, isLethal)) {
                 string transferReason = string.Empty;
                 if (!WillCharacterTransferEngageToFleeList(isLethal, ref transferReason)) {
                     hostilesInRange.Add(poi);
@@ -1168,7 +1159,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (poi is Character) {
             return AddAvoidInRange(poi as Character, processCombatBehavior, reason);
         } else {
-            if (character.traitContainer.GetNormalTrait("Berserked") == null) {
+            if (character.traitContainer.GetNormalTrait<Trait>("Berserked") == null) {
                 if (!avoidInRange.Contains(poi)) {
                     avoidInRange.Add(poi);
                     willProcessCombat = true;
@@ -1186,7 +1177,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             IPointOfInterest poi = pois[i];
             if (poi is Character) {
                 Character characterToAvoid = poi as Character;
-                if (characterToAvoid.isDead || characterToAvoid.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) || characterToAvoid.traitContainer.GetNormalTrait("Berserked") != null) {
+                if (characterToAvoid.isDead || characterToAvoid.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) || characterToAvoid.traitContainer.GetNormalTrait<Trait>("Berserked") != null) {
                     continue; //skip
                 }
             }
@@ -1206,7 +1197,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         return false;
     }
     private bool AddAvoidInRange(Character poi, bool processCombatBehavior = true, string reason = "") {
-        if (!poi.isDead && !poi.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && character.traitContainer.GetNormalTrait("Berserked") == null) { //, "Resting"
+        if (!poi.isDead && !poi.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && character.traitContainer.GetNormalTrait<Trait>("Berserked") == null) { //, "Resting"
             if (!avoidInRange.Contains(poi)) {
                 avoidInRange.Add(poi);
                 //NormalReactToHostileCharacter(poi, CHARACTER_STATE.FLEE);
@@ -1226,7 +1217,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Character otherPOI = null;
         for (int i = 0; i < pois.Count; i++) {
             Character poi = pois[i];
-            if (!poi.isDead && !poi.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && poi.traitContainer.GetNormalTrait("Berserked") == null) {
+            if (!poi.isDead && !poi.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && poi.traitContainer.GetNormalTrait<Trait>("Berserked") == null) {
                 if (!avoidInRange.Contains(poi)) {
                     avoidInRange.Add(poi);
                     if (otherPOI == null) {
@@ -1354,7 +1345,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
             //check flee first, the logic determines that this character will not flee, then attack by default
             bool willTransfer = true;
-            if (character.traitContainer.GetNormalTrait("Berserked") != null) {
+            if (character.traitContainer.GetNormalTrait<Trait>("Berserked") != null) {
                 willTransfer = false;
             }
             summary += "\nDid " + character.name + " chose to transfer? " + willTransfer.ToString();
@@ -1510,18 +1501,18 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public bool WillCharacterTransferEngageToFleeList(bool isLethal, ref string reason) {
         bool willTransfer = false;
-        if(character.traitContainer.GetNormalTrait("Coward") != null && character.traitContainer.GetNormalTrait("Berserked") == null) {
+        if(character.traitContainer.GetNormalTrait<Trait>("Coward") != null && character.traitContainer.GetNormalTrait<Trait>("Berserked") == null) {
             willTransfer = true;
             reason = "coward";
         } else if (!isLethal && !HasLethalCombatTarget()) {
             willTransfer = false;
         }
         //- if character is berserked, must not flee
-        else if (character.traitContainer.GetNormalTrait("Berserked") != null) {
+        else if (character.traitContainer.GetNormalTrait<Trait>("Berserked") != null) {
             willTransfer = false;
         }
         //- at some point, situation may trigger the character to flee, at which point it will attempt to move far away from target
-        //else if (character.traitContainer.GetNormalTrait("Injured") != null) {
+        //else if (character.traitContainer.GetNormalTrait<Trait>("Injured") != null) {
         //    //summary += "\n" + character.name + " is injured.";
         //    //-character gets injured(chance based dependent on the character)
         //    willTransfer = true;
@@ -1532,11 +1523,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
             willTransfer = true;
             reason = "critically low health";
         }
-        //else if (character.traitContainer.GetNormalTrait("Spooked") != null) {
+        //else if (character.traitContainer.GetNormalTrait<Trait>("Spooked") != null) {
         //    //- fear-type status effect
         //    willTransfer = true;
         //} 
-        else if (character.needsComponent.isStarving && character.traitContainer.GetNormalTrait("Vampiric") == null) {
+        else if (character.needsComponent.isStarving && character.traitContainer.GetNormalTrait<Trait>("Vampiric") == null) {
             //-character is starving and is not a vampire
             willTransfer = true;
             reason = "starving";
@@ -1576,13 +1567,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     #endregion
 
-    public override void Initialize(Character poi) {
-        throw new NotImplementedException();
-    }
-    public override void UpdateTileObjectVisual(Character obj) {
-        throw new NotImplementedException();
-    }
-    public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) {
-        throw new NotImplementedException();
-    }
+    #region Map Object Visual
+    public override void UpdateTileObjectVisual(Character obj) { }
+    public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
+    #endregion
+    
 }

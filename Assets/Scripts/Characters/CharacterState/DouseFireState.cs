@@ -214,7 +214,7 @@ public class DouseFireState : CharacterState {
         currentTarget = null;
     }
     private bool AddFire(IPointOfInterest poi) {
-        Burning burning = poi.traitContainer.GetNormalTrait("Burning") as Burning;
+        Burning burning = poi.traitContainer.GetNormalTrait<Trait>("Burning") as Burning;
         if (burning != null) {
             if (!fires.ContainsKey(burning.sourceOfBurning)) {
                 fires.Add(burning.sourceOfBurning, new List<ITraitable>());

@@ -28,7 +28,7 @@ namespace Traits {
                     } else if (relEffect == RELATIONSHIP_EFFECT.NONE) {
                         value = 2;
                     }
-                    if (characterThatWillDoJob.traitContainer.GetNormalTrait("Hothead") != null) {
+                    if (characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
                         value *= 5;
                     }
                     int chance = UnityEngine.Random.Range(0, 100);

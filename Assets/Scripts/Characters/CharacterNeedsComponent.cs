@@ -1,4 +1,5 @@
 ﻿using System;
+using Traits;
 using UnityEngine;
 
 public class CharacterNeedsComponent {
@@ -298,7 +299,7 @@ public class CharacterNeedsComponent {
             _character.Death("starvation");
         } else if (isStarving) {
             _character.traitContainer.RemoveTrait(_character, "Hungry");
-            if (_character.traitContainer.AddTrait(_character, "Starving") && _character.traitContainer.GetNormalTrait("Vampiric") == null) { //only characters that are not vampires will flee when they are starving
+            if (_character.traitContainer.AddTrait(_character, "Starving") && _character.traitContainer.GetNormalTrait<Trait>("Vampiric") == null) { //only characters that are not vampires will flee when they are starving
                 Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, _character, "starving");
             }
         } else if (isHungry) {

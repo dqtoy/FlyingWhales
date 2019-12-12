@@ -251,10 +251,10 @@ public class JobQueueItem {
         return jobType.ToString() + " assigned to " + assignedCharacter?.name ?? "None";
     }
     public bool IsAnInterruptionJob() {
-        return jobType == JOB_TYPE.INTERRUPTION || jobType == JOB_TYPE.DEATH;
+        return jobType == JOB_TYPE.INTERRUPTION || jobType == JOB_TYPE.DEATH || jobType == JOB_TYPE.COMBAT;
     }
     #endregion
-
+    
     #region Job Object Pool
     public virtual void Reset() {
         id = -1;
@@ -272,7 +272,7 @@ public class JobQueueItem {
         SetPriority(-1);
         SetCannotBePushedBack(false);
     }
-    #endregion
+#endregion    
 }
 
 [System.Serializable]

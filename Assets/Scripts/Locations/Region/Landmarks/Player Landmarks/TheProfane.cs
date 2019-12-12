@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Traits;
+using UnityEngine;
 
 public class TheProfane : BaseLandmark {
     public int currentCooldownTick { get; private set; }
@@ -29,11 +30,12 @@ public class TheProfane : BaseLandmark {
             targetCharacter.traitContainer.AddTrait(targetCharacter,"Cultist");
         } else if (action == "Corrupt") {
             if (!targetCharacter.jobQueue.HasJob(JOB_TYPE.CORRUPT_CULTIST)) {
-                CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.CORRUPT_CULTIST, CHARACTER_STATE.MOVE_OUT, targetCharacter);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CORRUPT_CULTIST,
+                    INTERACTION_TYPE.CORRUPT_CULTIST, this.tileLocation.region.regionTileObject, targetCharacter);
                 targetCharacter.jobQueue.AddJobInQueue(job);
             }
         } else if (action == "Sabotage Faction Quest") {
-            (targetCharacter.faction.activeQuest as DivineInterventionQuest).CreateSabotageFactionnJob();
+            (targetCharacter.faction.activeQuest as DivineInterventionQuest).CreateSabotageFactionJob();
         } 
         //else if (action == "Destroy Supply") {
         //    if (!targetCharacter.jobQueue.HasJob(JOB_TYPE.DESTROY_SUPPLY)) {
@@ -77,11 +79,11 @@ public class TheProfane : BaseLandmark {
     }
     public int GetConvertToCultistCost(Character character) {
         float manaCost = 0;
-        if (character.traitContainer.GetNormalTrait("Evil") != null) {
+        if (character.traitContainer.GetNormalTrait<Trait>("Evil") != null) {
             manaCost = 200;
-        } else if (character.traitContainer.GetNormalTrait("Disillusioned") != null) {
+        } else if (character.traitContainer.GetNormalTrait<Trait>("Disillusioned") != null) {
             manaCost = 300;
-        } else if (character.traitContainer.GetNormalTrait("Treacherous") != null) {
+        } else if (character.traitContainer.GetNormalTrait<Trait>("Treacherous") != null) {
             manaCost = 300;
         }
 

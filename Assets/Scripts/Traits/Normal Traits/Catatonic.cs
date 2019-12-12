@@ -45,7 +45,7 @@ namespace Traits {
                 Character targetCharacter = traitOwner as Character;
                 if (!targetCharacter.isDead) {
                     if (targetCharacter.faction != characterThatWillDoJob.faction) {
-                        if (targetCharacter.traitContainer.GetNormalTrait("Restrained") == null) {
+                        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null) {
                             GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.RESTRAIN);
                             if (currentJob == null) {
                                 if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter)) {
@@ -182,7 +182,7 @@ namespace Traits {
                 jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
             }
             bool triggerSpooked = false;
-            Spooked spooked = owner.traitContainer.GetNormalTrait("Spooked") as Spooked;
+            Spooked spooked = owner.traitContainer.GetNormalTrait<Trait>("Spooked") as Spooked;
             if (spooked != null) {
                 triggerSpooked = UnityEngine.Random.Range(0, 100) < 20;
             }

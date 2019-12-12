@@ -44,7 +44,7 @@ public class ChatCharacter : GoapAction {
         RELATIONSHIP_EFFECT relationshipEffectWithTarget = goapNode.actor.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo);
         //**if no relationship yet, may become friends**
         if (relData == null) {
-            if (goapNode.actor.traitContainer.GetNormalTrait("Serial Killer") == null && targetCharacter.traitContainer.GetNormalTrait("Serial Killer") == null) {
+            if (goapNode.actor.traitContainer.GetNormalTrait<Trait>("Serial Killer") == null && targetCharacter.traitContainer.GetNormalTrait<Trait>("Serial Killer") == null) {
                 int weight = 0;
                 if (thisCharacterMood == CHARACTER_MOOD.DARK) {
                     weight += -30;
@@ -91,10 +91,10 @@ public class ChatCharacter : GoapAction {
                 } else if (targetCharacterMood == CHARACTER_MOOD.GREAT) {
                     weight += -30;
                 }
-                if (goapNode.actor.traitContainer.GetNormalTrait("Hothead") != null) {
+                if (goapNode.actor.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
                     weight += 200;
                 }
-                if (targetCharacter.traitContainer.GetNormalTrait("Hothead") != null) {
+                if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
                     weight += 200;
                 }
                 if (weight > 0) {
@@ -131,10 +131,10 @@ public class ChatCharacter : GoapAction {
                 } else if (targetCharacterMood == CHARACTER_MOOD.GREAT) {
                     weight += 50;
                 }
-                if (goapNode.actor.traitContainer.GetNormalTrait("Hothead") != null) {
+                if (goapNode.actor.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
                     weight -= 40;
                 }
-                if (targetCharacter.traitContainer.GetNormalTrait("Hothead") != null) {
+                if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
                     weight -= 40;
                 }
                 if (weight > 0) {
@@ -161,7 +161,7 @@ public class ChatCharacter : GoapAction {
             weights.AddElement("Become Paramours", becomeParamoursWeight);
         }
 
-        if (goapNode.actor.traitContainer.GetNormalTrait("Angry") != null || targetCharacter.traitContainer.GetNormalTrait("Angry") != null) {
+        if (goapNode.actor.traitContainer.GetNormalTrait<Trait>("Angry") != null || targetCharacter.traitContainer.GetNormalTrait<Trait>("Angry") != null) {
             weights.RemoveElement("Quick Chat");
             weights.RemoveElement("Become Friends");
             weights.RemoveElement("Share Information");
@@ -216,21 +216,21 @@ public class ChatCharacter : GoapAction {
     }
     private void Argument(ActualGoapNode goapNode, Character targetCharacter) {
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        if (goapNode.actor.traitContainer.GetNormalTrait("Angry") != null) {
+        if (goapNode.actor.traitContainer.GetNormalTrait<Trait>("Angry") != null) {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_chat");
             log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             goapNode.actor.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
         }
-        if (targetCharacter.traitContainer.GetNormalTrait("Angry") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Angry") != null) {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_chat");
             log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             targetCharacter.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
         }
 
-        if (goapNode.actor.traitContainer.GetNormalTrait("Hothead") != null) {
+        if (goapNode.actor.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Angry");
         }
-        if (targetCharacter.traitContainer.GetNormalTrait("Hothead") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
             targetCharacter.traitContainer.AddTrait(targetCharacter, "Angry");
         }
     }

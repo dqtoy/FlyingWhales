@@ -113,6 +113,6 @@ public class CureCharacterData : GoapActionData {
         requirementAction = Requirement;
     }
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return poiTarget.traitContainer.GetNormalTrait("Sick", "Infected", "Plagued") != null;
+        return poiTarget.traitContainer.GetNormalTrait<Trait>("Sick", "Infected", "Plagued") != null;
     }
 }

@@ -37,7 +37,7 @@ namespace Traits {
                 }
 
                 bool triggerBrokenhearted = false;
-                Heartbroken heartbroken = character.traitContainer.GetNormalTrait("Heartbroken") as Heartbroken;
+                Heartbroken heartbroken = character.traitContainer.GetNormalTrait<Trait>("Heartbroken") as Heartbroken;
                 if (heartbroken != null) {
                     triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
                 }
@@ -62,7 +62,7 @@ namespace Traits {
                 //    jobType = JOB_TYPE.HAPPINESS_RECOVERY_FORLORN;
                 //}
                 bool triggerBrokenhearted = false;
-                Heartbroken heartbroken = owner.traitContainer.GetNormalTrait("Heartbroken") as Heartbroken;
+                Heartbroken heartbroken = owner.traitContainer.GetNormalTrait<Trait>("Heartbroken") as Heartbroken;
                 if (heartbroken != null) {
                     triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
                 }

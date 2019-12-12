@@ -26,7 +26,7 @@ namespace Traits {
             //TODO: Either move or totally remove validation from inside this container
             if (TraitValidator.CanAddTrait(addTo, trait) == false) {
                 if (trait.IsUnique()) {
-                    Trait oldTrait = GetNormalTrait(trait.name);
+                    Trait oldTrait = GetNormalTrait<Trait>(trait.name);
                     if (oldTrait != null) {
                         oldTrait.AddCharacterResponsibleForTrait(characterResponsible);
                         oldTrait.AddCharacterResponsibleForTrait(characterResponsible);
@@ -73,7 +73,7 @@ namespace Traits {
             return removed;
         }
         public bool RemoveTrait(ITraitable removeFrom, string traitName, Character removedBy = null) {
-            Trait trait = GetNormalTrait(traitName);
+            Trait trait = GetNormalTrait<Trait>(traitName);
             if (trait != null) {
                 return RemoveTrait(removeFrom, trait, removedBy);
             }
@@ -137,12 +137,12 @@ namespace Traits {
         #endregion
 
         #region Getting
-        public Trait GetNormalTrait(params string[] traitNames) {
+        public T GetNormalTrait<T>(params string[] traitNames) where T : Trait {
             for (int i = 0; i < allTraits.Count; i++) {
                 Trait trait = allTraits[i];
                 for (int j = 0; j < traitNames.Length; j++) {
                     if (trait.name == traitNames[j]) { // || trait.GetType().ToString() == traitNames[j]
-                        return trait;
+                        return trait as T;
                     }
                 }
             }

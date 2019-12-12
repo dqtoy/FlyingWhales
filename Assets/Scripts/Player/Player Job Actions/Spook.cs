@@ -59,7 +59,7 @@ public class Spook : PlayerJobAction {
         if (!targetCharacter.IsInOwnParty()) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait("Spooked") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Spooked") != null) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -94,7 +94,7 @@ public class Spook : PlayerJobAction {
         if (!targetCharacter.IsInOwnParty()) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait("Spooked") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Spooked") != null) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {

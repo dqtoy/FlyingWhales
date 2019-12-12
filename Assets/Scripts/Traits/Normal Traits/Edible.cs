@@ -68,13 +68,13 @@ namespace Traits {
             if (action == INTERACTION_TYPE.EAT) {
                 string edibleType = GetEdibleType();
                 if (edibleType == "Meat") {
-                    if (actor.traitContainer.GetNormalTrait("Carnivore") != null) {
+                    if (actor.traitContainer.GetNormalTrait<Trait>("Carnivore") != null) {
                         cost = 25;
                     } else {
                         cost = 50;
                     }
                 } else if (edibleType == "Plant") {
-                    if (actor.traitContainer.GetNormalTrait("Herbivore") != null) {
+                    if (actor.traitContainer.GetNormalTrait<Trait>("Herbivore") != null) {
                         cost = 25;
                     } else {
                         cost = 50;

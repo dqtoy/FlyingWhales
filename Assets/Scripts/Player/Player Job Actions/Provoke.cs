@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Traits;
 using UnityEngine;
 
 public class Provoke : PlayerJobAction {
@@ -31,7 +32,7 @@ public class Provoke : PlayerJobAction {
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.isFactionless) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait("Unconscious") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious") != null) {
             return false;
         }
         return base.CanPerformActionTowards(targetCharacter);
@@ -47,7 +48,7 @@ public class Provoke : PlayerJobAction {
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.isFactionless) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait("Unconscious") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious") != null) {
             return false;
         }
         return base.CanTarget(targetCharacter, ref hoverText);

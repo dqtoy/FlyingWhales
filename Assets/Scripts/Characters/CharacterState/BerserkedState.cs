@@ -147,7 +147,7 @@ public class BerserkedState : CharacterState {
     //}
     //public override void AfterExitingState() {
     //    base.AfterExitingState();
-    //    Spooked spooked = stateComponent.character.traitContainer.GetNormalTrait("Spooked") as Spooked;
+    //    Spooked spooked = stateComponent.character.traitContainer.GetNormalTrait<Trait>("Spooked") as Spooked;
     //    if (spooked != null) {
     //        //If has spooked, add them in avoid list and transfer all in engage list to flee list
     //        stateComponent.character.marker.AddAvoidsInRange(spooked.terrifyingCharacters, false);

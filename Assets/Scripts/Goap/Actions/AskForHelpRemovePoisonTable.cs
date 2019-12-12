@@ -49,7 +49,7 @@ public class AskForHelpRemovePoisonTable : GoapAction {
    //     this.otherData = otherData;
    //     if (otherData.Length == 1 && otherData[0] is IPointOfInterest) {
    //         targetTable = otherData[0] as IPointOfInterest;
-   //         poison = targetTable.traitContainer.GetNormalTrait("Poisoned") as Poisoned;
+   //         poison = targetTable.traitContainer.GetNormalTrait<Trait>("Poisoned") as Poisoned;
    //         if (thoughtBubbleMovingLog != null) {
    //             thoughtBubbleMovingLog.AddToFillers(targetTable.gridTileLocation.structure, targetTable.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
    //         }

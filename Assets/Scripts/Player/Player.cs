@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Linq;
 using Events.World_Events;
 using Inner_Maps;
+using Traits;
 
 public class Player : ILeader {
 
@@ -652,7 +653,7 @@ public class Player : ILeader {
         if(poi is Character) {
             Character character = poi as Character;
             hoverText = string.Empty;
-            if(character.traitContainer.GetNormalTrait("Blessed", "Catatonic") != null) {
+            if(character.traitContainer.GetNormalTrait<Trait>("Blessed", "Catatonic") != null) {
                 hoverText = "Blessed/Catatonic characters cannot be targetted.";
                 return false;
             }

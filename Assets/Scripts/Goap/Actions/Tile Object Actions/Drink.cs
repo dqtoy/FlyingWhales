@@ -8,7 +8,7 @@ public class Drink : GoapAction {
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.CONSUME; } }
 
     public Drink() : base(INTERACTION_TYPE.DRINK) {
-        //if (actor.traitContainer.GetNormalTrait("Drunkard") != null) {
+        //if (actor.traitContainer.GetNormalTrait<Trait>("Drunkard") != null) {
         //    validTimeOfDays = null;
         //} else {
         //    validTimeOfDays = new TIME_IN_WORDS[] {
@@ -61,7 +61,7 @@ public class Drink : GoapAction {
     //    if (res == "Sick") {
     //        string logKey = "drink poisoned_sick";
     //        poisonedResult = "Sick";
-    //        if (actor.traitContainer.GetNormalTrait("Robust") != null) {
+    //        if (actor.traitContainer.GetNormalTrait<Trait>("Robust") != null) {
     //            poisonedResult = "Robust";
     //            logKey = "drink poisoned_robust";
     //        }
@@ -103,7 +103,7 @@ public class Drink : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
                 return false;
             }
-            return poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.INN && poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.traitContainer.GetNormalTrait("Agoraphobic") == null;
+            return poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.INN && poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.traitContainer.GetNormalTrait<Trait>("Agoraphobic") == null;
         }
         return false;
     }
@@ -120,6 +120,6 @@ public class DrinkData : GoapActionData {
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
-        return poiTarget.gridTileLocation != null &&  poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.INN && poiTarget.IsAvailable() && actor.traitContainer.GetNormalTrait("Agoraphobic") == null;
+        return poiTarget.gridTileLocation != null &&  poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.INN && poiTarget.IsAvailable() && actor.traitContainer.GetNormalTrait<Trait>("Agoraphobic") == null;
     }
 }

@@ -237,7 +237,7 @@ namespace Inner_Maps {
                 //This means that the character travelled to a different area
                 character.marker.gameObject.transform.SetParent(objectsParent);
                 character.marker.gameObject.transform.localPosition = tile.centeredLocalLocation;
-                character.marker.UpdatePosition();
+                // character.marker.UpdatePosition();
             }
 
             if (!character.marker.gameObject.activeSelf) {
@@ -256,9 +256,7 @@ namespace Inner_Maps {
                 from.RemoveCharacterHere(character);
                 to.AddCharacterHere(character);
                 if (from.structure != to.structure) {
-                    if (from.structure != null) {
-                        from.structure.RemoveCharacterAtLocation(character);
-                    }
+                    @from.structure?.RemoveCharacterAtLocation(character);
                     if (to.structure != null) {
                         to.structure.AddCharacterAtLocation(character);
                     } else {

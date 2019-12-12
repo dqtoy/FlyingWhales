@@ -27,7 +27,7 @@ public class ResolveConflict : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         if (goapActionInvalidity.isInvalid == false) {
             Character targetCharacter = poiTarget as Character;
-            if ((targetCharacter.traitContainer.GetNormalTrait("Hothead") != null && UnityEngine.Random.Range(0, 2) == 0)
+            if ((targetCharacter.traitContainer.GetNormalTrait<Trait>("Hothead") != null && UnityEngine.Random.Range(0, 2) == 0)
                 || targetCharacter.isInCombat
                 || (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED)) {
                 goapActionInvalidity.isInvalid = true;
@@ -47,7 +47,7 @@ public class ResolveConflict : GoapAction {
                 Character targetCharacter = poiTarget as Character;
                 hasEnemy = targetCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.ENEMY) != null;
             }
-            return actor != poiTarget && hasEnemy && actor.traitContainer.GetNormalTrait("Diplomatic") != null;
+            return actor != poiTarget && hasEnemy && actor.traitContainer.GetNormalTrait<Trait>("Diplomatic") != null;
         }
         return false;
     }
@@ -84,6 +84,6 @@ public class ResolveConflictData : GoapActionData {
             Character targetCharacter = poiTarget as Character;
             hasEnemy = targetCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.ENEMY) != null;
         }
-        return actor != poiTarget && hasEnemy && actor.traitContainer.GetNormalTrait("Diplomatic") != null;
+        return actor != poiTarget && hasEnemy && actor.traitContainer.GetNormalTrait<Trait>("Diplomatic") != null;
     }
 }
