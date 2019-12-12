@@ -181,7 +181,7 @@ public class GoapAction {
         if (poiTarget.IsAvailable() == false || poiTarget.gridTileLocation == null) {
             return true;
         }
-        if (actor.currentRegion.IsSameCoreLocationAs(poiTarget.gridTileLocation.structure.location) == false) {
+        if (!actor.currentRegion.IsSameCoreLocationAs(poiTarget.gridTileLocation.structure.location)) {
             return true;
         }
         

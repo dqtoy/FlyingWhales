@@ -318,7 +318,7 @@ public class Party {
         if (_icon.isTravelling && _icon.travelLine != null) {
             return;
         }
-        if (owner.currentRegion == targetLocation) {
+        if (owner.currentRegion.IsSameCoreLocationAs(targetLocation)) {
             //action doer is already at the target location
             if (doneAction != null) {
                 doneAction();
