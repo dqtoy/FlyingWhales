@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Events.World_Events;
 using Inner_Maps;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Region : ILocation {
 
@@ -97,16 +99,15 @@ public class Region : ILocation {
         if (!tiles.Contains(tile)) {
             tiles.Add(tile);
             tile.SetRegion(this);
-            //if (area != null) {
-            //    area.OnTileAddedToArea(tile);
-            //    Messenger.Broadcast(Signals.AREA_TILE_ADDED, area, tile);
-            //}
         }
     }
     public void AddTile(List<HexTile> tiles) {
         for (int i = 0; i < tiles.Count; i++) {
             AddTile(tiles[i]);
         }
+    }
+    public void OnMainLandmarkChanged() {
+        regionTileObject?.UpdateAdvertisements(this);
     }
 
     #region Utilities
@@ -697,36 +698,13 @@ public class Region : ILocation {
             }
             Messenger.Broadcast(Signals.AREA_OWNER_CHANGED, area);
         }
-        bool isCorrupted = false;
-        if(this.owner != null && this.owner.isPlayerFaction) {
-            isCorrupted = true;
-        }
+        bool isCorrupted = this.owner != null && this.owner.isPlayerFaction;
         for (int i = 0; i < tiles.Count; i++) {
             HexTile tile = tiles[i];
             tile.SetCorruption(isCorrupted);
         }
         mainLandmark.landmarkNameplate.UpdateFactionEmblem();
-        //if(this.owner != null) {
-        //    if(this.owner.isPlayerFaction) {
-        //        for (int i = 0; i < tiles.Count; i++) {
-        //            HexTile tile = tiles[i];
-        //            Biomes.Instance.CorruptTileVisuals(tile);
-        //            tile.SetCorruption(true);
-        //        }
-        //    } else {
-        //        for (int i = 0; i < tiles.Count; i++) {
-        //            HexTile tile = tiles[i];
-        //            Biomes.Instance.UpdateTileVisuals(tile);
-        //            tile.SetCorruption(false);
-        //        }
-        //    }
-        //} else {
-        //    for (int i = 0; i < tiles.Count; i++) {
-        //        HexTile tile = tiles[i];
-        //        Biomes.Instance.UpdateTileVisuals(tile);
-        //        tile.SetCorruption(false);
-        //    }
-        //}
+        regionTileObject?.UpdateAdvertisements(this);
     }
     public void SetPreviousOwner(Faction faction) {
         previousOwner = faction;
@@ -998,8 +976,13 @@ public class Region : ILocation {
     public bool IsRequiredByLocation(SpecialToken token) {
         return false;
     }
+    public bool IsSameCoreLocationAs(ILocation location) {
+        return location.coreTile == this.coreTile;
+    }
     public void SetRegionTileObject(RegionTileObject _regionTileObject) {
         regionTileObject = _regionTileObject;
     }
     #endregion
+
+    
 }

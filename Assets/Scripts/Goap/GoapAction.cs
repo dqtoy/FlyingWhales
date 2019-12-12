@@ -175,13 +175,13 @@ public class GoapAction {
         }
         return (baseCost * TimeOfDaysCostMultiplier(actor) * PreconditionCostMultiplier()) + GetDistanceCost(actor, target);
     }
-    protected bool IsTargetMissing(ActualGoapNode node) {
+    private bool IsTargetMissing(ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         if (poiTarget.IsAvailable() == false || poiTarget.gridTileLocation == null) {
             return true;
         }
-        if (poiTarget.gridTileLocation.structure.location != actor.currentRegion) { //poiTarget.gridTileLocation.structure.location != actor.currentArea && 
+        if (actor.currentRegion.IsSameCoreLocationAs(poiTarget.gridTileLocation.structure.location) == false) {
             return true;
         }
         

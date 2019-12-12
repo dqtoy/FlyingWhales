@@ -117,6 +117,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     }
     #endregion
 
+    private void Awake() {
+        _structureAnimatorSpriteRenderer = structureAnimation.gameObject.GetComponent<SpriteRenderer>();
+        _highlightGOSpriteRenderer = highlightGO.GetComponent<SpriteRenderer>();
+        _hoverHighlightSpriteRenderer = _hoverHighlightGO.GetComponent<SpriteRenderer>();
+    }
     public void Initialize() {
         //spriteRenderer = this.GetComponent<SpriteRenderer>();
         //SetMagicAbundance();
@@ -143,6 +148,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         if (addFeatures) {
             landmarkOnTile?.AddFeaturesToRegion();
         }
+        region.OnMainLandmarkChanged();
     }
     public BaseLandmark CreateLandmarkOfType(LANDMARK_TYPE landmarkType, bool addFeatures) {
         LandmarkData data = LandmarkManager.Instance.GetLandmarkData(landmarkType);
@@ -257,6 +263,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     }
     public void RemoveLandmarkOnTile() {
         landmarkOnTile = null;
+        region.OnMainLandmarkChanged();
     }
     public void RemoveLandmarkVisuals() {
         HideLandmarkTileSprites();
@@ -278,11 +285,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
             mainStructure.enabled = true;
             structureAnimation.gameObject.SetActive(false);
         } else {
-            if (landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.MONSTER_LAIR) {
-                mainStructure.enabled = true; //SPECIAL CASE FOR MONSTER LAIR
-            } else {
-                mainStructure.enabled = false;
-            }
+            mainStructure.enabled = landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.MONSTER_LAIR; //SPECIAL CASE FOR MONSTER LAIR
             structureAnimation.gameObject.SetActive(true);
             structureAnimation.runtimeAnimatorController = sprites.animation;
         }
@@ -558,8 +561,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     }
     internal void UpdateSortingOrder() {
         int sortingOrder = spriteRenderer.sortingOrder;
-        _hoverHighlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-        highlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+        _hoverHighlightSpriteRenderer.sortingOrder = sortingOrder + 1;
+        _highlightGOSpriteRenderer.sortingOrder = sortingOrder + 1;
 
         topLeftBeach.sortingOrder = sortingOrder + 1;
         leftBeach.sortingOrder = sortingOrder + 1;
@@ -580,7 +583,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
 
         mainStructure.sortingOrder = sortingOrder + 3;
         structureTint.sortingOrder = sortingOrder + 4;
-        structureAnimation.gameObject.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 5;
+        _structureAnimatorSpriteRenderer.sortingOrder = sortingOrder + 5;
     }
     public SpriteRenderer GetBorder(HEXTILE_DIRECTION direction) {
         SpriteRenderer border = null;
@@ -627,9 +630,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     internal void SetBaseSprite(Sprite baseSprite) {
         this.baseSprite = baseSprite;
         spriteRenderer.sprite = baseSprite;
-        RuntimeAnimatorController animation = Biomes.Instance.GetTileSpriteAnimation(baseSprite);
-        if (animation != null) {
-            baseTileAnimator.runtimeAnimatorController = animation;
+        RuntimeAnimatorController _animation;
+        if (Biomes.Instance.TryGetTileSpriteAnimation(baseSprite, out _animation)) {
+            baseTileAnimator.runtimeAnimatorController = _animation;
             baseTileAnimator.enabled = true;
         } else {
             baseTileAnimator.enabled = false;
@@ -819,6 +822,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     [Header("For Testing")]
     [SerializeField] private int range = 0;
     List<HexTile> tiles = new List<HexTile>();
+    private SpriteRenderer _hoverHighlightSpriteRenderer;
+    private SpriteRenderer _highlightGOSpriteRenderer;
+    private SpriteRenderer _structureAnimatorSpriteRenderer;
     [ContextMenu("Show Tiles In Range")]
     public void ShowTilesInRange() {
         for (int i = 0; i < tiles.Count; i++) {

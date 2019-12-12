@@ -295,7 +295,6 @@ public class Utilities : MonoBehaviour {
         if(log.logText != string.Empty) {
             return log.logText;
         }
-        string replacedWord = string.Empty;
         List<int> specificWordIndexes = new List<int>();
         string newText;
         if (string.IsNullOrEmpty(log.message)) {
@@ -309,7 +308,7 @@ public class Utilities : MonoBehaviour {
         if (!string.IsNullOrEmpty(newText)) {
             string[] words = SplitAndKeepDelimiters(newText, new char[] { ' ', '.', ',', '\'', '!', '"', ':' });
             for (int i = 0; i < words.Length; i++) {
-                replacedWord = string.Empty;
+                var replacedWord = string.Empty;
                 if (words[i].StartsWith("%") && (words[i].EndsWith("%") || words[i].EndsWith("@"))) { //OBJECT
                     replacedWord = CustomStringReplacer(words[i], log.fillers);
                 } else if (words[i].StartsWith("%") && (words[i].EndsWith("a") || words[i].EndsWith("b"))) { //PRONOUN

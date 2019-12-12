@@ -179,7 +179,7 @@ public class DropResource : GoapAction {
             if (structure.location.mainStorage.unoccupiedTiles.Count <= 0) {
                 return false;
             }
-            return actor.homeArea == structure.location;
+            return actor.homeArea.IsSameCoreLocationAs(structure.location);
         }
         return false;
     }

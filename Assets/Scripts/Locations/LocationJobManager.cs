@@ -66,11 +66,9 @@ public class LocationJobManager {
         jobNames.Add("Invade");
 
         bool hasCreateJob = false;
-        string chosenJobName = string.Empty;
-        int index = 0;
         while (!hasCreateJob && jobNames.Count > 0) {
-            index = UnityEngine.Random.Range(0, jobNames.Count);
-            chosenJobName = jobNames[index];
+            var index = UnityEngine.Random.Range(0, jobNames.Count);
+            var chosenJobName = jobNames[index];
             if(chosenJobName == "Cleanse") {
                 hasCreateJob = CreateCleanseRegionJob();
             }else if (chosenJobName == "Claim") {

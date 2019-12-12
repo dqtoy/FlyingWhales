@@ -592,10 +592,12 @@ public class Biomes : MonoBehaviour {
 		}
 		return BIOMES.DESERT;
 	}
-    public RuntimeAnimatorController GetTileSpriteAnimation(Sprite sprite) {
+    public bool TryGetTileSpriteAnimation(Sprite sprite, out RuntimeAnimatorController animator) {
         if (biomeSpriteAnimations.ContainsKey(sprite)) {
-            return biomeSpriteAnimations[sprite];
+            animator = biomeSpriteAnimations[sprite];
+            return true;
         }
-        return null;
+        animator = default(RuntimeAnimatorController);
+        return false;
     }
 }

@@ -551,18 +551,58 @@ MonoBehaviour:
       animation: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+  - landmarkTypeString: Lumberyard
+    landmarkType: 57
+    minimumTileCount: 1
+    buildDuration: 0
+    description: 
+    connectedTileDirection: 6
+    uniqueTags: 
+    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
+      type: 3}
+    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: 8b69e1c43d456b1479f998800d8a6f31, type: 3}
+    biomeTileSprites:
+      m_keys: 
+      m_values: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 3f5f539ec1c81814e972d6b0b4903932, type: 3}
+      tintSprite: {fileID: 21300000, guid: 59980d3c50e9c3c4e8c869029a0ccc2e, type: 3}
+      animation: {fileID: 0}
+    humansLandmarkTileSprites: []
+    elvenLandmarkTileSprites: []
+  - landmarkTypeString: Quarry
+    landmarkType: 58
+    minimumTileCount: 1
+    buildDuration: 0
+    description: 
+    connectedTileDirection: 6
+    uniqueTags: 
+    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
+      type: 3}
+    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: 8b69e1c43d456b1479f998800d8a6f31, type: 3}
+    biomeTileSprites:
+      m_keys: 
+      m_values: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 0b1a6dfee21888942b79f0008084a2b8, type: 3}
+      tintSprite: {fileID: 21300000, guid: f16e449c34192234bb171cc4f9bc300d, type: 3}
+      animation: {fileID: 0}
+    humansLandmarkTileSprites: []
+    elvenLandmarkTileSprites: []
   areaData:
-  - areaType: 0
+  - locationType: 0
     baseAreaType: 0
-  - areaType: 1
+  - locationType: 1
     baseAreaType: 0
-  - areaType: 2
+  - locationType: 2
     baseAreaType: 0
-  - areaType: 3
+  - locationType: 3
     baseAreaType: 2
-  - areaType: 4
+  - locationType: 4
     baseAreaType: 1
-  - areaType: 5
+  - locationType: 5
     baseAreaType: 1
   corruptedLandmarksCount: 0
   landmarkGO: {fileID: 1000010040247426, guid: 62f5adf3c35fcea45a8e702a164cf60d, type: 2}

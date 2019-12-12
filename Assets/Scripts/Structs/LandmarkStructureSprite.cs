@@ -14,7 +14,5 @@ public struct LandmarkStructureSprite {
         this.animation = animation;
     }
 
-    public static LandmarkStructureSprite Empty {
-        get { return new LandmarkStructureSprite() { mainSprite = null, tintSprite = null, animation = null }; }
-    }
+    public static LandmarkStructureSprite Empty => new LandmarkStructureSprite() { mainSprite = null, tintSprite = null, animation = null };
 }

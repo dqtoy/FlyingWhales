@@ -299,7 +299,7 @@ public class CharacterNeedsComponent {
         } else if (isStarving) {
             _character.traitContainer.RemoveTrait(_character, "Hungry");
             if (_character.traitContainer.AddTrait(_character, "Starving") && _character.traitContainer.GetNormalTrait("Vampiric") == null) { //only characters that are not vampires will flee when they are starving
-                Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "starving");
+                Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, _character, "starving");
             }
         } else if (isHungry) {
             _character.traitContainer.RemoveTrait(_character, "Starving");

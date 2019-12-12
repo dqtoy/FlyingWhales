@@ -7,7 +7,7 @@ using Inner_Maps;
 using Traits;
 
 public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
-    public string name { get; private set; }
+    public string name { get; protected set; }
     public int id { get; private set; }
     public TILE_OBJECT_TYPE tileObjectType { get; private set; }
     public Faction factionOwner { get { return null; } }
@@ -675,7 +675,7 @@ public class SaveDataTileObject {
 
         if(tileObject.structureLocation != null) {
             structureLocationID = tileObject.structureLocation.id;
-            structureLocationAreaID = tileObject.structureLocation.location.id;
+            structureLocationAreaID = tileObject.structureLocation.location.id; //TODO: Refactor, because location is no longer guaranteed to be an area.
             structureLocationType = tileObject.structureLocation.structureType;
         } else {
             structureLocationID = -1;

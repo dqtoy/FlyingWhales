@@ -163,7 +163,7 @@ public class ActualGoapNode {
         }
         //Only create thought bubble log when characters starts the action/moves to do the action so we can pass the target structure
         CreateThoughtBubbleLog(targetStructure);
-        if (actor.currentRegion != targetStructure.location && actor.currentArea != targetStructure.location) {
+        if (actor.currentRegion.IsSameCoreLocationAs(targetStructure.location) == false) { //different core locations
             actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, doneAction: MoveToDoAction);
         } else {
             if (action.actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET || action.actionLocationType == ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET) {

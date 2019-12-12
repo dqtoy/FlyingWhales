@@ -76,6 +76,7 @@ public class ConsoleMenu : UIMenu {
             {"/log_location_class_data", LogLocationClassData },
             {"/highlight_structure_tiles", HighlightStructureTiles },
             {"/add_new_resident", AddNewResident },
+            {"/log_obj_advertisements", LogObjectAdvertisements },
 
         };
 
@@ -85,7 +86,6 @@ public class ConsoleMenu : UIMenu {
 #endif
         InitializeMinion();
     }
-
     private void Update() {
         fullDebugLbl.text = string.Empty;
         fullDebug2Lbl.text = string.Empty;
@@ -1308,6 +1308,51 @@ public class ConsoleMenu : UIMenu {
             }
             
         }
+    }
+    #endregion
+
+    #region IPointOfInterest
+    private void LogObjectAdvertisements(string[] parameters) {
+        if (parameters.Length != 3) { //POI Type, Object Type (TILE_OBJECT, SPECIAL_TOKEN), id 
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of LogObjectAdvertisments");
+            return;
+        }
+
+        string poiTypeStr = parameters[0];
+        string objTypeStr = parameters[1];
+        string idStr = parameters[2];
+
+        POINT_OF_INTEREST_TYPE poiType;
+        if (System.Enum.TryParse(poiTypeStr, out poiType) == false) {
+            AddErrorMessage("There is no poi of type " + poiTypeStr);
+        }
+        int id = Int32.Parse(idStr);
+        if (poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+            TILE_OBJECT_TYPE tileObjType;
+            if (System.Enum.TryParse(objTypeStr, out tileObjType) == false) {
+                AddErrorMessage("There is no tile object of type " + objTypeStr);
+            }
+
+            TileObject tileObj = InnerMapManager.Instance.GetTileObject(tileObjType, id);
+            string log = $"Advertised actions of {tileObj.name}:";
+            for (int i = 0; i < tileObj.advertisedActions.Count; i++) {
+                log += "\n" + tileObj.advertisedActions[i].ToString();
+            }
+            AddSuccessMessage(log);
+        } else if (poiType == POINT_OF_INTEREST_TYPE.ITEM) {
+            SPECIAL_TOKEN specialTokenType;
+            if (System.Enum.TryParse(objTypeStr, out specialTokenType) == false) {
+                AddErrorMessage("There is no special token of type " + objTypeStr);
+            }
+            SpecialToken st = TokenManager.Instance.GetSpecialTokenByID(id);
+            string log = $"Advertised actions of {st.name}:";
+            for (int i = 0; i < st.advertisedActions.Count; i++) {
+                log += "\n" + st.advertisedActions[i].ToString();
+            }
+            AddSuccessMessage(log);
+        }
+
     }
     #endregion
 }
