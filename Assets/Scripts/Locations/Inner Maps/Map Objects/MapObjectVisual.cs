@@ -14,11 +14,12 @@ public abstract class MapObjectVisual<T> : PooledObject, IMapObjectVisual, IPoin
 
     [SerializeField] private SpriteRenderer objectVisual;
     [SerializeField] private SpriteRenderer hoverObject;
-    private HoverHandler _hoverHandler;
     public BaseCollisionTrigger<T> collisionTrigger { get; protected set; }
     public GameObject gameObjectVisual => this.gameObject;
+    private bool isHoverObjectStateLocked;
     private System.Action onLeftClickAction;
     private System.Action onRightClickAction;
+    private HoverHandler _hoverHandler;
 
     #region getters
     public Sprite usedSprite {
@@ -69,6 +70,18 @@ public abstract class MapObjectVisual<T> : PooledObject, IMapObjectVisual, IPoin
         color.a = alpha;
         SetColor(color);
     }
+    public void SetHoverObjectState(bool state) {
+        if (isHoverObjectStateLocked) {
+            return; //ignore change because hover state is locked
+        }
+        hoverObject.gameObject.SetActive(state);
+    }
+    public void LockHoverObject() {
+        isHoverObjectStateLocked = true;
+    }
+    public void UnlockHoverObject() {
+            isHoverObjectStateLocked = false;
+        }
     #endregion
 
     #region Furniture Spots
@@ -77,10 +90,10 @@ public abstract class MapObjectVisual<T> : PooledObject, IMapObjectVisual, IPoin
 
     #region Pointer Functions
     protected virtual void OnPointerEnter(T poi) {
-        hoverObject.gameObject.SetActive(true);
+        SetHoverObjectState(true);
     }
     protected virtual void OnPointerExit(T poi) {
-        hoverObject.gameObject.SetActive(false);
+        SetHoverObjectState(false);
     }
     protected virtual void OnPointerLeftClick(T poi) { }
     protected virtual void OnPointerRightClick(T poi) { }
@@ -90,7 +103,6 @@ public abstract class MapObjectVisual<T> : PooledObject, IMapObjectVisual, IPoin
         }else if (eventData.button == PointerEventData.InputButton.Right) {
             onRightClickAction?.Invoke();
         }
-        
     }
     #endregion
 }

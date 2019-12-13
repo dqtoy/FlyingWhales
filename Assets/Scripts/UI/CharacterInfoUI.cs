@@ -119,9 +119,10 @@ public class CharacterInfoUI : UIMenu {
     #region Overrides
     public override void CloseMenu() {
         base.CloseMenu();
+        if (AreaMapCameraMove.Instance.target == _activeCharacter.marker.gameObject.transform) {
+            AreaMapCameraMove.Instance.CenterCameraOn(null);    
+        }
         _activeCharacter = null;
-        AreaMapCameraMove.Instance.CenterCameraOn(null);
-        
         //UIManager.Instance.SetCoverState(false);
         //PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
         //PlayerUI.Instance.CollapseMinionHolder();

@@ -905,7 +905,7 @@ public class UIManager : MonoBehaviour {
     }
     public void UpdateItemInfo() {
         if (itemInfoUI.isShowing) {
-            itemInfoUI.UpdateTileObjectInfo();
+            itemInfoUI.UpdateInfo();
         }
     }
     #endregion

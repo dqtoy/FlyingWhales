@@ -22,14 +22,24 @@ public class TileObjectInfoUI : UIMenu {
     #region Overrides
     public override void CloseMenu() {
         base.CloseMenu();
+        activeTileObject.mapVisual.UnlockHoverObject();
+        activeTileObject.mapVisual.SetHoverObjectState(false);
         activeTileObject = null;
     }
     public override void OpenMenu() {
+        TileObject previousTileObject = activeTileObject;
+        if (previousTileObject != null) {
+            previousTileObject.mapVisual.UnlockHoverObject();
+            previousTileObject.mapVisual.SetHoverObjectState(false);    
+        }
+        
         activeTileObject = _data as TileObject;
         if(activeTileObject.gridTileLocation != null) {
             bool instantCenter = InnerMapManager.Instance.currentlyShowingArea != activeTileObject.currentArea;
             AreaMapCameraMove.Instance.CenterCameraOn(activeTileObject.collisionTrigger.gameObject, instantCenter);
         }
+        activeTileObject.mapVisual.SetHoverObjectState(true);
+        activeTileObject.mapVisual.LockHoverObject();
         base.OpenMenu();
         UIManager.Instance.HideObjectPicker();
         //UpdateBasicInfo();
