@@ -57,6 +57,10 @@ public class Carry : GoapAction {
    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
+            if(poiTarget is TileObject) {
+                TileObject tileObj = poiTarget as TileObject;
+                return tileObj.isBeingCarriedBy == null && tileObj.gridTileLocation != null;
+            }
             return actor != poiTarget;
         }
         return false;
