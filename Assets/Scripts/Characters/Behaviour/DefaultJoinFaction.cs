@@ -13,8 +13,8 @@ public class DefaultJoinFaction : CharacterBehaviourComponent {
             if (character.isFriendlyFactionless) {
                 log += "\n-" + character.name + " is factionless, 15% chance to join faction";
                 List<Faction> viableFactions = null;
-                if (character.currentArea != null) {
-                    Region potentialRegion = character.currentArea.region;
+                if (character.currentRegion.area != null) {
+                    Region potentialRegion = character.currentRegion;
                     log += "\n-" + character.name + " is factionless and in a settlement region: " + potentialRegion.name + ", will try to join a faction...";
                     for (int i = 0; i < potentialRegion.factionsHere.Count; i++) {
                         Faction potentialFaction = potentialRegion.factionsHere[i];

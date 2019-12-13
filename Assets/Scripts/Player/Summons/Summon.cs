@@ -74,13 +74,15 @@ public class Summon : Character, IWorldObject {
             //} else {
             //    CancelAllJobsTargettingThisCharacter("target is already dead", false);
             //}
-            ForceCancelAllJobsTargettingThisCharacter(false, "target is already dead");
+            //ForceCancelAllJobsTargettingCharacter(false, "target is already dead");
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_CHARACTER, this as IPointOfInterest, "target is already dead");
+            CancelAllJobs();
             //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this as Character, "target is already dead");
-            if (currentActionNode != null) {
-                currentActionNode.StopActionNode(false);
-            }
-            if (currentArea != null && isHoldingItem) {
-                DropAllTokens(currentArea, currentStructure, deathTile, true);
+            //if (currentActionNode != null) {
+            //    currentActionNode.StopActionNode(false);
+            //}
+            if (currentRegion.area != null && isHoldingItem) {
+                DropAllTokens(currentRegion.area, currentStructure, deathTile, true);
             }
             //if (ownParty.specificLocation != null && isHoldingItem) {
             //    DropAllTokens(ownParty.specificLocation, currentStructure, deathTile, true);
@@ -228,7 +230,7 @@ public class Summon : Character, IWorldObject {
 
     #region Utilities
     protected void GoToWorkArea() {
-        LocationStructure structure = this.currentArea.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
+        LocationStructure structure = this.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
         LocationGridTile tile = structure.GetRandomTile();
         this.marker.GoTo(tile);
     }

@@ -33,7 +33,6 @@ public class Region : ILocation {
     public Faction previousOwner { get; private set; }
     public List<Faction> factionsHere { get; private set; }
     public List<Character> residents { get; private set; }
-    public LocationStructure mainStorage => structures.First().Value.First();
     public DemonicLandmarkBuildingData demonicBuildingData { get; private set; }
     public DemonicLandmarkInvasionData demonicInvasionData { get; private set; }
     public WorldEvent activeEvent { get; private set; }
@@ -50,7 +49,6 @@ public class Region : ILocation {
             return _regionInnerTileMap;
         }
     }
-    public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
     public RegionTileObject regionTileObject { get; private set; }
     
 
@@ -58,12 +56,25 @@ public class Region : ILocation {
     private List<System.Action> _otherAfterInvasionActions; //list of other things to do when this landmark is invaded.
     private string _activeEventAfterEffectScheduleId;
     private List<SpriteRenderer> _borderSprites;
+    private Dictionary<STRUCTURE_TYPE, List<LocationStructure>> _structures;
 
     public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; private set; }
 
     #region getter/setter
     public BaseLandmark mainLandmark {
         get { return coreTile.landmarkOnTile; }
+    }
+    public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures {
+        get {
+            if(area != null) { return area.structures; }
+            return _structures;
+        }
+    }
+    public LocationStructure mainStorage {
+        get {
+            if (area != null) { return area.mainStorage; }
+            return structures.First().Value.First();
+        }
     }
     #endregion
 
@@ -881,7 +892,7 @@ public class Region : ILocation {
     
     #region Structures
     public void GenerateStructures() {
-        structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
+        _structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WILDERNESS, false);
     }
     public void AddStructure(LocationStructure structure) {

@@ -54,7 +54,7 @@ public class Repair : GoapAction {
     private bool IsRepairTargetMissing(ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
-        if (poiTarget.gridTileLocation == null || actor.currentArea != poiTarget.currentArea) {
+        if (poiTarget.gridTileLocation == null || actor.currentRegion != poiTarget.currentRegion) {
             return true;
         }
         if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET) {

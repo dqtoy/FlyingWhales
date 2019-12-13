@@ -110,6 +110,8 @@ public class Area : IJobOwner, ILocation {
         Messenger.AddListener<WoodPile>(Signals.WOOD_IN_PILE_REDUCED, OnWoodInPileReduced);
         Messenger.AddListener(Signals.DAY_STARTED, PerDayHeroEventCreation);
         Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
+        Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_CHARACTER, ForceCancelAllJobsTargettingCharacter);
+
     }
     private void UnsubscribeToSignals() {
         Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyJobActions);
@@ -117,6 +119,7 @@ public class Area : IJobOwner, ILocation {
         Messenger.RemoveListener<FoodPile>(Signals.FOOD_IN_PILE_REDUCED, OnFoodInPileReduced);
         Messenger.RemoveListener<WoodPile>(Signals.WOOD_IN_PILE_REDUCED, OnWoodInPileReduced);
         Messenger.RemoveListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
+        Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_CHARACTER, ForceCancelAllJobsTargettingCharacter);
     }
     private void OnTileObjectRemoved(TileObject removedObj, Character character, LocationGridTile removedFrom) {
         //craft replacement tile object job
@@ -376,7 +379,7 @@ public class Area : IJobOwner, ILocation {
         citizenCount = count;
     }
     private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass currentClass) {
-        if(character.homeArea == this) {
+        if(character.homeRegion.area == this) {
             classManager.OnResidentChangeClass(character, previousClass, currentClass);
         }
     }
@@ -965,6 +968,19 @@ public class Area : IJobOwner, ILocation {
     //    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeReplaceTileObjectJob);
     //    AddToAvailableJobs(job);
     //}
+    private void ForceCancelAllJobsTargettingCharacter(IPointOfInterest target, string reason) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if(job is GoapPlanJob) {
+                GoapPlanJob goapJob = job as GoapPlanJob;
+                if(goapJob.targetPOI == target) {
+                    if(goapJob.ForceCancelJob(false, reason)) {
+                        i--;
+                    }
+                }
+            }
+        }
+    }
     #endregion
 
     #region IJobOwner

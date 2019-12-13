@@ -29,7 +29,7 @@ public class ReturnHome : GoapAction {
         if (actor.homeStructure != null) {
             return actor.homeStructure;
         } else {
-            return actor.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            return actor.homeRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
         }
     }
     #endregion

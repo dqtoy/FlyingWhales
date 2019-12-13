@@ -121,19 +121,18 @@ public class Minion {
             //else if (character.stateComponent.stateToDo != null) {
             //    character.stateComponent.SetStateToDo(null);
             //}
-            character.ForceCancelAllJobsTargettingThisCharacter(false, "target is already dead");
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, character, "target is already dead");
-            if (character.currentActionNode != null) {
-                character.currentActionNode.StopActionNode(false);
-            }
-            if (character.currentArea != null && character.isHoldingItem) {
-                character.DropAllTokens(character.currentArea, character.currentStructure, deathTile, true);
+            //character.ForceCancelAllJobsTargettingCharacter(false, "target is already dead");
+            //if (character.currentActionNode != null) {
+            //    character.currentActionNode.StopActionNode(false);
+            //}
+            if (character.currentRegion.area != null && character.isHoldingItem) {
+                character.DropAllTokens(character.currentRegion.area, character.currentStructure, deathTile, true);
             }
 
             //clear traits that need to be removed
             character.traitsNeededToBeRemoved.Clear();
 
-            bool wasOutsideSettlement = character.currentArea == null;
+            bool wasOutsideSettlement = character.currentRegion.area == null;
             //bool wasOutsideSettlement = false;
             //if (character.currentRegion != null) {
             //    wasOutsideSettlement = true;
@@ -169,6 +168,7 @@ public class Minion {
             PlayerManager.Instance.player.RemoveMinion(this);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, character);
 
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_CHARACTER, character as IPointOfInterest, "target is already dead");
             character.CancelAllJobs();
             StopInvasionProtocol(PlayerManager.Instance.player.currentAreaBeingInvaded);
 
@@ -325,7 +325,7 @@ public class Minion {
         GoToWorkArea();
     }
     private void GoToWorkArea() {
-        LocationStructure structure = character.currentArea.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
+        LocationStructure structure = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
         LocationGridTile tile = structure.GetRandomTile();
         character.marker.GoTo(tile);
     }
@@ -346,7 +346,7 @@ public class Minion {
         }
         character.StopCurrentActionNode(false);
 
-        character.currentArea.RemoveCharacterFromLocation(character);
+        character.currentRegion.RemoveCharacterFromLocation(character);
         //character.marker.ClearAvoidInRange(false);
         //character.marker.ClearHostilesInRange(false);
         //character.marker.ClearPOIsInVisionRange();

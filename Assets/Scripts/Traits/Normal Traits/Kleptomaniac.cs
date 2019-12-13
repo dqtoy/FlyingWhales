@@ -97,8 +97,8 @@ namespace Traits {
 
                     //This is just a quick fix, need to figure out a way to ensure that the character will steal.
                     List<SpecialToken> choices = new List<SpecialToken>();
-                    for (int i = 0; i < character.currentArea.charactersAtLocation.Count; i++) {
-                        Character otherCharacter = character.currentArea.charactersAtLocation[i];
+                    for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
+                        Character otherCharacter = character.currentRegion.charactersAtLocation[i];
                         if (otherCharacter == character && character.relationshipContainer.GetRelationshipEffectWith(otherCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
                             continue; //skip
                         }

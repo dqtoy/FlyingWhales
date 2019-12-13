@@ -19,7 +19,7 @@ public class ItemInfoUI : UIMenu {
     public override void OpenMenu() {
         activeItem = _data as SpecialToken;
         if (activeItem.gridTileLocation != null) {
-            bool instantCenter = InnerMapManager.Instance.currentlyShowingArea != activeItem.currentArea;
+            bool instantCenter = !InnerMapManager.Instance.IsShowingAreaMap(activeItem.currentRegion.area);
             AreaMapCameraMove.Instance.CenterCameraOn(activeItem.collisionTrigger.gameObject, instantCenter);
         }
         base.OpenMenu();

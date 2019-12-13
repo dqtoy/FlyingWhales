@@ -60,6 +60,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public string avoidReason { get; private set; }
     public bool willProcessCombat { get; private set; }
     public Action arrivalAction { get; private set; }
+    public Action failedToComputePathAction { get; private set; }
 
     //movement
     public IPointOfInterest targetPOI { get; private set; }
@@ -235,30 +236,53 @@ public class CharacterMarker : MapObjectVisual<Character> {
     /// </summary>
     /// <param name="travellingParty">The travelling party.</param>
     private void OnCharacterAreaTravelling(Party travellingParty) {
-        if (targetPOI is Character) {
-            Character targetCharacter = targetPOI as Character;
-            if (travellingParty.IsPOICarried(targetCharacter)) {
-                Action action = this.arrivalAction;
-                if(action != null) {
-                    if (character.currentParty.icon.isTravelling) {
-                        if(character.currentParty.icon.travelLine != null) {
-                            character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
-                        } else {
-                            StopMovement();
-                        }
+        //if (targetPOI is Character) {
+        //    Character targetCharacter = targetPOI as Character;
+        //    if (travellingParty.IsPOICarried(targetCharacter)) {
+        //        Action action = failedToComputePathAction;
+        //        if(action != null) {
+        //            if (character.currentParty.icon.isTravelling) {
+        //                if(character.currentParty.icon.travelLine != null) {
+        //                    character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
+        //                } else {
+        //                    StopMovement();
+        //                }
+        //            }
+        //        }
+        //        //set arrival action to null, because some arrival actions set it when executed
+        //        ClearArrivalAction();
+        //        action?.Invoke();
+        //    }
+        //}
+        if (travellingParty.isCarryingAnyPOI) {
+            if (travellingParty.IsPOICarried(targetPOI)) {
+                //If the travelling party is travelling outside and is carrying a poi that is being targetted by this marker, this marker should fail to compute path
+                Action action = failedToComputePathAction;
+                if (action != null) {
+                    //if (character.currentParty.icon.isTravellingOutside) {
+                    //    if (character.currentParty.icon.travelLine != null) {
+                    //        character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
+                    //    } else {
+                    //        StopMovement();
+                    //    }
+                    //}
+                    if (character.currentParty.icon.isTravellingOutside) {
+                        character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
+                    } else {
+                        StopMovement();
                     }
                 }
                 //set arrival action to null, because some arrival actions set it when executed
-                ClearArrivalAction();
+                failedToComputePathAction = null;
                 action?.Invoke();
             }
-        }
-        if (travellingParty.isCarryingAnyPOI && travellingParty.carriedPOI is Character) {
-            Character carriedCharacter = travellingParty.carriedPOI as Character;
-            RemoveHostileInRange(carriedCharacter); //removed hostile because he/she left the area.
-            RemoveAvoidInRange(carriedCharacter);
-            RemovePOIFromInVisionRange(carriedCharacter);
-            visionCollision.RemovePOIAsInRangeButDifferentStructure(carriedCharacter);
+            if(travellingParty.carriedPOI is Character) {
+                Character carriedCharacter = travellingParty.carriedPOI as Character;
+                RemoveHostileInRange(carriedCharacter); //removed hostile because he/she left the area.
+                RemoveAvoidInRange(carriedCharacter);
+                RemovePOIFromInVisionRange(carriedCharacter);
+                visionCollision.RemovePOIAsInRangeButDifferentStructure(carriedCharacter);
+            }
         }
         //for (int i = 0; i < travellingParty.characters.Count; i++) {
         //    Character traveller = travellingParty.characters[i];
@@ -426,7 +450,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #endregion
 
     #region Pathfinding Movement
-    public void GoTo(LocationGridTile destinationTile, Action arrivalAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
+    public void GoTo(LocationGridTile destinationTile, Action arrivalAction = null, Action failedToComputePathAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
         //If any time a character goes to a structure outside the trap structure, the trap structure data will be cleared out
         if (character.trapStructure.structure != null && character.trapStructure.structure != destinationTile.structure) {
             character.trapStructure.SetStructureAndDuration(null, 0);
@@ -435,6 +459,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
         this.destinationTile = destinationTile;
         this.arrivalAction = arrivalAction;
+        this.failedToComputePathAction = failedToComputePathAction;
         this.targetPOI = null;
         if (destinationTile == character.gridTileLocation) {
             //if (this.arrivalAction != null) {
@@ -451,26 +476,28 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         
     }
-    public void GoTo(IPointOfInterest targetPOI, Action arrivalAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
+    public void GoTo(IPointOfInterest targetPOI, Action arrivalAction = null, Action failedToComputePathAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
         pathfindingAI.ClearAllCurrentPathData();
         pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
         this.arrivalAction = arrivalAction;
+        this.failedToComputePathAction = failedToComputePathAction;
         this.targetPOI = targetPOI;
         switch (targetPOI.poiType) {
             case POINT_OF_INTEREST_TYPE.CHARACTER:
                 Character targetCharacter = targetPOI as Character;
                 if (targetCharacter.marker == null) {
-                    this.arrivalAction?.Invoke(); //target character is already dead.
-                    ClearArrivalAction();
+                    this.failedToComputePathAction?.Invoke(); //target character is already dead.
+                    this.failedToComputePathAction = null;
                     return;
                 }
                 SetTargetTransform(targetCharacter.marker.transform);
                 //if the target is a character, 
                 //check first if he/she is still at the location, 
-                if (targetCharacter.currentArea != character.currentArea) {
-                    this.arrivalAction?.Invoke();
-                    ClearArrivalAction();
-                } else if (targetCharacter.currentParty != null && targetCharacter.currentParty.icon != null && targetCharacter.currentParty.icon.isTravellingOutside) {
+                //if (targetCharacter.currentRegion != character.currentRegion) {
+                //    this.arrivalAction?.Invoke();
+                //    ClearArrivalAction();
+                //} else 
+                if (targetCharacter.currentParty != null && targetCharacter.currentParty.icon != null && targetCharacter.currentParty.icon.isTravellingOutside) {
                     OnCharacterAreaTravelling(targetCharacter.currentParty);
                 } 
                 break;

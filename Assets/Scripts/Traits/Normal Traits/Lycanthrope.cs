@@ -197,7 +197,7 @@ namespace Traits {
 
             _character.SwitchAlterEgo("Lycanthrope");
             //Plan idle stroll to the wilderness
-            LocationStructure wilderness = _character.currentArea.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            LocationStructure wilderness = _character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
             LocationGridTile targetTile = wilderness.GetRandomTile();
             _character.PlanIdleStroll(wilderness, targetTile);
         }
@@ -239,7 +239,7 @@ namespace Traits {
                 //go to a random tile in the wilderness
                 //then check if the character is alone, if not pick another random tile,
                 //repeat the process until alone, then transform to wolf
-                LocationStructure wilderness = character.currentArea.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+                LocationStructure wilderness = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
                 //LocationGridTile randomWildernessTile = wilderness.tiles[Random.Range(0, wilderness.tiles.Count)];
                 //character.marker.GoTo(randomWildernessTile, CheckIfAlone);
                 character.PlanAction(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, character, new object[] { wilderness });
@@ -253,7 +253,7 @@ namespace Traits {
                 DoTransformWolf();
             } else {
                 //go to a different tile
-                LocationStructure wilderness = _character.currentArea.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+                LocationStructure wilderness = _character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
                 //LocationGridTile randomWildernessTile = wilderness.tiles[Random.Range(0, wilderness.tiles.Count)];
                 //character.marker.GoTo(randomWildernessTile, CheckIfAlone);
                 _character.PlanAction(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, _character, new object[] { wilderness });

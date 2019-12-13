@@ -47,7 +47,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public int speedPercentMod { get; protected set; }
     public int maxHPPercentMod { get; protected set; }
     public Region homeRegion { get; protected set; }
-    public Area homeArea => homeRegion.area;
+    //public Area homeArea => homeRegion.area;
     public Dwelling homeStructure { get; protected set; }
     public IRelationshipContainer relationshipContainer => currentAlterEgo.relationshipContainer;
     public IRelationshipValidator relationshipValidator => currentAlterEgo.relationshipValidator;
@@ -157,12 +157,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public bool isFlirting => _isFlirting;
     public GENDER gender => _gender;
     public RACE race => _raceSetting.race;
-    public CharacterClass characterClass => this._characterClass;
+    public CharacterClass characterClass => _characterClass;
     public RaceSetting raceSetting => _raceSetting;
     public CharacterRole role => _role;
     public Faction faction => _faction;
     public Faction factionOwner => _faction;
-    public Area currentArea => currentRegion.area;
+    //public Area currentArea => currentRegion.area;
     public Region currentRegion {
         get {
             if (!IsInOwnParty()) {
@@ -171,7 +171,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             return _currentRegion;
         }
     }
-    public List<Log> history => this._history;
+    public List<Log> history => _history;
     public int level => _level;
     public int experience => _experience;
     public int maxExperience => _maxExperience;
@@ -465,7 +465,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.AddListener(Signals.DAY_STARTED, DailyGoapProcesses);
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
-        Messenger.AddListener<Character, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, CancelCurrentAction);
+        Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_CHARACTER, ForceCancelAllJobsTargettingCharacter);
         Messenger.AddListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
@@ -480,7 +480,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.RemoveListener(Signals.DAY_STARTED, DailyGoapProcesses);
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.RemoveListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
-        Messenger.RemoveListener<Character, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, CancelCurrentAction);
+        Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_CHARACTER, ForceCancelAllJobsTargettingCharacter);
         Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
@@ -523,7 +523,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     /// </summary>
     /// <param name="area">The invaded area.</param>
     protected virtual void OnSuccessInvadeArea(Area area) {
-        if (currentArea == area && minion == null) {
+        if (currentRegion.area == area && minion == null) {
             StopCurrentActionNode(false);
             if (stateComponent.currentState != null) {
                 stateComponent.ExitCurrentState();
@@ -531,7 +531,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //else if (stateComponent.stateToDo != null) {
             //    stateComponent.SetStateToDo(null);
             //}
-            currentArea.RemoveCharacterFromLocation(this);
+            currentRegion.RemoveCharacterFromLocation(this);
             //marker.ClearAvoidInRange(false);
             //marker.ClearHostilesInRange(false);
             //marker.ClearPOIsInVisionRange();
@@ -673,7 +673,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             needsComponent.SetFullnessForcedTick(0);
             needsComponent.SetHasCancelledSleepSchedule(false);
             needsComponent.ResetSleepTicks();
-            ForceCancelAllJobsTargettingThisCharacter();
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_CHARACTER, this as IPointOfInterest, "");
             //MigrateHomeTo(null);
             //AddInitialAwareness(gloomhollow);
             Messenger.Broadcast(Signals.CHARACTER_RETURNED_TO_LIFE, this);
@@ -719,14 +719,17 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //} else {
             //    CancelAllJobsTargettingThisCharacter("target is already dead", false);
             //}
-            StopCurrentActionNode();
-            ForceCancelAllJobsTargettingThisCharacter(false, "target is already dead");
-            //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target is already dead");
-            if (jobQueue.jobsInQueue.Count > 0) {
-                jobQueue.CancelAllJobs();
-            }
-            if (currentArea != null && isHoldingItem) {
-                DropAllTokens(currentArea, currentStructure, deathTile, true);
+            //StopCurrentActionNode();
+            //ForceCancelAllJobsTargettingCharacter(false, "target is already dead");
+            ////Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target is already dead");
+            //if (jobQueue.jobsInQueue.Count > 0) {
+            //    jobQueue.CancelAllJobs();
+            //}
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_CHARACTER, this as IPointOfInterest, "target is already dead");
+            CancelAllJobs();
+
+            if (currentRegion.area != null && isHoldingItem) {
+                DropAllTokens(currentRegion.area, currentStructure, deathTile, true);
             } else {
                 for (int i = 0; i < items.Count; i++) {
                     if (RemoveToken(i)) {
@@ -755,7 +758,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //clear traits that need to be removed
             traitsNeededToBeRemoved.Clear();
 
-            bool wasOutsideSettlement = currentArea == null;
+            bool wasOutsideSettlement = currentRegion.area == null;
 
             //bool wasOutsideSettlement = false;
             //if (currentRegion != null) {
@@ -826,8 +829,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //Dead dead = new Dead();
             //dead.SetCharacterResponsibleForTrait(responsibleCharacter);
             traitContainer.AddTrait(this, "Dead", responsibleCharacter, gainedFromDoing: deathFromAction);
-
-            CancelAllJobs();
 
             PrintLogIfActive(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
             Log deathLog;
@@ -1022,11 +1023,16 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //        }
     //    }
     //}
-    public void ForceCancelAllJobsTargettingThisCharacter(bool shouldDoAfterEffect = true, string reason = "") {
-        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
-            JobQueueItem job = allJobsTargettingThis[i];
-            if (job.ForceCancelJob(shouldDoAfterEffect, reason)) {
-                i--;
+    public void ForceCancelAllJobsTargettingCharacter(IPointOfInterest target, string reason) {
+        for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
+            JobQueueItem job = jobQueue.jobsInQueue[i];
+            if (job is GoapPlanJob) {
+                GoapPlanJob goapJob = job as GoapPlanJob;
+                if (goapJob.targetPOI == target) {
+                    if (goapJob.ForceCancelJob(false, reason)) {
+                        i--;
+                    }
+                }
             }
         }
     }
@@ -1400,11 +1406,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //return false;
     }
     public void CreateLocationKnockoutJobs(Character targetCharacter, int amount) {
-        if (homeArea != null && isAtHomeRegion && isPartOfHomeFaction && !targetCharacter.isDead && !targetCharacter.isAtHomeRegion && !traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+        if (isAtHomeRegion && homeRegion.area != null && isPartOfHomeFaction && !targetCharacter.isDead && !targetCharacter.isAtHomeRegion && !traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
             for (int i = 0; i < amount; i++) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KNOCKOUT, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, homeArea);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KNOCKOUT, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, homeRegion.area);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeKnockoutJob);
-                homeArea.AddToAvailableJobs(job);
+                homeRegion.area.AddToAvailableJobs(job);
             }
             //return job;
         }
@@ -1423,11 +1429,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     /// <returns>The created job.</returns>
     public GoapPlanJob CreateApprehendJobFor(Character targetCharacter, bool assignSelfToJob = false) {
         //if (homeArea.id == specificLocation.id) {
-        if (homeArea != null && currentArea == homeArea && !targetCharacter.HasJobTargettingThis(JOB_TYPE.APPREHEND) && targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null && !traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, targetCharacter, homeArea);
-            job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { currentArea.prison });
+        if (isAtHomeRegion && homeRegion.area != null && !targetCharacter.HasJobTargettingThis(JOB_TYPE.APPREHEND) && targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null && !traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, targetCharacter, homeRegion.area);
+            job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { homeRegion.area.prison });
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeApprehendJob);
-            homeArea.AddToAvailableJobs(job);
+            homeRegion.area.AddToAvailableJobs(job);
             if (assignSelfToJob) {
                 jobQueue.AddJobInQueue(job);
             }
@@ -1458,7 +1464,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         bool hasCreatedJob = false;
 
         //build furniture job
-        if (!hasCreatedJob && currentStructure is Dwelling) {
+        if (!hasCreatedJob && isAtHomeRegion && homeRegion.area != null && currentStructure is Dwelling) {
             Dwelling dwelling = currentStructure as Dwelling;
             if (dwelling.HasUnoccupiedFurnitureSpot() && advertisedActions.Contains(INTERACTION_TYPE.CRAFT_FURNITURE)) {
                 if (UnityEngine.Random.Range(0, 100) < 10) { //if the dwelling has a facility deficit(facility at 0) or if chance is met.
@@ -1484,10 +1490,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                             }
                         } else {
                             //furniture cannot be crafted by this character, post a job on the area
-                            if (homeArea.HasJob(JOB_TYPE.BUILD_FURNITURE, furniture) == false) {
-                                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_FURNITURE, INTERACTION_TYPE.CRAFT_TILE_OBJECT, furniture, homeArea);
+                            if (homeRegion.area.HasJob(JOB_TYPE.BUILD_FURNITURE, furniture) == false) {
+                                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_FURNITURE, INTERACTION_TYPE.CRAFT_TILE_OBJECT, furniture, homeRegion.area);
                                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
-                                homeArea.AddToAvailableJobs(job);
+                                homeRegion.area.AddToAvailableJobs(job);
                             }
                         }
                     }
@@ -2089,8 +2095,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         if (nearestEdgeTile == null) {
             float nearestDist = -999f;
-            for (int i = 0; i < currentArea.areaMap.allEdgeTiles.Count; i++) {
-                LocationGridTile currTile = currentArea.areaMap.allEdgeTiles[i];
+            for (int i = 0; i < currentRegion.area.areaMap.allEdgeTiles.Count; i++) {
+                LocationGridTile currTile = currentRegion.area.areaMap.allEdgeTiles[i];
                 float dist = Vector2.Distance(currTile.localLocation, currentGridTile.localLocation);
                 if (nearestDist == -999f || dist < nearestDist) {
                     if (currTile.structure != null) {
@@ -2106,7 +2112,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (currentParty == party) {
             CheckApprehendRelatedJobsOnLeaveLocation();
             //CancelOrUnassignRemoveTraitRelatedJobs();
-            ForceCancelAllJobsTargettingThisCharacter();
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_CHARACTER, this as IPointOfInterest, "");
             marker.ClearTerrifyingObjects();
             ExecuteLeaveAreaActions();
             needsComponent.OnCharacterLeftLocation(currentRegion);
@@ -2218,30 +2224,34 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void CenterOnCharacter() {
         if (marker != null) {
             if (currentParty.icon.isTravellingOutside) {
-                if (currentArea.areaMap.isShowing) {
+                if (InnerMapManager.Instance.IsShowingAreaMap(currentRegion.area)) {
                     InnerMapManager.Instance.HideAreaMap();
                 }
                 //CameraMove.Instance.CenterCameraOn(currentParty.icon.travelLine.iconImg.gameObject);
-                CameraMove.Instance.CenterCameraOn(homeRegion.coreTile.gameObject);
+                CameraMove.Instance.CenterCameraOn(currentRegion.coreTile.gameObject);
             } else if (currentParty.icon.isTravelling) {
                 if (marker.gameObject.activeInHierarchy) {
-                    bool instantCenter = InnerMapManager.Instance.currentlyShowingArea != currentArea;
-                    if (!currentArea.areaMap.isShowing) {
-                        InnerMapManager.Instance.ShowAreaMap(currentArea, false);
+                    bool instantCenter = !InnerMapManager.Instance.IsShowingAreaMap(currentRegion.area);
+                    if (currentRegion.area != null && instantCenter) {
+                        InnerMapManager.Instance.ShowAreaMap(currentRegion.area, false);
                     }
                     AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
                 }
-            } else if (currentArea != null) {
-                bool instantCenter = InnerMapManager.Instance.currentlyShowingArea != currentArea;
-                if (currentArea.areaMap != null) {
-                    if (!currentArea.areaMap.isShowing) {
-                        InnerMapManager.Instance.ShowAreaMap(currentArea, false);
-                    }
-                    AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
-                } else {
-                    InnerMapManager.Instance.HideAreaMap();
-                    CameraMove.Instance.CenterCameraOn(currentArea.region.coreTile.gameObject);
+            } else if (currentRegion.area != null) {
+                bool instantCenter = !InnerMapManager.Instance.IsShowingAreaMap(currentRegion.area);
+                if (instantCenter) {
+                    InnerMapManager.Instance.ShowAreaMap(currentRegion.area, false);
                 }
+                AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
+                //if (currentArea.areaMap != null) {
+                //    if (!currentArea.areaMap.isShowing) {
+                //        InnerMapManager.Instance.ShowAreaMap(currentArea, false);
+                //    }
+                //    AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
+                //} else {
+                //    InnerMapManager.Instance.HideAreaMap();
+                //    CameraMove.Instance.CenterCameraOn(currentArea.region.coreTile.gameObject);
+                //}
             } else {
                 CameraMove.Instance.CenterCameraOn(currentRegion.coreTile.gameObject);
             }
@@ -3757,12 +3767,13 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //    stateComponent.SetStateToDo(null);
         //}
 
-        ForceCancelAllJobsTargettingThisCharacter(false, "target became a minion");
-        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this, "target became a minion");
-        StopCurrentActionNode(reason: "Became a minion");
+        //ForceCancelAllJobsTargettingCharacter(false, "target became a minion");
+        //StopCurrentActionNode(reason: "Became a minion");
         //if (currentActionNode != null && !currentActionNode.cannotCancelAction) {
         //    currentActionNode.StopAction(reason: "Became a minion");
         //}
+        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_CHARACTER, this as IPointOfInterest, "target became a minion");
+        CancelAllJobs();
 
         if (!IsInOwnParty()) {
             currentParty.RemovePOI(this);
@@ -4235,7 +4246,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
     }
     public bool PlanWorkActions() { //ref bool hasAddedToGoapPlans
-        if (isAtHomeRegion && isPartOfHomeFaction) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
+        if (isAtHomeRegion && homeRegion.area != null && isPartOfHomeFaction) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
             bool triggerLazy = false;
             Lazy lazy = traitContainer.GetNormalTrait<Trait>("Lazy") as Lazy;
             if (lazy != null) {
@@ -4248,7 +4259,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                     PrintLogIfActive(GameManager.Instance.TodayLogString() + "Triggered LAZY happiness recovery but " + name + " already has that job type in queue and will not do it anymore!");
                 }
             }
-            if (!homeArea.AddFirstUnassignedJobToCharacterJob(this)) {
+            if (!homeRegion.area.AddFirstUnassignedJobToCharacterJob(this)) {
                 if (faction != null && faction.activeQuest != null) {
                     return faction.activeQuest.AddFirstUnassignedJobToCharacterJob(this);
                 }
@@ -5036,7 +5047,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     #region Awareness
     public void LogAwarenessList() {
         string log = "--------------AWARENESS LIST OF " + name + "-----------------";
-        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> kvp in currentArea.region.awareness) {
+        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> kvp in currentRegion.awareness) {
             log += "\n" + kvp.Key.ToString() + ": ";
             for (int i = 0; i < kvp.Value.Count; i++) {
                 if (i > 0) {
@@ -5134,7 +5145,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void OnPlacePOI() { /*FOR INTERFACE ONLY*/ }
     public void OnDestroyPOI() { /*FOR INTERFACE ONLY*/ }
     public virtual bool IsStillConsideredPartOfAwarenessByCharacter(Character character) {
-        if(character.currentArea == currentArea) {
+        if(character.currentRegion == currentRegion) {
             if (!isDead && currentParty.icon.isTravellingOutside) {
                 return false;
             }
@@ -5898,7 +5909,18 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if(currentActionNode == null) {
             return false;
         }
-        if (reason != "" && currentActionNode.poiTarget != this) {
+        bool shouldLogReason = true;
+        if (reason != "" && currentActionNode.poiTarget != this && !currentJob.IsAnInterruptionJob() && currentJob.jobType != JOB_TYPE.WATCH) {
+            //if(currentActionNode.poiTarget is Character) {
+            //    Trait targetDeadTrait = currentActionNode.poiTarget.traitContainer.GetNormalTrait<Trait>("Dead");
+            //    if(targetDeadTrait.gainedFromDoing == currentActionNode) {
+            //        shouldLogReason = false;
+            //    }
+            //}
+        } else {
+            shouldLogReason = false;
+        }
+        if (shouldLogReason) {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "current_action_abandoned_reason");
             log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(null, currentActionNode.action.goapName, LOG_IDENTIFIER.STRING_1);
@@ -5967,12 +5989,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //        }
     //    }
     //}
-    private void CancelCurrentAction(Character target, string cause) {
-        if (this != target && !isDead && currentActionNode != null && currentActionNode.poiTarget == target && currentActionNode.action.goapType != INTERACTION_TYPE.WATCH) {
-            //RegisterLogAndShowNotifToThisCharacterOnly("Generic", "action_cancelled_cause", null, cause);
-            StopCurrentActionNode(reason: cause);
-        }
-    }
     //This will only stop the current action of this character, this is different from StopAction because this will not drop the plan if the actor is not performing it but is on the way
     //This does not stop the movement of this character, call StopMovement separately to stop movement
     //public void StopCurrentAction(bool shouldDoAfterEffect = true, string reason = "") {
@@ -6490,9 +6506,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
     #region Pathfinding
     public List<LocationGridTile> GetTilesInRadius(int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
+        if(currentRegion.area == null) { return null; }
         List<LocationGridTile> tiles = new List<LocationGridTile>();
-        int mapSizeX = currentArea.areaMap.map.GetUpperBound(0);
-        int mapSizeY = currentArea.areaMap.map.GetUpperBound(1);
+        int mapSizeX = currentRegion.area.areaMap.map.GetUpperBound(0);
+        int mapSizeY = currentRegion.area.areaMap.map.GetUpperBound(1);
         int x = gridTileLocation.localPlace.x;
         int y = gridTileLocation.localPlace.y;
         if (includeCenterTile) {
@@ -6513,7 +6530,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                     if (radiusLimit > 0 && dx > xLimitLower && dx < xLimitUpper && dy > yLimitLower && dy < yLimitUpper) {
                         continue;
                     }
-                    LocationGridTile result = currentArea.areaMap.map[dx, dy];
+                    LocationGridTile result = currentRegion.area.areaMap.map[dx, dy];
                     if (!includeTilesInDifferentStructure && result.structure != gridTileLocation.structure) { continue; }
                     tiles.Add(result);
                 }
@@ -6629,6 +6646,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //currentAlterEgo.CopySpecialTraits();
 
             //Drop all plans except for the current action
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_CHARACTER, this as IPointOfInterest, "target is not found");
             if (currentActionNode != null) {
                 CancelAllJobsExceptForCurrent();
             } else {
@@ -6658,8 +6676,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             SetSpeedPercentMod(alterEgoData.speedPercentMod);
             traitContainer.RemoveAllNonPersistentTraits(this); //remove all non persistent traits (include alter ego: false)
 
-            ForceCancelAllJobsTargettingThisCharacter(false, "target is not found");
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this, "target is not found");
+            //ForceCancelAllJobsTargettingCharacter(false, "target is not found");
 
             for (int i = 0; i < alterEgoData.traits.Count; i++) {
                 traitContainer.AddTrait(this, alterEgoData.traits[i]);

@@ -68,10 +68,10 @@ namespace Traits {
                         characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                     } else {
                         GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, target = GOAP_EFFECT_TARGET.TARGET };
-                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect, targetCharacter, characterThatWillDoJob.currentArea);
+                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect, targetCharacter, characterThatWillDoJob.currentRegion.area);
                         job.AddOtherData(INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION });
                         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob);
-                        characterThatWillDoJob.currentArea.AddToAvailableJobs(job);
+                        characterThatWillDoJob.currentRegion.area.AddToAvailableJobs(job);
                     }
                     return true;
                 }

@@ -17,7 +17,7 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
     public int supplyValue { get { return TokenManager.Instance.itemData[specialTokenType].supplyValue; } }
     public int craftCost { get { return TokenManager.Instance.itemData[specialTokenType].craftCost; } }
     public int purchaseCost { get { return TokenManager.Instance.itemData[specialTokenType].purchaseCost; } }
-    public Area currentArea { get { return gridTileLocation.structure.location as Area; } }
+    public Region currentRegion { get { return gridTileLocation.structure.location.coreTile.region; } }
     public bool isDisabledByPlayer { get; protected set; }
     public POI_STATE state { get; protected set; }
     public int uses { get; protected set; } //how many times can this item be used?

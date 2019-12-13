@@ -48,13 +48,16 @@ namespace Traits {
             if (traitOwner is Character) {
                 Character targetCharacter = traitOwner as Character;
                 //TODO: (gainedFromDoing == null || gainedFromDoing.awareCharactersOfThisAction.Contains(characterThatWillDoJob)) &&
-                if (targetCharacter.isAtHomeRegion && !targetCharacter.isDead && targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null) {
+                if (targetCharacter.isAtHomeRegion && characterThatWillDoJob.isAtHomeRegion
+                    && targetCharacter.homeRegion == characterThatWillDoJob.homeRegion
+                    && targetCharacter.homeRegion.area != null
+                    && !targetCharacter.isDead) { // && targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null
                     GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.APPREHEND);
                     if (currentJob == null) {
                         if (InteractionManager.Instance.CanCharacterTakeApprehendJob(characterThatWillDoJob, targetCharacter)) {
                             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, targetCharacter, characterThatWillDoJob);
                             //job.SetCanBeDoneInLocation(true);
-                            job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { characterThatWillDoJob.currentArea.prison });
+                            job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { characterThatWillDoJob.homeRegion.area.prison });
                             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                             return true;
                         }

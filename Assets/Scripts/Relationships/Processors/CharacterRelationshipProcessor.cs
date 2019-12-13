@@ -26,15 +26,15 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
                 CreateRelationshipLog("friend", character1, character2);
                 break;
             case RELATIONSHIP_TRAIT.LOVER:
-                if (character1.homeArea != null && character2.homeArea != null && character1.homeArea.id == character2.homeArea.id
+                if (character1.homeRegion.area != null && character2.homeRegion.area != null && character1.homeRegion == character2.homeRegion
                     && character1.homeStructure != character2.homeStructure) {
                     if(character1.homeStructure == null && character2.homeStructure != null) {
-                        character1.homeArea.AssignCharacterToDwellingInArea(character1, character2.homeStructure);
+                        character1.homeRegion.area.AssignCharacterToDwellingInArea(character1, character2.homeStructure);
                     } else if (character1.homeStructure != null && character2.homeStructure == null) {
-                        character2.homeArea.AssignCharacterToDwellingInArea(character2, character1.homeStructure);
+                        character2.homeRegion.area.AssignCharacterToDwellingInArea(character2, character1.homeStructure);
                     } else {
                         //Lover conquers all, even if one character is factionless they will be together, meaning the factionless character will still have home structure
-                        character1.homeArea.AssignCharacterToDwellingInArea(character1, character2.homeStructure);
+                        character1.homeRegion.area.AssignCharacterToDwellingInArea(character1, character2.homeStructure);
                     }
                 }
                 break;

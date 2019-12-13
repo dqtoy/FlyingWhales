@@ -71,7 +71,7 @@ public class HuntState : CharacterState {
         stateComponent.character.marker.GoTo(PickRandomTileToGoTo(), StartHuntMovement);
     }
     private LocationGridTile PickRandomTileToGoTo() {
-        LocationStructure chosenStructure = stateComponent.character.currentArea.GetRandomStructure();
+        LocationStructure chosenStructure = stateComponent.character.currentRegion.GetRandomStructure();
         LocationGridTile chosenTile = chosenStructure.GetRandomTile();
         if (chosenTile != null) {
             return chosenTile;

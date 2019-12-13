@@ -223,9 +223,9 @@ public class CharacterInfoUI : UIMenu {
             }
             return;
         }
-        if (_activeCharacter.currentArea.areaMap == null) {
+        if (_activeCharacter.currentRegion.area != null && _activeCharacter.currentRegion.area.areaMap == null) {
             //area map has not yet been generated
-            plansLbl.text = "Visit " + _activeCharacter.currentArea.name + " to find out what " + _activeCharacter.name + " is doing.";
+            plansLbl.text = "Visit " + _activeCharacter.currentRegion.name + " to find out what " + _activeCharacter.name + " is doing.";
             return;
         }
         //Action
@@ -712,8 +712,8 @@ public class CharacterInfoUI : UIMenu {
     }
     public void AssaultACharacter() {
         List<Character> characterPool = new List<Character>();
-        for (int i = 0; i < _activeCharacter.currentArea.charactersAtLocation.Count; i++) {
-            Character character = _activeCharacter.currentArea.charactersAtLocation[i];
+        for (int i = 0; i < _activeCharacter.currentRegion.charactersAtLocation.Count; i++) {
+            Character character = _activeCharacter.currentRegion.charactersAtLocation[i];
             if (!character.isDead && !(character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine != null)) {
                 characterPool.Add(character);
             }

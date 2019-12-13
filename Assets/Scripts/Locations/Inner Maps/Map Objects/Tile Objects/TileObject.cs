@@ -12,7 +12,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
     public TILE_OBJECT_TYPE tileObjectType { get; private set; }
     public Faction factionOwner { get { return null; } }
     public List<INTERACTION_TYPE> advertisedActions { get; protected set; }
-    public Area currentArea { get { return gridTileLocation.structure.areaLocation; } }
+    public Region currentRegion { get { return gridTileLocation.structure.location.coreTile.region; } }
     public List<string> actionHistory { get; private set; } //list of actions that was done to this object
     public LocationStructure structureLocation { get { return gridTileLocation.structure; } }
     public bool isDisabledByPlayer { get; protected set; }
@@ -260,9 +260,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         if(mapVisual == null) {
             return false;
         }
-        if(gridTileLocation != null && currentArea == character.currentArea) {
+        if(gridTileLocation != null && currentRegion == character.currentRegion) {
             return true;
-        }else if (isBeingCarriedBy != null && isBeingCarriedBy.currentArea == character.currentArea) {
+        }else if (isBeingCarriedBy != null && isBeingCarriedBy.currentRegion == character.currentRegion) {
             return true;
         }
         return false;

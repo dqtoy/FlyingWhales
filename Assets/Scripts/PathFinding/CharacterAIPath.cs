@@ -121,9 +121,9 @@ public class CharacterAIPath : AILerp {
                 }
             }
         }
-        if (marker.character != null && marker.character.currentActionNode != null && marker.character.currentArea != null) {//&& marker.character.currentActionNode.willAvoidCharactersWhileMoving
-            for (int i = 0; i < marker.character.currentArea.charactersAtLocation.Count; i++) {
-                Character terrifyingCharacter = marker.character.currentArea.charactersAtLocation[i];
+        if (marker.character != null && marker.character.currentActionNode != null && marker.character.currentRegion.area != null) {//&& marker.character.currentActionNode.willAvoidCharactersWhileMoving
+            for (int i = 0; i < marker.character.currentRegion.charactersAtLocation.Count; i++) {
+                Character terrifyingCharacter = marker.character.currentRegion.charactersAtLocation[i];
                 terrifyingCharacter.marker.UpdateCenteredWorldPos();
             }
         }
@@ -131,7 +131,7 @@ public class CharacterAIPath : AILerp {
         // Alternative way of requesting the path
         CustomABPath p = CustomABPath.Construct(currentPosition, destination, null);
         p.traversalProvider = blockerTraversalProvider;
-        p.SetArea(marker.character.currentArea);
+        p.SetArea(marker.character.currentRegion.area);
         p.SetNotAllowedStructures(notAllowedStructures);
         p.SetOnlyAllowedStructures(onlyAllowedStructures);
         seeker.StartPath(p);
@@ -277,8 +277,8 @@ public class CharacterAIPath : AILerp {
             }
         }
         if(marker.character != null && marker.character.currentActionNode != null && marker.character.currentActionNode.action.goapType.WillAvoidCharactersWhileMoving()) {
-            for (int i = 0; i < marker.character.currentArea.charactersAtLocation.Count; i++) {
-                Character terrifyingCharacter = marker.character.currentArea.charactersAtLocation[i];
+            for (int i = 0; i < marker.character.currentRegion.charactersAtLocation.Count; i++) {
+                Character terrifyingCharacter = marker.character.currentRegion.charactersAtLocation[i];
                 if (terrifyingCharacter.marker == null || terrifyingCharacter == marker.character) {
                     continue;
                 }

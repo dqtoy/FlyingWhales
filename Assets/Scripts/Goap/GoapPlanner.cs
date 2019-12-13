@@ -300,7 +300,7 @@ public class GoapPlanner {
     public GoapPlan PlanActions(IPointOfInterest target, GoapEffect goalEffect, bool isPersonalPlan, ref string log, GoapPlanJob job) {
         //Cache all needed data
         Dictionary<POINT_OF_INTEREST_TYPE, List<GoapAction>> allGoapActionAdvertisements = InteractionManager.Instance.allGoapActionAdvertisements;
-        Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = actor.currentArea.region.awareness;
+        Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = actor.currentRegion.awareness;
         Dictionary<INTERACTION_TYPE, object[]> otherData = job.otherData;
         List<GoapNode> rawPlan = null; //The plan that will be created will be stored here
         if (goalEffect.target == GOAP_EFFECT_TARGET.TARGET) {
@@ -398,7 +398,7 @@ public class GoapPlanner {
     }
     public GoapPlan PlanActions(IPointOfInterest target, GoapAction goalAction, bool isPersonalPlan, ref string log, GoapPlanJob job) {
         Dictionary<POINT_OF_INTEREST_TYPE, List<GoapAction>> allGoapActionAdvertisements = InteractionManager.Instance.allGoapActionAdvertisements;
-        Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = actor.currentArea.region.awareness;
+        Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = actor.currentRegion.awareness;
         Dictionary<INTERACTION_TYPE, object[]> otherData = job.otherData;
         List<GoapNode> rawPlan = new List<GoapNode>();
         if(target != job.targetPOI && !target.IsStillConsideredPartOfAwarenessByCharacter(actor)) {
@@ -434,7 +434,7 @@ public class GoapPlanner {
         //In plan recalculation, only recalculate nodes starting from the previous node, because this means that the current node does not satisfy all preconditions, which in turn, means that somewhere in the previous nodes, the character failed to do the action
         //That is why we recalculate from the previous node up to the starting node
         Dictionary<POINT_OF_INTEREST_TYPE, List<GoapAction>> allGoapActionAdvertisements = InteractionManager.Instance.allGoapActionAdvertisements;
-        Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = actor.currentArea.region.awareness;
+        Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = actor.currentRegion.awareness;
         List<GoapNode> rawPlan = new List<GoapNode>();
 
         JobNode currentJobNode = currentPlan.currentNode;

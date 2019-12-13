@@ -56,8 +56,8 @@ namespace Traits {
 
         private IPointOfInterest GetPOIToTransformToFood(Character characterThatWillDoJob) {
             IPointOfInterest chosenPOI = null;
-            for (int i = 0; i < characterThatWillDoJob.currentArea.charactersAtLocation.Count; i++) {
-                Character character = characterThatWillDoJob.currentArea.charactersAtLocation[i];
+            for (int i = 0; i < characterThatWillDoJob.currentRegion.charactersAtLocation.Count; i++) {
+                Character character = characterThatWillDoJob.currentRegion.charactersAtLocation[i];
                 if (characterThatWillDoJob != character && character.isDead) {
                     if (character.grave != null) {
                         chosenPOI = character.grave;
@@ -69,8 +69,8 @@ namespace Traits {
             }
 
             if (chosenPOI == null) {
-                for (int i = 0; i < characterThatWillDoJob.currentArea.charactersAtLocation.Count; i++) {
-                    Character character = characterThatWillDoJob.currentArea.charactersAtLocation[i];
+                for (int i = 0; i < characterThatWillDoJob.currentRegion.charactersAtLocation.Count; i++) {
+                    Character character = characterThatWillDoJob.currentRegion.charactersAtLocation[i];
                     if (characterThatWillDoJob != character && characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(character.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
                         chosenPOI = character;
                         break;
@@ -79,8 +79,8 @@ namespace Traits {
             }
 
             if (chosenPOI == null) {
-                for (int i = 0; i < characterThatWillDoJob.currentArea.charactersAtLocation.Count; i++) {
-                    Character character = characterThatWillDoJob.currentArea.charactersAtLocation[i];
+                for (int i = 0; i < characterThatWillDoJob.currentRegion.charactersAtLocation.Count; i++) {
+                    Character character = characterThatWillDoJob.currentRegion.charactersAtLocation[i];
                     if (characterThatWillDoJob != character && characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(character.currentAlterEgo) == RELATIONSHIP_EFFECT.NONE) {
                         chosenPOI = character;
                         break;

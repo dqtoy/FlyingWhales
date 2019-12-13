@@ -94,12 +94,12 @@ namespace Traits {
                     //    }
                     //}
                 }
-                if (!targetCharacter.isDead && targetCharacter.faction != characterThatWillDoJob.faction && targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null) {
+                if (!targetCharacter.isDead && targetCharacter.faction != characterThatWillDoJob.faction) {
                     GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.RESTRAIN);
                     if (currentJob == null) {
                         if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter)) {
-                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, targetCharacter, characterThatWillDoJob);
-                            job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { characterThatWillDoJob.currentArea.prison });
+                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESTRAIN, INTERACTION_TYPE.RESTRAIN_CHARACTER, targetCharacter, characterThatWillDoJob);
+                            //job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { characterThatWillDoJob.currentArea.prison });
                             //job.SetCanBeDoneInLocation(true);
                             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                             return true;

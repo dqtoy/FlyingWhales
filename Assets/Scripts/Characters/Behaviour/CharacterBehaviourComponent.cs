@@ -24,9 +24,9 @@ public abstract class CharacterBehaviourComponent {
         return false;
     }
     public bool CanDoBehaviour(Character character) {
-        if(character.currentArea.region.area.areaMap == null && HasAttribute(BEHAVIOUR_COMPONENT_ATTRIBUTE.INSIDE_SETTLEMENT_ONLY)) { //character.specificLocation.region.area.areaMap - will be changed after specificLocation rework
+        if(character.currentRegion.area == null && HasAttribute(BEHAVIOUR_COMPONENT_ATTRIBUTE.INSIDE_SETTLEMENT_ONLY)) { //character.specificLocation.region.area.areaMap - will be changed after specificLocation rework
             return false;
-        }else if (character.currentArea.region.area.areaMap != null && HasAttribute(BEHAVIOUR_COMPONENT_ATTRIBUTE.OUTSIDE_SETTLEMENT_ONLY)) {
+        }else if (character.currentRegion.area != null && HasAttribute(BEHAVIOUR_COMPONENT_ATTRIBUTE.OUTSIDE_SETTLEMENT_ONLY)) {
             return false;
         }
         return true;

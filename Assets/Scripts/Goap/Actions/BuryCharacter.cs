@@ -23,7 +23,7 @@ public class BuryCharacter : GoapAction {
         if (otherData != null && otherData.Length == 1 && otherData[0] is LocationStructure) {
             return otherData[0] as LocationStructure;
         } else {
-            return actor.currentArea.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY);
+            return actor.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY);
         }
     }
     protected override void ConstructBasePreconditionsAndEffects() {
@@ -116,7 +116,7 @@ public class BuryCharacter : GoapAction {
             if (targetCharacter.grave != null) {
                 return false;
             }
-            return actor.currentArea.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) != null;
+            return actor.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) != null;
         }
         return false;
     }

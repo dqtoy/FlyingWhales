@@ -179,7 +179,7 @@ public class ActualGoapNode {
                 targetTile = actor.gridTileLocation;
                 actor.PerformGoapAction();
             } else if (action.actionLocationType == ACTION_LOCATION_TYPE.NEARBY) {
-                List<LocationGridTile> choices = actor.currentArea.areaMap.GetTilesInRadius(actor.gridTileLocation, 3);
+                List<LocationGridTile> choices = actor.currentRegion.area.areaMap.GetTilesInRadius(actor.gridTileLocation, 3);
                 if (choices.Count > 0) {
                     targetTile = choices[Utilities.rng.Next(0, choices.Count)];
                     actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);

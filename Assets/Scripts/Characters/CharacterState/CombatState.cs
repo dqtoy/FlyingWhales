@@ -391,7 +391,7 @@ public class CombatState : CharacterState {
             //stateComponent.character.PrintLogIfActive(log);
             stateComponent.character.marker.RemoveHostileInRange(currentClosestHostile);
         }
-        else if (currentClosestHostile.currentArea != stateComponent.character.currentArea) {
+        else if (currentClosestHostile.currentRegion != stateComponent.character.currentRegion) {
             //log += "\nCurrent closest hostile is already in another location or is travelling to one, removing hostile in hostile list...";
             //stateComponent.character.PrintLogIfActive(log);
             stateComponent.character.marker.RemoveHostileInRange(currentClosestHostile);

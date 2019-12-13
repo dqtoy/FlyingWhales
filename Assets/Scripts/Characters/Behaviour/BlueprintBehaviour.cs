@@ -10,7 +10,7 @@ public class BlueprintBehaviour : CharacterBehaviourComponent {
 
     public override bool TryDoBehaviour(Character character, ref string log) {
         log += $"\n-{character.name} will try to place blueprint";
-        if (character.isAtHomeRegion && character.homeArea.GetNumberOfJobsWith(JOB_TYPE.BUILD_BLUEPRINT) < 2 && HasCharacterWithPlaceBlueprintJobInSettlement(character.homeArea) == false) {
+        if (character.isAtHomeRegion && character.homeRegion.area != null && character.homeRegion.area.GetNumberOfJobsWith(JOB_TYPE.BUILD_BLUEPRINT) < 2 && HasCharacterWithPlaceBlueprintJobInSettlement(character.homeRegion.area) == false) {
             log += $"\n-{character.name} will roll for blueprint placement.";
             int chance = 35;
             int roll = Random.Range(0, 100);
@@ -26,7 +26,7 @@ public class BlueprintBehaviour : CharacterBehaviourComponent {
 
                 LocationStructureObject lso = chosenStructurePrefab.GetComponent<LocationStructureObject>();
                 BuildSpotTileObject chosenBuildingSpot;
-                if (character.currentArea.areaMap.TryGetValidBuildSpotTileObjectForStructure(lso, out chosenBuildingSpot) == false) {
+                if (character.homeRegion.area.areaMap.TryGetValidBuildSpotTileObjectForStructure(lso, out chosenBuildingSpot) == false) {
                     log += $"\n-Could not find spot that can house new structure. Abandoning...";
                     return false;
                 }

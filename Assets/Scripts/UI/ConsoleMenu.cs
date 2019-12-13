@@ -140,7 +140,7 @@ public class ConsoleMenu : UIMenu {
         text += "\n<b>Home Location:</b> " + character.homeStructure?.ToString() ?? "None";
 
         text += "\n<b>LOCATION INFO:</b>";
-        text += "\n\t<b>Area Location:</b> " + character.currentArea?.name ?? "None";
+        text += "\n\t<b>Region Location:</b> " + character.currentRegion?.name ?? "None";
         text += "\n\t<b>Structure Location:</b> " + character.currentStructure?.ToString() ?? "None";
         text += "\n\t<b>Grid Location:</b> " + character.gridTileLocation?.localPlace.ToString() ?? "None";
 

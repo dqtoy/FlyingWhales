@@ -363,7 +363,7 @@ public class AreaInfoUI : UIMenu {
         //List<LandmarkCharacterItem> nonTravellingResidents = new List<LandmarkCharacterItem>();
         for (int i = 0; i < characterItems.Count; i++) {
             CharacterNameplateItem currItem = characterItems[i];
-            if (currItem.character.homeArea != null && activeTile.id == currItem.character.homeArea.id) {
+            if (currItem.character.homeRegion.area != null && activeTile.id == currItem.character.homeRegion.coreTile.id) {
                 residents.Add(currItem);
             } else {
                 visitors.Add(currItem);

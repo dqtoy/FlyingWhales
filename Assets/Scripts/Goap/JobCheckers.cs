@@ -94,7 +94,7 @@ public partial class InteractionManager {
             //    }
             //}
             if (character.isFactionless) {
-                return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea &&
+                return character.race == targetCharacter.race && character.homeRegion == targetCharacter.homeRegion &&
                        !targetCharacter.relationshipContainer.HasRelationshipWith(character, RELATIONSHIP_TRAIT.ENEMY);
             }
             return !character.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo,
@@ -115,7 +115,7 @@ public partial class InteractionManager {
             //    //}
             //}
             if (character.isFactionless) {
-                return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea &&
+                return character.race == targetCharacter.race && character.homeRegion == targetCharacter.homeRegion &&
                        !targetCharacter.relationshipContainer.HasRelationshipWith(character, RELATIONSHIP_TRAIT.ENEMY);
             }
             return !character.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo,
@@ -138,7 +138,7 @@ public partial class InteractionManager {
 
             //}
             if (character.isFactionless) {
-                return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea &&
+                return character.race == targetCharacter.race && character.homeRegion == targetCharacter.homeRegion &&
                        !targetCharacter.relationshipContainer.HasRelationshipWith(character, RELATIONSHIP_TRAIT.ENEMY);
             }
             return !character.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo,
@@ -148,7 +148,7 @@ public partial class InteractionManager {
     }
     public bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter) {
         if (character.isAtHomeRegion && !character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL) &&
-            character.traitContainer.GetNormalTrait<Trait>("Coward") == null && character.currentArea.prison != null) {
+            character.traitContainer.GetNormalTrait<Trait>("Coward") == null && character.currentRegion.area.prison != null) {
             return character.role.roleType == CHARACTER_ROLE.SOLDIER &&
                    character.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) !=
                    RELATIONSHIP_EFFECT.POSITIVE;
@@ -156,13 +156,16 @@ public partial class InteractionManager {
         return false;
     }
     public bool CanCharacterTakeRestrainJob(Character character, Character targetCharacter) {
-        return targetCharacter.faction != character.faction && character.isAtHomeRegion &&
-               character.isPartOfHomeFaction && character.currentArea.prison != null
-               && (character.role.roleType == CHARACTER_ROLE.SOLDIER ||
-                   character.role.roleType == CHARACTER_ROLE.CIVILIAN ||
-                   character.role.roleType == CHARACTER_ROLE.ADVENTURER)
-               && character.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) !=
-               RELATIONSHIP_EFFECT.POSITIVE && !character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL);
+        return character.faction != targetCharacter.faction
+            && character.faction.GetRelationshipWith(targetCharacter.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE 
+            && character.isAtHomeRegion
+            && character.isPartOfHomeFaction && character.currentRegion.area.prison != null
+            && (character.role.roleType == CHARACTER_ROLE.SOLDIER ||
+            character.role.roleType == CHARACTER_ROLE.CIVILIAN ||
+            character.role.roleType == CHARACTER_ROLE.ADVENTURER)
+            && character.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.POSITIVE 
+            && !character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)
+            && targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null;
     }
     public bool CanCharacterTakeRepairJob(Character character) {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER ||
@@ -180,7 +183,7 @@ public partial class InteractionManager {
                RELATIONSHIP_EFFECT.NEGATIVE;
     }
     public bool CanCharacterTakeRestrainedFeedJob(Character sourceCharacter, Character character) {
-        if (sourceCharacter.currentArea.region.IsResident(character)) {
+        if (sourceCharacter.currentRegion.IsResident(character)) {
             if (!character.isFactionless) {
                 return character.role.roleType == CHARACTER_ROLE.SOLDIER ||
                        character.role.roleType == CHARACTER_ROLE.CIVILIAN;

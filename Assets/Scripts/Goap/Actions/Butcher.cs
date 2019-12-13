@@ -41,7 +41,7 @@ public class Butcher : GoapAction {
         return new GoapActionInvalidity(defaultTargetMissing, stateName);
     }
     private bool IsTargetMissing(Character actor, IPointOfInterest poiTarget) {
-        return poiTarget.gridTileLocation == null || actor.currentArea != poiTarget.currentArea
+        return poiTarget.gridTileLocation == null || actor.currentRegion != poiTarget.currentRegion
               || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) || (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER && !(poiTarget as Character).isDead);
     }
     #endregion

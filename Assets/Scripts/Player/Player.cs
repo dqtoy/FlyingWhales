@@ -66,11 +66,11 @@ public class Player : ILeader {
     public GENDER gender {
         get { return GENDER.MALE; }
     }
-    public Area currentArea {
-        get { return playerFaction.mainRegion.area; }
+    public Region currentRegion {
+        get { return playerFaction.mainRegion; }
     }
-    public Area homeArea {
-        get { return playerFaction.mainRegion.area; }
+    public Region homeRegion {
+        get { return playerFaction.mainRegion; }
     }
     public List<Character> allOwnedCharacters {
         get { return minions.Select(x => x.character).ToList(); }
@@ -1371,7 +1371,7 @@ public class Player : ILeader {
         bool stillHasResidents = false;
         for (int i = 0; i < currentAreaBeingInvaded.region.residents.Count; i++) { //Changed checking to faction members, because some characters may still consider the area as their home, but are no longer part of the faction
             Character currCharacter = currentAreaBeingInvaded.region.residents[i];
-            if (currCharacter.currentArea == currentAreaBeingInvaded && currCharacter.IsAble()) {
+            if (currCharacter.currentRegion.area == currentAreaBeingInvaded && currCharacter.IsAble()) {
                 stillHasResidents = true;
                 break;
             }

@@ -379,7 +379,7 @@ public class GoapPlanJob : JobQueueItem {
             case JOB_TYPE.REMOVE_TRAIT:
                 string text = Utilities.NormalizeStringUpperCaseFirstLetters(jobType.ToString());
                 if (!string.IsNullOrEmpty(goal.conditionKey)) {
-                    text += " " + goal.conditionKey;
+                    text += " " + Utilities.NormalizeStringUpperCaseFirstLetters(goal.conditionKey);
                 }
                 return text;
             case JOB_TYPE.HUNGER_RECOVERY:

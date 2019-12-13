@@ -255,6 +255,9 @@ namespace Inner_Maps {
             }
             return null;
         }
+        public bool IsShowingAreaMap(Area area) {
+            return area != null && isAnAreaMapShowing && area.areaMap == currentlyShowingMap;
+        }
         #endregion
 
         #region UI

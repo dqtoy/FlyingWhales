@@ -51,7 +51,7 @@ public class DropFood : GoapAction {
             if (poiTarget.gridTileLocation == null) {
                 return false;
             }
-            return actor.homeArea.IsSameCoreLocationAs(poiTarget.gridTileLocation.structure.location);
+            return actor.homeRegion.IsSameCoreLocationAs(poiTarget.gridTileLocation.structure.location);
         }
         return false;
     }
@@ -91,6 +91,6 @@ public class DropFoodData : GoapActionData {
         if (poiTarget.gridTileLocation == null) {
             return false;
         }
-        return actor.homeArea == poiTarget.gridTileLocation.structure.location;
+        return actor.homeRegion.IsSameCoreLocationAs(poiTarget.gridTileLocation.structure.location);
     }
 }

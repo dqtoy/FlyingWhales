@@ -181,7 +181,7 @@ public class BerserkedState : CharacterState {
         stateComponent.character.marker.GoTo(PickRandomTileToGoTo(), StartBerserkedMovement);
     }
     private LocationGridTile PickRandomTileToGoTo() {
-        LocationStructure chosenStructure = stateComponent.character.currentArea.GetRandomStructure();
+        LocationStructure chosenStructure = stateComponent.character.currentRegion.GetRandomStructure();
         LocationGridTile chosenTile = chosenStructure.GetRandomTile();
         if (chosenTile != null) {
             return chosenTile;

@@ -40,8 +40,8 @@ public class Sacrifice : CombatAbility {
 
             List<LocationGridTile> tilesInRadius = character.gridTileLocation.parentMap.GetTilesInRadius(character.gridTileLocation, _explosionRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
             List<Character> affectedByExplosion = new List<Character>();
-            for (int i = 0; i < character.currentArea.charactersAtLocation.Count; i++) {
-                Character currCharacter = character.currentArea.charactersAtLocation[i];
+            for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
+                Character currCharacter = character.currentRegion.charactersAtLocation[i];
                 if(currCharacter != character) {
                     if (tilesInRadius.Contains(currCharacter.gridTileLocation) && character.marker.IsCharacterInLineOfSightWith(currCharacter)) {
                         affectedByExplosion.Add(currCharacter);

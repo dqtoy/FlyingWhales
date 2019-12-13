@@ -548,7 +548,7 @@ public class RelationshipManager : MonoBehaviour {
                                 case RELATIONSHIP_TRAIT.RELATIVE:
                                     if (otherCharacter.role.roleType == CHARACTER_ROLE.BEAST) { continue; } //a beast character has no relatives
                                     else {
-                                        if (otherCharacter.currentArea.id == currCharacter.currentArea.id) {
+                                        if (otherCharacter.currentRegion == currCharacter.currentRegion) {
                                             // character is in same location: +50 Weight
                                             weight += 50;
                                         } else {
@@ -570,7 +570,7 @@ public class RelationshipManager : MonoBehaviour {
                                     if (GetValidator(currCharacter).CanHaveRelationship(currCharacter, otherCharacter, currRel) && GetValidator(otherCharacter).CanHaveRelationship(otherCharacter, currCharacter, currRel)) {
                                         if (currCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
                                             //- if non beast, from valid characters, choose based on these weights
-                                            if (otherCharacter.currentArea.id == currCharacter.currentArea.id) {
+                                            if (otherCharacter.currentRegion == currCharacter.currentRegion) {
                                                 //- character is in same location: +500 Weight
                                                 weight += 500;
                                             } else {
@@ -598,7 +598,7 @@ public class RelationshipManager : MonoBehaviour {
                                             }
                                         } else {
                                             //- if beast, from valid characters, choose based on these weights
-                                            if (otherCharacter.currentArea.id == currCharacter.currentArea.id) {
+                                            if (otherCharacter.currentRegion == currCharacter.currentRegion) {
                                                 //- character is in same location: +50 Weight
                                                 weight += 50;
                                             } else {

@@ -100,12 +100,12 @@ public class Bed : TileObject {
     public override void OnTileObjectGainedTrait(Trait trait) {
         base.OnTileObjectGainedTrait(trait);
         if (trait.name == "Burning") {
-            for (int i = 0; i < bedUsers.Length; i++) {
-                if (bedUsers[i] != null) {
-                    Character currUser = bedUsers[i];
-                    Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, currUser, "bed is burning");
-                }
-            }
+            //for (int i = 0; i < bedUsers.Length; i++) {
+            //    if (bedUsers[i] != null) {
+            //        Character currUser = bedUsers[i];
+            //    }
+            //}
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_CHARACTER, this as IPointOfInterest, "bed is burning");
         }
     }
     public override bool CanBeReplaced() {

@@ -44,7 +44,7 @@ public class MoveOutState : CharacterState {
         stateComponent.character.SetPOIState(POI_STATE.ACTIVE);
         stateComponent.character.ownParty.icon.SetIsTravellingOutside(false);
 
-        Area currArea = stateComponent.character.currentArea;
+        Area currArea = stateComponent.character.currentRegion.area;
         if (currArea != null) {
             if (!stateComponent.character.marker.gameObject.activeSelf) {
                 stateComponent.character.marker.PlaceMarkerAt(currArea.innerMap.GetRandomUnoccupiedEdgeTile());
@@ -82,7 +82,7 @@ public class MoveOutState : CharacterState {
     }
     protected override void OnJobSet() {
         base.OnJobSet();
-        Area currArea = stateComponent.character.currentArea;
+        Area currArea = stateComponent.character.currentRegion.area;
         if (currArea != null) {
             //if the character is still at his/her home area, go to the nearest edge tile
             LocationGridTile nearestEdgeTile = stateComponent.character.GetNearestUnoccupiedEdgeTileFromThis();
@@ -105,8 +105,9 @@ public class MoveOutState : CharacterState {
     public override void PerTickInState() { }
     protected override void CreateThoughtBubbleLog() {
         base.CreateThoughtBubbleLog();
+        Region currRegion = stateComponent.character.currentRegion;
         if (thoughtBubbleLog != null) {
-            thoughtBubbleLog.AddToFillers(stateComponent.character.currentArea, stateComponent.character.currentArea.name, LOG_IDENTIFIER.LANDMARK_1);
+            thoughtBubbleLog.AddToFillers(currRegion, currRegion.name, LOG_IDENTIFIER.LANDMARK_1);
         }
     }
     #endregion
@@ -133,7 +134,7 @@ public class MoveOutState : CharacterState {
         //Show log
         Log log = new Log(GameManager.Instance.Today(), "CharacterState", stateName, "left");
         log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(stateComponent.character.currentArea, stateComponent.character.currentArea.name, LOG_IDENTIFIER.LANDMARK_1);
+        log.AddToFillers(stateComponent.character.currentRegion, stateComponent.character.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
         thoughtBubbleLog = log;
@@ -142,7 +143,7 @@ public class MoveOutState : CharacterState {
         chosenRegion = GetRegionToDoJob(stateComponent.character);
         if (chosenRegion != null) {
             stateComponent.character.ownParty.icon.SetIsTravellingOutside(false);
-            stateComponent.character.currentArea.RemoveCharacterFromLocation(stateComponent.character);
+            stateComponent.character.currentRegion.RemoveCharacterFromLocation(stateComponent.character);
             chosenRegion.AddCharacterToLocation(stateComponent.character);
             OnArriveAtRegion();
         } else {
