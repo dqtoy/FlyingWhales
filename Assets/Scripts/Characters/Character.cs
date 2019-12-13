@@ -5062,13 +5062,15 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
     #region Point Of Interest
     //Returns the chosen action for the plan
-    public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost) {
+    public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost, ref string log) {
         GoapAction chosenAction = null;
         if (advertisedActions != null && advertisedActions.Count > 0) {//&& IsAvailable()
             bool isCharacterAvailable = IsAvailable();
             //List<GoapAction> usableActions = new List<GoapAction>();
             GoapAction lowestCostAction = null;
             int currentLowestCost = 0;
+            log += "\n--Choices for " + precondition.ToString();
+            log += "\n--";
             for (int i = 0; i < advertisedActions.Count; i++) {
                 INTERACTION_TYPE currType = advertisedActions[i];
                 GoapAction action = InteractionManager.Instance.goapActionData[currType];
@@ -5092,7 +5094,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                     if (action.CanSatisfyRequirements(actor, this, data)
                         && action.WillEffectsSatisfyPrecondition(precondition, actor, this, data)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
                         int actionCost = action.GetCost(actor, this, data);
-                        if (lowestCostAction == null|| actionCost < currentLowestCost) {
+                        log += "(" + actionCost + ")" + action.goapName + ", ";
+                        if (lowestCostAction == null || actionCost < currentLowestCost) {
                             lowestCostAction = action;
                             currentLowestCost = actionCost;
                         }

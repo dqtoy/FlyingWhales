@@ -27,7 +27,7 @@ public interface IPointOfInterest : ITraitable {
     bool IsAvailable();
     bool RemoveJobTargettingThis(JobQueueItem job);
     LocationGridTile GetNearestUnoccupiedTileFromThis();
-    GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost);
+    GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost, ref string log);
     bool CanAdvertiseActionToActor(Character actor, GoapAction action, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost);
     bool IsValidCombatTarget();
     bool IsStillConsideredPartOfAwarenessByCharacter(Character character);

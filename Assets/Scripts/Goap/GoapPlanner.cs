@@ -304,12 +304,13 @@ public class GoapPlanner {
         //Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = actor.gridTileLocation.parentMap.location.coreTile.region.awareness;
         Dictionary<INTERACTION_TYPE, object[]> otherData = job.otherData;
         List<GoapNode> rawPlan = null; //The plan that will be created will be stored here
+        log += "\n--Searching plan for target: " + target.name;
         if (goalEffect.target == GOAP_EFFECT_TARGET.TARGET) {
             //if precondition's target is TARGET, then the one who will advertise must be the target only
             int cost = 0;
             //Get action with the lowest cost that the actor can do that satisfies the goal effect
             if (target == job.targetPOI || target.IsStillConsideredPartOfAwarenessByCharacter(actor)) {  //POI must either be the job's target or the actor is still aware of it
-                GoapAction currentAction = target.AdvertiseActionsToActor(actor, goalEffect, otherData, ref cost);
+                GoapAction currentAction = target.AdvertiseActionsToActor(actor, goalEffect, otherData, ref cost, ref log);
                 if (currentAction != null) {
                     //If an action is found, make it the goal node and start building the plan
                     GoapNode goalNode = new GoapNode(cost, 0, currentAction, target);
@@ -322,7 +323,8 @@ public class GoapPlanner {
             GoapAction lowestCostAction = null;
             IPointOfInterest lowestCostTarget = null;
             int lowestCost = 0;
-
+            log += "\n--Choices for " + goalEffect.ToString();
+            log += "\n--";
             foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<GoapAction>> kvp in allGoapActionAdvertisements) {
                 //First loop through all actions that can be advertised (it is grouped by the poi type that can advertise the actions)
                 if (awareness.ContainsKey(kvp.Key)) {
@@ -350,6 +352,7 @@ public class GoapPlanner {
                                     bool canDoAction = poiTarget.CanAdvertiseActionToActor(actor, currentAction, otherData, ref cost)
                                         && currentAction.WillEffectsSatisfyPrecondition(goalEffect, actor, poiTarget, otherActionData);
                                     if (canDoAction) {
+                                        log += "(" + cost + ")" + currentAction.goapName + ", ";
                                         if (lowestCostAction == null || cost < lowestCost) {
                                             lowestCostAction = currentAction;
                                             lowestCostTarget = poiTarget;
@@ -365,6 +368,7 @@ public class GoapPlanner {
                                     bool canDoAction = poiTarget.CanAdvertiseActionToActor(actor, currentAction, otherData, ref cost)
                                         && currentAction.WillEffectsSatisfyPrecondition(goalEffect, actor, poiTarget, otherActionData);
                                     if (canDoAction) {
+                                        log += "(" + cost + ")" + currentAction.goapName + ", ";
                                         if (lowestCostAction == null || cost < lowestCost) {
                                             lowestCostAction = currentAction;
                                             lowestCostTarget = poiTarget;
@@ -415,6 +419,7 @@ public class GoapPlanner {
             }
         }
         int cost = goalAction.GetCost(actor, target, data);
+        log += "\n--Searching plan for target: " + target.name + " with goal action (" + cost + ")" + goalAction.goapName;
         GoapNode goalNode = new GoapNode(cost, 0, goalAction, target);
         BuildGoapTree(goalNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness, ref log); //, ref log
         if (rawPlan != null && rawPlan.Count > 0) {
@@ -559,7 +564,7 @@ public class GoapPlanner {
         , Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness, ref string log) { //
         GoapAction action = node.action;
         IPointOfInterest target = node.target;
-        log += "\nAdding node to raw plan: " + node.action.goapName;
+        log += "\n--Adding node to raw plan: " + node.action.goapName;
         rawPlan.Add(node);
         List<Precondition> preconditions = null;
         if (job.otherData != null) {
@@ -574,7 +579,7 @@ public class GoapPlanner {
             preconditions = action.basePreconditions;
         }
         if (preconditions.Count > 0) {
-            log += "\nNode " + node.action.goapName + " has preconditions: " + preconditions.Count;
+            log += "\n--Node " + node.action.goapName + " has preconditions: " + preconditions.Count;
             //get other data for current action
             object[] preconditionActionData = null;
             if (job.otherData != null) {
@@ -588,32 +593,34 @@ public class GoapPlanner {
             for (int i = 0; i < preconditions.Count; i++) {
                 Precondition precondition = preconditions[i];
                 if (!precondition.CanSatisfyCondition(actor, target, preconditionActionData)) {
-                    log += "\nCould not satisfy condition " + i + ", will look for action to satisfy it...";
                     GoapEffect preconditionEffect = precondition.goapEffect;
+                    log += "\n--Could not satisfy condition " + preconditionEffect.ToString() + ", will look for action to satisfy it...";
                     if (preconditionEffect.target == GOAP_EFFECT_TARGET.TARGET) {
                         //if precondition's target is the target, then the one who will advertise must be the target only
                         int cost = 0;
                         GoapAction currentAction = null;
                         if (target == job.targetPOI || target.IsStillConsideredPartOfAwarenessByCharacter(actor)) { //POI must either be the job's target or the actor is still aware of it
-                            currentAction = target.AdvertiseActionsToActor(actor, preconditionEffect, job.otherData, ref cost);
+                            currentAction = target.AdvertiseActionsToActor(actor, preconditionEffect, job.otherData, ref cost, ref log);
                         } else {
-                            log += "\n" + target.name + " is not the job's target and the actor is not aware of it";
+                            log += "\n--" + target.name + " is not the job's target and the actor is not aware of it";
                         }
                         if (currentAction != null) {
-                            log += "\nFound action: " + currentAction.goapName + ", creating new node...";
+                            log += "\n--Found action: " + currentAction.goapName + ", creating new node...";
                             GoapNode leafNode = new GoapNode(cost, node.level + 1, currentAction, target);
                             BuildGoapTree(leafNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness, ref log); //
                         } else {
                             //Fail - rawPlan must be set to null so the plan will fail
                             rawPlan.Clear();
                             //rawPlan = null;
-                            log += "\nCould not find action to satisfy precondition, setting raw plan to null and exiting goap tree...";
+                            log += "\n--Could not find action to satisfy precondition, setting raw plan to null and exiting goap tree...";
                             return;
                         }
                     } else if (preconditionEffect.target == GOAP_EFFECT_TARGET.ACTOR) {
                         GoapAction lowestCostAction = null;
                         IPointOfInterest lowestCostTarget = null;
                         int lowestCost = 0;
+                        log += "\n--Choices for " + preconditionEffect.ToString();
+                        log += "\n--";
                         foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<GoapAction>> kvp in allGoapActionAdvertisements) {
                             if (awareness.ContainsKey(kvp.Key)) {
                                 List<GoapAction> actionList = kvp.Value;
@@ -642,6 +649,7 @@ public class GoapPlanner {
                                                 bool canDoAction = poiTarget.CanAdvertiseActionToActor(actor, currentAction, job.otherData, ref cost)
                                                     && currentAction.WillEffectsSatisfyPrecondition(preconditionEffect, actor, poiTarget, otherActionData);
                                                 if (canDoAction) {
+                                                    log += "(" + cost + ")" + currentAction.goapName + ", ";
                                                     if (lowestCostAction == null || cost < lowestCost) {
                                                         lowestCostAction = currentAction;
                                                         lowestCostTarget = poiTarget;
@@ -657,6 +665,7 @@ public class GoapPlanner {
                                                 bool canDoAction = poiTarget.CanAdvertiseActionToActor(actor, currentAction, job.otherData, ref cost)
                                                     && currentAction.WillEffectsSatisfyPrecondition(preconditionEffect, actor, poiTarget, otherActionData);
                                                 if (canDoAction) {
+                                                    log += "(" + cost + ")" + currentAction.goapName + ", ";
                                                     if (lowestCostAction == null || cost < lowestCost) {
                                                         lowestCostAction = currentAction;
                                                         lowestCostTarget = poiTarget;
@@ -670,14 +679,14 @@ public class GoapPlanner {
                             }
                         }
                         if(lowestCostAction != null) {
-                            log += "\nFound action: " + lowestCostAction.goapName + ", creating new node...";
+                            log += "\n--Found action: " + lowestCostAction.goapName + ", creating new node...";
                             GoapNode leafNode = new GoapNode(lowestCost, node.level + 1, lowestCostAction, lowestCostTarget);
                             BuildGoapTree(leafNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness, ref log); //, ref log
                         } else {
                             //Fail - rawPlan must be set to null so the plan will fail
                             rawPlan.Clear();
                             //rawPlan = null;
-                            log += "\nCould not find action to satisfy precondition, setting raw plan to null and exiting goap tree...";
+                            log += "\n--Could not find action to satisfy precondition, setting raw plan to null and exiting goap tree...";
                             return;
                         }
                         //foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness in actor.awareness) {
@@ -695,11 +704,11 @@ public class GoapPlanner {
                         //}
                     }
                 } else {
-                    log += "\nCondition " + i + " satisfied, checking next precondition...";
+                    log += "\n--Condition " + i + " satisfied, checking next precondition...";
                 }
             }
         } else {
-            log += "\nNode " + node.action.goapName + " has no preconditions, exiting goap tree...";
+            log += "\n--Node " + node.action.goapName + " has no preconditions, exiting goap tree...";
         }
         //if (parent == null) {
         //    return false;
