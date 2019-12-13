@@ -41,6 +41,9 @@
     #region State Effects
     public void PreAttackSuccess(ActualGoapNode goapNode) {
         goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.structure.location, goapNode.poiTarget.gridTileLocation.structure.location.name, LOG_IDENTIFIER.LANDMARK_1);
+        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.structure.location.coreTile.region, 
+            Utilities.NormalizeString(goapNode.poiTarget.gridTileLocation.structure.location.coreTile.region.mainLandmark.specificLandmarkType.ToString()),
+            LOG_IDENTIFIER.STRING_1);
     }
     public void AfterAttackSuccess(ActualGoapNode goapNode) {
         LandmarkManager.Instance.CreateNewLandmarkOnTile(goapNode.poiTarget.gridTileLocation.structure.location.coreTile, LANDMARK_TYPE.NONE, false);
