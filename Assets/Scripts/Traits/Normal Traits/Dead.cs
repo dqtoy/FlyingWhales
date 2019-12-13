@@ -36,7 +36,8 @@ namespace Traits {
         public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
             if (traitOwner is Character) {
                 Character targetCharacter = traitOwner as Character;
-                if (responsibleCharacter != characterThatWillDoJob && targetCharacter.race != RACE.SKELETON && !(targetCharacter is Summon)) {
+                if (responsibleCharacter != characterThatWillDoJob && targetCharacter.race != RACE.SKELETON && !(targetCharacter is Summon) 
+                    && characterThatWillDoJob.currentRegion.HasStructure(STRUCTURE_TYPE.CEMETERY)) { //Do not create bury job if there is no cemetery
                     GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.BURY);
                     if (currentJob == null) {
                         //buryJob.AllowDeadTargets();
