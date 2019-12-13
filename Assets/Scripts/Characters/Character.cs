@@ -118,6 +118,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
     #region getters / setters
     public virtual string name => _firstName;
+    public string nameWithID => name;
     public string raceClassName {
         get {
             if (Utilities.IsRaceBeast(race)) {
@@ -5094,7 +5095,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                     if (action.CanSatisfyRequirements(actor, this, data)
                         && action.WillEffectsSatisfyPrecondition(precondition, actor, this, data)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
                         int actionCost = action.GetCost(actor, this, data);
-                        log += "(" + actionCost + ")" + action.goapName + ", ";
+                        log += "(" + actionCost + ")" + action.goapName + "-" + nameWithID + ", ";
                         if (lowestCostAction == null || actionCost < currentLowestCost) {
                             lowestCostAction = action;
                             currentLowestCost = actionCost;

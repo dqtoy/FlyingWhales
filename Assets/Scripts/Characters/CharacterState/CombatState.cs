@@ -465,7 +465,7 @@ public class CombatState : CharacterState {
                 //if the character that was hit is not the actual target of this combat, do not make him/her enter combat state
                 if (damageable == currentClosestHostile) {
                     //When the target is hit and it is still alive, add hostile
-                    hitCharacter.marker.AddHostileInRange(stateComponent.character, false, isLethal: stateComponent.character.marker.IsLethalCombatForTarget(hitCharacter));
+                    hitCharacter.marker.AddHostileInRange(stateComponent.character, false, isLethal: stateComponent.character.marker.IsLethalCombatForTarget(hitCharacter), gotHit: true);
                     //also add the hit character as degraded rel, so that when the character that owns this state is hit by the other character because of retaliation, relationship degradation will no longer happen
                     //Reference: https://trello.com/c/mvLDnyBf/2875-retaliation-should-not-trigger-relationship-degradation
                     //TODO:

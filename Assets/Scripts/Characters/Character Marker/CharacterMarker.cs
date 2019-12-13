@@ -1064,12 +1064,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #endregion
 
     #region Hosility Collision
-    public bool AddHostileInRange(IPointOfInterest poi, bool checkHostility = true, bool processCombatBehavior = true, bool isLethal = true) {
+    public bool AddHostileInRange(IPointOfInterest poi, bool checkHostility = true, bool processCombatBehavior = true, bool isLethal = true, bool gotHit = false) {
         if (!hostilesInRange.Contains(poi)) {
             //&& !this.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) 
             if (this.character.traitContainer.GetNormalTrait<Trait>("Zapped") == null && !this.character.isFollowingPlayerInstruction && CanAddPOIAsHostile(poi, checkHostility, isLethal)) {
                 string transferReason = string.Empty;
-                if (!WillCharacterTransferEngageToFleeList(isLethal, ref transferReason)) {
+                if (!WillCharacterTransferEngageToFleeList(isLethal, ref transferReason, gotHit)) {
                     hostilesInRange.Add(poi);
                     if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                         lethalCharacters.Add(poi as Character, isLethal);
@@ -1085,6 +1085,18 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     return AddAvoidInRange(poi, processCombatBehavior, transferReason);
                 }
                 return true;
+            }
+        } else {
+            if (gotHit) {
+                //When a poi hits this character, the behavior would be to add that poi to this character's hostile list so he can attack back
+                //However, there are times that the attacker is already in the hostile list
+                //If that happens, the behavior would be to evaluate the situation if the character will avoid or continue attacking
+                string transferReason = string.Empty;
+                if (WillCharacterTransferEngageToFleeList(isLethal, ref transferReason, gotHit)) {
+                    Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, character, transferReason);
+                    willProcessCombat = true;
+                }
+
             }
         }
         return false;
@@ -1530,12 +1542,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         return false;
     }
-    public bool WillCharacterTransferEngageToFleeList(bool isLethal, ref string reason) {
+    public bool WillCharacterTransferEngageToFleeList(bool isLethal, ref string reason, bool gotHit) {
         bool willTransfer = false;
-        if(character.traitContainer.GetNormalTrait<Trait>("Coward") != null && character.traitContainer.GetNormalTrait<Trait>("Berserked") == null) {
+        if (gotHit && character.traitContainer.GetNormalTrait<Trait>("Coward") != null && character.traitContainer.GetNormalTrait<Trait>("Berserked") == null) {
             willTransfer = true;
             reason = "coward";
-        } else if (!isLethal && !HasLethalCombatTarget()) {
+        } else
+        if (!isLethal && !HasLethalCombatTarget()) {
             willTransfer = false;
         }
         //- if character is berserked, must not flee
