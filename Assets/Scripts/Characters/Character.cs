@@ -2089,8 +2089,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         if (nearestEdgeTile == null) {
             float nearestDist = -999f;
-            for (int i = 0; i < currentArea.areaMap.allEdgeTiles.Count; i++) {
-                LocationGridTile currTile = currentArea.areaMap.allEdgeTiles[i];
+            for (int i = 0; i < gridTileLocation.parentMap.allEdgeTiles.Count; i++) {
+                LocationGridTile currTile = gridTileLocation.parentMap.allEdgeTiles[i];
                 float dist = Vector2.Distance(currTile.localLocation, currentGridTile.localLocation);
                 if (nearestDist == -999f || dist < nearestDist) {
                     if (currTile.structure != null) {

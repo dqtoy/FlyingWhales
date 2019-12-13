@@ -403,6 +403,15 @@ public class Region : ILocation {
         }
         return false;
     }
+    public bool IsConnectedToRegionThatSatisfies(Func<Region, bool> condition) {
+        for (int i = 0; i < connections.Count; i++) {
+            Region connection = connections[i];
+            if (condition.Invoke(connection)) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Corruption/Invasion
