@@ -574,12 +574,10 @@ public class Region : ILocation {
             if (character.currentStructure == null && area != null && !owner.isPlayerFaction) {
                 throw new System.Exception(character.name + " doesn't have a current structure at " + name);
             }
-            if (character.currentStructure != null && area == null) {
-                throw new System.Exception(character.name + " has a current structure at a location which has no area: " + name);
-            }
-            if (character.currentStructure != null) {
-                character.currentStructure.RemoveCharacterAtLocation(character);
-            }
+            // if (character.currentStructure != null && area == null) {
+            //     throw new System.Exception(character.name + " has a current structure at a location which has no area: " + name);
+            // }
+            character.currentStructure?.RemoveCharacterAtLocation(character);
             character.SetRegionLocation(null);
             Messenger.Broadcast(Signals.CHARACTER_EXITED_REGION, character, this);
             //if (area == null) {

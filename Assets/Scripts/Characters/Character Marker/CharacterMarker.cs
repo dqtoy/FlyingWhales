@@ -158,10 +158,14 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     protected override void OnPointerEnter(Character poi) {
         base.OnPointerEnter(poi);
+        InnerMapManager.Instance.SetCurrentlyHoveredPOI(poi);
         InnerMapManager.Instance.ShowTileData(character.gridTileLocation, character);
     }
     protected override void OnPointerExit(Character poi) {
         base.OnPointerExit(poi);
+        if (InnerMapManager.Instance.currentlyHoveredPoi == poi) {
+            InnerMapManager.Instance.SetCurrentlyHoveredPOI(null);    
+        }
         UIManager.Instance.HideSmallInfo();
     }
     #endregion

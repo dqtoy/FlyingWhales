@@ -21,6 +21,7 @@
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
+        log.AddToFillers(node.actor.faction, node.actor.faction.name, LOG_IDENTIFIER.FACTION_1);
         log.AddToFillers(node.poiTarget.gridTileLocation.parentMap.location.coreTile.region, node.poiTarget.gridTileLocation.parentMap.location.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
     }
     #endregion

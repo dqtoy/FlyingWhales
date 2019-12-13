@@ -9,7 +9,7 @@ using TMPro;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
-
+using UtilityScripts;
 
 public class UIManager : MonoBehaviour {
 
@@ -59,6 +59,7 @@ public class UIManager : MonoBehaviour {
     public GameObject portalPopup;
     public GameObject regionNameTopMenuGO;
     public TextMeshProUGUI regionNameTopMenuText;
+    public HoverHandler regionNameHoverHandler;
 
     [Space(10)]
     [Header("Notification Area")]
@@ -1065,6 +1066,7 @@ public class UIManager : MonoBehaviour {
     }
 
     #region Area Map
+    [Header("Inner Maps")]
     [SerializeField] private Button returnToWorldBtn;
     [SerializeField] private UIHoverPosition returnToWorldBtnTooltipPos;
     private void OnAreaMapOpened(Area area) {
@@ -1073,6 +1075,8 @@ public class UIManager : MonoBehaviour {
         worldUIRaycaster.enabled = false;
         regionNameTopMenuText.text = area.region.name;
         regionNameTopMenuGO.SetActive(true);
+        regionNameHoverHandler.SetOnHoverAction(() => TestingUtilities.ShowLocationInfo(area.region));
+        regionNameHoverHandler.SetOnHoverOutAction(TestingUtilities.HideLocationInfo);
     }
     private void OnAreaMapClosed(Area area) {
         //returnToWorldBtn.interactable = false;

@@ -649,6 +649,7 @@ public class CharacterManager : MonoBehaviour {
                 return asset.characterClassAssets[characterClassName];
             }
         }
+        Debug.LogWarning($"There are no race assets for {characterClassName} {gender.ToString()} {race.ToString()}");
         return null;
     }
     public Sprite GetMarkerHairSprite(GENDER gender) {

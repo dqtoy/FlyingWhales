@@ -87136,6 +87136,7 @@ MonoBehaviour:
   portalPopup: {fileID: 61644417}
   regionNameTopMenuGO: {fileID: 1701809088}
   regionNameTopMenuText: {fileID: 190503514}
+  regionNameHoverHandler: {fileID: 1701809092}
   developerNotificationArea: {fileID: 65978408}
   characterPortraitsParent: {fileID: 1575492443}
   minionsMenuToggle: {fileID: 298877624}
@@ -97622,6 +97623,7 @@ GameObject:
   - component: {fileID: 1701809089}
   - component: {fileID: 1701809091}
   - component: {fileID: 1701809090}
+  - component: {fileID: 1701809092}
   m_Layer: 5
   m_Name: RegionInfo
   m_TagString: Untagged
@@ -97681,6 +97683,30 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1701809088}
+--- !u!114 &1701809092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1701809088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 0
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!1 &1703339036
 GameObject:
   m_ObjectHideFlags: 0

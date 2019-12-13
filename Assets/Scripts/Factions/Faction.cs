@@ -70,6 +70,7 @@ public class Faction {
         ownedLandmarks = new List<BaseLandmark>();
         relationships = new Dictionary<Faction, FactionRelationship>();
         ownedRegions = new List<Region>();
+        bannedCharacters = new List<Character>();
         //recruitableRaces = new List<RACE>();
         //startingFollowers = new List<RACE>();
         history = new List<Log>();
@@ -97,6 +98,7 @@ public class Faction {
         ownedLandmarks = new List<BaseLandmark>();
         relationships = new Dictionary<Faction, FactionRelationship>();
         ownedRegions = new List<Region>();
+        bannedCharacters = new List<Character>();
         //recruitableRaces = new List<RACE>();
         //startingFollowers = new List<RACE>();
         history = new List<Log>();

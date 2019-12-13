@@ -858,14 +858,14 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 1b9f87144055c18468430c28a85f605a, type: 3}
         - defaultSprite: {fileID: 0}
           animationSprites:
-          - {fileID: 21300000, guid: 5ee65e07929259446ab8e9d27bbf9b9e, type: 3}
-          - {fileID: 21300000, guid: 10c3686f03ceaf84dbd2191ff0d11af3, type: 3}
-          - {fileID: 21300000, guid: 04b7e12732b1dee459fd7d4da50b9004, type: 3}
-          - {fileID: 21300000, guid: 4437bb56608a2d64e8ad9a014ae1035d, type: 3}
-          - {fileID: 21300000, guid: 87ef9529584e406408d60ca360c11737, type: 3}
-          - {fileID: 21300000, guid: c89af43a577300d4ba861afc1fa0864e, type: 3}
-          - {fileID: 21300000, guid: ab7a51574e10793468954f11e31a2b05, type: 3}
-          - {fileID: 21300000, guid: 5d6a22d9925708747a569495c981f000, type: 3}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
         - defaultSprite: {fileID: 21300000, guid: 0befebe0af691534a84a7ab6b7cc68c4,
             type: 3}
           animationSprites:
@@ -956,10 +956,10 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 0f21357fda4be1e499606f5958e03ef8, type: 3}
         - defaultSprite: {fileID: 0}
           animationSprites:
-          - {fileID: 21300000, guid: ce8eaf2449655cb408cb4ea67f061974, type: 3}
-          - {fileID: 21300000, guid: 31478b1586bf5f940afb08423824e38e, type: 3}
-          - {fileID: 21300000, guid: a4f685b410ab72e4984c0cf057da5c60, type: 3}
-          - {fileID: 21300000, guid: d6e78854d8bea874da7a7e0ae495ce26, type: 3}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
         - defaultSprite: {fileID: 21300000, guid: b0e17f42f7d966e4982e39dd4c703e9b,
             type: 3}
           animationSprites:
@@ -973,14 +973,14 @@ MonoBehaviour:
           - {fileID: 21300000, guid: c5c1984a784275348b1d4db9888df75c, type: 3}
         - defaultSprite: {fileID: 0}
           animationSprites:
-          - {fileID: 21300000, guid: e35d097e678775248b9ec4ef06c78a40, type: 3}
-          - {fileID: 21300000, guid: b44461f2b46a05844b641b8d6a87a2fa, type: 3}
-          - {fileID: 21300000, guid: 5ed8bc912ecc8ee4693747cca8a05aa4, type: 3}
-          - {fileID: 21300000, guid: dff69e1e92c56e14fa420333630a42ba, type: 3}
-          - {fileID: 21300000, guid: 49feba2e0cd111d44a903f3cdb483022, type: 3}
-          - {fileID: 21300000, guid: 56a40e8ee3ea3804cb269aa0d1a72427, type: 3}
-          - {fileID: 21300000, guid: 969b18d14945a4a42827bc9463bb87ee, type: 3}
-          - {fileID: 21300000, guid: 405896648a6a9684b91e67316481c550, type: 3}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
     femaleAssets:
       gender: 1
       characterClassAssets:
@@ -1063,14 +1063,14 @@ MonoBehaviour:
           - {fileID: 21300000, guid: bb87ea82317e5c04fa969fff7c5d22b9, type: 3}
         - defaultSprite: {fileID: 0}
           animationSprites:
-          - {fileID: 21300000, guid: f45afa27e7c2e63428433d14677844b3, type: 3}
-          - {fileID: 21300000, guid: cc74bbc97de951b4280745dd827a960c, type: 3}
-          - {fileID: 21300000, guid: bef602985589fa44298ce978b67c8505, type: 3}
-          - {fileID: 21300000, guid: 6461da94e73d5d148bdb92cdecdf6bad, type: 3}
-          - {fileID: 21300000, guid: 655adf99554c283499cf9d47c1942389, type: 3}
-          - {fileID: 21300000, guid: 2865f4c4806b9164f91cab71bbc3e488, type: 3}
-          - {fileID: 21300000, guid: 1321fd428afa45246b2692426c7e9626, type: 3}
-          - {fileID: 21300000, guid: 7bfac46c163ee54458f60d8f6184eb06, type: 3}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
         - defaultSprite: {fileID: 21300000, guid: b65d8604235b21349988e3c4ad6c5dee,
             type: 3}
           animationSprites:
@@ -1161,10 +1161,10 @@ MonoBehaviour:
           - {fileID: 21300000, guid: f0677cc27c58ae2459e3a3e354853e6e, type: 3}
         - defaultSprite: {fileID: 0}
           animationSprites:
-          - {fileID: 21300000, guid: d51b610e1fda40d45b002aca181195f8, type: 3}
-          - {fileID: 21300000, guid: 4b29eb21fbe5f2f4684548ceac4ec593, type: 3}
-          - {fileID: 21300000, guid: 6b2549e06c50ac54a9ba849223e4c0fb, type: 3}
-          - {fileID: 21300000, guid: 7cfd49b6ed8ea464cba9439908730c36, type: 3}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
         - defaultSprite: {fileID: 21300000, guid: 8ffa690bb981de44ca312aa33b60d921,
             type: 3}
           animationSprites:
@@ -1178,14 +1178,14 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 242bc3d8f7e1d7443a0364bacf3acaa3, type: 3}
         - defaultSprite: {fileID: 0}
           animationSprites:
-          - {fileID: 21300000, guid: ef690a31298175d4387d59fe31b911bb, type: 3}
-          - {fileID: 21300000, guid: a68c28fc9d0813943b2ebd5b1b6ecf40, type: 3}
-          - {fileID: 21300000, guid: 5799a50572532864584c559779a8b0be, type: 3}
-          - {fileID: 21300000, guid: 2f85e832a45571241b5d722f67467696, type: 3}
-          - {fileID: 21300000, guid: c8a670c9b85eebf4e9843cff4d576182, type: 3}
-          - {fileID: 21300000, guid: 55f5e18c1b1c98642ba6c58f05afacb1, type: 3}
-          - {fileID: 21300000, guid: f8358a6f753ae10468d86ea8a389c9a8, type: 3}
-          - {fileID: 21300000, guid: e3ceb4c83b227434194033d1ef368d3e, type: 3}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
   - raceName: HUMANS
     race: 1
     maleAssets:
@@ -1271,14 +1271,14 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 6a0b1fed9bcf4a74b90112219d11fde8, type: 3}
         - defaultSprite: {fileID: 0}
           animationSprites:
-          - {fileID: 21300000, guid: 4be5c25435a40c3458fc1fa8801dd63c, type: 3}
-          - {fileID: 21300000, guid: 6b271a8c4ab682f4996f457f67dbe21f, type: 3}
-          - {fileID: 21300000, guid: 648f887a8c462e14e9b3b8e947cad3fa, type: 3}
-          - {fileID: 21300000, guid: e79643ac6c83c524c8971ea07333b8cc, type: 3}
-          - {fileID: 21300000, guid: 45b22988c879646488b23dcc2915bc35, type: 3}
-          - {fileID: 21300000, guid: dbc19c69feaff6a49ad02e284efa82ff, type: 3}
-          - {fileID: 21300000, guid: d100023a8cd7a7c43a03530185cb581c, type: 3}
-          - {fileID: 21300000, guid: 954fa787aea3d4541b3818827d7364ef, type: 3}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
         - defaultSprite: {fileID: 21300000, guid: baafac0ffa5564041bef8a690e06ab05,
             type: 3}
           animationSprites:
@@ -1369,10 +1369,10 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 050d8f096ea073a4189ab8fd5e9f2840, type: 3}
         - defaultSprite: {fileID: 0}
           animationSprites:
-          - {fileID: 21300000, guid: 90c0d83e10a64c54cb97b277bddbe68c, type: 3}
-          - {fileID: 21300000, guid: 01e5117d04d78fa4f867869eb6c08070, type: 3}
-          - {fileID: 21300000, guid: e09392e6d677ba143b1c4c5be1739bce, type: 3}
-          - {fileID: 21300000, guid: 69d37d842b2ec0a419bcb4dfb78aae2a, type: 3}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
         - defaultSprite: {fileID: 21300000, guid: ebb641c198cad9b4282583960ba20edc,
             type: 3}
           animationSprites:
@@ -1386,16 +1386,16 @@ MonoBehaviour:
           - {fileID: 21300000, guid: e4b8a9ca84e039b4da1aebbe72b9893d, type: 3}
         - defaultSprite: {fileID: 0}
           animationSprites:
-          - {fileID: 21300000, guid: e5f4ad59327433d41a9061f137fa7eae, type: 3}
-          - {fileID: 21300000, guid: 0e7cdb34ef480354e9ad428b6d9e8723, type: 3}
-          - {fileID: 21300000, guid: 7de92a9a168d7954193f48bc21da419c, type: 3}
-          - {fileID: 21300000, guid: 03bd1ca569c6ab84fb3c72e9d6e016f8, type: 3}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
         - defaultSprite: {fileID: 0}
           animationSprites:
-          - {fileID: 21300000, guid: d1f332aa27640674b96169f5ea7ec243, type: 3}
-          - {fileID: 21300000, guid: 6e98e7305208df84d9a40d1e71f230d0, type: 3}
-          - {fileID: 21300000, guid: dfaabd8072304c74eb5487b3a43d9850, type: 3}
-          - {fileID: 21300000, guid: e1b7a9c4d7d3de24d83f872cbf414216, type: 3}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
     femaleAssets:
       gender: 1
       characterClassAssets:
@@ -1478,10 +1478,10 @@ MonoBehaviour:
           - {fileID: 21300000, guid: ea5fae633571eee4abd9daaccaaaad4c, type: 3}
         - defaultSprite: {fileID: 0}
           animationSprites:
-          - {fileID: 21300000, guid: 633fb2e8b5d890c40959c1167376d4be, type: 3}
-          - {fileID: 21300000, guid: 586fbee221a9f5b47ad90762d0ab9ec9, type: 3}
-          - {fileID: 21300000, guid: 4110c4df7cf393d47992fe735f160123, type: 3}
-          - {fileID: 21300000, guid: da7bd83586668da41b63bd5f848053c8, type: 3}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
         - defaultSprite: {fileID: 21300000, guid: 9b6c7f893c796c44e9b2b1955010e1da,
             type: 3}
           animationSprites:
@@ -1572,8 +1572,8 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 16079a2ed988cb54b8a472c2f97cff5e, type: 3}
         - defaultSprite: {fileID: 0}
           animationSprites:
-          - {fileID: 21300000, guid: 8a53246ff71bce64fa31c217e6f62938, type: 3}
-          - {fileID: 21300000, guid: bf4e213b0dffc5f478831c2182097cdc, type: 3}
+          - {fileID: 0}
+          - {fileID: 0}
         - defaultSprite: {fileID: 21300000, guid: 3d9afd0c084ec324b8762f83b2370daa,
             type: 3}
           animationSprites:
@@ -1587,10 +1587,10 @@ MonoBehaviour:
           - {fileID: 21300000, guid: e89c694b84381334982ebe8af4c2fa44, type: 3}
         - defaultSprite: {fileID: 0}
           animationSprites:
-          - {fileID: 21300000, guid: 4ebda2420b6477148ab6436cfa58dbc0, type: 3}
-          - {fileID: 21300000, guid: 4bc20e6069bd2a34399027e4cc618bc2, type: 3}
-          - {fileID: 21300000, guid: 6fc6aed1faff671429136cccc8493b42, type: 3}
-          - {fileID: 21300000, guid: bc6a8fc8cedacc64ea511731cf7d25a6, type: 3}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
   - raceName: SKELETON
     race: 13
     maleAssets:
@@ -1688,14 +1688,14 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 8e2d59d9ca419f74bb629b1dc2e28947, type: 3}
         - defaultSprite: {fileID: 0}
           animationSprites:
-          - {fileID: 21300000, guid: 4e850a7d3fa804d49a4d4e84d90090d9, type: 3}
-          - {fileID: 21300000, guid: aa2bf9dc843539340b41439e5c355ce3, type: 3}
-          - {fileID: 21300000, guid: 293df97b4c0c8414a860290b2568b5f9, type: 3}
-          - {fileID: 21300000, guid: 3f1cb96fb7de9f3419054ea070cbdd50, type: 3}
-          - {fileID: 21300000, guid: 34b5ba703c001de48a65a24aa0ed24a7, type: 3}
-          - {fileID: 21300000, guid: c1e8173cc0dd96a4a84b2a6e0cbc08ff, type: 3}
-          - {fileID: 21300000, guid: cec21c0962de2de42875ca06574966bb, type: 3}
-          - {fileID: 21300000, guid: 75b558212c650bf4bb846ea1e9267bf5, type: 3}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
         - defaultSprite: {fileID: 21300000, guid: 2533042823c73a646bb837d2d5ec0599,
             type: 3}
           animationSprites:
@@ -1802,14 +1802,14 @@ MonoBehaviour:
           - {fileID: 21300000, guid: bbd688223d82d2a4e9727e3842aed479, type: 3}
         - defaultSprite: {fileID: 0}
           animationSprites:
-          - {fileID: 21300000, guid: ec1777a0131f34746afc99aeccc65ff7, type: 3}
-          - {fileID: 21300000, guid: 5087feb957cb13f45ad920b8d95c4ea0, type: 3}
-          - {fileID: 21300000, guid: dadc537994b403d4da09916a18be23bc, type: 3}
-          - {fileID: 21300000, guid: bff950d686036f54b90e4dc0c43232b8, type: 3}
-          - {fileID: 21300000, guid: 0f4ee2f7c4c924f4aa59904da1bcd145, type: 3}
-          - {fileID: 21300000, guid: b6c44beaf665b20428ca01c220f4c9af, type: 3}
-          - {fileID: 21300000, guid: 8f461cc9b8e5b49468a0d560db965a78, type: 3}
-          - {fileID: 21300000, guid: f4d34e22bb7b2c9469078519a2e751fc, type: 3}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
     femaleAssets:
       gender: 1
       characterClassAssets:
@@ -1905,14 +1905,14 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 7283203b18e80fc41a62a84137502bf4, type: 3}
         - defaultSprite: {fileID: 0}
           animationSprites:
-          - {fileID: 21300000, guid: 9eff2f1444285b74da149ab93b9fb61b, type: 3}
-          - {fileID: 21300000, guid: 46a58c0af56f68247a495f924ab15246, type: 3}
-          - {fileID: 21300000, guid: 2b40f6c68a757c841a96ee1a88066aa7, type: 3}
-          - {fileID: 21300000, guid: b02375d54f85ee047937e94d27999d98, type: 3}
-          - {fileID: 21300000, guid: 08807c7472456284d9bb74351e54115b, type: 3}
-          - {fileID: 21300000, guid: 0f3f358ef35799d49b26f0a31d581b1f, type: 3}
-          - {fileID: 21300000, guid: fb241157d0acaf9489e7b66f33acdb89, type: 3}
-          - {fileID: 21300000, guid: a99fbf3c2d628e641a599d310557d48c, type: 3}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
         - defaultSprite: {fileID: 21300000, guid: d617895ea701b244496a7f7e85f9d0f7,
             type: 3}
           animationSprites:
@@ -2019,14 +2019,14 @@ MonoBehaviour:
           - {fileID: 21300000, guid: d09f3bb096f7a4a48b0fceef8ea30afa, type: 3}
         - defaultSprite: {fileID: 0}
           animationSprites:
-          - {fileID: 21300000, guid: 4766fe025a1999641812f1a01800218f, type: 3}
-          - {fileID: 21300000, guid: 456787d6c0062194d829b374de1af3c6, type: 3}
-          - {fileID: 21300000, guid: 1c26a16f8a9f88f4a956530c24925f51, type: 3}
-          - {fileID: 21300000, guid: 63e0d2a6c27d7ae41864b7dacefe7b16, type: 3}
-          - {fileID: 21300000, guid: 432a8e1218db7e648ab2da0b7cdfd771, type: 3}
-          - {fileID: 21300000, guid: a498b811ec351cd489b7d303b7b12849, type: 3}
-          - {fileID: 21300000, guid: 36e5f3c88312b10458d14faa9a6234cb, type: 3}
-          - {fileID: 21300000, guid: 5dc440500caad6846a89d0608548f3f3, type: 3}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
+          - {fileID: 0}
   - raceName: WOLF
     race: 10
     maleAssets:
@@ -2079,6 +2079,42 @@ MonoBehaviour:
           animationSprites:
           - {fileID: 21300000, guid: 0ed6bb5a01ff09d419b590feae107432, type: 3}
           - {fileID: 21300000, guid: 738e6a1cce21562458bbdaea08d07482, type: 3}
+  - raceName: Abomination
+    race: 18
+    maleAssets:
+      gender: 0
+      characterClassAssets:
+        m_keys:
+        - Barbarian
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: a21f6902b43448949ad783e9322dc352,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: bff0cdb48f81be2499b3753a213791dd, type: 3}
+          - {fileID: 21300000, guid: 81fb1fe7901b18c478230b0ddfdbcee8, type: 3}
+          - {fileID: 21300000, guid: 6c12b62661e256d46965834837aa7310, type: 3}
+          - {fileID: 21300000, guid: 17118c59ee4992944b9f02cbf8bc26c9, type: 3}
+          - {fileID: 21300000, guid: 9b4cade46fce8d841a3a8767f87d5122, type: 3}
+          - {fileID: 21300000, guid: a8290873b7ea5e74da45504cd305ea7d, type: 3}
+          - {fileID: 21300000, guid: 12b6236243d26c1438300af0d0ca1a15, type: 3}
+          - {fileID: 21300000, guid: eccf621290e865e458b41312a74c6bc5, type: 3}
+    femaleAssets:
+      gender: 1
+      characterClassAssets:
+        m_keys:
+        - Barbarian
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: a21f6902b43448949ad783e9322dc352,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: bff0cdb48f81be2499b3753a213791dd, type: 3}
+          - {fileID: 21300000, guid: 81fb1fe7901b18c478230b0ddfdbcee8, type: 3}
+          - {fileID: 21300000, guid: 6c12b62661e256d46965834837aa7310, type: 3}
+          - {fileID: 21300000, guid: 17118c59ee4992944b9f02cbf8bc26c9, type: 3}
+          - {fileID: 21300000, guid: 9b4cade46fce8d841a3a8767f87d5122, type: 3}
+          - {fileID: 21300000, guid: a8290873b7ea5e74da45504cd305ea7d, type: 3}
+          - {fileID: 21300000, guid: 12b6236243d26c1438300af0d0ca1a15, type: 3}
+          - {fileID: 21300000, guid: eccf621290e865e458b41312a74c6bc5, type: 3}
   baseAnimator: {fileID: 0}
   corpseSprite: {fileID: 21300000, guid: 5255390e6fedf8140a25b567a5f57b6c, type: 3}
   summonSettings:

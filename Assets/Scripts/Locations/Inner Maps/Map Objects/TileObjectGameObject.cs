@@ -55,10 +55,14 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
     }
     protected override void OnPointerEnter(TileObject poi) {
         base.OnPointerEnter(poi);
+        InnerMapManager.Instance.SetCurrentlyHoveredPOI(poi);
         InnerMapManager.Instance.ShowTileData(poi.gridTileLocation);
     }
     protected override void OnPointerExit(TileObject poi) {
         base.OnPointerExit(poi);
+        if (InnerMapManager.Instance.currentlyHoveredPoi == poi) {
+            InnerMapManager.Instance.SetCurrentlyHoveredPOI(null);
+        }
         UIManager.Instance.HideSmallInfo();
     }
     #endregion

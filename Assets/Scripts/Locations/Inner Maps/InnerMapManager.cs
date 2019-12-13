@@ -64,19 +64,7 @@ namespace Inner_Maps {
         public List<InnerTileMap> innerMaps { get; private set; }
         public bool isAnAreaMapShowing => currentlyShowingMap != null;
 
-        public IPointOfInterest currentlyHoveredPoi {
-            get {
-                if (isAnAreaMapShowing) {
-                    if (currentlyShowingMap.hoveredCharacter != null) {
-                        return currentlyShowingMap.hoveredCharacter;
-                    } else if (GetTileFromMousePosition() != null) {
-                        LocationGridTile hoveredTile = GetTileFromMousePosition();
-                        return hoveredTile.objHere;
-                    }
-                }
-                return null;
-            }
-        }
+        public IPointOfInterest currentlyHoveredPoi { get; private set; }
         public LocationGridTile currentlyHoveredTile => GetTileFromMousePosition();
         public List<LocationGridTile> currentlyHighlightedTiles { get; private set; }
 
@@ -854,6 +842,12 @@ namespace Inner_Maps {
         }
         public WallAsset GetWallAsset(RESOURCE wallResource, string assetName) {
             return wallResourceAssets[wallResource].GetWallAsset(assetName);
+        }
+        #endregion
+
+        #region Data Setting
+        public void SetCurrentlyHoveredPOI(IPointOfInterest poi) {
+            currentlyHoveredPoi = poi;
         }
         #endregion
     }

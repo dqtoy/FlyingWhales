@@ -33,6 +33,7 @@ namespace Inner_Maps {
         public ILocation location { get; private set; }
         public GridGraph pathfindingGraph { get; set; }
         public Vector3 worldPos { get; private set; }
+        public abstract bool isSettlementMap { get; }
 
         protected void GenerateGrid(int width, int height, ILocation location) {
             this.width = width;

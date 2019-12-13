@@ -1501,7 +1501,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //(sum from items in his inventory and in his home whose owner is this character). 
         //Reduce this chance by 3% for every item he owns (disregard stolen items)
         //NOTE: If he already has all items he needs, he doesnt need to do this job anymore.
-        if (!isFactionless && !jobQueue.HasJob(JOB_TYPE.OBTAIN_ITEM) && !role.HasNeededItems(this)) {
+        if (!isFactionless && !jobQueue.HasJob(JOB_TYPE.OBTAIN_ITEM) && !role.HasNeededItems(this) && isAtHomeRegion) {
             int numOfItemsOwned = GetNumOfItemsOwned();
             if (numOfItemsOwned < 4) {
                 //string obtainSummary = name + " will roll to obtain item.";
@@ -4123,7 +4123,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         return false;
     }
     private void PlanScheduledFullnessRecovery() {
-        if (!needsComponent.hasForcedFullness && needsComponent.fullnessForcedTick != 0 && GameManager.Instance.tick >= needsComponent.fullnessForcedTick && _doNotDisturb <= 0) {
+        if (!needsComponent.hasForcedFullness && needsComponent.fullnessForcedTick != 0 && GameManager.Instance.tick >= needsComponent.fullnessForcedTick && _doNotDisturb <= 0 && needsComponent.doNotGetHungry <= 0) {
             if (!jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING)) {
                 JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY;
                 if (needsComponent.isStarving) {
@@ -4154,7 +4154,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
     }
     private void PlanScheduledTirednessRecovery() {
-        if (!needsComponent.hasForcedTiredness && needsComponent.tirednessForcedTick != 0 && GameManager.Instance.tick >= needsComponent.tirednessForcedTick && _doNotDisturb <= 0) {
+        if (!needsComponent.hasForcedTiredness && needsComponent.tirednessForcedTick != 0 && GameManager.Instance.tick >= needsComponent.tirednessForcedTick && _doNotDisturb <= 0 && needsComponent.doNotGetTired <= 0) {
             if (!jobQueue.HasJob(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
                 JOB_TYPE jobType = JOB_TYPE.TIREDNESS_RECOVERY;
                 if (needsComponent.isExhausted) {
