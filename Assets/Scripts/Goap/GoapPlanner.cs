@@ -309,7 +309,7 @@ public class GoapPlanner {
             //if precondition's target is TARGET, then the one who will advertise must be the target only
             int cost = 0;
             //Get action with the lowest cost that the actor can do that satisfies the goal effect
-            if (target == job.targetPOI || target.IsStillConsideredPartOfAwarenessByCharacter(actor)) {  //POI must either be the job's target or the actor is still aware of it
+            if (target == job.targetPOI || target.IsStillConsideredPartOfAwarenessByCharacter(actor)) { //POI must either be the job's target or the actor is still aware of it
                 GoapAction currentAction = target.AdvertiseActionsToActor(actor, goalEffect, otherData, ref cost, ref log);
                 if (currentAction != null) {
                     //If an action is found, make it the goal node and start building the plan
@@ -352,7 +352,7 @@ public class GoapPlanner {
                                     bool canDoAction = poiTarget.CanAdvertiseActionToActor(actor, currentAction, otherData, ref cost)
                                         && currentAction.WillEffectsSatisfyPrecondition(goalEffect, actor, poiTarget, otherActionData);
                                     if (canDoAction) {
-                                        log += "(" + cost + ")" + currentAction.goapName + ", ";
+                                        log += "(" + cost + ")" + currentAction.goapName + "-" + poiTarget.nameWithID + ", ";
                                         if (lowestCostAction == null || cost < lowestCost) {
                                             lowestCostAction = currentAction;
                                             lowestCostTarget = poiTarget;
@@ -368,7 +368,7 @@ public class GoapPlanner {
                                     bool canDoAction = poiTarget.CanAdvertiseActionToActor(actor, currentAction, otherData, ref cost)
                                         && currentAction.WillEffectsSatisfyPrecondition(goalEffect, actor, poiTarget, otherActionData);
                                     if (canDoAction) {
-                                        log += "(" + cost + ")" + currentAction.goapName + ", ";
+                                        log += "(" + cost + ")" + currentAction.goapName + "-" + poiTarget.nameWithID + ", ";
                                         if (lowestCostAction == null || cost < lowestCost) {
                                             lowestCostAction = currentAction;
                                             lowestCostTarget = poiTarget;
@@ -564,7 +564,7 @@ public class GoapPlanner {
         , Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness, ref string log) { //
         GoapAction action = node.action;
         IPointOfInterest target = node.target;
-        log += "\n--Adding node to raw plan: " + node.action.goapName;
+        log += "\n--Adding node to raw plan: (" + node.cost + ")" + node.action.goapName + "-" + target.nameWithID;
         rawPlan.Add(node);
         List<Precondition> preconditions = null;
         if (job.otherData != null) {
@@ -649,7 +649,7 @@ public class GoapPlanner {
                                                 bool canDoAction = poiTarget.CanAdvertiseActionToActor(actor, currentAction, job.otherData, ref cost)
                                                     && currentAction.WillEffectsSatisfyPrecondition(preconditionEffect, actor, poiTarget, otherActionData);
                                                 if (canDoAction) {
-                                                    log += "(" + cost + ")" + currentAction.goapName + ", ";
+                                                    log += "(" + cost + ")" + currentAction.goapName + "-" + poiTarget.nameWithID + ", ";
                                                     if (lowestCostAction == null || cost < lowestCost) {
                                                         lowestCostAction = currentAction;
                                                         lowestCostTarget = poiTarget;
@@ -665,7 +665,7 @@ public class GoapPlanner {
                                                 bool canDoAction = poiTarget.CanAdvertiseActionToActor(actor, currentAction, job.otherData, ref cost)
                                                     && currentAction.WillEffectsSatisfyPrecondition(preconditionEffect, actor, poiTarget, otherActionData);
                                                 if (canDoAction) {
-                                                    log += "(" + cost + ")" + currentAction.goapName + ", ";
+                                                    log += "(" + cost + ")" + currentAction.goapName + "-" + poiTarget.nameWithID + ", ";
                                                     if (lowestCostAction == null || cost < lowestCost) {
                                                         lowestCostAction = currentAction;
                                                         lowestCostTarget = poiTarget;

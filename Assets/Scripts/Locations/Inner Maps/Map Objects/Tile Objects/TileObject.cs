@@ -61,6 +61,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         get { return mapVisual.collisionTrigger.projectileReceiver; }
     }
     public Transform worldObject { get { return mapVisual.transform; } }
+    public string nameWithID => ToString();
     #endregion
 
     protected void Initialize(TILE_OBJECT_TYPE tileObjectType) {
@@ -190,7 +191,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
                     if (action.CanSatisfyRequirements(actor, this, data)
                         && action.WillEffectsSatisfyPrecondition(precondition, actor, this, data)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
                         int actionCost = action.GetCost(actor, this, data);
-                        log += "(" + actionCost + ")" + action.goapName + ", ";
+                        log += "(" + actionCost + ")" + action.goapName + "-" + nameWithID + ", ";
                         if (lowestCostAction == null || actionCost < currentLowestCost) {
                             lowestCostAction = action;
                             currentLowestCost = actionCost;

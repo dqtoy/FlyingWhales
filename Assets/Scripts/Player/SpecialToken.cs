@@ -56,6 +56,7 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
         get { return mapVisual.collisionTrigger.projectileReceiver; }
     }
     public Transform worldObject { get { return mapVisual.transform; } }
+    public string nameWithID => ToString();
     #endregion
 
     public SpecialToken(SPECIAL_TOKEN specialTokenType, int appearanceRate) {
@@ -195,7 +196,7 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
                     if (action.CanSatisfyRequirements(actor, this, data)
                         && action.WillEffectsSatisfyPrecondition(precondition, actor, this, data)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
                         int actionCost = action.GetCost(actor, this, data);
-                        log += "(" + actionCost + ")" + action.goapName + ", ";
+                        log += "(" + actionCost + ")" + action.goapName + "-" + nameWithID + ", ";
                         if (lowestCostAction == null || actionCost < currentLowestCost) {
                             lowestCostAction = action;
                             currentLowestCost = actionCost;
