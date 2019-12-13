@@ -359,6 +359,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.CORRUPT_CULTIST, new[]{
             new StateNameAndDuration(){ name = "Corrupt Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(6) },
         } },
+        {INTERACTION_TYPE.OUTSIDE_SETTLEMENT_IDLE, new[]{
+            new StateNameAndDuration(){ name = "Idle Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(6) },
+        } },
     };
 }
 

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using Traits;
 
 public class CombatManager : MonoBehaviour {
     public static CombatManager Instance = null;
@@ -313,14 +314,14 @@ public class CombatManager : MonoBehaviour {
                 //if there is one mismatch, return false already because the separator is AND, otherwise, return true
                 if (traitEffect.isNot) {
                     for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                        if (icharacter.traitContainer.GetNormalTrait(traitEffect.requirements[i]) != null) {
+                        if (icharacter.traitContainer.GetNormalTrait<Trait>(traitEffect.requirements[i]) != null) {
                             return false;
                         }
                     }
                     return true;
                 } else {
                     for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                        if (icharacter.traitContainer.GetNormalTrait(traitEffect.requirements[i]) == null) {
+                        if (icharacter.traitContainer.GetNormalTrait<Trait>(traitEffect.requirements[i]) == null) {
                             return false;
                         }
                     }
@@ -330,14 +331,14 @@ public class CombatManager : MonoBehaviour {
                 //if there is one match, return true already because the separator is OR, otherwise, return false   
                 if (traitEffect.isNot) {
                     for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                        if (icharacter.traitContainer.GetNormalTrait(traitEffect.requirements[i]) == null) {
+                        if (icharacter.traitContainer.GetNormalTrait<Trait>(traitEffect.requirements[i]) == null) {
                             return true;
                         }
                     }
                     return false;
                 } else {
                     for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                        if (icharacter.traitContainer.GetNormalTrait(traitEffect.requirements[i]) != null) {
+                        if (icharacter.traitContainer.GetNormalTrait<Trait>(traitEffect.requirements[i]) != null) {
                             return true;
                         }
                     }
