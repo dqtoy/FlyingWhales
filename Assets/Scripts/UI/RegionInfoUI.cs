@@ -224,6 +224,7 @@ public class RegionInfoUI : UIMenu {
                 //if active region is corrupted and landmark type is none
                 //show build button
                 buildBtn.gameObject.SetActive(true);
+                buildProgress.gameObject.SetActive(false);
                 buildBtn.interactable = true;
                 demolishBtn.gameObject.SetActive(false);
             } else if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL) {
@@ -231,11 +232,13 @@ public class RegionInfoUI : UIMenu {
                 demolishBtn.gameObject.SetActive(true);
                 demolishBtn.interactable = false;
                 buildBtn.gameObject.SetActive(false);
+                buildProgress.gameObject.SetActive(false);
             } else {
                 //if the active region is corrupted and is not the demonic portal, show the demolish button
                 demolishBtn.gameObject.SetActive(true);
                 demolishBtn.interactable = true;
                 buildBtn.gameObject.SetActive(false);
+                buildProgress.gameObject.SetActive(false);
             }
         } else {
             invadeBtn.gameObject.SetActive(true);
@@ -556,38 +559,10 @@ public class RegionInfoUI : UIMenu {
 
     #region For Testing
     public void ShowLocationInfo() {
-//#if UNITY_EDITOR
-        if(activeRegion.area != null) {
-            string summary = "Location Job Queue: ";
-            if (activeRegion.area.availableJobs.Count > 0) {
-                for (int i = 0; i < activeRegion.area.availableJobs.Count; i++) {
-                    JobQueueItem jqi = activeRegion.area.availableJobs[i];
-                    if (jqi is GoapPlanJob) {
-                        GoapPlanJob gpj = jqi as GoapPlanJob;
-                        summary += "\n" + gpj.name + " Targetting " + gpj.targetPOI?.name ?? "None";
-                    } else {
-                        summary += "\n" + jqi.name;
-                    }
-                    summary += "\n\tAssigned Character: " + jqi.assignedCharacter?.name ?? "None";
-
-                }
-            } else {
-                summary += "\nNone";
-            }
-            summary += "\nActive Quest: ";
-            if (activeRegion.owner != null && activeRegion.owner.activeQuest != null) {
-                summary += activeRegion.owner.activeQuest.name;
-            } else {
-                summary += "None";
-            }
-            UIManager.Instance.ShowSmallInfo(summary);
-        }
-//#endif
+        UtilityScripts.TestingUtilities.ShowLocationInfo(activeRegion);
     }
     public void HideLocationInfo() {
-//#if UNITY_EDITOR
-        UIManager.Instance.HideSmallInfo();
-//#endif
+        UtilityScripts.TestingUtilities.HideLocationInfo();
     }
     #endregion
 }

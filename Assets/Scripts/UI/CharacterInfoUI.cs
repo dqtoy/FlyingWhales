@@ -119,9 +119,10 @@ public class CharacterInfoUI : UIMenu {
     #region Overrides
     public override void CloseMenu() {
         base.CloseMenu();
+        if (AreaMapCameraMove.Instance.target == _activeCharacter.marker.gameObject.transform) {
+            AreaMapCameraMove.Instance.CenterCameraOn(null);    
+        }
         _activeCharacter = null;
-        AreaMapCameraMove.Instance.CenterCameraOn(null);
-        
         //UIManager.Instance.SetCoverState(false);
         //PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
         //PlayerUI.Instance.CollapseMinionHolder();
@@ -223,11 +224,11 @@ public class CharacterInfoUI : UIMenu {
             }
             return;
         }
-        if (_activeCharacter.currentRegion.area != null && _activeCharacter.currentRegion.area.areaMap == null) {
-            //area map has not yet been generated
-            plansLbl.text = "Visit " + _activeCharacter.currentRegion.name + " to find out what " + _activeCharacter.name + " is doing.";
-            return;
-        }
+        //if (_activeCharacter.currentRegion.area != null && _activeCharacter.currentRegion.area.areaMap == null) {
+        //    //area map has not yet been generated
+        //    plansLbl.text = "Visit " + _activeCharacter.currentRegion.name + " to find out what " + _activeCharacter.name + " is doing.";
+        //    return;
+        //}
         //Action
         if (_activeCharacter.currentActionNode != null) {
             Log currentLog = _activeCharacter.currentActionNode.GetCurrentLog();

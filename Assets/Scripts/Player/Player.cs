@@ -469,16 +469,15 @@ public class Player : ILeader {
         if (UIManager.Instance.IsMouseOnUI()) {
             return; //clicked on UI;
         }
-        LocationGridTile hoveredTile;
         for (int i = 0; i < currentActivePlayerJobAction.targetTypes.Length; i++) {
             bool activatedAction = false;
             switch (currentActivePlayerJobAction.targetTypes[i]) {
                 case JOB_ACTION_TARGET.NONE:
                     break;
                 case JOB_ACTION_TARGET.CHARACTER:
-                    if (InnerMapManager.Instance.currentlyShowingMap != null && InnerMapManager.Instance.currentlyShowingMap.hoveredCharacter != null) {
-                        if (currentActivePlayerJobAction.CanPerformActionTowards(InnerMapManager.Instance.currentlyShowingMap.hoveredCharacter)) {
-                            currentActivePlayerJobAction.ActivateAction(InnerMapManager.Instance.currentlyShowingMap.hoveredCharacter);
+                    if (InnerMapManager.Instance.currentlyShowingMap != null && InnerMapManager.Instance.currentlyHoveredPoi is Character) {
+                        if (currentActivePlayerJobAction.CanPerformActionTowards(InnerMapManager.Instance.currentlyHoveredPoi)) {
+                            currentActivePlayerJobAction.ActivateAction(InnerMapManager.Instance.currentlyHoveredPoi);
                             activatedAction = true;
                         } else {
                         }
@@ -486,17 +485,16 @@ public class Player : ILeader {
                     }
                     break;
                 case JOB_ACTION_TARGET.TILE_OBJECT:
-                    hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
-                    if (hoveredTile != null && hoveredTile.objHere != null) {
-                        if (currentActivePlayerJobAction.CanPerformActionTowards(hoveredTile.objHere)) {
-                            currentActivePlayerJobAction.ActivateAction(hoveredTile.objHere);
+                    if (InnerMapManager.Instance.currentlyHoveredPoi is TileObject) {
+                        if (currentActivePlayerJobAction.CanPerformActionTowards(InnerMapManager.Instance.currentlyHoveredPoi)) {
+                            currentActivePlayerJobAction.ActivateAction(InnerMapManager.Instance.currentlyHoveredPoi);
                             activatedAction = true;
                         }
                         UIManager.Instance.SetTempDisableShowInfoUI(true);
                     }
                     break;
                 case JOB_ACTION_TARGET.TILE:
-                    hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
+                    LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
                     if (hoveredTile != null) {
                         if (currentActivePlayerJobAction.CanPerformActionTowards(hoveredTile)) {
                             currentActivePlayerJobAction.ActivateAction(hoveredTile);

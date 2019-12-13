@@ -34,7 +34,6 @@ namespace Inner_Maps {
         public List<BurningSource> activeBurningSources { get; private set; }
         //Building spots
         public BuildingSpot[,] buildingSpots { get; private set; }
-        public Character hoveredCharacter { get; private set; }
         public Area area { get; private set; }
         private List<LocationGridTile> outsideTiles { get; set; }
         private List<LocationGridTile> insideTiles { get; set; }
@@ -42,6 +41,7 @@ namespace Inner_Maps {
         public string usedTownCenterTemplateName { get; private set; }
         public GameObject centerGo { get; private set; }
         public bool isShowing => InnerMapManager.Instance.currentlyShowingMap == this;
+        public override bool isSettlementMap => true;
 
         #region Map Generation
         public void Initialize(Area _area) {
@@ -615,9 +615,6 @@ namespace Inner_Maps {
             ////}
             //isHovering = false;
             //SwitchFromPathfindingToEstimatedMovement();
-        }
-        public void SetHoveredCharacter(Character character) {
-            hoveredCharacter = character;
         }
         #endregion
 

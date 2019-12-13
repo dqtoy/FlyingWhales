@@ -468,7 +468,8 @@ public class CombatState : CharacterState {
                     hitCharacter.marker.AddHostileInRange(stateComponent.character, false, isLethal: stateComponent.character.marker.IsLethalCombatForTarget(hitCharacter));
                     //also add the hit character as degraded rel, so that when the character that owns this state is hit by the other character because of retaliation, relationship degradation will no longer happen
                     //Reference: https://trello.com/c/mvLDnyBf/2875-retaliation-should-not-trigger-relationship-degradation
-                    hitCharacter.marker.AddOnProcessCombatAction((combatState) => combatState.AddCharacterThatDegradedRel(stateComponent.character));
+                    //TODO:
+                    // hitCharacter.marker.AddOnProcessCombatAction((combatState) => combatState.AddCharacterThatDegradedRel(stateComponent.character));
                 }
             }
             

@@ -301,6 +301,7 @@ public class GoapPlanner {
         //Cache all needed data
         Dictionary<POINT_OF_INTEREST_TYPE, List<GoapAction>> allGoapActionAdvertisements = InteractionManager.Instance.allGoapActionAdvertisements;
         Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = actor.currentRegion.awareness;
+        //Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = actor.gridTileLocation.parentMap.location.coreTile.region.awareness;
         Dictionary<INTERACTION_TYPE, object[]> otherData = job.otherData;
         List<GoapNode> rawPlan = null; //The plan that will be created will be stored here
         if (goalEffect.target == GOAP_EFFECT_TARGET.TARGET) {

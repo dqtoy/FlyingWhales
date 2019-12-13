@@ -8,6 +8,8 @@ namespace Inner_Maps {
         private const int MapWidth = 15;
         private const int MapHeight = 15;
         
+        public override bool isSettlementMap => false;
+        
         public void Initialize(Region region) {
             this.name = $"{region.name}'s Inner Map";
             region.SetRegionInnerMap(this);

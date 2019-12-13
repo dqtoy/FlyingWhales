@@ -3,33 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class LocationJobManager {
-    public Area location { get; private set; }
+    private Area location { get; set; }
 
-    private int createJobsTriggerTick;
+    private int _createJobsTriggerTick;
     private int currentExistingJobsCount;
-    private List<string> jobNames;
+    private List<string> _jobNames;
 
     public LocationJobManager(Area location) {
         this.location = location;
-        jobNames = new List<string>();
-        createJobsTriggerTick = GameManager.Instance.GetTicksBasedOnHour(9); //150
+        _jobNames = new List<string>();
+        _createJobsTriggerTick = GameManager.Instance.GetTicksBasedOnHour(9); //150
         Messenger.AddListener(Signals.TICK_STARTED, ProcessJobs);
     }
 
 
     private void ProcessJobs() {
-        if(GameManager.Instance.tick == createJobsTriggerTick && currentExistingJobsCount < 2) {
+        if(GameManager.Instance.tick == _createJobsTriggerTick && currentExistingJobsCount < 2) {
             if (!JobsPart1()) {
-                //if (!JobsPart2()) {
-                //    JobsPart3();
-                //}
+                if (!JobsPart2()) {
+                    JobsPart3();
+                }
             }
         }else if (GameManager.Instance.IsEndOfDay()) {
             OnEndOfDay();
         }
     }
     private void OnEndOfDay() {
-        int chance = UnityEngine.Random.Range(0, 2);
+        int chance = Random.Range(0, 2);
         if(currentExistingJobsCount > 0) {
             for (int i = 0; i < location.availableJobs.Count; i++) {
                 JobQueueItem job = location.availableJobs[i];
@@ -60,15 +60,15 @@ public class LocationJobManager {
 
     #region Part 1
     private bool JobsPart1() {
-        jobNames.Clear();
-        jobNames.Add("Cleanse");
-        jobNames.Add("Claim");
-        jobNames.Add("Invade");
+        _jobNames.Clear();
+        _jobNames.Add("Cleanse");
+        _jobNames.Add("Claim");
+        _jobNames.Add("Invade");
 
         bool hasCreateJob = false;
-        while (!hasCreateJob && jobNames.Count > 0) {
-            var index = UnityEngine.Random.Range(0, jobNames.Count);
-            var chosenJobName = jobNames[index];
+        while (!hasCreateJob && _jobNames.Count > 0) {
+            var index = Random.Range(0, _jobNames.Count);
+            var chosenJobName = _jobNames[index];
             if(chosenJobName == "Cleanse") {
                 hasCreateJob = CreateCleanseRegionJob();
             }else if (chosenJobName == "Claim") {
@@ -76,12 +76,12 @@ public class LocationJobManager {
             } else if (chosenJobName == "Invade") {
                 hasCreateJob = CreateInvadeRegionJob();
             }
-            jobNames.RemoveAt(index);
+            _jobNames.RemoveAt(index);
         }
         return hasCreateJob;
     }
     private bool CreateCleanseRegionJob() {
-        if (UnityEngine.Random.Range(0, 2) <= 0) {
+        if (Random.Range(0, 2) <= 0) {
             Region region;
             if (TryGetCorruptedRegionWithoutLandmark(out region)) {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CLEANSE_REGION, INTERACTION_TYPE.CLEANSE_REGION, region.regionTileObject, location);
@@ -93,7 +93,7 @@ public class LocationJobManager {
         return false;
     }
     private bool CreateClaimRegionJob() {
-        if (UnityEngine.Random.Range(0, 2) == 0) {
+        if (Random.Range(0, 2) == 0) {
             Region region;
             if (TryGetAdjacentRegionWithoutFactionOwner(out region)) {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CLAIM_REGION, INTERACTION_TYPE.CLAIM_REGION, region.regionTileObject, location);
@@ -105,7 +105,7 @@ public class LocationJobManager {
         return false;
     }
     private bool CreateInvadeRegionJob() {
-        if (UnityEngine.Random.Range(0, 2) == 0) {
+        if (Random.Range(0, 2) == 0) {
             Region region;
             if (TryGetAdjacentRegionAtWarWithThisLocation(out region)) {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INVADE_REGION, INTERACTION_TYPE.INVADE_REGION, region.regionTileObject, location);
@@ -157,29 +157,28 @@ public class LocationJobManager {
 
     #region Part 2
     private bool JobsPart2() {
-        jobNames.Clear();
-        jobNames.Add("AttackNonDemonic");
-        jobNames.Add("AttackDemonic");
+        _jobNames.Clear();
+        _jobNames.Add("AttackNonDemonic");
+        _jobNames.Add("AttackDemonic");
 
         bool hasCreateJob = false;
-        string chosenJobName = string.Empty;
-        int index = 0;
-        while (!hasCreateJob && jobNames.Count > 0) {
-            index = UnityEngine.Random.Range(0, jobNames.Count);
-            chosenJobName = jobNames[index];
+        while (!hasCreateJob && _jobNames.Count > 0) {
+            var index = Random.Range(0, _jobNames.Count);
+            var chosenJobName = _jobNames[index];
             if (chosenJobName == "AttackNonDemonic") {
                 hasCreateJob = CreateAttackNonDemonicRegionJobPart2();
             } else if (chosenJobName == "AttackDemonic") {
                 hasCreateJob = CreateAttackDemonicRegionJobPart2();
             }
-            jobNames.RemoveAt(index);
+            _jobNames.RemoveAt(index);
         }
         return hasCreateJob;
     }
     private bool CreateAttackNonDemonicRegionJobPart2() {
-        if (UnityEngine.Random.Range(0, 2) == 0) {
+        if (Random.Range(0, 2) == 0) {
             Region validRegion;
             if (TryGetOccupiedNonSettlementTileAtWarWithThisLocation(out validRegion)) {
+                validRegion = AttackNonDemonicRegionRegionGetter();
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ATTACK_NON_DEMONIC_REGION, INTERACTION_TYPE.ATTACK_REGION, validRegion.regionTileObject, location);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoAttackNonDemonicRegionJob);
                 location.AddToAvailableJobs(job);
@@ -189,13 +188,15 @@ public class LocationJobManager {
         return false;
     }
     private bool CreateAttackDemonicRegionJobPart2() {
-        if (UnityEngine.Random.Range(0, 2) == 0) {
-//            if (!TryGetCorruptedRegionWithoutLandmark()) {
-//                CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.ATTACK_DEMONIC_REGION, CHARACTER_STATE.MOVE_OUT, location);
-//                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoAttackDemonicRegionJob);
-//                location.AddToAvailableJobs(job);
-//                return true;
-//            }
+        if (Random.Range(0, 2) == 0) {
+            Region region;
+            if (TryGetCorruptedRegionWithoutLandmark(out region) == false) {
+                region = AttackDemonicRegionRegionGetter();
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ATTACK_DEMONIC_REGION, INTERACTION_TYPE.ATTACK_REGION, region.regionTileObject, location);
+                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoAttackDemonicRegionJob);
+                location.AddToAvailableJobs(job);
+                return true;
+            }
         }
         return false;
     }
@@ -214,30 +215,29 @@ public class LocationJobManager {
     #endregion
 
     #region Part 3
-    private bool JobsPart3() {
-        jobNames.Clear();
-        jobNames.Add("AttackNonDemonic");
-        jobNames.Add("AttackDemonic");
+    private void JobsPart3() {
+        _jobNames.Clear();
+        _jobNames.Add("AttackNonDemonic");
+        _jobNames.Add("AttackDemonic");
 
         bool hasCreateJob = false;
-        string chosenJobName = string.Empty;
-        int index = 0;
-        while (!hasCreateJob && jobNames.Count > 0) {
-            index = UnityEngine.Random.Range(0, jobNames.Count);
-            chosenJobName = jobNames[index];
+        while (!hasCreateJob && _jobNames.Count > 0) {
+            var index = Random.Range(0, _jobNames.Count);
+            var chosenJobName = _jobNames[index];
             if (chosenJobName == "AttackNonDemonic") {
                 hasCreateJob = CreateAttackNonDemonicRegionJobPart3();
             } else if (chosenJobName == "AttackDemonic") {
                 hasCreateJob = CreateAttackDemonicRegionJobPart3();
             }
-            jobNames.RemoveAt(index);
+            _jobNames.RemoveAt(index);
         }
-        return hasCreateJob;
     }
     private bool CreateAttackNonDemonicRegionJobPart3() {
-        if (UnityEngine.Random.Range(0, 4) == 0) {
+        if (Random.Range(0, 4) == 0) {
             if (IsAtWarWithFactionThatSettlementNotBlockedByGarrison()) {
-                CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.ATTACK_NON_DEMONIC_REGION, CHARACTER_STATE.MOVE_OUT, location);
+                Region target = AttackNonDemonicRegionRegionGetter();
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ATTACK_NON_DEMONIC_REGION,
+                    INTERACTION_TYPE.ATTACK_REGION, target.regionTileObject, location);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoAttackNonDemonicRegionJob);
                 location.AddToAvailableJobs(job);
                 return true;
@@ -246,9 +246,9 @@ public class LocationJobManager {
         return false;
     }
     private bool CreateAttackDemonicRegionJobPart3() {
-        if (UnityEngine.Random.Range(0, 2) == 0) {
+        if (Random.Range(0, 2) == 0) {
             if (IsPlayerOnlyRemainingStructureIsPortal()) {
-                Region target = PlayerManager.Instance.player.playerArea.region;
+                Region target = AttackDemonicRegionRegionGetter();
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ATTACK_DEMONIC_REGION, INTERACTION_TYPE.ATTACK_REGION, target.regionTileObject, location);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoAttackDemonicRegionJob);
                 location.AddToAvailableJobs(job);
@@ -282,39 +282,83 @@ public class LocationJobManager {
     #endregion
 
     #region Region Getters
-    private Region AttackNonDemonicRegionRegionGetter(Character character) {
-        //TODO:
-        //List<Region> baseChoices = new List<Region>();
-        ////first only get the regions that can spawn the needed event
-        //for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-        //    Region currRegion = GridMap.Instance.allRegions[i];
-        //    if (currRegion.owner != null && currRegion.owner != PlayerManager.Instance.player.playerFaction && currRegion.owner != character.homeRegion.owner
-        //        && currRegion.IsConnectedToRegionOwnedBy(character.homeRegion.owner) && currRegion.owner.GetRelationshipWith(character.homeRegion.owner).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE
-        //        && WorldEventsManager.Instance.CanSpawnEventWithEffects(currRegion, character, WorldEventsManager.Instance.GetNeededEffectsOfJob(jobType))) {
-        //        baseChoices.Add(currRegion);
-        //    }
-        //}
-        //if (baseChoices.Count > 0) {
-        //    return baseChoices[UnityEngine.Random.Range(0, baseChoices.Count)];
-        //}
+    private Region AttackNonDemonicRegionRegionGetter() {
+        List<Region> choices = new List<Region>();
+        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+            Region region = GridMap.Instance.allRegions[i];
+            if (region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE 
+                && region.owner != null && region.owner != PlayerManager.Instance.player.playerFaction 
+                && region.owner.GetRelationshipWith(location.owner).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE 
+                && region.IsConnectedToRegionOwnedBy(location.owner)) {
+                choices.Add(region);
+            }
+        }
+
+        if (choices.Count == 0) {
+            for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+                Region region = GridMap.Instance.allRegions[i];
+                if (region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE 
+                    && region.locationType.IsSettlementType() == false
+                    && region.owner != null && region.owner != PlayerManager.Instance.player.playerFaction 
+                    && region.owner.GetRelationshipWith(location.owner).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+                    choices.Add(region);
+                }
+            }    
+        }
+
+        if (choices.Count == 0) {
+            for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+                Region region = GridMap.Instance.allRegions[i];
+                if (region.locationType.IsSettlementType()
+                    && region.owner != null && region.owner != PlayerManager.Instance.player.playerFaction 
+                    && region.owner.GetRelationshipWith(location.owner).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+                    choices.Add(region);
+                }
+            }    
+        }
+
+        if (choices.Count > 0) {
+            return Utilities.GetRandomElement(choices);
+        }
+        
         return null;
     }
-    private Region AttackDemonicRegionRegionGetter(Character character) {
-        //TODO:
-        //List<Region> baseChoices = new List<Region>();
-        ////first only get the regions that can spawn the needed event
-        //for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-        //    Region currRegion = GridMap.Instance.allRegions[i];
-        //    if (currRegion.owner != null && currRegion.owner != PlayerManager.Instance.player.playerFaction && currRegion.owner != character.homeRegion.owner
-        //        && currRegion.IsConnectedToRegionOwnedBy(character.homeRegion.owner) && currRegion.owner.GetRelationshipWith(character.homeRegion.owner).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE
-        //        && WorldEventsManager.Instance.CanSpawnEventWithEffects(currRegion, character, WorldEventsManager.Instance.GetNeededEffectsOfJob(jobType))) {
-        //        baseChoices.Add(currRegion);
-        //    }
-        //}
-        //if (baseChoices.Count > 0) {
-        //    return baseChoices[UnityEngine.Random.Range(0, baseChoices.Count)];
-        //}
-        return null;
+    private Region AttackDemonicRegionRegionGetter() {
+        List<Region> choices = new List<Region>();
+        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+            Region region = GridMap.Instance.allRegions[i];
+            if (region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE 
+                && region.owner == PlayerManager.Instance.player.playerFaction 
+                && region.IsConnectedToRegionOwnedBy(location.owner)) {
+                choices.Add(region);
+            }
+        }
+
+        if (choices.Count == 0) {
+            for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+                Region region = GridMap.Instance.allRegions[i];
+                if (region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE 
+                    && region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.THE_PORTAL
+                    && region.owner == PlayerManager.Instance.player.playerFaction 
+                    && region.IsConnectedToRegionThatSatisfies(IsRegionConnectedToNonCorruptedRegion)) {
+                    choices.Add(region);
+                }
+            }
+        }
+
+        if (choices.Count == 0) {
+            return PlayerManager.Instance.player.playerArea.region;
+        }
+        return Utilities.GetRandomElement(choices);
+    }
+    private bool IsRegionConnectedToNonCorruptedRegion(Region region) {
+        for (int i = 0; i < region.connections.Count; i++) {
+            Region connection = region.connections[i];
+            if (connection.coreTile.isCorrupted == false) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 }

@@ -42,9 +42,9 @@ public class AreaMapCameraMove : MonoBehaviour {
     [SerializeField] private float xSeeLimit;
 
     #region getters/setters
-    private Transform target {
+    public Transform target {
         get { return _target; }
-        set {
+        private set {
             _target = value;
             if (_target == null) {
                 Messenger.RemoveListener<GameObject>(Signals.POOLED_OBJECT_DESTROYED, OnPooledObjectDestroyed);
