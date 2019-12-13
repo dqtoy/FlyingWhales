@@ -496,6 +496,16 @@ public class Area : IJobOwner, ILocation {
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WORK_AREA, true);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WILDERNESS, false);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.POND, true);
+        
+        // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.APOTHECARY, true);
+        // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.ASSASSIN_GUILD, true);
+        // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.BARRACKS, true);
+        // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.HUNTER_LODGE, true);
+        // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.MAGE_QUARTERS, true);
+        // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.MINER_CAMP, true);
+        // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.RAIDER_CAMP, true);
+        // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.SMITHY, true);
+
         for (int i = 0; i < citizenCount; i++) {
             LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.DWELLING, true);
         }
