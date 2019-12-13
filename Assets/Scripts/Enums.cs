@@ -1362,16 +1362,11 @@ public static class Extensions {
     }
     public static bool ShouldBeGeneratedFromTemplate(this STRUCTURE_TYPE sub) {
         switch (sub) {
-            case STRUCTURE_TYPE.INN:
-            case STRUCTURE_TYPE.WAREHOUSE:
-            case STRUCTURE_TYPE.DWELLING:
-            case STRUCTURE_TYPE.CEMETERY:
-            case STRUCTURE_TYPE.PRISON:
-            case STRUCTURE_TYPE.POND:
-            case STRUCTURE_TYPE.CITY_CENTER:
-                return true;
-            default:
+            case STRUCTURE_TYPE.WILDERNESS:
+            case STRUCTURE_TYPE.WORK_AREA:
                 return false;
+            default:
+                return true;
         }
     }
     /// <summary>
