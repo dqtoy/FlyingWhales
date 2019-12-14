@@ -164,11 +164,13 @@ public class CursorManager : MonoBehaviour {
             ExecuteLeftClickActions();
             ClearLeftClickActions();
             TransferPendingLeftClickActions();
+            MapVisualClick(PointerEventData.InputButton.Left);
             Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Mouse0);
         }else if (Input.GetMouseButtonDown(1)) {
             //right click
             ExecuteRightClickActions();
             ClearRightClickActions();
+            MapVisualClick(PointerEventData.InputButton.Right);
             Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Mouse1);
         }
         if (AreaMapCameraMove.Instance != null) {
@@ -240,6 +242,45 @@ public class CursorManager : MonoBehaviour {
     public void ClearRightClickActions() {
         rightClickActions.Clear();
     }
+    private void MapVisualClick(PointerEventData.InputButton button) {
+        PointerEventData pointer = new PointerEventData(EventSystem.current);
+        pointer.position = Input.mousePosition;
+
+        List<RaycastResult> raycastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointer, raycastResults);
+
+        if (raycastResults.Count > 0) {
+            List<BaseMapObjectVisual> allVisuals = new List<BaseMapObjectVisual>();
+            foreach (var go in raycastResults) {
+                if (go.gameObject.CompareTag("Character Marker") || go.gameObject.CompareTag("Map Object")) {
+                    BaseMapObjectVisual visual = go.gameObject.GetComponent<BaseMapObjectVisual>();
+                    //assume that all objects that have the specified tags have the BaseMapObjectVisual class
+                    allVisuals.Add(visual);
+                }
+            }
+
+
+            if (allVisuals.Count > 0) {
+                bool foundObject = false;
+                BaseMapObjectVisual objToShowMenu = null;
+                for (int i = 0; i < allVisuals.Count; i++) {
+                    BaseMapObjectVisual visual = allVisuals[i];
+                    if (visual.IsMapObjectMenuVisible()) {
+                        //current map object is selected, set the next object in the loop to show its menu
+                        objToShowMenu = Utilities.GetNextElementCyclic(allVisuals, i);
+                        foundObject = true;
+                        break;
+                    }
+                }
+
+                if (foundObject == false) {
+                    objToShowMenu = allVisuals[0]; //show the first element
+                }
+                objToShowMenu.ExecuteClickAction(button);
+            }
+        }
+    }
+ 
     #endregion
 
     #region Effects

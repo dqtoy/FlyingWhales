@@ -53,9 +53,9 @@ public class PatrolState : CharacterState {
         }
         if (_planDuration >= 4) {
             _planDuration = 0;
-            if (!stateComponent.character.PlanFullnessRecoveryActions()) {
-                if (!stateComponent.character.PlanTirednessRecoveryActions()) {
-                    stateComponent.character.PlanHappinessRecoveryActions();
+            if (!stateComponent.character.needsComponent.PlanFullnessRecoveryActions(stateComponent.character)) {
+                if (!stateComponent.character.needsComponent.PlanTirednessRecoveryActions(stateComponent.character)) {
+                    stateComponent.character.needsComponent.PlanHappinessRecoveryActions(stateComponent.character);
                 }
             }
         } else {

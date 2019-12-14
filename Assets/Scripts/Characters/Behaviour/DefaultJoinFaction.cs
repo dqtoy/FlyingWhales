@@ -38,7 +38,7 @@ public class DefaultJoinFaction : CharacterBehaviourComponent {
                         }
                     }
                     for (int i = 0; i < character.currentRegion.connections.Count; i++) {
-                        potentialRegion = character.currentRegion.connections[i];
+                        potentialRegion = character.currentRegion.connections[i].region;
                         if (potentialRegion.owner != null && !potentialRegion.owner.isPlayerFaction
                             && !potentialRegion.owner.IsCharacterBannedFromJoining(character) && potentialRegion.owner.ideologyComponent.DoesCharacterFitCurrentIdeology(character)) {
                             if (viableFactions == null) { viableFactions = new List<Faction>(); }

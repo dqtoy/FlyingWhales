@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using Inner_Maps;
+using JetBrains.Annotations;
 
 public class PathGenerator : MonoBehaviour {
 
@@ -137,10 +138,46 @@ public class PathGenerator : MonoBehaviour {
         MultiThreadPool.Instance.AddToThreadPool(newThread);
         return newThread;
     }
+    public List<Region> GetPath([NotNull] Region start, [NotNull] Region destination) {
+        List<Region> path = null;
 
+        //normal pathfinding logic
+        Func<Region, Region, double> distance = (node1, node2) => 1;
+        Func<Region, double> estimate = t => Math.Sqrt(Math.Pow(t.coreTile.data.xCoordinate - destination.coreTile.data.xCoordinate, 2) 
+                                                       + Math.Pow(t.coreTile.data.yCoordinate - destination.coreTile.data.yCoordinate, 2));
+        var p = PathFind.PathFind.FindPath(start, destination, distance, estimate);
+        if (p != null) {
+            path = p.ToList();
+        }
+            
+        if (path != null) {
+            path.Reverse();
+//            if (!includeFirstTile) {
+//                path.RemoveAt(0);
+//            }
+            path.RemoveAt(0);
+            return path;
+        }
+        return null;
+    }
     public int GetTravelTime(HexTile from, HexTile to) {
         float distance = Vector3.Distance(from.transform.position, to.transform.position);
         return (Mathf.CeilToInt(distance / 2.315188f)) * 2;
+    }
+    
+    public int GetTravelTime([NotNull] Region from, [NotNull] Region to) {
+        List<Region> path = GetPath(from, to);
+
+        int totalTravelTime = 0;
+        for (int i = 0; i < path.Count - 1; i++) {
+            Region currRegion = path[i];
+            Region nextRegion = path[i + 1];
+
+            RegionConnectionData data = currRegion.GetConnectionDataWith(nextRegion);
+            totalTravelTime += data.travelTimeInTicks;
+        }
+        
+        return totalTravelTime;
     }
 
     #region Tile Getters

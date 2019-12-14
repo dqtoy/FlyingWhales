@@ -212,15 +212,15 @@ public class MoveOutState : CharacterState {
         string summary = GameManager.Instance.TodayLogString() + stateComponent.character.name + " has arrived home and will check his/her needs.";
         if (stateComponent.character.needsComponent.isStarving) {
             summary += "\n" + stateComponent.character.name + " is starving. Planning fullness recovery actions...";
-            stateComponent.character.PlanFullnessRecoveryActions();
+            stateComponent.character.needsComponent.PlanFullnessRecoveryActions(stateComponent.character);
         }
         if (stateComponent.character.needsComponent.isExhausted) {
             summary += "\n" + stateComponent.character.name + " is exhausted. Planning tiredness recovery actions...";
-            stateComponent.character.PlanTirednessRecoveryActions();
+            stateComponent.character.needsComponent.PlanTirednessRecoveryActions(stateComponent.character);
         }
         if (stateComponent.character.needsComponent.isForlorn) {
             summary += "\n" + stateComponent.character.name + " is forlorn. Planning happiness recovery actions...";
-            stateComponent.character.PlanHappinessRecoveryActions();
+            stateComponent.character.needsComponent.PlanHappinessRecoveryActions(stateComponent.character);
         }
         Debug.Log(summary);
     }

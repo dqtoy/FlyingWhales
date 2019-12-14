@@ -248,11 +248,9 @@ public class BaseLandmark {
         }
 
         //hallowed ground
-        if (Random.Range(0, 100) < 20) {
+        if (Random.Range(0, 100) < 20 && tileLocation.region.HasFeature(RegionFeatureDB.Hallowed_Ground_Feature) == false) {
             tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Hallowed_Ground_Feature));
         }
-
-       
     }
     #endregion
 }
