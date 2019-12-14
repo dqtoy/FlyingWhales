@@ -112,8 +112,8 @@ public class PlayerManager : MonoBehaviour {
 
         //Add an adjacent region to the player at the start of the game.
         //Ref: https://trello.com/c/cQKzEx06/2699-one-additional-empty-region-owned-by-the-player-at-the-start-of-game
-        List<Region> choices = portal.tileLocation.region.connections;
-        Region chosenRegion = choices[Random.Range(0, choices.Count)];
+        List<RegionConnectionData> choices = portal.tileLocation.region.connections;
+        Region chosenRegion = Utilities.GetRandomElement(choices).region;
         LandmarkManager.Instance.OwnRegion(player.playerFaction, RACE.DEMON, chosenRegion);
         //Pre-build a Spire in the second initial empty corrupted region and ensure that it does not have a Hallowed Ground trait.
         chosenRegion.RemoveAllFeatures();

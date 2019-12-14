@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Events.World_Events;
 using Inner_Maps;
+using PathFind;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class Region : ILocation {
+public class Region : ILocation, IHasNeighbours<Region> {
 
     private const float HoveredBorderAlpha = 0f / 255f;
     private const float UnhoveredBorderAlpha = 0f / 255f;
@@ -27,7 +28,7 @@ public class Region : ILocation {
     }
     public Area area { get; private set; }
     public Color regionColor { get; private set; }
-    public List<Region> connections { get; private set; }
+    public List<RegionConnectionData> connections { get; private set; }
     public Minion assignedMinion { get; private set; }
     public Faction owner { get; private set; }
     public Faction previousOwner { get; private set; }
@@ -50,8 +51,8 @@ public class Region : ILocation {
         }
     }
     public RegionTileObject regionTileObject { get; private set; }
+    public List<Region> ValidTiles => connections.Select(x => x.region).ToList();
     
-
     private RegionInnerTileMap _regionInnerTileMap; //inner map of the region, this should only be used if this region does not have an area. 
     private List<System.Action> _otherAfterInvasionActions; //list of other things to do when this landmark is invaded.
     private string _activeEventAfterEffectScheduleId;
@@ -61,9 +62,7 @@ public class Region : ILocation {
     public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; private set; }
 
     #region getter/setter
-    public BaseLandmark mainLandmark {
-        get { return coreTile.landmarkOnTile; }
-    }
+    public BaseLandmark mainLandmark => coreTile.landmarkOnTile;
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures {
         get {
             if(area != null) { return area.structures; }
@@ -79,7 +78,7 @@ public class Region : ILocation {
     #endregion
 
     private Region() {
-        connections = new List<Region>();
+        connections = new List<RegionConnectionData>();
         charactersAtLocation = new List<Character>();
         _otherAfterInvasionActions = new List<System.Action>();
         factionsHere = new List<Faction>();
@@ -360,11 +359,12 @@ public class Region : ILocation {
 
     #region Connections
     public void AddConnection(Region newConnection) {
-        connections.Add(newConnection);
+        RegionConnectionData connectionData = new RegionConnectionData(newConnection, this);
+        connections.Add(connectionData);
     }
     public bool IsConnectedWith(Region region) {
         for (int i = 0; i < connections.Count; i++) {
-            Region connection = connections[i];
+            Region connection = connections[i].region;
             if (connection == region) {
                 return true;
             }
@@ -380,7 +380,7 @@ public class Region : ILocation {
     /// <returns>True or false</returns>
     public bool HasCorruptedConnection() {
         for (int i = 0; i < connections.Count; i++) {
-            Region connection = connections[i];
+            Region connection = connections[i].region;
             if (connection.coreTile.isCorrupted) {
                 return true;
             }
@@ -389,7 +389,7 @@ public class Region : ILocation {
     }
     public bool HasSettlementConnection() {
         for (int i = 0; i < connections.Count; i++) {
-            Region connection = connections[i];
+            Region connection = connections[i].region;
             if (connection.area != null) {
                 return true;
             }
@@ -398,7 +398,7 @@ public class Region : ILocation {
     }
     public bool HasSettlementOrCorruptedConnection() {
         for (int i = 0; i < connections.Count; i++) {
-            Region connection = connections[i];
+            Region connection = connections[i].region;
             if (connection.area != null || connection.coreTile.isCorrupted) {
                 return true;
             }
@@ -407,7 +407,7 @@ public class Region : ILocation {
     }
     public bool IsConnectedToRegionOwnedBy(Faction faction) {
         for (int i = 0; i < connections.Count; i++) {
-            Region region = connections[i];
+            Region region = connections[i].region;
             if (region.owner == faction) {
                 return true;
             }
@@ -416,12 +416,21 @@ public class Region : ILocation {
     }
     public bool IsConnectedToRegionThatSatisfies(Func<Region, bool> condition) {
         for (int i = 0; i < connections.Count; i++) {
-            Region connection = connections[i];
+            Region connection = connections[i].region;
             if (condition.Invoke(connection)) {
                 return true;
             }
         }
         return false;
+    }
+    public RegionConnectionData GetConnectionDataWith(Region region) {
+        for (int i = 0; i < connections.Count; i++) {
+            RegionConnectionData data = connections[i];
+            if (data.region == region) {
+                return data;
+            }
+        }
+        return null;
     }
     #endregion
 
@@ -1001,6 +1010,4 @@ public class Region : ILocation {
         regionTileObject = _regionTileObject;
     }
     #endregion
-
-    
 }

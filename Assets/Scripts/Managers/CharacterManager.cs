@@ -541,9 +541,10 @@ public class CharacterManager : MonoBehaviour {
         }
         return null;
     }
-    public Sprite GetPortraitSprite(string identifier, int index, RACE race, GENDER gender) {
+    public bool TryGetPortraitSprite(string identifier, int index, RACE race, GENDER gender, out Sprite sprite) {
         if (index < 0) {
-            return null;
+            sprite = null;
+            return false;
         }
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);
         List<Sprite> listToUse;
@@ -577,9 +578,11 @@ public class CharacterManager : MonoBehaviour {
                 break;
         }
         if (listToUse != null && listToUse.Count > index) {
-            return listToUse[index];
+            sprite = listToUse[index];
+            return true;
         }
-        return null;
+        sprite = null;
+        return false;
     }
 #if UNITY_EDITOR
     public void LoadCharacterPortraitAssets() {
@@ -643,13 +646,13 @@ public class CharacterManager : MonoBehaviour {
             if (currRaceAsset.race == race) {
                 GenderMarkerAsset asset = currRaceAsset.GetMarkerAsset(gender);
                 if (asset.characterClassAssets.ContainsKey(characterClassName) == false) {
-                    Debug.LogWarning($"There are no class assets for {characterClassName} {gender.ToString()} {race.ToString()}");
+                    Debug.LogWarning($"There are no class assets for {characterClassName} {nameof(gender)} {nameof(race)}");
                     return null;
                 }
                 return asset.characterClassAssets[characterClassName];
             }
         }
-        Debug.LogWarning($"There are no race assets for {characterClassName} {gender.ToString()} {race.ToString()}");
+        Debug.LogWarning($"There are no race assets for {characterClassName} {nameof(gender)} {nameof(race)}");
         return null;
     }
     public Sprite GetMarkerHairSprite(GENDER gender) {

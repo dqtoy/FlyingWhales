@@ -49,7 +49,7 @@ public class SaveDataRegion {
 
         connectionsTileIDs = new List<int>();
         for (int i = 0; i < region.connections.Count; i++) {
-            connectionsTileIDs.Add(region.connections[i].coreTile.id);
+            connectionsTileIDs.Add(region.connections[i].region.coreTile.id);
         }
 
         charactersAtLocationIDs = new List<int>();
@@ -118,7 +118,7 @@ public class SaveDataRegion {
     public void LoadRegionConnections(Region region) {
         for (int i = 0; i < connectionsTileIDs.Count; i++) {
             Region regionToConnect = GridMap.Instance.hexTiles[connectionsTileIDs[i]].region;
-            if (!region.connections.Contains(regionToConnect)) {
+            if (!region.IsConnectedWith(regionToConnect)) {
                 LandmarkManager.Instance.ConnectRegions(region, regionToConnect);
             }
         }

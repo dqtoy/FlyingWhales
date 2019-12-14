@@ -86,18 +86,13 @@ public class CharacterAvatar : MonoBehaviour {
         SetIsPlaceCharacterAsTileObject(true);
 
         this.name = party.owner.name + "'s Avatar";
-
-#if !WORLD_CREATION_TOOL
+        
         GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, this.transform);
         characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
         characterPortrait.GeneratePortrait(_party.owner);
         portraitGO.SetActive(false);
 
         CharacterManager.Instance.AddCharacterAvatar(this);
-#endif
-        //Messenger.AddListener(Signals.TOGGLE_CHARACTERS_VISIBILITY, OnToggleCharactersVisibility);
-        //Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
-        //Messenger.AddListener<CharacterToken>(Signals.CHARACTER_TOKEN_ADDED, OnCharacterTokenObtained);
     }
 
     #region Monobehaviour
@@ -158,7 +153,8 @@ public class CharacterAvatar : MonoBehaviour {
         arriveLog.AddToFillers(_party.owner.currentRegion, _party.owner.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
         arriveLog.AddLogToInvolvedObjects();
         
-        _distanceToTarget = PathGenerator.Instance.GetTravelTime(_party.owner.currentRegion.coreTile, targetLocation.coreTile);
+        _distanceToTarget = PathGenerator.Instance.GetTravelTime(_party.owner.currentRegion, targetLocation);
+        Debug.Log($"{_party.owner.name} is travelling from {_party.owner.currentRegion.name} to {targetLocation.name}. Travel time in ticks is: {_distanceToTarget.ToString()}");
         _travelLine = _party.owner.currentRegion.coreTile.CreateTravelLine(targetLocation.coreTile, _distanceToTarget, _party.owner);
         _travelLine.SetActiveMeter(isVisualShowing);
         _party.owner.marker.gameObject.SetActive(false);

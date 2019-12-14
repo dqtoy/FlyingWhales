@@ -174,7 +174,7 @@ namespace Events.World_Events {
                 for (int i = 0; i < baseChoices.Count; i++) {
                     Region region = baseChoices[i];
                     for (int j = 0; j < region.connections.Count; j++) {
-                        Region connection = region.connections[j];
+                        Region connection = region.connections[j].region;
                         if (connection.coreTile.isCorrupted == false) {
                             return region;
                         }

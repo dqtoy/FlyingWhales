@@ -129,9 +129,9 @@ public class LocationJobManager {
         return false;
     }
     private bool TryGetAdjacentRegionWithoutFactionOwner(out Region validRegion) {
-        List<Region> connectedRegions = location.region.connections;
+        List<RegionConnectionData> connectedRegions = location.region.connections;
         for (int i = 0; i < connectedRegions.Count; i++) {
-            Region region = connectedRegions[i];
+            Region region = connectedRegions[i].region;
             if (!region.coreTile.isCorrupted && region.owner == null) {
                 validRegion = region;
                 return true;
@@ -141,9 +141,9 @@ public class LocationJobManager {
         return false;
     }
     private bool TryGetAdjacentRegionAtWarWithThisLocation(out Region validRegion) {
-        List<Region> connectedRegions = location.region.connections;
+        List<RegionConnectionData> connectedRegions = location.region.connections;
         for (int i = 0; i < connectedRegions.Count; i++) {
-            Region region = connectedRegions[i];
+            Region region = connectedRegions[i].region;
             if (!region.coreTile.isCorrupted && region.area == null && region.owner != null
                 && region.residents.Count <= 0 && region.owner.HasRelationshipStatusWith(FACTION_RELATIONSHIP_STATUS.HOSTILE, location.region.owner)) {
                 validRegion = region;
@@ -353,7 +353,7 @@ public class LocationJobManager {
     }
     private bool IsRegionConnectedToNonCorruptedRegion(Region region) {
         for (int i = 0; i < region.connections.Count; i++) {
-            Region connection = region.connections[i];
+            Region connection = region.connections[i].region;
             if (connection.coreTile.isCorrupted == false) {
                 return true;
             }

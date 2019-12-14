@@ -96,8 +96,10 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             //use whole image
             SetWholeImageSprite(CharacterManager.Instance.GetWholeImagePortraitSprite(_portraitSettings.wholeImage));
             SetWholeImageMaterial(character.visuals.wholeImageMaterial);
+            SetWholeImageState(true);
         } else {
             SetWholeImageSprite(null);
+            SetWholeImageState(false);
             SetHairMaterial(character.visuals.hairMaterial);
         }
         UpdateLvl();
@@ -122,7 +124,6 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     }
     private void SetWholeImageSprite(Sprite sprite) {
         wholeImage.sprite = sprite;
-        SetWholeImageState(sprite != null);
     }
     private void SetWholeImageState(bool state) {
         wholeImage.gameObject.SetActive(state);
@@ -223,10 +224,15 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     #endregion
 
     #region Body Parts
-    public void SetPortraitAsset(string identifier, int index, RACE race, GENDER gender, Image renderer) {
-        Sprite sprite = CharacterManager.Instance.GetPortraitSprite(identifier, index, race, gender);
-        renderer.sprite = sprite;
-        renderer.gameObject.SetActive(renderer.sprite != null);
+    private void SetPortraitAsset(string identifier, int index, RACE race, GENDER gender, Image renderer) {
+        Sprite sprite;
+        if (CharacterManager.Instance.TryGetPortraitSprite(identifier, index, race, gender, out sprite)) {
+            renderer.sprite = sprite;
+            renderer.gameObject.SetActive(true);
+        }
+        else {
+            renderer.gameObject.SetActive(false);    
+        }
     }
     #endregion
 
