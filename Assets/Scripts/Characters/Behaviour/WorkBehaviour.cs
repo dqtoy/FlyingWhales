@@ -10,9 +10,9 @@ public class WorkBehaviour : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log) {
         log += "\n-" + character.name + " is going to work or will do needs recovery...";
         if (!character.PlanJobQueueFirst()) {
-            if (!character.PlanFullnessRecoveryActions()) {
-                if (!character.PlanTirednessRecoveryActions()) {
-                    if (!character.PlanHappinessRecoveryActions()) {
+            if (!character.needsComponent.PlanFullnessRecoveryActions(character)) {
+                if (!character.needsComponent.PlanTirednessRecoveryActions(character)) {
+                    if (!character.needsComponent.PlanHappinessRecoveryActions(character)) {
                         if (!character.PlanWorkActions()) {
                             return false;
                         }

@@ -15,11 +15,11 @@ namespace Traits {
 
             if (GameManager.Instance.gameHasStarted) {
                 if (trait.name == "Starving") {
-                    character.PlanFullnessRecoveryActions();
+                    character.needsComponent.PlanFullnessRecoveryActions(character);
                 } else if (trait.name == "Forlorn" || trait.name == "Lonely") {
-                    character.PlanHappinessRecoveryActions();
+                    character.needsComponent.PlanHappinessRecoveryActions(character);
                 } else if (trait.name == "Exhausted") {
-                    character.PlanTirednessRecoveryActions();
+                    character.needsComponent.PlanTirednessRecoveryActions(character);
                 }
             }
             if (character.canMove == false || character.canWitness == false) {

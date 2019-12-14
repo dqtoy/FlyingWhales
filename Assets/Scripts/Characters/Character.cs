@@ -3839,8 +3839,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //If at the start of the tick, the character is not currently doing any action, and is not waiting for any new plans, it means that the character will no longer perform any actions
         //so start doing actions again
         //SetHasAlreadyAskedForPlan(false);
-        PlanScheduledFullnessRecovery();
-        PlanScheduledTirednessRecovery();
+        needsComponent.PlanScheduledFullnessRecovery(this);
+        needsComponent.PlanScheduledTirednessRecovery(this);
         if (CanPlanGoap()) {
             PerStartTickActionPlanning();
         }
@@ -3937,301 +3937,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //    }
     //    return false;
     //}
-    public bool PlanFullnessRecoveryActions() {
-        if (doNotDisturb > 0 || !canWitness) {
-            return false;
-        }
-        if (needsComponent.isStarving) {
-            if (!jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY_STARVING)) {
-                //If there is already a HUNGER_RECOVERY JOB and the character becomes Starving, replace HUNGER_RECOVERY with HUNGER_RECOVERY_STARVING only if that character is not doing the job already
-                JobQueueItem hungerRecoveryJob = jobQueue.GetJob(JOB_TYPE.HUNGER_RECOVERY);
-                if (hungerRecoveryJob != null) {
-                    //Replace this with Hunger Recovery Starving only if the character is not doing the Hunger Recovery Job already
-                    JobQueueItem currJob = currentJob;
-                    if (currJob == hungerRecoveryJob) {
-                        return false;
-                    } else {
-                        hungerRecoveryJob.CancelJob();
-                    }
-                }
-                JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY_STARVING;
-                bool triggerGrieving = false;
-                Griefstricken griefstricken = traitContainer.GetNormalTrait<Trait>("Griefstricken") as Griefstricken;
-                if (griefstricken != null) {
-                    triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
-                }
-                if (!triggerGrieving) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), this, this);
-                    //if (traitContainer.GetNormalTrait<Trait>("Vampiric") != null) {
-                    //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-                    //}
-                    //else if (GetNormalTrait<Trait>("Cannibal") != null) {
-                    //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
-                    //}
-                    //job.SetCancelOnFail(true);
-                    jobQueue.AddJobInQueue(job);
-                } else {
-                    griefstricken.TriggerGrieving();
-                }
-                return true;
-            }
-        } else if (needsComponent.isHungry) {
-            if (UnityEngine.Random.Range(0, 2) == 0 && traitContainer.GetNormalTrait<Trait>("Glutton") != null) {
-                if (!jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY)) {
-                    JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY;
-                    bool triggerGrieving = false;
-                    Griefstricken griefstricken = traitContainer.GetNormalTrait<Trait>("Griefstricken") as Griefstricken;
-                    if (griefstricken != null) {
-                        triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
-                    }
-                    if (!triggerGrieving) {
-                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), this, this);
-                        //if (traitContainer.GetNormalTrait<Trait>("Vampiric") != null) {
-                        //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-                        //}
-                        //else if (GetNormalTrait<Trait>("Cannibal") != null) {
-                        //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
-                        //}
-                        //job.SetCancelOnFail(true);
-                        jobQueue.AddJobInQueue(job);
-                    } else {
-                        griefstricken.TriggerGrieving();
-                    }
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public bool PlanTirednessRecoveryActions() {
-        if (doNotDisturb > 0 || !canWitness) {
-            return false;
-        }
-        if (needsComponent.isExhausted) {
-            if (!jobQueue.HasJob(JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
-                //If there is already a TIREDNESS_RECOVERY JOB and the character becomes Exhausted, replace TIREDNESS_RECOVERY with TIREDNESS_RECOVERY_STARVING only if that character is not doing the job already
-                JobQueueItem tirednessRecoveryJob = jobQueue.GetJob(JOB_TYPE.TIREDNESS_RECOVERY);
-                if (tirednessRecoveryJob != null) {
-                    //Replace this with Tiredness Recovery Exhausted only if the character is not doing the Tiredness Recovery Job already
-                    JobQueueItem currJob = currentJob;
-                    if (currJob == tirednessRecoveryJob) {
-                        return false;
-                    } else {
-                        tirednessRecoveryJob.CancelJob();
-                    }
-                }
-                JOB_TYPE jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
-                bool triggerSpooked = false;
-                Spooked spooked = traitContainer.GetNormalTrait<Trait>("Spooked") as Spooked;
-                if (spooked != null) {
-                    triggerSpooked = UnityEngine.Random.Range(0, 100) < 20;
-                }
-                if (!triggerSpooked) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), this, this);
-                    //job.SetCancelOnFail(true);
-                    jobQueue.AddJobInQueue(job);
-                } else {
-                    spooked.TriggerFeelingSpooked();
-                }
-                return true;
-            }
-        }
-        return false;
-    }
-    public bool PlanHappinessRecoveryActions() {
-        if (doNotDisturb > 0 || !canWitness) {
-            return false;
-        }
-        if (needsComponent.isForlorn) {
-            if (!jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
-                //If there is already a HUNGER_RECOVERY JOB and the character becomes Starving, replace HUNGER_RECOVERY with HUNGER_RECOVERY_STARVING only if that character is not doing the job already
-                JobQueueItem happinessRecoveryJob = jobQueue.GetJob(JOB_TYPE.HAPPINESS_RECOVERY);
-                if (happinessRecoveryJob != null) {
-                    //Replace this with Hunger Recovery Starving only if the character is not doing the Hunger Recovery Job already
-                    JobQueueItem currJob = currentJob;
-                    if (currJob == happinessRecoveryJob) {
-                        return false;
-                    } else {
-                        happinessRecoveryJob.CancelJob();
-                    }
-                }
-                bool triggerBrokenhearted = false;
-                Heartbroken heartbroken = traitContainer.GetNormalTrait<Trait>("Heartbroken") as Heartbroken;
-                if (heartbroken != null) {
-                    triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
-                }
-                if (!triggerBrokenhearted) {
-                    Hardworking hardworking = traitContainer.GetNormalTrait<Trait>("Hardworking") as Hardworking;
-                    if (hardworking != null) {
-                        bool isPlanningRecoveryProcessed = false;
-                        if (hardworking.ProcessHardworkingTrait(this, ref isPlanningRecoveryProcessed)) {
-                            return isPlanningRecoveryProcessed;
-                        }
-                    }
-                    JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY_FORLORN;
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), this, this);
-                    //job.SetCancelOnFail(true);
-                    jobQueue.AddJobInQueue(job);
-                } else {
-                    heartbroken.TriggerBrokenhearted();
-                }
-                return true;
-            }
-        } else if (needsComponent.isLonely) {
-            if (!jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
-                JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY;
-                int chance = UnityEngine.Random.Range(0, 100);
-                int value = 0;
-                TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick(this);
-                if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
-                    value = 30;
-                } else if (currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME) {
-                    value = 45;
-                } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
-                    value = 45;
-                } else if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
-                    value = 45;
-                } else if (currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT) {
-                    value = 30;
-                }
-                if (chance < value) {
-                    bool triggerBrokenhearted = false;
-                    Heartbroken heartbroken = traitContainer.GetNormalTrait<Trait>("Heartbroken") as Heartbroken;
-                    if (heartbroken != null) {
-                        triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
-                    }
-                    if (!triggerBrokenhearted) {
-                        Hardworking hardworking = traitContainer.GetNormalTrait<Trait>("Hardworking") as Hardworking;
-                        if (hardworking != null) {
-                            bool isPlanningRecoveryProcessed = false;
-                            if (hardworking.ProcessHardworkingTrait(this, ref isPlanningRecoveryProcessed)) {
-                                return isPlanningRecoveryProcessed;
-                            }
-                        }
-                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), this, this);
-                        //job.SetCancelOnFail(true);
-                        jobQueue.AddJobInQueue(job);
-                    } else {
-                        heartbroken.TriggerBrokenhearted();
-                    }
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    private void PlanScheduledFullnessRecovery() {
-        if (!needsComponent.hasForcedFullness && needsComponent.fullnessForcedTick != 0 && GameManager.Instance.tick >= needsComponent.fullnessForcedTick && _doNotDisturb <= 0 && needsComponent.doNotGetHungry <= 0) {
-            if (!jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING)) {
-                JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY;
-                if (needsComponent.isStarving) {
-                    jobType = JOB_TYPE.HUNGER_RECOVERY_STARVING;
-                }
-                bool triggerGrieving = false;
-                Griefstricken griefstricken = traitContainer.GetNormalTrait<Trait>("Griefstricken") as Griefstricken;
-                if (griefstricken != null) {
-                    triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
-                }
-                if (!triggerGrieving) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), this, this);
-                    //if (traitContainer.GetNormalTrait<Trait>("Vampiric") != null) {
-                    //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-                    //}
-                    //else if (GetNormalTrait<Trait>("Cannibal") != null) {
-                    //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
-                    //}
-                    //job.SetCancelOnFail(true);
-                    //bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0 /*|| stateComponent.stateToDo != null*/;
-                    jobQueue.AddJobInQueue(job); //, !willNotProcess
-                } else {
-                    griefstricken.TriggerGrieving();
-                }
-            }
-            needsComponent.hasForcedFullness = true;
-            needsComponent.SetFullnessForcedTick();
-        }
-    }
-    private void PlanScheduledTirednessRecovery() {
-        if (!needsComponent.hasForcedTiredness && needsComponent.tirednessForcedTick != 0 && GameManager.Instance.tick >= needsComponent.tirednessForcedTick && _doNotDisturb <= 0 && needsComponent.doNotGetTired <= 0) {
-            if (!jobQueue.HasJob(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
-                JOB_TYPE jobType = JOB_TYPE.TIREDNESS_RECOVERY;
-                if (needsComponent.isExhausted) {
-                    jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
-                }
-
-                bool triggerSpooked = false;
-                Spooked spooked = traitContainer.GetNormalTrait<Trait>("Spooked") as Spooked;
-                if (spooked != null) {
-                    triggerSpooked = UnityEngine.Random.Range(0, 100) < 20;
-                }
-                if (!triggerSpooked) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), this, this);
-                    //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this });
-                    //job.SetCancelOnFail(true);
-                    needsComponent.sleepScheduleJobID = job.id;
-                    //bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0 /*|| stateComponent.stateToDo != null*/;
-                    jobQueue.AddJobInQueue(job); //, !willNotProcess
-                } else {
-                    spooked.TriggerFeelingSpooked();
-                }
-            }
-            needsComponent.hasForcedTiredness = true;
-            needsComponent.SetTirednessForcedTick();
-        }
-        //If a character current sleep ticks is less than the default, this means that the character already started sleeping but was awaken midway that is why he/she did not finish the allotted sleeping time
-        //When this happens, make sure to queue tiredness recovery again so he can finish the sleeping time
-        else if ((needsComponent.hasCancelledSleepSchedule || needsComponent.currentSleepTicks < CharacterManager.Instance.defaultSleepTicks) && _doNotDisturb <= 0) {
-            if (!jobQueue.HasJob(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
-                JOB_TYPE jobType = JOB_TYPE.TIREDNESS_RECOVERY;
-                if (needsComponent.isExhausted) {
-                    jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
-                }
-                bool triggerSpooked = false;
-                Spooked spooked = traitContainer.GetNormalTrait<Trait>("Spooked") as Spooked;
-                if (spooked != null) {
-                    triggerSpooked = UnityEngine.Random.Range(0, 100) < 20;
-                }
-                if (!triggerSpooked) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), this, this);
-                    //job.SetCancelOnFail(true);
-                    needsComponent.sleepScheduleJobID = job.id;
-                    //bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
-                    //    || stateComponent.currentState != null || stateComponent.stateToDo != null;
-                    jobQueue.AddJobInQueue(job); //!willNotProcess
-                } else {
-                    spooked.TriggerFeelingSpooked();
-                }
-            }
-            needsComponent.SetHasCancelledSleepSchedule(false);
-        }
-    }
-    /// <summary>
-    /// Make this character plan a starving fullness recovery job, regardless of actual
-    /// fullness level. NOTE: This will also cancel any existing fullness recovery jobs
-    /// <param name="jobType">The type of job to create. Default is HUNGER_RECOVERY_STARVING but can set other job type to prevent overriding.</param>
-    /// </summary>
-    public void TriggerFlawFullnessRecovery() {
-        //if (jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING)) {
-        //    jobQueue.CancelAllJobs(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING);
-        //}
-        bool triggerGrieving = false;
-        Griefstricken griefstricken = traitContainer.GetNormalTrait<Trait>("Griefstricken") as Griefstricken;
-        if (griefstricken != null) {
-            triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
-        }
-        if (!triggerGrieving) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), this, this);
-            //if (traitContainer.GetNormalTrait<Trait>("Vampiric") != null) {
-            //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-            //}
-            //else if (GetNormalTrait<Trait>("Cannibal") != null) {
-            //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
-            //}
-            jobQueue.AddJobInQueue(job);
-        } else {
-            griefstricken.TriggerGrieving();
-        }
-    }
     public bool PlanWorkActions() { //ref bool hasAddedToGoapPlans
         if (isAtHomeRegion && homeRegion.area != null && isPartOfHomeFaction) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
             bool triggerLazy = false;
@@ -5548,49 +5253,14 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (actionNode == currentActionNode) {
             SetCurrentActionNode(null, null, null);
         }
-        //actionNode.poiTarget.RemoveTargettedByAction(actionNode);
 
         if (isDead || !canWitness) {
             log += "\n" + name + " is dead! Do not do GoapActionResult, automatically CancelJob";
             PrintLogIfActive(log);
             job.CancelJob(false);
-            //bool forceRemoveJobInQueue = false;
-            //if (plan.job != null) {
-            //    if (result == InteractionManager.Goap_State_Success) {
-            //        if (plan.currentNode.parent == null && plan.job.jobQueueParent != null) {
-            //            log += "This plan has a job and the result of action " + actionNode.goapName + " is " + result + " and this is the last action for this plan, removing job in job queue...";
-            //            forceRemoveJobInQueue = true;
-            //        }
-            //    }
-            //}
-            //PrintLogIfActive(log);
-            //DropPlan(plan, forceRemoveJobInQueue, true);
             return;
         }
-        //if (actionNode.isStopped) {
-        //    log += "\nAction is stopped!";
-        //    PrintLogIfActive(log);
-        //    DropPlan(plan);
-        //    return;
-        //}
 
-        //Myk, para san to?
-        //if (plan.state == GOAP_PLAN_STATE.CANCELLED || plan.currentNode == null) {
-        //    log += "\nPlan was cancelled.";
-        //    bool forceRemoveJobInQueue = false;
-        //    if (plan.job != null) {
-        //        if (!plan.job.jobQueueParent.isAreaOrQuestJobQueue) {
-        //            log += "\nRemoving job in queue...";
-        //            forceRemoveJobInQueue = true;
-        //            //plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
-        //        } else {
-        //            log += "\nPlan's job is either an area or faction job, returning it to jobQueue...";
-        //        }
-        //    }
-        //    PrintLogIfActive(log);
-        //    DropPlan(plan, forceRemoveJobInQueue);
-        //    return;
-        //}
         if(result == InteractionManager.Goap_State_Success) {
             log += "\nPlan is setting next action to be done...";
             plan.SetNextNode();
@@ -5608,15 +5278,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 //}
                 //this means that this is the end goal so end this plan now
                 job.ForceCancelJob(false);
-
-                //after doing an extreme needs type job, check again if the character needs to recover more of that need.
-                if (job.jobType == JOB_TYPE.HAPPINESS_RECOVERY_FORLORN) {
-                    PlanHappinessRecoveryActions();
-                } else if (job.jobType == JOB_TYPE.HUNGER_RECOVERY_STARVING) {
-                    PlanFullnessRecoveryActions();
-                } else if (job.jobType == JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED) {
-                    PlanTirednessRecoveryActions();
-                }
+                
+                Messenger.Broadcast(Signals.CHARACTER_FINISHED_JOB, this, job);
             } else {
                 log += "\nNext action for this plan: " + plan.currentActualNode.goapName;
                 //if (plan.job != null && plan.job.assignedCharacter != this) {
@@ -5635,94 +5298,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             } else {
                 planner.RecalculateJob(job as GoapPlanJob);
             }
-            //if the last action of the plan failed and that action type can be replaced
-            //if (actionNode.goapType.CanBeReplaced()) {
-            //    //find a similar action that is advertised by another object, in the same structure
-            //    //if there is any, insert that action into the current plan, then do that next
-            //    List<TileObject> objs = currentStructure.GetTileObjectsThatAdvertise(actionNode.goapType);
-            //    if (objs.Count > 0) {
-            //        TileObject chosenObject = objs[UnityEngine.Random.Range(0, objs.Count)];
-            //        GoapAction newAction = chosenObject.Advertise(actionNode.goapType, this);
-            //        if (newAction != null) {
-            //            plan.InsertAction(newAction);
-            //        } else {
-            //            Debug.LogWarning(chosenObject.ToString() + " did not return an action of type " + actionNode.goapType.ToString());
-            //        }
-            //    }
-            //}
         }
-        //log += "\nPlan is setting next action to be done...";
-        //plan.SetNextNode(actionNode);
-        //if (plan.currentNode == null) {
-        //    log += "\nThis action is the end of plan.";
-        //    if (plan.job != null && plan.job.jobQueueParent != null) {
-        //        log += "\nRemoving job in queue...";
-        //        if (plan.job.jobQueueParent.isAreaOrQuestJobQueue && traitContainer.GetNormalTrait<Trait>("Hardworking") != null) {
-        //            log += "\nFinished a settlement job and character is hardworking, increase happiness by 3000...";
-        //            AdjustHappiness(3000);
-        //        }
-        //        //plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
-        //    }
-        //    PrintLogIfActive(log);
-        //    bool forceRemoveJobInQueue = true;
-        //    //If an action is stopped as current action (meaning it was cancelled) and it is a settlement/faction job, do not remove it from the queue
-        //    if (actionNode.isStoppedAsCurrentAction && plan != null && plan.job != null && plan.job.jobQueueParent.isAreaOrQuestJobQueue) {
-        //        forceRemoveJobInQueue = false;
-        //    }
-        //    //this means that this is the end goal so end this plan now
-        //    DropPlan(plan, forceRemoveJobInQueue);
-        //} else {
-        //    log += "\nNext action for this plan: " + plan.currentNode.action.goapName;
-        //    if (plan.job != null && plan.job.assignedCharacter != this) {
-        //        log += "\nPlan has a job: " + plan.job.name + ". Assigned character " + (plan.job.assignedCharacter != null ? plan.job.assignedCharacter.name : "None") + " does not match with " + name + ".";
-        //        log += "Drop plan because this character is no longer the one assigned";
-        //        DropPlan(plan);
-        //    }
-        //    PrintLogIfActive(log);
-        //    //PlanGoapActions();
-        //}
-        //action.OnResultReturnedToActor();
-        //if (result == InteractionManager.Goap_State_Success) {
-        //    log += "\nAction performed is a success!";
-        //    plan.SetNextNode();
-        //    if (plan.currentNode == null) {
-        //        log += "\nThis action is the end of plan.";
-        //        if (plan.job != null) {
-        //            log += "\nRemoving job in queue...";
-        //            plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
-        //        }
-        //        PrintLogIfActive(log);
-        //        //this means that this is the end goal so end this plan now
-        //        if (!DropPlan(plan)) {
-        //            //PlanGoapActions();
-        //        }
-        //    } else {
-        //        log += "\nNext action for this plan: " + plan.currentNode.action.goapName;
-        //        PrintLogIfActive(log);
-        //        //PlanGoapActions();
-        //    }
-        //} else if(result == InteractionManager.Goap_State_Fail) {
-        //    if(plan.endNode.action == action) {
-        //        log += "\nAction performed has failed. Since this action is the end/goal action, it will not recalculate anymore. Dropping plan...";
-        //        PrintLogIfActive(log);
-        //        if (!DropPlan(plan)) {
-        //            //PlanGoapActions();
-        //        }
-        //    } else {
-        //        log += "\nAction performed has failed. Will try to recalculate plan...";
-        //        if (plan.doNotRecalculate) {
-        //            log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
-        //            PrintLogIfActive(log);
-        //            if (!DropPlan(plan)) {
-        //                //PlanGoapActions();
-        //            }
-        //        } else {
-        //            PrintLogIfActive(log);
-        //            RecalculatePlan(plan);
-        //            //IdlePlans();
-        //        }
-        //    }
-        //}
     }
     //public bool DropPlan(GoapPlan plan, bool forceRemoveJob = false, bool forceProcessPlanJob = false) {
     //    bool hasBeenRemoved = false;
