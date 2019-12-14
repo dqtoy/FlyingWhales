@@ -70,4 +70,7 @@ public class WallVisual : MapObjectVisual<WallObject> {
     public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) {
         throw new System.NotImplementedException();
     }
+    public override bool IsMapObjectMenuVisible() {
+        return true; //always true so that this is skipped
+    }
 }

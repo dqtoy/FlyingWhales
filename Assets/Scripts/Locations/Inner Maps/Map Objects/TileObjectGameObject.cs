@@ -5,16 +5,18 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class TileObjectGameObject : MapObjectVisual<TileObject> {
-
-
+    
     [SerializeField] private Sprite bed1Sleeping;
     [SerializeField] private Sprite bed2Sleeping;
+    
+    private System.Func<bool> _isMenuShowing;
 
     public override void Initialize(TileObject tileObject) {
         base.Initialize(tileObject);
         this.name = tileObject.ToString();
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject.tileObjectType, tileObject.state, tileObject.structureLocation.location.coreTile.biomeType));
         collisionTrigger = this.transform.GetComponentInChildren<TileObjectCollisionTrigger>();
+        _isMenuShowing = () => IsMenuShowing(tileObject);
     }
 
     public override void UpdateTileObjectVisual(TileObject tileObject) {
@@ -42,6 +44,16 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
         //this.OverrideVisual(furnitureSetting.assetToUse);
     }
 
+    #region Inquiry
+    private bool IsMenuShowing(TileObject obj) {
+        return UIManager.Instance.tileObjectInfoUI.isShowing &&
+               UIManager.Instance.tileObjectInfoUI.activeTileObject == obj;
+    }
+    public override bool IsMapObjectMenuVisible() {
+        return _isMenuShowing.Invoke();
+    }
+    #endregion
+    
     #region Pointer Events
     protected override void OnPointerLeftClick(TileObject poi) {
         base.OnPointerLeftClick(poi);

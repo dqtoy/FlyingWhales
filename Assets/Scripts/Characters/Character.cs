@@ -3862,8 +3862,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     private bool CanPerformEndTickJobs() {
         return minion == null && homeRegion.area != null && !isDead && doNotDisturb <= 0 && isStoppedByOtherCharacter <= 0 && canWitness
-            && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count > 0
-            && !marker.hasFleePath && stateComponent.currentState == null && IsInOwnParty();
+            && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count > 0 
+            && currentParty.icon.isTravellingOutside == false && !marker.hasFleePath 
+            && stateComponent.currentState == null && IsInOwnParty();
     }
     //public void PlanGoapActions() {
     //    if (!IsInOwnParty() || ownParty.icon.isTravelling || _doNotDisturb > 0 /*|| isWaitingForInteraction > 0 */ || isDead || marker.hasFleePath) {

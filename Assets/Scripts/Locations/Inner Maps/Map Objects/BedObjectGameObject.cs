@@ -26,4 +26,7 @@ public class BedObjectGameObject : MapObjectVisual<Bed> {
     }
 
     public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
+    public override bool IsMapObjectMenuVisible() {
+        return true;
+    }
 }

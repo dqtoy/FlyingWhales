@@ -249,4 +249,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     private bool CanBeSuckedIn(IDamageable damageable) {
         return damageable.CanBeDamaged() && (damageable is GenericTileObject) == false && (damageable is Character) == false;
     }
+    public override bool IsMapObjectMenuVisible() {
+        return true;
+    }
 }
