@@ -100,6 +100,7 @@ public class ActualGoapNode {
     public Log descriptionLog { get; private set; } //action log at the end of the action
     public LocationStructure targetStructure { get; private set; }
     public LocationGridTile targetTile { get; private set; }
+    public IPointOfInterest targetPOIToGoTo { get; private set; }
 
     public string currentStateName { get; private set; }
     public int currentStateDuration { get; private set; }
@@ -154,86 +155,173 @@ public class ActualGoapNode {
 
         //Move To Do Action
         actor.marker.pathfindingAI.ResetEndReachedDistance();
-        MoveToDoAction();
+        SetTargetToGoTo();
+        MoveToDoAction(job);
     }
-    private void MoveToDoAction() {
+    private void SetTargetToGoTo() {
         if (targetStructure == null) {
             targetStructure = action.GetTargetStructure(this);
             if (targetStructure == null) { throw new System.Exception(actor.name + " target structure of action " + action.goapName + " is null."); }
         }
+        if (action.actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET || action.actionLocationType == ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET) {
+            IPointOfInterest targetToGoTo = action.GetTargetToGoTo(this);
+            if (targetToGoTo == null) {
+                targetTile = action.GetTargetTileToGoTo(this);
+            } else {
+                targetTile = targetToGoTo.gridTileLocation;
+            }
+        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.IN_PLACE) {
+            targetTile = actor.gridTileLocation;
+        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.NEARBY) {
+            List<LocationGridTile> choices = actor.currentRegion.area.areaMap.GetTilesInRadius(actor.gridTileLocation, 3);
+            if (choices.Count > 0) {
+                targetTile = choices[Utilities.rng.Next(0, choices.Count)];
+            } else {
+                targetTile = actor.gridTileLocation;
+            }
+        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION) {
+            List<LocationGridTile> choices = targetStructure.unoccupiedTiles;
+            if (choices.Count > 0) {
+                targetTile = choices[Utilities.rng.Next(0, choices.Count)];
+            } else {
+                throw new System.Exception(actor.name + " target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
+            }
+        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION_B) {
+            List<LocationGridTile> choices = targetStructure.unoccupiedTiles.Where(x => x.UnoccupiedNeighbours.Count > 0).ToList();
+            if (choices.Count > 0) {
+                targetTile = choices[Utilities.rng.Next(0, choices.Count)];
+            } else {
+                throw new System.Exception(actor.name + " target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
+            }
+        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION_B) {
+            List<LocationGridTile> choices = targetStructure.unoccupiedTiles.Where(x => x.UnoccupiedNeighbours.Count > 0).ToList();
+            if (choices.Count > 0) {
+                targetTile = choices[Utilities.rng.Next(0, choices.Count)];
+            } else {
+                throw new System.Exception(actor.name + " target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
+            }
+        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
+            if (actor.marker.inVisionPOIs.Contains(poiTarget)) {
+                targetTile = actor.gridTileLocation;
+            } else {
+                //No OnArriveAtTargetLocation because it doesn't trigger on arrival, rather, it is triggered by on vision
+                targetTile = poiTarget.gridTileLocation;
+            }
+        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.OVERRIDE) {
+            LocationGridTile tile = action.GetOverrideTargetTile(this);
+            if (tile != null) {
+                targetTile = tile;
+            } else {
+                throw new System.Exception(actor.name + " override target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
+            }
+
+        }
+    }
+    //We only pass the job because we need to cancel it if the target tile is null
+    private void MoveToDoAction(JobQueueItem job) {
         //Only create thought bubble log when characters starts the action/moves to do the action so we can pass the target structure
         CreateThoughtBubbleLog(targetStructure);
         if (!actor.currentRegion.IsSameCoreLocationAs(targetStructure.location)) { //different core locations
-            actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, doneAction: MoveToDoAction);
+            actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, doneAction: () => MoveToDoAction(job));
         } else {
-            if (action.actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET || action.actionLocationType == ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET) {
-                IPointOfInterest targetToGoTo = action.GetTargetToGoTo(this);
-                if(targetToGoTo == null) {
-                    targetTile = action.GetTargetTileToGoTo(this);
-                    actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
-                } else {
-                    targetTile = targetToGoTo.gridTileLocation;
-                    actor.marker.GoTo(targetToGoTo, OnArriveAtTargetLocation);
-                }
-            } else if (action.actionLocationType == ACTION_LOCATION_TYPE.IN_PLACE) {
-                targetTile = actor.gridTileLocation;
-                actor.PerformGoapAction();
-            } else if (action.actionLocationType == ACTION_LOCATION_TYPE.NEARBY) {
-                List<LocationGridTile> choices = actor.currentRegion.area.areaMap.GetTilesInRadius(actor.gridTileLocation, 3);
-                if (choices.Count > 0) {
-                    targetTile = choices[Utilities.rng.Next(0, choices.Count)];
-                    actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
-                } else {
-                    targetTile = actor.gridTileLocation;
-                    actor.PerformGoapAction();
-                }
-            } else if (action.actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION) {
-                List<LocationGridTile> choices = targetStructure.unoccupiedTiles;
-                if (choices.Count > 0) {
-                    targetTile = choices[Utilities.rng.Next(0, choices.Count)];
-                    actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
-                } else {
-                    throw new System.Exception(actor.name + " target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
-                }
-            } else if (action.actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION_B) {
-                List<LocationGridTile> choices = targetStructure.unoccupiedTiles.Where(x => x.UnoccupiedNeighbours.Count > 0).ToList();
-                if (choices.Count > 0) {
-                    targetTile = choices[Utilities.rng.Next(0, choices.Count)];
-                    actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
-                } else {
-                    throw new System.Exception(actor.name + " target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
-                }
-            } else if (action.actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION_B) {
-                List<LocationGridTile> choices = targetStructure.unoccupiedTiles.Where(x => x.UnoccupiedNeighbours.Count > 0).ToList();
-                if (choices.Count > 0) {
-                    targetTile = choices[Utilities.rng.Next(0, choices.Count)];
-                    actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
-                } else {
-                    throw new System.Exception(actor.name + " target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
-                }
-            } else if (action.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
-                if (actor.marker.inVisionPOIs.Contains(poiTarget)) {
-                    targetTile = actor.gridTileLocation;
+            if (targetTile == null) {
+                //Here we check if there is a target tile to go to because if there is not, the target might already be destroyed/taken/disabled, if that happens, we must cancel job
+                Debug.LogWarning(GameManager.Instance.TodayLogString() + actor.name + " is trying to move to do action " + action.goapName + " with target " + poiTarget.name + " but target tile is null, will cancel job " + job.name + " instead.");
+                job.CancelJob(false);
+                return;
+            }
+            if (targetPOIToGoTo == null) {
+                if (targetTile == actor.gridTileLocation) {
                     actor.PerformGoapAction();
                 } else {
-                    //No OnArriveAtTargetLocation because it doesn't trigger on arrival, rather, it is triggered by on vision
-                    targetTile = poiTarget.gridTileLocation;
-                    actor.marker.GoTo(poiTarget);
+                    actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
                 }
-            } else if (action.actionLocationType == ACTION_LOCATION_TYPE.OVERRIDE) {
-                LocationGridTile tile = action.GetOverrideTargetTile(this);
-                if (tile != null) {
-                    targetTile = tile;
-                    actor.marker.GoTo(tile, OnArriveAtTargetLocation);
-                } else {
-                    throw new System.Exception(actor.name + " override target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
-                }
-                
+            } else {
+                actor.marker.GoTo(targetPOIToGoTo, OnArriveAtTargetLocation);
             }
         }
     }
+    //private void MoveToDoAction() {
+    //    if (targetStructure == null) {
+    //        targetStructure = action.GetTargetStructure(this);
+    //        if (targetStructure == null) { throw new System.Exception(actor.name + " target structure of action " + action.goapName + " is null."); }
+    //    }
+    //    //Only create thought bubble log when characters starts the action/moves to do the action so we can pass the target structure
+    //    CreateThoughtBubbleLog(targetStructure);
+    //    if (!actor.currentRegion.IsSameCoreLocationAs(targetStructure.location)) { //different core locations
+    //        actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, doneAction: MoveToDoAction);
+    //    } else {
+    //        if (action.actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET || action.actionLocationType == ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET) {
+    //            IPointOfInterest targetToGoTo = action.GetTargetToGoTo(this);
+    //            if(targetToGoTo == null) {
+    //                targetTile = action.GetTargetTileToGoTo(this);
+    //                actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
+    //            } else {
+    //                targetTile = targetToGoTo.gridTileLocation;
+    //                actor.marker.GoTo(targetToGoTo, OnArriveAtTargetLocation);
+    //            }
+    //        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.IN_PLACE) {
+    //            targetTile = actor.gridTileLocation;
+    //            actor.PerformGoapAction();
+    //        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.NEARBY) {
+    //            List<LocationGridTile> choices = actor.currentRegion.area.areaMap.GetTilesInRadius(actor.gridTileLocation, 3);
+    //            if (choices.Count > 0) {
+    //                targetTile = choices[Utilities.rng.Next(0, choices.Count)];
+    //                actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
+    //            } else {
+    //                targetTile = actor.gridTileLocation;
+    //                actor.PerformGoapAction();
+    //            }
+    //        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION) {
+    //            List<LocationGridTile> choices = targetStructure.unoccupiedTiles;
+    //            if (choices.Count > 0) {
+    //                targetTile = choices[Utilities.rng.Next(0, choices.Count)];
+    //                actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
+    //            } else {
+    //                throw new System.Exception(actor.name + " target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
+    //            }
+    //        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION_B) {
+    //            List<LocationGridTile> choices = targetStructure.unoccupiedTiles.Where(x => x.UnoccupiedNeighbours.Count > 0).ToList();
+    //            if (choices.Count > 0) {
+    //                targetTile = choices[Utilities.rng.Next(0, choices.Count)];
+    //                actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
+    //            } else {
+    //                throw new System.Exception(actor.name + " target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
+    //            }
+    //        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION_B) {
+    //            List<LocationGridTile> choices = targetStructure.unoccupiedTiles.Where(x => x.UnoccupiedNeighbours.Count > 0).ToList();
+    //            if (choices.Count > 0) {
+    //                targetTile = choices[Utilities.rng.Next(0, choices.Count)];
+    //                actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
+    //            } else {
+    //                throw new System.Exception(actor.name + " target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
+    //            }
+    //        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
+    //            if (actor.marker.inVisionPOIs.Contains(poiTarget)) {
+    //                targetTile = actor.gridTileLocation;
+    //                actor.PerformGoapAction();
+    //            } else {
+    //                //No OnArriveAtTargetLocation because it doesn't trigger on arrival, rather, it is triggered by on vision
+    //                targetTile = poiTarget.gridTileLocation;
+    //                actor.marker.GoTo(poiTarget);
+    //            }
+    //        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.OVERRIDE) {
+    //            LocationGridTile tile = action.GetOverrideTargetTile(this);
+    //            if (tile != null) {
+    //                targetTile = tile;
+    //                actor.marker.GoTo(tile, OnArriveAtTargetLocation);
+    //            } else {
+    //                throw new System.Exception(actor.name + " override target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
+    //            }
+                
+    //        }
+    //    }
+    //}
     private void OnArriveAtTargetLocation() {
-        actor.PerformGoapAction();
+        if(action.actionLocationType != ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
+            //Only do perform goap action on arrive at location if the location type is not target in vision, because if it is, we no longer need this function because perform goap action is already called upon entering vision
+            actor.PerformGoapAction();
+        }
     }
     public void PerformAction() {
         GoapActionInvalidity goapActionInvalidity = action.IsInvalid(this);

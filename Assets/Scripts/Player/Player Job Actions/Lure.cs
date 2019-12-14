@@ -70,8 +70,11 @@ public class Lure : PlayerJobAction {
     }
     private void GoToRegion(object r) {
         Region region = r as Region;
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.SEARCHING, region.regionTileObject, targetCharacter);
+        targetCharacter.jobQueue.AddJobInQueue(job);
+        UIManager.Instance.HideObjectPicker();
+        GameManager.Instance.SetPausedState(isGamePausedOnLure);
         base.ActivateAction(targetCharacter);
-        //TODO:
         // CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.SEARCHING_WORLD_EVENT, CHARACTER_STATE.MOVE_OUT, region, targetCharacter);
         // targetCharacter.jobQueue.AddJobInQueue(job);
         // UIManager.Instance.HideObjectPicker();
