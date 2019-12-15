@@ -9,13 +9,15 @@ public class UnleashSummonUI : MonoBehaviour {
     public Image summonIcon;
     public TextMeshProUGUI summonText;
     private Summon summon;
+    private bool isGamePausedOnShowUI;
 
     public void ShowUnleashSummonUI(Summon summon) {
         if (PlayerUI.Instance.IsMajorUIShowing()) {
             PlayerUI.Instance.AddPendingUI(() => ShowUnleashSummonUI(summon));
             return;
         }
-        if (!GameManager.Instance.isPaused) {
+        isGamePausedOnShowUI = GameManager.Instance.isPaused;
+        if (!isGamePausedOnShowUI) {
             UIManager.Instance.Pause();
             UIManager.Instance.SetSpeedTogglesState(false);
         }
@@ -47,7 +49,9 @@ public class UnleashSummonUI : MonoBehaviour {
     private void Close() {
         gameObject.SetActive(false);
         if (!PlayerUI.Instance.TryShowPendingUI()) {
-            UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
+            if (!isGamePausedOnShowUI) {
+                UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
+            }
         }
     }
 }

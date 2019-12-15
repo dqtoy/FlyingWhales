@@ -200,10 +200,10 @@ public class Summon : Character, IWorldObject {
         SubscribeToSignals();
         Messenger.RemoveListener(Signals.HOUR_STARTED, () => needsComponent.DecreaseNeeds()); //do not make summons decrease needs
         //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration); //do not make summons plan goap actions by default
-        if (GameManager.Instance.isPaused) {
-            DecreaseCanMove(); //TODO: Handle this somehwere better?
-            marker.PauseAnimation();
-        }
+        //if (GameManager.Instance.isPaused) {
+        //    DecreaseCanMove(); //TODO: Handle this somehwere better?
+        //    marker.PauseAnimation();
+        //}
         marker.UpdateSpeed();
     }
     #endregion
