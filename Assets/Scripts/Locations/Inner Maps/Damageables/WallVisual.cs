@@ -13,10 +13,10 @@ public class WallVisual : MapObjectVisual<WallObject> {
         collisionTrigger.gameObject.SetActive(false);
     }
 
-    public override void Initialize(WallObject wallObject) {
-        collisionTrigger.Initialize(wallObject);
+    public override void Initialize(WallObject obj) {
+        collisionTrigger.Initialize(obj);
         collisionTrigger.gameObject.SetActive(true);
-        UpdateWallAssets(wallObject);
+        UpdateWallAssets(obj);
     }
     public void UpdateWallAssets(WallObject wallObject) {
         for (int i = 0; i < spriteRenderers.Length; i++) {
@@ -73,4 +73,5 @@ public class WallVisual : MapObjectVisual<WallObject> {
     public override bool IsMapObjectMenuVisible() {
         return true; //always true so that this is skipped
     }
+    public override void UpdateCollidersState(WallObject obj) { }
 }

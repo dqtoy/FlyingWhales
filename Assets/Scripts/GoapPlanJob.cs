@@ -234,7 +234,7 @@ public class GoapPlanJob : JobQueueItem {
     }
     public override void OnAddJobToQueue() {
         if(targetPOI != null) {
-            targetPOI.AddJobTargettingThis(this);
+            targetPOI.AddJobTargetingThis(this);
         }
     }
     public override bool OnRemoveJobFromQueue() {
@@ -247,7 +247,7 @@ public class GoapPlanJob : JobQueueItem {
             }
         }
         if (targetPOI != null) {
-            return targetPOI.RemoveJobTargettingThis(this);
+            return targetPOI.RemoveJobTargetingThis(this);
         }
         return false;
     }

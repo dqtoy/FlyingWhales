@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -785,6 +786,16 @@ namespace Inner_Maps {
             }
             throw new System.Exception("Could not create new instance of tile object of type " + tileObjectType.ToString());
         }
+        public TILE_OBJECT_TYPE GetTileObjectTypeFromTileAsset(Sprite sprite) {
+            int index = sprite.name.IndexOf("#", StringComparison.Ordinal);
+            string tileObjectName = sprite.name;
+            if (index != -1) {
+                tileObjectName = sprite.name.Substring(0, index);    
+            }
+
+            TILE_OBJECT_TYPE tileObjectType = (TILE_OBJECT_TYPE) System.Enum.Parse(typeof(TILE_OBJECT_TYPE), tileObjectName);
+            return tileObjectType;
+        }
         #endregion
 
         #region Lighting
@@ -829,19 +840,21 @@ namespace Inner_Maps {
             return itemTiles[itemType];
         }
         public Sprite GetTileObjectAsset(TILE_OBJECT_TYPE objectType, POI_STATE state, BIOMES biome) {
-            TileObjectTileSetting setting = tileObjectTiles[objectType];
-            BiomeTileObjectTileSetting biomeSetting;
-            if (setting.biomeAssets.ContainsKey(biome)) {
-                biomeSetting = setting.biomeAssets[biome];
-            } else {
-                biomeSetting = setting.biomeAssets[BIOMES.NONE];
+            if (tileObjectTiles.ContainsKey(objectType)) {
+                TileObjectTileSetting setting = tileObjectTiles[objectType];
+                BiomeTileObjectTileSetting biomeSetting;
+                if (setting.biomeAssets.ContainsKey(biome)) {
+                    biomeSetting = setting.biomeAssets[biome];
+                } else {
+                    biomeSetting = setting.biomeAssets[BIOMES.NONE];
+                }
+                if (state == POI_STATE.ACTIVE) {
+                    return biomeSetting.activeTile;
+                } else {
+                    return biomeSetting.inactiveTile;
+                }    
             }
-            if (state == POI_STATE.ACTIVE) {
-                return biomeSetting.activeTile;
-            } else {
-                return biomeSetting.inactiveTile;
-            }
-        
+            return null;
         }
         public WallAsset GetWallAsset(RESOURCE wallResource, string assetName) {
             return wallResourceAssets[wallResource].GetWallAsset(assetName);

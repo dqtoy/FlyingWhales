@@ -54,7 +54,7 @@ namespace Traits {
                 if (targetTable.food < 20 && targetTable.structureLocation is Dwelling) {
                     Dwelling dwelling = targetTable.structureLocation as Dwelling;
                     if (dwelling.IsResident(characterThatWillDoJob)) {
-                        if (!targetTable.HasJobTargettingThis(JOB_TYPE.DROP_RESOURCE)) {
+                        if (!targetTable.HasJobTargetingThis(JOB_TYPE.DROP_RESOURCE)) {
                             int neededFood = 60 - targetTable.food;
                             GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_FOOD, "0", true, GOAP_EFFECT_TARGET.TARGET);
                             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DROP_RESOURCE, effect, targetTable, characterThatWillDoJob);

@@ -110,11 +110,11 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         head.rectTransform.SetSiblingIndex(1);
         brows.rectTransform.SetSiblingIndex(2);
         eyes.rectTransform.SetSiblingIndex(3);
-        nose.rectTransform.SetSiblingIndex(4);
-        hair.rectTransform.SetSiblingIndex(5);
-        mustache.rectTransform.SetSiblingIndex(6);
-        beard.rectTransform.SetSiblingIndex(7);
-        mouth.rectTransform.SetSiblingIndex(8);
+        hair.rectTransform.SetSiblingIndex(4);
+        beard.rectTransform.SetSiblingIndex(5);
+        mouth.rectTransform.SetSiblingIndex(6);
+        nose.rectTransform.SetSiblingIndex(7);
+        mustache.rectTransform.SetSiblingIndex(8);
         lvlGO.SetActive(false);
     }
 

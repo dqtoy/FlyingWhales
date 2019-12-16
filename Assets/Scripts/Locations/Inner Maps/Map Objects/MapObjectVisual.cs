@@ -5,11 +5,11 @@ using UnityEngine;
 public abstract class MapObjectVisual<T> : BaseMapObjectVisual where T : IDamageable {
     public BaseCollisionTrigger<T> collisionTrigger { get; protected set; }
 
-    public virtual void Initialize(T poi) {
-        _hoverHandler.SetOnHoverAction(() => OnPointerEnter(poi));
-        _hoverHandler.SetOnHoverOutAction(() => OnPointerExit(poi));
-        onLeftClickAction = () => OnPointerLeftClick(poi);
-        onRightClickAction = () => OnPointerRightClick(poi);
+    public virtual void Initialize(T obj) {
+        _hoverHandler.SetOnHoverAction(() => OnPointerEnter(obj));
+        _hoverHandler.SetOnHoverOutAction(() => OnPointerExit(obj));
+        onLeftClickAction = () => OnPointerLeftClick(obj);
+        onRightClickAction = () => OnPointerRightClick(obj);
     }
 
     #region Placement
@@ -41,5 +41,15 @@ public abstract class MapObjectVisual<T> : BaseMapObjectVisual where T : IDamage
     }
     protected virtual void OnPointerLeftClick(T poi) { }
     protected virtual void OnPointerRightClick(T poi) { }
+    #endregion
+
+    #region Collisions
+    public abstract void UpdateCollidersState(T obj);
+    protected void DisableColliders() {
+        collisionTrigger.SetCollidersState(false);
+    }
+    protected void EnableColliders() {
+        collisionTrigger.SetCollidersState(true);
+    }
     #endregion
 }

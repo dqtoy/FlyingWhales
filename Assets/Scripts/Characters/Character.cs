@@ -955,10 +955,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //    }
     //    return null;
     //}
-    public void AddJobTargettingThis(JobQueueItem job) {
+    public void AddJobTargetingThis(JobQueueItem job) {
         allJobsTargettingThis.Add(job);
     }
-    public bool RemoveJobTargettingThis(JobQueueItem job) {
+    public bool RemoveJobTargetingThis(JobQueueItem job) {
         return allJobsTargettingThis.Remove(job);
     }
     public void ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE jobType) {
@@ -1054,7 +1054,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //        }
     //    }
     //}
-    public bool HasJobTargettingThis(params JOB_TYPE[] jobTypes) {
+    public bool HasJobTargetingThis(params JOB_TYPE[] jobTypes) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
             for (int j = 0; j < jobTypes.Length; j++) {
@@ -1430,7 +1430,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     /// <returns>The created job.</returns>
     public GoapPlanJob CreateApprehendJobFor(Character targetCharacter, bool assignSelfToJob = false) {
         //if (homeArea.id == specificLocation.id) {
-        if (isAtHomeRegion && homeRegion.area != null && !targetCharacter.HasJobTargettingThis(JOB_TYPE.APPREHEND) && targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null && !traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+        if (isAtHomeRegion && homeRegion.area != null && !targetCharacter.HasJobTargetingThis(JOB_TYPE.APPREHEND) && targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null && !traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, targetCharacter, homeRegion.area);
             job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { homeRegion.area.prison });
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeApprehendJob);
@@ -1452,7 +1452,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         return job;
     }
     public GoapPlanJob CreateAttemptToStopCurrentActionAndJob(Character targetCharacter, GoapPlanJob jobToStop) {
-        if (!targetCharacter.HasJobTargettingThis(JOB_TYPE.ATTEMPT_TO_STOP_JOB)) {
+        if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.ATTEMPT_TO_STOP_JOB)) {
             GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.TARGET_STOP_ACTION_AND_JOB, string.Empty, false, GOAP_EFFECT_TARGET.TARGET);
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ATTEMPT_TO_STOP_JOB, goapEffect, targetCharacter, this);
             job.AddOtherData(INTERACTION_TYPE.ASK_TO_STOP_JOB, new object[] { jobToStop });
@@ -1550,7 +1550,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 while (chosenCharacter == null && enemyCharacters.Count > 0) {
                     int index = UnityEngine.Random.Range(0, enemyCharacters.Count);
                     Character character = enemyCharacters[index];
-                    if (character.HasJobTargettingThis(JOB_TYPE.UNDERMINE_ENEMY) || jobQueue.HasJob(JOB_TYPE.UNDERMINE_ENEMY, character)) {
+                    if (character.HasJobTargetingThis(JOB_TYPE.UNDERMINE_ENEMY) || jobQueue.HasJob(JOB_TYPE.UNDERMINE_ENEMY, character)) {
                         enemyCharacters.RemoveAt(index);
                     } else {
                         chosenCharacter = character;
@@ -1970,7 +1970,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //        (ownParty as CharacterParty).actionData.currentAction.EndAction(ownParty, (ownParty as CharacterParty).actionData.currentTargetObject);
         //    }
         //}
-        marker.collisionTrigger.SetMainColliderState(true);
+        marker.collisionTrigger.SetCollidersState(true);
         //if (this.minion != null) {
         //    this.minion.SetEnabledState(true); //reenable this minion, since it could've been disabled because it was part of another party
         //}
@@ -1980,7 +1980,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //currentRegion.RemoveCharacterFromLocation(this); //Why are we removing the character from location if it is added to a party
             //ownParty.specificLocation.RemoveCharacterFromLocation(this);
             //ownParty.icon.SetVisualState(false);
-            marker.collisionTrigger.SetMainColliderState(false);
+            marker.collisionTrigger.SetCollidersState(false);
         }
     }
     public bool IsInParty() {

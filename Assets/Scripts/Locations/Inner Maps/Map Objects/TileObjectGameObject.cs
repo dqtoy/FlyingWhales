@@ -11,12 +11,13 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
     
     private System.Func<bool> _isMenuShowing;
 
-    public override void Initialize(TileObject tileObject) {
-        base.Initialize(tileObject);
-        this.name = tileObject.ToString();
-        SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject.tileObjectType, tileObject.state, tileObject.structureLocation.location.coreTile.biomeType));
+    public override void Initialize(TileObject obj) {
+        base.Initialize(obj);
+        this.name = obj.ToString();
+        SetVisual(InnerMapManager.Instance.GetTileObjectAsset(obj.tileObjectType, obj.state, obj.structureLocation.location.coreTile.biomeType));
         collisionTrigger = this.transform.GetComponentInChildren<TileObjectCollisionTrigger>();
-        _isMenuShowing = () => IsMenuShowing(tileObject);
+        _isMenuShowing = () => IsMenuShowing(obj);
+        
     }
 
     public override void UpdateTileObjectVisual(TileObject tileObject) {
@@ -76,6 +77,16 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
             InnerMapManager.Instance.SetCurrentlyHoveredPOI(null);
         }
         UIManager.Instance.HideSmallInfo();
+    }
+    #endregion
+
+    #region Colliders
+    public override void UpdateCollidersState(TileObject obj) {
+        if (obj.advertisedActions.Count > 0) {
+            EnableColliders();
+        } else {
+            DisableColliders();
+        }
     }
     #endregion
 }

@@ -96,7 +96,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         AddAdvertisedAction(INTERACTION_TYPE.POISON);
         AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
     }
-    public void RemoveCommonAdvertisments() {
+    protected void RemoveCommonAdvertisments() {
         RemoveAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         RemoveAdvertisedAction(INTERACTION_TYPE.POISON);
         RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
@@ -308,17 +308,19 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
             advertisedActions = new List<INTERACTION_TYPE>();
         }
         advertisedActions.Add(type);
+        mapVisual?.UpdateCollidersState(this);
     }
     public void RemoveAdvertisedAction(INTERACTION_TYPE type) {
         advertisedActions.Remove(type);
+        mapVisual?.UpdateCollidersState(this);
     }
-    public void AddJobTargettingThis(JobQueueItem job) {
+    public void AddJobTargetingThis(JobQueueItem job) {
         allJobsTargettingThis.Add(job);
     }
-    public bool RemoveJobTargettingThis(JobQueueItem job) {
+    public bool RemoveJobTargetingThis(JobQueueItem job) {
         return allJobsTargettingThis.Remove(job);
     }
-    public bool HasJobTargettingThis(params JOB_TYPE[] jobTypes) {
+    public bool HasJobTargetingThis(params JOB_TYPE[] jobTypes) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
             for (int j = 0; j < jobTypes.Length; j++) {
