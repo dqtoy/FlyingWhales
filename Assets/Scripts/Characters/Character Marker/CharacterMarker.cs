@@ -1620,6 +1620,14 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         return false;
     }
+    public override void UpdateCollidersState(Character obj) {
+        //Do not implement?
+        // if (obj.advertisedActions.Count > 0) {
+        //     EnableColliders();
+        // } else {
+        //     DisableColliders();
+        // }
+    }
     #endregion
     
 }

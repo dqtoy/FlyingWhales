@@ -34,11 +34,11 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     }
     #endregion    
 
-    public override void Initialize(TileObject poi) {
-        this.tornado = poi as TornadoTileObject;
-        this.transform.localPosition = poi.gridTileLocation.centeredLocalLocation;
+    public override void Initialize(TileObject obj) {
+        this.tornado = obj as TornadoTileObject;
+        this.transform.localPosition = obj.gridTileLocation.centeredLocalLocation;
         this.radius = tornado.radius;
-        areaLocation = poi.gridTileLocation.structure.areaLocation;
+        areaLocation = obj.gridTileLocation.structure.areaLocation;
         float scale = tornado.radius / 5f;
         for (int i = 0; i < particles.Length; i++) {
             particles[i].transform.localScale = new Vector3(scale, scale, scale);
@@ -252,4 +252,6 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     public override bool IsMapObjectMenuVisible() {
         return true;
     }
+    
+    public override void UpdateCollidersState(TileObject obj) { }
 }

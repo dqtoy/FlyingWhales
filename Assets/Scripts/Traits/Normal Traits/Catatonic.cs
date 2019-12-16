@@ -57,7 +57,7 @@ namespace Traits {
                         }
                     } else {
                         if (characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.NEGATIVE) {
-                            if (owner.CanPlanGoap() && !owner.HasJobTargettingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
+                            if (owner.CanPlanGoap() && !owner.HasJobTargetingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
                                 if (!PlanFullnessRecovery(characterThatWillDoJob)) {
                                     CreateDropJobForTirednessRecovery(characterThatWillDoJob);
                                 }
@@ -83,7 +83,7 @@ namespace Traits {
             if (!owner.IsInOwnParty()) {
                 return;
             }
-            if (owner.HasJobTargettingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
+            if (owner.HasJobTargetingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
                 return;
             }
             if (owner.jobQueue.jobsInQueue.Count > 0) {
@@ -149,7 +149,7 @@ namespace Traits {
             return false;
         }
         private bool PlanTirednessRecovery() {
-            if ((owner.needsComponent.isExhausted || owner.needsComponent.isTired) && !owner.HasJobTargettingThis(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
+            if ((owner.needsComponent.isExhausted || owner.needsComponent.isTired) && !owner.HasJobTargetingThis(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
                 return CreateSleepJob();
             }
             return false;

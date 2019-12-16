@@ -410,4 +410,51 @@ public class LocationStructureObject : PooledObject {
             }
         }
     }
+
+
+    [ContextMenu("Convert Objects")]
+    public void ConvertObjects() {
+        Utilities.DestroyChildren(_objectsParent);
+        _detailTileMap.CompressBounds();
+        Material mat = Resources.Load<Material>("Fonts & Materials/2D Lighting");
+        BoundsInt bounds = _detailTileMap.cellBounds;
+        for (int x = bounds.xMin; x < bounds.xMax; x++) {
+            for (int y = bounds.yMin; y < bounds.yMax; y++) {
+                Vector3Int pos = new Vector3Int(x, y, 0);
+                TileBase tile = _detailTileMap.GetTile(pos);
+                Vector3 worldPos = _detailTileMap.CellToWorld(pos);
+            
+                if (tile != null) {
+                    Matrix4x4 m = _detailTileMap.GetTransformMatrix(pos);
+                    Vector2 centeredPos = new Vector2(worldPos.x + 0.5f, worldPos.y + 0.5f);
+                    
+                    GameObject newGo = new GameObject("StructureTemplateObjectData");
+                    newGo.layer = LayerMask.NameToLayer("Area Maps");
+                    newGo.transform.SetParent(_objectsParent);
+                    newGo.transform.position = centeredPos;
+                    newGo.transform.localRotation = m.rotation;
+
+                    StructureTemplateObjectData stod = newGo.AddComponent<StructureTemplateObjectData>();
+                    SpriteRenderer spriteRenderer = newGo.AddComponent<SpriteRenderer>();
+
+                    spriteRenderer.sortingLayerName = "Area Maps";
+                    spriteRenderer.sortingOrder = 60;
+                    spriteRenderer.material = mat;
+                    
+                    int index = tile.name.IndexOf("#", StringComparison.Ordinal);
+                    string tileObjectName = tile.name;
+                    if (index != -1) {
+                        tileObjectName = tile.name.Substring(0, index);    
+                    }
+
+                    TILE_OBJECT_TYPE tileObjectType = (TILE_OBJECT_TYPE) System.Enum.Parse(typeof(TILE_OBJECT_TYPE), tileObjectName);
+                    stod.tileObjectType = tileObjectType;
+                    stod.spriteRenderer = spriteRenderer;
+                    spriteRenderer.sprite = _detailTileMap.GetSprite(pos);
+                }
+            }
+        }
+        _detailTileMap.enabled = false;
+        _detailTileMapRenderer.enabled = false;
+    }
 }

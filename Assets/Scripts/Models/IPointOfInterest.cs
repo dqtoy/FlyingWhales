@@ -21,12 +21,12 @@ public interface IPointOfInterest : ITraitable {
     void SetGridTileLocation(LocationGridTile tile);
     void AddAdvertisedAction(INTERACTION_TYPE actionType);
     void RemoveAdvertisedAction(INTERACTION_TYPE actionType);
-    void AddJobTargettingThis(JobQueueItem job);
+    void AddJobTargetingThis(JobQueueItem job);
     void SetPOIState(POI_STATE state);
     void SetIsDisabledByPlayer(bool state);
-    bool HasJobTargettingThis(params JOB_TYPE[] jobType);
+    bool HasJobTargetingThis(params JOB_TYPE[] jobType);
     bool IsAvailable();
-    bool RemoveJobTargettingThis(JobQueueItem job);
+    bool RemoveJobTargetingThis(JobQueueItem job);
     LocationGridTile GetNearestUnoccupiedTileFromThis();
     GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost, ref string log);
     bool CanAdvertiseActionToActor(Character actor, GoapAction action, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost);

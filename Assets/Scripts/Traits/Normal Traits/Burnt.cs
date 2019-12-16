@@ -72,7 +72,7 @@ namespace Traits {
             if (traitOwner is TileObject) {
                 TileObject targetPOI = traitOwner as TileObject;
                 if (targetPOI.advertisedActions.Contains(INTERACTION_TYPE.REPAIR)) {
-                    GoapPlanJob currentJob = targetPOI.GetJobTargettingThisCharacter(JOB_TYPE.REPAIR);
+                    GoapPlanJob currentJob = targetPOI.GetJobTargetingThisCharacter(JOB_TYPE.REPAIR);
                     if (currentJob == null) {
                         //job.SetCanBeDoneInLocation(true);
                         if (InteractionManager.Instance.CanCharacterTakeRepairJob(characterThatWillDoJob)) {

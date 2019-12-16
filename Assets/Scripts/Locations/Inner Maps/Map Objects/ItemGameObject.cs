@@ -7,12 +7,12 @@ public class ItemGameObject : MapObjectVisual<SpecialToken> {
 
     private System.Func<bool> _isMenuShowing;
     
-    public override void Initialize(SpecialToken poi) {
-        base.Initialize(poi);
-        this.name = poi.ToString();
-        SetVisual(InnerMapManager.Instance.GetItemAsset(poi.specialTokenType));
+    public override void Initialize(SpecialToken obj) {
+        base.Initialize(obj);
+        this.name = obj.ToString();
+        SetVisual(InnerMapManager.Instance.GetItemAsset(obj.specialTokenType));
         collisionTrigger = transform.GetComponentInChildren<SpecialTokenCollisionTrigger>();
-        _isMenuShowing = () => IsMenuShowing(poi);
+        _isMenuShowing = () => IsMenuShowing(obj);
     }
 
     public override void UpdateTileObjectVisual(SpecialToken specialToken) { }
@@ -50,6 +50,16 @@ public class ItemGameObject : MapObjectVisual<SpecialToken> {
             InnerMapManager.Instance.SetCurrentlyHoveredPOI(null);
         }
         UIManager.Instance.HideSmallInfo();
+    }
+    #endregion
+    
+    #region Colliders
+    public override void UpdateCollidersState(SpecialToken obj) {
+        if (obj.advertisedActions.Count > 0) {
+            EnableColliders();
+        } else {
+            DisableColliders();
+        }
     }
     #endregion
 }

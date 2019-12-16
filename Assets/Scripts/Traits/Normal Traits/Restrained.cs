@@ -132,7 +132,7 @@ namespace Traits {
         }
 
         private void CreateFeedJob() {
-            if (!_sourceCharacter.HasJobTargettingThis(JOB_TYPE.FEED)) {
+            if (!_sourceCharacter.HasJobTargetingThis(JOB_TYPE.FEED)) {
                 GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, target = GOAP_EFFECT_TARGET.TARGET };
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, _sourceCharacter, _sourceCharacter.currentRegion.area);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRestrainedFeedJob);
@@ -154,7 +154,7 @@ namespace Traits {
             //}
         }
         private void CreateJudgementJob() {
-            if (!_sourceCharacter.HasJobTargettingThis(JOB_TYPE.JUDGEMENT)) {
+            if (!_sourceCharacter.HasJobTargetingThis(JOB_TYPE.JUDGEMENT)) {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGEMENT, INTERACTION_TYPE.JUDGE_CHARACTER, _sourceCharacter, _sourceCharacter.currentRegion.area);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoJudgementJob);
                 _sourceCharacter.currentRegion.area.AddToAvailableJobs(job);

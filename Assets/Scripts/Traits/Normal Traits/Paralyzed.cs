@@ -57,7 +57,7 @@ namespace Traits {
                         }
                     } else {
                         if (characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.NEGATIVE) {
-                            if (character.CanPlanGoap() && !character.HasJobTargettingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
+                            if (character.CanPlanGoap() && !character.HasJobTargetingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
                                 if (!PlanFullnessRecovery(characterThatWillDoJob)) {
                                     if (!CreateDropJobForTirednessRecovery(characterThatWillDoJob)) {
                                         CreateDropJobForHappinessRecovery(characterThatWillDoJob);
@@ -85,7 +85,7 @@ namespace Traits {
             if (!character.IsInOwnParty()) {
                 return;
             }
-            if (character.HasJobTargettingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
+            if (character.HasJobTargetingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
                 return;
             }
             if (character.jobQueue.jobsInQueue.Count > 0) {
@@ -101,7 +101,7 @@ namespace Traits {
                 if (character.CanPlanGoap() && character.stateComponent.currentState == null
                     && (character.needsComponent.isStarving || character.needsComponent.isExhausted || character.needsComponent.isForlorn)
                     && UnityEngine.Random.Range(0, 100) < 75 && !character.jobQueue.HasJob(JOB_TYPE.SCREAM)
-                    && character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") == null && !character.HasJobTargettingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
+                    && character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") == null && !character.HasJobTargetingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SCREAM, INTERACTION_TYPE.SCREAM_FOR_HELP, character, character);
                     character.jobQueue.AddJobInQueue(job);
                 }
@@ -172,7 +172,7 @@ namespace Traits {
             return false;
         }
         private bool PlanHappinessRecovery() {
-            if ((character.needsComponent.isForlorn || character.needsComponent.isLonely) && !character.HasJobTargettingThis(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
+            if ((character.needsComponent.isForlorn || character.needsComponent.isLonely) && !character.HasJobTargetingThis(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
                 return CreateDaydreamOrPrayJob();
             }
             return false;
@@ -263,7 +263,7 @@ namespace Traits {
             return false;
         }
         private bool PlanTirednessRecovery() {
-            if ((character.needsComponent.isExhausted || character.needsComponent.isTired) && !character.HasJobTargettingThis(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
+            if ((character.needsComponent.isExhausted || character.needsComponent.isTired) && !character.HasJobTargetingThis(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
                 return CreateSleepJob();
             }
             return false;

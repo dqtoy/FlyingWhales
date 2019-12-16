@@ -454,20 +454,25 @@ namespace Inner_Maps {
                                     if (area.coreTile.biomeType != BIOMES.SNOW && area.coreTile.biomeType != BIOMES.TUNDRA) {
                                         currTile.hasDetail = true;
                                         detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.shrubTile);
-                                        currTile.SetTileState(LocationGridTile.Tile_State.Empty);
-                                        Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Vector3.one);
-                                        detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
-                                        detailsTilemap.SetTransformMatrix(currTile.localPlace, m);
+                                        if (currTile.structure != null) {
+                                            //place tile object
+                                            ConvertDetailToTileObject(currTile);
+                                        } else {
+                                            //place detail instead
+                                            currTile.SetTileState(LocationGridTile.Tile_State.Empty);
+                                            Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Vector3.one);
+                                            detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
+                                            detailsTilemap.SetTransformMatrix(currTile.localPlace, m);
+                                        }
                                     }
                                 } else {
-                                    //Crates, Barrels, Ore, Stone and Tree tiles should be impassable. They should all be placed in spots adjacent to at least three passable tiles.
+                                    currTile.hasDetail = true;
+                                    detailsTilemap.SetTile(currTile.localPlace, GetTreeTile(area));
                                     if (currTile.structure != null) {
-                                        currTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TREE_OBJECT), currTile);
+                                        ConvertDetailToTileObject(currTile);
                                     } else {
                                         //this is for details on tiles on the border.
                                         //normal tree
-                                        currTile.hasDetail = true;
-                                        detailsTilemap.SetTile(currTile.localPlace, GetTreeTile(area));
                                         currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
                                         Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Vector3.one);
                                         detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
@@ -480,7 +485,6 @@ namespace Inner_Maps {
                         currTile.hasDetail = false;
                         detailsTilemap.SetTile(currTile.localPlace, null);
                     }
-                    //groundTilemap.SetColor(currTile.localPlace, new Color(sample, sample, sample));
                 }
             }
 
@@ -491,20 +495,32 @@ namespace Inner_Maps {
                     if (Random.Range(0, 100) < 3) {
                         currTile.hasDetail = true;
                         detailsTilemap.SetTile(currTile.localPlace, GetFlowerTile(area));
-                        currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                        if (currTile.structure != null) {
+                            ConvertDetailToTileObject(currTile);
+                        } else {
+                            currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                        }
+                        
                     } else if (Random.Range(0, 100) < 4) {
-                        //Crates, Barrels, Ore, Stone and Tree tiles should be impassable. They should all be placed in spots adjacent to at least three passable tiles.
                         currTile.hasDetail = true;
                         detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.rockTile);
-                        currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
-                        //currTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
+                        if (currTile.structure != null) {
+                            ConvertDetailToTileObject(currTile);
+                        } else {
+                            currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                        }
                     } else if (Random.Range(0, 100) < 3) {
                         currTile.hasDetail = true;
                         detailsTilemap.SetTile(currTile.localPlace, GetGarbTile(area));
+                        if (currTile.structure != null) {
+                            ConvertDetailToTileObject(currTile);
+                        } else {
+                            currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                        }
                     }
-                    Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Vector3.one);
-                    detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
-                    detailsTilemap.SetTransformMatrix(currTile.localPlace, m);
+                    // Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Vector3.one);
+                    // detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
+                    // detailsTilemap.SetTransformMatrix(currTile.localPlace, m);
                 }
             }
         }
@@ -528,8 +544,8 @@ namespace Inner_Maps {
                     currTile.hasDetail = true;
                     detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.crateBarrelTile);
                     currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
-                    //Crates, Barrels, Ore, Stone and Tree tiles should be impassable. They should all be placed in spots adjacent to at least three passable tiles.
-                    //currTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
+                    //place tile object
+                    ConvertDetailToTileObject(currTile);
                 }
             }
 
@@ -539,8 +555,17 @@ namespace Inner_Maps {
                     //3% of tiles should have random garbage
                     currTile.hasDetail = true;
                     detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.randomGarbTile);
+                    //place tile object
+                    ConvertDetailToTileObject(currTile);
                 }
             }
+        }
+        private void ConvertDetailToTileObject(LocationGridTile tile) {
+            Sprite sprite = detailsTilemap.GetSprite(tile.localPlace);
+            TileObject obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(InnerMapManager.Instance.GetTileObjectTypeFromTileAsset(sprite));
+            tile.structure.AddPOI(obj, tile);
+            obj.mapVisual.SetVisual(sprite);
+            detailsTilemap.SetTile(tile.localPlace, null);
         }
         #endregion
 

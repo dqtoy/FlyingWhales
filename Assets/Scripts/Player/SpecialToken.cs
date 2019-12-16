@@ -95,13 +95,13 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
     public override string ToString() {
         return name + " " + id.ToString();// + " Carried by " + (carriedByCharacter?.name ?? "no one");
     }
-    public void AddJobTargettingThis(JobQueueItem job) {
+    public void AddJobTargetingThis(JobQueueItem job) {
         allJobsTargettingThis.Add(job);
     }
-    public bool RemoveJobTargettingThis(JobQueueItem job) {
+    public bool RemoveJobTargetingThis(JobQueueItem job) {
         return allJobsTargettingThis.Remove(job);
     }
-    public bool HasJobTargettingThis(params JOB_TYPE[] jobTypes) {
+    public bool HasJobTargetingThis(params JOB_TYPE[] jobTypes) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
             for (int j = 0; j < jobTypes.Length; j++) {

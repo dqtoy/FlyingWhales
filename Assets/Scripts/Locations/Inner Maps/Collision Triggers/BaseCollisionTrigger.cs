@@ -21,8 +21,10 @@ public abstract class BaseCollisionTrigger<T> : MonoBehaviour, IBaseCollider whe
         _projectileReciever.Initialize(owner);
     }
 
-    public virtual void SetMainColliderState(bool state) {
+    public void SetCollidersState(bool state) {
         mainCollider.enabled = state;
+        _projectileReciever.SetColliderState(false);
     }
+    
 }
 
