@@ -573,10 +573,10 @@ public class GoapPlanner {
             } else if (job.otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
                 preconditions = action.GetPreconditions(target, job.otherData[INTERACTION_TYPE.NONE]);
             } else {
-                preconditions = action.basePreconditions;
+                preconditions = action.GetPreconditions(target, null);
             }
         } else {
-            preconditions = action.basePreconditions;
+            preconditions = action.GetPreconditions(target, null);
         }
         if (preconditions.Count > 0) {
             log += "\n--Node " + node.action.goapName + " has preconditions: " + preconditions.Count;

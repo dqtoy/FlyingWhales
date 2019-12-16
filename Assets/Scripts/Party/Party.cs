@@ -291,9 +291,9 @@ public class Party {
     /// <summary>
     /// Remove every character from this party, except the owner.
     /// </summary>
-    public void RemoveCarriedPOI() {
+    public void RemoveCarriedPOI(bool addToLocation = true, LocationGridTile dropLocation = null) {
         if(carriedPOI != null) {
-            RemovePOI(carriedPOI);
+            RemovePOI(carriedPOI, addToLocation, dropLocation);
         }
         //if (_characters.Count > 1) {
         //    for (int i = 0; i < _characters.Count; i++) {

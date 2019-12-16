@@ -36,7 +36,7 @@ public static class Signals {
     public static string TILE_HOVERED_OUT = "OnTileHoveredOut"; //Parameters (HexTile hoveredTile)
     #endregion
 
-    #region Areas
+    #region Areas/Regions
     public static string AREA_CREATED = "OnAreaCreated"; //Parameters (Area newArea)
     public static string AREA_DELETED = "OnAreaDeleted"; //Parameters (Area deletedArea)
     public static string AREA_TILE_REMOVED = "OnAreaTileRemoved"; //Parameters (Area affectedArea)
@@ -56,6 +56,7 @@ public static class Signals {
     public static string ITEM_BUILT = "OnItemBuilt"; //Parameters (SpecialToken token)
     public static string AREA_MAP_OPENED = "OnAreaMapOpened"; //parameters (Area area)
     public static string AREA_MAP_CLOSED = "OnAreaMapClosed"; //parameters (Area area)
+    public static string REGION_CHANGE_STORAGE = "OnRegionChangeStorage";
     /// <summary>
     /// Parameters: Food Pile (affected food pile)
     /// </summary>

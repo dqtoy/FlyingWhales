@@ -243,6 +243,9 @@ public class CursorManager : MonoBehaviour {
         rightClickActions.Clear();
     }
     private void MapVisualClick(PointerEventData.InputButton button) {
+        if (UIManager.Instance != null && (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing())) {
+            return;
+        }
         PointerEventData pointer = new PointerEventData(EventSystem.current);
         pointer.position = Input.mousePosition;
 

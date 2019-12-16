@@ -134,7 +134,7 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
         }
         isDestroyed = false;
         PlaceMapObjectAt(tile);
-        Messenger.Broadcast<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, this, tile);
+        Messenger.Broadcast(Signals.ITEM_PLACED_ON_TILE, this, tile);
         //for (int i = 0; i < tile.parentAreaMap.area.region.residents.Count; i++) {
         //    Character character = tile.parentAreaMap.area.region.residents[i];
         //    character.AddAwareness(this);
@@ -143,7 +143,7 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
     public void OnDestroyPOI() {
         isDestroyed = true;
         DisableGameObject();
-        Messenger.Broadcast<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, this, tile);
+        Messenger.Broadcast(Signals.ITEM_REMOVED_FROM_TILE, this, tile);
         //for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
         //    Character character = CharacterManager.Instance.allCharacters[i];
         //    character.RemoveAwareness(this);

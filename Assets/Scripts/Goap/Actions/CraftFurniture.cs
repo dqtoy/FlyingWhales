@@ -17,7 +17,7 @@ public class CraftFurniture : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_WOOD, target = GOAP_EFFECT_TARGET.ACTOR }, HasSupply);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_WOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR }, HasSupply);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -34,6 +34,17 @@ public class CraftFurniture : GoapAction {
         TILE_OBJECT_TYPE furnitureToCreate = (TILE_OBJECT_TYPE)node.otherData[1];
         log.AddToFillers(null, Utilities.GetArticleForWord(furnitureToCreate.ToString()), LOG_IDENTIFIER.STRING_1);
         log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(furnitureToCreate.ToString()), LOG_IDENTIFIER.ITEM_1);
+    }
+    public override void OnStopWhileStarted(ActualGoapNode node) {
+        base.OnStopWhileStarted(node);
+        Character actor = node.actor;
+        actor.ownParty.RemoveCarriedPOI();
+    }
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        actor.ownParty.RemoveCarriedPOI();
     }
     #endregion
 
@@ -59,8 +70,12 @@ public class CraftFurniture : GoapAction {
     #region Preconditions
     private bool HasSupply(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         TILE_OBJECT_TYPE furnitureToCreate = (TILE_OBJECT_TYPE)otherData[1];
-        return actor.supply >= TileObjectDB.GetTileObjectData(furnitureToCreate).constructionCost;
-
+        if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile) {
+            ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
+            return carriedPile.resourceInPile >= TileObjectDB.GetTileObjectData(furnitureToCreate).constructionCost;
+        }
+        return false;
+        //return actor.supply >= TileObjectDB.GetTileObjectData(furnitureToCreate).constructionCost;
     }
     #endregion
 
@@ -73,7 +88,9 @@ public class CraftFurniture : GoapAction {
     public void AfterCraftSuccess(ActualGoapNode goapNode) {
         LocationGridTile targetSpot = goapNode.otherData[0] as LocationGridTile;
         TILE_OBJECT_TYPE furnitureToCreate = (TILE_OBJECT_TYPE)goapNode.otherData[1];
-        goapNode.actor.AdjustSupply(-TileObjectDB.GetTileObjectData(furnitureToCreate).constructionCost);
+        //goapNode.actor.AdjustSupply(-TileObjectDB.GetTileObjectData(furnitureToCreate).constructionCost);
+        ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
+        carriedPile.AdjustResourceInPile(-TileObjectDB.GetTileObjectData(furnitureToCreate).constructionCost);
         if (targetSpot.objHere == null) {
             targetSpot.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(furnitureToCreate), targetSpot);
         }

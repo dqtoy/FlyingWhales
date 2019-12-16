@@ -237,6 +237,7 @@ public partial class InteractionManager : MonoBehaviour {
             case JOB_TYPE.PRODUCE_WOOD:
             case JOB_TYPE.PRODUCE_STONE:
             case JOB_TYPE.PRODUCE_METAL:
+            case JOB_TYPE.DROP_RESOURCE:
             case JOB_TYPE.DROP:
             case JOB_TYPE.INSPECT:
             case JOB_TYPE.PLACE_BLUEPRINT:

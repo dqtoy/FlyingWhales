@@ -331,7 +331,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         }
         return false;
     }
-    public GoapPlanJob GetJobTargetingThisCharacter(JOB_TYPE jobType) {
+    public GoapPlanJob GetJobTargettingThisCharacter(JOB_TYPE jobType) {
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
             if (allJobsTargetingThis[i] is GoapPlanJob) {
                 GoapPlanJob job = allJobsTargetingThis[i] as GoapPlanJob;

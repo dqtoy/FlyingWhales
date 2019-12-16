@@ -50,9 +50,10 @@ public class MetalPile : ResourcePile {
                 } else {
                     ForceCancelNotAssignedProduceJob(JOB_TYPE.PRODUCE_METAL);
                 }
-            } else {
-                CreateHaulJob();
-            }
+            } 
+            //else {
+            //    CreateHaulJob();
+            //}
         }
     }
     //public override void AdjustResourceInPile(int adjustment) {

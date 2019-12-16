@@ -14,7 +14,7 @@ public class CraftTileObject : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_WOOD, "0", true, GOAP_EFFECT_TARGET.ACTOR), HasSupply);
+        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_WOOD, "0", true, GOAP_EFFECT_TARGET.ACTOR), HasSupply);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -29,6 +29,17 @@ public class CraftTileObject : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 2;
     }
+    public override void OnStopWhileStarted(ActualGoapNode node) {
+        base.OnStopWhileStarted(node);
+        Character actor = node.actor;
+        actor.ownParty.RemoveCarriedPOI();
+    }
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        actor.ownParty.RemoveCarriedPOI();
+    }
     #endregion
 
     #region State Effects
@@ -40,13 +51,20 @@ public class CraftTileObject : GoapAction {
     public void AfterCraftSuccess(ActualGoapNode goapNode) {
         TileObject tileObj = goapNode.poiTarget as TileObject;
         tileObj.SetMapObjectState(MAP_OBJECT_STATE.BUILT);
-        goapNode.actor.AdjustResource(RESOURCE.WOOD, -TileObjectDB.GetTileObjectData((goapNode.poiTarget as TileObject).tileObjectType).constructionCost);
+        //goapNode.actor.AdjustResource(RESOURCE.WOOD, -TileObjectDB.GetTileObjectData((goapNode.poiTarget as TileObject).tileObjectType).constructionCost);
+        ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
+        carriedPile.AdjustResourceInPile(-TileObjectDB.GetTileObjectData((goapNode.poiTarget as TileObject).tileObjectType).constructionCost);
     }
     #endregion
 
     #region Preconditions
     private bool HasSupply(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor.supply >= TileObjectDB.GetTileObjectData((poiTarget as TileObject).tileObjectType).constructionCost;
+        if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile) {
+            ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
+            return carriedPile.resourceInPile >= TileObjectDB.GetTileObjectData((poiTarget as TileObject).tileObjectType).constructionCost;
+        }
+        return false;
+        //return actor.supply >= TileObjectDB.GetTileObjectData((poiTarget as TileObject).tileObjectType).constructionCost;
     }
     #endregion
 
