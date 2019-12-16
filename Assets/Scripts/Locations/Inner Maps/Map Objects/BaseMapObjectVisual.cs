@@ -8,22 +8,17 @@ using UnityEngine.EventSystems;
 /// <summary>
 /// Base class to be used for the visuals of any objects that are Area Map Objects.
 /// </summary>
-public abstract class BaseMapObjectVisual : PooledObject, IMapObjectVisual {
+public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, IPointerExitHandler {
     [SerializeField] protected SpriteRenderer objectVisual;
     [SerializeField] protected SpriteRenderer hoverObject;
     private bool isHoverObjectStateLocked;
+    protected System.Action onHoverOverAction;
+    protected System.Action onHoverExitAction;
     protected System.Action onLeftClickAction;
     protected System.Action onRightClickAction;
-    protected HoverHandler _hoverHandler;
     public GameObject gameObjectVisual => this.gameObject;
     public Sprite usedSprite => objectVisual.sprite;
-
-    #region Monobehaviours
-    private void Awake() {
-        _hoverHandler = GetComponent<HoverHandler>();
-    }
-    #endregion
-
+    
     #region Visuals
     public void SetRotation(float rotation) {
         this.transform.localRotation = Quaternion.Euler(0f, 0f, rotation);
@@ -46,6 +41,9 @@ public abstract class BaseMapObjectVisual : PooledObject, IMapObjectVisual {
     public void SetHoverObjectState(bool state) {
         if (isHoverObjectStateLocked) {
             return; //ignore change because hover state is locked
+        }
+        if (hoverObject.gameObject.activeSelf == state) {
+            return; //ignore change
         }
         hoverObject.gameObject.SetActive(state);
     }
@@ -74,6 +72,19 @@ public abstract class BaseMapObjectVisual : PooledObject, IMapObjectVisual {
             onRightClickAction?.Invoke();
         }
     }
+    public void OnPointerEnter(PointerEventData eventData) {
+        ExecuteHoverEnterAction();
+    }
+    public void OnPointerExit(PointerEventData eventData) {
+        ExecuteHoverExitAction();
+    }
+    public void ExecuteHoverEnterAction() {
+        onHoverOverAction?.Invoke();
+    }
+    public void ExecuteHoverExitAction() {
+        onHoverExitAction?.Invoke();
+    }
     #endregion
+
     
 }

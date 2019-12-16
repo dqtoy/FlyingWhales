@@ -21,10 +21,10 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
     public bool isDisabledByPlayer { get; protected set; }
     public POI_STATE state { get; protected set; }
     public int uses { get; protected set; } //how many times can this item be used?
-    public List<JobQueueItem> allJobsTargettingThis { get; private set; }
+    public List<JobQueueItem> allJobsTargetingThis { get; private set; }
     public Character carriedByCharacter { get; private set; }
     public bool isDestroyed { get; private set; }
-    public IMapObjectVisual mapObjectVisual { get { return mapVisual; } }
+    public BaseMapObjectVisual mapObjectVisual => mapVisual;
 
     //hp
     public int maxHP { get; protected set; }
@@ -65,7 +65,7 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.specialTokenType.ToString());
         weight = appearanceRate;
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_UP, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.DROP_ITEM};
-        allJobsTargettingThis = new List<JobQueueItem>();
+        allJobsTargetingThis = new List<JobQueueItem>();
         maxHP = 50;
         currentHP = maxHP;
         uses = 1;
@@ -96,14 +96,14 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
         return name + " " + id.ToString();// + " Carried by " + (carriedByCharacter?.name ?? "no one");
     }
     public void AddJobTargetingThis(JobQueueItem job) {
-        allJobsTargettingThis.Add(job);
+        allJobsTargetingThis.Add(job);
     }
     public bool RemoveJobTargetingThis(JobQueueItem job) {
-        return allJobsTargettingThis.Remove(job);
+        return allJobsTargetingThis.Remove(job);
     }
     public bool HasJobTargetingThis(params JOB_TYPE[] jobTypes) {
-        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
-            JobQueueItem job = allJobsTargettingThis[i];
+        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
+            JobQueueItem job = allJobsTargetingThis[i];
             for (int j = 0; j < jobTypes.Length; j++) {
                 if (job.jobType == jobTypes[j]) {
                     return true;

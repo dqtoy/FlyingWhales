@@ -56,7 +56,7 @@ public class CharacterStateJob : JobQueueItem {
         if (cannotBePushedBack) {
             //If job is cannot be pushed back and it is pushed back, cancel it instead
             CancelJob(false);
-        } else {
+        } else if (assignedState != null){
             assignedState.PauseState();
             assignedCharacter.stateComponent.SetCurrentState(null);
         }

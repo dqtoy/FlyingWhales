@@ -11,14 +11,14 @@ public class FurnitureSpotMono : MonoBehaviour {
     public FURNITURE_TYPE[] allowedFurnitureTypes;
     public List<FurnitureSetting> furnitureSettings;
 
-    private void Update() {
-        string summary = string.Empty;
-        for (int i = 0; i < allowedFurnitureTypes.Length ; i++) {
-            summary += allowedFurnitureTypes[i].ToString() + ", ";
-        }
-        this.name = summary;
-        furnitureSummary.text = summary;
-    }
+    // private void Update() {
+    //     string summary = string.Empty;
+    //     for (int i = 0; i < allowedFurnitureTypes.Length ; i++) {
+    //         summary += allowedFurnitureTypes[i].ToString() + ", ";
+    //     }
+    //     this.name = summary;
+    //     furnitureSummary.text = summary;
+    // }
 
     public FurnitureSpot GetFurnitureSpot() {
         return new FurnitureSpot() {

@@ -13,7 +13,7 @@ public interface IPointOfInterest : ITraitable {
     Region currentRegion { get; }
     new LocationGridTile gridTileLocation { get; }
     List<INTERACTION_TYPE> advertisedActions { get; }
-    List<JobQueueItem> allJobsTargettingThis { get; }
+    List<JobQueueItem> allJobsTargetingThis { get; }
     Faction factionOwner { get; }
     bool isDisabledByPlayer { get; }
     Vector3 worldPosition { get; }

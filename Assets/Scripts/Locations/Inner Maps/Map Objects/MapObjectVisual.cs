@@ -1,13 +1,12 @@
 ﻿using Inner_Maps;
 using UnityEngine;
 
-[RequireComponent(typeof(HoverHandler))]
 public abstract class MapObjectVisual<T> : BaseMapObjectVisual where T : IDamageable {
     public BaseCollisionTrigger<T> collisionTrigger { get; protected set; }
 
     public virtual void Initialize(T obj) {
-        _hoverHandler.SetOnHoverAction(() => OnPointerEnter(obj));
-        _hoverHandler.SetOnHoverOutAction(() => OnPointerExit(obj));
+        onHoverOverAction = () => OnPointerEnter(obj);
+        onHoverExitAction = () => OnPointerExit(obj);
         onLeftClickAction = () => OnPointerLeftClick(obj);
         onRightClickAction = () => OnPointerRightClick(obj);
     }

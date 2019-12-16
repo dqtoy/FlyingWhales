@@ -37,7 +37,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
     //visuals
     public CharacterVisuals visuals { get; private set; }
-    public IMapObjectVisual mapObjectVisual => marker;
+    public BaseMapObjectVisual mapObjectVisual => marker;
     public int doNotRecoverHP { get; protected set; }
     public SEXUALITY sexuality { get; private set; }
     public int attackPowerMod { get; protected set; }
@@ -62,7 +62,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public Character lastAssaultedCharacter { get; private set; }
     public List<SpecialToken> items { get; private set; }
     public JobQueue jobQueue { get; private set; }
-    public List<JobQueueItem> allJobsTargettingThis { get; private set; }
+    public List<JobQueueItem> allJobsTargetingThis { get; private set; }
     public int moodValue { get; private set; }
     public bool canCombat { get; private set; } //This should only be a getter but since we need to know when the value changes it now has a setter
     public List<Trait> traitsNeededToBeRemoved { get; private set; }
@@ -321,7 +321,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         stateComponent = new CharacterStateComponent(this);
         items = new List<SpecialToken>();
         jobQueue = new JobQueue(this);
-        allJobsTargettingThis = new List<JobQueueItem>();
+        allJobsTargetingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
         onLeaveAreaActions = new List<Action>();
         pendingActionsAfterMultiThread = new List<Action>();
@@ -351,7 +351,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         combatHistory = new Dictionary<int, Combat>();
         advertisedActions = new List<INTERACTION_TYPE>();
         items = new List<SpecialToken>();
-        allJobsTargettingThis = new List<JobQueueItem>();
+        allJobsTargetingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
         onLeaveAreaActions = new List<Action>();
         pendingActionsAfterMultiThread = new List<Action>();
@@ -956,14 +956,14 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //    return null;
     //}
     public void AddJobTargetingThis(JobQueueItem job) {
-        allJobsTargettingThis.Add(job);
+        allJobsTargetingThis.Add(job);
     }
     public bool RemoveJobTargetingThis(JobQueueItem job) {
-        return allJobsTargettingThis.Remove(job);
+        return allJobsTargetingThis.Remove(job);
     }
     public void ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE jobType) {
-        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
-            JobQueueItem job = allJobsTargettingThis[i];
+        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
+            JobQueueItem job = allJobsTargetingThis[i];
             if (job.jobType == jobType) {
                 if (job.ForceCancelJob()) {
                     i--;
@@ -988,9 +988,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //    }
     //}
     public void ForceCancelAllJobsTargettingThisCharacterExcept(JOB_TYPE jobType, string conditionKey, Character otherCharacter) {
-        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
-            if (allJobsTargettingThis[i] is GoapPlanJob) {
-                GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
+        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
+            if (allJobsTargetingThis[i] is GoapPlanJob) {
+                GoapPlanJob job = allJobsTargetingThis[i] as GoapPlanJob;
                 if (job.jobType == jobType && job.assignedCharacter != otherCharacter && job.HasGoalConditionKey(conditionKey)) {
                     if (job.ForceCancelJob()) {
                         i--;
@@ -1055,8 +1055,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //    }
     //}
     public bool HasJobTargetingThis(params JOB_TYPE[] jobTypes) {
-        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
-            JobQueueItem job = allJobsTargettingThis[i];
+        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
+            JobQueueItem job = allJobsTargetingThis[i];
             for (int j = 0; j < jobTypes.Length; j++) {
                 if (job.jobType == jobTypes[j]) {
                     return true;
@@ -1071,8 +1071,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     /// <param name="jobType">The type of job targetting this character.</param>
     /// <returns>True or false.</returns>
     public bool HasActiveJobTargettingThisCharacter(JOB_TYPE jobType) {
-        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
-            JobQueueItem job = allJobsTargettingThis[i];
+        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
+            JobQueueItem job = allJobsTargetingThis[i];
             if (job.jobType == jobType && job.assignedCharacter != null) {
                 return true;
             }
@@ -1081,8 +1081,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     public int GetNumOfJobsTargettingThisCharacter(JOB_TYPE jobType) {
         int count = 0;
-        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
-            JobQueueItem job = allJobsTargettingThis[i];
+        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
+            JobQueueItem job = allJobsTargetingThis[i];
             if (job.jobType == jobType) {
                 count++;
             }
@@ -1090,9 +1090,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         return count;
     }
     public bool HasJobTargettingThisCharacter(JOB_TYPE jobType, string conditionKey) {
-        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
-            if (allJobsTargettingThis[i] is GoapPlanJob) {
-                GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
+        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
+            if (allJobsTargetingThis[i] is GoapPlanJob) {
+                GoapPlanJob job = allJobsTargetingThis[i] as GoapPlanJob;
                 if (job.jobType == jobType && job.HasGoalConditionKey(conditionKey)) {
                     return true;
                 }
@@ -1101,9 +1101,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         return false;
     }
     public GoapPlanJob GetJobTargettingThisCharacter(JOB_TYPE jobType, string conditionKey) {
-        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
-            if (allJobsTargettingThis[i] is GoapPlanJob) {
-                GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
+        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
+            if (allJobsTargetingThis[i] is GoapPlanJob) {
+                GoapPlanJob job = allJobsTargetingThis[i] as GoapPlanJob;
                 if (job.jobType == jobType && job.HasGoalConditionKey(conditionKey)) {
                     return job;
                 }
@@ -1112,9 +1112,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         return null;
     }
     public GoapPlanJob GetJobTargettingThisCharacter(JOB_TYPE jobType) {
-        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
-            if (allJobsTargettingThis[i] is GoapPlanJob) {
-                GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
+        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
+            if (allJobsTargetingThis[i] is GoapPlanJob) {
+                GoapPlanJob job = allJobsTargetingThis[i] as GoapPlanJob;
                 if (job.jobType == jobType) {
                     return job;
                 }
@@ -1124,9 +1124,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     public List<GoapPlanJob> GetJobsTargettingThisCharacter(JOB_TYPE jobType, string conditionKey) {
         List<GoapPlanJob> jobs = new List<GoapPlanJob>();
-        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
-            if (allJobsTargettingThis[i] is GoapPlanJob) {
-                GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
+        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
+            if (allJobsTargetingThis[i] is GoapPlanJob) {
+                GoapPlanJob job = allJobsTargetingThis[i] as GoapPlanJob;
                 if (job.jobType == jobType && job.HasGoalConditionKey(conditionKey)) {
                     jobs.Add(job);
                 }
@@ -2574,12 +2574,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             targetCharacter.OnSeenBy(this); //trigger that the target character was seen by this character.
 
             List<ActualGoapNode> actionsToWitness = new List<ActualGoapNode>();
-            if (target.allJobsTargettingThis.Count > 0) {
+            if (target.allJobsTargetingThis.Count > 0) {
                 //We get the actions targetting the target character because a character must also witness an action even if he only sees the target and not the actor
                 //Collect all actions first to avoid duplicates 
-                for (int i = 0; i < target.allJobsTargettingThis.Count; i++) {
-                    if (target.allJobsTargettingThis[i] is GoapPlanJob) {
-                        GoapPlanJob job = target.allJobsTargettingThis[i] as GoapPlanJob;
+                for (int i = 0; i < target.allJobsTargetingThis.Count; i++) {
+                    if (target.allJobsTargetingThis[i] is GoapPlanJob) {
+                        GoapPlanJob job = target.allJobsTargetingThis[i] as GoapPlanJob;
                         GoapPlan plan = job.assignedPlan;
                         if (plan != null && plan.currentActualNode.action.shouldAddLogs && plan.currentActualNode.actionStatus == ACTION_STATUS.PERFORMING) {
                             actionsToWitness.Add(plan.currentActualNode);

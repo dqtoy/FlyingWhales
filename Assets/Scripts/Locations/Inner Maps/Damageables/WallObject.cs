@@ -8,20 +8,19 @@ public class WallObject : MapObject<WallObject>, ITraitable {
     public string name { get; private set; }
     public int currentHP { get; private set; }
     public int maxHP { get; private set; }
-    public ProjectileReceiver projectileReceiver { get { return visual.collisionTrigger.projectileReceiver; } }
+    public ProjectileReceiver projectileReceiver { get { return _visual.collisionTrigger.projectileReceiver; } }
     public RESOURCE madeOf { get; private set; }
     public ITraitContainer traitContainer { get; private set; }
-    public TraitProcessor traitProcessor { get { return TraitManager.defaultTraitProcessor; } }
-    public Transform worldObject { get { return visual.transform; } }
+    public TraitProcessor traitProcessor => TraitManager.defaultTraitProcessor;
+    public Transform worldObject => _visual.transform;
     public LocationGridTile gridTileLocation { get; private set; }
-    public override MapObjectVisual<WallObject> mapVisual { get { return visual; } }
-    public IMapObjectVisual mapObjectVisual { get { return mapVisual; } }
-
-    private WallVisual visual;
+    public override MapObjectVisual<WallObject> mapVisual => _visual;
+    public BaseMapObjectVisual mapObjectVisual => mapVisual;
+    private WallVisual _visual;
 
     public WallObject(LocationStructure structure, WallVisual visual) {
         this.name = $"Wall of {structure.ToString()}";
-        this.visual = visual;
+        this._visual = visual;
         this.maxHP = 100;
         this.currentHP = maxHP;
         this.madeOf = RESOURCE.WOOD;
@@ -42,21 +41,21 @@ public class WallObject : MapObject<WallObject>, ITraitable {
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
         if (currentHP <= 0) {
             //wall has been destroyed
-            visual.UpdateWallState(this);
+            _visual.UpdateWallState(this);
             Messenger.Broadcast(Signals.WALL_DESTROYED, this);
             gridTileLocation.CreateSeamlessEdgesForSelfAndNeighbours();
         } else if (amount < 0 && currentHP < maxHP) {
             //wall has been damaged
-            visual.UpdateWallAssets(this);
+            _visual.UpdateWallAssets(this);
             Messenger.Broadcast(Signals.WALL_DAMAGED, this);
         } else if (amount > 0 && currentHP < maxHP) {
             //wall has been partially repaired
-            visual.UpdateWallState(this);
+            _visual.UpdateWallState(this);
             //Messenger.Broadcast(Signals.WALL_REPAIRED, this);
         } else if (currentHP == maxHP) {
             //wall has been fully repaired
-            visual.UpdateWallAssets(this);
-            visual.UpdateWallState(this);
+            _visual.UpdateWallAssets(this);
+            _visual.UpdateWallState(this);
             Messenger.Broadcast(Signals.WALL_REPAIRED, this);
         }
     }
@@ -69,7 +68,7 @@ public class WallObject : MapObject<WallObject>, ITraitable {
     #region Resource
     internal void ChangeResourceMadeOf(RESOURCE madeOf) {
         this.madeOf = madeOf;
-        visual.UpdateWallAssets(this);
+        _visual.UpdateWallAssets(this);
         //TODO: Update HP based on new resource
         switch (madeOf) {
             case RESOURCE.WOOD:
@@ -88,7 +87,7 @@ public class WallObject : MapObject<WallObject>, ITraitable {
 
     #region Area Map Object
     protected override void CreateAreaMapGameObject() {
-        mapVisual = visual;
+        mapVisual = _visual;
     }
     protected override void OnMapObjectStateChanged() { }
     public void SetGridTileLocation(LocationGridTile tile) {
