@@ -37,7 +37,6 @@ GameObject:
   - component: {fileID: 4932280101310078}
   - component: {fileID: 114310401727755460}
   - component: {fileID: 61518028179232044}
-  - component: {fileID: 114981442735229248}
   m_Layer: 14
   m_Name: TileObjectGameObject
   m_TagString: Map Object
@@ -255,30 +254,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3af45c1e8289cd646a3b50358d8eeff2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114981442735229248
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1340829586555444}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tooltipPos: {fileID: 0}
-  tooltipHeader: 
-  ignoreInteractable: 0
-  onHoverOverAction:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  onHoverExitAction:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!212 &212487511842338434
 SpriteRenderer:
   m_ObjectHideFlags: 1

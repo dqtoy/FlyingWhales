@@ -13,25 +13,16 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     private float startTime;  // Time when the movement started.
     private float journeyLength; // Total distance between the markers.
     private Vector3 startPosition;
-
-    public bool isSpawned { get; private set; }
+    private bool isSpawned { get; set; }
     private float speed;
     private int radius;
     private List<IDamageable> damagablesInTornado;
     private Area areaLocation;
-    private LocationGridTile _destinationTile;
     private TornadoTileObject tornado;
 
     #region getters/setters
-    public LocationGridTile gridTileLocation {
-        get { return GetLocationGridTileByXY(Mathf.FloorToInt(this.transform.localPosition.x), Mathf.FloorToInt(this.transform.localPosition.y)); }
-    }
-    public LocationGridTile destinationTile {
-        get { return _destinationTile; }
-        set {
-            _destinationTile = value;
-        }
-    }
+    private LocationGridTile gridTileLocation => GetLocationGridTileByXY(Mathf.FloorToInt(this.transform.localPosition.x), Mathf.FloorToInt(this.transform.localPosition.y));
+    private LocationGridTile destinationTile { get; set; }
     #endregion    
 
     public override void Initialize(TileObject obj) {
@@ -39,10 +30,10 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
         this.transform.localPosition = obj.gridTileLocation.centeredLocalLocation;
         this.radius = tornado.radius;
         areaLocation = obj.gridTileLocation.structure.areaLocation;
-        float scale = tornado.radius / 5f;
-        for (int i = 0; i < particles.Length; i++) {
-            particles[i].transform.localScale = new Vector3(scale, scale, scale);
-        }
+        // float scale = tornado.radius / 5f;
+        // for (int i = 0; i < particles.Length; i++) {
+        //     particles[i].transform.localScale = new Vector3(scale, scale, scale);
+        // }
         damagablesInTornado = new List<IDamageable>();
         collisionTrigger = transform.GetComponentInChildren<TileObjectCollisionTrigger>();
     }
@@ -53,7 +44,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
         LocationGridTile chosen = tilesInRadius[Random.Range(0, tilesInRadius.Count)];
         GoTo(chosen);
     }
-    public LocationGridTile GetLocationGridTileByXY(int x, int y, bool throwOnException = true) {
+    private LocationGridTile GetLocationGridTileByXY(int x, int y, bool throwOnException = true) {
         try {
             if (throwOnException) {
                 return areaLocation.areaMap.map[x, y];
@@ -84,7 +75,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     }
 
     #region Pathfinding
-    public void GoTo(LocationGridTile destinationTile) {
+    private void GoTo(LocationGridTile destinationTile) {
         this.destinationTile = destinationTile;
         UpdateSpeed();
         RecalculatePathingValues();
@@ -92,10 +83,10 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     private void RecalculatePathingValues() {
         // Keep a note of the time the movement started.
         startTime = Time.time;
-        startPosition = this.transform.position;
+        startPosition = transform.position;
 
         // Calculate the journey length.
-        journeyLength = Vector3.Distance(this.transform.position, destinationTile.centeredWorldLocation);
+        journeyLength = Vector3.Distance(transform.position, destinationTile.centeredWorldLocation);
     }
     private void UpdateSpeed() {
         speed = baseSpeed;

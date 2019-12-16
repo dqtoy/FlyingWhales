@@ -638,14 +638,6 @@ public class UIManager : MonoBehaviour {
         }
         return false;
     }
-    public bool IsMouseOnInput() {
-        if (EventSystem.current.currentSelectedGameObject == null ||
-            (EventSystem.current.currentSelectedGameObject.GetComponent<TMP_InputField>() == null &&
-            EventSystem.current.currentSelectedGameObject.GetComponent<InputField>() == null)) {
-            return false;
-        }
-        return true;
-    }
     public void SetCoverState(bool state, bool blockClicks = true) {
         cover.SetActive(state);
         cover.GetComponent<Image>().raycastTarget = blockClicks;
@@ -1095,7 +1087,7 @@ public class UIManager : MonoBehaviour {
             InnerMapManager.Instance.HideAreaMap();
             OnCameraOutOfFocus();
         } else {
-            if(regionInfoUI.activeRegion != null && regionInfoUI.activeRegion.area != null) {
+            if(regionInfoUI.activeRegion != null && regionInfoUI.activeRegion.area != null && regionInfoUI.activeRegion.area != PlayerManager.Instance.player.playerArea) {
                 InnerMapManager.Instance.TryShowAreaMap(regionInfoUI.activeRegion.area);
             }
         }

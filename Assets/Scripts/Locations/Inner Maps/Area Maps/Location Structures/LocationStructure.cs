@@ -220,9 +220,10 @@ public class LocationStructure {
                 LocationGridTile chosenTile = tilesToUse[Random.Range(0, tilesToUse.Count)];
                 location.innerMap.PlaceObject(poi, chosenTile);
                 return true;
-            } else {
-                Debug.LogWarning("There are no tiles at " + structureType.ToString() + " at " + location.name + " for " + poi.ToString());
-            }
+            } 
+            // else {
+            //     Debug.LogWarning("There are no tiles at " + structureType.ToString() + " at " + location.name + " for " + poi.ToString());
+            // }
         }
         return false;
     }

@@ -17,7 +17,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
     public LocationStructure structureLocation { get { return gridTileLocation.structure; } }
     public bool isDisabledByPlayer { get; protected set; }
     public bool isSummonedByPlayer { get; protected set; }
-    public List<JobQueueItem> allJobsTargettingThis { get; protected set; }
+    public List<JobQueueItem> allJobsTargetingThis { get; protected set; }
     public List<Character> owners { get; private set; }
     public virtual Character[] users {
         get {
@@ -28,7 +28,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         }
     }//array of characters, currently using the tile object
     public Character removedBy { get; private set; }
-    public IMapObjectVisual mapObjectVisual { get { return mapVisual; } }
+    public BaseMapObjectVisual mapObjectVisual => mapVisual;
 
     //hp
     public int maxHP { get; protected set; }
@@ -69,7 +69,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         this.tileObjectType = tileObjectType;
         name = Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectType.ToString());
         actionHistory = new List<string>();
-        allJobsTargettingThis = new List<JobQueueItem>();
+        allJobsTargetingThis = new List<JobQueueItem>();
         owners = new List<Character>();
         hasCreatedSlots = false;
         maxHP = TileObjectDB.GetTileObjectData(tileObjectType).maxHP;
@@ -83,7 +83,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         id = Utilities.SetID(this, data.id);
         tileObjectType = data.tileObjectType;
         actionHistory = new List<string>();
-        allJobsTargettingThis = new List<JobQueueItem>();
+        allJobsTargetingThis = new List<JobQueueItem>();
         owners = new List<Character>();
         hasCreatedSlots = false;
         CreateTraitContainer();
@@ -315,14 +315,14 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         mapVisual?.UpdateCollidersState(this);
     }
     public void AddJobTargetingThis(JobQueueItem job) {
-        allJobsTargettingThis.Add(job);
+        allJobsTargetingThis.Add(job);
     }
     public bool RemoveJobTargetingThis(JobQueueItem job) {
-        return allJobsTargettingThis.Remove(job);
+        return allJobsTargetingThis.Remove(job);
     }
     public bool HasJobTargetingThis(params JOB_TYPE[] jobTypes) {
-        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
-            JobQueueItem job = allJobsTargettingThis[i];
+        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
+            JobQueueItem job = allJobsTargetingThis[i];
             for (int j = 0; j < jobTypes.Length; j++) {
                 if (job.jobType == jobTypes[j]) {
                     return true;
@@ -332,9 +332,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         return false;
     }
     public GoapPlanJob GetJobTargettingThisCharacter(JOB_TYPE jobType) {
-        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
-            if (allJobsTargettingThis[i] is GoapPlanJob) {
-                GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
+        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
+            if (allJobsTargetingThis[i] is GoapPlanJob) {
+                GoapPlanJob job = allJobsTargetingThis[i] as GoapPlanJob;
                 if (job.jobType == jobType) {
                     return job;
                 }

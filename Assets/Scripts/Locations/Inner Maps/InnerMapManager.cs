@@ -93,57 +93,11 @@ namespace Inner_Maps {
                     Messenger.Broadcast(Signals.HIDE_MENUS);    
                 }
             }
-//             if (UIManager.Instance.IsMouseOnUI() || IsMouseOnMarker() || currentlyShowingMap == null) {
-//                 if (UIManager.Instance.IsSmallInfoShowing() && UIManager.Instance.smallInfoShownFrom == "ShowTileData") {
-//                     UIManager.Instance.HideSmallInfo();
-//                 }
-//                 return;
-//             }
-//             LocationGridTile hoveredTile = GetTileFromMousePosition();
-//             if (hoveredTile != null) {
-//                 //CursorManager.Instance.SetSparkleEffectState(hoveredTile.objHere != null);
-//                 if (GameManager.showAllTilesTooltip) {
-//                     ShowTileData(hoveredTile);
-//                     if (hoveredTile.objHere != null) {
-//                         if (Input.GetMouseButtonDown(0)) {
-//                             hoveredTile.OnClickTileActions(PointerEventData.InputButton.Left);
-//                         } else if (Input.GetMouseButtonDown(1)) {
-//                             hoveredTile.OnClickTileActions(PointerEventData.InputButton.Right);
-//                         }
-//                     } else {
-//                         if (Input.GetMouseButtonDown(0)) {
-//                             hoveredTile.OnClickTileActions(PointerEventData.InputButton.Left);
-//                         } else if (Input.GetMouseButtonDown(1)) {
-//                             hoveredTile.OnClickTileActions(PointerEventData.InputButton.Right);
-//                         }
-//                     }
-//                 } else {
-//                     if (hoveredTile.objHere != null) {
-//                         if(hoveredTile.objHere != null) {
-//                             ShowTileData(hoveredTile);
-//                         } 
-// //                        else {
-// //                            ShowCharacterData(hoveredTile.parentMap.hoveredCharacter);
-// //                        }
-//                         if (Input.GetMouseButtonDown(0)) {
-//                             hoveredTile.OnClickTileActions(PointerEventData.InputButton.Left);
-//                         } else if (Input.GetMouseButtonDown(1)) {
-//                             hoveredTile.OnClickTileActions(PointerEventData.InputButton.Right);
-//                         }
-//                     } else {
-//                         if (Input.GetMouseButtonDown(0)) {
-//                             hoveredTile.OnClickTileActions(PointerEventData.InputButton.Left);
-//                         } else if (Input.GetMouseButtonDown(1)) {
-//                             hoveredTile.OnClickTileActions(PointerEventData.InputButton.Right);
-//                         }
-//                         UIManager.Instance.HideSmallInfo();
-//
-//                     }
-//                 }
-//
-//             } else {
-//                 UIManager.Instance.HideSmallInfo();
-//             }
+        }
+        private void Update() {
+            if (currentlyHoveredPoi != null && currentlyHoveredPoi.mapObjectVisual != null) {
+                currentlyHoveredPoi.mapObjectVisual.ExecuteHoverEnterAction();    
+            }
         }
         #endregion
 
@@ -453,9 +407,9 @@ namespace Inner_Maps {
                     summary += "None";
                 }
                 summary += "\n\tJobs Targeting this: ";
-                if (poi.allJobsTargettingThis.Count > 0) {
-                    for (int i = 0; i < poi.allJobsTargettingThis.Count; i++) {
-                        summary += "\n\t\t- " + poi.allJobsTargettingThis[i];
+                if (poi.allJobsTargetingThis.Count > 0) {
+                    for (int i = 0; i < poi.allJobsTargetingThis.Count; i++) {
+                        summary += "\n\t\t- " + poi.allJobsTargetingThis[i];
                     }
                 } else {
                     summary += "None";

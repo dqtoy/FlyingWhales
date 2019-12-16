@@ -1,14 +1,13 @@
-﻿using UnityEngine;
+﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using Inner_Maps;
-using UnityEngine.Events;
 using Traits;
+using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour {
 
-	public static GameManager Instance = null;
+	public static GameManager Instance;
 
     public static string[] daysInWords = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
     //public static TIME_IN_WORDS[] timeInWords = new TIME_IN_WORDS[] {
@@ -28,7 +27,6 @@ public class GameManager : MonoBehaviour {
     public const int daysPerMonth = 30;
     public const int ticksPerDay = 288;
     public const int ticksPerHour = 12;
-    public const int ticksPerTimeInWords = 36;
 
     public int startYear;
 
@@ -38,14 +36,11 @@ public class GameManager : MonoBehaviour {
 	public bool isPaused { get; private set; }
     public bool allowConsole = true;
     public bool displayFPS = true;
-    public bool ignoreEventTriggerWeights = false;
-    public bool showFullDebug = false;
+    public bool showFullDebug;
     public static bool showAllTilesTooltip = false;
     
     public GameObject travelLineParentPrefab;
     public GameObject travelLinePrefab;
-    public HexTile tile1;
-    public HexTile tile2;
 
     [Header("Particle Effects")]
     [SerializeField] private GameObject electricEffectPrefab;
@@ -62,7 +57,7 @@ public class GameManager : MonoBehaviour {
     private float timeElapsed;
     private bool _gameHasStarted;
 
-    public bool pauseTickEnded2 = false;
+    public bool pauseTickEnded2;
 
     public string lastProgressionBeforePausing; //what was the last progression speed before the player paused the game. NOTE: This includes paused state
 
@@ -74,8 +69,9 @@ public class GameManager : MonoBehaviour {
 
     #region Monobehaviours
     private void Awake() {
+        // Debug.unityLogger.logEnabled = false;
         Instance = this;
-        this.timeElapsed = 0f;
+        timeElapsed = 0f;
         _gameHasStarted = false;
         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
     }
@@ -86,7 +82,7 @@ public class GameManager : MonoBehaviour {
                 UIManager.Instance.ToggleConsole();
 #endif
             }
-        } else if (Input.GetKeyDown(KeyCode.Space) && !UIManager.Instance.IsMouseOnInput()) {
+        } else if (Input.GetKeyDown(KeyCode.Space)) {
             if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.pauseBtn.IsInteractable()) {
                 if (isPaused) {
                     UIManager.Instance.Unpause();
@@ -111,50 +107,16 @@ public class GameManager : MonoBehaviour {
         }
 
         if (_gameHasStarted && !isPaused) {
-            if (this.timeElapsed == 0f) {
-                this.TickStarted();
+            if (Math.Abs(timeElapsed) <= 0f) {
+                TickStarted();
             }
-            this.timeElapsed += Time.deltaTime;
-            if (this.timeElapsed >= this.progressionSpeed) {
-                this.timeElapsed = 0f;
+            timeElapsed += Time.deltaTime;
+            if (timeElapsed >= progressionSpeed) {
+                timeElapsed = 0f;
                 TickEnded();
             }
         }
     }
-    //private void FixedUpdate() {
-    //    if (_gameHasStarted && !isPaused) {
-    //        if (this.timeElapsed == 0f) {
-    //            this.TickStarted();
-    //        }
-    //        this.timeElapsed += Time.deltaTime;
-    //        if (this.timeElapsed >= this.progressionSpeed) {
-    //            this.timeElapsed = 0f;
-    //            TickEnded();
-    //        }
-    //    }
-    //}
-    //private void Update() {
-    //    //Application.targetFrameRate = 60;
-    //    //    if (!UIManager.Instance.IsConsoleShowing() && !UIManager.Instance.IsMouseOnInput() && !PlayerManager.Instance.isChoosingStartingTile) {
-    //    //        if (Input.GetKeyDown(KeyCode.Space)) {
-    //    //            if (isPaused) {
-    //    //                //SetProgressionSpeed(currProgressionSpeed);
-    //    //                //SetPausedState(false);
-    //    //                if (currProgressionSpeed == PROGRESSION_SPEED.X1) {
-    //    //                    UIManager.Instance.SetProgressionSpeed1X();
-    //    //                } else if (currProgressionSpeed == PROGRESSION_SPEED.X2) {
-    //    //                    UIManager.Instance.SetProgressionSpeed2X();
-    //    //                } else if (currProgressionSpeed == PROGRESSION_SPEED.X4) {
-    //    //                    UIManager.Instance.SetProgressionSpeed4X();
-    //    //                }
-    //    //            } else {
-    //    //                //pause
-    //    //                //SetPausedState(true);
-    //    //                UIManager.Instance.Pause();
-    //    //            }
-    //    //        }
-    //    //    }
-    //}
     #endregion
 
     [ContextMenu("Start Progression")]
@@ -169,27 +131,17 @@ public class GameManager : MonoBehaviour {
         InnerMapManager.Instance.UpdateLightBasedOnTime(Today());
         //TimerHubUI.Instance.AddItem("Until Divine Intervention", 4320, null);
     }
-
-    private float AngleBetweenVector2(Vector2 vec1, Vector2 vec2) {
-        Vector2 diference = vec2 - vec1;
-        float sign = (vec2.y < vec1.y) ? -1.0f : 1.0f;
-        return Vector2.Angle(Vector2.right, diference) * sign;
-    }
-
     public GameDate Today() {
-        return new GameDate(this.month, days, this.year, this.tick);
+        return new GameDate(month, days, year, tick);
     }
     public string TodayLogString() {
         return "[" + continuousDays + " - " + ConvertTickToTime(tick) + "] ";
     }
-    public string ConvertDayToLogString(GameDate date) {
-        return "[" + date.ConvertToContinuousDaysWithTime() + "] ";
-    }
     public GameDate EndOfTheMonth() {
-        return new GameDate(this.month, daysPerMonth, this.year, ticksPerDay);
+        return new GameDate(month, daysPerMonth, year, ticksPerDay);
     }
     public int GetNextMonth() {
-        int currMonth = this.month;
+        int currMonth = month;
         currMonth++;
         if(currMonth > 12) {
             currMonth = 1;
@@ -220,7 +172,7 @@ public class GameManager : MonoBehaviour {
         return tickDifference;
     }
     public GameDate FirstDayOfTheMonth() {
-		return new GameDate(this.month, 1, this.year, 1);
+		return new GameDate(month, 1, year, 1);
 	}
     public bool IsEndOfDay() {
         return tick == ticksPerDay;
@@ -236,7 +188,7 @@ public class GameManager : MonoBehaviour {
 	}
     private void StoreLastProgressionBeforePausing() {
         //the player paused the game
-        if (this.isPaused) {
+        if (isPaused) {
             lastProgressionBeforePausing = "paused";
         } else {
             switch (currProgressionSpeed) {
@@ -259,10 +211,7 @@ public class GameManager : MonoBehaviour {
         yield return null;
         SetPausedState(state);
     }
-    /*
-     * Set day progression speed to 1x, 2x of 4x
-     * */
-	public void SetProgressionSpeed(PROGRESSION_SPEED progSpeed){
+    public void SetProgressionSpeed(PROGRESSION_SPEED progSpeed){
         //if (!isPaused && currProgressionSpeed == progSpeed) {
         //    return; //ignore change
         //}
@@ -274,11 +223,11 @@ public class GameManager : MonoBehaviour {
         } else if(progSpeed == PROGRESSION_SPEED.X4){
             speed = X4_SPEED;
         }
-		this.progressionSpeed = speed;
+		progressionSpeed = speed;
         //CombatManager.Instance.updateIntervals = this.progressionSpeed / (float) CombatManager.Instance.numOfCombatActionPerDay;
         Messenger.Broadcast(Signals.PROGRESSION_SPEED_CHANGED, progSpeed);
 	}
-    public void TickStarted() {
+    private void TickStarted() {
         if (tick % ticksPerHour == 0 && !IsStartOfGame()) {
             //hour reached
             Messenger.Broadcast(Signals.HOUR_STARTED);
@@ -286,34 +235,31 @@ public class GameManager : MonoBehaviour {
         Messenger.Broadcast(Signals.TICK_STARTED);
         Messenger.Broadcast(Signals.UPDATE_UI);
     }
-    /*
-     * Function that triggers daily actions
-     * */
-    public void TickEnded(){
+    private void TickEnded(){
         Messenger.Broadcast(Signals.TICK_ENDED);
 
-        this.tick += 1;
-        if (this.tick > ticksPerDay) {
+        tick += 1;
+        if (tick > ticksPerDay) {
             //int difference = this.tick - ticksPerDay; //Added this for cases when the ticks to be added per tick is greater than 1, so it is possible that the excess ticks over ticksPerDay can also be greater than 1
-            this.tick = 1;
+            tick = 1;
             DayStarted(false);
         }
         Messenger.Broadcast(Signals.UPDATE_UI);
     }
     public void SetTick(int amount) {
-        this.tick = amount;
+        tick = amount;
         Messenger.Broadcast(Signals.UPDATE_UI);
     }
-    public void DayStarted(bool broadcastUI = true) {
+    private void DayStarted(bool broadcastUI = true) {
         days += 1;
-        this.continuousDays += 1;
+        continuousDays += 1;
         Messenger.Broadcast(Signals.DAY_STARTED);
         if (days > daysPerMonth) {
             days = 1;
-            this.month += 1;
-            if (this.month > 12) {
-                this.month = 1;
-                this.year += 1;
+            month += 1;
+            if (month > 12) {
+                month = 1;
+                year += 1;
             }
             Messenger.Broadcast(Signals.MONTH_START);
         }
@@ -340,15 +286,20 @@ public class GameManager : MonoBehaviour {
     public static TIME_IN_WORDS GetTimeInWordsOfTick(int tick) {
         if ((tick >= 265 && tick <= 288) || (tick >= 1 && tick <= 60)) {
             return TIME_IN_WORDS.AFTER_MIDNIGHT;
-        } else if (tick >= 61 && tick <= 132) {
+        }
+        if (tick >= 61 && tick <= 132) {
             return TIME_IN_WORDS.MORNING;
-        } else if (tick >= 133 && tick <= 156) {
+        }
+        if (tick >= 133 && tick <= 156) {
             return TIME_IN_WORDS.LUNCH_TIME;
-        } else if (tick >= 157 && tick <= 204) {
+        }
+        if (tick >= 157 && tick <= 204) {
             return TIME_IN_WORDS.AFTERNOON;
-        } else if (tick >= 205 && tick <= 240) {
+        }
+        if (tick >= 205 && tick <= 240) {
             return TIME_IN_WORDS.EARLY_NIGHT;
-        } else if (tick >= 241 && tick <= 264) {
+        }
+        if (tick >= 241 && tick <= 264) {
             return TIME_IN_WORDS.LATE_NIGHT;
         }
         return TIME_IN_WORDS.NONE;
@@ -358,17 +309,17 @@ public class GameManager : MonoBehaviour {
     //Example: If the character is Nocturnal, MORNING will become LATE_NIGHT
     public static TIME_IN_WORDS GetCurrentTimeInWordsOfTick(Character relativeTo = null) {
         TIME_IN_WORDS time = TIME_IN_WORDS.NONE;
-        if ((GameManager.Instance.tick >= 265 && GameManager.Instance.tick <= 288) || (GameManager.Instance.tick >= 1 && GameManager.Instance.tick <= 60)) {
+        if ((Instance.tick >= 265 && Instance.tick <= 288) || (Instance.tick >= 1 && Instance.tick <= 60)) {
             time = TIME_IN_WORDS.AFTER_MIDNIGHT;
-        } else if (GameManager.Instance.tick >= 61 && GameManager.Instance.tick <= 132) {
+        } else if (Instance.tick >= 61 && Instance.tick <= 132) {
             time = TIME_IN_WORDS.MORNING;
-        } else if (GameManager.Instance.tick >= 133 && GameManager.Instance.tick <= 156) {
+        } else if (Instance.tick >= 133 && Instance.tick <= 156) {
             time = TIME_IN_WORDS.LUNCH_TIME;
-        } else if (GameManager.Instance.tick >= 157 && GameManager.Instance.tick <= 204) {
+        } else if (Instance.tick >= 157 && Instance.tick <= 204) {
             time = TIME_IN_WORDS.AFTERNOON;
-        } else if (GameManager.Instance.tick >= 205 && GameManager.Instance.tick <= 240) {
+        } else if (Instance.tick >= 205 && Instance.tick <= 240) {
             time = TIME_IN_WORDS.EARLY_NIGHT;
-        } else if (GameManager.Instance.tick >= 241 && GameManager.Instance.tick <= 264) {
+        } else if (Instance.tick >= 241 && Instance.tick <= 264) {
             time = TIME_IN_WORDS.LATE_NIGHT;
         }
         if(relativeTo != null && relativeTo.traitContainer.GetNormalTrait<Trait>("Nocturnal") != null) {
@@ -389,44 +340,54 @@ public class GameManager : MonoBehaviour {
         if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
             //After Midnight has special processing because it goes beyond the max tick, its 10:00PM to 5:00AM 
             int maxRange = ticksPerDay + 60;
-            int chosenTick = UnityEngine.Random.Range(265, maxRange + 1);
+            int chosenTick = Random.Range(265, maxRange + 1);
             if(chosenTick > ticksPerDay) {
                 chosenTick -= ticksPerDay;
             }
             return chosenTick;
-        } else if (timeInWords == TIME_IN_WORDS.MORNING) {
-            return UnityEngine.Random.Range(61, 133);
-        } else if (timeInWords == TIME_IN_WORDS.LUNCH_TIME) {
-            return UnityEngine.Random.Range(133, 157);
-        } else if (timeInWords == TIME_IN_WORDS.AFTERNOON) {
-            return UnityEngine.Random.Range(157, 205);
-        } else if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
-            return UnityEngine.Random.Range(205, 241);
-        } else if (timeInWords == TIME_IN_WORDS.LATE_NIGHT) {
-            return UnityEngine.Random.Range(241, 265);
         }
-        throw new System.Exception(timeInWords.ToString() + " time in words has no tick!");
+        if (timeInWords == TIME_IN_WORDS.MORNING) {
+            return Random.Range(61, 133);
+        }
+        if (timeInWords == TIME_IN_WORDS.LUNCH_TIME) {
+            return Random.Range(133, 157);
+        }
+        if (timeInWords == TIME_IN_WORDS.AFTERNOON) {
+            return Random.Range(157, 205);
+        }
+        if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
+            return Random.Range(205, 241);
+        }
+        if (timeInWords == TIME_IN_WORDS.LATE_NIGHT) {
+            return Random.Range(241, 265);
+        }
+        throw new Exception(timeInWords + " time in words has no tick!");
     }
     public static int GetRandomTickFromTimeInWords(TIME_IN_WORDS timeInWords, int minimumThreshold) {
         if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
             int maxRange = ticksPerDay + 60;
-            int chosenTick = UnityEngine.Random.Range(minimumThreshold, maxRange + 1);
+            int chosenTick = Random.Range(minimumThreshold, maxRange + 1);
             if (chosenTick > ticksPerDay) {
                 chosenTick -= ticksPerDay;
             }
             return chosenTick;
-        } else if (timeInWords == TIME_IN_WORDS.MORNING) {
-            return UnityEngine.Random.Range(minimumThreshold, 133);
-        } else if (timeInWords == TIME_IN_WORDS.LUNCH_TIME) {
-            return UnityEngine.Random.Range(minimumThreshold, 157);
-        } else if (timeInWords == TIME_IN_WORDS.AFTERNOON) {
-            return UnityEngine.Random.Range(minimumThreshold, 205);
-        } else if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
-            return UnityEngine.Random.Range(minimumThreshold, 241);
-        } else if (timeInWords == TIME_IN_WORDS.LATE_NIGHT) {
-            return UnityEngine.Random.Range(minimumThreshold, 265);
         }
-        throw new System.Exception(timeInWords.ToString() + " time in words has no tick!");
+        if (timeInWords == TIME_IN_WORDS.MORNING) {
+            return Random.Range(minimumThreshold, 133);
+        }
+        if (timeInWords == TIME_IN_WORDS.LUNCH_TIME) {
+            return Random.Range(minimumThreshold, 157);
+        }
+        if (timeInWords == TIME_IN_WORDS.AFTERNOON) {
+            return Random.Range(minimumThreshold, 205);
+        }
+        if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
+            return Random.Range(minimumThreshold, 241);
+        }
+        if (timeInWords == TIME_IN_WORDS.LATE_NIGHT) {
+            return Random.Range(minimumThreshold, 265);
+        }
+        throw new Exception(timeInWords + " time in words has no tick!");
     }
     public static TIME_IN_WORDS[] ConvertTimeInWordsWhenNocturnal(TIME_IN_WORDS[] currentTimeInWords) {
         TIME_IN_WORDS[] convertedTimeInWords = new TIME_IN_WORDS[currentTimeInWords.Length];
@@ -438,15 +399,20 @@ public class GameManager : MonoBehaviour {
     public static TIME_IN_WORDS ConvertTimeInWordsWhenNocturnal(TIME_IN_WORDS currentTimeInWords) {
         if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
             return TIME_IN_WORDS.LATE_NIGHT;
-        } else if (currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME) {
+        }
+        if (currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME) {
             return TIME_IN_WORDS.AFTER_MIDNIGHT;
-        } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+        }
+        if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
             return TIME_IN_WORDS.AFTER_MIDNIGHT;
-        } else if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
+        }
+        if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
             return TIME_IN_WORDS.MORNING;
-        } else if (currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT) {
+        }
+        if (currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT) {
             return TIME_IN_WORDS.MORNING;
-        } else if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+        }
+        if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
             return TIME_IN_WORDS.AFTERNOON;
         }
         return TIME_IN_WORDS.NONE;
@@ -455,7 +421,7 @@ public class GameManager : MonoBehaviour {
         return ticksPerHour * hours;
     }
     public int GetTicksBasedOnMinutes(int minutes) {
-        float percent = (float)minutes/60f;
+        float percent = minutes/60f;
         return Mathf.FloorToInt(ticksPerHour * percent);
     }
     public int GetHoursBasedOnTicks(int ticks) {
@@ -465,7 +431,7 @@ public class GameManager : MonoBehaviour {
         return Mathf.CeilToInt(ticks / (float) ticksPerHour);
     }
     public int GetCeilingDaysBasedOnTicks(int ticks) {
-        return Mathf.CeilToInt((float)ticks / (float) ticksPerDay);
+        return Mathf.CeilToInt(ticks / (float) ticksPerDay);
     }
     //public void SetTicksToAddPerTick(int amount) {
     //    ticksToAddPerTick = amount;
@@ -575,9 +541,6 @@ public class GameManager : MonoBehaviour {
     #endregion
 
     #region Utilities
-    public void ToggleIgnoreEventTriggerWeights(bool state) {
-        ignoreEventTriggerWeights = state;
-    }
     private bool IsStartOfGame() {
         if (year == startYear && month == 1 && days == 1 && tick == 24) {
             return true;

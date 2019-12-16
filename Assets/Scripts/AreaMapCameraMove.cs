@@ -160,14 +160,14 @@ public class AreaMapCameraMove : MonoBehaviour {
     }
     private void ArrowKeysMovement() {
         if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) ||Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
-            if (!UIManager.Instance.IsConsoleShowing() && !UIManager.Instance.IsMouseOnInput()) {
+            if (!UIManager.Instance.IsConsoleShowing()) {
                 float zAxisValue = Input.GetAxis("Vertical");
                 iTween.MoveUpdate(areaMapsCamera.gameObject, iTween.Hash("y", areaMapsCamera.transform.position.y + zAxisValue, "time", 0.1f));
             }
         }
 
         if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) {
-            if (!UIManager.Instance.IsConsoleShowing() && !UIManager.Instance.IsMouseOnInput()) {
+            if (!UIManager.Instance.IsConsoleShowing()) {
                 float xAxisValue = Input.GetAxis("Horizontal");
                 iTween.MoveUpdate(areaMapsCamera.gameObject, iTween.Hash("x", areaMapsCamera.transform.position.x + xAxisValue, "time", 0.1f));
             }
