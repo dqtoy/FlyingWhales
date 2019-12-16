@@ -54,16 +54,25 @@ public class ResolveConflict : GoapAction {
     #endregion
 
     #region State Effects
+    public void PreResolveSuccess(ActualGoapNode goapNode) {
+        if (goapNode.poiTarget is Character) {
+            Character targetCharacter = goapNode.poiTarget as Character;
+            //List<Relatable> allEnemyTraits = targetCharacter.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.ENEMY);
+            Relatable relatableTarget = targetCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.ENEMY);
+            if (relatableTarget != null) {
+                goapNode.descriptionLog.AddToFillers(relatableTarget, relatableTarget.relatableName, LOG_IDENTIFIER.CHARACTER_3);
+            } else {
+                throw new System.Exception("Cannot resolve conflict for " + targetCharacter.name + " because he/she does not have enemies!");
+            }
+        }
+    }
     public void AfterResolveSuccess(ActualGoapNode goapNode) {
         if (goapNode.poiTarget is Character) {
             Character targetCharacter = goapNode.poiTarget as Character;
-            List<Relatable> allEnemyTraits = targetCharacter.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.ENEMY);
-            if (allEnemyTraits.Count > 0) {
-                Relatable chosenEnemy = allEnemyTraits[UnityEngine.Random.Range(0, allEnemyTraits.Count)];
-                GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-                goapNode.descriptionLog.AddToFillers(chosenEnemy, chosenEnemy.relatableName, LOG_IDENTIFIER.CHARACTER_3);
-                RelationshipManager.Instance.RemoveOneWayRelationship(targetCharacter.currentAlterEgo, chosenEnemy, RELATIONSHIP_TRAIT.ENEMY);
-                //NOTE: Moved removal of enemy trait after the action is fully processed for proper arrangement of logs
+            //List<Relatable> allEnemyTraits = targetCharacter.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.ENEMY);
+            Relatable relatableTarget = targetCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.ENEMY);
+            if (relatableTarget != null) {
+                RelationshipManager.Instance.RemoveOneWayRelationship(targetCharacter.currentAlterEgo, relatableTarget, RELATIONSHIP_TRAIT.ENEMY);
             } else {
                 throw new System.Exception("Cannot resolve conflict for " + targetCharacter.name + " because he/she does not have enemies!");
             }

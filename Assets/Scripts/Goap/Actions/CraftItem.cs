@@ -15,7 +15,7 @@ public class CraftItem : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_WOOD, "0", true, GOAP_EFFECT_TARGET.ACTOR), HasSupply);
+        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_WOOD, "0", true, GOAP_EFFECT_TARGET.ACTOR), HasSupply);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -36,6 +36,17 @@ public class CraftItem : GoapAction {
         log.AddToFillers(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
         log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
     }
+    public override void OnStopWhileStarted(ActualGoapNode node) {
+        base.OnStopWhileStarted(node);
+        Character actor = node.actor;
+        actor.ownParty.RemoveCarriedPOI();
+    }
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        actor.ownParty.RemoveCarriedPOI();
+    }
     #endregion
 
     #region Preconditions
@@ -46,8 +57,12 @@ public class CraftItem : GoapAction {
         } else {
             craftedItem = (SPECIAL_TOKEN)otherData[0];
         }
-        return actor.supply >= TokenManager.Instance.itemData[craftedItem].craftCost;
-       
+        if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile) {
+            ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
+            return carriedPile.resourceInPile >= TokenManager.Instance.itemData[craftedItem].craftCost;
+        }
+        return false;
+        //return actor.supply >= TokenManager.Instance.itemData[craftedItem].craftCost; 
     }
     #endregion
 
@@ -94,7 +109,9 @@ public class CraftItem : GoapAction {
             SpecialToken tool = TokenManager.Instance.CreateSpecialToken(craftedItem);
             goapNode.actor.ObtainToken(tool);
         }
-        goapNode.actor.AdjustSupply(-TokenManager.Instance.itemData[craftedItem].craftCost);
+        ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
+        carriedPile.AdjustResourceInPile(-TokenManager.Instance.itemData[craftedItem].craftCost);
+        //goapNode.actor.AdjustSupply(-TokenManager.Instance.itemData[craftedItem].craftCost);
     }
     #endregion
 }

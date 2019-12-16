@@ -16,17 +16,17 @@ public class Repair : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
+        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_WOOD, "0", true, GOAP_EFFECT_TARGET.ACTOR), HasSupply);
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Burnt", false, GOAP_EFFECT_TARGET.TARGET));
     }
-    public override List<Precondition> GetPreconditions(IPointOfInterest poiTarget, object[] otherData) {
-        List <Precondition> p = new List<Precondition>(base.GetPreconditions(poiTarget, otherData));
-        TileObject tileObj = poiTarget as TileObject;
-        TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
-        int craftCost = (int)(data.constructionCost * 0.5f);
-        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_WOOD, craftCost.ToString(), true, GOAP_EFFECT_TARGET.ACTOR), HasSupply));
-
-        return p;
-    }
+    //public override List<Precondition> GetPreconditions(IPointOfInterest poiTarget, object[] otherData) {
+    //    List <Precondition> p = new List<Precondition>(base.GetPreconditions(poiTarget, otherData));
+    //    TileObject tileObj = poiTarget as TileObject;
+    //    TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
+    //    int craftCost = (int)(data.constructionCost * 0.5f);
+    //    p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_WOOD, craftCost.ToString(), true, GOAP_EFFECT_TARGET.ACTOR), HasSupply));
+    //    return p;
+    //}
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Repair Success", goapNode);
@@ -70,6 +70,17 @@ public class Repair : GoapAction {
         }
         return false;
     }
+    public override void OnStopWhileStarted(ActualGoapNode node) {
+        base.OnStopWhileStarted(node);
+        Character actor = node.actor;
+        actor.ownParty.RemoveCarriedPOI();
+    }
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        actor.ownParty.RemoveCarriedPOI();
+    }
     #endregion
 
     #region State Effects
@@ -90,7 +101,9 @@ public class Repair : GoapAction {
 
         TileObject tileObj = goapNode.poiTarget as TileObject;
         TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
-        goapNode.actor.AdjustSupply((int) (data.constructionCost * 0.5f));
+        //goapNode.actor.AdjustSupply((int) (data.constructionCost * 0.5f));
+        ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
+        carriedPile.AdjustResourceInPile(-(int) (data.constructionCost * 0.5f));
     }
     #endregion
 
@@ -99,7 +112,12 @@ public class Repair : GoapAction {
         TileObject tileObj = poiTarget as TileObject;
         TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
         int craftCost = (int)(data.constructionCost * 0.5f);
-        return actor.supply >= craftCost;
+        if(actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile) {
+            ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
+            return carriedPile.resourceInPile >= craftCost;
+        }
+        return false;
+        //return actor.supply >= craftCost;
     }
     #endregion
 

@@ -14,7 +14,7 @@ public abstract class MapObject<T> where T: IDamageable {
 
     #region Initialization
     protected abstract void CreateAreaMapGameObject();
-    protected void InitializeMapObject(T obj) {
+    public void InitializeMapObject(T obj) {
         damageable = obj;
         CreateAreaMapGameObject();
         mapVisual.Initialize(obj);

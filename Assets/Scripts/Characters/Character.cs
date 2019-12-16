@@ -1467,7 +1467,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //build furniture job
         if (!hasCreatedJob && isAtHomeRegion && homeRegion.area != null && currentStructure is Dwelling) {
             Dwelling dwelling = currentStructure as Dwelling;
-            if (dwelling.HasUnoccupiedFurnitureSpot() && advertisedActions.Contains(INTERACTION_TYPE.CRAFT_FURNITURE)) {
+            if (dwelling.HasUnoccupiedFurnitureSpot()) { //&& advertisedActions.Contains(INTERACTION_TYPE.CRAFT_TILE_OBJECT)
                 if (UnityEngine.Random.Range(0, 100) < 10) { //if the dwelling has a facility deficit(facility at 0) or if chance is met.
                     FACILITY_TYPE mostNeededFacility = dwelling.GetMostNeededValidFacility();
                     if (mostNeededFacility != FACILITY_TYPE.NONE) {
@@ -1485,6 +1485,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                         if (tileObj.CanBeCraftedBy(this)) { //check first if the character can build that specific type of furniture
                             if (jobQueue.HasJob(JOB_TYPE.BUILD_FURNITURE, furniture) == false) {
                                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_FURNITURE, INTERACTION_TYPE.CRAFT_TILE_OBJECT, furniture, this);
+                                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(furniture.tileObjectType).constructionCost });
                                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
                                 jobQueue.AddJobInQueue(job);
                                 Debug.Log($"{GameManager.Instance.TodayLogString()}{job.ToString()} was added to {this.name}'s jobqueue");
@@ -1493,6 +1494,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                             //furniture cannot be crafted by this character, post a job on the area
                             if (homeRegion.area.HasJob(JOB_TYPE.BUILD_FURNITURE, furniture) == false) {
                                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_FURNITURE, INTERACTION_TYPE.CRAFT_TILE_OBJECT, furniture, homeRegion.area);
+                                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(furniture.tileObjectType).constructionCost });
                                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
                                 homeRegion.area.AddToAvailableJobs(job);
                             }
@@ -4908,7 +4910,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         advertisedActions.Add(INTERACTION_TYPE.CHANGE_CLASS);
         //advertisedActions.Add(INTERACTION_TYPE.STAND);
         //advertisedActions.Add(INTERACTION_TYPE.VISIT);
-        advertisedActions.Add(INTERACTION_TYPE.CRAFT_FURNITURE);
+        //advertisedActions.Add(INTERACTION_TYPE.CRAFT_FURNITURE);
 
         if (race != RACE.SKELETON) {
             advertisedActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);

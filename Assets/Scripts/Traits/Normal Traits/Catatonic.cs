@@ -128,6 +128,7 @@ namespace Traits {
             if (characterThatWillDoJob.currentRegion.IsResident(owner)) {
                 GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET };
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, owner, characterThatWillDoJob);
+                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 20 });
                 //job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeParalyzedFeedJob);
                 characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                 return true;

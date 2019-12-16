@@ -22,7 +22,7 @@ public class Feed : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_WOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR }, ActorHasSupply);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_FOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR }, ActorHasFood);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -32,9 +32,16 @@ public class Feed : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 1;
     }
+    public override void OnStopWhileStarted(ActualGoapNode node) {
+        base.OnStopWhileStarted(node);
+        Character actor = node.actor;
+        actor.ownParty.RemoveCarriedPOI();
+    }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
+        Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
+        actor.ownParty.RemoveCarriedPOI();
         (poiTarget as Character).needsComponent.AdjustDoNotGetHungry(-1);
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -53,7 +60,9 @@ public class Feed : GoapAction {
     public void PreFeedSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
         targetCharacter.needsComponent.AdjustDoNotGetHungry(1);
-        goapNode.actor.AdjustFood(-20);
+        ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
+        carriedPile.AdjustResourceInPile(-20);
+        //goapNode.actor.AdjustFood(-20);
         //TODO: goapNode.action.states[goapNode.currentStateName].SetIntelReaction(FeedSuccessReactions);
     }
     public void PerTickFeedSuccess(ActualGoapNode goapNode) {
@@ -150,8 +159,13 @@ public class Feed : GoapAction {
     //#endregion
 
     #region Preconditions
-    private bool ActorHasSupply(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor.supply >= 10;
+    private bool ActorHasFood(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile) {
+            ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
+            return carriedPile.resourceInPile >= 20;
+        }
+        return false;
+        //return actor.supply >= 20;
     }
     #endregion
 }

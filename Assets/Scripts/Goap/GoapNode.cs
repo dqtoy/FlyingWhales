@@ -168,6 +168,7 @@ public class ActualGoapNode {
             if (targetToGoTo == null) {
                 targetTile = action.GetTargetTileToGoTo(this);
             } else {
+                targetPOIToGoTo = targetToGoTo;
                 targetTile = targetToGoTo.gridTileLocation;
             }
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.IN_PLACE) {
@@ -205,6 +206,7 @@ public class ActualGoapNode {
                 targetTile = actor.gridTileLocation;
             } else {
                 //No OnArriveAtTargetLocation because it doesn't trigger on arrival, rather, it is triggered by on vision
+                targetPOIToGoTo = poiTarget;
                 targetTile = poiTarget.gridTileLocation;
             }
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.OVERRIDE) {

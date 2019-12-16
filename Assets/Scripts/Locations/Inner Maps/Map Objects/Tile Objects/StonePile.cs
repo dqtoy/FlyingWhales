@@ -50,9 +50,10 @@ public class StonePile : ResourcePile {
                 } else {
                     ForceCancelNotAssignedProduceJob(JOB_TYPE.PRODUCE_STONE);
                 }
-            } else {
-                CreateHaulJob();
-            }
+            } 
+            //else {
+            //    CreateHaulJob();
+            //}
         }
     }
     //public override void AdjustResourceInPile(int adjustment) {

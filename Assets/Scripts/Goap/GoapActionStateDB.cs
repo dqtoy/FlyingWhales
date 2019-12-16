@@ -95,13 +95,13 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.SCRAP, new[]{
             new StateNameAndDuration(){ name = "Scrap Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new[]{
+            new StateNameAndDuration(){ name = "Deposit Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
         {INTERACTION_TYPE.DROP_RESOURCE, new[]{
             new StateNameAndDuration(){ name = "Drop Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
-        {INTERACTION_TYPE.DROP_FOOD, new[]{
-            new StateNameAndDuration(){ name = "Drop Success", status = InteractionManager.Goap_State_Success, duration = 0 },
-        } },
-        {INTERACTION_TYPE.OBTAIN_RESOURCE, new[]{
+        {INTERACTION_TYPE.TAKE_RESOURCE, new[]{
             new StateNameAndDuration(){ name = "Take Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
         {INTERACTION_TYPE.RETURN_HOME_LOCATION, new[]{

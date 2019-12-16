@@ -112,6 +112,7 @@ public class LocationStructureObject : PooledObject {
             newTileObject.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
 
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_FURNITURE, INTERACTION_TYPE.CRAFT_TILE_OBJECT, newTileObject, areaMap.area);
+            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(newTileObject.tileObjectType).constructionCost });
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
             areaMap.area.AddToAvailableJobs(job);
         }

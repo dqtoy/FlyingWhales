@@ -78,6 +78,7 @@ namespace Traits {
                         if (InteractionManager.Instance.CanCharacterTakeRepairJob(characterThatWillDoJob)) {
                             GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Burnt", false, GOAP_EFFECT_TARGET.TARGET);
                             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPAIR, effect, targetPOI, characterThatWillDoJob);
+                            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { (int)(TileObjectDB.GetTileObjectData(targetPOI.tileObjectType).constructionCost * 0.5f) });
                             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                             return true;
                         }

@@ -1,0 +1,1 @@
+{"items":[{"key":"take success_description","value":"%00@ took %111% %112% from %04@."},{"key":"take fail_description","value":"%00@ wanted to take %112% but there was none available."},{"key":"target missing_description","value":"%00@ wanted to take %112% but there was none available."},{"key":"thought_bubble_m","value":"%00@ is going to take %112% from %04@."}]}

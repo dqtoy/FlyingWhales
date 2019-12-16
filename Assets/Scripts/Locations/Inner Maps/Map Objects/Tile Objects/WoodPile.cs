@@ -50,9 +50,10 @@ public class WoodPile : ResourcePile {
                 } else {
                     ForceCancelNotAssignedProduceJob(JOB_TYPE.PRODUCE_WOOD);
                 }
-            } else {
-                CreateHaulJob();
-            }
+            } 
+            //else {
+            //    CreateHaulJob();
+            //}
         }
     }
     //public override void AdjustResourceInPile(int adjustment) {

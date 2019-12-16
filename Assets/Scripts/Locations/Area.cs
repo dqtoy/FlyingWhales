@@ -755,7 +755,14 @@ public class Area : IJobOwner, ILocation {
         }
     }
     private void SetMainStorage(LocationStructure structure) {
+        bool shouldCheckResourcePiles = false;
+        if(mainStorage != null && structure != null && mainStorage != structure) {
+            shouldCheckResourcePiles = true;
+        }
         mainStorage = structure;
+        if (shouldCheckResourcePiles) {
+            Messenger.Broadcast(Signals.REGION_CHANGE_STORAGE, region);
+        }
     }
     #endregion
 
@@ -943,6 +950,7 @@ public class Area : IJobOwner, ILocation {
                     item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
 
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BREW_POTION, INTERACTION_TYPE.CRAFT_ITEM, item, this);
+                    job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TokenManager.Instance.itemData[SPECIAL_TOKEN.HEALING_POTION].craftCost });
                     job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanBrewPotion);
                     AddToAvailableJobs(job);
                 }
@@ -958,6 +966,7 @@ public class Area : IJobOwner, ILocation {
                     item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
 
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_TOOL, INTERACTION_TYPE.CRAFT_ITEM, item, this);
+                    job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TokenManager.Instance.itemData[SPECIAL_TOKEN.TOOL].craftCost });
                     job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCraftTool);
                     AddToAvailableJobs(job);
                 }

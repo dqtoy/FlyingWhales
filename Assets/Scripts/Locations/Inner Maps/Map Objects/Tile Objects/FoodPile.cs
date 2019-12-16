@@ -63,9 +63,10 @@ public class FoodPile : ResourcePile {
                     ForceCancelNotAssignedProduceJob(JOB_TYPE.PRODUCE_FOOD);
                     //structureLocation.location.ForceCancelJob(structureLocation.location.GetJob(JOB_TYPE.OBTAIN_FOOD));
                 }
-            } else {
-                CreateHaulJob();
-            }
+            } 
+            //else {
+            //    CreateHaulJob();
+            //}
         }
     }
 }
