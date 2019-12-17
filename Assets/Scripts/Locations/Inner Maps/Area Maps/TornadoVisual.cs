@@ -240,7 +240,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
         }
     }
     private void TrySuckIn(IDamageable damageable) {
-        if (CanBeSuckedIn(damageable) && Random.Range(0, 100) < 25) {
+        if (CanBeSuckedIn(damageable) && Random.Range(0, 100) < 20) {
             FollowerComponent fc = damageable.mapObjectVisual.gameObjectVisual.AddComponent<FollowerComponent>();
             fc.SetTarget(this.transform, () => OnDamagableReachedThis(damageable));
             if (damageable is IPointOfInterest) {
