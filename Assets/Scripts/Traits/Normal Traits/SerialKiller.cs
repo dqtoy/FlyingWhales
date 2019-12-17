@@ -217,7 +217,7 @@ namespace Traits {
         private void FollowTargetVictim() {
             if (!isFollowing) {
                 SetIsFollowing(true);
-                character.marker.GoTo(targetVictim);
+                character.marker.GoToPOI(targetVictim);
             }
         }
         private void CheckTargetVictimIfStillAvailable() {

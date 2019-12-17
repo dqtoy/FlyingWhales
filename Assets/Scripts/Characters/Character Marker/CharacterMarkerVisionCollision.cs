@@ -98,65 +98,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         }
     }
     #endregion
-
     
-    //public bool ChatHandling(Character targetCharacter) {
-    //    if (targetCharacter.isDead
-    //        || targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) //TODO: .HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER) Change to use new cannot move/cannot witness
-    //        || parentMarker.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
-    //        || (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
-    //        || (parentMarker.character.stateComponent.currentState != null && parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
-    //        || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
-    //        || parentMarker.character.role.roleType == CHARACTER_ROLE.BEAST
-    //        || targetCharacter.faction == PlayerManager.Instance.player.playerFaction
-    //        || parentMarker.character.faction == PlayerManager.Instance.player.playerFaction
-    //        || targetCharacter.characterClass.className == "Zombie"
-    //        || parentMarker.character.characterClass.className == "Zombie") {
-    //        return false;
-    //    }
-    //    if(!parentMarker.character.IsHostileWith(targetCharacter)) {
-    //        int roll = UnityEngine.Random.Range(0, 100);
-    //        int chance = 8;
-
-    //        if (roll < chance) {
-    //            if (!parentMarker.character.isChatting && !targetCharacter.isChatting) {
-    //                parentMarker.character.ChatCharacter(targetCharacter);
-    //                return true;
-    //            }
-    //        }
-    //    }
-    //    return false;
-    //}
-    //public bool ForceChatHandling(Character targetCharacter) {
-    //    if (targetCharacter.isDead
-    //        || targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)//TODO: .HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER) Change to use new cannot move/cannot witness
-    //        || parentMarker.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
-    //        || (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
-    //        || (parentMarker.character.stateComponent.currentState != null && parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
-    //        || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
-    //        || parentMarker.character.role.roleType == CHARACTER_ROLE.BEAST
-    //        || targetCharacter.faction == PlayerManager.Instance.player.playerFaction
-    //        || parentMarker.character.faction == PlayerManager.Instance.player.playerFaction
-    //        || targetCharacter.characterClass.className == "Zombie"
-    //        || parentMarker.character.characterClass.className == "Zombie") {
-    //        return false;
-    //    }
-    //    if (!parentMarker.character.IsHostileWith(targetCharacter)) {
-    //        if (!parentMarker.character.isChatting && !targetCharacter.isChatting) {
-    //            parentMarker.character.ChatCharacter(targetCharacter);
-    //            return true;
-    //        }
-    //    }
-    //    return false;
-    //}
-    //private void NormalCollisionHandling(IPointOfInterest poi) {
-    //    if(poi is Character) {
-    //        Character targetCharacter = poi as Character;
-    //        if(!parentMarker.AddHostileInRange(targetCharacter)) {
-    //            ChatHandling(targetCharacter);
-    //        }
-    //    }
-    //}
     private void NormalEnterHandling(IPointOfInterest poi) {
         Character targetCharacter = null;
         if (poi is Character) {
@@ -165,34 +107,9 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         parentMarker.AddPOIAsInVisionRange(poi);
         if(targetCharacter != null && parentMarker.character.traitContainer.GetNormalTrait<Trait>("Resting", "Unconscious") == null) {
             parentMarker.AddHostileInRange(targetCharacter);
-        } else if (poi is TornadoTileObject) {
+        } else if (poi is TornadoTileObject && parentMarker.character.traitContainer.GetNormalTrait<Trait>("Elemental Master") == null) {
             parentMarker.AddAvoidInRange(poi);
         }
-        //if (GameManager.Instance.gameHasStarted) {
-        //    if (parentMarker.character.stateComponent.currentState != null) {
-        //        if (!parentMarker.character.stateComponent.currentState.OnEnterVisionWith(poi)) {
-        //            if (targetCharacter != null) {
-        //                if (!parentMarker.AddHostileInRange(targetCharacter)) {
-        //                    if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter, true)) {
-        //                        ChatHandling(targetCharacter);
-        //                    }
-        //                }
-        //            } else {
-        //                parentMarker.character.CreateJobsOnEnterVisionWith(poi, true);
-        //            }
-        //        }
-        //    } else {
-        //        if (targetCharacter != null) {
-        //            if (!parentMarker.AddHostileInRange(targetCharacter)) {
-        //                if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter, true)) {
-        //                    ChatHandling(targetCharacter);
-        //                }
-        //            }
-        //        } else {
-        //            parentMarker.character.CreateJobsOnEnterVisionWith(poi, true);
-        //        }
-        //    }
-        //}
     }
 
     #region Different Structure Handling

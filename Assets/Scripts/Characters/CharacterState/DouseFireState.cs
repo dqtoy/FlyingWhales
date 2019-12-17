@@ -53,7 +53,7 @@ public class DouseFireState : CharacterState {
     }
     public void DetermineAction() {
         if (StillHasFire()) {
-            if (HasWater()) {
+            if (HasWater() || NeedsWater() == false) {
                 //douse nearest fire
                 DouseNearestFire();
             } else {
@@ -141,6 +141,9 @@ public class DouseFireState : CharacterState {
     private bool HasWater() {
         return stateComponent.character.GetToken(SPECIAL_TOKEN.WATER_BUCKET) != null;
     }
+    private bool NeedsWater() {
+        return stateComponent.character.traitContainer.GetNormalTrait<Trait>("Elemental Master") == null;
+    }
     private bool StillHasFire() {
         return fires.Count > 0;
     }
@@ -204,12 +207,14 @@ public class DouseFireState : CharacterState {
     }
     private void DouseFire() {
         currentTarget.traitContainer.RemoveTrait(currentTarget, "Burning", removedBy: this.stateComponent.character);
-        SpecialToken water = this.stateComponent.character.GetToken(SPECIAL_TOKEN.WATER_BUCKET);
-        if (water != null) {
-            //Reduce water count by 1.
-            this.stateComponent.character.ConsumeToken(water);
+        if (NeedsWater()) {
+            SpecialToken water = this.stateComponent.character.GetToken(SPECIAL_TOKEN.WATER_BUCKET);
+            if (water != null) {
+                //Reduce water count by 1.
+                this.stateComponent.character.ConsumeToken(water);
+            }
+            currentTarget.traitContainer.AddTrait(currentTarget, "Wet", this.stateComponent.character);    
         }
-        currentTarget.traitContainer.AddTrait(currentTarget, "Wet", this.stateComponent.character);
         isDousingFire = false;
         currentTarget = null;
     }

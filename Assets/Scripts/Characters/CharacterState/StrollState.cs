@@ -36,7 +36,7 @@ public class StrollState : CharacterState {
             SpecialToken token = targetPOI as SpecialToken;
             if (token.characterOwner == null) {
 
-                stateComponent.character.marker.GoTo(token, () => OnArriveAtPickUpLocation(token));
+                stateComponent.character.marker.GoToPOI(token, () => OnArriveAtPickUpLocation(token));
 
                 //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_UP, stateComponent.character, targetPOI);
                 //if (goapAction.targetTile != null) {
