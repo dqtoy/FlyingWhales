@@ -931,7 +931,7 @@ public class Area : IJobOwner, ILocation {
         List<JobQueueItem> choices = new List<JobQueueItem>();
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
-            if (job.assignedCharacter == null) {
+            if (job.assignedCharacter == null && job is GoapPlanJob) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
                 if (goapJob.targetPOI != null && character.marker.inVisionPOIs.Contains(goapJob.targetPOI) &&
                     character.jobQueue.CanJobBeAddedToQueue(job)) {
