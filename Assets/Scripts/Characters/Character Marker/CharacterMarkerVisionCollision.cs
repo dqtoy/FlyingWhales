@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 using Traits;
 
@@ -37,6 +38,9 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
     public void OnTriggerEnter2D(Collider2D collision) {
         if (!parentMarker.character.IsInOwnParty()) {
             return;
+        }
+        if (collision.gameObject.CompareTag(InnerMapManager.InvisibleToCharacterTag)) {
+            return; //object is invisible to character
         }
         IVisibleCollider collidedWith = collision.gameObject.GetComponent<IVisibleCollider>();
         if (collidedWith != null && collidedWith.poi != null
@@ -83,6 +87,9 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         }
     }
     public void OnTriggerExit2D(Collider2D collision) {
+        if (collision.gameObject.CompareTag(InnerMapManager.InvisibleToCharacterTag)) {
+            return; //object is invisible to character
+        }
         IVisibleCollider collidedWith = collision.gameObject.GetComponent<IVisibleCollider>();
         if (collidedWith != null && collidedWith.poi != null
             && collidedWith.poi != parentMarker.character) {

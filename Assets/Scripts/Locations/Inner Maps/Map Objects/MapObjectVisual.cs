@@ -1,4 +1,5 @@
-﻿using Inner_Maps;
+﻿using System.Collections;
+using Inner_Maps;
 using UnityEngine;
 
 public abstract class MapObjectVisual<T> : BaseMapObjectVisual where T : IDamageable {
@@ -44,10 +45,30 @@ public abstract class MapObjectVisual<T> : BaseMapObjectVisual where T : IDamage
 
     #region Collisions
     public abstract void UpdateCollidersState(T obj);
-    protected void DisableColliders() {
-        collisionTrigger.SetCollidersState(false);
+    /// <summary>
+    /// Set this object to be invisible to characters.
+    /// NOTE: Characters vision are at the Filtered Vision Collision layer, so they can only see objects in that layer.
+    /// Other objects like the Tornado that is in the All Vision Collision Layer can still see objects that are not
+    /// at the Filtered Vision Collision layer.
+    /// </summary>
+    protected void SetAsInvisibleToCharacters() {
+//        GameManager.Instance.StartCoroutine(ChangeCollidersLayer("All Vision Collision")); //Move colliders to all vision collision so it can still be seen by objects that collide with everything
+        collisionTrigger.gameObject.tag = InnerMapManager.InvisibleToCharacterTag;
     }
-    protected void EnableColliders() {
+    /// <summary>
+    /// Set this object to be visible to characters.
+    /// NOTE: Characters vision are at the Filtered Vision Collision layer, so they can only see objects in that layer.
+    /// Other objects like the Tornado that is in the All Vision Collision Layer can still see objects that are not
+    /// at the Filtered Vision Collision layer.
+    /// </summary>
+    protected void SetAsVisibleToCharacters() {
+//        GameManager.Instance.StartCoroutine(ChangeCollidersLayer("Filtered Vision Collision")); //Move colliders to filtered vision collision so it can be seen by characters and other objects in the all vision collision layer
+        collisionTrigger.gameObject.tag = InnerMapManager.VisibleAllTag;
+    }
+    private IEnumerator ChangeCollidersLayer(string layerName) {
+        collisionTrigger.SetCollidersState(false);
+        yield return new WaitForFixedUpdate();
+        collisionTrigger.SetColliderLayer(layerName);
         collisionTrigger.SetCollidersState(true);
     }
     #endregion

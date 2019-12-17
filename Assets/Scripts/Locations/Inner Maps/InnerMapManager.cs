@@ -17,6 +17,9 @@ namespace Inner_Maps {
         public static readonly Vector2Int BuildingSpotSize = new Vector2Int(7, 7);
         public static readonly int BuildingSpotBorderSize = 1; //how many tiles, per side of the build spot, should not be occupied by the structure.
 
+        public static readonly string VisibleAllTag = "Visible_All";
+        public static readonly string InvisibleToCharacterTag = "Invisible_Character";
+        
         public const int DefaultCharacterSortingOrder = 82;
         public const int GroundTilemapSortingOrder = 10;
         public const int DetailsTilemapSortingOrder = 40;
@@ -482,7 +485,7 @@ namespace Inner_Maps {
             if (character.marker.inVisionPOIs.Count > 0) {
                 for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {
                     IPointOfInterest poi = character.marker.inVisionPOIs[i];
-                    summary += poi.name + ", ";
+                    summary += poi.ToString() + ", ";
                 }
             } else {
                 summary += "None";
@@ -500,7 +503,7 @@ namespace Inner_Maps {
             if (character.marker.visionCollision.poisInRangeButDiffStructure.Count > 0) {
                 for (int i = 0; i < character.marker.visionCollision.poisInRangeButDiffStructure.Count; i++) {
                     IPointOfInterest poi = character.marker.visionCollision.poisInRangeButDiffStructure[i];
-                    summary += poi.name + ", ";
+                    summary += poi.ToString() + ", ";
                 }
             } else {
                 summary += "None";

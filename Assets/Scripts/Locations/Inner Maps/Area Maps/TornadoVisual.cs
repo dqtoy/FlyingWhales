@@ -25,11 +25,11 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     private LocationGridTile destinationTile { get; set; }
     #endregion    
 
-    public override void Initialize(TileObject obj) {
-        this.tornado = obj as TornadoTileObject;
-        this.transform.localPosition = obj.gridTileLocation.centeredLocalLocation;
+    public override void Initialize(TileObject tileObject) {
+        this.tornado = tileObject as TornadoTileObject;
+        this.transform.localPosition = tileObject.gridTileLocation.centeredLocalLocation;
         this.radius = tornado.radius;
-        areaLocation = obj.gridTileLocation.structure.areaLocation;
+        areaLocation = tileObject.gridTileLocation.structure.areaLocation;
         // float scale = tornado.radius / 5f;
         // for (int i = 0; i < particles.Length; i++) {
         //     particles[i].transform.localScale = new Vector3(scale, scale, scale);
@@ -209,7 +209,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
             IDamageable damageable = damagablesInTornado[i];
             if (damageable.mapObjectVisual != null) {
                 Vector3 distance = transform.position - damageable.mapObjectVisual.gameObjectVisual.transform.position;
-                if (distance.magnitude < 2f) {
+                if (distance.magnitude < 3f) {
                     DealDamage(damageable);
                 } else {
                     //check for suck in

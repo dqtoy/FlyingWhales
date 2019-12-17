@@ -628,6 +628,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         }
     }
     #endregion
+
+    public override string ToString() {
+        return $"{name} {id.ToString()}";
+    }
 }
 
 [System.Serializable]

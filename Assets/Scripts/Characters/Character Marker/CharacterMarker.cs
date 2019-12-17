@@ -165,7 +165,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     protected override void OnPointerExit(Character poi) {
         base.OnPointerExit(poi);
         if (InnerMapManager.Instance.currentlyHoveredPoi == poi) {
-            InnerMapManager.Instance.SetCurrentlyHoveredPOI(null);    
+            InnerMapManager.Instance.SetCurrentlyHoveredPOI(null);
         }
         UIManager.Instance.HideSmallInfo();
     }

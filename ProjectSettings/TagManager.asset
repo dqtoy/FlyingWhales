@@ -12,6 +12,8 @@ TagManager:
   - Avatar
   - Landmark
   - Map Object
+  - Visible_All
+  - Invisible_Character
   layers:
   - Default
   - TransparentFX
@@ -28,7 +30,7 @@ TagManager:
   - LoadingScreen
   - WorldUI
   - Area Maps
-  - Area Maps Collision
+  - All Vision Collision
   - Cursor Effects
   - Projectile Collision
   - Projectile

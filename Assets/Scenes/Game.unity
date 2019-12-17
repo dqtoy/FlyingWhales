@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -30872,14 +30872,11 @@ MonoBehaviour:
   progressionSpeed: 1
   allowConsole: 1
   displayFPS: 0
-  ignoreEventTriggerWeights: 0
   showFullDebug: 0
   travelLineParentPrefab: {fileID: 1299332570477848, guid: 7fbfec9db9af8174995f7853a5424299,
     type: 2}
   travelLinePrefab: {fileID: 1318962103750356, guid: 11eeaabdf21494f43b753c71e75d5783,
     type: 2}
-  tile1: {fileID: 0}
-  tile2: {fileID: 0}
   electricEffectPrefab: {fileID: 1997544771906246, guid: f8f78640bd2a9f34c8838653cdcb9f8b,
     type: 2}
   hitEffectPrefab: {fileID: 1826126969253054, guid: 35a4e5c959a14474086ca1824ea11827,
@@ -98339,7 +98336,7 @@ Camera:
   m_Depth: 1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 537281024
+    m_Bits: 537313792
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
