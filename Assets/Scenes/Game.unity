@@ -108020,8 +108020,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9412680eca83a944d9f947540f9d740a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  summonBtn: {fileID: 1651623838}
-  summonProgress: {fileID: 1865126250}
 --- !u!1 &1856152792
 GameObject:
   m_ObjectHideFlags: 0
@@ -109243,13 +109241,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 1681643118}
-  m_Horizontal: 1
+  m_Horizontal: 0
   m_Vertical: 1
-  m_MovementType: 1
+  m_MovementType: 2
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 25
   m_Viewport: {fileID: 86472575}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 1047749370}

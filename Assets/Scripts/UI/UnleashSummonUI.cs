@@ -56,6 +56,7 @@ public class UnleashSummonUI : MonoBehaviour {
                         item.SetAsToggle();
                         item.SetObject(character);
                         item.AddOnToggleAction(OnToggleCharacter);
+                        item.SetPortraitInteractableState(false);
                         item.gameObject.SetActive(true);
                     }
                 }

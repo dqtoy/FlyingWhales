@@ -181,9 +181,9 @@ public class Summon : Character, IWorldObject {
         ////If at the start of the tick, the character is not currently doing any action, and is not waiting for any new plans, it means that the character will no longer perform any actions
         ////so start doing actions again
         //SetHasAlreadyAskedForPlan(false);
-        if (CanPlanGoap()) {
-            PerStartTickActionPlanning();
-        }
+        //if (CanPlanGoap()) {
+        //    PerStartTickActionPlanning();
+        //}
     }
     //protected override void PerStartTickActionPlanning() {
     //    //base.IdlePlans();
