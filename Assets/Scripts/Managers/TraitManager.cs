@@ -10,8 +10,7 @@ public class TraitManager : MonoBehaviour {
     public static TraitManager Instance;
 
     private Dictionary<string, Trait> _allTraits;
-    private Trait[] instancedTraits;
-
+    private Trait[] instancedTraits { get; set; }
     [SerializeField] private StringSpriteDictionary traitIconDictionary;
 
     //Trait Processors
@@ -115,6 +114,7 @@ public class TraitManager : MonoBehaviour {
             new Chaste(),
             new Lustful(),
             new Edible(),
+            new ElementalMaster(), 
         };
         for (int i = 0; i < instancedTraits.Length; i++) {
             Trait trait = instancedTraits[i];

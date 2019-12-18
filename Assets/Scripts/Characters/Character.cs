@@ -2044,7 +2044,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             if (destinationTile == null) {
                 if (targetPOI != null) {
                     //if destination tile is null, make the charater marker use target poi logic (Usually used for moving targets)
-                    marker.GoTo(targetPOI, arrivalAction);
+                    marker.GoToPOI(targetPOI, arrivalAction);
                 } else {
                     if (arrivalAction != null) {
                         arrivalAction();
@@ -3939,63 +3939,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //    }
     //    return false;
     //}
-    public bool PlanWorkActions() { //ref bool hasAddedToGoapPlans
-        if (isAtHomeRegion && homeRegion.area != null && isPartOfHomeFaction) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
-            bool triggerLazy = false;
-            Lazy lazy = traitContainer.GetNormalTrait<Trait>("Lazy") as Lazy;
-            if (lazy != null) {
-                triggerLazy = UnityEngine.Random.Range(0, 100) < 35;
-            }
-            if (triggerLazy) {
-                if (lazy.TriggerLazy()) {
-                    return true;
-                } else {
-                    PrintLogIfActive(GameManager.Instance.TodayLogString() + "Triggered LAZY happiness recovery but " + name + " already has that job type in queue and will not do it anymore!");
-                }
-            }
-            if (!homeRegion.area.AddFirstUnassignedJobToCharacterJob(this)) {
-                if (faction != null && faction.activeQuest != null) {
-                    return faction.activeQuest.AddFirstUnassignedJobToCharacterJob(this);
-                }
-                return false;
-            } else {
-                return true;
-            }
-        } else {
-            return false;
-        }
-        //if (!jobQueue.ProcessFirstJobInQueue()) {
-        //    if (isAtHomeRegion && isPartOfHomeFaction) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
-        //        bool triggerLazy = false;
-        //        Lazy lazy = traitContainer.GetNormalTrait<Trait>("Lazy") as Lazy;
-        //        if (lazy != null) {
-        //            triggerLazy = UnityEngine.Random.Range(0, 100) < 35;
-        //        }
-        //        if (triggerLazy) {
-        //            if (!lazy.TriggerLazy()) {
-        //                PrintLogIfActive(GameManager.Instance.TodayLogString() + "Triggered LAZY happiness recovery but " + name + " already has that job type in queue and will not do it anymore!");
-        //            }
-        //        } else {
-        //            if (!homeArea.jobQueue.ProcessFirstJobInQueue(this)) {
-        //                if (faction != null && faction.activeQuest != null) {
-        //                    return faction.activeQuest.jobQueue.ProcessFirstJobInQueue(this);
-        //                }
-        //                return false;
-        //            } else {
-        //                return true;
-        //            }
-        //        }
-        //    } else {
-        //        return false;
-        //    }
-        //}
-    }
-    public bool PlanJobQueueFirst() {
-        if (!needsComponent.isStarving && !needsComponent.isExhausted && !needsComponent.isForlorn) {
-            return PlanWorkActions();
-        }
-        return false;
-    }
+
     public bool PlanIdleStroll(LocationStructure targetStructure, LocationGridTile targetTile = null) {
         CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.STROLL, CHARACTER_STATE.STROLL, this);
         jobQueue.AddJobInQueue(job);

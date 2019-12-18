@@ -105,6 +105,7 @@ public partial class InteractionManager : MonoBehaviour {
     public int GetInitialPriority(JOB_TYPE jobType) {
         int priority = 0;
         switch (jobType) {
+            case JOB_TYPE.STOP_TORNADO:
             case JOB_TYPE.INTERRUPTION:
                 priority = 2;
                 break;

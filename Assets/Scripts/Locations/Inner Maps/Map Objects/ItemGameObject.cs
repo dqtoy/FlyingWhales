@@ -56,9 +56,9 @@ public class ItemGameObject : MapObjectVisual<SpecialToken> {
     #region Colliders
     public override void UpdateCollidersState(SpecialToken obj) {
         if (obj.advertisedActions.Count > 0) {
-            EnableColliders();
+            SetAsVisibleToCharacters();
         } else {
-            DisableColliders();
+            SetAsInvisibleToCharacters();
         }
     }
     #endregion

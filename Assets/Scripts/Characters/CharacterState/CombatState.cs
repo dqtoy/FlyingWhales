@@ -356,7 +356,7 @@ public class CombatState : CharacterState {
     #region Attacking
     private void PursueClosestHostile() {
         if (!stateComponent.character.currentParty.icon.isTravelling || stateComponent.character.marker.targetPOI != currentClosestHostile) {
-            stateComponent.character.marker.GoTo(currentClosestHostile);
+            stateComponent.character.marker.GoToPOI(currentClosestHostile);
         }
     }
     private void SetClosestHostile() {

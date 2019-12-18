@@ -10,31 +10,33 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
 
     [Header("Movement")]
     [SerializeField] private float baseSpeed = 1.0F; // Movement speed in units per second.
-    private float startTime;  // Time when the movement started.
-    private float journeyLength; // Total distance between the markers.
-    private Vector3 startPosition;
+    private float _startTime;  // Time when the movement started.
+    private float _journeyLength; // Total distance between the markers.
+    private Vector3 _startPosition;
     private bool isSpawned { get; set; }
-    private float speed;
-    private int radius;
-    private List<IDamageable> damagablesInTornado;
-    private Area areaLocation;
-    private TornadoTileObject tornado;
-
+    private float _speed;
+    private int _radius;
+    private List<IDamageable> _damagablesInTornado;
+    private Area _areaLocation;
+    private TornadoTileObject _tornado;
+    private string _expiryKey;
+    
     #region getters/setters
-    private LocationGridTile gridTileLocation => GetLocationGridTileByXY(Mathf.FloorToInt(this.transform.localPosition.x), Mathf.FloorToInt(this.transform.localPosition.y));
+    private LocationGridTile gridTileLocation => GetLocationGridTileByXy(Mathf.FloorToInt(this.transform.localPosition.x), Mathf.FloorToInt(this.transform.localPosition.y));
     private LocationGridTile destinationTile { get; set; }
     #endregion    
 
-    public override void Initialize(TileObject obj) {
-        this.tornado = obj as TornadoTileObject;
-        this.transform.localPosition = obj.gridTileLocation.centeredLocalLocation;
-        this.radius = tornado.radius;
-        areaLocation = obj.gridTileLocation.structure.areaLocation;
+    public override void Initialize(TileObject tileObject) {
+        this._tornado = tileObject as TornadoTileObject;
+        this.transform.localPosition = tileObject.gridTileLocation.centeredLocalLocation;
+        this._radius = _tornado.radius;
+        _areaLocation = tileObject.gridTileLocation.structure.areaLocation;
         // float scale = tornado.radius / 5f;
-        // for (int i = 0; i < particles.Length; i++) {
-        //     particles[i].transform.localScale = new Vector3(scale, scale, scale);
-        // }
-        damagablesInTornado = new List<IDamageable>();
+        for (int i = 0; i < particles.Length; i++) {
+            ParticleSystem p = particles[i];
+            p.Play();    
+        }
+        _damagablesInTornado = new List<IDamageable>();
         collisionTrigger = transform.GetComponentInChildren<TileObjectCollisionTrigger>();
     }
     public override void UpdateTileObjectVisual(TileObject obj) { }
@@ -44,14 +46,14 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
         LocationGridTile chosen = tilesInRadius[Random.Range(0, tilesInRadius.Count)];
         GoTo(chosen);
     }
-    private LocationGridTile GetLocationGridTileByXY(int x, int y, bool throwOnException = true) {
+    private LocationGridTile GetLocationGridTileByXy(int x, int y, bool throwOnException = true) {
         try {
             if (throwOnException) {
-                return areaLocation.areaMap.map[x, y];
+                return _areaLocation.areaMap.map[x, y];
             } else {
-                if (Utilities.IsInRange(x, 0, areaLocation.areaMap.map.GetUpperBound(0) + 1) &&
-                    Utilities.IsInRange(y, 0, areaLocation.areaMap.map.GetUpperBound(1) + 1)) {
-                    return areaLocation.areaMap.map[x, y];
+                if (Utilities.IsInRange(x, 0, _areaLocation.areaMap.map.GetUpperBound(0) + 1) &&
+                    Utilities.IsInRange(y, 0, _areaLocation.areaMap.map.GetUpperBound(1) + 1)) {
+                    return _areaLocation.areaMap.map[x, y];
                 }
                 return null;
             }
@@ -67,7 +69,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
         this.transform.position = worldPos;
 
         GoToRandomTileInRadius();
-        SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(tornado.durationInTicks), Expire, this);
+        _expiryKey = SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(_tornado.durationInTicks), Expire, this);
         Messenger.AddListener(Signals.TICK_ENDED, PerTick);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
@@ -82,18 +84,18 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     }
     private void RecalculatePathingValues() {
         // Keep a note of the time the movement started.
-        startTime = Time.time;
-        startPosition = transform.position;
+        _startTime = Time.time;
+        _startPosition = transform.position;
 
         // Calculate the journey length.
-        journeyLength = Vector3.Distance(transform.position, destinationTile.centeredWorldLocation);
+        _journeyLength = Vector3.Distance(transform.position, destinationTile.centeredWorldLocation);
     }
     private void UpdateSpeed() {
-        speed = baseSpeed;
+        _speed = baseSpeed;
         if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X2) {
-            speed *= 1.5f;
+            _speed *= 1.5f;
         } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X4) {
-            speed *= 2f;
+            _speed *= 2f;
         }
     }
     private void OnProgressionSpeedChanged(PROGRESSION_SPEED prog) {
@@ -106,8 +108,18 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     }
     #endregion
 
-    private void Expire() {
-        tornado.OnExpire();
+    public void Expire() {
+        for (int i = 0; i < particles.Length; i++) {
+            ParticleSystem p = particles[i];
+            p.Stop();
+        }
+        SchedulingManager.Instance.RemoveSpecificEntry(_expiryKey);
+        _tornado.OnExpire();
+        GameManager.Instance.StartCoroutine(ExpireCoroutine());
+    }
+
+    private IEnumerator ExpireCoroutine() {
+        yield return new WaitForSeconds(1f);
         ObjectPoolManager.Instance.DestroyObject(this.gameObject);
     }
 
@@ -115,10 +127,14 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
         base.Reset();
         isSpawned = false;
         destinationTile = null;
-        areaLocation = null;
-        journeyLength = 0f;
-        startPosition = Vector3.zero;
-        startTime = 0f;
+        _areaLocation = null;
+        _journeyLength = 0f;
+        _startPosition = Vector3.zero;
+        _startTime = 0f;
+        for (int i = 0; i < particles.Length; i++) {
+            ParticleSystem p = particles[i];
+            p.Clear();    
+        }
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTick);
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
@@ -134,21 +150,21 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
             return;
         }
         // Distance moved equals elapsed time times speed..
-        float distCovered = (Time.time - startTime) * speed;
+        float distCovered = (Time.time - _startTime) * _speed;
 
         // Fraction of journey completed equals current distance divided by total distance.
-        float fractionOfJourney = distCovered / journeyLength;
+        float fractionOfJourney = distCovered / _journeyLength;
 
         // Set our position as a fraction of the distance between the markers.
-        transform.position = Vector3.Lerp(startPosition, destinationTile.centeredWorldLocation, fractionOfJourney);
+        transform.position = Vector3.Lerp(_startPosition, destinationTile.centeredWorldLocation, fractionOfJourney);
         if (Mathf.Approximately(transform.position.x, destinationTile.centeredWorldLocation.x) && Mathf.Approximately(transform.position.y, destinationTile.centeredWorldLocation.y)) {
             destinationTile = null;
             GoToRandomTileInRadius();
         }
     }
     void FixedUpdate() {
-        for (int i = 0; i < damagablesInTornado.Count; i++) {
-            IDamageable damageable = damagablesInTornado[i];
+        for (int i = 0; i < _damagablesInTornado.Count; i++) {
+            IDamageable damageable = _damagablesInTornado[i];
             if (damageable.mapObjectVisual != null && damageable.CanBeDamaged()) {
                 iTween.ShakeRotation(damageable.mapObjectVisual.gameObjectVisual, new Vector3(5f, 5f, 5f), 0.5f);
             }
@@ -179,17 +195,17 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
 
     #region POI's
     private void AddDamageable(IDamageable poi) {
-        if (!damagablesInTornado.Contains(poi)) {
-            damagablesInTornado.Add(poi);
-            OnAddPOIActions(poi);
+        if (!_damagablesInTornado.Contains(poi)) {
+            _damagablesInTornado.Add(poi);
+            OnAddPoiActions(poi);
         }
     }
     private void RemoveDamageable(IDamageable poi) {
-        if (damagablesInTornado.Remove(poi)) {
+        if (_damagablesInTornado.Remove(poi)) {
 
         }
     }
-    private void OnAddPOIActions(IDamageable poi) {
+    private void OnAddPoiActions(IDamageable poi) {
         //DealDamage(poi);
     }
     #endregion
@@ -198,18 +214,18 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
         if (isSpawned == false) {
             return;
         }
-        List<LocationGridTile> tiles = gridTileLocation.parentMap.GetTilesInRadius(gridTileLocation, radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+        List<LocationGridTile> tiles = gridTileLocation.parentMap.GetTilesInRadius(gridTileLocation, _radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
             if (tile.genericTileObject.CanBeDamaged()) {
                 tile.genericTileObject.AdjustHP(-(int)(tile.genericTileObject.maxHP * 0.35f), true, this);
             }
         }
-        for (int i = 0; i < damagablesInTornado.Count; i++) {
-            IDamageable damageable = damagablesInTornado[i];
+        for (int i = 0; i < _damagablesInTornado.Count; i++) {
+            IDamageable damageable = _damagablesInTornado[i];
             if (damageable.mapObjectVisual != null) {
                 Vector3 distance = transform.position - damageable.mapObjectVisual.gameObjectVisual.transform.position;
-                if (distance.magnitude < 2f) {
+                if (distance.magnitude < 3f) {
                     DealDamage(damageable);
                 } else {
                     //check for suck in
@@ -224,7 +240,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
         }
     }
     private void TrySuckIn(IDamageable damageable) {
-        if (CanBeSuckedIn(damageable) && Random.Range(0, 100) < 25) {
+        if (CanBeSuckedIn(damageable) && Random.Range(0, 100) < 20) {
             FollowerComponent fc = damageable.mapObjectVisual.gameObjectVisual.AddComponent<FollowerComponent>();
             fc.SetTarget(this.transform, () => OnDamagableReachedThis(damageable));
             if (damageable is IPointOfInterest) {

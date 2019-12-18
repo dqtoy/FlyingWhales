@@ -18,13 +18,16 @@ public class TornadoTileObject : TileObject {
     //        return base.gridTileLocation;
     //    }
     //}
+    private TornadoVisual _tornadoVisual;
     public TornadoTileObject() {
+        advertisedActions = new List<INTERACTION_TYPE>(){ INTERACTION_TYPE.SNUFF_TORNADO };
         Initialize(TILE_OBJECT_TYPE.TORNADO);
     }
 
     protected override void CreateAreaMapGameObject() {
         GameObject obj = InnerMapManager.Instance.mapObjectFactory.CreateNewTileObjectAreaMapObject(this.tileObjectType);
-        mapVisual = obj.GetComponent<TornadoVisual>();
+        _tornadoVisual = obj.GetComponent<TornadoVisual>();
+        mapVisual = _tornadoVisual;
     }
 
     public void SetRadius(int radius) {
@@ -34,6 +37,9 @@ public class TornadoTileObject : TileObject {
         this.durationInTicks = duration;
     }
 
+    public void ForceExpire() {
+        _tornadoVisual.Expire();
+    }
     public void OnExpire() {
         Messenger.Broadcast<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, this, null, base.gridTileLocation);
     }

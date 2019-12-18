@@ -54,6 +54,23 @@ public class Quest : IJobOwner {
         }
         return false;
     }
+    public bool AssignCharacterToJobBasedOnVision(Character character) {
+        List<JobQueueItem> choices = new List<JobQueueItem>();
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (job.assignedCharacter == null) {
+                GoapPlanJob goapJob = job as GoapPlanJob;
+                if (character.marker.inVisionPOIs.Contains(goapJob.targetPOI) && character.jobQueue.CanJobBeAddedToQueue(job)) {
+                    choices.Add(job);
+                }
+            }
+        }
+        if (choices.Count > 0) {
+            JobQueueItem job = Utilities.GetRandomElement(choices);
+            return character.jobQueue.AddJobInQueue(job);
+        }
+        return false;
+    }
     public bool HasJob(JOB_TYPE jobType) {
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem jqi = availableJobs[i];

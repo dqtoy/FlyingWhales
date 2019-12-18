@@ -165,7 +165,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     protected override void OnPointerExit(Character poi) {
         base.OnPointerExit(poi);
         if (InnerMapManager.Instance.currentlyHoveredPoi == poi) {
-            InnerMapManager.Instance.SetCurrentlyHoveredPOI(null);    
+            InnerMapManager.Instance.SetCurrentlyHoveredPOI(null);
         }
         UIManager.Instance.HideSmallInfo();
     }
@@ -480,7 +480,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         
     }
-    public void GoTo(IPointOfInterest targetPOI, Action arrivalAction = null, Action failedToComputePathAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
+    public void GoToPOI(IPointOfInterest targetPOI, Action arrivalAction = null, Action failedToComputePathAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
         pathfindingAI.ClearAllCurrentPathData();
         pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
         this.arrivalAction = arrivalAction;
@@ -516,9 +516,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         StartMovement();
     }
-    public void GoTo(ITraitable target, Action arrivalAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
-        if (target is IPointOfInterest) {
-            GoTo(target as IPointOfInterest, arrivalAction, notAllowedStructures);
+    public void GoTo(ITraitable target, Action arrivalAction = null, Action failedToComputePathAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
+        var poi = target as IPointOfInterest;
+        if (poi != null) {
+            GoToPOI(poi, arrivalAction, failedToComputePathAction, notAllowedStructures);
         } else {
             pathfindingAI.ClearAllCurrentPathData();
             pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
@@ -527,7 +528,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
             SetTargetTransform(target.worldObject);
             StartMovement();
         }
-        
     }
     public void GoTo(Vector3 destination, Action arrivalAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
         pathfindingAI.ClearAllCurrentPathData();

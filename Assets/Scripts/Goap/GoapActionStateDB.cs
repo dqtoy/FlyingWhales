@@ -365,6 +365,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.SEARCHING, new[]{
             new StateNameAndDuration(){ name = "Search Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(3) },
         } },
+        {INTERACTION_TYPE.SNUFF_TORNADO, new[]{
+            new StateNameAndDuration(){ name = "Snuff Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
     };
 }
 

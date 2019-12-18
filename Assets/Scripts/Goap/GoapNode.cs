@@ -239,7 +239,7 @@ public class ActualGoapNode {
                     actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
                 }
             } else {
-                actor.marker.GoTo(targetPOIToGoTo, OnArriveAtTargetLocation);
+                actor.marker.GoToPOI(targetPOIToGoTo, OnArriveAtTargetLocation);
             }
         }
     }
