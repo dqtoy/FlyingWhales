@@ -243,7 +243,7 @@ public class Region : ILocation, IHasNeighbours<Region> {
         if (area != null) {
             return area.CanInvadeSettlement();
         }
-        return HasCorruptedConnection() && !coreTile.isCorrupted && !demonicInvasionData.beingInvaded;
+        return /*HasCorruptedConnection() &&*/ !coreTile.isCorrupted && !demonicInvasionData.beingInvaded;
     }
     public void StartInvasion(Minion assignedMinion) {
         //PlayerManager.Instance.player.SetInvadingRegion(this);
@@ -539,10 +539,10 @@ public class Region : ILocation, IHasNeighbours<Region> {
             activeEvent.ExecuteAfterInvasionEffect(this);
             DespawnEvent();
         }
-        List<Character> nonMinionChaarcters = charactersAtLocation.Where(x => x.minion == null).ToList();
+        List<Character> nonMinionCharacters = charactersAtLocation.Where(x => x.minion == null && !(x is Summon)).ToList();
         //kill all remaining characters
-        for (int i = 0; i < nonMinionChaarcters.Count; i++) {
-            Character character = nonMinionChaarcters[i];
+        for (int i = 0; i < nonMinionCharacters.Count; i++) {
+            Character character = nonMinionCharacters[i];
             character.Death("Invasion");
         }
     }
@@ -607,6 +607,9 @@ public class Region : ILocation, IHasNeighbours<Region> {
             //     throw new System.Exception(character.name + " has a current structure at a location which has no area: " + name);
             // }
             character.currentStructure?.RemoveCharacterAtLocation(character);
+            for (int i = 0; i < features.Count; i++) {
+                features[i].OnRemoveCharacterFromRegion(this, character);
+            }
             character.SetRegionLocation(null);
             Messenger.Broadcast(Signals.CHARACTER_EXITED_REGION, character, this);
             //if (area == null) {
@@ -799,6 +802,7 @@ public class Region : ILocation, IHasNeighbours<Region> {
     public void AddFeature(RegionFeature feature) {
         if (!features.Contains(feature)) {
             features.Add(feature);
+            feature.OnAddFeature(this);
             //Debug.Log(GameManager.Instance.TodayLogString() + " added new region feature " + feature.name + " to " + this.name);
         }
     }
@@ -816,9 +820,11 @@ public class Region : ILocation, IHasNeighbours<Region> {
         return false;
     }
     public void RemoveAllFeatures() {
-        List<RegionFeature> allFeatures = new List<RegionFeature>(features);
-        for (int i = 0; i < allFeatures.Count; i++) {
-            RemoveFeature(allFeatures[i]);
+        //List<RegionFeature> allFeatures = new List<RegionFeature>(features);
+        for (int i = 0; i < features.Count; i++) {
+            if (RemoveFeature(features[i])) {
+                i--;
+            }
         }
         //features.Clear(); //only cleared for now because at the time of writing, features do not do anything when they are removed.
     }

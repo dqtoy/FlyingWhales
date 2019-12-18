@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class TreasureFeature : RegionFeature {
+public class ArtifactFeature : RegionFeature {
 
-    public TreasureFeature() {
-        name = "Treasures";
+    public ArtifactFeature() {
+        name = "Artifact";
         description = "There are rumored treasures hidden in this region. You may be able to find an Artifact here after invading this region.";
-        type = REGION_FEATURE_TYPE.ACTIVE;
-        isRemovedOnActivation = true;
+        type = REGION_FEATURE_TYPE.PASSIVE;
+        //isRemovedOnActivation = true;
     }
 
     #region Override

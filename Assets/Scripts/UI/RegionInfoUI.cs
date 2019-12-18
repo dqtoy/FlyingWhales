@@ -386,10 +386,15 @@ public class RegionInfoUI : UIMenu {
         }
     }
     private void ShowAppropriateContentOnOpen() {
-        if (overviewTabToggle.isOn) {
-            //UpdateDemonicLandmarkToggleState();
-            OnDemonicToggleStateChanged(overviewTabToggle.isOn);
+        //Always show Overview tab first upon opening of Region Info UI
+        if (!overviewTabToggle.isOn) {
+            overviewTabToggle.isOn = true;
         }
+        OnDemonicToggleStateChanged(overviewTabToggle.isOn);
+        //if (overviewTabToggle.isOn) {
+        //    //UpdateDemonicLandmarkToggleState();
+        //    OnDemonicToggleStateChanged(overviewTabToggle.isOn);
+        //}
     }
     private void UpdateAppropriateContentPerUpdateUI() {
         if (playerBuildLandmarkUI.gameObject.activeSelf) {

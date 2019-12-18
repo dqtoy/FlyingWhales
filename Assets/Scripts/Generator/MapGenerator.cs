@@ -67,6 +67,8 @@ public class MapGenerator : MonoBehaviour {
         yield return null;
         LandmarkManager.Instance.CreateTwoNewSettlementsAtTheStartOfGame();
         yield return null;
+        LandmarkManager.Instance.GenerateRegionFeatures();
+        yield return null;
         LandmarkManager.Instance.LoadAdditionalAreaData();
         yield return null;
         LandmarkManager.Instance.GenerateRegionInnerMaps();

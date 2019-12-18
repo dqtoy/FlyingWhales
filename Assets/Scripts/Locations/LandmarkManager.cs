@@ -193,11 +193,17 @@ public partial class LandmarkManager : MonoBehaviour {
             //otherLandmarkSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
             for (int i = 0; i < kvp.Value; i++) {
                 Region chosenRegion = availableRegions[Random.Range(0, availableRegions.Count)];
-                CreateNewLandmarkOnTile(chosenRegion.coreTile, kvp.Key, true); //BaseLandmark landmark = 
+                CreateNewLandmarkOnTile(chosenRegion.coreTile, kvp.Key, false); //BaseLandmark landmark = 
                 availableRegions.Remove(chosenRegion);
             }
         }
         //Debug.Log(otherLandmarkSummary);
+    }
+    public void GenerateRegionFeatures() {
+        Region[] regions = GridMap.Instance.allRegions;
+        for (int i = 0; i < regions.Length; i++) {
+            regions[i].mainLandmark.AddFeaturesToRegion();
+        }
     }
     public void CreateTwoNewSettlementsAtTheStartOfGame() {
         Region firstRegion = null;
@@ -227,7 +233,7 @@ public partial class LandmarkManager : MonoBehaviour {
         LOCATION_TYPE settlementType = Utilities.RandomSettlementType();
         int citizenCount = Random.Range(WorldConfigManager.Instance.minCitizenCount, WorldConfigManager.Instance.maxCitizenCount + 1);
         Area settlementArea = CreateNewArea(settlementRegion, settlementType, citizenCount);
-        BaseLandmark settlementLandmark = CreateNewLandmarkOnTile(settlementRegion.coreTile, LANDMARK_TYPE.PALACE, true);
+        BaseLandmark settlementLandmark = CreateNewLandmarkOnTile(settlementRegion.coreTile, LANDMARK_TYPE.PALACE, false);
         Faction faction = FactionManager.Instance.CreateNewFaction();
         if (settlementType == LOCATION_TYPE.ELVEN_SETTLEMENT) {
             //faction.SetInitialFactionLeaderClass("Queen");

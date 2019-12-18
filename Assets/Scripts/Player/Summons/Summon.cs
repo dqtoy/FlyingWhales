@@ -48,8 +48,9 @@ public class Summon : Character, IWorldObject {
         base.OnSuccessInvadeArea(area);
         //clean up
         Reset();
-        PlayerManager.Instance.player.playerArea.AddCharacterToLocation(this);
-        ResetToFullHP();
+        //PlayerManager.Instance.player.playerArea.AddCharacterToLocation(this);
+        //ResetToFullHP();
+        Death();
     }
     public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
         if (!_isDead) {
@@ -180,9 +181,9 @@ public class Summon : Character, IWorldObject {
         ////If at the start of the tick, the character is not currently doing any action, and is not waiting for any new plans, it means that the character will no longer perform any actions
         ////so start doing actions again
         //SetHasAlreadyAskedForPlan(false);
-        //if (CanPlanGoap()) {
-        //    PerStartTickActionPlanning();
-        //}
+        if (CanPlanGoap()) {
+            PerStartTickActionPlanning();
+        }
     }
     //protected override void PerStartTickActionPlanning() {
     //    //base.IdlePlans();

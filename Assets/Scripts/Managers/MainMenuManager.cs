@@ -46,7 +46,8 @@ public class MainMenuManager : MonoBehaviour {
     private void Initialize() {
         SaveManager.Instance.LoadSaveData();
         newGameButton.interactable = true;
-        loadGameButton.interactable = SaveManager.Instance.currentSave != null;
+        loadGameButton.interactable = false;
+        //loadGameButton.interactable = SaveManager.Instance.currentSave != null;
     }
     public void OnClickPlayGame() {
         //PlayGame();

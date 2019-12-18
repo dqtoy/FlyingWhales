@@ -15,6 +15,8 @@ public class RegionFeature  {
     /// If this feature is an Active type, This executes any effects it may have.
     /// </summary>
     public virtual void Activate(Region region) { }
+    public virtual void OnAddFeature(Region region) { }
+    public virtual void OnRemoveCharacterFromRegion(Region region, Character removedCharacter) { }
     #endregion
 
 }

@@ -6,7 +6,7 @@ public static class RegionFeatureDB {
 
     //All Features
     public static string Monster_Feature = "MonsterFeature";
-    public static string Treasure_Feature = "TreasureFeature";
+    public static string Artifact_Feature = "ArtifactFeature";
     public static string Spell_Feature = "SpellFeature";
     public static string Knowledge_Feature = "KnowledgeFeature";
     public static string Experience_Feature = "ExperienceFeature";
@@ -19,5 +19,6 @@ public static class RegionFeatureDB {
     public static string Stony_Feature = "StonyFeature";
     public static string Metal_Rich_Feature = "MetalRichFeature";
     public static string Game_Feature = "GameFeature";
+    public static string Summons_Feature = "SummonsFeature";
 
 }

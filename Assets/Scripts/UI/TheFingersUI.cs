@@ -201,6 +201,7 @@ public class TheFingersUI : MonoBehaviour {
     }
     private void PopulateCharactersToChooseFrom() {
         Utilities.DestroyChildren(characterScrollRect.content);
+        characterNameplateItems.Clear();
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
             if(character.isFriendlyFactionless && character.faction.leader != character) {

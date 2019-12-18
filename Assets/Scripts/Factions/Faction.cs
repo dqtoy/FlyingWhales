@@ -644,6 +644,14 @@ public class Faction {
         }
         return false;
     }
+    public bool HasOwnedRegionWithLandmarkType(LANDMARK_TYPE type) {
+        for (int i = 0; i < ownedRegions.Count; i++) {
+            if (ownedRegions[i].mainLandmark != null && ownedRegions[i].mainLandmark.specificLandmarkType == type) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Emblems

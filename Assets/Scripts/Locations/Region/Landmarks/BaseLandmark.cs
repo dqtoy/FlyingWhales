@@ -176,6 +176,13 @@ public class BaseLandmark {
         if (specificLandmarkType == LANDMARK_TYPE.NONE) {
             return; //do not
         }
+        if (tileLocation.isCorrupted || tileLocation.region.area != null) {
+            //Do not add feature is region is part of player or is a settlement region
+            return;
+        }
+        //if(tileLocation.region != null && tileLocation.region.area != null/* && tileLocation.region.area.areaMap.isSettlementMap*/) {
+        //    return; //do not
+        //}
 
         //Constant features
         switch (specificLandmarkType) {
@@ -205,7 +212,7 @@ public class BaseLandmark {
         WeightedDictionary<string> randomFeatureWeights = new WeightedDictionary<string>();
         switch (specificLandmarkType) {
             case LANDMARK_TYPE.MONSTER_LAIR:
-                randomFeatureWeights.AddElement(RegionFeatureDB.Monster_Feature, 100);
+                randomFeatureWeights.AddElement(RegionFeatureDB.Summons_Feature, 100);
                 randomFeatureWeights.AddElement(RegionFeatureDB.Spell_Feature, 25);
                 randomFeatureWeights.AddElement(RegionFeatureDB.Knowledge_Feature, 25);
                 break;
@@ -221,23 +228,23 @@ public class BaseLandmark {
                 break;
             case LANDMARK_TYPE.TEMPLE:
                 randomFeatureWeights.AddElement(RegionFeatureDB.Spell_Feature, 25);
-                randomFeatureWeights.AddElement(RegionFeatureDB.Treasure_Feature, 35);
+                randomFeatureWeights.AddElement(RegionFeatureDB.Artifact_Feature, 35);
                 //randomFeatureWeights.AddElement("Nothing", 25);
                 break;
             case LANDMARK_TYPE.MINES:
-                randomFeatureWeights.AddElement(RegionFeatureDB.Monster_Feature, 25);
-                randomFeatureWeights.AddElement(RegionFeatureDB.Treasure_Feature, 25);
+                randomFeatureWeights.AddElement(RegionFeatureDB.Summons_Feature, 25);
+                randomFeatureWeights.AddElement(RegionFeatureDB.Artifact_Feature, 25);
                 //randomFeatureWeights.AddElement("Nothing", 50);
                 break;
             case LANDMARK_TYPE.FARM:    
                 randomFeatureWeights.AddElement(RegionFeatureDB.Knowledge_Feature, 25);
-                randomFeatureWeights.AddElement(RegionFeatureDB.Monster_Feature, 25);
-                randomFeatureWeights.AddElement(RegionFeatureDB.Treasure_Feature, 25);
+                randomFeatureWeights.AddElement(RegionFeatureDB.Summons_Feature, 25);
+                randomFeatureWeights.AddElement(RegionFeatureDB.Artifact_Feature, 25);
                 //randomFeatureWeights.AddElement("Nothing", 50);
                 break;
             case LANDMARK_TYPE.WORKSHOP:
-                randomFeatureWeights.AddElement(RegionFeatureDB.Monster_Feature, 25);
-                randomFeatureWeights.AddElement(RegionFeatureDB.Treasure_Feature, 25);
+                randomFeatureWeights.AddElement(RegionFeatureDB.Summons_Feature, 25);
+                randomFeatureWeights.AddElement(RegionFeatureDB.Artifact_Feature, 25);
                 break;
         }
         if (randomFeatureWeights.GetTotalOfWeights() > 0) {

@@ -255,7 +255,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public JOB_OWNER ownerType => JOB_OWNER.CHARACTER;
     public bool isInCombat => stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT;
     public Transform worldObject => marker.transform;
-    public bool isStillConsideredAlive => minion == null && !(this is Summon) && !faction.isPlayerFaction;
+    public bool isStillConsideredAlive => minion == null /*&& !(this is Summon)*/ && !faction.isPlayerFaction;
     #endregion
 
     public Character(CharacterRole role, RACE race, GENDER gender) : this() {
@@ -2391,7 +2391,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         return true;
     }
     public bool IsAble() {
-        return currentHP > 0 && !traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && !isDead && characterClass.className != "Zombie";
+        return currentHP > 0 && !isDead && !traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && !isDead && characterClass.className != "Zombie";
     }
     public void SetIsFollowingPlayerInstruction(bool state) {
         isFollowingPlayerInstruction = state;
@@ -3850,7 +3850,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public bool CanPlanGoap() {
         //If there is no area, it means that there is no inner map, so character must not do goap actions, jobs, and plans
         //characters that cannot witness, cannot plan actions.
-        return minion == null && homeRegion.area != null && !isDead && doNotDisturb <= 0 && isStoppedByOtherCharacter <= 0 && canWitness
+        return minion == null && currentRegion.area != null && !isDead && doNotDisturb <= 0 && isStoppedByOtherCharacter <= 0 && canWitness
             && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count <= 0
             && !marker.hasFleePath && stateComponent.currentState == null && IsInOwnParty();
     }
@@ -3863,7 +3863,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
     }
     private bool CanPerformEndTickJobs() {
-        return minion == null && homeRegion.area != null && !isDead && doNotDisturb <= 0 && isStoppedByOtherCharacter <= 0 && canWitness
+        return minion == null && currentRegion.area != null && !isDead && doNotDisturb <= 0 && isStoppedByOtherCharacter <= 0 && canWitness
             && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count > 0 
             && currentParty.icon.isTravellingOutside == false && !marker.hasFleePath 
             && stateComponent.currentState == null && IsInOwnParty();

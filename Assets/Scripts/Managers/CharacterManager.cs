@@ -61,7 +61,8 @@ public class CharacterManager : MonoBehaviour {
     
     private List<string> deadlySinsRotation = new List<string>();
 
-    public int defaultSleepTicks { get; protected set; } //how many ticks does a character must sleep per day?
+    public int defaultSleepTicks { get; private set; } //how many ticks does a character must sleep per day?
+    public SUMMON_TYPE[] summonsPool { get; private set; }
 
     #region getters/setters
     public List<Character> allCharacters {
@@ -83,6 +84,7 @@ public class CharacterManager : MonoBehaviour {
         classManager.Initialize();
         CreateDeadlySinsData();
         defaultSleepTicks = GameManager.Instance.GetTicksBasedOnHour(8);
+        summonsPool = new SUMMON_TYPE[] { SUMMON_TYPE.Wolf, SUMMON_TYPE.Golem, SUMMON_TYPE.Incubus, SUMMON_TYPE.Succubus };
         Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
 

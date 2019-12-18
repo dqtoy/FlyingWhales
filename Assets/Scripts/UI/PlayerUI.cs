@@ -382,7 +382,7 @@ public class PlayerUI : MonoBehaviour {
         bool stillHasResidents = false;
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) { //Changed checking to faction members, because some characters may still consider the area as their home, but are no longer part of the faction
             Character currCharacter = CharacterManager.Instance.allCharacters[i];
-            if (currCharacter.IsAble() && currCharacter.isStillConsideredAlive && currCharacter.faction.isMajorFriendlyNeutral) {
+            if (currCharacter.IsAble() && currCharacter.isStillConsideredAlive && !(currCharacter is Summon) && currCharacter.faction.isMajorFriendlyNeutral) {
                 stillHasResidents = true;
                 break;
             }
@@ -1123,7 +1123,7 @@ public class PlayerUI : MonoBehaviour {
     private bool isSummoning = false; //if the player has clicked the summon button and is targetting a tile to place the summon on.
     private SummonSlot currentlySelectedSummonSlot; //the summon type that is currently shown in the UI
     private void UpdateSummonsInteraction() {
-        bool state = currentlySelectedSummonSlot != null && currentlySelectedSummonSlot.summon != null && !currentlySelectedSummonSlot.summon.hasBeenUsed && InnerMapManager.Instance.isAnAreaMapShowing;
+        bool state = /*currentlySelectedSummonSlot != null && currentlySelectedSummonSlot.summon != null && !currentlySelectedSummonSlot.summon.hasBeenUsed &&*/ InnerMapManager.Instance.isAnAreaMapShowing;
         //summonCover.SetActive(!state);
         summonBtn.interactable = state;
     }
@@ -1264,7 +1264,7 @@ public class PlayerUI : MonoBehaviour {
         UIManager.Instance.HideSmallInfo();
     }
     public void OnClickSummon() {
-        unleashSummonUI.ShowUnleashSummonUI(currentlySelectedSummonSlot.summon);
+        unleashSummonUI.ShowUnleashSummonUI();
         //CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Target);
         //isSummoning = true;
     }
@@ -1292,6 +1292,16 @@ public class PlayerUI : MonoBehaviour {
         //}
         //CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
     }
+    public void TryPlaceSummon(Summon summon, LocationGridTile locationTile) {
+        Summon summonToPlace = summon;
+        summonToPlace.homeRegion.RemoveCharacterFromLocation(summonToPlace);
+        summonToPlace.CreateMarker();
+        summonToPlace.marker.InitialPlaceMarkerAt(locationTile);
+        //PlayerManager.Instance.player.RemoveSummon(summonToPlace);
+        summonToPlace.OnPlaceSummon(locationTile);
+        Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summonToPlace);
+    }
+
     private void CancelSummon() {
         isSummoning = false;
         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
@@ -1618,10 +1628,10 @@ public class PlayerUI : MonoBehaviour {
             item.gameObject.SetActive(true);
             allFilteredCharactersCount++;
             unusedKillCountCharacterItems--;
-            if (character.isFactionless
-                //|| character.faction == PlayerManager.Instance.player.playerFaction 
+            if (/*character.isFactionless*/
+                //|| character.faction == PlayerManager.Instance.player.playerFaction
                 //|| character.faction == FactionManager.Instance.disguisedFaction
-                || !character.IsAble()) { //added checking for faction in cases that the character was raised from dead (Myk, if the concern here is only from raise dead, I changed the checker to returnedToLife to avoid conflicts with factions, otherwise you can return it to normal. -Chy)
+                /*||*/ !character.IsAble()) { //added checking for faction in cases that the character was raised from dead (Myk, if the concern here is only from raise dead, I changed the checker to returnedToLife to avoid conflicts with factions, otherwise you can return it to normal. -Chy)
                 dead.Add(item);
                 log += " - dead";
             } else {
@@ -1759,8 +1769,7 @@ public class PlayerUI : MonoBehaviour {
         //TODO: Optimize this
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
-            if(!character.isFactionless
-            && character.IsAble() && WillCharacterBeShownInKillCount(character)) {
+            if(/*!character.isFactionless &&*/ character.IsAble() && WillCharacterBeShownInKillCount(character)) {
                 aliveCount++;
             }
         }

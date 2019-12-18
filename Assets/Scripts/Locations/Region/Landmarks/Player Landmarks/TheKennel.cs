@@ -14,11 +14,17 @@ public class TheKennel : BaseLandmark {
     #region Overrides
     public override void OnFinishedBuilding() {
         base.OnFinishedBuilding();
-        PlayerManager.Instance.player.IncreaseSummonSlot();
+        for (int i = 0; i < tileLocation.region.charactersAtLocation.Count; i++) {
+            Character character = tileLocation.region.charactersAtLocation[i];
+            if (character is Summon) {
+                character.ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
+            }
+        }
+        //PlayerManager.Instance.player.IncreaseSummonSlot();
     }
-    public override void DestroyLandmark() {
-        base.DestroyLandmark();
-        PlayerManager.Instance.player.DecreaseSummonSlot();
-    }
+    //public override void DestroyLandmark() {
+    //    base.DestroyLandmark();
+    //    //PlayerManager.Instance.player.DecreaseSummonSlot();
+    //}
     #endregion
 }

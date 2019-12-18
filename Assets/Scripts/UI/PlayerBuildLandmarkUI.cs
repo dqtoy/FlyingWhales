@@ -55,6 +55,12 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
         if (landmarkName == "The Pit" || landmarkName == "The Fingers") {
             return false;
         }
+        if(landmarkName == "The Kennel" && !UIManager.Instance.regionInfoUI.activeRegion.HasFeature(RegionFeatureDB.Summons_Feature)) {
+            return false;
+        }
+        if (landmarkName == "The Crypt" && PlayerManager.Instance.player.playerFaction.HasOwnedRegionWithLandmarkType(LANDMARK_TYPE.THE_CRYPT)) {
+            return false;
+        }
         return true;
     }
     private void OnHoverLandmarkChoice(string landmarkName) {
