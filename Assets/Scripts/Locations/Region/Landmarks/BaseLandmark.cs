@@ -112,6 +112,9 @@ public class BaseLandmark {
             tileLocation.region.assignedMinion.SetAssignedRegion(null);
             tileLocation.region.SetAssignedMinion(null);
         }
+        for (int i = 0; i < tileLocation.region.features.Count; i++) {
+            tileLocation.region.features[i].OnDemolishLandmark(tileLocation.region, specificLandmarkType);
+        }
         if (specificLandmarkType.IsPlayerLandmark()) {
             HexTile tile = _location;
             UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), Utilities.NormalizeStringUpperCaseFirstLetters(specificLandmarkType.ToString()) + " was destroyed!", () => UIManager.Instance.ShowRegionInfo(tile.region));

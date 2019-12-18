@@ -13,11 +13,20 @@ public class TheCrypt : BaseLandmark {
     #region Overrides
     public override void OnFinishedBuilding() {
         base.OnFinishedBuilding();
-        PlayerManager.Instance.player.IncreaseArtifactSlot();
+        for (int i = 0; i < tileLocation.region.features.Count; i++) {
+            RegionFeature feature = tileLocation.region.features[i];
+            if(feature is ArtifactFeature) {
+                ArtifactFeature artifactFeature = feature as ArtifactFeature;
+                if(artifactFeature.artifact != null) {
+                    PlayerManager.Instance.player.GainArtifact(artifactFeature.artifact);
+                }
+            }
+        }
+        //PlayerManager.Instance.player.IncreaseArtifactSlot();
     }
-    public override void DestroyLandmark() {
-        base.DestroyLandmark();
-        PlayerManager.Instance.player.DecreaseArtifactSlot();
-    }
+    //public override void DestroyLandmark() {
+    //    base.DestroyLandmark();
+    //    PlayerManager.Instance.player.DecreaseArtifactSlot();
+    //}
     #endregion
 }

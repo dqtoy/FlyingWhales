@@ -811,7 +811,11 @@ public class Region : ILocation, IHasNeighbours<Region> {
         AddFeature(LandmarkManager.Instance.CreateRegionFeature(featureName));
     }
     public bool RemoveFeature(RegionFeature feature) {
-        return features.Remove(feature);
+        if (features.Remove(feature)) {
+            feature.OnRemoveFeature(this);
+            return true;
+        }
+        return false;
     }
     public bool RemoveFeature(string featureName) {
         RegionFeature feature = GetFeature(featureName);

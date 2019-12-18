@@ -16,7 +16,9 @@ public class RegionFeature  {
     /// </summary>
     public virtual void Activate(Region region) { }
     public virtual void OnAddFeature(Region region) { }
+    public virtual void OnRemoveFeature(Region region) { }
     public virtual void OnRemoveCharacterFromRegion(Region region, Character removedCharacter) { }
+    public virtual void OnDemolishLandmark(Region region, LANDMARK_TYPE demolishedLandmarkType) { }
     #endregion
 
 }
