@@ -13,7 +13,7 @@ namespace Traits {
             description = "This character is a relative of " + targetCharacter.name;
             type = TRAIT_TYPE.RELATIONSHIP;
             effect = TRAIT_EFFECT.NEUTRAL;
-            relType = RELATIONSHIP_TRAIT.RELATIVE;
+            relType = RELATIONSHIP_TYPE.RELATIVE;
             
             ticksDuration = 0;
             //effects = new List<TraitEffect>();

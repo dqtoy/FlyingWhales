@@ -27,7 +27,7 @@ public class TheAnvil : BaseLandmark {
         }
     }
     private GameDate upgradeStartDate;
-    private GameDate dueDate;
+    public GameDate dueDate { get; private set; }
 
     public int upgradeDuration { get; private set; }
     public Dictionary<string, AnvilDynamicResearchData> dynamicResearchData { get; private set; }
@@ -89,7 +89,7 @@ public class TheAnvil : BaseLandmark {
         upgradeIdentifier = string.Empty;
         tileLocation.region.assignedMinion.SetAssignedRegion(null);
         tileLocation.region.SetAssignedMinion(null); //reset assigned minion
-        UIManager.Instance.regionInfoUI.OnPlayerUpgradeDone();
+//        UIManager.Instance.regionInfoUI.OnPlayerUpgradeDone();
     }
     public string GetUnavailabilityDescription(string upgrade) {
         string text = string.Empty;

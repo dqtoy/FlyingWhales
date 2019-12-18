@@ -194,7 +194,7 @@ public class FactionManager : MonoBehaviour {
         //Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, _characterInvolved.specificLocation.coreTile.landmarkOnTile);
         //character.SetForcedInteraction(interaction);
     }
-    public List<Character> GetViableRulers(Character previousRuler, GENDER gender, params RELATIONSHIP_TRAIT[] type) {
+    public List<Character> GetViableRulers(Character previousRuler, GENDER gender, params RELATIONSHIP_TYPE[] type) {
         List<Character> characters = new List<Character>();
         List<Relatable> relatables = previousRuler.relationshipContainer.GetRelatablesWithRelationship(type);
         for (int i = 0; i < relatables.Count; i++) {

@@ -40,12 +40,8 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     private System.Action onClickAction;
 
     #region getters/setters
-    public Character thisCharacter {
-        get { return _character; }
-    }
-    public PortraitSettings portraitSettings {
-        get { return _portraitSettings; }
-    }
+    public Character character => _character;
+    public PortraitSettings portraitSettings => _portraitSettings;
     #endregion
 
     private bool isPixelPerfect;

@@ -11,7 +11,7 @@ namespace Traits {
         public Enemy(Character target) : base(target) {
             name = "Enemy";
             description = "This character is an enemy of " + targetCharacter.name;
-            relType = RELATIONSHIP_TRAIT.ENEMY;
+            relType = RELATIONSHIP_TYPE.ENEMY;
             type = TRAIT_TYPE.RELATIONSHIP;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;

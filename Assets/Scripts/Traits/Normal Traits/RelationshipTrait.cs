@@ -6,7 +6,7 @@ namespace Traits {
     public class RelationshipTrait : Trait {
         public Character targetCharacter { get; private set; }
 
-        public RELATIONSHIP_TRAIT relType { get; protected set; }
+        public RELATIONSHIP_TYPE relType { get; protected set; }
         public int severity { get; protected set; }
 
         private const int MIN_SEVERITY = 1;

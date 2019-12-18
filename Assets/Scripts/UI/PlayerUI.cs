@@ -244,7 +244,7 @@ public class PlayerUI : MonoBehaviour {
         //Landmarks
         Messenger.AddListener<BaseLandmark>(Signals.LANDMARK_CREATED, OnLandmarkCreated);
         //Messenger.AddListener<BaseLandmark>(Signals.LANDMARK_DESTROYED, OnLandmarkDestroyed);
-        Messenger.AddListener<Region>(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, OnUpdateRegionUISignal);
+        Messenger.AddListener<Region>(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, OnUpdateRegionUISignal);
     }
 
     public void InitializeAfterGameLoaded() {

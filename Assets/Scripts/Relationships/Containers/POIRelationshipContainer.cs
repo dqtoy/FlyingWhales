@@ -17,7 +17,7 @@ public class POIRelationshipContainer : IRelationshipContainer {
     }
 
     #region Adding
-    public void AddRelationship(Relatable relatable, RELATIONSHIP_TRAIT relType) {
+    public void AddRelationship(Relatable relatable, RELATIONSHIP_TYPE relType) {
         if (HasRelationshipWith(relatable) == false) {
             CreateNewRelationship(relatable);
         }
@@ -29,7 +29,7 @@ public class POIRelationshipContainer : IRelationshipContainer {
     #endregion
 
     #region Removing
-    public void RemoveRelationship(Relatable relatable, RELATIONSHIP_TRAIT rel) {
+    public void RemoveRelationship(Relatable relatable, RELATIONSHIP_TYPE rel) {
         relationships[relatable].RemoveRelationship(rel);
     }
     #endregion
@@ -38,20 +38,20 @@ public class POIRelationshipContainer : IRelationshipContainer {
     public bool HasRelationshipWith(Relatable relatable) {
         return relationships.ContainsKey(relatable);
     }
-    public bool HasRelationshipWith(Relatable alterEgo, RELATIONSHIP_TRAIT relType) {
+    public bool HasRelationshipWith(Relatable alterEgo, RELATIONSHIP_TYPE relType) {
         if (HasRelationshipWith(alterEgo)) {
             IRelationshipData data = relationships[alterEgo];
             return data.relationships.Contains(relType);
         }
         return false;
     }
-    public bool HasRelationshipWith(Relatable alterEgo, params RELATIONSHIP_TRAIT[] relType) {
+    public bool HasRelationshipWith(Relatable alterEgo, params RELATIONSHIP_TYPE[] relType) {
         if (HasRelationshipWith(alterEgo)) {
             IRelationshipData data = relationships[alterEgo];
             for (int i = 0; i < relType.Length; i++) {
-                RELATIONSHIP_TRAIT rel = relType[i];
+                RELATIONSHIP_TYPE rel = relType[i];
                 for (int j = 0; j < data.relationships.Count; j++) {
-                    RELATIONSHIP_TRAIT dataRel = data.relationships[j];
+                    RELATIONSHIP_TYPE dataRel = data.relationships[j];
                     if(rel == dataRel) {
                         return true;
                     }
@@ -64,7 +64,7 @@ public class POIRelationshipContainer : IRelationshipContainer {
     #endregion
 
     #region Getting
-    public Relatable GetFirstRelatableWithRelationship(params RELATIONSHIP_TRAIT[] type) {
+    public Relatable GetFirstRelatableWithRelationship(params RELATIONSHIP_TYPE[] type) {
         foreach (KeyValuePair<Relatable, IRelationshipData> kvp in relationships) {
             if (kvp.Value.HasRelationship(type)) {
                 return kvp.Key;
@@ -72,7 +72,7 @@ public class POIRelationshipContainer : IRelationshipContainer {
         }
         return null;
     }
-    public List<Relatable> GetRelatablesWithRelationship(params RELATIONSHIP_TRAIT[] type) {
+    public List<Relatable> GetRelatablesWithRelationship(params RELATIONSHIP_TYPE[] type) {
         List<Relatable> relatables = new List<Relatable>();
         foreach (KeyValuePair<Relatable, IRelationshipData> kvp in relationships) {
             if (kvp.Value.HasRelationship(type)) {
@@ -102,21 +102,21 @@ public class POIRelationshipContainer : IRelationshipContainer {
         }
         return null;
     }
-    public RELATIONSHIP_TRAIT GetRelationshipFromParametersWith(Relatable alterEgo, params RELATIONSHIP_TRAIT[] relType) {
+    public RELATIONSHIP_TYPE GetRelationshipFromParametersWith(Relatable alterEgo, params RELATIONSHIP_TYPE[] relType) {
         if (HasRelationshipWith(alterEgo)) {
             IRelationshipData data = relationships[alterEgo];
             for (int i = 0; i < relType.Length; i++) {
-                RELATIONSHIP_TRAIT rel = relType[i];
+                RELATIONSHIP_TYPE rel = relType[i];
                 for (int j = 0; j < data.relationships.Count; j++) {
-                    RELATIONSHIP_TRAIT dataRel = data.relationships[j];
+                    RELATIONSHIP_TYPE dataRel = data.relationships[j];
                     if (rel == dataRel) {
                         return rel;
                     }
                 }
             }
-            return RELATIONSHIP_TRAIT.NONE;
+            return RELATIONSHIP_TYPE.NONE;
         }
-        return RELATIONSHIP_TRAIT.NONE;
+        return RELATIONSHIP_TYPE.NONE;
     }
 
     #endregion

@@ -4,24 +4,14 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEditor.Experimental.UIElements.GraphView;
 
 public class PlayerSummonMinionUI : MonoBehaviour {
-    [Header("General")]
-    public Button summonBtn;
-    public Image summonProgress;
-
     public ThePortal portal { get; private set; }
     
-    #region General
-    public void ShowPlayerSummonMinionUI(ThePortal portal) {
-        this.portal = portal;
-        UpdatePlayerSummonMinionUI();
-        gameObject.SetActive(true);
-    }
-    public void HidePlayerSummonMinionUI() {
-        gameObject.SetActive(false);
-    }
-    public void OnClickSummon() {
+    #region Genera
+    public void OnClickSummon(BaseLandmark landmark) {
+        portal = landmark as ThePortal;
         //show dual object picker, and allow only 1 object to be picked
         //column 1 should contain all minions to be summoned and column 2 should contain the players minions
         UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), PlayerManager.Instance.player.minionsToSummon.ToList(),
@@ -61,18 +51,7 @@ public class PlayerSummonMinionUI : MonoBehaviour {
             portal.tileLocation.region.SetAssignedMinion(minion);
         }
         portal.StartSummon(System.Array.IndexOf(PlayerManager.Instance.player.minionsToSummon, data), 0, summonDuration);
-
-        UpdatePlayerSummonMinionUI();
-    }
-    public void UpdatePlayerSummonMinionUI() {
-        if (portal.currentMinionToSummonIndex != -1) {
-            summonProgress.gameObject.SetActive(true);
-            summonBtn.interactable = false;
-            summonProgress.fillAmount = portal.currentSummonTick / (float)portal.currentSummonDuration;
-        } else {
-            summonProgress.gameObject.SetActive(false);
-            summonBtn.interactable = true;
-        }
+        
     }
     #endregion
 
@@ -84,7 +63,7 @@ public class PlayerSummonMinionUI : MonoBehaviour {
 
     #region Summon
     public void OnHoverMinionToSummonChoice(UnsummonedMinionData minionClassName) {
-        string info = "Duration: " + GameManager.Instance.GetCeilingHoursBasedOnTicks(LandmarkManager.SUMMON_MINION_DURATION) + " hours";
+        string info = $"Duration: {GameManager.Instance.GetCeilingHoursBasedOnTicks(LandmarkManager.SUMMON_MINION_DURATION).ToString()} hours";
         UIManager.Instance.ShowSmallInfo(info);
     }
     public void OnHoverExitMinionToSummonChoice(UnsummonedMinionData minionClassName) {

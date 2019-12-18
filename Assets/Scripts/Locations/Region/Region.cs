@@ -243,7 +243,8 @@ public class Region : ILocation, IHasNeighbours<Region> {
         if (area != null) {
             return area.CanInvadeSettlement();
         }
-        return /*HasCorruptedConnection() &&*/ !coreTile.isCorrupted && !demonicInvasionData.beingInvaded;
+        //return HasCorruptedConnection() &&!coreTile.isCorrupted && !demonicInvasionData.beingInvaded;
+        return /*HasCorruptedConnection() &&*/ !coreTile.isCorrupted;
     }
     public void StartInvasion(Minion assignedMinion) {
         //PlayerManager.Instance.player.SetInvadingRegion(this);
@@ -353,7 +354,7 @@ public class Region : ILocation, IHasNeighbours<Region> {
 
         newLandmark.OnFinishedBuilding();
         coreTile.UpdateBuildSprites();
-        Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, this);
+        Messenger.Broadcast(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, this);
     }
     #endregion
 

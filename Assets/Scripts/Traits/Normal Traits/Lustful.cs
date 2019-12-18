@@ -23,7 +23,7 @@ namespace Traits {
                         //If unfaithful and target is Paramour (15 - 36)/(8 - 20)/(5-15) per level, affects Early Night and Late Night only).
                         Character targetCharacter = poiTarget as Character;
                         Unfaithful unfaithful = actor.traitContainer.GetNormalTrait<Trait>("Unfaithful") as Unfaithful;
-                        if (unfaithful != null && actor.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                        if (unfaithful != null && actor.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.PARAMOUR)) {
                             if (unfaithful.level == 1) {
                                 cost = Utilities.rng.Next(15, 37);
                             } else if (unfaithful.level == 2) {

@@ -32,7 +32,9 @@
             //**Requirements:** Region is owned by Faction different from Actor's Faction. Region is not Corrupted. Region is non-settlement type.
             var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
             return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && region.owner != null 
-                   && region.owner != actor.faction && region.coreTile.isCorrupted == false && region.locationType.IsSettlementType() == false;
+                   && region.owner != actor.faction && region.coreTile.isCorrupted == false 
+                   && region.locationType.IsSettlementType() == false 
+                   && region.regionTileObject.advertisedActions.Contains(this.goapType);
         }
         return false;
     }
@@ -40,9 +42,11 @@
 
     #region State Effects
     public void PreInvadeSuccess(ActualGoapNode goapNode) {
+        goapNode.poiTarget.RemoveAdvertisedAction(this.goapType);
         goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region, goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterInvadeSuccess(ActualGoapNode goapNode) {
+        goapNode.poiTarget.AddAdvertisedAction(this.goapType);
         var region = goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region;
         region.AddFactionHere(goapNode.actor.faction);
     }

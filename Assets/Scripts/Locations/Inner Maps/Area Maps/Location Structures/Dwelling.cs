@@ -70,8 +70,8 @@ public class Dwelling : LocationStructure {
         } else {
             for (int i = 0; i < residents.Count; i++) {
                 Character currResident = residents[i];
-                List<RELATIONSHIP_TRAIT> rels = currResident.relationshipContainer.GetRelationshipDataWith(character)?.relationships ?? null;
-                if (rels != null && rels.Contains(RELATIONSHIP_TRAIT.LOVER)) {
+                List<RELATIONSHIP_TYPE> rels = currResident.relationshipContainer.GetRelationshipDataWith(character)?.relationships ?? null;
+                if (rels != null && rels.Contains(RELATIONSHIP_TYPE.LOVER)) {
                     return true;
                 }
             }

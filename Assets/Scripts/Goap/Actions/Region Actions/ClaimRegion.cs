@@ -32,7 +32,9 @@
         if (satisfied) {
             //**Requirements:** Actor has Purifier trait. Region is corrupted. Region does not have a landmark.
             var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
-            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && region.owner == null && region.coreTile.isCorrupted == false;
+            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && region.owner == null 
+                   && region.coreTile.isCorrupted == false 
+                   && region.regionTileObject.advertisedActions.Contains(this.goapType);;
         }
         return false;
     }
@@ -40,10 +42,12 @@
 
     #region State Effects
     public void PreClaimSuccess(ActualGoapNode goapNode) {
+        goapNode.poiTarget.RemoveAdvertisedAction(this.goapType);
         goapNode.descriptionLog.AddToFillers(goapNode.actor.faction, goapNode.actor.faction.name, LOG_IDENTIFIER.FACTION_1);
         goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region, goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterClaimSuccess(ActualGoapNode goapNode) {
+        goapNode.poiTarget.AddAdvertisedAction(this.goapType);
         var region = goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region;
         LandmarkManager.Instance.OwnRegion(goapNode.actor.faction, goapNode.actor.faction.race, region);
     }

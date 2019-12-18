@@ -42,8 +42,9 @@ public class ThePortal : BaseLandmark {
         } else {
             minionSummonClassName = summonClassName;
         }
-        TimerHubUI.Instance.AddItem("Summmoning " + minionSummonClassName + " Minion", currentSummonDuration - currentSummonTick, null);
+        TimerHubUI.Instance.AddItem("Summoning " + minionSummonClassName + " Minion", currentSummonDuration - currentSummonTick, null);
         Messenger.AddListener(Signals.TICK_STARTED, PerTickSummon);
+        Messenger.Broadcast<Region>(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
     }
     private void PerTickSummon() {
         currentSummonTick++;
@@ -77,7 +78,7 @@ public class ThePortal : BaseLandmark {
             tileLocation.region.assignedMinion.SetAssignedRegion(null);
             tileLocation.region.SetAssignedMinion(null);
         }
-        Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
+        Messenger.Broadcast(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
     }
 }
 

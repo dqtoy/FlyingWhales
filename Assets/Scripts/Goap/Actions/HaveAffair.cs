@@ -23,16 +23,16 @@ public class HaveAffair : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         Character otherCharacter = target as Character;
         Character currCharacter = actor;
-        List<RELATIONSHIP_TRAIT> existingRelsOfCurrentCharacter = currCharacter.relationshipContainer.GetRelationshipDataWith(otherCharacter.currentAlterEgo)?.relationships ?? null;
-        List<RELATIONSHIP_TRAIT> existingRelsOfOtherCharacter = otherCharacter.relationshipContainer.GetRelationshipDataWith(currCharacter.currentAlterEgo)?.relationships ?? null;
+        List<RELATIONSHIP_TYPE> existingRelsOfCurrentCharacter = currCharacter.relationshipContainer.GetRelationshipDataWith(otherCharacter.currentAlterEgo)?.relationships ?? null;
+        List<RELATIONSHIP_TYPE> existingRelsOfOtherCharacter = otherCharacter.relationshipContainer.GetRelationshipDataWith(currCharacter.currentAlterEgo)?.relationships ?? null;
         int cost = 1;
         if (existingRelsOfCurrentCharacter != null) {
-            if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.RELATIVE)) {
+            if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TYPE.RELATIVE)) {
                 //- character is a relative: Weight +50
                 cost += 50;
             }
-            if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.LOVER)
-                || existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.ENEMY)) {
+            if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TYPE.LOVER)
+                || existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TYPE.ENEMY)) {
                 //- character is a lover: Weight x0
                 //- character is an enemy: Weight x0
                 cost *= 0;
@@ -51,7 +51,7 @@ public class HaveAffair : GoapAction {
         //currentState.SetIntelReaction(AffairSuccessReactions);
     }
     public void AfterAffairSuccess(ActualGoapNode goapNode) {
-        RelationshipManager.Instance.CreateNewRelationshipBetween(goapNode.actor, goapNode.poiTarget as Character, RELATIONSHIP_TRAIT.PARAMOUR);
+        RelationshipManager.Instance.CreateNewRelationshipBetween(goapNode.actor, goapNode.poiTarget as Character, RELATIONSHIP_TYPE.PARAMOUR);
     }
     #endregion
 
@@ -66,7 +66,7 @@ public class HaveAffair : GoapAction {
                 return false;
             }
             Character targetCharacter = poiTarget as Character;
-            if (RelationshipManager.Instance.IsSexuallyCompatible(actor, targetCharacter) && RelationshipManager.Instance.GetValidator(actor.currentAlterEgo).CanHaveRelationship(actor.currentAlterEgo, targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+            if (RelationshipManager.Instance.IsSexuallyCompatible(actor, targetCharacter) && RelationshipManager.Instance.GetValidator(actor.currentAlterEgo).CanHaveRelationship(actor.currentAlterEgo, targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.PARAMOUR)) {
                 return true;
             }
         }
@@ -331,7 +331,7 @@ public class HaveAffairData : GoapActionData {
             return false;
         }
         Character targetCharacter = poiTarget as Character;
-        if (RelationshipManager.Instance.IsSexuallyCompatible(actor, targetCharacter) && RelationshipManager.Instance.GetValidator(actor.currentAlterEgo).CanHaveRelationship(actor.currentAlterEgo, targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+        if (RelationshipManager.Instance.IsSexuallyCompatible(actor, targetCharacter) && RelationshipManager.Instance.GetValidator(actor.currentAlterEgo).CanHaveRelationship(actor.currentAlterEgo, targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.PARAMOUR)) {
             return true;
         }
         return false;

@@ -14,7 +14,7 @@ namespace Traits {
             description = "This character is a paramour of " + targetCharacter.name;
             type = TRAIT_TYPE.RELATIONSHIP;
             effect = TRAIT_EFFECT.POSITIVE;
-            relType = RELATIONSHIP_TRAIT.PARAMOUR;
+            relType = RELATIONSHIP_TYPE.PARAMOUR;
             
             ticksDuration = 0;
             //effects = new List<TraitEffect>();

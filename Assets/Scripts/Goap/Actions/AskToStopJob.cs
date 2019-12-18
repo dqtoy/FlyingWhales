@@ -108,7 +108,7 @@ public class AskToStopJobData : GoapActionData {
         bool targetDoesNotConsiderActorEnemy = true;
         if (poiTarget is Character) {
             Character targetCharacter = poiTarget as Character;
-            targetDoesNotConsiderActorEnemy = !targetCharacter.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
+            targetDoesNotConsiderActorEnemy = !targetCharacter.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TYPE.ENEMY);
         }
         return actor != poiTarget && targetDoesNotConsiderActorEnemy;
     }

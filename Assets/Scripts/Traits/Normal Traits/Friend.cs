@@ -11,7 +11,7 @@ namespace Traits {
         public Friend(Character target) : base(target) {
             name = "Friend";
             description = "This character is a friend of " + targetCharacter.name;
-            relType = RELATIONSHIP_TRAIT.FRIEND;
+            relType = RELATIONSHIP_TYPE.FRIEND;
             type = TRAIT_TYPE.RELATIONSHIP;
             effect = TRAIT_EFFECT.POSITIVE;
             ticksDuration = 0;
