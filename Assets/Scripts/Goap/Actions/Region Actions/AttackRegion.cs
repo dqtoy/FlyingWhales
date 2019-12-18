@@ -32,7 +32,8 @@
             //**Requirement:** Region has a landmark
             var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
             return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null &&
-                   region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE;
+                   region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE && 
+                   region.regionTileObject.advertisedActions.Contains(INTERACTION_TYPE.ATTACK_REGION);
         }
         return false;
     }
@@ -44,8 +45,10 @@
         goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.structure.location.coreTile.region, 
             Utilities.NormalizeString(goapNode.poiTarget.gridTileLocation.structure.location.coreTile.region.mainLandmark.specificLandmarkType.ToString()),
             LOG_IDENTIFIER.STRING_1);
+        goapNode.poiTarget.RemoveAdvertisedAction(INTERACTION_TYPE.ATTACK_REGION); //this is so that other characters cannot attack this region when another character is already attacking it.
     }
     public void AfterAttackSuccess(ActualGoapNode goapNode) {
+        goapNode.poiTarget.AddAdvertisedAction(INTERACTION_TYPE.ATTACK_REGION); //return removed advertisement
         LandmarkManager.Instance.CreateNewLandmarkOnTile(goapNode.poiTarget.gridTileLocation.structure.location.coreTile, LANDMARK_TYPE.NONE, false);
     }
     #endregion

@@ -347,19 +347,10 @@ public class ActualGoapNode {
                             //This means that the actor currently travelling to another tile in tilemap
                             targetCharacter.marker.StopMovement();
                         }
-                        //else {
-                        //    //This means that the actor is currently travelling to another area
-                        //    targetCharacter.currentParty.icon.SetOnArriveAction(() => targetCharacter.OnArriveAtAreaStopMovement());
-                        //}
                     }
                     if (targetCharacter.currentActionNode != null) {
                         targetCharacter.StopCurrentActionNode(false);
                     }
-                    //if (targetCharacter.stateComponent.currentState != null) {
-                    //    targetCharacter.stateComponent.currentState.PauseState();
-                    //} else if (targetCharacter.stateComponent.stateToDo != null) {
-                    //    targetCharacter.stateComponent.SetStateToDo(null, false, false);
-                    //}
                     targetCharacter.DecreaseCanMove();
                     targetCharacter.FaceTarget(actor);
                 }
