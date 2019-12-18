@@ -4,33 +4,42 @@ using UnityEngine;
 
 public class FactionIdeologyComponent {
     public Faction owner { get; private set; }
-    public FactionIdeology currentIdeology { get; private set; }
+    public FactionIdeology[] currentIdeologies { get; private set; }
 
     public FactionIdeologyComponent(Faction owner) {
         this.owner = owner;
+        currentIdeologies = new FactionIdeology[FactionManager.Instance.categorizedFactionIdeologies.Length];
     }
 
-    public void SwitchToIdeology(FACTION_IDEOLOGY ideologyType) {
-        if(currentIdeology != null && currentIdeology.ideologyType == FACTION_IDEOLOGY.INCLUSIVE && ideologyType == FACTION_IDEOLOGY.INCLUSIVE) { return; }
-        currentIdeology = CreateIdeology(ideologyType);
-        currentIdeology.SetRequirements(owner);
+    //public void SwitchToIdeology(FACTION_IDEOLOGY ideologyType) {
+    //    if(currentIdeologies != null && currentIdeologies.ideologyType == FACTION_IDEOLOGY.INCLUSIVE && ideologyType == FACTION_IDEOLOGY.INCLUSIVE) { return; }
+    //    currentIdeologies = CreateIdeology(ideologyType);
+    //    currentIdeologies.SetRequirements(owner);
+    //    ReEvaluateFactionMembers();
+    //}
+    public void RerollIdeologies() {
+        FACTION_IDEOLOGY[][] categorizedIdeologies = FactionManager.Instance.categorizedFactionIdeologies;
+        for (int i = 0; i < currentIdeologies.Length; i++) {
+            FactionIdeology ideology = currentIdeologies[i];
+            ideology = FactionManager.Instance.CreateIdeology(categorizedIdeologies[i][UnityEngine.Random.Range(0, categorizedIdeologies[i].Length)]);
+            ideology.SetRequirements(owner);
+            currentIdeologies[i] = ideology;
+        }
         ReEvaluateFactionMembers();
     }
-    public bool DoesCharacterFitCurrentIdeology(Character character) {
-        if(currentIdeology == null) { return true; }
-        return currentIdeology.DoesCharacterFitIdeology(character);
+    public void SetCurrentIdeology(int index, FactionIdeology ideology) {
+        currentIdeologies[index] = ideology;
     }
-
-    private FactionIdeology CreateIdeology(FACTION_IDEOLOGY ideologyType) {
-        string ideologyStr = ideologyType.ToString();
-        var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(ideologyStr);
-        System.Type type = System.Type.GetType(typeName);
-        if (type != null) {
-            FactionIdeology data = System.Activator.CreateInstance(type) as FactionIdeology;
-            return data;
-        } else {
-            throw new System.Exception(ideologyStr + " has no data!");
+    public bool DoesCharacterFitCurrentIdeologies(Character character) {
+        if(currentIdeologies == null) { return true; }
+        for (int i = 0; i < currentIdeologies.Length; i++) {
+            FactionIdeology ideology = currentIdeologies[i]; ;
+            if(ideology != null && !ideology.DoesCharacterFitIdeology(character)) {
+                return false;
+            }
         }
+        return true;
+        //return currentIdeologies.DoesCharacterFitIdeology(character);
     }
 
     private void ReEvaluateFactionMembers() {

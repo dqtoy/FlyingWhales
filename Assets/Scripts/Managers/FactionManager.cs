@@ -95,7 +95,8 @@ public class FactionManager : MonoBehaviour {
         }
         newFaction.SetIsMajorFaction(true);
         if (!isPlayerFaction) {
-            newFaction.ideologyComponent.SwitchToIdeology(FACTION_IDEOLOGY.INCLUSIVE);
+            //newFaction.ideologyComponent.RerollIdeologies();
+            //newFaction.ideologyComponent.SwitchToIdeology(FACTION_IDEOLOGY.INCLUSIVE);
             Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
         }
         return newFaction;
@@ -263,6 +264,20 @@ public class FactionManager : MonoBehaviour {
         int activeFactionsCount = allFactions.Where(x => x.isActive).Count();
         int totalFactionLvl = allFactions.Where(x => x.isActive).Sum(x => x.level);
         return totalFactionLvl / activeFactionsCount;
+    }
+    #endregion
+
+    #region Faction Ideologies
+    public FactionIdeology CreateIdeology(FACTION_IDEOLOGY ideologyType) {
+        string ideologyStr = ideologyType.ToString();
+        var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(ideologyStr);
+        System.Type type = System.Type.GetType(typeName);
+        if (type != null) {
+            FactionIdeology data = System.Activator.CreateInstance(type) as FactionIdeology;
+            return data;
+        } else {
+            throw new System.Exception(ideologyStr + " has no data!");
+        }
     }
     #endregion
 }

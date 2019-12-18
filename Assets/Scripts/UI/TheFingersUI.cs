@@ -21,6 +21,7 @@ public class TheFingersUI : MonoBehaviour {
     public ScrollRect characterScrollRect;
     public GameObject ideologyHolder;
     public TMP_Dropdown ideologyDropdown;
+    public TextMeshProUGUI ideologiesText;
     public List<CharacterNameplateItem> characterNameplateItems { get; private set; }
 
     [Header("Exclusive Ideology")]
@@ -31,6 +32,7 @@ public class TheFingersUI : MonoBehaviour {
     public TheFingers fingers { get; private set; }
     //public Minion chosenMinion { get; private set; }
     public Character chosenLeader { get; private set; }
+    private List<FactionIdeology> ideologies = new List<FactionIdeology>();
 
     #region General
     public void ShowTheFingersUI(TheFingers fingers) {
@@ -86,11 +88,14 @@ public class TheFingersUI : MonoBehaviour {
             Faction newFaction = FactionManager.Instance.CreateNewFaction(factionName: factionNameInput.text);
             chosenLeader.ChangeFactionTo(newFaction);
             newFaction.SetLeader(chosenLeader, false);
-            newFaction.ideologyComponent.SwitchToIdeology((FACTION_IDEOLOGY) ideologyDropdown.value);
-            if(newFaction.ideologyComponent.currentIdeology.ideologyType == FACTION_IDEOLOGY.EXCLUSIVE) {
-                Exclusive exclusiveIdeology = newFaction.ideologyComponent.currentIdeology as Exclusive;
-                exclusiveIdeology.SetIndividualRequirements((EXCLUSIVE_IDEOLOGY_CATEGORIES) exclusiveIdeologyCategoryDropdown.value, exclusiveIdeologyRequirementDropdown.options[exclusiveIdeologyRequirementDropdown.value].text);
+            for (int i = 0; i < ideologies.Count; i++) {
+                newFaction.ideologyComponent.SetCurrentIdeology(i, ideologies[i]);
             }
+            //newFaction.ideologyComponent.SwitchToIdeology((FACTION_IDEOLOGY) ideologyDropdown.value);
+            //if(newFaction.ideologyComponent.currentIdeologies.ideologyType == FACTION_IDEOLOGY.EXCLUSIVE) {
+            //    Exclusive exclusiveIdeology = newFaction.ideologyComponent.currentIdeologies as Exclusive;
+            //    exclusiveIdeology.SetIndividualRequirements((EXCLUSIVE_IDEOLOGY_CATEGORIES) exclusiveIdeologyCategoryDropdown.value, exclusiveIdeologyRequirementDropdown.options[exclusiveIdeologyRequirementDropdown.value].text);
+            //}
 
             Region regionLocation = chosenLeader.currentRegion;
             //if (chosenLeader.currentRegion != null) {
@@ -124,8 +129,19 @@ public class TheFingersUI : MonoBehaviour {
             PlayerUI.Instance.ShowGeneralConfirmation("No Faction Leader Error!", "Please select a faction leader.");
             return false;
         }
-        if ((FACTION_IDEOLOGY) ideologyDropdown.value == FACTION_IDEOLOGY.EXCLUSIVE) {
-            if((EXCLUSIVE_IDEOLOGY_CATEGORIES) exclusiveIdeologyCategoryDropdown.value == EXCLUSIVE_IDEOLOGY_CATEGORIES.RACE && exclusiveIdeologyRequirementDropdown.value == 0) { //This means that the race choice is NONE
+        if(ideologies.Count != FactionManager.Instance.categorizedFactionIdeologies.Length) {
+            PlayerUI.Instance.ShowGeneralConfirmation("Incomplete Ideologies!", "Please continue selecting ideologies for your faction.");
+            return false;
+        }
+        return true;
+    }
+    private bool CanAddIdeology() {
+        if(ideologies.Count == FactionManager.Instance.categorizedFactionIdeologies.Length) {
+            PlayerUI.Instance.ShowGeneralConfirmation("Ideologies Completed!", "Faction ideologies are complete.");
+            return false;
+        }
+        if (GetIdeologyDropdownValue() == FACTION_IDEOLOGY.EXCLUSIVE) {
+            if ((EXCLUSIVE_IDEOLOGY_CATEGORIES) exclusiveIdeologyCategoryDropdown.value == EXCLUSIVE_IDEOLOGY_CATEGORIES.RACE && exclusiveIdeologyRequirementDropdown.value == 0) { //This means that the race choice is NONE
                 PlayerUI.Instance.ShowGeneralConfirmation("No Race Requirement Error!", "Please select a race for the requirement.");
                 return false;
             }
@@ -165,6 +181,7 @@ public class TheFingersUI : MonoBehaviour {
     private void ShowCreateNewFactionUI() {
         SetChosenCharacter(null);
         factionNameInput.text = string.Empty;
+        ClearIdeologyList();
         PopulateCharactersToChooseFrom();
         HideChooseIdeology();
         createNewFactionGO.SetActive(true);
@@ -186,7 +203,7 @@ public class TheFingersUI : MonoBehaviour {
         Utilities.DestroyChildren(characterScrollRect.content);
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
-            if(/*character.isFriendlyFactionless*/ character.faction.leader != character) {
+            if(character.isFriendlyFactionless && character.faction.leader != character) {
                 CharacterNameplateItem item = CreateNewCharacterNameplateItem();
                 item.SetObject(character);
                 item.AddOnClickAction(OnClickCharacter);
@@ -220,15 +237,16 @@ public class TheFingersUI : MonoBehaviour {
     #region Ideology
     private void PopulateIdeologyDropdown() {
         ideologyDropdown.ClearOptions();
-        string[] ideologies = System.Enum.GetNames(typeof(FACTION_IDEOLOGY));
-        for (int i = 0; i < ideologies.Length; i++) {
-            ideologyDropdown.options.Add(new TMP_Dropdown.OptionData(ideologies[i]));
+        FACTION_IDEOLOGY[] categorizedIdeologies = FactionManager.Instance.categorizedFactionIdeologies[ideologies.Count];
+        //string[] ideologies = System.Enum.GetNames(typeof(FACTION_IDEOLOGY));
+        for (int i = 0; i < categorizedIdeologies.Length; i++) {
+            ideologyDropdown.options.Add(new TMP_Dropdown.OptionData(System.Enum.GetName(typeof(FACTION_IDEOLOGY), categorizedIdeologies[i])));
         }
         ideologyDropdown.RefreshShownValue();
         ideologyDropdown.value = 0;
     }
     private void ShowAppropriateIdeologyContent() {
-        FACTION_IDEOLOGY ideologyType = (FACTION_IDEOLOGY) ideologyDropdown.value;
+        FACTION_IDEOLOGY ideologyType = GetIdeologyDropdownValue();
         if(ideologyType == FACTION_IDEOLOGY.EXCLUSIVE) {
             ShowExclusiveIdeology();
         } else {
@@ -238,7 +256,52 @@ public class TheFingersUI : MonoBehaviour {
     public void OnChangeIdeology(int index) {
         ShowAppropriateIdeologyContent();
     }
-
+    public void AddIdeology() {
+        if (CanAddIdeology()) {
+            FactionIdeology currIdeology = FactionManager.Instance.CreateIdeology(GetIdeologyDropdownValue());
+            if (currIdeology.ideologyType == FACTION_IDEOLOGY.EXCLUSIVE) {
+                Exclusive exclusiveIdeology = currIdeology as Exclusive;
+                exclusiveIdeology.SetIndividualRequirements((EXCLUSIVE_IDEOLOGY_CATEGORIES) exclusiveIdeologyCategoryDropdown.value, exclusiveIdeologyRequirementDropdown.options[exclusiveIdeologyRequirementDropdown.value].text);
+            }
+            AddIdeologyToList(currIdeology);
+        }
+    }
+    public void RemoveIdeology() {
+        RemoveRecentIdeology();
+    }
+    private FACTION_IDEOLOGY GetIdeologyDropdownValue() {
+        return (FACTION_IDEOLOGY) System.Enum.Parse(typeof(FACTION_IDEOLOGY), ideologyDropdown.options[ideologyDropdown.value].text);
+    }
+    private void AddIdeologyToList(FactionIdeology ideology) {
+        ideologies.Add(ideology);
+        UpdateIdeologiesText();
+        if (ideologies.Count < FactionManager.Instance.categorizedFactionIdeologies.Length) {
+            ShowChooseIdeology();
+        }
+    }
+    private void RemoveRecentIdeology() {
+        if(ideologies.Count > 0) {
+            ideologies.RemoveAt(ideologies.Count - 1);
+            UpdateIdeologiesText();
+            if(ideologies.Count < FactionManager.Instance.categorizedFactionIdeologies.Length) {
+                ShowChooseIdeology();
+            }
+        }
+    }
+    private void UpdateIdeologiesText() {
+        string text = string.Empty;
+        for (int i = 0; i < ideologies.Count; i++) {
+            if (i > 0) {
+                text += ", ";
+            }
+            text += ideologies[i].name;
+        }
+        ideologiesText.text = text;
+    }
+    private void ClearIdeologyList() {
+        ideologies.Clear();
+        ideologiesText.text = string.Empty;
+    }
     #region Exclusive Ideology
     private void ShowExclusiveIdeology() {
         PopulateExclusiveIdeologyCategory();

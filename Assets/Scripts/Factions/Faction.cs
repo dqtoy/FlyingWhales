@@ -141,8 +141,9 @@ public class Faction {
         //Every time the leader changes, faction ideology changes
         if (leader is Character) {
             if (setIdeology) {
-                FACTION_IDEOLOGY newIdeology = Utilities.GetRandomEnumValue<FACTION_IDEOLOGY>();
-                ideologyComponent.SwitchToIdeology(newIdeology);
+                //FACTION_IDEOLOGY newIdeology = Utilities.GetRandomEnumValue<FACTION_IDEOLOGY>();
+                //ideologyComponent.SwitchToIdeology(newIdeology);
+                ideologyComponent.RerollIdeologies();
             }
             Character characterLeader = leader as Character;
             characterLeader.currentRegion.AddFactionHere(characterLeader.faction);
@@ -168,7 +169,7 @@ public class Faction {
 
     #region Characters
     public bool JoinFaction(Character character) {
-        if (ideologyComponent.DoesCharacterFitCurrentIdeology(character)) {
+        if (ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
             if (!characters.Contains(character)) {
                 characters.Add(character);
                 character.SetFaction(this);
@@ -340,7 +341,7 @@ public class Faction {
         LeaveFaction(character);
     }
     public void CheckIfCharacterStillFitsIdeology(Character character) {
-        if (character.faction == this && !ideologyComponent.DoesCharacterFitCurrentIdeology(character)) {
+        if (character.faction == this && !ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
             character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
 
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "left_faction_not_fit");

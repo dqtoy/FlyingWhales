@@ -15,14 +15,19 @@ public class Exclusive : FactionIdeology {
 
     #region Overrides
     public override void SetRequirements(Faction faction) {
-        int chance = UnityEngine.Random.Range(0, 3);
-        category = EXCLUSIVE_IDEOLOGY_CATEGORIES.TRAIT;
-        if (chance == 0) {
-            category = EXCLUSIVE_IDEOLOGY_CATEGORIES.GENDER;
-            genderRequirement = faction.leader.gender;
-        } else if (chance == 1) {
-            category = EXCLUSIVE_IDEOLOGY_CATEGORIES.RACE;
-            raceRequirement = faction.leader.race;
+        if(faction.leader != null) {
+            int chance = UnityEngine.Random.Range(0, 3);
+            category = EXCLUSIVE_IDEOLOGY_CATEGORIES.TRAIT;
+            if (chance == 0) {
+                category = EXCLUSIVE_IDEOLOGY_CATEGORIES.GENDER;
+                genderRequirement = faction.leader.gender;
+            } else if (chance == 1) {
+                category = EXCLUSIVE_IDEOLOGY_CATEGORIES.RACE;
+                raceRequirement = faction.leader.race;
+            } else {
+                category = EXCLUSIVE_IDEOLOGY_CATEGORIES.TRAIT;
+                traitRequirement = GetRandomTraitRequirement();
+            }
         } else {
             category = EXCLUSIVE_IDEOLOGY_CATEGORIES.TRAIT;
             traitRequirement = GetRandomTraitRequirement();

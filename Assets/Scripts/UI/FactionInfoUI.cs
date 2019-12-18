@@ -343,9 +343,13 @@ public class FactionInfoUI : UIMenu {
         //if (!string.IsNullOrEmpty(summary)) {
         //    summary += "\n";
         //}
-        summary += "\n" + activeFaction.ideologyComponent.currentIdeology.name;
-        summary += "\nRequirements for joining:";
-        summary += "\n\t" + activeFaction.ideologyComponent.currentIdeology.GetRequirementsForJoiningAsString();
+        for (int i = 0; i < activeFaction.ideologyComponent.currentIdeologies.Length; i++) {
+            FactionIdeology ideology = activeFaction.ideologyComponent.currentIdeologies[i];
+            summary += "\n" + ideology.name;
+            summary += "\nRequirements for joining:";
+            summary += "\n\t" + ideology.GetRequirementsForJoiningAsString();
+        }
+
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void HideFactionTestingInfo() {
