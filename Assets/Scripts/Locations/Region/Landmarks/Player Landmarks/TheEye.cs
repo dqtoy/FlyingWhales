@@ -49,7 +49,7 @@ public class TheEye : BaseLandmark {
     private void StartCooldown() {
         currentCooldownTick = 0;
         Messenger.AddListener(Signals.TICK_ENDED, PerTickCooldown);
-        Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
+        Messenger.Broadcast(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
     }
     private void PerTickCooldown() {
         currentCooldownTick++;
@@ -60,7 +60,7 @@ public class TheEye : BaseLandmark {
     }
     private void StopCooldown() {
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTickCooldown);
-        Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
+        Messenger.Broadcast(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
     }
     #endregion
 }

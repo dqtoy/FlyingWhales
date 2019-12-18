@@ -34,7 +34,7 @@ public class TheNeedles : BaseLandmark {
         minion.SetAssignedRegion(null);
         minion.character.Death("ConvertedMana");
         StartCooldown();
-        Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
+        Messenger.Broadcast(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
     }
 
     #region Overrides
@@ -57,7 +57,7 @@ public class TheNeedles : BaseLandmark {
     }
     private void StopCooldown() {
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTickCooldown);
-        Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
+        Messenger.Broadcast(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
     }
 
     public int GetManaValue(Minion minion) {

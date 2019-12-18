@@ -12,7 +12,7 @@ namespace Traits {
         public SaveTarget(Character target) : base(target) {
             name = "Save Target";
             description = "This character is a Save Target of " + targetCharacter.name;
-            relType = RELATIONSHIP_TRAIT.SAVE_TARGET;
+            relType = RELATIONSHIP_TYPE.SAVE_TARGET;
             type = TRAIT_TYPE.RELATIONSHIP;
             effect = TRAIT_EFFECT.NEUTRAL;
             

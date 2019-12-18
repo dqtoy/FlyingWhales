@@ -32,7 +32,7 @@ public class TheSpire : BaseLandmark {
         assignedMinion.AdjustSpellExtractionCount(1);
         assignedMinion.SetAssignedRegion(null);
         tileLocation.region.SetAssignedMinion(null);
-        Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
+        Messenger.Broadcast(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
 
         //Start Cooldown
         StartCooldown();
@@ -52,7 +52,7 @@ public class TheSpire : BaseLandmark {
     }
     private void StopCooldown() {
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTickCooldown);
-        Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
+        Messenger.Broadcast(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
     }
 
     #region Override

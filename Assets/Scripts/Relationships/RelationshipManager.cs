@@ -33,7 +33,7 @@ public class RelationshipManager : MonoBehaviour {
         }
         return null;
     }
-    public bool CanHaveRelationship(Relatable rel1, Relatable rel2, RELATIONSHIP_TRAIT rel) {
+    public bool CanHaveRelationship(Relatable rel1, Relatable rel2, RELATIONSHIP_TYPE rel) {
         IRelationshipValidator validator = GetValidator(rel1);
         if (validator != null) {
             return validator.CanHaveRelationship(rel1, rel2, rel);
@@ -43,17 +43,17 @@ public class RelationshipManager : MonoBehaviour {
     #endregion
 
     #region Relationship Effects
-    public RELATIONSHIP_EFFECT GetRelationshipEffect(RELATIONSHIP_TRAIT relType) {
+    public RELATIONSHIP_EFFECT GetRelationshipEffect(RELATIONSHIP_TYPE relType) {
         switch (relType) {
-            case RELATIONSHIP_TRAIT.ENEMY:
+            case RELATIONSHIP_TYPE.ENEMY:
                 return RELATIONSHIP_EFFECT.NEGATIVE;
-            case RELATIONSHIP_TRAIT.FRIEND:
+            case RELATIONSHIP_TYPE.FRIEND:
                 return RELATIONSHIP_EFFECT.POSITIVE;
-            case RELATIONSHIP_TRAIT.RELATIVE:
+            case RELATIONSHIP_TYPE.RELATIVE:
                 return RELATIONSHIP_EFFECT.POSITIVE;
-            case RELATIONSHIP_TRAIT.LOVER:
+            case RELATIONSHIP_TYPE.LOVER:
                 return RELATIONSHIP_EFFECT.POSITIVE;
-            case RELATIONSHIP_TRAIT.PARAMOUR:
+            case RELATIONSHIP_TYPE.PARAMOUR:
                 return RELATIONSHIP_EFFECT.POSITIVE;
             default:
                 return RELATIONSHIP_EFFECT.NONE;
@@ -69,28 +69,28 @@ public class RelationshipManager : MonoBehaviour {
     /// <param name="rel">The type of relationship to create.</param>
     /// <param name="triggerOnAdd">Should this trigger the trait's OnAdd Function.</param>
     /// <returns>The created relationship data.</returns>
-    private RELATIONSHIP_TRAIT GetPairedRelationship(RELATIONSHIP_TRAIT rel) {
+    private RELATIONSHIP_TYPE GetPairedRelationship(RELATIONSHIP_TYPE rel) {
         switch (rel) {
-            case RELATIONSHIP_TRAIT.ENEMY:
-                return RELATIONSHIP_TRAIT.ENEMY;
-            case RELATIONSHIP_TRAIT.FRIEND:
-                return RELATIONSHIP_TRAIT.FRIEND;
-            case RELATIONSHIP_TRAIT.RELATIVE:
-                return RELATIONSHIP_TRAIT.RELATIVE;
-            case RELATIONSHIP_TRAIT.LOVER:
-                return RELATIONSHIP_TRAIT.LOVER;
-            case RELATIONSHIP_TRAIT.PARAMOUR:
-                return RELATIONSHIP_TRAIT.PARAMOUR;
-            case RELATIONSHIP_TRAIT.MASTER:
-                return RELATIONSHIP_TRAIT.SERVANT;
-            case RELATIONSHIP_TRAIT.SERVANT:
-                return RELATIONSHIP_TRAIT.MASTER;
-            case RELATIONSHIP_TRAIT.SAVER:
-                return RELATIONSHIP_TRAIT.SAVE_TARGET;
-            case RELATIONSHIP_TRAIT.SAVE_TARGET:
-                return RELATIONSHIP_TRAIT.SAVER;
+            case RELATIONSHIP_TYPE.ENEMY:
+                return RELATIONSHIP_TYPE.ENEMY;
+            case RELATIONSHIP_TYPE.FRIEND:
+                return RELATIONSHIP_TYPE.FRIEND;
+            case RELATIONSHIP_TYPE.RELATIVE:
+                return RELATIONSHIP_TYPE.RELATIVE;
+            case RELATIONSHIP_TYPE.LOVER:
+                return RELATIONSHIP_TYPE.LOVER;
+            case RELATIONSHIP_TYPE.PARAMOUR:
+                return RELATIONSHIP_TYPE.PARAMOUR;
+            case RELATIONSHIP_TYPE.MASTER:
+                return RELATIONSHIP_TYPE.SERVANT;
+            case RELATIONSHIP_TYPE.SERVANT:
+                return RELATIONSHIP_TYPE.MASTER;
+            case RELATIONSHIP_TYPE.SAVER:
+                return RELATIONSHIP_TYPE.SAVE_TARGET;
+            case RELATIONSHIP_TYPE.SAVE_TARGET:
+                return RELATIONSHIP_TYPE.SAVER;
             default:
-                return RELATIONSHIP_TRAIT.NONE;
+                return RELATIONSHIP_TYPE.NONE;
         }
     }
     //public void GenerateRelationships() {
@@ -471,7 +471,7 @@ public class RelationshipManager : MonoBehaviour {
     //}
     public void GenerateRelationships(List<Character> characters) {
         int maxInitialRels = 4;
-        RELATIONSHIP_TRAIT[] relsInOrder = new RELATIONSHIP_TRAIT[] { RELATIONSHIP_TRAIT.RELATIVE, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.ENEMY, RELATIONSHIP_TRAIT.FRIEND };
+        RELATIONSHIP_TYPE[] relsInOrder = new RELATIONSHIP_TYPE[] { RELATIONSHIP_TYPE.RELATIVE, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.ENEMY, RELATIONSHIP_TYPE.FRIEND };
 
         // Loop through all characters in the world
         for (int i = 0; i < characters.Count; i++) {
@@ -488,7 +488,7 @@ public class RelationshipManager : MonoBehaviour {
 
             //  Loop through all relationship types
             for (int k = 0; k < relsInOrder.Length; k++) {
-                RELATIONSHIP_TRAIT currRel = relsInOrder[k];
+                RELATIONSHIP_TYPE currRel = relsInOrder[k];
                 if (totalCreatedRels >= maxInitialRels) {
                     summary += "\nMax Initial Relationships reached, stopping relationship generation for " + currCharacter.name;
                     break; //stop generating more relationships for this character
@@ -498,7 +498,7 @@ public class RelationshipManager : MonoBehaviour {
 
                 // Compute the number of relations to create per relationship type
                 switch (currRel) {
-                    case RELATIONSHIP_TRAIT.RELATIVE:
+                    case RELATIONSHIP_TYPE.RELATIVE:
                         if (currCharacter.role.roleType == CHARACTER_ROLE.BEAST) { continue; } //a beast character has no relatives
                         else {
                             //- a non-beast character may have either zero (75%), one (20%) or two (5%) relatives from characters of the same race
@@ -507,19 +507,19 @@ public class RelationshipManager : MonoBehaviour {
                             else relsToCreate = 2;
                         }
                         break;
-                    case RELATIONSHIP_TRAIT.LOVER:
+                    case RELATIONSHIP_TYPE.LOVER:
                         //- a character has a 20% chance to have a lover
                         if (chance < 20) relsToCreate = 1;
                         //relsToCreate = 1;
                         break;
-                    case RELATIONSHIP_TRAIT.ENEMY:
+                    case RELATIONSHIP_TYPE.ENEMY:
                         //- a character may have either zero (75%), one (20%) or two (5%) enemies
                         if (chance < 75) relsToCreate = 0;
                         else if (chance >= 75 && chance < 95) relsToCreate = 1;
                         else relsToCreate = 2;
                         //relsToCreate = 2;
                         break;
-                    case RELATIONSHIP_TRAIT.FRIEND:
+                    case RELATIONSHIP_TYPE.FRIEND:
                         //- a character may have either zero (65%), one (25%) or two (10%) friends
                         if (chance < 65) relsToCreate = 0;
                         else if (chance >= 65 && chance < 90) relsToCreate = 1;
@@ -535,8 +535,8 @@ public class RelationshipManager : MonoBehaviour {
                     for (int l = 0; l < currCharacter.faction.characters.Count; l++) {
                         Character otherCharacter = currCharacter.faction.characters[l];
                         if (currCharacter.id != otherCharacter.id) { //&& currCharacter.faction == otherCharacter.faction
-                            List<RELATIONSHIP_TRAIT> existingRelsOfCurrentCharacter = currCharacter.relationshipContainer.GetRelationshipDataWith(otherCharacter.currentAlterEgo)?.relationships ?? null;
-                            List<RELATIONSHIP_TRAIT> existingRelsOfOtherCharacter = otherCharacter.relationshipContainer.GetRelationshipDataWith(currCharacter.currentAlterEgo)?.relationships ?? null;
+                            List<RELATIONSHIP_TYPE> existingRelsOfCurrentCharacter = currCharacter.relationshipContainer.GetRelationshipDataWith(otherCharacter.currentAlterEgo)?.relationships ?? null;
+                            List<RELATIONSHIP_TYPE> existingRelsOfOtherCharacter = otherCharacter.relationshipContainer.GetRelationshipDataWith(currCharacter.currentAlterEgo)?.relationships ?? null;
                             //if the current character already has a relationship of the same type with the other character, skip
                             if (existingRelsOfCurrentCharacter != null && existingRelsOfCurrentCharacter.Contains(currRel)) {
                                 continue; //skip
@@ -545,7 +545,7 @@ public class RelationshipManager : MonoBehaviour {
 
                             // Compute the weight that determines how likely this character will have the current relationship type with current character
                             switch (currRel) {
-                                case RELATIONSHIP_TRAIT.RELATIVE:
+                                case RELATIONSHIP_TYPE.RELATIVE:
                                     if (otherCharacter.role.roleType == CHARACTER_ROLE.BEAST) { continue; } //a beast character has no relatives
                                     else {
                                         if (otherCharacter.currentRegion == currCharacter.currentRegion) {
@@ -557,7 +557,7 @@ public class RelationshipManager : MonoBehaviour {
                                         }
 
                                         if (currCharacter.race != otherCharacter.race) weight *= 0; //character is a different race: Weight x0
-                                        if (existingRelsOfCurrentCharacter != null && existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.FRIEND)) {
+                                        if (existingRelsOfCurrentCharacter != null && existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TYPE.FRIEND)) {
                                             //Disabled possiblity that relatives can be friends
                                             weight *= 0;
                                         }
@@ -566,7 +566,7 @@ public class RelationshipManager : MonoBehaviour {
                                         }
                                     }
                                     break;
-                                case RELATIONSHIP_TRAIT.LOVER:
+                                case RELATIONSHIP_TYPE.LOVER:
                                     if (GetValidator(currCharacter).CanHaveRelationship(currCharacter, otherCharacter, currRel) && GetValidator(otherCharacter).CanHaveRelationship(otherCharacter, currCharacter, currRel)) {
                                         if (currCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
                                             //- if non beast, from valid characters, choose based on these weights
@@ -589,7 +589,7 @@ public class RelationshipManager : MonoBehaviour {
                                                 //- character is a beast: Weight x0
                                                 weight *= 0;
                                             }
-                                            if (existingRelsOfCurrentCharacter != null && existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.RELATIVE)) {
+                                            if (existingRelsOfCurrentCharacter != null && existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TYPE.RELATIVE)) {
                                                 //- character is a relative: Weight x0.1    
                                                 weight *= 0.1f;
                                             }
@@ -616,7 +616,7 @@ public class RelationshipManager : MonoBehaviour {
                                         }
                                     }
                                     break;
-                                case RELATIONSHIP_TRAIT.ENEMY:
+                                case RELATIONSHIP_TYPE.ENEMY:
                                     if (GetValidator(currCharacter).CanHaveRelationship(currCharacter, otherCharacter, currRel) && GetValidator(otherCharacter).CanHaveRelationship(otherCharacter, currCharacter, currRel)) {
                                         if (currCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
                                             //- if non beast, from valid characters, choose based on these weights
@@ -637,25 +637,25 @@ public class RelationshipManager : MonoBehaviour {
                                             }
 
                                             if (existingRelsOfCurrentCharacter != null) {
-                                                if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.LOVER)) {
+                                                if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TYPE.LOVER)) {
                                                     //- character is a lover: Weight x0
                                                     weight *= 0;
                                                 }
                                             }
                                             if (existingRelsOfOtherCharacter != null) {
                                                 //- character considers this one as an Enemy: Weight x6
-                                                if (existingRelsOfOtherCharacter.Contains(RELATIONSHIP_TRAIT.ENEMY)) {
+                                                if (existingRelsOfOtherCharacter.Contains(RELATIONSHIP_TYPE.ENEMY)) {
                                                     weight *= 6;
                                                 }
                                                 //- character considers this one as a Friend: Weight x0.3
-                                                if (existingRelsOfOtherCharacter.Contains(RELATIONSHIP_TRAIT.FRIEND)) {
+                                                if (existingRelsOfOtherCharacter.Contains(RELATIONSHIP_TYPE.FRIEND)) {
                                                     weight *= 0.3f;
                                                 }
                                             }
                                         }
                                     }
                                     break;
-                                case RELATIONSHIP_TRAIT.FRIEND:
+                                case RELATIONSHIP_TYPE.FRIEND:
                                     if (GetValidator(currCharacter).CanHaveRelationship(currCharacter, otherCharacter, currRel) && GetValidator(otherCharacter).CanHaveRelationship(otherCharacter, currCharacter, currRel)) {
                                         if (currCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
                                             //- if non beast, from valid characters, choose based on these weights:
@@ -675,9 +675,9 @@ public class RelationshipManager : MonoBehaviour {
                                                 weight *= 2;
                                             }
                                             if (existingRelsOfCurrentCharacter != null) {
-                                                if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.RELATIVE)
-                                                    || existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.LOVER)
-                                                    || existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.ENEMY)) {
+                                                if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TYPE.RELATIVE)
+                                                    || existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TYPE.LOVER)
+                                                    || existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TYPE.ENEMY)) {
                                                     //- character is a relative: Weight x0
                                                     //- character is a lover: Weight x0
                                                     //- this one considers the character an enemy: Weight x0
@@ -686,11 +686,11 @@ public class RelationshipManager : MonoBehaviour {
                                             }
                                             if (existingRelsOfOtherCharacter != null) {
                                                 //- character considers this one as an Enemy: Weight x0.3
-                                                if (existingRelsOfOtherCharacter.Contains(RELATIONSHIP_TRAIT.ENEMY)) {
+                                                if (existingRelsOfOtherCharacter.Contains(RELATIONSHIP_TYPE.ENEMY)) {
                                                     weight *= 0.3f;
                                                 }
                                                 //- character considers this one as a Friend: Weight x6
-                                                if (existingRelsOfOtherCharacter.Contains(RELATIONSHIP_TRAIT.FRIEND)) {
+                                                if (existingRelsOfOtherCharacter.Contains(RELATIONSHIP_TYPE.FRIEND)) {
                                                     weight *= 6;
                                                 }
                                             }
@@ -761,7 +761,7 @@ public class RelationshipManager : MonoBehaviour {
     }
 
     #region Adding
-    public IRelationshipData CreateNewOneWayRelationship(Relatable rel1, Relatable rel2, RELATIONSHIP_TRAIT rel) {
+    public IRelationshipData CreateNewOneWayRelationship(Relatable rel1, Relatable rel2, RELATIONSHIP_TYPE rel) {
         if (!rel1.relationshipContainer.HasRelationshipWith(rel2, rel)) {
             //TODO: Move this somewhere else
             //if (rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.traitContainer.GetNormalTrait<Trait>("Diplomatic") != null) {
@@ -776,8 +776,8 @@ public class RelationshipManager : MonoBehaviour {
         }
         return rel1.relationshipContainer.GetRelationshipDataWith(rel2);
     }
-    public IRelationshipData CreateNewRelationshipBetween(Relatable rel1, Relatable rel2, RELATIONSHIP_TRAIT rel) {
-        RELATIONSHIP_TRAIT pair = GetPairedRelationship(rel);
+    public IRelationshipData CreateNewRelationshipBetween(Relatable rel1, Relatable rel2, RELATIONSHIP_TYPE rel) {
+        RELATIONSHIP_TYPE pair = GetPairedRelationship(rel);
         //TODO: Move this somewhere else
         //!(rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.traitContainer.GetNormalTrait<Trait>("Diplomatic") != null)
         //&& !(rel == RELATIONSHIP_TRAIT.FRIEND && currCharacter.traitContainer.GetNormalTrait<Trait>("Serial Killer") != null)
@@ -798,17 +798,17 @@ public class RelationshipManager : MonoBehaviour {
     #endregion
 
     #region Removing
-    public void RemoveOneWayRelationship(Relatable rel1, Relatable rel2, RELATIONSHIP_TRAIT rel) {
+    public void RemoveOneWayRelationship(Relatable rel1, Relatable rel2, RELATIONSHIP_TYPE rel) {
         rel1.relationshipContainer.RemoveRelationship(rel2, rel);
         rel1.relationshipProcessor?.OnRelationshipRemoved(rel1, rel2, rel);
         Messenger.Broadcast(Signals.RELATIONSHIP_REMOVED, rel1, rel, rel2);
     }
-    public void RemoveRelationshipBetween(Relatable rel1, Relatable rel2, RELATIONSHIP_TRAIT rel) {
+    public void RemoveRelationshipBetween(Relatable rel1, Relatable rel2, RELATIONSHIP_TYPE rel) {
         if (!rel1.relationshipContainer.relationships.ContainsKey(rel2)
             || !rel2.relationshipContainer.relationships.ContainsKey(rel1)) {
             return;
         }
-        RELATIONSHIP_TRAIT pair = GetPairedRelationship(rel);
+        RELATIONSHIP_TYPE pair = GetPairedRelationship(rel);
         if (rel1.relationshipContainer.relationships[rel2].HasRelationship(rel)
             && rel2.relationshipContainer.relationships[rel1].HasRelationship(pair)) {
 
@@ -832,7 +832,7 @@ public class RelationshipManager : MonoBehaviour {
         string summary = "Relationship improvement between " + actor.name + " and " + target.name;
         bool hasImproved = false;
         Log log = null;
-        if (target.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
+        if (target.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TYPE.ENEMY)) {
             //If Actor and Target are Enemies, 25% chance to remove Enemy relationship. If so, Target now considers Actor a Friend.
             summary += "\n" + target.name + " considers " + actor.name + " an enemy. Rolling for chance to consider as a friend...";
             int roll = UnityEngine.Random.Range(0, 100);
@@ -841,21 +841,21 @@ public class RelationshipManager : MonoBehaviour {
                 if (target.traitContainer.GetNormalTrait<Trait>("Serial Killer") == null) {
                     log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "enemy_now_friend");
                     summary += target.name + " now considers " + actor.name + " an enemy.";
-                    RemoveOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.ENEMY);
-                    CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.FRIEND);
+                    RemoveOneWayRelationship(target, actor, RELATIONSHIP_TYPE.ENEMY);
+                    CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TYPE.FRIEND);
                     hasImproved = true;
                 }
             }
         }
         //If character is already a Friend, will not change actual relationship but will consider it improved
-        else if (target.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.FRIEND)) {
+        else if (target.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TYPE.FRIEND)) {
             hasImproved = true;
         } else if (!target.relationshipContainer.HasRelationshipWith(actor)) {
             if (target.traitContainer.GetNormalTrait<Trait>("Serial Killer") == null) {
                 log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "now_friend");
                 summary += "\n" + target.name + " has no relationship with " + actor.name + ". " + target.name + " now considers " + actor.name + " a friend.";
                 //If Target has no relationship with Actor, Target now considers Actor a Friend.
-                CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.FRIEND);
+                CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TYPE.FRIEND);
                 hasImproved = true;
             }
         }
@@ -942,11 +942,11 @@ public class RelationshipManager : MonoBehaviour {
         //}
 
         //If Target considers Actor a Friend, remove that. If Target is in Bad or Dark Mood, Target now considers Actor an Enemy. Otherwise, they are just no longer friends.
-        if (target.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND)) {
+        if (target.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TYPE.FRIEND)) {
             summary += "\n" + target.name + " considers " + actorAlterEgo.name + " as a friend. Removing friend and replacing with enemy";
-            RemoveOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND);
+            RemoveOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TYPE.FRIEND);
             if (target.currentMoodType == CHARACTER_MOOD.BAD || target.currentMoodType == CHARACTER_MOOD.DARK) {
-                CreateNewOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
+                CreateNewOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TYPE.ENEMY);
                 Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "friend_now_enemy");
                 log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -961,13 +961,13 @@ public class RelationshipManager : MonoBehaviour {
             }
         }
         //If character is already an Enemy, will not change actual relationship but will consider it degraded
-        else if (target.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
+        else if (target.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TYPE.ENEMY)) {
             hasDegraded = true;
         }
         //If Target is only Relative of Actor(no other relationship) or has no relationship with Actor, Target now considers Actor an Enemy.
-        else if (!target.relationshipContainer.HasRelationshipWith(actorAlterEgo) || (target.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.RELATIVE) && target.relationshipContainer.GetRelationshipDataWith(actorAlterEgo).relationships.Count == 1)) {
+        else if (!target.relationshipContainer.HasRelationshipWith(actorAlterEgo) || (target.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TYPE.RELATIVE) && target.relationshipContainer.GetRelationshipDataWith(actorAlterEgo).relationships.Count == 1)) {
             summary += "\n" + target.name + " and " + actorAlterEgo.owner.name + " has no relationship or only has relative relationship. " + target.name + " now considers " + actorAlterEgo.owner.name + " an enemy.";
-            CreateNewOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
+            CreateNewOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TYPE.ENEMY);
 
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "now_enemy");
             log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

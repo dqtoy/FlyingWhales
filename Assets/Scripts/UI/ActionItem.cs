@@ -1,89 +1,48 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using EZObjectPools;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ActionItem : MonoBehaviour {
+public class ActionItem : PooledObject {
 
-    public object obj { get; private set; }
+	[SerializeField] private Button button;
+	[SerializeField] private Image actionImg;
+	[SerializeField] private Image coverImg;
+	[SerializeField] private TextMeshProUGUI actionLbl;
 
-    [SerializeField] protected Image actionIcon;
-    [SerializeField] protected CharacterPortrait portraitIcon;
-    [SerializeField] protected Button actionBtn;
-    [SerializeField] protected UIHoverPosition hoverPos;
-    [SerializeField] protected GameObject buttonCover;
-
-
-    public void SetAction(object obj) {
-        this.obj = obj;
-        if (obj == null) {
-            actionIcon.gameObject.SetActive(false);
-            portraitIcon.gameObject.SetActive(false);
-        } else if (obj is Summon) {
-            Summon summon = obj as Summon;
-            actionIcon.gameObject.SetActive(false);
-            portraitIcon.gameObject.SetActive(true);
-            portraitIcon.GeneratePortrait(summon);
-            AddSummonListeners();
-        }
-    }
-    private void ClearAction() {
-        if (obj is Summon) {
-            RemoveSummonListeners();
-        }
-        SetAction(null);
-    }
-
-    #region Interactions
-    public void OnClick() {
-        if (obj is Summon) {
-            PlayerUI.Instance.SetCurrentlySelectedSummonSlot(PlayerManager.Instance.player.GetSummonSlotBySummon((obj as Summon)));
-            PlayerUI.Instance.OnClickSummon();
-        }
-    }
-    public void OnHoverEnter() {
-        if (obj is Summon) {
-            ShowSummonTooltip((obj as Summon).summonType);
-        }
-    }
-    public void OnHoverExit() {
-        UIManager.Instance.HideSmallInfo();
-    }
-    private void Disable() {
-        actionBtn.interactable = false;
-        buttonCover.SetActive(true);
-    }
-    private void Enable() {
-        actionBtn.interactable = true;
-        buttonCover.SetActive(false);
-    }
-    #endregion
-
-    #region Summons
-    private void AddSummonListeners() {
-        Messenger.AddListener<Summon>(Signals.PLAYER_REMOVED_SUMMON, OnPlayerRemovedSummon);
-        Messenger.AddListener<Summon>(Signals.PLAYER_PLACED_SUMMON, OnPlayerPlacedSummon);
-    }
-    private void RemoveSummonListeners() {
-        Messenger.RemoveListener<Summon>(Signals.PLAYER_REMOVED_SUMMON, OnPlayerRemovedSummon);
-        Messenger.RemoveListener<Summon>(Signals.PLAYER_PLACED_SUMMON, OnPlayerPlacedSummon);
-    }
-    private void ShowSummonTooltip(SUMMON_TYPE currentlySelectedSummon) {
-        string header = Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedSummon.ToString());
-        string message = PlayerManager.Instance.player.GetSummonDescription(currentlySelectedSummon);
-        UIManager.Instance.ShowSmallInfo(message, hoverPos, header);
-    }
-    private void OnPlayerRemovedSummon(Summon summon) {
-        if (obj == summon) {
-            ClearAction();
-        }
-    }
-    private void OnPlayerPlacedSummon(Summon summon) {
-        if (obj == summon) {
-            Disable();
-        }
-    }
-    #endregion
-
-
+	private string expiryKey;
+	
+	public void SetAction(System.Action action, Sprite icon, string actionName) {
+		button.onClick.AddListener(action.Invoke);
+		if (icon != null) {
+			actionImg.sprite = icon;	
+		}
+		actionLbl.text = actionName;
+		SetAsClickable();
+	}
+	public void SetAsUninteractableUntil(int ticks) {
+		GameDate date = GameManager.Instance.Today();
+		date = date.AddTicks(ticks);
+		SetAsUninteractableUntil(date);
+	}
+	public void SetAsUninteractableUntil(GameDate date) {
+		button.interactable = false;
+		coverImg.gameObject.SetActive(true);
+		expiryKey = SchedulingManager.Instance.AddEntry(date, SetAsClickable, this);
+	}
+	private void SetAsClickable() {
+		button.interactable = true;
+		coverImg.gameObject.SetActive(false);
+	}
+	
+	public override void Reset() {
+		base.Reset();
+		button.onClick.RemoveAllListeners();
+		if (string.IsNullOrEmpty(expiryKey) == false) {
+			SchedulingManager.Instance.RemoveSpecificEntry(expiryKey);
+		}
+		expiryKey = string.Empty;
+	}
 }

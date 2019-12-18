@@ -256,7 +256,7 @@ public class Faction {
             string log = GameManager.Instance.TodayLogString() + name + " faction is deciding a new leader...";
 
             log += "\nChecking male relatives of the king...";
-            List<Character> maleRelatives = FactionManager.Instance.GetViableRulers(previousRuler, GENDER.MALE, RELATIONSHIP_TRAIT.RELATIVE);
+            List<Character> maleRelatives = FactionManager.Instance.GetViableRulers(previousRuler, GENDER.MALE, RELATIONSHIP_TYPE.RELATIVE);
             if (maleRelatives.Count > 0) {
                 newRuler = maleRelatives[UnityEngine.Random.Range(0, maleRelatives.Count)];
                 log += "\nNew Ruler: " + newRuler.name;
@@ -268,7 +268,7 @@ public class Faction {
                     log += "\nNew Ruler: " + newRuler.name;
                 } else {
                     log += "\nChecking female relatives of the king...";
-                    List<Character> femaleRelatives = FactionManager.Instance.GetViableRulers(previousRuler, GENDER.FEMALE, RELATIONSHIP_TRAIT.RELATIVE);
+                    List<Character> femaleRelatives = FactionManager.Instance.GetViableRulers(previousRuler, GENDER.FEMALE, RELATIONSHIP_TYPE.RELATIVE);
                     if (femaleRelatives.Count > 0) {
                         newRuler = femaleRelatives[UnityEngine.Random.Range(0, femaleRelatives.Count)];
                         log += "\nNew Ruler: " + newRuler.name;
@@ -511,7 +511,7 @@ public class Faction {
 
         while (listOfCharacters.Count != 0) {
             Character currCharacter = listOfCharacters[0];
-            Character lover = (currCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.LOVER) as AlterEgoData)?.owner ?? null;
+            Character lover = (currCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) as AlterEgoData)?.owner ?? null;
             if (lover != null) {
                 listOfCharacters.Remove(lover);
             }

@@ -21,7 +21,7 @@ public class TheFingers : BaseLandmark {
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTick);
         hasBeenActivated = false;
         currentTick = 0;
-        Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
+        Messenger.Broadcast(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
     }
 
     private void PerTick() {

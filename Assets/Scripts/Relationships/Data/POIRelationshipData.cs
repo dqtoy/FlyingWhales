@@ -4,15 +4,12 @@ using UnityEngine;
 
 public class POIRelationshipData : IRelationshipData {
     public int relationshipValue { get; private set; }
-    public List<RELATIONSHIP_TRAIT> relationships { get; private set; }
+    public List<RELATIONSHIP_TYPE> relationships { get; private set; }
     public int flirtationCount { get; private set; }
 
-    public RELATIONSHIP_EFFECT relationshipStatus {
-        get { return GetRelationshipStatus(); }
-    }
-
+    public RELATIONSHIP_EFFECT relationshipStatus => GetRelationshipStatus();
     public POIRelationshipData() {
-        relationships = new List<RELATIONSHIP_TRAIT>();
+        relationships = new List<RELATIONSHIP_TYPE>();
     }
 
     public void AdjustRelationshipValue(int amount) {
@@ -21,19 +18,19 @@ public class POIRelationshipData : IRelationshipData {
     }
 
     #region Adding
-    public void AddRelationship(RELATIONSHIP_TRAIT relType) {
+    public void AddRelationship(RELATIONSHIP_TYPE relType) {
         relationships.Add(relType);
     }
     #endregion
 
     #region Removing
-    public void RemoveRelationship(RELATIONSHIP_TRAIT relType) {
+    public void RemoveRelationship(RELATIONSHIP_TYPE relType) {
         relationships.Remove(relType);
     }
     #endregion
 
     #region Inquiry
-    public bool HasRelationship(params RELATIONSHIP_TRAIT[] rels) {
+    public bool HasRelationship(params RELATIONSHIP_TYPE[] rels) {
         for (int i = 0; i < rels.Length; i++) {
             if (relationships.Contains(rels[i])) {
                 return true; //as long as the relationship has at least 1 relationship type from the list, consider this as true.
@@ -42,9 +39,9 @@ public class POIRelationshipData : IRelationshipData {
         return false;
     }
     private RELATIONSHIP_EFFECT GetRelationshipStatus() {
-        if (HasRelationship(RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.RELATIVE, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+        if (HasRelationship(RELATIONSHIP_TYPE.FRIEND, RELATIONSHIP_TYPE.RELATIVE, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.PARAMOUR)) {
             return RELATIONSHIP_EFFECT.POSITIVE;
-        } else if (HasRelationship(RELATIONSHIP_TRAIT.ENEMY)) {
+        } else if (HasRelationship(RELATIONSHIP_TYPE.ENEMY)) {
             return RELATIONSHIP_EFFECT.NEGATIVE;
         } else {
             return RELATIONSHIP_EFFECT.NEUTRAL;
@@ -58,13 +55,22 @@ public class POIRelationshipData : IRelationshipData {
         //    return RELATIONSHIP_EFFECT.NEUTRAL;
         //}
     }
+    public RELATIONSHIP_TYPE GetFirstMajorRelationship() {
+        for (int i = 0; i < relationships.Count; i++) {
+            RELATIONSHIP_TYPE rel = relationships[i];
+            if (rel != RELATIONSHIP_TYPE.ENEMY && rel != RELATIONSHIP_TYPE.FRIEND) {
+                return rel;
+            }
+        }
+        return RELATIONSHIP_TYPE.NONE;
+    }
     #endregion
 
     #region Getting
-    public List<RELATIONSHIP_TRAIT> GetAllRelationshipOfEffect(RELATIONSHIP_EFFECT effect) {
-        List<RELATIONSHIP_TRAIT> rels = new List<RELATIONSHIP_TRAIT>();
+    public List<RELATIONSHIP_TYPE> GetAllRelationshipOfEffect(RELATIONSHIP_EFFECT effect) {
+        List<RELATIONSHIP_TYPE> rels = new List<RELATIONSHIP_TYPE>();
         for (int i = 0; i < relationships.Count; i++) {
-            RELATIONSHIP_TRAIT currRel = relationships[i];
+            RELATIONSHIP_TYPE currRel = relationships[i];
             if (RelationshipManager.Instance.GetRelationshipEffect(currRel) == effect) {
                 rels.Add(currRel);
             }

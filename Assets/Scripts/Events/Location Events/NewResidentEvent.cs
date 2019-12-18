@@ -84,7 +84,7 @@ public class NewResidentEvent : LocationEvent {
         //className = location.locationClassManager.GetNextClassToCreate();
         Character spouse2 = location.AddNewResident(race, gender, sexuality, location.region.owner);
 
-        RelationshipManager.Instance.CreateNewRelationshipBetween(spouse1, spouse2, RELATIONSHIP_TRAIT.LOVER);
+        RelationshipManager.Instance.CreateNewRelationshipBetween(spouse1, spouse2, RELATIONSHIP_TYPE.LOVER);
 
         //if (location.region != null) {
         //    spouse1.ownParty.icon.SetPosition(location.region.coreTile.transform.position);

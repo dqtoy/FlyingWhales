@@ -95,10 +95,10 @@ public partial class InteractionManager {
             //}
             if (character.isFactionless) {
                 return character.race == targetCharacter.race && character.homeRegion == targetCharacter.homeRegion &&
-                       !targetCharacter.relationshipContainer.HasRelationshipWith(character, RELATIONSHIP_TRAIT.ENEMY);
+                       !targetCharacter.relationshipContainer.HasRelationshipWith(character, RELATIONSHIP_TYPE.ENEMY);
             }
             return !character.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo,
-                RELATIONSHIP_TRAIT.ENEMY);
+                RELATIONSHIP_TYPE.ENEMY);
         }
         return false;
     }
@@ -116,10 +116,10 @@ public partial class InteractionManager {
             //}
             if (character.isFactionless) {
                 return character.race == targetCharacter.race && character.homeRegion == targetCharacter.homeRegion &&
-                       !targetCharacter.relationshipContainer.HasRelationshipWith(character, RELATIONSHIP_TRAIT.ENEMY);
+                       !targetCharacter.relationshipContainer.HasRelationshipWith(character, RELATIONSHIP_TYPE.ENEMY);
             }
             return !character.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo,
-                RELATIONSHIP_TRAIT.ENEMY); //&& character.traitContainer.GetNormalTrait<Trait>("Healer") != null;
+                RELATIONSHIP_TYPE.ENEMY); //&& character.traitContainer.GetNormalTrait<Trait>("Healer") != null;
         }
         return false;
     }
@@ -139,10 +139,10 @@ public partial class InteractionManager {
             //}
             if (character.isFactionless) {
                 return character.race == targetCharacter.race && character.homeRegion == targetCharacter.homeRegion &&
-                       !targetCharacter.relationshipContainer.HasRelationshipWith(character, RELATIONSHIP_TRAIT.ENEMY);
+                       !targetCharacter.relationshipContainer.HasRelationshipWith(character, RELATIONSHIP_TYPE.ENEMY);
             }
             return !character.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo,
-                       RELATIONSHIP_TRAIT.ENEMY) && character.traitContainer.GetNormalTrait<Trait>("Healer") != null;
+                       RELATIONSHIP_TYPE.ENEMY) && character.traitContainer.GetNormalTrait<Trait>("Healer") != null;
         }
         return false;
     }

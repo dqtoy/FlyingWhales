@@ -54,6 +54,32 @@ public class OpinionComponent {
     public int GetTotalOpinion(Character target) {
         return opinions[target].Sum(x => x.Value);
     }
+    public int GetTotalPositiveOpinionWith(Character character) {
+        if (HasOpinion(character)) {
+            int total = 0;
+            Dictionary<string, int> _opinions = GetOpinion(character);
+            foreach (KeyValuePair<string, int> pair in _opinions) {
+                if (pair.Value > 0) {
+                    total += pair.Value;
+                }
+            }
+            return total;
+        }
+        return 0;
+    }
+    public int GetTotalNegativeOpinionWith(Character character) {
+        if (HasOpinion(character)) {
+            int total = 0;
+            Dictionary<string, int> _opinions = GetOpinion(character);
+            foreach (KeyValuePair<string, int> pair in _opinions) {
+                if (pair.Value < 0) {
+                    total += pair.Value;
+                }
+            }
+            return total;
+        }
+        return 0;
+    }
     public Dictionary<string, int> GetOpinion(Character target) {
         return opinions[target];
     }

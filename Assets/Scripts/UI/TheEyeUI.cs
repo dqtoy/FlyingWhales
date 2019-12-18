@@ -7,33 +7,12 @@ using UnityEngine.UI;
 
 public class TheEyeUI : MonoBehaviour {
 
-    [Header("General")]
-    public Button interfereBtn;
-    public Image cooldownProgress;
-
     private TheEye theEye;
 
     #region General
-    public void ShowTheEyeUI(TheEye theEye) {
-        this.theEye = theEye;
-        UpdateTheEyeUI();
-        gameObject.SetActive(true);
-    }
-    public void HideTheEyeUI() {
-        gameObject.SetActive(false);
-    }
-    public void UpdateTheEyeUI() {
-        if (theEye.isInCooldown) {
-            interfereBtn.interactable = false;
-            cooldownProgress.gameObject.SetActive(true);
-            cooldownProgress.fillAmount = theEye.currentCooldownTick / (float)theEye.cooldownDuration;
-        } else {
-            interfereBtn.interactable = true;
-            cooldownProgress.gameObject.SetActive(false);
-        }
-    }
     private Minion minionToInterfere; 
-    public void OnClickInterfere() {
+    public void OnClickInterfere(BaseLandmark landmark) {
+        theEye = landmark as TheEye;
         minionToInterfere = null;
         UIManager.Instance.dualObjectPicker.ShowDualObjectPicker<Character>(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), "Choose Minion",
             CanChooseMinion, OnHoverEnterMinion, OnHoverExitMinion, OnPickFirstObject, ConfirmInterfere, "Interfere");
@@ -71,7 +50,6 @@ public class TheEyeUI : MonoBehaviour {
         Region targetRegion = regionObj as Region;
 
         (UIManager.Instance.regionInfoUI.activeRegion.mainLandmark as TheEye).StartInterference(targetRegion, character); //NOTE: This assumes that the Region Info UI is showing when the event item is clicked.
-        UpdateTheEyeUI();
     }
     #endregion
 

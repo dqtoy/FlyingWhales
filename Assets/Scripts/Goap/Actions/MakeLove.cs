@@ -113,10 +113,10 @@ public class MakeLove : GoapAction {
             targetCharacter.Death("seduced", goapNode, goapNode.actor);
         }
 
-        if (goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
+        if (goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.LOVER)) {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Satisfied", targetCharacter);
             targetCharacter.traitContainer.AddTrait(targetCharacter, "Satisfied", goapNode.actor);
-        } else if (goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+        } else if (goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.PARAMOUR)) {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Ashamed", targetCharacter);
             targetCharacter.traitContainer.AddTrait(targetCharacter, "Ashamed", goapNode.actor);
         }
@@ -166,7 +166,7 @@ public class MakeLove : GoapAction {
                 return false;
             }
             if (!(actor is SeducerSummon)) { //ignore relationships if succubus
-                if (!actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                if (!actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TYPE.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TYPE.PARAMOUR)) {
                     return false; //only lovers and paramours can make love
                 }
             }
@@ -449,7 +449,7 @@ public class MakeLoveData : GoapActionData {
             return false;
         }
         if (!(actor is SeducerSummon)) { //ignore relationships if succubus
-            if (!actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+            if (!actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TYPE.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TYPE.PARAMOUR)) {
                 return false; //only lovers and paramours can make love
             }
         }

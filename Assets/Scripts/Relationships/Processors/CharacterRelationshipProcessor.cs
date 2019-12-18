@@ -10,7 +10,7 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
         Instance = this;
     }
 
-    public void OnRelationshipAdded(Relatable rel1, Relatable rel2, RELATIONSHIP_TRAIT relType) {
+    public void OnRelationshipAdded(Relatable rel1, Relatable rel2, RELATIONSHIP_TYPE relType) {
         Character character1 = (rel1 as AlterEgoData).owner;
         Character character2 = (rel2 as AlterEgoData).owner;
         string relString = Utilities.NormalizeStringUpperCaseFirstLetters(relType.ToString());
@@ -19,13 +19,13 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
         character2.opinionComponent.AdjustOpinion(character1, relString, 0);
 
         switch (relType) {
-            case RELATIONSHIP_TRAIT.ENEMY:
+            case RELATIONSHIP_TYPE.ENEMY:
                 CreateRelationshipLog("enemy", character1, character2);
                 break;
-            case RELATIONSHIP_TRAIT.FRIEND:
+            case RELATIONSHIP_TYPE.FRIEND:
                 CreateRelationshipLog("friend", character1, character2);
                 break;
-            case RELATIONSHIP_TRAIT.LOVER:
+            case RELATIONSHIP_TYPE.LOVER:
                 if (character1.homeRegion.area != null && character2.homeRegion.area != null && character1.homeRegion == character2.homeRegion
                     && character1.homeStructure != character2.homeStructure) {
                     if(character1.homeStructure == null && character2.homeStructure != null) {
@@ -38,7 +38,7 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
                     }
                 }
                 break;
-            case RELATIONSHIP_TRAIT.EX_LOVER:
+            case RELATIONSHIP_TYPE.EX_LOVER:
                 character1.opinionComponent.AdjustOpinion(character2, "Ex Lover", -25);
                 character2.opinionComponent.AdjustOpinion(character1, "Ex Lover", -25);
                 break;
@@ -47,18 +47,18 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
         }
     }
 
-    public void OnRelationshipRemoved(Relatable rel1, Relatable rel2, RELATIONSHIP_TRAIT relType) {
+    public void OnRelationshipRemoved(Relatable rel1, Relatable rel2, RELATIONSHIP_TYPE relType) {
         Character character1 = (rel1 as AlterEgoData).owner;
         Character character2 = (rel2 as AlterEgoData).owner;
 
         switch (relType) {
-            case RELATIONSHIP_TRAIT.ENEMY:
+            case RELATIONSHIP_TYPE.ENEMY:
                 CreateRelationshipLog("not_enemy", character1, character2);
                 break;
-            case RELATIONSHIP_TRAIT.FRIEND:
+            case RELATIONSHIP_TYPE.FRIEND:
                 CreateRelationshipLog("not_friend", character1, character2);
                 break;
-            case RELATIONSHIP_TRAIT.EX_LOVER:
+            case RELATIONSHIP_TYPE.EX_LOVER:
                 character1.opinionComponent.RemoveOpinion(character2, "Ex-Lover");
                 character2.opinionComponent.RemoveOpinion(character1, "Ex-Lover");
                 break;

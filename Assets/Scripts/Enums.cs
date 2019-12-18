@@ -1123,7 +1123,7 @@ public enum STRUCTURE_TYPE {
     MAGE_QUARTERS,
     NONE,
 }
-public enum RELATIONSHIP_TRAIT {
+public enum RELATIONSHIP_TYPE {
     NONE = 0,
     ENEMY = 1,
     FRIEND = 2,

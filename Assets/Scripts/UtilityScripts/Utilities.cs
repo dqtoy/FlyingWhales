@@ -915,17 +915,17 @@ public class Utilities : MonoBehaviour {
             return "a";
         }
     }
-    public static string GetRelationshipPlural(RELATIONSHIP_TRAIT rel) {
+    public static string GetRelationshipPlural(RELATIONSHIP_TYPE rel) {
         switch (rel) {
-            case RELATIONSHIP_TRAIT.ENEMY:
+            case RELATIONSHIP_TYPE.ENEMY:
                 return "Enemies";
-            case RELATIONSHIP_TRAIT.FRIEND:
+            case RELATIONSHIP_TYPE.FRIEND:
                 return "Friends";
-            case RELATIONSHIP_TRAIT.RELATIVE:
+            case RELATIONSHIP_TYPE.RELATIVE:
                 return "Relatives";
-            case RELATIONSHIP_TRAIT.LOVER:
+            case RELATIONSHIP_TYPE.LOVER:
                 return "Lovers";
-            case RELATIONSHIP_TRAIT.PARAMOUR:
+            case RELATIONSHIP_TYPE.PARAMOUR:
                 return "Paramours";
             default:
                 return NormalizeStringUpperCaseFirstLetters(rel.ToString());

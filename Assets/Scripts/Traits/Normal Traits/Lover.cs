@@ -14,7 +14,7 @@ namespace Traits {
             description = "This character is a lover of " + targetCharacter.name;
             type = TRAIT_TYPE.RELATIONSHIP;
             effect = TRAIT_EFFECT.POSITIVE;
-            relType = RELATIONSHIP_TRAIT.LOVER;
+            relType = RELATIONSHIP_TYPE.LOVER;
             
             ticksDuration = 0;
             //effects = new List<TraitEffect>();

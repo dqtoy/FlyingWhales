@@ -45,7 +45,7 @@ public class ResolveConflict : GoapAction {
             bool hasEnemy = false;
             if (poiTarget is Character) {
                 Character targetCharacter = poiTarget as Character;
-                hasEnemy = targetCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.ENEMY) != null;
+                hasEnemy = targetCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.ENEMY) != null;
             }
             return actor != poiTarget && hasEnemy && actor.traitContainer.GetNormalTrait<Trait>("Diplomatic") != null;
         }
@@ -58,7 +58,7 @@ public class ResolveConflict : GoapAction {
         if (goapNode.poiTarget is Character) {
             Character targetCharacter = goapNode.poiTarget as Character;
             //List<Relatable> allEnemyTraits = targetCharacter.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.ENEMY);
-            Relatable relatableTarget = targetCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.ENEMY);
+            Relatable relatableTarget = targetCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.ENEMY);
             if (relatableTarget != null) {
                 goapNode.descriptionLog.AddToFillers(relatableTarget, relatableTarget.relatableName, LOG_IDENTIFIER.CHARACTER_3);
             } else {
@@ -70,9 +70,9 @@ public class ResolveConflict : GoapAction {
         if (goapNode.poiTarget is Character) {
             Character targetCharacter = goapNode.poiTarget as Character;
             //List<Relatable> allEnemyTraits = targetCharacter.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.ENEMY);
-            Relatable relatableTarget = targetCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.ENEMY);
+            Relatable relatableTarget = targetCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.ENEMY);
             if (relatableTarget != null) {
-                RelationshipManager.Instance.RemoveOneWayRelationship(targetCharacter.currentAlterEgo, relatableTarget, RELATIONSHIP_TRAIT.ENEMY);
+                RelationshipManager.Instance.RemoveOneWayRelationship(targetCharacter.currentAlterEgo, relatableTarget, RELATIONSHIP_TYPE.ENEMY);
             } else {
                 throw new System.Exception("Cannot resolve conflict for " + targetCharacter.name + " because he/she does not have enemies!");
             }
@@ -91,7 +91,7 @@ public class ResolveConflictData : GoapActionData {
         bool hasEnemy = false;
         if (poiTarget is Character) {
             Character targetCharacter = poiTarget as Character;
-            hasEnemy = targetCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.ENEMY) != null;
+            hasEnemy = targetCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.ENEMY) != null;
         }
         return actor != poiTarget && hasEnemy && actor.traitContainer.GetNormalTrait<Trait>("Diplomatic") != null;
     }

@@ -1533,7 +1533,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
 
         //Undermine Enemy Job
-        List<Character> enemyCharacters = relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.ENEMY).Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList();
+        List<Character> enemyCharacters = relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TYPE.ENEMY).Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList();
         if (!hasCreatedJob && enemyCharacters.Count > 0) {
             int chance = UnityEngine.Random.Range(0, 100);
             int value = 3;
@@ -2852,7 +2852,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                                             //Then that's only when we apply the join combat log and notif
                                             //Because if not, it means that this character is already in combat with someone else, and thus
                                             //should not product join combat log anymore
-                                            List<RELATIONSHIP_TRAIT> rels = relationshipContainer.GetRelationshipDataWith(targetCharacter.currentAlterEgo)?.relationships.OrderByDescending(x => (int) x).ToList() ?? null; //so that the first relationship to be returned is the one with higher importance.
+                                            List<RELATIONSHIP_TYPE> rels = relationshipContainer.GetRelationshipDataWith(targetCharacter.currentAlterEgo)?.relationships.OrderByDescending(x => (int) x).ToList() ?? null; //so that the first relationship to be returned is the one with higher importance.
                                             Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
                                             joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                                             joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -2873,7 +2873,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                                             //Then that's only when we apply the join combat log and notif
                                             //Because if not, it means that this character is already in combat with someone else, and thus
                                             //should not product join combat log anymore
-                                            List<RELATIONSHIP_TRAIT> rels = relationshipContainer.GetRelationshipDataWith(currentHostileOfTargetCharacter.currentAlterEgo)?.relationships.OrderByDescending(x => (int) x).ToList() ?? null; //so that the first relationship to be returned is the one with higher importance.
+                                            List<RELATIONSHIP_TYPE> rels = relationshipContainer.GetRelationshipDataWith(currentHostileOfTargetCharacter.currentAlterEgo)?.relationships.OrderByDescending(x => (int) x).ToList() ?? null; //so that the first relationship to be returned is the one with higher importance.
                                             Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
                                             joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                                             joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -4188,7 +4188,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             positiveFlirtationWeight *= 0.1f;
         }
         // x6 if initiator is Unfaithful and already has a lover
-        else if (unfaithful != null && (relData == null || !relData.HasRelationship(RELATIONSHIP_TRAIT.LOVER))) {
+        else if (unfaithful != null && (relData == null || !relData.HasRelationship(RELATIONSHIP_TYPE.LOVER))) {
             positiveFlirtationWeight *= 6f;
             positiveFlirtationWeight *= unfaithful.affairChanceMultiplier;
         }
@@ -4206,7 +4206,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         float positiveWeight = 0;
         float negativeWeight = 0;
         if (relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.relationshipContainer.GetRelationshipEffectWith(this.currentAlterEgo) != RELATIONSHIP_EFFECT.NEGATIVE
-            && relationshipValidator.CanHaveRelationship(this.currentAlterEgo, targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) && targetCharacter.relationshipValidator.CanHaveRelationship(targetCharacter.currentAlterEgo, this.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)
+            && relationshipValidator.CanHaveRelationship(this.currentAlterEgo, targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.LOVER) && targetCharacter.relationshipValidator.CanHaveRelationship(targetCharacter.currentAlterEgo, this.currentAlterEgo, RELATIONSHIP_TYPE.LOVER)
             && role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
             for (int i = 0; i < moods.Length; i++) {
                 CHARACTER_MOOD mood = moods[i];
@@ -4263,7 +4263,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         float positiveWeight = 0;
         float negativeWeight = 0;
         if (relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.relationshipContainer.GetRelationshipEffectWith(this.currentAlterEgo) != RELATIONSHIP_EFFECT.NEGATIVE
-            && relationshipValidator.CanHaveRelationship(this.currentAlterEgo, targetCharacter.currentAlterEgo,  RELATIONSHIP_TRAIT.PARAMOUR) && targetCharacter.relationshipValidator.CanHaveRelationship(targetCharacter.currentAlterEgo, this.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)
+            && relationshipValidator.CanHaveRelationship(this.currentAlterEgo, targetCharacter.currentAlterEgo,  RELATIONSHIP_TYPE.PARAMOUR) && targetCharacter.relationshipValidator.CanHaveRelationship(targetCharacter.currentAlterEgo, this.currentAlterEgo, RELATIONSHIP_TYPE.PARAMOUR)
             && role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
             for (int i = 0; i < moods.Length; i++) {
                 CHARACTER_MOOD mood = moods[i];
@@ -4303,7 +4303,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 positiveWeight *= 0.1f;
             }
             // x4 if initiator is Unfaithful and already has a lover
-            else if (unfaithful != null && (relData == null || !relData.HasRelationship(RELATIONSHIP_TRAIT.LOVER))) {
+            else if (unfaithful != null && (relData == null || !relData.HasRelationship(RELATIONSHIP_TYPE.LOVER))) {
                 positiveWeight *= 4f;
                 positiveWeight *= unfaithful.affairChanceMultiplier;
             }
@@ -4311,20 +4311,20 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             if (!RelationshipManager.Instance.IsSexuallyCompatibleOneSided(targetCharacter, this)) {
                 positiveWeight *= 0.1f;
             }
-            Relatable lover = relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.LOVER).FirstOrDefault();
+            Relatable lover = relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TYPE.LOVER).FirstOrDefault();
             //x3 all positive modifiers if character considers lover as Enemy
-            if (lover != null && relationshipContainer.HasRelationshipWith(lover, RELATIONSHIP_TRAIT.ENEMY)) {
+            if (lover != null && relationshipContainer.HasRelationshipWith(lover, RELATIONSHIP_TYPE.ENEMY)) {
                 positiveWeight *= 3f;
             }
-            if (relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.RELATIVE)) {
+            if (relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.RELATIVE)) {
                 positiveWeight *= 0.01f;
             }
             if (lover != null && lover is ITraitable && (lover as ITraitable).traitContainer.GetNormalTrait<Trait>("Ugly") != null) { //if lover is ugly
                 positiveWeight += positiveWeight * 0.75f;
             }
             //x0 if a character has a lover and does not have the Unfaithful trait
-            if ((relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.LOVER).Count > 0 && traitContainer.GetNormalTrait<Trait>("Unfaithful") == null) 
-                || (targetCharacter.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.LOVER).Count > 0 && targetCharacter.traitContainer.GetNormalTrait<Trait>("Unfaithful") == null)) {
+            if ((relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TYPE.LOVER).Count > 0 && traitContainer.GetNormalTrait<Trait>("Unfaithful") == null) 
+                || (targetCharacter.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TYPE.LOVER).Count > 0 && targetCharacter.traitContainer.GetNormalTrait<Trait>("Unfaithful") == null)) {
                 positiveWeight *= 0;
                 negativeWeight *= 0;
             }
@@ -5821,7 +5821,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
         }
         //If character has no relationships with the criminal or they are enemies and the crime is a Misdemeanor or worse:
-        else if ((!this.relationshipContainer.HasRelationshipWith(criminal) || this.relationshipContainer.HasRelationshipWith(criminal, RELATIONSHIP_TRAIT.ENEMY)) 
+        else if ((!this.relationshipContainer.HasRelationshipWith(criminal) || this.relationshipContainer.HasRelationshipWith(criminal, RELATIONSHIP_TYPE.ENEMY)) 
             && category.IsGreaterThanOrEqual(CRIME_CATEGORY.MISDEMEANOR)) {
             reactSummary += "\n" + this.name + " does not have a relationship with or is an enemy of " + criminal.name + " and the committed crime is misdemeanor or worse";
             //- Relationship Degradation between Character and Criminal

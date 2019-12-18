@@ -6,23 +6,12 @@ using TMPro;
 using System.Linq;
 
 public class PlayerBuildLandmarkUI : MonoBehaviour {
-    [Header("General")]
-    public Button buildBtn;
-    public Image buildProgress;
 
-    public HexTile currentTile { get; private set; }
+    public Region targetRegion { get; private set; }
 
     #region General
-    public void ShowPlayerBuildLandmarkUI(HexTile tile) {
-        currentTile = tile;
-        UpdateBuildButton();
-        UpdatePlayerBuildLandmarkUI();
-        gameObject.SetActive(true);
-    }
-    public void HidePlayerBuildLandmarkUI() {
-        gameObject.SetActive(false);
-    }
-    public void OnClickBuild() {
+    public void OnClickBuild(Region region) {
+        targetRegion = region;
         List<string> landmarkNames = new List<string>();
         for (int i = 0; i < PlayerManager.Instance.allLandmarksThatCanBeBuilt.Length; i++) {
             landmarkNames.Add(Utilities.NormalizeStringUpperCaseFirstLetters(PlayerManager.Instance.allLandmarksThatCanBeBuilt[i].ToString()));
@@ -63,7 +52,7 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
         if (info != string.Empty) {
             info += "\n";
         }
-        info += "Duration: " + GameManager.Instance.GetCeilingHoursBasedOnTicks(data.buildDuration) + " hours";
+        info += $"Duration: {GameManager.Instance.GetCeilingHoursBasedOnTicks(data.buildDuration).ToString()} hours";
         UIManager.Instance.ShowSmallInfo(info);
     }
     private void OnHoverExitLandmarkChoice(string landmarkName) {
@@ -71,23 +60,9 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
     }
     private void StartBuild(object minionObj, object landmarkObj) {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkObj as string);
-        currentTile.region.StartBuildingStructure(landmarkData.landmarkType, (minionObj as Character).minion);
+        targetRegion.StartBuildingStructure(landmarkData.landmarkType, (minionObj as Character).minion);
         UIManager.Instance.regionInfoUI.UpdateInfo();
-    }
-    private void UpdateBuildButton() {
-        //buildProgress.gameObject.SetActive(false);
-        //buildBtn.interactable = currentTile.region.demonicBuildingData.landmarkType == LANDMARK_TYPE.NONE && !currentTile.region.HasFeature(RegionFeatureDB.Hallowed_Ground_Feature);
-        //if (!buildBtn.interactable) {
-        //    if(currentTile.region.demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE) {
-        //        buildProgress.gameObject.SetActive(true);
-        //        buildProgress.fillAmount = 0;
-        //    }
-        //}
-    }
-    public void UpdatePlayerBuildLandmarkUI() {
-        //if(currentTile.region.demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE) {
-        //    buildProgress.fillAmount = currentTile.region.demonicBuildingData.currentDuration / (float)currentTile.region.demonicBuildingData.buildDuration;
-        //}
+        Messenger.Broadcast<Region>(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, targetRegion);
     }
     #endregion
 }

@@ -210,7 +210,7 @@ public static class Signals {
     public static string ON_OPEN_SHARE_INTEL = "OnOpenShareIntel";
     public static string ON_CLOSE_SHARE_INTEL = "OnCloseShareIntel";
     public static string SHOW_TIMER_HUB_ITEM = "ShowTimerHubItem";
-    public static string AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT = "OnAreaInfoUIUpdateAppropriateContent";
+    public static string REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT = "OnAreaInfoUIUpdateAppropriateContent";
     #endregion
 
     #region Quest Signals

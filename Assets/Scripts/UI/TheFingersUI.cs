@@ -28,44 +28,14 @@ public class TheFingersUI : MonoBehaviour {
     public GameObject exclusiveIdeologyHolder;
     public TMP_Dropdown exclusiveIdeologyCategoryDropdown;
     public TMP_Dropdown exclusiveIdeologyRequirementDropdown;
-
-    public TheFingers fingers { get; private set; }
-    //public Minion chosenMinion { get; private set; }
-    public Character chosenLeader { get; private set; }
+    private TheFingers fingers { get; set; }
+    private Character chosenLeader { get; set; }
     private List<FactionIdeology> ideologies = new List<FactionIdeology>();
 
     #region General
-    public void ShowTheFingersUI(TheFingers fingers) {
-        this.fingers = fingers;
-        if (characterNameplateItems == null) {
-            characterNameplateItems = new List<CharacterNameplateItem>();
-        }
-        //ideologyDropdown.onValueChanged.AddListener(OnChangeIdeology);
-        //exclusiveIdeologyCategoryDropdown.onValueChanged.AddListener(OnChangeExclusiveIdeologyCategory);
-        if (!fingers.hasBeenActivated) {
-            //chosenMinion = null;
-            createBtn.interactable = true;
-            createProgress.fillAmount = 0;
-            //minionName.gameObject.SetActive(false);
-            //minionPortrait.gameObject.SetActive(false);
-            //selectMinionBtn.interactable = true;
-        } else {
-            SetChosenMinion(fingers.tileLocation.region.assignedMinion.character);
-            UpdateSelectMinionBtn();
-            UpdateTheFingersUI();
-        }
-
-        gameObject.SetActive(true);
-    }
-    public void HideTheFingersUI() {
-        gameObject.SetActive(false);
-    }
-    public void UpdateTheFingersUI() {
-        if (fingers.hasBeenActivated && createProgress.gameObject.activeSelf) {
-            createProgress.fillAmount = fingers.currentTick / (float) fingers.duration;
-        }
-    }
-    public void OnClickCreate() {
+    public void OnClickCreate(BaseLandmark landmark) {
+        fingers = landmark as TheFingers;
+        characterNameplateItems = new List<CharacterNameplateItem>();
         //fingers.tileLocation.region.SetAssignedMinion(chosenMinion);
         //chosenMinion.SetAssignedRegion(fingers.tileLocation.region);
         //fingers.StartDelay(0);

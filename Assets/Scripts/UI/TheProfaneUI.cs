@@ -8,43 +8,11 @@ using System.Linq;
 using Traits;
 
 public class TheProfaneUI : MonoBehaviour {
-
-    [Header("Cooldown")]
-    [SerializeField] private Button corruptBtn;
-    [SerializeField] private Image cooldownProgess;
-    
-
-    public TheProfane profane { get; private set; }
+    private TheProfane profane { get; set; }
     private Character chosenCultist;
 
-    #region General
-    public void ShowTheProfaneUI(TheProfane profane) {
-        this.profane = profane;
-        //if (profane.isInCooldown) {
-        //    UpdateTheProfaneUI();
-        //}
-        //UpdateMinionList();
-        UpdateTheProfaneUI();
-        gameObject.SetActive(true);
-        ////Reset();
-        //minionsToggle.isOn = true; //switch to minions tab;
-        //OnToggleMinionsTab(true);
-    }
-    public void Hide() {
-        gameObject.SetActive(false);
-    }
-    public void UpdateTheProfaneUI() {
-        corruptBtn.interactable = !profane.isInCooldown;
-        if (profane.isInCooldown) {
-            cooldownProgess.gameObject.SetActive(true);
-            cooldownProgess.fillAmount = profane.currentCooldownTick / (float)profane.cooldownDuration;
-        } else {
-            cooldownProgess.gameObject.SetActive(false);
-        }
-    }
-    #endregion
-
-    public void OnClickCorrupt() {
+    public void OnClickCorrupt(BaseLandmark landmark) {
+        profane = landmark as TheProfane;
         DualObjectPickerTabSetting[] tabs = new DualObjectPickerTabSetting[] {
             //convert
             new DualObjectPickerTabSetting() {
@@ -80,11 +48,11 @@ public class TheProfaneUI : MonoBehaviour {
         } else {
             string message = "Cannot convert character: ";
             if (PlayerManager.Instance.player.mana < manaCost) {
-                message += "\n\t- Insufficient Mana. Cost is " + manaCost;
+                message += "\n\t- Insufficient Mana. Cost is " + manaCost.ToString();
             }
             if (character.traitContainer.GetNormalTrait<Trait>("Treacherous") != null) {
                 Character factionLeader = character.faction.leader as Character;
-                if (!character.relationshipContainer.HasRelationshipWith(factionLeader, RELATIONSHIP_TRAIT.ENEMY)) {
+                if (!character.relationshipContainer.HasRelationshipWith(factionLeader, RELATIONSHIP_TYPE.ENEMY)) {
                     message += "\n\t- Treacherous characters must be enemies with their faction leader to be converted to a cultist.";
                 }
                 
@@ -96,7 +64,6 @@ public class TheProfaneUI : MonoBehaviour {
         Minion minion = (minionObj as Character).minion;
         Character target = convertCharacter as Character;
         OnChooseCharacterToConvert(target);
-        UpdateTheProfaneUI();
     }
     private void OnClickInstruct(bool isOn) {
         if (isOn) {
@@ -151,7 +118,7 @@ public class TheProfaneUI : MonoBehaviour {
             return true;
         } else if (character.traitContainer.GetNormalTrait<Trait>("Treacherous") != null) {
             Character factionLeader = character.faction.leader as Character;
-            return character.relationshipContainer.HasRelationshipWith(factionLeader, RELATIONSHIP_TRAIT.ENEMY);
+            return character.relationshipContainer.HasRelationshipWith(factionLeader, RELATIONSHIP_TYPE.ENEMY);
         }
         return false;
     }

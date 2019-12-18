@@ -94,8 +94,8 @@ public class NonActionEventsComponent {
     }
     public void NormalBreakUp(Character target) {
         if (UnityEngine.Random.Range(0, 5) == 0) {
-            RELATIONSHIP_TRAIT relationship = owner.relationshipContainer.GetRelationshipFromParametersWith(target, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR);
-            if (relationship != RELATIONSHIP_TRAIT.NONE) {
+            RELATIONSHIP_TYPE relationship = owner.relationshipContainer.GetRelationshipFromParametersWith(target, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.PARAMOUR);
+            if (relationship != RELATIONSHIP_TYPE.NONE) {
                 if (owner.opinionComponent.GetTotalOpinion(target) < -25) {
                     TriggerBreakUp(target, relationship);
                 }
@@ -103,9 +103,9 @@ public class NonActionEventsComponent {
         }
 
     }
-    private void TriggerBreakUp(Character target, RELATIONSHIP_TRAIT relationship) {
+    private void TriggerBreakUp(Character target, RELATIONSHIP_TYPE relationship) {
         RelationshipManager.Instance.RemoveRelationshipBetween(owner, target, relationship);
-        if (relationship == RELATIONSHIP_TRAIT.LOVER) {
+        if (relationship == RELATIONSHIP_TYPE.LOVER) {
             //**Effect 1**: Actor - Remove Lover relationship with Character 2
             //if the relationship that was removed is lover, change home to a random unoccupied dwelling,
             //otherwise, no home. Reference: https://trello.com/c/JUSt9bEa/1938-broken-up-characters-should-live-in-separate-house
@@ -121,7 +121,7 @@ public class NonActionEventsComponent {
         if (target.opinionComponent.GetTotalOpinion(owner) > 0) {
             target.traitContainer.AddTrait(target, "Heartbroken", owner);
         }
-        RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TRAIT.EX_LOVER);
+        RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.EX_LOVER);
 
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "break_up");
         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

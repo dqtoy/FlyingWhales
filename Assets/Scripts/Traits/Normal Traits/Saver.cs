@@ -12,7 +12,7 @@ namespace Traits {
         public Saver(Character target) : base(target) {
             name = "Saver";
             description = "This character is a Saver of " + targetCharacter.name;
-            relType = RELATIONSHIP_TRAIT.SAVER;
+            relType = RELATIONSHIP_TYPE.SAVER;
             type = TRAIT_TYPE.RELATIONSHIP;
             effect = TRAIT_EFFECT.NEUTRAL;
             

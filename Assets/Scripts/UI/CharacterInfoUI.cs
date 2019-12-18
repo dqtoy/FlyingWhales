@@ -5,52 +5,35 @@ using System.Linq;
 using TMPro;
 using UnityEngine.UI;
 using Traits;
+using UnityEngine.Serialization;
 
 public class CharacterInfoUI : UIMenu {
-
-    [Space(10)]
-    [Header("Minion")]
-    [SerializeField] private GameObject defaultTogglesGO;
-    [SerializeField] private GameObject minionTogglesGO;
-    [SerializeField] private Toggle skillToggle;
-    [SerializeField] private Toggle minionTraitsToggle;
-    [SerializeField] private Toggle spellsToggle;
-    [SerializeField] private Toggle minionItemsToggle;
-    [SerializeField] private TextMeshProUGUI minionSkillLbl;
-    [SerializeField] private TextMeshProUGUI minionTraitsLbl;
-    [SerializeField] private TextMeshProUGUI minionSpellsLbl;
-    [SerializeField] private ScrollRect minionItemsScrollView;
-
+    
     [Space(10)]
     [Header("Basic Info")]
     [SerializeField] private CharacterPortrait characterPortrait;
     [SerializeField] private TextMeshProUGUI nameLbl;
     [SerializeField] private TextMeshProUGUI lvlClassLbl;
     [SerializeField] private TextMeshProUGUI plansLbl;
-    [SerializeField] private TextMeshProUGUI supplyLbl;
     [SerializeField] private LogItem plansLblLogItem;
-    [SerializeField] private FactionEmblem factionEmblem;
-    [SerializeField] private PartyEmblem partyEmblem;
-
+    
     [Space(10)]
     [Header("Location")]
-    [SerializeField] private LocationPortrait visitorLocationPortrait;
-    [SerializeField] private LocationPortrait residentLocationPortrait;
+    [SerializeField] private TextMeshProUGUI factionLbl;
+    [SerializeField] private EventLabel factionEventLbl;
+    [SerializeField] private TextMeshProUGUI currentLocationLbl;
+    [SerializeField] private EventLabel currentLocationEventLbl;
+    [SerializeField] private TextMeshProUGUI homeRegionLbl;
+    [SerializeField] private EventLabel homeRegionEventLbl;
+    [SerializeField] private TextMeshProUGUI houseLbl;
+    [SerializeField] private EventLabel houseEventLbl;
 
     [Space(10)]
     [Header("Logs")]
     [SerializeField] private GameObject logParentGO;
     [SerializeField] private GameObject logHistoryPrefab;
     [SerializeField] private ScrollRect historyScrollView;
-    [SerializeField] private Color evenLogColor;
-    [SerializeField] private Color oddLogColor;
-
-    [Space(10)]
-    [Header("Character")]
-    [SerializeField] private GameObject attackButtonGO;
-    [SerializeField] private Toggle attackBtnToggle;
-    [SerializeField] private GameObject joinBattleButtonGO;
-    [SerializeField] private Toggle joinBattleBtnToggle;
+    private LogHistoryItem[] logHistoryItems;
 
     [Space(10)]
     [Header("Stats")]
@@ -60,33 +43,26 @@ public class CharacterInfoUI : UIMenu {
 
     [Space(10)]
     [Header("Traits")]
-    [SerializeField] private ScrollRect statusTraitsScrollView;
     [SerializeField] private TextMeshProUGUI statusTraitsLbl;
-    [SerializeField] private ScrollRect normalTraitsScrollView;
     [SerializeField] private TextMeshProUGUI normalTraitsLbl;
-    [SerializeField] private ScrollRect itemsScrollView;
-    [SerializeField] private GameObject combatAttributePrefab;
     [SerializeField] private EventLabel statusTraitsEventLbl;
     [SerializeField] private EventLabel normalTraitsEventLbl;
 
     [Space(10)]
+    [Header("Items")]
+    [SerializeField] private TextMeshProUGUI itemsLbl;
+    
+    [Space(10)]
     [Header("Relationships")]
-    [SerializeField] private ScrollRect relationshipTraitsScrollView;
-    [SerializeField] private GameObject relationshipItemPrefab;
-
-    private ItemContainer[] inventoryItemContainers;
-    private LogHistoryItem[] logHistoryItems;
-
+    [SerializeField] private TextMeshProUGUI relationshipTypesLbl;
+    [SerializeField] private TextMeshProUGUI relationshipNamesLbl;
+    [SerializeField] private TextMeshProUGUI relationshipValuesLbl;
+    
     private Character _activeCharacter;
     private Character _previousCharacter;
 
-    public Character activeCharacter {
-        get { return _activeCharacter; }
-    }
-    public Character previousCharacter {
-        get { return _previousCharacter; }
-    }
-
+    public Character activeCharacter => _activeCharacter;
+    public Character previousCharacter => _previousCharacter;
     private string normalTextColor = "#CEB67C";
     private string buffTextColor = "#39FF14";
     private string flawTextColor = "#FF073A";
@@ -108,10 +84,14 @@ public class CharacterInfoUI : UIMenu {
         //Messenger.AddListener<Relatable, RELATIONSHIP_TRAIT, Relatable>(Signals.RELATIONSHIP_REMOVED, OnRelationshipRemoved);
         Messenger.AddListener<Character, Character>(Signals.OPINION_ADDED, OnOpinionAdded);
         Messenger.AddListener<Character, Character>(Signals.OPINION_REMOVED, OnOpinionRemoved);
-        inventoryItemContainers = Utilities.GetComponentsInDirectChildren<ItemContainer>(itemsScrollView.content.gameObject);
 
         normalTraitsEventLbl.SetOnClickAction(OnClickTrait);
         statusTraitsEventLbl.SetOnClickAction(OnClickTrait);
+        
+        factionEventLbl.SetOnClickAction(OnClickFaction);
+        currentLocationEventLbl.SetOnClickAction(OnClickCurrentLocation);
+        homeRegionEventLbl.SetOnClickAction(OnClickHomeLocation);
+        houseEventLbl.SetOnClickAction(OnClickHomeStructure);
 
         InitializeLogsMenu();
     }
@@ -123,18 +103,10 @@ public class CharacterInfoUI : UIMenu {
             AreaMapCameraMove.Instance.CenterCameraOn(null);    
         }
         _activeCharacter = null;
-        //UIManager.Instance.SetCoverState(false);
-        //PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
-        //PlayerUI.Instance.CollapseMinionHolder();
-        //InteractionUI.Instance.HideInteractionUI();
     }
     public override void OpenMenu() {
         _previousCharacter = _activeCharacter;
         _activeCharacter = _data as Character;
-        SetLogMenuState(false);
-        //if (_activeCharacter.marker != null) {
-        //    _activeCharacter.CenterOnCharacter();
-        //}
         base.OpenMenu();
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
             backButton.interactable = false;
@@ -142,7 +114,6 @@ public class CharacterInfoUI : UIMenu {
         if (UIManager.Instance.IsObjectPickerOpen()) {
             UIManager.Instance.HideObjectPicker();
         }
-        UpdateTabsToShow();
         UpdateCharacterInfo();
         UpdateTraits();
         UpdateRelationships();
@@ -172,11 +143,8 @@ public class CharacterInfoUI : UIMenu {
             logHistoryItems[i].gameObject.SetActive(false);
         }
     }
-    public void ResetAllScrollPositions() {
+    private void ResetAllScrollPositions() {
         historyScrollView.verticalNormalizedPosition = 1;
-        relationshipTraitsScrollView.verticalNormalizedPosition = 1;
-        statusTraitsScrollView.verticalNormalizedPosition = 1;
-        normalTraitsScrollView.verticalNormalizedPosition = 1;
     }
     public void UpdateCharacterInfo() {
         if (_activeCharacter == null) {
@@ -186,24 +154,13 @@ public class CharacterInfoUI : UIMenu {
         UpdateBasicInfo();
         UpdateStatInfo();
         UpdateLocationInfo();
-
-        if (_activeCharacter.minion != null) {
-            UpdateMinionSkills();
-            UpdateMinionTraits();
-            UpdateMinionSpells();
-        }
-        
-        //UpdateAllHistoryInfo();
-        //UpdateMemories();
     }
     private void UpdatePortrait() {
         characterPortrait.GeneratePortrait(_activeCharacter);
-        //characterPortrait.SetBGState(false);
     }
     public void UpdateBasicInfo() {
         nameLbl.text = _activeCharacter.name;
-        lvlClassLbl.text = _activeCharacter.raceClassName; //+ " (" + _activeCharacter.currentMoodType.ToString() + ")"; // + " " + _activeCharacter.role.name
-        supplyLbl.text = _activeCharacter.supply.ToString();
+        lvlClassLbl.text = _activeCharacter.raceClassName;
         UpdateThoughtBubble();
     }
     public void UpdateThoughtBubble() {
@@ -212,7 +169,7 @@ public class CharacterInfoUI : UIMenu {
             return;
         }
         if (_activeCharacter.isDead) {
-            plansLbl.text = _activeCharacter.name + " has died.";
+            plansLbl.text = $"{_activeCharacter.name} has died.";
             return;
         }
         if (_activeCharacter.minion != null) {
@@ -220,15 +177,10 @@ public class CharacterInfoUI : UIMenu {
                 plansLblLogItem.SetLog(_activeCharacter.minion.busyReasonLog);
                 plansLbl.text = Utilities.LogReplacer(_activeCharacter.minion.busyReasonLog);
             } else {
-                plansLbl.text = _activeCharacter.name + " is ready to do your bidding.";
+                plansLbl.text = $"{_activeCharacter.name} is ready to do your bidding.";
             }
             return;
         }
-        //if (_activeCharacter.currentRegion.area != null && _activeCharacter.currentRegion.area.areaMap == null) {
-        //    //area map has not yet been generated
-        //    plansLbl.text = "Visit " + _activeCharacter.currentRegion.name + " to find out what " + _activeCharacter.name + " is doing.";
-        //    return;
-        //}
         //Action
         if (_activeCharacter.currentActionNode != null) {
             Log currentLog = _activeCharacter.currentActionNode.GetCurrentLog();
@@ -241,14 +193,10 @@ public class CharacterInfoUI : UIMenu {
         if (_activeCharacter.doNotDisturb > 0) {
             Trait disablerTrait = _activeCharacter.traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER).FirstOrDefault();
             if (disablerTrait != null) {
-                if (disablerTrait.thoughtText != null && disablerTrait.thoughtText != string.Empty) {
+                if (!string.IsNullOrEmpty(disablerTrait.thoughtText)) {
                     plansLbl.text = disablerTrait.thoughtText.Replace("[Character]", _activeCharacter.name);
                     return;
                 }
-                //else {
-                //    plansLbl.text = _activeCharacter.name + " has a disabler trait: " + disablerTrait.name + ".";
-                //}
-                //return;
             }
         }
 
@@ -258,137 +206,35 @@ public class CharacterInfoUI : UIMenu {
             plansLbl.text = Utilities.LogReplacer(_activeCharacter.stateComponent.currentState.thoughtBubbleLog);
             return;
         }
-
-        ////targetted by action
-        //if (_activeCharacter.targettedByAction.Count > 0) {
-        //    //character is targetted by an action
-        //    Log targetLog = null;
-        //    for (int i = 0; i < _activeCharacter.targettedByAction.Count; i++) {
-        //        GoapAction action = _activeCharacter.targettedByAction[i];
-        //        if (action.isPerformingActualAction && action.targetLog != null) {
-        //            targetLog = action.targetLog;
-        //            break;
-        //        }
-        //    }
-        //    if (targetLog != null) {
-        //        plansLbl.text = Utilities.LogReplacer(targetLog);
-        //        return;
-        //    }
-        //}
-
-        //State Job To Do
-        //if (_activeCharacter.stateComponent.stateToDo != null) {
-        //    plansLblLogItem.SetLog(_activeCharacter.stateComponent.stateToDo.thoughtBubbleLog);
-        //    plansLbl.text = Utilities.LogReplacer(_activeCharacter.stateComponent.stateToDo.thoughtBubbleLog);
-        //    return;
-        //}
-
         //fleeing
         if (_activeCharacter.marker.hasFleePath) {
-            plansLbl.text = _activeCharacter.name + " is fleeing.";
+            plansLbl.text = $"{_activeCharacter.name} is fleeing.";
             return;
         }
 
         //Travelling
         if (_activeCharacter.currentParty.icon.isTravelling) {
             if (_activeCharacter.currentParty.owner.marker.destinationTile != null) {
-                plansLbl.text = _activeCharacter.name + " is going to " + _activeCharacter.currentParty.owner.marker.destinationTile.structure.GetNameRelativeTo(_activeCharacter);
+                plansLbl.text = $"{_activeCharacter.name} is going to {_activeCharacter.currentParty.owner.marker.destinationTile.structure.GetNameRelativeTo(_activeCharacter)}";
                 return;
             }
         }
 
         //Default - Do nothing/Idle
         if (_activeCharacter.currentStructure != null) {
-            plansLbl.text = _activeCharacter.name + " is in " + _activeCharacter.currentStructure.GetNameRelativeTo(_activeCharacter);
+            plansLbl.text = $"{_activeCharacter.name} is in {_activeCharacter.currentStructure.GetNameRelativeTo(_activeCharacter)}";
         }
 
-        plansLbl.text = _activeCharacter.name + " is in " + _activeCharacter.currentRegion.name;
-
-        //if (_activeCharacter.currentRegion != null || _activeCharacter.currentArea != null) {
-        //    Region region = _activeCharacter.currentRegion;
-        //    if(region == null) {
-        //        region = _activeCharacter.currentArea.region;
-        //    }
-        //    plansLbl.text = _activeCharacter.name + " is in " + region.name;
-        //}
-    }
-    public bool IsCharacterInfoShowing(Character character) {
-        return (isShowing && _activeCharacter == character);
-    }
-    #endregion
-
-    #region Tabs
-    /// <summary>
-    /// Update the tabs to show based on the character that is being shown on the menu
-    /// </summary>
-    private void UpdateTabsToShow() {
-        defaultTogglesGO.SetActive(activeCharacter.minion == null);
-        minionTogglesGO.SetActive(activeCharacter.minion != null);
-    }
-    #endregion
-
-    #region Minion
-    private void UpdateMinionSkills() {
-        minionSkillLbl.text = "<b><link=\"0\">" + activeCharacter.minion.combatAbility.name + "</link></b>";
-    }
-    private void UpdateMinionTraits() {
-        minionTraitsLbl.text = string.Empty;
-        for (int i = 0; i < activeCharacter.minion.deadlySin.assignments.Length; i++) {
-            if (i > 0) {
-                minionTraitsLbl.text += ", ";
-            }
-            minionTraitsLbl.text += "<b><link=\"" + i.ToString() + "\">" + Utilities.NormalizeStringUpperCaseFirstLetters(activeCharacter.minion.deadlySin.assignments[i].ToString()) + "</link></b>";
-        }
-    }
-    private void UpdateMinionSpells() {
-        if (activeCharacter.minion.interventionAbilitiesToResearch.Count > 0) {
-            minionSpellsLbl.text = string.Empty;
-            for (int i = 0; i < activeCharacter.minion.interventionAbilitiesToResearch.Count; i++) {
-                if (i > 0) {
-                    minionSpellsLbl.text += ", ";
-                }
-                minionSpellsLbl.text += "<b><link=\"" + i.ToString() + "\">" + Utilities.NormalizeStringUpperCaseFirstLetters(activeCharacter.minion.interventionAbilitiesToResearch[i].ToString()) + "</link></b>";
-            }
-        } else {
-            minionSpellsLbl.text = "<i>Minions without the spell source trait do not have extractable spells.</i>";
-        }
-    }
-    public void OnHoverActionAbility(object obj) {
-        if (obj is string) {
-            int index = System.Int32.Parse((string)obj);
-            DEADLY_SIN_ACTION action = activeCharacter.minion.deadlySin.assignments[index];
-            
-            UIManager.Instance.ShowSmallInfo(action.Description(), Utilities.NormalizeStringUpperCaseFirstLetters(action.ToString()));
-        }
-    }
-    public void OnHoverExitAbility() {
-        UIManager.Instance.HideSmallInfo();
-    }
-    public void OnHoverResearchSpell(object obj) {
-        if (obj is string) {
-            int index = System.Int32.Parse((string)obj);
-            INTERVENTION_ABILITY spell = activeCharacter.minion.interventionAbilitiesToResearch[index];
-            UIManager.Instance.ShowSmallInfo(PlayerManager.Instance.allInterventionAbilitiesData[spell].description, Utilities.NormalizeStringUpperCaseFirstLetters(spell.ToString()));
-        }
-    }
-    public void OnHoverExitSpell() {
-        UIManager.Instance.HideSmallInfo();
-    }
-    public void OnHoverCombatAbility(object obj) {
-        COMBAT_ABILITY action = activeCharacter.minion.combatAbility.type;
-        UIManager.Instance.ShowSmallInfo(action.Description(), Utilities.NormalizeStringUpperCaseFirstLetters(action.ToString()));
-    }
-    public void OnHoverExitCombatAbility() {
-        UIManager.Instance.HideSmallInfo();
+        plansLbl.text = $"{_activeCharacter.name} is in {_activeCharacter.currentRegion.name}";
     }
     #endregion
 
     #region Stats
     private void UpdateStatInfo() {
-        hpLbl.text = _activeCharacter.currentHP.ToString();
-        attackLbl.text = _activeCharacter.attackPower.ToString();
-        speedLbl.text = _activeCharacter.speed.ToString();
-        if(characterPortrait.thisCharacter != null) {
+        hpLbl.text = $"{_activeCharacter.currentHP.ToString()}/{_activeCharacter.maxHP.ToString()}";
+        attackLbl.text = $"{_activeCharacter.attackPower.ToString()}";
+        speedLbl.text = $"{_activeCharacter.speed.ToString()}";
+        if(characterPortrait.character != null) {
             characterPortrait.UpdateLvl();
         }
     }
@@ -396,13 +242,22 @@ public class CharacterInfoUI : UIMenu {
 
     #region Location
     private void UpdateLocationInfo() {
-        //if (_activeCharacter.currentRegion != null) {
-        //    visitorLocationPortrait.SetLocation(_activeCharacter.currentRegion);
-        //} else {
-        //    visitorLocationPortrait.SetLocation(_activeCharacter.currentArea.region);
-        //}
-        visitorLocationPortrait.SetLocation(_activeCharacter.currentRegion);
-        residentLocationPortrait.SetLocation(_activeCharacter.homeRegion);
+        factionLbl.text = _activeCharacter.faction != null ? $"<link=\"faction\">{_activeCharacter.faction.name}</link>" : "Factionless";
+        currentLocationLbl.text = $"<link=\"currLocation\">{_activeCharacter.currentRegion.name}</link>";
+        homeRegionLbl.text = $"<link=\"home\">{_activeCharacter.homeRegion.name}</link>";
+        houseLbl.text = $"<link=\"house\">{_activeCharacter.homeStructure.name}</link>";
+    }
+    private void OnClickFaction(object obj) {
+        UIManager.Instance.ShowFactionInfo(activeCharacter.faction);
+    }
+    private void OnClickCurrentLocation(object obj) {
+        UIManager.Instance.ShowRegionInfo(activeCharacter.currentRegion);
+    }
+    private void OnClickHomeLocation(object obj) {
+        UIManager.Instance.ShowRegionInfo(activeCharacter.homeRegion);
+    }
+    private void OnClickHomeStructure(object obj) {
+        //TODO: Center camera on home structure
     }
     #endregion
 
@@ -439,9 +294,9 @@ public class CharacterInfoUI : UIMenu {
                     color = flawTextColor;
                 }
                 if (!string.IsNullOrEmpty(statusTraits)) {
-                    statusTraits += ", ";
+                    statusTraits = $"{statusTraits}, ";
                 }
-                statusTraits += "<b><color=" + color + "><link=" + '"' + i.ToString() + '"' + ">" + currTrait.name + "</link></color></b>";
+                statusTraits = $"{statusTraits}<b><color={color}><link=\"{i}\">{currTrait.name}</link></color></b>";
             } else {
                 string color = normalTextColor;
                 if (currTrait.type == TRAIT_TYPE.BUFF) {
@@ -450,21 +305,21 @@ public class CharacterInfoUI : UIMenu {
                     color = flawTextColor;
                 }
                 if (!string.IsNullOrEmpty(normalTraits)) {
-                    normalTraits += ", ";
+                    normalTraits = $"{normalTraits}, ";
                 }
-                normalTraits += "<b><color=" + color + "><link=" + '"' + i.ToString() + '"' + ">" + currTrait.name + "</link></color></b>";
+                normalTraits = $"{normalTraits}<b><color={color}><link=\"{i}\">{currTrait.name}</link></color></b>";
             }
         }
 
         statusTraitsLbl.text = string.Empty;
         if (string.IsNullOrEmpty(statusTraits) == false) {
             //character has status traits
-            statusTraitsLbl.text = "<i>Statuses:</i> \n" + statusTraits + "\n"; 
+            statusTraitsLbl.text = statusTraits; 
         }
 
         if (string.IsNullOrEmpty(normalTraits) == false) {
             //character has normal traits
-            statusTraitsLbl.text += "<i>Traits:</i> \n" + normalTraits;
+            normalTraitsLbl.text = normalTraits;
         }
     }
     public void OnHoverTrait(object obj) {
@@ -476,7 +331,7 @@ public class CharacterInfoUI : UIMenu {
         }
 
     }
-    public void OnHoverOutTrait() {
+    private void OnHoverOutTrait() {
         UIManager.Instance.HideSmallInfo();
     }
     private void OnClickTrait(object obj) {
@@ -494,7 +349,8 @@ public class CharacterInfoUI : UIMenu {
                 StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
                 UIManager.Instance.ShowYesNoConfirmation(trait.name, traitDescription,
                     onClickYesAction: () => OnClickTriggerFlaw(trait),
-                    showCover: true, layer: 25, yesBtnText: "Trigger (" + trait.GetTriggerFlawManaCost(activeCharacter).ToString() + " Mana)",
+                    showCover: true, layer: 25, yesBtnText:
+                    $"Trigger ({trait.GetTriggerFlawManaCost(activeCharacter).ToString()} Mana)",
                     yesBtnInteractable: trait.CanFlawBeTriggered(activeCharacter),
                     pauseAndResume: true,
                     noBtnActive: false,
@@ -515,10 +371,10 @@ public class CharacterInfoUI : UIMenu {
         OnHoverOutTrait();
     }
     private void ShowCannotTriggerFlawReason(Trait trait) {
-        string reason = "You cannot trigger " + activeCharacter.name + "'s flaw because: ";
+        string reason = $"You cannot trigger {activeCharacter.name}'s flaw because: ";
         List<string> reasons = trait.GetCannotTriggerFlawReasons(activeCharacter);
         for (int i = 0; i < reasons.Count; i++) {
-            reason += "\n\t- " + reasons[i];
+            reason = $"{reason}\n\t- {reasons[i]}";
         }
         UIManager.Instance.ShowSmallInfo(reason);
     }
@@ -535,16 +391,6 @@ public class CharacterInfoUI : UIMenu {
                 noBtnActive: false
             );
         }
-        //normalTraitsLbl.raycastTarget = true;
-    }
-    #endregion
-
-    #region Buttons
-    public void OnClickLogButton() {
-        SetLogMenuState(!logParentGO.activeSelf);
-    }
-    public void OnCloseLog() {
-        SetLogMenuState(false);
     }
     #endregion
 
@@ -555,25 +401,21 @@ public class CharacterInfoUI : UIMenu {
         }
     }
     private void UpdateInventoryInfo() {
-        //if (_activeCharacter.minion != null) {
-        //    return;
-        //}
-        for (int i = 0; i < inventoryItemContainers.Length; i++) {
-            ItemContainer currContainer = inventoryItemContainers[i];
-            SpecialToken currInventoryItem = _activeCharacter.items.ElementAtOrDefault(i);
-            currContainer.SetItem(currInventoryItem);
-            if (activeCharacter.minion != null) {
-                currContainer.transform.SetParent(minionItemsScrollView.content);
-            } else {
-                currContainer.transform.SetParent(itemsScrollView.content);
+        itemsLbl.text = string.Empty;
+        for (int i = 0; i < _activeCharacter.items.Count; i++) {
+            SpecialToken currInventoryItem = _activeCharacter.items[i];
+            if (i != _activeCharacter.items.Count - 1) {
+                itemsLbl.text = $"{itemsLbl.text}, ";
             }
+            itemsLbl.text = $"{itemsLbl.text} {currInventoryItem.name}";
         }
     }
     #endregion
 
     #region History
     private void UpdateHistory(object obj) {
-        if (obj is Character && _activeCharacter != null && (obj as Character).id == _activeCharacter.id && _activeCharacter.minion == null) {
+        var character = obj as Character;
+        if (character != null && _activeCharacter != null && character.id == _activeCharacter.id && _activeCharacter.minion == null) {
             UpdateAllHistoryInfo();
         }
     }
@@ -590,32 +432,12 @@ public class CharacterInfoUI : UIMenu {
                 Log currLog = _activeCharacter.history[historyLastIndex - i];
                 currItem.gameObject.SetActive(true);
                 currItem.SetLog(currLog);
-                if (Utilities.IsEven(i)) {
-                    currItem.SetLogColor(evenLogColor);
-                } else {
-                    currItem.SetLogColor(oddLogColor);
-                }
             } else {
                 currItem.gameObject.SetActive(false);
             }
-            //if (currLog != null) {
-                
-            //} else {
-            //}
         }
     }
-    private bool IsLogAlreadyShown(Log log) {
-        for (int i = 0; i < logHistoryItems.Length; i++) {
-            LogHistoryItem currItem = logHistoryItems[i];
-            if (currItem.log != null) {
-                if (currItem.log.id == log.id) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public void SetLogMenuState(bool state) {
+    private void SetLogMenuState(bool state) {
         logParentGO.SetActive(state);
     }
     #endregion   
@@ -657,42 +479,27 @@ public class CharacterInfoUI : UIMenu {
     #region For Testing
     public void ShowCharacterTestingInfo() {
         string summary = "Home structure: " + activeCharacter.homeStructure?.ToString() ?? "None";
-        summary += "\nCurrent structure: " + activeCharacter.currentStructure?.ToString() ?? "None";
-        summary += "\nPOI State: " + activeCharacter.state.ToString();
-        summary += "\nDo Not Disturb: " + activeCharacter.doNotDisturb.ToString();
-        summary += "\nDo Not Get Hungry: " + activeCharacter.needsComponent.doNotGetHungry.ToString();
-        summary += "\nDo Not Get Tired: " + activeCharacter.needsComponent.doNotGetTired.ToString();
-        summary += "\nDo Not Get Lonely: " + activeCharacter.needsComponent.doNotGetLonely.ToString();
-        summary += "\nDo Not Recover HP: " + activeCharacter.doNotRecoverHP.ToString();
-        summary += "\nFullness Time: " + (activeCharacter.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.fullnessForcedTick));
-        summary += "\nTiredness Time: " + (activeCharacter.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.tirednessForcedTick));
-        summary += "\nRemaining Sleep Ticks: " + activeCharacter.needsComponent.currentSleepTicks.ToString();
-        summary += "\nFood: " + activeCharacter.food.ToString();
-        summary += "\nRole: " + activeCharacter.role.roleType.ToString();
-        summary += "\nSexuality: " + activeCharacter.sexuality.ToString();
-        summary += "\nMood: " + activeCharacter.moodValue.ToString() + "(" + activeCharacter.currentMoodType.ToString() + ")";
-        summary += "\nHP: " + activeCharacter.currentHP.ToString() + "/" + activeCharacter.maxHP.ToString();
-        summary += "\nIgnore Hostiles: " + activeCharacter.ignoreHostility.ToString();
-        summary += "\nAttack Range: " + activeCharacter.characterClass.attackRange.ToString();
-        summary += "\nAttack Speed: " + activeCharacter.attackSpeed.ToString();
-        summary += "\nCurrent State: " + activeCharacter.stateComponent.currentState?.ToString() ?? "None";
-        //summary += "\nState To Do: " + activeCharacter.stateComponent.stateToDo?.ToString() ?? "None";
-        summary += "\nActions targetting this character: ";
-        //if (activeCharacter.targettedByAction.Count > 0) {
-        //    for (int i = 0; i < activeCharacter.targettedByAction.Count; i++) {
-        //        summary += "\n" + activeCharacter.targettedByAction[i].goapName + " done by " + activeCharacter.targettedByAction[i].actor.name;
-        //    }
-        //} else {
-        //    summary += "None";
-        //}
-        //summary += "\nActions advertised by this character: ";
-        //if (activeCharacter.poiGoapActions.Count > 0) {
-        //    for (int i = 0; i < activeCharacter.poiGoapActions.Count; i++) {
-        //        summary += "|" + activeCharacter.poiGoapActions[i].ToString() + "|";
-        //    }
-        //} else {
-        //    summary += "None";
-        //}
+        summary = $"{summary}{("\nCurrent structure: " + activeCharacter.currentStructure?.ToString() ?? "None")}";
+        summary = $"{summary}{("\nPOI State: " + activeCharacter.state.ToString())}";
+        summary = $"{summary}{("\nDo Not Disturb: " + activeCharacter.doNotDisturb.ToString())}";
+        summary = $"{summary}{("\nDo Not Get Hungry: " + activeCharacter.needsComponent.doNotGetHungry.ToString())}";
+        summary = $"{summary}{("\nDo Not Get Tired: " + activeCharacter.needsComponent.doNotGetTired.ToString())}";
+        summary = $"{summary}{("\nDo Not Get Lonely: " + activeCharacter.needsComponent.doNotGetLonely.ToString())}";
+        summary = $"{summary}{("\nDo Not Recover HP: " + activeCharacter.doNotRecoverHP.ToString())}";
+        summary = $"{summary}{("\nFullness Time: " + (activeCharacter.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.fullnessForcedTick)))}";
+        summary = $"{summary}{("\nTiredness Time: " + (activeCharacter.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.tirednessForcedTick)))}";
+        summary = $"{summary}{("\nRemaining Sleep Ticks: " + activeCharacter.needsComponent.currentSleepTicks.ToString())}";
+        summary = $"{summary}{("\nFood: " + activeCharacter.food.ToString())}";
+        summary = $"{summary}{("\nRole: " + activeCharacter.role.roleType.ToString())}";
+        summary = $"{summary}{("\nSexuality: " + activeCharacter.sexuality.ToString())}";
+        summary = $"{summary}{("\nMood: " + activeCharacter.moodValue.ToString() + "(" + activeCharacter.currentMoodType.ToString() + ")")}";
+        summary = $"{summary}{("\nHP: " + activeCharacter.currentHP.ToString() + "/" + activeCharacter.maxHP.ToString())}";
+        summary = $"{summary}{("\nIgnore Hostiles: " + activeCharacter.ignoreHostility.ToString())}";
+        summary = $"{summary}{("\nAttack Range: " + activeCharacter.characterClass.attackRange.ToString())}";
+        summary = $"{summary}{("\nAttack Speed: " + activeCharacter.attackSpeed.ToString())}";
+        summary = $"{summary}{("\nCurrent State: " + activeCharacter.stateComponent.currentState?.ToString() ?? "None")}";
+        summary = $"{summary}\nActions targeting this character: ";
+        
         summary += "\n" + activeCharacter.needsComponent.GetNeedsSummary();
         summary += "\n\nAlter Egos: ";
         for (int i = 0; i < activeCharacter.alterEgos.Values.Count; i++) {
@@ -703,49 +510,28 @@ public class CharacterInfoUI : UIMenu {
     public void HideCharacterTestingInfo() {
         UIManager.Instance.HideSmallInfo();
     }
-    public void DropACharacter() {
-        //_activeCharacter.DropACharacter();
-    }
-    public void LogAwareness() {
-        _activeCharacter.marker.LogPOIsInVisionRange();
-        _activeCharacter.LogAwarenessList();
-    }
-    public void Death() {
-        _activeCharacter.Death();
-    }
-    public void AssaultACharacter() {
-        List<Character> characterPool = new List<Character>();
-        for (int i = 0; i < _activeCharacter.currentRegion.charactersAtLocation.Count; i++) {
-            Character character = _activeCharacter.currentRegion.charactersAtLocation[i];
-            if (!character.isDead && !(character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine != null)) {
-                characterPool.Add(character);
-            }
-        }
-        if(characterPool.Count > 0) {
-            Character chosenCharacter = characterPool[UnityEngine.Random.Range(0, characterPool.Count)];
-            _activeCharacter.CreateKnockoutJob(chosenCharacter);
-        } else {
-            Debug.LogError("No eligible characters to assault!");
-        }
-    }
     #endregion
 
     #region Relationships
     private void UpdateRelationships() {
-        //CharacterRelationshipItem[] items = Utilities.GetComponentsInDirectChildren<CharacterRelationshipItem>(relationshipTraitsScrollView.content.gameObject);
-        Utilities.DestroyChildren(relationshipTraitsScrollView.content);
-        foreach (Character target in activeCharacter.opinionComponent.opinions.Keys) {
-            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(relationshipItemPrefab.name, Vector3.zero, Quaternion.identity, relationshipTraitsScrollView.content);
-            CharacterRelationshipItem item = go.GetComponent<CharacterRelationshipItem>();
-            item.Initialize(activeCharacter, target);
+        relationshipTypesLbl.text = string.Empty;
+        relationshipNamesLbl.text = string.Empty;
+        relationshipValuesLbl.text = string.Empty;
+        for (int i = 0; i < _activeCharacter.opinionComponent.opinions.Keys.Count; i++) {
+            Character target = _activeCharacter.opinionComponent.opinions.Keys.ElementAt(i);
+            IRelationshipData relData = _activeCharacter.relationshipContainer.GetRelationshipDataWith(target);
+            RELATIONSHIP_TYPE relType = RELATIONSHIP_TYPE.NONE;
+            if (relData != null) {
+                relType = relData.GetFirstMajorRelationship();    
+            }
+            if (relType == RELATIONSHIP_TYPE.NONE) {
+                relationshipTypesLbl.text += "Acquaintance\n";
+            } else {
+                relationshipTypesLbl.text += Utilities.NormalizeString(relType.ToString()) + "\n";    
+            }
+            relationshipNamesLbl.text += target.name + "\n";
+            relationshipValuesLbl.text += $"+{_activeCharacter.opinionComponent.GetTotalPositiveOpinionWith(target).ToString()} ({_activeCharacter.opinionComponent.GetTotalNegativeOpinionWith(target).ToString()})\n";
         }
-        //foreach (KeyValuePair<Relatable, IRelationshipData> keyValuePair in activeCharacter.relationshipContainer.relationships) {
-        //    GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(relationshipItemPrefab.name, Vector3.zero, Quaternion.identity, relationshipTraitsScrollView.content);
-        //    CharacterRelationshipItem item = go.GetComponent<CharacterRelationshipItem>();
-        //    if (keyValuePair.Key is AlterEgoData) {
-        //        item.Initialize(keyValuePair.Key as AlterEgoData, keyValuePair.Value);
-        //    }
-        //}
     }
     private void OnOpinionAdded(Character owner, Character target) {
         if (isShowing && owner == activeCharacter) {
@@ -757,20 +543,5 @@ public class CharacterInfoUI : UIMenu {
             UpdateRelationships();
         }
     }
-    //private void OnRelationshipAdded(Relatable gainedBy, Relatable rel) {
-    //    if (isShowing) {
-    //        if (gainedBy == activeCharacter.currentAlterEgo || rel == activeCharacter.currentAlterEgo) {
-    //            UpdateRelationships();
-    //        }
-    //    }
-
-    //}
-    //private void OnRelationshipRemoved(Relatable gainedBy, RELATIONSHIP_TRAIT trait, Relatable rel) {
-    //    if (isShowing) {
-    //        if (gainedBy == activeCharacter.currentAlterEgo || rel == activeCharacter.currentAlterEgo) {
-    //            UpdateRelationships();
-    //        }
-    //    }
-    //}
     #endregion
 }

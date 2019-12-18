@@ -859,8 +859,8 @@ public class ConsoleMenu : UIMenu {
             return;
         }
         string typeParameterString = parameters[0];
-        RELATIONSHIP_TRAIT rel;
-        if (!Enum.TryParse<RELATIONSHIP_TRAIT>(typeParameterString, out rel)) {
+        RELATIONSHIP_TYPE rel;
+        if (!Enum.TryParse<RELATIONSHIP_TYPE>(typeParameterString, out rel)) {
             AddErrorMessage("There is no relationship of type " + typeParameterString);
         }
         string character1ParameterString = parameters[1];

@@ -6,25 +6,12 @@ using TMPro;
 using System.Linq;
 
 public class PlayerResearchUI : MonoBehaviour {
-    [Header("General")]
-    public Button researchBtn;
-    public Image researchProgress;
-
-    public TheSpire spire { get; private set; }
-
+    private TheSpire spire { get; set; }
     private Minion chosenMinion;
 
     #region General
-    public void ShowPlayerResearchUI(TheSpire spire) {
-        this.spire = spire;
-
-        UpdatePlayerResearchUI();
-        gameObject.SetActive(true);
-    }
-    public void HidePlayerResearchUI() {
-        gameObject.SetActive(false);
-    }
-    public void OnClickResearch() {
+    public void OnClickResearch(BaseLandmark landmark) {
+        spire = landmark as TheSpire;
         UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), "Select minion", CanChooseMinion, OnHoverEnterMinion, OnHoverExitMinion, OnChooseMinion, OnConfirmExtract, "Extract");
     }
     private void OnHoverEnterMinion(Character character) {
@@ -56,16 +43,6 @@ public class PlayerResearchUI : MonoBehaviour {
         spire.tileLocation.region.SetAssignedMinion(minion);
         minion.SetAssignedRegion(spire.tileLocation.region);
         spire.ExtractInterventionAbility(ability);
-        UpdatePlayerResearchUI();
-    }
-    public void UpdatePlayerResearchUI() {
-        researchBtn.interactable = !spire.isInCooldown;
-        if (spire.isInCooldown) {
-            researchProgress.gameObject.SetActive(true);
-            researchProgress.fillAmount = spire.currentCooldownTick / (float) spire.cooldownDuration;
-        } else {
-            researchProgress.gameObject.SetActive(false);
-        }
     }
     #endregion
 

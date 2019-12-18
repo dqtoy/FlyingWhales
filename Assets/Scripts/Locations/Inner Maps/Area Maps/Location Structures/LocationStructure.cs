@@ -28,7 +28,7 @@ public class LocationStructure {
     public LocationStructure(STRUCTURE_TYPE structureType, ILocation location, bool isInside) {
         id = Utilities.SetID(this);
         this.structureType = structureType;
-        this.name = Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
+        this.name = $"{Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())} {id.ToString()}";
         this.isInside = isInside;
         this.location = location;
         charactersHere = new List<Character>();

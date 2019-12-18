@@ -8,7 +8,7 @@ public class SaveDataRelationship {
     public int targetCharacterID;
     public string targetCharacterAlterEgo;
 
-    public List<RELATIONSHIP_TRAIT> rels;
+    public List<RELATIONSHIP_TYPE> rels;
     public bool isDisabled;
     public int flirtationCount;
     
