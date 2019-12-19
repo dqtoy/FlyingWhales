@@ -50,13 +50,12 @@ public class DefaultJoinFaction : CharacterBehaviourComponent {
                 }
                 if (viableFactions != null && viableFactions.Count > 0) {
                     Faction chosenFaction = viableFactions[UnityEngine.Random.Range(0, viableFactions.Count)];
-                    chosenFaction.JoinFaction(character);
+                    character.ChangeFactionTo(chosenFaction);
+                    //chosenFaction.JoinFaction(character);
                     log += "\n-Chosen faction to join: " + chosenFaction.name;
                 } else {
                     log += "\n-No available faction that the character fits the ideology";
                 }
-
-                character.currentRegion.owner.JoinFaction(character);
             }
             return true;
         } else if (UnityEngine.Random.Range(0, 100) < 10) {

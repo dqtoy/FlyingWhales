@@ -82,7 +82,7 @@ public class FactionInfoUI : UIMenu {
     #region Basic Info
     private void UpdateBasicInfo() {
         factionNameLbl.text = activeFaction.name;
-        factionTypeLbl.text = Utilities.GetNormalizedRaceAdjective(activeFaction.race) + " Faction";
+        factionTypeLbl.text = activeFaction.GetRaceText();
         emblem.SetFaction(activeFaction);
     }
     #endregion

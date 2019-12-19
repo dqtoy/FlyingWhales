@@ -110,6 +110,7 @@ public class UIManager : MonoBehaviour {
     public GameObject stringNameplatePrefab;
     public GameObject unsummonedMinionNameplatePrefab;
     public GameObject worldEventNameplatePrefab;
+    public GameObject factionNameplatePrefab;
 
     [Space(10)]
     [Header("Dual Object Picker")]

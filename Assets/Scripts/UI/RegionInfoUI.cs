@@ -50,8 +50,8 @@ public class RegionInfoUI : UIMenu {
     [SerializeField] private PlayerSummonMinionUI playerSummonMinionUI;
     [SerializeField] private PlayerUpgradeUI playerUpgradeUI;
     [SerializeField] private TheEyeUI theEyeUI;
-    [SerializeField] private TheFingersUI fingersUI;
     [SerializeField] private TheNeedlesUI needlesUI;
+    public TheFingersUI fingersUI;
 
     public Region activeRegion { get; private set; }
     private List<WorldEventNameplate> activeWorldEventNameplates = new List<WorldEventNameplate>();
@@ -574,6 +574,8 @@ public class RegionInfoUI : UIMenu {
                     case LANDMARK_TYPE.THE_FINGERS:
                         TheFingers fingers = activeRegion.mainLandmark as TheFingers;
                         item = AddNewAction("Create Faction", null, () => fingersUI.OnClickCreate(fingers));
+                        item = AddNewAction("Force Leave Faction", null, () => fingersUI.OnClickForceLeaveFaction());
+                        item = AddNewAction("Force Join Faction", null, () => fingersUI.OnClickForceJoinFaction());
                         if (fingers.hasBeenActivated) {
                             remaining = fingers.duration - fingers.currentTick;
                             item.SetAsUninteractableUntil(remaining);

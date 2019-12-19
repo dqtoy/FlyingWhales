@@ -304,6 +304,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 860dc689b4a48f442aa34a3024a86264, type: 3}
   - {fileID: 21300000, guid: 78b42a89f6925ca4caae504b7c91e78c, type: 3}
   - {fileID: 21300000, guid: 8b6e7f8939f814945b4a71ce16c2c8a3, type: 3}
+  - {fileID: 21300000, guid: 9450c3a9507c1e549800df5991839a0e, type: 3}
   - {fileID: 21300000, guid: 51f5fda9d315fa846a7eadde79d74136, type: 3}
   - {fileID: 21300000, guid: 6f75dfa9b0cb7104395538d61bf936e5, type: 3}
   - {fileID: 21300000, guid: 683795c9de78ff74f91fc16fe7030fca, type: 3}
@@ -821,6 +822,7 @@ SpriteAtlas:
   - minion_create_army_off
   - nameplate_container
   - minion_tab_traits_default
+  - dropdown_container
   - minion_tab_spells_default
   - minion_tab_items_hover
   - bottom_right_icon_holder_off

@@ -1713,11 +1713,14 @@ public class PlayerUI : MonoBehaviour {
             return;
         }
         CharacterNameplateItem item = GetInactiveCharacterNameplateItem(character);
-        int index = item.transform.GetSiblingIndex();
-        int deadHeaderIndex = deadHeader.transform.GetSiblingIndex();
-        if (item != null && index > deadHeaderIndex) {
-            item.transform.SetSiblingIndex(deadHeaderIndex);
-            aliveCount++;
+
+        if (item != null) {
+            int index = item.transform.GetSiblingIndex();
+            int deadHeaderIndex = deadHeader.transform.GetSiblingIndex();
+            if(index > deadHeaderIndex) {
+                item.transform.SetSiblingIndex(deadHeaderIndex);
+                aliveCount++;
+            }
         }
         //UpdateKillCount();
     }

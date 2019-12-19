@@ -214,6 +214,8 @@ public class DualObjectPicker : MonoBehaviour {
             if (identifier == "WorldEvent") {
                 ShowWorldEventItems(validItems.Cast<Region>().ToList(), invalidItems.Cast<Region>().ToList(), hoverEnterAction, hoverExitAction, column, toggleGroup);
             }
+        } else if (typeof(T) == typeof(Faction)) {
+            ShowFactionItems(validItems.Cast<Faction>().ToList(), invalidItems.Cast<Faction>().ToList(), hoverEnterAction, hoverExitAction, column, toggleGroup);
         }
     }
 
@@ -363,7 +365,7 @@ public class DualObjectPicker : MonoBehaviour {
         }
         for (int i = 0; i < invalidItems.Count; i++) {
             UnsummonedMinionData minion = invalidItems[i];
-            GameObject characterItemGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.stringNameplatePrefab.name, column.content);
+            GameObject characterItemGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.unsummonedMinionNameplatePrefab.name, column.content);
             UnsummonedMinionNameplateItem characterItem = characterItemGO.GetComponent<UnsummonedMinionNameplateItem>();
             characterItem.SetObject(minion);
             characterItem.ClearAllOnClickActions();
@@ -378,6 +380,57 @@ public class DualObjectPicker : MonoBehaviour {
                 characterItem.AddHoverExitAction(convertedHoverExitAction.Invoke);
             }
             characterItem.SetInteractableState(false);
+        }
+    }
+    private void ShowFactionItems<T>(List<Faction> validItems, List<Faction> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, ScrollRect column, ToggleGroup toggleGroup) {
+        Action<Faction> convertedHoverAction = null;
+        if (onHoverItemAction != null) {
+            convertedHoverAction = ConvertToFaction(onHoverItemAction);
+        }
+        Action<Faction> convertedHoverExitAction = null;
+        if (onHoverExitItemAction != null) {
+            convertedHoverExitAction = ConvertToFaction(onHoverExitItemAction);
+        }
+        for (int i = 0; i < validItems.Count; i++) {
+            Faction faction = validItems[i];
+            GameObject characterItemGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.factionNameplatePrefab.name, column.content);
+            FactionNameplateItem item = characterItemGO.GetComponent<FactionNameplateItem>();
+            item.SetObject(faction);
+            item.ClearAllOnClickActions();
+
+            item.ClearAllHoverEnterActions();
+            if (convertedHoverAction != null) {
+                item.AddHoverEnterAction(convertedHoverAction.Invoke);
+            }
+
+            item.ClearAllHoverExitActions();
+            if (convertedHoverExitAction != null) {
+                item.AddHoverExitAction(convertedHoverExitAction.Invoke);
+            }
+            item.SetAsToggle();
+            item.AddOnToggleAction((obj, isOn) => OnToggleItem(obj, isOn, column));
+            item.SetToggleGroup(toggleGroup);
+            item.SetInteractableState(true);
+            //item.AddHoverEnterAction(ShowMinionCardTooltip);
+            //item.AddHoverExitAction(HideMinionCardTooltip);
+        }
+        for (int i = 0; i < invalidItems.Count; i++) {
+            Faction faction = invalidItems[i];
+            GameObject itemGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.factionNameplatePrefab.name, column.content);
+            FactionNameplateItem item = itemGO.GetComponent<FactionNameplateItem>();
+            item.SetObject(faction);
+            item.ClearAllOnClickActions();
+
+            item.ClearAllHoverEnterActions();
+            if (convertedHoverAction != null) {
+                item.AddHoverEnterAction(convertedHoverAction.Invoke);
+            }
+
+            item.ClearAllHoverExitActions();
+            if (convertedHoverExitAction != null) {
+                item.AddHoverExitAction(convertedHoverExitAction.Invoke);
+            }
+            item.SetInteractableState(false);
         }
     }
     private void ShowMinionCardTooltip(UnsummonedMinionData data) {
@@ -507,7 +560,11 @@ public class DualObjectPicker : MonoBehaviour {
     }
     public Action<Region> ConvertToRegion<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
-        else return new Action<Region>(o => myActionT((T)(object)o));
+        else return new Action<Region>(o => myActionT((T) (object) o));
+    }
+    public Action<Faction> ConvertToFaction<T>(Action<T> myActionT) {
+        if (myActionT == null) return null;
+        else return new Action<Faction>(o => myActionT((T) (object) o));
     }
     #endregion
 }
