@@ -2578,7 +2578,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             return Utilities.LogReplacer(stateComponent.currentState.thoughtBubbleLog);
         }
         //fleeing
-        if (marker.hasFleePath) {
+        if (marker != null && marker.hasFleePath) {
             return $"{name} is fleeing.";
         }
 
