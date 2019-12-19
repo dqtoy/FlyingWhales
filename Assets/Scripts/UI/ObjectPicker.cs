@@ -210,7 +210,7 @@ public class ObjectPicker : MonoBehaviour {
         for (int i = 0; i < validItems.Count; i++) {
             Region currRegion = validItems[i];
             GameObject areaItemGO = UIManager.Instance.InstantiateUIObject(objectPickerRegionItemPrefab.name, objectPickerScrollView.content);
-            RegionPickerItem item = areaItemGO.GetComponent<RegionPickerItem>();
+            RegionNameplateItem item = areaItemGO.GetComponent<RegionNameplateItem>();
             item.SetObject(currRegion);
             item.ClearAllOnClickActions();
             item.AddOnToggleAction(OnPickObject);
@@ -230,7 +230,7 @@ public class ObjectPicker : MonoBehaviour {
         for (int i = 0; i < invalidItems.Count; i++) {
             Region currRegion = invalidItems[i];
             GameObject areaItemGO = UIManager.Instance.InstantiateUIObject(objectPickerRegionItemPrefab.name, objectPickerScrollView.content);
-            RegionPickerItem item = areaItemGO.GetComponent<RegionPickerItem>();
+            RegionNameplateItem item = areaItemGO.GetComponent<RegionNameplateItem>();
             item.SetObject(currRegion);
             item.ClearAllOnClickActions();
 

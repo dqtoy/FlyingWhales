@@ -17,6 +17,8 @@ public class KillCountCharacterItem : CharacterNameplateItem {
         Messenger.AddListener<Character>(Signals.CHARACTER_SWITCHED_ALTER_EGO, OnCharacterSwitchedAlterEgo);
         Messenger.AddListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterChangedFaction);
         Messenger.AddListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
+        Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
+        Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
     public override void Reset() {
         base.Reset();
@@ -28,10 +30,12 @@ public class KillCountCharacterItem : CharacterNameplateItem {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_SWITCHED_ALTER_EGO, OnCharacterSwitchedAlterEgo);
         Messenger.RemoveListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterChangedFaction);
         Messenger.RemoveListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
+        Messenger.RemoveListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
+        Messenger.RemoveListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         StopScroll();
     }
     private void UpdateInfo() {
-        SetSupportingLabelState(!character.IsAble() || transform.GetSiblingIndex() > PlayerUI.Instance.deadHeader.GetSiblingIndex()); // !LandmarkManager.Instance.enemyOfPlayerArea.region.IsFactionHere(character.faction)
+        SetSupportingLabelState(true);
         if (character.isDead) {
             supportingLbl.text = "\"" + character.deathStr + "\"";
         } else {
@@ -63,7 +67,15 @@ public class KillCountCharacterItem : CharacterNameplateItem {
                     text = "\"" + character.name + " became a minion.\"";
                 }
             }
+            if (string.IsNullOrEmpty(text)) {
+                //character is not yet dead and not disabled, show current action insteadC
+                if (character.currentActionNode != null) {
+                    Log currentLog = character.currentActionNode.GetCurrentLog();
+                    text = Utilities.LogReplacer(currentLog);
+                }
+            }
             supportingLbl.text = text;
+            
         }
     }
 
@@ -104,6 +116,16 @@ public class KillCountCharacterItem : CharacterNameplateItem {
         }
     }
     private void OnCharacterSwitchedAlterEgo(Character character) {
+        if (character.id == this.character.id) {
+            UpdateInfo();
+        }
+    }
+    private void OnCharacterDoingAction(Character character, ActualGoapNode action) {
+        if (character.id == this.character.id) {
+            UpdateInfo();
+        }
+    }
+    private void OnCharacterFinishedAction(Character character, GoapAction action, string result) {
         if (character.id == this.character.id) {
             UpdateInfo();
         }

@@ -148,6 +148,7 @@ public class ActualGoapNode {
     public virtual void DoAction(JobQueueItem job, GoapPlan plan) {
         actionStatus = ACTION_STATUS.STARTED;
         actor.SetCurrentActionNode(this, job, plan);
+        CreateThoughtBubbleLog(targetStructure);
         //parentPlan?.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
         Messenger.Broadcast(Signals.CHARACTER_DOING_ACTION, actor, this);
         actor.marker.UpdateActionIcon();
@@ -222,7 +223,6 @@ public class ActualGoapNode {
     //We only pass the job because we need to cancel it if the target tile is null
     private void MoveToDoAction(JobQueueItem job) {
         //Only create thought bubble log when characters starts the action/moves to do the action so we can pass the target structure
-        CreateThoughtBubbleLog(targetStructure);
         if (!actor.currentRegion.IsSameCoreLocationAs(targetStructure.location)) { //different core locations
             actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, doneAction: () => MoveToDoAction(job));
         } else {

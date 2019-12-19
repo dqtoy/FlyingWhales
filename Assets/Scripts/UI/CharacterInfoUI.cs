@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Inner_Maps;
 using TMPro;
 using UnityEngine.UI;
 using Traits;
@@ -54,6 +55,7 @@ public class CharacterInfoUI : UIMenu {
     
     [Space(10)]
     [Header("Relationships")]
+    [SerializeField] private EventLabel relationshipNamesEventLbl;
     [SerializeField] private TextMeshProUGUI relationshipTypesLbl;
     [SerializeField] private TextMeshProUGUI relationshipNamesLbl;
     [SerializeField] private TextMeshProUGUI relationshipValuesLbl;
@@ -87,6 +89,7 @@ public class CharacterInfoUI : UIMenu {
 
         normalTraitsEventLbl.SetOnClickAction(OnClickTrait);
         statusTraitsEventLbl.SetOnClickAction(OnClickTrait);
+        relationshipNamesEventLbl.SetOnClickAction(OnClickCharacter);
         
         factionEventLbl.SetOnClickAction(OnClickFaction);
         currentLocationEventLbl.SetOnClickAction(OnClickCurrentLocation);
@@ -99,7 +102,7 @@ public class CharacterInfoUI : UIMenu {
     #region Overrides
     public override void CloseMenu() {
         base.CloseMenu();
-        if (AreaMapCameraMove.Instance.target == _activeCharacter.marker.gameObject.transform) {
+        if (_activeCharacter != null && _activeCharacter.marker != null && AreaMapCameraMove.Instance.target == _activeCharacter.marker.gameObject.transform) {
             AreaMapCameraMove.Instance.CenterCameraOn(null);    
         }
         _activeCharacter = null;
@@ -244,8 +247,8 @@ public class CharacterInfoUI : UIMenu {
     private void UpdateLocationInfo() {
         factionLbl.text = _activeCharacter.faction != null ? $"<link=\"faction\">{_activeCharacter.faction.name}</link>" : "Factionless";
         currentLocationLbl.text = $"<link=\"currLocation\">{_activeCharacter.currentRegion.name}</link>";
-        homeRegionLbl.text = $"<link=\"home\">{_activeCharacter.homeRegion.name}</link>";
-        houseLbl.text = $"<link=\"house\">{_activeCharacter.homeStructure.name}</link>";
+        homeRegionLbl.text = _activeCharacter.homeRegion != null ? $"<link=\"home\">{_activeCharacter.homeRegion.name}</link>" : "Homeless";
+        houseLbl.text = _activeCharacter.homeStructure != null ? $"<link=\"house\">{_activeCharacter.homeStructure.name}</link>" : "Homeless";
     }
     private void OnClickFaction(object obj) {
         UIManager.Instance.ShowFactionInfo(activeCharacter.faction);
@@ -257,7 +260,18 @@ public class CharacterInfoUI : UIMenu {
         UIManager.Instance.ShowRegionInfo(activeCharacter.homeRegion);
     }
     private void OnClickHomeStructure(object obj) {
-        //TODO: Center camera on home structure
+        if (activeCharacter.homeRegion.area != null) {
+            if (InnerMapManager.Instance.isAnAreaMapShowing && InnerMapManager.Instance.currentlyShowingMap != activeCharacter.homeRegion.area.areaMap) {
+                InnerMapManager.Instance.HideAreaMap();
+            }
+            if (activeCharacter.homeRegion.area.areaMap.isShowing == false) {
+                InnerMapManager.Instance.ShowAreaMap(activeCharacter.homeRegion.area);
+            }
+            AreaMapCameraMove.Instance.CenterCameraOn(activeCharacter.homeStructure.structureObj.gameObject);
+        } else {
+            UIManager.Instance.ShowRegionInfo(activeCharacter.homeRegion);
+        }
+        
     }
     #endregion
 
@@ -270,9 +284,9 @@ public class CharacterInfoUI : UIMenu {
         UpdateThoughtBubble();
     }
     private void UpdateTraits() {
-        if (_activeCharacter.minion != null) {
-            return;
-        }
+        // if (_activeCharacter.minion != null) {
+        //     return;
+        // }
 
         string statusTraits = string.Empty;
         string normalTraits = string.Empty;
@@ -316,7 +330,7 @@ public class CharacterInfoUI : UIMenu {
             //character has status traits
             statusTraitsLbl.text = statusTraits; 
         }
-
+        normalTraitsLbl.text = string.Empty;
         if (string.IsNullOrEmpty(normalTraits) == false) {
             //character has normal traits
             normalTraitsLbl.text = normalTraits;
@@ -331,7 +345,7 @@ public class CharacterInfoUI : UIMenu {
         }
 
     }
-    private void OnHoverOutTrait() {
+    public void OnHoverOutTrait() {
         UIManager.Instance.HideSmallInfo();
     }
     private void OnClickTrait(object obj) {
@@ -404,10 +418,10 @@ public class CharacterInfoUI : UIMenu {
         itemsLbl.text = string.Empty;
         for (int i = 0; i < _activeCharacter.items.Count; i++) {
             SpecialToken currInventoryItem = _activeCharacter.items[i];
-            if (i != _activeCharacter.items.Count - 1) {
+            itemsLbl.text = $"{itemsLbl.text} {currInventoryItem.name}";
+            if (i < _activeCharacter.items.Count - 1) {
                 itemsLbl.text = $"{itemsLbl.text}, ";
             }
-            itemsLbl.text = $"{itemsLbl.text} {currInventoryItem.name}";
         }
     }
     #endregion
@@ -529,8 +543,18 @@ public class CharacterInfoUI : UIMenu {
             } else {
                 relationshipTypesLbl.text += Utilities.NormalizeString(relType.ToString()) + "\n";    
             }
-            relationshipNamesLbl.text += target.name + "\n";
-            relationshipValuesLbl.text += $"+{_activeCharacter.opinionComponent.GetTotalPositiveOpinionWith(target).ToString()} ({_activeCharacter.opinionComponent.GetTotalNegativeOpinionWith(target).ToString()})\n";
+            relationshipNamesLbl.text += $"<link=\"{i}\">{target.name}</link>\n";
+            relationshipValuesLbl.text += $"<link=\"{i}\">+{_activeCharacter.opinionComponent.GetTotalPositiveOpinionWith(target).ToString()} ({_activeCharacter.opinionComponent.GetTotalNegativeOpinionWith(target).ToString()})</link>\n";
+        }
+    }
+    public void OnHoverRelationshipValue(object obj) {
+        if (obj is string) {
+            string text = (string)obj;
+            int index = int.Parse(text);
+            Character target = _activeCharacter.opinionComponent.opinions.Keys.ElementAtOrDefault(index);
+            if (target != null) {
+                ShowRelationshipData(target);
+            }
         }
     }
     private void OnOpinionAdded(Character owner, Character target) {
@@ -541,6 +565,43 @@ public class CharacterInfoUI : UIMenu {
     private void OnOpinionRemoved(Character owner, Character target) {
         if (isShowing && owner == activeCharacter) {
             UpdateRelationships();
+        }
+    }
+    private void ShowRelationshipData(Character target) {
+        int opinionOfOther = target.opinionComponent.GetTotalOpinion(activeCharacter);
+        string summary = target.name;
+        summary += "\n---------------------";
+        Dictionary<string, int> opinions = activeCharacter.opinionComponent.GetOpinion(target);
+        foreach (KeyValuePair<string, int> kvp in opinions) {
+            summary += "\n" + kvp.Key + ": " + "<color=" + OpinionColor(kvp.Value) + ">" + GetOpinionText(kvp.Value) + "</color>";
+        }
+        summary += "\n---------------------";
+        summary += "\nTotal: <color=" + OpinionColor(opinionOfOther) + ">" + GetOpinionText(activeCharacter.opinionComponent.GetTotalOpinion(target)) + "</color> <color=" + OpinionColor(opinionOfOther) + ">(" + GetOpinionText(opinionOfOther) + ")</color>";
+        UIManager.Instance.ShowSmallInfo(summary);
+    }
+    public void HideRelationshipData() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    private string OpinionColor(int number) {
+        if(number < 0) {
+            return "red";
+        }
+        return "green";
+    }
+    private string GetOpinionText(int number) {
+        if (number < 0) {
+            return "" + number;
+        }
+        return "+" + number;
+    }
+    private void OnClickCharacter(object obj) {
+        if (obj is string) {
+            string text = (string)obj;
+            int index = int.Parse(text);
+            Character target = _activeCharacter.opinionComponent.opinions.Keys.ElementAtOrDefault(index);
+            if (target != null) {
+                UIManager.Instance.ShowCharacterInfo(target,true);    
+            }
         }
     }
     #endregion
