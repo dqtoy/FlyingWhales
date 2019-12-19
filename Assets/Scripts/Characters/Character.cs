@@ -3855,7 +3855,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public bool CanPlanGoap() {
         //If there is no area, it means that there is no inner map, so character must not do goap actions, jobs, and plans
         //characters that cannot witness, cannot plan actions.
-        return minion == null && currentRegion.area != null && !isDead && doNotDisturb <= 0 && isStoppedByOtherCharacter <= 0 && canWitness
+        return minion == null && !isDead && doNotDisturb <= 0 && isStoppedByOtherCharacter <= 0 && canWitness
             && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count <= 0
             && !marker.hasFleePath && stateComponent.currentState == null && IsInOwnParty();
     }
@@ -3868,7 +3868,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
     }
     private bool CanPerformEndTickJobs() {
-        return minion == null && currentRegion.area != null && !isDead && doNotDisturb <= 0 && isStoppedByOtherCharacter <= 0 && canWitness
+        return minion == null && !isDead && doNotDisturb <= 0 && isStoppedByOtherCharacter <= 0 && canWitness
             && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count > 0 
             && currentParty.icon.isTravellingOutside == false && !marker.hasFleePath 
             && stateComponent.currentState == null && IsInOwnParty();

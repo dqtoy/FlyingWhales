@@ -1078,7 +1078,7 @@ public class Area : IJobOwner, ILocation {
             return; //hero events are maxed.
         }
         Region validRegion;
-        if (UnityEngine.Random.Range(0, 100) < 15 && TryGetRegionToStudyAt(out validRegion)) {//15
+        if (UnityEngine.Random.Range(0, 100) < 15 && TryGetRegionToStudyAt(out validRegion)) {//15 
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IMPROVE, 
                 new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Buff", false, GOAP_EFFECT_TARGET.ACTOR),
                 validRegion.regionTileObject, this) ;
@@ -1093,7 +1093,8 @@ public class Area : IJobOwner, ILocation {
         var validRegions = new List<Region>();
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             Region currRegion = GridMap.Instance.allRegions[i];
-            if (region.mainLandmark.specificLandmarkType.IsPlayerLandmark() == false && region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE) {
+            if (currRegion.mainLandmark.specificLandmarkType.IsPlayerLandmark() == false && currRegion.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE 
+                && currRegion.locationType.IsSettlementType() == false) {
                 validRegions.Add(currRegion);
             }
         }
