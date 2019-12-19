@@ -1,4 +1,5 @@
-﻿using EZObjectPools;
+﻿using System;
+using EZObjectPools;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -227,7 +228,7 @@ public class NameplateItem<T> : PooledObject {
         }
     }
     public void SetSupportingLabelState(bool state) {
-        supportingLblContainer.gameObject.SetActive(state);
+        supportingLbl.gameObject.SetActive(state);
     }
     #endregion
 }

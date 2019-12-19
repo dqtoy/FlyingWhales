@@ -207,7 +207,7 @@ public class DualObjectPicker : MonoBehaviour {
         if (typeof(T) == typeof(Character)) {
             ShowCharacterItems(validItems.Cast<Character>().ToList(), invalidItems.Cast<Character>().ToList(), hoverEnterAction, hoverExitAction, column, toggleGroup);
         } else if (typeof(T) == typeof(string)) {
-            ShowStringItems(validItems.Cast<string>().ToList(), invalidItems.Cast<string>().ToList(), hoverEnterAction, hoverExitAction, column, toggleGroup);
+            ShowStringItems(validItems.Cast<string>().ToList(), invalidItems.Cast<string>().ToList(), hoverEnterAction, hoverExitAction, column, toggleGroup, identifier);
         } else if (typeof(T) == typeof(UnsummonedMinionData)) {
             ShowUnsummonedMinionItems(validItems.Cast<UnsummonedMinionData>().ToList(), invalidItems.Cast<UnsummonedMinionData>().ToList(), hoverEnterAction, hoverExitAction, column, toggleGroup);
         } else if (typeof(T) == typeof(Region)) {
@@ -278,7 +278,7 @@ public class DualObjectPicker : MonoBehaviour {
             characterItem.SetInteractableState(false);
         }
     }
-    private void ShowStringItems<T>(List<string> validItems, List<string> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, ScrollRect column, ToggleGroup toggleGroup) {
+    private void ShowStringItems<T>(List<string> validItems, List<string> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, ScrollRect column, ToggleGroup toggleGroup, string identifier) {
         Action<string> convertedHoverAction = null;
         if (onHoverItemAction != null) {
             convertedHoverAction = ConvertToString(onHoverItemAction);
@@ -307,24 +307,26 @@ public class DualObjectPicker : MonoBehaviour {
             item.AddOnToggleAction((character, isOn) => OnToggleItem(character, isOn, column));
             item.SetToggleGroup(toggleGroup);
             item.SetInteractableState(true);
+            item.SetIdentifier(identifier);
         }
         for (int i = 0; i < invalidItems.Count; i++) {
             string currStr = invalidItems[i];
             GameObject characterItemGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.stringNameplatePrefab.name, column.content);
-            StringNameplateItem characterItem = characterItemGO.GetComponent<StringNameplateItem>();
-            characterItem.SetObject(currStr);
-            characterItem.ClearAllOnClickActions();
+            StringNameplateItem item = characterItemGO.GetComponent<StringNameplateItem>();
+            item.SetObject(currStr);
+            item.ClearAllOnClickActions();
 
-            characterItem.ClearAllHoverEnterActions();
+            item.ClearAllHoverEnterActions();
             if (convertedHoverAction != null) {
-                characterItem.AddHoverEnterAction(convertedHoverAction.Invoke);
+                item.AddHoverEnterAction(convertedHoverAction.Invoke);
             }
 
-            characterItem.ClearAllHoverExitActions();
+            item.ClearAllHoverExitActions();
             if (convertedHoverExitAction != null) {
-                characterItem.AddHoverExitAction(convertedHoverExitAction.Invoke);
+                item.AddHoverExitAction(convertedHoverExitAction.Invoke);
             }
-            characterItem.SetInteractableState(false);
+            item.SetInteractableState(false);
+            item.SetIdentifier(identifier);
         }
     }
     private void ShowUnsummonedMinionItems<T>(List<UnsummonedMinionData> validItems, List<UnsummonedMinionData> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, ScrollRect column, ToggleGroup toggleGroup) {

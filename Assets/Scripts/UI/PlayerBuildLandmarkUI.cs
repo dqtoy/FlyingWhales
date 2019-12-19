@@ -21,7 +21,7 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
             CanChooseMinion, CanChooseLandmark,
             OnHoverEnterMinion, OnHoverLandmarkChoice,
             OnHoverExitMinion, OnHoverExitLandmarkChoice,
-            StartBuild, "Build");
+            StartBuild, "Build", column2Identifier: "Landmark");
     }
     private bool CanChooseMinion(Character character) {
         return !character.minion.isAssigned && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER);

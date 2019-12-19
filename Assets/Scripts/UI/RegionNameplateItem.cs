@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class RegionPickerItem : NameplateItem<Region> {
+public class RegionNameplateItem : NameplateItem<Region> {
 
     [Header("Region Attributes")]
     [SerializeField] private LocationPortrait portrait;

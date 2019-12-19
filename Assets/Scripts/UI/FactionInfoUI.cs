@@ -16,50 +16,32 @@ public class FactionInfoUI : UIMenu {
     [Header("Content")]
     [SerializeField] private TextMeshProUGUI factionNameLbl;
     [SerializeField] private TextMeshProUGUI factionTypeLbl;
-    [SerializeField] private GameObject charactersGO;
-    [SerializeField] private GameObject logsGO;
     [SerializeField] private FactionEmblem emblem;
 
     [Space(10)]
     [Header("Characters")]
     [SerializeField] private GameObject characterItemPrefab;
     [SerializeField] private ScrollRect charactersScrollView;
-    [SerializeField] private RectTransform leaderEmblem;
-    private List<CharacterNameplateItem> characterItems;
+    private List<CharacterNameplateItem> _characterItems;
 
     [Space(10)]
     [Header("Regions")]
     [SerializeField] private ScrollRect regionsScrollView;
-    [SerializeField] private GameObject locationPortraitPrefab;
-    private List<LocationPortrait> locationItems;
-
-    [Space(10)]
-    [Header("Logs")]
-    [SerializeField] private Toggle logsToggle;
-    [SerializeField] private GameObject logHistoryPrefab;
-    [SerializeField] private ScrollRect historyScrollView;
-    [SerializeField] private Color evenLogColor;
-    [SerializeField] private Color oddLogColor;
+    [SerializeField] private GameObject regionNameplatePrefab;
+    private List<RegionNameplateItem> locationItems;
 
     [Space(10)]
     [Header("Relationships")]
     [SerializeField] private RectTransform relationshipsParent;
     [SerializeField] private GameObject relationshipPrefab;
-
-    private LogHistoryItem[] logHistoryItems;
-
-    internal Faction currentlyShowingFaction {
-        get { return _data as Faction; }
-    }
-
-    public Faction activeFaction { get; private set; }
+    
+    internal Faction currentlyShowingFaction => _data as Faction;
+    private Faction activeFaction { get; set; }
 
     internal override void Initialize() {
         base.Initialize();
-        characterItems = new List<CharacterNameplateItem>();
-        locationItems = new List<LocationPortrait>();
-        LoadLogItems();
-        Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
+        _characterItems = new List<CharacterNameplateItem>();
+        locationItems = new List<RegionNameplateItem>();
         Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
         Messenger.AddListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
         Messenger.AddListener<Character, Faction>(Signals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
@@ -80,7 +62,7 @@ public class FactionInfoUI : UIMenu {
         }
         UpdateFactionInfo();
         UpdateAllCharacters();
-        UpdateRegionss();
+        UpdateRegions();
         UpdateAllRelationships();
         ResetScrollPositions();
     }
@@ -94,7 +76,6 @@ public class FactionInfoUI : UIMenu {
             return;
         }
         UpdateBasicInfo();
-        UpdateAllHistoryInfo();
         //ResetScrollPositions();
     }
 
@@ -106,74 +87,10 @@ public class FactionInfoUI : UIMenu {
     }
     #endregion
 
-    #region Log History
-    private void LoadLogItems() {
-        logHistoryItems = new LogHistoryItem[MAX_HISTORY_LOGS];
-        //populate history logs table
-        for (int i = 0; i < MAX_HISTORY_LOGS; i++) {
-            GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, historyScrollView.content);
-            logHistoryItems[i] = newLogItem.GetComponent<LogHistoryItem>();
-            newLogItem.transform.localScale = Vector3.one;
-            newLogItem.SetActive(true);
-        }
-        for (int i = 0; i < logHistoryItems.Length; i++) {
-            logHistoryItems[i].gameObject.SetActive(false);
-        }
-    }
-    private void UpdateHistory(object obj) {
-        if (obj is Area && activeFaction != null && (obj as Area).id == activeFaction.id) {
-            UpdateAllHistoryInfo();
-        }
-    }
-    private void UpdateAllHistoryInfo() {
-        List<Log> landmarkHistory = new List<Log>(activeFaction.history.OrderByDescending(x => x.id));
-        for (int i = 0; i < logHistoryItems.Length; i++) {
-            LogHistoryItem currItem = logHistoryItems[i];
-            Log currLog = landmarkHistory.ElementAtOrDefault(i);
-            if (currLog != null) {
-                currItem.gameObject.SetActive(true);
-                currItem.SetLog(currLog);
-                if (Utilities.IsEven(i)) {
-                    currItem.SetLogColor(evenLogColor);
-                } else {
-                    currItem.SetLogColor(oddLogColor);
-                }
-            } else {
-                currItem.gameObject.SetActive(false);
-            }
-        }
-        //if (this.gameObject.activeInHierarchy) {
-        //    StartCoroutine(UIManager.Instance.RepositionTable(logHistoryTable));
-        //    StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
-        //}
-    }
-    private bool IsLogAlreadyShown(Log log) {
-        for (int i = 0; i < logHistoryItems.Length; i++) {
-            LogHistoryItem currItem = logHistoryItems[i];
-            if (currItem.log != null) {
-                if (currItem.log.id == log.id) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public void ToggleLogsMenu(bool state) {
-        logsToggle.isOn = state;
-        logsGO.SetActive(state);
-        if (state) {
-            for (int i = 0; i < logHistoryItems.Length; i++) {
-                LogHistoryItem currItem = logHistoryItems[i];
-                currItem.EnvelopContentExecute();
-            }
-        }
-    }
-    #endregion
-
     #region Characters
     private void UpdateAllCharacters() {
         Utilities.DestroyChildren(charactersScrollView.content);
-        characterItems.Clear();
+        _characterItems.Clear();
 
         for (int i = 0; i < activeFaction.characters.Count; i++) {
             Character currCharacter = activeFaction.characters[i];
@@ -210,7 +127,7 @@ public class FactionInfoUI : UIMenu {
         CharacterNameplateItem item = characterGO.GetComponent<CharacterNameplateItem>();
         item.SetObject(character);
         item.SetAsDefaultBehaviour();
-        characterItems.Add(item);
+        _characterItems.Add(item);
         if (autoSort) {
             OrderCharacterItems();
         }
@@ -224,11 +141,6 @@ public class FactionInfoUI : UIMenu {
                 throw new System.Exception("Leader item in " + activeFaction.name + "'s UI is null! Leader is " + leader.name);
             }
             leaderItem.transform.SetAsFirstSibling();
-            leaderEmblem.gameObject.SetActive(true);
-            leaderEmblem.SetParent(leaderItem.transform);
-            leaderEmblem.anchoredPosition = new Vector2(-18.3f, -55f);
-        } else {
-            leaderEmblem.gameObject.SetActive(false);
         }
     }
     private void OnCharacterAddedToFaction(Character character, Faction faction) {
@@ -240,7 +152,7 @@ public class FactionInfoUI : UIMenu {
         if (isShowing && activeFaction != null && activeFaction.id == faction.id) {
             CharacterNameplateItem item = GetItem(character);
             if (item != null) {
-                characterItems.Remove(item);
+                _characterItems.Remove(item);
                 ObjectPoolManager.Instance.DestroyObject(item.gameObject);
                 OrderCharacterItems();
             }
@@ -249,7 +161,7 @@ public class FactionInfoUI : UIMenu {
     #endregion
 
     #region Regions
-    private void UpdateRegionss() {
+    private void UpdateRegions() {
         Utilities.DestroyChildren(regionsScrollView.content);
         locationItems.Clear();
 
@@ -259,22 +171,22 @@ public class FactionInfoUI : UIMenu {
         }
     }
     private void CreateNewRegionItem(Region region) {
-        GameObject characterGO = UIManager.Instance.InstantiateUIObject(locationPortraitPrefab.name, regionsScrollView.content);
-        LocationPortrait item = characterGO.GetComponent<LocationPortrait>();
-        item.SetLocation(region);
+        GameObject characterGO = UIManager.Instance.InstantiateUIObject(regionNameplatePrefab.name, regionsScrollView.content);
+        RegionNameplateItem item = characterGO.GetComponent<RegionNameplateItem>();
+        item.SetObject(region);
         locationItems.Add(item);
     }
-    private LocationPortrait GetLocationItem(Region region) {
+    private RegionNameplateItem GetLocationItem(Region region) {
         for (int i = 0; i < locationItems.Count; i++) {
-            LocationPortrait locationPortrait = locationItems[i];
-            if (locationPortrait.region.id == region.id) {
+            RegionNameplateItem locationPortrait = locationItems[i];
+            if (locationPortrait.obj.id == region.id) {
                 return locationPortrait;
             }
         }
         return null;
     }
     private void DestroyLocationItem(Region region) {
-        LocationPortrait item = GetLocationItem(region);
+        RegionNameplateItem item = GetLocationItem(region);
         if (item != null) {
             locationItems.Remove(item);
             ObjectPoolManager.Instance.DestroyObject(item.gameObject);
@@ -322,7 +234,6 @@ public class FactionInfoUI : UIMenu {
     }
     private void ResetScrollPositions() {
         charactersScrollView.verticalNormalizedPosition = 1;
-        historyScrollView.verticalNormalizedPosition = 1;
         regionsScrollView.verticalNormalizedPosition = 1;
     }
     private void OnInspectAll() {

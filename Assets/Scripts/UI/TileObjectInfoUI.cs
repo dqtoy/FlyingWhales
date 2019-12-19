@@ -14,8 +14,10 @@ public class TileObjectInfoUI : UIMenu {
 
     [Space(10)]
     [Header("Users")]
+    [SerializeField] private Toggle charactersToggle;
     [SerializeField] private GameObject characterItemPrefab;
     [SerializeField] private ScrollRect charactersScrollView;
+    [SerializeField] private GameObject charactersGO;
 
     public TileObject activeTileObject { get; private set; }
 
@@ -42,7 +44,7 @@ public class TileObjectInfoUI : UIMenu {
         activeTileObject.mapVisual.LockHoverObject();
         base.OpenMenu();
         UIManager.Instance.HideObjectPicker();
-        //UpdateBasicInfo();
+        UpdateCharactersToggle();
         UpdateTileObjectInfo();
         UpdateCharacters();
     }
@@ -59,6 +61,15 @@ public class TileObjectInfoUI : UIMenu {
         nameLbl.text = activeTileObject.name;
         if (activeTileObject.isDisabledByPlayer) {
             nameLbl.text += " (Disabled)";
+        }
+    }
+    private void UpdateCharactersToggle() {
+        if (activeTileObject.users != null) {
+            charactersToggle.isOn = false;
+            charactersToggle.gameObject.SetActive(true);
+        } else {
+            charactersToggle.isOn = false;
+            charactersToggle.gameObject.SetActive(false);
         }
     }
     private void UpdateCharacters() {
