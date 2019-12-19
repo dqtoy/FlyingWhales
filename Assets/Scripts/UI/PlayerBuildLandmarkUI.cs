@@ -41,7 +41,7 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
         UIManager.Instance.HideSmallInfo();
     }
     private bool CanChooseLandmark(string landmarkName) {
-        if (landmarkName == "The Pit" || landmarkName == "The Fingers") {
+        if (landmarkName == "The Pit") {
             return false;
         }
         if(landmarkName == "The Kennel" && !UIManager.Instance.regionInfoUI.activeRegion.HasFeature(RegionFeatureDB.Summons_Feature)) {

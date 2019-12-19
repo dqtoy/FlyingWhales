@@ -19,6 +19,10 @@ public class KillCountCharacterItem : CharacterNameplateItem {
         Messenger.AddListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
         Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
         Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+        Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterChangedState);
+        Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterChangedState);
+        SetSupportingLabelState(true);
+        UpdateInfo();
     }
     public override void Reset() {
         base.Reset();
@@ -32,10 +36,11 @@ public class KillCountCharacterItem : CharacterNameplateItem {
         Messenger.RemoveListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
         Messenger.RemoveListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
         Messenger.RemoveListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterChangedState);
+        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterChangedState);
         StopScroll();
     }
     private void UpdateInfo() {
-        SetSupportingLabelState(true);
         if (character.isDead) {
             supportingLbl.text = "\"" + character.deathStr + "\"";
         } else {
@@ -68,11 +73,10 @@ public class KillCountCharacterItem : CharacterNameplateItem {
                 }
             }
             if (string.IsNullOrEmpty(text)) {
-                //character is not yet dead and not disabled, show current action insteadC
-                if (character.currentActionNode != null) {
-                    Log currentLog = character.currentActionNode.GetCurrentLog();
-                    text = Utilities.LogReplacer(currentLog);
-                }
+                //character is not yet dead and not disabled, show current action instead
+                Log currentLog;
+                text = character.GetThoughtBubble(out currentLog);
+                
             }
             supportingLbl.text = text;
             
@@ -126,6 +130,11 @@ public class KillCountCharacterItem : CharacterNameplateItem {
         }
     }
     private void OnCharacterFinishedAction(Character character, GoapAction action, string result) {
+        if (character.id == this.character.id) {
+            UpdateInfo();
+        }
+    }
+    private void OnCharacterChangedState(Character character, CharacterState state) {
         if (character.id == this.character.id) {
             UpdateInfo();
         }

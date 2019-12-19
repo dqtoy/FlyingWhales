@@ -2538,7 +2538,64 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //ThisCharacterWitnessedEvent(action);
         //ThisCharacterWatchEvent(null, action, state);
     }
+    public string GetThoughtBubble(out Log log) {
+        log = null;
+        if (minion != null) {
+            return string.Empty;
+        }
+        if (isDead) {
+            return $"{name} has died.";
+        }
+        if (minion != null) {
+            if (minion.busyReasonLog != null) {
+                log = minion.busyReasonLog;
+                return Utilities.LogReplacer(minion.busyReasonLog);
+            } else {
+                return $"{name} is ready to do your bidding.";
+            }
+            return string.Empty; 
+        }
+        //Action
+        if (currentActionNode != null) {
+            Log currentLog = currentActionNode.GetCurrentLog();
+            log = currentLog;
+            return Utilities.LogReplacer(currentLog);
+        }
 
+        //Disabler Thought
+        if (doNotDisturb > 0) {
+            Trait disablerTrait = traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER).FirstOrDefault();
+            if (disablerTrait != null) {
+                if (!string.IsNullOrEmpty(disablerTrait.thoughtText)) {
+                    return disablerTrait.thoughtText.Replace("[Character]", name);
+                }
+            }
+        }
+
+        //Character State
+        if (stateComponent.currentState != null) {
+            log = stateComponent.currentState.thoughtBubbleLog;
+            return Utilities.LogReplacer(stateComponent.currentState.thoughtBubbleLog);
+        }
+        //fleeing
+        if (marker.hasFleePath) {
+            return $"{name} is fleeing.";
+        }
+
+        //Travelling
+        if (currentParty.icon.isTravelling) {
+            if (currentParty.owner.marker.destinationTile != null) {
+                return $"{name} is going to {currentParty.owner.marker.destinationTile.structure.GetNameRelativeTo(this)}";
+            }
+        }
+
+        //Default - Do nothing/Idle
+        if (currentStructure != null) {
+            return $"{name} is in {currentStructure.GetNameRelativeTo(this)}";
+        }
+
+        return $"{name} is in {currentRegion.name}";
+    }
     //Returns the list of goap actions to be witnessed by this character
     public virtual List<ActualGoapNode> ThisCharacterSaw(IPointOfInterest target) {
         if (isDead || !canWitness) {
@@ -3608,36 +3665,14 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     public void CreateInitialTraitsByClass() {
         if (role.roleType != CHARACTER_ROLE.MINION && !(this is Summon)) { //only generate buffs and flaws for non minion characters. Reference: https://trello.com/c/pC9hBih0/2781-demonic-minions-should-not-have-pregenerated-buff-and-flaw-traits
-            string[] traitPool = new string[] { "Vigilant", "Diplomatic",
-            "Fireproof", "Accident Prone", "Unfaithful", "Drunkard", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
-            "Herbalist", "Optimist", "Pessimist", "Fast", "Chaste", "Lustful", "Coward", "Lazy", "Hardworking", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
-            "Narcoleptic", "Hothead", "Evil", "Treacherous", "Disillusioned", "Ambitious", "Authoritative", "Healer"
-            };
-            //"Kleptomaniac","Curious", "Craftsman"
+            
 
-            List<string> buffTraits = new List<string>();
-            List<string> flawTraits = new List<string>();
-            List<string> neutralTraits = new List<string>();
-
-            //Categorize traits from trait pool
-            for (int i = 0; i < traitPool.Length; i++) {
-                string currTraitName = traitPool[i];
-                if (TraitManager.Instance.allTraits.ContainsKey(currTraitName)) {
-                    Trait trait = TraitManager.Instance.allTraits[currTraitName];
-                    if (trait.type == TRAIT_TYPE.BUFF) {
-                        buffTraits.Add(currTraitName);
-                    } else if (trait.type == TRAIT_TYPE.FLAW) {
-                        flawTraits.Add(currTraitName);
-                    } else {
-                        neutralTraits.Add(currTraitName);
-                    }
-                } else {
-                    throw new Exception("There is no trait named: " + currTraitName);
-                }
-            }
+            List<string> buffTraits = new List<string>(TraitManager.Instance.buffTraitPool);
+            List<string> flawTraits = new List<string>(TraitManager.Instance.flawTraitPool);
+            List<string> neutralTraits = new List<string>(TraitManager.Instance.neutralTraitPool);
 
             //First trait is random buff trait
-            string chosenBuffTraitName = string.Empty;
+            string chosenBuffTraitName;
             if (buffTraits.Count > 0) {
                 int index = UnityEngine.Random.Range(0, buffTraits.Count);
                 chosenBuffTraitName = buffTraits[index];
@@ -3657,7 +3692,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
 
             //Second trait is a random buff or neutral trait
-            string chosenBuffOrNeutralTraitName = string.Empty;
+            string chosenBuffOrNeutralTraitName;
             if (buffTraits.Count > 0 && neutralTraits.Count > 0) {
                 if (UnityEngine.Random.Range(0, 2) == 0) {
                     //Buff trait
@@ -3669,10 +3704,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                     int index = UnityEngine.Random.Range(0, neutralTraits.Count);
                     chosenBuffOrNeutralTraitName = neutralTraits[index];
                     neutralTraits.RemoveAt(index);
-                    ///Changed this to use mutual exclusive list per trait <see cref= "Trait.mutuallyExclusive"/>
-                    //if(chosenBuffOrNeutralTraitName == "Music Lover") {
-                    //    flawTraits.Remove("Music Hater");
-                    //}
                 }
             } else {
                 if (buffTraits.Count > 0) {
@@ -3683,10 +3714,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                     int index = UnityEngine.Random.Range(0, neutralTraits.Count);
                     chosenBuffOrNeutralTraitName = neutralTraits[index];
                     neutralTraits.RemoveAt(index);
-                    ///Changed this to use mutual exclusive list per trait <see cref= "Trait.mutuallyExclusive"/>
-                    //if (chosenBuffOrNeutralTraitName == "Music Lover") {
-                    //    flawTraits.Remove("Music Hater");
-                    //}
                 }
             }
 
@@ -3700,7 +3727,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
 
             //Third trait is a random neutral or flaw traits
-            string chosenFlawOrNeutralTraitName = string.Empty;
+            string chosenFlawOrNeutralTraitName;
             if (flawTraits.Count > 0 && neutralTraits.Count > 0) {
                 if (UnityEngine.Random.Range(0, 2) == 0) {
                     //Buff trait
