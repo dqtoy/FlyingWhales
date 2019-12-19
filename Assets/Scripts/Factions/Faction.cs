@@ -520,6 +520,9 @@ public class Faction {
         }
         return neededDwellingCount;
     }
+    public string GetRaceText() {
+        return Utilities.GetNormalizedRaceAdjective(race) + " Faction";
+    }
     #endregion
 
     #region Relationships
