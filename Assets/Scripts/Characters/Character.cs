@@ -2246,6 +2246,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 }
                 CameraMove.Instance.CenterCameraOn(currentRegion.coreTile.gameObject);
             }
+        } else {
+            if (InnerMapManager.Instance.isAnAreaMapShowing) {
+                InnerMapManager.Instance.HideAreaMap();
+            }
+            CameraMove.Instance.CenterCameraOn(currentRegion.coreTile.gameObject);
         }
     }
 

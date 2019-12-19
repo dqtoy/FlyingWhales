@@ -284,9 +284,9 @@ public class CharacterInfoUI : UIMenu {
         UpdateThoughtBubble();
     }
     private void UpdateTraits() {
-        if (_activeCharacter.minion != null) {
-            return;
-        }
+        // if (_activeCharacter.minion != null) {
+        //     return;
+        // }
 
         string statusTraits = string.Empty;
         string normalTraits = string.Empty;
@@ -330,7 +330,7 @@ public class CharacterInfoUI : UIMenu {
             //character has status traits
             statusTraitsLbl.text = statusTraits; 
         }
-
+        normalTraitsLbl.text = string.Empty;
         if (string.IsNullOrEmpty(normalTraits) == false) {
             //character has normal traits
             normalTraitsLbl.text = normalTraits;
