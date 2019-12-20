@@ -24,8 +24,13 @@ public class TileObjectInfoUI : UIMenu {
     #region Overrides
     public override void CloseMenu() {
         base.CloseMenu();
-        activeTileObject.mapVisual.UnlockHoverObject();
-        activeTileObject.mapVisual.SetHoverObjectState(false);
+        if(activeTileObject != null && activeTileObject.mapVisual != null) {
+            activeTileObject.mapVisual.UnlockHoverObject();
+            activeTileObject.mapVisual.SetHoverObjectState(false);
+            if (AreaMapCameraMove.Instance.target == activeTileObject.collisionTrigger.transform) {
+                AreaMapCameraMove.Instance.CenterCameraOn(null);
+            }
+        }
         activeTileObject = null;
     }
     public override void OpenMenu() {

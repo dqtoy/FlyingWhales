@@ -52,7 +52,7 @@ public class Bed : TileObject {
             if (GetActiveUserCount() > 0) {
                 UpdateUsedBedAsset();
             } else {
-                if (gridTileLocation != null) {
+                if (gridTileLocation != null && mapVisual != null) {
                     mapVisual.UpdateTileObjectVisual(this);
                 }
             }

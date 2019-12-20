@@ -148,6 +148,8 @@ public class CombatState : CharacterState {
                 Character currCharacter = stateComponent.character.marker.inVisionCharacters[i];
                 stateComponent.character.CreateJobsOnEnterVisionWith(currCharacter);
             }
+            stateComponent.character.needsComponent.CheckExtremeNeeds();
+
         }
     }
     #endregion

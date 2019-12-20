@@ -145,6 +145,23 @@ public class GoapPlanner {
                     goapThread.job.AddBlacklistedCharacter(actor);
                 }
             }
+            //Every time no plan is generated for the job, remove carried poi because this means that the carried poi is part of that job that has no plan, so the character needs to let go of the poi now
+            if (actor.IsInOwnParty()) {
+                if (actor.ownParty.isCarryingAnyPOI) {
+                    IPointOfInterest carriedPOI = actor.ownParty.carriedPOI;
+                    string log = GameManager.Instance.TodayLogString() + "Dropping carried POI: " + carriedPOI.name + " because no plan was generated.";
+                    log += "\nAdditional Info:";
+                    if(carriedPOI is ResourcePile) {
+                        ResourcePile pile = carriedPOI as ResourcePile;
+                        log += "\n-Stored resources on drop: " + pile.resourceInPile + " " + pile.providedResource.ToString();
+                    }else if (carriedPOI is Table) {
+                        Table table = carriedPOI as Table;
+                        log += "\n-Stored resources on drop: " + table.food + " Food.";
+                    }
+                    actor.PrintLogIfActive(log);
+                }
+                actor.ownParty.RemoveCarriedPOI();
+            }
             goapThread.job.CancelJob(false);
         }
         //if (goapThread.createdPlan != null) {

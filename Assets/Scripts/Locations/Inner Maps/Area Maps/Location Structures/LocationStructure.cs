@@ -104,13 +104,22 @@ public class LocationStructure {
         if (!itemsInStructure.Contains(token)) {
             itemsInStructure.Add(token);
             token.SetStructureLocation(this);
-            AddPOI(token, gridLocation);
+            if(AddPOI(token, gridLocation)) {
+                token.SetOwner(location.coreTile.region.owner);
+                if (location.coreTile.region.area != null) {
+                    location.coreTile.region.area.OnItemAddedToLocation(token, this);
+                }
+            }
         }
     }
-    public void RemoveItem(SpecialToken token) {
+    public void RemoveItem(SpecialToken token, Character removedBy = null) {
         if (itemsInStructure.Remove(token)) {
             token.SetStructureLocation(null);
-            RemovePOI(token);
+            if (RemovePOI(token, removedBy)) {
+                if (location.coreTile.region.area != null) {
+                    location.coreTile.region.area.OnItemRemovedFromLocation(token, this);
+                }
+            }
         }
     }
     public void OwnItemsInLocation(Faction owner) {

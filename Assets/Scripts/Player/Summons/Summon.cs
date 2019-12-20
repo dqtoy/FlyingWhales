@@ -83,7 +83,7 @@ public class Summon : Character, IWorldObject {
             //    currentActionNode.StopActionNode(false);
             //}
             if (currentRegion.area != null && isHoldingItem) {
-                DropAllTokens(currentRegion.area, currentStructure, deathTile, true);
+                DropAllTokens(currentStructure, deathTile, true);
             }
             //if (ownParty.specificLocation != null && isHoldingItem) {
             //    DropAllTokens(ownParty.specificLocation, currentStructure, deathTile, true);

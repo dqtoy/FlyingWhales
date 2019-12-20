@@ -21,7 +21,7 @@ public class Desk : TileObject {
     }
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);
-        if (gridTileLocation != null) {
+        if (gridTileLocation != null && mapVisual != null) {
            mapVisual.UpdateTileObjectVisual(this); //update visual based on state
         }
     }

@@ -24,7 +24,7 @@ public class Area : IJobOwner, ILocation {
     public List<Character> charactersAtLocation { get { return region.charactersAtLocation; } }
 
     //special tokens
-    public List<SpecialToken> itemsInArea { get; private set; }
+    //public List<SpecialToken> itemsInArea { get; private set; }
     public const int MAX_ITEM_CAPACITY = 15;
 
     //structures
@@ -74,7 +74,7 @@ public class Area : IJobOwner, ILocation {
         this.citizenCount = citizenCount;
         //charactersAtLocation = new List<Character>();
         //defaultRace = new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL);
-        itemsInArea = new List<SpecialToken>();
+        //itemsInArea = new List<SpecialToken>();
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
         //jobQueue = new JobQueue(this);
         SetAreaType(locationType);
@@ -91,7 +91,7 @@ public class Area : IJobOwner, ILocation {
         id = Utilities.SetID(this, saveDataArea.id);
         citizenCount = saveDataArea.citizenCount;
         //charactersAtLocation = new List<Character>();
-        itemsInArea = new List<SpecialToken>();
+        //itemsInArea = new List<SpecialToken>();
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
         //jobQueue = new JobQueue(null);
 
@@ -423,55 +423,54 @@ public class Area : IJobOwner, ILocation {
     #endregion
 
     #region Special Tokens
-    public bool AddSpecialTokenToLocation(SpecialToken token, LocationStructure structure = null, LocationGridTile gridLocation = null) {
-        if (!itemsInArea.Contains(token)) {
-            itemsInArea.Add(token);
-            token.SetOwner(this.owner);
-            if (areaMap != null) { //if the area map of this area has already been created.
-                //Debug.Log(GameManager.Instance.TodayLogString() + "Added " + token.name + " at " + name);
-                if (structure != null) {
-                    structure.AddItem(token, gridLocation);
-                } else {
-                    //get structure for token
-                    LocationStructure chosen = InnerMapManager.Instance.GetRandomStructureToPlaceItem(this, token);
-                    chosen.AddItem(token);
-                }
-                OnItemAddedToLocation(token, token.structureLocation);
-            }
-            Messenger.Broadcast(Signals.ITEM_ADDED_TO_AREA, this, token);
-            return true;
-        }
-        return false;
-    }
-    public void RemoveSpecialTokenFromLocation(SpecialToken token) {
-        if (itemsInArea.Remove(token)) {
-            LocationStructure takenFrom = token.structureLocation;
-            if (takenFrom != null) {
-                takenFrom.RemoveItem(token);
-                OnItemRemovedFromLocation(token, takenFrom);
-            }
-            //Debug.Log(GameManager.Instance.TodayLogString() + "Removed " + token.name + " from " + name);
-            Messenger.Broadcast(Signals.ITEM_REMOVED_FROM_AREA, this, token);
-        }
-
-    }
-    public bool IsItemInventoryFull() {
-        return itemsInArea.Count >= MAX_ITEM_CAPACITY;
-    }
-    private int GetItemsInAreaCount(SPECIAL_TOKEN itemType) {
-        int count = 0;
-        for (int i = 0; i < itemsInArea.Count; i++) {
-            SpecialToken currItem = itemsInArea[i];
-            if (currItem.specialTokenType == itemType) {
-                count++;
-            }
-        }
-        return count;
-    }
-    private void OnItemAddedToLocation(SpecialToken item, LocationStructure structure) {
+    //public bool AddSpecialTokenToLocation(SpecialToken token, LocationStructure structure = null, LocationGridTile gridLocation = null) {
+    //    if (!itemsInArea.Contains(token)) {
+    //        itemsInArea.Add(token);
+    //        token.SetOwner(this.owner);
+    //        if (areaMap != null) { //if the area map of this area has already been created.
+    //            //Debug.Log(GameManager.Instance.TodayLogString() + "Added " + token.name + " at " + name);
+    //            if (structure != null) {
+    //                structure.AddItem(token, gridLocation);
+    //            } else {
+    //                //get structure for token
+    //                LocationStructure chosen = InnerMapManager.Instance.GetRandomStructureToPlaceItem(this, token);
+    //                chosen.AddItem(token);
+    //            }
+    //            OnItemAddedToLocation(token, token.structureLocation);
+    //        }
+    //        Messenger.Broadcast(Signals.ITEM_ADDED_TO_AREA, this, token);
+    //        return true;
+    //    }
+    //    return false;
+    //}
+    //public void RemoveSpecialTokenFromLocation(SpecialToken token) {
+    //    if (itemsInArea.Remove(token)) {
+    //        LocationStructure takenFrom = token.structureLocation;
+    //        if (takenFrom != null) {
+    //            takenFrom.RemoveItem(token);
+    //            OnItemRemovedFromLocation(token, takenFrom);
+    //        }
+    //        //Debug.Log(GameManager.Instance.TodayLogString() + "Removed " + token.name + " from " + name);
+    //        Messenger.Broadcast(Signals.ITEM_REMOVED_FROM_AREA, this, token);
+    //    }
+    //}
+    //public bool IsItemInventoryFull() {
+    //    return itemsInArea.Count >= MAX_ITEM_CAPACITY;
+    //}
+    //private int GetItemsInAreaCount(SPECIAL_TOKEN itemType) {
+    //    int count = 0;
+    //    for (int i = 0; i < itemsInArea.Count; i++) {
+    //        SpecialToken currItem = itemsInArea[i];
+    //        if (currItem.specialTokenType == itemType) {
+    //            count++;
+    //        }
+    //    }
+    //    return count;
+    //}
+    public void OnItemAddedToLocation(SpecialToken item, LocationStructure structure) {
         CheckAreaInventoryJobs(structure);
     }
-    private void OnItemRemovedFromLocation(SpecialToken item, LocationStructure structure) {
+    public void OnItemRemovedFromLocation(SpecialToken item, LocationStructure structure) {
         CheckAreaInventoryJobs(structure);
     }
     public bool IsRequiredByLocation(SpecialToken token) {
@@ -955,7 +954,7 @@ public class Area : IJobOwner, ILocation {
                 if (!HasJob(JOB_TYPE.BREW_POTION)) {
                     //create an un crafted potion and place it at the main storage structure, then use that as the target for the job.
                     SpecialToken item = TokenManager.Instance.CreateSpecialToken(SPECIAL_TOKEN.HEALING_POTION);
-                    AddSpecialTokenToLocation(item, affectedStructure);
+                    affectedStructure.AddItem(item);
                     item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
 
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BREW_POTION, INTERACTION_TYPE.CRAFT_ITEM, item, this);
@@ -971,7 +970,7 @@ public class Area : IJobOwner, ILocation {
                 if (!HasJob(JOB_TYPE.CRAFT_TOOL)) {
                     //create an un crafted potion and place it at the main storage structure, then use that as the target for the job.
                     SpecialToken item = TokenManager.Instance.CreateSpecialToken(SPECIAL_TOKEN.TOOL);
-                    AddSpecialTokenToLocation(item, affectedStructure);
+                    affectedStructure.AddItem(item);
                     item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
 
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_TOOL, INTERACTION_TYPE.CRAFT_ITEM, item, this);
@@ -1146,18 +1145,18 @@ public class Area : IJobOwner, ILocation {
     #endregion
 
     #region Area Map
-    public void OnMapGenerationFinished() {
-        //place tokens in area to actual structures.
-        //get structure for token
-        for (int i = 0; i < itemsInArea.Count; i++) {
-            SpecialToken token = itemsInArea[i];
-            LocationStructure chosen = InnerMapManager.Instance.GetRandomStructureToPlaceItem(this, token);
-            chosen.AddItem(token);
-            if (chosen.isInside) {
-                token.SetOwner(this.owner);
-            }
-        }
-    }
+    //public void OnMapGenerationFinished() {
+    //    //place tokens in area to actual structures.
+    //    //get structure for token
+    //    for (int i = 0; i < itemsInArea.Count; i++) {
+    //        SpecialToken token = itemsInArea[i];
+    //        LocationStructure chosen = InnerMapManager.Instance.GetRandomStructureToPlaceItem(this, token);
+    //        chosen.AddItem(token);
+    //        if (chosen.isInside) {
+    //            token.SetOwner(this.owner);
+    //        }
+    //    }
+    //}
     #endregion
 
     #region Awareness

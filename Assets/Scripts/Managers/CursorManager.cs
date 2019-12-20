@@ -154,6 +154,17 @@ public class CursorManager : MonoBehaviour {
                     UIManager.Instance.HideSmallInfo();
                     SetCursorTo(Cursor_Type.Cross);
                 }
+            } else if (PlayerManager.Instance.player.seizeComponent.isPreparingToBeUnseized) {
+                LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
+                if (hoveredTile != null) {
+                    if(hoveredTile.objHere != null) {
+                        SetCursorTo(Cursor_Type.Cross);
+                    } else {
+                        SetCursorTo(Cursor_Type.Check);
+                    }
+                } else {
+                    SetCursorTo(Cursor_Type.Cross);
+                }
             }
             //else {
             //    UIManager.Instance.HideSmallInfo();

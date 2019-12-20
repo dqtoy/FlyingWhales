@@ -314,11 +314,14 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
         return storedResources[resourceType] >= amount;
     }
     public void OnSeizePOI() {
+        if (UIManager.Instance.itemInfoUI.isShowing && UIManager.Instance.itemInfoUI.activeItem == this) {
+            UIManager.Instance.itemInfoUI.CloseMenu();
+        }
         Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this as IPointOfInterest, "");
-        gridTileLocation.structure.RemovePOI(this);
+        gridTileLocation.structure.RemoveItem(this);
     }
     public void OnUnseizePOI(LocationGridTile tileLocation) {
-
+        gridTileLocation.structure.AddItem(this, tileLocation);
     }
     #endregion
 

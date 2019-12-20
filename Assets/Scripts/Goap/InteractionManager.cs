@@ -213,15 +213,6 @@ public partial class InteractionManager : MonoBehaviour {
             case JOB_TYPE.PATROL:
                 priority = 170;
                 break;
-            case JOB_TYPE.HUNGER_RECOVERY:
-            //priority = 180;
-            //break;
-            case JOB_TYPE.TIREDNESS_RECOVERY:
-            //priority = 190;
-            //break;
-            case JOB_TYPE.HAPPINESS_RECOVERY:
-            //priority = 200;
-            //break;
             case JOB_TYPE.SHARE_INFORMATION:
             //priority = 210;
             //break;
@@ -243,13 +234,18 @@ public partial class InteractionManager : MonoBehaviour {
             case JOB_TYPE.INSPECT:
             case JOB_TYPE.PLACE_BLUEPRINT:
             case JOB_TYPE.BUILD_BLUEPRINT:
+            case JOB_TYPE.BUILD_FURNITURE:
+            case JOB_TYPE.OBTAIN_ITEM:
                 priority = 240;
                 break;
             //case JOB_TYPE.WATCH:
             //    priority = 250;
             //    break;
-            case JOB_TYPE.BUILD_FURNITURE:
-            case JOB_TYPE.OBTAIN_ITEM:
+            case JOB_TYPE.HUNGER_RECOVERY:
+            case JOB_TYPE.TIREDNESS_RECOVERY:
+            case JOB_TYPE.HAPPINESS_RECOVERY:
+                priority = 270;
+                break;
             case JOB_TYPE.MOVE_OUT:
             case JOB_TYPE.OBTAIN_FOOD_OUTSIDE:
             case JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE:

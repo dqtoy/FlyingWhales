@@ -197,7 +197,7 @@ public class MoveOutState : CharacterState {
         //OnExitThisState();
         stateComponent.ExitCurrentState();
         Messenger.Broadcast(Signals.PARTY_DONE_TRAVELLING, stateComponent.character.currentParty);
-        CheckNeeds();
+        stateComponent.character.needsComponent.CheckExtremeNeeds();
         
         //Show log
         Log log = new Log(GameManager.Instance.Today(), "CharacterState", stateName, "arrive_home");
@@ -207,22 +207,6 @@ public class MoveOutState : CharacterState {
         PlayerManager.Instance.player.ShowNotification(log);
         thoughtBubbleLog = log;
 
-    }
-    private void CheckNeeds() {
-        string summary = GameManager.Instance.TodayLogString() + stateComponent.character.name + " has arrived home and will check his/her needs.";
-        if (stateComponent.character.needsComponent.isStarving) {
-            summary += "\n" + stateComponent.character.name + " is starving. Planning fullness recovery actions...";
-            stateComponent.character.needsComponent.PlanFullnessRecoveryActions(stateComponent.character);
-        }
-        if (stateComponent.character.needsComponent.isExhausted) {
-            summary += "\n" + stateComponent.character.name + " is exhausted. Planning tiredness recovery actions...";
-            stateComponent.character.needsComponent.PlanTirednessRecoveryActions(stateComponent.character);
-        }
-        if (stateComponent.character.needsComponent.isForlorn) {
-            summary += "\n" + stateComponent.character.name + " is forlorn. Planning happiness recovery actions...";
-            stateComponent.character.needsComponent.PlanHappinessRecoveryActions(stateComponent.character);
-        }
-        Debug.Log(summary);
     }
 
     #region Region getters

@@ -14,8 +14,13 @@ public class ItemInfoUI : UIMenu {
     #region Overrides
     public override void CloseMenu() {
         base.CloseMenu();
-        activeItem.mapVisual.UnlockHoverObject();
-        activeItem.mapVisual.SetHoverObjectState(false);
+        if (activeItem != null && activeItem.mapVisual != null) {
+            activeItem.mapVisual.UnlockHoverObject();
+            activeItem.mapVisual.SetHoverObjectState(false);
+            if (AreaMapCameraMove.Instance.target == activeItem.collisionTrigger.transform) {
+                AreaMapCameraMove.Instance.CenterCameraOn(null);
+            }
+        }
         activeItem = null;
     }
     public override void OpenMenu() {
