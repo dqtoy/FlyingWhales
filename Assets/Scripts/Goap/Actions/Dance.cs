@@ -37,11 +37,14 @@ public class Dance : GoapAction {
         Character actor = node.actor;
         actor.needsComponent.AdjustDoNotGetLonely(-1);
     }
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, object[] otherData) {
-        bool satisfied = base.AreRequirementsSatisfied(actor, target, otherData);
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             //"Actor should be in Good or better mood"
-            return actor.currentMoodType == CHARACTER_MOOD.GOOD || actor.currentMoodType == CHARACTER_MOOD.GREAT;
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+                return false;
+            }
+            return actor == poiTarget && (actor.currentMoodType == CHARACTER_MOOD.GOOD || actor.currentMoodType == CHARACTER_MOOD.GREAT);
         }
         return false;
     }

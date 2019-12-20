@@ -36,6 +36,15 @@ public class Puke : GoapAction {
     }
     #endregion
 
+    #region Requirements
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            return actor == poiTarget;
+        }
+        return false;
+    }
+    #endregion
     //private void CreateRemoveTraitJob(Character characterThatWillDoJob) {
     //    Trait trait = actor.traitContainer.GetNormalTrait<Trait>("Plagued", "Infected", "Sick");
     //    if (trait != null && !actor.isDead && !actor.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, trait.name) && !actor.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {

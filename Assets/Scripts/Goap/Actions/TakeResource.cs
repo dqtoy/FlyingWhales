@@ -158,7 +158,12 @@ public class TakeResource : GoapAction {
         //EDIT: Taking resource does not mean that the character must not be carrying any poi, when the actor takes a resource and it is the same type as the one he/she is carrying, just add the amount, if it is not the same type, replace the carried one with the new type
         //If the actor is not carrying anything, create new object to be carried
         if(carriedResourcePile != null) {
-            carriedResourcePile.AdjustResourceInPile(takenResource);
+            if(carriedResourcePile.tileObjectType != resourcePile.tileObjectType) {
+                goapNode.actor.ownParty.RemoveCarriedPOI();
+                CarryResourcePile(goapNode.actor, resourcePile, takenResource);
+            } else {
+                carriedResourcePile.AdjustResourceInPile(takenResource);
+            }
         } else {
             if (goapNode.actor.ownParty.isCarryingAnyPOI) {
                 goapNode.actor.ownParty.RemoveCarriedPOI();

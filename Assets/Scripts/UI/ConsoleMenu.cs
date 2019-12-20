@@ -1256,9 +1256,9 @@ public class ConsoleMenu : UIMenu {
         int id = System.Int32.Parse(idParameterString);
         TILE_OBJECT_TYPE type;
         if (Enum.TryParse(typeParameterString, out type)) {
-            for (int i = 0; i < LandmarkManager.Instance.allNonPlayerAreas.Count; i++) {
-                Area currArea = LandmarkManager.Instance.allNonPlayerAreas[i];
-                List<TileObject> objs = currArea.GetTileObjectsOfType(type);
+            for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+                Region currRegion = GridMap.Instance.allRegions[i];
+                List<TileObject> objs = currRegion.GetTileObjectsOfType(type);
                 for (int j = 0; j < objs.Count; j++) {
                     TileObject currObj = objs[j];
                     if (currObj.id == id) {

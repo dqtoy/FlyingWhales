@@ -61,6 +61,16 @@ public class SlayCharacter : GoapAction {
     }
     #endregion
 
+    #region Requirements
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            return actor != poiTarget;
+        }
+        return false;
+    }
+    #endregion
+
     #region Intel Reactions
     //private List<string> KnockoutSuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
     //    List<string> reactions = new List<string>();

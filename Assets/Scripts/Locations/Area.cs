@@ -110,7 +110,7 @@ public class Area : IJobOwner, ILocation {
         Messenger.AddListener<WoodPile>(Signals.WOOD_IN_PILE_REDUCED, OnWoodInPileReduced);
         Messenger.AddListener(Signals.DAY_STARTED, PerDayHeroEventCreation);
         Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
-        Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_CHARACTER, ForceCancelAllJobsTargettingCharacter);
+        Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, ForceCancelAllJobsTargettingCharacter);
 
     }
     private void UnsubscribeToSignals() {
@@ -119,7 +119,7 @@ public class Area : IJobOwner, ILocation {
         Messenger.RemoveListener<FoodPile>(Signals.FOOD_IN_PILE_REDUCED, OnFoodInPileReduced);
         Messenger.RemoveListener<WoodPile>(Signals.WOOD_IN_PILE_REDUCED, OnWoodInPileReduced);
         Messenger.RemoveListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
-        Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_CHARACTER, ForceCancelAllJobsTargettingCharacter);
+        Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, ForceCancelAllJobsTargettingCharacter);
     }
     private void OnTileObjectRemoved(TileObject removedObj, Character character, LocationGridTile removedFrom) {
         //craft replacement tile object job
@@ -775,15 +775,6 @@ public class Area : IJobOwner, ILocation {
             }
         }
         return pois;
-    }
-    public List<TileObject> GetTileObjectsOfType(TILE_OBJECT_TYPE type) {
-        List<TileObject> objs = new List<TileObject>();
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
-            for (int i = 0; i < keyValuePair.Value.Count; i++) {
-                objs.AddRange(keyValuePair.Value[i].GetTileObjectsOfType(type));
-            }
-        }
-        return objs;
     }
     public List<TileObject> GetTileObjectsThatAdvertise(params INTERACTION_TYPE[] types) {
         List<TileObject> objs = new List<TileObject>();

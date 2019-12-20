@@ -64,7 +64,7 @@ public class SeducerSummon : Summon {
             && !doneCharacters.Contains(x)
             && RelationshipManager.Instance.IsSexuallyCompatibleOneSided(x, this)
             && !x.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)).ToList();
-            List<TileObject> validBeds = currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.INN).GetTileObjectsOfType(TILE_OBJECT_TYPE.BED);
+            List<TileObject> validBeds = currentRegion.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED);
             if (choices.Count > 0 && validBeds.Count > 0) {
                 Character chosenCharacter = choices[Random.Range(0, choices.Count)];
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SEDUCE, INTERACTION_TYPE.INVITE, chosenCharacter, this);

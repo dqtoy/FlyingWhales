@@ -19,6 +19,7 @@ public interface IPointOfInterest : ITraitable {
     bool isDisabledByPlayer { get; }
     Vector3 worldPosition { get; }
     bool isDead { get; }
+    Character isBeingCarriedBy { get; }
     void SetGridTileLocation(LocationGridTile tile);
     void AddAdvertisedAction(INTERACTION_TYPE actionType);
     void RemoveAdvertisedAction(INTERACTION_TYPE actionType);
@@ -39,6 +40,8 @@ public interface IPointOfInterest : ITraitable {
     void SetResource(RESOURCE resourceType, int amount);
     void AdjustResource(RESOURCE resourceType, int amount);
     bool HasResourceAmount(RESOURCE resourceType, int amount);
+    void OnSeizePOI();
+    void OnUnseizePOI(LocationGridTile tileLocation);
 }
 
 /// <summary>

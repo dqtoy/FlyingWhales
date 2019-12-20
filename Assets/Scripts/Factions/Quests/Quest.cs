@@ -87,12 +87,12 @@ public class Quest : IJobOwner {
     public virtual void ActivateQuest() {
         isActivated = true;
         Messenger.AddListener(Signals.TICK_STARTED, PerTickOnQuest);
-        Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_CHARACTER, ForceCancelAllJobsTargettingCharacter);
+        Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, ForceCancelAllJobsTargettingCharacter);
     }
     public virtual void FinishQuest() {
         isActivated = false;
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickOnQuest);
-        Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_CHARACTER, ForceCancelAllJobsTargettingCharacter);
+        Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, ForceCancelAllJobsTargettingCharacter);
     }
     protected virtual void PerTickOnQuest() {
         if(duration > 0) {

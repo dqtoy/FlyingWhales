@@ -86,7 +86,7 @@ public class DivineInterventionQuest : Quest {
         }
     }
     private bool CanStillCreateGoddessStatues() {
-        return region.area.GetTileObjectsOfType(TILE_OBJECT_TYPE.GODDESS_STATUE).Count < 4;
+        return region.GetTileObjectsOfType(TILE_OBJECT_TYPE.GODDESS_STATUE).Count < 4;
     }
 
     private void TryCreateDestroyProfaneLandmarkJob() {

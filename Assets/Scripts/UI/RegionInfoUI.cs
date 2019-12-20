@@ -75,7 +75,6 @@ public class RegionInfoUI : UIMenu {
         UpdateCharacters();
         UpdateEventInfo();
         //ShowAppropriateContentOnOpen();
-        LoadActions();
     }
     public override void CloseMenu() {
         activeRegion.ShowTransparentBorder();
@@ -516,10 +515,10 @@ public class RegionInfoUI : UIMenu {
     #endregion
 
     #region Actions
-    [Header("Actions")] 
-    [SerializeField] private RectTransform actionsTransform;
-    [SerializeField] private GameObject actionItemPrefab;
-    private void LoadActions() {
+    //[Header("Actions")] 
+    //[SerializeField] private RectTransform actionsTransform;
+    //[SerializeField] private GameObject actionItemPrefab;
+    protected override void LoadActions() {
         Utilities.DestroyChildren(actionsTransform);
         if (activeRegion.coreTile.isCorrupted) {
             //region is corrupted
@@ -612,12 +611,12 @@ public class RegionInfoUI : UIMenu {
             }
         }
     }
-    private ActionItem AddNewAction(string actionName, Sprite actionIcon, System.Action action) {
-        GameObject obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(actionItemPrefab.name, Vector3.zero,
-            Quaternion.identity, actionsTransform);
-        ActionItem item = obj.GetComponent<ActionItem>();
-        item.SetAction(action, actionIcon, actionName);
-        return item;
-    }
+    //private ActionItem AddNewAction(string actionName, Sprite actionIcon, System.Action action) {
+    //    GameObject obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(actionItemPrefab.name, Vector3.zero,
+    //        Quaternion.identity, actionsTransform);
+    //    ActionItem item = obj.GetComponent<ActionItem>();
+    //    item.SetAction(action, actionIcon, actionName);
+    //    return item;
+    //}
     #endregion
 }

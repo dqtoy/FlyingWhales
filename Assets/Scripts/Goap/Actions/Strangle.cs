@@ -45,10 +45,19 @@ public class Strangle : GoapAction {
 
     #region State Effects
     public void PerTickStrangleSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.AdjustHP(-(int)((float)goapNode.actor.maxHP * 0.18f));
+        goapNode.actor.AdjustHP(-(int)(goapNode.actor.maxHP * 0.18f));
     }
     public void AfterStrangleSuccess(ActualGoapNode goapNode) {
+        //Character target = goapNode.poiTarget as Character;
+        //string deathReason = string.Empty;
+        //if(target == goapNode.actor) {
+        //    deathReason = "suicide";
+        //} else {
+        //    deathReason = "murder";
+        //}
+        //target.Death("suicide", goapNode, _deathLog: goapNode.action.states[goapNode.currentStateName].descriptionLog);
         goapNode.actor.Death("suicide", goapNode, _deathLog: goapNode.action.states[goapNode.currentStateName].descriptionLog);
+
     }
     #endregion
 }
