@@ -54,8 +54,12 @@ public class SleepOutside : GoapAction {
         //goapNode.OverrideCurrentStateDuration(currentState.duration - goapNode.actor.currentSleepTicks); //this can make the current duration negative
     }
     public void PerTickRestSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustTiredness(70);
-        goapNode.actor.needsComponent.AdjustSleepTicks(-1);
+        CharacterNeedsComponent needsComponent = goapNode.actor.needsComponent;
+        if (needsComponent.currentSleepTicks == 1) { //If sleep ticks is down to 1 tick left, set current duration to end duration so that the action will end now, we need this because the character must only sleep the remaining hours of his sleep if ever that character is interrupted while sleeping
+            goapNode.OverrideCurrentStateDuration(goapNode.currentState.duration);
+        }
+        needsComponent.AdjustTiredness(70);
+        needsComponent.AdjustSleepTicks(-1);
     }
     public void AfterRestSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Resting");

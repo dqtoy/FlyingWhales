@@ -780,7 +780,7 @@ namespace Inner_Maps {
             }
         }
         private List<BuildSpotTileObject> GetOpenBuildpotTileObjects() {
-            List<BuildSpotTileObject> spots = area.GetTileObjectsOfType(TILE_OBJECT_TYPE.BUILD_SPOT_TILE_OBJECT).Select(x => x as BuildSpotTileObject).ToList();
+            List<BuildSpotTileObject> spots = area.region.GetTileObjectsOfType(TILE_OBJECT_TYPE.BUILD_SPOT_TILE_OBJECT).Select(x => x as BuildSpotTileObject).ToList();
             List<BuildSpotTileObject> open = new List<BuildSpotTileObject>();
             for (int i = 0; i < spots.Count; i++) {
                 BuildSpotTileObject buildSpotTileObject = spots[i];

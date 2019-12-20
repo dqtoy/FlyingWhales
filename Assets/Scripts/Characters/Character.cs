@@ -257,6 +257,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public bool isInCombat => stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT;
     public Transform worldObject => marker.transform;
     public bool isStillConsideredAlive => minion == null /*&& !(this is Summon)*/ && !faction.isPlayerFaction;
+    public Character isBeingCarriedBy => IsInOwnParty() ? null : currentParty.owner;
     #endregion
 
     public Character(CharacterRole role, RACE race, GENDER gender) : this() {
@@ -468,7 +469,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.AddListener(Signals.DAY_STARTED, DailyGoapProcesses);
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
-        Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_CHARACTER, ForceCancelAllJobsTargettingCharacter);
+        Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, ForceCancelAllJobsTargettingCharacter);
         Messenger.AddListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
@@ -483,7 +484,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.RemoveListener(Signals.DAY_STARTED, DailyGoapProcesses);
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.RemoveListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
-        Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_CHARACTER, ForceCancelAllJobsTargettingCharacter);
+        Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, ForceCancelAllJobsTargettingCharacter);
         Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
@@ -676,7 +677,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             needsComponent.SetFullnessForcedTick(0);
             needsComponent.SetHasCancelledSleepSchedule(false);
             needsComponent.ResetSleepTicks();
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_CHARACTER, this as IPointOfInterest, "");
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this as IPointOfInterest, "");
             //MigrateHomeTo(null);
             //AddInitialAwareness(gloomhollow);
             Messenger.Broadcast(Signals.CHARACTER_RETURNED_TO_LIFE, this);
@@ -728,7 +729,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //if (jobQueue.jobsInQueue.Count > 0) {
             //    jobQueue.CancelAllJobs();
             //}
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_CHARACTER, this as IPointOfInterest, "target is already dead");
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this as IPointOfInterest, "target is already dead");
             CancelAllJobs();
 
             if (currentRegion.area != null && isHoldingItem) {
@@ -2112,9 +2113,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     private void OnLeaveArea(Party party) {
         if (currentParty == party) {
-            CheckApprehendRelatedJobsOnLeaveLocation();
+            //CheckApprehendRelatedJobsOnLeaveLocation();
             //CancelOrUnassignRemoveTraitRelatedJobs();
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_CHARACTER, this as IPointOfInterest, "");
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this as IPointOfInterest, "");
             marker.ClearTerrifyingObjects();
             ExecuteLeaveAreaActions();
             needsComponent.OnCharacterLeftLocation(currentRegion);
@@ -3788,7 +3789,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //if (currentActionNode != null && !currentActionNode.cannotCancelAction) {
         //    currentActionNode.StopAction(reason: "Became a minion");
         //}
-        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_CHARACTER, this as IPointOfInterest, "target became a minion");
+        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this as IPointOfInterest, "target became a minion");
         CancelAllJobs();
 
         if (!IsInOwnParty()) {
@@ -4818,6 +4819,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             if (!isDead && currentParty.icon.isTravellingOutside) {
                 return false;
             }
+            if (isDead && marker == null) {
+                return false;
+            }
             return true;
         }
         return false;
@@ -5634,6 +5638,24 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         PrintLogIfActive(log);
     }
+
+    //Can only be seized if poi has tile location
+    public void OnSeizePOI() {
+        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this as IPointOfInterest, "");
+        marker.ClearTerrifyingObjects();
+        needsComponent.OnCharacterLeftLocation(currentRegion);
+
+        CancelAllJobs();
+        UnsubscribeSignals();
+        SetIsChatting(false);
+        SetPOIState(POI_STATE.INACTIVE);
+        if (marker != null) {
+            DestroyMarker();
+        }
+    }
+    public void OnUnseizePOI(LocationGridTile tileLocation) {
+
+    }
     #endregion
 
     #region Resources
@@ -6196,7 +6218,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //currentAlterEgo.CopySpecialTraits();
 
             //Drop all plans except for the current action
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_CHARACTER, this as IPointOfInterest, "target is not found");
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this as IPointOfInterest, "target is not found");
             if (currentActionNode != null) {
                 CancelAllJobsExceptForCurrent();
             } else {

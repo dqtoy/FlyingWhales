@@ -22,6 +22,16 @@ public class Shock : GoapAction {
         return Utilities.rng.Next(25, 51);
     }
     #endregion
+
+    #region Requirements
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            return actor == poiTarget;
+        }
+        return false;
+    }
+    #endregion
 }
 
 public class ShockData : GoapActionData {

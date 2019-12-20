@@ -31,6 +31,16 @@ public class SepticShock : GoapAction {
         goapNode.actor.Death("Septic Shock", goapNode, _deathLog: goapNode.action.states[goapNode.currentStateName].descriptionLog);
     }
     #endregion
+
+    #region Requirements
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            return actor == poiTarget;
+        }
+        return false;
+    }
+    #endregion
 }
 
 public class SepticShockData : GoapActionData {

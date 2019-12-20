@@ -398,6 +398,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
     public bool HasResourceAmount(RESOURCE resourceType, int amount) {
         return storedResources[resourceType] >= amount;
     }
+    public void OnSeizePOI() {
+        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this as IPointOfInterest, "");
+        gridTileLocation.structure.RemovePOI(this);
+    }
+    public void OnUnseizePOI(LocationGridTile tileLocation) {
+
+    }
     #endregion
 
     #region Traits

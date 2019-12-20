@@ -244,7 +244,7 @@ public class Region : ILocation, IHasNeighbours<Region> {
             return area.CanInvadeSettlement();
         }
         //return HasCorruptedConnection() &&!coreTile.isCorrupted && !demonicInvasionData.beingInvaded;
-        return /*HasCorruptedConnection() &&*/ !coreTile.isCorrupted;
+        return HasCorruptedConnection() && !coreTile.isCorrupted;
     }
     public void StartInvasion(Minion assignedMinion) {
         //PlayerManager.Instance.player.SetInvadingRegion(this);
@@ -1031,6 +1031,15 @@ public class Region : ILocation, IHasNeighbours<Region> {
     }
     public void SetRegionTileObject(RegionTileObject _regionTileObject) {
         regionTileObject = _regionTileObject;
+    }
+    public List<TileObject> GetTileObjectsOfType(TILE_OBJECT_TYPE type) {
+        List<TileObject> objs = new List<TileObject>();
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
+            for (int i = 0; i < keyValuePair.Value.Count; i++) {
+                objs.AddRange(keyValuePair.Value[i].GetTileObjectsOfType(type));
+            }
+        }
+        return objs;
     }
     #endregion
 }

@@ -10,6 +10,10 @@ public class UIMenu : MonoBehaviour {
 
     protected object _data;
 
+    [Header("Actions")]
+    [SerializeField] protected RectTransform actionsTransform;
+    [SerializeField] protected GameObject actionItemPrefab;
+
     #region virtuals
     internal virtual void Initialize() {
         Messenger.AddListener<UIMenu>(Signals.BEFORE_MENU_OPENED, BeforeMenuOpens);
@@ -29,6 +33,7 @@ public class UIMenu : MonoBehaviour {
         UIManager.Instance.AddToUIMenuHistory(_data);
         backButton.interactable = UIManager.Instance.GetLastUIMenuHistory() != null;
         UIManager.Instance.poiTestingUI.HideUI();
+        LoadActions();
     }
     public virtual void CloseMenu() {
         isShowing = false;
@@ -91,4 +96,15 @@ public class UIMenu : MonoBehaviour {
         }
     }
 
+    #region Actions
+    protected virtual void LoadActions() {
+    }
+    protected ActionItem AddNewAction(string actionName, Sprite actionIcon, System.Action action) {
+        GameObject obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(actionItemPrefab.name, Vector3.zero,
+            Quaternion.identity, actionsTransform);
+        ActionItem item = obj.GetComponent<ActionItem>();
+        item.SetAction(action, actionIcon, actionName);
+        return item;
+    }
+    #endregion
 }

@@ -548,4 +548,13 @@ public class CharacterInfoUI : UIMenu {
         }
     }
     #endregion
+
+    #region Actions
+    protected override void LoadActions() {
+        Utilities.DestroyChildren(actionsTransform);
+        ActionItem item = AddNewAction("Seize", null, () => PlayerManager.Instance.player.seizeComponent.SeizePOI(activeCharacter));
+        bool isInteractable = PlayerManager.Instance.player.seizeComponent.seizedPOI == null && activeCharacter.minion == null && !(activeCharacter is Summon) && activeCharacter.traitContainer.GetNormalTrait<Trait>("Leader", "Blessed") == null;
+        item.SetInteractable(isInteractable);
+    }
+    #endregion
 }

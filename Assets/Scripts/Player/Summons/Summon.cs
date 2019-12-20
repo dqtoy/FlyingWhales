@@ -76,7 +76,7 @@ public class Summon : Character, IWorldObject {
             //    CancelAllJobsTargettingThisCharacter("target is already dead", false);
             //}
             //ForceCancelAllJobsTargettingCharacter(false, "target is already dead");
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_CHARACTER, this as IPointOfInterest, "target is already dead");
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this as IPointOfInterest, "target is already dead");
             CancelAllJobs();
             //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this as Character, "target is already dead");
             //if (currentActionNode != null) {

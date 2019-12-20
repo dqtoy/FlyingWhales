@@ -26,6 +26,7 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
     public bool isDestroyed { get; private set; }
     public BaseMapObjectVisual mapObjectVisual => mapVisual;
     public Dictionary<RESOURCE, int> storedResources { get; protected set; }
+    public Character isBeingCarriedBy { get; private set; }
 
     //hp
     public int maxHP { get; protected set; }
@@ -289,7 +290,7 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
         return gridTileLocation != null;
     }
     public bool IsStillConsideredPartOfAwarenessByCharacter(Character character) {
-        return !isDestroyed || carriedByCharacter != null;
+        return !isDestroyed || carriedByCharacter != null || gridTileLocation == null;
     }
     public void ConstructResources() {
         storedResources = new Dictionary<RESOURCE, int>() {
@@ -311,6 +312,13 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
     }
     public bool HasResourceAmount(RESOURCE resourceType, int amount) {
         return storedResources[resourceType] >= amount;
+    }
+    public void OnSeizePOI() {
+        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this as IPointOfInterest, "");
+        gridTileLocation.structure.RemovePOI(this);
+    }
+    public void OnUnseizePOI(LocationGridTile tileLocation) {
+
     }
     #endregion
 

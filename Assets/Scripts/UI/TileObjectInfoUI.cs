@@ -91,4 +91,14 @@ public class TileObjectInfoUI : UIMenu {
             }
         }
     }
+
+
+    #region Actions
+    protected override void LoadActions() {
+        Utilities.DestroyChildren(actionsTransform);
+        ActionItem item = AddNewAction("Seize", null, () => PlayerManager.Instance.player.seizeComponent.SeizePOI(activeTileObject));
+        bool isInteractable = PlayerManager.Instance.player.seizeComponent.seizedPOI == null && activeTileObject.mapVisual != null && (activeTileObject.isBeingCarriedBy != null || activeTileObject.gridTileLocation != null);
+        item.SetInteractable(isInteractable);
+    }
+    #endregion
 }

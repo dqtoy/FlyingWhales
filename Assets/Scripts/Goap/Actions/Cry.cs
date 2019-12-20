@@ -33,6 +33,16 @@ public class Cry : GoapAction {
         goapNode.actor.needsComponent.AdjustHappiness(500);
     }
     #endregion
+
+    #region Requirements
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            return actor == poiTarget;
+        }
+        return false;
+    }
+    #endregion
 }
 
 public class CryData : GoapActionData {

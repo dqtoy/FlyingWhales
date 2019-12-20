@@ -28,16 +28,18 @@ public class ActionItem : PooledObject {
 		SetAsUninteractableUntil(date);
 	}
 	public void SetAsUninteractableUntil(GameDate date) {
-		button.interactable = false;
-		coverImg.gameObject.SetActive(true);
-		expiryKey = SchedulingManager.Instance.AddEntry(date, SetAsClickable, this);
+        SetInteractable(false);
+        expiryKey = SchedulingManager.Instance.AddEntry(date, SetAsClickable, this);
 	}
 	private void SetAsClickable() {
-		button.interactable = true;
-		coverImg.gameObject.SetActive(false);
+        SetInteractable(true);
 	}
-	
-	public override void Reset() {
+    public void SetInteractable(bool state) {
+        button.interactable = state;
+        coverImg.gameObject.SetActive(!state);
+    }
+
+    public override void Reset() {
 		base.Reset();
 		button.onClick.RemoveAllListeners();
 		if (string.IsNullOrEmpty(expiryKey) == false) {

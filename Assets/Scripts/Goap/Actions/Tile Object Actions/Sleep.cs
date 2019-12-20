@@ -22,8 +22,7 @@ public class Sleep : GoapAction {
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        SetState("Rest Success", goapNode);
-           
+        SetState("Rest Success", goapNode); 
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         LocationStructure targetStructure = target.gridTileLocation.structure;
@@ -95,8 +94,12 @@ public class Sleep : GoapAction {
         //goapNode.action.states[goapNode.currentStateName].OverrideDuration(goapNode.actor.currentSleepTicks);
     }
     public void PerTickRestSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustTiredness(75);
-        goapNode.actor.needsComponent.AdjustSleepTicks(-1);
+        CharacterNeedsComponent needsComponent = goapNode.actor.needsComponent;
+        if (needsComponent.currentSleepTicks == 1) { //If sleep ticks is down to 1 tick left, set current duration to end duration so that the action will end now, we need this because the character must only sleep the remaining hours of his sleep if ever that character is interrupted while sleeping
+            goapNode.OverrideCurrentStateDuration(goapNode.currentState.duration);
+        }
+        needsComponent.AdjustTiredness(75);
+        needsComponent.AdjustSleepTicks(-1);
     }
     public void AfterRestSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Resting");

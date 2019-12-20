@@ -53,6 +53,9 @@ public class Player : ILeader {
 
     public float constructionRatePercentageModifier { get; private set; }
 
+    //Components
+    public SeizeComponent seizeComponent { get; private set; }
+
     #region getters/setters
     public int id {
         get { return -645; }
@@ -97,6 +100,7 @@ public class Player : ILeader {
         SetMaxMana(MAX_MANA);
         mana = maxMana;
         SetManaRegen(INITIAL_MANA_REGEN);
+        seizeComponent = new SeizeComponent();
         ConstructAllInterventionAbilitySlots();
         GenerateMinionsToSummon();
         AddListeners();
@@ -134,7 +138,7 @@ public class Player : ILeader {
         for (int i = 0; i < interventionAbilitySlots.Length; i++) {
             interventionAbilitySlots[i] = data.interventionAbilitySlots[i].Load();
         }
-
+        seizeComponent = new SeizeComponent();
         //InitializeNewInterventionAbilityCycle();
         AddListeners();
     }
