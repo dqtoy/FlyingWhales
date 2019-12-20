@@ -18,6 +18,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public TextMeshPro nameLbl;
     [SerializeField] private SpriteRenderer mainImg;
     [SerializeField] private SpriteRenderer hairImg;
+    [SerializeField] private SpriteRenderer knockedOutHairImg;
     [SerializeField] private SpriteRenderer hoveredImg;
     [SerializeField] private SpriteRenderer clickedImg;
     [SerializeField] private SpriteRenderer actionIcon;
@@ -28,6 +29,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     [Header("Animation")]
     public Animator animator;
     [SerializeField] private CharacterMarkerAnimationListener animationListener;
+    [SerializeField] private string currentAnimation;
 
     [Header("Pathfinding")]
     public CharacterAIPath pathfindingAI;    
@@ -90,6 +92,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         var sortingOrder = InnerMapManager.DefaultCharacterSortingOrder + character.id;
         mainImg.sortingOrder = sortingOrder;
         hairImg.sortingOrder = sortingOrder + 1;
+        knockedOutHairImg.sortingOrder = sortingOrder + 1;
         nameLbl.sortingOrder = sortingOrder;
         actionIcon.sortingOrder = sortingOrder;
         hoveredImg.sortingOrder = sortingOrder - 1;
@@ -99,9 +102,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (UIManager.Instance.characterInfoUI.isShowing) {
             clickedImg.gameObject.SetActive(UIManager.Instance.characterInfoUI.activeCharacter.id == character.id);
         }
-        Sprite hair = CharacterManager.Instance.GetMarkerHairSprite(character.gender);
-        hairImg.sprite = hair;
-        hairImg.materials = new Material[] { CharacterManager.Instance.spriteLightingMaterial, character.visuals.hairMaterial };
         UpdateMarkerVisuals();
         UpdateActionIcon();
 
@@ -139,8 +139,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     void LateUpdate() {
         string currSpriteName = mainImg.sprite.name;
-        if (character.visuals.markerVisuals.ContainsKey(currSpriteName)) {
-            Sprite newSprite = character.visuals.markerVisuals[currSpriteName];
+        if (character.visuals.markerAnimations.ContainsKey(currSpriteName)) {
+            Sprite newSprite = character.visuals.markerAnimations[currSpriteName];
             mainImg.sprite = newSprite;
         } 
     }
@@ -674,6 +674,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         PlayAnimation("Sleep Ground");
     }
     public void PlayAnimation(string animation) {
+        currentAnimation = animation;
         animator.Play(animation, 0, 0.5f);
     }
     public void UpdateAnimation() {
@@ -688,7 +689,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         if (character.isDead) {
             PlayAnimation("Dead");
-            UpdateHairState();
         } else if (character.isStoppedByOtherCharacter > 0) {
             PlayIdle();
         } else if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) || character.canMove == false) {
@@ -704,6 +704,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         } else {
             PlayIdle();
         }
+        UpdateHairState();
     }
     public void PauseAnimation() {
         animator.speed = 0;
@@ -797,26 +798,17 @@ public class CharacterMarker : MapObjectVisual<Character> {
         hoveredImg.enabled = state;
         clickedImg.enabled = state;
     }
+    private void UpdateHairVisuals() {
+        Sprite hair = CharacterManager.Instance.GetMarkerHairSprite(character.gender);
+        hairImg.sprite = hair;
+        hairImg.materials = new Material[] { CharacterManager.Instance.spriteLightingMaterial, character.visuals.hairMaterial };
+        
+        Sprite knockoutHair = CharacterManager.Instance.GetMarkerKnockedOutHairSprite(character.gender);
+        knockedOutHairImg.sprite = knockoutHair;
+        knockedOutHairImg.materials = new Material[] { CharacterManager.Instance.spriteLightingMaterial, character.visuals.hairMaterial };
+    }
     public void UpdateMarkerVisuals() {
-        //CharacterClassAsset assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender, character.characterClass.className);
-        //if (assets != null) {
-        //    if (assets.animator != null) {
-        //        animatorOverrideController = new AnimatorOverrideController(assets.animator);
-
-        //        animatorOverrideController["Idle"] = assets.idleClip;
-        //        animatorOverrideController["Dead"] = assets.deadClip;
-        //        animatorOverrideController["Raise Dead"] = assets.raiseDeadClip;
-        //        animatorOverrideController["Sleep Ground"] = assets.sleepGroundClip;
-        //        animatorOverrideController["Walk"] = assets.walkClip;
-        //        animatorOverrideController["Attack"] = assets.attackClip;
-
-        //        animator.runtimeAnimatorController = animatorOverrideController;
-        //    } else {
-        //        animator.runtimeAnimatorController = null;
-        //    }
-        //    mainImg.sprite = assets.defaultSprite;
-        //}
-        UpdateHairState();
+        UpdateHairVisuals();
     }
     public void UpdatePosition() {
         //This is checked per update, stress test this for performance
@@ -946,8 +938,16 @@ public class CharacterMarker : MapObjectVisual<Character> {
             character.race == RACE.WOLF || character.isDead || character.race == RACE.SKELETON || 
             character.race == RACE.GOLEM) {
             hairImg.gameObject.SetActive(false);
+            knockedOutHairImg.gameObject.SetActive(false);
         } else {
-            hairImg.gameObject.SetActive(true);
+            if (currentAnimation == "Sleep Ground") {
+                knockedOutHairImg.gameObject.SetActive(true);
+                hairImg.gameObject.SetActive(false);
+            } else {
+                knockedOutHairImg.gameObject.SetActive(false);
+                hairImg.gameObject.SetActive(true);
+            }
+            
         }
     }
     #endregion

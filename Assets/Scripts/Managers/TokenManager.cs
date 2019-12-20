@@ -33,28 +33,28 @@ public class TokenManager : MonoBehaviour {
     public void LoadSpecialTokens(Area area) {
         ////Reference: https://trello.com/c/Kuqt3ZSP/2610-put-2-healing-potions-in-the-warehouse-at-start-of-the-game
         LocationStructure mainStorage = area.mainStorage;
-        //for (int i = 0; i < 4; i++) {
-        //    area.AddSpecialTokenToLocation(CreateSpecialToken(SPECIAL_TOKEN.HEALING_POTION), mainStorage);
-        //}
-        //for (int i = 0; i < 2; i++) {
-        //    area.AddSpecialTokenToLocation(CreateSpecialToken(SPECIAL_TOKEN.TOOL), mainStorage);
-        //}
-
-        for (int i = 0; i < specialTokenSettings.Count; i++) {
-            SpecialTokenSettings currSetting = specialTokenSettings[i];
-            List<Area> areas = LandmarkManager.Instance.allNonPlayerAreas;
-            for (int j = 0; j < currSetting.quantity; j++) {
-                if (UnityEngine.Random.Range(0, 100) < currSetting.appearanceWeight) {
-                    Area chosenArea = areas[UnityEngine.Random.Range(0, areas.Count)];
-                    SpecialToken createdToken = CreateSpecialToken(currSetting.tokenType, currSetting.appearanceWeight);
-                    if (createdToken != null) {
-                        chosenArea.AddSpecialTokenToLocation(createdToken);
-                        //createdToken.SetOwner(chosenArea.owner); //Removed this because of redundancy, SetOwner is already being called inside AddSpecialTokenToLocation
-                        //Messenger.Broadcast<SpecialToken>(Signals.SPECIAL_TOKEN_CREATED, createdToken);
-                    }
-                }
-            }
+        for (int i = 0; i < 4; i++) {
+            area.AddSpecialTokenToLocation(CreateSpecialToken(SPECIAL_TOKEN.HEALING_POTION), mainStorage);
         }
+        for (int i = 0; i < 2; i++) {
+            area.AddSpecialTokenToLocation(CreateSpecialToken(SPECIAL_TOKEN.TOOL), mainStorage);
+        }
+
+        // for (int i = 0; i < specialTokenSettings.Count; i++) {
+        //     SpecialTokenSettings currSetting = specialTokenSettings[i];
+        //     List<Area> areas = LandmarkManager.Instance.allNonPlayerAreas;
+        //     for (int j = 0; j < currSetting.quantity; j++) {
+        //         if (UnityEngine.Random.Range(0, 100) < currSetting.appearanceWeight) {
+        //             Area chosenArea = areas[UnityEngine.Random.Range(0, areas.Count)];
+        //             SpecialToken createdToken = CreateSpecialToken(currSetting.tokenType, currSetting.appearanceWeight);
+        //             if (createdToken != null) {
+        //                 chosenArea.AddSpecialTokenToLocation(createdToken);
+        //                 //createdToken.SetOwner(chosenArea.owner); //Removed this because of redundancy, SetOwner is already being called inside AddSpecialTokenToLocation
+        //                 //Messenger.Broadcast<SpecialToken>(Signals.SPECIAL_TOKEN_CREATED, createdToken);
+        //             }
+        //         }
+        //     }
+        // }
     }
     public SpecialToken CreateRandomDroppableSpecialToken() {
         SPECIAL_TOKEN[] choices = Utilities.GetEnumValues<SPECIAL_TOKEN>().Where(x => x.CreatesObjectWhenDropped()).ToArray();

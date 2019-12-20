@@ -8,13 +8,13 @@ public class CharacterVisuals {
     public Material hairMaterial { get; private set; }
     public Material wholeImageMaterial { get; private set; }
 
-    public Dictionary<string, Sprite> markerVisuals { get; private set; }
+    public Dictionary<string, Sprite> markerAnimations { get; private set; }
 
 
     public CharacterVisuals(Character character) {
         portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(character.race, character.gender, character.characterClass.className);
         CreateHairMaterial();
-        UpdateMarkerVisuals(character);
+        UpdateMarkerAnimations(character);
     }
     public CharacterVisuals(SaveDataCharacter data) {
         portraitSettings = data.portraitSettings;
@@ -37,16 +37,19 @@ public class CharacterVisuals {
         if (character.isSwitchingAlterEgo) {
             return;
         }
-        UpdateMarkerVisuals(character);
+        UpdateMarkerAnimations(character);
         UpdatePortraitSettings(character);
+        if (character.marker != null) {
+            character.marker.UpdateMarkerVisuals();
+        }
     }
 
-    private void UpdateMarkerVisuals(Character character) {
+    private void UpdateMarkerAnimations(Character character) {
         CharacterClassAsset assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender, character.characterClass.className);
-        markerVisuals = new Dictionary<string, Sprite>();
+        markerAnimations = new Dictionary<string, Sprite>();
         for (int i = 0; i < assets.animationSprites.Count; i++) {
             Sprite currSprite = assets.animationSprites[i];
-            markerVisuals.Add(currSprite.name, currSprite);
+            markerAnimations.Add(currSprite.name, currSprite);
         }
     }
 }
