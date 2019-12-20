@@ -926,9 +926,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             traitContainer.AddTrait(this, _characterClass.traitNames[i]);
         }
         visuals.UpdateAllVisuals(this);
-        if (marker != null) {
-            marker.UpdateMarkerVisuals();
-        }
         if (minion != null) {
             minion.SetAssignedDeadlySinName(_characterClass.className);
         }
@@ -2200,9 +2197,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         //Update Portrait to use new race
         visuals.UpdateAllVisuals(this);
-        if (marker != null) {
-            marker.UpdateMarkerVisuals();
-        }
         //update goap interactions that should no longer be valid
         if (race == RACE.SKELETON) {
             advertisedActions.Remove(INTERACTION_TYPE.DRINK_BLOOD);

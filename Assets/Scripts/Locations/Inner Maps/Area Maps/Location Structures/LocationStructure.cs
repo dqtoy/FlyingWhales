@@ -328,7 +328,7 @@ public class LocationStructure {
             case STRUCTURE_TYPE.CITY_CENTER:
                 return "the " + location.name + " city center";
             default:
-                return ToString();
+                return "the " + Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
         }
     }
     public List<LocationGridTile> GetOuterTiles() {

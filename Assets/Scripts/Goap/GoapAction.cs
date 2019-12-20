@@ -40,6 +40,7 @@ public class GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.No_Icon;
         canBeAdvertisedEvenIfActorIsUnavailable = false;
+        animationName = "Interacting";
         ConstructBasePreconditionsAndEffects();
         CreateStates();
     }

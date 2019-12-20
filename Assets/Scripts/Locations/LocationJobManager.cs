@@ -286,7 +286,8 @@ public class LocationJobManager {
         List<Region> choices = new List<Region>();
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             Region region = GridMap.Instance.allRegions[i];
-            if (region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE
+            if (region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE 
+                && region.locationType.IsSettlementType() == false
                 && region.owner != null && region.owner != PlayerManager.Instance.player.playerFaction) {
                 FactionRelationship rel = region.owner.GetRelationshipWith(location.owner);
                 if (rel != null && rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE 
@@ -313,7 +314,7 @@ public class LocationJobManager {
         if (choices.Count == 0) {
             for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
                 Region region = GridMap.Instance.allRegions[i];
-                if (region.locationType.IsSettlementType()
+                if (region.locationType.IsSettlementType() == false
                     && region.owner != null && region.owner != PlayerManager.Instance.player.playerFaction) {
                     FactionRelationship rel = region.owner.GetRelationshipWith(location.owner);
                     if (rel != null && rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {

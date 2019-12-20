@@ -42,7 +42,9 @@ public class CharacterManager : MonoBehaviour {
     //TODO: Will move this once other hair assets arrive
     [SerializeField] private Sprite[] maleHairSprite;
     [SerializeField] private Sprite[] femaleHairSprite;
-
+    [SerializeField] private Sprite[] maleKnockoutHairSprite;
+    [SerializeField] private Sprite[] femaleKnockoutHairSprite;
+    
     [Header("Character Marker Assets")]
     [SerializeField] private List<RaceMarkerAsset> markerAssets;
     [SerializeField] private RuntimeAnimatorController baseAnimator;
@@ -662,6 +664,16 @@ public class CharacterManager : MonoBehaviour {
                 return maleHairSprite[UnityEngine.Random.Range(0, maleHairSprite.Length)];
             case GENDER.FEMALE:
                 return femaleHairSprite[UnityEngine.Random.Range(0, femaleHairSprite.Length)];
+            default:
+                return null;
+        }
+    }
+    public Sprite GetMarkerKnockedOutHairSprite(GENDER gender) {
+        switch (gender) {
+            case GENDER.MALE:
+                return maleKnockoutHairSprite[UnityEngine.Random.Range(0, maleHairSprite.Length)];
+            case GENDER.FEMALE:
+                return femaleKnockoutHairSprite[UnityEngine.Random.Range(0, femaleHairSprite.Length)];
             default:
                 return null;
         }

@@ -1227,6 +1227,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: a4917a69811e51249921bb7661b2876b, type: 3}
   - {fileID: 21300000, guid: d0f6db69da8d08b4f8af14d90cd83a3a, type: 3}
   - {fileID: 21300000, guid: 8e782c695e518d040b54caad44eb26bd, type: 3}
+  - {fileID: 21300000, guid: 4d03f179d3552154497aa52fe16b546a, type: 3}
   - {fileID: 21300000, guid: d74f527915c25f3499ad1284a08a5383, type: 3}
   - {fileID: 21300000, guid: 7c31b379e79d54b4ebcaa83c6015b23f, type: 3}
   - {fileID: 21300000, guid: d2460579324259c459e668067871249c, type: 3}
@@ -1455,6 +1456,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 6650c22be92e53441b0e354bede919c5, type: 3}
   - {fileID: 21300000, guid: 6b59042bf8be28447966fbe3b00b4f2d, type: 3}
   - {fileID: 21300000, guid: ed4f742b8347c6a4ba2a728510202514, type: 3}
+  - {fileID: 21300000, guid: 9481352b2de5e7a42806c589fa9d73d1, type: 3}
   - {fileID: 21300000, guid: bb1b272be09132e44ab2aa5224e2e386, type: 3}
   - {fileID: 21300000, guid: b784692ba68e87947b48c2727f441463, type: 3}
   - {fileID: 21300000, guid: 53beba2b7937f414fb08cb17d0cefa8c, type: 3}
@@ -3284,6 +3286,7 @@ SpriteAtlas:
   - sleep_1
   - walk_1
   - interact_2
+  - hair_female_knockout
   - attack_3
   - walk_4
   - interact_4
@@ -3512,6 +3515,7 @@ SpriteAtlas:
   - sleep_2
   - sleep_2
   - sleep_1
+  - hair_male_knockout
   - idle_1
   - walk_1
   - marauder_human_body
