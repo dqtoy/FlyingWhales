@@ -910,9 +910,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   backButton: {fileID: 114805480099200044}
   isShowing: 0
-  actionsTransform: {fileID: 224461831548925420, guid: c318eb473a674104ca08bf7e11c3030b,
+  actionsTransform: {fileID: 224850329529905810}
+  actionItemPrefab: {fileID: 1728383093349538, guid: c318eb473a674104ca08bf7e11c3030b,
     type: 2}
-  actionItemPrefab: {fileID: 1039195085264276}
   nameLbl: {fileID: 114555966147182492}
   charactersToggle: {fileID: 114418289278751442}
   characterItemPrefab: {fileID: 1716271878575152, guid: 192605b2e90f468409baf06dedf19376,
