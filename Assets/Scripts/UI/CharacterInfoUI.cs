@@ -167,68 +167,11 @@ public class CharacterInfoUI : UIMenu {
         UpdateThoughtBubble();
     }
     public void UpdateThoughtBubble() {
-        if (_activeCharacter.minion != null) {
-            plansLbl.text = string.Empty;
-            return;
+        Log log;
+        plansLbl.text = activeCharacter.GetThoughtBubble(out log);
+        if (log != null) {
+            plansLblLogItem.SetLog(log);
         }
-        if (_activeCharacter.isDead) {
-            plansLbl.text = $"{_activeCharacter.name} has died.";
-            return;
-        }
-        if (_activeCharacter.minion != null) {
-            if (_activeCharacter.minion.busyReasonLog != null) {
-                plansLblLogItem.SetLog(_activeCharacter.minion.busyReasonLog);
-                plansLbl.text = Utilities.LogReplacer(_activeCharacter.minion.busyReasonLog);
-            } else {
-                plansLbl.text = $"{_activeCharacter.name} is ready to do your bidding.";
-            }
-            return;
-        }
-        //Action
-        if (_activeCharacter.currentActionNode != null) {
-            Log currentLog = _activeCharacter.currentActionNode.GetCurrentLog();
-            plansLblLogItem.SetLog(currentLog);
-            plansLbl.text = Utilities.LogReplacer(currentLog);
-            return;
-        }
-
-        //Disabler Thought
-        if (_activeCharacter.doNotDisturb > 0) {
-            Trait disablerTrait = _activeCharacter.traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER).FirstOrDefault();
-            if (disablerTrait != null) {
-                if (!string.IsNullOrEmpty(disablerTrait.thoughtText)) {
-                    plansLbl.text = disablerTrait.thoughtText.Replace("[Character]", _activeCharacter.name);
-                    return;
-                }
-            }
-        }
-
-        //Character State
-        if (_activeCharacter.stateComponent.currentState != null) {
-            plansLblLogItem.SetLog(_activeCharacter.stateComponent.currentState.thoughtBubbleLog);
-            plansLbl.text = Utilities.LogReplacer(_activeCharacter.stateComponent.currentState.thoughtBubbleLog);
-            return;
-        }
-        //fleeing
-        if (_activeCharacter.marker.hasFleePath) {
-            plansLbl.text = $"{_activeCharacter.name} is fleeing.";
-            return;
-        }
-
-        //Travelling
-        if (_activeCharacter.currentParty.icon.isTravelling) {
-            if (_activeCharacter.currentParty.owner.marker.destinationTile != null) {
-                plansLbl.text = $"{_activeCharacter.name} is going to {_activeCharacter.currentParty.owner.marker.destinationTile.structure.GetNameRelativeTo(_activeCharacter)}";
-                return;
-            }
-        }
-
-        //Default - Do nothing/Idle
-        if (_activeCharacter.currentStructure != null) {
-            plansLbl.text = $"{_activeCharacter.name} is in {_activeCharacter.currentStructure.GetNameRelativeTo(_activeCharacter)}";
-        }
-
-        plansLbl.text = $"{_activeCharacter.name} is in {_activeCharacter.currentRegion.name}";
     }
     #endregion
 

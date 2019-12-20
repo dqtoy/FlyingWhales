@@ -648,13 +648,13 @@ public class CharacterManager : MonoBehaviour {
             if (currRaceAsset.race == race) {
                 GenderMarkerAsset asset = currRaceAsset.GetMarkerAsset(gender);
                 if (asset.characterClassAssets.ContainsKey(characterClassName) == false) {
-                    Debug.LogWarning($"There are no class assets for {characterClassName} {nameof(gender)} {nameof(race)}");
+                    Debug.LogWarning($"There are no class assets for {characterClassName} {gender.ToString()} {race.ToString()}");
                     return null;
                 }
                 return asset.characterClassAssets[characterClassName];
             }
         }
-        Debug.LogWarning($"There are no race assets for {characterClassName} {nameof(gender)} {nameof(race)}");
+        Debug.LogWarning($"There are no race assets for {characterClassName} {gender.ToString()} {race.ToString()}");
         return null;
     }
     public Sprite GetMarkerHairSprite(GENDER gender) {

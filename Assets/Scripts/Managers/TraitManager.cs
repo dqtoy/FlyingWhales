@@ -18,6 +18,17 @@ public class TraitManager : MonoBehaviour {
     public static TraitProcessor tileObjectTraitProcessor;
     public static TraitProcessor specialTokenTraitProcessor;
     public static TraitProcessor defaultTraitProcessor;
+    
+    //list of traits that a character can gain on their own
+    public readonly string[] traitPool = new string[] { "Vigilant", "Diplomatic",
+        "Fireproof", "Accident Prone", "Unfaithful", "Drunkard", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
+        "Herbalist", "Optimist", "Pessimist", "Fast", "Chaste", "Lustful", "Coward", "Lazy", "Hardworking", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
+        "Narcoleptic", "Hothead", "Evil", "Treacherous", "Disillusioned", "Ambitious", "Authoritative", "Healer"
+    };
+    //"Kleptomaniac","Curious", "Craftsman"
+    public List<string> buffTraitPool { get; private set; }
+    public List<string> flawTraitPool { get; private set; }
+    public List<string> neutralTraitPool { get; private set; }
 
     #region getters/setters
     public Dictionary<string, Trait> allTraits {
@@ -38,7 +49,29 @@ public class TraitManager : MonoBehaviour {
             Trait attribute = JsonUtility.FromJson<Trait>(System.IO.File.ReadAllText(files[i]));
             _allTraits.Add(attribute.name, attribute);
         }
+        
         AddInstancedTraits(); //Traits with their own classes
+        
+        buffTraitPool = new List<string>();
+        flawTraitPool = new List<string>();
+        neutralTraitPool = new List<string>();
+        
+        //Categorize traits from trait pool
+        for (int i = 0; i < traitPool.Length; i++) {
+            string currTraitName = traitPool[i];
+            if (TraitManager.Instance.allTraits.ContainsKey(currTraitName)) {
+                Trait trait = TraitManager.Instance.allTraits[currTraitName];
+                if (trait.type == TRAIT_TYPE.BUFF) {
+                    buffTraitPool.Add(currTraitName);
+                } else if (trait.type == TRAIT_TYPE.FLAW) {
+                    flawTraitPool.Add(currTraitName);
+                } else {
+                    neutralTraitPool.Add(currTraitName);
+                }
+            } else {
+                throw new Exception("There is no trait named: " + currTraitName);
+            }
+        }
     }
 
     #region Utilities
@@ -173,7 +206,7 @@ public class TraitManager : MonoBehaviour {
         return flawTraits;
     }
     public List<string> GetAllBuffTraitsThatCharacterCanHave(Character character) {
-        List<string> allBuffs = GetAllBuffTraits();
+        List<string> allBuffs = new List<string>(buffTraitPool);
         for (int i = 0; i < character.traitContainer.allTraits.Count; i++) {
             Trait trait = character.traitContainer.allTraits[i];
             if (trait.mutuallyExclusive != null) {
