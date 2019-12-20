@@ -8,7 +8,7 @@ using UnityEngine.Tilemaps;
 public class Table : TileObject {
     //private Character[] users;
     public TileBase usedAsset { get; private set; }
-    public int food { get; private set; }
+    public int food { get { return storedResources[RESOURCE.FOOD]; } }
     //private int slots {
     //    get { return users.Length;}
     //}
@@ -269,25 +269,25 @@ public class Table : TileObject {
 
     #region Food
     public void AdjustFood(int amount) {
-        food += amount;
+        storedResources[RESOURCE.FOOD] += amount;
         if (food < 20) {
             traitContainer.RemoveTrait(this, "Edible"); //to stop advertising eat
         } else {
             traitContainer.AddTrait(this, "Edible"); //to advertise eat
         }
         if (food < 0) {
-            food = 0;
+            storedResources[RESOURCE.FOOD] = 0;
         }
     }
     public void SetFood(int amount) {
-        food = amount;
+        storedResources[RESOURCE.FOOD] = amount;
         if (food < 20) {
             traitContainer.RemoveTrait(this, "Edible"); //to stop advertising eat
         } else {
             traitContainer.AddTrait(this, "Edible"); //to advertise eat
         }
         if (food < 0) {
-            food = 0;
+            storedResources[RESOURCE.FOOD] = 0;
         }
     }
     #endregion

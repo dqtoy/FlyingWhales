@@ -60,8 +60,11 @@ public class Feed : GoapAction {
     public void PreFeedSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
         targetCharacter.needsComponent.AdjustDoNotGetHungry(1);
-        ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
-        carriedPile.AdjustResourceInPile(-20);
+        if(goapNode.actor.ownParty.carriedPOI != null) {
+            ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
+            carriedPile.AdjustResourceInPile(-20);
+            targetCharacter.AdjustResource(RESOURCE.FOOD, 20);
+        }
         //goapNode.actor.AdjustFood(-20);
         //TODO: goapNode.action.states[goapNode.currentStateName].SetIntelReaction(FeedSuccessReactions);
     }
@@ -72,6 +75,7 @@ public class Feed : GoapAction {
     public void AfterFeedSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
         targetCharacter.needsComponent.AdjustDoNotGetHungry(-1);
+        targetCharacter.AdjustResource(RESOURCE.FOOD, -20);
     }
     #endregion
 
@@ -160,6 +164,9 @@ public class Feed : GoapAction {
 
     #region Preconditions
     private bool ActorHasFood(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (poiTarget.HasResourceAmount(RESOURCE.FOOD, 20)) {
+            return true;
+        }
         if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile) {
             ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
             return carriedPile.resourceInPile >= 20;

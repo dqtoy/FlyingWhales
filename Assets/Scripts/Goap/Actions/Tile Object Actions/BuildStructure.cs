@@ -56,6 +56,9 @@ public class BuildStructure : GoapAction {
 
     #region Preconditions
     private bool HasSupply(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (poiTarget.HasResourceAmount(RESOURCE.WOOD, 50)) {
+            return true;
+        }
         if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile) {
             ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
             return carriedPile.resourceInPile >= 50;
@@ -68,14 +71,20 @@ public class BuildStructure : GoapAction {
     #region State Effects
     public void PreBuildSuccess(ActualGoapNode goapNode) {
         BuildSpotTileObject target = goapNode.poiTarget as BuildSpotTileObject;
+        if (goapNode.actor.ownParty.carriedPOI != null) {
+            ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
+            int cost = TileObjectDB.GetTileObjectData((goapNode.poiTarget as TileObject).tileObjectType).constructionCost;
+            carriedPile.AdjustResourceInPile(-50);
+            goapNode.poiTarget.AdjustResource(RESOURCE.WOOD, 50);
+        }
         goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(target.spot.blueprintType.ToString()), LOG_IDENTIFIER.STRING_1);
     }
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
         BuildSpotTileObject spot = goapNode.poiTarget as BuildSpotTileObject;
         LocationStructure structure = spot.BuildBlueprint();
-
-        ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
-        carriedPile.AdjustResourceInPile(-50);
+        goapNode.poiTarget.AdjustResource(RESOURCE.WOOD, -50);
+        //ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
+        //carriedPile.AdjustResourceInPile(-50);
         //goapNode.actor.AdjustResource(RESOURCE.WOOD, -50);//TODO: Change this to be per structure
         PlayerUI.Instance.ShowGeneralConfirmation("New Structure", $"A new {spot.gridTileLocation.structure.name} has been built at {spot.gridTileLocation.structure.location.name}");
     }

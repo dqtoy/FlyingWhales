@@ -85,7 +85,16 @@ public class Repair : GoapAction {
 
     #region State Effects
     public void PreRepairSuccess(ActualGoapNode goapNode) {
-        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //goapNode.descriptionLog.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        TileObject tileObj = goapNode.poiTarget as TileObject;
+        TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
+        int cost = (int) (data.constructionCost * 0.5f);
+        if (goapNode.actor.ownParty.carriedPOI != null) {
+            ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
+            carriedPile.AdjustResourceInPile(-cost);
+            tileObj.AdjustResource(RESOURCE.WOOD, cost);
+        }
+
         //TODO:
         //int gainedHPPerTick = 20;
         //int missingHP = goapNode.poiTarget.maxHP - goapNode.poiTarget.currentHP;
@@ -101,9 +110,10 @@ public class Repair : GoapAction {
 
         TileObject tileObj = goapNode.poiTarget as TileObject;
         TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
+        int cost = (int) (data.constructionCost * 0.5f);
+        tileObj.AdjustResource(RESOURCE.WOOD, -cost);
         //goapNode.actor.AdjustSupply((int) (data.constructionCost * 0.5f));
-        ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
-        carriedPile.AdjustResourceInPile(-(int) (data.constructionCost * 0.5f));
+
     }
     #endregion
 
@@ -112,7 +122,10 @@ public class Repair : GoapAction {
         TileObject tileObj = poiTarget as TileObject;
         TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
         int craftCost = (int)(data.constructionCost * 0.5f);
-        if(actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile) {
+        if (poiTarget.HasResourceAmount(RESOURCE.WOOD, craftCost)) {
+            return true;
+        }
+        if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile) {
             ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
             return carriedPile.resourceInPile >= craftCost;
         }

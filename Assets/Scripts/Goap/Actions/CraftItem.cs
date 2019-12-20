@@ -57,9 +57,13 @@ public class CraftItem : GoapAction {
         } else {
             craftedItem = (SPECIAL_TOKEN)otherData[0];
         }
+        int cost = TokenManager.Instance.itemData[craftedItem].craftCost;
+        if (poiTarget.HasResourceAmount(RESOURCE.WOOD, cost)) {
+            return true;
+        }
         if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile) {
             ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
-            return carriedPile.resourceInPile >= TokenManager.Instance.itemData[craftedItem].craftCost;
+            return carriedPile.resourceInPile >= cost;
         }
         return false;
         //return actor.supply >= TokenManager.Instance.itemData[craftedItem].craftCost; 
@@ -96,6 +100,12 @@ public class CraftItem : GoapAction {
         } else {
             craftedItem = (SPECIAL_TOKEN)goapNode.otherData[0];
         }
+        if(goapNode.actor.ownParty.carriedPOI != null) {
+            ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
+            int amount = TokenManager.Instance.itemData[craftedItem].craftCost;
+            carriedPile.AdjustResourceInPile(-amount);
+            goapNode.poiTarget.AdjustResource(RESOURCE.WOOD, amount);
+        }
         goapNode.descriptionLog.AddToFillers(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
         goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
     }
@@ -109,8 +119,9 @@ public class CraftItem : GoapAction {
             SpecialToken tool = TokenManager.Instance.CreateSpecialToken(craftedItem);
             goapNode.actor.ObtainToken(tool);
         }
-        ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
-        carriedPile.AdjustResourceInPile(-TokenManager.Instance.itemData[craftedItem].craftCost);
+        int amount = TokenManager.Instance.itemData[craftedItem].craftCost;
+        goapNode.poiTarget.AdjustResource(RESOURCE.WOOD, -amount);
+
         //goapNode.actor.AdjustSupply(-TokenManager.Instance.itemData[craftedItem].craftCost);
     }
     #endregion

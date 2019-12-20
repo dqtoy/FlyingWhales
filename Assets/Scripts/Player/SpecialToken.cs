@@ -25,6 +25,7 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
     public Character carriedByCharacter { get; private set; }
     public bool isDestroyed { get; private set; }
     public BaseMapObjectVisual mapObjectVisual => mapVisual;
+    public Dictionary<RESOURCE, int> storedResources { get; protected set; }
 
     //hp
     public int maxHP { get; protected set; }
@@ -70,6 +71,7 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
         currentHP = maxHP;
         uses = 1;
         CreateTraitContainer();
+        ConstructResources();
     }
     public void SetID(int id) {
         this.id = Utilities.SetID(this, id);
@@ -288,6 +290,27 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
     }
     public bool IsStillConsideredPartOfAwarenessByCharacter(Character character) {
         return !isDestroyed || carriedByCharacter != null;
+    }
+    public void ConstructResources() {
+        storedResources = new Dictionary<RESOURCE, int>() {
+            { RESOURCE.FOOD, 0 },
+            { RESOURCE.WOOD, 0 },
+            { RESOURCE.STONE, 0 },
+            { RESOURCE.METAL, 0 },
+        };
+    }
+    public void SetResource(RESOURCE resourceType, int amount) {
+        int currentAmount = storedResources[resourceType];
+        storedResources[resourceType] = amount;
+        storedResources[resourceType] = Mathf.Max(0, currentAmount);
+    }
+    public void AdjustResource(RESOURCE resourceType, int amount) {
+        int currentAmount = storedResources[resourceType];
+        storedResources[resourceType] += amount;
+        storedResources[resourceType] = Mathf.Max(0, currentAmount);
+    }
+    public bool HasResourceAmount(RESOURCE resourceType, int amount) {
+        return storedResources[resourceType] >= amount;
     }
     #endregion
 
