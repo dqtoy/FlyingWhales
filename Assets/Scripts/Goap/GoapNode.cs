@@ -331,6 +331,7 @@ public class ActualGoapNode {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{actor.name}'s action {action.goapType.ToString()} was invalid!");
             action.LogActionInvalid(goapActionInvalidity, this);
             actor.GoapActionResult(InteractionManager.Goap_State_Fail, this);
+            action.OnInvalidAction(this);
             return;
         }
         actionStatus = ACTION_STATUS.PERFORMING;

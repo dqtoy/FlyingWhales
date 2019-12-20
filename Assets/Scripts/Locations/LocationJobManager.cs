@@ -286,11 +286,13 @@ public class LocationJobManager {
         List<Region> choices = new List<Region>();
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             Region region = GridMap.Instance.allRegions[i];
-            if (region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE 
-                && region.owner != null && region.owner != PlayerManager.Instance.player.playerFaction 
-                && region.owner.GetRelationshipWith(location.owner).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE 
-                && region.IsConnectedToRegionOwnedBy(location.owner)) {
-                choices.Add(region);
+            if (region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE
+                && region.owner != null && region.owner != PlayerManager.Instance.player.playerFaction) {
+                FactionRelationship rel = region.owner.GetRelationshipWith(location.owner);
+                if (rel != null && rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE 
+                    && region.IsConnectedToRegionOwnedBy(location.owner)) {
+                    choices.Add(region);
+                }
             }
         }
 
@@ -299,9 +301,11 @@ public class LocationJobManager {
                 Region region = GridMap.Instance.allRegions[i];
                 if (region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE 
                     && region.locationType.IsSettlementType() == false
-                    && region.owner != null && region.owner != PlayerManager.Instance.player.playerFaction 
-                    && region.owner.GetRelationshipWith(location.owner).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
-                    choices.Add(region);
+                    && region.owner != null && region.owner != PlayerManager.Instance.player.playerFaction) {
+                    FactionRelationship rel = region.owner.GetRelationshipWith(location.owner);
+                    if (rel != null && rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+                        choices.Add(region);
+                    }
                 }
             }    
         }
@@ -310,9 +314,11 @@ public class LocationJobManager {
             for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
                 Region region = GridMap.Instance.allRegions[i];
                 if (region.locationType.IsSettlementType()
-                    && region.owner != null && region.owner != PlayerManager.Instance.player.playerFaction 
-                    && region.owner.GetRelationshipWith(location.owner).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
-                    choices.Add(region);
+                    && region.owner != null && region.owner != PlayerManager.Instance.player.playerFaction) {
+                    FactionRelationship rel = region.owner.GetRelationshipWith(location.owner);
+                    if (rel != null && rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+                        choices.Add(region);
+                    }
                 }
             }    
         }

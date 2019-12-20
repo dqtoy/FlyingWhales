@@ -56,47 +56,48 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     public void GeneratePortrait(Character character, bool makePixelPerfect = true) {
         _character = character;
         _portraitSettings = character.visuals.portraitSettings;
-
-        SetPortraitAsset("head", character.visuals.portraitSettings.head, _portraitSettings.race, _portraitSettings.gender, head);
-        SetPortraitAsset("brows", character.visuals.portraitSettings.brows, _portraitSettings.race, _portraitSettings.gender, brows);
-        SetPortraitAsset("eyes", character.visuals.portraitSettings.eyes, _portraitSettings.race, _portraitSettings.gender, eyes);
-        SetPortraitAsset("mouth", character.visuals.portraitSettings.mouth, _portraitSettings.race, _portraitSettings.gender, mouth);
-        SetPortraitAsset("nose", character.visuals.portraitSettings.nose, _portraitSettings.race, _portraitSettings.gender, nose);
-        SetPortraitAsset("hair", character.visuals.portraitSettings.hair, _portraitSettings.race, _portraitSettings.gender, hair);
-        SetPortraitAsset("mustache", character.visuals.portraitSettings.mustache, _portraitSettings.race, _portraitSettings.gender, mustache);
-        SetPortraitAsset("beard", character.visuals.portraitSettings.beard, _portraitSettings.race, _portraitSettings.gender, beard);
-
+        
         isPixelPerfect = makePixelPerfect;
-
-        if (makePixelPerfect) {
-            head.SetNativeSize();
-            brows.SetNativeSize();
-            eyes.SetNativeSize();
-            mouth.SetNativeSize();
-            nose.SetNativeSize();
-            hair.SetNativeSize();
-            mustache.SetNativeSize();
-            beard.SetNativeSize();
-
-            head.rectTransform.anchoredPosition = new Vector2(55f, 55f);
-            brows.rectTransform.anchoredPosition = new Vector2(55f, 55f);
-            eyes.rectTransform.anchoredPosition = new Vector2(55f, 55f);
-            mouth.rectTransform.anchoredPosition = new Vector2(55f, 55f);
-            nose.rectTransform.anchoredPosition = new Vector2(55f, 55f);
-            hair.rectTransform.anchoredPosition = new Vector2(55f, 55f);
-            mustache.rectTransform.anchoredPosition = new Vector2(55f, 55f);
-            beard.rectTransform.anchoredPosition = new Vector2(55f, 55f);
-        }
 
         if (string.IsNullOrEmpty(_portraitSettings.wholeImage) == false) {
             //use whole image
             SetWholeImageSprite(CharacterManager.Instance.GetWholeImagePortraitSprite(_portraitSettings.wholeImage));
             SetWholeImageMaterial(character.visuals.wholeImageMaterial);
             SetWholeImageState(true);
+            SetFaceObjectStates(false);
         } else {
             SetWholeImageSprite(null);
             SetWholeImageState(false);
             SetHairMaterial(character.visuals.hairMaterial);
+            
+            SetPortraitAsset("head", character.visuals.portraitSettings.head, _portraitSettings.race, _portraitSettings.gender, head);
+            SetPortraitAsset("brows", character.visuals.portraitSettings.brows, _portraitSettings.race, _portraitSettings.gender, brows);
+            SetPortraitAsset("eyes", character.visuals.portraitSettings.eyes, _portraitSettings.race, _portraitSettings.gender, eyes);
+            SetPortraitAsset("mouth", character.visuals.portraitSettings.mouth, _portraitSettings.race, _portraitSettings.gender, mouth);
+            SetPortraitAsset("nose", character.visuals.portraitSettings.nose, _portraitSettings.race, _portraitSettings.gender, nose);
+            SetPortraitAsset("hair", character.visuals.portraitSettings.hair, _portraitSettings.race, _portraitSettings.gender, hair);
+            SetPortraitAsset("mustache", character.visuals.portraitSettings.mustache, _portraitSettings.race, _portraitSettings.gender, mustache);
+            SetPortraitAsset("beard", character.visuals.portraitSettings.beard, _portraitSettings.race, _portraitSettings.gender, beard);
+            
+            if (makePixelPerfect) {
+                head.SetNativeSize();
+                brows.SetNativeSize();
+                eyes.SetNativeSize();
+                mouth.SetNativeSize();
+                nose.SetNativeSize();
+                hair.SetNativeSize();
+                mustache.SetNativeSize();
+                beard.SetNativeSize();
+
+                head.rectTransform.anchoredPosition = new Vector2(55f, 55f);
+                brows.rectTransform.anchoredPosition = new Vector2(55f, 55f);
+                eyes.rectTransform.anchoredPosition = new Vector2(55f, 55f);
+                mouth.rectTransform.anchoredPosition = new Vector2(55f, 55f);
+                nose.rectTransform.anchoredPosition = new Vector2(55f, 55f);
+                hair.rectTransform.anchoredPosition = new Vector2(55f, 55f);
+                mustache.rectTransform.anchoredPosition = new Vector2(55f, 55f);
+                beard.rectTransform.anchoredPosition = new Vector2(55f, 55f);
+            }
         }
         UpdateLvl();
         UpdateFrame();
@@ -225,10 +226,19 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         if (CharacterManager.Instance.TryGetPortraitSprite(identifier, index, race, gender, out sprite)) {
             renderer.sprite = sprite;
             renderer.gameObject.SetActive(true);
-        }
-        else {
+        } else {
             renderer.gameObject.SetActive(false);    
         }
+    }
+    private void SetFaceObjectStates(bool state) {
+        head.gameObject.SetActive(state);
+        brows.gameObject.SetActive(state);
+        eyes.gameObject.SetActive(state);
+        mouth.gameObject.SetActive(state);
+        nose.gameObject.SetActive(state);
+        hair.gameObject.SetActive(state);
+        mustache.gameObject.SetActive(state);
+        beard.gameObject.SetActive(state);
     }
     #endregion
 

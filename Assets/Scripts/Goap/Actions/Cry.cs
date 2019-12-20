@@ -26,7 +26,7 @@ public class Cry : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return Utilities.rng.Next(25, 51);
     }
-    #endregion
+    #endregion    
 
     #region State Effects
     public void PerTickCrySuccess(ActualGoapNode goapNode) {

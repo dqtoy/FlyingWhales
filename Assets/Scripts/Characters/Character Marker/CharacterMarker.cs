@@ -674,6 +674,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         PlayAnimation("Sleep Ground");
     }
     public void PlayAnimation(string animation) {
+        if (animation == "Sleep Ground") {
+            Debug.Log($"{character.name} set animation to {animation}");
+        }
         animator.Play(animation, 0, 0.5f);
     }
     public void UpdateAnimation() {
@@ -942,7 +945,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     private void UpdateHairState() {
         //TODO: Find another way to unify this
-        if (character.characterClass.className == "Mage" || character.visuals.portraitSettings.hair == -1 || character.race == RACE.WOLF || character.isDead || character.race == RACE.SKELETON) {
+        if (character.characterClass.className == "Mage" || character.visuals.portraitSettings.hair == -1 || 
+            character.race == RACE.WOLF || character.isDead || character.race == RACE.SKELETON || 
+            character.race == RACE.GOLEM) {
             hairImg.gameObject.SetActive(false);
         } else {
             hairImg.gameObject.SetActive(true);

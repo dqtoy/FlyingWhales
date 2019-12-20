@@ -51,7 +51,7 @@ public enum RACE{
     FAERY,
     INSECT,
     SPIDER,
-    ABOMINATION,
+    GOLEM,
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,

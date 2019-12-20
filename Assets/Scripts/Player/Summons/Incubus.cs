@@ -10,4 +10,7 @@ public class Incubus : SeducerSummon {
     }
     public Incubus(SaveDataCharacter data) : base(data) {
     }
+    public override string GetClassForRole(CharacterRole role) {
+        return "Incubus";
+    }
 }

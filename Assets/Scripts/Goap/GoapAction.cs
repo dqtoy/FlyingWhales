@@ -133,6 +133,7 @@ public class GoapAction {
         }
         return goapActionInvalidity;
     }
+    public virtual void OnInvalidAction(ActualGoapNode node) { }
     public virtual LocationStructure GetTargetStructure(ActualGoapNode node) {
         //if (poiTarget is Character) {
         //    return (poiTarget as Character).currentStructure;

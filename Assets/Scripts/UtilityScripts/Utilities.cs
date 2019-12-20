@@ -1557,7 +1557,7 @@ public class Utilities : MonoBehaviour {
         return beastRaces.Contains(race);
     }
     public static string GetRespectiveBeastClassNameFromByRace(RACE race) {
-        if(race == RACE.ABOMINATION) {
+        if(race == RACE.GOLEM) {
             return "Abomination";
         } else if(race == RACE.DRAGON) {
             return "Dragon";

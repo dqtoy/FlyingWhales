@@ -189,6 +189,18 @@ public class LocationStructure {
         }
         return objs;
     }
+    public T GetTileObjectOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject{
+        List<TileObject> objs = new List<TileObject>();
+        for (int i = 0; i < pointsOfInterest.Count; i++) {
+            if (pointsOfInterest[i] is TileObject) {
+                TileObject obj = pointsOfInterest[i] as TileObject;
+                if (obj.tileObjectType == type) {
+                    return obj as T;
+                }
+            }
+        }
+        return null;
+    }
     public ResourcePile GetResourcePileObjectWithLowestCount(TILE_OBJECT_TYPE type) {
         ResourcePile chosenPile = null;
         int lowestCount = 0;
