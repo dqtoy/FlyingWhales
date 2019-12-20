@@ -1237,10 +1237,10 @@ public class UIManager : MonoBehaviour {
         playerNotifGO.SetActive(false);
     }
     private void MoveNotificationMenuToDefaultPos() {
-        playerNotificationParent.anchoredPosition = new Vector2(506f, 14f);
+        playerNotificationParent.anchoredPosition = new Vector2(506f, 170f);
     }
     private void MoveNotificationMenuToModifiedPos() {
-        playerNotificationParent.anchoredPosition = new Vector2(930f, 14f);
+        playerNotificationParent.anchoredPosition = new Vector2(930f, 170f);
     }
     #endregion
 
