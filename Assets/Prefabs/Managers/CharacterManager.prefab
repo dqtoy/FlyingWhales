@@ -587,6 +587,10 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 262b3712b96ca0b44824cc35aae3ec03, type: 3}
   femaleHairSprite:
   - {fileID: 21300000, guid: 68cf74ef33622e043a41883bef5e2a12, type: 3}
+  maleKnockoutHairSprite:
+  - {fileID: 21300000, guid: 9481352b2de5e7a42806c589fa9d73d1, type: 3}
+  femaleKnockoutHairSprite:
+  - {fileID: 21300000, guid: 4d03f179d3552154497aa52fe16b546a, type: 3}
   markerAssets:
   - raceName: DEMON
     race: 14
