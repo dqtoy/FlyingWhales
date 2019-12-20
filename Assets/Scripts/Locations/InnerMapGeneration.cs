@@ -25,7 +25,7 @@ public partial class LandmarkManager {
         area.PlaceObjects();
 
         areaMap.OnMapGenerationFinished();
-        area.OnMapGenerationFinished();
+        //area.OnMapGenerationFinished();
         InnerMapManager.Instance.OnCreateInnerMap(areaMap);
         TokenManager.Instance.LoadSpecialTokens(area);
         CharacterManager.Instance.PlaceInitialCharacters(area);
@@ -41,7 +41,7 @@ public partial class LandmarkManager {
         Area area = areaMap.area;
 
         areaMap.OnMapGenerationFinished();
-        area.OnMapGenerationFinished();
+        //area.OnMapGenerationFinished();
         InnerMapManager.Instance.OnCreateInnerMap(areaMap);
 
         area.OnAreaSetAsActive();

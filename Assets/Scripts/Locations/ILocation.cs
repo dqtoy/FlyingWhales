@@ -35,8 +35,8 @@ public interface ILocation {
     void RemoveCharacterFromLocation(Party party);
     #endregion
 
-    bool AddSpecialTokenToLocation(SpecialToken token, LocationStructure structure = null, LocationGridTile gridLocation = null);
-    void RemoveSpecialTokenFromLocation(SpecialToken token);
+    //bool AddSpecialTokenToLocation(SpecialToken token, LocationStructure structure = null, LocationGridTile gridLocation = null);
+    //void RemoveSpecialTokenFromLocation(SpecialToken token);
     bool IsRequiredByLocation(SpecialToken token);
     /// <summary>
     /// Does the given location share the same core tile as this location?

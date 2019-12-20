@@ -18,7 +18,7 @@ public class SaveDataArea {
     //public List<int> tileIDs;
     //public List<int> residentIDs;
     //public List<int> charactersAtLocationIDs;
-    public List<SaveDataItem> itemsInArea;
+    //public List<SaveDataItem> itemsInArea;
 
     //public List<Log> history;
     //public JobQueue jobQueue;
@@ -58,12 +58,12 @@ public class SaveDataArea {
         //    charactersAtLocationIDs.Add(area.charactersAtLocation[i].id);
         //}
 
-        itemsInArea = new List<SaveDataItem>();
-        for (int i = 0; i < area.itemsInArea.Count; i++) {
-            SaveDataItem newSaveDataItem = new SaveDataItem();
-            newSaveDataItem.Save(area.itemsInArea[i]);
-            itemsInArea.Add(newSaveDataItem);
-        }
+        //itemsInArea = new List<SaveDataItem>();
+        //for (int i = 0; i < area.itemsInArea.Count; i++) {
+        //    SaveDataItem newSaveDataItem = new SaveDataItem();
+        //    newSaveDataItem.Save(area.itemsInArea[i]);
+        //    itemsInArea.Add(newSaveDataItem);
+        //}
 
         structures = new List<SaveDataLocationStructure>();
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in area.structures) {
@@ -104,9 +104,9 @@ public class SaveDataArea {
     //The sequence for loading save data is LoadAreas -> LoadFactions -> LoadAreaItems, so as to ensure that the area already has a faction owner when loading the items and by that logic the items loaded will also have a faction owner
     public void LoadAreaItems() {
         Area area = LandmarkManager.Instance.GetAreaByID(id);
-        for (int i = 0; i < itemsInArea.Count; i++) {
-            itemsInArea[i].Load(area);
-        }
+        //for (int i = 0; i < itemsInArea.Count; i++) {
+        //    itemsInArea[i].Load(area);
+        //}
     }
 
     public void LoadStructureEntranceTiles() {

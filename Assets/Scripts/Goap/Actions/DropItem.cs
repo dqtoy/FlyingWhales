@@ -72,7 +72,7 @@ public class DropItem : GoapAction {
             specialToken = goapNode.poiTarget as SpecialToken;
         }
 
-        goapNode.actor.DropToken(specialToken, goapNode.actor.gridTileLocation.structure.location, goapNode.actor.gridTileLocation.structure, tile);
+        goapNode.actor.DropToken(specialToken, goapNode.actor.gridTileLocation.structure, tile);
     }
     #endregion
 }

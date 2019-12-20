@@ -65,6 +65,7 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI generalConfirmationBodyText;
     [SerializeField] private Button generalConfirmationButton;
     [SerializeField] private TextMeshProUGUI generalConfirmationButtonText;
+    public string previousMenu;
 
     [Header("Start Picker")]
     [SerializeField] private GameObject startingMinionPickerGO;
@@ -140,6 +141,9 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private Toggle kennelToggle;
     [SerializeField] private Toggle profaneToggle;
     [SerializeField] private ToggleGroup demonicToggleGroup;
+
+    [Header("Seize Object")]
+    [SerializeField] private Button unseizeButton;
 
     public List<System.Action> pendingUIToShow { get; private set; }
 
@@ -291,7 +295,7 @@ public class PlayerUI : MonoBehaviour {
             if (PlayerManager.Instance.player.currentActivePlayerJobAction != null) {
                 PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
                 CursorManager.Instance.ClearLeftClickActions();
-            }else if (isSummoning) {
+            } else if (isSummoning) {
                 CancelSummon();
             } else if (isSummoningArtifact) {
                 CancelSummonArtifact();
@@ -362,7 +366,7 @@ public class PlayerUI : MonoBehaviour {
     }
     private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass currentClass) {
         CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
-        if(item != null) {
+        if (item != null) {
             item.SetObject(character);
         }
     }
@@ -408,7 +412,6 @@ public class PlayerUI : MonoBehaviour {
             UpdateClickedDemonicToggle();
         }
     }
-    public string previousMenu;
     private void OnMenuOpened(UIMenu menu) {
         if (menu is LandmarkInfoUI) {
             UIManager.Instance.ShowMinionsMenu();
@@ -1016,9 +1019,9 @@ public class PlayerUI : MonoBehaviour {
             && CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.BUILDER)) {
             minionClassName2 = CharacterManager.sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, CharacterManager.sevenDeadlySinsClassNames.Length)];
         } else {
-            if(CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.INVADER)) {
+            if (CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.INVADER)) {
                 filteredDeadlySinClasses = filteredDeadlySinClasses.Where(x => CharacterManager.Instance.CanDoDeadlySinAction(x, DEADLY_SIN_ACTION.BUILDER)).ToList();
-            }else if (CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.BUILDER)) {
+            } else if (CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.BUILDER)) {
                 filteredDeadlySinClasses = filteredDeadlySinClasses.Where(x => CharacterManager.Instance.CanDoDeadlySinAction(x, DEADLY_SIN_ACTION.INVADER)).ToList();
             }
             minionClassName2 = filteredDeadlySinClasses[UnityEngine.Random.Range(0, filteredDeadlySinClasses.Count)];
@@ -1130,13 +1133,13 @@ public class PlayerUI : MonoBehaviour {
     private void OnPlayerGainedSummonSlot(SummonSlot slot) {
         UpdateSummonsInteraction();
         //if (currentlySelectedSummonSlot == null) {
-            SetCurrentlySelectedSummonSlot(slot);
+        SetCurrentlySelectedSummonSlot(slot);
         //}
     }
     private void OnPlayerLostSummonSlot(SummonSlot slot) {
         UpdateSummonsInteraction();
         //if (currentlySelectedSummonSlot == slot) {
-            SetCurrentlySelectedSummonSlot(PlayerManager.Instance.player.summonSlots.FirstOrDefault());
+        SetCurrentlySelectedSummonSlot(PlayerManager.Instance.player.summonSlots.FirstOrDefault());
         //}
     }
     public void OnGainNewSummon(Summon newSummon) {
@@ -1150,7 +1153,7 @@ public class PlayerUI : MonoBehaviour {
     public void OnRemoveSummon(Summon summon) {
         UpdateSummonsInteraction();
         //if (PlayerManager.Instance.player.GetTotalSummonsCount() == 0) { //the player has no more summons left
-            SetCurrentlySelectedSummonSlot(currentlySelectedSummonSlot);
+        SetCurrentlySelectedSummonSlot(currentlySelectedSummonSlot);
         //} else if (currentlySelectedSummonSlot.summon == null) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
         //    CycleSummons(1);
         //}
@@ -1203,7 +1206,7 @@ public class PlayerUI : MonoBehaviour {
                     cycleSummonRight.gameObject.SetActive(true);
                 }
             }
-            
+
         }
 
         UpdateSummonsInteraction();
@@ -1332,13 +1335,13 @@ public class PlayerUI : MonoBehaviour {
     private void OnPlayerGainedArtifactSlot(ArtifactSlot slot) {
         UpdateArtifactsInteraction();
         //if (currentlySelectedArtifactSlot == null) {
-            SetCurrentlySelectedArtifactSlot(slot);
+        SetCurrentlySelectedArtifactSlot(slot);
         //}
     }
     private void OnPlayerLostArtifactSlot(ArtifactSlot slot) {
         UpdateArtifactsInteraction();
         //if (currentlySelectedArtifactSlot == slot) {
-            SetCurrentlySelectedArtifactSlot(PlayerManager.Instance.player.artifactSlots.FirstOrDefault());
+        SetCurrentlySelectedArtifactSlot(PlayerManager.Instance.player.artifactSlots.FirstOrDefault());
         //}
     }
     private void OnGainNewArtifact(Artifact newArtifact) {
@@ -1360,7 +1363,7 @@ public class PlayerUI : MonoBehaviour {
     private void OnUsedArtifact(Artifact artifact) {
         UpdateArtifactsInteraction();
         //if (PlayerManager.Instance.player.GetTotalArtifactCount() == 0) { //the player has no more artifacts left
-            SetCurrentlySelectedArtifactSlot(currentlySelectedArtifactSlot);
+        SetCurrentlySelectedArtifactSlot(currentlySelectedArtifactSlot);
         //} else if (currentlySelectedArtifactSlot.artifact == null) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
         //    CycleArtifacts(1);
         //}
@@ -1717,7 +1720,7 @@ public class PlayerUI : MonoBehaviour {
         if (item != null) {
             int index = item.transform.GetSiblingIndex();
             int deadHeaderIndex = deadHeader.transform.GetSiblingIndex();
-            if(index > deadHeaderIndex) {
+            if (index > deadHeaderIndex) {
                 item.transform.SetSiblingIndex(deadHeaderIndex);
                 aliveCount++;
             }
@@ -1726,7 +1729,7 @@ public class PlayerUI : MonoBehaviour {
     }
     private void OnCharacterBecomesMinionOrSummon(Character character) {
         CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
-        if(item != null) {
+        if (item != null) {
             item.gameObject.SetActive(false);
             aliveCount--;
             allFilteredCharactersCount--;
@@ -1772,12 +1775,12 @@ public class PlayerUI : MonoBehaviour {
         //TODO: Optimize this
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
-            if(/*!character.isFactionless &&*/ character.IsAble() && WillCharacterBeShownInKillCount(character)) {
+            if (/*!character.isFactionless &&*/ character.IsAble() && WillCharacterBeShownInKillCount(character)) {
                 aliveCount++;
             }
         }
         killCountLbl.text = aliveCount + "/" + allFilteredCharactersCount;
-        if(aliveCount <= 0) {
+        if (aliveCount <= 0) {
             //player has won
             UIManager.Instance.Pause();
             UIManager.Instance.SetSpeedTogglesState(false);
@@ -1972,7 +1975,7 @@ public class PlayerUI : MonoBehaviour {
             if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL && !demonicToggleGroup.AnyTogglesOn()) {
                 UIManager.Instance.regionInfoUI.CloseMenu();
             }
-        }   
+        }
     }
     public void OnToggleSpire(bool isOn) {
         if (isOn) {
@@ -2113,6 +2116,22 @@ public class PlayerUI : MonoBehaviour {
             kennelToggle.isOn = false;
             profaneToggle.isOn = false;
         }
+    }
+    #endregion
+
+    #region Seize Object
+    public void ShowSeizedObjectUI() {
+        unseizeButton.gameObject.SetActive(true);
+    }
+    public void HideSeizedObjectUI() {
+        unseizeButton.gameObject.SetActive(false);
+    }
+    //Not used right now, might be used in the future
+    public void UpdateSeizedObjectUI() {
+        unseizeButton.gameObject.SetActive(PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
+    }
+    public void OnClickSeizedObject() {
+        PlayerManager.Instance.player.seizeComponent.PrepareToUnseize();
     }
     #endregion
 }

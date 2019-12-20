@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Traits;
 using UnityEngine;
+using Inner_Maps;
 
 public class TokenManager : MonoBehaviour {
     public static TokenManager Instance;
@@ -48,7 +49,8 @@ public class TokenManager : MonoBehaviour {
                     Area chosenArea = areas[UnityEngine.Random.Range(0, areas.Count)];
                     SpecialToken createdToken = CreateSpecialToken(currSetting.tokenType, currSetting.appearanceWeight);
                     if (createdToken != null) {
-                        chosenArea.AddSpecialTokenToLocation(createdToken);
+                        LocationStructure chosenStructure = InnerMapManager.Instance.GetRandomStructureToPlaceItem(chosenArea, createdToken);
+                        chosenStructure.AddItem(createdToken);
                         //createdToken.SetOwner(chosenArea.owner); //Removed this because of redundancy, SetOwner is already being called inside AddSpecialTokenToLocation
                         //Messenger.Broadcast<SpecialToken>(Signals.SPECIAL_TOKEN_CREATED, createdToken);
                     }

@@ -115,6 +115,23 @@ public class CharacterNeedsComponent {
     }
     #endregion
 
+    public void CheckExtremeNeeds() {
+        string summary = GameManager.Instance.TodayLogString() + _character.name + " will check his/her needs.";
+        if (isStarving) {
+            summary += "\n" + _character.name + " is starving. Planning fullness recovery actions...";
+            PlanFullnessRecoveryActions(_character);
+        }
+        if (isExhausted) {
+            summary += "\n" + _character.name + " is exhausted. Planning tiredness recovery actions...";
+            PlanTirednessRecoveryActions(_character);
+        }
+        if (isForlorn) {
+            summary += "\n" + _character.name + " is forlorn. Planning happiness recovery actions...";
+            PlanHappinessRecoveryActions(_character);
+        }
+        Debug.Log(summary);
+    }
+
     private bool HasNeeds() {
         return _character.race != RACE.SKELETON && _character.characterClass.className != "Zombie" && !_character.returnedToLife && _character.isAtHomeRegion && 
                _character.homeRegion.area != null; //Characters living on a region without a settlement must not decrease needs

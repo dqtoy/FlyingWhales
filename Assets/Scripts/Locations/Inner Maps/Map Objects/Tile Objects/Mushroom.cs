@@ -29,7 +29,9 @@ public class Mushroom : TileObject {
         base.SetPOIState(state);
         if (gridTileLocation != null) {
             //Debug.Log(GameManager.Instance.TodayLogString() + "Set " + this.ToString() + "' state to " + state.ToString());
-            mapVisual.UpdateTileObjectVisual(this); //update visual based on state
+            if(mapVisual != null) {
+                mapVisual.UpdateTileObjectVisual(this); //update visual based on state
+            }
             if (!IsAvailable()) {
                 ScheduleCooldown();
             }

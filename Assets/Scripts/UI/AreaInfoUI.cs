@@ -439,12 +439,12 @@ public class AreaInfoUI : UIMenu {
         }
     }
     private void UpdateItems() {
-        if (!normalContentGO.activeSelf) { return; }
-        for (int i = 0; i < itemContainers.Length; i++) {
-            ItemContainer currContainer = itemContainers[i];
-            SpecialToken currToken = activeArea.itemsInArea.ElementAtOrDefault(i);
-            currContainer.SetItem(currToken);
-        }
+        //if (!normalContentGO.activeSelf) { return; }
+        //for (int i = 0; i < itemContainers.Length; i++) {
+        //    ItemContainer currContainer = itemContainers[i];
+        //    SpecialToken currToken = activeArea.itemsInArea.ElementAtOrDefault(i);
+        //    currContainer.SetItem(currToken);
+        //}
     }
     #endregion
 

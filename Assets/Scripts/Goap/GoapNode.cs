@@ -664,6 +664,9 @@ public class ActualGoapNode {
     public void OverrideDescriptionLog(Log log) {
         descriptionLog = log;
     }
+    public string StringText() {
+        return action.goapName + " with actor => " + actor.name + ", and target => " + poiTarget.name;
+    }
     #endregion
 
     #region Jobs

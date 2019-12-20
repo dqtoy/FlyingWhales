@@ -134,13 +134,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         //}
     }
     public virtual void OnPlacePOI() {
+        SetPOIState(POI_STATE.ACTIVE);
         if (mapVisual == null) {
             InitializeMapObject(this);
             gridTileLocation.parentMap.location.AddAwareness(this);
         }
         PlaceMapObjectAt(gridTileLocation);
         OnPlaceObjectAtTile(gridTileLocation);
-        SetPOIState(POI_STATE.ACTIVE);
     }
     public virtual void RemoveTileObject(Character removedBy) {
         LocationGridTile previousTile = this.gridTileLocation;
@@ -399,11 +399,14 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         return storedResources[resourceType] >= amount;
     }
     public void OnSeizePOI() {
+        if (UIManager.Instance.tileObjectInfoUI.isShowing && UIManager.Instance.tileObjectInfoUI.activeTileObject == this) {
+            UIManager.Instance.tileObjectInfoUI.CloseMenu();
+        }
         Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this as IPointOfInterest, "");
         gridTileLocation.structure.RemovePOI(this);
     }
     public void OnUnseizePOI(LocationGridTile tileLocation) {
-
+        tileLocation.structure.AddPOI(this, tileLocation);
     }
     #endregion
 

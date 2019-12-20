@@ -126,7 +126,7 @@ public class Minion {
             //    character.currentActionNode.StopActionNode(false);
             //}
             if (character.currentRegion.area != null && character.isHoldingItem) {
-                character.DropAllTokens(character.currentRegion.area, character.currentStructure, deathTile, true);
+                character.DropAllTokens(character.currentStructure, deathTile, true);
             }
 
             //clear traits that need to be removed

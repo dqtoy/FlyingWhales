@@ -62,7 +62,7 @@ public class SaveDataItem {
             structure = areaOwner.GetStructureByID(structureType, structureID);
             tile = areaOwner.areaMap.map[(int) gridTile.x, (int) gridTile.y];
         }
-        areaOwner.AddSpecialTokenToLocation(item, structure, tile);
+        structure.AddItem(item, tile);
     }
     public void Load(Character characterOwner) {
         SpecialToken item = TokenManager.Instance.CreateSpecialToken(specialTokenType, weight);

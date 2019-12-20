@@ -733,7 +733,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             CancelAllJobs();
 
             if (currentRegion.area != null && isHoldingItem) {
-                DropAllTokens(currentRegion.area, currentStructure, deathTile, true);
+                DropAllTokens(currentStructure, deathTile, true);
             } else {
                 for (int i = 0; i < items.Count; i++) {
                     if (RemoveToken(i)) {
@@ -4457,17 +4457,18 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         return false;
     }
-    public void DropToken(SpecialToken token, ILocation location, LocationStructure structure, LocationGridTile gridTile = null, bool clearOwner = true) {
+    public void DropToken(SpecialToken token, LocationStructure structure, LocationGridTile gridTile = null, bool clearOwner = true) {
         if (UnobtainToken(token)) {
             if (token.specialTokenType.CreatesObjectWhenDropped()) {
-                location.AddSpecialTokenToLocation(token, structure, gridTile);
+                structure.AddItem(token, gridTile);
+                //location.AddSpecialTokenToLocation(token, structure, gridTile);
             }
             if (clearOwner) {
                 token.SetCharacterOwner(null);
             }
         }
     }
-    public void DropAllTokens(Area location, LocationStructure structure, LocationGridTile tile, bool removeFactionOwner = false) {
+    public void DropAllTokens(LocationStructure structure, LocationGridTile tile, bool removeFactionOwner = false) {
         while (isHoldingItem) {
             SpecialToken token = items[0];
             if (UnobtainToken(token)) {
@@ -4476,7 +4477,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 }
                 if (token.specialTokenType.CreatesObjectWhenDropped()) {
                     LocationGridTile targetTile = tile.GetNearestUnoccupiedTileFromThis();
-                    location.AddSpecialTokenToLocation(token, structure, targetTile);
+                    targetTile.structure.AddItem(token, targetTile);
+                    //location.AddSpecialTokenToLocation(token, structure, targetTile);
                     if (structure != homeStructure) {
                         //if this character drops this at a structure that is not his/her home structure, set the owner of the item to null
                         token.SetCharacterOwner(null);
@@ -4493,12 +4495,14 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         if (ObtainToken(token, changeCharacterOwnership)) {
             if (token.gridTileLocation != null) {
-                token.gridTileLocation.structure.location.RemoveSpecialTokenFromLocation(token);
+                token.gridTileLocation.structure.RemoveItem(token);
+                //token.gridTileLocation.structure.location.RemoveSpecialTokenFromLocation(token);
             }
         }
     }
     public void DestroyToken(SpecialToken token) {
-        token.gridTileLocation.structure.location.RemoveSpecialTokenFromLocation(token);
+        token.gridTileLocation.structure.RemoveItem(token);
+        //token.gridTileLocation.structure.location.RemoveSpecialTokenFromLocation(token);
     }
     private void UpdateTokenOwner() {
         for (int i = 0; i < items.Count; i++) {
@@ -5504,6 +5508,19 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
         //Every time current node is stopped, drop carried poi
         if (IsInOwnParty()) {
+            if (ownParty.isCarryingAnyPOI) {
+                IPointOfInterest carriedPOI = ownParty.carriedPOI;
+                string log = GameManager.Instance.TodayLogString() + "Dropping carried POI: " + carriedPOI.name + " because current action node is stopped: " + currentActionNode.StringText();
+                log += "\nAdditional Info:";
+                if (carriedPOI is ResourcePile) {
+                    ResourcePile pile = carriedPOI as ResourcePile;
+                    log += "\n-Stored resources on drop: " + pile.resourceInPile + " " + pile.providedResource.ToString();
+                } else if (carriedPOI is Table) {
+                    Table table = carriedPOI as Table;
+                    log += "\n-Stored resources on drop: " + table.food + " Food.";
+                }
+                PrintLogIfActive(log);
+            }
             ownParty.RemoveCarriedPOI();
         }
         currentActionNode.StopActionNode(shouldDoAfterEffect);
@@ -5647,6 +5664,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
     //Can only be seized if poi has tile location
     public void OnSeizePOI() {
+        if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this) {
+            UIManager.Instance.characterInfoUI.CloseMenu();
+        }
+        if (ownParty.icon.isTravelling) {
+            marker.StopMovement();
+        }
         Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this as IPointOfInterest, "");
         marker.ClearTerrifyingObjects();
         needsComponent.OnCharacterLeftLocation(currentRegion);
@@ -5655,12 +5678,24 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         UnsubscribeSignals();
         SetIsChatting(false);
         SetPOIState(POI_STATE.INACTIVE);
+        SchedulingManager.Instance.ClearAllSchedulesBy(this);
         if (marker != null) {
             DestroyMarker();
         }
     }
     public void OnUnseizePOI(LocationGridTile tileLocation) {
-
+        needsComponent.OnCharacterArrivedAtLocation(tileLocation.structure.location.coreTile.region);
+        SubscribeToSignals();
+        SetPOIState(POI_STATE.ACTIVE);
+        if (marker == null) {
+            CreateMarker();
+        }
+        if(tileLocation.structure.location.coreTile.region != currentRegion) {
+            currentRegion.RemoveCharacterFromLocation(this);
+            marker.InitialPlaceMarkerAt(tileLocation);
+        } else {
+            marker.InitialPlaceMarkerAt(tileLocation, false);
+        }
     }
     #endregion
 

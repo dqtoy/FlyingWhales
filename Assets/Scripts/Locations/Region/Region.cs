@@ -1004,25 +1004,25 @@ public class Region : ILocation, IHasNeighbours<Region> {
     public void SetRegionInnerMap(RegionInnerTileMap regionInnerTileMap) {
         _regionInnerTileMap = regionInnerTileMap;
     }
-    public bool AddSpecialTokenToLocation(SpecialToken token, LocationStructure structure = null, LocationGridTile gridLocation = null) {
-        token.SetOwner(this.owner);
-        if (innerMap != null) { //if the area map of this area has already been created.
-            if (structure != null) {
-                structure.AddItem(token, gridLocation);
-            } else {
-                //get structure for token
-                LocationStructure chosen = InnerMapManager.Instance.GetRandomStructureToPlaceItem(this, token);
-                chosen.AddItem(token);
-            }
-        }
-        return true;
-    }
-    public void RemoveSpecialTokenFromLocation(SpecialToken token) {
-        LocationStructure takenFrom = token.structureLocation;
-        if (takenFrom != null) {
-            takenFrom.RemoveItem(token);
-        }
-    }
+    //public bool AddSpecialTokenToLocation(SpecialToken token, LocationStructure structure = null, LocationGridTile gridLocation = null) {
+    //    token.SetOwner(this.owner);
+    //    if (innerMap != null) { //if the area map of this area has already been created.
+    //        if (structure != null) {
+    //            structure.AddItem(token, gridLocation);
+    //        } else {
+    //            //get structure for token
+    //            LocationStructure chosen = InnerMapManager.Instance.GetRandomStructureToPlaceItem(this, token);
+    //            chosen.AddItem(token);
+    //        }
+    //    }
+    //    return true;
+    //}
+    //public void RemoveSpecialTokenFromLocation(SpecialToken token) {
+    //    LocationStructure takenFrom = token.structureLocation;
+    //    if (takenFrom != null) {
+    //        takenFrom.RemoveItem(token);
+    //    }
+    //}
     public bool IsRequiredByLocation(SpecialToken token) {
         return false;
     }
