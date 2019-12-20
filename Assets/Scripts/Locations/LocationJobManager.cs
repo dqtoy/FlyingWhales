@@ -1,6 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class LocationJobManager {
     private Area location { get; set; }
@@ -179,6 +180,9 @@ public class LocationJobManager {
             Region validRegion;
             if (TryGetOccupiedNonSettlementTileAtWarWithThisLocation(out validRegion)) {
                 validRegion = AttackNonDemonicRegionRegionGetter();
+                if (validRegion.regionTileObject == null) {
+                    throw new Exception($"Valid region's tile object is null! Valid region is {validRegion.name}");
+                }
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ATTACK_NON_DEMONIC_REGION, INTERACTION_TYPE.ATTACK_REGION, validRegion.regionTileObject, location);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoAttackNonDemonicRegionJob);
                 location.AddToAvailableJobs(job);

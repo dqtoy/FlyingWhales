@@ -199,9 +199,9 @@ public class BaseLandmark {
             case LANDMARK_TYPE.TEMPLE:
                 tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Warded_Feature));
                 break;
-            //case LANDMARK_TYPE.MONSTER_LAIR:
-            //    tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Dangerous_Feature));
-            //    break;
+            case LANDMARK_TYPE.MONSTER_LAIR:
+                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Summons_Feature));
+                break;
             case LANDMARK_TYPE.FARM:
                 tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Fertile_Feature));
                 break;
@@ -215,7 +215,6 @@ public class BaseLandmark {
         WeightedDictionary<string> randomFeatureWeights = new WeightedDictionary<string>();
         switch (specificLandmarkType) {
             case LANDMARK_TYPE.MONSTER_LAIR:
-                randomFeatureWeights.AddElement(RegionFeatureDB.Summons_Feature, 100);
                 randomFeatureWeights.AddElement(RegionFeatureDB.Spell_Feature, 25);
                 randomFeatureWeights.AddElement(RegionFeatureDB.Knowledge_Feature, 25);
                 break;

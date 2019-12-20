@@ -40,7 +40,7 @@ public class MakeLove : GoapAction {
         actor.needsComponent.AdjustDoNotGetLonely(-1);
         targetCharacter.needsComponent.AdjustDoNotGetLonely(-1);
 
-        Bed bed = actor.gridTileLocation.objHere as Bed;
+        Bed bed = actor.gridTileLocation.structure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).FirstOrDefault() as Bed;
         bed?.OnDoneActionToObject(actor.currentActionNode);
 
         targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Wooed");
@@ -93,7 +93,8 @@ public class MakeLove : GoapAction {
 
     #region Effects
     public void PreMakeLoveSuccess(ActualGoapNode goapNode) {
-        Bed bed = goapNode.actor.gridTileLocation.objHere as Bed;
+        //TODO: This is unsafe, code will not work when structure has more than 1 bed
+        Bed bed = goapNode.actor.gridTileLocation.structure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).FirstOrDefault() as Bed;
         bed.OnDoActionToObject(goapNode);
 
         Character targetCharacter = goapNode.poiTarget as Character;
@@ -113,7 +114,7 @@ public class MakeLove : GoapAction {
         targetCharacter.needsComponent.AdjustHappiness(500);
     }
     public void AfterMakeLoveSuccess(ActualGoapNode goapNode) {
-        Bed bed = goapNode.actor.gridTileLocation.objHere as Bed;
+        Bed bed = goapNode.actor.gridTileLocation.structure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).FirstOrDefault() as Bed;
         bed.OnDoneActionToObject(goapNode);
         Character targetCharacter = goapNode.poiTarget as Character;
         goapNode.actor.needsComponent.AdjustDoNotGetLonely(-1);

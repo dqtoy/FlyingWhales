@@ -103,7 +103,7 @@ namespace Traits {
             int roll = Random.Range(0, 100);
             if (roll < 2 && owner.isAtHomeRegion) { //2
                 owner.marker.StopMovement();
-                if (owner.currentActionNode.action != null && owner.currentActionNode.action.goapType != INTERACTION_TYPE.ZOMBIE_DEATH) {
+                if (owner.currentActionNode != null && owner.currentActionNode.action.goapType != INTERACTION_TYPE.ZOMBIE_DEATH) {
                     owner.StopCurrentActionNode(false);
                 } else if (owner.stateComponent.currentState != null) {
                     owner.stateComponent.ExitCurrentState();
