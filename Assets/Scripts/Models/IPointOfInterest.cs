@@ -14,6 +14,7 @@ public interface IPointOfInterest : ITraitable {
     new LocationGridTile gridTileLocation { get; }
     List<INTERACTION_TYPE> advertisedActions { get; }
     List<JobQueueItem> allJobsTargetingThis { get; }
+    Dictionary<RESOURCE, int> storedResources { get; }
     Faction factionOwner { get; }
     bool isDisabledByPlayer { get; }
     Vector3 worldPosition { get; }
@@ -34,6 +35,10 @@ public interface IPointOfInterest : ITraitable {
     bool IsStillConsideredPartOfAwarenessByCharacter(Character character);
     void OnPlacePOI();
     void OnDestroyPOI();
+    void ConstructResources();
+    void SetResource(RESOURCE resourceType, int amount);
+    void AdjustResource(RESOURCE resourceType, int amount);
+    bool HasResourceAmount(RESOURCE resourceType, int amount);
 }
 
 /// <summary>

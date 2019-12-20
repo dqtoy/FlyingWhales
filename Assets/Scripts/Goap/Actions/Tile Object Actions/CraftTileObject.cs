@@ -45,6 +45,12 @@ public class CraftTileObject : GoapAction {
     #region State Effects
     public void PreCraftSuccess(ActualGoapNode goapNode) {
         TileObject obj = goapNode.poiTarget as TileObject;
+        if (goapNode.actor.ownParty.carriedPOI != null) {
+            ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
+            int cost = TileObjectDB.GetTileObjectData((goapNode.poiTarget as TileObject).tileObjectType).constructionCost;
+            carriedPile.AdjustResourceInPile(-cost);
+            goapNode.poiTarget.AdjustResource(RESOURCE.WOOD, cost);
+        }
         goapNode.descriptionLog.AddToFillers(null, Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
         goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
     }
@@ -52,16 +58,22 @@ public class CraftTileObject : GoapAction {
         TileObject tileObj = goapNode.poiTarget as TileObject;
         tileObj.SetMapObjectState(MAP_OBJECT_STATE.BUILT);
         //goapNode.actor.AdjustResource(RESOURCE.WOOD, -TileObjectDB.GetTileObjectData((goapNode.poiTarget as TileObject).tileObjectType).constructionCost);
-        ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
-        carriedPile.AdjustResourceInPile(-TileObjectDB.GetTileObjectData((goapNode.poiTarget as TileObject).tileObjectType).constructionCost);
+        int cost = TileObjectDB.GetTileObjectData((goapNode.poiTarget as TileObject).tileObjectType).constructionCost;
+        goapNode.poiTarget.AdjustResource(RESOURCE.WOOD, -cost);
+        //ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
+        //carriedPile.AdjustResourceInPile(-TileObjectDB.GetTileObjectData((goapNode.poiTarget as TileObject).tileObjectType).constructionCost);
     }
     #endregion
 
     #region Preconditions
     private bool HasSupply(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        int cost = TileObjectDB.GetTileObjectData((poiTarget as TileObject).tileObjectType).constructionCost;
+        if (poiTarget.HasResourceAmount(RESOURCE.WOOD, cost)) {
+            return true;
+        }
         if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile) {
             ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
-            return carriedPile.resourceInPile >= TileObjectDB.GetTileObjectData((poiTarget as TileObject).tileObjectType).constructionCost;
+            return carriedPile.resourceInPile >= cost;
         }
         return false;
         //return actor.supply >= TileObjectDB.GetTileObjectData((poiTarget as TileObject).tileObjectType).constructionCost;

@@ -46,6 +46,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
     public POI_STATE state { get; private set; }
     public LocationGridTile previousTile { get; protected set; }
     public Character isBeingCarriedBy { get; protected set; }
+    public Dictionary<RESOURCE, int> storedResources { get; protected set; }
 
     #region getters
     public POINT_OF_INTEREST_TYPE poiType {
@@ -76,6 +77,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         currentHP = maxHP;
         CreateTraitContainer();
         traitContainer.AddTrait(this, "Flammable");
+        ConstructResources();
         AddCommonAdvertisments();
         InnerMapManager.Instance.AddTileObject(this);
     }
@@ -88,6 +90,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         hasCreatedSlots = false;
         CreateTraitContainer();
         AddCommonAdvertisments();
+        ConstructResources();
         InnerMapManager.Instance.AddTileObject(this);
     }
 
@@ -375,6 +378,25 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
     public void SetGridTileLocation(LocationGridTile tile) {
         previousTile = this.gridTileLocation;
         this.gridTileLocation = tile;
+    }
+    public void ConstructResources() {
+        storedResources = new Dictionary<RESOURCE, int>() {
+            { RESOURCE.FOOD, 0 },
+            { RESOURCE.WOOD, 0 },
+            { RESOURCE.STONE, 0 },
+            { RESOURCE.METAL, 0 },
+        };
+    }
+    public void SetResource(RESOURCE resourceType, int amount) {
+        storedResources[resourceType] = amount;
+        storedResources[resourceType] = Mathf.Max(0, storedResources[resourceType]);
+    }
+    public void AdjustResource(RESOURCE resourceType, int amount) {
+        storedResources[resourceType] += amount;
+        storedResources[resourceType] = Mathf.Max(0, storedResources[resourceType]);
+    }
+    public bool HasResourceAmount(RESOURCE resourceType, int amount) {
+        return storedResources[resourceType] >= amount;
     }
     #endregion
 

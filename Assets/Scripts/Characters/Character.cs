@@ -75,6 +75,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public int isStoppedByOtherCharacter { get; private set; } //this is increased, when the action of another character stops this characters movement
     public Party ownParty { get; protected set; }
     public Party currentParty { get; protected set; }
+    public Dictionary<RESOURCE, int> storedResources { get; protected set; }
 
     private List<System.Action> onLeaveAreaActions;
     private POI_STATE _state;
@@ -357,6 +358,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         pendingActionsAfterMultiThread = new List<Action>();
         SetPOIState(POI_STATE.ACTIVE);
         needsComponent.ResetSleepTicks();
+        ConstructResources();
 
         //for testing
         locationHistory = new List<string>();
@@ -5468,6 +5470,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //}
 
         //SetIsStopped(true);
+
+        //Every time current node is stopped, drop carried poi
+        if (IsInOwnParty()) {
+            ownParty.RemoveCarriedPOI();
+        }
         currentActionNode.StopActionNode(shouldDoAfterEffect);
         SetCurrentActionNode(null, null, null);
         //JobQueueItem job = parentPlan.job;
@@ -5608,22 +5615,27 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     #endregion
 
-    #region Reesources
-    public void AdjustResource(RESOURCE resource, int amount) {
-        switch (resource) {
-            case RESOURCE.FOOD:
-                AdjustFood(amount);
-                break;
-            case RESOURCE.WOOD:
-                AdjustSupply(amount);
-                break;
-            case RESOURCE.STONE:
-                throw new NotImplementedException();
-            case RESOURCE.METAL:
-                throw new NotImplementedException();
-            default:
-                break;
-        }
+    #region Resources
+    public void ConstructResources() {
+        storedResources = new Dictionary<RESOURCE, int>() {
+            { RESOURCE.FOOD, 0 },
+            { RESOURCE.WOOD, 0 },
+            { RESOURCE.STONE, 0 },
+            { RESOURCE.METAL, 0 },
+        };
+    }
+    public void SetResource(RESOURCE resourceType, int amount) {
+        int currentAmount = storedResources[resourceType];
+        storedResources[resourceType] = amount;
+        storedResources[resourceType] = Mathf.Max(0, currentAmount);
+    }
+    public void AdjustResource(RESOURCE resourceType, int amount) {
+        int currentAmount = storedResources[resourceType];
+        storedResources[resourceType] += amount;
+        storedResources[resourceType] = Mathf.Max(0, currentAmount);
+    }
+    public bool HasResourceAmount(RESOURCE resourceType, int amount) {
+        return storedResources[resourceType] >= amount;
     }
     #endregion
 

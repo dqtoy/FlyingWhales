@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class ResourcePile : TileObject {
 
 	public RESOURCE providedResource { get; protected set; }
-    public int resourceInPile { get; protected set; }
+    public int resourceInPile { get { return storedResources[providedResource]; } }
 
     public ResourcePile(RESOURCE providedResource) {
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TAKE_RESOURCE, INTERACTION_TYPE.CARRY, INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE /*, INTERACTION_TYPE.DESTROY_RESOURCE*/ };
@@ -14,15 +14,17 @@ public abstract class ResourcePile : TileObject {
 
     #region Virtuals
     public virtual void SetResourceInPile(int amount) {
-        resourceInPile = amount;
-        resourceInPile = Mathf.Max(0, resourceInPile);
+        SetResource(providedResource, amount);
+        //resourceInPile = amount;
+        //resourceInPile = Mathf.Max(0, resourceInPile);
         if(resourceInPile <= 0 && gridTileLocation != null && isBeingCarriedBy == null) {
             gridTileLocation.structure.RemovePOI(this);
         }
     }
     public virtual void AdjustResourceInPile(int adjustment) {
-        resourceInPile += adjustment;
-        resourceInPile = Mathf.Max(0, resourceInPile);
+        //resourceInPile += adjustment;
+        //resourceInPile = Mathf.Max(0, resourceInPile);
+        AdjustResource(providedResource, adjustment);
         if (resourceInPile <= 0) {
             if(gridTileLocation != null && isBeingCarriedBy == null) {
                 gridTileLocation.structure.RemovePOI(this);

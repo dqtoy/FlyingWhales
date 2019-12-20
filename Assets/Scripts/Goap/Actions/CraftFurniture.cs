@@ -70,9 +70,13 @@ public class CraftFurniture : GoapAction {
     #region Preconditions
     private bool HasSupply(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         TILE_OBJECT_TYPE furnitureToCreate = (TILE_OBJECT_TYPE)otherData[1];
+        int cost = TileObjectDB.GetTileObjectData(furnitureToCreate).constructionCost;
+        if (poiTarget.HasResourceAmount(RESOURCE.WOOD, cost)) {
+            return true;
+        }
         if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile) {
             ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
-            return carriedPile.resourceInPile >= TileObjectDB.GetTileObjectData(furnitureToCreate).constructionCost;
+            return carriedPile.resourceInPile >= cost;
         }
         return false;
         //return actor.supply >= TileObjectDB.GetTileObjectData(furnitureToCreate).constructionCost;
@@ -82,6 +86,13 @@ public class CraftFurniture : GoapAction {
     #region State Effects
     public void PreCraftSuccess(ActualGoapNode goapNode) {
         TILE_OBJECT_TYPE furnitureToCreate = (TILE_OBJECT_TYPE)goapNode.otherData[1];
+        if(goapNode.actor.ownParty.carriedPOI != null) {
+            ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
+            int cost = TileObjectDB.GetTileObjectData(furnitureToCreate).constructionCost;
+            carriedPile.AdjustResourceInPile(-cost);
+            goapNode.poiTarget.AdjustResource(RESOURCE.WOOD, cost);
+        }
+
         goapNode.descriptionLog.AddToFillers(null, Utilities.GetArticleForWord(furnitureToCreate.ToString()), LOG_IDENTIFIER.STRING_1);
         goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(furnitureToCreate.ToString()), LOG_IDENTIFIER.ITEM_1);
     }
@@ -89,8 +100,8 @@ public class CraftFurniture : GoapAction {
         LocationGridTile targetSpot = goapNode.otherData[0] as LocationGridTile;
         TILE_OBJECT_TYPE furnitureToCreate = (TILE_OBJECT_TYPE)goapNode.otherData[1];
         //goapNode.actor.AdjustSupply(-TileObjectDB.GetTileObjectData(furnitureToCreate).constructionCost);
-        ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
-        carriedPile.AdjustResourceInPile(-TileObjectDB.GetTileObjectData(furnitureToCreate).constructionCost);
+        int cost = TileObjectDB.GetTileObjectData(furnitureToCreate).constructionCost;
+        goapNode.poiTarget.AdjustResource(RESOURCE.WOOD, -cost);
         if (targetSpot.objHere == null) {
             targetSpot.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(furnitureToCreate), targetSpot);
         }
