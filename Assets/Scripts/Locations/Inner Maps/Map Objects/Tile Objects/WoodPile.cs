@@ -42,7 +42,7 @@ public class WoodPile : ResourcePile {
         if (gridTileLocation != null) {
             if (structureLocation == structureLocation.location.mainStorage) {
                 if (resourceInPile < 100) {
-                    if (!structureLocation.areaLocation.HasJob(JOB_TYPE.PRODUCE_WOOD)) {
+                    if (structureLocation.areaLocation != null && !structureLocation.areaLocation.HasJob(JOB_TYPE.PRODUCE_WOOD)) {
                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PRODUCE_WOOD, new GoapEffect(GOAP_EFFECT_CONDITION.PRODUCE_WOOD, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), this, structureLocation.areaLocation);
                         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainSupplyJob);
                         structureLocation.areaLocation.AddToAvailableJobs(job);

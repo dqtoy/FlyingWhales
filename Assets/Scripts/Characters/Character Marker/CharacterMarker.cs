@@ -674,9 +674,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
         PlayAnimation("Sleep Ground");
     }
     public void PlayAnimation(string animation) {
-        if (animation == "Sleep Ground") {
-            Debug.Log($"{character.name} set animation to {animation}");
-        }
         animator.Play(animation, 0, 0.5f);
     }
     public void UpdateAnimation() {
@@ -692,10 +689,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (character.isDead) {
             PlayAnimation("Dead");
             UpdateHairState();
-        } else if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) || character.canMove == false) {
-            PlaySleepGround();
         } else if (character.isStoppedByOtherCharacter > 0) {
             PlayIdle();
+        } else if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) || character.canMove == false) {
+            PlaySleepGround();
         } else if (character.currentParty.icon != null && character.currentParty.icon.isTravelling) {
             //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
             PlayWalkingAnimation();
