@@ -689,10 +689,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (character.isDead) {
             PlayAnimation("Dead");
             UpdateHairState();
-        } else if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) || character.canMove == false) {
-            PlaySleepGround();
         } else if (character.isStoppedByOtherCharacter > 0) {
             PlayIdle();
+        } else if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) || character.canMove == false) {
+            PlaySleepGround();
         } else if (character.currentParty.icon != null && character.currentParty.icon.isTravelling) {
             //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
             PlayWalkingAnimation();
@@ -942,7 +942,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     private void UpdateHairState() {
         //TODO: Find another way to unify this
-        if (character.characterClass.className == "Mage" || character.visuals.portraitSettings.hair == -1 || character.race == RACE.WOLF || character.isDead || character.race == RACE.SKELETON) {
+        if (character.characterClass.className == "Mage" || character.visuals.portraitSettings.hair == -1 || 
+            character.race == RACE.WOLF || character.isDead || character.race == RACE.SKELETON || 
+            character.race == RACE.GOLEM) {
             hairImg.gameObject.SetActive(false);
         } else {
             hairImg.gameObject.SetActive(true);

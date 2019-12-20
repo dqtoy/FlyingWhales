@@ -39,6 +39,7 @@ public class WorldConfigManager : MonoBehaviour {
             { LANDMARK_TYPE.BARRACKS, 1 },//-1 barracks region
             { LANDMARK_TYPE.WORKSHOP, 1 }, //-1 workshop region
             { LANDMARK_TYPE.TEMPLE, 1 }, //-1 temple region
+            { LANDMARK_TYPE.MONSTER_LAIR, 4 }, //-1 temple region
         };
 
         //-4 monster lair, cave or ancient ruin region

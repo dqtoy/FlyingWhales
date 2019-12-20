@@ -51,6 +51,13 @@ public class Invite : GoapAction {
         }
         return goapActionInvalidity;
     }
+    public override void OnInvalidAction(ActualGoapNode node) {
+        base.OnInvalidAction(node);
+        if (node.actor is SeducerSummon) {
+            Character target = node.poiTarget as Character;
+            target.marker.AddHostileInRange(node.actor, false);
+        }
+    }
     #endregion
 
     #region Effects

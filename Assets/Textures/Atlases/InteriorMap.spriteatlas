@@ -452,7 +452,7 @@ SpriteAtlas:
   - TRASH#4
   - TABLE_SCROLLS#1
   - dirtSnow00
-  - table_herbalism
+  - TABLE_HERBALISM
   - snow01
   - ROCK#1
   - farmFieldVert01
@@ -496,14 +496,14 @@ SpriteAtlas:
   - magicCircle00
   - caveWallA-1001-00
   - shore11011111-00
-  - rack_tools
+  - RACK_TOOLS
   - caveWallA-1101-01 - Copy (2)
   - caveWallA-1100-00
   - shore11011101-00
   - ROCK#2
   - metal_pile
   - shore11000101-00
-  - table_alchemy
+  - TABLE_ALCHEMY
   - TORCH#1
   - well01
   - tundraDirt03
@@ -516,7 +516,7 @@ SpriteAtlas:
   - dirt00
   - GRAVE#1
   - vertical_1
-  - shelf_swords
+  - SHELF_SWORDS
   - PondWall
   - well04
   - shore01000111-00
@@ -545,7 +545,7 @@ SpriteAtlas:
   - TRAINING_DUMMY#1
   - caveWallA-1101-02 - Copy
   - templeStatueGoddess00
-  - rack_weapons
+  - RACK_WEAPONS
   - SHRINE_CANDLES#2
   - FLOWER#2
   - grass02
@@ -587,10 +587,10 @@ SpriteAtlas:
   - caveWallA-1001-02
   - chair01
   - grass_v01
-  - shelf_armor
+  - SHELF_ARMOR
   - rabbit00
   - wood_floorA000
-  - table_weapons
+  - TABLE_WEAPONS
   - BRAZIER#2
   - floorStone02
   - caveWallA-1101-01
@@ -602,7 +602,7 @@ SpriteAtlas:
   - TRASH#1
   - caveWallA-1101-01 - Copy
   - shore01000000-00
-  - shelf_scrolls
+  - SHELF_SCROLLS
   - wood_floorA022
   - caveWallA-1010-01
   - caveWallA-1001-01
@@ -652,7 +652,7 @@ SpriteAtlas:
   - CRATE#3
   - ANVIL#1
   - caveWallA-0100-00
-  - plinth_book
+  - PLINTH_BOOK
   - WATER_BASIN#1_EMPTY
   - shore01000101-00
   - minion_icon_attacker 1
@@ -669,9 +669,9 @@ SpriteAtlas:
   - stone_v01
   - fireplace00
   - BotLeft
-  - table_metalworking_tools
+  - TABLE_METALWORKING_TOOLS
   - snow03
-  - rack_staves
+  - RACK_STAVES
   - caveWallA-1101-00
   - caveWallA-0001-00
   - rug02
@@ -687,7 +687,7 @@ SpriteAtlas:
   - ROCK#4
   - wood_floorA01
   - BRAZIER#1
-  - table_armor
+  - TABLE_ARMOR
   - caveWallA-1010-02
   - supplies
   - shore01010111-00
@@ -698,7 +698,7 @@ SpriteAtlas:
   - guitar
   - shore11110111-00
   - farmFieldVert00crops
-  - smithing_forge
+  - SMITHING_FORGE
   - corner_1
   - floorRuins02
   - dirt02
@@ -746,8 +746,8 @@ SpriteAtlas:
   - caveWallA-1101-02
   - chaos_orb
   - water00
-  - wheelbarrow
-  - table_conjuring
+  - WHEELBARROW
+  - TABLE_CONJURING
   - bed_clinic_sleeping2
   - Empty
   - oreDepleted00
@@ -790,7 +790,7 @@ SpriteAtlas:
   - caveWallA-1100-02
   - wood_floorA011
   - caveWallA-0101-03
-  - table_medicine
+  - TABLE_MEDICINE
   - caveWallA-1110-03
   - snow02
   - tableDecor00
@@ -808,7 +808,7 @@ SpriteAtlas:
   - shore11000001-00
   - desk_empty
   - dirt_h01
-  - stump
+  - STUMP
   - shore00011101-00
   - CHAINS#1
   - floorStone03
@@ -820,7 +820,7 @@ SpriteAtlas:
   - tableDecor01
   - wallA-0101-wall1010
   - dirtSnow_h01
-  - shelf_books
+  - SHELF_BOOKS
   - well
   - vertical_1
   - TRASH#2

@@ -40,8 +40,8 @@ public class MakeLove : GoapAction {
         actor.needsComponent.AdjustDoNotGetLonely(-1);
         targetCharacter.needsComponent.AdjustDoNotGetLonely(-1);
 
-        Bed bed = actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).First() as Bed;
-        bed.OnDoneActionToObject(actor.currentActionNode);
+        Bed bed = actor.gridTileLocation.objHere as Bed;
+        bed?.OnDoneActionToObject(actor.currentActionNode);
 
         targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Wooed");
         if (targetCharacter.currentActionNode.action == this) {
@@ -63,25 +63,37 @@ public class MakeLove : GoapAction {
         }
     }
     public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
-        return goapNode.actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).First();
+        return GetValidBedForActor(goapNode.actor);
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
         Character actor = node.actor;
         if (goapActionInvalidity.isInvalid == false) {
-            Bed bed = actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).First() as Bed;
-            if (bed.IsAvailable() == false || bed.GetActiveUserCount() > 0) {
+            Bed bed = GetValidBedForActor(node.actor);
+            if (bed == null ||  bed.IsAvailable() == false || bed.GetActiveUserCount() > 0) {
                 goapActionInvalidity.isInvalid = true;
                 goapActionInvalidity.stateName = "Make Love Fail";
             }
         }
         return goapActionInvalidity;
     }
+    public override void OnInvalidAction(ActualGoapNode node) {
+        base.OnInvalidAction(node);
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        Character targetCharacter = poiTarget as Character;
+        actor.ownParty.RemovePOI(targetCharacter);
+
+        targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Wooed");
+        if (targetCharacter.currentActionNode.action == this) {
+            targetCharacter.SetCurrentActionNode(null, null, null);
+        }
+    }
     #endregion
 
     #region Effects
     public void PreMakeLoveSuccess(ActualGoapNode goapNode) {
-        Bed bed = goapNode.actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).First() as Bed;
+        Bed bed = goapNode.actor.gridTileLocation.objHere as Bed;
         bed.OnDoActionToObject(goapNode);
 
         Character targetCharacter = goapNode.poiTarget as Character;
@@ -101,7 +113,7 @@ public class MakeLove : GoapAction {
         targetCharacter.needsComponent.AdjustHappiness(500);
     }
     public void AfterMakeLoveSuccess(ActualGoapNode goapNode) {
-        Bed bed = goapNode.actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).First() as Bed;
+        Bed bed = goapNode.actor.gridTileLocation.objHere as Bed;
         bed.OnDoneActionToObject(goapNode);
         Character targetCharacter = goapNode.poiTarget as Character;
         goapNode.actor.needsComponent.AdjustDoNotGetLonely(-1);
@@ -162,7 +174,7 @@ public class MakeLove : GoapAction {
             if (target.currentParty.icon.isTravellingOutside || target.currentRegion != actor.currentRegion) {
                 return false; //target is outside the map
             }
-            if (actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).Count <= 0) {
+            if (GetValidBedForActor(actor) == null) {
                 return false;
             }
             if (!(actor is SeducerSummon)) { //ignore relationships if succubus
@@ -170,12 +182,30 @@ public class MakeLove : GoapAction {
                     return false; //only lovers and paramours can make love
                 }
             }
-            return target.IsInOwnParty();
+            return true;
         }
         return false;
     }
     #endregion
 
+    private Bed GetValidBedForActor(Character actor) {
+        if (actor is Summon) {
+            //check un owned dwellings for possible beds
+            List<Dwelling> dwellings =
+                actor.currentRegion.GetStructuresAtLocation<Dwelling>(STRUCTURE_TYPE.DWELLING);
+            for (int i = 0; i < dwellings.Count; i++) {
+                Dwelling currDwelling = dwellings[i];
+                Bed dwellingBed = currDwelling.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);
+                if (dwellingBed != null && dwellingBed.mapObjectState == MAP_OBJECT_STATE.BUILT && dwellingBed.IsAvailable() && dwellingBed.GetActiveUserCount() == 0) {
+                    return dwellingBed;
+                }
+            }
+            return null;
+        } else {
+            return actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).FirstOrDefault() as Bed;
+        }   
+    }
+    
     //#region Intel Reactions
     //private List<string> MakeLoveSuccessReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
     //    List<string> reactions = new List<string>();

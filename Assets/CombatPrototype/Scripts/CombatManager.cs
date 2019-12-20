@@ -164,7 +164,7 @@ public class CombatManager : MonoBehaviour {
                     if (characters2[0].race == RACE.GOBLIN) {
                         totalPower *= 1.25f;
                     }
-                } else if (character.race == RACE.ABOMINATION) {
+                } else if (character.race == RACE.GOLEM) {
                     if (characters2[0].race == RACE.ELVES) {
                         totalPower *= 1.25f;
                     }

@@ -84,7 +84,7 @@ public class CharacterManager : MonoBehaviour {
         classManager.Initialize();
         CreateDeadlySinsData();
         defaultSleepTicks = GameManager.Instance.GetTicksBasedOnHour(8);
-        summonsPool = new SUMMON_TYPE[] { SUMMON_TYPE.Wolf, SUMMON_TYPE.Golem, SUMMON_TYPE.Incubus, SUMMON_TYPE.Succubus };
+        summonsPool = new SUMMON_TYPE[] { SUMMON_TYPE.Golem, SUMMON_TYPE.Incubus, SUMMON_TYPE.Succubus }; //SUMMON_TYPE.Wolf,
         Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
 
@@ -491,6 +491,7 @@ public class CharacterManager : MonoBehaviour {
         PortraitSettings ps = new PortraitSettings();
         ps.race = race;
         ps.gender = gender;
+        ps.wholeImage = classPortraits.ContainsKey(characterClass) ? characterClass : string.Empty;
         if (race == RACE.DEMON) {
             ps.head = -1;
             ps.brows = -1;
@@ -500,7 +501,6 @@ public class CharacterManager : MonoBehaviour {
             ps.hair = -1;
             ps.mustache = -1;
             ps.beard = -1;
-            ps.wholeImage = characterClass;
             ps.hairColor = 0f;
             ps.wholeImageColor = UnityEngine.Random.Range(-144f, 144f);
         } else {
@@ -525,7 +525,6 @@ public class CharacterManager : MonoBehaviour {
             } else {
                 ps.beard = Utilities.GetRandomIndexInList(pac.beard);
             }
-            ps.wholeImage = string.Empty;
             ps.hairColor = UnityEngine.Random.Range(-720f, 720f);
             ps.wholeImageColor = 0f;
         }

@@ -58,16 +58,16 @@ public class SeducerSummon : Summon {
         if (hasSucceeded) {
             //disappear
             Disappear();
-        } else if (!jobQueue.HasJob(JOB_TYPE.SEDUCE)){
+        } else if (!jobQueue.HasJob(JOB_TYPE.SEDUCE)) {
             //pick a random character that is sexually compatible with this character, to seduce. Exclude characters that this succubus has already invited.
             List<Character> choices = currentRegion.charactersAtLocation.Where(x => x.faction != this.faction
             && !doneCharacters.Contains(x)
             && RelationshipManager.Instance.IsSexuallyCompatibleOneSided(x, this)
-            && !x.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)).ToList();
-            List<TileObject> validBeds = currentRegion.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED);
-            if (choices.Count > 0 && validBeds.Count > 0) {
+            && !x.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
+            && x.IsAvailable()).ToList();
+            if (choices.Count > 0) {
                 Character chosenCharacter = choices[Random.Range(0, choices.Count)];
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SEDUCE, INTERACTION_TYPE.INVITE, chosenCharacter, this);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SEDUCE, INTERACTION_TYPE.MAKE_LOVE, chosenCharacter, this);
                 jobQueue.AddJobInQueue(job);
             } else {
                 PlanIdleStrollOutside(); //currentStructure

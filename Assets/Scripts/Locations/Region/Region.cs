@@ -983,6 +983,18 @@ public class Region : ILocation, IHasNeighbours<Region> {
         }
         return _structures;
     }
+    public List<T> GetStructuresAtLocation<T>(STRUCTURE_TYPE type) where T : LocationStructure{
+        List<T> _structures = new List<T>();
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in this.structures) {
+            for (int i = 0; i < kvp.Value.Count; i++) {
+                LocationStructure currStructure = kvp.Value[i];
+                if (currStructure.structureType == type) {
+                    _structures.Add(currStructure as T);
+                }
+            }
+        }
+        return _structures;
+    }
     public bool HasStructure(STRUCTURE_TYPE type) {
         return structures.ContainsKey(type);
     }
