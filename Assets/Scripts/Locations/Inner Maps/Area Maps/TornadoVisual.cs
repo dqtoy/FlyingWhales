@@ -74,6 +74,8 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
         Messenger.AddListener(Signals.TICK_ENDED, PerTick);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
+        Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
+        Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         isSpawned = true;
     }
 
@@ -117,7 +119,6 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
         SchedulingManager.Instance.RemoveSpecificEntry(_expiryKey);
         GameManager.Instance.StartCoroutine(ExpireCoroutine());
     }
-
     private IEnumerator ExpireCoroutine() {
         yield return new WaitForSeconds(1f);
         ObjectPoolManager.Instance.DestroyObject(this.gameObject);
@@ -139,6 +140,8 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTick);
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
+        Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
+        Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
     }
 
     #region Monobehaviours
@@ -263,4 +266,13 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     }
     
     public override void UpdateCollidersState(TileObject obj) { }
+
+    #region Listeners
+    private void OnTileObjectRemovedFromTile(TileObject tileObject, Character removedBy, LocationGridTile removedFrom) {
+       RemoveDamageable(tileObject);
+    }
+    private void OnItemRemovedFromTile(SpecialToken item, LocationGridTile removedFrom) {
+        RemoveDamageable(item);
+    }
+    #endregion
 }

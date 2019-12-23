@@ -16,16 +16,16 @@ public class FollowerComponent : MonoBehaviour {
         transform.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
         this.targetTransform = target;
         this.onReachTarget = onReachTarget;
+        Messenger.AddListener<GameObject>(Signals.POOLED_OBJECT_DESTROYED, OnPooledObjectDestroyed);
     }
 
-    private void Update() {
-        if (targetTransform == null) {
-            return;
-        }
+    private void FixedUpdate() {
         if (GameManager.Instance.isPaused) {
             return;
         }
-
+        if (targetTransform == null) {
+            return;
+        }
         float step = speed * Time.deltaTime;
         // move sprite towards the target location
         transform.position = Vector2.MoveTowards(transform.position, targetTransform.position, step);
@@ -43,4 +43,12 @@ public class FollowerComponent : MonoBehaviour {
         targetTransform = null;
         GameObject.Destroy(this);
     }
+
+    private void OnPooledObjectDestroyed(GameObject go) {
+        if (go.transform == targetTransform) {
+            targetTransform = null;
+            GameObject.Destroy(this);
+        }
+    }
+    
 }
