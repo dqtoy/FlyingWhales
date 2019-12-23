@@ -13,16 +13,17 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     private float _startTime;  // Time when the movement started.
     private float _journeyLength; // Total distance between the markers.
     private Vector3 _startPosition;
-    private bool isSpawned { get; set; }
+    public bool isSpawned { get; private set; }
     private float _speed;
     private int _radius;
     private List<IDamageable> _damagablesInTornado;
     private Area _areaLocation;
     private TornadoTileObject _tornado;
     private string _expiryKey;
+    private Vector3 pos;
     
     #region getters/setters
-    private LocationGridTile gridTileLocation => GetLocationGridTileByXy(Mathf.FloorToInt(this.transform.localPosition.x), Mathf.FloorToInt(this.transform.localPosition.y));
+    public LocationGridTile gridTileLocation => GetLocationGridTileByXy(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y));
     private LocationGridTile destinationTile { get; set; }
     #endregion    
 
@@ -114,13 +115,13 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
             p.Stop();
         }
         SchedulingManager.Instance.RemoveSpecificEntry(_expiryKey);
-        _tornado.OnExpire();
         GameManager.Instance.StartCoroutine(ExpireCoroutine());
     }
 
     private IEnumerator ExpireCoroutine() {
         yield return new WaitForSeconds(1f);
         ObjectPoolManager.Instance.DestroyObject(this.gameObject);
+        _tornado.OnExpire();
     }
 
     public override void Reset() {
@@ -161,6 +162,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
             destinationTile = null;
             GoToRandomTileInRadius();
         }
+        pos = transform.localPosition;
     }
     void FixedUpdate() {
         for (int i = 0; i < _damagablesInTornado.Count; i++) {
@@ -236,7 +238,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     }
     private void DealDamage(IDamageable damageable) {
         if (damageable.CanBeDamaged()) {
-            damageable.AdjustHP(-(int)(damageable.maxHP * 0.35f), true, this);
+            damageable.AdjustHP(-(int)(damageable.maxHP * 0.35f), true, _tornado);
         }
     }
     private void TrySuckIn(IDamageable damageable) {
@@ -250,7 +252,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
         }
     }
     private void OnDamagableReachedThis(IDamageable damageable) {
-        damageable.AdjustHP(-damageable.maxHP);
+        damageable.AdjustHP(-damageable.maxHP, true, _tornado);
     }
 
     private bool CanBeSuckedIn(IDamageable damageable) {

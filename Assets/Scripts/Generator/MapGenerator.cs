@@ -86,7 +86,7 @@ public class MapGenerator : MonoBehaviour {
         GameManager.Instance.StartProgression();
         UIManager.Instance.SetSpeedTogglesState(false);
         PlayerUI.Instance.ShowStartingMinionPicker();
-        
+
         //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Necronomicon);
     }
     private IEnumerator InitializeWorldCoroutine(Save data) {

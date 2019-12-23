@@ -593,16 +593,16 @@ public class UIManager : MonoBehaviour {
 
     #region UI Utilities
     private void OnUIMenuOpened(UIMenu menu) {
-        if (menu is RegionInfoUI || menu is TileObjectInfoUI || menu is CharacterInfoUI || menu is ItemInfoUI ||
-            menu is FactionInfoUI) {
-            MoveNotificationMenuToModifiedPos();
-        }
+        // if (menu is RegionInfoUI || menu is TileObjectInfoUI || menu is CharacterInfoUI || menu is ItemInfoUI ||
+        //     menu is FactionInfoUI) {
+        //     MoveNotificationMenuToModifiedPos();
+        // }
     }
     private void OnUIMenuClosed(UIMenu menu) {
-        if (menu is RegionInfoUI || menu is TileObjectInfoUI || menu is CharacterInfoUI || menu is ItemInfoUI ||
-            menu is FactionInfoUI) {
-            MoveNotificationMenuToDefaultPos();
-        }
+        // if (menu is RegionInfoUI || menu is TileObjectInfoUI || menu is CharacterInfoUI || menu is ItemInfoUI ||
+        //     menu is FactionInfoUI) {
+        //     MoveNotificationMenuToDefaultPos();
+        // }
     }
     public void RepositionGridCallback(UIGrid thisGrid) {
         StartCoroutine(RepositionGrid(thisGrid));
