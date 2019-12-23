@@ -496,8 +496,14 @@ public class CharacterInfoUI : UIMenu {
             } else {
                 relationshipTypesLbl.text += Utilities.NormalizeString(relType.ToString()) + "\n";    
             }
+            int opinionOfOther = 0;
+            if (target.opinionComponent.HasOpinion(activeCharacter)) {
+                opinionOfOther = target.opinionComponent.GetTotalOpinion(activeCharacter);
+            }
             relationshipNamesLbl.text += $"<link=\"{i}\">{target.name}</link>\n";
-            relationshipValuesLbl.text += $"<link=\"{i}\">+{_activeCharacter.opinionComponent.GetTotalPositiveOpinionWith(target).ToString()} ({_activeCharacter.opinionComponent.GetTotalNegativeOpinionWith(target).ToString()})</link>\n";
+            relationshipValuesLbl.text += $"<link=\"{i}\"><color=\"{ OpinionColor(opinionOfOther) }\"> " +
+                                          $"{GetOpinionText(activeCharacter.opinionComponent.GetTotalOpinion(target))}</color> " +
+                                          $"<color=\"{OpinionColor(opinionOfOther)}\">({GetOpinionText(opinionOfOther)})</color></link>\n";
         }
     }
     public void OnHoverRelationshipValue(object obj) {
