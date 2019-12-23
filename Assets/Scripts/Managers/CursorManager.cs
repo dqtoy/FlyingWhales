@@ -52,7 +52,7 @@ public class CursorManager : MonoBehaviour {
             if (PlayerManager.Instance.player.currentActivePlayerJobAction != null) {
                 LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
                 if (previousHoveredTile != null && previousHoveredTile != hoveredTile) {
-                    PlayerManager.Instance.player.currentActivePlayerJobAction.HideRange(previousHoveredTile);
+                    // PlayerManager.Instance.player.currentActivePlayerJobAction.HideRange(previousHoveredTile);
                 }
                 bool canTarget = false;
                 IPointOfInterest hoveredPOI = InnerMapManager.Instance.currentlyHoveredPoi;
@@ -75,11 +75,11 @@ public class CursorManager : MonoBehaviour {
                     }
                     if (canTarget) {
                         SetCursorTo(Cursor_Type.Check);
-                        PlayerManager.Instance.player.currentActivePlayerJobAction.ShowRange(hoveredTile);
+                        // PlayerManager.Instance.player.currentActivePlayerJobAction.ShowRange(hoveredTile);
                         break;
                     } else {
                         SetCursorTo(Cursor_Type.Cross);
-                        PlayerManager.Instance.player.currentActivePlayerJobAction.HideRange(hoveredTile);
+                        // PlayerManager.Instance.player.currentActivePlayerJobAction.HideRange(hoveredTile);
                     }
                 }
                 previousHoveredTile = hoveredTile;

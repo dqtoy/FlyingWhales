@@ -451,9 +451,9 @@ public class Player : ILeader {
             PlayerJobActionButton jobActionButton = PlayerUI.Instance.GetPlayerJobActionButton(previousActiveAction);
             jobActionButton?.UpdateInteractableState();
             jobActionButton?.SetSelectedIconState(false);
-            if (previousActiveAction != null) {
-                previousActiveAction.HideRange(InnerMapManager.Instance.GetTileFromMousePosition());
-            }
+            // if (previousActiveAction != null) {
+            //     previousActiveAction.HideRange(InnerMapManager.Instance.GetTileFromMousePosition());
+            // }
         } else {
             PlayerJobActionButton jobActionButton = PlayerUI.Instance.GetPlayerJobActionButton(currentActivePlayerJobAction);
             CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Cross);

@@ -650,22 +650,22 @@ public class Area : IJobOwner, ILocation {
             mainStorage = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
         }
         WoodPile woodPile = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
-        woodPile.SetResourceInPile(51);
+        woodPile.SetResourceInPile(1000);
         mainStorage.AddPOI(woodPile);
         woodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.WOOD_PILE);
 
         StonePile stonePile = InnerMapManager.Instance.CreateNewTileObject<StonePile>(TILE_OBJECT_TYPE.STONE_PILE);
-        stonePile.SetResourceInPile(51);
+        stonePile.SetResourceInPile(1000);
         mainStorage.AddPOI(stonePile);
         stonePile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.STONE_PILE);
 
         MetalPile metalPile = InnerMapManager.Instance.CreateNewTileObject<MetalPile>(TILE_OBJECT_TYPE.METAL_PILE);
-        metalPile.SetResourceInPile(51);
+        metalPile.SetResourceInPile(1000);
         mainStorage.AddPOI(metalPile);
         metalPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.METAL_PILE);
 
         FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.FOOD_PILE);
-        foodPile.SetResourceInPile(51);
+        foodPile.SetResourceInPile(1000);
         mainStorage.AddPOI(foodPile);
         foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
     }
