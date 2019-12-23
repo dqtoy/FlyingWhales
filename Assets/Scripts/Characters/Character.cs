@@ -469,7 +469,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.AddListener(Signals.DAY_STARTED, DailyGoapProcesses);
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
-        Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, ForceCancelAllJobsTargettingCharacter);
+        Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingPOI);
+        Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
         Messenger.AddListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
@@ -484,7 +485,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.RemoveListener(Signals.DAY_STARTED, DailyGoapProcesses);
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.RemoveListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
-        Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, ForceCancelAllJobsTargettingCharacter);
+        Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingPOI);
+        Messenger.RemoveListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
         Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
@@ -677,7 +679,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             needsComponent.SetFullnessForcedTick(0);
             needsComponent.SetHasCancelledSleepSchedule(false);
             needsComponent.ResetSleepTicks();
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this as IPointOfInterest, "");
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
             //MigrateHomeTo(null);
             //AddInitialAwareness(gloomhollow);
             Messenger.Broadcast(Signals.CHARACTER_RETURNED_TO_LIFE, this);
@@ -729,7 +731,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //if (jobQueue.jobsInQueue.Count > 0) {
             //    jobQueue.CancelAllJobs();
             //}
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this as IPointOfInterest, "target is already dead");
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "target is already dead");
             CancelAllJobs();
 
             if (currentRegion.area != null && isHoldingItem) {
@@ -972,21 +974,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
         }
     }
-    /// <summary>
-    /// Cancel all jobs of type that is targetting this character, except jobs that have the provided character assigned to it.
-    /// </summary>
-    /// <param name="jobType">The type of job to cancel.</param>
-    /// <param name="otherCharacter">The character exception.</param>
-    //public void CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE jobType, Character otherCharacter, bool forceRemove = true) {
-    //    for (int i = 0; i < allJobsTargettingThis.Count; i++) {
-    //        JobQueueItem job = allJobsTargettingThis[i];
-    //        if (job.jobType == jobType && job.assignedCharacter != otherCharacter) {
-    //            if (job.currentOwner.CancelJob(job, forceRemove: forceRemove)) {
-    //                i--;
-    //            }
-    //        }
-    //    }
-    //}
     public void ForceCancelAllJobsTargettingThisCharacterExcept(JOB_TYPE jobType, string conditionKey, Character otherCharacter) {
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
             if (allJobsTargetingThis[i] is GoapPlanJob) {
@@ -996,35 +983,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                         i--;
                     }
                 }
-
             }
         }
-
     }
-
-    //public void CancelAllJobsTargettingThisCharacter(JOB_TYPE jobType, JobQueueItem except, bool forceRemove = true) {
-    //    for (int i = 0; i < allJobsTargettingThis.Count; i++) {
-    //        JobQueueItem job = allJobsTargettingThis[i];
-    //        if (job.jobType == jobType && job != except) {
-    //            if (job.currentOwner.CancelJob(job, forceRemove: forceRemove)) {
-    //                i--;
-    //            }
-    //        }
-    //    }
-    //}
-    //public void CancelAllJobsTargettingThisCharacter(JOB_TYPE jobType, object conditionKey, bool forceRemove = true) {
-    //    for (int i = 0; i < allJobsTargettingThis.Count; i++) {
-    //        if (allJobsTargettingThis[i] is GoapPlanJob) {
-    //            GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
-    //            if (job.jobType == jobType && job.goals.conditionKey == conditionKey) {
-    //                if (job.jobQueueParent.CancelJob(job, forceRemove: forceRemove)) {
-    //                    i--;
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
-    public void ForceCancelAllJobsTargettingCharacter(IPointOfInterest target, string reason) {
+    private void ForceCancelAllJobsTargetingPOI(IPointOfInterest target, string reason) {
         for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
             JobQueueItem job = jobQueue.jobsInQueue[i];
             if (job is GoapPlanJob) {
@@ -1037,23 +999,19 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
         }
     }
-    /// <summary>
-    /// Cancel all jobs that are targetting this character, except job that has the given action.
-    /// </summary>
-    /// <param name="except">The exception.</param>
-    /// <param name="cause">The cause for cancelling</param>
-    /// <param name="shouldDoAfterEffect">Should the effect of the cancelled action be executed.</param>
-    //public void CancelAllJobsTargettingThisCharacterExcept(GoapAction except, string cause = "", bool shouldDoAfterEffect = true, bool forceRemove = true) {
-    //    for (int i = 0; i < allJobsTargettingThis.Count; i++) {
-    //        JobQueueItem job = allJobsTargettingThis[i];
-    //        if (except.parentPlan != null && except.parentPlan.job == job) {
-    //            continue; //skip
-    //        }
-    //        if (job.jobQueueParent.CancelJob(job, cause, shouldDoAfterEffect, forceRemove)) {
-    //            i--;
-    //        }
-    //    }
-    //}
+    private void ForceCancelJobTypesTargetingPOI(IPointOfInterest target, string reason, JOB_TYPE jobType) {
+        for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
+            JobQueueItem job = jobQueue.jobsInQueue[i];
+            if (job.jobType == jobType && job is GoapPlanJob) {
+                GoapPlanJob goapJob = job as GoapPlanJob;
+                if (goapJob.targetPOI == target) {
+                    if (goapJob.ForceCancelJob(false, reason)) {
+                        i--;
+                    }
+                }
+            }
+        }
+    }
     public bool HasJobTargetingThis(params JOB_TYPE[] jobTypes) {
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
             JobQueueItem job = allJobsTargetingThis[i];
@@ -2115,7 +2073,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (currentParty == party) {
             //CheckApprehendRelatedJobsOnLeaveLocation();
             //CancelOrUnassignRemoveTraitRelatedJobs();
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this as IPointOfInterest, "");
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
             marker.ClearTerrifyingObjects();
             ExecuteLeaveAreaActions();
             needsComponent.OnCharacterLeftLocation(currentRegion);
@@ -3789,7 +3747,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //if (currentActionNode != null && !currentActionNode.cannotCancelAction) {
         //    currentActionNode.StopAction(reason: "Became a minion");
         //}
-        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this as IPointOfInterest, "target became a minion");
+        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "target became a minion");
         CancelAllJobs();
 
         if (!IsInOwnParty()) {
@@ -5664,7 +5622,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (ownParty.icon.isTravelling) {
             marker.StopMovement();
         }
-        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this as IPointOfInterest, "");
+        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
         marker.ClearTerrifyingObjects();
         needsComponent.OnCharacterLeftLocation(currentRegion);
 
@@ -6253,7 +6211,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //currentAlterEgo.CopySpecialTraits();
 
             //Drop all plans except for the current action
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this as IPointOfInterest, "target is not found");
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "target is not found");
             if (currentActionNode != null) {
                 CancelAllJobsExceptForCurrent();
             } else {

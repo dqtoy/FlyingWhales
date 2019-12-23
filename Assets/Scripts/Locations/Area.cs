@@ -110,7 +110,8 @@ public class Area : IJobOwner, ILocation {
         Messenger.AddListener<WoodPile>(Signals.WOOD_IN_PILE_REDUCED, OnWoodInPileReduced);
         Messenger.AddListener(Signals.DAY_STARTED, PerDayHeroEventCreation);
         Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
-        Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, ForceCancelAllJobsTargettingCharacter);
+        Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargettingCharacter);
+        Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
 
     }
     private void UnsubscribeToSignals() {
@@ -119,7 +120,8 @@ public class Area : IJobOwner, ILocation {
         Messenger.RemoveListener<FoodPile>(Signals.FOOD_IN_PILE_REDUCED, OnFoodInPileReduced);
         Messenger.RemoveListener<WoodPile>(Signals.WOOD_IN_PILE_REDUCED, OnWoodInPileReduced);
         Messenger.RemoveListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
-        Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, ForceCancelAllJobsTargettingCharacter);
+        Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargettingCharacter);
+        Messenger.RemoveListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
     }
     private void OnTileObjectRemoved(TileObject removedObj, Character character, LocationGridTile removedFrom) {
         //craft replacement tile object job
@@ -790,11 +792,22 @@ public class Area : IJobOwner, ILocation {
     public void AddToAvailableJobs(JobQueueItem job) {
         availableJobs.Add(job);
         jobManager.OnAddToAvailableJobs(job);
-        Debug.Log($"{GameManager.Instance.TodayLogString()}{job.ToString()} was added to {this.name}'s available jobs");
+        if (job is GoapPlanJob) {
+            GoapPlanJob goapJob = job as GoapPlanJob;
+            Debug.Log($"{GameManager.Instance.TodayLogString()}{goapJob.ToString()} targeting {goapJob.targetPOI?.name} was added to {this.name}'s available jobs");
+        } else {
+            Debug.Log($"{GameManager.Instance.TodayLogString()}{job.ToString()} was added to {this.name}'s available jobs");    
+        }
+        
     }
     public bool RemoveFromAvailableJobs(JobQueueItem job) {
         if (availableJobs.Remove(job)) {
-            Debug.Log($"{GameManager.Instance.TodayLogString()}{job.ToString()} was removed from {this.name}'s available jobs");
+            if (job is GoapPlanJob) {
+                GoapPlanJob goapJob = job as GoapPlanJob;
+                Debug.Log($"{GameManager.Instance.TodayLogString()}{goapJob.ToString()} targeting {goapJob.targetPOI?.name} was added to {this.name}'s available jobs");
+            } else {
+                Debug.Log($"{GameManager.Instance.TodayLogString()}{job.ToString()} was added to {this.name}'s available jobs");    
+            }
             OnJobRemovedFromAvailableJobs(job);
             return true;
         }
@@ -1002,6 +1015,19 @@ public class Area : IJobOwner, ILocation {
                 GoapPlanJob goapJob = job as GoapPlanJob;
                 if(goapJob.targetPOI == target) {
                     if(goapJob.ForceCancelJob(false, reason)) {
+                        i--;
+                    }
+                }
+            }
+        }
+    }
+    private void ForceCancelJobTypesTargetingPOI(IPointOfInterest target, string reason, JOB_TYPE jobType) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (job.jobType == jobType && job is GoapPlanJob) {
+                GoapPlanJob goapJob = job as GoapPlanJob;
+                if (goapJob.targetPOI == target) {
+                    if (goapJob.ForceCancelJob(false, reason)) {
                         i--;
                     }
                 }

@@ -457,11 +457,21 @@ public class CharacterInfoUI : UIMenu {
         summary = $"{summary}{("\nCurrent State: " + activeCharacter.stateComponent.currentState?.ToString() ?? "None")}";
         summary = $"{summary}\nActions targeting this character: ";
         
-        summary += "\n" + activeCharacter.needsComponent.GetNeedsSummary();
-        summary += "\n\nAlter Egos: ";
-        for (int i = 0; i < activeCharacter.alterEgos.Values.Count; i++) {
-            summary += "\n" + activeCharacter.alterEgos.Values.ElementAt(i).GetAlterEgoSummary();
+        summary += "\nPersonal Job Queue: ";
+        if (activeCharacter.jobQueue.jobsInQueue.Count > 0) {
+            for (int i = 0; i < activeCharacter.jobQueue.jobsInQueue.Count; i++) {
+                JobQueueItem poi = activeCharacter.jobQueue.jobsInQueue[i];
+                summary += poi + ", ";
+            }
+        } else {
+            summary += "None";
         }
+        
+        // summary += "\n" + activeCharacter.needsComponent.GetNeedsSummary();
+        // summary += "\n\nAlter Egos: ";
+        // for (int i = 0; i < activeCharacter.alterEgos.Values.Count; i++) {
+        //     summary += "\n" + activeCharacter.alterEgos.Values.ElementAt(i).GetAlterEgoSummary();
+        // }
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void HideCharacterTestingInfo() {

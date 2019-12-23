@@ -87,12 +87,14 @@ public class Quest : IJobOwner {
     public virtual void ActivateQuest() {
         isActivated = true;
         Messenger.AddListener(Signals.TICK_STARTED, PerTickOnQuest);
-        Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, ForceCancelAllJobsTargettingCharacter);
+        Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargettingCharacter);
+        Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
     }
     public virtual void FinishQuest() {
         isActivated = false;
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickOnQuest);
-        Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, ForceCancelAllJobsTargettingCharacter);
+        Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargettingCharacter);
+        Messenger.RemoveListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
     }
     protected virtual void PerTickOnQuest() {
         if(duration > 0) {
@@ -134,6 +136,19 @@ public class Quest : IJobOwner {
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
             if (job is GoapPlanJob) {
+                GoapPlanJob goapJob = job as GoapPlanJob;
+                if (goapJob.targetPOI == target) {
+                    if (goapJob.ForceCancelJob(false, reason)) {
+                        i--;
+                    }
+                }
+            }
+        }
+    }
+    private void ForceCancelJobTypesTargetingPOI(IPointOfInterest target, string reason, JOB_TYPE jobType) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (job.jobType == jobType && job is GoapPlanJob) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
                 if (goapJob.targetPOI == target) {
                     if (goapJob.ForceCancelJob(false, reason)) {

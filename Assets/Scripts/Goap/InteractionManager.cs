@@ -136,9 +136,9 @@ public partial class InteractionManager : MonoBehaviour {
             case JOB_TYPE.INVADE_REGION:
                 priority = 6;
                 break;
-            case JOB_TYPE.IDLE:
-                priority = 7;
-                break;
+            // case JOB_TYPE.IDLE:
+            //     priority = 7;
+            //     break;
             case JOB_TYPE.DEATH:
             case JOB_TYPE.BERSERK:
             case JOB_TYPE.STEAL:
@@ -195,7 +195,6 @@ public partial class InteractionManager : MonoBehaviour {
             case JOB_TYPE.PRAY_GODDESS_STATUE:
             case JOB_TYPE.REACT_TO_SCREAM:
             case JOB_TYPE.CHAT:
-            case JOB_TYPE.STROLL:
                 priority = 120;
                 break;
             case JOB_TYPE.BREAK_UP:
@@ -245,6 +244,10 @@ public partial class InteractionManager : MonoBehaviour {
             case JOB_TYPE.TIREDNESS_RECOVERY:
             case JOB_TYPE.HAPPINESS_RECOVERY:
                 priority = 270;
+                break;
+            case JOB_TYPE.STROLL:
+            case JOB_TYPE.IDLE:
+                priority = 290;
                 break;
             case JOB_TYPE.MOVE_OUT:
             case JOB_TYPE.OBTAIN_FOOD_OUTSIDE:

@@ -402,7 +402,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         if (UIManager.Instance.tileObjectInfoUI.isShowing && UIManager.Instance.tileObjectInfoUI.activeTileObject == this) {
             UIManager.Instance.tileObjectInfoUI.CloseMenu();
         }
-        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this as IPointOfInterest, "");
+        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
         gridTileLocation.structure.RemovePOI(this);
     }
     public void OnUnseizePOI(LocationGridTile tileLocation) {

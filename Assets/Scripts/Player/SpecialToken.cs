@@ -317,7 +317,7 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
         if (UIManager.Instance.itemInfoUI.isShowing && UIManager.Instance.itemInfoUI.activeItem == this) {
             UIManager.Instance.itemInfoUI.CloseMenu();
         }
-        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this as IPointOfInterest, "");
+        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
         gridTileLocation.structure.RemoveItem(this);
     }
     public void OnUnseizePOI(LocationGridTile tileLocation) {

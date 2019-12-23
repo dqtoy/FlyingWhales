@@ -105,7 +105,7 @@ public class Bed : TileObject {
             //        Character currUser = bedUsers[i];
             //    }
             //}
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETTING_POI, this as IPointOfInterest, "bed is burning");
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "bed is burning");
         }
     }
     public override bool CanBeReplaced() {
