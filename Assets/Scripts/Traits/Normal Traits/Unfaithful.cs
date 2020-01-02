@@ -6,7 +6,6 @@ namespace Traits {
     public class Unfaithful : Trait {
 
         public float affairChanceMultiplier { get; private set; }
-        //public float makeLoveChanceMultiplier { get; private set; }
 
         public Unfaithful() {
             name = "Unfaithful";
@@ -15,7 +14,6 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;
             canBeTriggered = true;
-            //effects = new List<TraitEffect>();
         }
 
         #region Overrides
@@ -29,18 +27,6 @@ namespace Traits {
                 affairChanceMultiplier = 5f;
             }
         }
-        //public override string GetRequirementDescription(Character character) {
-        //    string baseDesc = base.GetRequirementDescription(character);
-        //    return baseDesc + " The character must also have a lover.";
-        //}
-        //public override bool CanFlawBeTriggered(Character character) {
-        //    bool canBeTriggered = base.CanFlawBeTriggered(character);
-        //    if (canBeTriggered) {
-        //        //the character must have a lover.
-        //        canBeTriggered = character.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER) != null;
-        //    }
-        //    return canBeTriggered;
-        //}
         public override string TriggerFlaw(Character character) {
             string successLogKey = base.TriggerFlaw(character);
             if (character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) != null) {

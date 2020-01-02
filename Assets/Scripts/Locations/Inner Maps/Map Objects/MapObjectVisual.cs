@@ -29,9 +29,6 @@ public abstract class MapObjectVisual<T> : BaseMapObjectVisual where T : IDamage
     public abstract void UpdateTileObjectVisual(T obj);
     #endregion
 
-    #region Furniture Spots
-    #endregion
-
     #region Pointer Functions
     protected virtual void OnPointerEnter(T poi) {
         SetHoverObjectState(true);

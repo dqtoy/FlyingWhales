@@ -35,8 +35,15 @@ public class StrollState : CharacterState {
         if (stateComponent.character.faction.isMajorFriendlyNeutral && stateComponent.character.role.roleType != CHARACTER_ROLE.BEAST && targetPOI is SpecialToken) {
             SpecialToken token = targetPOI as SpecialToken;
             if (token.characterOwner == null) {
-
-                stateComponent.character.marker.GoToPOI(token, () => OnArriveAtPickUpLocation(token));
+                ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PICK_UP], stateComponent.character, targetPOI, null, 0);
+                GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, stateComponent.character);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP, targetPOI, stateComponent.character);
+                goapPlan.SetDoNotRecalculate(true);
+                job.SetCannotBePushedBack(true);
+                job.SetAssignedPlan(goapPlan);
+                stateComponent.character.jobQueue.AddJobInQueue(job);
+                
+                // stateComponent.character.marker.GoToPOI(token, () => OnArriveAtPickUpLocation(token));
 
                 //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_UP, stateComponent.character, targetPOI);
                 //if (goapAction.targetTile != null) {

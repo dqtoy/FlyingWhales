@@ -166,8 +166,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
             GoToRandomTileInRadius();
         }
         pos = transform.localPosition;
-    }
-    void FixedUpdate() {
+        
         for (int i = 0; i < _damagablesInTornado.Count; i++) {
             IDamageable damageable = _damagablesInTornado[i];
             if (damageable.mapObjectVisual != null && damageable.CanBeDamaged()) {
@@ -175,6 +174,14 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
             }
         }
     }
+    // void FixedUpdate() {
+    //     for (int i = 0; i < _damagablesInTornado.Count; i++) {
+    //         IDamageable damageable = _damagablesInTornado[i];
+    //         if (damageable.mapObjectVisual != null && damageable.CanBeDamaged()) {
+    //             iTween.ShakeRotation(damageable.mapObjectVisual.gameObjectVisual, new Vector3(5f, 5f, 5f), 0.5f);
+    //         }
+    //     }
+    // }
     #endregion
 
     #region Triggers
@@ -206,9 +213,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
         }
     }
     private void RemoveDamageable(IDamageable poi) {
-        if (_damagablesInTornado.Remove(poi)) {
-
-        }
+        _damagablesInTornado.Remove(poi);
     }
     private void OnAddPoiActions(IDamageable poi) {
         //DealDamage(poi);
