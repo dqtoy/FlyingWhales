@@ -14,6 +14,11 @@
                             summary += "\n" + jqi.name;
                         }
                         summary += "\n\tAssigned Character: " + jqi.assignedCharacter?.name ?? "None";
+                        if (UIManager.Instance.characterInfoUI.isShowing) {
+                            summary += "\n\tCan character take job? " + jqi
+                                           .CanCharacterDoJob(UIManager.Instance.characterInfoUI.activeCharacter)
+                                           .ToString();
+                        }
 
                     }
                 } else {

@@ -61,17 +61,6 @@ public class StrollState : CharacterState {
         return base.OnEnterVisionWith(targetPOI);
     }
     #endregion
-
-    private void OnArriveAtPickUpLocation(SpecialToken token) {
-        if (token.gridTileLocation != null) {
-            stateComponent.character.PickUpToken(token);
-            StrollAgain();
-        }
-    }
-    private void StrollAgain() {
-        ResumeState();
-    }
-
     private void StartStrollMovement() {
         LocationGridTile target = PickRandomTileToGoTo();
         stateComponent.character.marker.GoTo(target, StartStrollMovement);

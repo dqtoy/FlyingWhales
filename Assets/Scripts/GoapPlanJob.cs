@@ -375,7 +375,7 @@ public class GoapPlanJob : JobQueueItem {
     /// <returns>string value to represent what the job detail is (eg. Remove Trait Unconscious)</returns>
     public string GetJobDetailString() {
         switch (jobType) {
-            case JOB_TYPE.OBTAIN_ITEM:
+            case JOB_TYPE.OBTAIN_PERSONAL_ITEM:
             case JOB_TYPE.REMOVE_TRAIT:
                 string text = Utilities.NormalizeStringUpperCaseFirstLetters(jobType.ToString());
                 if (!string.IsNullOrEmpty(goal.conditionKey)) {

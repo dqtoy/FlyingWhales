@@ -49,7 +49,7 @@ namespace Traits {
             if (removedFrom is IPointOfInterest) {
                 if (removedFrom is Character) {
                     Character character = removedFrom as Character;
-                    character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_FIRE);
+                    character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.DOUSE_FIRE);
                     character.AdjustDoNotRecoverHP(-1);
                 }
             } 
@@ -60,7 +60,7 @@ namespace Traits {
             character.traitContainer.RemoveTrait(character, this);
         }
         public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
-            if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.REMOVE_FIRE) && (characterThatWillDoJob.stateComponent.currentState == null || characterThatWillDoJob.stateComponent.currentState.characterState != CHARACTER_STATE.DOUSE_FIRE)) {
+            if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.DOUSE_FIRE) && (characterThatWillDoJob.stateComponent.currentState == null || characterThatWillDoJob.stateComponent.currentState.characterState != CHARACTER_STATE.DOUSE_FIRE)) {
                 string summary = GameManager.Instance.TodayLogString() + characterThatWillDoJob.name + " saw a fire from source " + sourceOfBurning.ToString();
                 if (!TryToCreateDouseFireJob(traitOwner, characterThatWillDoJob)) {
                     Pyrophobic pyrophobic = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Pyrophobic") as Pyrophobic;
@@ -128,7 +128,7 @@ namespace Traits {
                 }
 
                 if (willCreateDouseFireJob) {
-                    CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.REMOVE_FIRE, CHARACTER_STATE.DOUSE_FIRE, characterThatWillDoJob);
+                    CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.DOUSE_FIRE, CHARACTER_STATE.DOUSE_FIRE, characterThatWillDoJob);
                     if (CanTakeRemoveFireJob(characterThatWillDoJob, traitOwner)) {
                         sourceOfBurning.AddCharactersDousingFire(characterThatWillDoJob); //adjust the number of characters dousing the fire source. NOTE: Make sure to reduce that number if a character decides to quit the job for any reason.
                         job.AddOnUnassignAction(sourceOfBurning.RemoveCharactersDousingFire); //This is the action responsible for reducing the number of characters dousing the fire when a character decides to quit the job.

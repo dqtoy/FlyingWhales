@@ -454,7 +454,11 @@ public class CharacterInfoUI : UIMenu {
         summary = $"{summary}{("\nIgnore Hostiles: " + activeCharacter.ignoreHostility.ToString())}";
         summary = $"{summary}{("\nAttack Range: " + activeCharacter.characterClass.attackRange.ToString())}";
         summary = $"{summary}{("\nAttack Speed: " + activeCharacter.attackSpeed.ToString())}";
-        summary = $"{summary}{("\nCurrent State: " + activeCharacter.stateComponent.currentState?.ToString() ?? "None")}";
+        if (activeCharacter.stateComponent.currentState != null) {
+            summary = $"{summary}{"\nCurrent State: " + activeCharacter.stateComponent.currentState.ToString()}";
+            summary = $"{summary}{"\n\tDuration in state: " + activeCharacter.stateComponent.currentState.currentDuration.ToString() + "/" + activeCharacter.stateComponent.currentState.duration.ToString()}";
+        }
+        
         summary = $"{summary}\nActions targeting this character: ";
         
         summary += "\nPersonal Job Queue: ";

@@ -145,6 +145,7 @@ public class CharacterState {
         }
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Resuming " + stateName + " for " + stateComponent.character.name);
         isPaused = false;
+        stateComponent.SetCurrentState(this);
         //StartStatePerTick();
         DoMovementBehavior();
     }

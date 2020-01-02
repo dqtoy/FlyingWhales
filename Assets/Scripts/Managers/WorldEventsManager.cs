@@ -63,24 +63,6 @@ public class WorldEventsManager : MonoBehaviour {
         }
         return events;
     }
-    public bool CanSpawnEventWithEffects(Region region, Character spawner, WORLD_EVENT_EFFECT[] effects) {
-        for (int i = 0; i < worldEvents.Length; i++) {
-            WorldEvent currEvent = worldEvents[i];
-            if (currEvent.CanSpawnEventAt(region, spawner) && currEvent.CanProvideAnyNeededEffects(effects)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public bool DoesJobProduceWorldEvent(JOB_TYPE job) {
-        return WorldEventsDB.jobEventsDB[job].neededEffects != null;
-    }
-    public WORLD_EVENT_EFFECT[] GetNeededEffectsOfJob(JOB_TYPE job) {
-        return WorldEventsDB.jobEventsDB[job].neededEffects;
-    }
-    public Region GetValidRegionToMoveTo(JOB_TYPE job, Character character) {
-        return WorldEventsDB.jobEventsDB[job].validRegionGetter.Invoke(character, job);
-    }
     #endregion
 
     #region World State

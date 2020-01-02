@@ -964,29 +964,27 @@ public class Area : IJobOwner, ILocation {
 
             //brew potion
             if (affectedStructure.GetItemsOfTypeCount(SPECIAL_TOKEN.HEALING_POTION) < 2) {
-                if (!HasJob(JOB_TYPE.BREW_POTION)) {
-                    //create an un crafted potion and place it at the main storage structure, then use that as the target for the job.
-                    SpecialToken item = TokenManager.Instance.CreateSpecialToken(SPECIAL_TOKEN.HEALING_POTION);
-                    affectedStructure.AddItem(item);
-                    item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
+                //create an un crafted potion and place it at the main storage structure, then use that as the target for the job.
+                SpecialToken item = TokenManager.Instance.CreateSpecialToken(SPECIAL_TOKEN.HEALING_POTION);
+                affectedStructure.AddItem(item);
+                item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
 
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BREW_POTION, INTERACTION_TYPE.CRAFT_ITEM, item, this);
-                    job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TokenManager.Instance.itemData[SPECIAL_TOKEN.HEALING_POTION].craftCost });
-                    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanBrewPotion);
-                    AddToAvailableJobs(job);
-                }
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_ITEM, item, this);
+                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TokenManager.Instance.itemData[SPECIAL_TOKEN.HEALING_POTION].craftCost });
+                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanBrewPotion);
+                AddToAvailableJobs(job);
             }
 
 
             //craft tool
             if (affectedStructure.GetItemsOfTypeCount(SPECIAL_TOKEN.TOOL) < 2) {
-                if (!HasJob(JOB_TYPE.CRAFT_TOOL)) {
+                if (!HasJob(JOB_TYPE.CRAFT_OBJECT)) {
                     //create an un crafted potion and place it at the main storage structure, then use that as the target for the job.
                     SpecialToken item = TokenManager.Instance.CreateSpecialToken(SPECIAL_TOKEN.TOOL);
                     affectedStructure.AddItem(item);
                     item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
 
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_TOOL, INTERACTION_TYPE.CRAFT_ITEM, item, this);
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_ITEM, item, this);
                     job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TokenManager.Instance.itemData[SPECIAL_TOKEN.TOOL].craftCost });
                     job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCraftTool);
                     AddToAvailableJobs(job);
@@ -997,7 +995,7 @@ public class Area : IJobOwner, ILocation {
     private void OnJobRemovedFromAvailableJobs(JobQueueItem job) {
         jobManager.OnRemoveFromAvailableJobs(job);
         JobManager.Instance.OnFinishJob(job);
-        if (job.jobType == JOB_TYPE.CRAFT_TOOL || job.jobType == JOB_TYPE.BREW_POTION) {
+        if (job.jobType == JOB_TYPE.CRAFT_OBJECT) {
             CheckAreaInventoryJobs(mainStorage);
         }
     }
@@ -1055,11 +1053,8 @@ public class Area : IJobOwner, ILocation {
     private int currentHeroEventJobs => GetNumberOfJobsWith(IsJobTypeAHeroEventJob);
     private bool IsJobTypeAHeroEventJob(JobQueueItem item) {
         switch (item.jobType) {
-            case JOB_TYPE.OBTAIN_FOOD_OUTSIDE:
-            case JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE:
             case JOB_TYPE.IMPROVE:
             case JOB_TYPE.EXPLORE:
-            case JOB_TYPE.COMBAT_WORLD_EVENT:
                 return true;
             default:
                 return false;
@@ -1073,16 +1068,6 @@ public class Area : IJobOwner, ILocation {
         GameDate improveJobDate = GameManager.Instance.Today();
         improveJobDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(8));
         SchedulingManager.Instance.AddEntry(improveJobDate, TryCreateImproveJob, this);
-
-        // //explore job at 8 am
-        // GameDate exploreJobDate = GameManager.Instance.Today();
-        // exploreJobDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(8));
-        // SchedulingManager.Instance.AddEntry(exploreJobDate, TryCreateExploreJob, this);
-
-        // //combat job at 8 am
-        // GameDate combatJobDate = GameManager.Instance.Today();
-        // combatJobDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(8));
-        // SchedulingManager.Instance.AddEntry(combatJobDate, TryCreateCombatJob, this);
     }
     /// <summary>
     /// Try and create an improve job. This checks chances and max hero event jobs.
@@ -1122,45 +1107,6 @@ public class Area : IJobOwner, ILocation {
             return false;    
         }
         
-    }
-    /// <summary>
-    /// Try and create an explore job. This checks chances and max hero event jobs.
-    /// Criteria can be found at: https://trello.com/c/cICMVSch/2706-hero-events
-    /// NOTE: Since this will be checked each day at a specific time, I just added a scheduled event that calls this at the start of each day, rather than checking it every tick.
-    /// </summary>
-    private void TryCreateExploreJob() {
-        if (!CanStillCreateHeroEventJob()) {
-            return; //hero events are maxed.
-        }
-        if (UnityEngine.Random.Range(0, 100) < 15) {//15
-            CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.EXPLORE, CHARACTER_STATE.MOVE_OUT, this);
-            //Used lambda expression instead of new function. Reference: https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/lambda-expressions
-            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoExploreJob);
-            AddToAvailableJobs(job);
-            //expires at midnight
-            GameDate expiry = GameManager.Instance.Today();
-            expiry.SetTicks(GameManager.Instance.GetTicksBasedOnHour(24));
-            SchedulingManager.Instance.AddEntry(expiry, () => CheckIfJobWillExpire(job), this);
-        }
-    }
-    /// <summary>
-    /// Try and create a combat job. This checks chances and max hero event jobs.
-    /// Criteria can be found at: https://trello.com/c/cICMVSch/2706-hero-events
-    /// NOTE: Since this will be checked each day at a specific time, I just added a scheduled event that calls this at the start of each day, rather than checking it every tick.
-    /// </summary>
-    private void TryCreateCombatJob() {
-        if (!CanStillCreateHeroEventJob()) {
-            return; //hero events are maxed.
-        }
-        if (UnityEngine.Random.Range(0, 100) < 15) {//15
-            CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT_WORLD_EVENT, CHARACTER_STATE.MOVE_OUT, this);
-            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCombatJob);
-            AddToAvailableJobs(job);
-            //expires at midnight
-            GameDate expiry = GameManager.Instance.Today();
-            expiry.SetTicks(GameManager.Instance.GetTicksBasedOnHour(24));
-            SchedulingManager.Instance.AddEntry(expiry, () => CheckIfJobWillExpire(job), this);
-        }
     }
     private void CheckIfJobWillExpire(JobQueueItem item) {
         if (item.assignedCharacter == null) {

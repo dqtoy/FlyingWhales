@@ -115,8 +115,6 @@ public partial class InteractionManager : MonoBehaviour {
             case JOB_TYPE.TRIGGER_FLAW:
                 priority = 4;
                 break;
-            case JOB_TYPE.CHEAT:
-            case JOB_TYPE.HAVE_AFFAIR:
             case JOB_TYPE.MISC:
             case JOB_TYPE.RETURN_HOME:
             case JOB_TYPE.CORRUPT_CULTIST:
@@ -147,7 +145,6 @@ public partial class InteractionManager : MonoBehaviour {
                 priority = 10;
                 break;
             case JOB_TYPE.KNOCKOUT:
-            case JOB_TYPE.ABDUCT:
             case JOB_TYPE.SEDUCE:
             case JOB_TYPE.UNDERMINE_ENEMY:
                 priority = 20;
@@ -157,8 +154,7 @@ public partial class InteractionManager : MonoBehaviour {
                 priority = 30;
                 break;
             case JOB_TYPE.APPREHEND:
-            case JOB_TYPE.ATTEMPT_TO_STOP_JOB:
-            case JOB_TYPE.REMOVE_FIRE:
+            case JOB_TYPE.DOUSE_FIRE:
                 priority = 40;
                 break;
             case JOB_TYPE.REMOVE_TRAIT:
@@ -166,18 +162,6 @@ public partial class InteractionManager : MonoBehaviour {
                 break;
             case JOB_TYPE.RESTRAIN:
                 priority = 60;
-                break;
-            case JOB_TYPE.REMOVE_POISON:
-                priority = 70;
-                break;
-            case JOB_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE:
-                priority = 80;
-                break;
-            case JOB_TYPE.SAVE_CHARACTER:
-                priority = 90;
-                break;
-            case JOB_TYPE.ASK_FOR_HELP_SAVE_CHARACTER:
-                priority = 90;
                 break;
             case JOB_TYPE.HAPPINESS_RECOVERY_FORLORN:
                 priority = 100;
@@ -188,33 +172,18 @@ public partial class InteractionManager : MonoBehaviour {
             case JOB_TYPE.BURY:
             case JOB_TYPE.REPAIR:
             case JOB_TYPE.WATCH:
-            case JOB_TYPE.BUILD_TILE_OBJECT:
-            case JOB_TYPE.BUILD_GODDESS_STATUE:
             case JOB_TYPE.DESTROY_PROFANE_LANDMARK:
             case JOB_TYPE.PERFORM_HOLY_INCANTATION:
             case JOB_TYPE.PRAY_GODDESS_STATUE:
             case JOB_TYPE.REACT_TO_SCREAM:
-            case JOB_TYPE.CHAT:
                 priority = 120;
                 break;
             case JOB_TYPE.BREAK_UP:
                 priority = 130;
                 break;
-            case JOB_TYPE.REPLACE_TILE_OBJECT:
-                priority = 140;
-                break;
-            //case JOB_TYPE.EXPLORE:
-            //    priority = 150;
-            //    break;
-            case JOB_TYPE.DELIVER_TREASURE:
-                priority = 160;
-                break;
             case JOB_TYPE.PATROL:
                 priority = 170;
                 break;
-            case JOB_TYPE.SHARE_INFORMATION:
-            //priority = 210;
-            //break;
             case JOB_TYPE.JUDGEMENT:
                 priority = 220;
                 break;
@@ -222,24 +191,19 @@ public partial class InteractionManager : MonoBehaviour {
             case JOB_TYPE.HAUL:
                 priority = 230;
                 break;
-            case JOB_TYPE.CRAFT_TOOL:
-            case JOB_TYPE.BREW_POTION:
+            case JOB_TYPE.CRAFT_OBJECT:
             case JOB_TYPE.PRODUCE_FOOD:
             case JOB_TYPE.PRODUCE_WOOD:
             case JOB_TYPE.PRODUCE_STONE:
             case JOB_TYPE.PRODUCE_METAL:
-            case JOB_TYPE.DROP_RESOURCE:
+            case JOB_TYPE.TAKE_PERSONAL_FOOD:
             case JOB_TYPE.DROP:
             case JOB_TYPE.INSPECT:
             case JOB_TYPE.PLACE_BLUEPRINT:
             case JOB_TYPE.BUILD_BLUEPRINT:
-            case JOB_TYPE.BUILD_FURNITURE:
-            case JOB_TYPE.OBTAIN_ITEM:
+            case JOB_TYPE.OBTAIN_PERSONAL_ITEM:
                 priority = 240;
                 break;
-            //case JOB_TYPE.WATCH:
-            //    priority = 250;
-            //    break;
             case JOB_TYPE.HUNGER_RECOVERY:
             case JOB_TYPE.TIREDNESS_RECOVERY:
             case JOB_TYPE.HAPPINESS_RECOVERY:
@@ -249,13 +213,8 @@ public partial class InteractionManager : MonoBehaviour {
             case JOB_TYPE.IDLE:
                 priority = 290;
                 break;
-            case JOB_TYPE.MOVE_OUT:
-            case JOB_TYPE.OBTAIN_FOOD_OUTSIDE:
-            case JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE:
             case JOB_TYPE.IMPROVE:
             case JOB_TYPE.EXPLORE:
-            case JOB_TYPE.COMBAT_WORLD_EVENT:
-            case JOB_TYPE.SEARCHING_WORLD_EVENT:
                 priority = 300;
                 break;
         }

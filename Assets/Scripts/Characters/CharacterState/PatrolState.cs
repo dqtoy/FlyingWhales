@@ -63,18 +63,6 @@ public class PatrolState : CharacterState {
         }
     }
     #endregion
-
-    private void OnArriveAtPickUpLocation(SpecialToken token) {
-        if (token.gridTileLocation != null) {
-            stateComponent.character.PickUpToken(token);
-            PatrolAgain();
-        }
-        
-    }
-    private void PatrolAgain() {
-        ResumeState();
-    }
-
     private void StartPatrolMovement() {
         stateComponent.character.marker.GoTo(PickRandomTileToGoTo(), StartPatrolMovement);
     }

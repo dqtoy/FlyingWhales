@@ -1403,21 +1403,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     public GoapPlanJob CreateObtainItemJob(SPECIAL_TOKEN item) {
         GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_ITEM, item.ToString(), false, GOAP_EFFECT_TARGET.ACTOR);
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_ITEM, goapEffect, this, this);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM, goapEffect, this, this);
         jobQueue.AddJobInQueue(job);
         //Debug.Log(this.name + " created job to obtain item " + item.ToString());
         //Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, this.name + " created job to obtain item " + item.ToString(), 5, null);
         return job;
-    }
-    public GoapPlanJob CreateAttemptToStopCurrentActionAndJob(Character targetCharacter, GoapPlanJob jobToStop) {
-        if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.ATTEMPT_TO_STOP_JOB)) {
-            GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.TARGET_STOP_ACTION_AND_JOB, string.Empty, false, GOAP_EFFECT_TARGET.TARGET);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ATTEMPT_TO_STOP_JOB, goapEffect, targetCharacter, this);
-            job.AddOtherData(INTERACTION_TYPE.ASK_TO_STOP_JOB, new object[] { jobToStop });
-            jobQueue.AddJobInQueue(job);
-            return job;
-        }
-        return null;
     }
     public void CreatePersonalJobs() {
         bool hasCreatedJob = false;
@@ -1441,8 +1431,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                         Debug.Log($"Created new unbuilt {furniture.name} at {chosenTile}");
 
                         if (tileObj.CanBeCraftedBy(this)) { //check first if the character can build that specific type of furniture
-                            if (jobQueue.HasJob(JOB_TYPE.BUILD_FURNITURE, furniture) == false) {
-                                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_FURNITURE, INTERACTION_TYPE.CRAFT_TILE_OBJECT, furniture, this);
+                            if (jobQueue.HasJob(JOB_TYPE.CRAFT_OBJECT, furniture) == false) {
+                                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, furniture, this);
                                 job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(furniture.tileObjectType).constructionCost });
                                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
                                 jobQueue.AddJobInQueue(job);
@@ -1450,8 +1440,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                             }
                         } else {
                             //furniture cannot be crafted by this character, post a job on the area
-                            if (homeRegion.area.HasJob(JOB_TYPE.BUILD_FURNITURE, furniture) == false) {
-                                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_FURNITURE, INTERACTION_TYPE.CRAFT_TILE_OBJECT, furniture, homeRegion.area);
+                            if (homeRegion.area.HasJob(JOB_TYPE.CRAFT_OBJECT, furniture) == false) {
+                                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, furniture, homeRegion.area);
                                 job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(furniture.tileObjectType).constructionCost });
                                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
                                 homeRegion.area.AddToAvailableJobs(job);
@@ -1468,7 +1458,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //(sum from items in his inventory and in his home whose owner is this character). 
         //Reduce this chance by 3% for every item he owns (disregard stolen items)
         //NOTE: If he already has all items he needs, he doesnt need to do this job anymore.
-        if (!isFactionless && !jobQueue.HasJob(JOB_TYPE.OBTAIN_ITEM) && !role.HasNeededItems(this) && isAtHomeRegion) {
+        if (!isFactionless && !jobQueue.HasJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM) && !role.HasNeededItems(this) && isAtHomeRegion) {
             int numOfItemsOwned = GetNumOfItemsOwned();
             if (numOfItemsOwned < 4) {
                 //string obtainSummary = name + " will roll to obtain item.";
@@ -1632,13 +1622,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //    jobQueue.AddJobInQueue(job);
     //    return job;
     //}
-    public void CreateShareInformationJob(Character targetCharacter, GoapAction info) {
-        if (!IsHostileWith(targetCharacter) && !jobQueue.HasJobWithOtherData(JOB_TYPE.SHARE_INFORMATION, info)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SHARE_INFORMATION, INTERACTION_TYPE.SHARE_INFORMATION, targetCharacter, this);
-            job.AddOtherData(INTERACTION_TYPE.SHARE_INFORMATION, new object[] { info });
-            jobQueue.AddJobInQueue(job);
-        }
-    }
     //public void CancelAllJobsAndPlansExceptNeedsRecovery(string reason = "") {
     //    AdjustIsWaitingForInteraction(1);
     //    for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {

@@ -43,7 +43,7 @@ public class DivineInterventionQuest : Quest {
         //Will improve later
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
-            if(job.jobType == JOB_TYPE.BUILD_GODDESS_STATUE && !CanStillCreateGoddessStatues()) {
+            if(job.jobType == JOB_TYPE.CRAFT_OBJECT && !CanStillCreateGoddessStatues()) {
                 job.CancelJob();
                 i--;
             }else if (job.jobType == JOB_TYPE.DESTROY_PROFANE_LANDMARK && !AreThereProfaneLandmarks()) {
@@ -72,7 +72,7 @@ public class DivineInterventionQuest : Quest {
         if (GameManager.Instance.tick == 72 || GameManager.Instance.tick == 132) { //72 = 6:00AM, 132 = 11:00AM
             string summary = GameManager.Instance.TodayLogString() + " Will try to create build goddess statue job";
             int roll = UnityEngine.Random.Range(0, 100);
-            bool hasExistingJob = HasJob(JOB_TYPE.BUILD_GODDESS_STATUE);
+            bool hasExistingJob = HasJob(JOB_TYPE.CRAFT_OBJECT);
             bool canStillCreateGoddessStatue = CanStillCreateGoddessStatues();
             summary += "\nRoll is: " + roll.ToString();
             summary += "\nHas Existing Job?: " + hasExistingJob.ToString();
@@ -148,7 +148,7 @@ public class DivineInterventionQuest : Quest {
         GoddessStatue goddessStatue = InnerMapManager.Instance.CreateNewTileObject<GoddessStatue>(TILE_OBJECT_TYPE.GODDESS_STATUE);
         structure.AddPOI(goddessStatue);
         goddessStatue.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_GODDESS_STATUE, INTERACTION_TYPE.CRAFT_TILE_OBJECT, goddessStatue, this);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, goddessStatue, this);
         job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(goddessStatue.tileObjectType).constructionCost });
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeBuildGoddessStatueJob);
         AddToAvailableJobs(job);

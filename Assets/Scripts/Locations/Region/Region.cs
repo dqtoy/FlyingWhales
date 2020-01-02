@@ -463,14 +463,7 @@ public class Region : ILocation, IHasNeighbours<Region> {
         for (int i = 0; i < eventData.involvedCharacters.Length; i++) {
             Character currCharacter = eventData.involvedCharacters[i];
             //do not let the character that spawned the event go home
-            if (currCharacter.stateComponent.currentState is MoveOutState) {
-                MoveOutState state = currCharacter.stateComponent.currentState as MoveOutState;
-                Debug.Log(GameManager.Instance.TodayLogString() + "Removing go home schedule of " + currCharacter.name);
-                SchedulingManager.Instance.RemoveSpecificEntry(state.goHomeSchedID);
-            } else {
-                throw new System.Exception(currCharacter.name + " is at " + name + " but is not in move out state!");
-
-            }
+           
         }
         //spawn the event
         activeEvent.Spawn(this, spawner, eventData, out _activeEventAfterEffectScheduleId);
@@ -505,9 +498,6 @@ public class Region : ILocation, IHasNeighbours<Region> {
         for (int i = 0; i < eventData.involvedCharacters.Length; i++) {
             Character currCharacter = eventData.involvedCharacters[i];
             //make characters involved in the event, go home
-            if (currCharacter.minion == null) {
-                (currCharacter.stateComponent.currentState as MoveOutState).GoHome();
-            }
         }
         DespawnEvent();
         Messenger.Broadcast(Signals.WORLD_EVENT_FINISHED_NORMAL, this, we);
@@ -519,9 +509,6 @@ public class Region : ILocation, IHasNeighbours<Region> {
         for (int i = 0; i < eventData.involvedCharacters.Length; i++) {
             Character currCharacter = eventData.involvedCharacters[i];
             //make characters involved in the event, go home
-            if (currCharacter.minion == null && !currCharacter.isDead && currCharacter.stateComponent.currentState is MoveOutState) {
-                (currCharacter.stateComponent.currentState as MoveOutState).GoHome();
-            }
         }
         DespawnEvent();
         Messenger.Broadcast(Signals.WORLD_EVENT_FAILED, this, we);
@@ -563,10 +550,7 @@ public class Region : ILocation, IHasNeighbours<Region> {
     public void JobBasedEventGeneration(Character character) {
         //only trigger event generation if there is no active event and the character that arrived is not a minion
         if (activeEvent == null && character.minion == null) {
-            if (character.stateComponent.currentState is MoveOutState) {
-                WORLD_EVENT_EFFECT[] effects = WorldEventsManager.Instance.GetNeededEffectsOfJob(character.stateComponent.currentState.job.jobType);
-                SpawnEventThatCanProvideEffectFor(effects, character);
-            }
+            
         }
     }
     #endregion

@@ -132,7 +132,7 @@ public class GoapPlanner {
             if (goapThread.recalculationPlan == null) {
                 //This means that the planner cannot create a new plan
                 bool logCancelJobNoPlan = true;
-                if (goapThread.job.jobType == JOB_TYPE.REMOVE_FIRE && goapThread.job.targetPOI.gridTileLocation == null) {
+                if (goapThread.job.jobType == JOB_TYPE.DOUSE_FIRE && goapThread.job.targetPOI.gridTileLocation == null) {
                     logCancelJobNoPlan = false;
                 }
                 if (logCancelJobNoPlan) {

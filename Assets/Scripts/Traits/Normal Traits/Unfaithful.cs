@@ -32,7 +32,7 @@ namespace Traits {
             if (character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) != null) {
                 Character paramour = (character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.PARAMOUR) as AlterEgoData)?.owner ?? null;
                 if (paramour == null) {
-                    if (!character.jobQueue.HasJob(JOB_TYPE.HAVE_AFFAIR)) {
+                    if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
                         List<Character> choices = new List<Character>();
                         for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
                             Character choice = character.currentRegion.charactersAtLocation[i];
@@ -45,7 +45,7 @@ namespace Traits {
 
                         if (choices.Count > 0) {
                             //If no paramour yet, the character will create a Have Affair Job which will attempt to have an affair with a viable target.
-                            GoapPlanJob cheatJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAVE_AFFAIR, INTERACTION_TYPE.HAVE_AFFAIR, Utilities.GetRandomElement(choices), character);
+                            GoapPlanJob cheatJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.HAVE_AFFAIR, Utilities.GetRandomElement(choices), character);
                             character.jobQueue.AddJobInQueue(cheatJob);
                             return successLogKey;
                         } else {
@@ -53,9 +53,9 @@ namespace Traits {
                         }
                     }
                 } else {
-                    if (!character.jobQueue.HasJob(JOB_TYPE.CHEAT)) {
+                    if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
                         //If already has a paramour, the character will attempt to make love with one.
-                        GoapPlanJob cheatJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CHEAT, INTERACTION_TYPE.MAKE_LOVE, paramour, character);
+                        GoapPlanJob cheatJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.MAKE_LOVE, paramour, character);
                         character.jobQueue.AddJobInQueue(cheatJob);
                     }
                 }

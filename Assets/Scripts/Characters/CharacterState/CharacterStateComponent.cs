@@ -281,9 +281,6 @@ public class CharacterStateComponent {
             case CHARACTER_STATE.DOUSE_FIRE:
                 newState = new DouseFireState(this);
                 break;
-            case CHARACTER_STATE.MOVE_OUT:
-                newState = new MoveOutState(this);
-                break;
         }
         return newState;
     }
