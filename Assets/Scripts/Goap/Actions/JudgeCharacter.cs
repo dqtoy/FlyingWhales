@@ -93,31 +93,29 @@ public class JudgeCharacter : GoapAction {
             }
         }
 
-        List<RELATIONSHIP_TYPE> rels = goapNode.actor.relationshipContainer.GetRelationshipDataWith(targetCharacter.currentAlterEgo)?.relationships ?? null;
-        if (rels != null) {
-            for (int i = 0; i < rels.Count; i++) {
-                switch (rels[i]) {
-                    case RELATIONSHIP_TYPE.LOVER:
-                        absolve *= 2f;
-                        whip *= 2f;
-                        kill *= 0.2f;
-                        exile *= 0.5f;
-                        break;
-                    case RELATIONSHIP_TYPE.FRIEND:
-                    case RELATIONSHIP_TYPE.RELATIVE:
-                        absolve *= 2f;
-                        whip *= 2f;
-                        kill *= 0.5f;
-                        exile *= 0.5f;
-                        break;
-                    case RELATIONSHIP_TYPE.ENEMY:
-                        absolve *= 0.2f;
-                        whip *= 0.5f;
-                        kill *= 2f;
-                        exile *= 1.5f;
-                        break;
-                }
-            }
+        if (goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.LOVER)) {
+            absolve *= 2f;
+            whip *= 2f;
+            kill *= 0.2f;
+            exile *= 0.5f;
+        }
+        if (goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.RELATIVE)) {
+            absolve *= 2f;
+            whip *= 2f;
+            kill *= 0.5f;
+            exile *= 0.5f;
+        }
+
+        if (goapNode.actor.opinionComponent.IsFriendsWith(targetCharacter)) {
+            absolve *= 2f;
+            whip *= 2f;
+            kill *= 0.5f;
+            exile *= 0.5f;
+        } else if (goapNode.actor.opinionComponent.IsEnemiesWith(targetCharacter)) {
+            absolve *= 0.2f;
+            whip *= 0.5f;
+            kill *= 2f;
+            exile *= 1.5f;
         }
 
         weights.AddElement("Target Released", absolve);

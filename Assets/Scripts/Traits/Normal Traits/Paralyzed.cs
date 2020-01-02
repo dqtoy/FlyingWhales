@@ -56,7 +56,7 @@ namespace Traits {
                             }
                         }
                     } else {
-                        if (characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.NEGATIVE) {
+                        if (characterThatWillDoJob.opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE) {
                             if (character.CanPlanGoap() && !character.HasJobTargetingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
                                 if (!PlanFullnessRecovery(characterThatWillDoJob)) {
                                     if (!CreateDropJobForTirednessRecovery(characterThatWillDoJob)) {

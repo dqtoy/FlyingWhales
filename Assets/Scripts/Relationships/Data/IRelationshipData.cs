@@ -9,7 +9,6 @@ public interface IRelationshipData {
     /// </summary>
 	int relationshipValue { get; }
     List<RELATIONSHIP_TYPE> relationships { get; }
-    RELATIONSHIP_EFFECT relationshipStatus { get; }
 
     void AdjustRelationshipValue(int amount);
     void AddRelationship(RELATIONSHIP_TYPE relType);
@@ -22,5 +21,4 @@ public interface IRelationshipData {
     /// <param name="rels">The relationships to watch out for.</param>
     /// <returns>True or false</returns>
     bool HasRelationship(params RELATIONSHIP_TYPE[] rels);
-    List<RELATIONSHIP_TYPE> GetAllRelationshipOfEffect(RELATIONSHIP_EFFECT effect);
 }

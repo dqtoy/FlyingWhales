@@ -60,7 +60,7 @@ public class RememberFallen : GoapAction {
             if (poiTarget is Tombstone) {
                 Tombstone tombstone = poiTarget as Tombstone;
                 Character target = tombstone.character;
-                return actor.relationshipContainer.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.POSITIVE;
+                return actor.opinionComponent.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.POSITIVE;
             }
             return false;
         }
@@ -103,7 +103,7 @@ public class RememberFallenData : GoapActionData {
         if (poiTarget is Tombstone) {
             Tombstone tombstone = poiTarget as Tombstone;
             Character target = tombstone.character;
-            return actor.relationshipContainer.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.POSITIVE;
+            return actor.opinionComponent.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.POSITIVE;
         }
         return false;
     }

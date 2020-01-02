@@ -22,8 +22,7 @@ public class Tease : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         Character targetCharacter = poiTarget as Character;
-        List<RELATIONSHIP_TYPE> rels = actor.relationshipContainer.GetRelationshipDataWith(targetCharacter).relationships;
-        if (rels.Contains(RELATIONSHIP_TYPE.FRIEND)) {
+        if (actor.opinionComponent.IsFriendsWith(targetCharacter)) {
             return Utilities.rng.Next(40, 61);
         } else {
             return Utilities.rng.Next(50, 71);

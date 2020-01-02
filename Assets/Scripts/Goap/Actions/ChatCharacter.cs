@@ -41,7 +41,7 @@ public class ChatCharacter : GoapAction {
         weights.AddElement("Quick Chat", 250);
 
         IRelationshipData relData = goapNode.actor.relationshipContainer.GetRelationshipDataWith(targetCharacter.currentAlterEgo);
-        RELATIONSHIP_EFFECT relationshipEffectWithTarget = goapNode.actor.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo);
+        RELATIONSHIP_EFFECT relationshipEffectWithTarget = goapNode.actor.opinionComponent.GetRelationshipEffectWith(targetCharacter);
         //**if no relationship yet, may become friends**
         if (relData == null) {
             if (goapNode.actor.traitContainer.GetNormalTrait<Trait>("Serial Killer") == null && targetCharacter.traitContainer.GetNormalTrait<Trait>("Serial Killer") == null) {
@@ -181,14 +181,8 @@ public class ChatCharacter : GoapAction {
 
         if (chatResult == "Quick Chat") {
             QuickChat(goapNode);
-        } else if (chatResult == "Become Friends") {
-            BecomeFriends(goapNode, targetCharacter);
-        } else if (chatResult == "Become Enemies") {
-            BecomeEnemies(goapNode, targetCharacter);
         } else if (chatResult == "Share Information") {
             ShareInformation(goapNode);
-        } else if (chatResult == "Resolve Enmity") {
-            ResolveEnmity(goapNode, targetCharacter);
         } else if (chatResult == "Flirt") {
             Flirt(goapNode, targetCharacter);
         } else if (chatResult == "Become Lovers") {
@@ -201,19 +195,13 @@ public class ChatCharacter : GoapAction {
     }
     private void QuickChat(ActualGoapNode goapNode) {
         //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        //TODO: currentState.SetIntelReaction(QuickChatIntelReaction);
+        //adjust opinion +2 both ways
+        Character target = goapNode.poiTarget as Character;
+        goapNode.actor.opinionComponent.AdjustOpinion(target, "Good Chat", 2);
+        goapNode.actor.opinionComponent.AdjustOpinion(target, "Good Chat", 2);
+        
     }
-    private void ShareInformation(ActualGoapNode goapNode) {
-        //TODO: currentState.SetIntelReaction(ShareInformationIntelReaction);
-        //TODO: mechanics to be added later
-    }
-    private void BecomeFriends(ActualGoapNode goapNode, Character targetCharacter) {
-        //TODO: currentState.SetIntelReaction(BecomeFriendsIntelReaction);
-        RelationshipManager.Instance.CreateNewOneWayRelationship(goapNode.actor, targetCharacter, RELATIONSHIP_TYPE.FRIEND);
-    }
-    private void BecomeEnemies(ActualGoapNode goapNode, Character targetCharacter) {
-        RelationshipManager.Instance.CreateNewOneWayRelationship(goapNode.actor, targetCharacter, RELATIONSHIP_TYPE.ENEMY);
-    }
+    private void ShareInformation(ActualGoapNode goapNode) { }
     private void Argument(ActualGoapNode goapNode, Character targetCharacter) {
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         if (goapNode.actor.traitContainer.GetNormalTrait<Trait>("Angry") != null) {
@@ -233,6 +221,11 @@ public class ChatCharacter : GoapAction {
         if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
             targetCharacter.traitContainer.AddTrait(targetCharacter, "Angry");
         }
+        
+        //adjust opinion -2 both ways
+        Character target = goapNode.poiTarget as Character;
+        goapNode.actor.opinionComponent.AdjustOpinion(target, "Argument", -2);
+        goapNode.actor.opinionComponent.AdjustOpinion(target, "Argument", -2);
     }
     private void Flirt(ActualGoapNode goapNode, Character targetCharacter) {
         //TODO: currentState.SetIntelReaction(FlirtIntelReaction);
@@ -242,18 +235,10 @@ public class ChatCharacter : GoapAction {
         (goapNode.actor.relationshipContainer.GetRelationshipDataWith(targetCharacter) as POIRelationshipData).IncreaseFlirtationCount();
     }
     private void BecomeLovers(ActualGoapNode goapNode, Character targetCharacter) {
-        //TODO: currentState.SetIntelReaction(BecomeLoversIntelReaction);
         RelationshipManager.Instance.CreateNewRelationshipBetween(goapNode.actor, targetCharacter, RELATIONSHIP_TYPE.LOVER);
     }
     private void BecomeParamours(ActualGoapNode goapNode, Character targetCharacter) {
-        //TODO: currentState.SetIntelReaction(BecomeParamoursIntelReaction);
         RelationshipManager.Instance.CreateNewRelationshipBetween(goapNode.actor, targetCharacter, RELATIONSHIP_TYPE.PARAMOUR);
-    }
-    private void ResolveEnmity(ActualGoapNode goapNode, Character targetCharacter) {
-        //TODO: currentState.SetIntelReaction(ResolveEnmityIntelReaction);
-        List<RELATIONSHIP_TYPE> negativeTraits = goapNode.actor.relationshipContainer.GetRelationshipDataWith(targetCharacter.currentAlterEgo).GetAllRelationshipOfEffect(RELATIONSHIP_EFFECT.NEGATIVE);
-        RELATIONSHIP_TYPE chosenTrait = negativeTraits[UnityEngine.Random.Range(0, negativeTraits.Count)];
-        RelationshipManager.Instance.RemoveOneWayRelationship(goapNode.actor, targetCharacter, chosenTrait);
     }
     #endregion
 

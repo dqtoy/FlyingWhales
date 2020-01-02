@@ -95,10 +95,9 @@ public partial class InteractionManager {
             //}
             if (character.isFactionless) {
                 return character.race == targetCharacter.race && character.homeRegion == targetCharacter.homeRegion &&
-                       !targetCharacter.relationshipContainer.HasRelationshipWith(character, RELATIONSHIP_TYPE.ENEMY);
+                       !targetCharacter.opinionComponent.IsEnemiesWith(character);
             }
-            return !character.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo,
-                RELATIONSHIP_TYPE.ENEMY);
+            return !character.opinionComponent.IsEnemiesWith(targetCharacter);
         }
         return false;
     }
@@ -116,10 +115,9 @@ public partial class InteractionManager {
             //}
             if (character.isFactionless) {
                 return character.race == targetCharacter.race && character.homeRegion == targetCharacter.homeRegion &&
-                       !targetCharacter.relationshipContainer.HasRelationshipWith(character, RELATIONSHIP_TYPE.ENEMY);
+                       !targetCharacter.opinionComponent.IsEnemiesWith(character);
             }
-            return !character.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo,
-                RELATIONSHIP_TYPE.ENEMY); //&& character.traitContainer.GetNormalTrait<Trait>("Healer") != null;
+            return !character.opinionComponent.IsEnemiesWith(targetCharacter);
         }
         return false;
     }
@@ -139,10 +137,9 @@ public partial class InteractionManager {
             //}
             if (character.isFactionless) {
                 return character.race == targetCharacter.race && character.homeRegion == targetCharacter.homeRegion &&
-                       !targetCharacter.relationshipContainer.HasRelationshipWith(character, RELATIONSHIP_TYPE.ENEMY);
+                       !targetCharacter.opinionComponent.IsEnemiesWith(character);
             }
-            return !character.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo,
-                       RELATIONSHIP_TYPE.ENEMY) && character.traitContainer.GetNormalTrait<Trait>("Healer") != null;
+            return !character.opinionComponent.IsEnemiesWith(targetCharacter) && character.traitContainer.GetNormalTrait<Trait>("Healer") != null;
         }
         return false;
     }
@@ -150,7 +147,7 @@ public partial class InteractionManager {
         if (character.isAtHomeRegion && !character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL) &&
             character.traitContainer.GetNormalTrait<Trait>("Coward") == null && character.currentRegion.area.prison != null) {
             return character.role.roleType == CHARACTER_ROLE.SOLDIER &&
-                   character.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) !=
+                   character.opinionComponent.GetRelationshipEffectWith(targetCharacter) !=
                    RELATIONSHIP_EFFECT.POSITIVE;
         }
         return false;
@@ -163,7 +160,7 @@ public partial class InteractionManager {
             && (character.role.roleType == CHARACTER_ROLE.SOLDIER ||
             character.role.roleType == CHARACTER_ROLE.CIVILIAN ||
             character.role.roleType == CHARACTER_ROLE.ADVENTURER)
-            && character.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.POSITIVE 
+            && character.opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE 
             && !character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)
             && targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null;
     }
@@ -179,7 +176,7 @@ public partial class InteractionManager {
     }
     public bool CanCharacterTakeParalyzedFeedJob(Character sourceCharacter, Character character) {
         return sourceCharacter != character && sourceCharacter.faction == character.faction &&
-               sourceCharacter.relationshipContainer.GetRelationshipEffectWith(character.currentAlterEgo) !=
+               sourceCharacter.opinionComponent.GetRelationshipEffectWith(character) !=
                RELATIONSHIP_EFFECT.NEGATIVE;
     }
     public bool CanCharacterTakeRestrainedFeedJob(Character sourceCharacter, Character character) {
@@ -197,7 +194,7 @@ public partial class InteractionManager {
     }
     public bool CanCharacterTakeDropJob(Character sourceCharacter, Character character) {
         return sourceCharacter != character && sourceCharacter.faction == character.faction &&
-               character.relationshipContainer.GetRelationshipEffectWith(sourceCharacter.currentAlterEgo) !=
+               character.opinionComponent.GetRelationshipEffectWith(sourceCharacter) !=
                RELATIONSHIP_EFFECT.NEGATIVE;
     }
     public bool CanCharacterTakeKnockoutJob(Character character, Character targetCharacter) {

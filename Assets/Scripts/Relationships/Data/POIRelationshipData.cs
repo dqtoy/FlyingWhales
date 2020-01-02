@@ -7,7 +7,6 @@ public class POIRelationshipData : IRelationshipData {
     public List<RELATIONSHIP_TYPE> relationships { get; private set; }
     public int flirtationCount { get; private set; }
 
-    public RELATIONSHIP_EFFECT relationshipStatus => GetRelationshipStatus();
     public POIRelationshipData() {
         relationships = new List<RELATIONSHIP_TYPE>();
     }
@@ -38,45 +37,16 @@ public class POIRelationshipData : IRelationshipData {
         }
         return false;
     }
-    private RELATIONSHIP_EFFECT GetRelationshipStatus() {
-        if (HasRelationship(RELATIONSHIP_TYPE.FRIEND, RELATIONSHIP_TYPE.RELATIVE, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.PARAMOUR)) {
-            return RELATIONSHIP_EFFECT.POSITIVE;
-        } else if (HasRelationship(RELATIONSHIP_TYPE.ENEMY)) {
-            return RELATIONSHIP_EFFECT.NEGATIVE;
-        } else {
-            return RELATIONSHIP_EFFECT.NEUTRAL;
-        }
-
-        //if (relationshipValue < 0) {
-        //    return RELATIONSHIP_EFFECT.NEGATIVE;
-        //} else if (relationshipValue > 0) {
-        //    return RELATIONSHIP_EFFECT.POSITIVE;
-        //} else {
-        //    return RELATIONSHIP_EFFECT.NEUTRAL;
-        //}
-    }
     public RELATIONSHIP_TYPE GetFirstMajorRelationship() {
         for (int i = 0; i < relationships.Count; i++) {
             RELATIONSHIP_TYPE rel = relationships[i];
-            if (rel != RELATIONSHIP_TYPE.ENEMY && rel != RELATIONSHIP_TYPE.FRIEND) {
-                return rel;
-            }
+            return rel;
         }
         return RELATIONSHIP_TYPE.NONE;
     }
     #endregion
 
     #region Getting
-    public List<RELATIONSHIP_TYPE> GetAllRelationshipOfEffect(RELATIONSHIP_EFFECT effect) {
-        List<RELATIONSHIP_TYPE> rels = new List<RELATIONSHIP_TYPE>();
-        for (int i = 0; i < relationships.Count; i++) {
-            RELATIONSHIP_TYPE currRel = relationships[i];
-            if (RelationshipManager.Instance.GetRelationshipEffect(currRel) == effect) {
-                rels.Add(currRel);
-            }
-        }
-        return rels;
-    }
     #endregion
 
     #region Flirting

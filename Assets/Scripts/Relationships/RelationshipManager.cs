@@ -42,25 +42,6 @@ public class RelationshipManager : MonoBehaviour {
     }
     #endregion
 
-    #region Relationship Effects
-    public RELATIONSHIP_EFFECT GetRelationshipEffect(RELATIONSHIP_TYPE relType) {
-        switch (relType) {
-            case RELATIONSHIP_TYPE.ENEMY:
-                return RELATIONSHIP_EFFECT.NEGATIVE;
-            case RELATIONSHIP_TYPE.FRIEND:
-                return RELATIONSHIP_EFFECT.POSITIVE;
-            case RELATIONSHIP_TYPE.RELATIVE:
-                return RELATIONSHIP_EFFECT.POSITIVE;
-            case RELATIONSHIP_TYPE.LOVER:
-                return RELATIONSHIP_EFFECT.POSITIVE;
-            case RELATIONSHIP_TYPE.PARAMOUR:
-                return RELATIONSHIP_EFFECT.POSITIVE;
-            default:
-                return RELATIONSHIP_EFFECT.NONE;
-        }
-    }
-    #endregion
-
     /// <summary>
     /// Add a one way relationship to a character.
     /// </summary>
@@ -71,10 +52,6 @@ public class RelationshipManager : MonoBehaviour {
     /// <returns>The created relationship data.</returns>
     private RELATIONSHIP_TYPE GetPairedRelationship(RELATIONSHIP_TYPE rel) {
         switch (rel) {
-            case RELATIONSHIP_TYPE.ENEMY:
-                return RELATIONSHIP_TYPE.ENEMY;
-            case RELATIONSHIP_TYPE.FRIEND:
-                return RELATIONSHIP_TYPE.FRIEND;
             case RELATIONSHIP_TYPE.RELATIVE:
                 return RELATIONSHIP_TYPE.RELATIVE;
             case RELATIONSHIP_TYPE.LOVER:
@@ -136,19 +113,6 @@ public class RelationshipManager : MonoBehaviour {
                         if (chance < 20) relsToCreate = 1;
                         //relsToCreate = 1;
                         break;
-                    case RELATIONSHIP_TYPE.ENEMY:
-                        //- a character may have either zero (75%), one (20%) or two (5%) enemies
-                        if (chance < 75) relsToCreate = 0;
-                        else if (chance >= 75 && chance < 95) relsToCreate = 1;
-                        else relsToCreate = 2;
-                        //relsToCreate = 2;
-                        break;
-                    case RELATIONSHIP_TYPE.FRIEND:
-                        //- a character may have either zero (65%), one (25%) or two (10%) friends
-                        if (chance < 65) relsToCreate = 0;
-                        else if (chance >= 65 && chance < 90) relsToCreate = 1;
-                        else relsToCreate = 2;
-                        break;
                 }
                 summary += "\n===========Creating " + relsToCreate + " " + currRel.ToString() + " Relationships...==========";
 
@@ -181,10 +145,6 @@ public class RelationshipManager : MonoBehaviour {
                                         }
 
                                         if (currCharacter.race != otherCharacter.race) weight *= 0; //character is a different race: Weight x0
-                                        if (existingRelsOfCurrentCharacter != null && existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TYPE.FRIEND)) {
-                                            //Disabled possiblity that relatives can be friends
-                                            weight *= 0;
-                                        }
                                         if (currCharacter.faction != otherCharacter.faction) {
                                             weight *= 0; //disabled different faction positive relationships
                                         }
@@ -236,90 +196,6 @@ public class RelationshipManager : MonoBehaviour {
                                             if (currCharacter.gender != otherCharacter.gender) {
                                                 //- character is the opposite gender: Weight x6
                                                 weight *= 6;
-                                            }
-                                        }
-                                    }
-                                    break;
-                                case RELATIONSHIP_TYPE.ENEMY:
-                                    if (GetValidator(currCharacter).CanHaveRelationship(currCharacter, otherCharacter, currRel) && GetValidator(otherCharacter).CanHaveRelationship(otherCharacter, currCharacter, currRel)) {
-                                        if (currCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
-                                            //- if non beast, from valid characters, choose based on these weights
-                                            if (otherCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
-                                                // - character is non-beast: +50 Weight
-                                                weight += 50;
-                                            } else {
-                                                //- character is a beast: +5 Weight
-                                                weight += 5;
-                                            }
-                                            if (currCharacter.faction.id == otherCharacter.faction.id) {
-                                                //- character is from same faction: Weight x6
-                                                weight *= 6;
-                                            }
-                                            if (currCharacter.race != otherCharacter.race) {
-                                                //- character is a different race: Weight x2
-                                                weight *= 2;
-                                            }
-
-                                            if (existingRelsOfCurrentCharacter != null) {
-                                                if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TYPE.LOVER)) {
-                                                    //- character is a lover: Weight x0
-                                                    weight *= 0;
-                                                }
-                                            }
-                                            if (existingRelsOfOtherCharacter != null) {
-                                                //- character considers this one as an Enemy: Weight x6
-                                                if (existingRelsOfOtherCharacter.Contains(RELATIONSHIP_TYPE.ENEMY)) {
-                                                    weight *= 6;
-                                                }
-                                                //- character considers this one as a Friend: Weight x0.3
-                                                if (existingRelsOfOtherCharacter.Contains(RELATIONSHIP_TYPE.FRIEND)) {
-                                                    weight *= 0.3f;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    break;
-                                case RELATIONSHIP_TYPE.FRIEND:
-                                    if (GetValidator(currCharacter).CanHaveRelationship(currCharacter, otherCharacter, currRel) && GetValidator(otherCharacter).CanHaveRelationship(otherCharacter, currCharacter, currRel)) {
-                                        if (currCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
-                                            //- if non beast, from valid characters, choose based on these weights:
-                                            if (otherCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
-                                                //- character is non-beast: +50 Weight
-                                                weight += 50;
-                                            } else {
-                                                //- character is a beast: +5 Weight
-                                                weight += 5;
-                                            }
-                                            if (currCharacter.faction.id == otherCharacter.faction.id) {
-                                                // - character is from same faction: Weight x6
-                                                weight *= 6;
-                                            }
-                                            if (currCharacter.race == otherCharacter.race) {
-                                                //- character is from same race: Weight x2
-                                                weight *= 2;
-                                            }
-                                            if (existingRelsOfCurrentCharacter != null) {
-                                                if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TYPE.RELATIVE)
-                                                    || existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TYPE.LOVER)
-                                                    || existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TYPE.ENEMY)) {
-                                                    //- character is a relative: Weight x0
-                                                    //- character is a lover: Weight x0
-                                                    //- this one considers the character an enemy: Weight x0
-                                                    weight *= 0;
-                                                }
-                                            }
-                                            if (existingRelsOfOtherCharacter != null) {
-                                                //- character considers this one as an Enemy: Weight x0.3
-                                                if (existingRelsOfOtherCharacter.Contains(RELATIONSHIP_TYPE.ENEMY)) {
-                                                    weight *= 0.3f;
-                                                }
-                                                //- character considers this one as a Friend: Weight x6
-                                                if (existingRelsOfOtherCharacter.Contains(RELATIONSHIP_TYPE.FRIEND)) {
-                                                    weight *= 6;
-                                                }
-                                            }
-                                            if (currCharacter.faction != otherCharacter.faction) {
-                                                weight *= 0; //disabled different faction positive relationships
                                             }
                                         }
                                     }
@@ -456,39 +332,39 @@ public class RelationshipManager : MonoBehaviour {
         string summary = "Relationship improvement between " + actor.name + " and " + target.name;
         bool hasImproved = false;
         Log log = null;
-        if (target.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TYPE.ENEMY)) {
-            //If Actor and Target are Enemies, 25% chance to remove Enemy relationship. If so, Target now considers Actor a Friend.
-            summary += "\n" + target.name + " considers " + actor.name + " an enemy. Rolling for chance to consider as a friend...";
-            int roll = UnityEngine.Random.Range(0, 100);
-            summary += "\nRoll is " + roll.ToString();
-            if (roll < 25) {
-                if (target.traitContainer.GetNormalTrait<Trait>("Serial Killer") == null) {
-                    log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "enemy_now_friend");
-                    summary += target.name + " now considers " + actor.name + " an enemy.";
-                    RemoveOneWayRelationship(target, actor, RELATIONSHIP_TYPE.ENEMY);
-                    CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TYPE.FRIEND);
-                    hasImproved = true;
-                }
-            }
-        }
-        //If character is already a Friend, will not change actual relationship but will consider it improved
-        else if (target.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TYPE.FRIEND)) {
-            hasImproved = true;
-        } else if (!target.relationshipContainer.HasRelationshipWith(actor)) {
-            if (target.traitContainer.GetNormalTrait<Trait>("Serial Killer") == null) {
-                log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "now_friend");
-                summary += "\n" + target.name + " has no relationship with " + actor.name + ". " + target.name + " now considers " + actor.name + " a friend.";
-                //If Target has no relationship with Actor, Target now considers Actor a Friend.
-                CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TYPE.FRIEND);
-                hasImproved = true;
-            }
-        }
-        Debug.Log(summary);
-        if (log != null) {
-            log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            PlayerManager.Instance.player.ShowNotificationFrom(log, target, actor);
-        }
+        // if (target.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TYPE.ENEMY)) {
+        //     //If Actor and Target are Enemies, 25% chance to remove Enemy relationship. If so, Target now considers Actor a Friend.
+        //     summary += "\n" + target.name + " considers " + actor.name + " an enemy. Rolling for chance to consider as a friend...";
+        //     int roll = UnityEngine.Random.Range(0, 100);
+        //     summary += "\nRoll is " + roll.ToString();
+        //     if (roll < 25) {
+        //         if (target.traitContainer.GetNormalTrait<Trait>("Serial Killer") == null) {
+        //             log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "enemy_now_friend");
+        //             summary += target.name + " now considers " + actor.name + " an enemy.";
+        //             RemoveOneWayRelationship(target, actor, RELATIONSHIP_TYPE.ENEMY);
+        //             CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TYPE.FRIEND);
+        //             hasImproved = true;
+        //         }
+        //     }
+        // }
+        // //If character is already a Friend, will not change actual relationship but will consider it improved
+        // else if (target.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TYPE.FRIEND)) {
+        //     hasImproved = true;
+        // } else if (!target.relationshipContainer.HasRelationshipWith(actor)) {
+        //     if (target.traitContainer.GetNormalTrait<Trait>("Serial Killer") == null) {
+        //         log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "now_friend");
+        //         summary += "\n" + target.name + " has no relationship with " + actor.name + ". " + target.name + " now considers " + actor.name + " a friend.";
+        //         //If Target has no relationship with Actor, Target now considers Actor a Friend.
+        //         CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TYPE.FRIEND);
+        //         hasImproved = true;
+        //     }
+        // }
+        // Debug.Log(summary);
+        // if (log != null) {
+        //     log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //     log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //     PlayerManager.Instance.player.ShowNotificationFrom(log, target, actor);
+        // }
         return hasImproved;
     }
     #endregion
@@ -524,7 +400,21 @@ public class RelationshipManager : MonoBehaviour {
             hasDegraded = true;
             return hasDegraded;
         }
-        string summary = "Relationship degradation between " + actorAlterEgo.owner.name + " and " + target.name;
+
+        string opinionText = "Relationship Degradation";
+        if (cause != null) {
+            opinionText = cause.goapName;
+        }
+        
+        actorAlterEgo.owner.opinionComponent.AdjustOpinion(target, opinionText, -10);
+        
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "rel_degrade");
+        log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
+        hasDegraded = true;
+        
+        // string summary = "Relationship degradation between " + actorAlterEgo.owner.name + " and " + target.name;
         //TODO:
         //if (cause != null && cause.IsFromApprehendJob()) {
         //    //If this has been triggered by an Action's End Result that is part of an Apprehend Job, skip processing.
@@ -565,43 +455,43 @@ public class RelationshipManager : MonoBehaviour {
         //    }
         //}
 
-        //If Target considers Actor a Friend, remove that. If Target is in Bad or Dark Mood, Target now considers Actor an Enemy. Otherwise, they are just no longer friends.
-        if (target.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TYPE.FRIEND)) {
-            summary += "\n" + target.name + " considers " + actorAlterEgo.name + " as a friend. Removing friend and replacing with enemy";
-            RemoveOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TYPE.FRIEND);
-            if (target.currentMoodType == CHARACTER_MOOD.BAD || target.currentMoodType == CHARACTER_MOOD.DARK) {
-                CreateNewOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TYPE.ENEMY);
-                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "friend_now_enemy");
-                log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
-                hasDegraded = true;
-            } else {
-                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_friend");
-                log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
-                hasDegraded = true;
-            }
-        }
-        //If character is already an Enemy, will not change actual relationship but will consider it degraded
-        else if (target.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TYPE.ENEMY)) {
-            hasDegraded = true;
-        }
-        //If Target is only Relative of Actor(no other relationship) or has no relationship with Actor, Target now considers Actor an Enemy.
-        else if (!target.relationshipContainer.HasRelationshipWith(actorAlterEgo) || (target.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TYPE.RELATIVE) && target.relationshipContainer.GetRelationshipDataWith(actorAlterEgo).relationships.Count == 1)) {
-            summary += "\n" + target.name + " and " + actorAlterEgo.owner.name + " has no relationship or only has relative relationship. " + target.name + " now considers " + actorAlterEgo.owner.name + " an enemy.";
-            CreateNewOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TYPE.ENEMY);
+        // //If Target considers Actor a Friend, remove that. If Target is in Bad or Dark Mood, Target now considers Actor an Enemy. Otherwise, they are just no longer friends.
+        // if (target.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TYPE.FRIEND)) {
+        //     summary += "\n" + target.name + " considers " + actorAlterEgo.name + " as a friend. Removing friend and replacing with enemy";
+        //     RemoveOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TYPE.FRIEND);
+        //     if (target.currentMoodType == CHARACTER_MOOD.BAD || target.currentMoodType == CHARACTER_MOOD.DARK) {
+        //         CreateNewOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TYPE.ENEMY);
+        //         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "friend_now_enemy");
+        //         log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //         log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //         PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
+        //         hasDegraded = true;
+        //     } else {
+        //         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_friend");
+        //         log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //         log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //         PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
+        //         hasDegraded = true;
+        //     }
+        // }
+        // //If character is already an Enemy, will not change actual relationship but will consider it degraded
+        // else if (target.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TYPE.ENEMY)) {
+        //     hasDegraded = true;
+        // }
+        // //If Target is only Relative of Actor(no other relationship) or has no relationship with Actor, Target now considers Actor an Enemy.
+        // else if (!target.relationshipContainer.HasRelationshipWith(actorAlterEgo) || (target.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TYPE.RELATIVE) && target.relationshipContainer.GetRelationshipDataWith(actorAlterEgo).relationships.Count == 1)) {
+        //     summary += "\n" + target.name + " and " + actorAlterEgo.owner.name + " has no relationship or only has relative relationship. " + target.name + " now considers " + actorAlterEgo.owner.name + " an enemy.";
+        //     CreateNewOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TYPE.ENEMY);
+        //
+        //     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "now_enemy");
+        //     log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //     log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //     PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
+        //     hasDegraded = true;
+        // }
 
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "now_enemy");
-            log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
-            hasDegraded = true;
-        }
 
-
-        Debug.Log(summary);
+        // Debug.Log(summary);
         return hasDegraded;
     }
     #endregion

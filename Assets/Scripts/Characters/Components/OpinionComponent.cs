@@ -1,9 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Traits;
 using UnityEngine;
 
 public class OpinionComponent {
+
+    private const int Friend_Requirement = 1; //opinion requirement to consider someone a friend
+    private const int Enemy_Requirement = -1; //opinion requirement to consider someone an enemy
+    
     public Character owner { get; private set; }
     public Dictionary<Character, Dictionary<string, int>> opinions { get; private set; }
 
@@ -83,4 +88,78 @@ public class OpinionComponent {
     public Dictionary<string, int> GetOpinion(Character target) {
         return opinions[target];
     }
+
+    #region Inquiry
+    public bool IsFriendsWith(Character character) {
+        if (HasOpinion(character)) {
+            return GetTotalOpinion(character) >= Friend_Requirement;
+        }
+        return false;
+    }
+    public bool IsEnemiesWith(Character character) {
+        if (HasOpinion(character)) {
+            return GetTotalOpinion(character) <= Enemy_Requirement;
+        }
+        return false;
+    }
+    #endregion
+
+    #region Data Getting
+    public List<Character> GetCharactersWithPositiveOpinion() {
+        List<Character> characters = new List<Character>();
+        List<Character> charactersWithOpinion = opinions.Keys.ToList();
+        for (int i = 0; i < charactersWithOpinion.Count; i++) {
+            Character otherCharacter = charactersWithOpinion[i];
+            if (GetTotalOpinion(otherCharacter) > 0) {
+                characters.Add(otherCharacter);
+            }
+        }
+        return characters;
+    }
+    public List<Character> GetCharactersWithNeutralOpinion() {
+        List<Character> characters = new List<Character>();
+        List<Character> charactersWithOpinion = opinions.Keys.ToList();
+        for (int i = 0; i < charactersWithOpinion.Count; i++) {
+            Character otherCharacter = charactersWithOpinion[i];
+            int opinion = GetTotalOpinion(otherCharacter); 
+            if (opinion < Friend_Requirement && opinion > Enemy_Requirement) {
+                characters.Add(otherCharacter);
+            }
+        }
+        return characters;
+    }
+    public List<Character> GetCharactersWithNegativeOpinion() {
+        List<Character> characters = new List<Character>();
+        List<Character> charactersWithOpinion = opinions.Keys.ToList();
+        for (int i = 0; i < charactersWithOpinion.Count; i++) {
+            Character otherCharacter = charactersWithOpinion[i];
+            if (GetTotalOpinion(otherCharacter) < 0) {
+                characters.Add(otherCharacter);
+            }
+        }
+        return characters;
+    }
+    public List<Character> GetEnemyCharacters() {
+        List<Character> characters = new List<Character>();
+        List<Character> charactersWithOpinion = opinions.Keys.ToList();
+        for (int i = 0; i < charactersWithOpinion.Count; i++) {
+            Character otherCharacter = charactersWithOpinion[i];
+            if (IsEnemiesWith(otherCharacter)) {
+                characters.Add(otherCharacter);
+            }
+        }
+        return characters;
+    }
+    public RELATIONSHIP_EFFECT GetRelationshipEffectWith(Character character) {
+        if (HasOpinion(character)) {
+            int totalOpinion = GetTotalOpinion(character);
+            if (totalOpinion > 0) {
+                return RELATIONSHIP_EFFECT.POSITIVE;
+            } else if (totalOpinion < 0) {
+                return RELATIONSHIP_EFFECT.NEGATIVE;
+            }    
+        }
+        return RELATIONSHIP_EFFECT.NONE;
+    }
+    #endregion
 }

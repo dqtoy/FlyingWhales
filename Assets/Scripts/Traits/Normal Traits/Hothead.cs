@@ -24,7 +24,7 @@ namespace Traits {
             if (targetPOI is Character) {
                 if (UnityEngine.Random.Range(0, 100) < 20) {
                     Character targetCharacter = targetPOI as Character;
-                    if (character.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    if (character.opinionComponent.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
                         character.traitContainer.AddTrait(character, "Angry");
                         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_saw");
                         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

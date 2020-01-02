@@ -15,13 +15,13 @@ public class CharacterRelationshipValidator : IRelationshipValidator {
         //if (target.characterClass.className == "Zombie" || character.characterClass.className == "Zombie") {
         //    return false; //Zombies cannot create relationships
         //}
+
+        Character targetCharacter = (target as AlterEgoData).owner;
+        Character sourceCharacter = (character as AlterEgoData).owner; 
+        
         //NOTE: This is only one way checking. This character will only check itself, if he/she meets the requirements of a given relationship
         List<RELATIONSHIP_TYPE> relationshipsWithTarget = character.relationshipContainer.GetRelationshipDataWith(target)?.relationships ?? null;
         switch (type) {
-            case RELATIONSHIP_TYPE.ENEMY:
-                return relationshipsWithTarget == null || (!relationshipsWithTarget.Contains(RELATIONSHIP_TYPE.ENEMY) && !relationshipsWithTarget.Contains(RELATIONSHIP_TYPE.FRIEND) && !relationshipsWithTarget.Contains(RELATIONSHIP_TYPE.LOVER)); //check that the target character is not already this characters enemy and that this character is also not his friend or his lover
-            case RELATIONSHIP_TYPE.FRIEND:
-                return relationshipsWithTarget == null || (!relationshipsWithTarget.Contains(RELATIONSHIP_TYPE.FRIEND) && !relationshipsWithTarget.Contains(RELATIONSHIP_TYPE.ENEMY)); //check that the target character is not already this characters friend and that this character is also not his enemy
             case RELATIONSHIP_TYPE.LOVER:
                 //- **Lover:** Positive, Permanent (Can only have 1)
                 //check if this character already has a lover and that the target character is not his/her paramour
@@ -29,7 +29,7 @@ public class CharacterRelationshipValidator : IRelationshipValidator {
                     return false;
                 }
                 if (relationshipsWithTarget != null &&
-                    (relationshipsWithTarget.Contains(RELATIONSHIP_TYPE.PARAMOUR) || relationshipsWithTarget.Contains(RELATIONSHIP_TYPE.ENEMY))) {
+                    (relationshipsWithTarget.Contains(RELATIONSHIP_TYPE.PARAMOUR)) || sourceCharacter.opinionComponent.IsEnemiesWith(targetCharacter)) {
                     return false;
                 }
                 return true;

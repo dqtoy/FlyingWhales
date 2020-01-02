@@ -119,7 +119,7 @@ namespace Traits {
                     Character targetCharacter = traitOwner as Character;
                     //When a character sees someone burning, it must create a Remove Fire job targetting that character (if they are not enemies).
                     if (targetCharacter.isPartOfHomeFaction && characterThatWillDoJob.isPartOfHomeFaction
-                        && (targetCharacter == characterThatWillDoJob || !characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.ENEMY))) {
+                        && (targetCharacter == characterThatWillDoJob || !characterThatWillDoJob.opinionComponent.IsEnemiesWith(targetCharacter))) {
                         willCreateDouseFireJob = true;
                     }
                 } else {
@@ -177,7 +177,7 @@ namespace Traits {
                     return true;
                 } else {
                     //if burning character is other character, make sure that the character that will do the job is not burning.
-                    return character.traitContainer.GetNormalTrait<Trait>("Burning") == null && !character.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.ENEMY);
+                    return character.traitContainer.GetNormalTrait<Trait>("Burning") == null && !character.opinionComponent.IsEnemiesWith(targetCharacter);
                 }
             } else {
                 //make sure that the character that will do the job is not burning.

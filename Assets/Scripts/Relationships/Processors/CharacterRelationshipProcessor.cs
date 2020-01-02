@@ -19,12 +19,6 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
         character2.opinionComponent.AdjustOpinion(character1, relString, 0);
 
         switch (relType) {
-            case RELATIONSHIP_TYPE.ENEMY:
-                CreateRelationshipLog("enemy", character1, character2);
-                break;
-            case RELATIONSHIP_TYPE.FRIEND:
-                CreateRelationshipLog("friend", character1, character2);
-                break;
             case RELATIONSHIP_TYPE.LOVER:
                 if (character1.homeRegion.area != null && character2.homeRegion.area != null && character1.homeRegion == character2.homeRegion
                     && character1.homeStructure != character2.homeStructure) {
@@ -52,12 +46,6 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
         Character character2 = (rel2 as AlterEgoData).owner;
 
         switch (relType) {
-            case RELATIONSHIP_TYPE.ENEMY:
-                CreateRelationshipLog("not_enemy", character1, character2);
-                break;
-            case RELATIONSHIP_TYPE.FRIEND:
-                CreateRelationshipLog("not_friend", character1, character2);
-                break;
             case RELATIONSHIP_TYPE.EX_LOVER:
                 character1.opinionComponent.RemoveOpinion(character2, "Ex-Lover");
                 character2.opinionComponent.RemoveOpinion(character1, "Ex-Lover");

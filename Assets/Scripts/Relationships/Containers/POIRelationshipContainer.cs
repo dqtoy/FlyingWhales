@@ -81,21 +81,6 @@ public class POIRelationshipContainer : IRelationshipContainer {
         }
         return relatables;
     }
-    public List<Relatable> GetRelatablesWithRelationship(RELATIONSHIP_EFFECT effect) {
-        List<Relatable> relatables = new List<Relatable>();
-        foreach (KeyValuePair<Relatable, IRelationshipData> kvp in relationships) {
-            if (kvp.Value.relationshipStatus == effect) {
-                relatables.Add(kvp.Key);
-            }
-        }
-        return relatables;
-    }
-    public RELATIONSHIP_EFFECT GetRelationshipEffectWith(Relatable relatable) {
-        if (HasRelationshipWith(relatable)) {
-            return relationships[relatable].relationshipStatus;
-        }
-        return RELATIONSHIP_EFFECT.NONE;
-    }
     public IRelationshipData GetRelationshipDataWith(Relatable relatable) {
         if (HasRelationshipWith(relatable)) {
             return relationships[relatable];

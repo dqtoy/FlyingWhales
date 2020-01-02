@@ -50,7 +50,7 @@ public class ProvokeMenu : MonoBehaviour {
 
     private void ProvokeAction(ref string targetText, ref string actorText) {
         bool succeedProvoke = false;
-        if (targetCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.ENEMY) != null) {
+        if (targetCharacter.opinionComponent.GetEnemyCharacters().Count > 0) {
             //succeedProvoke = true;
             CHARACTER_MOOD currentMood = targetCharacter.currentMoodType;
             if (currentMood == CHARACTER_MOOD.GREAT) {
@@ -84,7 +84,7 @@ public class ProvokeMenu : MonoBehaviour {
         bool succeedUndermine = false;
         Character chosenCharacter = null;
         if (succeedProvoke) {
-            List<Character> enemyCharacters = targetCharacter.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TYPE.ENEMY).Where(x => x is AlterEgoData && !(x as AlterEgoData).owner.isDead).Select(x => (x as AlterEgoData).owner).ToList();
+            List<Character> enemyCharacters = targetCharacter.opinionComponent.GetEnemyCharacters();
             while (chosenCharacter == null && enemyCharacters.Count > 0) {
                 int index = UnityEngine.Random.Range(0, enemyCharacters.Count);
                 Character character = enemyCharacters[index];

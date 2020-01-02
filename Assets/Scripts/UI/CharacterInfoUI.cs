@@ -505,7 +505,7 @@ public class CharacterInfoUI : UIMenu {
                 opinionOfOther = target.opinionComponent.GetTotalOpinion(activeCharacter);
             }
             relationshipNamesLbl.text += $"<link=\"{i}\">{target.name}</link>\n";
-            relationshipValuesLbl.text += $"<link=\"{i}\"><color=\"{ OpinionColor(opinionOfOther) }\"> " +
+            relationshipValuesLbl.text += $"<link=\"{i}\"><color=\"{ OpinionColor(activeCharacter.opinionComponent.GetTotalOpinion(target)) }\"> " +
                                           $"{GetOpinionText(activeCharacter.opinionComponent.GetTotalOpinion(target))}</color> " +
                                           $"<color=\"{OpinionColor(opinionOfOther)}\">({GetOpinionText(opinionOfOther)})</color></link>\n";
         }

@@ -1481,7 +1481,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
 
         //Undermine Enemy Job
-        List<Character> enemyCharacters = relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TYPE.ENEMY).Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList();
+        List<Character> enemyCharacters = opinionComponent.GetEnemyCharacters();
         if (!hasCreatedJob && enemyCharacters.Count > 0) {
             int chance = UnityEngine.Random.Range(0, 100);
             int value = 3;
@@ -1523,14 +1523,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (troubledCharacter != null) {
             this.troubledCharacter = troubledCharacter;
             Character targetCharacter = null;
-            List<Character> positiveCharacters = relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_EFFECT.POSITIVE)
-                .Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList(); //TODO: Improve this
+            List<Character> positiveCharacters = opinionComponent.GetCharactersWithPositiveOpinion();
             positiveCharacters.Remove(troubledCharacter);
             if (positiveCharacters.Count > 0) {
                 targetCharacter = positiveCharacters[UnityEngine.Random.Range(0, positiveCharacters.Count)];
             } else {
-                List<Character> nonEnemyCharacters = relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_EFFECT.NEUTRAL)
-                    .Where(x => x is AlterEgoData && (x as AlterEgoData).owner.faction.id == faction.id).Select(x => (x as AlterEgoData).owner).ToList(); //TODO: Improve this
+                List<Character> nonEnemyCharacters = opinionComponent.GetCharactersWithNeutralOpinion();
                 nonEnemyCharacters.Remove(troubledCharacter);
                 if (nonEnemyCharacters.Count > 0) {
                     targetCharacter = nonEnemyCharacters[UnityEngine.Random.Range(0, nonEnemyCharacters.Count)];
@@ -1557,14 +1555,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (troubledCharacter != null && troubledCharacter != this) {
             this.troubledCharacter = troubledCharacter;
             Character targetCharacter = null;
-            List<Character> positiveCharacters = relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_EFFECT.POSITIVE)
-                .Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList(); //TODO: Improve this
+            List<Character> positiveCharacters = opinionComponent.GetCharactersWithPositiveOpinion();
             positiveCharacters.Remove(troubledCharacter);
             if (positiveCharacters.Count > 0) {
                 targetCharacter = positiveCharacters[UnityEngine.Random.Range(0, positiveCharacters.Count)];
             } else {
-                List<Character> nonEnemyCharacters = relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_EFFECT.NEUTRAL)
-                    .Where(x => x is AlterEgoData && (x as AlterEgoData).owner.faction.id == faction.id).Select(x => (x as AlterEgoData).owner).ToList(); //TODO: Improve this
+                List<Character> nonEnemyCharacters = opinionComponent.GetCharactersWithNeutralOpinion();
                 nonEnemyCharacters.Remove(troubledCharacter);
                 if (nonEnemyCharacters.Count > 0) {
                     targetCharacter = nonEnemyCharacters[UnityEngine.Random.Range(0, nonEnemyCharacters.Count)];
@@ -2838,8 +2834,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                         }
 
                         if (currentHostileOfTargetCharacter.faction == faction) {
-                            RELATIONSHIP_EFFECT relEffectTowardsTarget = relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo);
-                            RELATIONSHIP_EFFECT relEffectTowardsTargetOfCombat = relationshipContainer.GetRelationshipEffectWith(currentHostileOfTargetCharacter.currentAlterEgo);
+                            RELATIONSHIP_EFFECT relEffectTowardsTarget = opinionComponent.GetRelationshipEffectWith(targetCharacter);
+                            RELATIONSHIP_EFFECT relEffectTowardsTargetOfCombat = opinionComponent.GetRelationshipEffectWith(currentHostileOfTargetCharacter);
 
                             if (relEffectTowardsTarget == RELATIONSHIP_EFFECT.POSITIVE) {
                                 if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
@@ -4040,7 +4036,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             List<Character> positiveCharactersWithParalyzedOrCatatonic = new List<Character>();
             for (int i = 0; i < charactersWithRel.Count; i++) {
                 Character character = charactersWithRel[i];
-                if (relationshipContainer.GetRelationshipEffectWith(character.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
+                if (opinionComponent.GetRelationshipEffectWith(character) == RELATIONSHIP_EFFECT.POSITIVE) {
                     Trait trait = character.traitContainer.GetNormalTrait<Trait>("Paralyzed", "Catatonic");
                     if (trait != null) {
                         if (trait is Paralyzed && (trait as Paralyzed).charactersThatKnow.Contains(this)) {
@@ -4147,10 +4143,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
         Unfaithful unfaithful = traitContainer.GetNormalTrait<Trait>("Unfaithful") as Unfaithful;
         //x0.5 all positive modifiers per negative relationship
-        if (relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
+        if (opinionComponent.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
             positiveFlirtationWeight *= 0.5f;
         }
-        if (targetCharacter.relationshipContainer.GetRelationshipEffectWith(this.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
+        if (targetCharacter.opinionComponent.GetRelationshipEffectWith(this) == RELATIONSHIP_EFFECT.NEGATIVE) {
             positiveFlirtationWeight *= 0.5f;
         }
         //x0.1 all positive modifiers per sexually incompatible
@@ -4175,7 +4171,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public float GetBecomeLoversWeightWith(Character targetCharacter, IRelationshipData relData, params CHARACTER_MOOD[] moods) {
         float positiveWeight = 0;
         float negativeWeight = 0;
-        if (relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.relationshipContainer.GetRelationshipEffectWith(this.currentAlterEgo) != RELATIONSHIP_EFFECT.NEGATIVE
+        if (opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.opinionComponent.GetRelationshipEffectWith(this) != RELATIONSHIP_EFFECT.NEGATIVE
             && relationshipValidator.CanHaveRelationship(this.currentAlterEgo, targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.LOVER) && targetCharacter.relationshipValidator.CanHaveRelationship(targetCharacter.currentAlterEgo, this.currentAlterEgo, RELATIONSHIP_TYPE.LOVER)
             && role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
             for (int i = 0; i < moods.Length; i++) {
@@ -4232,7 +4228,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //**if they dont have a negative relationship and at least one of them has a lover, they may become paramours**
         float positiveWeight = 0;
         float negativeWeight = 0;
-        if (relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.relationshipContainer.GetRelationshipEffectWith(this.currentAlterEgo) != RELATIONSHIP_EFFECT.NEGATIVE
+        if (opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.opinionComponent.GetRelationshipEffectWith(this) != RELATIONSHIP_EFFECT.NEGATIVE
             && relationshipValidator.CanHaveRelationship(this.currentAlterEgo, targetCharacter.currentAlterEgo,  RELATIONSHIP_TYPE.PARAMOUR) && targetCharacter.relationshipValidator.CanHaveRelationship(targetCharacter.currentAlterEgo, this.currentAlterEgo, RELATIONSHIP_TYPE.PARAMOUR)
             && role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
             for (int i = 0; i < moods.Length; i++) {
@@ -4283,7 +4279,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
             Relatable lover = relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TYPE.LOVER).FirstOrDefault();
             //x3 all positive modifiers if character considers lover as Enemy
-            if (lover != null && relationshipContainer.HasRelationshipWith(lover, RELATIONSHIP_TYPE.ENEMY)) {
+            if (lover != null && opinionComponent.IsEnemiesWith((lover as AlterEgoData).owner)) {
                 positiveWeight *= 3f;
             }
             if (relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.RELATIVE)) {
@@ -5812,7 +5808,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         //Log witnessLog = null;
         //Log reportLog = null;
-        RELATIONSHIP_EFFECT relationshipEfffectWithCriminal = relationshipContainer.GetRelationshipEffectWith(criminal);
+        RELATIONSHIP_EFFECT relationshipEfffectWithCriminal = opinionComponent.GetRelationshipEffectWith(criminal.owner);
         CRIME_CATEGORY category = committedCrime.GetCategory();
 
         //If character witnessed an Infraction crime:
@@ -5857,7 +5853,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
         }
         //If character has no relationships with the criminal or they are enemies and the crime is a Misdemeanor or worse:
-        else if ((!this.relationshipContainer.HasRelationshipWith(criminal) || this.relationshipContainer.HasRelationshipWith(criminal, RELATIONSHIP_TYPE.ENEMY)) 
+        else if ((!this.relationshipContainer.HasRelationshipWith(criminal) || this.opinionComponent.IsEnemiesWith(criminal.owner)) 
             && category.IsGreaterThanOrEqual(CRIME_CATEGORY.MISDEMEANOR)) {
             reactSummary += "\n" + this.name + " does not have a relationship with or is an enemy of " + criminal.name + " and the committed crime is misdemeanor or worse";
             //- Relationship Degradation between Character and Criminal
@@ -6107,7 +6103,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 }
                 //Debug.Log(this.name + " distance with " + characterThatStartedState.name + " is " + distance.ToString());
                 if (targetCharacter != null && this.isPartOfHomeFaction && characterThatStartedState.isAtHomeRegion && characterThatStartedState.isPartOfHomeFaction && this.IsCombatReady()
-                    && this.IsHostileOutsider(targetCharacter) && (this.relationshipContainer.GetRelationshipEffectWith(characterThatStartedState.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE || characterThatStartedState.role.roleType == CHARACTER_ROLE.SOLDIER)
+                    && this.IsHostileOutsider(targetCharacter) && (opinionComponent.GetRelationshipEffectWith(characterThatStartedState) == RELATIONSHIP_EFFECT.POSITIVE || characterThatStartedState.role.roleType == CHARACTER_ROLE.SOLDIER)
                     && distance <= Combat_Signalled_Distance) {
                     if (marker.AddHostileInRange(targetCharacter, processCombatBehavior: false)) {
                         if (!marker.avoidInRange.Contains(targetCharacter)) {

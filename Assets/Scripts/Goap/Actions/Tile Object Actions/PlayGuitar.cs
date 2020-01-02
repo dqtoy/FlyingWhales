@@ -42,7 +42,7 @@ public class PlayGuitar : GoapAction {
                     if (dwelling.residents.Count > 0) {
                         for (int i = 0; i < dwelling.residents.Count; i++) {
                             Character currResident = dwelling.residents[i];
-                            if (currResident.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
+                            if (currResident.opinionComponent.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
                                 //- Actor is not a resident but has a positive relationship with the Guitar's Dwelling resident: 20-36 (If music lover 10 - 26)
                                 return Utilities.rng.Next(20, 37);
                             }
@@ -120,7 +120,7 @@ public class PlayGuitar : GoapAction {
                     if (dwelling.residents.Count > 0) {
                         for (int i = 0; i < dwelling.residents.Count; i++) {
                             Character currResident = dwelling.residents[i];
-                            if (currResident.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
+                            if (currResident.opinionComponent.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
                                 return true;
                             }
                         }
@@ -198,7 +198,7 @@ public class PlayGuitarData : GoapActionData {
                 if (dwelling.residents.Count > 0) {
                     for (int i = 0; i < dwelling.residents.Count; i++) {
                         Character currResident = dwelling.residents[i];
-                        if (currResident.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
+                        if (currResident.opinionComponent.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
                             return true;
                         }
                     }

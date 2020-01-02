@@ -141,25 +141,26 @@ namespace Traits {
                             bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
                             characterThatWillDoJob.needsComponent.AdjustHappiness(-4000);
                             return hasCreatedJob;
-                        } else if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.FRIEND)) {
+                        } else if (characterThatWillDoJob.opinionComponent.IsFriendsWith(targetCharacter)) {
                             characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Griefstricken");
                             bool hasCreatedJob = CreatePrioritizedShockJob(characterThatWillDoJob);
                             characterThatWillDoJob.needsComponent.AdjustHappiness(-2000);
                             return hasCreatedJob;
                         }
                     }
-                } else { //character is not dead
-                         //When someone sees another character carrying a character that is unconscious or restrained, and that character is not a branded criminal, and not the carrier's lover or relative, the carrier will be branded as Assaulter and Crime Handling will take place.
-                         //if (targetCharacter.IsInOwnParty() && targetCharacter.currentParty.characters.Count > 1 && !targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) { //This means that this character is carrrying another character
-                         //    Character carriedCharacter = targetCharacter.currentParty.characters[1];
-                         //    if (characterThatWillDoJob != carriedCharacter && !carriedCharacter.isDead && carriedcharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Restrained") != null) {
-                         //        if (!targetCharacter.HasRelationshipOfTypeWith(carriedCharacter, false, RELATIONSHIP_TRAIT.RELATIVE, RELATIONSHIP_TRAIT.LOVER)) {
-                         //            if (targetCharacter.currentActionNode.action != null && !targetCharacter.currentActionNode.action.hasCrimeBeenReported) {
-                         //                characterThatWillDoJob.ReactToCrime(CRIME.ASSAULT, targetCharacter.currentActionNode.action, targetCharacter.currentAlterEgo, SHARE_INTEL_STATUS.WITNESSED);
-                         //            }
-                         //        }
-                         //    }
-                         //}
+                } else { 
+                    //character is not dead
+                     //When someone sees another character carrying a character that is unconscious or restrained, and that character is not a branded criminal, and not the carrier's lover or relative, the carrier will be branded as Assaulter and Crime Handling will take place.
+                     //if (targetCharacter.IsInOwnParty() && targetCharacter.currentParty.characters.Count > 1 && !targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) { //This means that this character is carrrying another character
+                     //    Character carriedCharacter = targetCharacter.currentParty.characters[1];
+                     //    if (characterThatWillDoJob != carriedCharacter && !carriedCharacter.isDead && carriedcharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Restrained") != null) {
+                     //        if (!targetCharacter.HasRelationshipOfTypeWith(carriedCharacter, false, RELATIONSHIP_TRAIT.RELATIVE, RELATIONSHIP_TRAIT.LOVER)) {
+                     //            if (targetCharacter.currentActionNode.action != null && !targetCharacter.currentActionNode.action.hasCrimeBeenReported) {
+                     //                characterThatWillDoJob.ReactToCrime(CRIME.ASSAULT, targetCharacter.currentActionNode.action, targetCharacter.currentAlterEgo, SHARE_INTEL_STATUS.WITNESSED);
+                     //            }
+                     //        }
+                     //    }
+                     //}
 
                     #region Check Up
                     //If a character cannot assist a character in vision, they may stay with it and check up on it for a bit. Reference: https://trello.com/c/hW7y6d5W/2841-if-a-character-cannot-assist-a-character-in-vision-they-may-stay-with-it-and-check-up-on-it-for-a-bit
@@ -167,7 +168,7 @@ namespace Traits {
                     //- unconscious, catatonic, restrained, puked, stumbled
                     ///NOTE: Puke and Stumble Reactions can be found at <see cref="Puke.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/> and <see cref="Stumble.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/> respectively
                     //They will trigger a personal https://trello.com/c/uCbLBXsF/2846-character-laugh-at job
-                    if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.ENEMY) && targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Catatonic", "Restrained") != null && characterThatWillDoJob.faction == targetCharacter.faction
+                    if (characterThatWillDoJob.opinionComponent.IsEnemiesWith(targetCharacter) && targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Catatonic", "Restrained") != null && characterThatWillDoJob.faction == targetCharacter.faction
                         && (characterThatWillDoJob.currentActionNode == null || characterThatWillDoJob.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)) {
                         return CreateLaughAtJob(characterThatWillDoJob, targetCharacter);
                     }
@@ -176,7 +177,7 @@ namespace Traits {
                     //catatonic, unconscious, restrained, puked
                     ///NOTE: Puke Reactions can be found at <see cref="Puke.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/>
                     //They will trigger a personal https://trello.com/c/iDsfwQ7d/2845-character-feeling-concerned job
-                    else if (characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE && targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Catatonic", "Restrained") != null
+                    else if (characterThatWillDoJob.opinionComponent.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE && targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Catatonic", "Restrained") != null
                         && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.REMOVE_TRAIT, targetCharacter) && characterThatWillDoJob.faction == targetCharacter.faction
                          && (characterThatWillDoJob.currentActionNode == null || characterThatWillDoJob.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)) {
                         return CreateFeelingConcernedJob(characterThatWillDoJob, targetCharacter);

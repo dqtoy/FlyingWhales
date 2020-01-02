@@ -26,8 +26,6 @@ public interface IRelationshipContainer {
     #region Getting
     Relatable GetFirstRelatableWithRelationship(params RELATIONSHIP_TYPE[] type);
     List<Relatable> GetRelatablesWithRelationship(params RELATIONSHIP_TYPE[] type);
-    List<Relatable> GetRelatablesWithRelationship(RELATIONSHIP_EFFECT effect);
-    RELATIONSHIP_EFFECT GetRelationshipEffectWith(Relatable relatable);
     IRelationshipData GetRelationshipDataWith(Relatable relatable);
     //Returns the relationship where the choices are the relationships that are passed to the function
     //Example: If we want to know if the character is lover or paramour of another character we will use this function because this will return if their relationship is lover or paramour

@@ -40,7 +40,7 @@ public class Spit : GoapAction {
             if (poiTarget is Tombstone) {
                 Tombstone tombstone = poiTarget as Tombstone;
                 Character target = tombstone.character;
-                return actor.relationshipContainer.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.NEGATIVE;
+                return actor.opinionComponent.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.NEGATIVE;
             }
             return false;
         }
@@ -131,7 +131,7 @@ public class SpitData : GoapActionData {
         if (poiTarget is Tombstone) {
             Tombstone tombstone = poiTarget as Tombstone;
             Character target = tombstone.character;
-            return actor.relationshipContainer.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.NEGATIVE;
+            return actor.opinionComponent.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.NEGATIVE;
         }
         return false;
     }

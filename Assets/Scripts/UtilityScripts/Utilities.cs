@@ -917,10 +917,6 @@ public class Utilities : MonoBehaviour {
     }
     public static string GetRelationshipPlural(RELATIONSHIP_TYPE rel) {
         switch (rel) {
-            case RELATIONSHIP_TYPE.ENEMY:
-                return "Enemies";
-            case RELATIONSHIP_TYPE.FRIEND:
-                return "Friends";
             case RELATIONSHIP_TYPE.RELATIVE:
                 return "Relatives";
             case RELATIONSHIP_TYPE.LOVER:

@@ -52,7 +52,7 @@ public class TheProfaneUI : MonoBehaviour {
             }
             if (character.traitContainer.GetNormalTrait<Trait>("Treacherous") != null) {
                 Character factionLeader = character.faction.leader as Character;
-                if (!character.relationshipContainer.HasRelationshipWith(factionLeader, RELATIONSHIP_TYPE.ENEMY)) {
+                if (!character.opinionComponent.IsEnemiesWith(factionLeader)) {
                     message += "\n\t- Treacherous characters must be enemies with their faction leader to be converted to a cultist.";
                 }
                 
@@ -118,7 +118,7 @@ public class TheProfaneUI : MonoBehaviour {
             return true;
         } else if (character.traitContainer.GetNormalTrait<Trait>("Treacherous") != null) {
             Character factionLeader = character.faction.leader as Character;
-            return character.relationshipContainer.HasRelationshipWith(factionLeader, RELATIONSHIP_TYPE.ENEMY);
+            return character.opinionComponent.IsEnemiesWith(factionLeader);
         }
         return false;
     }

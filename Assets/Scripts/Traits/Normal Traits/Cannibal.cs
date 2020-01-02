@@ -71,7 +71,7 @@ namespace Traits {
             if (chosenPOI == null) {
                 for (int i = 0; i < characterThatWillDoJob.currentRegion.charactersAtLocation.Count; i++) {
                     Character character = characterThatWillDoJob.currentRegion.charactersAtLocation[i];
-                    if (characterThatWillDoJob != character && characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(character.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    if (characterThatWillDoJob != character && characterThatWillDoJob.opinionComponent.GetRelationshipEffectWith(character) == RELATIONSHIP_EFFECT.NEGATIVE) {
                         chosenPOI = character;
                         break;
                     }
@@ -81,7 +81,7 @@ namespace Traits {
             if (chosenPOI == null) {
                 for (int i = 0; i < characterThatWillDoJob.currentRegion.charactersAtLocation.Count; i++) {
                     Character character = characterThatWillDoJob.currentRegion.charactersAtLocation[i];
-                    if (characterThatWillDoJob != character && characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(character.currentAlterEgo) == RELATIONSHIP_EFFECT.NONE) {
+                    if (characterThatWillDoJob != character && characterThatWillDoJob.opinionComponent.GetRelationshipEffectWith(character) == RELATIONSHIP_EFFECT.NONE) {
                         chosenPOI = character;
                         break;
                     }

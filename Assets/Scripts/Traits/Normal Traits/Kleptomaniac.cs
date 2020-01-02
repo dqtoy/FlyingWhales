@@ -72,7 +72,7 @@ namespace Traits {
                 }
             } else if (targetPOI is Character) {
                 Character targetCharacter = targetPOI as Character;
-                if (characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.POSITIVE && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetCharacter) && targetCharacter.items.Count > 0) {
+                if (characterThatWillDoJob.opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetCharacter) && targetCharacter.items.Count > 0) {
                     SpecialToken item = targetCharacter.items[Random.Range(0, targetCharacter.items.Count)];
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.STEAL, INTERACTION_TYPE.STEAL, item, characterThatWillDoJob);
                     job.SetIsStealth(true);
@@ -99,7 +99,7 @@ namespace Traits {
                     List<SpecialToken> choices = new List<SpecialToken>();
                     for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
                         Character otherCharacter = character.currentRegion.charactersAtLocation[i];
-                        if (otherCharacter == character && character.relationshipContainer.GetRelationshipEffectWith(otherCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
+                        if (otherCharacter == character && character.opinionComponent.GetRelationshipEffectWith(otherCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
                             continue; //skip
                         }
                         for (int j = 0; j < otherCharacter.items.Count; j++) {

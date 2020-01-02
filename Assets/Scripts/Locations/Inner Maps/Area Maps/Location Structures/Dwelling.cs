@@ -84,7 +84,7 @@ public class Dwelling : LocationStructure {
         }
         for (int i = 0; i < residents.Count; i++) {
             Character currResident = residents[i];
-            RELATIONSHIP_EFFECT effect = character.relationshipContainer.GetRelationshipEffectWith(currResident);
+            RELATIONSHIP_EFFECT effect = character.opinionComponent.GetRelationshipEffectWith(currResident);
             if (effect == RELATIONSHIP_EFFECT.POSITIVE) {
                 return true;
             }
@@ -97,7 +97,7 @@ public class Dwelling : LocationStructure {
         //}
         for (int i = 0; i < residents.Count; i++) {
             Character currResident = residents[i];
-            RELATIONSHIP_EFFECT effect = character.relationshipContainer.GetRelationshipEffectWith(currResident);
+            RELATIONSHIP_EFFECT effect = character.opinionComponent.GetRelationshipEffectWith(currResident);
             if (effect == RELATIONSHIP_EFFECT.NEGATIVE || effect == RELATIONSHIP_EFFECT.NONE) {
                 return true;
             }
