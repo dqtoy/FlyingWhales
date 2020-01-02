@@ -17,7 +17,7 @@ public class BlueprintBehaviour : CharacterBehaviourComponent {
             log += $"\n-Roll is {roll.ToString()}, chance is {chance.ToString()}";
             if (roll < chance) {
                 log += $"\n-Roll successful";
-                STRUCTURE_TYPE neededStructure = STRUCTURE_TYPE.INN;//character.buildStructureComponent.GetCurrentStructureToBuild();
+                STRUCTURE_TYPE neededStructure = character.buildStructureComponent.GetCurrentStructureToBuild();
                 log += $"\n-Structure Type to build is {neededStructure.ToString()}";
 
                 List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(neededStructure);
