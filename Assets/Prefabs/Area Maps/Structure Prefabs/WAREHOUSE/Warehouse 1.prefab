@@ -4060,7 +4060,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d945f1bb05d7904d972553c667e2b03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _projectileReciever: {fileID: 114439316176176388}
+  _projectileReceiver: {fileID: 114439316176176388}
   mainCollider: {fileID: 0}
 --- !u!114 &114034906880241534
 MonoBehaviour:
@@ -4133,7 +4133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d945f1bb05d7904d972553c667e2b03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _projectileReciever: {fileID: 114652929324892642}
+  _projectileReceiver: {fileID: 114652929324892642}
   mainCollider: {fileID: 0}
 --- !u!114 &114181122299932400
 MonoBehaviour:
@@ -4160,7 +4160,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d945f1bb05d7904d972553c667e2b03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _projectileReciever: {fileID: 114406793924841800}
+  _projectileReceiver: {fileID: 114406793924841800}
   mainCollider: {fileID: 0}
 --- !u!114 &114230246088700028
 MonoBehaviour:
@@ -4173,7 +4173,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d945f1bb05d7904d972553c667e2b03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _projectileReciever: {fileID: 114457748758163066}
+  _projectileReceiver: {fileID: 114457748758163066}
   mainCollider: {fileID: 0}
 --- !u!114 &114246309617520252
 MonoBehaviour:
@@ -4211,7 +4211,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d945f1bb05d7904d972553c667e2b03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _projectileReciever: {fileID: 114702576342342308}
+  _projectileReceiver: {fileID: 114702576342342308}
   mainCollider: {fileID: 0}
 --- !u!114 &114280416438817526
 MonoBehaviour:
@@ -4251,7 +4251,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d945f1bb05d7904d972553c667e2b03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _projectileReciever: {fileID: 114034906880241534}
+  _projectileReceiver: {fileID: 114034906880241534}
   mainCollider: {fileID: 0}
 --- !u!114 &114301240072324740
 MonoBehaviour:
@@ -4278,7 +4278,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d945f1bb05d7904d972553c667e2b03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _projectileReciever: {fileID: 114925931616849904}
+  _projectileReceiver: {fileID: 114925931616849904}
   mainCollider: {fileID: 0}
 --- !u!114 &114366434617975154
 MonoBehaviour:
@@ -4291,7 +4291,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d945f1bb05d7904d972553c667e2b03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _projectileReciever: {fileID: 114973073019178426}
+  _projectileReceiver: {fileID: 114973073019178426}
   mainCollider: {fileID: 0}
 --- !u!114 &114374255579624196
 MonoBehaviour:
@@ -4340,7 +4340,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d945f1bb05d7904d972553c667e2b03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _projectileReciever: {fileID: 114591455668974714}
+  _projectileReceiver: {fileID: 114591455668974714}
   mainCollider: {fileID: 0}
 --- !u!114 &114417960495778456
 MonoBehaviour:
@@ -4377,7 +4377,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d945f1bb05d7904d972553c667e2b03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _projectileReciever: {fileID: 114417960495778456}
+  _projectileReceiver: {fileID: 114417960495778456}
   mainCollider: {fileID: 0}
 --- !u!114 &114439316176176388
 MonoBehaviour:
@@ -4439,7 +4439,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d945f1bb05d7904d972553c667e2b03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _projectileReciever: {fileID: 114413085443283202}
+  _projectileReceiver: {fileID: 114413085443283202}
   mainCollider: {fileID: 0}
 --- !u!114 &114462320484633508
 MonoBehaviour:
@@ -4452,7 +4452,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d945f1bb05d7904d972553c667e2b03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _projectileReciever: {fileID: 114049795391549388}
+  _projectileReceiver: {fileID: 114049795391549388}
   mainCollider: {fileID: 0}
 --- !u!114 &114482414426423074
 MonoBehaviour:
@@ -4465,7 +4465,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d945f1bb05d7904d972553c667e2b03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _projectileReciever: {fileID: 114830259150639858}
+  _projectileReceiver: {fileID: 114830259150639858}
   mainCollider: {fileID: 0}
 --- !u!114 &114493456359576032
 MonoBehaviour:
@@ -4505,7 +4505,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d945f1bb05d7904d972553c667e2b03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _projectileReciever: {fileID: 114267769484042688}
+  _projectileReceiver: {fileID: 114267769484042688}
   mainCollider: {fileID: 0}
 --- !u!114 &114551583914753040
 MonoBehaviour:
@@ -4532,7 +4532,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d945f1bb05d7904d972553c667e2b03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _projectileReciever: {fileID: 114080407184097324}
+  _projectileReceiver: {fileID: 114080407184097324}
   mainCollider: {fileID: 0}
 --- !u!114 &114582376361827048
 MonoBehaviour:
@@ -4619,7 +4619,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 0
+  tileObjectType: 74
   spriteRenderer: {fileID: 212798854893836576}
 --- !u!114 &114667266725641498
 MonoBehaviour:
@@ -4685,7 +4685,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d945f1bb05d7904d972553c667e2b03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _projectileReciever: {fileID: 114728062048399920}
+  _projectileReceiver: {fileID: 114728062048399920}
   mainCollider: {fileID: 0}
 --- !u!114 &114728062048399920
 MonoBehaviour:
@@ -4807,7 +4807,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d945f1bb05d7904d972553c667e2b03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _projectileReciever: {fileID: 114797462989760930}
+  _projectileReceiver: {fileID: 114797462989760930}
   mainCollider: {fileID: 0}
 --- !u!114 &114937251720649144
 MonoBehaviour:
@@ -4834,7 +4834,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d945f1bb05d7904d972553c667e2b03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _projectileReciever: {fileID: 114601559623209416}
+  _projectileReceiver: {fileID: 114601559623209416}
   mainCollider: {fileID: 0}
 --- !u!114 &114953713026148154
 MonoBehaviour:
@@ -4861,7 +4861,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d945f1bb05d7904d972553c667e2b03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _projectileReciever: {fileID: 114906724479025172}
+  _projectileReceiver: {fileID: 114906724479025172}
   mainCollider: {fileID: 0}
 --- !u!114 &114969246801303994
 MonoBehaviour:

@@ -9365,7 +9365,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd7182b7dcb98949856eb51bac9ae25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileObjectType: 0
+  tileObjectType: 74
   spriteRenderer: {fileID: 212727063529239176}
 --- !u!212 &212001224999960434
 SpriteRenderer:

@@ -1215,7 +1215,8 @@ public enum TILE_OBJECT_TYPE {
     PLANT,
     TRASH,
     ROCK,
-    FLOWER
+    FLOWER,
+    KINDLING,
 }
 public enum POI_STATE {
     ACTIVE,

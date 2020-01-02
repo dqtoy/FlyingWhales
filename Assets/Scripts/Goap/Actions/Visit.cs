@@ -25,6 +25,17 @@ public class Visit : GoapAction {
         }
         return null;
     }
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
+        object[] otherData = node.otherData;
+        if (otherData != null && otherData.Length == 1) {
+            if (otherData[0] is LocationStructure) {
+                LocationStructure structure = otherData[0] as LocationStructure; 
+                log.AddToFillers(structure, structure.GetNameRelativeTo(node.actor), LOG_IDENTIFIER.LANDMARK_1);
+            } 
+        }
+        
+    }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Visit Success", goapNode);

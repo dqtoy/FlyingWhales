@@ -86,7 +86,7 @@ public class BuildStructure : GoapAction {
         //ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
         //carriedPile.AdjustResourceInPile(-50);
         //goapNode.actor.AdjustResource(RESOURCE.WOOD, -50);//TODO: Change this to be per structure
-        PlayerUI.Instance.ShowGeneralConfirmation("New Structure", $"A new {spot.gridTileLocation.structure.name} has been built at {spot.gridTileLocation.structure.location.name}");
+        PlayerUI.Instance.ShowGeneralConfirmation("New Structure", $"A new {structure.name} has been built at {spot.gridTileLocation.structure.location.name}");
     }
     #endregion
 }
