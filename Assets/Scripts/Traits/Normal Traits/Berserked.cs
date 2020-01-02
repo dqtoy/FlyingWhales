@@ -36,6 +36,29 @@ namespace Traits {
                 if (character.marker != null) {
                     character.marker.UnberserkedMarker();
                 }
+                
+                //check hostiles in range, remove any poi's that are not hostile with the character 
+                List<IPointOfInterest> hostilesToRemove = new List<IPointOfInterest>();
+                for (int i = 0; i < character.marker.hostilesInRange.Count; i++) {
+                    IPointOfInterest poi = character.marker.hostilesInRange[i];
+                    if (poi is Character) {
+                        //poi is a character, check for hostilities
+                        Character otherCharacter = poi as Character;
+                        if (character.IsHostileWith(otherCharacter) == false) {
+                            hostilesToRemove.Add(otherCharacter);
+                        }    
+                    } else {
+                        //poi is not a character, remove
+                        hostilesToRemove.Add(poi);
+                    }
+                }
+
+                //remove all non hostiles from hostile in range
+                for (int i = 0; i < hostilesToRemove.Count; i++) {
+                    IPointOfInterest hostile = hostilesToRemove[i];
+                    character.marker.RemoveHostileInRange(hostile);
+                }
+                
             }
         }
         public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {

@@ -437,7 +437,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
         base.Reset();
         destinationTile = null;
         onProcessCombat = null;
-        fleeSpeedModifier = 0;
         SetMarkerColor(Color.white);
         actionIcon.gameObject.SetActive(false);
         StopPerTickFlee();
@@ -767,10 +766,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         speed += (speed * character.speedModifier);
         if (speed <= 0f) {
-            speed = 0.5f;
-        }
-        speed += (speed * fleeSpeedModifier);
-        if (speed < 0.5f) {
             speed = 0.5f;
         }
         return speed;
@@ -1309,11 +1304,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     #region Flee
     public bool hasFleePath { get; private set; }
-    private float fleeSpeedModifier;
-    private const float Starting_Flee_Modifier = 0.3f; //starts at positive value, increase speed by 30%, then gradually reduce every other tick, eventually becoming negative.
-    private const int Tick_Flee_Will_Slow_Down = 2; //What tick will the fleeing character slow down at.
-    private const int Tick_Flee_In_Slow_Down_Check = 3; //What tick will the fleeing character check for exit state when he/she is at his/her lowest speed.
-    private int ticksInFlee;
     public void OnStartFlee() {
         if (avoidInRange.Count == 0) {
             return;
@@ -1334,9 +1324,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //Debug.Log(character.name + " computed flee path");
         arrivalAction = OnFinishedTraversingFleePath;
         StartMovement();
-        fleeSpeedModifier = Starting_Flee_Modifier;
-        Messenger.AddListener(Signals.TICK_STARTED, PerTickFlee);
-        ticksInFlee = 0;
         //Debug.Log(GameManager.Instance.TodayLogString() + character.name + " will start fleeing");
     }
     public void OnFinishedTraversingFleePath() {
@@ -1423,44 +1410,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             character.PrintLogIfActive(summary);
         }
     }
-    private void PerTickFlee() {
-        ticksInFlee++;
-        if (GetSpeedWithoutProgressionMultiplier() <= 0.5f) {
-            //lowest speed
-            if (ticksInFlee >= Tick_Flee_In_Slow_Down_Check) {
-                ticksInFlee = 0;
-                if (!StillHasAvoidInActualRange() && character.stateComponent.currentState is CombatState) {
-                    (character.stateComponent.currentState as CombatState).OnReachLowFleeSpeedThreshold();
-                }
-            }
-        } else {
-            //slow down current speed
-            if (ticksInFlee >= Tick_Flee_Will_Slow_Down) {
-                ticksInFlee = 0;
-                fleeSpeedModifier -= 0.4f;
-                UpdateSpeed();
-            }
-        }
-    }
-    /// <summary>
-    /// Does this character still have a character that it needs to avoid in its actual visual range?
-    /// </summary>
-    /// <returns>True or false</returns>
-    private bool StillHasAvoidInActualRange() {
-        for (int i = 0; i < avoidInRange.Count; i++) {
-            IPointOfInterest currAvoid = avoidInRange[i];
-            if (inVisionCharacters.Contains(currAvoid)
-                || inVisionPOIs.Contains(currAvoid)
-                || visionCollision.poisInRangeButDiffStructure.Contains(currAvoid)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public void StopPerTickFlee() {
-        fleeSpeedModifier = 0f;
-        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickFlee);
-    }
+    public void StopPerTickFlee() { }
     #endregion
 
     #region Combat

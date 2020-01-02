@@ -204,8 +204,6 @@ public class PlayerManager : MonoBehaviour {
                 return new Provoke();
             case INTERVENTION_ABILITY.RAISE_DEAD:
                 return new RaiseDead();
-            case INTERVENTION_ABILITY.RILE_UP:
-                return new RileUp();
             //case INTERVENTION_ABILITY.SHARE_INTEL:
             //    return new ShareIntel();
             case INTERVENTION_ABILITY.SPOOK:

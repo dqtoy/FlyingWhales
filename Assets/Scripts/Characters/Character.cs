@@ -6020,7 +6020,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
             //tantrumLog += "\nRolled: " + chance.ToString();
 
-            if (chance < 10) {
+            if (chance < 10) { 
                 //Note: Do not cancel jobs and plans anymore, let the job priority decide if the character will do tantrum already
                 //CancelAllJobsAndPlans();
                 //Create Tantrum action

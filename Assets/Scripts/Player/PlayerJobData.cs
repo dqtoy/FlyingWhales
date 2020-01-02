@@ -53,7 +53,6 @@ public class PlayerJobData {
                 jobActions.Add(new Disable());
                 break;
             case JOB.INSTIGATOR:
-                jobActions.Add(new RileUp());
                 jobActions.Add(new Abduct());
                 jobActions.Add(new Provoke());
                 jobActions.Add(new Destroy());

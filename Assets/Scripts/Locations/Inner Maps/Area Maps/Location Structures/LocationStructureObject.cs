@@ -45,6 +45,7 @@ public class LocationStructureObject : PooledObject {
     void Awake() {
         allTilemaps = this.transform.GetComponentsInChildren<Tilemap>();
         wallVisuals = this.transform.GetComponentsInChildren<WallVisual>();
+        _groundTileMap.CompressBounds();
     }
     #endregion
 
@@ -226,8 +227,6 @@ public class LocationStructureObject : PooledObject {
     #region Inquiry
     public List<LocationGridTile> GetTilesOccupiedByStructure(AreaInnerTileMap map) {
         List<LocationGridTile> occupiedTiles = new List<LocationGridTile>();
-
-        _groundTileMap.CompressBounds();
         BoundsInt bounds = _groundTileMap.cellBounds;
 
         List<Vector3Int> occupiedCoordinates = new List<Vector3Int>();
