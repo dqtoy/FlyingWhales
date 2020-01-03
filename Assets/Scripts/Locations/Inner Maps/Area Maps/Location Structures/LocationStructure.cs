@@ -506,7 +506,7 @@ public class LocationStructure {
         OnStructureDamaged();
     }
     public void OnTileRepaired(LocationGridTile tile) {
-        structureObj.ApplyGroundTileAssetForTile(tile);
+        structureObj?.ApplyGroundTileAssetForTile(tile);
     }
     public void OnTileDestroyed(LocationGridTile tile) {
         if (structureType.IsOpenSpace()) {

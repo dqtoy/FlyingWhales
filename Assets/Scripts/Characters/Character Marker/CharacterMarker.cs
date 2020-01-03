@@ -350,12 +350,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
     }
     private void OnTileObjectRemovedFromTile(TileObject obj, Character removedBy, LocationGridTile removedFrom) {
-        if (hostilesInRange.Contains(obj)) {
-            RemoveHostileInRange(obj);
-        }
-        if (avoidInRange.Contains(obj)) {
-            RemoveAvoidInRange(obj);
-        }
+        RemoveHostileInRange(obj);
+        RemoveAvoidInRange(obj);
+        RemovePOIFromInVisionRange(obj);
     }
     #endregion
 
