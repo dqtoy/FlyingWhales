@@ -352,11 +352,13 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
     }
     protected override void OnMapObjectStateChanged() {
         if (mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
-            mapVisual.SetVisualAlpha(128f / 255f);
+            mapVisual.SetVisualAlpha(0f / 255f);
             //remove all other interactions
             advertisedActions = new List<INTERACTION_TYPE>();
 
             AddAdvertisedAction(INTERACTION_TYPE.CRAFT_ITEM);
+        } else if (mapObjectState == MAP_OBJECT_STATE.BUILDING) {
+            mapVisual.SetVisualAlpha(128f / 255f);
         } else {
             mapVisual.SetVisualAlpha(255f / 255f);
             RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_ITEM);

@@ -39,6 +39,7 @@ public class CraftTileObject : GoapAction {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         actor.ownParty.RemoveCarriedPOI();
+        (node.poiTarget as TileObject).SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);    
     }
     #endregion
 
@@ -51,6 +52,7 @@ public class CraftTileObject : GoapAction {
             carriedPile.AdjustResourceInPile(-cost);
             goapNode.poiTarget.AdjustResource(RESOURCE.WOOD, cost);
         }
+        obj.SetMapObjectState(MAP_OBJECT_STATE.BUILDING);
         goapNode.descriptionLog.AddToFillers(null, Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
         goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
     }

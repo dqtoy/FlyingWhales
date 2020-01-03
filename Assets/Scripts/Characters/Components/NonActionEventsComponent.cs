@@ -61,14 +61,16 @@ public class NonActionEventsComponent {
         int chance = UnityEngine.Random.Range(0, 100);
         string result = string.Empty;
         if(chance < 75) {
-            target.opinionComponent.AdjustOpinion(owner, "Base", 3);
+            target.opinionComponent.AdjustOpinion(owner, "Good Chat", 2);
+            owner.opinionComponent.AdjustOpinion(target, "Good Chat", 2);
             result = "good";
         } else if (chance < 25) {
-            target.opinionComponent.AdjustOpinion(owner, "Base", -2);
+            target.opinionComponent.AdjustOpinion(owner, "Awkward Chat", -2);
+            owner.opinionComponent.AdjustOpinion(target, "Awkward Chat", 2);
             result = "awkward";
         } else {
-            target.opinionComponent.AdjustOpinion(owner, "Base", -5);
-            owner.opinionComponent.AdjustOpinion(target, "Base", -5);
+            target.opinionComponent.AdjustOpinion(owner, "Argument", -5);
+            owner.opinionComponent.AdjustOpinion(target, "Argument", -5);
             result = "argument";
         }
         GameDate dueDate = GameManager.Instance.Today();

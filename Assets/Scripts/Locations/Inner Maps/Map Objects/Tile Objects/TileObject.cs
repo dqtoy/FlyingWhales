@@ -640,8 +640,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
     private INTERACTION_TYPE[] storedActions;
     protected override void OnMapObjectStateChanged() {
         if (mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
-            mapVisual.SetVisualAlpha(128f / 255f);
-            SetSlotAlpha(128f / 255f);
+            mapVisual.SetVisualAlpha(0f / 255f);
+            SetSlotAlpha(0f / 255f);
             //store advertised actions
             storedActions = new INTERACTION_TYPE[advertisedActions.Count];
             for (int i = 0; i < advertisedActions.Count; i++) {
@@ -649,6 +649,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
             }
             advertisedActions.Clear();
             AddAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
+        } else if (mapObjectState == MAP_OBJECT_STATE.BUILDING) {
+            mapVisual.SetVisualAlpha(128f / 255f);
+            SetSlotAlpha(128f / 255f);
         } else {
             mapVisual.SetVisualAlpha(255f / 255f);
             SetSlotAlpha(255f / 255f);

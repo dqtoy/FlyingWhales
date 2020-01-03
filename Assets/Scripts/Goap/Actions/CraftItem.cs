@@ -46,6 +46,9 @@ public class CraftItem : GoapAction {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         actor.ownParty.RemoveCarriedPOI();
+        if (node.poiTarget is SpecialToken) {
+            (node.poiTarget as SpecialToken).SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);    
+        }
     }
     #endregion
 
@@ -97,6 +100,7 @@ public class CraftItem : GoapAction {
         SPECIAL_TOKEN craftedItem;
         if (goapNode.poiTarget is SpecialToken) {
             craftedItem = (goapNode.poiTarget as SpecialToken).specialTokenType;
+            (goapNode.poiTarget as SpecialToken).SetMapObjectState(MAP_OBJECT_STATE.BUILDING);
         } else {
             craftedItem = (SPECIAL_TOKEN)goapNode.otherData[0];
         }

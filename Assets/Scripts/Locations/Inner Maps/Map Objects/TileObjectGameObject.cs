@@ -67,11 +67,17 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
 #endif
     }
     protected override void OnPointerEnter(TileObject poi) {
+        if (poi.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
+            return;
+        }
         base.OnPointerEnter(poi);
         InnerMapManager.Instance.SetCurrentlyHoveredPOI(poi);
         InnerMapManager.Instance.ShowTileData(poi.gridTileLocation);
     }
     protected override void OnPointerExit(TileObject poi) {
+        if (poi.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
+            return;
+        }
         base.OnPointerExit(poi);
         if (InnerMapManager.Instance.currentlyHoveredPoi == poi) {
             InnerMapManager.Instance.SetCurrentlyHoveredPOI(null);
