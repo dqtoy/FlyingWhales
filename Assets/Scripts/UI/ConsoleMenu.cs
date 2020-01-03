@@ -77,7 +77,7 @@ public class ConsoleMenu : UIMenu {
             {"/highlight_structure_tiles", HighlightStructureTiles },
             {"/add_new_resident", AddNewResident },
             {"/log_obj_advertisements", LogObjectAdvertisements },
-
+            {"/cleanse_region", CleanseRegion },
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -1069,6 +1069,26 @@ public class ConsoleMenu : UIMenu {
         //    text += "\n" + area.charactersAtLocationHistory[i];
         //}
         //AddSuccessMessage(text);
+    }
+    #endregion
+
+    #region Region
+    private void CleanseRegion(string[] parameters) {
+        if (parameters.Length != 1) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /cleanse_region");
+            return;
+        }
+        string regionParameterString = parameters[0];
+        Region region = GridMap.Instance.GetRegionByName(regionParameterString);
+
+        if (region == null) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /cleanse_region");
+            return;
+        }
+        LandmarkManager.Instance.UnownRegion(region);
+        region.OnCleansedRegion();
     }
     #endregion
 

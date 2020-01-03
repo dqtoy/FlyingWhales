@@ -13,6 +13,7 @@
             log.AddLogToInvolvedObjects();
             PlayerManager.Instance.player.ShowNotification(log);
             LandmarkManager.Instance.UnownRegion(region);
+            region.OnCleansedRegion();
             base.ExecuteAfterEffect(region, spawner);
         }
         public override bool CanSpawnEventAt(Region region, Character spawner) {

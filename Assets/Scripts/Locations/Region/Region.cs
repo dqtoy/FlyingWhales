@@ -52,7 +52,7 @@ public class Region : ILocation, IHasNeighbours<Region> {
     }
     public RegionTileObject regionTileObject { get; private set; }
     public List<Region> ValidTiles => connections.Select(x => x.region).ToList();
-    
+
     private RegionInnerTileMap _regionInnerTileMap; //inner map of the region, this should only be used if this region does not have an area. 
     private List<System.Action> _otherAfterInvasionActions; //list of other things to do when this landmark is invaded.
     private string _activeEventAfterEffectScheduleId;
@@ -65,7 +65,7 @@ public class Region : ILocation, IHasNeighbours<Region> {
     public BaseLandmark mainLandmark => coreTile.landmarkOnTile;
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures {
         get {
-            if(area != null) { return area.structures; }
+            if (area != null) { return area.structures; }
             return _structures;
         }
     }
@@ -327,7 +327,7 @@ public class Region : ILocation, IHasNeighbours<Region> {
     }
     public void LoadBuildingStructure(SaveDataRegion data) {
         demonicBuildingData = data.demonicBuildingData;
-        if(demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE) {
+        if (demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE) {
             TimerHubUI.Instance.AddItem("Building " + demonicBuildingData.landmarkName + " at " + name, demonicBuildingData.buildDuration - demonicBuildingData.currentDuration, () => UIManager.Instance.ShowRegionInfo(this));
             Messenger.AddListener(Signals.TICK_STARTED, PerTickBuilding);
         }
@@ -341,6 +341,7 @@ public class Region : ILocation, IHasNeighbours<Region> {
         }
     }
     private void FinishBuildingStructure() {
+        //NOTE: We do not call SetAssignedMinion to null and SetAssignedRegion to null here because it is already called in CreateNewLandmarkOnTile inside DestroyLandmarkOnTile
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickBuilding);
         //mainLandmark.ChangeLandmarkType(demonicBuildingData.landmarkType);
         //int previousID = mainLandmark.id;
@@ -355,6 +356,15 @@ public class Region : ILocation, IHasNeighbours<Region> {
         newLandmark.OnFinishedBuilding();
         coreTile.UpdateBuildSprites();
         Messenger.Broadcast(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, this);
+    }
+    private void StopBuildingStructure() {
+        if (demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE) {
+            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickBuilding);
+            TimerHubUI.Instance.RemoveItem("Building " + demonicBuildingData.landmarkName + " at " + name);
+            Messenger.Broadcast(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, this);
+            demonicBuildingData = new DemonicLandmarkBuildingData();
+            coreTile.UpdateBuildSprites();
+        }
     }
     #endregion
 
@@ -463,7 +473,7 @@ public class Region : ILocation, IHasNeighbours<Region> {
         for (int i = 0; i < eventData.involvedCharacters.Length; i++) {
             Character currCharacter = eventData.involvedCharacters[i];
             //do not let the character that spawned the event go home
-           
+
         }
         //spawn the event
         activeEvent.Spawn(this, spawner, eventData, out _activeEventAfterEffectScheduleId);
@@ -550,8 +560,11 @@ public class Region : ILocation, IHasNeighbours<Region> {
     public void JobBasedEventGeneration(Character character) {
         //only trigger event generation if there is no active event and the character that arrived is not a minion
         if (activeEvent == null && character.minion == null) {
-            
+
         }
+    }
+    public void OnCleansedRegion() {
+        StopBuildingStructure();
     }
     #endregion
 
