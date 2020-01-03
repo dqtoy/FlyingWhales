@@ -731,12 +731,12 @@ public class ConsoleMenu : UIMenu {
             return;
         }
 
-        if (character.canMove) {
-            character.DecreaseCanMove();
-        } else {
-            character.IncreaseCanMove();
-        }
-        AddSuccessMessage("Adjusted " + character.name + " do not disturb to " + character.doNotDisturb);
+        //if (character.canMove) {
+        //    character.DecreaseCanMove();
+        //} else {
+        //    character.IncreaseCanMove();
+        //}
+        //AddSuccessMessage("Adjusted " + character.name + " do not disturb to " + character.doNotDisturb);
     }
     private void SetMoodToCharacter(string[] parameters) {
         if (parameters.Length != 2) { //parameters command, item

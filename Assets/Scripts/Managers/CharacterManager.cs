@@ -87,7 +87,7 @@ public class CharacterManager : MonoBehaviour {
         CreateDeadlySinsData();
         defaultSleepTicks = GameManager.Instance.GetTicksBasedOnHour(8);
         summonsPool = new SUMMON_TYPE[] { SUMMON_TYPE.Wolf, SUMMON_TYPE.Golem, SUMMON_TYPE.Incubus, SUMMON_TYPE.Succubus };
-        Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+        Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
 
     #region Characters
@@ -731,9 +731,9 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Listeners
-    private void OnCharacterFinishedAction(Character actor, GoapAction action, string result) {
-        actor.marker.UpdateActionIcon();
-        actor.marker.UpdateAnimation();
+    private void OnCharacterFinishedAction(ActualGoapNode node) {
+        node.actor.marker.UpdateActionIcon();
+        node.actor.marker.UpdateAnimation();
 
         //for (int i = 0; i < actor.marker.inVisionCharacters.Count; i++) {
         //    Character otherCharacter = actor.marker.inVisionCharacters[i];

@@ -86,9 +86,11 @@ public class CraftItem : GoapAction {
                 if (actor != poiTarget) {
                     return false;
                 }
-                SPECIAL_TOKEN craftedItem = (SPECIAL_TOKEN)otherData[0];
-                //if the crafted item enum has been set, check if the actor has the needed trait to craft it
-                return craftedItem.CanBeCraftedBy(actor);
+                if(otherData.Length == 1 && otherData[0] is SPECIAL_TOKEN) {
+                    SPECIAL_TOKEN craftedItem = (SPECIAL_TOKEN) otherData[0];
+                    //if the crafted item enum has been set, check if the actor has the needed trait to craft it
+                    return craftedItem.CanBeCraftedBy(actor);
+                }
             }
         }
         return false;

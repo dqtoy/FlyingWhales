@@ -103,7 +103,7 @@ namespace Traits {
         }
 
         private void CheckSerialKiller() {
-            if (character.isDead || character.doNotDisturb > 0 || !character.canMove) { //character.currentArea != InnerMapManager.Instance.currentlyShowingArea
+            if (character.isDead || character.doNotDisturb) { //character.doNotDisturb > 0 || !character.canMove //character.currentArea != InnerMapManager.Instance.currentlyShowingArea
                 if (hasStartedFollowing) {
                     StopFollowing();
                     SetHasStartedFollowing(false);

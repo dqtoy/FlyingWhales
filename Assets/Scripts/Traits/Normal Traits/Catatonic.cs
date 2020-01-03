@@ -29,14 +29,14 @@ namespace Traits {
                 owner.AdjustMoodValue(-15, this);
                 owner.needsComponent.AdjustDoNotGetLonely(1);
                 Messenger.AddListener(Signals.TICK_STARTED, CheckTrait);
-                Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+                Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             if (owner != null) {
                 owner.needsComponent.AdjustDoNotGetLonely(1);
                 Messenger.RemoveListener(Signals.TICK_STARTED, CheckTrait);
-                Messenger.RemoveListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+                Messenger.RemoveListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
@@ -108,8 +108,8 @@ namespace Traits {
             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
             return true;
         }
-        private void OnCharacterFinishedAction(Character character, GoapAction action, string result) {
-            if (action.goapType == INTERACTION_TYPE.DROP && character.currentActionNode.poiTarget == owner) {
+        private void OnCharacterFinishedAction(ActualGoapNode node) {
+            if (node.action.goapType == INTERACTION_TYPE.DROP && node.poiTarget == owner) {
                 if (owner.gridTileLocation.objHere != null && owner.gridTileLocation.objHere is Bed) {
                     CreateActualSleepJob(owner.gridTileLocation.objHere as Bed);
                 }

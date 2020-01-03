@@ -175,9 +175,13 @@ public class ActualGoapNode {
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.IN_PLACE) {
             targetTile = actor.gridTileLocation;
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.NEARBY) {
-            List<LocationGridTile> choices = actor.currentRegion.area.areaMap.GetTilesInRadius(actor.gridTileLocation, 3);
-            if (choices.Count > 0) {
-                targetTile = choices[Utilities.rng.Next(0, choices.Count)];
+            if (actor.canMove) {
+                List<LocationGridTile> choices = actor.currentRegion.area.areaMap.GetTilesInRadius(actor.gridTileLocation, 3);
+                if (choices.Count > 0) {
+                    targetTile = choices[Utilities.rng.Next(0, choices.Count)];
+                } else {
+                    targetTile = actor.gridTileLocation;
+                }
             } else {
                 targetTile = actor.gridTileLocation;
             }
@@ -382,7 +386,7 @@ public class ActualGoapNode {
             actor.SetCurrentActionNode(null, null, null);
         }
         job.CancelJob(false);
-        Messenger.Broadcast(Signals.CHARACTER_FINISHED_ACTION, actor, this.action, result);
+        Messenger.Broadcast(Signals.CHARACTER_FINISHED_ACTION, this);
     }
     public void ActionResult(GoapActionState actionState) {
         string result = GoapActionStateDB.GetStateResult(action.goapType, actionState.name);
@@ -421,7 +425,7 @@ public class ActualGoapNode {
         //        actor.GoapActionResult(result, this);
         //    }
         //}
-        Messenger.Broadcast(Signals.CHARACTER_FINISHED_ACTION, actor, this.action, result);
+        Messenger.Broadcast(Signals.CHARACTER_FINISHED_ACTION, this);
         //parentPlan?.OnActionInPlanFinished(actor, this, result);
     }
     public void StopActionNode(bool shouldDoAfterEffect) {

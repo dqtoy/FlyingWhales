@@ -34,7 +34,7 @@ namespace Traits {
                 character.AddTraitNeededToBeRemoved(this);
                 character.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
             } else if (sourcePOI is TileObject) {
-                Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedInteraction);
+                Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedInteraction);
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
@@ -44,7 +44,7 @@ namespace Traits {
                 character.RemoveTraitNeededToBeRemoved(this);
                 character.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
             } else if (sourceCharacter is TileObject) {
-                Messenger.RemoveListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedInteraction);
+                Messenger.RemoveListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedInteraction);
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
@@ -105,11 +105,11 @@ namespace Traits {
             }
             cursedInteractions.Add(new CursedInteraction() { characterThatInteracted = characterThatInteracted, actionDone = actionDone.goapType, result = result });
         }
-        private void OnCharacterFinishedInteraction(Character character, GoapAction action, string result) {
+        private void OnCharacterFinishedInteraction(ActualGoapNode node) {
             for (int i = 0; i < cursedInteractions.Count; i++) {
                 CursedInteraction interaction = cursedInteractions[i];
-                if (interaction.characterThatInteracted == character && interaction.actionDone == action.goapType) {
-                    InteractionEffectApplication(character, interaction.result);
+                if (interaction.characterThatInteracted == node.actor && interaction.actionDone == node.action.goapType) {
+                    InteractionEffectApplication(node.actor, interaction.result);
                     cursedInteractions.RemoveAt(i);
                     break;
                 }

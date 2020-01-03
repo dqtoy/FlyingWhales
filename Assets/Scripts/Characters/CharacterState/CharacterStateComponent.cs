@@ -236,7 +236,7 @@ public class CharacterStateComponent {
     }
     private void PerTickCurrentState() {
         if(currentState != null && !currentState.isPaused && !currentState.isDone) {
-            if(character.doNotDisturb > 0) {
+            if(character.doNotDisturb) {
                 ExitCurrentState();
                 return;
             }

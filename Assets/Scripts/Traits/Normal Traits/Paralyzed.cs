@@ -29,14 +29,14 @@ namespace Traits {
                 character.CancelAllJobs();
                 Messenger.AddListener(Signals.TICK_STARTED, CheckParalyzedTrait);
                 Messenger.AddListener(Signals.HOUR_STARTED, CheckParalyzedTraitPerHour);
-                Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+                Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             if (character != null) {
                 Messenger.RemoveListener(Signals.TICK_STARTED, CheckParalyzedTrait);
                 Messenger.RemoveListener(Signals.HOUR_STARTED, CheckParalyzedTraitPerHour);
-                Messenger.RemoveListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+                Messenger.RemoveListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
@@ -57,7 +57,7 @@ namespace Traits {
                         }
                     } else {
                         if (characterThatWillDoJob.opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE) {
-                            if (character.CanPlanGoap() && !character.HasJobTargetingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
+                            if (CanPlanGoap() && !character.HasJobTargetingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
                                 if (!PlanFullnessRecovery(characterThatWillDoJob)) {
                                     if (!CreateDropJobForTirednessRecovery(characterThatWillDoJob)) {
                                         CreateDropJobForHappinessRecovery(characterThatWillDoJob);
@@ -77,12 +77,15 @@ namespace Traits {
                 charactersThatKnow.Add(character);
             }
         }
-
+        private bool CanPlanGoap() {
+            //If there is no area, it means that there is no inner map, so character must not do goap actions, jobs, and plans
+            //characters that cannot witness, cannot plan actions.
+            return character.minion == null && !character.isDead && character.isStoppedByOtherCharacter <= 0 && character.canWitness
+                && character.currentActionNode == null && character.planner.status == GOAP_PLANNING_STATUS.NONE && character.jobQueue.jobsInQueue.Count <= 0
+                && !character.marker.hasFleePath && character.stateComponent.currentState == null && character.IsInOwnParty();
+        }
         private void CheckParalyzedTrait() {
-            if (!character.CanPlanGoap()) {
-                return;
-            }
-            if (!character.IsInOwnParty()) {
+            if (!CanPlanGoap()) {
                 return;
             }
             if (character.HasJobTargetingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
@@ -97,14 +100,13 @@ namespace Traits {
             }
         }
         private void CheckParalyzedTraitPerHour() {
-            if (character.IsInOwnParty()) {
-                if (character.CanPlanGoap() && character.stateComponent.currentState == null
+            if (CanPlanGoap()
                     && (character.needsComponent.isStarving || character.needsComponent.isExhausted || character.needsComponent.isForlorn)
                     && UnityEngine.Random.Range(0, 100) < 75 && !character.jobQueue.HasJob(JOB_TYPE.SCREAM)
-                    && character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") == null && !character.HasJobTargetingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SCREAM, INTERACTION_TYPE.SCREAM_FOR_HELP, character, character);
-                    character.jobQueue.AddJobInQueue(job);
-                }
+                    && character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") == null
+                    && !character.HasJobTargetingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SCREAM, INTERACTION_TYPE.SCREAM_FOR_HELP, character, character);
+                character.jobQueue.AddJobInQueue(job);
             }
         }
 
@@ -123,17 +125,16 @@ namespace Traits {
             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
             return true;
         }
-        private void OnCharacterFinishedAction(Character character, GoapAction action, string result) {
-            //TODO:
-            //if (action.goapType == INTERACTION_TYPE.DROP && action.poiTarget == this.character) {
-            //    if (this.character.gridTileLocation.objHere != null && this.character.gridTileLocation.objHere is Bed) {
-            //        CreateActualSleepJob(this.character.gridTileLocation.objHere as Bed);
-            //    } else if (this.character.gridTileLocation.structure == this.character.homeStructure) {
-            //        CreateActualHappinessRecoveryJob(INTERACTION_TYPE.PRAY);
-            //    } else {
-            //        CreateActualHappinessRecoveryJob(INTERACTION_TYPE.DAYDREAM);
-            //    }
-            //}
+        private void OnCharacterFinishedAction(ActualGoapNode node) {
+            if (node.action.goapType == INTERACTION_TYPE.DROP && node.poiTarget == this.character) {
+                if (this.character.gridTileLocation.objHere != null && this.character.gridTileLocation.objHere is Bed) {
+                    CreateActualSleepJob(this.character.gridTileLocation.objHere as Bed);
+                } else if (this.character.gridTileLocation.structure == this.character.homeStructure) {
+                    CreateActualHappinessRecoveryJob(INTERACTION_TYPE.PRAY);
+                } else {
+                    CreateActualHappinessRecoveryJob(INTERACTION_TYPE.DAYDREAM);
+                }
+            }
         }
         #endregion
 
@@ -147,7 +148,7 @@ namespace Traits {
         private bool CreateFeedJob(Character characterThatWillDoJob) {
             if (characterThatWillDoJob.currentRegion.IsResident(character)) {
                 GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, target = GOAP_EFFECT_TARGET.TARGET };
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, characterThatWillDoJob, characterThatWillDoJob);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, character, characterThatWillDoJob);
                 job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 20 });
                 //job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeParalyzedFeedJob);
                 characterThatWillDoJob.jobQueue.AddJobInQueue(job);
@@ -243,7 +244,7 @@ namespace Traits {
             }
             if (!triggerBrokenhearted) {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, actionType, character, character);
-                job.AddOtherData(actionType, new object[] { ACTION_LOCATION_TYPE.IN_PLACE });
+                //job.AddOtherData(actionType, new object[] { ACTION_LOCATION_TYPE.IN_PLACE });
                 character.jobQueue.AddJobInQueue(job);
             } else {
                 heartbroken.TriggerBrokenhearted();
@@ -296,7 +297,7 @@ namespace Traits {
             }
             if (!triggerSpooked) {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.SLEEP, bed, character);
-                job.AddOtherData(INTERACTION_TYPE.SLEEP, new object[] { ACTION_LOCATION_TYPE.IN_PLACE });
+                //job.AddOtherData(INTERACTION_TYPE.SLEEP, new object[] { ACTION_LOCATION_TYPE.IN_PLACE });
                 character.jobQueue.AddJobInQueue(job);
             } else {
                 spooked.TriggerFeelingSpooked();

@@ -18,7 +18,7 @@ public class KillCountCharacterItem : CharacterNameplateItem {
         Messenger.AddListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterChangedFaction);
         Messenger.AddListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
         Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
-        Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+        Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterChangedState);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterChangedState);
         SetSupportingLabelState(true);
@@ -35,7 +35,7 @@ public class KillCountCharacterItem : CharacterNameplateItem {
         Messenger.RemoveListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterChangedFaction);
         Messenger.RemoveListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
         Messenger.RemoveListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
-        Messenger.RemoveListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+        Messenger.RemoveListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterChangedState);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterChangedState);
         StopScroll();
@@ -130,8 +130,8 @@ public class KillCountCharacterItem : CharacterNameplateItem {
             UpdateInfo();
         }
     }
-    private void OnCharacterFinishedAction(Character character, GoapAction action, string result) {
-        if (character.id == this.character.id) {
+    private void OnCharacterFinishedAction(ActualGoapNode node) {
+        if (node.actor.id == this.character.id) {
             UpdateInfo();
         }
     }

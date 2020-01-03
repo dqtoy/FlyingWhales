@@ -104,14 +104,14 @@ public class NewCombat : MonoBehaviour {
                 _combatOrder.Add(combatCharacter);
                 _leftSideCombatOrder.Add(combatCharacter);
                 //leftSide.slots[i].character.SetCombatCharacter(combatCharacter);
-                leftSide.slots[i].character.AdjustDoNotDisturb(1);
+                //leftSide.slots[i].character.AdjustDoNotDisturb(1);
             }
             if (rightSide.slots[i].isOccupied && !IsInCombatOrder(rightSide.slots[i].character)) {
                 CombatCharacter combatCharacter = new CombatCharacter(rightSide.slots[i].character, rightSide.slots[i].gridNumber, SIDES.B);
                 _combatOrder.Add(combatCharacter);
                 _rightSideCombatOrder.Add(combatCharacter);
                 //rightSide.slots[i].character.SetCombatCharacter(combatCharacter);
-                rightSide.slots[i].character.AdjustDoNotDisturb(1);
+                //rightSide.slots[i].character.AdjustDoNotDisturb(1);
             }
         }
         ApplyStartCombatTraits();
@@ -229,12 +229,12 @@ public class NewCombat : MonoBehaviour {
             UIManager.Instance.combatUI.AddCombatLogs("Right Side Wins!", SIDES.B);
             //Messenger.Broadcast(Signals.ADD_TO_COMBAT_LOGS, "Right Side Wins!");
         }
-        for (int i = 0; i < _combatOrder.Count; i++) {
-            _combatOrder[i].character.AdjustDoNotDisturb(-1);
-        }
-        for (int i = 0; i < _deadCharacters.Count; i++) {
-            _deadCharacters[i].AdjustDoNotDisturb(-1);
-        }
+        //for (int i = 0; i < _combatOrder.Count; i++) {
+        //    _combatOrder[i].character.AdjustDoNotDisturb(-1);
+        //}
+        //for (int i = 0; i < _deadCharacters.Count; i++) {
+        //    _deadCharacters[i].AdjustDoNotDisturb(-1);
+        //}
         for (int i = 0; i < _endCombatActions.Count; i++) {
             if (_endCombatActions[i] != null) {
                 _endCombatActions[i]();

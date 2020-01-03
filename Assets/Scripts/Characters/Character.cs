@@ -199,7 +199,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public int currentHP => this._currentHP;
     public int attackSpeed => _characterClass.baseAttackSpeed; //in milliseconds, The lower the amount the faster the attack rate
     public Minion minion => _minion;
-    public int doNotDisturb => _doNotDisturb;
+    //public int doNotDisturb => _doNotDisturb;
+    public bool doNotDisturb => !canMove || !canWitness;
     public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.CHARACTER;
     public LocationGridTile gridTileLocation {
         get {
@@ -2497,7 +2498,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
 
         //Disabler Thought
-        if (doNotDisturb > 0) {
+        if (doNotDisturb) {
             Trait disablerTrait = traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER).FirstOrDefault();
             if (disablerTrait != null) {
                 if (!string.IsNullOrEmpty(disablerTrait.thoughtText)) {
@@ -3816,11 +3817,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public bool CanPlanGoap() {
         //If there is no area, it means that there is no inner map, so character must not do goap actions, jobs, and plans
         //characters that cannot witness, cannot plan actions.
-        return minion == null && !isDead && doNotDisturb <= 0 && isStoppedByOtherCharacter <= 0 && canWitness
+        return minion == null && !isDead && isStoppedByOtherCharacter <= 0 && !doNotDisturb
             && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count <= 0
             && !marker.hasFleePath && stateComponent.currentState == null && IsInOwnParty();
     }
-
     protected void EndTickPerformJobs() {
         if (CanPerformEndTickJobs()) {
             if (!jobQueue.jobsInQueue[0].ProcessJob()) {
@@ -3829,10 +3829,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
     }
     private bool CanPerformEndTickJobs() {
-        return minion == null && !isDead && doNotDisturb <= 0 && isStoppedByOtherCharacter <= 0 && canWitness
+        return minion == null && !isDead && isStoppedByOtherCharacter <= 0 && canWitness
             && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count > 0 
             && currentParty.icon.isTravellingOutside == false && !marker.hasFleePath 
-            && stateComponent.currentState == null && IsInOwnParty();
+            && stateComponent.currentState == null && IsInOwnParty(); //&& doNotDisturb <= 0
     }
     //public void PlanGoapActions() {
     //    if (!IsInOwnParty() || ownParty.icon.isTravelling || _doNotDisturb > 0 /*|| isWaitingForInteraction > 0 */ || isDead || marker.hasFleePath) {
@@ -5533,8 +5533,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
     }
     private void HeardAScream(Character characterThatScreamed) {
-        if(doNotDisturb > 0) {
+        if(doNotDisturb) {
             //Do not react to scream if character has disabler trait
+            return;
+        }
+        if(currentRegion != characterThatScreamed.currentRegion) {
             return;
         }
         if(gridTileLocation != null && characterThatScreamed.gridTileLocation != null) {
@@ -5997,7 +6000,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         moodValue += amount;
         moodValue = Mathf.Clamp(moodValue, 1, 100);
         if(amount < 0 && currentMoodType == CHARACTER_MOOD.DARK) {
-            if (doNotDisturb > 0) {
+            if (doNotDisturb) {
                 return;
             }
             if(currentActionNode != null && currentActionNode.action.goapType == INTERACTION_TYPE.TANTRUM) {
