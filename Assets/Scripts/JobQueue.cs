@@ -16,32 +16,36 @@ public class JobQueue {
         jobsInQueue = new List<JobQueueItem>();
     }
 
-    //NOTE: IMPROVE THIS! PROBABLY PUT THIS IN CONSTRUCTOR JUST LIKE WITH THE CHARACTER
-    //public void SetQuest(Quest quest) {
-    //    this.quest = quest;
-    //}
-
     public bool AddJobInQueue(JobQueueItem job) { //, bool processLogicForPersonalJob = true
         if (!CanJobBeAddedToQueue(job)) {
             return false;
         }
         job.SetAssignedCharacter(owner);
 
-        bool isNewJobTopPriority = false;
-        //Push back current top priority first before adding the job
-        if (jobsInQueue.Count > 0) { //characterOwner.CanCurrentJobBeOverriddenByJob(job))
-            JobQueueItem topJob = jobsInQueue[0];
-            if (job.priority < topJob.priority) {
-                if(topJob.CanBeInterrupted() || job.IsAnInterruptionJob()) {
-                    topJob.PushedBack(job); //This means that the job is inserted as the top most priority
-                    isNewJobTopPriority = true;
-                }
-            }
-        }
-
+        //if (jobsInQueue.Count > 0) { //characterOwner.CanCurrentJobBeOverriddenByJob(job))
+        //    JobQueueItem topJob = jobsInQueue[0];
+        //    if (job.priority < topJob.priority) {
+        //        if(topJob.CanBeInterrupted() || job.IsAnInterruptionJob()) {
+        //            topJob.PushedBack(job); //This means that the job is inserted as the top most priority
+        //            isNewJobTopPriority = true;
+        //        }
+        //    }
+        //}
+        bool isNewJobTopPriority = IsJobTopPriorityWhenAdded(job);
         if (isNewJobTopPriority) {
+            bool isJobQueueEmpty = jobsInQueue.Count <= 0;
+            //Push back current top priority first before adding the job
+            if (!isJobQueueEmpty) {
+                jobsInQueue[0].PushedBack(job); //This means that the job is inserted as the top most priority
+            }
+
+            //Insert job in the top of the list
             jobsInQueue.Insert(0, job);
-            job.ProcessJob();
+
+            //If job queue has jobs even before the new job is inserted, process it
+            if (!isJobQueueEmpty) {
+                job.ProcessJob();
+            }
         } else {
             bool hasBeenInserted = false;
             if(jobsInQueue.Count > 1) {
@@ -128,6 +132,32 @@ public class JobQueue {
             return state;
         }
         return false;
+    }
+    private bool IsJobTopPriorityWhenAdded(JobQueueItem newJob) {
+        if (jobsInQueue.Count > 0) { //characterOwner.CanCurrentJobBeOverriddenByJob(job))
+            JobQueueItem topJob = jobsInQueue[0];
+            if (newJob.priority < topJob.priority) {
+                if (topJob.CanBeInterrupted() || newJob.IsAnInterruptionJob()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        //If there are no jobs in queue, the new job is automatically the top priority
+        return true;
+    }
+    public bool IsJobTopTypePriorityWhenAdded(JOB_TYPE jobType) {
+        if (jobsInQueue.Count > 0) { //characterOwner.CanCurrentJobBeOverriddenByJob(job))
+            JobQueueItem topJob = jobsInQueue[0];
+            if (jobType.GetJobTypePriority() < topJob.priority) {
+                if (topJob.CanBeInterrupted() || jobType.IsAnInterruptionJobType()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        //If there are no jobs in queue, the new job is automatically the top priority
+        return true;
     }
     //public void MoveJobToTopPriority(JobQueueItem job) {
     //    if (jobsInQueue.Remove(job)) {
