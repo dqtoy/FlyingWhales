@@ -38,16 +38,16 @@ public class StrollOutsideState : CharacterState {
         //}
     //}
     public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
-        if (stateComponent.character.role.roleType != CHARACTER_ROLE.BEAST && stateComponent.character.race != RACE.SKELETON && targetPOI is SpecialToken) {
+        if (targetPOI is SpecialToken) {
             SpecialToken token = targetPOI as SpecialToken;
-            if (token.characterOwner == null && token.advertisedActions.Contains(INTERACTION_TYPE.PICK_UP)) {
+            if (token.CanBePickedUpNormallyUponVisionBy(stateComponent.character)) {
                 ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PICK_UP], stateComponent.character, targetPOI, null, 0);
                 GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, stateComponent.character);
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP, targetPOI, stateComponent.character);
+                GoapPlanJob goapPlanJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP, targetPOI, stateComponent.character);
                 goapPlan.SetDoNotRecalculate(true);
-                job.SetCannotBePushedBack(true);
-                job.SetAssignedPlan(goapPlan);
-                stateComponent.character.jobQueue.AddJobInQueue(job);
+                goapPlanJob.SetCannotBePushedBack(true);
+                goapPlanJob.SetAssignedPlan(goapPlan);
+                stateComponent.character.jobQueue.AddJobInQueue(goapPlanJob);
                 // stateComponent.character.marker.GoToPOI(token, () => OnArriveAtPickUpLocation(token));
                 //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_UP, stateComponent.character, targetPOI);
                 //if (goapAction.targetTile != null) {

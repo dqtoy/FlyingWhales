@@ -2850,8 +2850,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                                 if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
                                     CreateWatchEvent(null, targetCombatState, targetCharacter);
                                 } else {
-                                    List<RELATIONSHIP_TYPE> rels = relationshipContainer.GetRelationshipDataWith(targetCharacter.currentAlterEgo)?.relationships.OrderByDescending(x => (int) x).ToList() ?? null; //so that the first relationship to be returned is the one with higher importance.
-                                    if (rels.Count > 0 && marker.AddHostileInRange(targetCombatState.currentClosestHostile, false, false, isLethal: targetCharacter.marker.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
+                                    if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, false, false, isLethal: targetCharacter.marker.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
                                         if (!marker.avoidInRange.Contains(targetCharacter)) {
                                             //Do process combat behavior first for this character, if the current closest hostile
                                             //of the combat state of this character is also the targetCombatState.currentClosestHostile
@@ -2862,7 +2861,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                                             joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                                             joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                                             joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
-                                            joinLog.AddToFillers(null, Utilities.NormalizeString(rels.First().ToString()), LOG_IDENTIFIER.STRING_1);
+                                            joinLog.AddToFillers(null, this.relationshipContainer.GetRelationshipName(targetCharacter), LOG_IDENTIFIER.STRING_1);
                                             joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
                                             PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
                                         }
@@ -2871,8 +2870,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                                 }
                             } else {
                                 if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
-                                    List<RELATIONSHIP_TYPE> rels = relationshipContainer.GetRelationshipDataWith(currentHostileOfTargetCharacter.currentAlterEgo)?.relationships.OrderByDescending(x => (int) x).ToList() ?? null; //so that the first relationship to be returned is the one with higher importance.
-                                    if (rels.Count > 0 && marker.AddHostileInRange(targetCharacter, false, false, isLethal: targetCharacter.marker.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
+                                    if (marker.AddHostileInRange(targetCharacter, false, false, isLethal: targetCharacter.marker.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
                                         if (!marker.avoidInRange.Contains(targetCharacter)) {
                                             //Do process combat behavior first for this character, if the current closest hostile
                                             //of the combat state of this character is also the targetCombatState.currentClosestHostile
@@ -2883,7 +2881,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                                             joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                                             joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                                             joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.CHARACTER_3);
-                                            joinLog.AddToFillers(null, Utilities.NormalizeString(rels.First().ToString()), LOG_IDENTIFIER.STRING_1);
+                                            joinLog.AddToFillers(null, this.relationshipContainer.GetRelationshipName(currentHostileOfTargetCharacter), LOG_IDENTIFIER.STRING_1);
                                             joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
                                             PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
                                         }
@@ -4837,6 +4835,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         advertisedActions.Add(INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM);
         advertisedActions.Add(INTERACTION_TYPE.REVERT_TO_NORMAL_FORM);
         advertisedActions.Add(INTERACTION_TYPE.CHANGE_CLASS);
+        advertisedActions.Add(INTERACTION_TYPE.ZOMBIE_DEATH);
         //advertisedActions.Add(INTERACTION_TYPE.STAND);
         //advertisedActions.Add(INTERACTION_TYPE.VISIT);
         //advertisedActions.Add(INTERACTION_TYPE.CRAFT_FURNITURE);

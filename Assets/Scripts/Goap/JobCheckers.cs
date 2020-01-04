@@ -51,10 +51,10 @@ public partial class InteractionManager {
         return character.traitContainer.GetNormalTrait<Trait>("Raider") != null;
     }
     public bool CanDoAttackNonDemonicRegionJob(Character character) {
-        return true;
+        return character.characterClass.isNonCombatant == false || character.characterClass.className.Equals("Noble") || character.characterClass.className.Equals("Leader");
     }
     public bool CanDoAttackDemonicRegionJob(Character character) {
-        return true;
+        return character.characterClass.isNonCombatant == false || character.characterClass.className.Equals("Noble") || character.characterClass.className.Equals("Leader");
     }
     public bool CanDoJudgementJob(Character character) {
         return character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER;

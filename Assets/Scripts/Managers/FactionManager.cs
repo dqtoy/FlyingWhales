@@ -31,7 +31,7 @@ public class FactionManager : MonoBehaviour {
     public Faction zombieFaction {
         get {
             if (_zombieFaction == null) {
-                _zombieFaction = CreateNewFaction(factionName: "Zombies");
+                _zombieFaction = CreateZombieFaction();
             }
             return _zombieFaction;
         }
@@ -100,6 +100,13 @@ public class FactionManager : MonoBehaviour {
             Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
         }
         return newFaction;
+    }
+    private Faction CreateZombieFaction() {
+        Faction zombies = CreateNewFaction(factionName: "Zombies");
+        foreach (KeyValuePair<Faction,FactionRelationship> pair in zombies.relationships) {
+            zombies.SetRelationshipFor(pair.Key, FACTION_RELATIONSHIP_STATUS.HOSTILE);
+        }
+        return zombies;
     }
     public Faction CreateNewFaction(SaveDataFaction data) {
         Faction newFaction = new Faction(data);

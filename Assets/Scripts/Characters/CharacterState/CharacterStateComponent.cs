@@ -18,7 +18,6 @@ public class CharacterStateComponent {
     public CharacterState currentState { get; private set; }
     //Right now this is only for Explore State so that we can store the state even when the character is still moving to the area that will be explored
     //public CharacterState stateToDo { get; private set; }
-
     public CharacterStateComponent(Character character) {
         this.character = character;
     }
