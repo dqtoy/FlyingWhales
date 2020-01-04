@@ -651,25 +651,19 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #endregion
 
     #region Animation
-    public void PlayWalkingAnimation() {
-        if (!this.gameObject.activeInHierarchy) {
-            return;
-        }
+    private void PlayWalkingAnimation() {
         PlayAnimation("Walk");
     }
-    public void PlayIdle() {
-        if (!this.gameObject.activeInHierarchy) {
-            return;
-        }
+    private void PlayIdle() {
         PlayAnimation("Idle");
     }
     private void PlaySleepGround() {
-        if (!this.gameObject.activeInHierarchy) {
-            return;
-        }
         PlayAnimation("Sleep Ground");
     }
     public void PlayAnimation(string animation) {
+        if (!this.gameObject.activeInHierarchy) {
+            return;
+        }
         currentAnimation = animation;
         animator.Play(animation, 0, 0.5f);
     }

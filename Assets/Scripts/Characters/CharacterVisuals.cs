@@ -46,10 +46,12 @@ public class CharacterVisuals {
 
     private void UpdateMarkerAnimations(Character character) {
         CharacterClassAsset assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender, character.characterClass.className);
-        markerAnimations = new Dictionary<string, Sprite>();
-        for (int i = 0; i < assets.animationSprites.Count; i++) {
-            Sprite currSprite = assets.animationSprites[i];
-            markerAnimations.Add(currSprite.name, currSprite);
+        if (assets != null) {
+            markerAnimations = new Dictionary<string, Sprite>();
+            for (int i = 0; i < assets.animationSprites.Count; i++) {
+                Sprite currSprite = assets.animationSprites[i];
+                markerAnimations.Add(currSprite.name, currSprite);
+            }
         }
     }
 }

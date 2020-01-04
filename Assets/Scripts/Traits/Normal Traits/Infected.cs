@@ -108,8 +108,12 @@ namespace Traits {
                 } else if (owner.stateComponent.currentState != null) {
                     owner.stateComponent.ExitCurrentState();
                 }
-
+                ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ZOMBIE_DEATH], owner, owner, null, 0);
+                GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.ZOMBIE_DEATH, owner, owner);
+                goapPlan.SetDoNotRecalculate(true);
+                job.SetCannotBePushedBack(true);
+                job.SetAssignedPlan(goapPlan);
                 owner.jobQueue.AddJobInQueue(job);
             }
         }

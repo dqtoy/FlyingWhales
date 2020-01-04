@@ -92,22 +92,10 @@ namespace Traits {
             if (targetPOI is SpecialToken) {
                 if (characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST) {
                     SpecialToken token = targetPOI as SpecialToken;
-                    if (token.characterOwner == null) {
-                        //Patrollers should not pick up items from their main storage structure
-                        if (token.gridTileLocation != null && token.gridTileLocation.structure == characterThatWillDoJob.homeRegion.mainStorage) { //&& token.currentRegion == characterThatWillDoJob.homeRegion
-                            return false;
-                        }
-                        //characters should not pick up items if that item is the target of it's current action
-                        if (characterThatWillDoJob.currentActionNode != null && characterThatWillDoJob.currentActionNode.poiTarget == token) {
-                            return false;
-                        }
-                        if (token.advertisedActions.Contains(INTERACTION_TYPE.PICK_UP) == false) {
-                            return false;
-                        }
-                        if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP)) {
-                            GoapPlanJob pickUpJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP, token, characterThatWillDoJob);
-                            characterThatWillDoJob.jobQueue.AddJobInQueue(pickUpJob);
-                        }
+                    if (token.CanBePickedUpNormallyUponVisionBy(characterThatWillDoJob)
+                    && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP)) {
+                        GoapPlanJob pickUpJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP, token, characterThatWillDoJob);
+                        characterThatWillDoJob.jobQueue.AddJobInQueue(pickUpJob);
                         return true;
                     }
                 }

@@ -32,9 +32,12 @@ public class StrollState : CharacterState {
         }
     }
     public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
-        if (stateComponent.character.faction.isMajorFriendlyNeutral && stateComponent.character.role.roleType != CHARACTER_ROLE.BEAST && targetPOI is SpecialToken) {
+        if (stateComponent.character.faction.isMajorFriendlyNeutral && 
+            stateComponent.character.faction != FactionManager.Instance.zombieFaction &&
+            stateComponent.character.role.roleType != CHARACTER_ROLE.BEAST && 
+            targetPOI is SpecialToken) {
             SpecialToken token = targetPOI as SpecialToken;
-            if (token.characterOwner == null) {
+            if (token.CanBePickedUpNormallyUponVisionBy(stateComponent.character)) {
                 ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PICK_UP], stateComponent.character, targetPOI, null, 0);
                 GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, stateComponent.character);
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP, targetPOI, stateComponent.character);
@@ -42,19 +45,6 @@ public class StrollState : CharacterState {
                 job.SetCannotBePushedBack(true);
                 job.SetAssignedPlan(goapPlan);
                 stateComponent.character.jobQueue.AddJobInQueue(job);
-                
-                // stateComponent.character.marker.GoToPOI(token, () => OnArriveAtPickUpLocation(token));
-
-                //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_UP, stateComponent.character, targetPOI);
-                //if (goapAction.targetTile != null) {
-                //    SetCurrentlyDoingAction(goapAction);
-                //    goapAction.CreateStates();
-                //    stateComponent.character.SetCurrentActionNode(goapAction);
-                //    stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtPickUpLocation);
-                //    PauseState();
-                //} else {
-                //    Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't pick up item " + targetPOI.name + " because there is no tile to go to!");
-                //}
                 return true;
             }
         }
