@@ -29,10 +29,19 @@ public class TheEye : BaseLandmark {
         currentCooldownTick = data.currentCooldownTick;
     }
 
-    public void StartInterference(Region targetRegion, Character interferingCharacter) {
-        targetRegion.eventData.SetInterferingCharacter(interferingCharacter);
-        interferingCharacter.minion.SetAssignedRegion(targetRegion);  //only set assigned region to minion.
-        targetRegion.ForceResolveWorldEvent();
+    public void StartInterference(Character targetCharacter, Character interferingCharacter) {
+        interferingCharacter.minion.SetAssignedRegion(targetCharacter.currentRegion);  //only set assigned region to minion.
+        GoapPlanJob job = null;
+        for (int i = 0; i < targetCharacter.jobQueue.jobsInQueue.Count; i++) {
+            JobQueueItem jqi = targetCharacter.jobQueue.jobsInQueue[i];
+            if (jqi is GoapPlanJob) {
+                GoapPlanJob gpj = jqi as GoapPlanJob;
+                if (gpj.targetPOI is TileObject && (gpj.targetPOI as TileObject).tileObjectType == TILE_OBJECT_TYPE.REGION_TILE_OBJECT) {
+                    job = gpj;
+                }
+            }
+        }
+        job?.ForceCancelJob(false, $"Interfered by {interferingCharacter.name}");
         PlayerManager.Instance.player.AdjustMana(-interfereManaCost);
         //Start cooldown.
         StartCooldown();
