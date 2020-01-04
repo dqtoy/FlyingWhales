@@ -150,6 +150,8 @@ public static class Signals {
     public static string DETERMINE_COMBAT_REACTION = "DetermineCombatReaction"; //Parameters (Character character)
     public static string TRANSFER_ENGAGE_TO_FLEE_LIST = "TransferEngageToFleeList"; //Parameters (Character character)
     public static string CHARACTER_CLASS_CHANGE = "CharacterClassChange";
+    public static string ON_SEIZE_CHARACTER = "OnSeizeCharacter";
+
     /// <summary>
     /// Parameters (Character characterWithVision, Character characterRemovedFromVision)
     /// </summary>
@@ -420,6 +422,9 @@ public static class Signals {
     public static string WALL_DESTROYED = "OnWallDestroyed";
     public static string WALL_DAMAGED = "OnWallDamaged";
     public static string WALL_REPAIRED = "OnWallRepaired";
+    #endregion
+
+    #region POI
     #endregion
 
     public static Dictionary<string, SignalMethod[]> orderedSignalExecution = new Dictionary<string, SignalMethod[]>() {

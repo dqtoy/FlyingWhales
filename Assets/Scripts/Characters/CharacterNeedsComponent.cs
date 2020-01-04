@@ -256,7 +256,7 @@ public class CharacterNeedsComponent {
         doNotGetTired = Math.Max(doNotGetTired, 0);
     }
     public bool PlanTirednessRecoveryActions(Character character) {
-        if (character.doNotDisturb) { //character.doNotDisturb > 0 || !character.canWitness
+        if (character.doNotDisturb || !character.canWitness) { //character.doNotDisturb > 0 || !character.canWitness
             return false;
         }
         if (this.isExhausted) {
@@ -403,7 +403,7 @@ public class CharacterNeedsComponent {
         doNotGetLonely = Math.Max(doNotGetLonely, 0);
     }
     public bool PlanHappinessRecoveryActions(Character character) {
-        if (character.doNotDisturb) { //character.doNotDisturb > 0 || !character.canWitness
+        if (character.doNotDisturb || !character.canWitness) { //character.doNotDisturb > 0 || !character.canWitness
             return false;
         }
         if (this.isForlorn) {
@@ -594,7 +594,7 @@ public class CharacterNeedsComponent {
         }
     }
     public bool PlanFullnessRecoveryActions(Character character) {
-        if (character.doNotDisturb) { //character.doNotDisturb > 0 || !character.canWitness
+        if (character.doNotDisturb || !character.canWitness) { //character.doNotDisturb > 0 || !character.canWitness
             return false;
         }
         if (this.isStarving) {

@@ -1170,6 +1170,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
             action?.Invoke();
         }
     }
+    public void OnSeizeOtherCharacter(Character otherCharacter) {
+        RemoveHostileInRange(otherCharacter);
+        RemoveAvoidInRange(otherCharacter);
+    }
     public bool IsLethalCombatForTarget(Character character) {
         if (lethalCharacters.ContainsKey(character)) {
             return lethalCharacters[character];

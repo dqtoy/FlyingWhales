@@ -199,8 +199,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public int currentHP => this._currentHP;
     public int attackSpeed => _characterClass.baseAttackSpeed; //in milliseconds, The lower the amount the faster the attack rate
     public Minion minion => _minion;
-    //public int doNotDisturb => _doNotDisturb;
-    public bool doNotDisturb => !canMove || !canWitness;
+    public bool doNotDisturb => _doNotDisturb > 0; //!canMove || !canWitness
     public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.CHARACTER;
     public LocationGridTile gridTileLocation {
         get {
@@ -477,6 +476,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         Messenger.AddListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
         Messenger.AddListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
+        Messenger.AddListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
         needsComponent.SubscribeToSignals();
     }
     public virtual void UnsubscribeSignals() {
@@ -493,6 +493,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         Messenger.RemoveListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
         Messenger.RemoveListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
+        Messenger.RemoveListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
         needsComponent.UnsubscribeToSignals();
     }
     #endregion
@@ -2189,10 +2190,16 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
     }
 
-    internal void OnOtherCharacterDied(Character characterThatDied) {
+    public void OnOtherCharacterDied(Character characterThatDied) {
         if (characterThatDied.id != this.id) {
             //RemoveRelationship(characterThatDied); //do not remove relationships when dying
             marker.OnOtherCharacterDied(characterThatDied);
+        }
+    }
+    private void OnSeizeOtherCharacter(Character otherCharacter) {
+        if (otherCharacter.id != this.id) {
+            //RemoveRelationship(characterThatDied); //do not remove relationships when dying
+            marker.OnSeizeOtherCharacter(otherCharacter);
         }
     }
     public void AdjustDoNotDisturb(int amount) {
@@ -5616,6 +5623,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (marker != null) {
             DestroyMarker();
         }
+        Messenger.Broadcast(Signals.ON_SEIZE_CHARACTER, this);
     }
     public void OnUnseizePOI(LocationGridTile tileLocation) {
         needsComponent.OnCharacterArrivedAtLocation(tileLocation.structure.location.coreTile.region);
