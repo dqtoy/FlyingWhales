@@ -523,14 +523,15 @@ public class CharacterInfoUI : UIMenu {
     }
     private void ShowRelationshipData(Character target) {
         int opinionOfOther = target.opinionComponent.GetTotalOpinion(activeCharacter);
-        string summary = target.name;
+        string summary = activeCharacter.name + "'s opinion of " + target.name;
         summary += "\n---------------------";
         Dictionary<string, int> opinions = activeCharacter.opinionComponent.GetOpinion(target);
         foreach (KeyValuePair<string, int> kvp in opinions) {
             summary += "\n" + kvp.Key + ": " + "<color=" + OpinionColor(kvp.Value) + ">" + GetOpinionText(kvp.Value) + "</color>";
         }
         summary += "\n---------------------";
-        summary += "\nTotal: <color=" + OpinionColor(opinionOfOther) + ">" + GetOpinionText(activeCharacter.opinionComponent.GetTotalOpinion(target)) + "</color> <color=" + OpinionColor(opinionOfOther) + ">(" + GetOpinionText(opinionOfOther) + ")</color>";
+        summary += "\nTotal: <color=" + OpinionColor(opinionOfOther) + ">" + GetOpinionText(activeCharacter.opinionComponent.GetTotalOpinion(target)) + "</color>";
+        summary += "\n" + target.name + "'s opinion of " + activeCharacter.name + ": <color=" + OpinionColor(opinionOfOther) + ">" + GetOpinionText(opinionOfOther) + "</color>";
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void HideRelationshipData() {

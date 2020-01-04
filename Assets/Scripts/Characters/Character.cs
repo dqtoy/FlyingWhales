@@ -3093,10 +3093,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 //Do not set as responsible character for unconscious trait if character is hit unintentionally
                 //So, only set responsible character if currentClosestHostile is this character, meaning, this character is really the target
                 responsibleCharacter = characterThatAttacked;
-                if (!state.allCharactersThatDegradedRel.Contains(this)) {
-                    RelationshipManager.Instance.RelationshipDegradation(characterThatAttacked, this);
-                    state.AddCharacterThatDegradedRel(this);
-                }
+                //if (!state.allCharactersThatDegradedRel.Contains(this)) {
+                //    RelationshipManager.Instance.RelationshipDegradation(characterThatAttacked, this);
+                //    state.AddCharacterThatDegradedRel(this);
+                //}
             }
         }
 
