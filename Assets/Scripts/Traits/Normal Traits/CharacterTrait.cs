@@ -90,7 +90,7 @@ namespace Traits {
                 //}
             }
             if (targetPOI is SpecialToken) {
-                if (characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST) {
+                if (characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Beast") == null /*characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST*/) {
                     SpecialToken token = targetPOI as SpecialToken;
                     if (token.CanBePickedUpNormallyUponVisionBy(characterThatWillDoJob)
                     && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP)) {

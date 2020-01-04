@@ -607,7 +607,9 @@ public class RegionInfoUI : UIMenu {
                     int remaining = activeRegion.mainLandmark.invasionTicks -
                                     activeRegion.demonicInvasionData.currentDuration;
                     item.SetAsUninteractableUntil(remaining);
-                }    
+                } else {
+                    item.SetInteractable(PlayerManager.Instance.player.currentAreaBeingInvaded == null);
+                }
             }
         }
     }

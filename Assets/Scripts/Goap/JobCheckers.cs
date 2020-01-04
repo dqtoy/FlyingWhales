@@ -14,7 +14,7 @@ public partial class InteractionManager {
             //if nocturnal get after midnight
             time = TIME_IN_WORDS.AFTER_MIDNIGHT;
         }
-        return character.role.roleType != CHARACTER_ROLE.LEADER &&
+        return character.traitContainer.GetNormalTrait<Trait>("Leader") != null /*character.role.roleType != CHARACTER_ROLE.LEADER*/ &&
                GameManager.GetTimeInWordsOfTick(GameManager.Instance.tick) ==
                time; //Only non-leaders can take move out job, and it must also be in the morning time.
     }
@@ -23,22 +23,28 @@ public partial class InteractionManager {
         return furnitureToCreate.CanBeCraftedBy(character);
     }
     public bool CanDoDestroyProfaneJob(Character character) {
-        return character.role.roleType == CHARACTER_ROLE.SOLDIER;
+        return character.traitContainer.GetNormalTrait<Trait>("Combatant") != null;
+        //return character.role.roleType == CHARACTER_ROLE.SOLDIER;
     }
     public bool CanDoCombatJob(Character character) {
-        return character.role.roleType == CHARACTER_ROLE.SOLDIER;
+        return character.traitContainer.GetNormalTrait<Trait>("Combatant") != null;
+        //return character.role.roleType == CHARACTER_ROLE.SOLDIER;
     }
     public bool CanDoObtainFoodOutsideJob(Character character) {
-        return character.role.roleType == CHARACTER_ROLE.CIVILIAN;
+        return character.traitContainer.GetNormalTrait<Trait>("Worker") != null;
+        //return character.role.roleType == CHARACTER_ROLE.CIVILIAN;
     }
     public bool CanDoObtainSupplyOutsideJob(Character character) {
-        return character.role.roleType == CHARACTER_ROLE.CIVILIAN;
+        return character.traitContainer.GetNormalTrait<Trait>("Worker") != null;
+        //return character.role.roleType == CHARACTER_ROLE.CIVILIAN;
     }
     public bool CanDoHolyIncantationJob(Character character) {
-        return character.role.roleType == CHARACTER_ROLE.ADVENTURER;
+        return character.traitContainer.GetNormalTrait<Trait>("Combatant") != null;
+        //return character.role.roleType == CHARACTER_ROLE.ADVENTURER;
     }
     public bool CanDoExploreJob(Character character) {
-        return character.role.roleType == CHARACTER_ROLE.ADVENTURER;
+        return character.traitContainer.GetNormalTrait<Trait>("Combatant") != null;
+        //return character.role.roleType == CHARACTER_ROLE.ADVENTURER;
     }
     public bool CanDoCleanseRegionJob(Character character) {
         return character.traitContainer.GetNormalTrait<Trait>("Purifier") != null;
@@ -57,7 +63,8 @@ public partial class InteractionManager {
         return character.characterClass.isNonCombatant == false || character.characterClass.className.Equals("Noble") || character.characterClass.className.Equals("Leader");
     }
     public bool CanDoJudgementJob(Character character) {
-        return character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER;
+        return character.traitContainer.GetNormalTrait<Trait>("Royalty") != null;
+        //return character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER;
     }
     public bool CanDoSabotageFactionJob(Character character) {
         return character.traitContainer.GetNormalTrait<Trait>("Cultist") != null;
@@ -67,7 +74,8 @@ public partial class InteractionManager {
         return SPECIAL_TOKEN.TOOL.CanBeCraftedBy(character);
     }
     public bool CanDoObtainSupplyJob(Character character) {
-        return character.role.roleType == CHARACTER_ROLE.SOLDIER;
+        return character.traitContainer.GetNormalTrait<Trait>("Combatant") != null;
+        //return character.role.roleType == CHARACTER_ROLE.SOLDIER;
     }
     public bool CanCharacterTakeBuildGoddessStatueJob(Character character) {
         return character.traitContainer.GetNormalTrait<Trait>("Builder") != null;
@@ -79,9 +87,10 @@ public partial class InteractionManager {
     public bool CanTakeBuryJob(Character character) {
         if (!character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL) && character.isAtHomeRegion &&
             character.isPartOfHomeFaction
-            && character.role.roleType != CHARACTER_ROLE.BEAST) {
-            return character.role.roleType == CHARACTER_ROLE.SOLDIER ||
-                   character.role.roleType == CHARACTER_ROLE.CIVILIAN;
+            && character.traitContainer.GetNormalTrait<Trait>("Beast") == null /*character.role.roleType != CHARACTER_ROLE.BEAST*/) {
+            return character.traitContainer.GetNormalTrait<Trait>("Worker", "Combatant") != null;
+            //return character.role.roleType == CHARACTER_ROLE.SOLDIER ||
+            //       character.role.roleType == CHARACTER_ROLE.CIVILIAN;
         }
         return false;
     }
@@ -146,7 +155,7 @@ public partial class InteractionManager {
     public bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter) {
         if (character.isAtHomeRegion && !character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL) &&
             character.traitContainer.GetNormalTrait<Trait>("Coward") == null && character.currentRegion.area.prison != null) {
-            return character.role.roleType == CHARACTER_ROLE.SOLDIER &&
+            return character.traitContainer.GetNormalTrait<Trait>("Combatant") != null /*character.role.roleType == CHARACTER_ROLE.SOLDIER*/ &&
                    character.opinionComponent.GetRelationshipEffectWith(targetCharacter) !=
                    RELATIONSHIP_EFFECT.POSITIVE;
         }
@@ -157,17 +166,19 @@ public partial class InteractionManager {
             && character.faction.GetRelationshipWith(targetCharacter.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE 
             && character.isAtHomeRegion
             && character.isPartOfHomeFaction && character.currentRegion.area.prison != null
-            && (character.role.roleType == CHARACTER_ROLE.SOLDIER ||
-            character.role.roleType == CHARACTER_ROLE.CIVILIAN ||
-            character.role.roleType == CHARACTER_ROLE.ADVENTURER)
+            //&& (character.role.roleType == CHARACTER_ROLE.SOLDIER ||
+            //character.role.roleType == CHARACTER_ROLE.CIVILIAN ||
+            //character.role.roleType == CHARACTER_ROLE.ADVENTURER)
+            && character.traitContainer.GetNormalTrait<Trait>("Worker", "Combatant") != null
             && character.opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE 
             && !character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)
             && targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null;
     }
     public bool CanCharacterTakeRepairJob(Character character) {
-        return character.role.roleType == CHARACTER_ROLE.SOLDIER ||
-               character.role.roleType == CHARACTER_ROLE.CIVILIAN ||
-               character.role.roleType == CHARACTER_ROLE.ADVENTURER;
+        return character.traitContainer.GetNormalTrait<Trait>("Worker", "Combatant") != null;
+        //return character.role.roleType == CHARACTER_ROLE.SOLDIER ||
+        //       character.role.roleType == CHARACTER_ROLE.CIVILIAN ||
+        //       character.role.roleType == CHARACTER_ROLE.ADVENTURER;
     }
     public bool CanCharacterTakeReplaceTileObjectJob(Character character, JobQueueItem job) {
         object[] otherData = (job as GoapPlanJob).otherData[INTERACTION_TYPE.REPLACE_TILE_OBJECT];
@@ -182,11 +193,12 @@ public partial class InteractionManager {
     public bool CanCharacterTakeRestrainedFeedJob(Character sourceCharacter, Character character) {
         if (sourceCharacter.currentRegion.IsResident(character)) {
             if (!character.isFactionless) {
-                return character.role.roleType == CHARACTER_ROLE.SOLDIER ||
-                       character.role.roleType == CHARACTER_ROLE.CIVILIAN;
+                return character.traitContainer.GetNormalTrait<Trait>("Worker", "Combatant") != null;
+                //return character.role.roleType == CHARACTER_ROLE.SOLDIER ||
+                //       character.role.roleType == CHARACTER_ROLE.CIVILIAN;
             }
             else {
-                return character.role.roleType != CHARACTER_ROLE.BEAST &&
+                return character.traitContainer.GetNormalTrait<Trait>("Beast") == null /*character.role.roleType != CHARACTER_ROLE.BEAST*/ &&
                        sourceCharacter.currentStructure.structureType.IsOpenSpace();
             }
         }
@@ -198,9 +210,9 @@ public partial class InteractionManager {
                RELATIONSHIP_EFFECT.NEGATIVE;
     }
     public bool CanCharacterTakeKnockoutJob(Character character, Character targetCharacter) {
-        return character.role.roleType == CHARACTER_ROLE.SOLDIER ||
-               character.role.roleType ==
-               CHARACTER_ROLE.ADVENTURER; // && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE)
+        return character.traitContainer.GetNormalTrait<Trait>("Combatant") != null;
+        //return character.role.roleType == CHARACTER_ROLE.SOLDIER ||
+        //       character.role.roleType == CHARACTER_ROLE.ADVENTURER; // && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE)
     }
     public bool CanCharacterTakeBuildJob(Character character) {
         return character.traitContainer.GetNormalTrait<Trait>("Builder") != null;

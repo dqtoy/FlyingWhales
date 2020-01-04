@@ -151,6 +151,7 @@ public static class Signals {
     public static string TRANSFER_ENGAGE_TO_FLEE_LIST = "TransferEngageToFleeList"; //Parameters (Character character)
     public static string CHARACTER_CLASS_CHANGE = "CharacterClassChange";
     public static string ON_SEIZE_CHARACTER = "OnSeizeCharacter";
+    public static string ON_SEIZE_TILE_OBJECT = "OnSeizeTileObject";
 
     /// <summary>
     /// Parameters (Character characterWithVision, Character characterRemovedFromVision)

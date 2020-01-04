@@ -477,6 +477,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.AddListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
         Messenger.AddListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
         Messenger.AddListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
+        Messenger.AddListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
         needsComponent.SubscribeToSignals();
     }
     public virtual void UnsubscribeSignals() {
@@ -494,6 +495,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.RemoveListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
         Messenger.RemoveListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
         Messenger.RemoveListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
+        Messenger.RemoveListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
         needsComponent.UnsubscribeToSignals();
     }
     #endregion
@@ -964,6 +966,14 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     public bool RemoveJobTargetingThis(JobQueueItem job) {
         return allJobsTargetingThis.Remove(job);
+    }
+    public void ForceCancelAllJobsTargettingThisCharacter() {
+        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
+            JobQueueItem job = allJobsTargetingThis[i];
+            if (job.ForceCancelJob()) {
+                i--;
+            }
+        }
     }
     public void ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE jobType) {
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
@@ -2201,6 +2211,19 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (otherCharacter.id != this.id) {
             //RemoveRelationship(characterThatDied); //do not remove relationships when dying
             marker.OnSeizeOtherCharacter(otherCharacter);
+        }
+    }
+    private void OnSeizeTileObject(TileObject tileObject) {
+        if(currentActionNode != null && currentActionNode.poiTarget == tileObject) {
+            StopCurrentActionNode();
+        }
+        Character[] currentUsers = tileObject.users;
+        if (currentUsers != null && currentUsers.Length > 0) {
+            for (int i = 0; i < currentUsers.Length; i++) {
+                currentUsers[i].StopCurrentActionNode();
+                tileObject.RemoveUser(currentUsers[i]);
+                //i--;
+            }
         }
     }
     public void AdjustDoNotDisturb(int amount) {
@@ -5625,6 +5648,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             marker.StopMovement();
         }
         Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
+        //ForceCancelAllJobsTargettingThisCharacter();
         marker.ClearTerrifyingObjects();
         needsComponent.OnCharacterLeftLocation(currentRegion);
 

@@ -28,7 +28,7 @@ public class Psychopathy : PlayerJobAction {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.race == RACE.SKELETON || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST) {
+        if (targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.GetNormalTrait<Trait>("Beast") != null /*targetCharacter.role.roleType == CHARACTER_ROLE.BEAST*/) {
             return false;
         }
         if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Serial Killer") != null) {
@@ -45,7 +45,7 @@ public class Psychopathy : PlayerJobAction {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.race == RACE.SKELETON || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST) {
+        if (targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.GetNormalTrait<Trait>("Beast") != null /*targetCharacter.role.roleType == CHARACTER_ROLE.BEAST*/) {
             return false;
         }
         if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Serial Killer") != null) {

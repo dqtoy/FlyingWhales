@@ -140,7 +140,7 @@ public class Watch : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             Character target = poiTarget as Character;
-            return actor != target && target.role.roleType != CHARACTER_ROLE.BEAST;
+            return actor != target && target.traitContainer.GetNormalTrait<Trait>("Beast") == null; // target.role.roleType != CHARACTER_ROLE.BEAST;
         }
         return false;
     }
