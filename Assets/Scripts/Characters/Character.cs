@@ -4041,7 +4041,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         jobQueue.AddJobInQueue(job);
     }
     public Character GetParalyzedOrCatatonicCharacterToCheckOut() {
-        List<Character> charactersWithRel = relationshipContainer.relationships.Keys.Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList();
+        //List<Character> charactersWithRel = relationshipContainer.relationships.Keys.Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList();
+        List<Character> charactersWithRel = opinionComponent.charactersWithOpinion;
         if (charactersWithRel.Count > 0) {
             List<Character> positiveCharactersWithParalyzedOrCatatonic = new List<Character>();
             for (int i = 0; i < charactersWithRel.Count; i++) {
@@ -4049,11 +4050,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 if (opinionComponent.GetRelationshipEffectWith(character) == RELATIONSHIP_EFFECT.POSITIVE) {
                     Trait trait = character.traitContainer.GetNormalTrait<Trait>("Paralyzed", "Catatonic");
                     if (trait != null) {
-                        if (trait is Paralyzed && (trait as Paralyzed).charactersThatKnow.Contains(this)) {
-                            positiveCharactersWithParalyzedOrCatatonic.Add(character);
-                        } else if (trait is Catatonic && (trait as Catatonic).charactersThatKnow.Contains(this)) {
-                            positiveCharactersWithParalyzedOrCatatonic.Add(character);
-                        }
+                        positiveCharactersWithParalyzedOrCatatonic.Add(character);
+                        //if (trait is Paralyzed && (trait as Paralyzed).charactersThatKnow.Contains(this)) {
+                        //    positiveCharactersWithParalyzedOrCatatonic.Add(character);
+                        //} else if (trait is Catatonic && (trait as Catatonic).charactersThatKnow.Contains(this)) {
+                        //    positiveCharactersWithParalyzedOrCatatonic.Add(character);
+                        //}
                     }
                 }
             }
@@ -5554,7 +5556,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if(gridTileLocation != null && characterThatScreamed.gridTileLocation != null) {
             float dist = gridTileLocation.GetDistanceTo(characterThatScreamed.gridTileLocation);
             PrintLogIfActive(name + " distance to " + characterThatScreamed.name + " is " + dist);
-            float distanceChecker = 5f;
+            float distanceChecker = 10f;
             //if (currentStructure != characterThatScreamed.currentStructure) {
             //    distanceChecker = 2f;
             //}

@@ -78,7 +78,6 @@ namespace Traits {
                             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                             return true;
                         }
- 
                     } 
                     //else {
                     //    if (InteractionManager.Instance.CanCharacterTakeRemoveIllnessesJob(characterThatWillDoJob, targetCharacter, currentJob)) {

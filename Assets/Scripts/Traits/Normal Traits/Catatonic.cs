@@ -7,7 +7,7 @@ namespace Traits {
     public class Catatonic : Trait {
 
         public Character owner { get; private set; }
-        public List<Character> charactersThatKnow { get; private set; }
+        //public List<Character> charactersThatKnow { get; private set; }
 
         public Catatonic() {
             name = "Catatonic";
@@ -16,7 +16,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.ticksPerDay;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED };
-            charactersThatKnow = new List<Character>();
+            //charactersThatKnow = new List<Character>();
             hindersMovement = true;
             hindersWitness = true;
         }
@@ -70,11 +70,11 @@ namespace Traits {
         }
         #endregion
 
-        public void AddCharacterThatKnows(Character character) {
-            if (!charactersThatKnow.Contains(character)) {
-                charactersThatKnow.Add(character);
-            }
-        }
+        //public void AddCharacterThatKnows(Character character) {
+        //    if (!charactersThatKnow.Contains(character)) {
+        //        charactersThatKnow.Add(character);
+        //    }
+        //}
 
         private void CheckTrait() {
             if (!owner.CanPlanGoap()) {
@@ -191,25 +191,25 @@ namespace Traits {
         #endregion
     }
 
-    public class SaveDataCatatonic : SaveDataTrait {
-        public List<int> charactersThatKnow;
+    //public class SaveDataCatatonic : SaveDataTrait {
+    //    public List<int> charactersThatKnow;
 
-        public override void Save(Trait trait) {
-            base.Save(trait);
-            Catatonic catatonic = trait as Catatonic;
-            charactersThatKnow = new List<int>();
-            for (int i = 0; i < catatonic.charactersThatKnow.Count; i++) {
-                charactersThatKnow.Add(catatonic.charactersThatKnow[i].id);
-            }
-        }
+    //    public override void Save(Trait trait) {
+    //        base.Save(trait);
+    //        Catatonic catatonic = trait as Catatonic;
+    //        charactersThatKnow = new List<int>();
+    //        for (int i = 0; i < catatonic.charactersThatKnow.Count; i++) {
+    //            charactersThatKnow.Add(catatonic.charactersThatKnow[i].id);
+    //        }
+    //    }
 
-        public override Trait Load(ref Character responsibleCharacter) {
-            Trait trait = base.Load(ref responsibleCharacter);
-            Catatonic catatonic = trait as Catatonic;
-            for (int i = 0; i < charactersThatKnow.Count; i++) {
-                catatonic.AddCharacterThatKnows(CharacterManager.Instance.GetCharacterByID(charactersThatKnow[i]));
-            }
-            return trait;
-        }
-    }
+    //    public override Trait Load(ref Character responsibleCharacter) {
+    //        Trait trait = base.Load(ref responsibleCharacter);
+    //        Catatonic catatonic = trait as Catatonic;
+    //        for (int i = 0; i < charactersThatKnow.Count; i++) {
+    //            catatonic.AddCharacterThatKnows(CharacterManager.Instance.GetCharacterByID(charactersThatKnow[i]));
+    //        }
+    //        return trait;
+    //    }
+    //}
 }
