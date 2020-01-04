@@ -298,6 +298,7 @@ public class Minion {
     public void StartInvasionProtocol(Area area) {
         AddPendingTraits();
         Messenger.AddListener(Signals.TICK_STARTED, PerTickInvasion);
+        Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.AddListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, character.OnCharacterEndedState);
@@ -306,6 +307,7 @@ public class Minion {
     public void StopInvasionProtocol(Area area) {
         if(area != null && assignedRegion != null && assignedRegion.area == area) {
             Messenger.RemoveListener(Signals.TICK_STARTED, PerTickInvasion);
+            Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
             Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
             Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
             Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, character.OnCharacterEndedState);
@@ -329,6 +331,10 @@ public class Minion {
         //    return;
         //}
         //GoToWorkArea();
+    }
+    private void OnTickEnded() {
+        character.stateComponent.OnTickEnded();
+        character.EndTickPerformJobs();
     }
     private void GoToWorkArea() {
         LocationStructure structure = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
