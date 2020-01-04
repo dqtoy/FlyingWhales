@@ -337,9 +337,9 @@ namespace Traits {
                 }
                 return SERIAL_VICTIM_TYPE.ROLE;
             } else {
-                if (chance == 0) {
-                    return SERIAL_VICTIM_TYPE.TRAIT;
-                }
+                //if (chance == 0) {
+                //    return SERIAL_VICTIM_TYPE.TRAIT;
+                //}
                 return SERIAL_VICTIM_TYPE.STATUS;
             }
         }
@@ -389,12 +389,15 @@ namespace Traits {
                 GENDER gender = Utilities.GetRandomEnumValue<GENDER>();
                 return gender.ToString();
             } else if (victimType == SERIAL_VICTIM_TYPE.ROLE) {
-                CHARACTER_ROLE[] roles = new CHARACTER_ROLE[] { CHARACTER_ROLE.CIVILIAN, CHARACTER_ROLE.SOLDIER, CHARACTER_ROLE.ADVENTURER };
-                return roles[UnityEngine.Random.Range(0, roles.Length)].ToString();
-            } else if (victimType == SERIAL_VICTIM_TYPE.TRAIT) {
+                //CHARACTER_ROLE[] roles = new CHARACTER_ROLE[] { CHARACTER_ROLE.CIVILIAN, CHARACTER_ROLE.SOLDIER, CHARACTER_ROLE.ADVENTURER };
+                string[] roles = new string[] { "Worker", "Combatant", "Royalty" };
+                return roles[UnityEngine.Random.Range(0, roles.Length)];
+            } 
+            else if (victimType == SERIAL_VICTIM_TYPE.TRAIT) {
                 string[] traits = new string[] { "Builder", "Criminal", "Drunk", "Sick", "Lazy", "Hardworking" }; //, "Curious"
                 return traits[UnityEngine.Random.Range(0, traits.Length)];
-            } else if (victimType == SERIAL_VICTIM_TYPE.STATUS) {
+            }
+            else if (victimType == SERIAL_VICTIM_TYPE.STATUS) {
                 string[] statuses = new string[] { "Hungry", "Tired", "Lonely" };
                 return statuses[UnityEngine.Random.Range(0, statuses.Length)];
             }
@@ -417,6 +420,8 @@ namespace Traits {
             string newText = text + "s";
             if (text.EndsWith("man")) {
                 newText = text.Replace("man", "men");
+            }else if (text.EndsWith("ty")) {
+                newText = text.Replace("ty", "ties");
             }
             return newText;
         }
@@ -429,7 +434,7 @@ namespace Traits {
             if (victimType == SERIAL_VICTIM_TYPE.GENDER) {
                 return victimDesc == character.gender.ToString();
             } else if (victimType == SERIAL_VICTIM_TYPE.ROLE) {
-                return victimDesc == character.role.roleType.ToString();
+                return character.traitContainer.GetNormalTrait<Trait>(victimDesc) != null;
             } else if (victimType == SERIAL_VICTIM_TYPE.TRAIT) {
                 return character.traitContainer.GetNormalTrait<Trait>(victimDesc) != null;
             } else if (victimType == SERIAL_VICTIM_TYPE.STATUS) {

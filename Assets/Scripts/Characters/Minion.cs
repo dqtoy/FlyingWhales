@@ -316,13 +316,19 @@ public class Minion {
         if (character.isDead) {
             return;
         }
-        if (!character.IsInOwnParty() || character.ownParty.icon.isTravelling || character.doNotDisturb) {
-            return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
+        if (!character.isInCombat) {
+            character.HPRecovery(0.0025f);
+            if (character.IsInOwnParty() && character.marker != null && !character.doNotDisturb && !character.ownParty.icon.isTravelling) {
+                GoToWorkArea();
+            }
         }
-        if (character.stateComponent.currentState != null /*|| character.stateComponent.stateToDo != null*/ || character.marker == null) {
-            return;
-        }
-        GoToWorkArea();
+        //if (!character.IsInOwnParty() || character.ownParty.icon.isTravelling || character.doNotDisturb) {
+        //    return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
+        //}
+        //if (character.stateComponent.currentState != null /*|| character.stateComponent.stateToDo != null*/ || character.marker == null) {
+        //    return;
+        //}
+        //GoToWorkArea();
     }
     private void GoToWorkArea() {
         LocationStructure structure = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);

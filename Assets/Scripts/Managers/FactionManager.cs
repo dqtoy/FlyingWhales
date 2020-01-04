@@ -137,6 +137,9 @@ public class FactionManager : MonoBehaviour {
      * Will return an error if there are no more available emblems.
      * */
     internal Sprite GenerateFactionEmblem(Faction faction) {
+        if(usedEmblems.Count == _factionEmblems.Count) {
+            usedEmblems.Clear();
+        }
         for (int i = 0; i < _factionEmblems.Count; i++) {
             Sprite currSprite = _factionEmblems[i];
             if (usedEmblems.Contains(currSprite)) {
