@@ -226,6 +226,7 @@ public class RegionInfoUI : UIMenu {
             //simulate as if clicking the invade button while inside the are map
             InnerMapManager.Instance.ShowAreaMap(activeRegion.area);
             StartSettlementInvasion(activeRegion.area);
+            LoadActions();
         } else {
             chosenMinionToInvade = null;
             UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), onClickAction: ChooseMinionForInvasion, validityChecker: CanMinionInvade,
@@ -607,9 +608,10 @@ public class RegionInfoUI : UIMenu {
                     int remaining = activeRegion.mainLandmark.invasionTicks -
                                     activeRegion.demonicInvasionData.currentDuration;
                     item.SetAsUninteractableUntil(remaining);
-                } else {
-                    item.SetInteractable(PlayerManager.Instance.player.currentAreaBeingInvaded == null);
-                }
+                } 
+                //else {
+                //    item.SetInteractable(PlayerManager.Instance.player.currentAreaBeingInvaded != null);
+                //}
             }
         }
     }
