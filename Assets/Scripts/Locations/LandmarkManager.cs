@@ -238,7 +238,7 @@ public partial class LandmarkManager : MonoBehaviour {
         LOCATION_TYPE settlementType = Utilities.RandomSettlementType();
         int citizenCount = Random.Range(WorldConfigManager.Instance.minCitizenCount, WorldConfigManager.Instance.maxCitizenCount + 1);
         Area settlementArea = CreateNewArea(settlementRegion, settlementType, citizenCount);
-        BaseLandmark settlementLandmark = CreateNewLandmarkOnTile(settlementRegion.coreTile, LANDMARK_TYPE.PALACE, false);
+        BaseLandmark settlementLandmark = CreateNewLandmarkOnTile(settlementRegion.coreTile, LANDMARK_TYPE.VILLAGE, false);
         Faction faction = FactionManager.Instance.CreateNewFaction();
         if (settlementType == LOCATION_TYPE.ELVEN_SETTLEMENT) {
             //faction.SetInitialFactionLeaderClass("Queen");

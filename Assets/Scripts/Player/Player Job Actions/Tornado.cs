@@ -51,6 +51,12 @@ public class Tornado : PlayerJobAction {
         List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, radius, 0, true);
         InnerMapManager.Instance.UnhighlightTiles(tiles);
     }
+    public override bool CanTarget(LocationGridTile tile) {
+        return tile.structure != null;
+    }
+    protected override bool CanPerformActionTowards(LocationGridTile tile) {
+        return tile.structure != null;
+    }
     #endregion
 }
 
