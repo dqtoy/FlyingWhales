@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TheFingers : BaseLandmark {
+public class Goader : BaseLandmark {
     public int currentTick { get; private set; }
     public int duration { get; private set; }
     public bool hasBeenActivated { get; private set; }
 
-    public TheFingers(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) { }
+    public Goader(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) { }
 
-    public TheFingers(HexTile location, SaveDataLandmark data) : base(location, data) { }
+    public Goader(HexTile location, SaveDataLandmark data) : base(location, data) { }
 
     public void Activate() {
         hasBeenActivated = true;

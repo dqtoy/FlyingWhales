@@ -2015,9 +2015,9 @@ public class PlayerUI : MonoBehaviour {
     }
     public void OnToggleGoader(bool isOn) {
         if (isOn) {
-            ShowDemonicLandmarkUI(LANDMARK_TYPE.THE_FINGERS);
+            ShowDemonicLandmarkUI(LANDMARK_TYPE.GOADER);
         } else {
-            if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_FINGERS && !demonicToggleGroup.AnyTogglesOn()) {
+            if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.GOADER && !demonicToggleGroup.AnyTogglesOn()) {
                 UIManager.Instance.regionInfoUI.CloseMenu();
             }
         }
@@ -2060,7 +2060,7 @@ public class PlayerUI : MonoBehaviour {
         anvilToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.THE_ANVIL);
         eyeToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.THE_EYE);
         needleToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.THE_NEEDLES);
-        fingerToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.THE_FINGERS);
+        fingerToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.GOADER);
         cryptToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.THE_CRYPT);
         kennelToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.THE_KENNEL);
         profaneToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.THE_PROFANE);
@@ -2091,7 +2091,7 @@ public class PlayerUI : MonoBehaviour {
                 case LANDMARK_TYPE.THE_NEEDLES:
                     needleToggle.isOn = true;
                     break;
-                case LANDMARK_TYPE.THE_FINGERS:
+                case LANDMARK_TYPE.GOADER:
                     fingerToggle.isOn = true;
                     break;
                 case LANDMARK_TYPE.THE_CRYPT:

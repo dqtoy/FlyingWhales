@@ -60,7 +60,7 @@ public class PlayerManager : MonoBehaviour {
             allInterventionAbilitiesData.Add(allInterventionAbilities[i], System.Activator.CreateInstance(System.Type.GetType(typeName)) as PlayerJobActionData);
         }
 
-        allLandmarksThatCanBeBuilt = new LANDMARK_TYPE[] { LANDMARK_TYPE.THE_ANVIL, LANDMARK_TYPE.THE_EYE , LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.THE_CRYPT, LANDMARK_TYPE.THE_SPIRE, LANDMARK_TYPE.THE_NEEDLES, LANDMARK_TYPE.THE_PROFANE, LANDMARK_TYPE.THE_PIT, LANDMARK_TYPE.THE_FINGERS };
+        allLandmarksThatCanBeBuilt = new LANDMARK_TYPE[] { LANDMARK_TYPE.THE_ANVIL, LANDMARK_TYPE.THE_EYE , LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.THE_CRYPT, LANDMARK_TYPE.THE_SPIRE, LANDMARK_TYPE.THE_NEEDLES, LANDMARK_TYPE.THE_PROFANE, LANDMARK_TYPE.THE_PIT, LANDMARK_TYPE.GOADER };
         //Unit Selection
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);

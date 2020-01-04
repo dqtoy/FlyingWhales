@@ -68,6 +68,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
         this.transform.SetParent(tile.parentMap.objectsParent);
         Vector3 worldPos = tile.centeredWorldLocation;
         this.transform.position = worldPos;
+        pos = transform.localPosition;
 
         GoToRandomTileInRadius();
         _expiryKey = SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(_tornado.durationInTicks), Expire, this);
@@ -146,6 +147,8 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
 
     #region Monobehaviours
     private void Update() {
+        pos = transform.localPosition;
+        
         if (destinationTile == null) {
             return;
         }
@@ -165,8 +168,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
             destinationTile = null;
             GoToRandomTileInRadius();
         }
-        pos = transform.localPosition;
-        
+
         for (int i = 0; i < _damagablesInTornado.Count; i++) {
             IDamageable damageable = _damagablesInTornado[i];
             if (damageable.mapObjectVisual != null && damageable.CanBeDamaged()) {

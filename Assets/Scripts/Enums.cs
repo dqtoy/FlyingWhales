@@ -220,7 +220,7 @@ public enum LANDMARK_TYPE {
     THE_CRYPT = 49,
     THE_KENNEL = 50,
     THE_ANVIL = 51,
-    THE_FINGERS = 52,
+    GOADER = 52,
     THE_EYE = 53,
     THE_PROFANE = 54,
     THE_NEEDLES = 55,
@@ -1828,7 +1828,7 @@ public static class Extensions {
             case LANDMARK_TYPE.THE_CRYPT:
             case LANDMARK_TYPE.THE_KENNEL:
             case LANDMARK_TYPE.THE_ANVIL:
-            case LANDMARK_TYPE.THE_FINGERS:
+            case LANDMARK_TYPE.GOADER:
             case LANDMARK_TYPE.THE_EYE:
             case LANDMARK_TYPE.THE_PROFANE:
             case LANDMARK_TYPE.THE_NEEDLES:
