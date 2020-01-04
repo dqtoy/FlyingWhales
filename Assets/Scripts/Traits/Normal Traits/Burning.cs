@@ -89,7 +89,7 @@ namespace Traits {
                         int currentPriorityValue = characterThatWillDoJob.GetCurrentPriorityValue();
                         if (characterThatWillDoJob != traitOwner
                             && (characterThatWillDoJob.currentActionNode == null || characterThatWillDoJob.currentActionNode.action.goapType != INTERACTION_TYPE.WATCH)
-                            && currentPriorityValue > InteractionManager.Instance.GetInitialPriority(JOB_TYPE.WATCH)) {
+                            && currentPriorityValue > JOB_TYPE.WATCH.GetJobTypePriority()) {
                             summary += "\nWill watch because current priority value is  " + currentPriorityValue.ToString();
                             Character nearestDouser = sourceOfBurning.GetNearestDouserFrom(characterThatWillDoJob);
                             if (nearestDouser != null && nearestDouser.stateComponent.currentState is DouseFireState) {

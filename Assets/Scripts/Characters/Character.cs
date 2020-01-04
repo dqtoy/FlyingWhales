@@ -2979,15 +2979,15 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //    PrintLogIfActive(summary);
         //    return;
         //}
-        int watchJobPriority = InteractionManager.Instance.GetInitialPriority(JOB_TYPE.WATCH);
-        JobQueueItem currJob = currentJob;
-        if (currJob != null) {
-            if (watchJobPriority >= currJob.priority) {
-                summary += "\n-Current action job " + currJob.name + " priority: " + currJob.priority + " is higher or equal than Watch Job priority " + watchJobPriority + ", will not watch...";
-                PrintLogIfActive(summary);
-                return;
-            }
-        }
+        //int watchJobPriority = JOB_TYPE.WATCH.GetJobTypePriority();
+        //JobQueueItem currJob = currentJob;
+        //if (currJob != null) {
+        //    if (watchJobPriority >= currJob.priority) {
+        //        summary += "\n-Current action job " + currJob.name + " priority: " + currJob.priority + " is higher or equal than Watch Job priority " + watchJobPriority + ", will not watch...";
+        //        PrintLogIfActive(summary);
+        //        return;
+        //    }
+        //}
         //if (stateComponent.currentState != null && stateComponent.currentState.job != null && stateComponent.currentState.job.priority <= watchJobPriority) {
         //    summary += "\n-Current state job " + stateComponent.currentState.job.name + " priority: " + stateComponent.currentState.job.priority + " is higher or equal than Watch Job priority " + watchJobPriority + ", will not watch...";
         //    PrintLogIfActive(summary);
@@ -3029,6 +3029,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //    StopCurrentAction(false, "Have something important to do");
         //    AdjustIsWaitingForInteraction(-1);
         //}
+        if (!jobQueue.IsJobTopTypePriorityWhenAdded(JOB_TYPE.WATCH)) {
+            summary += "\n-Watch job will not be top priority in queue in when added, will not watch...";
+            return;
+        }
         summary += "\nWatch event created.";
         PrintLogIfActive(summary);
         ActualGoapNode node = null;
@@ -5577,7 +5581,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         string log = GameManager.Instance.TodayLogString() + name + " heard the scream of " + characterThatScreamed.name + ", reacting...";
 
         bool canReact = true;
-        int reactJobPriority = InteractionManager.Instance.GetInitialPriority(JOB_TYPE.REACT_TO_SCREAM);
+        int reactJobPriority = JOB_TYPE.REACT_TO_SCREAM.GetJobTypePriority();
         if (stateComponent.currentState != null && stateComponent.currentState.job != null && stateComponent.currentState.job.priority <= reactJobPriority) {
             canReact = false;
         } 

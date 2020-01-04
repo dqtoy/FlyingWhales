@@ -1620,6 +1620,127 @@ public static class Extensions {
                 return false;
         }
     }
+    public static bool IsAnInterruptionJobType(this JOB_TYPE jobType) {
+        return jobType == JOB_TYPE.INTERRUPTION || jobType == JOB_TYPE.DEATH || jobType == JOB_TYPE.COMBAT;
+    }
+    public static int GetJobTypePriority(this JOB_TYPE jobType) {
+        int priority = 0;
+        switch (jobType) {
+            case JOB_TYPE.STOP_TORNADO:
+            case JOB_TYPE.INTERRUPTION:
+                priority = 2;
+                break;
+            case JOB_TYPE.COMBAT:
+                priority = 3;
+                break;
+            case JOB_TYPE.TRIGGER_FLAW:
+                priority = 4;
+                break;
+            case JOB_TYPE.MISC:
+            case JOB_TYPE.RETURN_HOME:
+            case JOB_TYPE.CORRUPT_CULTIST:
+            case JOB_TYPE.DESTROY_FOOD:
+            case JOB_TYPE.DESTROY_SUPPLY:
+            case JOB_TYPE.SABOTAGE_FACTION:
+            case JOB_TYPE.SCREAM:
+            case JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM:
+                //case JOB_TYPE.INTERRUPTION:
+                priority = 5;
+                break;
+            case JOB_TYPE.TANTRUM:
+            case JOB_TYPE.CLAIM_REGION:
+            case JOB_TYPE.CLEANSE_REGION:
+            case JOB_TYPE.ATTACK_DEMONIC_REGION:
+            case JOB_TYPE.ATTACK_NON_DEMONIC_REGION:
+            case JOB_TYPE.INVADE_REGION:
+                priority = 6;
+                break;
+            // case JOB_TYPE.IDLE:
+            //     priority = 7;
+            //     break;
+            case JOB_TYPE.DEATH:
+            case JOB_TYPE.BERSERK:
+            case JOB_TYPE.STEAL:
+            case JOB_TYPE.RESOLVE_CONFLICT:
+            case JOB_TYPE.DESTROY:
+                priority = 10;
+                break;
+            case JOB_TYPE.KNOCKOUT:
+            case JOB_TYPE.SEDUCE:
+            case JOB_TYPE.UNDERMINE_ENEMY:
+                priority = 20;
+                break;
+            case JOB_TYPE.HUNGER_RECOVERY_STARVING:
+            case JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED:
+                priority = 30;
+                break;
+            case JOB_TYPE.APPREHEND:
+            case JOB_TYPE.DOUSE_FIRE:
+                priority = 40;
+                break;
+            case JOB_TYPE.REMOVE_TRAIT:
+                priority = 50;
+                break;
+            case JOB_TYPE.RESTRAIN:
+                priority = 60;
+                break;
+            case JOB_TYPE.HAPPINESS_RECOVERY_FORLORN:
+                priority = 100;
+                break;
+            case JOB_TYPE.FEED:
+                priority = 110;
+                break;
+            case JOB_TYPE.BURY:
+            case JOB_TYPE.REPAIR:
+            case JOB_TYPE.WATCH:
+            case JOB_TYPE.DESTROY_PROFANE_LANDMARK:
+            case JOB_TYPE.PERFORM_HOLY_INCANTATION:
+            case JOB_TYPE.PRAY_GODDESS_STATUE:
+            case JOB_TYPE.REACT_TO_SCREAM:
+                priority = 120;
+                break;
+            case JOB_TYPE.BREAK_UP:
+                priority = 130;
+                break;
+            case JOB_TYPE.PATROL:
+                priority = 170;
+                break;
+            case JOB_TYPE.JUDGEMENT:
+                priority = 220;
+                break;
+            case JOB_TYPE.SUICIDE:
+            case JOB_TYPE.HAUL:
+                priority = 230;
+                break;
+            case JOB_TYPE.CRAFT_OBJECT:
+            case JOB_TYPE.PRODUCE_FOOD:
+            case JOB_TYPE.PRODUCE_WOOD:
+            case JOB_TYPE.PRODUCE_STONE:
+            case JOB_TYPE.PRODUCE_METAL:
+            case JOB_TYPE.TAKE_PERSONAL_FOOD:
+            case JOB_TYPE.DROP:
+            case JOB_TYPE.INSPECT:
+            case JOB_TYPE.PLACE_BLUEPRINT:
+            case JOB_TYPE.BUILD_BLUEPRINT:
+            case JOB_TYPE.OBTAIN_PERSONAL_ITEM:
+                priority = 240;
+                break;
+            case JOB_TYPE.HUNGER_RECOVERY:
+            case JOB_TYPE.TIREDNESS_RECOVERY:
+            case JOB_TYPE.HAPPINESS_RECOVERY:
+                priority = 270;
+                break;
+            case JOB_TYPE.STROLL:
+            case JOB_TYPE.IDLE:
+                priority = 290;
+                break;
+            case JOB_TYPE.IMPROVE:
+            case JOB_TYPE.EXPLORE:
+                priority = 300;
+                break;
+        }
+        return priority;
+    }
     #endregion
 
     #region Summons
