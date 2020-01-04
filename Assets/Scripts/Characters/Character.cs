@@ -2849,14 +2849,14 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                                 if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
                                     CreateWatchEvent(null, targetCombatState, targetCharacter);
                                 } else {
-                                    if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, false, false, isLethal: targetCharacter.marker.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
+                                    List<RELATIONSHIP_TYPE> rels = relationshipContainer.GetRelationshipDataWith(targetCharacter.currentAlterEgo)?.relationships.OrderByDescending(x => (int) x).ToList() ?? null; //so that the first relationship to be returned is the one with higher importance.
+                                    if (rels.Count > 0 && marker.AddHostileInRange(targetCombatState.currentClosestHostile, false, false, isLethal: targetCharacter.marker.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
                                         if (!marker.avoidInRange.Contains(targetCharacter)) {
                                             //Do process combat behavior first for this character, if the current closest hostile
                                             //of the combat state of this character is also the targetCombatState.currentClosestHostile
                                             //Then that's only when we apply the join combat log and notif
                                             //Because if not, it means that this character is already in combat with someone else, and thus
                                             //should not product join combat log anymore
-                                            List<RELATIONSHIP_TYPE> rels = relationshipContainer.GetRelationshipDataWith(targetCharacter.currentAlterEgo)?.relationships.OrderByDescending(x => (int) x).ToList() ?? null; //so that the first relationship to be returned is the one with higher importance.
                                             Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
                                             joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                                             joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);

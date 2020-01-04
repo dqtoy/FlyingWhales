@@ -5,7 +5,7 @@ using UnityEngine;
 public class ResolveCombat : GoapAction {
 
     public ResolveCombat() : base(INTERACTION_TYPE.RESOLVE_COMBAT) {
-        actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
+        actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Hostile_Icon;
         doesNotStopTargetCharacter = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
@@ -42,8 +42,11 @@ public class ResolveCombat : GoapAction {
     #region Preconditions
     private bool IsCombatFinished(Character actor, IPointOfInterest target, object[] otherData) {
         if (target is Character) {
-            Character targetCharcater = target as Character;
-            if (targetCharcater.canMove == false || targetCharcater.canWitness == false) {
+            Character targetCharacter = target as Character;
+            //target character must be
+            // - unable to move
+            //to consider the combat as finished
+            if (targetCharacter.canMove == false) {
                 return true;
             }
         } else {

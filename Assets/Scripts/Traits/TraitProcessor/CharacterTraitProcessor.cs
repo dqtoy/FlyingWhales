@@ -70,7 +70,6 @@ namespace Traits {
                 character.needsComponent.AdjustDoNotGetTired(1);
                 character.needsComponent.AdjustDoNotGetHungry(1);
                 character.needsComponent.AdjustDoNotGetLonely(1);
-                character.DecreaseCanMove();
             } else if (trait.name == "Charmed") {
                 character.needsComponent.AdjustDoNotGetLonely(1);
             } else if (trait.name == "Daydreaming") {
@@ -178,7 +177,6 @@ namespace Traits {
                 character.needsComponent.AdjustDoNotGetTired(-1);
                 character.needsComponent.AdjustDoNotGetHungry(-1);
                 character.needsComponent.AdjustDoNotGetLonely(-1);
-                character.IncreaseCanMove();
             } else if (trait.name == "Charmed") {
                 character.needsComponent.AdjustDoNotGetLonely(-1);
             } else if (trait.name == "Daydreaming") {

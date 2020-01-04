@@ -238,6 +238,7 @@ public class ActualGoapNode {
             }
             if (targetPOIToGoTo == null) {
                 if (targetTile == actor.gridTileLocation) {
+                    actor.marker.StopMovement();
                     actor.PerformGoapAction();
                 } else {
                     actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
