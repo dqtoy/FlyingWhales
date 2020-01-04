@@ -570,8 +570,8 @@ public class RegionInfoUI : UIMenu {
                             item.SetAsUninteractableUntil(remaining);
                         }
                         break;
-                    case LANDMARK_TYPE.THE_FINGERS:
-                        TheFingers fingers = activeRegion.mainLandmark as TheFingers;
+                    case LANDMARK_TYPE.GOADER:
+                        Goader fingers = activeRegion.mainLandmark as Goader;
                         item = AddNewAction("Create Faction", null, () => fingersUI.OnClickCreate(fingers));
                         item = AddNewAction("Force Leave Faction", null, () => fingersUI.OnClickForceLeaveFaction());
                         item = AddNewAction("Force Join Faction", null, () => fingersUI.OnClickForceJoinFaction());

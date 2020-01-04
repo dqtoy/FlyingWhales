@@ -372,7 +372,7 @@ MonoBehaviour:
       animation: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
-  - landmarkTypeString: The Fingers
+  - landmarkTypeString: Goader
     landmarkType: 52
     minimumTileCount: 1
     buildDuration: 48
