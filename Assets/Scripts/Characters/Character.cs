@@ -3441,7 +3441,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
         }
         Messenger.Broadcast(Signals.ADJUSTED_HP, this);
-        if (IsHealthCriticallyLow()) {
+        if (amount < 0 && IsHealthCriticallyLow()) {
             Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "critically low health");
         }
         if (triggerDeath && previous != this._currentHP) {
