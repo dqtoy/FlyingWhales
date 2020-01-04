@@ -100,8 +100,9 @@ namespace Traits {
             Log log = new Log(GameManager.Instance.Today(), "Trait", "MusicLover", "heard_guitar");
             log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(guitarPlayer, guitarPlayer.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            log.AddLogToInvolvedObjects();
-            PlayerManager.Instance.player.ShowNotificationFrom(log, owner, guitarPlayer);
+            owner.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            //log.AddLogToInvolvedObjects();
+            //PlayerManager.Instance.player.ShowNotificationFrom(log, owner, guitarPlayer);
         }
         private void OnHearSinging(Character singer) {
             owner.traitContainer.AddTrait(owner, "Satisfied");
