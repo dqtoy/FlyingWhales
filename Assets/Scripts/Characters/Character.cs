@@ -2055,6 +2055,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //CheckApprehendRelatedJobsOnLeaveLocation();
             //CancelOrUnassignRemoveTraitRelatedJobs();
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
+            CancelAllJobsExceptForCurrent(false);
             marker.ClearTerrifyingObjects();
             ExecuteLeaveAreaActions();
             needsComponent.OnCharacterLeftLocation(currentRegion);

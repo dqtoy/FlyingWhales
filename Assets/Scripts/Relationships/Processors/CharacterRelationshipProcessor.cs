@@ -16,7 +16,7 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
         string relString = Utilities.NormalizeStringUpperCaseFirstLetters(relType.ToString());
 
         character1.opinionComponent.AdjustOpinion(character2, relString, 0);
-        character2.opinionComponent.AdjustOpinion(character1, relString, 0);
+        //character2.opinionComponent.AdjustOpinion(character1, relString, 0);
 
         switch (relType) {
             case RELATIONSHIP_TYPE.LOVER:
@@ -32,16 +32,16 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
                     }
                 }
                 character1.opinionComponent.AdjustOpinion(character2, relString, 30);
-                character2.opinionComponent.AdjustOpinion(character1, relString, 30);
+                //character2.opinionComponent.AdjustOpinion(character1, relString, 30);
                 break;
             case RELATIONSHIP_TYPE.EX_LOVER:
                 character1.opinionComponent.AdjustOpinion(character2, relString, -25);
-                character2.opinionComponent.AdjustOpinion(character1, relString, - 25);
+                //character2.opinionComponent.AdjustOpinion(character1, relString, -25);
                 break;
             case RELATIONSHIP_TYPE.RELATIVE:
             case RELATIONSHIP_TYPE.PARAMOUR:
                 character1.opinionComponent.AdjustOpinion(character2, relString, 20);
-                character2.opinionComponent.AdjustOpinion(character1, relString, 20);
+                //character2.opinionComponent.AdjustOpinion(character1, relString, 20);
                 break;
             default:
                 break;
@@ -53,7 +53,7 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
         Character character2 = (rel2 as AlterEgoData).owner;
         string relString = Utilities.NormalizeStringUpperCaseFirstLetters(relType.ToString());
         character1.opinionComponent.RemoveOpinion(character2, relString);
-        character2.opinionComponent.RemoveOpinion(character1, relString);
+        //character2.opinionComponent.RemoveOpinion(character1, relString);
         //switch (relType) {
         //    case RELATIONSHIP_TYPE.EX_LOVER:
         //        break;
