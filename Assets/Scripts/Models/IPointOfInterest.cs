@@ -21,8 +21,6 @@ public interface IPointOfInterest : ITraitable {
     bool isDead { get; }
     Character isBeingCarriedBy { get; }
     void SetGridTileLocation(LocationGridTile tile);
-    void AddAdvertisedAction(INTERACTION_TYPE actionType);
-    void RemoveAdvertisedAction(INTERACTION_TYPE actionType);
     void AddJobTargetingThis(JobQueueItem job);
     bool RemoveJobTargetingThis(JobQueueItem job);
     bool HasJobTargetingThis(params JOB_TYPE[] jobType);

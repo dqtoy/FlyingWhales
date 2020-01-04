@@ -445,6 +445,9 @@ public class CharacterInfoUI : UIMenu {
         summary = $"{summary}{("\nDo Not Get Tired: " + activeCharacter.needsComponent.doNotGetTired.ToString())}";
         summary = $"{summary}{("\nDo Not Get Lonely: " + activeCharacter.needsComponent.doNotGetLonely.ToString())}";
         summary = $"{summary}{("\nDo Not Recover HP: " + activeCharacter.doNotRecoverHP.ToString())}";
+        summary = $"{summary}{("\nFullness: " + activeCharacter.needsComponent.fullness + "/" + CharacterNeedsComponent.FULLNESS_DEFAULT)}";
+        summary = $"{summary}{("\nTiredness: " + activeCharacter.needsComponent.tiredness + "/" + CharacterNeedsComponent.TIREDNESS_DEFAULT)}";
+        summary = $"{summary}{("\nHappiness: " + activeCharacter.needsComponent.happiness + "/" + CharacterNeedsComponent.HAPPINESS_DEFAULT)}";
         summary = $"{summary}{("\nFullness Time: " + (activeCharacter.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.fullnessForcedTick)))}";
         summary = $"{summary}{("\nTiredness Time: " + (activeCharacter.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.tirednessForcedTick)))}";
         summary = $"{summary}{("\nRemaining Sleep Ticks: " + activeCharacter.needsComponent.currentSleepTicks.ToString())}";

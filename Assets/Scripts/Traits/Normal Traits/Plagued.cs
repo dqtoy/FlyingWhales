@@ -104,8 +104,8 @@ namespace Traits {
             }
             return hasCreatedJob;
         }
-        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
-            base.ExecuteActionAfterEffects(action, goapNode);
+        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
+            base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
             if (goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT) {
                 IPointOfInterest target;
                 IPointOfInterest infector;
