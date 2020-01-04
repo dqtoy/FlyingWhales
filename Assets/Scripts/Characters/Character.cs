@@ -3838,7 +3838,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count <= 0
             && !marker.hasFleePath && stateComponent.currentState == null && IsInOwnParty();
     }
-    protected void EndTickPerformJobs() {
+    public void EndTickPerformJobs() {
         if (CanPerformEndTickJobs()) {
             if (!jobQueue.jobsInQueue[0].ProcessJob()) {
                 PerformTopPriorityJob();
