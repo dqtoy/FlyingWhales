@@ -209,7 +209,7 @@ public enum LANDMARK_TYPE {
     WORKSHOP = 4,
     MINES = 8,
     FARM = 17,
-    PALACE = 20,
+    VILLAGE = 20,
     BANDIT_CAMP = 24,
     MAGE_TOWER = 25,
     TEMPLE = 30,
