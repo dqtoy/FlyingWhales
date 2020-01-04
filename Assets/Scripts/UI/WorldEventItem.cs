@@ -73,8 +73,8 @@ public class WorldEventItem : PooledObject {
         UIManager.Instance.ShowYesNoConfirmation("Send minion to interfere.", "Are you sure you want to send " + character.name + " to interfere with the " + e.name + " event happening at " + region.name + "?", () => Interfere(character), showCover: false, layer: 26);
     }
     private void Interfere(Character character) {
-        (UIManager.Instance.regionInfoUI.activeRegion.mainLandmark as TheEye).StartInterference(region, character); //NOTE: This assumes that the Region Info UI is showing when the event item is clicked.
-        UIManager.Instance.HideObjectPicker();
+        // (UIManager.Instance.regionInfoUI.activeRegion.mainLandmark as TheEye).StartInterference(region, character); //NOTE: This assumes that the Region Info UI is showing when the event item is clicked.
+        // UIManager.Instance.HideObjectPicker();
     }
     public void SetMainButtonState(bool state) {
         mainBtn.interactable = state;

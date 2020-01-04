@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Traits {
     public class Kleptomaniac : Trait {
         public List<Character> noItemCharacters { get; private set; }
-        private Character owner;
+        private Character traitOwner;
 
         private int _happinessDecreaseRate;
         public Kleptomaniac() {
@@ -23,8 +23,8 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable sourceCharacter) {
             //(sourceCharacter as Character).RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "afflicted", null, "Kleptomania");
-            owner = sourceCharacter as Character;
-            owner.needsComponent.AdjustHappinessDecreaseRate(_happinessDecreaseRate);
+            traitOwner = sourceCharacter as Character;
+            traitOwner.needsComponent.AdjustHappinessDecreaseRate(_happinessDecreaseRate);
             base.OnAddTrait(sourceCharacter);
             //owner.AddInteractionType(INTERACTION_TYPE.STEAL);
             Messenger.AddListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
@@ -32,7 +32,7 @@ namespace Traits {
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             base.OnRemoveTrait(sourceCharacter, removedBy);
             //owner.RemoveInteractionType(INTERACTION_TYPE.STEAL);
-            owner.needsComponent.AdjustHappinessDecreaseRate(-_happinessDecreaseRate);
+            traitOwner.needsComponent.AdjustHappinessDecreaseRate(-_happinessDecreaseRate);
             Messenger.RemoveListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
         }
         public override void OnDeath(Character character) {
@@ -64,7 +64,7 @@ namespace Traits {
         public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is SpecialToken) {
                 SpecialToken token = targetPOI as SpecialToken;
-                if ((token.characterOwner == null || token.characterOwner != characterThatWillDoJob) && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetPOI) && token.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+                if (token.characterOwner != null && token.characterOwner != characterThatWillDoJob && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetPOI) && token.mapObjectState == MAP_OBJECT_STATE.BUILT) {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.STEAL, INTERACTION_TYPE.STEAL, targetPOI, characterThatWillDoJob);
                     job.SetIsStealth(true);
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
@@ -95,24 +95,34 @@ namespace Traits {
                         character.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN);
                     }
 
-                    //This is just a quick fix, need to figure out a way to ensure that the character will steal.
                     List<SpecialToken> choices = new List<SpecialToken>();
                     for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
                         Character otherCharacter = character.currentRegion.charactersAtLocation[i];
-                        if (otherCharacter == character && character.opinionComponent.GetRelationshipEffectWith(otherCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
-                            continue; //skip
-                        }
                         for (int j = 0; j < otherCharacter.items.Count; j++) {
                             SpecialToken currItem = otherCharacter.items[j];
-                            choices.Add(currItem);
+                            if (CanBeStolen(currItem)) {
+                                choices.Add(currItem);    
+                            }
+                        }
+                    }
+                    foreach (KeyValuePair<STRUCTURE_TYPE,List<LocationStructure>> pair in character.currentRegion.structures) {
+                        for (int i = 0; i < pair.Value.Count; i++) {
+                            LocationStructure structure = pair.Value[i];
+                            for (int j = 0; j < structure.itemsInStructure.Count; j++) {
+                                SpecialToken item = structure.itemsInStructure[j];
+                                if (CanBeStolen(item)) {
+                                    choices.Add(item);
+                                }
+                            }
                         }
                     }
                     if (choices.Count > 0) {
                         IPointOfInterest target = Utilities.GetRandomElement(choices);
                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEAL, target, character);
                         character.jobQueue.AddJobInQueue(job);
+                    } else {
+                        return "no_target";
                     }
-                    
                 } else {
                     heartbroken.TriggerBrokenhearted();
                 }
@@ -129,7 +139,7 @@ namespace Traits {
         public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
             base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
             if (action == INTERACTION_TYPE.STEAL) {
-                owner.needsComponent.AdjustHappiness(6000);
+                traitOwner.needsComponent.AdjustHappiness(6000);
             }
         }
         public override void ExecuteExpectedEffectModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref List<GoapEffect> effects) {
@@ -157,6 +167,18 @@ namespace Traits {
             if (Utilities.IsEven(GameManager.days)) {
                 ClearNoItemsList();
             }
+        }
+
+        private bool CanBeStolen(SpecialToken item) {
+            if (item.carriedByCharacter != null) {
+                if (item.carriedByCharacter == this.traitOwner || item.carriedByCharacter.opinionComponent.GetRelationshipEffectWith(this.traitOwner) == RELATIONSHIP_EFFECT.POSITIVE) {
+                    return false;
+                }
+                return true;
+            } else {
+                return item.characterOwner != null && item.characterOwner != traitOwner;
+            }
+            
         }
     }
 

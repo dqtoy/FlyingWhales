@@ -268,6 +268,9 @@ public class CursorManager : MonoBehaviour {
             foreach (var go in raycastResults) {
                 if (go.gameObject.CompareTag("Character Marker") || go.gameObject.CompareTag("Map Object")) {
                     BaseMapObjectVisual visual = go.gameObject.GetComponent<BaseMapObjectVisual>();
+                    if (visual.IsInvisible()) {
+                        continue; //skip
+                    }
                     //assume that all objects that have the specified tags have the BaseMapObjectVisual class
                     allVisuals.Add(visual);
                 }

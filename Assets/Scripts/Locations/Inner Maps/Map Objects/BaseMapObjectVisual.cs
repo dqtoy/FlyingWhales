@@ -62,6 +62,12 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     /// </summary>
     /// <returns>True or false</returns>
     public abstract bool IsMapObjectMenuVisible();
+    public bool IsInvisible() {
+        if (objectVisual != null) {
+            return Mathf.Approximately(objectVisual.color.a, 0f);    
+        }
+        return false;
+    }
     #endregion
 
     #region Pointer Functions

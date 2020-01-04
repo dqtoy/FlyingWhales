@@ -314,7 +314,8 @@ MonoBehaviour:
     landmarkType: 49
     minimumTileCount: 1
     buildDuration: 48
-    description: Each Crypt expands the player's Artifact slots by 1.
+    description: 'Allows the Ruinarch to use the artifact in this region. Requires:
+      Artifact Feature.'
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -334,7 +335,8 @@ MonoBehaviour:
     landmarkType: 50
     minimumTileCount: 1
     buildDuration: 48
-    description: Each Kennel expands the player's Summon slots by 1.
+    description: 'Allows the Ruinarch to command monsters in the region. Requires:
+      Summon Feature.'
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -374,7 +376,7 @@ MonoBehaviour:
     landmarkType: 52
     minimumTileCount: 1
     buildDuration: 48
-    description: The Ruinarch may assign a minion The Fingers to spawn Chaos Events.
+    description: The Ruinarch may interfere with factions at the Fingers.
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
