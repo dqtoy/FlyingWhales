@@ -14,6 +14,7 @@ namespace Traits {
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
+            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT };
         }
 
 
@@ -23,7 +24,6 @@ namespace Traits {
             if (addedTo is IPointOfInterest) {
                 IPointOfInterest poi = addedTo as IPointOfInterest;
                 owner = poi;
-                poi.AddAdvertisedAction(INTERACTION_TYPE.EAT);
                 if (poi is Mushroom) {
                     fullnessProvided = 520;
                 } else if (poi is EdiblePlant) {
@@ -36,13 +36,13 @@ namespace Traits {
 
             }
         }
-        public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
-            base.OnRemoveTrait(removedFrom, removedBy);
-            if (removedFrom is IPointOfInterest) {
-                IPointOfInterest poi = removedFrom as IPointOfInterest;
-                poi.RemoveAdvertisedAction(INTERACTION_TYPE.EAT);
-            }
-        }
+        //public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+        //    base.OnRemoveTrait(removedFrom, removedBy);
+        //    if (removedFrom is IPointOfInterest) {
+        //        IPointOfInterest poi = removedFrom as IPointOfInterest;
+        //        poi.RemoveAdvertisedAction(INTERACTION_TYPE.EAT);
+        //    }
+        //}
         public override void ExecuteActionPreEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
             base.ExecuteActionPreEffects(action, goapNode);
             if (action == INTERACTION_TYPE.EAT) {
@@ -114,7 +114,7 @@ namespace Traits {
             if (owner is EdiblePlant) {
                 return "Plant";
             } else if (owner is Table) {
-                return "None";
+                return "Table";
             } else {
                 return "Meat";
             }
