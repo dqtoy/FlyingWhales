@@ -31,10 +31,17 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
                         character1.homeRegion.area.AssignCharacterToDwellingInArea(character1, character2.homeStructure);
                     }
                 }
+                character1.opinionComponent.AdjustOpinion(character2, relString, 30);
+                character2.opinionComponent.AdjustOpinion(character1, relString, 30);
                 break;
             case RELATIONSHIP_TYPE.EX_LOVER:
-                character1.opinionComponent.AdjustOpinion(character2, "Ex Lover", -25);
-                character2.opinionComponent.AdjustOpinion(character1, "Ex Lover", -25);
+                character1.opinionComponent.AdjustOpinion(character2, relString, -25);
+                character2.opinionComponent.AdjustOpinion(character1, relString, - 25);
+                break;
+            case RELATIONSHIP_TYPE.RELATIVE:
+            case RELATIONSHIP_TYPE.PARAMOUR:
+                character1.opinionComponent.AdjustOpinion(character2, relString, 20);
+                character2.opinionComponent.AdjustOpinion(character1, relString, 20);
                 break;
             default:
                 break;
@@ -44,15 +51,16 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
     public void OnRelationshipRemoved(Relatable rel1, Relatable rel2, RELATIONSHIP_TYPE relType) {
         Character character1 = (rel1 as AlterEgoData).owner;
         Character character2 = (rel2 as AlterEgoData).owner;
+        string relString = Utilities.NormalizeStringUpperCaseFirstLetters(relType.ToString());
+        character1.opinionComponent.RemoveOpinion(character2, relString);
+        character2.opinionComponent.RemoveOpinion(character1, relString);
+        //switch (relType) {
+        //    case RELATIONSHIP_TYPE.EX_LOVER:
+        //        break;
+        //    default:
 
-        switch (relType) {
-            case RELATIONSHIP_TYPE.EX_LOVER:
-                character1.opinionComponent.RemoveOpinion(character2, "Ex-Lover");
-                character2.opinionComponent.RemoveOpinion(character1, "Ex-Lover");
-                break;
-            default:
-                break;
-        }
+        //        break;
+        //}
     }
 
     private void CreateRelationshipLog(string key, Character character1, Character character2) {

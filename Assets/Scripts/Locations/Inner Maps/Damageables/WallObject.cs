@@ -85,6 +85,12 @@ public class WallObject : MapObject<WallObject>, ITraitable {
     }
     #endregion
 
+    #region General
+    public bool CanBeDamaged() {
+        return mapObjectState != MAP_OBJECT_STATE.UNBUILT;
+    }
+    #endregion
+
     #region Area Map Object
     protected override void CreateAreaMapGameObject() {
         mapVisual = _visual;
@@ -95,7 +101,12 @@ public class WallObject : MapObject<WallObject>, ITraitable {
     }
     #endregion
 
-    public bool CanBeDamaged() {
-        return mapObjectState != MAP_OBJECT_STATE.UNBUILT;
+    #region ITraitable
+    public void AddAdvertisedAction(INTERACTION_TYPE actionType) {
+        //Not Applicable
     }
+    public void RemoveAdvertisedAction(INTERACTION_TYPE actionType) {
+        //Not Applicable
+    }
+    #endregion
 }

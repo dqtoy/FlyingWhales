@@ -13,6 +13,8 @@ namespace Traits {
         Transform worldObject { get; }
 
         void CreateTraitContainer();
+        void AddAdvertisedAction(INTERACTION_TYPE actionType);
+        void RemoveAdvertisedAction(INTERACTION_TYPE actionType);
     }
 }
 

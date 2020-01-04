@@ -126,8 +126,8 @@ namespace Traits {
                 cost = 10000;//Utilities.rng.Next(5, 10);//5,46
             }
         }
-        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
-            base.ExecuteActionAfterEffects(action, goapNode);
+        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
+            base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
             if (action == INTERACTION_TYPE.STEAL) {
                 owner.needsComponent.AdjustHappiness(6000);
             }

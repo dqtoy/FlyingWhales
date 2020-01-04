@@ -17,7 +17,6 @@ namespace Traits {
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT };
         }
 
-
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
@@ -57,8 +56,8 @@ namespace Traits {
                 goapNode.actor.needsComponent.AdjustFullness(fullnessProvided);
             }
         }
-        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
-            base.ExecuteActionAfterEffects(action, goapNode);
+        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
+            base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
             if (action == INTERACTION_TYPE.EAT) {
                 OnDoneEating(goapNode);
             }
@@ -111,7 +110,7 @@ namespace Traits {
         }
 
         private string GetEdibleType() {
-            if (owner is EdiblePlant) {
+            if (owner is EdiblePlant || owner is Mushroom) {
                 return "Plant";
             } else if (owner is Table) {
                 return "Table";
