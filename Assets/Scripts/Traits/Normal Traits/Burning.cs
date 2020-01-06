@@ -30,7 +30,9 @@ namespace Traits {
                 if (addedTo is Character) {
                     Character character = addedTo as Character;
                     character.AdjustDoNotRecoverHP(1);
-                    CreateJobsOnEnterVisionBasedOnTrait(character, character);
+                    if(character.canMove && character.canWitness) {
+                        CreateJobsOnEnterVisionBasedOnTrait(character, character);
+                    }
                 } else {
                     IPointOfInterest obj = addedTo as IPointOfInterest;
                     obj.SetPOIState(POI_STATE.INACTIVE);
@@ -187,8 +189,17 @@ namespace Traits {
         private void PerTick() {
 
             //Every tick, a Burning tile, object or character has a 15% chance to spread to an adjacent flammable tile, flammable character, 
-            //flammable object or the object in the same tile. 
-            if (Random.Range(0, 100) < 5) {
+            //flammable object or the object in the same tile.
+            if(PlayerManager.Instance.player.seizeComponent.seizedPOI == owner) {
+                //Temporary fix only, if the burning object is seized, spreading of fire should not trigger
+                return;
+            }
+            if(owner.gridTileLocation == null) {
+                Messenger.RemoveListener(Signals.TICK_ENDED, PerTick);
+                //Temporary fix only, if the burning object has no longer have a tile location (presumably destroyed), spreading of fire should not trigger, and remove listener for per tick
+                return;
+            }
+            if (Random.Range(0, 100) < 25) { //5
                 List<ITraitable> choices = new List<ITraitable>();
                 LocationGridTile origin = owner.gridTileLocation;
                 choices.AddRange(origin.GetTraitablesOnTileWithTrait("Flammable"));

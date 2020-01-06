@@ -120,7 +120,32 @@ public class Zap : PlayerJobAction {
 }
 
 public class ZapData : PlayerJobActionData {
+    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.ZAP;
     public override string name { get { return "Zap"; } }
     public override string description { get { return "Stops a character from his/her action and temporarily paralyzes him/her."; } }
     public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.SABOTAGE; } }
+
+    #region Overrides
+    public override void ActivateAbility(IPointOfInterest targetPOI) {
+        targetPOI.traitContainer.AddTrait(targetPOI, "Zapped");
+        if (UIManager.Instance.characterInfoUI.isShowing) {
+            UIManager.Instance.characterInfoUI.UpdateThoughtBubble();
+        }
+        if(targetPOI is Character) {
+            GameManager.Instance.CreateElectricEffectAt(targetPOI as Character);
+        }
+
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_intervention");
+        log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(null, "zapped", LOG_IDENTIFIER.STRING_1);
+        log.AddLogToInvolvedObjects();
+        PlayerManager.Instance.player.ShowNotification(log);
+    }
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        if (targetCharacter.isDead || !targetCharacter.IsInOwnParty() || targetCharacter.traitContainer.GetNormalTrait<Trait>("Zapped") != null) {
+            return false;
+        }
+        return base.CanPerformAbilityTowards(targetCharacter);
+    }
+    #endregion
 }

@@ -101,9 +101,60 @@ public class TileObjectInfoUI : UIMenu {
     #region Actions
     protected override void LoadActions() {
         Utilities.DestroyChildren(actionsTransform);
-        ActionItem item = AddNewAction("Seize", null, () => PlayerManager.Instance.player.seizeComponent.SeizePOI(activeTileObject));
+
+        ActionItem destroyItem = AddNewAction("Destroy", null, Destroy);
+        destroyItem.SetInteractable(CanBeDestroyed());
+
+        ActionItem ignitedItem = AddNewAction("Ignite", null, Ignite);
+        ignitedItem.SetInteractable(CanBeIgnited());
+
+        ActionItem poisonItem = AddNewAction("Poison", null, Poison);
+        poisonItem.SetInteractable(CanBePoisoned());
+
+        ActionItem animateItem = AddNewAction("Animate", null, Animate);
+
+        ActionItem seizeItem = AddNewAction("Seize", null, () => PlayerManager.Instance.player.seizeComponent.SeizePOI(activeTileObject));
         bool isInteractable = PlayerManager.Instance.player.seizeComponent.seizedPOI == null && activeTileObject.mapVisual != null && (activeTileObject.isBeingCarriedBy != null || activeTileObject.gridTileLocation != null);
-        item.SetInteractable(isInteractable);
+        seizeItem.SetInteractable(isInteractable);
+    }
+    #endregion
+
+    #region Destroy
+    protected void Destroy() {
+        TileObject tileObject = activeTileObject;
+        CloseMenu();
+        PlayerManager.Instance.allInterventionAbilitiesData[INTERVENTION_ABILITY.DESTROY].ActivateAbility(tileObject);
+    }
+    protected bool CanBeDestroyed() {
+        return PlayerManager.Instance.allInterventionAbilitiesData[INTERVENTION_ABILITY.DESTROY].CanPerformAbilityTowards(activeTileObject);
+    }
+    #endregion
+
+    #region Ignite
+    protected void Ignite() {
+        PlayerManager.Instance.allInterventionAbilitiesData[INTERVENTION_ABILITY.IGNITE].ActivateAbility(activeTileObject);
+        //Find better way to load only the button that was clicked
+        LoadActions();
+    }
+    protected bool CanBeIgnited() {
+        return PlayerManager.Instance.allInterventionAbilitiesData[INTERVENTION_ABILITY.IGNITE].CanPerformAbilityTowards(activeTileObject);
+    }
+    #endregion
+
+    #region Ignite
+    protected void Poison() {
+        PlayerManager.Instance.allInterventionAbilitiesData[INTERVENTION_ABILITY.SPOIL].ActivateAbility(activeTileObject);
+        //Find better way to load only the button that was clicked
+        LoadActions();
+    }
+    protected bool CanBePoisoned() {
+        return PlayerManager.Instance.allInterventionAbilitiesData[INTERVENTION_ABILITY.SPOIL].CanPerformAbilityTowards(activeTileObject);
+    }
+    #endregion
+
+    #region Animate
+    protected void Animate() {
+        //Animate
     }
     #endregion
 }

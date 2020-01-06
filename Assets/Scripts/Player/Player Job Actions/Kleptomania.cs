@@ -104,7 +104,26 @@ public class Kleptomania : PlayerJobAction {
 }
 
 public class KleptomaniaData : PlayerJobActionData {
+    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.KLEPTOMANIA;
     public override string name { get { return "Kleptomania"; } }
     public override string description { get { return "Makes a character enjoy stealing other people's items."; } }
     public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.HEX; } }
+    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
+
+    #region Overrides
+    public override void ActivateAbility(IPointOfInterest targetPOI) {
+        targetPOI.traitContainer.AddTrait(targetPOI, "Kleptomaniac");
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
+        log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(null, "Kleptomaniac", LOG_IDENTIFIER.STRING_1);
+        log.AddLogToInvolvedObjects();
+        PlayerManager.Instance.player.ShowNotification(log);
+    }
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.GetNormalTrait<Trait>("Kleptomaniac", "Beast") != null) {
+            return false;
+        }
+        return base.CanPerformAbilityTowards(targetCharacter);
+    }
+    #endregion
 }

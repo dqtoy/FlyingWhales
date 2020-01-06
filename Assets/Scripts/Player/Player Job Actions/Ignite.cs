@@ -63,7 +63,26 @@ public class Ignite : PlayerJobAction {
 }
 
 public class IgniteData : PlayerJobActionData {
+    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.IGNITE;
     public override string name { get { return "Ignite"; } }
     public override string description { get { return "Targets a spot. Target will ignite and start spreading fire."; } }
     public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.DEVASTATION; } }
+
+    #region Overrides
+    public override void ActivateAbility(IPointOfInterest targetPOI) {
+        LocationGridTile tile = targetPOI.gridTileLocation;
+        BurningSource bs = new BurningSource(targetPOI.gridTileLocation.structure.location.coreTile.region.area);
+        Burning burning = new Burning();
+        burning.SetSourceOfBurning(bs, tile.genericTileObject);
+        tile.genericTileObject.traitContainer.AddTrait(tile.genericTileObject, burning);
+        Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", name, "activated");
+        PlayerManager.Instance.player.ShowNotification(log);
+    }
+    public override bool CanPerformAbilityTowards(TileObject tileObject) {
+        if (tileObject.gridTileLocation == null || tileObject.gridTileLocation.genericTileObject.traitContainer.GetNormalTrait<Trait>("Burning") != null) {
+            return false;
+        }
+        return base.CanPerformAbilityTowards(tileObject);
+    }
+    #endregion
 }

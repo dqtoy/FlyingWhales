@@ -564,9 +564,57 @@ public class CharacterInfoUI : UIMenu {
     #region Actions
     protected override void LoadActions() {
         Utilities.DestroyChildren(actionsTransform);
-        ActionItem item = AddNewAction("Seize", null, () => PlayerManager.Instance.player.seizeComponent.SeizePOI(activeCharacter));
+        ActionItem afflictItem = AddNewAction("Afflict", null, ShowAfflictUI);
+
+        ActionItem zapItem = AddNewAction("Zap", null, Zap);
+        zapItem.SetInteractable(CanBeZapped());
+
+        ActionItem seizeItem = AddNewAction("Seize", null, () => PlayerManager.Instance.player.seizeComponent.SeizePOI(activeCharacter));
         bool isInteractable = PlayerManager.Instance.player.seizeComponent.seizedPOI == null && activeCharacter.minion == null && !(activeCharacter is Summon) && activeCharacter.traitContainer.GetNormalTrait<Trait>("Leader", "Blessed") == null;
-        item.SetInteractable(isInteractable);
+        seizeItem.SetInteractable(isInteractable);
+
+        ActionItem shareIntelItem = AddNewAction("Share Intel", null, ShareIntel);
+    }
+    #endregion
+
+    #region Afflict
+    protected void ShowAfflictUI() {
+        List<string> afflictions = new List<string>();
+        foreach (PlayerJobActionData abilityData in PlayerManager.Instance.allInterventionAbilitiesData.Values) {
+            if (abilityData.type == INTERVENTION_ABILITY_TYPE.AFFLICTION) {
+                afflictions.Add(abilityData.name);
+            }
+        }
+        UIManager.Instance.ShowClickableObjectPicker(afflictions, ActivateAffliction, null, CanActivateAffliction, "Select Affliction", identifier: "Intervention Ability", showCover: true, layer: 19);
+    }
+    private void ActivateAffliction(object o) {
+        string afflictionName = (string) o;
+        INTERVENTION_ABILITY afflictionType = (INTERVENTION_ABILITY) System.Enum.Parse(typeof(INTERVENTION_ABILITY), afflictionName.ToUpper().Replace(' ', '_'));
+        PlayerManager.Instance.allInterventionAbilitiesData[afflictionType].ActivateAbility(activeCharacter);
+
+        UIManager.Instance.HideObjectPicker();
+    }
+    private bool CanActivateAffliction(string afflictionName) {
+        INTERVENTION_ABILITY afflictionType = (INTERVENTION_ABILITY) System.Enum.Parse(typeof(INTERVENTION_ABILITY), afflictionName.ToUpper().Replace(' ', '_'));
+        return PlayerManager.Instance.allInterventionAbilitiesData[afflictionType].CanPerformAbilityTowards(activeCharacter);
+    }
+    #endregion
+
+    #region Zap
+    protected void Zap() {
+        PlayerManager.Instance.allInterventionAbilitiesData[INTERVENTION_ABILITY.ZAP].ActivateAbility(activeCharacter);
+
+        //Find better way to load only the button that was clicked
+        LoadActions();
+    }
+    protected bool CanBeZapped() {
+        return PlayerManager.Instance.allInterventionAbilitiesData[INTERVENTION_ABILITY.ZAP].CanPerformAbilityTowards(activeCharacter);
+    }
+    #endregion
+
+    #region Share Intel
+    protected void ShareIntel() {
+
     }
     #endregion
 }

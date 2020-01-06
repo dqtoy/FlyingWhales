@@ -89,7 +89,26 @@ public class Alcoholic : PlayerJobAction {
 }
 
 public class AlcoholicData : PlayerJobActionData {
+    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.ALCOHOLIC;
     public override string name { get { return "Alcoholic"; } }
     public override string description { get { return "Makes a character often want to drink."; } }
     public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.HEX; } }
+    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
+
+    #region Overrides
+    public override void ActivateAbility(IPointOfInterest targetPOI) {
+        targetPOI.traitContainer.AddTrait(targetPOI, "Drunkard");
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
+        log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(null, "Drunkard", LOG_IDENTIFIER.STRING_1);
+        log.AddLogToInvolvedObjects();
+        PlayerManager.Instance.player.ShowNotification(log);
+    }
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        if (targetCharacter.isDead || targetCharacter.traitContainer.GetNormalTrait<Trait>("Drunkard") != null) {
+            return false;
+        }
+        return base.CanPerformAbilityTowards(targetCharacter);
+    }
+    #endregion
 }

@@ -85,6 +85,9 @@ namespace Traits {
                 && !character.marker.hasFleePath && character.stateComponent.currentState == null && character.IsInOwnParty();
         }
         private void CheckParalyzedTrait() {
+            if(character.marker == null) {
+                return;
+            }
             if (!CanPlanGoap()) {
                 return;
             }
@@ -100,8 +103,11 @@ namespace Traits {
             }
         }
         private void CheckParalyzedTraitPerHour() {
+            if (character.marker == null) {
+                return;
+            }
             if (CanPlanGoap()
-                    && (character.needsComponent.isStarving || character.needsComponent.isExhausted || character.needsComponent.isForlorn)
+                    && (character.needsComponent.isStarving || character.needsComponent.isExhausted || character.needsComponent.isForlorn || character.traitContainer.GetNormalTrait<Trait>("Burning") != null)
                     && UnityEngine.Random.Range(0, 100) < 75 && !character.jobQueue.HasJob(JOB_TYPE.SCREAM)
                     && character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") == null
                     && !character.HasJobTargetingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {

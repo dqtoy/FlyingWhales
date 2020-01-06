@@ -40,3 +40,27 @@ public class Destroy : PlayerJobAction {
         return base.CanTarget(targetPOI, ref hoverText);
     }
 }
+
+public class DestroyData : PlayerJobActionData {
+    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.DESTROY;
+    public override string name { get { return "Destroy"; } }
+    public override string description { get { return "Destroys an object"; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.SABOTAGE; } }
+
+    #region Overrides
+    public override void ActivateAbility(IPointOfInterest targetPOI) {
+        targetPOI.gridTileLocation.structure.RemovePOI(targetPOI);
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_intervention");
+        log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(null, "destroyed", LOG_IDENTIFIER.STRING_1);
+        log.AddLogToInvolvedObjects();
+        PlayerManager.Instance.player.ShowNotification(log);
+    }
+    public override bool CanPerformAbilityTowards(TileObject tileObject) {
+        if (tileObject.gridTileLocation == null) {
+            return false;
+        }
+        return base.CanPerformAbilityTowards(tileObject);
+    }
+    #endregion
+}

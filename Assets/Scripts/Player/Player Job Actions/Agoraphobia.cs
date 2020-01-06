@@ -1,15 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Traits;
 using UnityEngine;
+using Traits;
 
-public class Vampirism : PlayerJobAction {
+public class Agoraphobia : PlayerJobAction {
 
-    public Vampirism() : base(INTERVENTION_ABILITY.VAMPIRISM) {
-        tier = 1;
+    public Agoraphobia() : base(INTERVENTION_ABILITY.AGORAPHOBIA) {
+        tier = 3;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
-        //abilityTags.Add(ABILITY_TAG.MAGIC);
+        //abilityTags.Add(ABILITY_TAG.NONE);
     }
 
     #region Overrides
@@ -27,7 +27,7 @@ public class Vampirism : PlayerJobAction {
             for (int i = 0; i < targets.Count; i++) {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(currTarget)) {
-                    Trait newTrait = new Vampiric();
+                    Trait newTrait = new Agoraphobic();
                     newTrait.SetLevel(level);
                     currTarget.traitContainer.AddTrait(currTarget, newTrait);
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
@@ -57,10 +57,7 @@ public class Vampirism : PlayerJobAction {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
-            return false;
-        }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Vampiric", "Cannibal") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Agoraphobic") != null) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -91,11 +88,7 @@ public class Vampirism : PlayerJobAction {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
-            return false;
-        }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Vampiric", "Cannibal") != null) {
-
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Agoraphobic") != null) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -105,8 +98,27 @@ public class Vampirism : PlayerJobAction {
     }
 }
 
-public class VampirismData : PlayerJobActionData {
-    public override string name { get { return "Vampirism"; } }
-    public override string description { get { return "Makes a character have uncontrollable urge to drink blood for sustenance."; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.MONSTER; } }
+public class AgoraphobiaData : PlayerJobActionData {
+    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.AGORAPHOBIA;
+    public override string name { get { return "Agoraphobia"; } }
+    public override string description { get { return "Makes a character fear crowds."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.HEX; } }
+    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
+
+    #region Overrides
+    public override void ActivateAbility(IPointOfInterest targetPOI) {
+        targetPOI.traitContainer.AddTrait(targetPOI, "Agoraphobic");
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
+        log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(null, "Agoraphobic", LOG_IDENTIFIER.STRING_1);
+        log.AddLogToInvolvedObjects();
+        PlayerManager.Instance.player.ShowNotification(log);
+    }
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        if (targetCharacter.isDead || targetCharacter.traitContainer.GetNormalTrait<Trait>("Agoraphobic") != null) {
+            return false;
+        }
+        return base.CanPerformAbilityTowards(targetCharacter);
+    }
+    #endregion
 }

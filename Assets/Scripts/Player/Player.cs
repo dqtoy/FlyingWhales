@@ -1721,13 +1721,7 @@ public class Player : ILeader {
     }
     public int GetManaCostForInterventionAbility(INTERVENTION_ABILITY ability) {
         int tier = PlayerManager.Instance.GetInterventionAbilityTier(ability);
-        if (tier == 1) {
-            return 150;
-        } else if (tier == 2) {
-            return 100;
-        } else {
-            return 50;
-        }
+        return PlayerManager.Instance.GetManaCostForInterventionAbility(tier);
     }
     public bool CanAffordInterventionAbility(INTERVENTION_ABILITY ability) {
         return mana >= GetManaCostForInterventionAbility(ability);

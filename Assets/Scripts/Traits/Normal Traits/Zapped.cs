@@ -51,8 +51,10 @@ namespace Traits {
             if (sourcePOI is Character) {
                 Character character = sourcePOI as Character;
                 character.AdjustDoNotDisturb(-1);
-                character.marker.ClearHostilesInRange(false);
-                character.marker.ClearAvoidInRange(false);
+                if(character.marker != null) {
+                    character.marker.ClearHostilesInRange(false);
+                    character.marker.ClearAvoidInRange(false);
+                }
             }
             base.OnRemoveTrait(sourcePOI, removedBy);
         }

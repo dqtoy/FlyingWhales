@@ -858,15 +858,16 @@ public class Utilities : MonoBehaviour {
         T[] values = (T[]) Enum.GetValues(typeof(T));
         for (int i = 0; i < values.Length; i++) {
             T currOption = values[i];
+            string currString = currOption.ToString();
             if (!includeNone) { //do not include none
-                if (currOption.ToString().Equals("NONE")) {
+                if (currString.Equals("NONE")) {
                     continue;
                 }
             }
             if (exclude != null && exclude.Contains(currOption)) {
                 continue; //skip excluded items
             }
-            options.Add(values[i].ToString());
+            options.Add(currString);
         }
         return options;
     }

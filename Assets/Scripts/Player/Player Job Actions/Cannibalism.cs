@@ -1,14 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Traits;
 using UnityEngine;
+using Traits;
 
-public class Paralysis : PlayerJobAction {
-    public Paralysis() : base(INTERVENTION_ABILITY.PARALYSIS) {
-        tier = 1;
+public class Cannibalism : PlayerJobAction {
+
+    public Cannibalism() : base(INTERVENTION_ABILITY.CANNIBALISM) {
+        tier = 2;
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
-        //abilityTags.Add(ABILITY_TAG.PHYSICAL);
+        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT};
+        //abilityTags.Add(ABILITY_TAG.MAGIC);
+        //abilityTags.Add(ABILITY_TAG.CRIME);
     }
 
     #region Overrides
@@ -26,7 +28,7 @@ public class Paralysis : PlayerJobAction {
             for (int i = 0; i < targets.Count; i++) {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(currTarget)) {
-                    Trait newTrait = new Paralyzed();
+                    Trait newTrait = new Cannibal();
                     newTrait.SetLevel(level);
                     currTarget.traitContainer.AddTrait(currTarget, newTrait);
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
@@ -53,10 +55,13 @@ public class Paralysis : PlayerJobAction {
         return false;
     }
     protected override bool CanPerformActionTowards(Character targetCharacter) {
-        if (targetCharacter.isDead) {
+        if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Paralyzed") != null) {
+        if (targetCharacter.race == RACE.SKELETON) {
+            return false;
+        }
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Cannibal", "Vampiric") != null) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -87,7 +92,10 @@ public class Paralysis : PlayerJobAction {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Paralyzed") != null) {
+        if (targetCharacter.race == RACE.SKELETON) {
+            return false;
+        }
+        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Cannibal", "Vampiric") != null) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -97,8 +105,27 @@ public class Paralysis : PlayerJobAction {
     }
 }
 
-public class ParalysisData : PlayerJobActionData {
-    public override string name { get { return "Paralysis"; } }
-    public override string description { get { return "Makes a character unable to move permanently."; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.HEX; } }
+public class CannibalismData : PlayerJobActionData {
+    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.CANNIBALISM;
+    public override string name { get { return "Cannibalism"; } }
+    public override string description { get { return "Makes a character eat other characters with the same race for sustenance."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.MONSTER; } }
+    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
+
+    #region Overrides
+    public override void ActivateAbility(IPointOfInterest targetPOI) {
+        targetPOI.traitContainer.AddTrait(targetPOI, "Cannibal");
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
+        log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(null, "Cannibal", LOG_IDENTIFIER.STRING_1);
+        log.AddLogToInvolvedObjects();
+        PlayerManager.Instance.player.ShowNotification(log);
+    }
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.GetNormalTrait<Trait>("Cannibal", "Vampiric") != null) {
+            return false;
+        }
+        return base.CanPerformAbilityTowards(targetCharacter);
+    }
+    #endregion
 }

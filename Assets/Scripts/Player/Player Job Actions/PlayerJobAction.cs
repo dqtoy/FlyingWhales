@@ -9,6 +9,7 @@ public class PlayerJobAction {
     //public PlayerJobData parentData { get; protected set; }
     //public Minion minion { get; protected set; }
     public INTERVENTION_ABILITY abilityType { get; protected set; }
+    public INTERVENTION_ABILITY_CATEGORY abilityCategory { get; protected set; }
     public string name { get { return PlayerManager.Instance.allInterventionAbilitiesData[abilityType].name; } }
     public string description { get { return PlayerManager.Instance.allInterventionAbilitiesData[abilityType].description; } }
     public int tier { get; protected set; }
@@ -21,8 +22,8 @@ public class PlayerJobAction {
     public int ticksInCooldown { get; private set; } //how many ticks has this action been in cooldown?
     public int level { get; protected set; }
     //public List<ABILITY_TAG> abilityTags { get; protected set; }
-    public bool hasSecondPhase { get; protected set; }
-    public bool isInSecondPhase { get; protected set; }
+    //public bool hasSecondPhase { get; protected set; }
+    //public bool isInSecondPhase { get; protected set; }
 
     #region getters/setters
     public string worldObjectName {
@@ -49,7 +50,7 @@ public class PlayerJobAction {
         this.level = 1;
         this.tier = PlayerManager.Instance.GetInterventionAbilityTier(abilityType);
         this.abilityRadius = 0;
-        hasSecondPhase = false;
+        //hasSecondPhase = false;
         OnLevelUp();
     }
 
@@ -231,10 +232,48 @@ public class PlayerJobAction {
 }
 
 public class PlayerJobActionData {
+    public virtual INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.NONE;
     public virtual string name { get { return string.Empty; } }
     public virtual string description { get { return string.Empty; } }
     public virtual INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.NONE; } }
-    public virtual int manaCost { get { return PlayerManager.Instance.player.GetManaCostForInterventionAbility(name.ToUpper().Replace(' ', '_')); } }
+    public virtual INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.NONE;
+    public virtual int abilityRadius => 0; //0 means single target
+
+    public int tier { get; protected set; }
+    public int manaCost { get; protected set; }
+
+    public PlayerJobActionData() {
+        tier = PlayerManager.Instance.GetInterventionAbilityTier(ability);
+        manaCost = PlayerManager.Instance.GetManaCostForInterventionAbility(tier);
+    }
+
+
+    #region Virtuals
+    public virtual void ActivateAbility(IPointOfInterest targetPOI) { }
+    public virtual void ActivateAbility(LocationGridTile targetTile) { }
+    public virtual bool CanPerformAbilityTowards(Character targetCharacter) {
+        if((targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES) || targetCharacter.traitContainer.GetNormalTrait<Trait>("Blessed") != null) {
+            return false;
+        }
+        return true;
+    }
+    public virtual bool CanPerformAbilityTowards(TileObject tileObject) { return true; }
+    /// <summary>
+    /// If the ability has a range, override this to show that range. <see cref="CursorManager.Update"/>
+    /// </summary>
+    public virtual void ShowRange(LocationGridTile tile) {
+        if(abilityRadius > 0) {
+            List<LocationGridTile> tiles = tile.parentMap.GetTilesInRadius(tile, abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            InnerMapManager.Instance.HighlightTiles(tiles);
+        }
+    }
+    public virtual void HideRange(LocationGridTile tile) {
+        if (abilityRadius > 0) {
+            List<LocationGridTile> tiles = tile.parentMap.GetTilesInRadius(tile, abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            InnerMapManager.Instance.UnhighlightTiles(tiles);
+        }
+    }
+    #endregion
 }
 
 public class PlayerJobActionSlot {

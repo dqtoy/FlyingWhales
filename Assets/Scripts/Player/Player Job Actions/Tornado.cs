@@ -61,7 +61,10 @@ public class Tornado : PlayerJobAction {
 }
 
 public class TornadoData : PlayerJobActionData {
+    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.TORNADO;
     public override string name { get { return "Tornado"; } }
     public override string description { get { return "Spawn a tornado that randomly moves around dealing heavy damage to objects and characters caught in its path."; } }
     public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.DEVASTATION; } }
+    public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
+    public override int abilityRadius => 1;
 }

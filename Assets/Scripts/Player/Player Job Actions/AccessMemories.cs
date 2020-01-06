@@ -39,6 +39,7 @@ public class AccessMemories : PlayerJobAction {
 }
 
 public class AccessMemoriesData : PlayerJobActionData {
+    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.ACCESS_MEMORIES;
     public override string name { get { return "Access Memories"; } }
     public override string description { get { return "Access the memories of a character."; } }
 }

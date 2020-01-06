@@ -177,7 +177,7 @@ namespace Traits {
         }
         #endregion
         private void CheckAsCriminal() {
-            if (owner.stateComponent.currentState == null && !owner.isAtHomeRegion && !owner.jobQueue.HasJob(JOB_TYPE.RETURN_HOME)) {
+            if (owner.stateComponent.currentState == null && !owner.isAtHomeRegion && !owner.jobQueue.HasJob(JOB_TYPE.IDLE, INTERACTION_TYPE.RETURN_HOME)) {
                 if (owner.jobQueue.jobsInQueue.Count > 0) {
                     owner.CancelAllJobs();
                 }

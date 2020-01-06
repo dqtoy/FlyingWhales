@@ -51,7 +51,7 @@ public class PlayerManager : MonoBehaviour {
             , INTERVENTION_ABILITY.UNFAITHFULNESS, INTERVENTION_ABILITY.ENRAGE, INTERVENTION_ABILITY.PROVOKE, INTERVENTION_ABILITY.EXPLOSION
             , INTERVENTION_ABILITY.IGNITE, INTERVENTION_ABILITY.LURE, INTERVENTION_ABILITY.CURSED_OBJECT, INTERVENTION_ABILITY.SPOIL, INTERVENTION_ABILITY.ALCOHOLIC
             , INTERVENTION_ABILITY.LULLABY, INTERVENTION_ABILITY.AGORAPHOBIA, INTERVENTION_ABILITY.PARALYSIS, INTERVENTION_ABILITY.RELEASE, INTERVENTION_ABILITY.ZOMBIE_VIRUS
-            , INTERVENTION_ABILITY.PESTILENCE, INTERVENTION_ABILITY.PSYCHOPATHY, INTERVENTION_ABILITY.TORNADO }; //INTERVENTION_ABILITY.JOLT, , INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY//
+            , INTERVENTION_ABILITY.PESTILENCE, INTERVENTION_ABILITY.PSYCHOPATHY, INTERVENTION_ABILITY.TORNADO , INTERVENTION_ABILITY.DESTROY }; //INTERVENTION_ABILITY.JOLT, , INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY//
         allCombatAbilities = (COMBAT_ABILITY[]) System.Enum.GetValues(typeof(COMBAT_ABILITY));
 
         allInterventionAbilitiesData = new Dictionary<INTERVENTION_ABILITY, PlayerJobActionData>();
@@ -150,6 +150,15 @@ public class PlayerManager : MonoBehaviour {
             }
         }
         //player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
+    }
+    public int GetManaCostForInterventionAbility(int tier) {
+        if (tier == 1) {
+            return 150;
+        } else if (tier == 2) {
+            return 100;
+        } else {
+            return 50;
+        }
     }
     //public void AddTileToPlayerArea(HexTile tile) {
     //    player.playerArea.AddTile(tile);

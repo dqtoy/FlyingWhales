@@ -18,7 +18,7 @@ public class Lure : PlayerJobAction {
         //targetCharacters = new List<Character>();
         //tileChoices = new List<LocationGridTile>();
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
-        hasSecondPhase = true;
+        //hasSecondPhase = true;
     }
 
     #region Overrides
@@ -150,6 +150,7 @@ public class Lure : PlayerJobAction {
 }
 
 public class LureData : PlayerJobActionData {
+    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.LURE;
     public override string name { get { return "Lure"; } }
     public override string description { get { return "Force a character to go to a specified nearby location."; } }
     public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.SABOTAGE; } }

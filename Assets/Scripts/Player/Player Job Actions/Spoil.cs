@@ -38,7 +38,23 @@ public class Spoil : PlayerJobAction {
 }
 
 public class SpoilData : PlayerJobActionData {
+    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.SPOIL;
     public override string name { get { return "Spoil"; } }
     public override string description { get { return "Poison the food at the target table."; } }
     public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.SABOTAGE; } }
+
+
+    #region Overrides
+    public override void ActivateAbility(IPointOfInterest targetPOI) {
+        targetPOI.traitContainer.AddTrait(targetPOI, "Poisoned");
+        Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", name, "activated");
+        PlayerManager.Instance.player.ShowNotification(log);
+    }
+    public override bool CanPerformAbilityTowards(TileObject tileObject) {
+        if (tileObject.gridTileLocation == null || tileObject.traitContainer.GetNormalTrait<Trait>("Poisoned", "Robust") != null) {
+            return false;
+        }
+        return base.CanPerformAbilityTowards(tileObject);
+    }
+    #endregion
 }

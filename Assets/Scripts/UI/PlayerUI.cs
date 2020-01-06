@@ -145,8 +145,12 @@ public class PlayerUI : MonoBehaviour {
     [Header("Seize Object")]
     [SerializeField] private Button unseizeButton;
 
-    public List<System.Action> pendingUIToShow { get; private set; }
+    [Header("Custom Dropdown")]
+    [SerializeField] private CustomDropdownList customDropdownList;
+    private readonly List<string> spellsList = new List<string>() { "Tornado" };
+    private readonly List<string> factionActionsList = new List<string>() { "Manage Cult", "Meddle" };
 
+    public List<System.Action> pendingUIToShow { get; private set; }
 
     //[Header("Actions")]
     //[SerializeField] private int maxActionPages;
@@ -2132,6 +2136,50 @@ public class PlayerUI : MonoBehaviour {
     }
     public void OnClickSeizedObject() {
         PlayerManager.Instance.player.seizeComponent.PrepareToUnseize();
+    }
+    #endregion
+
+    #region Spells
+    public void OnToggleSpells(bool isOn) {
+        if (isOn) {
+            ShowSpells();
+        } else {
+            HideSpells();
+        }
+    }
+    private void ShowSpells() {
+        customDropdownList.ShowDropdown(spellsList, OnClickSpell);
+    }
+    private void HideSpells() {
+        customDropdownList.HideDropdown();
+    }
+    private void OnClickSpell(string spellName) {
+        if(PlayerManager.Instance.player.currentActivePlayerJobAction != null) {
+            return;
+        }
+        INTERVENTION_ABILITY spell = (INTERVENTION_ABILITY) System.Enum.Parse(typeof(INTERVENTION_ABILITY), spellName.ToUpper().Replace(' ', '_'));
+        //This is temporary only because we will eliminate instanced intervention abilities in the future, they will become singleton
+        PlayerJobAction ability = PlayerManager.Instance.CreateNewInterventionAbility(spell);
+        PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(ability);
+    }
+    #endregion
+
+    #region Faction Actions
+    public void OnToggleFactionActions(bool isOn) {
+        if (isOn) {
+            ShowFactionActions();
+        } else {
+            HideFactionActions();
+        }
+    }
+    private void ShowFactionActions() {
+        customDropdownList.ShowDropdown(factionActionsList, OnClickFactionAction);
+    }
+    private void HideFactionActions() {
+        customDropdownList.HideDropdown();
+    }
+    private void OnClickFactionAction(string text) {
+        //TODO
     }
     #endregion
 }

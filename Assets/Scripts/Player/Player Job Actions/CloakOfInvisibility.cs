@@ -98,6 +98,7 @@ public class CloakOfInvisibility : PlayerJobAction {
 }
 
 public class CloakOfInvisibilityData : PlayerJobActionData {
+    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY;
     public override string name { get { return "Cloak Of Invisibility"; } }
     public override string description { get { return "Makes a character invisible from all other characters."; } }
 }

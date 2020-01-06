@@ -105,6 +105,7 @@ public class Abduct : PlayerJobAction {
 }
 
 public class AbductData : PlayerJobActionData {
+    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.ABDUCT;
     public override string name { get { return "Abduct"; } }
     public override string description { get { return "Makes a character abduct other characters of different race."; } }
     public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.SABOTAGE; } }
