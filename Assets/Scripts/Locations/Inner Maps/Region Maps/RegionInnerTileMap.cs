@@ -10,11 +10,11 @@ namespace Inner_Maps {
         
         public override bool isSettlementMap => false;
         
-        public void Initialize(Region region) {
+        public IEnumerator Initialize(Region region) {
             this.name = $"{region.name}'s Inner Map";
             region.SetRegionInnerMap(this);
             ClearAllTilemaps();
-            GenerateGrid(MapWidth, MapHeight, region);
+            yield return StartCoroutine(GenerateGrid(MapWidth, MapHeight, region));
             AssignStructures();
             LocationStructure structure = location.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
             RegionTileObject rto = InnerMapManager.Instance.CreateNewTileObject<RegionTileObject>(TILE_OBJECT_TYPE.REGION_TILE_OBJECT); 

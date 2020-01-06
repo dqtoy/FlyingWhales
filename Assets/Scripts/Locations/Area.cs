@@ -590,21 +590,26 @@ public class Area : IJobOwner, ILocation {
     public void SetAreaMap(AreaInnerTileMap map) {
         areaMap = map;
     }
-    public void PlaceObjects() {
+    public IEnumerator PlaceObjects() {
         //pre placed objects
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
             for (int i = 0; i < keyValuePair.Value.Count; i++) {
                 LocationStructure structure = keyValuePair.Value[i];
                 structure.structureObj?.RegisterPreplacedObjects(structure, this.areaMap);
+                yield return null;
             }
         }
 
         //place build spots
         PlaceBuildSpots();
-
+        yield return null;
+        
         PlaceOres();
+        yield return null;
         PlaceResourcePiles();
+        yield return null;
         SpawnFoodObjects();
+        yield return null;
 
         //magic circle
         if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {

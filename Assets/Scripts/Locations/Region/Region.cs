@@ -92,7 +92,21 @@ public class Region : ILocation, IHasNeighbours<Region> {
         this.coreTile = coreTile;
         tiles = new List<HexTile>();
         AddTile(coreTile);
-        regionColor = Random.ColorHSV();
+
+        if (id == 1) {
+            regionColor = Color.black;
+        } else if (id == 2) {
+            regionColor = Color.blue;
+        } else if (id == 3) {
+            regionColor = Color.magenta;
+        } else if (id == 4) {
+            regionColor = Color.green;
+        } else if (id == 5) {
+            regionColor = Color.red;
+        }
+        
+        
+        // regionColor = Random.ColorHSV();
     }
     public Region(SaveDataRegion data) : this() {
         id = Utilities.SetID(this, data.id);
@@ -109,6 +123,7 @@ public class Region : ILocation, IHasNeighbours<Region> {
         if (!tiles.Contains(tile)) {
             tiles.Add(tile);
             tile.SetRegion(this);
+            tile.spriteRenderer.color = regionColor;
         }
     }
     public void AddTile(List<HexTile> tiles) {

@@ -169,7 +169,7 @@ public partial class LandmarkManager : MonoBehaviour {
         }
         throw new System.Exception("There is no landmark data for " + landmarkName);
     }
-    public void GenerateLandmarks(Region[] regions, out BaseLandmark portal, out BaseLandmark settlement) {
+    public IEnumerator GenerateLandmarks(Region[] regions, MapGenerationData data) {
         //place portal first
         Region[] corners = GetCornerRegions();
         int portalCorner = Random.Range(0, 4);
@@ -177,15 +177,16 @@ public partial class LandmarkManager : MonoBehaviour {
         Area portalArea = CreateNewArea(portalRegion, LOCATION_TYPE.DEMONIC_INTRUSION, 0);
         BaseLandmark portalLandmark = CreateNewLandmarkOnTile(portalRegion.coreTile, LANDMARK_TYPE.THE_PORTAL, false);
         portalArea.region.SetName("Portal"); //need this so that when player is initialized. This area will be assigned to the player.
-        portal = portalLandmark;
+        data.portal = portalLandmark;
+        yield return null;
 
         //place settlement at opposite corner
         int oppositeCorner = GetOppositeCorner(portalCorner);
         Region settlementRegion = corners[oppositeCorner];
         Area area = CreateSettlementArea(settlementRegion);
-        settlement = settlementRegion.mainLandmark;
+        data.settlement = settlementRegion.mainLandmark;
         //SetEnemyPlayerArea(area);
-
+        yield return null;
 
         List<Region> availableRegions = new List<Region>(regions);
         availableRegions.Remove(portalRegion);
@@ -193,16 +194,14 @@ public partial class LandmarkManager : MonoBehaviour {
 
         //place all other landmarks
         Dictionary<LANDMARK_TYPE, int> landmarks = WorldConfigManager.Instance.GetLandmarksForGeneration(regions.Length - 2); //subtracted 2 because of portal and settlement
-        //string otherLandmarkSummary = "Will generate the following landmarks: ";
         foreach (KeyValuePair<LANDMARK_TYPE, int> kvp in landmarks) {
-            //otherLandmarkSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
             for (int i = 0; i < kvp.Value; i++) {
                 Region chosenRegion = availableRegions[Random.Range(0, availableRegions.Count)];
                 CreateNewLandmarkOnTile(chosenRegion.coreTile, kvp.Key, false); //BaseLandmark landmark = 
                 availableRegions.Remove(chosenRegion);
+                yield return null;
             }
         }
-        //Debug.Log(otherLandmarkSummary);
     }
     public void GenerateRegionFeatures() {
         Region[] regions = GridMap.Instance.allRegions;
@@ -210,7 +209,7 @@ public partial class LandmarkManager : MonoBehaviour {
             regions[i].mainLandmark.AddFeaturesToRegion();
         }
     }
-    public void CreateTwoNewSettlementsAtTheStartOfGame() {
+    public IEnumerator CreateTwoNewSettlementsAtTheStartOfGame() {
         Region firstRegion = null;
         Region secondRegion = null;
 
@@ -220,19 +219,21 @@ public partial class LandmarkManager : MonoBehaviour {
             if (!potentialRegion.coreTile.isCorrupted && potentialRegion.area == null && !potentialRegion.HasSettlementOrCorruptedConnection()) {
                 firstRegion = potentialRegion;
             }
+            yield return null;
         }
         while (secondRegion == null) {
             Region potentialRegion = allRegions[UnityEngine.Random.Range(0, allRegions.Length)];
             if (!potentialRegion.coreTile.isCorrupted && potentialRegion.area == null && potentialRegion != firstRegion && !potentialRegion.IsConnectedWith(firstRegion) && !potentialRegion.HasSettlementOrCorruptedConnection()) {
                 secondRegion = potentialRegion;
             }
+            yield return null;
         }
 
         Area firstArea = CreateSettlementArea(firstRegion);
         Area secondArea = CreateSettlementArea(secondRegion);
 
-        GenerateAreaMap(firstArea);
-        GenerateAreaMap(secondArea);
+        yield return StartCoroutine(GenerateAreaMap(firstArea));
+        yield return StartCoroutine(GenerateAreaMap(secondArea));
     }
     private Area CreateSettlementArea(Region settlementRegion) {
         LOCATION_TYPE settlementType = Utilities.RandomSettlementType();
@@ -321,7 +322,7 @@ public partial class LandmarkManager : MonoBehaviour {
         island1.regionsInIsland.AddRange(island2.regionsInIsland);
         islands.Remove(island2);
     }
-    public void GenerateConnections(BaseLandmark portal, BaseLandmark settlement) {
+    public IEnumerator GenerateConnections(BaseLandmark portal, BaseLandmark settlement) {
         List<Region> pendingConnections = new List<Region>();
 
         List<BaseLandmark> allLandmarks = GetAllLandmarks();
@@ -339,6 +340,7 @@ public partial class LandmarkManager : MonoBehaviour {
             ConnectRegions(portal.tileLocation.region, currRegion, ref islands);
             pendingConnections.Add(currRegion);
             if (portal.tileLocation.region.HasMaximumConnections()) { break; }
+            yield return null;
         }
 
         //connect settlement to all adjacent regions
@@ -348,6 +350,7 @@ public partial class LandmarkManager : MonoBehaviour {
             ConnectRegions(settlement.tileLocation.region, currRegion, ref islands);
             pendingConnections.Add(currRegion);
             if (settlement.tileLocation.region.HasMaximumConnections()) { break; }
+            yield return null;
         }
 
         WeightedDictionary<int> connectionWeights = new WeightedDictionary<int>();
@@ -387,6 +390,7 @@ public partial class LandmarkManager : MonoBehaviour {
                     pendingConnections.Add(noConnectionRegions[Random.Range(0, noConnectionRegions.Count)]);
                 }
             }
+            yield return null;
         }
 
         if (islands.Count > 1) {
@@ -411,6 +415,7 @@ public partial class LandmarkManager : MonoBehaviour {
                         break;
                     }
                 }
+                yield return null;
             }
         }
     }

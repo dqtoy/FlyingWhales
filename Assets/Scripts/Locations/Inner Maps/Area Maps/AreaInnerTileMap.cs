@@ -64,9 +64,9 @@ namespace Inner_Maps {
             TilemapRenderer eastEdge = eastEdgeTilemap.gameObject.GetComponent<TilemapRenderer>();
             eastEdge.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 2;
         }
-        public void DrawMap(TownMapSettings generatedSettings) {
+        public IEnumerator DrawMap(TownMapSettings generatedSettings) {
             generatedTownMapSettings = generatedSettings;
-            GenerateGrid(generatedSettings);
+            yield return StartCoroutine(GenerateGrid(generatedSettings));
             SplitMap();
             Vector3Int startPoint = new Vector3Int(_eastOutsideTiles, _southOutsideTiles, 0);
             DrawTownMap(generatedSettings, startPoint);
@@ -100,9 +100,9 @@ namespace Inner_Maps {
             centerGo = GameObject.Instantiate(centerGoPrefab, transform);
             centerGo.transform.position = new Vector3((cameraBounds.x + cameraBounds.z) * 0.5f, (cameraBounds.y + cameraBounds.w) * 0.5f);
         }
-        private void GenerateGrid(TownMapSettings settings) {
+        private IEnumerator GenerateGrid(TownMapSettings settings) {
             Point determinedSize = GetWidthAndHeightForSettings(settings);
-            GenerateGrid(determinedSize.X, determinedSize.Y, area);
+            yield return StartCoroutine(GenerateGrid(determinedSize.X, determinedSize.Y, area));
         }
         private void SplitMap(bool changeFloorAssets = true) {
             //assign outer and inner areas
@@ -241,7 +241,7 @@ namespace Inner_Maps {
 
             }
         }
-        public void PlaceInitialStructures(Area area) {
+        public IEnumerator PlaceInitialStructures(Area area) {
             //order the structures based on their priorities
             Dictionary<STRUCTURE_TYPE, List<LocationStructure>> ordered = area.structures.OrderBy(x => x.Key.StructureGenerationPriority()).ToDictionary(x => x.Key, x => x.Value);
 
@@ -265,6 +265,7 @@ namespace Inner_Maps {
                         } else {
                             PlaceStructureObjectAt(chosenBuildingSpot, chosenStructurePrefab, structure);
                         }
+                        yield return null;
                     }
                 }
             }
@@ -348,9 +349,9 @@ namespace Inner_Maps {
         #endregion
 
         #region Details
-        public void GenerateDetails() {
+        public IEnumerator GenerateDetails() {
             //Generate details for the outside map
-            MapPerlinDetails(
+            yield return StartCoroutine(MapPerlinDetails(
                 outsideTiles.Where(x =>
                     x.objHere == null
                     && (x.structure == null || x.structure.structureType == STRUCTURE_TYPE.WILDERNESS || x.structure.structureType == STRUCTURE_TYPE.WORK_AREA)
@@ -358,7 +359,7 @@ namespace Inner_Maps {
                     && !x.isLocked
                     && !x.IsAdjacentTo(typeof(MagicCircle))
                 ).ToList()
-            ); //Make this better!
+            ));
 
             if (area.locationType != LOCATION_TYPE.DUNGEON) {
                 if (area.structures.ContainsKey(STRUCTURE_TYPE.WORK_AREA)) {
@@ -369,24 +370,24 @@ namespace Inner_Maps {
                     //  - is not near the gate (so as not to block path going outside)
 
                     //Generate details for inside map (Trees, shrubs, etc.)
-                    MapPerlinDetails(area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).tiles
+                    yield return StartCoroutine(MapPerlinDetails(area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).tiles
                         .Where(x => 
                             !x.hasDetail
                             && x.objHere == null 
-                            && !x.isLocked).ToList());
+                            && !x.isLocked).ToList()));
 
                     //Generate details for work area (crates, barrels)
-                    WorkAreaDetails(area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).tiles
+                    yield return StartCoroutine(WorkAreaDetails(area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).tiles
                         .Where(x => 
                             !x.hasDetail 
                             && x.objHere == null 
                             && !x.isLocked
-                            && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Structure_Entrance)).ToList());
+                            && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Structure_Entrance)).ToList()));
                 }
             }
-            CreateSeamlessEdges();
+            yield return StartCoroutine(CreateSeamlessEdges());
         }
-        private void MapPerlinDetails(List<LocationGridTile> tiles) {
+        private IEnumerator MapPerlinDetails(List<LocationGridTile> tiles) {
             offsetX = Random.Range(0f, 99999f);
             offsetY = Random.Range(0f, 99999f);
             int minX = tiles.Min(t => t.localPlace.x);
@@ -397,6 +398,8 @@ namespace Inner_Maps {
             int width = maxX - minX;
             int height = maxY - minY;
 
+            int batchCount = 0;
+            
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile currTile = tiles[i];
                 float xCoord = (float)currTile.localPlace.x / width * 11f + offsetX;
@@ -486,8 +489,14 @@ namespace Inner_Maps {
                         detailsTilemap.SetTile(currTile.localPlace, null);
                     }
                 }
+                batchCount++;
+                if (batchCount == MapGenerationData.InnerMapDetailBatches) {
+                    batchCount = 0;
+                    yield return null;    
+                }
             }
 
+            batchCount = 0;
             //flower, rock and garbage
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile currTile = tiles[i];
@@ -518,9 +527,11 @@ namespace Inner_Maps {
                             currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
                         }
                     }
-                    // Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Vector3.one);
-                    // detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
-                    // detailsTilemap.SetTransformMatrix(currTile.localPlace, m);
+                }
+                batchCount++;
+                if (batchCount == MapGenerationData.InnerMapDetailBatches) {
+                    batchCount = 0;
+                    yield return null;    
                 }
             }
         }
@@ -528,7 +539,7 @@ namespace Inner_Maps {
         /// Generate details for the work area (Crates, Barrels, etc.)
         /// </summary>
         /// <param name="insideTiles">Tiles included in the work area</param>
-        private void WorkAreaDetails(List<LocationGridTile> insideTiles) {
+        private IEnumerator WorkAreaDetails(List<LocationGridTile> insideTiles) {
             //5% of tiles that are adjacent to thin and thick walls should have crates or barrels
             List<LocationGridTile> tilesForBarrels = new List<LocationGridTile>();
             for (int i = 0; i < insideTiles.Count; i++) {
@@ -546,6 +557,7 @@ namespace Inner_Maps {
                     currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
                     //place tile object
                     ConvertDetailToTileObject(currTile);
+                    yield return null;
                 }
             }
 
@@ -557,6 +569,7 @@ namespace Inner_Maps {
                     detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.randomGarbTile);
                     //place tile object
                     ConvertDetailToTileObject(currTile);
+                    yield return null;
                 }
             }
         }
@@ -598,11 +611,17 @@ namespace Inner_Maps {
         #endregion
 
         #region Seamless Edges
-        private void CreateSeamlessEdges() {
+        private IEnumerator CreateSeamlessEdges() {
+            int batchCount = 0;
             for (int i = 0; i < allTiles.Count; i++) {
                 LocationGridTile tile = allTiles[i];
                 if (tile.structure != null && !tile.structure.structureType.IsOpenSpace()) { continue; } //skip non open space structure tiles.
                 tile.CreateSeamlessEdgesForTile(this);
+                batchCount++;
+                if (batchCount == MapGenerationData.InnerMapSeamlessEdgeBatches) {
+                    batchCount = 0;
+                    yield return null;
+                }
             }
         }
         #endregion

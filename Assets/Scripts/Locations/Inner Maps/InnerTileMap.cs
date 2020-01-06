@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Pathfinding;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -35,7 +36,7 @@ namespace Inner_Maps {
         public Vector3 worldPos { get; private set; }
         public abstract bool isSettlementMap { get; }
 
-        protected void GenerateGrid(int width, int height, ILocation location) {
+        protected IEnumerator GenerateGrid(int width, int height, ILocation location) {
             this.width = width;
             this.height = height;
             this.location = location;
@@ -43,6 +44,7 @@ namespace Inner_Maps {
             map = new LocationGridTile[width, height];
             allTiles = new List<LocationGridTile>();
             allEdgeTiles = new List<LocationGridTile>();
+            int batchCount = 0;
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
                     groundTilemap.SetTile(new Vector3Int(x, y, 0), GetOutsideFloorTile(location));
@@ -52,6 +54,11 @@ namespace Inner_Maps {
                         allEdgeTiles.Add(tile);
                     }
                     map[x, y] = tile;
+                }
+                batchCount++;
+                if (batchCount == MapGenerationData.InnerMapTileGenerationBatches) {
+                    batchCount = 0;
+                    yield return null;    
                 }
             }
             allTiles.ForEach(x => x.FindNeighbours(map));

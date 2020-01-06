@@ -1,4 +1,5 @@
-﻿using Inner_Maps;
+﻿using System.Collections;
+using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -10,7 +11,7 @@ public partial class LandmarkManager {
     [SerializeField] private GameObject regionInnerStructurePrefab;
     
     #region Area Maps
-    public void GenerateAreaMap(Area area) {
+    public IEnumerator GenerateAreaMap(Area area) {
         GameObject areaMapGO = GameObject.Instantiate(areaInnerStructurePrefab, innerMapsParent);
         AreaInnerTileMap areaMap = areaMapGO.GetComponent<AreaInnerTileMap>();
         areaMap.ClearAllTilemaps();
@@ -18,11 +19,11 @@ public partial class LandmarkManager {
         string log = string.Empty;
         areaMap.Initialize(area);
         TownMapSettings generatedSettings = areaMap.GenerateTownMap(out log);
-        areaMap.DrawMap(generatedSettings);
-        areaMap.PlaceInitialStructures(area);
+        yield return StartCoroutine(areaMap.DrawMap(generatedSettings));
+        yield return StartCoroutine(areaMap.PlaceInitialStructures(area));
 
-        areaMap.GenerateDetails();
-        area.PlaceObjects();
+        yield return StartCoroutine(areaMap.GenerateDetails());
+        yield return StartCoroutine(area.PlaceObjects());
 
         areaMap.OnMapGenerationFinished();
         //area.OnMapGenerationFinished();
@@ -49,18 +50,18 @@ public partial class LandmarkManager {
     #endregion
 
     #region Region Maps
-    private void GenerateRegionMap(Region region) {
+    private IEnumerator GenerateRegionMap(Region region) {
         GameObject regionMapGo = Instantiate(regionInnerStructurePrefab, innerMapsParent);
         RegionInnerTileMap innerTileMap = regionMapGo.GetComponent<RegionInnerTileMap>();
-        innerTileMap.Initialize(region);
+        yield return StartCoroutine(innerTileMap.Initialize(region));
         InnerMapManager.Instance.OnCreateInnerMap(innerTileMap);
     }
-    public void GenerateRegionInnerMaps() {
+    public IEnumerator GenerateRegionInnerMaps() {
         for (var i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             var region = GridMap.Instance.allRegions[i];
             if (region.area == null) { //only generate inner maps for regions if they do not have settlements on them (Areas)
                 region.GenerateStructures();
-                GenerateRegionMap(region);    
+                yield return StartCoroutine(GenerateRegionMap(region));    
             }
         }
     }

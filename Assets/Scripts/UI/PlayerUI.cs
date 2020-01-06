@@ -938,17 +938,17 @@ public class PlayerUI : MonoBehaviour {
             }
         }
         
-        LANDMARK_TYPE[] landmarkTypes = Utilities.GetEnumValues<LANDMARK_TYPE>();
-        for (int i = 0; i < landmarkTypes.Length; i++) {
-            LANDMARK_TYPE type = landmarkTypes[i];
-            if (type.IsPlayerLandmark() && type != LANDMARK_TYPE.THE_PORTAL && type != LANDMARK_TYPE.THE_SPIRE) {
-                Region region =
-                    Utilities.GetRandomElement(GridMap.Instance.allRegions.Where(x => x.coreTile.isCorrupted == false && x.owner == null).ToList());
-                LandmarkManager.Instance.OwnRegion(PlayerManager.Instance.player.playerFaction, RACE.DEMON, region);
-                BaseLandmark landmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(region.coreTile, type, false);
-                landmark.OnFinishedBuilding();
-            }
-        }
+        // LANDMARK_TYPE[] landmarkTypes = Utilities.GetEnumValues<LANDMARK_TYPE>();
+        // for (int i = 0; i < landmarkTypes.Length; i++) {
+        //     LANDMARK_TYPE type = landmarkTypes[i];
+        //     if (type.IsPlayerLandmark() && type != LANDMARK_TYPE.THE_PORTAL && type != LANDMARK_TYPE.THE_SPIRE) {
+        //         Region region =
+        //             Utilities.GetRandomElement(GridMap.Instance.allRegions.Where(x => x.coreTile.isCorrupted == false && x.owner == null).ToList());
+        //         LandmarkManager.Instance.OwnRegion(PlayerManager.Instance.player.playerFaction, RACE.DEMON, region);
+        //         BaseLandmark landmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(region.coreTile, type, false);
+        //         landmark.OnFinishedBuilding();
+        //     }
+        // }
         //PlayerManager.Instance.player.StartDivineIntervention();
         //PlayerManager.Instance.player.StartResearchNewInterventionAbility();
     }

@@ -139,11 +139,7 @@ public class CameraMove : MonoBehaviour {
         CameraMove.Instance.ConstrainCameraBounds();
     }
     public void CenterCameraOn(GameObject GO) {
-        if (GO == null) {
-            target = null;
-        } else {
-            target = GO.transform;
-        }
+        target = GO.transform;
     }
     private void ArrowKeysMovement() {
 #if WORLD_CREATION_TOOL

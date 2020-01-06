@@ -26,6 +26,6 @@ public class StartupManager : MonoBehaviour {
 
     private void OnGameLoaded() {
         Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
-        initializer.InitializeDataAfterWorldCreation();
+        // initializer.InitializeDataAfterWorldCreation();
     }
 }
