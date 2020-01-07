@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Interrupts {
-    public class BreakUp : Interrupt {
-        public BreakUp() : base(INTERRUPT.Break_Up) {
+    public class Mock : Interrupt {
+        public Mock() : base(INTERRUPT.Mock) {
             duration = 0;
             isSimulateneous = true;
         }
 
         #region Overrides
         public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
-            actor.nonActionEventsComponent.NormalBreakUp(target as Character);
+            Character targetCharacter = target as Character;
+            targetCharacter.opinionComponent.AdjustOpinion(actor, "Base", -3);
             return true;
         }
         #endregion

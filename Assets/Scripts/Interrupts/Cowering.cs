@@ -11,7 +11,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptEffect(Character actor, IPointOfInterest target) {
+        public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
             actor.CancelAllJobs();
             return true;
         }

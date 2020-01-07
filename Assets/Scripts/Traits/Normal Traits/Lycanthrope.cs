@@ -64,8 +64,9 @@ namespace Traits {
         }
         public override void ExecuteActionPerTickEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
             base.ExecuteActionPerTickEffects(action, goapNode);
-            if (action == INTERACTION_TYPE.NAP || action == INTERACTION_TYPE.SLEEP || action == INTERACTION_TYPE.SLEEP_OUTSIDE || action == INTERACTION_TYPE.NARCOLEPTIC_NAP) {
-                CheckForLycanthropy();
+            //if (action == INTERACTION_TYPE.NAP || action == INTERACTION_TYPE.SLEEP || action == INTERACTION_TYPE.SLEEP_OUTSIDE || action == INTERACTION_TYPE.NARCOLEPTIC_NAP) {
+            if (_character.traitContainer.GetNormalTrait<Trait>("Resting") != null) {
+                    CheckForLycanthropy();
             }
         }
         #endregion

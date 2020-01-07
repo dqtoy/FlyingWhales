@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Interrupts {
-    public class FeelingBrokenhearted : Interrupt {
-        public FeelingBrokenhearted() : base(INTERRUPT.Feeling_Brokenhearted) {
-            duration = 12;
+    public class FeelingEmbarassed : Interrupt {
+        public FeelingEmbarassed() : base(INTERRUPT.Feeling_Embarassed) {
+            duration = 0;
             doesStopCurrentAction = true;
-            doesDropCurrentJob = true;
         }
 
         #region Overrides
         public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
-            actor.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN);
+            actor.marker.AddAvoidInRange(target, true, "embarassed");
             return true;
         }
         #endregion

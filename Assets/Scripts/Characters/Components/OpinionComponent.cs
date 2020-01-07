@@ -92,6 +92,23 @@ public class OpinionComponent {
     public Dictionary<string, int> GetOpinion(Character target) {
         return opinions[target];
     }
+    public string GetOpinionLabel(Character target) {
+        if (HasOpinion(target)) {
+            int totalOpinion = GetTotalOpinion(target);
+            if (totalOpinion > 70) {
+                return "Close Friend";
+            } else if (totalOpinion > 20 && totalOpinion <= 70) {
+                return "Friend";
+            } else if (totalOpinion > -21 && totalOpinion <= 20) {
+                return "Acquaintance";
+            } else if (totalOpinion > -71 && totalOpinion <= -21) {
+                return "Enemy";
+            } else {
+                return "Rival";
+            }
+        }
+        return string.Empty;
+    }
 
     #region Inquiry
     public bool IsFriendsWith(Character character) {

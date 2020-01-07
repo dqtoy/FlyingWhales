@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Interrupts {
-    public class BreakUp : Interrupt {
-        public BreakUp() : base(INTERRUPT.Break_Up) {
+    public class Flirt : Interrupt {
+        public Flirt() : base(INTERRUPT.Flirt) {
             duration = 0;
             isSimulateneous = true;
         }
 
         #region Overrides
         public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
-            actor.nonActionEventsComponent.NormalBreakUp(target as Character);
+            actor.nonActionEventsComponent.NormalFlirtCharacter(target as Character);
             return true;
         }
         #endregion

@@ -42,13 +42,14 @@ public class InterruptComponent {
                 owner.currentJob.ForceCancelJob(false);
             }
         }
+        currentInterrupt.ExecuteInterruptStartEffect(owner, currentTargetPOI);
         return true;
     }
     public void OnTickEnded() {
         if (isInterrupted) {
             currentDuration++;
             if(currentDuration >= currentInterrupt.duration) {
-                if(currentInterrupt.ExecuteInterruptEffect(owner, currentTargetPOI)) {
+                if(currentInterrupt.ExecuteInterruptEndEffect(owner, currentTargetPOI)) {
                     CreateAndAddEffectLog();
                     EndInterrupt();
                 }

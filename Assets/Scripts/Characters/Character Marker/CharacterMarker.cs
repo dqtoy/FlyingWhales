@@ -1017,8 +1017,20 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     if(character.stateComponent.currentState == null || !character.stateComponent.currentState.OnEnterVisionWith(poi)) {
                         if (!character.CreateJobsOnEnterVisionWith(poi)) {
                             if (poi is Character) {
-                                character.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, poi);
-                                //character.nonActionEventsComponent.NormalChatCharacter(poi as Character);
+                                if (UnityEngine.Random.Range(0, 100) < 5) {
+                                    character.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, poi);
+                                    //character.nonActionEventsComponent.NormalChatCharacter(poi as Character);
+                                } else {
+                                    Character targetCharacter = poi as Character;
+                                    if(character.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.PARAMOUR)
+                                        || character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) == null
+                                        || character.traitContainer.GetNormalTrait<Trait>("Unfaithful") != null) {
+                                        int value = 2; //TODO: multiplied by the two character's Compatibility with each other
+                                        if(UnityEngine.Random.Range(0, 100) < value) {
+                                            character.interruptComponent.TriggerInterrupt(INTERRUPT.Flirt, targetCharacter);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

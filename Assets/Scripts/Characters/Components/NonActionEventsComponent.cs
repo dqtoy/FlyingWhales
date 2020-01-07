@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Traits;
 
 public class NonActionEventsComponent {
     public Character owner { get; private set; }
@@ -74,7 +75,7 @@ public class NonActionEventsComponent {
             result = "argument";
         }
         GameDate dueDate = GameManager.Instance.Today();
-        Log log = new Log(dueDate, "Character", "NonIntel", "chat_" + result);
+        Log log = new Log(dueDate, "Interrupt", "Chat", "chat_" + result);
         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         owner.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
@@ -125,10 +126,76 @@ public class NonActionEventsComponent {
         }
         RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.EX_LOVER);
 
-        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "break_up");
+        Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Break Up", "break_up");
         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         owner.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+    }
+    #endregion
+
+    #region Flirt
+    public bool NormalFlirtCharacter(Character target) {
+        if (target.isDead
+            || !target.canWitness
+            || !owner.canWitness
+            || target.role.roleType == CHARACTER_ROLE.BEAST
+            || owner.role.roleType == CHARACTER_ROLE.BEAST
+            || target.faction.isPlayerFaction
+            || owner.faction.isPlayerFaction
+            || target.characterClass.className == "Zombie"
+            || owner.characterClass.className == "Zombie"
+            || (owner.currentActionNode != null && owner.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)
+            || (target.currentActionNode != null && target.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)
+            //|| owner.isChatting
+            //|| target.isChatting
+            ) {
+            return false;
+        }
+        if (!owner.IsHostileWith(target)) {
+            TriggerFlirtCharacter(target);
+            return true;
+        }
+        return false;
+    }
+    private string TriggerFlirtCharacter(Character target) {
+        int chance = UnityEngine.Random.Range(0, 100);
+        if(chance < 50) {
+            if (owner.traitContainer.GetNormalTrait<Trait>("Ugly") != null) {
+                owner.opinionComponent.AdjustOpinion(target, "Base", -4);
+                target.opinionComponent.AdjustOpinion(owner, "Base", -2);
+                return "ugly";
+            }
+        }
+        if(chance < 90) {
+            if(!RelationshipManager.Instance.IsSexuallyCompatibleOneSided(target, owner)) {
+                owner.opinionComponent.AdjustOpinion(target, "Base", -4);
+                target.opinionComponent.AdjustOpinion(owner, "Base", -2);
+                return "incompatible";
+            }
+        }
+        owner.opinionComponent.AdjustOpinion(target, "Base", 2);
+        target.opinionComponent.AdjustOpinion(owner, "Base", 4);
+
+        int value = 0;
+        string opinionLabel = owner.opinionComponent.GetOpinionLabel(target);
+        if(opinionLabel == "Acquaintance") {
+            value = 1;
+        }else if (opinionLabel == "Friend" || opinionLabel == "Close Friend") {
+            value = 2;
+        }
+        if (value != 0
+            && UnityEngine.Random.Range(0, 10) < value
+            && owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.LOVER)
+            && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.LOVER)) {
+            RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.LOVER);
+        } else if (value != 0
+            && UnityEngine.Random.Range(0, 10) < value
+            && owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.PARAMOUR)
+            && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.PARAMOUR)) {
+            RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.PARAMOUR);
+            return "flirted_back";
+        }
+        return "flirted_back";
     }
     #endregion
 }

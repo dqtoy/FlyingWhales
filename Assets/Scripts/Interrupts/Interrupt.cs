@@ -18,7 +18,8 @@ namespace Interrupts {
         }
 
         #region Virtuals
-        public virtual bool ExecuteInterruptEffect(Character actor, IPointOfInterest target) { return false; }
+        public virtual bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) { return false; }
+        public virtual bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target) { return false; }
         #endregion
     }
 }
