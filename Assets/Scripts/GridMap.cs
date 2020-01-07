@@ -26,29 +26,17 @@ public class GridMap : MonoBehaviour {
     [Space(10)]
 	//public List<GameObject> listHexes;
     public List<HexTile> outerGridList;
-    public List<HexTile> hexTiles;
+    public List<HexTile> normalHexTiles;
 	public HexTile[,] map;
-
-	internal float mapWidth;
-	internal float mapHeight;
-
     public Region[] allRegions { get; private set; }
 
 
     #region getters/setters
-    public List<HexTile> allTiles {
-        get; private set;
-            //{
-            //List<HexTile> tiles = new List<HexTile>(hexTiles);
-            //tiles.AddRange(outerGridList);
-            //return tiles;
-        //}
-    }
+    public List<HexTile> allTiles { get; private set; }
     #endregion
 
     void Awake(){
 		Instance = this;
-//		ConvertInitialResourceSetupToDictionary ();
 	}
 
     #region Grid Generation
@@ -56,65 +44,12 @@ public class GridMap : MonoBehaviour {
         this.width = width;
         this.height = height;
     }
-    //public void StartGenerateGridCoroutine() {
-    //    StartCoroutine(GenerateGridCoroutine());
-    //}
-    public IEnumerator GenerateGridCoroutine() {
-        float newX = xOffset * (width / 2);
-        float newY = yOffset * (height / 2);
-        this.transform.localPosition = new Vector2(-newX, -newY);
-        //CameraMove.Instance.minimapCamera.transform.position
-        map = new HexTile[width, height];
-        //listHexes = new List<GameObject>();
-        hexTiles = new List<HexTile>();
-        allTiles = new List<HexTile>();
-        int id = 0;
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                float xPosition = x * xOffset;
-
-                float yPosition = y * yOffset;
-                if (y % 2 == 1) {
-                    xPosition += xOffset / 2;
-                }
-
-                GameObject hex = Instantiate(goHex) as GameObject;
-                hex.transform.SetParent(this.transform);
-                hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
-                hex.transform.localScale = new Vector3(tileSize, tileSize, 0f);
-                hex.name = x + "," + y;
-                HexTile currHex = hex.GetComponent<HexTile>();
-                hexTiles.Add(currHex);
-                currHex.Initialize();
-                currHex.data.id = id;
-                currHex.data.tileName = RandomNameGenerator.Instance.GetTileName();
-                currHex.data.xCoordinate = x;
-                currHex.data.yCoordinate = y;
-                //listHexes.Add(hex);
-                allTiles.Add(currHex);
-                map[x, y] = hex.GetComponent<HexTile>();
-                id++;
-                yield return null;
-            }
-        }
-        for (int i = 0; i < hexTiles.Count; i++) {
-            hexTiles[i].FindNeighbours(map);
-            yield return null;
-        }
-        //listHexes.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(map));
-        mapWidth = hexTiles[hexTiles.Count - 1].transform.position.x;
-        mapHeight = hexTiles[hexTiles.Count - 1].transform.position.y;
-        MapGenerator.Instance.SetIsCoroutineRunning(false);
-        //listHexes.ForEach(o => Debug.Log(o.name + " id: " + o.GetComponent<HexTile>().id));
-    }
     public IEnumerator GenerateGrid() {
         float newX = xOffset * (width / 2);
         float newY = yOffset * (height / 2);
         this.transform.localPosition = new Vector2(-newX, -newY);
-        //CameraMove.Instance.minimapCamera.transform.position
         map = new HexTile[width, height];
-        //listHexes = new List<GameObject>();
-        hexTiles = new List<HexTile>();
+        normalHexTiles = new List<HexTile>();
         allTiles = new List<HexTile>();
         int id = 0;
 
@@ -133,14 +68,14 @@ public class GridMap : MonoBehaviour {
                 hex.transform.localScale = new Vector3(tileSize, tileSize, 0f);
                 hex.name = x + "," + y;
                 HexTile currHex = hex.GetComponent<HexTile>();
-                hexTiles.Add(currHex);
+                normalHexTiles.Add(currHex);
                 currHex.Initialize();
                 currHex.data.id = id;
 				currHex.data.tileName = RandomNameGenerator.Instance.GetTileName();
                 currHex.data.xCoordinate = x;
                 currHex.data.yCoordinate = y;
-                //hexTiles.Add(hex);
                 allTiles.Add(currHex);
+                normalHexTiles.Add(currHex);
                 map[x, y] = hex.GetComponent<HexTile>();
                 id++;
 
@@ -151,9 +86,7 @@ public class GridMap : MonoBehaviour {
                 }
             }
         }
-        hexTiles.ForEach(o => o.FindNeighbours(map));
-        mapWidth = hexTiles[hexTiles.Count - 1].transform.position.x;
-        mapHeight = hexTiles[hexTiles.Count - 1].transform.position.y;
+        normalHexTiles.ForEach(o => o.FindNeighbours(map));
         yield return null;
         //listHexes.ForEach(o => Debug.Log(o.name + " id: " + o.GetComponent<HexTile>().id));
     }
@@ -164,7 +97,7 @@ public class GridMap : MonoBehaviour {
         float newY = yOffset * (height / 2);
         this.transform.localPosition = new Vector2(-newX, -newY);
         map = new HexTile[width, height];
-        hexTiles = new List<HexTile>();
+        normalHexTiles = new List<HexTile>();
         //int totalTiles = (int)width * (int)height;
         for (int i = 0; i < data.hextileSaves.Count; i++) {
             SaveDataHextile saveDataHextile = data.hextileSaves[i];
@@ -183,12 +116,12 @@ public class GridMap : MonoBehaviour {
             hex.transform.localScale = new Vector3(tileSize, tileSize, 0f);
             hex.name = x + "," + y;
             HexTile currHex = hex.GetComponent<HexTile>();
-            hexTiles.Add(currHex);
+            normalHexTiles.Add(currHex);
             currHex.Initialize();
             saveDataHextile.Load(currHex);
             map[x, y] = currHex;
         }
-        hexTiles.ForEach(o => o.FindNeighbours(map));
+        normalHexTiles.ForEach(o => o.FindNeighbours(map));
     }
     internal IEnumerator GenerateOuterGrid() {
         int newWidth = width + (_borderThickness * 2);
@@ -347,17 +280,17 @@ public class GridMap : MonoBehaviour {
 
     #region Grid Utilities
     internal HexTile GetHexTile(int id) {
-        for (int i = 0; i < hexTiles.Count; i++) {
-            if (hexTiles[i].id == id) {
-                return hexTiles[i];
+        for (int i = 0; i < normalHexTiles.Count; i++) {
+            if (normalHexTiles[i].id == id) {
+                return normalHexTiles[i];
             }
         }
         return null;
     }
     internal HexTile GetHexTile(int xCoordinate, int yCoordinate) {
-        for (int i = 0; i < hexTiles.Count; i++) {
-            if (xCoordinate == hexTiles[i].xCoordinate && yCoordinate == hexTiles[i].yCoordinate) {
-                return hexTiles[i];
+        for (int i = 0; i < normalHexTiles.Count; i++) {
+            if (xCoordinate == normalHexTiles[i].xCoordinate && yCoordinate == normalHexTiles[i].yCoordinate) {
+                return normalHexTiles[i];
             }
         }
         return null;
@@ -416,41 +349,22 @@ public class GridMap : MonoBehaviour {
             allRegions[i].ShowTransparentBorder();
         }
     }
-    public IEnumerator DivideToRegions(List<HexTile> tiles, int regionCount, int mapSize) {
-        List<HexTile> regionCoreTileChoices = new List<HexTile>(tiles);
-        List<HexTile> remainingTiles = new List<HexTile>(tiles);
-        allRegions = new Region[regionCount];
-        for (int i = 0; i < regionCount; i++) {
-            if (regionCoreTileChoices.Count == 0) {
-                throw new System.Exception("No more core tiles for regions!");
-            }
-            HexTile chosenTile = regionCoreTileChoices[Random.Range(0, regionCoreTileChoices.Count)];
-            Region newRegion = new Region(chosenTile);
-            int range = 2;
-            List<HexTile> tilesInRange = chosenTile.GetTilesInRange(range);
-            regionCoreTileChoices.Remove(chosenTile);
-            remainingTiles.Remove(chosenTile);
-            for (int j = 0; j < tilesInRange.Count; j++) {
-                regionCoreTileChoices.Remove(tilesInRange[j]);
-            }
-            allRegions[i] = newRegion;
-            yield return null;
-        }
+    public IEnumerator DivideToRegions(List<HexTile> tiles, int regionCount, int refinementLevel) {
+        List<HexTile> remainingTiles = new List<HexTile>();
+        allRegions = CreateRandomRegions(regionCount, tiles, ref remainingTiles);
+
         //assign each remaining tile to a region, based on each tiles distance from a core tile.
-        remainingTiles = remainingTiles.OrderBy(h => h.xCoordinate).ThenBy(h => h.yCoordinate).ToList();
-        for (int i = 0; i < remainingTiles.Count; i++) {
-            HexTile currTile = remainingTiles[i];
-            Region nearestRegion = null;
-            float nearestDistance = 99999f;
-            for (int j = 0; j < allRegions.Length; j++) {
-                Region currRegion = allRegions[j];
-                float dist = Vector2.Distance(currTile.transform.position, currRegion.coreTile.transform.position);
-                if (dist < nearestDistance) {
-                    nearestRegion = currRegion;
-                    nearestDistance = dist;
-                }
+        for (int i = 0; i <= refinementLevel; ++i) {
+            remainingTiles = GetNonRegionCoreTiles(tiles);
+            for (int j = 0; j < remainingTiles.Count; j++) {
+                HexTile currTile = remainingTiles[j];
+                Region nearestRegion = GetNearestRegionFromTile(currTile);
+                nearestRegion.AddTile(currTile);
             }
-            nearestRegion.AddTile(currTile);
+            //if the loop has not yet reached its end
+            if (i != refinementLevel) {
+                RedetermineRegionCoreTiles();
+            }
             yield return null;
         }
 
@@ -467,7 +381,55 @@ public class GridMap : MonoBehaviour {
         }
         Debug.Log(summary);
     }
-    #region Region
+    private Region[] CreateRandomRegions(int regionCount, List<HexTile> tiles, ref List<HexTile> remainingTiles) {
+        List<HexTile> regionCoreTileChoices = new List<HexTile>(tiles);
+        Region[] createdRegions = new Region[regionCount];
+        for (int i = 0; i < regionCount; i++) {
+            if (regionCoreTileChoices.Count == 0) {
+                throw new System.Exception("No more core tiles for regions!");
+            }
+            HexTile chosenTile = regionCoreTileChoices[Random.Range(0, regionCoreTileChoices.Count)];
+            Region newRegion = new Region(chosenTile);
+            int range = 2;
+            List<HexTile> tilesInRange = chosenTile.GetTilesInRange(range);
+            regionCoreTileChoices.Remove(chosenTile);
+            remainingTiles.Remove(chosenTile);
+            for (int j = 0; j < tilesInRange.Count; j++) {
+                regionCoreTileChoices.Remove(tilesInRange[j]);
+            }
+            createdRegions[i] = newRegion;
+        }
+        return createdRegions;
+    }
+    private List<HexTile> GetNonRegionCoreTiles(List<HexTile> tiles) {
+        List<HexTile> nonCoreTiles = new List<HexTile>();
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile currTile = tiles[i];
+            if (currTile.region == null || currTile.region.coreTile != currTile) {
+                nonCoreTiles.Add(currTile);
+            }
+        }
+        return nonCoreTiles;
+    }
+    private Region GetNearestRegionFromTile(HexTile tile) {
+        Region nearestRegion = null;
+        float nearestDistance = 99999f;
+        for (int k = 0; k < allRegions.Length; k++) {
+            Region currRegion = allRegions[k];
+            float dist = Vector2.Distance(tile.transform.position, currRegion.coreTile.transform.position);
+            if (dist < nearestDistance) {
+                nearestRegion = currRegion;
+                nearestDistance = dist;
+            }
+        }
+        return nearestRegion;
+    }
+    private void RedetermineRegionCoreTiles() {
+        for (int i = 0; i < allRegions.Length; i++) {
+            Region region = allRegions[i];
+            region.RedetermineCore();
+        }
+    }
     public Region GetRegionByID(int id) {
         for (int i = 0; i < allRegions.Length; i++) {
             if(allRegions[i].id == id) {
@@ -484,7 +446,6 @@ public class GridMap : MonoBehaviour {
         }
         return null;
     }
-    #endregion
     #endregion
 }
 

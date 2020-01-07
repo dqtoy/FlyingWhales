@@ -13,13 +13,6 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 	}
 	
 	private void GenerateMapWidthAndHeightFromRegionCount(int regionCount, out int width, out int height) {
-		// width = 0;
-		// height = 0;
-		// for (int i = 0; i < regionCount; i++) {
-		// 	int randomTileCount = Random.Range(12, 17);
-		// 	List<FactorPair> factors = GetFactorsOf(randomTileCount);
-		// }
-		
 		width = 0;
 		height = 0;
 		int maxColumns = 3;
@@ -47,40 +40,11 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 				currentRowWidth = 0;
 				height += regionHeight;
 			}
-            
-			//if (Utilities.IsEven(i)) {
-			//    width += regionWidth;
-			//} else {
-			//    height += regionHeight;
-			//}
-            
-			//totalTiles += regionWidth * regionHeight;
-			summary += "\n" + i + " - Width: " + regionWidth + " Height: " + regionHeight;
+			summary += $"\n{i} - Width: {regionWidth.ToString()} Height: {regionHeight.ToString()}";
 		}
-		//summary += "\nComputed total tiles : " + totalTiles.ToString();
 		summary += "\nTotal tiles : " + (width * height).ToString();
 		
 		Debug.Log(summary);
 	}
 
-	private List<FactorPair> GetFactorsOf(int value) {
-		List<FactorPair> pairs = new List<FactorPair>();
-		int closestWholeNum = Mathf.FloorToInt(Mathf.Sqrt(value));
-
-		for (int i = 1; i <= closestWholeNum; i++) {
-			if (value % i == 0) {//no remainders
-				pairs.Add(new FactorPair() {
-					num1 = i,
-					num2 = value/i
-				});
-			}
-		}
-		return pairs;
-	}
-	
-}
-
-public struct FactorPair {
-	public int num1;
-	public int num2;
 }

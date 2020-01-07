@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameFeature : RegionFeature {
+public class GameFeature : TileFeature {
 
     public GameFeature() {
         name = "Game";

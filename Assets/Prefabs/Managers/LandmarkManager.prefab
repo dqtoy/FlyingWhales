@@ -144,7 +144,7 @@ MonoBehaviour:
       tintSprite: {fileID: 21300000, guid: 455f303fb578b4841ae48fd16107beb2, type: 3}
       animation: {fileID: 0}
     elvenLandmarkTileSprites: []
-  - landmarkTypeString: Palace
+  - landmarkTypeString: Village
     landmarkType: 20
     minimumTileCount: 1
     buildDuration: 0
@@ -158,7 +158,10 @@ MonoBehaviour:
     biomeTileSprites:
       m_keys: 
       m_values: []
-    neutralTileSprites: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 25ad2f1445b44a44780267f577682fc6, type: 3}
+      tintSprite: {fileID: 21300000, guid: 2509d8d1c25f61343a7e20c936950617, type: 3}
+      animation: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 25ad2f1445b44a44780267f577682fc6, type: 3}
       tintSprite: {fileID: 21300000, guid: 2509d8d1c25f61343a7e20c936950617, type: 3}

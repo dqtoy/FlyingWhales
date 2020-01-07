@@ -203,12 +203,12 @@ public partial class LandmarkManager : MonoBehaviour {
             }
         }
     }
-    public void GenerateRegionFeatures() {
-        Region[] regions = GridMap.Instance.allRegions;
-        for (int i = 0; i < regions.Length; i++) {
-            regions[i].mainLandmark.AddFeaturesToRegion();
-        }
-    }
+    // public void GenerateRegionFeatures() {
+    //     Region[] regions = GridMap.Instance.allRegions;
+    //     for (int i = 0; i < regions.Length; i++) {
+    //         regions[i].mainLandmark.AddFeaturesToRegion();
+    //     }
+    // }
     public IEnumerator CreateTwoNewSettlementsAtTheStartOfGame() {
         Region firstRegion = null;
         Region secondRegion = null;
@@ -469,7 +469,7 @@ public partial class LandmarkManager : MonoBehaviour {
 #if WORLD_CREATION_TOOL
         List<HexTile> choices = worldcreator.WorldCreatorManager.Instance.allTiles;
 #else
-        List<HexTile> choices = GridMap.Instance.hexTiles;
+        List<HexTile> choices = GridMap.Instance.normalHexTiles;
 #endif
         for (int i = 0; i < choices.Count; i++) {
             HexTile currTile = choices[i];
@@ -678,10 +678,10 @@ public partial class LandmarkManager : MonoBehaviour {
     #endregion
 
     #region Regions
-    public RegionFeature CreateRegionFeature([NotNull] string featureName) {
+    public TileFeature CreateTileFeature([NotNull] string featureName) {
         try {
             Debug.Assert(featureName != null, nameof(featureName) + " != null");
-            return System.Activator.CreateInstance(System.Type.GetType(featureName)) as RegionFeature;
+            return System.Activator.CreateInstance(System.Type.GetType(featureName)) as TileFeature;
         } catch {
             throw new System.Exception("Cannot create region feature with name " + featureName);
         }
@@ -691,7 +691,7 @@ public partial class LandmarkManager : MonoBehaviour {
         List<Region> choices = new List<Region>();
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             Region region = GridMap.Instance.allRegions[i];
-            if (region.HasFeature(feature)) {
+            if (region.HasTileWithFeature(feature)) {
                 choices.Add(region);
             }
         }

@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Events.World_Events;
 using Inner_Maps;
 using PathFind;
 using UnityEngine;
@@ -36,12 +35,8 @@ public class Region : ILocation, IHasNeighbours<Region> {
     public List<Character> residents { get; private set; }
     public DemonicLandmarkBuildingData demonicBuildingData { get; private set; }
     public DemonicLandmarkInvasionData demonicInvasionData { get; private set; }
-    public WorldEvent activeEvent { get; private set; }
-    public Character eventSpawnedBy { get; private set; }
-    public IWorldEventData eventData { get; private set; }
     public GameObject eventIconGo { get; private set; }
     public List<Character> charactersAtLocation { get; private set; }
-    public List<RegionFeature> features { get; private set; }
     public InnerTileMap innerMap {
         get {
             if (area != null) {
@@ -82,7 +77,6 @@ public class Region : ILocation, IHasNeighbours<Region> {
         charactersAtLocation = new List<Character>();
         _otherAfterInvasionActions = new List<System.Action>();
         factionsHere = new List<Faction>();
-        features = new List<RegionFeature>();
         residents = new List<Character>();
         awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>>();
     }
@@ -92,26 +86,12 @@ public class Region : ILocation, IHasNeighbours<Region> {
         this.coreTile = coreTile;
         tiles = new List<HexTile>();
         AddTile(coreTile);
-
-        if (id == 1) {
-            regionColor = Color.black;
-        } else if (id == 2) {
-            regionColor = Color.blue;
-        } else if (id == 3) {
-            regionColor = Color.magenta;
-        } else if (id == 4) {
-            regionColor = Color.green;
-        } else if (id == 5) {
-            regionColor = Color.red;
-        }
-        
-        
-        // regionColor = Random.ColorHSV();
+        regionColor = Random.ColorHSV();
     }
     public Region(SaveDataRegion data) : this() {
         id = Utilities.SetID(this, data.id);
         name = data.name;
-        coreTile = GridMap.Instance.hexTiles[data.coreTileID];
+        coreTile = GridMap.Instance.normalHexTiles[data.coreTileID];
         tiles = new List<HexTile>();
         regionColor = data.regionColor;
     }
@@ -123,12 +103,13 @@ public class Region : ILocation, IHasNeighbours<Region> {
         if (!tiles.Contains(tile)) {
             tiles.Add(tile);
             tile.SetRegion(this);
-            tile.spriteRenderer.color = regionColor;
+            // tile.spriteRenderer.color = regionColor;
         }
     }
-    public void AddTile(List<HexTile> tiles) {
-        for (int i = 0; i < tiles.Count; i++) {
-            AddTile(tiles[i]);
+    private void RemoveTile(HexTile tile) {
+        if (tiles.Remove(tile)) {
+            tile.SetRegion(null);
+            // tile.spriteRenderer.color = Color.white;
         }
     }
     public void OnMainLandmarkChanged() {
@@ -138,9 +119,7 @@ public class Region : ILocation, IHasNeighbours<Region> {
     #region Utilities
     private string GetDescription() {
         if (coreTile.isCorrupted) {
-            if (HasFeature(RegionFeatureDB.Hallowed_Ground_Feature)) {
-                return "This region has a Hallowed Ground. You cannot build a demonic landmark here until you have defiled it.";
-            } else if (mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE) {
+            if (mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE) {
                 return "This region is empty. You may assign a minion to build a demonic landmark here.";
             }
         }
@@ -159,14 +138,23 @@ public class Region : ILocation, IHasNeighbours<Region> {
         int x = (minX + maxX) / 2;
         int y = (minY + maxY) / 2;
 
-        //coreTile.spriteRenderer.color = regionColor;
-
         coreTile = GridMap.Instance.map[x, y];
-        //coreTile.spriteRenderer.color = Color.white;
 
-        if (!tiles.Contains(coreTile)) {
-            throw new System.Exception("Region does not contain new core tile! " + coreTile.ToString());
+        while (tiles.Contains(coreTile) == false) {
+            x--;
+            y--;
+            coreTile = GridMap.Instance.map[x, y];
         }
+        
+        //clear all tiles again after redetermining core
+        List<HexTile> allTiles = new List<HexTile>(tiles);
+        for (int i = 0; i < allTiles.Count; i++) {
+            HexTile currTile = allTiles[i];
+            if (currTile != coreTile) {
+                RemoveTile(currTile);
+            }
+        }
+        
     }
     /// <summary>
     /// Get the outer tiles of this region. NOTE: Made this into a getter instead of saving it in a variable, to save memory.
@@ -250,6 +238,15 @@ public class Region : ILocation, IHasNeighbours<Region> {
     }
     public void CenterCameraOnRegion() {
         coreTile.CenterCameraHere();
+    }
+    public bool HasTileWithFeature(string featureName) {
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile tile = tiles[i];
+            if (tile.featureComponent.HasFeature(featureName)) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 
@@ -463,10 +460,10 @@ public class Region : ILocation, IHasNeighbours<Region> {
     #region Corruption/Invasion
     public void InvadeActions() {
         mainLandmark?.ChangeLandmarkType(LANDMARK_TYPE.NONE);
-        ActivateRegionFeatures();
-        RemoveFeaturesAfterInvade();
-        ExecuteEventAfterInvasion();
-        ExecuteOtherAfterInvasionActions();
+        // ActivateRegionFeatures();
+        // RemoveFeaturesAfterInvade();
+        // ExecuteEventAfterInvasion();
+        // ExecuteOtherAfterInvasionActions();
     }
     private void ExecuteOtherAfterInvasionActions() {
         for (int i = 0; i < _otherAfterInvasionActions.Count; i++) {
@@ -480,103 +477,8 @@ public class Region : ILocation, IHasNeighbours<Region> {
     #endregion
 
     #region Events
-    public void SpawnEvent(WorldEvent we, Character spawner) {
-        activeEvent = we;
-        //set character that spawned event
-        SetCharacterEventSpawner(spawner);
-        eventData = activeEvent.ConstructEventDataForLandmark(this);
-        for (int i = 0; i < eventData.involvedCharacters.Length; i++) {
-            Character currCharacter = eventData.involvedCharacters[i];
-            //do not let the character that spawned the event go home
-
-        }
-        //spawn the event
-        activeEvent.Spawn(this, spawner, eventData, out _activeEventAfterEffectScheduleId);
-        Messenger.Broadcast(Signals.WORLD_EVENT_SPAWNED, this, we);
-    }
-    public void LoadEvent(SaveDataRegion data) {
-        if (data.activeEvent != WORLD_EVENT.NONE) {
-            activeEvent = WorldEventsManager.Instance.GetWorldEvent(data.activeEvent);
-            Character spawner = CharacterManager.Instance.GetCharacterByID(data.eventSpawnedByCharacterID);
-            SetCharacterEventSpawner(spawner);
-            eventData = data.eventData.Load();
-            activeEvent.Load(this, spawner, eventData, out _activeEventAfterEffectScheduleId);
-            Messenger.Broadcast(Signals.WORLD_EVENT_SPAWNED, this, activeEvent);
-        }
-    }
-    public void SetCharacterEventSpawner(Character character) {
-        eventSpawnedBy = character;
-    }
-    private void SpawnEventThatCanProvideEffectFor(WORLD_EVENT_EFFECT[] effects, Character spawner) {
-        List<WorldEvent> events = WorldEventsManager.Instance.GetEventsThatCanProvideEffects(this, spawner, effects);
-        if (events.Count > 0) {
-            WorldEvent chosenEvent = events[Random.Range(0, events.Count)];
-            SpawnEvent(chosenEvent, spawner);
-        } else {
-            Debug.LogWarning($"{GameManager.Instance.TodayLogString()}No spawnable events were found for {spawner.name} at {this.name}");
-        }
-    }
-    public void WorldEventFinished(WorldEvent we) {
-        if (activeEvent != we) {
-            throw new System.Exception("World event " + we.name + " finished, but it is not the active event at " + this.name);
-        }
-        for (int i = 0; i < eventData.involvedCharacters.Length; i++) {
-            Character currCharacter = eventData.involvedCharacters[i];
-            //make characters involved in the event, go home
-        }
-        DespawnEvent();
-        Messenger.Broadcast(Signals.WORLD_EVENT_FINISHED_NORMAL, this, we);
-    }
-    public void WorldEventFailed(WorldEvent we) {
-        if (activeEvent != we) {
-            throw new System.Exception("World event " + we.name + " finished, but it is not the active event at " + this.name);
-        }
-        for (int i = 0; i < eventData.involvedCharacters.Length; i++) {
-            Character currCharacter = eventData.involvedCharacters[i];
-            //make characters involved in the event, go home
-        }
-        DespawnEvent();
-        Messenger.Broadcast(Signals.WORLD_EVENT_FAILED, this, we);
-    }
-    private void DespawnEvent() {
-        WorldEvent despawned = activeEvent;
-        eventData.interferingCharacter?.minion.SetAssignedRegion(null); //return interfering character
-        activeEvent = null;
-        eventData = null;
-        despawned.OnDespawn(this);
-        Messenger.Broadcast(Signals.WORLD_EVENT_DESPAWNED, this, despawned);
-    }
-    private void ExecuteEventAfterInvasion() {
-        if (activeEvent != null) {
-            SchedulingManager.Instance.RemoveSpecificEntry(_activeEventAfterEffectScheduleId); //unschedule the active event after effect schedule
-            activeEvent.ExecuteAfterInvasionEffect(this);
-            DespawnEvent();
-        }
-        List<Character> nonMinionCharacters = charactersAtLocation.Where(x => x.minion == null && !(x is Summon)).ToList();
-        //kill all remaining characters
-        for (int i = 0; i < nonMinionCharacters.Count; i++) {
-            Character character = nonMinionCharacters[i];
-            character.Death("Invasion");
-        }
-    }
-    public bool CanSpawnNewEvent() {
-        return activeEvent == null;
-    }
-    /// <summary>
-    /// Force the event to end regardless of its remaining duration.
-    /// </summary>
-    public void ForceResolveWorldEvent() {
-        SchedulingManager.Instance.RemoveSpecificEntry(_activeEventAfterEffectScheduleId); //unschedule the active event after effect schedule
-        activeEvent.TryExecuteAfterEffect(this, eventSpawnedBy);
-    }
     public void SetEventIcon(GameObject go) {
         eventIconGo = go;
-    }
-    public void JobBasedEventGeneration(Character character) {
-        //only trigger event generation if there is no active event and the character that arrived is not a minion
-        if (activeEvent == null && character.minion == null) {
-
-        }
     }
     public void OnCleansedRegion() {
         StopBuildingStructure();
@@ -588,27 +490,12 @@ public class Region : ILocation, IHasNeighbours<Region> {
         charactersAtLocation.Add(character);
         character.SetRegionLocation(this);
         Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
-        //if (area == null) {
-        //    //JobBasedEventGeneration(character);
-        //    Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
-        //} else {
-        //    //character.ownParty.SetSpecificLocation(area);
-        //    Messenger.Broadcast(Signals.CHARACTER_ENTERED_AREA, area, character);
-        //}
-        //character.SetLandmarkLocation(this.mainLandmark);
-        //Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
     }
     public void AddCharacterToLocation(Character character, LocationGridTile tileOverride = null, bool isInitial = false) {
         if (!charactersAtLocation.Contains(character)) {
             charactersAtLocation.Add(character);
             character.SetRegionLocation(this);
             Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
-            //if (area == null) {
-            //    Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
-            //} else {
-            //    //character.ownParty.SetSpecificLocation(area);
-            //    Messenger.Broadcast(Signals.CHARACTER_ENTERED_AREA, area, character);
-            //}
         }
     }
     public void RemoveCharacterFromLocation(Character character) {
@@ -616,28 +503,12 @@ public class Region : ILocation, IHasNeighbours<Region> {
             if (character.currentStructure == null && area != null && !owner.isPlayerFaction) {
                 throw new System.Exception(character.name + " doesn't have a current structure at " + name);
             }
-            // if (character.currentStructure != null && area == null) {
-            //     throw new System.Exception(character.name + " has a current structure at a location which has no area: " + name);
-            // }
             character.currentStructure?.RemoveCharacterAtLocation(character);
-            for (int i = 0; i < features.Count; i++) {
-                features[i].OnRemoveCharacterFromRegion(this, character);
-            }
+            // for (int i = 0; i < features.Count; i++) {
+            //     features[i].OnRemoveCharacterFromRegion(this, character);
+            // }
             character.SetRegionLocation(null);
             Messenger.Broadcast(Signals.CHARACTER_EXITED_REGION, character, this);
-            //if (area == null) {
-            //    character.SetRegionLocation(null);
-            //    Messenger.Broadcast(Signals.CHARACTER_EXITED_REGION, character, this);
-            //} else {
-            //    if (character.currentStructure == null && !owner.isPlayerFaction) {
-            //        throw new System.Exception(character.name + " doesn't have a current structure at " + area.name);
-            //    }
-            //    if (character.currentStructure != null) {
-            //        character.currentStructure.RemoveCharacterAtLocation(character);
-
-            //    }
-            //    Messenger.Broadcast(Signals.CHARACTER_EXITED_AREA, area, character);
-            //}
         }
     }
     public void RemoveCharacterFromLocation(Party party) {
@@ -804,80 +675,6 @@ public class Region : ILocation, IHasNeighbours<Region> {
     //        Biomes.Instance.UpdateTileVisuals(tile);
     //    }
     //}
-    #endregion
-
-    #region Features
-    public void LoadFeatures(SaveDataRegion data) {
-        for (int i = 0; i < data.features.Count; i++) {
-            AddFeature(data.features[i]);
-        }
-    }
-    public void AddFeature(RegionFeature feature) {
-        if (!features.Contains(feature)) {
-            features.Add(feature);
-            feature.OnAddFeature(this);
-            //Debug.Log(GameManager.Instance.TodayLogString() + " added new region feature " + feature.name + " to " + this.name);
-        }
-    }
-    public void AddFeature(string featureName) {
-        AddFeature(LandmarkManager.Instance.CreateRegionFeature(featureName));
-    }
-    public bool RemoveFeature(RegionFeature feature) {
-        if (features.Remove(feature)) {
-            feature.OnRemoveFeature(this);
-            return true;
-        }
-        return false;
-    }
-    public bool RemoveFeature(string featureName) {
-        RegionFeature feature = GetFeature(featureName);
-        if (feature != null) {
-            return RemoveFeature(feature);
-        }
-        return false;
-    }
-    public void RemoveAllFeatures() {
-        //List<RegionFeature> allFeatures = new List<RegionFeature>(features);
-        for (int i = 0; i < features.Count; i++) {
-            if (RemoveFeature(features[i])) {
-                i--;
-            }
-        }
-        //features.Clear(); //only cleared for now because at the time of writing, features do not do anything when they are removed.
-    }
-    public RegionFeature GetFeature(string featureName) {
-        for (int i = 0; i < features.Count; i++) {
-            RegionFeature f = features[i];
-            if (f.GetType().ToString() == featureName || f.name == featureName) {
-                return f;
-            }
-        }
-        return null;
-    }
-    public bool HasFeature(string featureName) {
-        return GetFeature(featureName) != null;
-    }
-    private void ActivateRegionFeatures() {
-        List<RegionFeature> regionFeatures = new List<RegionFeature>(features);
-        for (int i = 0; i < regionFeatures.Count; i++) {
-            RegionFeature f = regionFeatures[i];
-            if (f.type == REGION_FEATURE_TYPE.ACTIVE) {
-                f.Activate(this);
-                if (f.isRemovedOnActivation) {
-                    RemoveFeature(f);
-                }
-            }
-        }
-    }
-    private void RemoveFeaturesAfterInvade() {
-        List<RegionFeature> regionFeatures = new List<RegionFeature>(features);
-        for (int i = 0; i < regionFeatures.Count; i++) {
-            RegionFeature f = regionFeatures[i];
-            if (f.isRemovedOnInvade) {
-                RemoveFeature(f);
-            }
-        }
-    }
     #endregion
 
     #region Awareness

@@ -416,21 +416,11 @@ public class Minion {
                 log.AddToFillers(assignedRegion, assignedRegion.name, LOG_IDENTIFIER.LANDMARK_1);
                 SetBusyReason(log);
             } else {
-                //the region that this minion is assigned to is a normal landmark
-                if (assignedRegion.activeEvent != null && assignedRegion.eventData.interferingCharacter == this.character) {
-                    //this minion is interferring with an event 
-                    Log log = new Log(GameManager.Instance.Today(), "Character", "Minion", "busy_interfere");
-                    log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddToFillers(null, assignedRegion.activeEvent.name, LOG_IDENTIFIER.STRING_1);
-                    log.AddToFillers(assignedRegion, assignedRegion.name, LOG_IDENTIFIER.LANDMARK_1);
-                    SetBusyReason(log);
-                } else {
-                    //this minion is invading
-                    Log log = new Log(GameManager.Instance.Today(), "Character", "Minion", "busy_invade");
-                    log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddToFillers(assignedRegion, assignedRegion.name, LOG_IDENTIFIER.LANDMARK_1);
-                    SetBusyReason(log);
-                }
+                //this minion is invading
+                Log log = new Log(GameManager.Instance.Today(), "Character", "Minion", "busy_invade");
+                log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(assignedRegion, assignedRegion.name, LOG_IDENTIFIER.LANDMARK_1);
+                SetBusyReason(log);
             }
         } else {
             SetBusyReason(null);

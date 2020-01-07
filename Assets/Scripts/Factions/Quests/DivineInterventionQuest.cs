@@ -135,7 +135,7 @@ public class DivineInterventionQuest : Quest {
     private bool AreThereHallowedGrounds() {
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             Region currRegion = GridMap.Instance.allRegions[i];
-            if (currRegion.HasFeature(RegionFeatureDB.Hallowed_Ground_Feature)) {
+            if (currRegion.HasTileWithFeature(TileFeatureDB.Hallowed_Ground_Feature)) {
                 return true;
             }
         }
@@ -176,7 +176,7 @@ public class DivineInterventionQuest : Quest {
 
     #region Holy Incantation
     private void CreateHolyIncantationJob() {
-        Region target = LandmarkManager.Instance.GetRandomRegionWithFeature(RegionFeatureDB.Hallowed_Ground_Feature);
+        Region target = LandmarkManager.Instance.GetRandomRegionWithFeature(TileFeatureDB.Hallowed_Ground_Feature);
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PERFORM_HOLY_INCANTATION, INTERACTION_TYPE.HOLY_INCANTATION, target.regionTileObject, this);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoHolyIncantationJob);
         AddToAvailableJobs(job);
@@ -191,7 +191,7 @@ public class DivineInterventionQuest : Quest {
     #region Sabotage Faction
     public void CreateSabotageFactionJob() {
         if (!HasJob(JOB_TYPE.SABOTAGE_FACTION)) {
-            Region target = LandmarkManager.Instance.GetRandomRegionWithFeature(RegionFeatureDB.Hallowed_Ground_Feature);
+            Region target = LandmarkManager.Instance.GetRandomRegionWithFeature(TileFeatureDB.Hallowed_Ground_Feature);
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SABOTAGE_FACTION, INTERACTION_TYPE.DEMONIC_INCANTATION, target.regionTileObject, this);
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoSabotageFactionJob);
             AddToAvailableJobs(job);

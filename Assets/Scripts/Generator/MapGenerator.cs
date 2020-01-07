@@ -19,7 +19,9 @@ public class MapGenerator : MonoBehaviour {
     internal void InitializeWorld() {
         MapGenerationComponent[] mapGenerationComponents = {
             new WorldMapGridGeneration(), new WorldMapElevationGeneration(), new WorldMapBiomeGeneration(),
-            new SupportingFactionGeneration(), new WorldMapRegionGeneration(), new WorldMapOuterGridGeneration(), 
+            new SupportingFactionGeneration(), new WorldMapRegionGeneration(), new WorldMapOuterGridGeneration(),
+            new TileFeatureGeneration(), new PortalLandmarkGeneration(), new WorldMapLandmarkGeneration(), 
+             
             // new MainSettlementMapGeneration(), new SuppotingSettlementMapGeneration(), new RegionDataGeneration(), 
             // new PlayerDataGeneration(), 
         };
@@ -100,7 +102,6 @@ public class MapGenerator : MonoBehaviour {
 
         TokenManager.Instance.Initialize();
         //CharacterManager.Instance.GenerateRelationships();
-        WorldEventsManager.Instance.Initialize();
 
         yield return null;
         //LandmarkManager.Instance.GenerateAreaMap(LandmarkManager.Instance.enemyOfPlayerArea, false);
@@ -124,7 +125,6 @@ public class MapGenerator : MonoBehaviour {
         yield return null;
         data.LoadCharacterHistories();
 
-        data.LoadWorldEventsAndWorldObject();
         data.LoadCharacterCurrentStates();
         data.LoadFactionsActiveQuests();
 

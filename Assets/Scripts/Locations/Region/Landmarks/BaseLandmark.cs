@@ -66,7 +66,7 @@ public class BaseLandmark {
         _id = Utilities.SetID(this, data.id);
         _location = location;
         if(data.connectedTileID != -1) {
-            _connectedTile = GridMap.Instance.hexTiles[data.connectedTileID];
+            _connectedTile = GridMap.Instance.normalHexTiles[data.connectedTileID];
         }
         _specificLandmarkType = data.landmarkType;
         SetName(data.landmarkName);
@@ -112,8 +112,8 @@ public class BaseLandmark {
             tileLocation.region.assignedMinion.SetAssignedRegion(null);
             tileLocation.region.SetAssignedMinion(null);
         }
-        for (int i = 0; i < tileLocation.region.features.Count; i++) {
-            tileLocation.region.features[i].OnDemolishLandmark(tileLocation.region, specificLandmarkType);
+        for (int i = 0; i < tileLocation.featureComponent.features.Count; i++) {
+            tileLocation.featureComponent.features[i].OnDemolishLandmark(tileLocation, specificLandmarkType);
         }
         if (specificLandmarkType.IsPlayerLandmark()) {
             HexTile tile = _location;
@@ -175,91 +175,91 @@ public class BaseLandmark {
     /// <summary>
     /// Add features to the region that this landmark is in.
     /// </summary>
-    public void AddFeaturesToRegion() {
-        if (specificLandmarkType == LANDMARK_TYPE.NONE) {
-            return; //do not
-        }
-        if (tileLocation.isCorrupted || tileLocation.region.area != null) {
-            //Do not add feature is region is part of player or is a settlement region
-            return;
-        }
-        //if(tileLocation.region != null && tileLocation.region.area != null/* && tileLocation.region.area.areaMap.isSettlementMap*/) {
-        //    return; //do not
-        //}
-
-        //Constant features
-        switch (specificLandmarkType) {
-            case LANDMARK_TYPE.BARRACKS:
-                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Experience_Feature));
-                //tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Fortified_Feature));
-                break;
-            case LANDMARK_TYPE.MAGE_TOWER:
-                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Experience_Feature));
-                break;
-            case LANDMARK_TYPE.TEMPLE:
-                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Warded_Feature));
-                break;
-            case LANDMARK_TYPE.MONSTER_LAIR:
-                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Summons_Feature));
-                break;
-            case LANDMARK_TYPE.FARM:
-                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Fertile_Feature));
-                break;
-            case LANDMARK_TYPE.MINES:
-                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Stony_Feature));
-                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Metal_Rich_Feature));
-                break;
-        }
-
-        //random features
-        WeightedDictionary<string> randomFeatureWeights = new WeightedDictionary<string>();
-        switch (specificLandmarkType) {
-            case LANDMARK_TYPE.MONSTER_LAIR:
-                randomFeatureWeights.AddElement(RegionFeatureDB.Spell_Feature, 25);
-                randomFeatureWeights.AddElement(RegionFeatureDB.Knowledge_Feature, 25);
-                break;
-            case LANDMARK_TYPE.BARRACKS:
-                randomFeatureWeights.AddElement(RegionFeatureDB.Spell_Feature, 25);
-                randomFeatureWeights.AddElement(RegionFeatureDB.Knowledge_Feature, 45);
-                //randomFeatureWeights.AddElement("Nothing", 25);
-                break;
-            case LANDMARK_TYPE.MAGE_TOWER:
-                randomFeatureWeights.AddElement(RegionFeatureDB.Spell_Feature, 45);
-                randomFeatureWeights.AddElement(RegionFeatureDB.Knowledge_Feature, 25);
-                //randomFeatureWeights.AddElement("Nothing", 25);
-                break;
-            case LANDMARK_TYPE.TEMPLE:
-                randomFeatureWeights.AddElement(RegionFeatureDB.Spell_Feature, 25);
-                randomFeatureWeights.AddElement(RegionFeatureDB.Artifact_Feature, 35);
-                //randomFeatureWeights.AddElement("Nothing", 25);
-                break;
-            case LANDMARK_TYPE.MINES:
-                randomFeatureWeights.AddElement(RegionFeatureDB.Summons_Feature, 25);
-                randomFeatureWeights.AddElement(RegionFeatureDB.Artifact_Feature, 25);
-                //randomFeatureWeights.AddElement("Nothing", 50);
-                break;
-            case LANDMARK_TYPE.FARM:    
-                randomFeatureWeights.AddElement(RegionFeatureDB.Knowledge_Feature, 25);
-                randomFeatureWeights.AddElement(RegionFeatureDB.Summons_Feature, 25);
-                randomFeatureWeights.AddElement(RegionFeatureDB.Artifact_Feature, 25);
-                //randomFeatureWeights.AddElement("Nothing", 50);
-                break;
-            case LANDMARK_TYPE.WORKSHOP:
-                randomFeatureWeights.AddElement(RegionFeatureDB.Summons_Feature, 25);
-                randomFeatureWeights.AddElement(RegionFeatureDB.Artifact_Feature, 25);
-                break;
-        }
-        if (randomFeatureWeights.GetTotalOfWeights() > 0) {
-            string randomFeature = randomFeatureWeights.PickRandomElementGivenWeights();
-            if (randomFeature != "Nothing") {
-                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(randomFeature));
-            }
-        }
-
-        //hallowed ground
-        if (Random.Range(0, 100) < 20 && tileLocation.region.HasFeature(RegionFeatureDB.Hallowed_Ground_Feature) == false) {
-            tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Hallowed_Ground_Feature));
-        }
-    }
+    // public void AddFeaturesToRegion() {
+    //     if (specificLandmarkType == LANDMARK_TYPE.NONE) {
+    //         return; //do not
+    //     }
+    //     if (tileLocation.isCorrupted || tileLocation.region.area != null) {
+    //         //Do not add feature is region is part of player or is a settlement region
+    //         return;
+    //     }
+    //     //if(tileLocation.region != null && tileLocation.region.area != null/* && tileLocation.region.area.areaMap.isSettlementMap*/) {
+    //     //    return; //do not
+    //     //}
+    //
+    //     //Constant features
+    //     switch (specificLandmarkType) {
+    //         case LANDMARK_TYPE.BARRACKS:
+    //             tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(TileFeatureDB.Experience_Feature));
+    //             //tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Fortified_Feature));
+    //             break;
+    //         case LANDMARK_TYPE.MAGE_TOWER:
+    //             tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(TileFeatureDB.Experience_Feature));
+    //             break;
+    //         case LANDMARK_TYPE.TEMPLE:
+    //             tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(TileFeatureDB.Warded_Feature));
+    //             break;
+    //         case LANDMARK_TYPE.MONSTER_LAIR:
+    //             tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(TileFeatureDB.Summons_Feature));
+    //             break;
+    //         case LANDMARK_TYPE.FARM:
+    //             tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(TileFeatureDB.Fertile_Feature));
+    //             break;
+    //         case LANDMARK_TYPE.MINES:
+    //             tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(TileFeatureDB.Stony_Feature));
+    //             tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(TileFeatureDB.Metal_Rich_Feature));
+    //             break;
+    //     }
+    //
+    //     //random features
+    //     WeightedDictionary<string> randomFeatureWeights = new WeightedDictionary<string>();
+    //     switch (specificLandmarkType) {
+    //         case LANDMARK_TYPE.MONSTER_LAIR:
+    //             randomFeatureWeights.AddElement(TileFeatureDB.Spell_Feature, 25);
+    //             randomFeatureWeights.AddElement(TileFeatureDB.Knowledge_Feature, 25);
+    //             break;
+    //         case LANDMARK_TYPE.BARRACKS:
+    //             randomFeatureWeights.AddElement(TileFeatureDB.Spell_Feature, 25);
+    //             randomFeatureWeights.AddElement(TileFeatureDB.Knowledge_Feature, 45);
+    //             //randomFeatureWeights.AddElement("Nothing", 25);
+    //             break;
+    //         case LANDMARK_TYPE.MAGE_TOWER:
+    //             randomFeatureWeights.AddElement(TileFeatureDB.Spell_Feature, 45);
+    //             randomFeatureWeights.AddElement(TileFeatureDB.Knowledge_Feature, 25);
+    //             //randomFeatureWeights.AddElement("Nothing", 25);
+    //             break;
+    //         case LANDMARK_TYPE.TEMPLE:
+    //             randomFeatureWeights.AddElement(TileFeatureDB.Spell_Feature, 25);
+    //             randomFeatureWeights.AddElement(TileFeatureDB.Artifact_Feature, 35);
+    //             //randomFeatureWeights.AddElement("Nothing", 25);
+    //             break;
+    //         case LANDMARK_TYPE.MINES:
+    //             randomFeatureWeights.AddElement(TileFeatureDB.Summons_Feature, 25);
+    //             randomFeatureWeights.AddElement(TileFeatureDB.Artifact_Feature, 25);
+    //             //randomFeatureWeights.AddElement("Nothing", 50);
+    //             break;
+    //         case LANDMARK_TYPE.FARM:    
+    //             randomFeatureWeights.AddElement(TileFeatureDB.Knowledge_Feature, 25);
+    //             randomFeatureWeights.AddElement(TileFeatureDB.Summons_Feature, 25);
+    //             randomFeatureWeights.AddElement(TileFeatureDB.Artifact_Feature, 25);
+    //             //randomFeatureWeights.AddElement("Nothing", 50);
+    //             break;
+    //         case LANDMARK_TYPE.WORKSHOP:
+    //             randomFeatureWeights.AddElement(TileFeatureDB.Summons_Feature, 25);
+    //             randomFeatureWeights.AddElement(TileFeatureDB.Artifact_Feature, 25);
+    //             break;
+    //     }
+    //     if (randomFeatureWeights.GetTotalOfWeights() > 0) {
+    //         string randomFeature = randomFeatureWeights.PickRandomElementGivenWeights();
+    //         if (randomFeature != "Nothing") {
+    //             tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(randomFeature));
+    //         }
+    //     }
+    //
+    //     //hallowed ground
+    //     if (Random.Range(0, 100) < 20 && tileLocation.region.HasFeature(TileFeatureDB.Hallowed_Ground_Feature) == false) {
+    //         tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(TileFeatureDB.Hallowed_Ground_Feature));
+    //     }
+    // }
     #endregion
 }

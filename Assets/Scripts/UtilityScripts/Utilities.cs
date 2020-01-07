@@ -2094,4 +2094,5 @@ public class Utilities : MonoBehaviour {
         int random = UnityEngine.Random.Range(0, values.Length);
         return (T) values.GetValue(random);
     }
+    
 }

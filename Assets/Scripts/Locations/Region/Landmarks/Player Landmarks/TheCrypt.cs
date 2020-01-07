@@ -13,8 +13,8 @@ public class TheCrypt : BaseLandmark {
     #region Overrides
     public override void OnFinishedBuilding() {
         base.OnFinishedBuilding();
-        for (int i = 0; i < tileLocation.region.features.Count; i++) {
-            RegionFeature feature = tileLocation.region.features[i];
+        for (int i = 0; i < tileLocation.featureComponent.features.Count; i++) {
+            TileFeature feature = tileLocation.featureComponent.features[i];
             if(feature is ArtifactFeature) {
                 ArtifactFeature artifactFeature = feature as ArtifactFeature;
                 if(artifactFeature.artifact != null) {

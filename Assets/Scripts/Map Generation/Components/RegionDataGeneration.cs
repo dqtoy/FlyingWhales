@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class RegionDataGeneration : MapGenerationComponent {
 	public override IEnumerator Execute(MapGenerationData data) {
-		LandmarkManager.Instance.GenerateRegionFeatures();
-		yield return null;
+		// LandmarkManager.Instance.GenerateRegionFeatures();
+		// yield return null;
 		LandmarkManager.Instance.LoadAdditionalAreaData();
 		yield return null;
 		yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.GenerateRegionInnerMaps());

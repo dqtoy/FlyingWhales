@@ -25,7 +25,7 @@ public class SaveManager : MonoBehaviour {
     }
     public void SaveCurrentStateOfWorld() {
         Save save = new Save((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance._borderThickness);
-        save.SaveHextiles(GridMap.Instance.hexTiles);
+        save.SaveHextiles(GridMap.Instance.normalHexTiles);
         save.SaveOuterHextiles(GridMap.Instance.outerGridList);
         save.SaveRegions(GridMap.Instance.allRegions);
         save.SavePlayerArea(PlayerManager.Instance.player.playerArea);

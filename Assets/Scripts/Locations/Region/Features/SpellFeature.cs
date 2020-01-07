@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpellFeature : RegionFeature {
+public class SpellFeature : TileFeature {
 
     public SpellFeature() {
         name = "Spell";
@@ -12,8 +12,8 @@ public class SpellFeature : RegionFeature {
     }
 
     #region Overrides
-    public override void Activate(Region region) {
-        base.Activate(region);
+    public override void Activate(HexTile tile) {
+        base.Activate(tile);
         INTERVENTION_ABILITY[] spells = PlayerManager.Instance.allInterventionAbilities;
         PlayerJobAction newAbility = PlayerManager.Instance.CreateNewInterventionAbility(spells[Random.Range(0, spells.Length)]);
         if (PlayerManager.Instance.player.HasEmptyInterventionSlot()) {

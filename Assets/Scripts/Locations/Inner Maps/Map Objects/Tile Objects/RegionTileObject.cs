@@ -35,7 +35,7 @@ public class RegionTileObject : TileObject {
             }
 
             //features
-            if (region.HasFeature(RegionFeatureDB.Hallowed_Ground_Feature)) {
+            if (region.HasTileWithFeature(TileFeatureDB.Hallowed_Ground_Feature)) {
                 advertisedActions.Add(INTERACTION_TYPE.HOLY_INCANTATION);
                 advertisedActions.Add(INTERACTION_TYPE.DEMONIC_INCANTATION);
             }
@@ -63,10 +63,10 @@ public class RegionTileObject : TileObject {
             }
 
             //features
-            if (region.HasFeature(RegionFeatureDB.Game_Feature)) {
+            if (region.HasTileWithFeature(TileFeatureDB.Game_Feature)) {
                 advertisedActions.Add(INTERACTION_TYPE.FORAGE_FOOD_REGION);
             } 
-            if (region.HasFeature(RegionFeatureDB.Hallowed_Ground_Feature)) {
+            if (region.HasTileWithFeature(TileFeatureDB.Hallowed_Ground_Feature)) {
                 advertisedActions.Add(INTERACTION_TYPE.HOLY_INCANTATION);
                 advertisedActions.Add(INTERACTION_TYPE.DEMONIC_INCANTATION);
             }

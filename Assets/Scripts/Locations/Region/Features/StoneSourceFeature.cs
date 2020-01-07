@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FertileFeature : TileFeature {
+public class StoneSourceFeature : TileFeature {
 
-    public FertileFeature() {
-        name = "Fertile";
-        description = "Farms can be built here.";
+    public StoneSourceFeature() {
+        name = "Stone Source";
+        description = "Provides stone.";
         type = REGION_FEATURE_TYPE.PASSIVE;
         isRemovedOnInvade = true;
     }  

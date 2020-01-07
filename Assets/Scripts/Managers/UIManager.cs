@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using Events.World_Events;
 using Inner_Maps;
 using TMPro;
 using UnityEngine.UI;
@@ -136,11 +135,17 @@ public class UIManager : MonoBehaviour {
     }
     private void Update() {
         if (isHoveringTile) {
-            if (currentTileHovered.landmarkOnTile != null) {
-                currentTileHovered.ShowTileInfo();
-               
+            // if (currentTileHovered.landmarkOnTile != null) {
+            //     currentTileHovered.ShowTileInfo();
+            //    
+            // }
+            // currentTileHovered.region?.OnHoverOverAction();
+            string summary = $"{currentTileHovered.ToString()} \nfeatures:";
+            for (int i = 0; i < currentTileHovered.featureComponent.features.Count; i++) {
+                TileFeature feature = currentTileHovered.featureComponent.features[i];
+                summary += $"{feature.name}, ";
             }
-            currentTileHovered.region?.OnHoverOverAction();
+            UIManager.Instance.ShowSmallInfo(summary);
         }
     }
     #endregion
@@ -186,10 +191,7 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
-
-        Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnWorldEventSpawned);
-        Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_DESPAWNED, OnWorldEventDespawned);
-
+        
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnUIMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnUIMenuClosed);
 
@@ -1273,19 +1275,6 @@ public class UIManager : MonoBehaviour {
         //    //interiorMapLoadingBGImage.CrossFadeAlpha(0, 0.5f, true);
         //    //StartCoroutine(LoadingCoroutine(0f / 255f));
         //}
-    }
-    #endregion
-
-    #region World Events
-    private void OnWorldEventSpawned(Region region, WorldEvent we) {
-        //create world event popup
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(worldEventIconPrefab.name, Vector3.zero, Quaternion.identity, worldUIParent);
-        WorldEventIcon icon = go.GetComponent<WorldEventIcon>();
-        icon.PlaceAt(region);
-        region.SetEventIcon(go);
-    }
-    private void OnWorldEventDespawned(Region region, WorldEvent we) {
-        ObjectPoolManager.Instance.DestroyObject(region.eventIconGo);
     }
     #endregion
 

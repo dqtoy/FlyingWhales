@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using System.Linq;
-using Events.World_Events;
 using Inner_Maps;
 using Traits;
 
@@ -1646,44 +1645,8 @@ public class Player : ILeader {
     #endregion
 
     #region The Eye
-    private int listenToWorldEvents; //This is incremented everytime a minion is assigned/unassigned to The Eye. This makes the player listen for events.
-    private bool isAlreadyListeningToEvents { get { return listenToWorldEvents > 1; } } //This is used to check if the player is already listening to events. Which in this case means that the listenToWorldEvents is greater than 1 meaning it has already started listening for events atleast once
-    private void OnMinionAssignedToPlayerLandmark(Minion minion, BaseLandmark landmark) {
-        if (landmark.specificLandmarkType == LANDMARK_TYPE.THE_EYE) {
-            AdjustListenToEvents(1);
-        }
-    }
-    private void OnMinionUnassignedFromPlayerLandmark(Minion minion, BaseLandmark landmark) {
-        if (landmark.specificLandmarkType == LANDMARK_TYPE.THE_EYE) {
-            AdjustListenToEvents(-1);
-        }
-    }
-    private void AdjustListenToEvents(int adjustment) {
-        listenToWorldEvents += adjustment;
-        if (listenToWorldEvents > 0) {
-            StartListeningToEvents();
-        } else if (listenToWorldEvents <= 0) {
-            StopListeningToEvents();
-        }
-    }
-    private void StartListeningToEvents() {
-        if (isAlreadyListeningToEvents) {
-            return;
-        }
-        Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnEventSpawned);
-
-    }
-    private void StopListeningToEvents() {
-        Messenger.RemoveListener<Region, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnEventSpawned);
-    }
-    private void OnEventSpawned(Region region, WorldEvent we) {
-        Log log = new Log(GameManager.Instance.Today(), "WorldEvent", "Generic", "spawned");
-        log.AddToFillers(null, we.name, LOG_IDENTIFIER.STRING_1);
-        log.AddToFillers(region, region.name, LOG_IDENTIFIER.LANDMARK_1);
-        //PlayerManager.Instance.player.ShowNotification(log);
-        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), Utilities.LogReplacer(log), () => UIManager.Instance.ShowRegionInfo(region));
-        TimerHubUI.Instance.AddItem(we.name + " event at " + region.name, we.duration, () => UIManager.Instance.ShowRegionInfo(region));
-    }
+    private void OnMinionAssignedToPlayerLandmark(Minion minion, BaseLandmark landmark) { }
+    private void OnMinionUnassignedFromPlayerLandmark(Minion minion, BaseLandmark landmark) { }
     #endregion
 
     #region Mana

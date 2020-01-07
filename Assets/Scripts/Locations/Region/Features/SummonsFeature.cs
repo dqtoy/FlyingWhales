@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class SummonsFeature : RegionFeature {
+public class SummonsFeature : TileFeature {
 
 	public SummonsFeature() {
         name = "Summons";
@@ -12,8 +12,8 @@ public class SummonsFeature : RegionFeature {
     }
 
     #region Override
-    public override void OnAddFeature(Region region) {
-        base.OnAddFeature(region);
+    public override void OnAddFeature(HexTile tile) {
+        base.OnAddFeature(tile);
         SUMMON_TYPE chosenSummonType = CharacterManager.Instance.summonsPool[UnityEngine.Random.Range(0, CharacterManager.Instance.summonsPool.Length)];
         int numOfChars = 0;
         if (chosenSummonType == SUMMON_TYPE.Golem) {
@@ -23,9 +23,9 @@ public class SummonsFeature : RegionFeature {
         } else {
             numOfChars = UnityEngine.Random.Range(1, 4);
         }
-        for (int i = 0; i < numOfChars; i++) {
-            Summon summon = CharacterManager.Instance.CreateNewSummon(chosenSummonType, FactionManager.Instance.neutralFaction, region);
-        }
+        // for (int i = 0; i < numOfChars; i++) {
+        //     Summon summon = CharacterManager.Instance.CreateNewSummon(chosenSummonType, FactionManager.Instance.neutralFaction, tile);
+        // }
     }
     //public override void Activate(Region region) {
     //    base.Activate(region);
@@ -47,7 +47,7 @@ public class SummonsFeature : RegionFeature {
             }
         }
         if (!stillHasSummon) {
-            region.RemoveFeature(this);
+            // region.RemoveFeature(this);
         }
     }
     #endregion

@@ -4,6 +4,6 @@ using UnityEngine;
 
 public class WorldMapBiomeGeneration : MapGenerationComponent {
 	public override IEnumerator Execute(MapGenerationData data) {
-		yield return MapGenerator.Instance.StartCoroutine(Biomes.Instance.GenerateBiome(GridMap.Instance.hexTiles));
+		yield return MapGenerator.Instance.StartCoroutine(Biomes.Instance.GenerateBiome(GridMap.Instance.normalHexTiles));
 	}
 }
