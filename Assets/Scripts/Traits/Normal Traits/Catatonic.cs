@@ -28,14 +28,14 @@ namespace Traits {
                 owner = addedTo as Character;
                 owner.AdjustMoodValue(-15, this);
                 owner.needsComponent.AdjustDoNotGetLonely(1);
-                Messenger.AddListener(Signals.TICK_STARTED, CheckTrait);
+                //Messenger.AddListener(Signals.TICK_STARTED, CheckTrait);
                 Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             if (owner != null) {
                 owner.needsComponent.AdjustDoNotGetLonely(1);
-                Messenger.RemoveListener(Signals.TICK_STARTED, CheckTrait);
+                //Messenger.RemoveListener(Signals.TICK_STARTED, CheckTrait);
                 Messenger.RemoveListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
@@ -67,6 +67,10 @@ namespace Traits {
                 }
             }
             return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
+        }
+        public override void OnTickStarted() {
+            base.OnTickStarted();
+            CheckTrait();
         }
         #endregion
 

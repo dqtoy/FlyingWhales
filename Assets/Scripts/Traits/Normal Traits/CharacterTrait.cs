@@ -187,7 +187,14 @@ namespace Traits {
             }
             return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
         }
+        public override void OnTickStarted() {
+            base.OnTickStarted();
+            if (hasSurvivedApprehension) {
+                CheckAsCriminal();
+            }
+        }
         #endregion
+
         private void CheckAsCriminal() {
             if (owner.stateComponent.currentState == null && !owner.isAtHomeRegion && !owner.jobQueue.HasJob(JOB_TYPE.RETURN_HOME)) {
                 if (owner.jobQueue.jobsInQueue.Count > 0) {
@@ -204,13 +211,13 @@ namespace Traits {
         public void SetHasSurvivedApprehension(bool state) {
             if (hasSurvivedApprehension != state) {
                 hasSurvivedApprehension = state;
-                if (hasSurvivedApprehension) {
-                    Messenger.AddListener(Signals.TICK_STARTED, CheckAsCriminal);
-                } else {
-                    if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
-                        Messenger.RemoveListener(Signals.TICK_STARTED, CheckAsCriminal);
-                    }
-                }
+                //if (hasSurvivedApprehension) {
+                //    Messenger.AddListener(Signals.TICK_STARTED, CheckAsCriminal);
+                //} else {
+                //    if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+                //        Messenger.RemoveListener(Signals.TICK_STARTED, CheckAsCriminal);
+                //    }
+                //}
             }
         }
 

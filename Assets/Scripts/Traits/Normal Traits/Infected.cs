@@ -7,6 +7,9 @@ namespace Traits {
 
         private Character owner;
         private float pukeChance;
+        private bool canBeReanimated;
+        private bool willBeReanimated;
+        private bool doNotCheckPerHour;
 
         public override bool isPersistent { get { return true; } }
         public Infected() {
@@ -17,17 +20,20 @@ namespace Traits {
             ticksDuration = 0;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CURE_CHARACTER, };
             mutuallyExclusive = new string[] { "Robust" };
+            canBeReanimated = false;
+            willBeReanimated = false;
+            doNotCheckPerHour = false;
         }
 
         #region Override
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             owner = addedTo as Character;
-            Messenger.AddListener(Signals.HOUR_STARTED, PerHour);
+            //Messenger.AddListener(Signals.HOUR_STARTED, PerHour);
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
-            Messenger.RemoveListener(Signals.HOUR_STARTED, PerHour);
+            //Messenger.RemoveListener(Signals.HOUR_STARTED, PerHour);
             owner.marker.SetMarkerColor(Color.white);
             owner.ForceCancelAllJobsTargettingThisCharacterExcept(JOB_TYPE.REMOVE_TRAIT, name, removedBy);
         }
@@ -38,7 +44,8 @@ namespace Traits {
                 Messenger.RemoveListener<Character, Character>(Signals.CHARACTER_WAS_HIT, OnCharacterHit);
                 owner.traitContainer.RemoveTrait(owner, this);
             } else {
-                Messenger.RemoveListener(Signals.HOUR_STARTED, PerHour);
+                //Messenger.RemoveListener(Signals.HOUR_STARTED, PerHour);
+                doNotCheckPerHour = true;
                 SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(30)), StartReanimationCheck, this);
             }
         }
@@ -97,6 +104,21 @@ namespace Traits {
             }
             return hasCreatedJob;
         }
+        public override void OnTickEnded() {
+            base.OnTickEnded();
+            if (canBeReanimated) {
+                RollForReanimation();
+            }
+            if (willBeReanimated) {
+                CheckIfCanReanimate();
+            }
+        }
+        public override void OnHourStarted() {
+            base.OnHourStarted();
+            if(!doNotCheckPerHour) {
+                PerHour();
+            }
+        }
         #endregion
 
         private void PerHour() {
@@ -115,8 +137,9 @@ namespace Traits {
         }
 
         private void StartReanimationCheck() {
-            Messenger.AddListener(Signals.TICK_ENDED, RollForReanimation);
-            RollForReanimation(); //called this so, check will run immediately after the first 30 mins of being dead.
+            canBeReanimated = true;
+            //Messenger.AddListener(Signals.TICK_ENDED, RollForReanimation);
+            //RollForReanimation(); //called this so, check will run immediately after the first 30 mins of being dead.
         }
 
         private void RollForReanimation() {
@@ -124,12 +147,14 @@ namespace Traits {
             int roll = Random.Range(0, 100);
             //summary += "\nRoll is: " + roll.ToString(); 
             if (roll < 15) { //15
-                Messenger.RemoveListener(Signals.TICK_ENDED, RollForReanimation);
+                //Messenger.RemoveListener(Signals.TICK_ENDED, RollForReanimation);
+                canBeReanimated = false;
                 //reanimate
                 //summary += "\n" + owner.name + " is being reanimated.";
                 if (!owner.IsInOwnParty()) {
                     //character is being carried, check per tick if it is dropped or buried, then reanimate
-                    Messenger.AddListener(Signals.TICK_ENDED, CheckIfCanReanimate);
+                    //Messenger.AddListener(Signals.TICK_ENDED, CheckIfCanReanimate);
+                    willBeReanimated = true;
                 } else {
                     Reanimate();
                 }
@@ -141,7 +166,8 @@ namespace Traits {
         private void CheckIfCanReanimate() {
             if (owner.IsInOwnParty()) {
                 Reanimate();
-                Messenger.RemoveListener(Signals.TICK_ENDED, CheckIfCanReanimate);
+                willBeReanimated = false;
+                //Messenger.RemoveListener(Signals.TICK_ENDED, CheckIfCanReanimate);
             }
         }
 

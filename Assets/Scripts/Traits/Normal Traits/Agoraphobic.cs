@@ -33,9 +33,10 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             if (addedTo is Character) {
                 Character character = addedTo as Character;
-                if (character.marker.inVisionCharacters.Count >= 3) {
-                    ApplyAgoraphobicEffect(character, true);
-                }
+                ApplyAgoraphobicEffect(character);
+                //if (character.marker.inVisionCharacters.Count >= 3) {
+                //    ApplyAgoraphobicEffect(character, true);
+                //}
             }
         }
         public override void OnSeePOI(IPointOfInterest targetPOI, Character character) {
@@ -45,52 +46,65 @@ namespace Traits {
                 if (character.traitContainer.GetNormalTrait<Trait>("Berserked") != null) {
                     return;
                 }
-                if (!character.isInCombat) {
-                    if (character.marker.inVisionCharacters.Count >= 3) {
-                        ApplyAgoraphobicEffect(character, true);
-                    }
-                } else {
-                    CombatState combatState = character.stateComponent.currentState as CombatState;
-                    if (combatState.isAttacking) {
-                        if (character.marker.inVisionCharacters.Count >= 3) {
-                            ApplyAgoraphobicEffect(character, false);
-                            Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, character, "agoraphobia");
-                        }
-                    }
-                }
+                ApplyAgoraphobicEffect(character);
+                //if (!character.isInCombat) {
+                //    if (character.marker.inVisionCharacters.Count >= 3) {
+                //        ApplyAgoraphobicEffect(character, true);
+                //    }
+                //} else {
+                //    CombatState combatState = character.stateComponent.currentState as CombatState;
+                //    if (combatState.isAttacking) {
+                //        if (character.marker.inVisionCharacters.Count >= 3) {
+                //            ApplyAgoraphobicEffect(character, false);
+                //            Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, character, "agoraphobia");
+                //        }
+                //    }
+                //}
             }
         }
         public override string TriggerFlaw(Character character) {
             //If outside and the character lives in a house, the character will flee and go back home.
-            string successLogKey = base.TriggerFlaw(character);
-            if (character.homeStructure != null) {
-                if (character.currentStructure != character.homeStructure) {
-                    if (character.currentActionNode.action != null) {
-                        character.StopCurrentActionNode(false);
-                    }
-                    if (character.stateComponent.currentState != null) {
-                        character.stateComponent.ExitCurrentState();
-                    } 
-                    //else if (character.stateComponent.stateToDo != null) {
-                    //    character.stateComponent.SetStateToDo(null, false, false);
-                    //}
+            //string successLogKey = base.TriggerFlaw(character);
+            //if (character.homeStructure != null) {
+            //    if (character.currentStructure != character.homeStructure) {
+            //        if (character.currentActionNode.action != null) {
+            //            character.StopCurrentActionNode(false);
+            //        }
+            //        if (character.stateComponent.currentState != null) {
+            //            character.stateComponent.ExitCurrentState();
+            //        } 
+            //        //else if (character.stateComponent.stateToDo != null) {
+            //        //    character.stateComponent.SetStateToDo(null, false, false);
+            //        //}
 
-                    LocationGridTile tile = character.homeStructure.tiles[Random.Range(0, character.homeStructure.tiles.Count)];
-                    character.marker.GoTo(tile);
-                    return successLogKey;
-                } else {
-                    return "fail_at_home";
-                }
-            } else {
-                return "fail_no_home";
-            }
+            //        LocationGridTile tile = character.homeStructure.tiles[Random.Range(0, character.homeStructure.tiles.Count)];
+            //        character.marker.GoTo(tile);
+            //        return successLogKey;
+            //    } else {
+            //        return "fail_at_home";
+            //    }
+            //} else {
+            //    return "fail_no_home";
+            //}
+            ApplyAgoraphobicEffect(character);
+            return base.TriggerFlaw(character);
         }
         #endregion
 
-        private void ApplyAgoraphobicEffect(Character character, bool processCombat) {
-            character.marker.AddAvoidsInRange(character.marker.inVisionCharacters, processCombat, "agoraphobia");
-            character.needsComponent.AdjustHappiness(-50);
-            character.needsComponent.AdjustTiredness(-150);
+        private void ApplyAgoraphobicEffect(Character character/*, bool processCombat*/) {
+            if (!character.canWitness) {
+                return;
+            }
+            if(character.marker.inVisionCharacters.Count < 3) {
+                return;
+            }
+            character.traitContainer.AddTrait(character, "Anxious");
+            if(character.homeStructure != null && character.currentStructure != character.homeStructure) {
+
+            }
+            //character.marker.AddAvoidsInRange(character.marker.inVisionCharacters, processCombat, "agoraphobia");
+            //character.needsComponent.AdjustHappiness(-50);
+            //character.needsComponent.AdjustTiredness(-150);
         }
     }
 }

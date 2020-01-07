@@ -845,6 +845,12 @@ public class Utilities : MonoBehaviour {
         }
         return normalizedString;
     }
+    public static string NotNormalizedConversionEnumToString(string s) {
+        return s.Replace('_', ' ');
+    }
+    public static string NotNormalizedConversionStringToEnum(string s) {
+        return s.Replace(' ', '_');
+    }
     public static string FirstLetterToUpperCase(string s) {
         if (string.IsNullOrEmpty(s))
             throw new ArgumentException("There is no first letter");

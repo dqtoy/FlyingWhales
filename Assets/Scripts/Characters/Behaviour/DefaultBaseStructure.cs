@@ -17,7 +17,8 @@ public class DefaultBaseStructure : CharacterBehaviourComponent {
                     bool hasForcedChat = false;
                     for (int i = 0; i < character.marker.inVisionCharacters.Count; i++) {
                         Character targetCharacter = character.marker.inVisionCharacters[i];
-                        if (character.nonActionEventsComponent.ForceChatCharacter(targetCharacter)) {
+                        //if (character.nonActionEventsComponent.ForceChatCharacter(targetCharacter)) {
+                        if (character.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, targetCharacter)) {
                             log += "\n  -Chat with: " + targetCharacter.name;
                             hasForcedChat = true;
                             break;

@@ -1023,7 +1023,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     if(character.stateComponent.currentState == null || !character.stateComponent.currentState.OnEnterVisionWith(poi)) {
                         if (!character.CreateJobsOnEnterVisionWith(poi)) {
                             if (poi is Character) {
-                                character.nonActionEventsComponent.NormalChatCharacter(poi as Character);
+                                character.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, poi);
+                                //character.nonActionEventsComponent.NormalChatCharacter(poi as Character);
                             }
                         }
                     }

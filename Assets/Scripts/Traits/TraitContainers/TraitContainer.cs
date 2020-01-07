@@ -195,5 +195,29 @@ namespace Traits {
             return traits;
         }
         #endregion
+
+        #region Processes
+        public void ProcessOnTickStarted() {
+            if(allTraits != null) {
+                for (int i = 0; i < allTraits.Count; i++) {
+                    allTraits[i].OnTickStarted();
+                }
+            }
+        }
+        public void ProcessOnTickEnded() {
+            if (allTraits != null) {
+                for (int i = 0; i < allTraits.Count; i++) {
+                    allTraits[i].OnTickEnded();
+                }
+            }
+        }
+        public void ProcessOnHourStarted() {
+            if (allTraits != null) {
+                for (int i = 0; i < allTraits.Count; i++) {
+                    allTraits[i].OnHourStarted();
+                }
+            }
+        }
+        #endregion
     }
 }

@@ -125,6 +125,9 @@ namespace Traits {
             return reasons;
 
         }
+        public virtual void OnTickStarted() { }
+        public virtual void OnTickEnded() { }
+        public virtual void OnHourStarted() { }
         #endregion
 
         #region Utilities
