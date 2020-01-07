@@ -79,16 +79,16 @@ public class CameraMove : MonoBehaviour {
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
-        Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
-        Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
+        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
     }
 
     private void RemoveListeners() {
         Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
         Messenger.RemoveListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.RemoveListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
-        Messenger.RemoveListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
-        Messenger.RemoveListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
+        Messenger.RemoveListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.RemoveListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
     }
 
     #region Utilities
@@ -375,11 +375,11 @@ public class CameraMove : MonoBehaviour {
             ZoomToTarget(lastZoomAmount);
         }
     }
-    private void OnAreaMapOpened(Area area) {
+    private void OnInnerMapOpened(ILocation location) {
         Camera.main.cullingMask = 0;
         SetCameraControlState(false);
     }
-    private void OnAreaMapClosed(Area area) {
+    private void OnInnerMapClosed(ILocation location) {
         Camera.main.cullingMask = defaultMask;
         SetCameraControlState(true);
     }

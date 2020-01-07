@@ -9,6 +9,7 @@ public interface ILocation {
     HexTile coreTile { get; }
     InnerTileMap innerMap { get; }
     LOCATION_TYPE locationType { get; }
+    List<Character> charactersAtLocation { get; }
     Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; }
     LocationStructure mainStorage { get; }
 

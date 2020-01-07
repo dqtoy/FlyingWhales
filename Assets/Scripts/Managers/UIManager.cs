@@ -139,11 +139,20 @@ public class UIManager : MonoBehaviour {
             //     currentTileHovered.ShowTileInfo();
             //    
             // }
-            // currentTileHovered.region?.OnHoverOverAction();
+            currentTileHovered.region?.OnHoverOverAction();
             string summary = $"{currentTileHovered.ToString()} \nfeatures:";
             for (int i = 0; i < currentTileHovered.featureComponent.features.Count; i++) {
                 TileFeature feature = currentTileHovered.featureComponent.features[i];
                 summary += $"{feature.name}, ";
+            }
+            summary += "\nTile Map:\n";
+            for (int x = 0; x <= currentTileHovered.region.hexTileMap.GetUpperBound(0); x++) {
+                summary += $"X: {x.ToString()} ";
+                for (int y = 0; y <= currentTileHovered.region.hexTileMap.GetUpperBound(1); y++) {
+                    HexTile tile = currentTileHovered.region.hexTileMap[x, y];
+                    summary += $"{tile?.locationName ?? "Null"}, ";
+                }
+                summary += "\n";
             }
             UIManager.Instance.ShowSmallInfo(summary);
         }
@@ -182,8 +191,8 @@ public class UIManager : MonoBehaviour {
         //Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnPartyStartedTravelling);
         //Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnPartyDoneTravelling);
         //Messenger.AddListener(Signals.CAMERA_OUT_OF_FOCUS, OnCameraOutOfFocus);
-        Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
-        Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
+        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
 
         Messenger.AddListener<Intel>(Signals.SHOW_INTEL_NOTIFICATION, ShowPlayerNotification);
         Messenger.AddListener<Log>(Signals.SHOW_PLAYER_NOTIFICATION, ShowPlayerNotification);
@@ -1062,20 +1071,20 @@ public class UIManager : MonoBehaviour {
         return false;
     }
 
-    #region Area Map
+    #region Inner Map
     [Header("Inner Maps")]
     [SerializeField] private Button returnToWorldBtn;
     [SerializeField] private UIHoverPosition returnToWorldBtnTooltipPos;
-    private void OnAreaMapOpened(Area area) {
+    private void OnInnerMapOpened(ILocation location) {
         //returnToWorldBtn.interactable = true;
         //ShowPlayerNotificationArea();
         worldUIRaycaster.enabled = false;
-        regionNameTopMenuText.text = area.region.name;
+        regionNameTopMenuText.text = location.name;
         regionNameTopMenuGO.SetActive(true);
-        regionNameHoverHandler.SetOnHoverAction(() => TestingUtilities.ShowLocationInfo(area.region));
+        regionNameHoverHandler.SetOnHoverAction(() => TestingUtilities.ShowLocationInfo(location.coreTile.region));
         regionNameHoverHandler.SetOnHoverOutAction(TestingUtilities.HideLocationInfo);
     }
-    private void OnAreaMapClosed(Area area) {
+    private void OnInnerMapClosed(ILocation location) {
         //returnToWorldBtn.interactable = false;
         //HidePlayerNotificationArea();
         worldUIRaycaster.enabled = true;
@@ -1093,13 +1102,13 @@ public class UIManager : MonoBehaviour {
             OnCameraOutOfFocus();
         } else {
             if(regionInfoUI.activeRegion != null && regionInfoUI.activeRegion.area != null && regionInfoUI.activeRegion.area != PlayerManager.Instance.player.playerArea) {
-                InnerMapManager.Instance.TryShowAreaMap(regionInfoUI.activeRegion.area);
+                InnerMapManager.Instance.TryShowLocationMap(regionInfoUI.activeRegion.area);
             }
         }
     }
     public void ToggleMapsHover() {
         if (InnerMapManager.Instance.isAnAreaMapShowing) {
-            ShowSmallInfo("Click to exit " + InnerMapManager.Instance.currentlyShowingArea.name + ".", returnToWorldBtnTooltipPos);
+            ShowSmallInfo("Click to exit " + InnerMapManager.Instance.currentlyShowingLocation.name + ".", returnToWorldBtnTooltipPos);
         } else {
             if (regionInfoUI.activeRegion != null && regionInfoUI.activeRegion.area != null) {
                 ShowSmallInfo("Click to enter " + regionInfoUI.activeRegion.area.name + ".", returnToWorldBtnTooltipPos);
@@ -1255,7 +1264,7 @@ public class UIManager : MonoBehaviour {
     #region Controls
     public void ToggleEdgePanning(bool state) {
         CameraMove.Instance.AllowEdgePanning(state);
-        AreaMapCameraMove.Instance.AllowEdgePanning(state);
+        InnerMapCameraMove.Instance.AllowEdgePanning(state);
     }
     #endregion
 

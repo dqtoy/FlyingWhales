@@ -153,8 +153,8 @@ public class Player : ILeader {
         //Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnCharacterDidAction);
         Messenger.AddListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
         Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
-        Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
-        Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
+        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
 
         //minions
         Messenger.AddListener<Minion, BaseLandmark>(Signals.MINION_ASSIGNED_PLAYER_LANDMARK, OnMinionAssignedToPlayerLandmark);
@@ -209,14 +209,14 @@ public class Player : ILeader {
     //        Biomes.Instance.UpdateTileVisuals(removedTile);
     //    }
     //}
-    private void OnAreaMapOpened(Area area) {
+    private void OnInnerMapOpened(ILocation area) {
         //for (int i = 0; i < minions.Count; i++) {
         //    minions[i].ResetCombatAbilityCD();
         //}
         //ResetInterventionAbilitiesCD();
         //currentTargetFaction = area.owner;
     }
-    private void OnAreaMapClosed(Area area) {
+    private void OnInnerMapClosed(ILocation area) {
         //currentTargetFaction = null;
     }
     #endregion
@@ -675,8 +675,8 @@ public class Player : ILeader {
         return false;
 #endif
 
-        if (!onlyClickedCharacter && AreaMapCameraMove.Instance.gameObject.activeSelf) { //&& !character.isDead
-            if ((UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) || (character.marker != null &&  AreaMapCameraMove.Instance.CanSee(character.marker.gameObject))) {
+        if (!onlyClickedCharacter && InnerMapCameraMove.Instance.gameObject.activeSelf) { //&& !character.isDead
+            if ((UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) || (character.marker != null &&  InnerMapCameraMove.Instance.CanSee(character.marker.gameObject))) {
                 return true;
             }
         } else if (onlyClickedCharacter && UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) {
@@ -1464,8 +1464,8 @@ public class Player : ILeader {
             List<LocationGridTile> highlightedTiles = InnerMapManager.Instance.currentlyHighlightedTiles;
             if (highlightedTiles != null) {
                 List<IPointOfInterest> poisInHighlightedTiles = new List<IPointOfInterest>();
-                for (int i = 0; i < InnerMapManager.Instance.currentlyShowingArea.charactersAtLocation.Count; i++) {
-                    Character currCharacter = InnerMapManager.Instance.currentlyShowingArea.charactersAtLocation[i];
+                for (int i = 0; i < InnerMapManager.Instance.currentlyShowingLocation.charactersAtLocation.Count; i++) {
+                    Character currCharacter = InnerMapManager.Instance.currentlyShowingLocation.charactersAtLocation[i];
                     if (highlightedTiles.Contains(currCharacter.gridTileLocation)) {
                         poisInHighlightedTiles.Add(currCharacter);
                     }

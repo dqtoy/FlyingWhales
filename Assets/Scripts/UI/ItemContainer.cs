@@ -71,11 +71,11 @@ public class ItemContainer : PooledObject, IPointerClickHandler {
         //center camera on item location
         LocationGridTile tileLocation = item.gridTileLocation;
         if (tileLocation != null) {
-            bool instantCenter = InnerMapManager.Instance.currentlyShowingArea != tileLocation.structure.location;
+            bool instantCenter = InnerMapManager.Instance.currentlyShowingLocation != tileLocation.structure.location;
             if (InnerMapManager.Instance.currentlyShowingMap == tileLocation.parentMap) {
-                InnerMapManager.Instance.ShowAreaMap(tileLocation.structure.areaLocation);
+                InnerMapManager.Instance.ShowInnerMap(tileLocation.structure.areaLocation);
             }
-            AreaMapCameraMove.Instance.CenterCameraOn(item.collisionTrigger.gameObject, instantCenter);
+            InnerMapCameraMove.Instance.CenterCameraOn(item.collisionTrigger.gameObject, instantCenter);
         }
     }
 

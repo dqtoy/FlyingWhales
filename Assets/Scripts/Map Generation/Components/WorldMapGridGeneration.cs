@@ -15,7 +15,7 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 	private void GenerateMapWidthAndHeightFromRegionCount(int regionCount, out int width, out int height) {
 		width = 0;
 		height = 0;
-		int maxColumns = 3;
+		int maxColumns = 4;
 		int currColumn = 0;
 		
 		int currentRowWidth = 0;

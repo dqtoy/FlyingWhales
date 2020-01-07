@@ -2,16 +2,17 @@
 using System.Collections;
 using Inner_Maps;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 
-public class AreaMapCameraMove : MonoBehaviour {
+public class InnerMapCameraMove : MonoBehaviour {
 
-	public static AreaMapCameraMove Instance = null;
+	public static InnerMapCameraMove Instance = null;
 
 	[SerializeField] private float _minFov;
 	[SerializeField] private float _maxFov;
 	[SerializeField] private float zoomSensitivity;
     [SerializeField] private float _zoomSpeed = 5f;
-    public Camera areaMapsCamera;
+    [FormerlySerializedAs("areaMapsCamera")] public Camera innerMapsCamera;
 
     private float dampTime = 0.2f;
 	private Vector3 velocity = Vector3.zero;
@@ -54,7 +55,7 @@ public class AreaMapCameraMove : MonoBehaviour {
         }
     }
     public float currentFOV {
-        get { return areaMapsCamera.orthographicSize; }
+        get { return innerMapsCamera.orthographicSize; }
     }
     public float maxFOV {
         get { return _maxFov; }
@@ -79,19 +80,19 @@ public class AreaMapCameraMove : MonoBehaviour {
     public void Initialize() {
         //SetInitialCameraPosition();
         gameObject.SetActive(false);
-        Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
-        Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
+        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
         
     }
 
     #region Listeners
-    private void OnAreaMapOpened(Area area) {
+    private void OnInnerMapOpened(ILocation location) {
         gameObject.SetActive(true);
         SetCameraControlState(true);
-        SetCameraBordersForMap(area.areaMap);
+        SetCameraBordersForMap(location.innerMap);
         ConstrainCameraBounds();
     }
-    private void OnAreaMapClosed(Area area) {
+    private void OnInnerMapClosed(ILocation location) {
         gameObject.SetActive(false);
         SetCameraControlState(false);
     }
@@ -104,7 +105,7 @@ public class AreaMapCameraMove : MonoBehaviour {
 
     #region Utilities
     public void ZoomToTarget(float targetZoom) {
-        StartCoroutine(lerpFieldOfView(areaMapsCamera, targetZoom, 0.1f));
+        StartCoroutine(lerpFieldOfView(innerMapsCamera, targetZoom, 0.1f));
     }
     private IEnumerator lerpFieldOfView(Camera targetCamera, float toFOV, float duration) {
         float counter = 0;
@@ -162,14 +163,14 @@ public class AreaMapCameraMove : MonoBehaviour {
         if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) ||Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
             if (!UIManager.Instance.IsConsoleShowing()) {
                 float zAxisValue = Input.GetAxis("Vertical");
-                iTween.MoveUpdate(areaMapsCamera.gameObject, iTween.Hash("y", areaMapsCamera.transform.position.y + zAxisValue, "time", 0.1f));
+                iTween.MoveUpdate(innerMapsCamera.gameObject, iTween.Hash("y", innerMapsCamera.transform.position.y + zAxisValue, "time", 0.1f));
             }
         }
 
         if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) {
             if (!UIManager.Instance.IsConsoleShowing()) {
                 float xAxisValue = Input.GetAxis("Horizontal");
-                iTween.MoveUpdate(areaMapsCamera.gameObject, iTween.Hash("x", areaMapsCamera.transform.position.x + xAxisValue, "time", 0.1f));
+                iTween.MoveUpdate(innerMapsCamera.gameObject, iTween.Hash("x", innerMapsCamera.transform.position.x + xAxisValue, "time", 0.1f));
             }
         }
     }
@@ -177,7 +178,7 @@ public class AreaMapCameraMove : MonoBehaviour {
         Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
         if (allowZoom && screenRect.Contains(Input.mousePosition)) {
             //camera scrolling code
-            float fov = areaMapsCamera.orthographicSize;
+            float fov = innerMapsCamera.orthographicSize;
             float adjustment = Input.GetAxis("Mouse ScrollWheel") * (zoomSensitivity);
             if (adjustment != 0f && !UIManager.Instance.IsMouseOnUI()) {
                 //Debug.Log(adjustment);
@@ -187,9 +188,9 @@ public class AreaMapCameraMove : MonoBehaviour {
 
                 if (!Mathf.Approximately(previousCameraFOV, fov)) {
                     previousCameraFOV = fov;
-                    areaMapsCamera.orthographicSize = Mathf.Lerp(areaMapsCamera.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
+                    innerMapsCamera.orthographicSize = Mathf.Lerp(innerMapsCamera.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
                 } else {
-                    areaMapsCamera.orthographicSize = fov;
+                    innerMapsCamera.orthographicSize = fov;
                 }
                 CalculateCameraBounds();
             }
@@ -206,8 +207,8 @@ public class AreaMapCameraMove : MonoBehaviour {
         }
 
         if (target) { //smooth camera center
-            Vector3 point = areaMapsCamera.WorldToViewportPoint(target.position);
-            Vector3 delta = target.position - areaMapsCamera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z)); //(new Vector3(0.5, 0.5, point.z));
+            Vector3 point = innerMapsCamera.WorldToViewportPoint(target.position);
+            Vector3 delta = target.position - innerMapsCamera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z)); //(new Vector3(0.5, 0.5, point.z));
             Vector3 destination = transform.position + delta;
             if (transform.position != destination) {
                 transform.position = Vector3.SmoothDamp(transform.position, destination, ref velocity, dampTime);
@@ -238,7 +239,7 @@ public class AreaMapCameraMove : MonoBehaviour {
                 currDragTime += Time.deltaTime; //while the left mouse button is pressed
                 if (currDragTime >= dragThreshold) {
                     if (!hasReachedThreshold) {
-                        dragOrigin = areaMapsCamera.ScreenToWorldPoint(Input.mousePosition);
+                        dragOrigin = innerMapsCamera.ScreenToWorldPoint(Input.mousePosition);
                         originMousePos = Input.mousePosition;
                         hasReachedThreshold = true;
                     }
@@ -252,8 +253,8 @@ public class AreaMapCameraMove : MonoBehaviour {
         }
 
         if (isDragging) {
-            Vector3 difference = (areaMapsCamera.ScreenToWorldPoint(Input.mousePosition))- areaMapsCamera.transform.position;
-            areaMapsCamera.transform.position = dragOrigin-difference;
+            Vector3 difference = (innerMapsCamera.ScreenToWorldPoint(Input.mousePosition))- innerMapsCamera.transform.position;
+            innerMapsCamera.transform.position = dragOrigin-difference;
             if (Input.GetMouseButtonUp(2)) {
                 ResetDragValues();
                 CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
@@ -272,7 +273,7 @@ public class AreaMapCameraMove : MonoBehaviour {
         startedOnUI = false;
         hasReachedThreshold = false;
     }
-    private void SetCameraBordersForMap(AreaInnerTileMap map) {
+    private void SetCameraBordersForMap(InnerTileMap map) {
         float y = map.transform.localPosition.y;
         //MIN_Y = y;
         //MAX_Y = y;
@@ -331,7 +332,7 @@ public class AreaMapCameraMove : MonoBehaviour {
         //float mapX = Mathf.Floor(topRightCornerCoordinates.x);
         //float mapY = Mathf.Floor(topRightCornerCoordinates.y);
 
-        float vertExtent = areaMapsCamera.orthographicSize;
+        float vertExtent = innerMapsCamera.orthographicSize;
         float horzExtent = vertExtent * Screen.width / Screen.height;
 
         Bounds newBounds = new Bounds();
@@ -354,7 +355,7 @@ public class AreaMapCameraMove : MonoBehaviour {
         float xCoord = Mathf.Clamp(transform.position.x, xLowerBound, xUpperBound);
         float yCoord = Mathf.Clamp(transform.position.y, yLowerBound, yUpperBound);
         float zCoord = Mathf.Clamp(transform.position.z, MIN_Z, MAX_Z);
-        areaMapsCamera.transform.position = new Vector3(
+        innerMapsCamera.transform.position = new Vector3(
             xCoord,
             yCoord,
             zCoord);
@@ -402,7 +403,7 @@ public class AreaMapCameraMove : MonoBehaviour {
         return corners;
     }
     public bool CanSee(GameObject go) {
-        Vector3 viewPos = areaMapsCamera.WorldToViewportPoint(go.transform.position);
+        Vector3 viewPos = innerMapsCamera.WorldToViewportPoint(go.transform.position);
         return viewPos.x >= 0 && viewPos.x <= xSeeLimit && viewPos.y >= 0 && viewPos.y <= 1 && viewPos.z >= 0;
     }
     #endregion

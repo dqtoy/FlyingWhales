@@ -13,14 +13,6 @@ namespace Inner_Maps {
         private static int _westOutsideTiles = 8;
         private static int _northOutsideTiles = 8;
         private static int _southOutsideTiles = 8;
-
-        public Grid grid;
-        [FormerlySerializedAs("worldUICanvas")] public Canvas worldUiCanvas;
-        
-        [Header("Other")]
-        public Vector4 cameraBounds;
-        [FormerlySerializedAs("centerGOPrefab")] public GameObject centerGoPrefab;
-
         [Header("Structures")]
         [SerializeField] private GameObject buildSpotPrefab;
         [Header("Perlin Noise")]
@@ -29,9 +21,7 @@ namespace Inner_Maps {
         
         [Header("For Testing")]
         [SerializeField] private LineRenderer pathLineRenderer;
-
-        //burning
-        public List<BurningSource> activeBurningSources { get; private set; }
+        
         //Building spots
         public BuildingSpot[,] buildingSpots { get; private set; }
         public Area area { get; private set; }
@@ -47,7 +37,6 @@ namespace Inner_Maps {
         public void Initialize(Area _area) {
             this.area = _area;
             _area.SetAreaMap(this);
-            activeBurningSources = new List<BurningSource>();
 
             //set tile map sorting orders
             TilemapRenderer ground = groundTilemap.gameObject.GetComponent<TilemapRenderer>();
@@ -86,23 +75,9 @@ namespace Inner_Maps {
             //No need to Place Structures since structure of tile is loaded upon loading grid tile
             //AssignOuterAreas(insideTiles, outsideTiles); //no need for this because structure reference is already saved per location grid tile, and this only assigns the tile to either the wilderness or work area structure
         }
-        public void OnMapGenerationFinished() {
-            this.name = area.name + "'s Inner Map";
-            worldUiCanvas.worldCamera = AreaMapCameraMove.Instance.areaMapsCamera;
-            cameraBounds = new Vector4 {x = -185.8f}; //x - minX, y - minY, z - maxX, w - maxY 
-            var orthographicSize = AreaMapCameraMove.Instance.areaMapsCamera.orthographicSize;
-            cameraBounds.y = orthographicSize;
-            cameraBounds.z = (cameraBounds.x + width) - 28.5f;
-            cameraBounds.w = height - orthographicSize;
-            SpawnCenterGo();
-        }
-        private void SpawnCenterGo() {
-            centerGo = GameObject.Instantiate(centerGoPrefab, transform);
-            centerGo.transform.position = new Vector3((cameraBounds.x + cameraBounds.z) * 0.5f, (cameraBounds.y + cameraBounds.w) * 0.5f);
-        }
         private IEnumerator GenerateGrid(TownMapSettings settings) {
             Point determinedSize = GetWidthAndHeightForSettings(settings);
-            yield return StartCoroutine(GenerateGrid(determinedSize.X, determinedSize.Y, area));
+            yield return StartCoroutine(GenerateGrid(determinedSize.X, determinedSize.Y));
         }
         private void SplitMap(bool changeFloorAssets = true) {
             //assign outer and inner areas
@@ -642,24 +617,6 @@ namespace Inner_Maps {
             }
             return tiles;
         }
-        public void CleanUp() {
-            Utilities.DestroyChildren(objectsParent);
-        }
-        #endregion
-
-        #region Other
-        public void Open() {
-            //this.gameObject.SetActive(true);
-            //SwitchFromEstimatedMovementToPathfinding();
-        }
-        public void Close() {
-            //this.gameObject.SetActive(false);
-            ////if (UIManager.Instance.areaInfoUI.isShowing) {
-            ////    UIManager.Instance.areaInfoUI.ToggleMapMenu(false);
-            ////}
-            //isHovering = false;
-            //SwitchFromPathfindingToEstimatedMovement();
-        }
         #endregion
 
         #region For Testing
@@ -840,23 +797,6 @@ namespace Inner_Maps {
                 return true;
             }
             return false;
-        }
-        #endregion
-
-        #region Burning Source
-        public void AddActiveBurningSource(BurningSource bs) {
-            if (!activeBurningSources.Contains(bs)) {
-                activeBurningSources.Add(bs);
-            }
-        }
-        public void RemoveActiveBurningSources(BurningSource bs) {
-            activeBurningSources.Remove(bs);
-        }
-        public void LoadBurningSources(List<SaveDataBurningSource> sources) {
-            //for (int i = 0; i < sources.Count; i++) {
-            //    SaveDataBurningSource data = sources[i];
-            //    BurningSource bs = new BurningSource(area, data);
-            //}
         }
         #endregion
     }

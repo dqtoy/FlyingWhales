@@ -2176,16 +2176,16 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 if (marker.gameObject.activeInHierarchy) {
                     bool instantCenter = !InnerMapManager.Instance.IsShowingAreaMap(currentRegion.area);
                     if (currentRegion.area != null && instantCenter) {
-                        InnerMapManager.Instance.ShowAreaMap(currentRegion.area, false);
+                        InnerMapManager.Instance.ShowInnerMap(currentRegion.area, false);
                     }
-                    AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
+                    InnerMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
                 }
             } else if (currentRegion.area != null) {
                 bool instantCenter = !InnerMapManager.Instance.IsShowingAreaMap(currentRegion.area);
                 if (instantCenter) {
-                    InnerMapManager.Instance.ShowAreaMap(currentRegion.area, false);
+                    InnerMapManager.Instance.ShowInnerMap(currentRegion.area, false);
                 }
-                AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
+                InnerMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
 
             } else {
                 if (InnerMapManager.Instance.isAnAreaMapShowing) {

@@ -1,15 +1,17 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Pathfinding;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 namespace Inner_Maps {
     public abstract class InnerTileMap : MonoBehaviour {
         
-        public static int WestEdge = 7;
-        public static int NorthEdge = 1;
-        public static int SouthEdge = 1;
-        public static int EastEdge = 2;
+        public static int WestEdge = 0;
+        public static int NorthEdge = 0;
+        public static int SouthEdge = 0;
+        public static int EastEdge = 0;
         
         [Header("Tile Maps")]
         public Tilemap groundTilemap;
@@ -25,7 +27,10 @@ namespace Inner_Maps {
         [Header("Parents")]
         public Transform objectsParent;
         public Transform structureParent;
-        
+        [FormerlySerializedAs("worldUICanvas")] public Canvas worldUiCanvas;
+        public Grid grid;
+        [Header("Other")]
+        [FormerlySerializedAs("centerGOPrefab")] public GameObject centerGoPrefab;
         public int width { get; set; }
         public int height { get; set; }
         public LocationGridTile[,] map { get; private set; }
@@ -34,12 +39,19 @@ namespace Inner_Maps {
         public ILocation location { get; private set; }
         public GridGraph pathfindingGraph { get; set; }
         public Vector3 worldPos { get; private set; }
+        public GameObject centerGo { get; private set; }
+        public Vector4 cameraBounds;
         public abstract bool isSettlementMap { get; }
+        public List<BurningSource> activeBurningSources { get; private set; }
 
-        protected IEnumerator GenerateGrid(int width, int height, ILocation location) {
+        public virtual void Initialize(ILocation location) {
+            this.location = location;
+            activeBurningSources = new List<BurningSource>();
+        }
+        
+        protected IEnumerator GenerateGrid(int width, int height) {
             this.width = width;
             this.height = height;
-            this.location = location;
 
             map = new LocationGridTile[width, height];
             allTiles = new List<LocationGridTile>();
@@ -290,5 +302,62 @@ namespace Inner_Maps {
             worldPos = transform.position;
         }
         #endregion
+
+        public void Open() {
+            //this.gameObject.SetActive(true);
+            //SwitchFromEstimatedMovementToPathfinding();
+        }
+        public void Close() {
+            //this.gameObject.SetActive(false);
+            ////if (UIManager.Instance.areaInfoUI.isShowing) {
+            ////    UIManager.Instance.areaInfoUI.ToggleMapMenu(false);
+            ////}
+            //isHovering = false;
+            //SwitchFromPathfindingToEstimatedMovement();
+        }
+        public void OnMapGenerationFinished() {
+            this.name = location.name + "'s Inner Map";
+            worldUiCanvas.worldCamera = InnerMapCameraMove.Instance.innerMapsCamera;
+            var orthographicSize = InnerMapCameraMove.Instance.innerMapsCamera.orthographicSize;
+            cameraBounds = new Vector4 {x = -185.8f}; //x - minX, y - minY, z - maxX, w - maxY 
+            cameraBounds.y = orthographicSize;
+            cameraBounds.z = (cameraBounds.x + width) - 28.5f;
+            cameraBounds.w = height - orthographicSize;
+            SpawnCenterGo();
+        }
+        private void SpawnCenterGo() {
+            centerGo = GameObject.Instantiate<GameObject>(centerGoPrefab, transform);
+            centerGo.transform.position = new Vector3((cameraBounds.x + cameraBounds.z) * 0.5f, (cameraBounds.y + cameraBounds.w) * 0.5f);
+        }
+        public void AddActiveBurningSource(BurningSource bs) {
+            if (!activeBurningSources.Contains(bs)) {
+                activeBurningSources.Add(bs);
+            }
+        }
+        public void RemoveActiveBurningSources(BurningSource bs) {
+            activeBurningSources.Remove(bs);
+        }
+        public void LoadBurningSources(List<SaveDataBurningSource> sources) {
+            //for (int i = 0; i < sources.Count; i++) {
+            //    SaveDataBurningSource data = sources[i];
+            //    BurningSource bs = new BurningSource(area, data);
+            //}
+        }
+        public void CleanUp() {
+            Utilities.DestroyChildren(objectsParent);
+        }
+        public HexTile GetHexTileThatTileBelongsTo(LocationGridTile tile) {
+            int localX = tile.localPlace.x / 14;
+            int localY = tile.localPlace.y / 14;
+
+            try {
+                return location.coreTile.region.hexTileMap[localX, localY];
+            } catch (Exception e) {
+                Debug.LogWarning($"{e.Message} Local X: {localX.ToString()} Local Y: {localY.ToString()}");
+                return null;
+            }
+            
+            
+        }
     }
 }

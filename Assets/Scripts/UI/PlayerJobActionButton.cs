@@ -27,15 +27,15 @@ public class PlayerJobActionButton : MonoBehaviour {
     private void OnEnable() {
         Messenger.AddListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, OnJobActionCooldownActivated);
         Messenger.AddListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_DONE, OnJobActionCooldownDone);
-        Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
-        Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
+        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
         Messenger.AddListener<PlayerJobActionSlot>(Signals.PLAYER_GAINED_INTERVENE_LEVEL, OnJobActionGainLevel);
     }
     private void OnDisable() {
         Messenger.RemoveListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, OnJobActionCooldownActivated);
         Messenger.RemoveListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_DONE, OnJobActionCooldownDone);
-        Messenger.RemoveListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
-        Messenger.RemoveListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
+        Messenger.RemoveListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.RemoveListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
         Messenger.RemoveListener<PlayerJobActionSlot>(Signals.PLAYER_GAINED_INTERVENE_LEVEL, OnJobActionGainLevel);
     }
 
@@ -124,10 +124,10 @@ public class PlayerJobActionButton : MonoBehaviour {
             UpdateLevel();
         }
     }
-    private void OnAreaMapOpened(Area area) {
+    private void OnInnerMapOpened(ILocation location) {
         UpdateInteractableState();
     }
-    private void OnAreaMapClosed(Area area) {
+    private void OnInnerMapClosed(ILocation location) {
         //Upon closing of area map reset intervention ability cooldowns
         //action.InstantCooldown();
         UpdateInteractableState();

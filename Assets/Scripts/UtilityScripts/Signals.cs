@@ -54,8 +54,8 @@ public static class Signals {
     public static string ITEM_REMOVED_FROM_AREA = "OnItemRemovedFromArea"; //Parameters (Area affectedArea, SpecialToken token)
     public static string ITEM_ADDED_TO_AREA = "OnItemAddedToArea"; //Parameters (Area affectedArea, SpecialToken token)
     public static string ITEM_BUILT = "OnItemBuilt"; //Parameters (SpecialToken token)
-    public static string AREA_MAP_OPENED = "OnAreaMapOpened"; //parameters (Area area)
-    public static string AREA_MAP_CLOSED = "OnAreaMapClosed"; //parameters (Area area)
+    public static string LOCATION_MAP_OPENED = "OnAreaMapOpened"; //parameters (Area area)
+    public static string LOCATION_MAP_CLOSED = "OnAreaMapClosed"; //parameters (Area area)
     public static string REGION_CHANGE_STORAGE = "OnRegionChangeStorage";
     /// <summary>
     /// Parameters: Food Pile (affected food pile)

@@ -50,20 +50,13 @@ public partial class LandmarkManager {
     #endregion
 
     #region Region Maps
-    private IEnumerator GenerateRegionMap(Region region) {
+    public IEnumerator GenerateRegionMap(Region region, int mapWidth, int mapHeight) {
         GameObject regionMapGo = Instantiate(regionInnerStructurePrefab, innerMapsParent);
         RegionInnerTileMap innerTileMap = regionMapGo.GetComponent<RegionInnerTileMap>();
-        yield return StartCoroutine(innerTileMap.Initialize(region));
+        innerTileMap.Initialize(region);
+        region.GenerateStructures();
+        yield return StartCoroutine(innerTileMap.GenerateMap(region, mapWidth, mapHeight));
         InnerMapManager.Instance.OnCreateInnerMap(innerTileMap);
-    }
-    public IEnumerator GenerateRegionInnerMaps() {
-        for (var i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-            var region = GridMap.Instance.allRegions[i];
-            if (region.area == null) { //only generate inner maps for regions if they do not have settlements on them (Areas)
-                region.GenerateStructures();
-                yield return StartCoroutine(GenerateRegionMap(region));    
-            }
-        }
     }
     #endregion
 

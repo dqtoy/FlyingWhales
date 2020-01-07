@@ -236,8 +236,8 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<Minion>(Signals.PLAYER_GAINED_MINION, OnGainedMinion);
         Messenger.AddListener<Minion>(Signals.PLAYER_LOST_MINION, OnLostMinion);
 
-        Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
-        Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
+        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
 
         //key presses
         Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
@@ -265,7 +265,7 @@ public class PlayerUI : MonoBehaviour {
     }
 
     #region Listeners
-    private void OnAreaMapOpened(Area area) {
+    private void OnInnerMapOpened(ILocation location) {
         UpdateSummonsInteraction();
         UpdateArtifactsInteraction();
         //UpdateStartInvasionButton();
@@ -281,7 +281,7 @@ public class PlayerUI : MonoBehaviour {
         //LoadKillCountCharacterItems(area);
         //UpdateKillCount();
     }
-    private void OnAreaMapClosed(Area area) {
+    private void OnInnerMapClosed(ILocation location) {
         UpdateSummonsInteraction();
         UpdateArtifactsInteraction();
         //startInvasionButton.gameObject.SetActive(false);
@@ -1088,7 +1088,7 @@ public class PlayerUI : MonoBehaviour {
             //}
         }
         if (PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile != null) {
-            InnerMapManager.Instance.TryShowAreaMap(PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile);
+            InnerMapManager.Instance.TryShowLocationMap(PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile);
         } else {
             //PlayerManager.Instance.player.currentTileBeingCorrupted.landmarkOnTile.ShowEventBasedOnYieldType();
             PlayerManager.Instance.player.InvadeATile();
@@ -1531,11 +1531,11 @@ public class PlayerUI : MonoBehaviour {
     }
     public void BackToWorld() {
         Utilities.DestroyChildren(killSummaryScrollView.content);
-        Area closedArea = InnerMapManager.Instance.HideAreaMap();
+        ILocation closedArea = InnerMapManager.Instance.HideAreaMap();
         SetCurrentlySelectedSummonSlot(PlayerManager.Instance.player.summonSlots.FirstOrDefault());
         SetCurrentlySelectedArtifactSlot(PlayerManager.Instance.player.artifactSlots.FirstOrDefault());
         successfulAreaCorruptionGO.SetActive(false);
-        InnerMapManager.Instance.DestroyAreaMap(closedArea);
+        InnerMapManager.Instance.DestroyInnerMap(closedArea);
 
         if (LandmarkManager.Instance.AreAllNonPlayerAreasCorrupted()) {
             GameOver("You have conquered all settlements! This world is now yours! Congratulations!");

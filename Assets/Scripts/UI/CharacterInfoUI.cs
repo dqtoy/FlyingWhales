@@ -104,8 +104,8 @@ public class CharacterInfoUI : UIMenu {
     #region Overrides
     public override void CloseMenu() {
         base.CloseMenu();
-        if (_activeCharacter != null && _activeCharacter.marker != null && AreaMapCameraMove.Instance.target == _activeCharacter.marker.gameObject.transform) {
-            AreaMapCameraMove.Instance.CenterCameraOn(null);    
+        if (_activeCharacter != null && _activeCharacter.marker != null && InnerMapCameraMove.Instance.target == _activeCharacter.marker.gameObject.transform) {
+            InnerMapCameraMove.Instance.CenterCameraOn(null);    
         }
         _activeCharacter = null;
     }
@@ -210,9 +210,9 @@ public class CharacterInfoUI : UIMenu {
                 InnerMapManager.Instance.HideAreaMap();
             }
             if (activeCharacter.homeRegion.area.areaMap.isShowing == false) {
-                InnerMapManager.Instance.ShowAreaMap(activeCharacter.homeRegion.area);
+                InnerMapManager.Instance.ShowInnerMap(activeCharacter.homeRegion.area);
             }
-            AreaMapCameraMove.Instance.CenterCameraOn(activeCharacter.homeStructure.structureObj.gameObject);
+            InnerMapCameraMove.Instance.CenterCameraOn(activeCharacter.homeStructure.structureObj.gameObject);
         } else {
             UIManager.Instance.ShowRegionInfo(activeCharacter.homeRegion);
         }
@@ -430,7 +430,7 @@ public class CharacterInfoUI : UIMenu {
     }
     private void OnCharacterDied(Character character) {
         if (this.isShowing && activeCharacter.id == character.id) {
-            AreaMapCameraMove.Instance.CenterCameraOn(null);
+            InnerMapCameraMove.Instance.CenterCameraOn(null);
         }
     }
     #endregion

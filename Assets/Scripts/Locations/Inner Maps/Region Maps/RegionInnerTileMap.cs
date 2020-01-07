@@ -4,24 +4,23 @@ using UnityEngine.Tilemaps;
 
 namespace Inner_Maps {
     public class RegionInnerTileMap : InnerTileMap {
-
-        private const int MapWidth = 15;
-        private const int MapHeight = 15;
-        
         public override bool isSettlementMap => false;
-        
-        public IEnumerator Initialize(Region region) {
+        public Region region { get; private set; }
+
+        public IEnumerator GenerateMap(Region region, int mapWidth, int mapHeight) {
             this.name = $"{region.name}'s Inner Map";
+            this.region = region;
             region.SetRegionInnerMap(this);
             ClearAllTilemaps();
-            yield return StartCoroutine(GenerateGrid(MapWidth, MapHeight, region));
+            yield return StartCoroutine(GenerateGrid(mapWidth, mapHeight));
             AssignStructures();
-            LocationStructure structure = location.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-            RegionTileObject rto = InnerMapManager.Instance.CreateNewTileObject<RegionTileObject>(TILE_OBJECT_TYPE.REGION_TILE_OBJECT); 
-            structure.AddPOI(rto);
-            region.SetRegionTileObject(rto);
-            rto.SetName(region);
-            rto.UpdateAdvertisements(region);
+            
+            // LocationStructure structure = location.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            // RegionTileObject rto = InnerMapManager.Instance.CreateNewTileObject<RegionTileObject>(TILE_OBJECT_TYPE.REGION_TILE_OBJECT); 
+            // structure.AddPOI(rto);
+            // region.SetRegionTileObject(rto);
+            // rto.SetName(region);
+            // rto.UpdateAdvertisements(region);
         }
         private void AssignStructures() {
             LocationStructure structure = location.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS); //since regions only have wilderness

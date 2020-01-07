@@ -98,8 +98,8 @@ public class AreaInfoUI : UIMenu {
         Messenger.AddListener<Character, Region, Region>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
         Messenger.AddListener<Area, SpecialToken>(Signals.ITEM_ADDED_TO_AREA, OnItemAddedToArea);
         Messenger.AddListener<Area, SpecialToken>(Signals.ITEM_REMOVED_FROM_AREA, OnItemRemovedFromArea);
-        Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
-        Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
+        // Messenger.AddListener<Area>(Signals.LOCATION_MAP_OPENED, OnAreaMapOpened);
+        // Messenger.AddListener<Area>(Signals.LOCATION_MAP_CLOSED, OnAreaMapClosed);
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
         //Messenger.AddListener<Region>(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, ShowAppropriateContentOnSignal);

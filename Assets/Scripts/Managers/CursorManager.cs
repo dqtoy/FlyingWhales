@@ -184,7 +184,7 @@ public class CursorManager : MonoBehaviour {
             MapVisualClick(PointerEventData.InputButton.Right);
             Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Mouse1);
         }
-        if (AreaMapCameraMove.Instance != null) {
+        if (InnerMapCameraMove.Instance != null) {
             Vector3 pos = effectsCamera.ScreenToWorldPoint(Input.mousePosition);
             //pos.x += 0.05f;
             //pos.y -= 0.05f;

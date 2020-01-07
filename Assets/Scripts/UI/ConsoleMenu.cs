@@ -1313,7 +1313,7 @@ public class ConsoleMenu : UIMenu {
             return;
         }
 
-        LocationStructure structure = InnerMapManager.Instance.currentlyShowingMap.area.GetStructureByID(structureType, id);
+        LocationStructure structure = InnerMapManager.Instance.currentlyShowingMap.location.GetStructureByID(structureType, id);
         if (structure == null) {
             AddErrorMessage("There is no " + structureType.ToString() + " with id " + id.ToString());
             return;

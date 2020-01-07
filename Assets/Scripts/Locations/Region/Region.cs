@@ -9,8 +9,8 @@ using Random = UnityEngine.Random;
 
 public class Region : ILocation, IHasNeighbours<Region> {
 
-    private const float HoveredBorderAlpha = 0f / 255f;
-    private const float UnhoveredBorderAlpha = 0f / 255f;
+    private const float HoveredBorderAlpha = 255f / 255f;
+    private const float UnhoveredBorderAlpha = 128f / 255f;
 
     public int id { get; private set; }
     public string name { get; private set; }
@@ -53,6 +53,7 @@ public class Region : ILocation, IHasNeighbours<Region> {
     private string _activeEventAfterEffectScheduleId;
     private List<SpriteRenderer> _borderSprites;
     private Dictionary<STRUCTURE_TYPE, List<LocationStructure>> _structures;
+    public HexTile[,] hexTileMap { get; private set; }
 
     public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; private set; }
 
@@ -86,7 +87,18 @@ public class Region : ILocation, IHasNeighbours<Region> {
         this.coreTile = coreTile;
         tiles = new List<HexTile>();
         AddTile(coreTile);
-        regionColor = Random.ColorHSV();
+        if (id == 1) {
+            regionColor = Color.blue;
+        } else if (id == 2) {
+            regionColor = Color.yellow;
+        } else if (id == 3) {
+            regionColor = Color.green;
+        } else if (id == 4) {
+            regionColor = Color.red;
+        } else if (id == 5) {
+            regionColor = Color.yellow;
+        }
+        // regionColor = Random.ColorHSV();
     }
     public Region(SaveDataRegion data) : this() {
         id = Utilities.SetID(this, data.id);
@@ -103,13 +115,13 @@ public class Region : ILocation, IHasNeighbours<Region> {
         if (!tiles.Contains(tile)) {
             tiles.Add(tile);
             tile.SetRegion(this);
-            // tile.spriteRenderer.color = regionColor;
+            tile.spriteRenderer.color = regionColor;
         }
     }
     private void RemoveTile(HexTile tile) {
         if (tiles.Remove(tile)) {
             tile.SetRegion(null);
-            // tile.spriteRenderer.color = Color.white;
+            tile.spriteRenderer.color = Color.white;
         }
     }
     public void OnMainLandmarkChanged() {
@@ -128,6 +140,32 @@ public class Region : ILocation, IHasNeighbours<Region> {
     public void FinalizeData() {
         //outerTiles = GetOuterTiles();
         _borderSprites = GetOuterBorders();
+        DetermineHexTileMap();
+    }
+    private void DetermineHexTileMap() {
+        int maxX = tiles.Max(t => t.data.xCoordinate);
+        int minX = tiles.Min(t => t.data.xCoordinate);
+        int maxY = tiles.Max(t => t.data.yCoordinate);
+        int minY = tiles.Min(t => t.data.yCoordinate);
+
+        int width = maxX - minX;
+        int height = maxY - minY;
+        
+        hexTileMap = new HexTile[width + 1, height + 1];
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                int mapXIndex = x - minX;
+                int mapYIndex = y - minY;
+
+                HexTile tile = GridMap.Instance.map[x, y];
+                if (tiles.Contains(tile)) {
+                    hexTileMap[mapXIndex, mapYIndex] = tile;
+                } else {
+                    hexTileMap[mapXIndex, mapYIndex] = null;
+                }
+            }
+        }
+        
     }
     public void RedetermineCore() {
         int maxX = tiles.Max(t => t.data.xCoordinate);
@@ -140,11 +178,11 @@ public class Region : ILocation, IHasNeighbours<Region> {
 
         coreTile = GridMap.Instance.map[x, y];
 
-        while (tiles.Contains(coreTile) == false) {
-            x--;
-            y--;
-            coreTile = GridMap.Instance.map[x, y];
-        }
+        // while (tiles.Contains(coreTile) == false) {
+        //     x++;
+        //     y++;
+        //     coreTile = GridMap.Instance.map[x, y];
+        // }
         
         //clear all tiles again after redetermining core
         List<HexTile> allTiles = new List<HexTile>(tiles);

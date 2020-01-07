@@ -85,7 +85,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     public BIOMES biomeType => data.biomeType;
     public ELEVATION elevationType => data.elevationType;
     public Area areaOfTile => region.area;
-    private string locationName => $"({xCoordinate.ToString()}, {yCoordinate.ToString()})";
+    public string locationName => $"({xCoordinate.ToString()}, {yCoordinate.ToString()})";
     private GameObject centerPiece => this._centerPiece;
     private GameObject highlightGO => this._highlightGO;
     private Dictionary<HEXTILE_DIRECTION, HexTile> neighbourDirections => _neighbourDirections;
@@ -702,8 +702,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
             return;
         }
-        if(region.area != null && region.area != PlayerManager.Instance.player.playerArea) {
-            InnerMapManager.Instance.TryShowAreaMap(region.area);
+        // if(region.area != null && region.area != PlayerManager.Instance.player.playerArea) {
+        //     InnerMapManager.Instance.TryShowLocationMap(region.area);
+        // }
+        if (region != null) {
+            InnerMapManager.Instance.TryShowLocationMap(region);
         }
     }
     public void PointerClick(BaseEventData bed) {
@@ -759,53 +762,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
             tiles[i].spriteRenderer.color = Color.magenta;
         }
     }
-    [ContextMenu("Show Hextile Positions")]
-    public void ShowHextileBounds() {
-        Debug.Log("Local Pos: " + this.transform.localPosition.ToString());
-        Debug.Log("Pos: " + this.transform.position.ToString());
-    }
-    [ContextMenu("Force Reset Tile")]
-    public void ForceResetTile() {
-        ResetTile();
-    }
-    [ContextMenu("Log Neighbour Directions")]
-    public void LogNeighbourDirections() {
-        string text = this.name + " neighbours: ";
-        foreach (KeyValuePair<HEXTILE_DIRECTION, HexTile> kvp in neighbourDirections) {
-            text += "\n" + kvp.Key.ToString() + " - " + kvp.Value.name;
-        }
-        Debug.Log(text);
-    }
-    [ContextMenu("Log Screen Position")]
-    public void LogScreenPosition() {
-        //Debug.Log(CameraMove.Instance.wholeMapCamera.WorldToScreenPoint(this.transform.position));
-    }
-    [ContextMenu("Force Update Tile Visuals")]
-    public void ForceUpdateTileVisuals() {
-        Biomes.Instance.UpdateTileVisuals(this);
-    }
     public override string ToString() {
-        return $"{this.locationName} - {landmarkOnTile?.specificLandmarkType.ToString() ?? "No Landmark"}";
+        return $"{this.locationName} - {landmarkOnTile?.specificLandmarkType.ToString() ?? "No Landmark"} - {region?.name ?? "No Region"}";
     }
     public void ShowTileInfo() {
         if (areaOfTile != null && areaOfTile.locationType != LOCATION_TYPE.DEMONIC_INTRUSION) {
             UIManager.Instance.ShowSmallInfo("Double click to view.", areaOfTile.name);
         }
-        
-        //string summary = "Landmark: " + landmarkOnTile?.specificLandmarkType.ToString();
-        //summary += "\nRegion: " + region.id + " (Tiles: " + region.tiles.Count.ToString() + ")";
-        //summary += "\nConnections: " + region.connections.Count.ToString();
-        //for (int i = 0; i < region.connections.Count; i++) {
-        //    Region connection = region.connections[i];
-        //    summary += "\n\t- " + connection.mainLandmark.specificLandmarkType.ToString() + " " + connection.coreTile.locationName;
-        //}
-        //summary += "\nArea: " + areaOfTile?.name;
-        ////summary += "\nNeighbours: " + AllNeighbours.Count.ToString();
-        ////for (int i = 0; i < AllNeighbours.Count; i++) {
-        ////    HexTile currNeighbour = AllNeighbours[i];
-        ////    summary += "\n\t-" + currNeighbour.name;
-        ////}
-        //UIManager.Instance.ShowSmallInfo(summary, this.ToString() + " Info: ");
     }
     #endregion
 

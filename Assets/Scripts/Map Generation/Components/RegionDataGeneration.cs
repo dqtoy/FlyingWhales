@@ -8,7 +8,7 @@ public class RegionDataGeneration : MapGenerationComponent {
 		// yield return null;
 		LandmarkManager.Instance.LoadAdditionalAreaData();
 		yield return null;
-		yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.GenerateRegionInnerMaps());
+		// yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.GenerateRegionInnerMaps());
 		LandmarkManager.Instance.MakeAllRegionsAwareOfEachOther();
 	}
 }

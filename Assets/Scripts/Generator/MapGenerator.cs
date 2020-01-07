@@ -21,6 +21,7 @@ public class MapGenerator : MonoBehaviour {
             new WorldMapGridGeneration(), new WorldMapElevationGeneration(), new WorldMapBiomeGeneration(),
             new SupportingFactionGeneration(), new WorldMapRegionGeneration(), new WorldMapOuterGridGeneration(),
             new TileFeatureGeneration(), new PortalLandmarkGeneration(), new WorldMapLandmarkGeneration(), 
+            new RegionInnerMapGeneration(), 
              
             // new MainSettlementMapGeneration(), new SuppotingSettlementMapGeneration(), new RegionDataGeneration(), 
             // new PlayerDataGeneration(), 
@@ -37,9 +38,7 @@ public class MapGenerator : MonoBehaviour {
         MapGenerationData data = new MapGenerationData();
         for (int i = 0; i < components.Length; i++) {
             MapGenerationComponent currComponent = components[i];
-            Debug.Log("Executing map generation component: " + currComponent.ToString());
             yield return StartCoroutine(currComponent.Execute(data));
-            Debug.Log("Done executing map generation component: " + currComponent.ToString());
         }
         
         loadingWatch.Stop();

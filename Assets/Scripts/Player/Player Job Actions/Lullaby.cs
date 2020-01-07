@@ -24,8 +24,8 @@ public class Lullaby : PlayerJobAction {
         List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
 
         List<Character> charactersInHighlightedTiles = new List<Character>();
-        for (int i = 0; i < InnerMapManager.Instance.currentlyShowingArea.charactersAtLocation.Count; i++) {
-            Character currCharacter = InnerMapManager.Instance.currentlyShowingArea.charactersAtLocation[i];
+        for (int i = 0; i < InnerMapManager.Instance.currentlyShowingLocation.charactersAtLocation.Count; i++) {
+            Character currCharacter = InnerMapManager.Instance.currentlyShowingLocation.charactersAtLocation[i];
             if (tiles.Contains(currCharacter.gridTileLocation)) {
                 charactersInHighlightedTiles.Add(currCharacter);
             }

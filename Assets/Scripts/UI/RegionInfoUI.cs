@@ -221,7 +221,7 @@ public class RegionInfoUI : UIMenu {
     public void OnClickInvade() {
         if (activeRegion.area != null) {
             //simulate as if clicking the invade button while inside the are map
-            InnerMapManager.Instance.ShowAreaMap(activeRegion.area);
+            InnerMapManager.Instance.ShowInnerMap(activeRegion.area);
             StartSettlementInvasion(activeRegion.area);
             LoadActions();
         } else {
