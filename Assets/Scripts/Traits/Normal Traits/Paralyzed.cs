@@ -7,7 +7,7 @@ namespace Traits {
     public class Paralyzed : Trait {
 
         public Character character { get; private set; }
-        public List<Character> charactersThatKnow { get; private set; }
+        //public List<Character> charactersThatKnow { get; private set; }
 
         public Paralyzed() {
             name = "Paralyzed";
@@ -17,7 +17,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEGATIVE;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED };
             ticksDuration = 0;
-            charactersThatKnow = new List<Character>();
+            //charactersThatKnow = new List<Character>();
             hindersMovement = true;
         }
 
@@ -80,11 +80,11 @@ namespace Traits {
         }
         #endregion
 
-        public void AddCharacterThatKnows(Character character) {
-            if (!charactersThatKnow.Contains(character)) {
-                charactersThatKnow.Add(character);
-            }
-        }
+        //public void AddCharacterThatKnows(Character character) {
+        //    if (!charactersThatKnow.Contains(character)) {
+        //        charactersThatKnow.Add(character);
+        //    }
+        //}
         private bool CanPlanGoap() {
             //If there is no area, it means that there is no inner map, so character must not do goap actions, jobs, and plans
             //characters that cannot witness, cannot plan actions.
@@ -315,25 +315,25 @@ namespace Traits {
     }
 
 
-    public class SaveDataParalyzed : SaveDataTrait {
-        public List<int> charactersThatKnow;
+    //public class SaveDataParalyzed : SaveDataTrait {
+    //    public List<int> charactersThatKnow;
 
-        public override void Save(Trait trait) {
-            base.Save(trait);
-            Paralyzed paralyzed = trait as Paralyzed;
-            charactersThatKnow = new List<int>();
-            for (int i = 0; i < paralyzed.charactersThatKnow.Count; i++) {
-                charactersThatKnow.Add(paralyzed.charactersThatKnow[i].id);
-            }
-        }
+    //    public override void Save(Trait trait) {
+    //        base.Save(trait);
+    //        Paralyzed paralyzed = trait as Paralyzed;
+    //        charactersThatKnow = new List<int>();
+    //        for (int i = 0; i < paralyzed.charactersThatKnow.Count; i++) {
+    //            charactersThatKnow.Add(paralyzed.charactersThatKnow[i].id);
+    //        }
+    //    }
 
-        public override Trait Load(ref Character responsibleCharacter) {
-            Trait trait = base.Load(ref responsibleCharacter);
-            Paralyzed paralyzed = trait as Paralyzed;
-            for (int i = 0; i < charactersThatKnow.Count; i++) {
-                paralyzed.AddCharacterThatKnows(CharacterManager.Instance.GetCharacterByID(charactersThatKnow[i]));
-            }
-            return trait;
-        }
-    }
+    //    public override Trait Load(ref Character responsibleCharacter) {
+    //        Trait trait = base.Load(ref responsibleCharacter);
+    //        Paralyzed paralyzed = trait as Paralyzed;
+    //        for (int i = 0; i < charactersThatKnow.Count; i++) {
+    //            paralyzed.AddCharacterThatKnows(CharacterManager.Instance.GetCharacterByID(charactersThatKnow[i]));
+    //        }
+    //        return trait;
+    //    }
+    //}
 }

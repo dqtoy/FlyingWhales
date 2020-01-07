@@ -52,9 +52,9 @@ public class Eat : GoapAction {
         goapNode.actor.needsComponent.AdjustDoNotGetHungry(1);
         //actor.traitContainer.AddTrait(actor,"Eating");
     }
-    public void PerTickEatSuccess(ActualGoapNode goapNode) {
-        //goapNode.actor.AdjustFullness(520);
-    }
+    //public void PerTickEatSuccess(ActualGoapNode goapNode) {
+    //    //goapNode.actor.AdjustFullness(520);
+    //}
     public void AfterEatSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetHungry(-1);
         //goapNode.poiTarget.SetPOIState(POI_STATE.ACTIVE);
@@ -81,6 +81,10 @@ public class Eat : GoapAction {
             if(poiTarget is SmallAnimal || poiTarget is EdiblePlant) {
                 //If plant or animal, only eat if the actor is homeless
                 if(actor.homeStructure != null) {
+                    return false;
+                }
+            } else if(poiTarget is Table) {
+                if(poiTarget.storedResources[RESOURCE.FOOD] < 20) {
                     return false;
                 }
             }

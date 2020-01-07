@@ -307,14 +307,15 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 73eecfc9a4b9f1d4395846aa3a37d4bf, type: 3}
       tintSprite: {fileID: 0}
-      animation: {fileID: 0}
+      animation: {fileID: 9100000, guid: b3c9bdb6b8e51ef40a10c83c58900ee0, type: 2}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: The Crypt
     landmarkType: 49
     minimumTileCount: 1
     buildDuration: 48
-    description: Each Crypt expands the player's Artifact slots by 1.
+    description: 'Allows the Ruinarch to use the artifact in this region. Requires:
+      Artifact Feature.'
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -334,7 +335,8 @@ MonoBehaviour:
     landmarkType: 50
     minimumTileCount: 1
     buildDuration: 48
-    description: Each Kennel expands the player's Summon slots by 1.
+    description: 'Allows the Ruinarch to command monsters in the region. Requires:
+      Summon Feature.'
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -347,7 +349,7 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: bc0fdc68227150c488e1d5988e09871d, type: 3}
       tintSprite: {fileID: 0}
-      animation: {fileID: 0}
+      animation: {fileID: 9100000, guid: b711fb2f50735fc4aa46d89f72021d88, type: 2}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: The Anvil
@@ -367,14 +369,14 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 566392069dbffc6409998f9359704001, type: 3}
       tintSprite: {fileID: 0}
-      animation: {fileID: 0}
+      animation: {fileID: 9100000, guid: a62da718639c1c54c952d8b0cf78d36d, type: 2}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
-  - landmarkTypeString: The Fingers
+  - landmarkTypeString: Goader
     landmarkType: 52
     minimumTileCount: 1
     buildDuration: 48
-    description: The Ruinarch may assign a minion The Fingers to spawn Chaos Events.
+    description: The Ruinarch may interfere with factions at the Fingers.
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -408,7 +410,7 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 3a6d947b034203946aab2f02724b66c2, type: 3}
       tintSprite: {fileID: 0}
-      animation: {fileID: 0}
+      animation: {fileID: 9100000, guid: 7cd39483f9be2bf4baa2bc7211149480, type: 2}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: The Profane
@@ -428,7 +430,7 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 0919fe3d152887f46a5152e78ab4f9dd, type: 3}
       tintSprite: {fileID: 0}
-      animation: {fileID: 0}
+      animation: {fileID: 9100000, guid: b447470680d718740b7ffef6eda52099, type: 2}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: None
@@ -468,7 +470,7 @@ MonoBehaviour:
     neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 234e6925ebef61f49b0f4cd54e1b3959, type: 3}
       tintSprite: {fileID: 0}
-      animation: {fileID: 0}
+      animation: {fileID: 9100000, guid: a515eaf954edb284ab7ba81ddf31a0a3, type: 2}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: The Pit

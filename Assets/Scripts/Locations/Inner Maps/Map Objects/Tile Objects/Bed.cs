@@ -137,7 +137,7 @@ public class Bed : TileObject {
             }
         }
     }
-    protected override void RemoveUser(Character character) {
+    public override bool RemoveUser(Character character) {
         for (int i = 0; i < bedUsers.Length; i++) {
             if (bedUsers[i] == character) {
                 bedUsers[i] = null;
@@ -153,9 +153,10 @@ public class Bed : TileObject {
                     LocationGridTile gridTile = character.gridTileLocation.GetNearestUnoccupiedTileFromThis();
                     character.marker.PlaceMarkerAt(gridTile);
                 }
-                break;
+                return true;
             }
         }
+        return false;
     }
     public int GetActiveUserCount() {
         int count = 0;

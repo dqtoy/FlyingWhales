@@ -7,7 +7,7 @@ namespace Traits {
 
         public List<Character> awareCharacters { get; private set; } //characters that know about this trait
 
-        public ITraitable poi { get; private set; } //poi that has the poison
+        public ITraitable traitable { get; private set; } //poi that has the poison
         public Poisoned() {
             name = "Poisoned";
             description = "This object is poisoned.";
@@ -23,7 +23,7 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable sourceCharacter) {
             base.OnAddTrait(sourceCharacter);
-            poi = sourceCharacter;
+            traitable = sourceCharacter;
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             base.OnRemoveTrait(sourceCharacter, removedBy);
@@ -39,8 +39,8 @@ namespace Traits {
             }
             return summary;
         }
-        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
-            base.ExecuteActionAfterEffects(action, goapNode);
+        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
+            base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
             if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
                 WeightedDictionary<string> result = GetResultWeights();
                 string res = result.PickRandomElementGivenWeights();
@@ -50,8 +50,13 @@ namespace Traits {
                         sick.AddCharacterResponsibleForTrait(responsibleCharacters[i]);
                     }
                     goapNode.actor.traitContainer.AddTrait(goapNode.actor, sick);
-                } else if (res == "Death") {
+                } else { //if (res == "Death")
                     goapNode.actor.Death("poisoned", deathFromAction: goapNode);
+                }
+                if(traitable is IPointOfInterest) {
+                    IPointOfInterest poi = traitable as IPointOfInterest;
+                    poi.traitContainer.RemoveTrait(traitable, this);
+                    isRemoved = true;
                 }
             }
         }

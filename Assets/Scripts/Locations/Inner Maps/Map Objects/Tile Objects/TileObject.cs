@@ -403,6 +403,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
             UIManager.Instance.tileObjectInfoUI.CloseMenu();
         }
         Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
+        Messenger.Broadcast(Signals.ON_SEIZE_TILE_OBJECT, this);
+
         gridTileLocation.structure.RemovePOI(this);
     }
     public void OnUnseizePOI(LocationGridTile tileLocation) {
@@ -568,13 +570,15 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
             }
         }
     }
-    protected virtual void RemoveUser(Character user) {
+    public virtual bool RemoveUser(Character user) {
         TileObjectSlotItem slot = GetSlotUsedBy(user);
         if (slot != null) {
             user.SetTileObjectLocation(null);
             slot.StopUsing();
             SetPOIState(POI_STATE.ACTIVE);
+            return true;
         }
+        return false;
     }
     #endregion
 

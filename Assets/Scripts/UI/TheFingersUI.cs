@@ -28,13 +28,14 @@ public class TheFingersUI : MonoBehaviour {
     public GameObject exclusiveIdeologyHolder;
     public TMP_Dropdown exclusiveIdeologyCategoryDropdown;
     public TMP_Dropdown exclusiveIdeologyRequirementDropdown;
-    private TheFingers fingers { get; set; }
+    private Goader fingers { get; set; }
     private Character chosenLeader { get; set; }
     //private List<FactionIdeology> ideologies = new List<FactionIdeology>();
+    private string[] criteriaRaces = new string[] { "HUMANS", "ELVES" };
 
     #region General
     public void OnClickCreate(BaseLandmark landmark) {
-        fingers = landmark as TheFingers;
+        fingers = landmark as Goader;
         if(characterNameplateItems == null) {
             characterNameplateItems = new Dictionary<Character, CharacterNameplateItem>();
         }
@@ -108,12 +109,12 @@ public class TheFingersUI : MonoBehaviour {
         return true;
     }
     private bool CanAddIdeology(FACTION_IDEOLOGY ideologyType) {
-        if (ideologyType == FACTION_IDEOLOGY.EXCLUSIVE) {
-            if ((EXCLUSIVE_IDEOLOGY_CATEGORIES) exclusiveIdeologyCategoryDropdown.value == EXCLUSIVE_IDEOLOGY_CATEGORIES.RACE && exclusiveIdeologyRequirementDropdown.value == 0) { //This means that the race choice is NONE
-                PlayerUI.Instance.ShowGeneralConfirmation("No Race Requirement Error!", "Please select a race for the requirement.");
-                return false;
-            }
-        }
+        //if (ideologyType == FACTION_IDEOLOGY.EXCLUSIVE) {
+        //    if ((EXCLUSIVE_IDEOLOGY_CATEGORIES) exclusiveIdeologyCategoryDropdown.value == EXCLUSIVE_IDEOLOGY_CATEGORIES.RACE && exclusiveIdeologyRequirementDropdown.value == 0) { //This means that the race choice is NONE
+        //        PlayerUI.Instance.ShowGeneralConfirmation("No Race Requirement Error!", "Please select a race for the requirement.");
+        //        return false;
+        //    }
+        //}
         return true;
     }
     #endregion
@@ -171,7 +172,7 @@ public class TheFingersUI : MonoBehaviour {
         characterNameplateItems.Clear();
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
-            if(/*character.isFriendlyFactionless &&*/ character.faction.leader != character) {
+            if(character.isFriendlyFactionless && character.faction.leader != character) {
                 CharacterNameplateItem item = CreateNewCharacterNameplateItem();
                 item.SetObject(character);
                 item.SetAsToggle();
@@ -285,7 +286,8 @@ public class TheFingersUI : MonoBehaviour {
                 exclusiveIdeologyRequirementDropdown.options.Add(new TMP_Dropdown.OptionData(genders[i]));
             }
         } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.RACE) {
-            string[] races = System.Enum.GetNames(typeof(RACE));
+            //string[] races = System.Enum.GetNames(typeof(RACE));
+            string[] races = criteriaRaces;
             for (int i = 0; i < races.Length; i++) {
                 exclusiveIdeologyRequirementDropdown.options.Add(new TMP_Dropdown.OptionData(races[i]));
             }

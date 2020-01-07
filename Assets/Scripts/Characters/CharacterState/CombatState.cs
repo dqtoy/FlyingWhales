@@ -464,6 +464,15 @@ public class CombatState : CharacterState {
             attackSummary += "\n" + damageable.name + " still has remaining hp " + damageable.currentHP.ToString() + "/" + damageable.maxHP.ToString();
             if (damageable is Character) {
                 Character hitCharacter = damageable as Character;
+                //if the character that attacked is not in the hostile/avoid list of the character that was hit, this means that it is not a retaliation, so the character that was hit must reduce its opinion of the character that attacked
+                if(!hitCharacter.marker.hostilesInRange.Contains(stateComponent.character) && !hitCharacter.marker.avoidInRange.Contains(stateComponent.character)) {
+                    if (!allCharactersThatDegradedRel.Contains(hitCharacter)) {
+                        hitCharacter.opinionComponent.AdjustOpinion(stateComponent.character, "Base", -15);
+                        AddCharacterThatDegradedRel(hitCharacter);
+                    }
+                }
+
+
                 //if the character that was hit is not the actual target of this combat, do not make him/her enter combat state
                 if (damageable == currentClosestHostile) {
                     //When the target is hit and it is still alive, add hostile

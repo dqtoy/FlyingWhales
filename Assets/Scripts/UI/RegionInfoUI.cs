@@ -226,6 +226,7 @@ public class RegionInfoUI : UIMenu {
             //simulate as if clicking the invade button while inside the are map
             InnerMapManager.Instance.ShowAreaMap(activeRegion.area);
             StartSettlementInvasion(activeRegion.area);
+            LoadActions();
         } else {
             chosenMinionToInvade = null;
             UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), onClickAction: ChooseMinionForInvasion, validityChecker: CanMinionInvade,
@@ -570,8 +571,8 @@ public class RegionInfoUI : UIMenu {
                             item.SetAsUninteractableUntil(remaining);
                         }
                         break;
-                    case LANDMARK_TYPE.THE_FINGERS:
-                        TheFingers fingers = activeRegion.mainLandmark as TheFingers;
+                    case LANDMARK_TYPE.GOADER:
+                        Goader fingers = activeRegion.mainLandmark as Goader;
                         item = AddNewAction("Create Faction", null, () => fingersUI.OnClickCreate(fingers));
                         item = AddNewAction("Force Leave Faction", null, () => fingersUI.OnClickForceLeaveFaction());
                         item = AddNewAction("Force Join Faction", null, () => fingersUI.OnClickForceJoinFaction());
@@ -607,7 +608,10 @@ public class RegionInfoUI : UIMenu {
                     int remaining = activeRegion.mainLandmark.invasionTicks -
                                     activeRegion.demonicInvasionData.currentDuration;
                     item.SetAsUninteractableUntil(remaining);
-                }    
+                } 
+                //else {
+                //    item.SetInteractable(PlayerManager.Instance.player.currentAreaBeingInvaded != null);
+                //}
             }
         }
     }

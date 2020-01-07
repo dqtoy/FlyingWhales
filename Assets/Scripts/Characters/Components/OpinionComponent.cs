@@ -11,15 +11,18 @@ public class OpinionComponent {
     
     public Character owner { get; private set; }
     public Dictionary<Character, Dictionary<string, int>> opinions { get; private set; }
+    public List<Character> charactersWithOpinion { get; private set; } //Made a list of all characters with opinion to lessen CPU load
 
     public OpinionComponent(Character owner) {
         this.owner = owner;
         opinions = new Dictionary<Character, Dictionary<string, int>>();
+        charactersWithOpinion = new List<Character>();
     }
 
     public void AdjustOpinion(Character target, string opinionText, int opinionValue) {
         if (!HasOpinion(target)) {
             opinions.Add(target, new Dictionary<string, int>() { { "Base", 0 } });
+            charactersWithOpinion.Add(target);
             Messenger.Broadcast(Signals.OPINION_ADDED, owner, target);
         }
         if (opinions[target].ContainsKey(opinionText)) {
@@ -47,6 +50,7 @@ public class OpinionComponent {
     public void RemoveOpinion(Character target) {
         if (HasOpinion(target)) {
             opinions.Remove(target);
+            charactersWithOpinion.Remove(target);
             Messenger.Broadcast(Signals.OPINION_REMOVED, owner, target);
         }
     }
@@ -63,9 +67,9 @@ public class OpinionComponent {
         if (HasOpinion(character)) {
             int total = 0;
             Dictionary<string, int> _opinions = GetOpinion(character);
-            foreach (KeyValuePair<string, int> pair in _opinions) {
-                if (pair.Value > 0) {
-                    total += pair.Value;
+            foreach (int value in _opinions.Values) {
+                if (value >= 0) {
+                    total += value;
                 }
             }
             return total;
@@ -76,9 +80,9 @@ public class OpinionComponent {
         if (HasOpinion(character)) {
             int total = 0;
             Dictionary<string, int> _opinions = GetOpinion(character);
-            foreach (KeyValuePair<string, int> pair in _opinions) {
-                if (pair.Value < 0) {
-                    total += pair.Value;
+            foreach (int value in _opinions.Values) {
+                if (value < 0) {
+                    total += value;
                 }
             }
             return total;
@@ -107,7 +111,7 @@ public class OpinionComponent {
     #region Data Getting
     public List<Character> GetCharactersWithPositiveOpinion() {
         List<Character> characters = new List<Character>();
-        List<Character> charactersWithOpinion = opinions.Keys.ToList();
+        //List<Character> charactersWithOpinion = opinions.Keys.ToList();
         for (int i = 0; i < charactersWithOpinion.Count; i++) {
             Character otherCharacter = charactersWithOpinion[i];
             if (GetTotalOpinion(otherCharacter) > 0) {
@@ -118,7 +122,7 @@ public class OpinionComponent {
     }
     public List<Character> GetCharactersWithNeutralOpinion() {
         List<Character> characters = new List<Character>();
-        List<Character> charactersWithOpinion = opinions.Keys.ToList();
+        //List<Character> charactersWithOpinion = opinions.Keys.ToList();
         for (int i = 0; i < charactersWithOpinion.Count; i++) {
             Character otherCharacter = charactersWithOpinion[i];
             int opinion = GetTotalOpinion(otherCharacter); 
@@ -130,7 +134,7 @@ public class OpinionComponent {
     }
     public List<Character> GetCharactersWithNegativeOpinion() {
         List<Character> characters = new List<Character>();
-        List<Character> charactersWithOpinion = opinions.Keys.ToList();
+        //List<Character> charactersWithOpinion = opinions.Keys.ToList();
         for (int i = 0; i < charactersWithOpinion.Count; i++) {
             Character otherCharacter = charactersWithOpinion[i];
             if (GetTotalOpinion(otherCharacter) < 0) {
@@ -141,7 +145,7 @@ public class OpinionComponent {
     }
     public List<Character> GetEnemyCharacters() {
         List<Character> characters = new List<Character>();
-        List<Character> charactersWithOpinion = opinions.Keys.ToList();
+        //List<Character> charactersWithOpinion = opinions.Keys.ToList();
         for (int i = 0; i < charactersWithOpinion.Count; i++) {
             Character otherCharacter = charactersWithOpinion[i];
             if (IsEnemiesWith(otherCharacter)) {

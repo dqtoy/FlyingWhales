@@ -407,6 +407,7 @@ public class RelationshipManager : MonoBehaviour {
         }
         
         actorAlterEgo.owner.opinionComponent.AdjustOpinion(target, opinionText, -10);
+        target.opinionComponent.AdjustOpinion(actorAlterEgo.owner, opinionText, -10);
         
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "rel_degrade");
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

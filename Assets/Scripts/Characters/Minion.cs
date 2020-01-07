@@ -298,6 +298,7 @@ public class Minion {
     public void StartInvasionProtocol(Area area) {
         AddPendingTraits();
         Messenger.AddListener(Signals.TICK_STARTED, PerTickInvasion);
+        Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.AddListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, character.OnCharacterEndedState);
@@ -306,6 +307,7 @@ public class Minion {
     public void StopInvasionProtocol(Area area) {
         if(area != null && assignedRegion != null && assignedRegion.area == area) {
             Messenger.RemoveListener(Signals.TICK_STARTED, PerTickInvasion);
+            Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
             Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
             Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
             Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, character.OnCharacterEndedState);
@@ -316,13 +318,23 @@ public class Minion {
         if (character.isDead) {
             return;
         }
-        if (!character.IsInOwnParty() || character.ownParty.icon.isTravelling || character.doNotDisturb) {
-            return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
+        if (!character.isInCombat) {
+            character.HPRecovery(0.0025f);
+            if (character.IsInOwnParty() && character.marker != null && !character.doNotDisturb && !character.ownParty.icon.isTravelling) {
+                GoToWorkArea();
+            }
         }
-        if (character.stateComponent.currentState != null /*|| character.stateComponent.stateToDo != null*/ || character.marker == null) {
-            return;
-        }
-        GoToWorkArea();
+        //if (!character.IsInOwnParty() || character.ownParty.icon.isTravelling || character.doNotDisturb) {
+        //    return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
+        //}
+        //if (character.stateComponent.currentState != null /*|| character.stateComponent.stateToDo != null*/ || character.marker == null) {
+        //    return;
+        //}
+        //GoToWorkArea();
+    }
+    private void OnTickEnded() {
+        character.stateComponent.OnTickEnded();
+        character.EndTickPerformJobs();
     }
     private void GoToWorkArea() {
         LocationStructure structure = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);

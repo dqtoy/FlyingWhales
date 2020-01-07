@@ -232,76 +232,76 @@ public class CharacterAIPath : AILerp {
     }
     public uint GetNodePenalty(Vector3 nodePos) {
         uint penalty = 1000;
-        if (marker.terrifyingObjects.Count > 0) {
-            for (int i = 0; i < marker.terrifyingObjects.Count; i++) {
-                IPointOfInterest currPOI = marker.terrifyingObjects.ElementAtOrDefault(i);
-                if (currPOI is Character) {
-                    Character terrifyingCharacter = currPOI as Character;
-                    if (terrifyingCharacter.marker == null) {
-                        continue;
-                    }
-                    if (terrifyingCharacter.currentParty == null || terrifyingCharacter.currentParty.icon == null || (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure)) {
-                        continue;
-                    }
-                    if (terrifyingCharacter.currentParty.icon == null || (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure)) {
-                        continue;
-                    }
-                    if (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure) {
-                        continue;
-                    }
-                    if (!terrifyingCharacter.isDead) {
-                        //float dx = (terrifyingCharacter.marker.character.gridTileLocation.centeredWorldLocation.x - nodePos.x);
-                        //float dz = (terrifyingCharacter.marker.character.gridTileLocation.centeredWorldLocation.y - nodePos.y);
-                        //float distSqr = dx * dx + dz * dz;
-                        //if (distSqr <= marker.penaltyRadius) {
-                        //    return false;
-                        //}
-                        Vector3 newNodePos = new Vector3((Mathf.Floor(nodePos.x)) + 0.5f, (Mathf.Floor(nodePos.y)) + 0.5f, Mathf.Floor(nodePos.z));
-                        float distance = Vector3.Distance(newNodePos, terrifyingCharacter.marker.centeredWorldPos);
-                        if (distance <= marker.penaltyRadius) {
-                            penalty += 1000000;
-                            //float multiplier = marker.penaltyRadius - distance;
-                            //if(multiplier <= 0.5f) {
-                            //    multiplier = 1;
-                            //}
-                            //return multiplier * 5000000;
-                        }
-                    }
-                } else {
-                    Vector3 newNodePos = new Vector3((Mathf.Floor(nodePos.x)) + 0.5f, (Mathf.Floor(nodePos.y)) + 0.5f, Mathf.Floor(nodePos.z));
-                    if (currPOI != null && currPOI.gridTileLocation != null) {
-                        float distance = Vector3.Distance(newNodePos, currPOI.gridTileLocation.centeredWorldLocation);
-                        if (distance <= marker.penaltyRadius) {
-                            penalty += 1000000;
-                        }
-                    }
-                }
-            }
-        }
-        if(marker.character != null && marker.character.currentActionNode != null && marker.character.currentActionNode.action.goapType.WillAvoidCharactersWhileMoving()) {
-            for (int i = 0; i < marker.character.currentRegion.charactersAtLocation.Count; i++) {
-                Character terrifyingCharacter = marker.character.currentRegion.charactersAtLocation[i];
-                if (terrifyingCharacter.marker == null || terrifyingCharacter == marker.character) {
-                    continue;
-                }
-                if (terrifyingCharacter.currentParty == null || terrifyingCharacter.currentParty.icon == null || (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure)) {
-                    continue;
-                }
-                if (terrifyingCharacter.currentParty.icon == null || (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure)) {
-                    continue;
-                }
-                if (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure) {
-                    continue;
-                }
-                if (!terrifyingCharacter.isDead) {
-                    Vector3 newNodePos = new Vector3((Mathf.Floor(nodePos.x)) + 0.5f, (Mathf.Floor(nodePos.y)) + 0.5f, Mathf.Floor(nodePos.z));
-                    float distance = Vector3.Distance(newNodePos, terrifyingCharacter.marker.centeredWorldPos);
-                    if (distance <= marker.penaltyRadius) {
-                        penalty += 1000000;
-                    }
-                }
-            }
-        }
+        //if (marker.terrifyingObjects.Count > 0) {
+        //    for (int i = 0; i < marker.terrifyingObjects.Count; i++) {
+        //        IPointOfInterest currPOI = marker.terrifyingObjects.ElementAtOrDefault(i);
+        //        if (currPOI is Character) {
+        //            Character terrifyingCharacter = currPOI as Character;
+        //            if (terrifyingCharacter.marker == null) {
+        //                continue;
+        //            }
+        //            if (terrifyingCharacter.currentParty == null || terrifyingCharacter.currentParty.icon == null || (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure)) {
+        //                continue;
+        //            }
+        //            if (terrifyingCharacter.currentParty.icon == null || (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure)) {
+        //                continue;
+        //            }
+        //            if (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure) {
+        //                continue;
+        //            }
+        //            if (!terrifyingCharacter.isDead) {
+        //                //float dx = (terrifyingCharacter.marker.character.gridTileLocation.centeredWorldLocation.x - nodePos.x);
+        //                //float dz = (terrifyingCharacter.marker.character.gridTileLocation.centeredWorldLocation.y - nodePos.y);
+        //                //float distSqr = dx * dx + dz * dz;
+        //                //if (distSqr <= marker.penaltyRadius) {
+        //                //    return false;
+        //                //}
+        //                Vector3 newNodePos = new Vector3((Mathf.Floor(nodePos.x)) + 0.5f, (Mathf.Floor(nodePos.y)) + 0.5f, Mathf.Floor(nodePos.z));
+        //                float distance = Vector3.Distance(newNodePos, terrifyingCharacter.marker.centeredWorldPos);
+        //                if (distance <= marker.penaltyRadius) {
+        //                    penalty += 1000000;
+        //                    //float multiplier = marker.penaltyRadius - distance;
+        //                    //if(multiplier <= 0.5f) {
+        //                    //    multiplier = 1;
+        //                    //}
+        //                    //return multiplier * 5000000;
+        //                }
+        //            }
+        //        } else {
+        //            Vector3 newNodePos = new Vector3((Mathf.Floor(nodePos.x)) + 0.5f, (Mathf.Floor(nodePos.y)) + 0.5f, Mathf.Floor(nodePos.z));
+        //            if (currPOI != null && currPOI.gridTileLocation != null) {
+        //                float distance = Vector3.Distance(newNodePos, currPOI.gridTileLocation.centeredWorldLocation);
+        //                if (distance <= marker.penaltyRadius) {
+        //                    penalty += 1000000;
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+        //if(marker.character != null && marker.character.currentActionNode != null && marker.character.currentActionNode.action.goapType.WillAvoidCharactersWhileMoving()) {
+        //    for (int i = 0; i < marker.character.currentRegion.charactersAtLocation.Count; i++) {
+        //        Character terrifyingCharacter = marker.character.currentRegion.charactersAtLocation[i];
+        //        if (terrifyingCharacter.marker == null || terrifyingCharacter == marker.character) {
+        //            continue;
+        //        }
+        //        if (terrifyingCharacter.currentParty == null || terrifyingCharacter.currentParty.icon == null || (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure)) {
+        //            continue;
+        //        }
+        //        if (terrifyingCharacter.currentParty.icon == null || (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure)) {
+        //            continue;
+        //        }
+        //        if (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure) {
+        //            continue;
+        //        }
+        //        if (!terrifyingCharacter.isDead) {
+        //            Vector3 newNodePos = new Vector3((Mathf.Floor(nodePos.x)) + 0.5f, (Mathf.Floor(nodePos.y)) + 0.5f, Mathf.Floor(nodePos.z));
+        //            float distance = Vector3.Distance(newNodePos, terrifyingCharacter.marker.centeredWorldPos);
+        //            if (distance <= marker.penaltyRadius) {
+        //                penalty += 1000000;
+        //            }
+        //        }
+        //    }
+        //}
         return penalty;
     }
     public uint GetNodePenaltyForStructures(Path path, Vector3 nodePos) {

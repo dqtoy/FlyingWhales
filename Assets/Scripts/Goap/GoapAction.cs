@@ -170,9 +170,13 @@ public class GoapAction {
     #region Utilities
     public int GetCost(Character actor, IPointOfInterest target, object[] otherData) {
         int baseCost = GetBaseCost(actor, target, otherData);
-        //modify costs based on actors traits
+        //modify costs based on actor's and target's traits
         for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
             Trait trait = actor.traitContainer.allTraits[i];
+            trait.ExecuteCostModification(goapType, actor, target, otherData, ref baseCost);
+        }
+        for (int i = 0; i < target.traitContainer.allTraits.Count; i++) {
+            Trait trait = target.traitContainer.allTraits[i];
             trait.ExecuteCostModification(goapType, actor, target, otherData, ref baseCost);
         }
         return (baseCost * TimeOfDaysCostMultiplier(actor) * PreconditionCostMultiplier()) + GetDistanceCost(actor, target);

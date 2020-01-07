@@ -234,7 +234,7 @@ public class JobQueueItem {
         _priority = amount;
     }
     private void SetInitialPriority() {
-        int priority = InteractionManager.Instance.GetInitialPriority(jobType);
+        int priority = jobType.GetJobTypePriority();
         if(priority > 0) {
             SetPriority(priority);
         } else {
@@ -251,7 +251,7 @@ public class JobQueueItem {
         return jobType.ToString() + " assigned to " + assignedCharacter?.name ?? "None";
     }
     public bool IsAnInterruptionJob() {
-        return jobType == JOB_TYPE.INTERRUPTION || jobType == JOB_TYPE.DEATH || jobType == JOB_TYPE.COMBAT;
+        return jobType.IsAnInterruptionJobType();
     }
     #endregion
     

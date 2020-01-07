@@ -12,6 +12,7 @@ namespace Traits {
             //trait.SetOnRemoveAction(onRemoveAction);
             trait.AddCharacterResponsibleForTrait(characterResponsible);
             trait.AddCharacterResponsibleForTrait(characterResponsible);
+            ApplyPOITraitInteractions(traitable, trait);
             if (trait.ticksDuration > 0) {
                 GameDate removeDate = GameManager.Instance.Today();
                 removeDate.AddTicks(trait.ticksDuration);
@@ -27,8 +28,24 @@ namespace Traits {
             //TODO: if (triggerOnRemove) {
             //    trait.OnRemoveTrait(this, removedBy);
             //}
+            UnapplyPOITraitInteractions(traitable, trait);
             trait.OnRemoveTrait(traitable, removedBy);
             Messenger.Broadcast(Signals.TRAITABLE_LOST_TRAIT, traitable, trait, removedBy);
+        }
+
+        private void ApplyPOITraitInteractions(ITraitable traitable, Trait trait) {
+            if (trait.advertisedInteractions != null) {
+                for (int i = 0; i < trait.advertisedInteractions.Count; i++) {
+                    traitable.AddAdvertisedAction(trait.advertisedInteractions[i]);
+                }
+            }
+        }
+        private void UnapplyPOITraitInteractions(ITraitable traitable, Trait trait) {
+            if (trait.advertisedInteractions != null) {
+                for (int i = 0; i < trait.advertisedInteractions.Count; i++) {
+                    traitable.RemoveAdvertisedAction(trait.advertisedInteractions[i]);
+                }
+            }
         }
     }
 }

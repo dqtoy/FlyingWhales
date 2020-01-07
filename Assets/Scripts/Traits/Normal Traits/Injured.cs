@@ -27,10 +27,10 @@ namespace Traits {
         }
 
         #region Overrides
-        public override void OnAddTrait(ITraitable sourceCharacter) {
-            base.OnAddTrait(sourceCharacter);
-            if (sourceCharacter is Character) {
-                _sourceCharacter = sourceCharacter as Character;
+        public override void OnAddTrait(ITraitable traitable) {
+            base.OnAddTrait(traitable);
+            if (traitable is Character) {
+                _sourceCharacter = traitable as Character;
                 _sourceCharacter.UpdateCanCombatState();
                 _sourceCharacter.AdjustSpeedModifier(-0.15f);
                 //_sourceCharacter.CreateRemoveTraitJob(name);
@@ -78,7 +78,6 @@ namespace Traits {
                             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                             return true;
                         }
- 
                     } 
                     //else {
                     //    if (InteractionManager.Instance.CanCharacterTakeRemoveIllnessesJob(characterThatWillDoJob, targetCharacter, currentJob)) {

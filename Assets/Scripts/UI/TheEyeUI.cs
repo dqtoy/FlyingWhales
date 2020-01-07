@@ -18,18 +18,35 @@ public class TheEyeUI : MonoBehaviour {
             CanChooseMinion, OnHoverEnterMinion, OnHoverExitMinion, OnPickFirstObject, ConfirmInterfere, "Interfere");
     }
     private void OnPickFirstObject(object obj) {
-        List<Region> activeEventRegions = new List<Region>();
+        // List<Region> activeEventRegions = new List<Region>();
+        // for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+        //     Region currRegion = GridMap.Instance.allRegions[i];
+        //     if (currRegion.activeEvent != null) {
+        //         activeEventRegions.Add(currRegion);
+        //     }
+        // }
+        // minionToInterfere = (obj as Character).minion;
+        // UIManager.Instance.dualObjectPicker.PopulateColumn(activeEventRegions, CanInterfere, null, null, UIManager.Instance.dualObjectPicker.column2ScrollView, UIManager.Instance.dualObjectPicker.column2ToggleGroup, "Choose Event", "WorldEvent");
+        List<Character> targets = new List<Character>();
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             Region currRegion = GridMap.Instance.allRegions[i];
-            if (currRegion.activeEvent != null) {
-                activeEventRegions.Add(currRegion);
+            if (currRegion.locationType.IsSettlementType() == false) {
+                for (int j = 0; j < currRegion.charactersAtLocation.Count; j++) {
+                    Character character = currRegion.charactersAtLocation[j];
+                    if (character.currentActionNode?.poiTarget is TileObject) {
+                        TileObject target = character.currentActionNode.poiTarget as TileObject;
+                        if (target.tileObjectType == TILE_OBJECT_TYPE.REGION_TILE_OBJECT) {
+                            targets.Add(character); // character is currently targeting a region, add to choices
+                        }
+                    }
+                }    
             }
         }
         minionToInterfere = (obj as Character).minion;
-        UIManager.Instance.dualObjectPicker.PopulateColumn(activeEventRegions, CanInterfere, null, null, UIManager.Instance.dualObjectPicker.column2ScrollView, UIManager.Instance.dualObjectPicker.column2ToggleGroup, "Choose Event", "WorldEvent");
+        UIManager.Instance.dualObjectPicker.PopulateColumn(targets, CanInterfere, null, null, UIManager.Instance.dualObjectPicker.column2ScrollView, UIManager.Instance.dualObjectPicker.column2ToggleGroup, "Choose Event", "WorldEvent");
     }
-    private bool CanInterfere(Region region) {
-        return region.activeEvent.CanBeInterferedBy(minionToInterfere);
+    private bool CanInterfere(Character character) {
+        return true;
     }
     private void OnHoverEnterMinion(Character character) {
         if (!CanChooseMinion(character)) {
@@ -47,9 +64,9 @@ public class TheEyeUI : MonoBehaviour {
     }
     private void ConfirmInterfere(object minionObj, object regionObj) {
         Character character = minionObj as Character;
-        Region targetRegion = regionObj as Region;
+        Character targetCharacter = regionObj as Character;
 
-        (UIManager.Instance.regionInfoUI.activeRegion.mainLandmark as TheEye).StartInterference(targetRegion, character); //NOTE: This assumes that the Region Info UI is showing when the event item is clicked.
+        (UIManager.Instance.regionInfoUI.activeRegion.mainLandmark as TheEye).StartInterference(targetCharacter, character);
     }
     #endregion
 

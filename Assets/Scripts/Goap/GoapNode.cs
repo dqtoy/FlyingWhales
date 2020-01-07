@@ -238,6 +238,7 @@ public class ActualGoapNode {
             }
             if (targetPOIToGoTo == null) {
                 if (targetTile == actor.gridTileLocation) {
+                    actor.marker.StopMovement();
                     actor.PerformGoapAction();
                 } else {
                     actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
@@ -541,13 +542,18 @@ public class ActualGoapNode {
         //After effect and logs should be done after processing action result so that we can be sure that the action is completely done before doing anything
         if (shouldDoAfterEffect) {
             currentState.afterEffect?.Invoke(this);
+            bool isRemoved = false;
             for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
                 Trait currTrait = actor.traitContainer.allTraits[i];
-                currTrait.ExecuteActionAfterEffects(action.goapType, this);
+                isRemoved = false;
+                currTrait.ExecuteActionAfterEffects(action.goapType, this, ref isRemoved);
+                if (isRemoved) { i--; }
             }
             for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
                 Trait currTrait = poiTarget.traitContainer.allTraits[i];
-                currTrait.ExecuteActionAfterEffects(action.goapType, this);
+                isRemoved = false;
+                currTrait.ExecuteActionAfterEffects(action.goapType, this, ref isRemoved);
+                if (isRemoved) { i--; }
             }
         }
         //else {

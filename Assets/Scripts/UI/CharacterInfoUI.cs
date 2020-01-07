@@ -84,8 +84,10 @@ public class CharacterInfoUI : UIMenu {
         Messenger.AddListener<Character>(Signals.CHARACTER_SWITCHED_ALTER_EGO, OnCharacterChangedAlterEgo);
         //Messenger.AddListener<Relatable, Relatable>(Signals.RELATIONSHIP_ADDED, OnRelationshipAdded);
         //Messenger.AddListener<Relatable, RELATIONSHIP_TRAIT, Relatable>(Signals.RELATIONSHIP_REMOVED, OnRelationshipRemoved);
-        Messenger.AddListener<Character, Character>(Signals.OPINION_ADDED, OnOpinionAdded);
-        Messenger.AddListener<Character, Character>(Signals.OPINION_REMOVED, OnOpinionRemoved);
+        Messenger.AddListener<Character, Character>(Signals.OPINION_ADDED, OnOpinionChanged);
+        Messenger.AddListener<Character, Character>(Signals.OPINION_REMOVED, OnOpinionChanged);
+        Messenger.AddListener<Character, Character>(Signals.OPINION_INCREASED, OnOpinionChanged);
+        Messenger.AddListener<Character, Character>(Signals.OPINION_DECREASED, OnOpinionChanged);
 
         normalTraitsEventLbl.SetOnClickAction(OnClickTrait);
         statusTraitsEventLbl.SetOnClickAction(OnClickTrait);
@@ -443,6 +445,9 @@ public class CharacterInfoUI : UIMenu {
         summary = $"{summary}{("\nDo Not Get Tired: " + activeCharacter.needsComponent.doNotGetTired.ToString())}";
         summary = $"{summary}{("\nDo Not Get Lonely: " + activeCharacter.needsComponent.doNotGetLonely.ToString())}";
         summary = $"{summary}{("\nDo Not Recover HP: " + activeCharacter.doNotRecoverHP.ToString())}";
+        summary = $"{summary}{("\nFullness: " + activeCharacter.needsComponent.fullness + "/" + CharacterNeedsComponent.FULLNESS_DEFAULT)}";
+        summary = $"{summary}{("\nTiredness: " + activeCharacter.needsComponent.tiredness + "/" + CharacterNeedsComponent.TIREDNESS_DEFAULT)}";
+        summary = $"{summary}{("\nHappiness: " + activeCharacter.needsComponent.happiness + "/" + CharacterNeedsComponent.HAPPINESS_DEFAULT)}";
         summary = $"{summary}{("\nFullness Time: " + (activeCharacter.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.fullnessForcedTick)))}";
         summary = $"{summary}{("\nTiredness Time: " + (activeCharacter.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.tirednessForcedTick)))}";
         summary = $"{summary}{("\nRemaining Sleep Ticks: " + activeCharacter.needsComponent.currentSleepTicks.ToString())}";
@@ -490,16 +495,7 @@ public class CharacterInfoUI : UIMenu {
         relationshipValuesLbl.text = string.Empty;
         for (int i = 0; i < _activeCharacter.opinionComponent.opinions.Keys.Count; i++) {
             Character target = _activeCharacter.opinionComponent.opinions.Keys.ElementAt(i);
-            IRelationshipData relData = _activeCharacter.relationshipContainer.GetRelationshipDataWith(target);
-            RELATIONSHIP_TYPE relType = RELATIONSHIP_TYPE.NONE;
-            if (relData != null) {
-                relType = relData.GetFirstMajorRelationship();    
-            }
-            if (relType == RELATIONSHIP_TYPE.NONE) {
-                relationshipTypesLbl.text += "Acquaintance\n";
-            } else {
-                relationshipTypesLbl.text += Utilities.NormalizeString(relType.ToString()) + "\n";    
-            }
+            relationshipTypesLbl.text += $"{_activeCharacter.relationshipContainer.GetRelationshipName(target)}\n";
             int opinionOfOther = 0;
             if (target.opinionComponent.HasOpinion(activeCharacter)) {
                 opinionOfOther = target.opinionComponent.GetTotalOpinion(activeCharacter);
@@ -520,26 +516,22 @@ public class CharacterInfoUI : UIMenu {
             }
         }
     }
-    private void OnOpinionAdded(Character owner, Character target) {
-        if (isShowing && owner == activeCharacter) {
-            UpdateRelationships();
-        }
-    }
-    private void OnOpinionRemoved(Character owner, Character target) {
-        if (isShowing && owner == activeCharacter) {
+    private void OnOpinionChanged(Character owner, Character target) {
+        if (isShowing && (owner == activeCharacter || target == activeCharacter)) {
             UpdateRelationships();
         }
     }
     private void ShowRelationshipData(Character target) {
         int opinionOfOther = target.opinionComponent.GetTotalOpinion(activeCharacter);
-        string summary = target.name;
+        string summary = activeCharacter.name + "'s opinion of " + target.name;
         summary += "\n---------------------";
         Dictionary<string, int> opinions = activeCharacter.opinionComponent.GetOpinion(target);
         foreach (KeyValuePair<string, int> kvp in opinions) {
             summary += "\n" + kvp.Key + ": " + "<color=" + OpinionColor(kvp.Value) + ">" + GetOpinionText(kvp.Value) + "</color>";
         }
         summary += "\n---------------------";
-        summary += "\nTotal: <color=" + OpinionColor(opinionOfOther) + ">" + GetOpinionText(activeCharacter.opinionComponent.GetTotalOpinion(target)) + "</color> <color=" + OpinionColor(opinionOfOther) + ">(" + GetOpinionText(opinionOfOther) + ")</color>";
+        summary += "\nTotal: <color=" + OpinionColor(opinionOfOther) + ">" + GetOpinionText(activeCharacter.opinionComponent.GetTotalOpinion(target)) + "</color>";
+        summary += "\n" + target.name + "'s opinion of " + activeCharacter.name + ": <color=" + OpinionColor(opinionOfOther) + ">" + GetOpinionText(opinionOfOther) + "</color>";
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void HideRelationshipData() {

@@ -343,6 +343,32 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
     public void DoCleanup() {
         RemoveAllTraits();
     }
+    public bool CanBePickedUpNormallyUponVisionBy(Character character) {
+        if (character.role.roleType == CHARACTER_ROLE.BEAST) {
+            return false;
+        }
+        if (character.race == RACE.SKELETON) {
+            return false;
+        }
+        if (character.characterClass.className.Equals("Zombie")) {
+            return false;
+        }
+        if (characterOwner == null) {
+            //Patrollers should not pick up items from their main storage structure
+            if (gridTileLocation != null && gridTileLocation.structure == character.homeRegion.mainStorage) { //&& token.currentRegion == characterThatWillDoJob.homeRegion
+                return false;
+            }
+            //characters should not pick up items if that item is the target of it's current action
+            if (character.currentActionNode != null && character.currentActionNode.poiTarget == this) {
+                return false;
+            }
+            if (advertisedActions.Contains(INTERACTION_TYPE.PICK_UP) == false) {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
     #endregion
 
     #region Map Object

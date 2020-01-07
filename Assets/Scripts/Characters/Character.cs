@@ -480,6 +480,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.AddListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
         Messenger.AddListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
         Messenger.AddListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
+        Messenger.AddListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
         needsComponent.SubscribeToSignals();
     }
     public virtual void UnsubscribeSignals() {
@@ -498,6 +499,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.RemoveListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
         Messenger.RemoveListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
         Messenger.RemoveListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
+        Messenger.RemoveListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
         needsComponent.UnsubscribeToSignals();
     }
     #endregion
@@ -968,6 +970,14 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     public bool RemoveJobTargetingThis(JobQueueItem job) {
         return allJobsTargetingThis.Remove(job);
+    }
+    public void ForceCancelAllJobsTargettingThisCharacter() {
+        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
+            JobQueueItem job = allJobsTargetingThis[i];
+            if (job.ForceCancelJob()) {
+                i--;
+            }
+        }
     }
     public void ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE jobType) {
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
@@ -2059,6 +2069,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //CheckApprehendRelatedJobsOnLeaveLocation();
             //CancelOrUnassignRemoveTraitRelatedJobs();
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
+            CancelAllJobsExceptForCurrent(false);
             marker.ClearTerrifyingObjects();
             ExecuteLeaveAreaActions();
             needsComponent.OnCharacterLeftLocation(currentRegion);
@@ -2204,6 +2215,19 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (otherCharacter.id != this.id) {
             //RemoveRelationship(characterThatDied); //do not remove relationships when dying
             marker.OnSeizeOtherCharacter(otherCharacter);
+        }
+    }
+    private void OnSeizeTileObject(TileObject tileObject) {
+        if(currentActionNode != null && currentActionNode.poiTarget == tileObject) {
+            StopCurrentActionNode();
+        }
+        Character[] currentUsers = tileObject.users;
+        if (currentUsers != null && currentUsers.Length > 0) {
+            for (int i = 0; i < currentUsers.Length; i++) {
+                currentUsers[i].StopCurrentActionNode();
+                tileObject.RemoveUser(currentUsers[i]);
+                //i--;
+            }
         }
     }
     public void AdjustDoNotDisturb(int amount) {
@@ -2835,93 +2859,98 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             return;
         }
         if (action == null) {
-            if (targetCharacter != null && targetCharacter.isInCombat
-                && targetCharacter.faction == faction) {
+            if (targetCharacter != null && targetCharacter.isInCombat) {
                 CombatState targetCombatState = targetCharacter.stateComponent.currentState as CombatState;
                 if (targetCombatState.currentClosestHostile != null && targetCombatState.currentClosestHostile != this) {
                     if (targetCombatState.currentClosestHostile is Character) {
                         Character currentHostileOfTargetCharacter = targetCombatState.currentClosestHostile as Character;
-                        if (currentHostileOfTargetCharacter.stateComponent.currentState != null
-                            && !currentHostileOfTargetCharacter.stateComponent.currentState.isDone
-                            && currentHostileOfTargetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
-                            CombatState combatStateOfCurrentHostileOfTargetCharacter = currentHostileOfTargetCharacter.stateComponent.currentState as CombatState;
-                            if (combatStateOfCurrentHostileOfTargetCharacter.currentClosestHostile != null
-                                && combatStateOfCurrentHostileOfTargetCharacter.currentClosestHostile == this) {
-                                //If character 1 is supposed to watch/join the combat of character 2 against character 3
-                                //but character 3 is already in combat and his current target is already character 1
-                                //then character 1 should not react
-                                return;
+                        RELATIONSHIP_EFFECT relEffectTowardsTargetOfCombat = opinionComponent.GetRelationshipEffectWith(currentHostileOfTargetCharacter);
+                        if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
+                            if (!targetCombatState.allCharactersThatDegradedRel.Contains(this)) {
+                                opinionComponent.AdjustOpinion(targetCharacter, "Base", -10);
+                                targetCombatState.AddCharacterThatDegradedRel(this);
                             }
                         }
+                        if (targetCharacter.faction == faction) {
+                            if (currentHostileOfTargetCharacter.stateComponent.currentState != null
+                                && !currentHostileOfTargetCharacter.stateComponent.currentState.isDone
+                                && currentHostileOfTargetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+                                CombatState combatStateOfCurrentHostileOfTargetCharacter = currentHostileOfTargetCharacter.stateComponent.currentState as CombatState;
+                                if (combatStateOfCurrentHostileOfTargetCharacter.currentClosestHostile != null
+                                    && combatStateOfCurrentHostileOfTargetCharacter.currentClosestHostile == this) {
+                                    //If character 1 is supposed to watch/join the combat of character 2 against character 3
+                                    //but character 3 is already in combat and his current target is already character 1
+                                    //then character 1 should not react
+                                    return;
+                                }
+                            }
+                            if (currentHostileOfTargetCharacter.faction == faction) {
+                                RELATIONSHIP_EFFECT relEffectTowardsTarget = opinionComponent.GetRelationshipEffectWith(targetCharacter);
 
-                        if (currentHostileOfTargetCharacter.faction == faction) {
-                            RELATIONSHIP_EFFECT relEffectTowardsTarget = opinionComponent.GetRelationshipEffectWith(targetCharacter);
-                            RELATIONSHIP_EFFECT relEffectTowardsTargetOfCombat = opinionComponent.GetRelationshipEffectWith(currentHostileOfTargetCharacter);
+                                if (relEffectTowardsTarget == RELATIONSHIP_EFFECT.POSITIVE) {
+                                    if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
+                                        CreateWatchEvent(null, targetCombatState, targetCharacter);
+                                    } else {
+                                        if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, false, false, isLethal: targetCharacter.marker.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
+                                            if (!marker.avoidInRange.Contains(targetCharacter)) {
+                                                //Do process combat behavior first for this character, if the current closest hostile
+                                                //of the combat state of this character is also the targetCombatState.currentClosestHostile
+                                                //Then that's only when we apply the join combat log and notif
+                                                //Because if not, it means that this character is already in combat with someone else, and thus
+                                                //should not product join combat log anymore
+                                                Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
+                                                joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                                                joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                                                joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
+                                                joinLog.AddToFillers(null, this.relationshipContainer.GetRelationshipName(targetCharacter), LOG_IDENTIFIER.STRING_1);
+                                                joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
+                                                PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
+                                            }
 
-                            if (relEffectTowardsTarget == RELATIONSHIP_EFFECT.POSITIVE) {
-                                if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
-                                    CreateWatchEvent(null, targetCombatState, targetCharacter);
-                                } else {
-                                    if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, false, false, isLethal: targetCharacter.marker.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
-                                        if (!marker.avoidInRange.Contains(targetCharacter)) {
-                                            //Do process combat behavior first for this character, if the current closest hostile
-                                            //of the combat state of this character is also the targetCombatState.currentClosestHostile
-                                            //Then that's only when we apply the join combat log and notif
-                                            //Because if not, it means that this character is already in combat with someone else, and thus
-                                            //should not product join combat log anymore
-                                            List<RELATIONSHIP_TYPE> rels = relationshipContainer.GetRelationshipDataWith(targetCharacter.currentAlterEgo)?.relationships.OrderByDescending(x => (int) x).ToList() ?? null; //so that the first relationship to be returned is the one with higher importance.
-                                            Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
-                                            joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                                            joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                            joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
-                                            joinLog.AddToFillers(null, Utilities.NormalizeString(rels.First().ToString()), LOG_IDENTIFIER.STRING_1);
-                                            joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                            PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
+                                            //marker.ProcessCombatBehavior();
                                         }
-                                        //marker.ProcessCombatBehavior();
+                                    }
+                                } else {
+                                    if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
+                                        if (marker.AddHostileInRange(targetCharacter, false, false, isLethal: targetCharacter.marker.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
+                                            if (!marker.avoidInRange.Contains(targetCharacter)) {
+                                                //Do process combat behavior first for this character, if the current closest hostile
+                                                //of the combat state of this character is also the targetCombatState.currentClosestHostile
+                                                //Then that's only when we apply the join combat log and notif
+                                                //Because if not, it means that this character is already in combat with someone else, and thus
+                                                //should not product join combat log anymore
+                                                Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
+                                                joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                                                joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                                                joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.CHARACTER_3);
+                                                joinLog.AddToFillers(null, this.relationshipContainer.GetRelationshipName(currentHostileOfTargetCharacter), LOG_IDENTIFIER.STRING_1);
+                                                joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
+                                                PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
+                                            }
+                                            //marker.ProcessCombatBehavior();
+                                        }
+                                    } else {
+                                        CreateWatchEvent(null, targetCombatState, targetCharacter);
                                     }
                                 }
                             } else {
-                                if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
-                                    List<RELATIONSHIP_TYPE> rels = relationshipContainer.GetRelationshipDataWith(currentHostileOfTargetCharacter.currentAlterEgo)?.relationships.OrderByDescending(x => (int) x).ToList() ?? null; //so that the first relationship to be returned is the one with higher importance.
-                                    if (rels.Count > 0 && marker.AddHostileInRange(targetCharacter, false, false, isLethal: targetCharacter.marker.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
-                                        if (!marker.avoidInRange.Contains(targetCharacter)) {
-                                            //Do process combat behavior first for this character, if the current closest hostile
-                                            //of the combat state of this character is also the targetCombatState.currentClosestHostile
-                                            //Then that's only when we apply the join combat log and notif
-                                            //Because if not, it means that this character is already in combat with someone else, and thus
-                                            //should not product join combat log anymore
-                                            Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
-                                            joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                                            joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                            joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.CHARACTER_3);
-                                            joinLog.AddToFillers(null, Utilities.NormalizeString(rels.First().ToString()), LOG_IDENTIFIER.STRING_1);
-                                            joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                            PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
-                                        }
-                                        //marker.ProcessCombatBehavior();
+                                //the target of the combat state is not part of this character's faction
+                                if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, false, false, isLethal: targetCharacter.marker.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
+                                    if (!marker.avoidInRange.Contains(targetCharacter)) {
+                                        //TODO: Do process combat behavior first for this character, if the current closest hostile
+                                        //of the combat state of this character is also the targetCombatState.currentClosestHostile
+                                        //Then that's only when we apply the join combat log and notif
+                                        //Because if not, it means that this character is already in combat with someone else, and thus
+                                        //should not product join combat log anymore
+                                        Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_faction");
+                                        joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                                        joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                                        joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
+                                        joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
+                                        PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
                                     }
-                                } else {
-                                    CreateWatchEvent(null, targetCombatState, targetCharacter);
+                                    //marker.ProcessCombatBehavior();
                                 }
-                            }
-                        } else {
-                            //the target of the combat state is not part of this character's faction
-                            if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, false, false, isLethal: targetCharacter.marker.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
-                                if (!marker.avoidInRange.Contains(targetCharacter)) {
-                                    //TODO: Do process combat behavior first for this character, if the current closest hostile
-                                    //of the combat state of this character is also the targetCombatState.currentClosestHostile
-                                    //Then that's only when we apply the join combat log and notif
-                                    //Because if not, it means that this character is already in combat with someone else, and thus
-                                    //should not product join combat log anymore
-                                    Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_faction");
-                                    joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                                    joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                    joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
-                                    joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                    PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
-                                }
-                                //marker.ProcessCombatBehavior();
                             }
                         }
                     }
@@ -2992,15 +3021,15 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //    PrintLogIfActive(summary);
         //    return;
         //}
-        int watchJobPriority = InteractionManager.Instance.GetInitialPriority(JOB_TYPE.WATCH);
-        JobQueueItem currJob = currentJob;
-        if (currJob != null) {
-            if (watchJobPriority >= currJob.priority) {
-                summary += "\n-Current action job " + currJob.name + " priority: " + currJob.priority + " is higher or equal than Watch Job priority " + watchJobPriority + ", will not watch...";
-                PrintLogIfActive(summary);
-                return;
-            }
-        }
+        //int watchJobPriority = JOB_TYPE.WATCH.GetJobTypePriority();
+        //JobQueueItem currJob = currentJob;
+        //if (currJob != null) {
+        //    if (watchJobPriority >= currJob.priority) {
+        //        summary += "\n-Current action job " + currJob.name + " priority: " + currJob.priority + " is higher or equal than Watch Job priority " + watchJobPriority + ", will not watch...";
+        //        PrintLogIfActive(summary);
+        //        return;
+        //    }
+        //}
         //if (stateComponent.currentState != null && stateComponent.currentState.job != null && stateComponent.currentState.job.priority <= watchJobPriority) {
         //    summary += "\n-Current state job " + stateComponent.currentState.job.name + " priority: " + stateComponent.currentState.job.priority + " is higher or equal than Watch Job priority " + watchJobPriority + ", will not watch...";
         //    PrintLogIfActive(summary);
@@ -3042,6 +3071,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //    StopCurrentAction(false, "Have something important to do");
         //    AdjustIsWaitingForInteraction(-1);
         //}
+        if (!jobQueue.IsJobTopTypePriorityWhenAdded(JOB_TYPE.WATCH)) {
+            summary += "\n-Watch job will not be top priority in queue in when added, will not watch...";
+            return;
+        }
         summary += "\nWatch event created.";
         PrintLogIfActive(summary);
         ActualGoapNode node = null;
@@ -3103,10 +3136,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 //Do not set as responsible character for unconscious trait if character is hit unintentionally
                 //So, only set responsible character if currentClosestHostile is this character, meaning, this character is really the target
                 responsibleCharacter = characterThatAttacked;
-                if (!state.allCharactersThatDegradedRel.Contains(this)) {
-                    RelationshipManager.Instance.RelationshipDegradation(characterThatAttacked, this);
-                    state.AddCharacterThatDegradedRel(this);
-                }
+                //if (!state.allCharactersThatDegradedRel.Contains(this)) {
+                //    RelationshipManager.Instance.RelationshipDegradation(characterThatAttacked, this);
+                //    state.AddCharacterThatDegradedRel(this);
+                //}
             }
         }
 
@@ -3421,7 +3454,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
         }
         Messenger.Broadcast(Signals.ADJUSTED_HP, this);
-        if (IsHealthCriticallyLow()) {
+        if (amount < 0 && IsHealthCriticallyLow()) {
             Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "critically low health");
         }
         if (triggerDeath && previous != this._currentHP) {
@@ -3861,7 +3894,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count <= 0
             && !marker.hasFleePath && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterruptedNonSimultaneous;
     }
-    protected void EndTickPerformJobs() {
+    public void EndTickPerformJobs() {
         if (CanPerformEndTickJobs()) {
             if (!jobQueue.jobsInQueue[0].ProcessJob()) {
                 PerformTopPriorityJob();
@@ -3869,10 +3902,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
     }
     private bool CanPerformEndTickJobs() {
-        return minion == null && !isDead && isStoppedByOtherCharacter <= 0 && canWitness
+        return !isDead && isStoppedByOtherCharacter <= 0 && canWitness
             && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count > 0 
             && currentParty.icon.isTravellingOutside == false && !marker.hasFleePath 
-            && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterruptedNonSimultaneous; //&& doNotDisturb <= 0
+            && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterruptedNonSimultaneous; //minion == null && doNotDisturb <= 0
     }
     //public void PlanGoapActions() {
     //    if (!IsInOwnParty() || ownParty.icon.isTravelling || _doNotDisturb > 0 /*|| isWaitingForInteraction > 0 */ || isDead || marker.hasFleePath) {
@@ -4071,7 +4104,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         jobQueue.AddJobInQueue(job);
     }
     public Character GetParalyzedOrCatatonicCharacterToCheckOut() {
-        List<Character> charactersWithRel = relationshipContainer.relationships.Keys.Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList();
+        //List<Character> charactersWithRel = relationshipContainer.relationships.Keys.Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList();
+        List<Character> charactersWithRel = opinionComponent.charactersWithOpinion;
         if (charactersWithRel.Count > 0) {
             List<Character> positiveCharactersWithParalyzedOrCatatonic = new List<Character>();
             for (int i = 0; i < charactersWithRel.Count; i++) {
@@ -4079,11 +4113,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 if (opinionComponent.GetRelationshipEffectWith(character) == RELATIONSHIP_EFFECT.POSITIVE) {
                     Trait trait = character.traitContainer.GetNormalTrait<Trait>("Paralyzed", "Catatonic");
                     if (trait != null) {
-                        if (trait is Paralyzed && (trait as Paralyzed).charactersThatKnow.Contains(this)) {
-                            positiveCharactersWithParalyzedOrCatatonic.Add(character);
-                        } else if (trait is Catatonic && (trait as Catatonic).charactersThatKnow.Contains(this)) {
-                            positiveCharactersWithParalyzedOrCatatonic.Add(character);
-                        }
+                        positiveCharactersWithParalyzedOrCatatonic.Add(character);
+                        //if (trait is Paralyzed && (trait as Paralyzed).charactersThatKnow.Contains(this)) {
+                        //    positiveCharactersWithParalyzedOrCatatonic.Add(character);
+                        //} else if (trait is Catatonic && (trait as Catatonic).charactersThatKnow.Contains(this)) {
+                        //    positiveCharactersWithParalyzedOrCatatonic.Add(character);
+                        //}
                     }
                 }
             }
@@ -4865,6 +4900,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         advertisedActions.Add(INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM);
         advertisedActions.Add(INTERACTION_TYPE.REVERT_TO_NORMAL_FORM);
         advertisedActions.Add(INTERACTION_TYPE.CHANGE_CLASS);
+        advertisedActions.Add(INTERACTION_TYPE.ZOMBIE_DEATH);
         //advertisedActions.Add(INTERACTION_TYPE.STAND);
         //advertisedActions.Add(INTERACTION_TYPE.VISIT);
         //advertisedActions.Add(INTERACTION_TYPE.CRAFT_FURNITURE);
@@ -5583,7 +5619,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if(gridTileLocation != null && characterThatScreamed.gridTileLocation != null) {
             float dist = gridTileLocation.GetDistanceTo(characterThatScreamed.gridTileLocation);
             PrintLogIfActive(name + " distance to " + characterThatScreamed.name + " is " + dist);
-            float distanceChecker = 5f;
+            float distanceChecker = 10f;
             //if (currentStructure != characterThatScreamed.currentStructure) {
             //    distanceChecker = 2f;
             //}
@@ -5610,7 +5646,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         string log = GameManager.Instance.TodayLogString() + name + " heard the scream of " + characterThatScreamed.name + ", reacting...";
 
         bool canReact = true;
-        int reactJobPriority = InteractionManager.Instance.GetInitialPriority(JOB_TYPE.REACT_TO_SCREAM);
+        int reactJobPriority = JOB_TYPE.REACT_TO_SCREAM.GetJobTypePriority();
         if (stateComponent.currentState != null && stateComponent.currentState.job != null && stateComponent.currentState.job.priority <= reactJobPriority) {
             canReact = false;
         } 
@@ -5645,6 +5681,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             marker.StopMovement();
         }
         Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
+        //ForceCancelAllJobsTargettingThisCharacter();
         marker.ClearTerrifyingObjects();
         needsComponent.OnCharacterLeftLocation(currentRegion);
 

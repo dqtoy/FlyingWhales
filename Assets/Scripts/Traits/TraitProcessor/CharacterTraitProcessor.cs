@@ -10,7 +10,7 @@ namespace Traits {
         public override void OnTraitAdded(ITraitable traitable, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
             Character character = traitable as Character;
             ApplyTraitEffects(character, trait);
-            ApplyPOITraitInteractions(character, trait);
+            //ApplyPOITraitInteractions(character, trait);
             character.currentAlterEgo.AddTrait(trait);
 
             if (GameManager.Instance.gameHasStarted) {
@@ -32,7 +32,7 @@ namespace Traits {
         public override void OnTraitRemoved(ITraitable traitable, Trait trait, Character removedBy) {
             Character character = traitable as Character;
             UnapplyTraitEffects(character, trait);
-            UnapplyPOITraitInteractions(character, trait);
+            //UnapplyPOITraitInteractions(character, trait);
             character.currentAlterEgo.RemoveTrait(trait);
 
             DefaultProcessOnRemoveTrait(traitable, trait, removedBy);
@@ -70,7 +70,6 @@ namespace Traits {
                 character.needsComponent.AdjustDoNotGetTired(1);
                 character.needsComponent.AdjustDoNotGetHungry(1);
                 character.needsComponent.AdjustDoNotGetLonely(1);
-                character.DecreaseCanMove();
             } else if (trait.name == "Charmed") {
                 character.needsComponent.AdjustDoNotGetLonely(1);
             } else if (trait.name == "Daydreaming") {
@@ -178,7 +177,6 @@ namespace Traits {
                 character.needsComponent.AdjustDoNotGetTired(-1);
                 character.needsComponent.AdjustDoNotGetHungry(-1);
                 character.needsComponent.AdjustDoNotGetLonely(-1);
-                character.IncreaseCanMove();
             } else if (trait.name == "Charmed") {
                 character.needsComponent.AdjustDoNotGetLonely(-1);
             } else if (trait.name == "Daydreaming") {
@@ -252,21 +250,6 @@ namespace Traits {
                             }
                         }
                     }
-                }
-            }
-        }
-
-        public void ApplyPOITraitInteractions(Character character, Trait trait) {
-            if (trait.advertisedInteractions != null) {
-                for (int i = 0; i < trait.advertisedInteractions.Count; i++) {
-                    character.AddAdvertisedAction(trait.advertisedInteractions[i]);
-                }
-            }
-        }
-        public void UnapplyPOITraitInteractions(Character character, Trait trait) {
-            if (trait.advertisedInteractions != null) {
-                for (int i = 0; i < trait.advertisedInteractions.Count; i++) {
-                    character.RemoveAdvertisedAction(trait.advertisedInteractions[i]);
                 }
             }
         }

@@ -31,7 +31,7 @@ public class FactionManager : MonoBehaviour {
     public Faction zombieFaction {
         get {
             if (_zombieFaction == null) {
-                _zombieFaction = CreateNewFaction(factionName: "Zombies");
+                _zombieFaction = CreateZombieFaction();
             }
             return _zombieFaction;
         }
@@ -101,6 +101,13 @@ public class FactionManager : MonoBehaviour {
         }
         return newFaction;
     }
+    private Faction CreateZombieFaction() {
+        Faction zombies = CreateNewFaction(factionName: "Zombies");
+        foreach (KeyValuePair<Faction,FactionRelationship> pair in zombies.relationships) {
+            zombies.SetRelationshipFor(pair.Key, FACTION_RELATIONSHIP_STATUS.HOSTILE);
+        }
+        return zombies;
+    }
     public Faction CreateNewFaction(SaveDataFaction data) {
         Faction newFaction = new Faction(data);
         if(data.name == "Neutral") {
@@ -130,6 +137,9 @@ public class FactionManager : MonoBehaviour {
      * Will return an error if there are no more available emblems.
      * */
     internal Sprite GenerateFactionEmblem(Faction faction) {
+        if(usedEmblems.Count == _factionEmblems.Count) {
+            usedEmblems.Clear();
+        }
         for (int i = 0; i < _factionEmblems.Count; i++) {
             Sprite currSprite = _factionEmblems[i];
             if (usedEmblems.Contains(currSprite)) {
