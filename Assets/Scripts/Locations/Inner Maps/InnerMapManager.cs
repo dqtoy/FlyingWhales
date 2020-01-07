@@ -146,7 +146,7 @@ namespace Inner_Maps {
             InnerMapCameraMove.Instance.CenterCameraOn(null);
             currentlyShowingMap = null;
             currentlyShowingLocation = null;
-            PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
+            // PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
             Messenger.Broadcast(Signals.LOCATION_MAP_CLOSED, closedLocation);
             return closedLocation;
         }
@@ -324,7 +324,7 @@ namespace Inner_Maps {
                 return;
             }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            HexTile hexTile = tile.parentMap.GetHexTileThatTileBelongsTo(tile);
+            HexTile hexTile = tile.parentMap.GetHexTileInRegionThatTileBelongsTo(tile);
             string summary = tile.localPlace.ToString();
             summary += "\n<b>HexTile:</b>" + (hexTile?.ToString() ?? "None");
             summary += "\n<b>Local Location:</b>" + tile.localLocation;

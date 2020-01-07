@@ -11,7 +11,6 @@ public class BuildingSpot {
     public bool isOccupied { get; private set; }
     public Vector3Int location { get; private set; }
     public Vector3 centeredLocation { get; private set; }
-    public int[] adjacentSpots { get; private set; }
     public LocationGridTile[] tilesInTerritory { get; private set; }
     public Vector2Int locationInBuildSpotGrid { get; private set; }
     public Dictionary<GridNeighbourDirection, BuildingSpot> neighbours { get; private set; }
@@ -31,8 +30,14 @@ public class BuildingSpot {
         this.id = data.id;
         this.isOpen = data.isOpen;
         this.location = data.location;
-        this.adjacentSpots = data.adjacentSpots;
         this.locationInBuildSpotGrid = data.buildingSpotGridPos;
+        centeredLocation = new Vector3(location.x + 0.5f, location.y + 0.5f);
+    }
+    public BuildingSpot(int x, int y, Vector3Int tileLocation) {
+        this.id = Utilities.SetID(this);
+        this.isOpen = false;
+        this.location = tileLocation;
+        this.locationInBuildSpotGrid = new Vector2Int(x, y);
         centeredLocation = new Vector3(location.x + 0.5f, location.y + 0.5f);
     }
 

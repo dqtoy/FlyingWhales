@@ -13,8 +13,6 @@ namespace Inner_Maps {
         private static int _westOutsideTiles = 8;
         private static int _northOutsideTiles = 8;
         private static int _southOutsideTiles = 8;
-        [Header("Structures")]
-        [SerializeField] private GameObject buildSpotPrefab;
         [Header("Perlin Noise")]
         [SerializeField] private float offsetX;
         [SerializeField] private float offsetY;
@@ -320,7 +318,6 @@ namespace Inner_Maps {
                 }
             }
         }
-
         #endregion
 
         #region Details

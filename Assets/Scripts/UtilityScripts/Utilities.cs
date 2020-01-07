@@ -33,6 +33,7 @@ public class Utilities : MonoBehaviour {
     public static int lastJobID = 0;
     public static int lastBurningSourceID = 0;
     public static int lastSpecialObjectID = 0;
+    public static int lastBuildSpotID = 0;
 
     public static float defenseBuff = 1.20f;
     public static int defaultCityHP = 300;
@@ -105,6 +106,9 @@ public class Utilities : MonoBehaviour {
         } else if (obj is SpecialObject) {
             lastSpecialObjectID += 1;
             return lastSpecialObjectID;
+        } else if (obj is BuildingSpot) {
+            lastBuildSpotID += 1;
+            return lastBuildSpotID;
         }
         return 0;
     }

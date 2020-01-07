@@ -493,6 +493,9 @@ namespace Inner_Maps {
         public void HighlightTile() {
             parentMap.groundTilemap.SetColor(localPlace, Color.blue);
         }
+        public void HighlightTile(Color color) {
+            parentMap.groundTilemap.SetColor(localPlace, color);
+        }
         public void UnhighlightTile() {
             parentMap.groundTilemap.SetColor(localPlace, defaultTileColor);
         }
