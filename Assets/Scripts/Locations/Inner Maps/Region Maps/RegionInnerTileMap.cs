@@ -63,7 +63,7 @@ namespace Inner_Maps {
             int maxX = region.tiles.Max(t => t.data.xCoordinate);
             int minX = region.tiles.Min(t => t.data.xCoordinate);
 
-            int difference = (maxX - minX) + 1;
+            int difference = ((maxX - minX) + 1) * 2;
 
             if ((Utilities.IsEven(leftMostRow) && Utilities.IsEven(rightMostRow)) || 
                 (Utilities.IsEven(leftMostRow) == false && Utilities.IsEven(rightMostRow) == false)) {
@@ -74,7 +74,7 @@ namespace Inner_Maps {
             
             int maxY = region.tiles.Max(t => t.data.yCoordinate);
             int minY = region.tiles.Min(t => t.data.yCoordinate);
-            int height = maxY - minY + 1;
+            int height = ((maxY - minY) + 1) * 2;
             
             buildingSpots = new BuildingSpot[width, height];
             for (int x = 0; x < width; x++) {
