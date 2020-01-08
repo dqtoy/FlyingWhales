@@ -40,6 +40,7 @@ public class CharacterStateJob : JobQueueItem {
             CharacterState newState = assignedCharacter.stateComponent.SwitchToState(targetState);
             if (newState != null) {
                 SetAssignedState(newState);
+                assignedCharacter.SetCurrentJob(this);
                 return true;
             } else {
                 throw new System.Exception(assignedCharacter.name + " tried doing state " + targetState.ToString() + " but was unable to do so! This must not happen!");
@@ -47,6 +48,7 @@ public class CharacterStateJob : JobQueueItem {
         } else {
             if(assignedState.isPaused && !assignedState.isDone) {
                 assignedState.ResumeState();
+                assignedCharacter.SetCurrentJob(this);
                 return true;
             }
         }

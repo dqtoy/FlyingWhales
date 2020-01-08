@@ -1081,6 +1081,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     //if (processCombatBehavior) {
                     //    ProcessCombatBehavior();
                     //}
+
                     willProcessCombat = true;
                 } else {
                     //Transfer to flee list

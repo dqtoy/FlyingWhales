@@ -78,6 +78,7 @@ public class ConsoleMenu : UIMenu {
             {"/add_new_resident", AddNewResident },
             {"/log_obj_advertisements", LogObjectAdvertisements },
             {"/cleanse_region", CleanseRegion },
+            {"/adjust_opinion", AdjustOpinion },
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -1006,6 +1007,36 @@ public class ConsoleMenu : UIMenu {
             return;
         }
         region.area.AddNewResident(RACE.HUMANS, region.owner);
+    }
+    private void AdjustOpinion(string[] parameters) {
+        if (parameters.Length != 3) { //parameters command, item
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of AdjustOpinion");
+            return;
+        }
+        string character1ParameterString = parameters[0];
+        string character2ParameterString = parameters[1];
+
+        Character character1 = CharacterManager.Instance.GetCharacterByName(character1ParameterString);
+        Character character2 = CharacterManager.Instance.GetCharacterByName(character2ParameterString);
+
+        if (character1 == null) {
+            AddErrorMessage("There is no character named " + character1ParameterString);
+            return;
+        }
+        if (character2 == null) {
+            AddErrorMessage("There is no character named " + character2ParameterString);
+            return;
+        }
+        string opinionParameterString = parameters[2];
+
+        int value = 0;
+        if (!int.TryParse(opinionParameterString, out value)) {
+            AddErrorMessage("Opinion parameter is not an integer: " + opinionParameterString);
+            return;
+        }
+        character1.opinionComponent.AdjustOpinion(character2, "Base", value);
+        AddSuccessMessage("Adjusted Opinion of " + character1.name + " towards " + character2.name + " by " + value);
     }
     #endregion
 

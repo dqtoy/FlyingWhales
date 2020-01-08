@@ -10,7 +10,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
+        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target) {
             actor.nonActionEventsComponent.NormalBreakUp(target as Character);
             return true;
         }

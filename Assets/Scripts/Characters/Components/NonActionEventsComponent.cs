@@ -238,7 +238,6 @@ public class NonActionEventsComponent {
                 }
             }
         }
-
     }
     private void TriggerBreakUp(Character target, RELATIONSHIP_TYPE relationship) {
         RelationshipManager.Instance.RemoveRelationshipBetween(owner, target, relationship);

@@ -156,6 +156,9 @@ public class CharacterStateComponent {
         currState.AfterExitingState();
 
         if(stateJob != null) {
+            if(stateJob == character.currentJob) {
+                character.SetCurrentJob(null);
+            }
             stateJob.ForceCancelJob();
         }
 
