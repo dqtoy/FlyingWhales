@@ -33,9 +33,10 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             if (addedTo is Character) {
                 Character character = addedTo as Character;
-                if (character.marker.inVisionCharacters.Count >= 3) {
-                    ApplyAgoraphobicEffect(character, true);
-                }
+                ApplyAgoraphobicEffect(character);
+                //if (character.marker.inVisionCharacters.Count >= 3) {
+                //    ApplyAgoraphobicEffect(character, true);
+                //}
             }
         }
         public override void OnSeePOI(IPointOfInterest targetPOI, Character character) {
@@ -45,53 +46,75 @@ namespace Traits {
                 if (character.traitContainer.GetNormalTrait<Trait>("Berserked") != null) {
                     return;
                 }
-                if (!character.isInCombat) {
-                    if (character.marker.inVisionCharacters.Count >= 3) {
-                        ApplyAgoraphobicEffect(character, true);
-                    }
-                } else {
-                    CombatState combatState = character.stateComponent.currentState as CombatState;
-                    if (combatState.isAttacking) {
-                        if (character.marker.inVisionCharacters.Count >= 3) {
-                            ApplyAgoraphobicEffect(character, false);
-                            Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, character, "agoraphobia");
-                        }
-                    }
-                }
+                ApplyAgoraphobicEffect(character);
+                //if (!character.isInCombat) {
+                //    if (character.marker.inVisionCharacters.Count >= 3) {
+                //        ApplyAgoraphobicEffect(character, true);
+                //    }
+                //} else {
+                //    CombatState combatState = character.stateComponent.currentState as CombatState;
+                //    if (combatState.isAttacking) {
+                //        if (character.marker.inVisionCharacters.Count >= 3) {
+                //            ApplyAgoraphobicEffect(character, false);
+                //            Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, character, "agoraphobia");
+                //        }
+                //    }
+                //}
             }
         }
         public override string TriggerFlaw(Character character) {
             //If outside and the character lives in a house, the character will flee and go back home.
-            string successLogKey = base.TriggerFlaw(character);
-            if (character.homeStructure != null) {
-                if (character.currentStructure != character.homeStructure) {
-                    if (character.currentActionNode != null) {
-                        character.StopCurrentActionNode(false);
-                    }
-                    if (character.stateComponent.currentState != null) {
-                        character.stateComponent.ExitCurrentState();
-                    }
-                    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], character, character, null, 0);
-                    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, character);
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.RETURN_HOME, character, character);
-                    goapPlan.SetDoNotRecalculate(true);
-                    job.SetCannotBePushedBack(true);
-                    job.SetAssignedPlan(goapPlan);
-                    character.jobQueue.AddJobInQueue(job);
-                    return successLogKey;
-                } else {
-                    return "fail_at_home";
-                }
-            } else {
-                return "fail_no_home";
-            }
+            //string successLogKey = base.TriggerFlaw(character);
+            //if (character.homeStructure != null) {
+            //    if (character.currentStructure != character.homeStructure) {
+            //        if (character.currentActionNode != null) {
+            //            character.StopCurrentActionNode(false);
+            //        }
+            //        if (character.stateComponent.currentState != null) {
+            //            character.stateComponent.ExitCurrentState();
+            //        }
+            //        ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], character, character, null, 0);
+            //        GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, character);
+            //        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.RETURN_HOME, character, character);
+            //        goapPlan.SetDoNotRecalculate(true);
+            //        job.SetCannotBePushedBack(true);
+            //        job.SetAssignedPlan(goapPlan);
+            //        character.jobQueue.AddJobInQueue(job);
+            //        return successLogKey;
+            //    } else {
+            //        return "fail_at_home";
+            //    }
+            //} else {
+            //    return "fail_no_home";
+            //}
+            ApplyAgoraphobicEffect(character);
+            return base.TriggerFlaw(character);
+
         }
         #endregion
 
-        private void ApplyAgoraphobicEffect(Character character, bool processCombat) {
-            character.marker.AddAvoidsInRange(character.marker.inVisionCharacters, processCombat, "agoraphobia");
-            character.needsComponent.AdjustHappiness(-50);
-            character.needsComponent.AdjustTiredness(-150);
+        private void ApplyAgoraphobicEffect(Character character/*, bool processCombat*/) {
+            if (!character.canWitness) {
+                return;
+            }
+            if(character.marker.inVisionCharacters.Count < 3) {
+                return;
+            }
+            character.traitContainer.AddTrait(character, "Anxious");
+            if(character.homeStructure != null && character.currentStructure != character.homeStructure) {
+                ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], character, character, null, 0);
+                GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, character);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.RETURN_HOME, character, character);
+                goapPlan.SetDoNotRecalculate(true);
+                job.SetCannotBePushedBack(true);
+                job.SetAssignedPlan(goapPlan);
+                character.jobQueue.AddJobInQueue(job);
+            } else {
+                character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character);
+            }
+            //character.marker.AddAvoidsInRange(character.marker.inVisionCharacters, processCombat, "agoraphobia");
+            //character.needsComponent.AdjustHappiness(-50);
+            //character.needsComponent.AdjustTiredness(-150);
         }
     }
 }

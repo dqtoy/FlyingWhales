@@ -36,5 +36,11 @@ namespace Traits {
         List<Trait> GetAllTraitsOf(TRAIT_TYPE type);
         List<Trait> GetAllTraitsOf(TRAIT_TYPE type, TRAIT_EFFECT effect);
         #endregion
+
+        #region Processes
+        void ProcessOnTickStarted();
+        void ProcessOnTickEnded();
+        void ProcessOnHourStarted();
+        #endregion
     }
 }

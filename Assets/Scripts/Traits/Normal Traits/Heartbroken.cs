@@ -25,12 +25,15 @@ namespace Traits {
         }
         #endregion
 
-        public GoapPlanJob TriggerBrokenhearted() {
-            owner.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN);
+        //public GoapPlanJob TriggerBrokenhearted() {
+        //    owner.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN);
 
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_BROKENHEARTED, owner, owner);
-            owner.jobQueue.AddJobInQueue(job);
-            return job;
+        //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_BROKENHEARTED, owner, owner);
+        //    owner.jobQueue.AddJobInQueue(job);
+        //    return job;
+        //}
+        public bool TriggerBrokenhearted() {
+            return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Feeling_Brokenhearted, owner);
         }
     }
 }

@@ -40,8 +40,8 @@ namespace Traits {
                 _sourceCharacter = sourceCharacter as Character;
                 isCriminal = _sourceCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL);
                 isLeader = _sourceCharacter.role.roleType == CHARACTER_ROLE.LEADER;
-                Messenger.AddListener(Signals.TICK_STARTED, CheckRestrainTrait);
-                Messenger.AddListener(Signals.HOUR_STARTED, CheckRestrainTraitPerHour);
+                //Messenger.AddListener(Signals.TICK_STARTED, CheckRestrainTrait);
+                //Messenger.AddListener(Signals.HOUR_STARTED, CheckRestrainTraitPerHour);
                 //_sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_restrained");
                 //_sourceCharacter.RemoveTrait("Unconscious", removedBy: responsibleCharacter);
                 //_sourceCharacter.CancelAllJobsAndPlans();
@@ -58,8 +58,8 @@ namespace Traits {
                 Character character = sourceCharacter as Character;
                 character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.FEED);
                 character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.JUDGEMENT);
-                Messenger.RemoveListener(Signals.TICK_STARTED, CheckRestrainTrait);
-                Messenger.RemoveListener(Signals.HOUR_STARTED, CheckRestrainTraitPerHour);
+                //Messenger.RemoveListener(Signals.TICK_STARTED, CheckRestrainTrait);
+                //Messenger.RemoveListener(Signals.HOUR_STARTED, CheckRestrainTraitPerHour);
                 //_sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
                 _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
 
@@ -109,6 +109,14 @@ namespace Traits {
                 }
             }
             return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
+        }
+        public override void OnTickStarted() {
+            base.OnTickStarted();
+            CheckRestrainTrait();
+        }
+        public override void OnHourStarted() {
+            base.OnHourStarted();
+            CheckRestrainTraitPerHour();
         }
         #endregion
 

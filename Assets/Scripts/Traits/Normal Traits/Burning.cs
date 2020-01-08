@@ -41,12 +41,12 @@ namespace Traits {
             if (sourceOfBurning != null && !sourceOfBurning.objectsOnFire.Contains(owner)) {
                 SetSourceOfBurning(sourceOfBurning, owner);
             }
-            Messenger.AddListener(Signals.TICK_ENDED, PerTick);
+            //Messenger.AddListener(Signals.TICK_ENDED, PerTickEnded);
             base.OnAddTrait(addedTo);
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
-            Messenger.RemoveListener(Signals.TICK_ENDED, PerTick);
+            //Messenger.RemoveListener(Signals.TICK_ENDED, PerTickEnded);
             ObjectPoolManager.Instance.DestroyObject(burningEffect);
             if (removedFrom is IPointOfInterest) {
                 if (removedFrom is Character) {
@@ -148,6 +148,10 @@ namespace Traits {
         public override string GetTestingData() {
             return sourceOfBurning.ToString();
         }
+        public override void OnTickEnded() {
+            base.OnTickEnded();
+            PerTickEnded();
+        }
         #endregion
 
         public void LoadSourceOfBurning(BurningSource source) {
@@ -186,7 +190,7 @@ namespace Traits {
                 return character.traitContainer.GetNormalTrait<Trait>("Burning") == null;
             }
         }
-        private void PerTick() {
+        private void PerTickEnded() {
 
             //Every tick, a Burning tile, object or character has a 15% chance to spread to an adjacent flammable tile, flammable character, 
             //flammable object or the object in the same tile.

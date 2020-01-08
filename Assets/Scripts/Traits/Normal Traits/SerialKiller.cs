@@ -35,13 +35,13 @@ namespace Traits {
                 if (victim1Requirement == null) { // || victim2Requirement == null
                     GenerateSerialVictims();
                 }
-                Messenger.AddListener(Signals.TICK_STARTED, CheckSerialKiller);
+                //Messenger.AddListener(Signals.TICK_STARTED, CheckSerialKiller);
                 Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             if (character != null) {
-                Messenger.RemoveListener(Signals.TICK_STARTED, CheckSerialKiller);
+                //Messenger.RemoveListener(Signals.TICK_STARTED, CheckSerialKiller);
                 Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
@@ -68,6 +68,10 @@ namespace Traits {
                 return "fail";
             }
             return base.TriggerFlaw(character);
+        }
+        public override void OnTickStarted() {
+            base.OnTickStarted();
+            CheckSerialKiller();
         }
         #endregion
 

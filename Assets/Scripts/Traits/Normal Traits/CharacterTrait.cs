@@ -170,12 +170,32 @@ namespace Traits {
                          && (characterThatWillDoJob.currentActionNode == null || characterThatWillDoJob.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)) {
                         return CreateFeelingConcernedJob(characterThatWillDoJob, targetCharacter);
                     }
+
+                    if(!characterThatWillDoJob.interruptComponent.isInterrupted && UnityEngine.Random.Range(0, 2) == 0) {
+                        if (characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Diplomatic") == null) {
+                            string opinionLabel = characterThatWillDoJob.opinionComponent.GetOpinionLabel(targetCharacter);
+                            if (opinionLabel == "Enemy" || opinionLabel == "Rival") {
+                                if(targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Injured") != null
+                                    || (targetCharacter.currentActionNode != null && targetCharacter.currentActionNode.action.goapType == INTERACTION_TYPE.CRY)
+                                    || (targetCharacter.interruptComponent.isInterrupted && (targetCharacter.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Puke || targetCharacter.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Stumble || targetCharacter.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Accident))) {
+                                    CreateMockJob(characterThatWillDoJob, targetCharacter);
+                                }
+                            }
+                        }
+                    }
                     #endregion
                 }
             }
             return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
         }
+        public override void OnTickStarted() {
+            base.OnTickStarted();
+            if (hasSurvivedApprehension) {
+                CheckAsCriminal();
+            }
+        }
         #endregion
+
         private void CheckAsCriminal() {
             if (owner.stateComponent.currentState == null && !owner.isAtHomeRegion && !owner.jobQueue.HasJob(JOB_TYPE.IDLE, INTERACTION_TYPE.RETURN_HOME)) {
                 if (owner.jobQueue.jobsInQueue.Count > 0) {
@@ -192,13 +212,13 @@ namespace Traits {
         public void SetHasSurvivedApprehension(bool state) {
             if (hasSurvivedApprehension != state) {
                 hasSurvivedApprehension = state;
-                if (hasSurvivedApprehension) {
-                    Messenger.AddListener(Signals.TICK_STARTED, CheckAsCriminal);
-                } else {
-                    if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
-                        Messenger.RemoveListener(Signals.TICK_STARTED, CheckAsCriminal);
-                    }
-                }
+                //if (hasSurvivedApprehension) {
+                //    Messenger.AddListener(Signals.TICK_STARTED, CheckAsCriminal);
+                //} else {
+                //    if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+                //        Messenger.RemoveListener(Signals.TICK_STARTED, CheckAsCriminal);
+                //    }
+                //}
             }
         }
 
@@ -226,20 +246,25 @@ namespace Traits {
             return false;
         }
         private bool CreateLaughAtJob(Character characterThatWillDoJob, Character target) {
-            if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT)) {
-                GoapPlanJob laughJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT, target, characterThatWillDoJob);
-                characterThatWillDoJob.jobQueue.AddJobInQueue(laughJob);
-                return true;
-            }
-            return false;
+            //if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT)) {
+            //    GoapPlanJob laughJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT, target, characterThatWillDoJob);
+            //    characterThatWillDoJob.jobQueue.AddJobInQueue(laughJob);
+            //    return true;
+            //}
+            //return false;
+            return characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, target);
         }
         private bool CreateFeelingConcernedJob(Character characterThatWillDoJob, Character target) {
-            if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_CONCERNED)) {
-                GoapPlanJob laughJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_CONCERNED, target, characterThatWillDoJob);
-                characterThatWillDoJob.jobQueue.AddJobInQueue(laughJob);
-                return true;
-            }
-            return false;
+            return characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Feeling_Concerned, target);
+            //if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_CONCERNED)) {
+            //    GoapPlanJob laughJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_CONCERNED, target, characterThatWillDoJob);
+            //    characterThatWillDoJob.jobQueue.AddJobInQueue(laughJob);
+            //    return true;
+            //}
+            //return false;
+        }
+        private bool CreateMockJob(Character characterThatWillDoJob, Character target) {
+            return characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, target);
         }
     }
 

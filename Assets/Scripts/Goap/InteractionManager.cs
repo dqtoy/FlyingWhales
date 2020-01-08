@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Inner_Maps;
 using UnityEngine;
+using Inner_Maps;
+using Interrupts;
 
 public partial class InteractionManager : MonoBehaviour {
     public static InteractionManager Instance = null;
@@ -18,6 +19,8 @@ public partial class InteractionManager : MonoBehaviour {
     private string dailyInteractionSummary;
     public Dictionary<INTERACTION_TYPE, GoapAction> goapActionData { get; private set; }
     public Dictionary<POINT_OF_INTEREST_TYPE, List<GoapAction>> allGoapActionAdvertisements { get; private set; }
+    public Dictionary<INTERRUPT, Interrupt> interruptData { get; private set; }
+
 
     private void Awake() {
         Instance = this;
@@ -25,6 +28,7 @@ public partial class InteractionManager : MonoBehaviour {
     public void Initialize() {
         ConstructGoapActionData();
         ConstructAllGoapActionAdvertisements();
+        ConstructInterruptData();
     }
 
     private void ConstructAllGoapActionAdvertisements() {
@@ -57,6 +61,28 @@ public partial class InteractionManager : MonoBehaviour {
             }
         }
     }
+    private void ConstructInterruptData() {
+        interruptData = new Dictionary<INTERRUPT, Interrupt>();
+        INTERRUPT[] allInterrupts = Utilities.GetEnumValues<INTERRUPT>();
+        for (int i = 0; i < allInterrupts.Length; i++) {
+            INTERRUPT interrupt = allInterrupts[i];
+            var typeName = Utilities.NotNormalizedConversionEnumToStringNoSpaces(interrupt.ToString());
+            System.Type type = System.Type.GetType(typeName);
+            if (type != null) {
+                Interrupt data = System.Activator.CreateInstance(type) as Interrupt;
+                interruptData.Add(interrupt, data);
+            } else {
+                Debug.LogWarning(typeName + " has no data!");
+            }
+        }
+    }
+    public Interrupt GetInterruptData(INTERRUPT interrupt) {
+        if (interruptData.ContainsKey(interrupt)) {
+            return interruptData[interrupt];
+        }
+        return null;
+    }
+
     public bool CanSatisfyGoapActionRequirements(INTERACTION_TYPE goapType, Character actor, IPointOfInterest poiTarget, object[] otherData) {
         if (goapActionData.ContainsKey(goapType)) {
             return goapActionData[goapType].CanSatisfyRequirements(actor, poiTarget, otherData);

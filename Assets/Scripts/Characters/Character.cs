@@ -116,6 +116,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public CharacterStateComponent stateComponent { get; private set; }
     public NonActionEventsComponent nonActionEventsComponent { get; private set; }
     public OpinionComponent opinionComponent { get; private set; }
+    public InterruptComponent interruptComponent { get; private set; }
 
     #region getters / setters
     public virtual string name => _firstName;
@@ -375,6 +376,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         planner = new GoapPlanner(this);
         nonActionEventsComponent = new NonActionEventsComponent(this);
         opinionComponent = new OpinionComponent(this);
+        interruptComponent = new InterruptComponent(this);
     }
 
     //This is done separately after all traits have been loaded so that the data will be accurate
@@ -466,6 +468,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
         Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
+        Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
         Messenger.AddListener(Signals.DAY_STARTED, DailyGoapProcesses);
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
@@ -484,6 +487,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
         Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStarted);
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
+        Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
         Messenger.RemoveListener(Signals.DAY_STARTED, DailyGoapProcesses);
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.RemoveListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
@@ -2326,6 +2330,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (this.canWitness == false) {
             return false; //this character cannot witness
         }
+        if (interruptComponent.isInterruptedNonSimultaneous) {
+            //Cannot react if interrupted
+            return false;
+        }
         if (this is Summon || minion != null) {
             //Cannot react if summon or minion
             return false;
@@ -2519,8 +2527,13 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             } else {
                 return $"{name} is ready to do your bidding.";
             }
-            return string.Empty; 
+            //return string.Empty; 
         }
+        //Interrupt
+        if (interruptComponent.isInterrupted && interruptComponent.thoughtBubbleLog != null) {
+            return Utilities.LogReplacer(interruptComponent.thoughtBubbleLog);
+        }
+
         //Action
         if (currentActionNode != null) {
             Log currentLog = currentActionNode.GetCurrentLog();
@@ -3741,6 +3754,21 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void RemoveTraitNeededToBeRemoved(Trait trait) {
         traitsNeededToBeRemoved.Remove(trait);
     }
+    private void ProcessTraitsOnTickStarted() {
+        if (!interruptComponent.isInterruptedNonSimultaneous) {
+            traitContainer.ProcessOnTickStarted();
+        }
+    }
+    private void ProcessTraitsOnTickEnded() {
+        if (!interruptComponent.isInterruptedNonSimultaneous) {
+            traitContainer.ProcessOnTickEnded();
+        }
+    }
+    private void ProcessTraitsOnHourStarted() {
+        if (!interruptComponent.isInterruptedNonSimultaneous) {
+            traitContainer.ProcessOnHourStarted();
+        }
+    }
     #endregion
 
     #region Minion
@@ -3836,12 +3864,17 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (!isDead && !isInCombat) {
             HPRecovery(0.0025f);
         }
-
+        ProcessTraitsOnTickStarted();
         StartTickGoapPlanGeneration();
     }
     protected virtual void OnTickEnded() {
+        interruptComponent.OnTickEnded();
         stateComponent.OnTickEnded();
+        ProcessTraitsOnTickEnded();
         EndTickPerformJobs();
+    }
+    protected virtual void OnHourStarted() {
+        ProcessTraitsOnHourStarted();
     }
     protected void StartTickGoapPlanGeneration() {
         //This is to ensure that this character will not be idle forever
@@ -3859,7 +3892,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //characters that cannot witness, cannot plan actions.
         return minion == null && !isDead && isStoppedByOtherCharacter <= 0 && !doNotDisturb
             && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count <= 0
-            && !marker.hasFleePath && stateComponent.currentState == null && IsInOwnParty();
+            && !marker.hasFleePath && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterruptedNonSimultaneous;
     }
     public void EndTickPerformJobs() {
         if (CanPerformEndTickJobs()) {
@@ -3872,7 +3905,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         return !isDead && isStoppedByOtherCharacter <= 0 && canWitness
             && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count > 0 
             && currentParty.icon.isTravellingOutside == false && !marker.hasFleePath 
-            && stateComponent.currentState == null && IsInOwnParty(); //minion == null && doNotDisturb <= 0
+            && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterruptedNonSimultaneous; //minion == null && doNotDisturb <= 0
     }
     //public void PlanGoapActions() {
     //    if (!IsInOwnParty() || ownParty.icon.isTravelling || _doNotDisturb > 0 /*|| isWaitingForInteraction > 0 */ || isDead || marker.hasFleePath) {

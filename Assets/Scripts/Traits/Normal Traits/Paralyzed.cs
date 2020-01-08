@@ -27,15 +27,15 @@ namespace Traits {
             if (addedTo is Character) {
                 character = addedTo as Character;
                 character.CancelAllJobs();
-                Messenger.AddListener(Signals.TICK_STARTED, CheckParalyzedTrait);
-                Messenger.AddListener(Signals.HOUR_STARTED, CheckParalyzedTraitPerHour);
+                //Messenger.AddListener(Signals.TICK_STARTED, CheckParalyzedTrait);
+                //Messenger.AddListener(Signals.HOUR_STARTED, CheckParalyzedTraitPerHour);
                 Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             if (character != null) {
-                Messenger.RemoveListener(Signals.TICK_STARTED, CheckParalyzedTrait);
-                Messenger.RemoveListener(Signals.HOUR_STARTED, CheckParalyzedTraitPerHour);
+                //Messenger.RemoveListener(Signals.TICK_STARTED, CheckParalyzedTrait);
+                //Messenger.RemoveListener(Signals.HOUR_STARTED, CheckParalyzedTraitPerHour);
                 Messenger.RemoveListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
@@ -69,6 +69,14 @@ namespace Traits {
                 }
             }
             return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
+        }
+        public override void OnTickStarted() {
+            base.OnTickStarted();
+            CheckParalyzedTrait();
+        }
+        public override void OnHourStarted() {
+            base.OnHourStarted();
+            CheckParalyzedTraitPerHour();
         }
         #endregion
 

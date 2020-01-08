@@ -24,12 +24,16 @@ namespace Traits {
         }
         #endregion
 
-        public GoapPlanJob TriggerGrieving() {
-            owner.jobQueue.CancelAllJobs(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING);
+        //public GoapPlanJob TriggerGrieving() {
+        //    owner.jobQueue.CancelAllJobs(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING);
 
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.GRIEVING, owner, owner);
-            owner.jobQueue.AddJobInQueue(job);
-            return job;
+        //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.GRIEVING, owner, owner);
+        //    owner.jobQueue.AddJobInQueue(job);
+        //    return job;
+        //}
+
+        public bool TriggerGrieving() {
+            return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Grieving, owner);
         }
     }
 }
