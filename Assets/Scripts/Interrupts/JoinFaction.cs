@@ -10,10 +10,20 @@ namespace Interrupts {
         }
 
         #region Overrides
-        //public override bool ExecuteInterruptEffect(Character actor, IPointOfInterest target) {
-        //    actor.nonActionEventsComponent.NormalFlirtCharacter(target as Character);
-        //    return true;
-        //}
+        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target) {
+            if(target is Character) {
+                Character targetCharacter = target as Character;
+                Faction factionToJoinTo = targetCharacter.faction;
+                if (actor.ChangeFactionTo(factionToJoinTo)) {
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", actor.interruptComponent.identifier);
+                    log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(factionToJoinTo, factionToJoinTo.name, LOG_IDENTIFIER.FACTION_1);
+                    actor.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+                    return true;
+                }
+            }
+            return base.ExecuteInterruptStartEffect(actor, target);
+        }
         #endregion
     }
 }

@@ -70,9 +70,9 @@ namespace Traits {
                         //- Actor is resident of the Guitar's Dwelling: 15 - 26 (If Music Lover 5 - 12)
                         cost = Utilities.rng.Next(5, 13);
                     } else {
-                        if (knownLoc.structure is Dwelling) {
-                            Dwelling dwelling = knownLoc.structure as Dwelling;
-                            if (dwelling.residents.Count > 0) {
+                        if (knownLoc.structure.isDwelling) {
+                            IDwelling dwelling = knownLoc.structure as IDwelling;
+                            if (dwelling.IsOccupied()) {
                                 for (int i = 0; i < dwelling.residents.Count; i++) {
                                     Character currResident = dwelling.residents[i];
                                     if (currResident.opinionComponent.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {

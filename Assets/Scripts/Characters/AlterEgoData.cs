@@ -16,7 +16,7 @@ public class AlterEgoData : Relatable{
     public RACE race { get; private set; }
     public CharacterRole role { get; private set; }
     public CharacterClass characterClass { get; private set; }
-    public Dwelling homeStructure { get; private set; }
+    public IDwelling homeStructure { get; private set; }
     public int level { get; private set; }
     public int attackPowerMod { get; protected set; }
     public int speedMod { get; protected set; }
@@ -68,7 +68,7 @@ public class AlterEgoData : Relatable{
         }
         this.characterClass = characterClass;
     }
-    public void SetHomeStructure(Dwelling homeStructure) {
+    public void SetHomeStructure(IDwelling homeStructure) {
         if (owner.isSwitchingAlterEgo) {
             return; //ignore any changes while the owner is switching alter egos
         }

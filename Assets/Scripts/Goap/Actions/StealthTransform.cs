@@ -17,9 +17,10 @@ public class StealthTransform : GoapAction {
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
         object[] otherData = node.otherData;
         if (otherData != null && otherData.Length == 1) {
-            if (otherData[0] is Dwelling) {
-                return otherData[0] as Dwelling;
-            } else if (otherData[0] is LocationStructure) {
+            //if (otherData[0] is Dwelling) {
+            //    return otherData[0] as Dwelling;
+            //} else 
+            if (otherData[0] is LocationStructure) {
                 return otherData[0] as LocationStructure;
             }
         }

@@ -2,15 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Puke : MonoBehaviour {
+namespace Interrupts {
+    public class Puke : Interrupt {
+        public Puke() : base(INTERRUPT.Puke) {
+            duration = 2;
+            doesStopCurrentAction = true;
+        }
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+        #region Overrides
+        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target) {
+            actor.SetPOIState(POI_STATE.INACTIVE);
+            return true;
+        }
+        public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
+            actor.SetPOIState(POI_STATE.ACTIVE);
+            return true;
+        }
+        #endregion
+    }
 }

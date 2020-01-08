@@ -505,4 +505,15 @@ public class RelationshipManager : MonoBehaviour {
         return null;
     }
     #endregion
+
+    #region Compatibility
+    public int GetCompatibilityBetween(Character character1, Character character2) {
+        int char1Compatibility = character1.opinionComponent.GetCompatibility(character2);
+        int char2Compatibility = character2.opinionComponent.GetCompatibility(character1);
+        if (char1Compatibility != -1 && char2Compatibility != -1) {
+            return char1Compatibility + char2Compatibility;
+        }
+        return -1;
+    }
+    #endregion
 }

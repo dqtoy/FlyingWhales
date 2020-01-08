@@ -6,6 +6,13 @@ using Traits;
 public class NonActionEventsComponent {
     public Character owner { get; private set; }
 
+    private const string Warm_Chat = "Warm Chat";
+    private const string Awkward_Chat = "Awkward Chat";
+    private const string Argument = "Argument";
+    private const string Insult = "Insult";
+    private const string Praise = "Praise";
+
+
     public NonActionEventsComponent(Character owner) {
         this.owner = owner;
         Messenger.AddListener<Character, Character>(Signals.OPINION_DECREASED, OnOpinionDecreased);
@@ -59,23 +66,148 @@ public class NonActionEventsComponent {
         return false;
     }
     private void TriggerChatCharacter(Character target) {
-        int chance = UnityEngine.Random.Range(0, 100);
-        string result = string.Empty;
-        if(chance < 75) {
-            target.opinionComponent.AdjustOpinion(owner, "Good Chat", 2);
-            owner.opinionComponent.AdjustOpinion(target, "Good Chat", 2);
-            result = "good";
-        } else if (chance < 25) {
-            target.opinionComponent.AdjustOpinion(owner, "Awkward Chat", -2);
-            owner.opinionComponent.AdjustOpinion(target, "Awkward Chat", 2);
-            result = "awkward";
-        } else {
-            target.opinionComponent.AdjustOpinion(owner, "Argument", -5);
-            owner.opinionComponent.AdjustOpinion(target, "Argument", -5);
-            result = "argument";
+        string strLog = owner.name + " chat with " + target.name;
+        WeightedDictionary<string> weights = new WeightedDictionary<string>();
+        weights.AddElement(Warm_Chat, 100);
+        weights.AddElement(Awkward_Chat, 30);
+        weights.AddElement(Argument, 20);
+        weights.AddElement(Insult, 20);
+        weights.AddElement(Praise, 20);
+
+        strLog += "\n\n" + weights.GetWeightsSummary("Base Weights");
+
+        CHARACTER_MOOD actorMood = owner.currentMoodType;
+        CHARACTER_MOOD targetMood = target.currentMoodType;
+        string actorOpinionLabel = owner.opinionComponent.GetOpinionLabel(target);
+        string targetOpinionLabel = target.opinionComponent.GetOpinionLabel(owner);
+        int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(owner, target);
+
+        if (actorMood == CHARACTER_MOOD.BAD) {
+            weights.AddWeightToElement(Warm_Chat, -20);
+            weights.AddWeightToElement(Argument, 15);
+            weights.AddWeightToElement(Insult, 20);
+            strLog += "\n\nActor Mood is Low, modified weights...";
+            strLog += "\nWarm Chat: -20, Argument: +15, Insult: +20";
+        } else if (actorMood == CHARACTER_MOOD.DARK) {
+            weights.AddWeightToElement(Warm_Chat, -40);
+            weights.AddWeightToElement(Argument, 30);
+            weights.AddWeightToElement(Insult, 50);
+            strLog += "\n\nActor Mood is Critical, modified weights...";
+            strLog += "\nWarm Chat: -40, Argument: +30, Insult: +50";
         }
+
+        if (targetMood == CHARACTER_MOOD.BAD) {
+            weights.AddWeightToElement(Warm_Chat, -20);
+            weights.AddWeightToElement(Argument, 15);
+            strLog += "\n\nTarget Mood is Low, modified weights...";
+            strLog += "\nWarm Chat: -20, Argument: +15";
+        } else if (targetMood == CHARACTER_MOOD.DARK) {
+            weights.AddWeightToElement(Warm_Chat, -40);
+            weights.AddWeightToElement(Argument, 30);
+            strLog += "\n\nTarget Mood is Critical, modified weights...";
+            strLog += "\nWarm Chat: -40, Argument: +30";
+        }
+
+        if (actorOpinionLabel == OpinionComponent.Close_Friend || actorOpinionLabel == OpinionComponent.Friend) {
+            weights.AddWeightToElement(Awkward_Chat, -15);
+            strLog += "\n\nActor's opinion of Target is Close Friend or Friend, modified weights...";
+            strLog += "\nAwkward Chat: -15";
+        } else if (actorOpinionLabel == OpinionComponent.Enemy || actorOpinionLabel == OpinionComponent.Rival) {
+            weights.AddWeightToElement(Awkward_Chat, 15);
+            strLog += "\n\nActor's opinion of Target is Enemy or Rival, modified weights...";
+            strLog += "\nAwkward Chat: +15";
+        }
+
+        if (targetOpinionLabel == OpinionComponent.Close_Friend || targetOpinionLabel == OpinionComponent.Friend) {
+            weights.AddWeightToElement(Awkward_Chat, -15);
+            strLog += "\n\nTarget's opinion of Actor is Close Friend or Friend, modified weights...";
+            strLog += "\nAwkward Chat: -15";
+        } else if (targetOpinionLabel == OpinionComponent.Enemy || targetOpinionLabel == OpinionComponent.Rival) {
+            weights.AddWeightToElement(Awkward_Chat, 15);
+            strLog += "\n\nTarget's opinion of Actor is Enemy or Rival, modified weights...";
+            strLog += "\nAwkward Chat: +15";
+        }
+
+        if(compatibility != -1) {
+            strLog += "\n\nActor and Target Compatibility is " + compatibility + ", modified weights...";
+            if (compatibility == 0) {
+                weights.AddWeightToElement(Awkward_Chat, 15);
+                weights.AddWeightToElement(Argument, 20);
+                weights.AddWeightToElement(Insult, 15);
+                strLog += "\nAwkward Chat: +15, Argument: +20, Insult: +15";
+            } else if (compatibility == 1) {
+                weights.AddWeightToElement(Awkward_Chat, 10);
+                weights.AddWeightToElement(Argument, 10);
+                weights.AddWeightToElement(Insult, 10);
+                strLog += "\nAwkward Chat: +10, Argument: +10, Insult: +10";
+            } else if (compatibility == 2) {
+                weights.AddWeightToElement(Awkward_Chat, 5);
+                weights.AddWeightToElement(Argument, 5);
+                weights.AddWeightToElement(Insult, 5);
+                strLog += "\nAwkward Chat: +5, Argument: +5, Insult: +5";
+            } else if (compatibility == 3) {
+                weights.AddWeightToElement(Praise, 5);
+                strLog += "\nPraise: +5";
+            } else if (compatibility == 4) {
+                weights.AddWeightToElement(Praise, 10);
+                strLog += "\nPraise: +10";
+            } else if (compatibility == 5) {
+                weights.AddWeightToElement(Praise, 20);
+                strLog += "\nPraise: +20";
+            }
+        }
+
+        if (owner.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
+            weights.AddWeightToElement(Argument, 15);
+            strLog += "\n\nActor is Hotheaded, modified weights...";
+            strLog += "\nArgument: +15";
+        }
+        if (target.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
+            weights.AddWeightToElement(Argument, 15);
+            strLog += "\n\nTarget is Hotheaded, modified weights...";
+            strLog += "\nArgument: +15";
+        }
+
+        if (owner.traitContainer.GetNormalTrait<Trait>("Diplomatic") != null) {
+            weights.AddWeightToElement(Insult, -30);
+            weights.AddWeightToElement(Praise, 30);
+            strLog += "\n\nActor is Diplomatic, modified weights...";
+            strLog += "\nInsult: -30, Praise: +30";
+        }
+
+        strLog += "\n\n" + weights.GetWeightsSummary("Final Weights");
+
+        string result = weights.PickRandomElementGivenWeights();
+        strLog += "\nResult: " + result;
+
+        bool adjustOpinionBothSides = false;
+        int opinionValue = 0;
+
+        if(result == Warm_Chat) {
+            opinionValue = 2;
+            adjustOpinionBothSides = true;
+        } else if (result == Awkward_Chat) {
+            opinionValue = -1;
+            adjustOpinionBothSides = true;
+        } else if (result == Argument) {
+            opinionValue = -2;
+            adjustOpinionBothSides = true;
+        } else if (result == Insult) {
+            opinionValue = -3;
+        } else if (result == Praise) {
+            opinionValue = 3;
+        }
+
+        if (adjustOpinionBothSides) {
+            owner.opinionComponent.AdjustOpinion(target, result, opinionValue);
+            target.opinionComponent.AdjustOpinion(owner, result, opinionValue);
+        } else {
+            //If adjustment of opinion is not on both sides, this must mean that the result is either Insult or Praise, so adjust opinion of target to actor
+            target.opinionComponent.AdjustOpinion(owner, result, opinionValue);
+        }
+
         GameDate dueDate = GameManager.Instance.Today();
-        Log log = new Log(dueDate, "Interrupt", "Chat", "chat_" + result);
+        Log log = new Log(dueDate, "Interrupt", "Chat", result);
         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         owner.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
@@ -85,6 +217,8 @@ public class NonActionEventsComponent {
         dueDate.AddTicks(2);
         SchedulingManager.Instance.AddEntry(dueDate, () => owner.SetIsChatting(false), owner);
         SchedulingManager.Instance.AddEntry(dueDate, () => target.SetIsChatting(false), target);
+
+        owner.PrintLogIfActive(strLog);
     }
     #endregion
 
@@ -113,9 +247,10 @@ public class NonActionEventsComponent {
             //if the relationship that was removed is lover, change home to a random unoccupied dwelling,
             //otherwise, no home. Reference: https://trello.com/c/JUSt9bEa/1938-broken-up-characters-should-live-in-separate-house
             owner.MigrateHomeStructureTo(null);
-            if (owner.homeRegion.area != null) {
-                owner.homeRegion.area.AssignCharacterToDwellingInArea(owner);
-            }
+            owner.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, owner);
+            //if (owner.homeRegion.area != null) {
+                //owner.homeRegion.area.AssignCharacterToDwellingInArea(owner);
+            //}
         }
         //upon break up, if one of them still has a Positive opinion of the other, he will gain Heartbroken trait
         if (owner.opinionComponent.GetTotalOpinion(target) > 0) {
@@ -152,7 +287,11 @@ public class NonActionEventsComponent {
             return false;
         }
         if (!owner.IsHostileWith(target)) {
-            TriggerFlirtCharacter(target);
+            string result = TriggerFlirtCharacter(target);
+            Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Flirt", result);
+            log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            owner.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
             return true;
         }
         return false;
@@ -178,9 +317,9 @@ public class NonActionEventsComponent {
 
         int value = 0;
         string opinionLabel = owner.opinionComponent.GetOpinionLabel(target);
-        if(opinionLabel == "Acquaintance") {
+        if(opinionLabel == OpinionComponent.Acquaintance) {
             value = 1;
-        }else if (opinionLabel == "Friend" || opinionLabel == "Close Friend") {
+        }else if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
             value = 2;
         }
         if (value != 0

@@ -51,8 +51,8 @@ namespace Traits {
         public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is Table) {
                 Table targetTable = targetPOI as Table;
-                if (targetTable.food < 20 && targetTable.structureLocation is Dwelling) {
-                    Dwelling dwelling = targetTable.structureLocation as Dwelling;
+                if (targetTable.food < 20 && targetTable.structureLocation.isDwelling) {
+                    IDwelling dwelling = targetTable.structureLocation as IDwelling;
                     if (dwelling.IsResident(characterThatWillDoJob)) {
                         if (!targetTable.HasJobTargetingThis(JOB_TYPE.TAKE_PERSONAL_FOOD)) {
                             int neededFood = 60 - targetTable.food;
@@ -174,7 +174,7 @@ namespace Traits {
                     if(!characterThatWillDoJob.interruptComponent.isInterrupted && UnityEngine.Random.Range(0, 2) == 0) {
                         if (characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Diplomatic") == null) {
                             string opinionLabel = characterThatWillDoJob.opinionComponent.GetOpinionLabel(targetCharacter);
-                            if (opinionLabel == "Enemy" || opinionLabel == "Rival") {
+                            if (opinionLabel == OpinionComponent.Enemy || opinionLabel == OpinionComponent.Rival) {
                                 if(targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Injured") != null
                                     || (targetCharacter.currentActionNode != null && targetCharacter.currentActionNode.action.goapType == INTERACTION_TYPE.CRY)
                                     || (targetCharacter.interruptComponent.isInterrupted && (targetCharacter.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Puke || targetCharacter.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Stumble || targetCharacter.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Accident))) {
@@ -230,12 +230,13 @@ namespace Traits {
             }
         }
         private bool CreatePrioritizedShockJob(Character characterThatWillDoJob) {
-            if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.SHOCK)) {
-                GoapPlanJob shockJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.SHOCK, characterThatWillDoJob, characterThatWillDoJob);
-                characterThatWillDoJob.jobQueue.AddJobInQueue(shockJob);
-                return true;
-            }
-            return false;
+            //if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.SHOCK)) {
+            //    GoapPlanJob shockJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.SHOCK, characterThatWillDoJob, characterThatWillDoJob);
+            //    characterThatWillDoJob.jobQueue.AddJobInQueue(shockJob);
+            //    return true;
+            //}
+            //return false;
+            return characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, characterThatWillDoJob);
         }
         private bool CreatePrioritizedCryJob(Character characterThatWillDoJob) {
             if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.CRY)) {

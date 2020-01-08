@@ -80,14 +80,14 @@ namespace Traits {
                     }
                 } else if (edibleType == "Table") {
                     Table table = owner as Table;
-                    if (table.structureLocation is Dwelling) {
+                    if (table.structureLocation.isDwelling) {
                         if (table.structureLocation == actor.homeStructure) {
                             cost = 12;
                         } else {
-                            Dwelling dwelling = table.structureLocation as Dwelling;
+                            IDwelling dwelling = table.structureLocation as IDwelling;
                             if (dwelling.HasPositiveRelationshipWithAnyResident(actor)) {
                                 cost = 18;
-                            } else if (dwelling.residents.Count == 0) {
+                            } else if (!dwelling.IsOccupied()) {
                                 cost = 28;
                             }
                         }

@@ -8,6 +8,7 @@ public class InterruptComponent {
     public IPointOfInterest currentTargetPOI { get; private set; }
     public Interrupt currentInterrupt { get; private set; }
     public int currentDuration { get; private set; }
+    public string identifier { get; private set; }
 
     public Log thoughtBubbleLog { get; private set; }
 
@@ -21,25 +22,29 @@ public class InterruptComponent {
     }
 
     #region General
-    public bool TriggerInterrupt(INTERRUPT interrupt, IPointOfInterest targetPOI) {
+    public bool TriggerInterrupt(INTERRUPT interrupt, IPointOfInterest targetPOI, string identifier = "") {
         if(isInterrupted) {
             owner.PrintLogIfActive("Cannot trigger interrupt " + interrupt.ToString() + " because there is already a current interrupt: " + currentInterrupt.name);
             return false;
         }
         currentInterrupt = InteractionManager.Instance.GetInterruptData(interrupt);
         currentTargetPOI = targetPOI;
+        this.identifier = identifier;
 
         CreateThoughtBubbleLog();
 
-        if (owner.marker != null && owner.marker.isMoving) {
-            owner.marker.StopMovement();
+        if (!currentInterrupt.isSimulateneous) {
+            if (owner.marker != null && owner.marker.isMoving) {
+                owner.marker.StopMovement();
+            }
         }
+
         if (currentInterrupt.doesStopCurrentAction) {
             owner.StopCurrentActionNode();
         }
         if (currentInterrupt.doesDropCurrentJob) {
             if(owner.currentJob != null) {
-                owner.currentJob.ForceCancelJob(false);
+                owner.currentJob.CancelJob(false);
             }
         }
         currentInterrupt.ExecuteInterruptStartEffect(owner, currentTargetPOI);
@@ -49,15 +54,14 @@ public class InterruptComponent {
         if (isInterrupted) {
             currentDuration++;
             if(currentDuration >= currentInterrupt.duration) {
-                if(currentInterrupt.ExecuteInterruptEndEffect(owner, currentTargetPOI)) {
-                    CreateAndAddEffectLog();
-                    EndInterrupt();
-                }
+                CreateAndAddEffectLog();
+                currentInterrupt.ExecuteInterruptEndEffect(owner, currentTargetPOI);
+                EndInterrupt();
             }
         }
     }
     private void EndInterrupt() {
-        bool willCheckInvision = !currentInterrupt.isSimulateneous;
+        bool willCheckInvision = currentInterrupt.duration > 0;
         currentInterrupt = null;
         currentDuration = 0;
         if (willCheckInvision) {

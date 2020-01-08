@@ -26,7 +26,7 @@ public class Strangle : GoapAction {
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
         Character actor = node.actor;
         if (actor.homeStructure != null) {
-            return actor.homeStructure;
+            return actor.homeStructure.GetLocationStructure();
         } else {
             return actor.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
         }

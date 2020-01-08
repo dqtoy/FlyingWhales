@@ -179,7 +179,7 @@ namespace Traits {
                     (character.currentRegion.HasStructure(STRUCTURE_TYPE.WORK_AREA) && character.currentStructure.structureType != STRUCTURE_TYPE.WORK_AREA)) {
                     int chance = UnityEngine.Random.Range(0, 2);
                     if (chance == 0) {
-                        return CreateActualDropJob(characterThatWillDoJob, character.homeStructure);
+                        return CreateActualDropJob(characterThatWillDoJob, character.homeStructure.GetLocationStructure());
                     } else {
                         return CreateActualDropJob(characterThatWillDoJob, character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA));
                     }
@@ -272,7 +272,7 @@ namespace Traits {
                 if (character.homeStructure != null && (character.gridTileLocation.objHere == null || !(character.gridTileLocation.objHere is Bed))) {
                     TileObject bed = character.homeStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED);
                     if (bed != null) {
-                        return CreateActualDropJob(characterThatWillDoJob, character.homeStructure, bed.gridTileLocation);
+                        return CreateActualDropJob(characterThatWillDoJob, character.homeStructure.GetLocationStructure(), bed.gridTileLocation);
                     }
                 }
             }

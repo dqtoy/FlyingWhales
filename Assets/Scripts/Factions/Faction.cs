@@ -342,12 +342,12 @@ public class Faction {
     }
     public void CheckIfCharacterStillFitsIdeology(Character character) {
         if (character.faction == this && !ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
-            character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
-
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "left_faction_not_fit");
-            log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
-            character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "left_faction_not_fit");
+            //character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
+            //Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "left_faction_not_fit");
+            //log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            //log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
+            //character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
         }
     }
     public bool IsCharacterBannedFromJoining(Character character) {
@@ -371,13 +371,14 @@ public class Faction {
     }
     public void KickOutCharacter(Character character) {
         if(character.faction == this) {
-            character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
             AddBannedCharacter(character);
 
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "kick_out_faction_character");
-            log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
-            character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "kick_out_faction_character");
+            //character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
+            //Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "kick_out_faction_character");
+            //log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            //log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
+            //character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
         }
     }
     #endregion

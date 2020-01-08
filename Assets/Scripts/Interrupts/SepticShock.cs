@@ -2,15 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SepticShock : MonoBehaviour {
+namespace Interrupts {
+    public class SepticShock : Interrupt {
+        public SepticShock() : base(INTERRUPT.Septic_Shock) {
+            duration = 4;
+            doesStopCurrentAction = true;
+            doesDropCurrentJob = true;
+        }
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+        #region Overrides
+        public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
+            actor.Death("Septic Shock");
+            return true;
+        }
+        #endregion
+    }
 }

@@ -66,7 +66,7 @@ public partial class InteractionManager : MonoBehaviour {
         INTERRUPT[] allInterrupts = Utilities.GetEnumValues<INTERRUPT>();
         for (int i = 0; i < allInterrupts.Length; i++) {
             INTERRUPT interrupt = allInterrupts[i];
-            var typeName = Utilities.NotNormalizedConversionEnumToStringNoSpaces(interrupt.ToString());
+            var typeName = $"Interrupts.{ Utilities.NotNormalizedConversionEnumToStringNoSpaces(interrupt.ToString()) }"; ;
             System.Type type = System.Type.GetType(typeName);
             if (type != null) {
                 Interrupt data = System.Activator.CreateInstance(type) as Interrupt;

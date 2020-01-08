@@ -147,7 +147,7 @@ namespace Traits {
                 if (owner.homeStructure != null && (owner.gridTileLocation.objHere == null || !(owner.gridTileLocation.objHere is Bed))) {
                     TileObject bed = owner.homeStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED);
                     if (bed != null) {
-                        return CreateActualDropJob(characterThatWillDoJob, owner.homeStructure, bed.gridTileLocation);
+                        return CreateActualDropJob(characterThatWillDoJob, owner.homeStructure.GetLocationStructure(), bed.gridTileLocation);
                     }
                 }
             }

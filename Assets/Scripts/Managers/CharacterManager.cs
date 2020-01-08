@@ -95,7 +95,7 @@ public class CharacterManager : MonoBehaviour {
      Create a new character, given a role, class and race.
          */
     public Character CreateNewCharacter(CharacterRole role, RACE race, GENDER gender, Faction faction = null, 
-        Region homeLocation = null, Dwelling homeStructure = null) {
+        Region homeLocation = null, IDwelling homeStructure = null) {
         Character newCharacter = null;
         //if (role == CharacterRole.LEADER) {
         //    //If the role is leader, it must have a faction, so get the data for the class from the faction
@@ -128,7 +128,7 @@ public class CharacterManager : MonoBehaviour {
         return newCharacter;
     }
     public Character CreateNewCharacter(CharacterRole role, string className, RACE race, GENDER gender, Faction faction = null, 
-        Region homeLocation = null, Dwelling homeStructure = null) {
+        Region homeLocation = null, IDwelling homeStructure = null) {
         Character newCharacter = new Character(role, className, race, gender);
         newCharacter.Initialize();
         if (faction != null) {
@@ -149,7 +149,7 @@ public class CharacterManager : MonoBehaviour {
         return newCharacter;
     }
     public Character CreateNewCharacter(CharacterRole role, string className, RACE race, GENDER gender, SEXUALITY sexuality, Faction faction = null,
-        Region homeLocation = null, Dwelling homeStructure = null) {
+        Region homeLocation = null, IDwelling homeStructure = null) {
         Character newCharacter = new Character(role, className, race, gender, sexuality);
         newCharacter.Initialize();
         if (faction != null) {
@@ -316,7 +316,7 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Summons
-    public Summon CreateNewSummon(SUMMON_TYPE summonType, Faction faction = null, Region homeLocation = null, Dwelling homeStructure = null) {
+    public Summon CreateNewSummon(SUMMON_TYPE summonType, Faction faction = null, Region homeLocation = null, IDwelling homeStructure = null) {
         Summon newCharacter = CreateNewSummonClassFromType(summonType) as Summon;
         newCharacter.Initialize();
         if (faction != null) {

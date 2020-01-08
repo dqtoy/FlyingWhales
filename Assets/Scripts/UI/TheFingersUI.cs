@@ -331,11 +331,12 @@ public class TheFingersUI : MonoBehaviour {
         Faction faction = obj1 as Faction;
         Character character = obj2 as Character;
 
-        character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
-        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "left_faction_normal");
-        log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
-        character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+        character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "left_faction_normal");
+        //character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
+        //Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "left_faction_normal");
+        //log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //log.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
+        //character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
     }
     #endregion
 
@@ -371,11 +372,12 @@ public class TheFingersUI : MonoBehaviour {
         Character character = obj1 as Character;
         Faction faction = obj2 as Faction;
 
-        character.ChangeFactionTo(faction);
-        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_faction_normal");
-        log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
-        character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+        character.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, faction.leader as Character, "join_faction_normal");
+        //character.ChangeFactionTo(faction);
+        //Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_faction_normal");
+        //log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //log.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
+        //character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
     }
     #endregion
 }

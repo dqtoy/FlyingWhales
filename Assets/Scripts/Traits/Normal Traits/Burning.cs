@@ -88,21 +88,21 @@ namespace Traits {
                         summary += "\nDid not create douse fire job because maximum dousers has been reached!";
                         //if the character did not create a douse fire job. Check if he/she will watch instead. (Characters will just watch if their current actions are lower priority than Watch) NOTE: Lower priority value is considered higher priority
                         //also make sure that character is not already watching.
-                        int currentPriorityValue = characterThatWillDoJob.GetCurrentPriorityValue();
-                        if (characterThatWillDoJob != traitOwner
-                            && (characterThatWillDoJob.currentActionNode == null || characterThatWillDoJob.currentActionNode.action.goapType != INTERACTION_TYPE.WATCH)
-                            && currentPriorityValue > JOB_TYPE.WATCH.GetJobTypePriority()) {
-                            summary += "\nWill watch because current priority value is  " + currentPriorityValue.ToString();
-                            Character nearestDouser = sourceOfBurning.GetNearestDouserFrom(characterThatWillDoJob);
-                            if (nearestDouser != null && nearestDouser.stateComponent.currentState is DouseFireState) {
-                                characterThatWillDoJob.CreateWatchEvent(null, nearestDouser.stateComponent.currentState, nearestDouser);
-                                summary += "\nCreated watch event targetting " + nearestDouser.name;
-                            } else {
-                                summary += "\nDid not watch because nearest douser is null or nearest douser is not in douse fire state. Nearest douser is: " + (nearestDouser?.name ?? "None");
-                            }
-                        } else {
-                            summary += "\nDid not watch because current priority value is " + currentPriorityValue.ToString() + " or is already doing watch.";
-                        }
+                        //int currentPriorityValue = characterThatWillDoJob.GetCurrentPriorityValue();
+                        //if (characterThatWillDoJob != traitOwner
+                        //    && (characterThatWillDoJob.currentActionNode == null || characterThatWillDoJob.currentActionNode.action.goapType != INTERACTION_TYPE.WATCH)
+                        //    && currentPriorityValue > JOB_TYPE.WATCH.GetJobTypePriority()) {
+                        //    summary += "\nWill watch because current priority value is  " + currentPriorityValue.ToString();
+                        //    Character nearestDouser = sourceOfBurning.GetNearestDouserFrom(characterThatWillDoJob);
+                        //    if (nearestDouser != null && nearestDouser.stateComponent.currentState is DouseFireState) {
+                        //        characterThatWillDoJob.CreateWatchEvent(null, nearestDouser.stateComponent.currentState, nearestDouser);
+                        //        summary += "\nCreated watch event targetting " + nearestDouser.name;
+                        //    } else {
+                        //        summary += "\nDid not watch because nearest douser is null or nearest douser is not in douse fire state. Nearest douser is: " + (nearestDouser?.name ?? "None");
+                        //    }
+                        //} else {
+                        //    summary += "\nDid not watch because current priority value is " + currentPriorityValue.ToString() + " or is already doing watch.";
+                        //}
                     }
                     Debug.Log(summary);
                     return false;
@@ -191,7 +191,6 @@ namespace Traits {
             }
         }
         private void PerTickEnded() {
-
             //Every tick, a Burning tile, object or character has a 15% chance to spread to an adjacent flammable tile, flammable character, 
             //flammable object or the object in the same tile.
             if(PlayerManager.Instance.player.seizeComponent.seizedPOI == owner) {
@@ -199,7 +198,7 @@ namespace Traits {
                 return;
             }
             if(owner.gridTileLocation == null) {
-                Messenger.RemoveListener(Signals.TICK_ENDED, PerTick);
+                //Messenger.RemoveListener(Signals.TICK_ENDED, PerTickEnded);
                 //Temporary fix only, if the burning object has no longer have a tile location (presumably destroyed), spreading of fire should not trigger, and remove listener for per tick
                 return;
             }

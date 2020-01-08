@@ -25,6 +25,10 @@ public class LocationStructure {
     public List<LocationGridTile> unoccupiedTiles { get; private set; }
     public LocationGridTile entranceTile { get; private set; }
 
+    #region getters
+    public virtual bool isDwelling => false;
+    #endregion
+
     public LocationStructure(STRUCTURE_TYPE structureType, ILocation location, bool isInside) {
         id = Utilities.SetID(this);
         this.structureType = structureType;

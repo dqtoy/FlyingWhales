@@ -23,12 +23,15 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
                 if (character1.homeRegion.area != null && character2.homeRegion.area != null && character1.homeRegion == character2.homeRegion
                     && character1.homeStructure != character2.homeStructure) {
                     if(character1.homeStructure == null && character2.homeStructure != null) {
-                        character1.homeRegion.area.AssignCharacterToDwellingInArea(character1, character2.homeStructure);
+                        character1.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, character2);
+                        //character1.homeRegion.area.AssignCharacterToDwellingInArea(character1, character2.homeStructure);
                     } else if (character1.homeStructure != null && character2.homeStructure == null) {
-                        character2.homeRegion.area.AssignCharacterToDwellingInArea(character2, character1.homeStructure);
+                        character2.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, character1);
+                        //character2.homeRegion.area.AssignCharacterToDwellingInArea(character2, character1.homeStructure);
                     } else {
                         //Lover conquers all, even if one character is factionless they will be together, meaning the factionless character will still have home structure
-                        character1.homeRegion.area.AssignCharacterToDwellingInArea(character1, character2.homeStructure);
+                        character1.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, character2);
+                        //character1.homeRegion.area.AssignCharacterToDwellingInArea(character1, character2.homeStructure);
                     }
                 }
                 character1.opinionComponent.AdjustOpinion(character2, relString, 30);

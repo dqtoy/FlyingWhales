@@ -37,9 +37,9 @@ public class PlayGuitar : GoapAction {
                 //- Actor is resident of the Guitar's Dwelling: 15 - 26 (If Music Lover 5 - 12)
                 return Utilities.rng.Next(15, 27);
             } else {
-                if (knownLoc.structure is Dwelling) {
-                    Dwelling dwelling = knownLoc.structure as Dwelling;
-                    if (dwelling.residents.Count > 0) {
+                if (knownLoc.structure.isDwelling) {
+                    IDwelling dwelling = knownLoc.structure as IDwelling;
+                    if (dwelling.IsOccupied()) {
                         for (int i = 0; i < dwelling.residents.Count; i++) {
                             Character currResident = dwelling.residents[i];
                             if (currResident.opinionComponent.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
@@ -112,12 +112,12 @@ public class PlayGuitar : GoapAction {
             }
             LocationGridTile knownLoc = poiTarget.gridTileLocation;
             //**Advertised To**: Residents of the dwelling or characters with a positive relationship with a Resident
-            if (knownLoc.structure is Dwelling) {
+            if (knownLoc.structure.isDwelling) {
                 if (actor.homeStructure == knownLoc.structure) {
                     return true;
                 } else {
-                    Dwelling dwelling = knownLoc.structure as Dwelling;
-                    if (dwelling.residents.Count > 0) {
+                    IDwelling dwelling = knownLoc.structure as IDwelling;
+                    if (dwelling.IsOccupied()) {
                         for (int i = 0; i < dwelling.residents.Count; i++) {
                             Character currResident = dwelling.residents[i];
                             if (currResident.opinionComponent.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
@@ -190,12 +190,12 @@ public class PlayGuitarData : GoapActionData {
         }
         LocationGridTile knownLoc = poiTarget.gridTileLocation;
         //**Advertised To**: Residents of the dwelling or characters with a positive relationship with a Resident
-        if (knownLoc.structure is Dwelling) {
+        if (knownLoc.structure.isDwelling) {
             if (actor.homeStructure == knownLoc.structure) {
                 return true;
             } else {
-                Dwelling dwelling = knownLoc.structure as Dwelling;
-                if (dwelling.residents.Count > 0) {
+                IDwelling dwelling = knownLoc.structure as IDwelling;
+                if (dwelling.IsOccupied()) {
                     for (int i = 0; i < dwelling.residents.Count; i++) {
                         Character currResident = dwelling.residents[i];
                         if (currResident.opinionComponent.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {

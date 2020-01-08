@@ -4,9 +4,14 @@ using System.Linq;
 using Inner_Maps;
 using UnityEngine;
 
-public class Dwelling : LocationStructure {
+public class Dwelling : LocationStructure, IDwelling {
 
     public List<Character> residents { get; private set; }
+
+    #region getters
+    public override bool isDwelling => true;
+    #endregion
+
     public Character owner {
         get { return residents.ElementAtOrDefault(0); }
     }
@@ -148,6 +153,9 @@ public class Dwelling : LocationStructure {
             //- Dwelling where no one resides: "at an empty house"
             return "an empty house";
         }
+    }
+    public LocationStructure GetLocationStructure() {
+        return this;
     }
     #endregion
 

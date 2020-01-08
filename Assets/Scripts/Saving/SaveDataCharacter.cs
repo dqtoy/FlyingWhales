@@ -338,7 +338,7 @@ public class SaveDataCharacter {
         if (homeStructureID != -1) {
             Area area = LandmarkManager.Instance.GetAreaByID(homeStructureAreaID);
             LocationStructure structure = area.GetStructureByID(homeStructureType, homeStructureID);
-            character.MigrateHomeStructureTo(structure as Dwelling);
+            character.MigrateHomeStructureTo(structure as IDwelling);
         }
     }
 

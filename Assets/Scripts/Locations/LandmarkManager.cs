@@ -629,6 +629,9 @@ public partial class LandmarkManager : MonoBehaviour {
             case STRUCTURE_TYPE.DWELLING:
                 createdStructure = new Dwelling(location, isInside);
                 break;
+            case STRUCTURE_TYPE.CITY_CENTER:
+                createdStructure = new CityCenter(location, isInside);
+                break;
             default:
                 createdStructure = new LocationStructure(type, location, isInside);
                 break;

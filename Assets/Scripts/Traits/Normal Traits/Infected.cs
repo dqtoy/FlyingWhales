@@ -99,25 +99,25 @@ namespace Traits {
         }
         public override bool PerTickOwnerMovement() {
             float pukeRoll = Random.Range(0f, 100f);
-            bool hasCreatedJob = false;
             if (pukeRoll < pukeChance) {
                 //do puke action
-                if (owner.characterClass.className == "Zombie" || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.PUKE)) {
+                if (owner.characterClass.className == "Zombie"/* || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.PUKE)*/) {
                     //If current action is a roaming action like Hunting To Drink Blood, we must requeue the job after it is removed by StopCurrentAction
-                    return hasCreatedJob;
+                    return false;
                 }
-                ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PUKE], owner, owner, null, 0);
-                GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
-                goapPlan.SetDoNotRecalculate(true);
-                job.SetCannotBePushedBack(true);
-                job.SetAssignedPlan(goapPlan);
-                owner.jobQueue.AddJobInQueue(job);
+                //ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PUKE], owner, owner, null, 0);
+                //GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
                 //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
+                //goapPlan.SetDoNotRecalculate(true);
+                //job.SetCannotBePushedBack(true);
+                //job.SetAssignedPlan(goapPlan);
                 //owner.jobQueue.AddJobInQueue(job);
-                hasCreatedJob = true;
+                ////GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
+                ////owner.jobQueue.AddJobInQueue(job);
+
+                return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, owner);
             }
-            return hasCreatedJob;
+            return false;
         }
         public override void OnTickEnded() {
             base.OnTickEnded();
@@ -139,19 +139,20 @@ namespace Traits {
         private void PerHour() {
             int roll = Random.Range(0, 100);
             if (roll < 2 && owner.isAtHomeRegion) { //2
-                owner.marker.StopMovement();
-                if (owner.currentActionNode != null && owner.currentActionNode.action.goapType != INTERACTION_TYPE.ZOMBIE_DEATH) {
-                    owner.StopCurrentActionNode(false);
-                } else if (owner.stateComponent.currentState != null) {
-                    owner.stateComponent.ExitCurrentState();
-                }
-                ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ZOMBIE_DEATH], owner, owner, null, 0);
-                GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.ZOMBIE_DEATH, owner, owner);
-                goapPlan.SetDoNotRecalculate(true);
-                job.SetCannotBePushedBack(true);
-                job.SetAssignedPlan(goapPlan);
-                owner.jobQueue.AddJobInQueue(job);
+                //owner.marker.StopMovement();
+                //if (owner.currentActionNode != null && owner.currentActionNode.action.goapType != INTERACTION_TYPE.ZOMBIE_DEATH) {
+                //    owner.StopCurrentActionNode(false);
+                //} else if (owner.stateComponent.currentState != null) {
+                //    owner.stateComponent.ExitCurrentState();
+                //}
+                //ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ZOMBIE_DEATH], owner, owner, null, 0);
+                //GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+                //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.ZOMBIE_DEATH, owner, owner);
+                //goapPlan.SetDoNotRecalculate(true);
+                //job.SetCannotBePushedBack(true);
+                //job.SetAssignedPlan(goapPlan);
+                //owner.jobQueue.AddJobInQueue(job);
+                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Zombie_Death, owner);
             }
         }
 

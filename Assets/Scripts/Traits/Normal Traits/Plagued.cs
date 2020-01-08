@@ -87,33 +87,35 @@ namespace Traits {
             bool hasCreatedJob = false;
             if (pukeRoll < pukeChance) {
                 //do puke action
-                if (owner.characterClass.className == "Zombie" || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.PUKE)) {
+                if (owner.characterClass.className == "Zombie"/* || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.PUKE)*/) {
                     return hasCreatedJob;
                 }
-                ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PUKE], owner, owner, null, 0);
-                GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
-                goapPlan.SetDoNotRecalculate(true);
-                job.SetCannotBePushedBack(true);
-                job.SetAssignedPlan(goapPlan);
-                owner.jobQueue.AddJobInQueue(job);
+                //ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PUKE], owner, owner, null, 0);
+                //GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
                 //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
+                //goapPlan.SetDoNotRecalculate(true);
+                //job.SetCannotBePushedBack(true);
+                //job.SetAssignedPlan(goapPlan);
                 //owner.jobQueue.AddJobInQueue(job);
-                hasCreatedJob = true;
+                ////GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
+                ////owner.jobQueue.AddJobInQueue(job);
+
+                return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, owner);
             } else if (septicRoll < septicChance) {
-                if (owner.characterClass.className == "Zombie" || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.SEPTIC_SHOCK)) {
+                if (owner.characterClass.className == "Zombie"/* || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.SEPTIC_SHOCK)*/) {
                     return hasCreatedJob;
                 }
-                ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.SEPTIC_SHOCK], owner, owner, null, 0);
-                GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.SEPTIC_SHOCK, owner, owner);
-                goapPlan.SetDoNotRecalculate(true);
-                job.SetCannotBePushedBack(true);
-                job.SetAssignedPlan(goapPlan);
-                owner.jobQueue.AddJobInQueue(job);
+                //ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.SEPTIC_SHOCK], owner, owner, null, 0);
+                //GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
                 //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.SEPTIC_SHOCK, owner, owner);
+                //goapPlan.SetDoNotRecalculate(true);
+                //job.SetCannotBePushedBack(true);
+                //job.SetAssignedPlan(goapPlan);
                 //owner.jobQueue.AddJobInQueue(job);
-                hasCreatedJob = true;
+                ////GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.SEPTIC_SHOCK, owner, owner);
+                ////owner.jobQueue.AddJobInQueue(job);
+
+                return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Septic_Shock, owner);
             }
             return hasCreatedJob;
         }

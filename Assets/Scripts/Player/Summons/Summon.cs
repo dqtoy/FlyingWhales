@@ -106,7 +106,7 @@ public class Summon : Character, IWorldObject {
 
             if (homeRegion != null) {
                 Region home = homeRegion;
-                Dwelling homeStructure = this.homeStructure;
+                IDwelling homeStructure = this.homeStructure;
                 homeRegion.RemoveResident(this);
                 SetHome(home); //keep this data with character to prevent errors
                 SetHomeStructure(homeStructure); //keep this data with character to prevent errors

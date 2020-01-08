@@ -37,7 +37,7 @@ public class CharacterRelationshipItem : PooledObject {
         int opinionOfOther = target.opinionComponent.GetTotalOpinion(owner);
         string summary = target.name;
         summary += "\n---------------------";
-        Dictionary<string, int> opinions = owner.opinionComponent.GetOpinion(target);
+        Dictionary<string, int> opinions = owner.opinionComponent.GetOpinionData(target).allOpinions;
         foreach (KeyValuePair<string, int> kvp in opinions) {
             summary += "\n" + kvp.Key + ": " + "<color=" + OpinionColor(kvp.Value) + ">" + GetOpinionText(kvp.Value) + "</color>";
         }

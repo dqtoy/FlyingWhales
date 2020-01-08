@@ -631,7 +631,7 @@ public class Region : ILocation, IHasNeighbours<Region> {
     public bool IsResident(Character character) {
         return residents.Contains(character);
     }
-    public bool AddResident(Character character, Dwelling chosenHome = null, bool ignoreCapacity = true) {
+    public bool AddResident(Character character, IDwelling chosenHome = null, bool ignoreCapacity = true) {
         if (!residents.Contains(character)) {
             if (!ignoreCapacity) {
                 if (area != null && area.IsResidentsFull()) {

@@ -104,17 +104,16 @@ namespace Traits {
         }
         public override bool PerTickOwnerMovement() {
             float pukeRoll = Random.Range(0f, 100f);
-            bool hasCreatedJob = false;
             if (pukeRoll < pukeChance) {
                 //do puke action
-                if (owner.characterClass.className == "Zombie" || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.PUKE)) {
-                    return hasCreatedJob;
+                if (owner.characterClass.className == "Zombie" /*|| (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.PUKE)*/) {
+                    return false;
                 }
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
-                owner.jobQueue.AddJobInQueue(job);
-                hasCreatedJob = true;
+                //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
+                //owner.jobQueue.AddJobInQueue(job);
+                return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, owner);
             }
-            return hasCreatedJob;
+            return false;
         }
         #endregion
     }

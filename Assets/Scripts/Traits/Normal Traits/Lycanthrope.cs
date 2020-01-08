@@ -283,7 +283,7 @@ namespace Traits {
         public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; private set; }
         //public List<RelationshipLycanthropyData> relationships { get; private set; }
         public List<Trait> traits { get; set; }
-        public Dwelling homeStructure { get; private set; }
+        public IDwelling homeStructure { get; private set; }
         public CharacterClass characterClass { get; private set; }
         public CharacterRole role { get; private set; }
         public RACE race { get; private set; }

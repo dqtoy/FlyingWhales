@@ -2,15 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SetHome : MonoBehaviour {
+namespace Interrupts {
+    public class SetHome : Interrupt {
+        public SetHome() : base(INTERRUPT.Set_Home) {
+            duration = 0;
+            isSimulateneous = true;
+        }
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+        #region Overrides
+        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target) {
+            if(actor.homeRegion.area != null) {
+                IDwelling chosenHomeStructure = null;
+                if(target != actor) {
+                    chosenHomeStructure = (target as Character).homeStructure;
+                }
+                actor.homeRegion.area.AssignCharacterToDwellingInArea(actor, chosenHomeStructure);
+                if(actor.homeStructure != null) {
+                    Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Set Home", "set_new_home_structure");
+                    log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(null, actor.homeStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.STRING_1);
+                    actor.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+                }
+            }
+            return true;
+        }
+        #endregion
+    }
 }

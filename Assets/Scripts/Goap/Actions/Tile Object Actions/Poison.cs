@@ -52,9 +52,9 @@ public class Poison : GoapAction {
                 return false;
             }
             LocationGridTile knownLoc = poiTarget.gridTileLocation;
-            if (knownLoc.structure is Dwelling) {
-                Dwelling d = knownLoc.structure as Dwelling;
-                if (d.residents.Count == 0) {
+            if (knownLoc.structure.isDwelling) {
+                IDwelling d = knownLoc.structure as IDwelling;
+                if (!d.IsOccupied()) {
                     return false;
                 }
                 Poisoned poisonedTrait = poiTarget.traitContainer.GetNormalTrait<Trait>("Poisoned") as Poisoned;
@@ -492,9 +492,9 @@ public class PoisonTableData : GoapActionData {
         }
         LocationGridTile knownLoc = poiTarget.gridTileLocation;
         //LocationGridTile knownLoc = actor.GetAwareness(poiTarget).knownGridLocation;
-        if (knownLoc.structure is Dwelling) {
-            Dwelling d = knownLoc.structure as Dwelling;
-            if (d.residents.Count == 0) {
+        if (knownLoc.structure.isDwelling) {
+            IDwelling d = knownLoc.structure as IDwelling;
+            if (!d.IsOccupied()) {
                 return false;
             }
             Poisoned poisonedTrait = poiTarget.traitContainer.GetNormalTrait<Trait>("Poisoned") as Poisoned;
