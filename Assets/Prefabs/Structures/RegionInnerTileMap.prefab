@@ -478,6 +478,8 @@ MonoBehaviour:
   centerGoPrefab: {fileID: 1235531871457826, guid: 2b36a36d8ac855246b9993705d70c259,
     type: 2}
   cameraBounds: {x: 0, y: 0, z: 0, w: 0}
+  buildSpotPrefab: {fileID: 1128990682525240, guid: 74dab492db5997b48b9676d136a36650,
+    type: 2}
 --- !u!114 &114873698038624080
 MonoBehaviour:
   m_ObjectHideFlags: 1

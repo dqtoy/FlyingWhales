@@ -27,7 +27,6 @@ namespace Inner_Maps {
         private List<LocationGridTile> insideTiles { get; set; }
         public TownMapSettings generatedTownMapSettings { get; private set; }
         public string usedTownCenterTemplateName { get; private set; }
-        public GameObject centerGo { get; private set; }
         public bool isShowing => InnerMapManager.Instance.currentlyShowingMap == this;
         public override bool isSettlementMap => true;
 

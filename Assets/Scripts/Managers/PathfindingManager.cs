@@ -85,7 +85,7 @@ public class PathfindingManager : MonoBehaviour {
         Vector3 pos = InnerMapManager.Instance.transform.position;
         pos.x += (newMap.width / 2f);
         pos.y += (newMap.height / 2f) + newMap.transform.localPosition.y;
-        pos.x += (InnerTileMap.WestEdge / 2f) - 0.5f;
+        // pos.x += (InnerTileMap.WestEdge / 2f) - 0.5f;
 
         gg.center = pos;
         gg.collision.use2D = true;

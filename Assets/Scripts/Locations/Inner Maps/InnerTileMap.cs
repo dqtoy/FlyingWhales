@@ -29,8 +29,14 @@ namespace Inner_Maps {
         public Transform structureParent;
         [FormerlySerializedAs("worldUICanvas")] public Canvas worldUiCanvas;
         public Grid grid;
+        
         [Header("Other")]
         [FormerlySerializedAs("centerGOPrefab")] public GameObject centerGoPrefab;
+        public Vector4 cameraBounds;
+        
+        [Header("Structures")]
+        [SerializeField] protected GameObject buildSpotPrefab;
+        
         public int width { get; set; }
         public int height { get; set; }
         public LocationGridTile[,] map { get; private set; }
@@ -40,13 +46,10 @@ namespace Inner_Maps {
         public GridGraph pathfindingGraph { get; set; }
         public Vector3 worldPos { get; private set; }
         public GameObject centerGo { get; private set; }
-        public Vector4 cameraBounds;
-        [Header("Structures")]
-        [SerializeField]
-        protected GameObject buildSpotPrefab;
         public abstract bool isSettlementMap { get; }
         public List<BurningSource> activeBurningSources { get; private set; }
-
+        public BuildingSpot[,] buildingSpots { get; protected set; }
+        
         public virtual void Initialize(ILocation location) {
             this.location = location;
             activeBurningSources = new List<BurningSource>();

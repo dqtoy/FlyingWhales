@@ -33,11 +33,11 @@ public class BuildingSpot {
         this.locationInBuildSpotGrid = data.buildingSpotGridPos;
         centeredLocation = new Vector3(location.x + 0.5f, location.y + 0.5f);
     }
-    public BuildingSpot(int x, int y, Vector3Int tileLocation) {
+    public BuildingSpot(Vector3Int tileLocation, Vector2Int locationInBuildSpotGrid) {
         this.id = Utilities.SetID(this);
         this.isOpen = false;
         this.location = tileLocation;
-        this.locationInBuildSpotGrid = new Vector2Int(x, y);
+        this.locationInBuildSpotGrid = locationInBuildSpotGrid;
         centeredLocation = new Vector3(location.x + 0.5f, location.y + 0.5f);
     }
 
@@ -56,7 +56,7 @@ public class BuildingSpot {
             }
         }
     }
-    public void FindNeighbours(AreaInnerTileMap map) {
+    public void FindNeighbours(InnerTileMap map) {
         if (neighbours != null) {
             throw new System.Exception($"Build spot {this.id.ToString()} is trying to find neighbours again!");
         }
