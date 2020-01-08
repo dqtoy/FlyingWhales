@@ -77,7 +77,7 @@ public class TheFingersUI : MonoBehaviour {
             //    regionLocation = chosenLeader.currentArea.region;
             //}
 
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "character_create_faction");
+            Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Create Faction", "character_create_faction");
             log.AddToFillers(chosenLeader, chosenLeader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(newFaction, newFaction.name, LOG_IDENTIFIER.FACTION_1);
             log.AddToFillers(regionLocation, regionLocation.name, LOG_IDENTIFIER.LANDMARK_1);

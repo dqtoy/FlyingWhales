@@ -39,8 +39,8 @@ public class InterruptComponent {
             }
         }
 
-        if (currentInterrupt.doesStopCurrentAction) {
-            owner.StopCurrentActionNode();
+        if (currentInterrupt.doesStopCurrentAction && owner.currentJob != null) {
+            owner.currentJob.StopJobNotDrop();
         }
         if (currentInterrupt.doesDropCurrentJob) {
             if(owner.currentJob != null) {

@@ -61,6 +61,15 @@ public class CharacterStateJob : JobQueueItem {
             assignedCharacter.stateComponent.SetCurrentState(null);
         }
     }
+    public override void StopJobNotDrop() {
+        if (cannotBePushedBack) {
+            //If job is cannot be pushed back and it is stopped, cancel it
+            CancelJob(false);
+        } else if (assignedState != null) {
+            assignedState.PauseState();
+            assignedCharacter.stateComponent.SetCurrentState(null);
+        }
+    }
     public override void UnassignJob(bool shouldDoAfterEffect, string reason) {
         base.UnassignJob(shouldDoAfterEffect, reason);
         if(assignedCharacter != null) {

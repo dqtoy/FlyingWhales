@@ -50,8 +50,8 @@ public class DefaultJoinFaction : CharacterBehaviourComponent {
                 }
                 if (viableFactions != null && viableFactions.Count > 0) {
                     Faction chosenFaction = viableFactions[UnityEngine.Random.Range(0, viableFactions.Count)];
-                    character.ChangeFactionTo(chosenFaction);
-                    //chosenFaction.JoinFaction(character);
+                    character.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, chosenFaction.leader as Character, "join_faction_normal");
+                    //character.ChangeFactionTo(chosenFaction);
                     log += "\n-Chosen faction to join: " + chosenFaction.name;
                 } else {
                     log += "\n-No available faction that the character fits the ideology";
@@ -63,15 +63,16 @@ public class DefaultJoinFaction : CharacterBehaviourComponent {
                 log += "\n-" + character.name + " is factionless, 10% chance to create faction";
                 if (character.traitContainer.GetNormalTrait<Trait>("Inspiring", "Ambitious") != null) {
                     log += "\n-" + character.name + " is Ambitious or Inspiring, creating new faction...";
-                    Faction newFaction = FactionManager.Instance.CreateNewFaction();
-                    character.ChangeFactionTo(newFaction);
-                    newFaction.SetLeader(character);
+                    character.interruptComponent.TriggerInterrupt(INTERRUPT.Create_Faction, character);
+                    //Faction newFaction = FactionManager.Instance.CreateNewFaction();
+                    //character.ChangeFactionTo(newFaction);
+                    //newFaction.SetLeader(character);
 
-                    Log createFactionLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "character_create_faction");
-                    createFactionLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    createFactionLog.AddToFillers(newFaction, newFaction.name, LOG_IDENTIFIER.FACTION_1);
-                    createFactionLog.AddToFillers(character.currentRegion, character.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
-                    character.RegisterLogAndShowNotifToThisCharacterOnly(createFactionLog, onlyClickedCharacter: false);
+                    //Log createFactionLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "character_create_faction");
+                    //createFactionLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    //createFactionLog.AddToFillers(newFaction, newFaction.name, LOG_IDENTIFIER.FACTION_1);
+                    //createFactionLog.AddToFillers(character.currentRegion, character.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
+                    //character.RegisterLogAndShowNotifToThisCharacterOnly(createFactionLog, onlyClickedCharacter: false);
                 }
             }
             return true;

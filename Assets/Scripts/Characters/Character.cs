@@ -55,7 +55,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public int supply { get; set; }
     public int food { get; set; }
     public CharacterMarker marker { get; private set; }
-    public JobQueueItem currentJob { get; private set; }
     public GoapPlan currentPlan { get; private set; }
     public ActualGoapNode currentActionNode { get; private set; }
     public ActualGoapNode previousCurrentActionNode { get; private set; }
@@ -259,6 +258,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public Transform worldObject => marker.transform;
     public bool isStillConsideredAlive => minion == null /*&& !(this is Summon)*/ && !faction.isPlayerFaction;
     public Character isBeingCarriedBy => IsInOwnParty() ? null : currentParty.owner;
+    public JobQueueItem currentJob => jobQueue.jobsInQueue.Count > 0 ? jobQueue.jobsInQueue[0] : null; //The current job is always the top of the queue
     #endregion
 
     public Character(CharacterRole role, RACE race, GENDER gender) : this() {
@@ -956,9 +956,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     #endregion
 
     #region Jobs
-    public void SetCurrentJob(JobQueueItem job) {
-        currentJob = job;
-    }
+    //public void SetCurrentJob(JobQueueItem job) {
+    //    currentJob = job;
+    //}
     //public JobQueueItem GetCurrentJob() {
     //    if(currentActionNode != null && jobQueue.jobsInQueue.Count > 0) {
     //        return jobQueue.jobsInQueue[0];
@@ -5377,7 +5377,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
             //Current Job must always be the job in the top prio, if there is inconsistency with the currentActionNode, then the problem lies on what you set as the currentActionNode
         }
-        SetCurrentJob(job);
+        //SetCurrentJob(job);
         SetCurrentPlan(plan);
         
         string summary = GameManager.Instance.TodayLogString() + "Set current action to ";

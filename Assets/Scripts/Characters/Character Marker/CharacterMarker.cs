@@ -672,16 +672,17 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //    return;
         //}
         if (!character.IsInOwnParty()) {
-            if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
-                PlaySleepGround();
-            }
+            PlaySleepGround();
+            //if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
+            //    PlaySleepGround();
+            //}
             return; //if not in own party do not update any other animations
         }
         if (character.isDead) {
             PlayAnimation("Dead");
         } else if (character.isStoppedByOtherCharacter > 0) {
             PlayIdle();
-        } else if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) || character.canMove == false) {
+        } else if (character.canMove == false || character.traitContainer.GetNormalTrait<Trait>("Resting") != null || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
             PlaySleepGround();
         } else if (character.currentParty.icon != null && character.currentParty.icon.isTravelling) {
             //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL

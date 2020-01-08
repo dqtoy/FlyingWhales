@@ -159,6 +159,14 @@ public class JobQueueItem {
             //}
         }
     }
+    public virtual void StopJobNotDrop() {
+        if (cannotBePushedBack) {
+            //If job is cannot be pushed back and it is stopped, cancel it
+            CancelJob(false);
+        } else {
+            assignedCharacter.StopCurrentActionNode(false);
+        }
+    }
     public virtual bool CanBeInterrupted() { return true; }
     #endregion
 
