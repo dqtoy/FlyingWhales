@@ -226,7 +226,7 @@ public class NonActionEventsComponent {
     //Char1 decreased his/her opinion of char2
     private void OnOpinionDecreased(Character char1, Character char2) {
         if(char1 == owner) {
-            NormalBreakUp(char2);
+            char1.interruptComponent.TriggerInterrupt(INTERRUPT.Break_Up, char2);
         }
     }
     public void NormalBreakUp(Character target) {
