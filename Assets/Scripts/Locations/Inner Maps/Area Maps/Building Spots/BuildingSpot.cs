@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps;
 using UnityEngine;
 
@@ -41,7 +42,7 @@ public class BuildingSpot {
         centeredLocation = new Vector3(location.x + 0.5f, location.y + 0.5f);
     }
 
-    public void Initialize(AreaInnerTileMap tileMap) {
+    public void Initialize(InnerTileMap tileMap) {
         //get the tiles in this spots territory.
         tilesInTerritory = new LocationGridTile[(int)InnerMapManager.BuildingSpotSize.x * (int)InnerMapManager.BuildingSpotSize.y];
         int radius = Mathf.FloorToInt(InnerMapManager.BuildingSpotSize.x / 2f);
@@ -85,7 +86,7 @@ public class BuildingSpot {
         this.isOccupied = isOccupied;
         //Debug.Log($"Set building spot {id.ToString()} is occupied to {isOccupied.ToString()}");
     }
-    public void SetAllAdjacentSpotsAsOpen(AreaInnerTileMap map) {
+    public void SetAllAdjacentSpotsAsOpen(InnerTileMap map) {
         List<BuildingSpot> adjacent = GetNeighbourList();
         for (int i = 0; i < adjacent.Count; i++) {
             BuildingSpot adjacentSpot = adjacent[i];
@@ -122,14 +123,14 @@ public class BuildingSpot {
     #endregion
 
     #region Checkers
-    public void UpdateAdjacentSpotsOccupancy(AreaInnerTileMap map) {
+    public void UpdateAdjacentSpotsOccupancy(InnerTileMap map) {
         List<BuildingSpot> adjacent = GetNeighbourList();
         for (int i = 0; i < adjacent.Count; i++) {
             BuildingSpot currSpot = adjacent[i];
             currSpot.CheckIfOccupied(map);
         }
     }
-    public void CheckIfOccupied(AreaInnerTileMap map) {
+    public void CheckIfOccupied(InnerTileMap map) {
         bool occupied = false;
         for (int i = 0; i < tilesInTerritory.Length; i++) {
             LocationGridTile currTile = tilesInTerritory[i];
@@ -148,8 +149,8 @@ public class BuildingSpot {
             SetIsOpen(true);
         }
     }
-    public bool CanPlaceStructureOnSpot(LocationStructureObject obj, AreaInnerTileMap map) {
-        return map.IsBuildSpotValidFor(obj, this);
+    public bool CanPlaceStructureOnSpot(LocationStructureObject obj, InnerTileMap map, HexTile tile) {
+        return map.IsBuildSpotValidFor(obj, this, tile);
     }
     #endregion
 

@@ -74,18 +74,6 @@ public class Biomes : MonoBehaviour {
     void Awake(){
 		Instance = this;
 	}
-    //public void StartGenerateBiomeCoroutine(List<HexTile> tiles) {
-    //    StartCoroutine(GenerateBiomeCoroutine(tiles));
-    //}
-    public IEnumerator GenerateBiomeCoroutine(List<HexTile> tiles) {
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile currentHexTile = tiles[i];
-            BIOMES biomeForTile = GetBiomeSimple(currentHexTile.gameObject);
-            SetBiomeForTile(biomeForTile, currentHexTile);
-            yield return null;
-        }
-        MapGenerator.Instance.SetIsCoroutineRunning(false);
-    }
     public IEnumerator GenerateBiome(List<HexTile> tiles) {
         int batchCount = 0;
         for(int i = 0; i < tiles.Count; i++){
@@ -102,17 +90,6 @@ public class Biomes : MonoBehaviour {
     }
     internal void SetBiomeForTile(BIOMES biomeForTile, HexTile currentHexTile) {
         currentHexTile.SetBiome(biomeForTile);
-    }
-    //public void StartUpdateTileVisualsCoroutine(List<HexTile> allTiles) {
-    //    StartCoroutine(UpdateTileVisualsCoroutine(allTiles));
-    //}
-    public IEnumerator UpdateTileVisualsCoroutine(List<HexTile> allTiles) {
-        for (int i = 0; i < allTiles.Count; i++) {
-            HexTile currentHexTile = allTiles[i];
-            UpdateTileVisuals(currentHexTile);
-            yield return null;
-        }
-        MapGenerator.Instance.SetIsCoroutineRunning(false);
     }
     public void UpdateTileVisuals(List<HexTile> allTiles) {
         for (int i = 0; i < allTiles.Count; i++) {

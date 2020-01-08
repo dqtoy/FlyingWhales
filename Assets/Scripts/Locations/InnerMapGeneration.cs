@@ -20,7 +20,7 @@ public partial class LandmarkManager {
         areaMap.Initialize(area);
         TownMapSettings generatedSettings = areaMap.GenerateTownMap(out log);
         yield return StartCoroutine(areaMap.DrawMap(generatedSettings));
-        yield return StartCoroutine(areaMap.PlaceInitialStructures(area));
+        // yield return StartCoroutine(areaMap.PlaceInitialStructures(area));
 
         yield return StartCoroutine(areaMap.GenerateDetails());
         yield return StartCoroutine(area.PlaceObjects());
@@ -50,12 +50,12 @@ public partial class LandmarkManager {
     #endregion
 
     #region Region Maps
-    public IEnumerator GenerateRegionMap(Region region, int mapWidth, int mapHeight) {
+    public IEnumerator GenerateRegionMap(Region region, int width, int height) {
         GameObject regionMapGo = Instantiate(regionInnerStructurePrefab, innerMapsParent);
         RegionInnerTileMap innerTileMap = regionMapGo.GetComponent<RegionInnerTileMap>();
         innerTileMap.Initialize(region);
         region.GenerateStructures();
-        yield return StartCoroutine(innerTileMap.GenerateMap(region, mapWidth, mapHeight));
+        yield return StartCoroutine(innerTileMap.GenerateMap(width, height));
         InnerMapManager.Instance.OnCreateInnerMap(innerTileMap);
     }
     #endregion

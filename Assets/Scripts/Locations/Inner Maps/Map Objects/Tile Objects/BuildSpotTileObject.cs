@@ -39,10 +39,11 @@ public class BuildSpotTileObject : TileObject {
         for (int i = 0; i < choices.Count; i++) {
             GameObject currPrefab = choices[i];
             LocationStructureObject so = currPrefab.GetComponent<LocationStructureObject>();
-            if (spot.CanPlaceStructureOnSpot(so, area.areaMap)) {
-                chosenStructurePrefab = currPrefab;
-                break;
-            }
+            //TODO:
+            // if (spot.CanPlaceStructureOnSpot(so, area.areaMap)) {
+            //     chosenStructurePrefab = currPrefab;
+            //     break;
+            // }
 
         }
         if (chosenStructurePrefab != null) {

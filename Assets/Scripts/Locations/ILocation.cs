@@ -28,6 +28,7 @@ public interface ILocation {
     LocationStructure GetStructureByID(STRUCTURE_TYPE type, int id);
     List<LocationStructure> GetStructuresAtLocation(bool inside);
     bool HasStructure(STRUCTURE_TYPE type);
+    void OnLocationStructureObjectPlaced(LocationStructure structure);
     #endregion
 
     #region Characters

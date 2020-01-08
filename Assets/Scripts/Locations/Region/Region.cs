@@ -54,7 +54,8 @@ public class Region : ILocation, IHasNeighbours<Region> {
     private List<SpriteRenderer> _borderSprites;
     private Dictionary<STRUCTURE_TYPE, List<LocationStructure>> _structures;
     public HexTile[,] hexTileMap { get; private set; }
-
+    public LocationStructure mainStorage { get; private set; }
+    
     public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; private set; }
 
     #region getter/setter
@@ -63,12 +64,6 @@ public class Region : ILocation, IHasNeighbours<Region> {
         get {
             if (area != null) { return area.structures; }
             return _structures;
-        }
-    }
-    public LocationStructure mainStorage {
-        get {
-            if (area != null) { return area.mainStorage; }
-            return structures.First().Value.First();
         }
     }
     #endregion
@@ -141,31 +136,6 @@ public class Region : ILocation, IHasNeighbours<Region> {
         //outerTiles = GetOuterTiles();
         _borderSprites = GetOuterBorders();
         DetermineHexTileMap();
-    }
-    private void DetermineHexTileMap() {
-        int maxX = tiles.Max(t => t.data.xCoordinate);
-        int minX = tiles.Min(t => t.data.xCoordinate);
-        int maxY = tiles.Max(t => t.data.yCoordinate);
-        int minY = tiles.Min(t => t.data.yCoordinate);
-
-        int width = maxX - minX;
-        int height = maxY - minY;
-        
-        hexTileMap = new HexTile[width + 1, height + 1];
-        for (int x = minX; x <= maxX; x++) {
-            for (int y = minY; y <= maxY; y++) {
-                int mapXIndex = x - minX;
-                int mapYIndex = y - minY;
-
-                HexTile tile = GridMap.Instance.map[x, y];
-                if (tiles.Contains(tile)) {
-                    hexTileMap[mapXIndex, mapYIndex] = tile;
-                } else {
-                    hexTileMap[mapXIndex, mapYIndex] = null;
-                }
-            }
-        }
-        
     }
     public void RedetermineCore() {
         int maxX = tiles.Max(t => t.data.xCoordinate);
@@ -845,6 +815,25 @@ public class Region : ILocation, IHasNeighbours<Region> {
     public bool HasStructure(STRUCTURE_TYPE type) {
         return structures.ContainsKey(type);
     }
+    public void OnLocationStructureObjectPlaced(LocationStructure structure) {
+        if (structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
+            //if a warehouse was placed, and this area does not yet have a main storage structure, or is using the city center as their main storage structure, then use the new warehouse instead.
+            if (mainStorage == null || mainStorage.structureType == STRUCTURE_TYPE.CITY_CENTER) {
+                SetMainStorage(structure);
+            }
+        } else if (structure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
+            if (mainStorage == null) {
+                SetMainStorage(structure);
+            }
+        }
+    }
+    private void SetMainStorage(LocationStructure structure) {
+        bool shouldCheckResourcePiles = mainStorage != null && structure != null && mainStorage != structure;
+        mainStorage = structure;
+        if (shouldCheckResourcePiles) {
+            Messenger.Broadcast(Signals.REGION_CHANGE_STORAGE, this);
+        }
+    }
     #endregion
 
     #region Inner Map
@@ -887,6 +876,50 @@ public class Region : ILocation, IHasNeighbours<Region> {
             }
         }
         return objs;
+    }
+    #endregion
+
+    #region Hex Tile Map
+    private void DetermineHexTileMap() {
+        int maxX = tiles.Max(t => t.data.xCoordinate);
+        int minX = tiles.Min(t => t.data.xCoordinate);
+        int maxY = tiles.Max(t => t.data.yCoordinate);
+        int minY = tiles.Min(t => t.data.yCoordinate);
+
+        int width = maxX - minX + 1;
+        int height = maxY - minY + 1;
+        
+        hexTileMap = new HexTile[width, height];
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                int mapXIndex = x - minX;
+                int mapYIndex = y - minY;
+
+                HexTile tile = GridMap.Instance.map[x, y];
+                if (tiles.Contains(tile)) {
+                    hexTileMap[mapXIndex, mapYIndex] = tile;
+                } else {
+                    hexTileMap[mapXIndex, mapYIndex] = null;
+                }
+            }
+        }
+    }
+    public HexTile GetLeftMostTile() {
+        return tiles.OrderBy(x => x.data.xCoordinate).First();
+    }
+    public HexTile GetRightMostTile() {
+        return tiles.OrderByDescending(x => x.data.xCoordinate).First();
+    }
+    public int GetLocalRowOf(HexTile tile) {
+        for (int x = 0; x < hexTileMap.GetUpperBound(0); x++) {
+            for (int y = 0; y < hexTileMap.GetUpperBound(1); y++) {
+                HexTile currTile = hexTileMap[x, y];
+                if (currTile == tile) {
+                    return y;
+                }
+            }
+        }
+        return -1;
     }
     #endregion
 }

@@ -23,7 +23,13 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
 		int maxY = region.tiles.Max(t => t.data.yCoordinate);
 		int minY = region.tiles.Min(t => t.data.yCoordinate);
 
-		width = ((maxX - minX) + 1) * (InnerMapManager.BuildingSpotSize.y * 2);
-		height = ((maxY - minY) + 1) * (InnerMapManager.BuildingSpotSize.y * 2);
+		int differenceX = (maxX - minX) + 1;
+		int differenceY = (maxY - minY) + 1;
+
+		int buildSpotColumnCount = (differenceX * 2) + 1;
+		int buildSpotRowCount = differenceY * 2;
+
+		width = buildSpotColumnCount * InnerMapManager.BuildingSpotSize.x;
+		height = buildSpotRowCount * InnerMapManager.BuildingSpotSize.y;
 	}
 }

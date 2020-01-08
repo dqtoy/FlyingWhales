@@ -146,9 +146,9 @@ public class UIManager : MonoBehaviour {
                 summary += $"{feature.name}, ";
             }
             summary += "\nTile Map:\n";
-            for (int x = 0; x <= currentTileHovered.region.hexTileMap.GetUpperBound(0); x++) {
-                summary += $"X: {x.ToString()} ";
-                for (int y = 0; y <= currentTileHovered.region.hexTileMap.GetUpperBound(1); y++) {
+            for (int y = 0; y <= currentTileHovered.region.hexTileMap.GetUpperBound(1); y++) {
+                summary += $"Y: {y.ToString()} ";
+                for (int x = 0; x <= currentTileHovered.region.hexTileMap.GetUpperBound(0); x++) {
                     HexTile tile = currentTileHovered.region.hexTileMap[x, y];
                     summary += $"{tile?.locationName ?? "Null"}, ";
                 }

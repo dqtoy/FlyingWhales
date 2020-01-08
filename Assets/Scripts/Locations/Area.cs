@@ -761,10 +761,7 @@ public class Area : IJobOwner, ILocation {
         }
     }
     private void SetMainStorage(LocationStructure structure) {
-        bool shouldCheckResourcePiles = false;
-        if(mainStorage != null && structure != null && mainStorage != structure) {
-            shouldCheckResourcePiles = true;
-        }
+        bool shouldCheckResourcePiles = mainStorage != null && structure != null && mainStorage != structure;
         mainStorage = structure;
         if (shouldCheckResourcePiles) {
             Messenger.Broadcast(Signals.REGION_CHANGE_STORAGE, region);

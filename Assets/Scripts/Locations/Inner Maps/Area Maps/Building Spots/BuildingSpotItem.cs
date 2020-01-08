@@ -31,16 +31,19 @@ public class BuildingSpotItem : MonoBehaviour {
     // }
 
     void OnDrawGizmos() {
-        if (buildingSpot != null) {
-            Vector3 position = this.transform.position;
-            if (buildingSpot.isOpen) {
-                Gizmos.color = Color.white;
-            } else {
-                Gizmos.color = Color.red;
-            }
-
-            Gizmos.DrawWireCube(position, new Vector3(InnerMapManager.BuildingSpotSize.x, InnerMapManager.BuildingSpotSize.y, 0));
-        }
+        // if (buildingSpot != null) {
+        //     Vector3 position = this.transform.position;
+        //     if (buildingSpot.isOpen) {
+        //         Gizmos.color = Color.white;
+        //     } else {
+        //         Gizmos.color = Color.red;
+        //     }
+        //
+        //     Gizmos.DrawWireCube(position, new Vector3(InnerMapManager.BuildingSpotSize.x, InnerMapManager.BuildingSpotSize.y, 0));
+        // }
+        Gizmos.color = Color.red;
+        Vector3 position = this.transform.position;
+        Gizmos.DrawWireCube(position, new Vector3(InnerMapManager.BuildingSpotSize.x, InnerMapManager.BuildingSpotSize.y, 0));
     }
 
 }

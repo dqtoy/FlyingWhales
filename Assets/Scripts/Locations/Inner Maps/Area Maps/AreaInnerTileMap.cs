@@ -213,59 +213,35 @@ namespace Inner_Maps {
 
             }
         }
-        public IEnumerator PlaceInitialStructures(Area area) {
-            //order the structures based on their priorities
-            Dictionary<STRUCTURE_TYPE, List<LocationStructure>> ordered = area.structures.OrderBy(x => x.Key.StructureGenerationPriority()).ToDictionary(x => x.Key, x => x.Value);
-
-            foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in ordered) {
-                if (keyValuePair.Key.ShouldBeGeneratedFromTemplate()) {
-                    for (int i = 0; i < keyValuePair.Value.Count; i++) {
-                        LocationStructure structure = keyValuePair.Value[i];
-                        List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(keyValuePair.Key);
-                        GameObject chosenStructurePrefab = Utilities.GetRandomElement(choices);
-                        LocationStructureObject lso = chosenStructurePrefab.GetComponent<LocationStructureObject>();
-                        BuildingSpot chosenBuildingSpot;
-                        if (TryGetValidBuildSpotForStructure(lso, out chosenBuildingSpot) == false) {
-                            chosenBuildingSpot = GetRandomBuildingSpotAtCenter(0);
-                            if (keyValuePair.Key != STRUCTURE_TYPE.CITY_CENTER) {
-                                throw new System.Exception($"There was no valid spot to place {structure.ToString()} using prefab {chosenStructurePrefab.name} so it was placed at a random spot in the center");
-                            }
-                            Debug.LogWarning($"There was no valid spot to place {structure.ToString()} uso it was placed at a random spot in the center");
-                        }
-                        if (chosenBuildingSpot == null) {
-                            throw new System.Exception($"Could not find valid building spot for { structure.ToString() } using prefab { chosenStructurePrefab.name }");
-                        } else {
-                            PlaceStructureObjectAt(chosenBuildingSpot, chosenStructurePrefab, structure);
-                        }
-                        yield return null;
-                    }
-                }
-            }
-        }
-        private void PlaceStructureObjectAt(BuildingSpot chosenBuildingSpot, GameObject structurePrefab, LocationStructure structure) {
-            GameObject structureGo = ObjectPoolManager.Instance.InstantiateObjectFromPool(structurePrefab.name, Vector3.zero, Quaternion.identity, structureParent);
-            LocationStructureObject structureObjectPrefab = structureGo.GetComponent<LocationStructureObject>();
-            structureGo.transform.localPosition = chosenBuildingSpot.GetPositionToPlaceStructure(structureObjectPrefab);
-        
-            LocationStructureObject structureObject = structureGo.GetComponent<LocationStructureObject>();
-            structureObject.RefreshAllTilemaps();
-            List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(this);
-            structureObject.SetTilesInStructure(occupiedTiles.ToArray());
-
-            structureObject.ClearOutUnimportantObjectsBeforePlacement();
-
-            for (int j = 0; j < occupiedTiles.Count; j++) {
-                LocationGridTile tile = occupiedTiles[j];
-                tile.SetStructure(structure);
-            }
-            chosenBuildingSpot.SetIsOpen(false);
-            chosenBuildingSpot.SetIsOccupied(true);
-            chosenBuildingSpot.SetAllAdjacentSpotsAsOpen(this);
-            chosenBuildingSpot.UpdateAdjacentSpotsOccupancy(this);
-
-            structure.SetStructureObject(structureObject);
-            structureObject.OnStructureObjectPlaced(this, structure);
-        }
+        // public IEnumerator PlaceInitialStructures(Area area) {
+        //     //order the structures based on their priorities
+        //     Dictionary<STRUCTURE_TYPE, List<LocationStructure>> ordered = area.structures.OrderBy(x => x.Key.StructureGenerationPriority()).ToDictionary(x => x.Key, x => x.Value);
+        //
+        //     foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in ordered) {
+        //         if (keyValuePair.Key.ShouldBeGeneratedFromTemplate()) {
+        //             for (int i = 0; i < keyValuePair.Value.Count; i++) {
+        //                 LocationStructure structure = keyValuePair.Value[i];
+        //                 List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(keyValuePair.Key);
+        //                 GameObject chosenStructurePrefab = Utilities.GetRandomElement(choices);
+        //                 LocationStructureObject lso = chosenStructurePrefab.GetComponent<LocationStructureObject>();
+        //                 BuildingSpot chosenBuildingSpot;
+        //                 if (TryGetValidBuildSpotForStructure(lso, out chosenBuildingSpot) == false) {
+        //                     chosenBuildingSpot = GetRandomBuildingSpotAtCenter(0);
+        //                     if (keyValuePair.Key != STRUCTURE_TYPE.CITY_CENTER) {
+        //                         throw new System.Exception($"There was no valid spot to place {structure.ToString()} using prefab {chosenStructurePrefab.name} so it was placed at a random spot in the center");
+        //                     }
+        //                     Debug.LogWarning($"There was no valid spot to place {structure.ToString()} uso it was placed at a random spot in the center");
+        //                 }
+        //                 if (chosenBuildingSpot == null) {
+        //                     throw new System.Exception($"Could not find valid building spot for { structure.ToString() } using prefab { chosenStructurePrefab.name }");
+        //                 } else {
+        //                     PlaceStructureObjectAt(chosenBuildingSpot, chosenStructurePrefab, structure);
+        //                 }
+        //                 yield return null;
+        //             }
+        //         }
+        //     }
+        // }
         #endregion
 
         #region Town Generation
@@ -581,22 +557,6 @@ namespace Inner_Maps {
         }
         #endregion
 
-        #region Seamless Edges
-        private IEnumerator CreateSeamlessEdges() {
-            int batchCount = 0;
-            for (int i = 0; i < allTiles.Count; i++) {
-                LocationGridTile tile = allTiles[i];
-                if (tile.structure != null && !tile.structure.structureType.IsOpenSpace()) { continue; } //skip non open space structure tiles.
-                tile.CreateSeamlessEdgesForTile(this);
-                batchCount++;
-                if (batchCount == MapGenerationData.InnerMapSeamlessEdgeBatches) {
-                    batchCount = 0;
-                    yield return null;
-                }
-            }
-        }
-        #endregion
-
         #region Utilities
         private List<LocationGridTile> GetTiles(Point size, LocationGridTile startingTile, List<LocationGridTile> mustBeIn = null) {
             List<LocationGridTile> tiles = new List<LocationGridTile>();
@@ -651,148 +611,6 @@ namespace Inner_Maps {
         }
         public void HidePath() {
             pathLineRenderer.gameObject.SetActive(false);
-        }
-        #endregion
-
-        #region Building Spots
-        private BuildingSpot GetRandomOpenBuildingSpot() {
-            List<BuildingSpot> choices = GetOpenBuildingSpots();
-            if (choices.Count > 0) {
-                return Utilities.GetRandomElement(choices);
-            }
-            return null;
-        }
-        private bool TryGetValidBuildSpotForStructure(LocationStructureObject structureObject, out BuildingSpot buildingSpot) {
-            if (structureObject.IsBiggerThanBuildSpot()) {
-                List<BuildingSpot> openSpots = GetOpenBuildingSpots();
-                if (openSpots.Count > 0) {
-                    List<BuildingSpot> choices = new List<BuildingSpot>();
-                    for (int i = 0; i < openSpots.Count; i++) {
-                        BuildingSpot buildSpot = openSpots[i];
-                        if (buildSpot.CanPlaceStructureOnSpot(structureObject, this)) {
-                            choices.Add(buildSpot);
-                        }
-                    }
-                    if (choices.Count > 0) {
-                        buildingSpot = Utilities.GetRandomElement(choices);
-                        return true;
-                    }
-                }
-                //could not find any spots
-                buildingSpot = null;
-                return false;
-            } else {
-                //if the object does not exceed the size of a build spot, then just give it a random open build spot
-                buildingSpot = GetRandomOpenBuildingSpot();
-                return buildingSpot != null;
-            }
-        }
-        private BuildingSpot GetRandomBuildingSpotAtCenter(int allowance) {
-            int upperBoundX = buildingSpots.GetUpperBound(0);
-            int upperBoundY = buildingSpots.GetUpperBound(1);
-
-            int centerX = upperBoundX / 2;
-            int centerY = upperBoundY / 2;
-
-            List<BuildingSpot> choices = new List<BuildingSpot>();
-            for (int x = 0; x < upperBoundX; x++) {
-                for (int y = 0; y < upperBoundY; y++) {
-                    bool isXSatisfied = x == centerX || Utilities.IsInRange(x, centerX - allowance, centerX + allowance);
-                    bool isYSatisfied = y == centerY || Utilities.IsInRange(y, centerY - allowance, centerY + allowance);
-                    if (isXSatisfied && isYSatisfied) {
-                        BuildingSpot currSpot = buildingSpots[x, y];
-                        choices.Add(currSpot);
-                    }
-                }
-            }
-            return Utilities.GetRandomElement(choices);
-        }
-        private List<BuildingSpot> GetOpenBuildingSpots() {
-            List<BuildingSpot> open = new List<BuildingSpot>();
-            for (int x = 0; x < buildingSpots.GetUpperBound(0); x++) {
-                for (int y = 0; y < buildingSpots.GetUpperBound(1); y++) {
-                    BuildingSpot currSpot = buildingSpots[x, y];
-                    if (currSpot.isOpen) {
-                        open.Add(currSpot);
-                    }
-                }
-            }
-            return open;
-        }
-        private BuildSpotTileObject GetRandomOpenBuildSpotTileObject() {
-            List<BuildSpotTileObject> choices = GetOpenBuildpotTileObjects();
-            if (choices.Count > 0) {
-                return Utilities.GetRandomElement(choices);
-            }
-            return null;
-        }
-        public bool TryGetValidBuildSpotTileObjectForStructure(LocationStructureObject structureObject, out BuildSpotTileObject buildingSpot) {
-            if (structureObject.IsBiggerThanBuildSpot()) {
-                List<BuildSpotTileObject> openSpots = GetOpenBuildpotTileObjects();
-                if (openSpots.Count > 0) {
-                    List<BuildSpotTileObject> choices = new List<BuildSpotTileObject>();
-                    for (int i = 0; i < openSpots.Count; i++) {
-                        BuildSpotTileObject buildSpot = openSpots[i];
-                        if (buildSpot.spot.CanPlaceStructureOnSpot(structureObject, this)) {
-                            choices.Add(buildSpot);
-                        }
-                    }
-                    if (choices.Count > 0) {
-                        buildingSpot = Utilities.GetRandomElement(choices);
-                        return true;
-                    }
-                }
-                //could not find any spots
-                buildingSpot = null;
-                return false;
-            } else {
-                //if the object does not exceed the size of a build spot, then just give it a random open build spot
-                buildingSpot = GetRandomOpenBuildSpotTileObject();
-                return buildingSpot != null;
-            }
-        }
-        private List<BuildSpotTileObject> GetOpenBuildpotTileObjects() {
-            List<BuildSpotTileObject> spots = area.region.GetTileObjectsOfType(TILE_OBJECT_TYPE.BUILD_SPOT_TILE_OBJECT).Select(x => x as BuildSpotTileObject).ToList();
-            List<BuildSpotTileObject> open = new List<BuildSpotTileObject>();
-            for (int i = 0; i < spots.Count; i++) {
-                BuildSpotTileObject buildSpotTileObject = spots[i];
-                if (buildSpotTileObject.spot.isOpen) {
-                    open.Add(buildSpotTileObject);
-                }
-            }
-            return open;
-        }
-        public bool IsBuildSpotValidFor(LocationStructureObject structureObject, BuildingSpot spot) {
-            bool isHorizontallyBig = structureObject.IsHorizontallyBig();
-            bool isVerticallyBig = structureObject.IsVerticallyBig();
-            BuildingSpot currSpot = spot;
-            if (isHorizontallyBig && isVerticallyBig) {
-                //if it is bigger both horizontally and vertically
-                //only get build spots that do not have any occupied adjacent spots at their top and right
-                bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North) && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false;
-                bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East) && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false;
-                if (hasUnoccupiedNorth && hasUnoccupiedEast) {
-                    return true;
-                }
-            } else if (isHorizontallyBig) {
-                //if it is bigger horizontally
-                //only get build spots that do not have any occupied adjacent spots at their right
-                bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East) && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false;
-                if (hasUnoccupiedEast) {
-                    return true;
-                }
-            } else if (isVerticallyBig) {
-                //if it is bigger vertically
-                //only get build spots that do not have any occupied adjacent spots at their top
-                bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North) && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false;
-                if (hasUnoccupiedNorth) {
-                    return true;
-                }
-            } else {
-                //object is not big
-                return true;
-            }
-            return false;
         }
         #endregion
     }

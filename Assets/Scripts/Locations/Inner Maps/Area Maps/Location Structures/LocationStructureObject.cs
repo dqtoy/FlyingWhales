@@ -180,7 +180,7 @@ public class LocationStructureObject : PooledObject {
     #endregion
 
     #region Furniture Spots
-    private void RegisterFurnitureSpots(AreaInnerTileMap areaMap) {
+    private void RegisterFurnitureSpots(InnerTileMap areaMap) {
         if (_furnitureSpotsParent == null) {
             return;
         }
@@ -201,8 +201,8 @@ public class LocationStructureObject : PooledObject {
     /// <summary>
     /// Actions to do when a structure object has been placed.
     /// </summary>
-    /// <param name="areaMap">The map where the structure was placed.</param>
-    public void OnStructureObjectPlaced(AreaInnerTileMap areaMap, LocationStructure structure) {
+    /// <param name="innerMap">The map where the structure was placed.</param>
+    public void OnStructureObjectPlaced(InnerTileMap innerMap, LocationStructure structure) {
         for (int i = 0; i < tiles.Length; i++) {
             LocationGridTile tile = tiles[i];
             //check if the template has details at this tiles location
@@ -216,16 +216,16 @@ public class LocationStructureObject : PooledObject {
             
             tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null);
         }
-        RegisterWalls(areaMap, structure);
+        RegisterWalls(innerMap, structure);
         _groundTileMap.gameObject.SetActive(false);
-        RegisterFurnitureSpots(areaMap);
-        areaMap.area.OnLocationStructureObjectPlaced(structure);
+        RegisterFurnitureSpots(innerMap);
+        innerMap.location.OnLocationStructureObjectPlaced(structure);
         UpdateSortingOrders();
     }
     #endregion
 
     #region Inquiry
-    public List<LocationGridTile> GetTilesOccupiedByStructure(AreaInnerTileMap map) {
+    public List<LocationGridTile> GetTilesOccupiedByStructure(InnerTileMap map) {
         List<LocationGridTile> occupiedTiles = new List<LocationGridTile>();
         BoundsInt bounds = _groundTileMap.cellBounds;
 
@@ -303,7 +303,7 @@ public class LocationStructureObject : PooledObject {
     #endregion
 
     #region Walls
-    private void RegisterWalls(AreaInnerTileMap map, LocationStructure structure) {
+    private void RegisterWalls(InnerTileMap map, LocationStructure structure) {
         walls = new WallObject[wallVisuals.Length];
         for (int i = 0; i < wallVisuals.Length; i++) {
             WallVisual wallVisual = wallVisuals[i];

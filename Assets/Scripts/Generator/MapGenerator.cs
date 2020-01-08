@@ -18,8 +18,8 @@ public class MapGenerator : MonoBehaviour {
 
     internal void InitializeWorld() {
         MapGenerationComponent[] mapGenerationComponents = {
-            new WorldMapGridGeneration(), new WorldMapElevationGeneration(), new WorldMapBiomeGeneration(),
-            new SupportingFactionGeneration(), new WorldMapRegionGeneration(), new WorldMapOuterGridGeneration(),
+            new WorldMapGridGeneration(), new WorldMapElevationGeneration(), new SupportingFactionGeneration(), 
+            new WorldMapRegionGeneration(), new WorldMapBiomeGeneration(), new WorldMapOuterGridGeneration(),
             new TileFeatureGeneration(), new PortalLandmarkGeneration(), new WorldMapLandmarkGeneration(), 
             new RegionInnerMapGeneration(), 
              
