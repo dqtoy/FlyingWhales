@@ -10,7 +10,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
+        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target) {
             Character targetCharacter = target as Character;
             List<Character> enemyOrRivalCharacters = targetCharacter.opinionComponent.GetCharactersWithOpinionLabel(OpinionComponent.Enemy, OpinionComponent.Rival);
             if(enemyOrRivalCharacters.Count > 0) {

@@ -2334,7 +2334,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (this.canWitness == false) {
             return false; //this character cannot witness
         }
-        if (interruptComponent.isInterruptedNonSimultaneous) {
+        if (interruptComponent.isInterrupted) {
             //Cannot react if interrupted
             return false;
         }
@@ -3689,17 +3689,17 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         traitsNeededToBeRemoved.Remove(trait);
     }
     private void ProcessTraitsOnTickStarted() {
-        if (!interruptComponent.isInterruptedNonSimultaneous) {
+        if (!interruptComponent.isInterrupted) {
             traitContainer.ProcessOnTickStarted();
         }
     }
     private void ProcessTraitsOnTickEnded() {
-        if (!interruptComponent.isInterruptedNonSimultaneous) {
+        if (!interruptComponent.isInterrupted) {
             traitContainer.ProcessOnTickEnded();
         }
     }
     private void ProcessTraitsOnHourStarted() {
-        if (!interruptComponent.isInterruptedNonSimultaneous) {
+        if (!interruptComponent.isInterrupted) {
             traitContainer.ProcessOnHourStarted();
         }
     }
@@ -3826,7 +3826,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //characters that cannot witness, cannot plan actions.
         return minion == null && !isDead && isStoppedByOtherCharacter <= 0 && !doNotDisturb
             && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count <= 0
-            && !marker.hasFleePath && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterruptedNonSimultaneous;
+            && !marker.hasFleePath && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterrupted;
     }
     public void EndTickPerformJobs() {
         if (CanPerformEndTickJobs()) {
@@ -3839,7 +3839,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         return !isDead && isStoppedByOtherCharacter <= 0 && canWitness
             && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count > 0 
             && currentParty.icon.isTravellingOutside == false && !marker.hasFleePath 
-            && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterruptedNonSimultaneous; //minion == null && doNotDisturb <= 0
+            && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterrupted; //minion == null && doNotDisturb <= 0
     }
     //public void PlanGoapActions() {
     //    if (!IsInOwnParty() || ownParty.icon.isTravelling || _doNotDisturb > 0 /*|| isWaitingForInteraction > 0 */ || isDead || marker.hasFleePath) {
@@ -5612,6 +5612,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         if (ownParty.icon.isTravelling) {
             marker.StopMovement();
+        }
+        if (trapStructure.structure != null) {
+            trapStructure.SetStructureAndDuration(null, 0);
         }
         Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
         //ForceCancelAllJobsTargettingThisCharacter();

@@ -226,17 +226,19 @@ public class NonActionEventsComponent {
     //Char1 decreased his/her opinion of char2
     private void OnOpinionDecreased(Character char1, Character char2) {
         if(char1 == owner) {
-            char1.interruptComponent.TriggerInterrupt(INTERRUPT.Break_Up, char2);
+            if (UnityEngine.Random.Range(0, 5) == 0) {
+                if (owner.opinionComponent.GetTotalOpinion(char2) < -25) {
+                    if (owner.relationshipContainer.HasRelationshipWith(char2, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.PARAMOUR)) {
+                        char1.interruptComponent.TriggerInterrupt(INTERRUPT.Break_Up, char2);
+                    }
+                }
+            }
         }
     }
     public void NormalBreakUp(Character target) {
-        if (UnityEngine.Random.Range(0, 5) == 0) {
-            RELATIONSHIP_TYPE relationship = owner.relationshipContainer.GetRelationshipFromParametersWith(target, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.PARAMOUR);
-            if (relationship != RELATIONSHIP_TYPE.NONE) {
-                if (owner.opinionComponent.GetTotalOpinion(target) < -25) {
-                    TriggerBreakUp(target, relationship);
-                }
-            }
+        RELATIONSHIP_TYPE relationship = owner.relationshipContainer.GetRelationshipFromParametersWith(target, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.PARAMOUR);
+        if (relationship != RELATIONSHIP_TYPE.NONE) {
+            TriggerBreakUp(target, relationship);
         }
     }
     private void TriggerBreakUp(Character target, RELATIONSHIP_TYPE relationship) {

@@ -52,6 +52,7 @@ public abstract class ResourcePile : TileObject {
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
         Messenger.RemoveListener<Region>(Signals.REGION_CHANGE_STORAGE, OnRegionChangeStorage);
+        Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.HAUL, this as IPointOfInterest);
     }
     #endregion
 

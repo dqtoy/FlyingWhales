@@ -146,9 +146,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         LocationGridTile previousTile = this.gridTileLocation;
         this.gridTileLocation = null;
         //DisableGameObject();
-        DestroyGameObject();
-        OnRemoveTileObject(removedBy, previousTile);
-        SetPOIState(POI_STATE.INACTIVE);
+        //DestroyGameObject();
+        //OnRemoveTileObject(removedBy, previousTile);
+        //SetPOIState(POI_STATE.INACTIVE);
+        OnDestroyPOI();
     }
     public virtual LocationGridTile GetNearestUnoccupiedTileFromThis() {
         if (gridTileLocation != null) {

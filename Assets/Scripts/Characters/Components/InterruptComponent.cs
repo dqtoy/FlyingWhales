@@ -13,7 +13,6 @@ public class InterruptComponent {
     public Log thoughtBubbleLog { get; private set; }
 
     #region getters
-    public bool isInterruptedNonSimultaneous => currentInterrupt != null && !currentInterrupt.isSimulateneous;
     public bool isInterrupted => currentInterrupt != null;
     #endregion
 
@@ -23,31 +22,42 @@ public class InterruptComponent {
 
     #region General
     public bool TriggerInterrupt(INTERRUPT interrupt, IPointOfInterest targetPOI, string identifier = "") {
-        if(isInterrupted) {
-            owner.PrintLogIfActive("Cannot trigger interrupt " + interrupt.ToString() + " because there is already a current interrupt: " + currentInterrupt.name);
-            return false;
-        }
-        currentInterrupt = InteractionManager.Instance.GetInterruptData(interrupt);
-        currentTargetPOI = targetPOI;
-        this.identifier = identifier;
+        Interrupt triggeredInterrupt = InteractionManager.Instance.GetInterruptData(interrupt);
+        if (!triggeredInterrupt.isSimulateneous) {
+            if (isInterrupted) {
+                owner.PrintLogIfActive("Cannot trigger interrupt " + interrupt.ToString() + " because there is already a current interrupt: " + currentInterrupt.name);
+                return false;
+            }
+            owner.PrintLogIfActive(GameManager.Instance.TodayLogString() + owner.name + " triggered a non simultaneous interrupt: " + triggeredInterrupt.name);
+            currentInterrupt = triggeredInterrupt;
+            currentTargetPOI = targetPOI;
+            this.identifier = identifier;
 
-        CreateThoughtBubbleLog();
+            CreateThoughtBubbleLog();
 
-        if (!currentInterrupt.isSimulateneous) {
             if (owner.marker != null && owner.marker.isMoving) {
                 owner.marker.StopMovement();
             }
-        }
-
-        if (currentInterrupt.doesStopCurrentAction && owner.currentJob != null) {
-            owner.currentJob.StopJobNotDrop();
-        }
-        if (currentInterrupt.doesDropCurrentJob) {
-            if(owner.currentJob != null) {
-                owner.currentJob.CancelJob(false);
+            if (currentInterrupt.doesStopCurrentAction && owner.currentJob != null) {
+                owner.currentJob.StopJobNotDrop();
             }
+            if (currentInterrupt.doesDropCurrentJob) {
+                if (owner.currentJob != null) {
+                    owner.currentJob.CancelJob(false);
+                }
+            }
+            triggeredInterrupt.ExecuteInterruptStartEffect(owner, targetPOI);
+        } else {
+            TriggeredSimultaneousInterrupt(triggeredInterrupt, targetPOI, identifier);
         }
-        currentInterrupt.ExecuteInterruptStartEffect(owner, currentTargetPOI);
+        return true;
+    }
+    private bool TriggeredSimultaneousInterrupt(Interrupt interrupt, IPointOfInterest targetPOI, string identifier) {
+        owner.PrintLogIfActive(GameManager.Instance.TodayLogString() + owner.name + " triggered a simultaneous interrupt: " + interrupt.name);
+        interrupt.ExecuteInterruptStartEffect(owner, targetPOI);
+        CreateAndAddEffectLog(interrupt, targetPOI);
+        this.identifier = identifier;
+        interrupt.ExecuteInterruptEndEffect(owner, currentTargetPOI);
         return true;
     }
     public void OnTickEnded() {
@@ -89,6 +99,15 @@ public class InterruptComponent {
         //else {
         //    Debug.LogWarning(currentInterrupt.name + " interrupt does not have effect log!");
         //}
+    }
+    private void CreateAndAddEffectLog(Interrupt interrupt, IPointOfInterest target) {
+        if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", interrupt.name, "effect")) {
+            Log effectLog = new Log(GameManager.Instance.Today(), "Interrupt", interrupt.name, "effect");
+            effectLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            effectLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            effectLog.AddLogToInvolvedObjects();
+            PlayerManager.Instance.player.ShowNotificationFrom(owner, effectLog);
+        }
     }
     #endregion
 }

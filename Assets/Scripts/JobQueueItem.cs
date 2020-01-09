@@ -46,6 +46,7 @@ public class JobQueueItem {
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.jobType.ToString());
         //this.blacklistedCharacters = new List<Character>();
         SetInitialPriority();
+        Messenger.AddListener<JOB_TYPE, IPointOfInterest>(Signals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
     }
     protected void Initialize(SaveDataJobQueueItem data) {
         id = Utilities.SetID(this, data.id);
@@ -63,6 +64,7 @@ public class JobQueueItem {
         //SetCancelJobOnDropPlan(data.cancelJobOnDropPlan);
         SetIsStealth(data.isStealth);
         SetInitialPriority();
+        Messenger.AddListener<JOB_TYPE, IPointOfInterest>(Signals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
     }
 
     #region Virtuals
@@ -134,12 +136,6 @@ public class JobQueueItem {
         }
         return originalOwner.ForceCancelJob(this);
     }
-    public bool IsJobStillApplicable() {
-        if(stillApplicable != null) {
-            return stillApplicable();
-        }
-        return true;
-    }
     public virtual void PushedBack(JobQueueItem jobThatPushedBack) {
         if (cannotBePushedBack) {
             //If job is cannot be pushed back and it is pushed back, cancel it instead
@@ -168,6 +164,7 @@ public class JobQueueItem {
         }
     }
     public virtual bool CanBeInterrupted() { return true; }
+    protected virtual void CheckJobApplicability(JOB_TYPE jobType, IPointOfInterest targetPOI) { }
     #endregion
 
     public void SetAssignedCharacter(Character character) {
@@ -261,8 +258,14 @@ public class JobQueueItem {
     public bool IsAnInterruptionJob() {
         return jobType.IsAnInterruptionJobType();
     }
+    public bool IsJobStillApplicable() {
+        if (stillApplicable != null) {
+            return stillApplicable();
+        }
+        return true;
+    }
     #endregion
-    
+
     #region Job Object Pool
     public virtual void Reset() {
         id = -1;
@@ -279,8 +282,9 @@ public class JobQueueItem {
         SetIsStealth(false);
         SetPriority(-1);
         SetCannotBePushedBack(false);
+        Messenger.RemoveListener<JOB_TYPE, IPointOfInterest>(Signals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
     }
-#endregion    
+    #endregion
 }
 
 [System.Serializable]

@@ -381,7 +381,7 @@ public static class Signals {
     public static string TOKEN_CONSUMED = "OnTokenConsumed"; //Parameters (SpecialToken specialToken)
     #endregion
 
-    #region GOAP
+    #region Jobs/Actions
     public static string CHARACTER_WILL_DO_PLAN = "OnCharacterRecievedPlan"; //Parameters (Character, GoapPlan)
     public static string CHARACTER_DID_ACTION = "OnCharacterDidAction"; //Parameters (Character, GoapAction)
     public static string STOP_ACTION = "OnStopAction"; //Parameters (GoapAction)
@@ -391,6 +391,7 @@ public static class Signals {
     public static string AFTER_ACTION_STATE_SET = "OnAfterActionStateSet"; //Parameters (Character, GoapAction, GoapActionState)
     public static string CHARACTER_PERFORMING_ACTION = "OnCharacterPerformingAction"; //Parameters (Character, GoapAction)
     public static string ON_SET_JOB = "OnSetJob"; //Parameters (GoapPlanJob)
+    public static string CHECK_JOB_APPLICABILITY = "OnCheckJobApplicability"; //Parameters (JOB_TYPE, IJobOwner)
     #endregion
 
     #region Location Grid Tile

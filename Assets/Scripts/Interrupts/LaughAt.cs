@@ -10,7 +10,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
+        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target) {
             Character targetCharacter = target as Character;
             if (targetCharacter.canWitness) {
                 targetCharacter.traitContainer.AddTrait(targetCharacter, "Ashamed");

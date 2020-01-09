@@ -321,6 +321,13 @@ public class GoapPlanJob : JobQueueItem {
         }
         return base.CanBeInterrupted();
     }
+    protected override void CheckJobApplicability(JOB_TYPE jobType, IPointOfInterest targetPOI) {
+        if (this.jobType == jobType && this.targetPOI == targetPOI) {
+            if (!IsJobStillApplicable()) {
+                ForceCancelJob(false);
+            }
+        }
+    }
     #endregion
 
     #region Forced Actions
