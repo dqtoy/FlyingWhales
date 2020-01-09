@@ -20,11 +20,12 @@ public class TimerHubUI : MonoBehaviour {
     public void Initialize() {
         timerHubItems = new List<TimerHubItem>();
 
-        Messenger.AddListener(Signals.TICK_ENDED, PerTick);
+        //Messenger.AddListener(Signals.TICK_ENDED, PerTick);
         //Messenger.AddListener<string, int, System.Action>(Signals.SHOW_TIMER_HUB_ITEM, AddItem);
     }
 
     public void AddItem(string description, int durationInTicks, System.Action onClickAction) {
+        return;
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(timerHubItemPrefab.name, Vector3.zero, Quaternion.identity, timerHubScrollRect.content);
         TimerHubItem timerHubItem = go.GetComponent<TimerHubItem>();
         timerHubItem.Initialize(description, durationInTicks, onClickAction);
