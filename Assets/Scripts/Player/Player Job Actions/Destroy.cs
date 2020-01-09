@@ -62,5 +62,11 @@ public class DestroyData : PlayerJobActionData {
         }
         return base.CanPerformAbilityTowards(tileObject);
     }
+    public override bool CanPerformAbilityTowards(SpecialToken item) {
+        if (item.gridTileLocation == null) {
+            return false;
+        }
+        return base.CanPerformAbilityTowards(item);
+    }
     #endregion
 }

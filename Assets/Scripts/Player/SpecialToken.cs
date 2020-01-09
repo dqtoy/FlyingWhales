@@ -135,6 +135,7 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
             InitializeMapObject(this);
             gridTileLocation.structure.location.AddAwareness(this);
         }
+        EnableGameObject();
         isDestroyed = false;
         PlaceMapObjectAt(tile);
         Messenger.Broadcast(Signals.ITEM_PLACED_ON_TILE, this, tile);
@@ -321,7 +322,7 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
         gridTileLocation.structure.RemoveItem(this);
     }
     public void OnUnseizePOI(LocationGridTile tileLocation) {
-        gridTileLocation.structure.AddItem(this, tileLocation);
+        tileLocation.structure.AddItem(this, tileLocation);
     }
     #endregion
 

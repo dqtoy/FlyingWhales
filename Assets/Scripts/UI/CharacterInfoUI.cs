@@ -512,7 +512,7 @@ public class CharacterInfoUI : UIMenu {
             int index = int.Parse(text);
             Character target = _activeCharacter.opinionComponent.opinions.Keys.ElementAtOrDefault(index);
             if (target != null) {
-                ShowRelationshipData(target);
+                ShowOpinionData(target);
             }
         }
     }
@@ -521,7 +521,7 @@ public class CharacterInfoUI : UIMenu {
             UpdateRelationships();
         }
     }
-    private void ShowRelationshipData(Character target) {
+    private void ShowOpinionData(Character target) {
         int opinionOfOther = target.opinionComponent.GetTotalOpinion(activeCharacter);
         string summary = activeCharacter.name + "'s opinion of " + target.name;
         summary += "\n---------------------";
@@ -532,6 +532,7 @@ public class CharacterInfoUI : UIMenu {
         summary += "\n---------------------";
         summary += "\nTotal: <color=" + OpinionColor(opinionOfOther) + ">" + GetOpinionText(activeCharacter.opinionComponent.GetTotalOpinion(target)) + "</color>";
         summary += "\n" + target.name + "'s opinion of " + activeCharacter.name + ": <color=" + OpinionColor(opinionOfOther) + ">" + GetOpinionText(opinionOfOther) + "</color>";
+        summary += "\n\nCompatibility: " + RelationshipManager.Instance.GetCompatibilityBetween(activeCharacter, target);
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void HideRelationshipData() {

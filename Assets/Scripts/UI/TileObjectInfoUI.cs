@@ -141,7 +141,7 @@ public class TileObjectInfoUI : UIMenu {
     }
     #endregion
 
-    #region Ignite
+    #region Poison
     protected void Poison() {
         PlayerManager.Instance.allInterventionAbilitiesData[INTERVENTION_ABILITY.SPOIL].ActivateAbility(activeTileObject);
         //Find better way to load only the button that was clicked

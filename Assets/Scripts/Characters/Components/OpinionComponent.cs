@@ -120,16 +120,20 @@ public class OpinionComponent {
 
     #region Inquiry
     public bool IsFriendsWith(Character character) {
-        if (HasOpinion(character)) {
-            return GetTotalOpinion(character) >= Friend_Requirement;
-        }
-        return false;
+        string opinionLabel = GetOpinionLabel(character);
+        return opinionLabel == Friend || opinionLabel == Close_Friend;
+        //if (HasOpinion(character)) {
+        //    return GetTotalOpinion(character) >= Friend_Requirement;
+        //}
+        //return false;
     }
     public bool IsEnemiesWith(Character character) {
-        if (HasOpinion(character)) {
-            return GetTotalOpinion(character) <= Enemy_Requirement;
-        }
-        return false;
+        string opinionLabel = GetOpinionLabel(character);
+        return opinionLabel == Enemy || opinionLabel == Rival;
+        //if (HasOpinion(character)) {
+        //    return GetTotalOpinion(character) <= Enemy_Requirement;
+        //}
+        //return false;
     }
     #endregion
 

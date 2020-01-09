@@ -29,7 +29,7 @@ namespace Traits {
         public override bool PerTickOwnerMovement() {
             int napChance = UnityEngine.Random.Range(0, 100);
             //bool hasCreatedJob = false;
-            if (napChance < 1) {
+            if (napChance < 4) {
                 return DoNarcolepticNap();
                 //if (owner.currentActionNode == null || (owner.currentActionNode.action.goapType != INTERACTION_TYPE.NARCOLEPTIC_NAP)) {
                 //    DoNarcolepticNap();

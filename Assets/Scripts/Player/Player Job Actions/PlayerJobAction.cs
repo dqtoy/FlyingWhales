@@ -258,6 +258,8 @@ public class PlayerJobActionData {
         return true;
     }
     public virtual bool CanPerformAbilityTowards(TileObject tileObject) { return true; }
+    public virtual bool CanPerformAbilityTowards(SpecialToken item) { return true; }
+
     /// <summary>
     /// If the ability has a range, override this to show that range. <see cref="CursorManager.Update"/>
     /// </summary>

@@ -49,6 +49,7 @@ namespace Traits {
             int accidentChance = UnityEngine.Random.Range(0, 100);
             //bool hasCreatedJob = false;
             if (accidentChance < 10) {
+                willStillContinueAction = false;
                 return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Accident, owner);
                 //if (node != null && !excludedActionsFromAccidentProneTrait.Contains(node.action.goapType)) {
                 //    DoAccident(node.action);

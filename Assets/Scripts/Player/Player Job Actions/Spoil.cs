@@ -56,5 +56,11 @@ public class SpoilData : PlayerJobActionData {
         }
         return base.CanPerformAbilityTowards(tileObject);
     }
+    public override bool CanPerformAbilityTowards(SpecialToken item) {
+        if (item.gridTileLocation == null || item.traitContainer.GetNormalTrait<Trait>("Poisoned", "Robust") != null) {
+            return false;
+        }
+        return base.CanPerformAbilityTowards(item);
+    }
     #endregion
 }

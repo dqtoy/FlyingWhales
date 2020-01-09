@@ -84,5 +84,11 @@ public class IgniteData : PlayerJobActionData {
         }
         return base.CanPerformAbilityTowards(tileObject);
     }
+    public override bool CanPerformAbilityTowards(SpecialToken item) {
+        if (item.gridTileLocation == null || item.gridTileLocation.genericTileObject.traitContainer.GetNormalTrait<Trait>("Burning") != null) {
+            return false;
+        }
+        return base.CanPerformAbilityTowards(item);
+    }
     #endregion
 }
