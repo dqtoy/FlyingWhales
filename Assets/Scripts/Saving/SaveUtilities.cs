@@ -33,8 +33,8 @@ public static class SaveUtilities {
                 return CharacterManager.Instance.GetCharacterByID(data.poiID);
             case POINT_OF_INTEREST_TYPE.TILE_OBJECT:
                 if (data.tileObjectType == TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
-                    Area area = LandmarkManager.Instance.GetAreaByID(data.areaID);
-                    return area.areaMap.map[(int)data.genericTileObjectPlace.x, (int)data.genericTileObjectPlace.y].genericTileObject;
+                    Settlement settlement = LandmarkManager.Instance.GetAreaByID(data.areaID);
+                    return settlement.innerMap.map[(int)data.genericTileObjectPlace.x, (int)data.genericTileObjectPlace.y].genericTileObject;
                 } else {
                     return InnerMapManager.Instance.GetTileObject(data.tileObjectType, data.poiID);
                 }

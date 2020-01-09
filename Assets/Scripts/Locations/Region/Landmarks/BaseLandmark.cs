@@ -23,34 +23,16 @@ public class BaseLandmark {
     //private int _invasionTicks; //how many ticks until this landmark is invaded. NOTE: This is in raw ticks so if the landmark should be invaded in 1 hour, this should be set to the number of ticks in an hour.
 
     #region getters/setters
-    public int id {
-        get { return _id; }
-    }
-    public string landmarkName {
-        get { return _landmarkName; }
-    }
-    public string urlName {
-        get { return "<link=" + '"' + this._id.ToString() + "_landmark" + '"' + ">" + _landmarkName + "</link>"; }
-    }
-    public LANDMARK_TYPE specificLandmarkType {
-        get { return _specificLandmarkType; }
-    }
-    public LandmarkVisual landmarkVisual {
-        get { return _landmarkVisual; }
-    }
-    public HexTile tileLocation {
-        get { return _location; }
-    }
-    public HexTile connectedTile {
-        get { return _connectedTile; }
-    }
-    public LandmarkNameplate landmarkNameplate {
-        get { return nameplate; }
-    }
+    public int id => _id;
+    public string landmarkName => _landmarkName;
+    public string urlName => $"<link=\"{this._id.ToString()}_landmark\">{_landmarkName}</link>";
+    public LANDMARK_TYPE specificLandmarkType => _specificLandmarkType;
+    public LandmarkVisual landmarkVisual => _landmarkVisual;
+    public HexTile tileLocation => _location;
+    public HexTile connectedTile => _connectedTile;
     #endregion
 
-    public BaseLandmark() {
-    }
+    private BaseLandmark() { }
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this() {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
         _id = Utilities.SetID(this);
@@ -78,8 +60,7 @@ public class BaseLandmark {
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.tileLocation);
         nameplate = UIManager.Instance.CreateLandmarkNameplate(this);
     }
-
-    public void SetName(string name) {
+    private void SetName(string name) {
         _landmarkName = name;
         if (_landmarkVisual != null) {
             _landmarkVisual.UpdateName();
@@ -179,11 +160,11 @@ public class BaseLandmark {
     //     if (specificLandmarkType == LANDMARK_TYPE.NONE) {
     //         return; //do not
     //     }
-    //     if (tileLocation.isCorrupted || tileLocation.region.area != null) {
+    //     if (tileLocation.isCorrupted || tileLocation.region.settlement != null) {
     //         //Do not add feature is region is part of player or is a settlement region
     //         return;
     //     }
-    //     //if(tileLocation.region != null && tileLocation.region.area != null/* && tileLocation.region.area.areaMap.isSettlementMap*/) {
+    //     //if(tileLocation.region != null && tileLocation.region.settlement != null/* && tileLocation.region.settlement.areaMap.isSettlementMap*/) {
     //     //    return; //do not
     //     //}
     //

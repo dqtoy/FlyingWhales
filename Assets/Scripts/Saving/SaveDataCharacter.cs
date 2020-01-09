@@ -148,7 +148,7 @@ public class SaveDataCharacter {
         if (character.homeStructure != null) {
             homeStructureID = character.homeStructure.id;
             homeStructureType = character.homeStructure.structureType;
-            homeStructureAreaID = character.homeStructure.location.id; //TODO: Refactor this, because structure location is no longer guaranteed to be an area.
+            homeStructureAreaID = character.homeStructure.location.id; //TODO: Refactor this, because structure location is no longer guaranteed to be an settlement.
         } else {
             homeStructureID = -1;
         }
@@ -236,7 +236,7 @@ public class SaveDataCharacter {
 
         if (character.gridTileLocation != null) {
             gridTileLocation = new Vector3Save(character.gridTileLocation.localPlace.x, character.gridTileLocation.localPlace.y, 0f);
-            gridTileLocationAreaID = character.gridTileLocation.structure.location.id; //TODO: Refactor this, because structure location is no longer guaranteed to be an area.
+            gridTileLocationAreaID = character.gridTileLocation.structure.location.id; //TODO: Refactor this, because structure location is no longer guaranteed to be an settlement.
         } else {
             gridTileLocation = new Vector3Save(0f, 0f, -1f);
         }
@@ -336,16 +336,16 @@ public class SaveDataCharacter {
 
     public void LoadHomeStructure(Character character) {
         if (homeStructureID != -1) {
-            Area area = LandmarkManager.Instance.GetAreaByID(homeStructureAreaID);
-            LocationStructure structure = area.GetStructureByID(homeStructureType, homeStructureID);
+            Settlement settlement = LandmarkManager.Instance.GetAreaByID(homeStructureAreaID);
+            LocationStructure structure = settlement.GetStructureByID(homeStructureType, homeStructureID);
             character.MigrateHomeStructureTo(structure as Dwelling);
         }
     }
 
     public void LoadCharacterGridTileLocation(Character character) {
         if (gridTileLocation.z != -1f) {
-            Area area = LandmarkManager.Instance.GetAreaByID(gridTileLocationAreaID);
-            LocationGridTile gridTile = area.areaMap.map[(int) gridTileLocation.x, (int) gridTileLocation.y];
+            Settlement settlement = LandmarkManager.Instance.GetAreaByID(gridTileLocationAreaID);
+            LocationGridTile gridTile = settlement.innerMap.map[(int) gridTileLocation.x, (int) gridTileLocation.y];
 
             if (character.marker == null) {
                 character.CreateMarker();
@@ -378,14 +378,14 @@ public class SaveDataCharacter {
     public void LoadCharacterCurrentState(Character character) {
         if (hasCurrentState) {
             Character targetCharacter = null;
-            Area targetArea = null;
+            Settlement targetSettlement = null;
             if (currentState.targetCharacterID != -1) {
                 targetCharacter = CharacterManager.Instance.GetCharacterByID(currentState.targetCharacterID);
             }
             //if (currentState.targetAreaID != -1) {
-            //    targetArea = LandmarkManager.Instance.GetAreaByID(currentState.targetAreaID);
+            //    targetSettlement = LandmarkManager.Instance.GetAreaByID(currentState.targetAreaID);
             //}
-            CharacterState loadedState = character.stateComponent.SwitchToState(currentState.characterState, targetCharacter, targetArea, currentState.duration, currentState.level);
+            CharacterState loadedState = character.stateComponent.SwitchToState(currentState.characterState, targetCharacter, targetSettlement, currentState.duration, currentState.level);
             loadedState.SetCurrentDuration(currentState.currentDuration);
             //loadedState.SetIsUnending(currentState.isUnending);
 
@@ -406,7 +406,7 @@ public class SaveDataCharacter {
             //    if (dataStateJob.assignedCharacterID != -1) {
             //        Character assignedCharacter = CharacterManager.Instance.GetCharacterByID(dataStateJob.assignedCharacterID);
             //        stateJob.SetAssignedCharacter(assignedCharacter);
-            //        CharacterState newState = assignedCharacter.stateComponent.SwitchToState(stateJob.targetState, null, stateJob.targetArea);
+            //        CharacterState newState = assignedCharacter.stateComponent.SwitchToState(stateJob.targetState, null, stateJob.targetSettlement);
             //        if (newState != null) {
             //            stateJob.SetAssignedState(newState);
             //        } else {

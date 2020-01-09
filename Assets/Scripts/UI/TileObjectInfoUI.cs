@@ -42,7 +42,7 @@ public class TileObjectInfoUI : UIMenu {
         
         activeTileObject = _data as TileObject;
         if(activeTileObject.gridTileLocation != null) {
-            bool instantCenter = !InnerMapManager.Instance.IsShowingAreaMap(activeTileObject.currentRegion.area);
+            bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(activeTileObject.currentRegion);
             InnerMapCameraMove.Instance.CenterCameraOn(activeTileObject.collisionTrigger.gameObject, instantCenter);
         }
         activeTileObject.mapVisual.SetHoverObjectState(true);

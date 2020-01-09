@@ -117,7 +117,7 @@ public class Biomes : MonoBehaviour {
         }
 
         if (PlayerManager.Instance.player != null) {
-            Faction factionOwner = currentHexTile.region.owner;
+            Faction factionOwner = currentHexTile.settlementOnTile.owner;
             if (factionOwner != null && factionOwner.isPlayerFaction) {
                 return;
             }

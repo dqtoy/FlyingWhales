@@ -73,7 +73,7 @@ public class ItemContainer : PooledObject, IPointerClickHandler {
         if (tileLocation != null) {
             bool instantCenter = InnerMapManager.Instance.currentlyShowingLocation != tileLocation.structure.location;
             if (InnerMapManager.Instance.currentlyShowingMap == tileLocation.parentMap) {
-                InnerMapManager.Instance.ShowInnerMap(tileLocation.structure.areaLocation);
+                InnerMapManager.Instance.ShowInnerMap(tileLocation.parentMap.location);
             }
             InnerMapCameraMove.Instance.CenterCameraOn(item.collisionTrigger.gameObject, instantCenter);
         }

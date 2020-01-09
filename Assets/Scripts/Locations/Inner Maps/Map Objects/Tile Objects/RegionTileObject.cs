@@ -42,13 +42,14 @@ public class RegionTileObject : TileObject {
         } else {
             advertisedActions.Add(INTERACTION_TYPE.STUDY);
             advertisedActions.Add(INTERACTION_TYPE.SEARCHING);
-            if (region.owner == null) {
-                advertisedActions.Add(INTERACTION_TYPE.CLAIM_REGION);
-            } else {
-                if (region.locationType.IsSettlementType()) {
-                    advertisedActions.Add(INTERACTION_TYPE.INVADE_REGION);      
-                }
-            }
+            //TODO:
+            // if (region.owner == null) {
+            //     advertisedActions.Add(INTERACTION_TYPE.CLAIM_REGION);
+            // } else {
+            //     if (region.locationType.IsSettlementType()) {
+            //         advertisedActions.Add(INTERACTION_TYPE.INVADE_REGION);      
+            //     }
+            // }
             
             //landmark types
             if (region.mainLandmark != null) {

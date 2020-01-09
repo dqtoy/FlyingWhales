@@ -360,21 +360,8 @@ public class CameraMove : MonoBehaviour {
 
     #region Listeners
     private float lastZoomAmount = 0f;
-    private void OnMenuOpened(UIMenu openedMenu) {
-        if (openedMenu is LandmarkInfoUI) {
-            allowZoom = false;
-            if (!Mathf.Approximately(Camera.main.orthographicSize, 6.5f)) {
-                lastZoomAmount = Camera.main.orthographicSize;
-                ZoomToTarget(6.5f);
-            }
-        }
-    }
-    private void OnMenuClosed(UIMenu openedMenu) {
-        if (openedMenu is LandmarkInfoUI) {
-            allowZoom = true;
-            ZoomToTarget(lastZoomAmount);
-        }
-    }
+    private void OnMenuOpened(UIMenu openedMenu) { }
+    private void OnMenuClosed(UIMenu openedMenu) { }
     private void OnInnerMapOpened(ILocation location) {
         Camera.main.cullingMask = 0;
         SetCameraControlState(false);

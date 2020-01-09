@@ -24,7 +24,7 @@ public class Faction {
     public List<BaseLandmark> ownedLandmarks { get; protected set; }
     public Color factionColor { get; protected set; }
     public List<Character> characters { get; protected set; }//List of characters that are part of the faction
-    public List<Region> ownedRegions { get; protected set; }
+    public List<Settlement> ownedSettlements { get; protected set; }
     //public List<RACE> recruitableRaces { get; protected set; }
     //public List<RACE> startingFollowers { get; protected set; }
     public List<Character> bannedCharacters { get; protected set; }
@@ -35,7 +35,7 @@ public class Faction {
     public FACTION_TYPE factionType { get; private set; }
     public bool isActive { get; private set; }
     public List<Log> history { get; private set; }
-    public Region mainRegion { get { return ownedRegions[0]; } }
+    public Settlement mainRegion { get { return ownedSettlements[0]; } }
     public Quest activeQuest { get; protected set; }
     public FactionIdeologyComponent ideologyComponent { get; protected set; }
 
@@ -69,7 +69,7 @@ public class Faction {
         characters = new List<Character>();
         ownedLandmarks = new List<BaseLandmark>();
         relationships = new Dictionary<Faction, FactionRelationship>();
-        ownedRegions = new List<Region>();
+        ownedSettlements = new List<Settlement>();
         bannedCharacters = new List<Character>();
         //recruitableRaces = new List<RACE>();
         //startingFollowers = new List<RACE>();
@@ -97,7 +97,7 @@ public class Faction {
         characters = new List<Character>();
         ownedLandmarks = new List<BaseLandmark>();
         relationships = new Dictionary<Faction, FactionRelationship>();
-        ownedRegions = new List<Region>();
+        ownedSettlements = new List<Settlement>();
         bannedCharacters = new List<Character>();
         //recruitableRaces = new List<RACE>();
         //startingFollowers = new List<RACE>();
@@ -482,11 +482,13 @@ public class Faction {
         isActive = state;
         Messenger.Broadcast(Signals.FACTION_ACTIVE_CHANGED, this);
     }
-    public List<Character> GenerateStartingCitizens(int leaderLevel, int citizensLevel, int citizenCount, LocationClassManager classManager, Region region) {
+    public List<Character> GenerateStartingCitizens(int leaderLevel, int citizensLevel, int citizenCount,
+        LocationClassManager classManager, Settlement settlement) {
+        
         List<Character> createdCharacters = new List<Character>();
         for (int i = 0; i < citizenCount; i++) {
             string className = classManager.GetCurrentClassToCreate();
-            Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, Utilities.GetRandomGender(), this, region);
+            Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, Utilities.GetRandomGender(), this, settlement);
             if(className == "Leader") {
                 citizen.LevelUp(leaderLevel - 1);
                 SetLeader(citizen);
@@ -495,31 +497,11 @@ public class Faction {
             }
             createdCharacters.Add(citizen);
         }
-        region.area.SetInitialResidentCount(citizenCount);
+        settlement.SetInitialResidentCount(citizenCount);
         RelationshipManager.Instance.GenerateRelationships(this.characters);
         return createdCharacters;
     }
-    public int GetNumberOfDwellingsToHouseCharacters(List<Character> characters) {
-        //To get number of dwellings needed,
-        //loop through all the characters, then check if each one is single
-        //if a character is single, assign it 1 dwelling, then remove that character from the list
-        //if the character is not single then remove it and its lover from the list of characters, and assign them 1 dwelling.
-        //continue the loop until the list of characters becomes empty
-
-        List<Character> listOfCharacters = new List<Character>(characters);
-        int neededDwellingCount = 0;
-
-        while (listOfCharacters.Count != 0) {
-            Character currCharacter = listOfCharacters[0];
-            Character lover = (currCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) as AlterEgoData)?.owner ?? null;
-            if (lover != null) {
-                listOfCharacters.Remove(lover);
-            }
-            listOfCharacters.Remove(currCharacter);
-            neededDwellingCount++;
-        }
-        return neededDwellingCount;
-    }
+   
     public string GetRaceText() {
         return Utilities.GetNormalizedRaceAdjective(race) + " Faction";
     }
@@ -628,31 +610,32 @@ public class Faction {
     #endregion
 
     #region Areas
-    public void AddToOwnedRegions(Region region) {
-        if (!ownedRegions.Contains(region)) {
-            ownedRegions.Add(region);
-            Messenger.Broadcast(Signals.FACTION_OWNED_REGION_ADDED, this, region);
+    public void AddToOwnedSettlements(Settlement settlement) {
+        if (!ownedSettlements.Contains(settlement)) {
+            ownedSettlements.Add(settlement);
+            Messenger.Broadcast(Signals.FACTION_OWNED_REGION_ADDED, this, settlement);
         }
     }
-    public void RemoveFromOwnedRegions(Region region) {
-        if (ownedRegions.Remove(region)) {
-            Messenger.Broadcast(Signals.FACTION_OWNED_REGION_REMOVED, this, region);
+    public void RemoveFromOwnedSettlements(Settlement settlement) {
+        if (ownedSettlements.Remove(settlement)) {
+            Messenger.Broadcast(Signals.FACTION_OWNED_REGION_REMOVED, this, settlement);
         }
     }
     public bool HasOwnedRegionWithSettlement() {
-        for (int i = 0; i < ownedRegions.Count; i++) {
-            if (ownedRegions[i].area != null) {
-                return true;
-            }
-        }
+        // for (int i = 0; i < ownedRegions.Count; i++) {
+        //     if (ownedRegions[i].settlement != null) {
+        //         return true;
+        //     }
+        // }
         return false;
     }
     public bool HasOwnedRegionWithLandmarkType(LANDMARK_TYPE type) {
-        for (int i = 0; i < ownedRegions.Count; i++) {
-            if (ownedRegions[i].mainLandmark != null && ownedRegions[i].mainLandmark.specificLandmarkType == type) {
-                return true;
-            }
-        }
+        //TODO:
+        // for (int i = 0; i < ownedSettlements.Count; i++) {
+        //     if (ownedSettlements[i].mainLandmark != null && ownedSettlements[i].mainLandmark.specificLandmarkType == type) {
+        //         return true;
+        //     }
+        // }
         return false;
     }
     #endregion
@@ -711,7 +694,7 @@ public class Faction {
     #endregion
 }
 public struct FactionTaskWeight {
-    public int baseWeight; //Must not be changed by area
+    public int baseWeight; //Must not be changed by settlement
     public int areaWeight;
     public int supplyCost;
     public bool areaCannotDoTask;

@@ -35,33 +35,33 @@ public class BuildSpotTileObject : TileObject {
     public void PlaceBlueprintOnBuildingSpot(STRUCTURE_TYPE structureType) {
         List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureType);
         GameObject chosenStructurePrefab = null;
-        Area area = gridTileLocation.structure.location as Area;
+        Settlement settlement = gridTileLocation.structure.location as Settlement;
         for (int i = 0; i < choices.Count; i++) {
             GameObject currPrefab = choices[i];
             LocationStructureObject so = currPrefab.GetComponent<LocationStructureObject>();
             //TODO:
-            // if (spot.CanPlaceStructureOnSpot(so, area.areaMap)) {
+            // if (spot.CanPlaceStructureOnSpot(so, settlement.areaMap)) {
             //     chosenStructurePrefab = currPrefab;
             //     break;
             // }
 
         }
         if (chosenStructurePrefab != null) {
-            GameObject structurePrefab = ObjectPoolManager.Instance.InstantiateObjectFromPool(chosenStructurePrefab.name, Vector3.zero, Quaternion.identity, area.areaMap.structureParent);
+            GameObject structurePrefab = ObjectPoolManager.Instance.InstantiateObjectFromPool(chosenStructurePrefab.name, Vector3.zero, Quaternion.identity, settlement.innerMap.structureParent);
             LocationStructureObject structureObject = structurePrefab.GetComponent<LocationStructureObject>();
             structurePrefab.transform.localPosition = spot.GetPositionToPlaceStructure(structureObject);
             
             structureObject.RefreshAllTilemaps();
-            List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(area.areaMap);
+            List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(settlement.innerMap);
             for (int j = 0; j < occupiedTiles.Count; j++) {
                 LocationGridTile tile = occupiedTiles[j];
                 tile.SetHasBlueprint(true);
             }
             spot.SetIsOpen(false);
             spot.SetIsOccupied(true);
-            spot.SetAllAdjacentSpotsAsOpen(area.areaMap);
-            spot.UpdateAdjacentSpotsOccupancy(area.areaMap);
-            structureObject.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Blueprint, area.areaMap);
+            spot.SetAllAdjacentSpotsAsOpen(settlement.innerMap);
+            spot.UpdateAdjacentSpotsOccupancy(settlement.innerMap);
+            structureObject.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Blueprint);
             spot.SetBlueprint(structureObject, structureType);
             structureObject.SetTilesInStructure(occupiedTiles.ToArray());
         } else {
@@ -69,9 +69,9 @@ public class BuildSpotTileObject : TileObject {
         }
     }
     public LocationStructure BuildBlueprint() {
-        Area area = gridTileLocation.structure.location as Area;
-        spot.blueprint.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Built, area.areaMap);
-        LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(gridTileLocation.structure.location, spot.blueprintType, true);
+        Settlement settlement = gridTileLocation.structure.location as Settlement;
+        spot.blueprint.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Built);
+        LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(gridTileLocation.structure.location, spot.blueprintType);
 
         spot.blueprint.ClearOutUnimportantObjectsBeforePlacement();
 
@@ -80,8 +80,8 @@ public class BuildSpotTileObject : TileObject {
             tile.SetStructure(structure);
         }
         structure.SetStructureObject(spot.blueprint);
-        spot.blueprint.PlacePreplacedObjectsAsBlueprints(structure, area.areaMap);
-        spot.blueprint.OnStructureObjectPlaced(area.areaMap, structure);
+        spot.blueprint.PlacePreplacedObjectsAsBlueprints(structure, settlement.innerMap);
+        spot.blueprint.OnStructureObjectPlaced(settlement.innerMap, structure);
         spot.ClearBlueprints();
 
         structure.SetOccupiedBuildSpot(this);
@@ -90,10 +90,10 @@ public class BuildSpotTileObject : TileObject {
         
     }
     public void RemoveOccupyingStructure(LocationStructure structure) {
-        Area area = structure.location as Area;
+        Settlement settlement = structure.location as Settlement;
         spot.SetIsOpen(true);
         spot.SetIsOccupied(false);
-        spot.UpdateAdjacentSpotsOccupancy(area.areaMap);
+        spot.UpdateAdjacentSpotsOccupancy(settlement.innerMap);
     }
 
 }

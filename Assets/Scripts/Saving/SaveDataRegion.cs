@@ -44,21 +44,16 @@ public class SaveDataRegion {
         demonicBuildingData = region.demonicBuildingData;
         demonicInvasionData = region.demonicInvasionData;
 
-        connectionsTileIDs = new List<int>();
-        for (int i = 0; i < region.connections.Count; i++) {
-            connectionsTileIDs.Add(region.connections[i].region.coreTile.id);
-        }
-
         charactersAtLocationIDs = new List<int>();
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {
             charactersAtLocationIDs.Add(region.charactersAtLocation[i].id);
         }
 
-        if(region.previousOwner != null) {
-            previousOwnerID = region.previousOwner.id;
-        } else {
-            previousOwnerID = -1;
-        }
+        // if(region.previousOwner != null) {
+        //     previousOwnerID = region.previousOwner.id;
+        // } else {
+        //     previousOwnerID = -1;
+        // }
 
         factionsHereIDs = new List<int>();
         for (int i = 0; i < region.factionsHere.Count; i++) {
@@ -89,9 +84,9 @@ public class SaveDataRegion {
 
     public void LoadRegionAdditionalData(Region region) {
         //Region region = GridMap.Instance.GetRegionByID(id);
-        if(previousOwnerID != -1) {
-            region.SetPreviousOwner(FactionManager.Instance.GetFactionBasedOnID(previousOwnerID));
-        }
+        // if(previousOwnerID != -1) {
+        //     region.SetPreviousOwner(FactionManager.Instance.GetFactionBasedOnID(previousOwnerID));
+        // }
 
         for (int i = 0; i < factionsHereIDs.Count; i++) {
             region.AddFactionHere(FactionManager.Instance.GetFactionBasedOnID(factionsHereIDs[i]));
@@ -101,14 +96,6 @@ public class SaveDataRegion {
         region.LoadInvasion(this);
         // region.LoadFeatures(this);
 
-    }
-    public void LoadRegionConnections(Region region) {
-        for (int i = 0; i < connectionsTileIDs.Count; i++) {
-            Region regionToConnect = GridMap.Instance.normalHexTiles[connectionsTileIDs[i]].region;
-            if (!region.IsConnectedWith(regionToConnect)) {
-                LandmarkManager.Instance.ConnectRegions(region, regionToConnect);
-            }
-        }
     }
     public void LoadRegionCharacters(Region region) {
         for (int i = 0; i < charactersAtLocationIDs.Count; i++) {

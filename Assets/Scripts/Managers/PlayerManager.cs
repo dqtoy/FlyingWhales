@@ -67,65 +67,41 @@ public class PlayerManager : MonoBehaviour {
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressedDown);
     }
-
-    public void LoadStartingTile() {
-        BaseLandmark portal = LandmarkManager.Instance.GetLandmarkOfType(LANDMARK_TYPE.THE_PORTAL);
-        OnLoadStartingTile(portal);
-    }
-    private void OnLoadStartingTile(BaseLandmark portal) {
-        player = new Player();
-        //PlayerUI.Instance.Initialize();
-        player.CreatePlayerFaction();
-        Area existingPlayerArea = LandmarkManager.Instance.GetAreaByName("Portal");
-        if (existingPlayerArea == null) {
-            player.CreatePlayerArea(portal);
-        } else {
-            player.LoadPlayerArea(existingPlayerArea);
-        }
-        //player.SetMaxMinions(9);
-        //player.CreateInitialMinions();
-        //player.PreAssignJobSlots();
-        LandmarkManager.Instance.OwnRegion(player.playerFaction, RACE.DEMON, portal.tileLocation.region);
-        //player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
-        GameManager.Instance.StartProgression();
-        UIManager.Instance.SetSpeedTogglesState(true);
-        PlayerUI.Instance.UpdateUI();
-        //PlayerUI.Instance.InitializeThreatMeter();
-    }
     public void InitializePlayer(BaseLandmark portal) {
         player = new Player();
-        //PlayerUI.Instance.Initialize();
+        PlayerUI.Instance.Initialize();
         player.CreatePlayerFaction();
-        Area existingPlayerArea = LandmarkManager.Instance.GetAreaByName("Portal");
-        if (existingPlayerArea == null) {
-            player.CreatePlayerArea(portal);
-        } else {
-            player.LoadPlayerArea(existingPlayerArea);
-        }
-        //for (int i = 0; i < portal.tileLocation.region.tiles.Count; i++) {
-        //    HexTile regionTile = portal.tileLocation.region.tiles[i];
-        //    //player.playerArea.AddTile(regionTile);
-        //    regionTile.SetCorruption(true);
-        //}
-        LandmarkManager.Instance.OwnRegion(player.playerFaction, RACE.DEMON, portal.tileLocation.region);
-        //player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
+        
+        Settlement existingPlayerSettlement = player.CreatePlayerSettlement(portal);
+        existingPlayerSettlement.GenerateStructures(0);
+        
+        // Settlement existingPlayerSettlement = LandmarkManager.Instance.GetAreaByName("Portal");
+        // if (existingPlayerSettlement == null) {
+        //     player.CreatePlayerArea(portal);
+        // } else {
+        //     player.LoadPlayerArea(existingPlayerSettlement);
+        // }
+
+        LandmarkManager.Instance.OwnSettlement(player.playerFaction, existingPlayerSettlement);
+        
         PlayerUI.Instance.UpdateUI();
 
         //Add an adjacent region to the player at the start of the game.
         //Ref: https://trello.com/c/cQKzEx06/2699-one-additional-empty-region-owned-by-the-player-at-the-start-of-game
-        List<RegionConnectionData> choices = portal.tileLocation.region.connections;
-        Region chosenRegion = Utilities.GetRandomElement(choices).region;
-        LandmarkManager.Instance.OwnRegion(player.playerFaction, RACE.DEMON, chosenRegion);
-        //Pre-build a Spire in the second initial empty corrupted region and ensure that it does not have a Hallowed Ground trait.
-        // chosenRegion.RemoveAllFeatures();
-        LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenRegion.coreTile, LANDMARK_TYPE.THE_SPIRE, false);
+        //TODO:
+        // List<RegionConnectionData> choices = portal.tileLocation.region.connections;
+        // Region chosenRegion = Utilities.GetRandomElement(choices).region;
+        // LandmarkManager.Instance.OwnRegion(player.playerFaction, RACE.DEMON, chosenRegion);
+        // //Pre-build a Spire in the second initial empty corrupted region and ensure that it does not have a Hallowed Ground trait.
+        // // chosenRegion.RemoveAllFeatures();
+        // LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenRegion.coreTile, LANDMARK_TYPE.THE_SPIRE, false);
     }
     public void InitializePlayer(SaveDataPlayer data) {
         player = new Player(data);
         //PlayerUI.Instance.Initialize();
         player.CreatePlayerFaction(data);
-        Area existingPlayerArea = LandmarkManager.Instance.GetAreaByID(data.playerAreaID);
-        player.SetPlayerArea(existingPlayerArea);
+        Settlement existingPlayerSettlement = LandmarkManager.Instance.GetAreaByID(data.playerAreaID);
+        player.SetPlayerArea(existingPlayerSettlement);
         //PlayerUI.Instance.UpdateUI();
         //PlayerUI.Instance.InitializeThreatMeter();
         //PlayerUI.Instance.UpdateThreatMeter();
@@ -150,16 +126,6 @@ public class PlayerManager : MonoBehaviour {
         }
         //player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
     }
-    //public void AddTileToPlayerArea(HexTile tile) {
-    //    player.playerArea.AddTile(tile);
-    //    tile.SetCorruption(true);
-    //    for (int i = 0; i < tile.region.tiles.Count; i++) {
-    //        HexTile regionTile = tile.region.tiles[i];
-    //        player.playerArea.AddTile(regionTile);
-    //        regionTile.SetCorruption(true);
-    //    }
-    //    //tile.StopCorruptionAnimation();
-    //}
 
     #region Utilities
     public Sprite GetJobActionSprite(string actionName) {

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class LocationEventManager {
-    public Area location { get; private set; }
+    public Settlement location { get; private set; }
 
-    public LocationEventManager(Area location) {
+    public LocationEventManager(Settlement location) {
         this.location = location;
         Messenger.AddListener(Signals.TICK_STARTED, ProcessEvents);
     }

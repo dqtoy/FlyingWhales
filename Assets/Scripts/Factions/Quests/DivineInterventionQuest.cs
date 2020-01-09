@@ -107,11 +107,12 @@ public class DivineInterventionQuest : Quest {
         }
     }
     private bool AreThereProfaneLandmarks() {
-        for (int i = 0; i < PlayerManager.Instance.player.playerFaction.ownedRegions.Count; i++) {
-            BaseLandmark landmark = PlayerManager.Instance.player.playerFaction.ownedRegions[i].mainLandmark;
-            if(landmark.specificLandmarkType == LANDMARK_TYPE.THE_PROFANE) {
-                return true;
-            }
+        for (int i = 0; i < PlayerManager.Instance.player.playerFaction.ownedSettlements.Count; i++) {
+            //TODO:
+            // BaseLandmark landmark = PlayerManager.Instance.player.playerFaction.ownedSettlements[i].mainLandmark;
+            // if(landmark.specificLandmarkType == LANDMARK_TYPE.THE_PROFANE) {
+            //     return true;
+            // }
         }
         return false;
     }
@@ -144,7 +145,7 @@ public class DivineInterventionQuest : Quest {
 
     #region Build Goddess Statue
     private void CreateBuildGoddessStatueJob() {
-        LocationStructure structure = region.area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
+        LocationStructure structure = region.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
         GoddessStatue goddessStatue = InnerMapManager.Instance.CreateNewTileObject<GoddessStatue>(TILE_OBJECT_TYPE.GODDESS_STATUE);
         structure.AddPOI(goddessStatue);
         goddessStatue.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);

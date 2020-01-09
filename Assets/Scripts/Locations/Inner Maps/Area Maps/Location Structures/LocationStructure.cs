@@ -10,10 +10,9 @@ public class LocationStructure {
     public int id { get; private set; }
     public string name { get; private set; }
     public STRUCTURE_TYPE structureType { get; private set; }
-    public bool isInside { get; private set; }
     public List<Character> charactersHere { get; private set; }
     public ILocation location { get; private set; }
-    public Area areaLocation { get; private set; }
+    public Settlement settlementLocation => tiles.First().buildSpotOwner.hexTileOwner.settlementOnTile;
     public List<SpecialToken> itemsInStructure { get; private set; }
     public List<IPointOfInterest> pointsOfInterest { get; private set; }
     public POI_STATE state { get; private set; }
@@ -25,21 +24,16 @@ public class LocationStructure {
     public List<LocationGridTile> unoccupiedTiles { get; private set; }
     public LocationGridTile entranceTile { get; private set; }
 
-    public LocationStructure(STRUCTURE_TYPE structureType, ILocation location, bool isInside) {
+    public LocationStructure(STRUCTURE_TYPE structureType, ILocation location) {
         id = Utilities.SetID(this);
         this.structureType = structureType;
         this.name = $"{Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())} {id.ToString()}";
-        this.isInside = isInside;
         this.location = location;
         charactersHere = new List<Character>();
         itemsInStructure = new List<SpecialToken>();
         pointsOfInterest = new List<IPointOfInterest>();
         tiles = new List<LocationGridTile>();
         unoccupiedTiles = new List<LocationGridTile>();
-        var area = location as Area;
-        if (area != null) {
-            areaLocation = area;
-        }
         SubscribeListeners();
     }
     public LocationStructure(ILocation location, SaveDataLocationStructure data) {
@@ -47,7 +41,6 @@ public class LocationStructure {
         id = Utilities.SetID(this, data.id);
         this.structureType = data.structureType;
         this.name = data.name;
-        this.isInside = data.isInside;
         charactersHere = new List<Character>();
         itemsInStructure = new List<SpecialToken>();
         pointsOfInterest = new List<IPointOfInterest>();
@@ -105,20 +98,17 @@ public class LocationStructure {
             itemsInStructure.Add(token);
             token.SetStructureLocation(this);
             if(AddPOI(token, gridLocation)) {
-                token.SetOwner(location.coreTile.region.owner);
-                if (location.coreTile.region.area != null) {
-                    location.coreTile.region.area.OnItemAddedToLocation(token, this);
-                }
+                token.SetOwner(token.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile.owner);
+                token.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemAddedToLocation(token, this);
             }
         }
     }
     public void RemoveItem(SpecialToken token, Character removedBy = null) {
         if (itemsInStructure.Remove(token)) {
             token.SetStructureLocation(null);
+            LocationGridTile removedFrom = token.gridTileLocation;
             if (RemovePOI(token, removedBy)) {
-                if (location.coreTile.region.area != null) {
-                    location.coreTile.region.area.OnItemRemovedFromLocation(token, this);
-                }
+                removedFrom.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemRemovedFromLocation(token, this);
             }
         }
     }
@@ -232,7 +222,7 @@ public class LocationStructure {
             return true;
         } else {
             List<LocationGridTile> tilesToUse;
-            if (location.locationType == LOCATION_TYPE.DEMONIC_INTRUSION) { //player area
+            if (location.locationType == LOCATION_TYPE.DEMONIC_INTRUSION) { //player settlement
                 tilesToUse = tiles;
             } else {
                 tilesToUse = GetValidTilesToPlace(poi);
@@ -408,7 +398,7 @@ public class LocationStructure {
     #region Destroy
     private void DestroyStructure() {
         Debug.Log($"{GameManager.Instance.TodayLogString()}{this.ToString()} was destroyed!");
-        //transfer tiles to either the wilderness or work area
+        //transfer tiles to either the wilderness or work settlement
         List<LocationGridTile> tiles = new List<LocationGridTile>(this.tiles);
         LocationStructure workArea = location.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
         LocationStructure wilderness = location.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
@@ -434,11 +424,11 @@ public class LocationStructure {
             tile.SetPreviousGroundVisual(null); //so that the tile will never revert to the structure tile, unless a new structure is put on it.
             tile.genericTileObject.AdjustHP(tile.genericTileObject.maxHP);
         }
-        if (location is Area) {
-            Area area = location as Area;
-            JobQueueItem existingRepairJob = area.GetJob(JOB_TYPE.REPAIR, occupiedBuildSpot);
+        if (location is Settlement) {
+            Settlement settlement = location as Settlement;
+            JobQueueItem existingRepairJob = settlement.GetJob(JOB_TYPE.REPAIR, occupiedBuildSpot);
             if (existingRepairJob != null) {
-                area.RemoveFromAvailableJobs(existingRepairJob);
+                settlement.RemoveFromAvailableJobs(existingRepairJob);
             }    
         }
         
@@ -510,19 +500,19 @@ public class LocationStructure {
     }
     public void OnTileDestroyed(LocationGridTile tile) {
         if (structureType.IsOpenSpace()) {
-            return; //do not check for destruction if structure is open space (Wilderness, Work Area, Cemetery, etc.)
+            return; //do not check for destruction if structure is open space (Wilderness, Work Settlement, Cemetery, etc.)
         }
         CheckIfStructureDestroyed();
     }
     private void OnStructureDamaged() {
         if (structureType.IsOpenSpace()) {
-            return; //do not check for damage if structure is open space (Wilderness, Work Area, Cemetery, etc.)
+            return; //do not check for damage if structure is open space (Wilderness, Work Settlement, Cemetery, etc.)
         }
         if (occupiedBuildSpot.advertisedActions.Contains(INTERACTION_TYPE.REPAIR_STRUCTURE) == false) {
             occupiedBuildSpot.AddAdvertisedAction(INTERACTION_TYPE.REPAIR_STRUCTURE);
         }
-        if (location is Area) {
-            if ((location as Area).HasJob(JOB_TYPE.REPAIR, occupiedBuildSpot) == false) {
+        if (location is Settlement) {
+            if ((location as Settlement).HasJob(JOB_TYPE.REPAIR, occupiedBuildSpot) == false) {
                 CreateRepairJob();
             }    
         }
@@ -547,11 +537,11 @@ public class LocationStructure {
 
     #region Repair
     private void CreateRepairJob() {
-        if (location is Area) {
-            Area area = location as Area;
-            GoapPlanJob repairJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPAIR, INTERACTION_TYPE.REPAIR_STRUCTURE, occupiedBuildSpot, area);
+        if (location is Settlement) {
+            Settlement settlement = location as Settlement;
+            GoapPlanJob repairJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPAIR, INTERACTION_TYPE.REPAIR_STRUCTURE, occupiedBuildSpot, settlement);
             repairJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRepairStructureJob);
-            area.AddToAvailableJobs(repairJob);    
+            settlement.AddToAvailableJobs(repairJob);    
         }
     }
     #endregion
@@ -583,7 +573,6 @@ public class SaveDataLocationStructure {
         id = structure.id;
         name = structure.name;
         structureType = structure.structureType;
-        isInside = structure.isInside;
         state = structure.state;
 
         if(structure.entranceTile != null) {
@@ -593,14 +582,14 @@ public class SaveDataLocationStructure {
         }
     }
 
-    public LocationStructure Load(Area area) {
+    public LocationStructure Load(ILocation location) {
         LocationStructure createdStructure = null;
         switch (structureType) {
             case STRUCTURE_TYPE.DWELLING:
-                createdStructure = new Dwelling(area, this);
+                createdStructure = new Dwelling(location, this);
                 break;
             default:
-                createdStructure = new LocationStructure(area, this);
+                createdStructure = new LocationStructure(location, this);
                 break;
         }
         loadedStructure = createdStructure;

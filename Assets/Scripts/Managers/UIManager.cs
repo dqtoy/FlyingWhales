@@ -53,7 +53,7 @@ public class UIManager : MonoBehaviour {
     public CharacterPortrait[] detailedInfoPortraits;
 
     [Space(10)]
-    [Header("Other Area Info")]
+    [Header("Other Settlement Info")]
     public Sprite[] areaCenterSprites;
     public GameObject portalPopup;
     public GameObject regionNameTopMenuGO;
@@ -61,7 +61,7 @@ public class UIManager : MonoBehaviour {
     public HoverHandler regionNameHoverHandler;
 
     [Space(10)]
-    [Header("Notification Area")]
+    [Header("Notification Settlement")]
     public DeveloperNotificationArea developerNotificationArea;
 
     [Space(10)]
@@ -115,7 +115,7 @@ public class UIManager : MonoBehaviour {
     [Header("Dual Object Picker")]
     public DualObjectPicker dualObjectPicker;
 
-    public bool isShowingAreaTooltip { get; private set; } //is the tooltip for area double clicks showing?
+    public bool isShowingAreaTooltip { get; private set; } //is the tooltip for settlement double clicks showing?
     private UIMenu lastOpenedMenu = null;
     private List<object> _uiMenuHistory;
 
@@ -140,7 +140,10 @@ public class UIManager : MonoBehaviour {
             //    
             // }
             currentTileHovered.region?.OnHoverOverAction();
-            string summary = $"{currentTileHovered.ToString()} \nfeatures:";
+            string summary = $"{currentTileHovered.ToString()}";
+            summary += "\nLeft Most: " + (currentTileHovered.region.GetLeftMostTile()?.ToString() ?? "Null");
+            summary += "\nRight Most: " + (currentTileHovered.region.GetRightMostTile()?.ToString() ?? "Null");
+            summary += "\nfeatures:";
             for (int i = 0; i < currentTileHovered.featureComponent.features.Count; i++) {
                 TileFeature feature = currentTileHovered.featureComponent.features[i];
                 summary += $"{feature.name}, ";
@@ -153,6 +156,16 @@ public class UIManager : MonoBehaviour {
                     summary += $"{tile?.locationName ?? "Null"}, ";
                 }
                 summary += "\n";
+            }
+            summary += "\nLeft Most Rows:";
+            List<int> leftMostRows = currentTileHovered.region.GetLeftMostRows();
+            for (int i = 0; i < leftMostRows.Count; i++) {
+                summary += $"{leftMostRows[i].ToString()}, ";
+            }
+            summary += "\nRight Most Rows:";
+            List<int> rightMostRows = currentTileHovered.region.GetRightMostRows();
+            for (int i = 0; i < rightMostRows.Count; i++) {
+                summary += $"{rightMostRows[i].ToString()}, ";
             }
             UIManager.Instance.ShowSmallInfo(summary);
         }
@@ -216,9 +229,6 @@ public class UIManager : MonoBehaviour {
         }
         if (factionInfoUI.isShowing) {
             factionInfoUI.CloseMenu();
-        }
-        if (areaInfoUI.isShowing) {
-            areaInfoUI.CloseMenu();
         }
         if (regionInfoUI.isShowing) {
             regionInfoUI.CloseMenu();
@@ -285,7 +295,6 @@ public class UIManager : MonoBehaviour {
         UpdateCharacterInfo();
         UpdateTileObjectInfo();
         UpdateRegionInfo();
-        UpdateAreaInfo();
         UpdateQuestInfo();
     }
 
@@ -582,7 +591,7 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-    #region Developer Notifications Area
+    #region Developer Notifications Settlement
     private void ShowDeveloperNotification(string text, int expirationTicks, UnityAction onClickAction) {
         developerNotificationArea.ShowNotification(text, expirationTicks, onClickAction);
     }
@@ -657,18 +666,13 @@ public class UIManager : MonoBehaviour {
         cover.GetComponent<Image>().raycastTarget = blockClicks;
     }
     private void OnInteractionMenuOpened() {
-        if (areaInfoUI.isShowing) {
-            lastOpenedMenu = areaInfoUI;
-        } else if (characterInfoUI.isShowing) {
+       if (characterInfoUI.isShowing) {
             lastOpenedMenu = characterInfoUI;
         }
         //if (objectPicker.gameObject.activeSelf) {
         //    HideObjectPicker();
         //}
         //HideMenus();
-        if (areaInfoUI.isShowing) {
-            areaInfoUI.gameObject.SetActive(false);
-        }
         if (characterInfoUI.isShowing) {
             characterInfoUI.gameObject.SetActive(false);
         }
@@ -705,10 +709,10 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Nameplate
-    public void CreateAreaNameplate(Area area) {
+    public void CreateAreaNameplate(Settlement settlement) {
         GameObject nameplateGO = UIManager.Instance.InstantiateUIObject("AreaNameplate", worldUIParent);
         //nameplateGO.transform.localScale = new Vector3(0.02f, 0.02f, 1f);
-        nameplateGO.GetComponent<AreaNameplate>().SetArea(area);
+        nameplateGO.GetComponent<AreaNameplate>().SetArea(settlement);
     }
     public LandmarkNameplate CreateLandmarkNameplate(BaseLandmark landmark) {
         GameObject nameplateGO = UIManager.Instance.InstantiateUIObject("LandmarkNameplate", worldUIParent);
@@ -763,33 +767,14 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-    #region Area Info
-    [Space(10)]
-    [Header("Area Info")]
-    [SerializeField]
-    internal AreaInfoUI areaInfoUI;
-
-    //Why change data parameter from Area to Hextile?
+    #region Settlement Info
+    //Why change data parameter from Settlement to Hextile?
     //It's because the tile data is needed now since we can construct demonic landmarks, etc
-    //If we only pass the area data, the only tile we can get is the coreTile
+    //If we only pass the settlement data, the only tile we can get is the coreTile
     //We have no way of knowing now how to get the actual tile the player clicked
     //Thus, the information that will be shown to the player will be wrong
-    //So in order for us to process exactly what the player clicked, the tile must be passed not the area
+    //So in order for us to process exactly what the player clicked, the tile must be passed not the settlement
     //IMPORTANT NOTE: MAKE SURE THAT THE TILE PASSED HAS AN AREA
-    public void ShowAreaInfo(HexTile tile) { //Area area
-        //if (PlayerManager.Instance.player.homeArea == area) {
-        //    portalPopup.SetActive(true);
-        //} else {
-        areaInfoUI.SetData(tile);
-        areaInfoUI.OpenMenu();
-        areaInfoUI.CenterOnTile();
-        //}
-    }
-    public void UpdateAreaInfo() {
-        if (areaInfoUI.isShowing) {
-            areaInfoUI.UpdateAreaInfo();
-        }
-    }
     public Sprite GetAreaCenterSprite(string name) {
         for (int i = 0; i < areaCenterSprites.Length; i++) {
             if (areaCenterSprites[i].name.ToLower() == name.ToLower()) {
@@ -1002,7 +987,7 @@ public class UIManager : MonoBehaviour {
         currentTileHovered = null;
         isHoveringTile = false;
         tile.region?.OnHoverOutAction();
-        if (tile.areaOfTile != null) {
+        if (tile.region != null) {
             HideSmallInfo();
             isShowingAreaTooltip = false;
         }
@@ -1097,23 +1082,25 @@ public class UIManager : MonoBehaviour {
     //    //}
     //}
     public void ToggleBetweenMaps() {
-        if (InnerMapManager.Instance.isAnAreaMapShowing) {
+        if (InnerMapManager.Instance.isAnInnerMapShowing) {
             InnerMapManager.Instance.HideAreaMap();
             OnCameraOutOfFocus();
-        } else {
-            if(regionInfoUI.activeRegion != null && regionInfoUI.activeRegion.area != null && regionInfoUI.activeRegion.area != PlayerManager.Instance.player.playerArea) {
-                InnerMapManager.Instance.TryShowLocationMap(regionInfoUI.activeRegion.area);
-            }
-        }
+        } 
+        // else {
+        //     if(regionInfoUI.activeRegion != null && regionInfoUI.activeRegion.settlement != PlayerManager.Instance.player.playerSettlement) {
+        //         InnerMapManager.Instance.TryShowLocationMap(regionInfoUI.activeRegion);
+        //     }
+        // }
     }
     public void ToggleMapsHover() {
-        if (InnerMapManager.Instance.isAnAreaMapShowing) {
+        if (InnerMapManager.Instance.isAnInnerMapShowing) {
             ShowSmallInfo("Click to exit " + InnerMapManager.Instance.currentlyShowingLocation.name + ".", returnToWorldBtnTooltipPos);
-        } else {
-            if (regionInfoUI.activeRegion != null && regionInfoUI.activeRegion.area != null) {
-                ShowSmallInfo("Click to enter " + regionInfoUI.activeRegion.area.name + ".", returnToWorldBtnTooltipPos);
-            }
-        }
+        } 
+        // else {
+        //     if (regionInfoUI.activeRegion != null && regionInfoUI.activeRegion.settlement != null) {
+        //         ShowSmallInfo("Click to enter " + regionInfoUI.activeRegion.settlement.name + ".", returnToWorldBtnTooltipPos);
+        //     }
+        // }
     }
     #endregion
 

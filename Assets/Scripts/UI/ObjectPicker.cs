@@ -53,8 +53,8 @@ public class ObjectPicker : MonoBehaviour {
         if (type == typeof(Character)) {
             ShowCharacterItems(validItems.Cast<Character>().ToList(), invalidItems.Cast<Character>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier);
         }
-        //else if (type == typeof(Area)) {
-        //    ShowAreaItems(validItems.Cast<Area>().ToList(), invalidItems.Cast<Area>().ToList(), onHoverItemAction, onHoverExitItemAction);
+        //else if (type == typeof(Settlement)) {
+        //    ShowAreaItems(validItems.Cast<Settlement>().ToList(), invalidItems.Cast<Settlement>().ToList(), onHoverItemAction, onHoverExitItemAction);
         //} 
         else if (type == typeof(Region)) {
             ShowRegionItems(validItems.Cast<Region>().ToList(), invalidItems.Cast<Region>().ToList(), onHoverItemAction, onHoverExitItemAction);
@@ -168,30 +168,30 @@ public class ObjectPicker : MonoBehaviour {
             characterItem.SetPortraitInteractableState(true);
         }
     }
-    //private void ShowAreaItems<T>(List<Area> validItems, List<Area> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction) {
-    //    Action<Area> convertedHoverAction = null;
+    //private void ShowAreaItems<T>(List<Settlement> validItems, List<Settlement> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction) {
+    //    Action<Settlement> convertedHoverAction = null;
     //    if (onHoverItemAction != null) {
     //        convertedHoverAction = ConvertToArea(onHoverItemAction);
     //    }
-    //    Action<Area> convertedHoverExitAction = null;
+    //    Action<Settlement> convertedHoverExitAction = null;
     //    if (onHoverExitItemAction != null) {
     //        convertedHoverExitAction = ConvertToArea(onHoverExitItemAction);
     //    }
     //    for (int i = 0; i < validItems.Count; i++) {
-    //        Area currArea = validItems[i];
+    //        Settlement currSettlement = validItems[i];
     //        GameObject areaItemGO = UIManager.Instance.InstantiateUIObject(objectPickerAreaItemPrefab.name, objectPickerScrollView.content);
     //        AreaPickerItem areaItem = areaItemGO.GetComponent<AreaPickerItem>();
-    //        areaItem.SetArea(currArea);
+    //        areaItem.SetArea(currSettlement);
     //        areaItem.onClickAction = convertedAction;
     //        areaItem.onHoverEnterAction = convertedHoverAction;
     //        areaItem.onHoverExitAction = convertedHoverExitAction;
     //        areaItem.SetButtonState(true);
     //    }
     //    for (int i = 0; i < invalidItems.Count; i++) {
-    //        Area currArea = invalidItems[i];
+    //        Settlement currSettlement = invalidItems[i];
     //        GameObject areaItemGO = UIManager.Instance.InstantiateUIObject(objectPickerAreaItemPrefab.name, objectPickerScrollView.content);
     //        AreaPickerItem areaItem = areaItemGO.GetComponent<AreaPickerItem>();
-    //        areaItem.SetArea(currArea);
+    //        areaItem.SetArea(currSettlement);
     //        areaItem.onClickAction = null;
     //        areaItem.onHoverEnterAction = convertedHoverAction;
     //        areaItem.onHoverExitAction = convertedHoverExitAction;
@@ -440,9 +440,9 @@ public class ObjectPicker : MonoBehaviour {
         if (myActionT == null) return null;
         else return new Action<Minion>(o => myActionT((T)(object)o));
     }
-    public Action<Area> ConvertToArea<T>(Action<T> myActionT) {
+    public Action<Settlement> ConvertToArea<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
-        else return new Action<Area>(o => myActionT((T)(object)o));
+        else return new Action<Settlement>(o => myActionT((T)(object)o));
     }
     public Action<Region> ConvertToRegion<T>(Action<T> myActionT) {
         if (myActionT == null) return null;

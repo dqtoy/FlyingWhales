@@ -32,7 +32,7 @@ public class ItemInfoUI : UIMenu {
 
         activeItem = _data as SpecialToken;
         if (activeItem.gridTileLocation != null) {
-            bool instantCenter = !InnerMapManager.Instance.IsShowingAreaMap(activeItem.currentRegion.area);
+            bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(activeItem.currentRegion);
             InnerMapCameraMove.Instance.CenterCameraOn(activeItem.collisionTrigger.gameObject, instantCenter);
         }
         activeItem.mapVisual.SetHoverObjectState(true);

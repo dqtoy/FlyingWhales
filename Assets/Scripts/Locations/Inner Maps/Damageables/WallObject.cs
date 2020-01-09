@@ -91,7 +91,7 @@ public class WallObject : MapObject<WallObject>, ITraitable {
     }
     #endregion
 
-    #region Area Map Object
+    #region Settlement Map Object
     protected override void CreateAreaMapGameObject() {
         mapVisual = _visual;
     }

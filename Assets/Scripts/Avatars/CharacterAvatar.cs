@@ -54,14 +54,14 @@ public class CharacterAvatar : MonoBehaviour {
         get { return _isTravelling; }
     }
     public bool isTravellingOutside {
-        get { return _isTravellingOutside; } //if the character is travelling from area to area, as oppose to only travelling inside area map
+        get { return _isTravellingOutside; } //if the character is travelling from settlement to settlement, as oppose to only travelling inside settlement map
     }
     public bool isVisualShowing {
         get {
             //if (_isVisualShowing) {
             //    return _isVisualShowing;
             //} else {
-            //    //check if this characters current location area is being tracked
+            //    //check if this characters current location settlement is being tracked
             //    if (party.specificLocation != null ) { //&& party.specificLocation.isBeingTracked
             //        return true;
             //    }
@@ -153,7 +153,7 @@ public class CharacterAvatar : MonoBehaviour {
         arriveLog.AddToFillers(_party.owner.currentRegion, _party.owner.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
         arriveLog.AddLogToInvolvedObjects();
         
-        _distanceToTarget = PathGenerator.Instance.GetTravelTime(_party.owner.currentRegion, targetLocation);
+        _distanceToTarget = 1;
         Debug.Log($"{_party.owner.name} is travelling from {_party.owner.currentRegion.name} to {targetLocation.name}. Travel time in ticks is: {_distanceToTarget.ToString()}");
         _travelLine = _party.owner.currentRegion.coreTile.CreateTravelLine(targetLocation.coreTile, _distanceToTarget, _party.owner);
         _travelLine.SetActiveMeter(isVisualShowing);
@@ -332,7 +332,7 @@ public class CharacterAvatar : MonoBehaviour {
                 //                targetLocation.tileLocation.landmarkOnTile.AddCharacterHomeOnLandmark(character);
                 //            } else {
                 //                //Create new camp
-                //                BaseLandmark newCamp = targetLocation.tileLocation.areaOfTile.CreateCampOnTile(targetLocation.tileLocation);
+                //                BaseLandmark newCamp = targetLocation.tileLocation.settlementOfTile.CreateCampOnTile(targetLocation.tileLocation);
                 //                _party.mainCharacter.homeLandmark.RemoveCharacterHomeOnLandmark(character);
                 //                newCamp.AddCharacterHomeOnLandmark(character);
                 //            }

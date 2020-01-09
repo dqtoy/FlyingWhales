@@ -4,7 +4,7 @@ using Inner_Maps;
 using UnityEngine;
 using Traits;
 
-//Characters will avoid the area. If any character gets caught within, they will gain Poisoned status effect. Any objects inside the radius are disabled.
+//Characters will avoid the settlement. If any character gets caught within, they will gain Poisoned status effect. Any objects inside the radius are disabled.
 public class MiasmaEmitter : Artifact {
 
     private int range;
@@ -31,8 +31,8 @@ public class MiasmaEmitter : Artifact {
     protected override void OnPlaceArtifactOn(LocationGridTile tile) {
         base.OnPlaceArtifactOn(tile);
         currentDuration = 0;
-//        for (int i = 0; i < tile.parentMap.area.charactersAtLocation.Count; i++) {
-//            Character currCharacter = tile.parentMap.area.charactersAtLocation[i];
+//        for (int i = 0; i < tile.parentMap.settlement.charactersAtLocation.Count; i++) {
+//            Character currCharacter = tile.parentMap.settlement.charactersAtLocation[i];
 //            if (!currCharacter.faction.isPlayerFaction) { //only characters that are not part of the player faction will be terrified by this
 //                currCharacter.marker.AddTerrifyingObject(this);
 //            }
@@ -73,8 +73,8 @@ public class MiasmaEmitter : Artifact {
                 obj.traitContainer.RemoveTrait(obj, "Disabled");
             }
         }
-//        for (int i = 0; i < previousTile.parentMap.area.charactersAtLocation.Count; i++) {
-//            Character currCharacter = previousTile.parentMap.area.charactersAtLocation[i];
+//        for (int i = 0; i < previousTile.parentMap.settlement.charactersAtLocation.Count; i++) {
+//            Character currCharacter = previousTile.parentMap.settlement.charactersAtLocation[i];
 //            if (!currCharacter.faction.isPlayerFaction) {
 //                currCharacter.marker.RemoveTerrifyingObject(this);
 //            }

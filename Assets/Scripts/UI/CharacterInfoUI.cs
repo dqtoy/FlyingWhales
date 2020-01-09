@@ -205,12 +205,12 @@ public class CharacterInfoUI : UIMenu {
         UIManager.Instance.ShowRegionInfo(activeCharacter.homeRegion);
     }
     private void OnClickHomeStructure(object obj) {
-        if (activeCharacter.homeRegion.area != null) {
-            if (InnerMapManager.Instance.isAnAreaMapShowing && InnerMapManager.Instance.currentlyShowingMap != activeCharacter.homeRegion.area.areaMap) {
+        if (activeCharacter.homeSettlement != null) {
+            if (InnerMapManager.Instance.isAnInnerMapShowing && InnerMapManager.Instance.currentlyShowingMap != activeCharacter.homeSettlement.innerMap) {
                 InnerMapManager.Instance.HideAreaMap();
             }
-            if (activeCharacter.homeRegion.area.areaMap.isShowing == false) {
-                InnerMapManager.Instance.ShowInnerMap(activeCharacter.homeRegion.area);
+            if (activeCharacter.homeSettlement.innerMap.isShowing == false) {
+                InnerMapManager.Instance.ShowInnerMap(activeCharacter.homeRegion);
             }
             InnerMapCameraMove.Instance.CenterCameraOn(activeCharacter.homeStructure.structureObj.gameObject);
         } else {

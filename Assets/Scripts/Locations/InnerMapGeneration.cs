@@ -10,27 +10,27 @@ public partial class LandmarkManager {
     [FormerlySerializedAs("areaMapsParent")] [SerializeField] private Transform innerMapsParent;
     [SerializeField] private GameObject regionInnerStructurePrefab;
     
-    #region Area Maps
-    public IEnumerator GenerateAreaMap(Area area) {
+    #region Settlement Maps
+    public IEnumerator GenerateAreaMap(Settlement settlement) {
         GameObject areaMapGO = GameObject.Instantiate(areaInnerStructurePrefab, innerMapsParent);
         AreaInnerTileMap areaMap = areaMapGO.GetComponent<AreaInnerTileMap>();
         areaMap.ClearAllTilemaps();
 
         string log = string.Empty;
-        areaMap.Initialize(area);
+        areaMap.Initialize(settlement);
         TownMapSettings generatedSettings = areaMap.GenerateTownMap(out log);
         yield return StartCoroutine(areaMap.DrawMap(generatedSettings));
-        // yield return StartCoroutine(areaMap.PlaceInitialStructures(area));
+        // yield return StartCoroutine(areaMap.PlaceInitialStructures(settlement));
 
         yield return StartCoroutine(areaMap.GenerateDetails());
-        yield return StartCoroutine(area.PlaceObjects());
+        yield return StartCoroutine(settlement.PlaceObjects());
 
         areaMap.OnMapGenerationFinished();
-        //area.OnMapGenerationFinished();
+        //settlement.OnMapGenerationFinished();
         InnerMapManager.Instance.OnCreateInnerMap(areaMap);
-        TokenManager.Instance.LoadSpecialTokens(area);
-        CharacterManager.Instance.PlaceInitialCharacters(area);
-        area.OnAreaSetAsActive();
+        TokenManager.Instance.LoadSpecialTokens(settlement);
+        CharacterManager.Instance.PlaceInitialCharacters(settlement);
+        settlement.OnAreaSetAsActive();
     }
     public void LoadAreaMap(SaveDataAreaInnerTileMap data) {
         GameObject areaMapGO = GameObject.Instantiate(areaInnerStructurePrefab, innerMapsParent);
@@ -39,23 +39,23 @@ public partial class LandmarkManager {
         data.Load(areaMap);
 
         //Load other data
-        Area area = areaMap.area;
+        Settlement settlement = areaMap.settlement;
 
         areaMap.OnMapGenerationFinished();
-        //area.OnMapGenerationFinished();
+        //settlement.OnMapGenerationFinished();
         InnerMapManager.Instance.OnCreateInnerMap(areaMap);
 
-        area.OnAreaSetAsActive();
+        settlement.OnAreaSetAsActive();
     }
     #endregion
 
     #region Region Maps
-    public IEnumerator GenerateRegionMap(Region region, int width, int height) {
+    public IEnumerator GenerateRegionMap(Region region) {
         GameObject regionMapGo = Instantiate(regionInnerStructurePrefab, innerMapsParent);
         RegionInnerTileMap innerTileMap = regionMapGo.GetComponent<RegionInnerTileMap>();
         innerTileMap.Initialize(region);
         region.GenerateStructures();
-        yield return StartCoroutine(innerTileMap.GenerateMap(width, height));
+        yield return StartCoroutine(innerTileMap.GenerateMap());
         InnerMapManager.Instance.OnCreateInnerMap(innerTileMap);
     }
     #endregion

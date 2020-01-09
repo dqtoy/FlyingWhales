@@ -219,18 +219,18 @@ public class RegionInfoUI : UIMenu {
 //        }
 //    }
     public void OnClickInvade() {
-        if (activeRegion.area != null) {
-            //simulate as if clicking the invade button while inside the are map
-            InnerMapManager.Instance.ShowInnerMap(activeRegion.area);
-            StartSettlementInvasion(activeRegion.area);
-            LoadActions();
-        } else {
-            chosenMinionToInvade = null;
-            UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), onClickAction: ChooseMinionForInvasion, validityChecker: CanMinionInvade,
-                title: "Invasion (" + ((int)activeRegion.mainLandmark.invasionTicks / (int)GameManager.ticksPerHour).ToString() + " hours)\nChoose a minion that will invade " + activeRegion.name + ". NOTE: That minion will be unavailable while the invasion is ongoing.",
-                onHoverAction: OnHoverEnterMinionInvade, onHoverExitAction: OnHoverExitMinionInvade,
-                showCover: true, layer: 25);
-        }
+        // if (activeRegion.settlement != null) {
+        //     //simulate as if clicking the invade button while inside the are map
+        //     InnerMapManager.Instance.ShowInnerMap(activeRegion);
+        //     StartSettlementInvasion(activeRegion.settlement);
+        //     LoadActions();
+        // } else {
+        //     chosenMinionToInvade = null;
+        //     UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), onClickAction: ChooseMinionForInvasion, validityChecker: CanMinionInvade,
+        //         title: "Invasion (" + ((int)activeRegion.mainLandmark.invasionTicks / (int)GameManager.ticksPerHour).ToString() + " hours)\nChoose a minion that will invade " + activeRegion.name + ". NOTE: That minion will be unavailable while the invasion is ongoing.",
+        //         onHoverAction: OnHoverEnterMinionInvade, onHoverExitAction: OnHoverExitMinionInvade,
+        //         showCover: true, layer: 25);
+        // }
         
     }
     private bool CanMinionInvade(Character character) {
@@ -266,8 +266,8 @@ public class RegionInfoUI : UIMenu {
         chosenMinionToInvade = null;
         invConfirmationGO.SetActive(false);
     }
-    private void StartSettlementInvasion(Area area) {
-        PlayerManager.Instance.player.StartInvasion(area);
+    private void StartSettlementInvasion(Settlement settlement) {
+        PlayerManager.Instance.player.StartInvasion(settlement);
         //ShowCombatAbilityUI();
     }
     public void StopSettlementInvasion() {
@@ -584,7 +584,7 @@ public class RegionInfoUI : UIMenu {
                     item.SetAsUninteractableUntil(remaining);
                 } 
                 //else {
-                //    item.SetInteractable(PlayerManager.Instance.player.currentAreaBeingInvaded != null);
+                //    item.SetInteractable(PlayerManager.Instance.player.currentSettlementBeingInvaded != null);
                 //}
             }
         }

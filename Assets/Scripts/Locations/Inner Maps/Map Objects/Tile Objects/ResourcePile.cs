@@ -64,21 +64,21 @@ public abstract class ResourcePile : TileObject {
         }
     }
     protected void CreateHaulJob() {
-        if (!structureLocation.areaLocation.HasJob(JOB_TYPE.HAUL, this)) {
-            ResourcePile chosenPileToBeDeposited = structureLocation.location.mainStorage.GetResourcePileObjectWithLowestCount(tileObjectType);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), this, structureLocation.areaLocation);
+        if (!structureLocation.settlementLocation.HasJob(JOB_TYPE.HAUL, this)) {
+            ResourcePile chosenPileToBeDeposited = structureLocation.settlementLocation.mainStorage.GetResourcePileObjectWithLowestCount(tileObjectType);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), this, structureLocation.settlementLocation);
             if (chosenPileToBeDeposited != null) {
                 job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { chosenPileToBeDeposited });
             }
             job.SetStillApplicableChecker(IsDepositResourcePileStillApplicable);
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainSupplyJob);
-            structureLocation.areaLocation.AddToAvailableJobs(job);
+            structureLocation.settlementLocation.AddToAvailableJobs(job);
         }
     }
     protected void ForceCancelNotAssignedProduceJob(JOB_TYPE jobType) {
-        JobQueueItem job = structureLocation.areaLocation.GetJob(jobType);
+        JobQueueItem job = structureLocation.settlementLocation.GetJob(jobType);
         if (job != null && job.assignedCharacter == null) {
-            structureLocation.areaLocation.ForceCancelJob(job);
+            structureLocation.settlementLocation.ForceCancelJob(job);
         }
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class AreaNameplate : MonoBehaviour {
 
-    private Area area;
+    private Settlement _settlement;
 
     [SerializeField] private FactionEmblem emblem;
     [SerializeField] private TextMeshProUGUI areaNameLbl;
@@ -18,33 +18,33 @@ public class AreaNameplate : MonoBehaviour {
     [SerializeField] private GameObject visitorsGO;
     [SerializeField] private TextMeshProUGUI visitorsLbl;
 
-    public void SetArea(Area area) {
-        this.area = area;
-        name = area.name + " Nameplate";
+    public void SetArea(Settlement settlement) {
+        this._settlement = settlement;
+        name = settlement.name + " Nameplate";
         UpdateVisuals();
         UpdatePosition();
 
-        Messenger.AddListener<Area>(Signals.AREA_OWNER_CHANGED, OnAreaOwnerChanged);
+        Messenger.AddListener<Settlement>(Signals.AREA_OWNER_CHANGED, OnAreaOwnerChanged);
     }
 
     private void UpdateVisuals() {
-        emblem.SetFaction(area.owner);
-        areaNameLbl.text = area.name;
+        emblem.SetFaction(_settlement.owner);
+        areaNameLbl.text = _settlement.name;
     }
 
     private void UpdatePosition() {
-        //Vector2 originalPos = area.coreTile.transform.position;
+        //Vector2 originalPos = settlement.coreTile.transform.position;
         //originalPos.y -= 1f;
-        //Vector2 ScreenPosition = Camera.main.WorldToScreenPoint(area.nameplatePos);
-        this.transform.position = area.nameplatePos;
+        //Vector2 ScreenPosition = Camera.main.WorldToScreenPoint(settlement.nameplatePos);
+        this.transform.position = _settlement.nameplatePos;
     }
 
     public void LateUpdate() {
         UpdatePosition();
     }
 
-    private void OnAreaOwnerChanged(Area area) {
-        if (this.area.id == area.id) {
+    private void OnAreaOwnerChanged(Settlement settlement) {
+        if (this._settlement.id == settlement.id) {
             UpdateVisuals();
         }
     }
@@ -54,8 +54,8 @@ public class AreaNameplate : MonoBehaviour {
             residentsGO.SetActive(true);
             visitorsGO.SetActive(true);
         }
-        residentsLbl.text = area.region.residents.Count.ToString();
-        visitorsLbl.text = area.visitors.Count.ToString();
+        residentsLbl.text = _settlement.region.residents.Count.ToString();
+        visitorsLbl.text = _settlement.visitors.Count.ToString();
     }
 
     public void HideResidentsAndVisitors() {

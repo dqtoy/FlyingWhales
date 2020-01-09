@@ -135,10 +135,10 @@ namespace Traits {
         private void CreateFeedJob() {
             if (!_sourceCharacter.HasJobTargetingThis(JOB_TYPE.FEED)) {
                 GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, target = GOAP_EFFECT_TARGET.TARGET };
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, _sourceCharacter, _sourceCharacter.currentRegion.area);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, _sourceCharacter, _sourceCharacter.currentSettlement);
                 job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 20 });
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRestrainedFeedJob);
-                _sourceCharacter.currentRegion.area.AddToAvailableJobs(job);
+                _sourceCharacter.currentSettlement.AddToAvailableJobs(job);
             }
         }
         private void MoveFeedJobToTopPriority() {
@@ -157,9 +157,9 @@ namespace Traits {
         }
         private void CreateJudgementJob() {
             if (!_sourceCharacter.HasJobTargetingThis(JOB_TYPE.JUDGEMENT)) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGEMENT, INTERACTION_TYPE.JUDGE_CHARACTER, _sourceCharacter, _sourceCharacter.currentRegion.area);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGEMENT, INTERACTION_TYPE.JUDGE_CHARACTER, _sourceCharacter, _sourceCharacter.currentSettlement);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoJudgementJob);
-                _sourceCharacter.currentRegion.area.AddToAvailableJobs(job);
+                _sourceCharacter.currentSettlement.AddToAvailableJobs(job);
             }
         }
         public void SetIsPrisoner(bool state) {

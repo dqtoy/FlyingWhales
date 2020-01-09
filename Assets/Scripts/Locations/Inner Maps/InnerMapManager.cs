@@ -48,7 +48,7 @@ namespace Inner_Maps {
         [SerializeField] private WallResourceAssetDictionary wallResourceAssets; //wall assets categorized by resource.
         [SerializeField] private List<TileBase> allTileAssets;
 
-        //Area Map Objects
+        //Settlement Map Objects
         [FormerlySerializedAs("areaMapObjectFactory")] public MapVisualFactory mapObjectFactory;
 
         //structure templates
@@ -66,7 +66,7 @@ namespace Inner_Maps {
         public InnerTileMap currentlyShowingMap { get; private set; }
         public ILocation currentlyShowingLocation { get; private set; }
         public List<InnerTileMap> innerMaps { get; private set; }
-        public bool isAnAreaMapShowing => currentlyShowingMap != null;
+        public bool isAnInnerMapShowing => currentlyShowingMap != null;
 
         public IPointOfInterest currentlyHoveredPoi { get; private set; }
         public List<LocationGridTile> currentlyHighlightedTiles { get; private set; }
@@ -112,7 +112,7 @@ namespace Inner_Maps {
             Messenger.AddListener(Signals.TICK_ENDED, CheckForChangeLight);
         }
         /// <summary>
-        /// Try and show the area map of an area. If it does not have one, this will generate one instead.
+        /// Try and show the settlement map of an settlement. If it does not have one, this will generate one instead.
         /// </summary>
         /// <param name="location"></param>
         public void TryShowLocationMap(ILocation location) {
@@ -170,7 +170,7 @@ namespace Inner_Maps {
             location.innerMap.CleanUp();
             innerMaps.Remove(location.innerMap);
             GameObject.Destroy(location.innerMap.gameObject);
-            Debug.LogError("Area map of " + location.name + " is destroyed!");
+            Debug.LogError("Settlement map of " + location.name + " is destroyed!");
         }
         #endregion
 
@@ -185,8 +185,8 @@ namespace Inner_Maps {
             }
             return null;
         }
-        public bool IsShowingAreaMap(Area area) {
-            return area != null && isAnAreaMapShowing && area.areaMap == currentlyShowingMap;
+        public bool IsShowingInnerMap(ILocation location) {
+            return location != null && isAnInnerMapShowing && location.innerMap == currentlyShowingMap;
         }
         #endregion
 
@@ -273,7 +273,7 @@ namespace Inner_Maps {
             return templates;
         }
         /// <summary>
-        /// Get Tile asset based on name. NOTE: Should only be used on the start of the game when building the area maps.
+        /// Get Tile asset based on name. NOTE: Should only be used on the start of the game when building the settlement maps.
         /// </summary>
         /// <param name="name">Name of the asset</param>
         public TileBase GetTileAsset(string name, bool logMissing = false) {
@@ -324,7 +324,7 @@ namespace Inner_Maps {
                 return;
             }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            HexTile hexTile = tile.parentMap.GetHexTileInRegionThatTileBelongsTo(tile);
+            HexTile hexTile = tile.buildSpotOwner.hexTileOwner;
             string summary = tile.localPlace.ToString();
             summary += "\n<b>HexTile:</b>" + (hexTile?.ToString() ?? "None");
             summary += "\n<b>Local Location:</b>" + tile.localLocation;

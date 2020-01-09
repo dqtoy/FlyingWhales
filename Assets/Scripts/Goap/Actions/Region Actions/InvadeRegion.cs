@@ -31,10 +31,10 @@
         if (satisfied) {
             //**Requirements:** Region is owned by Faction different from Actor's Faction. Region is not Corrupted. Region is non-settlement type.
             var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
-            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && region.owner != null 
-                   && region.owner != actor.faction && region.coreTile.isCorrupted == false 
-                   && region.locationType.IsSettlementType() == false 
-                   && region.regionTileObject.advertisedActions.Contains(this.goapType);
+            // return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && region.owner != null 
+            //        && region.owner != actor.faction && region.coreTile.isCorrupted == false 
+            //        && region.locationType.IsSettlementType() == false 
+            //        && region.regionTileObject.advertisedActions.Contains(this.goapType);
         }
         return false;
     }

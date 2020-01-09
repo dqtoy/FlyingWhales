@@ -236,7 +236,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
     }
     /// <summary>
-    /// Listener for when a party starts travelling towards another area.
+    /// Listener for when a party starts travelling towards another settlement.
     /// </summary>
     /// <param name="travellingParty">The travelling party.</param>
     private void OnCharacterAreaTravelling(Party travellingParty) {
@@ -282,7 +282,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
             if(travellingParty.carriedPOI is Character) {
                 Character carriedCharacter = travellingParty.carriedPOI as Character;
-                RemoveHostileInRange(carriedCharacter); //removed hostile because he/she left the area.
+                RemoveHostileInRange(carriedCharacter); //removed hostile because he/she left the settlement.
                 RemoveAvoidInRange(carriedCharacter);
                 RemovePOIFromInVisionRange(carriedCharacter);
                 visionCollision.RemovePOIAsInRangeButDifferentStructure(carriedCharacter);
@@ -291,7 +291,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //for (int i = 0; i < travellingParty.characters.Count; i++) {
         //    Character traveller = travellingParty.characters[i];
         //    if(traveller != character) {
-        //        RemoveHostileInRange(traveller); //removed hostile because he/she left the area.
+        //        RemoveHostileInRange(traveller); //removed hostile because he/she left the settlement.
         //        RemoveAvoidInRange(traveller);
         //        RemovePOIFromInVisionRange(traveller);
         //        visionCollision.RemovePOIAsInRangeButDifferentStructure(traveller);
@@ -1436,7 +1436,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public IPointOfInterest GetNearestValidHostile() {
         IPointOfInterest nearest = null;
         float nearestDist = 9999f;
-        //first check only the hostiles that are in the same area as this character
+        //first check only the hostiles that are in the same settlement as this character
         for (int i = 0; i < hostilesInRange.Count; i++) {
             IPointOfInterest poi = hostilesInRange[i];
             if (poi.IsValidCombatTarget()) {
@@ -1448,7 +1448,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
             
         }
-        //if no character was returned, choose at random from the list, since we are sure that all characters in the list are not in the same area as this character
+        //if no character was returned, choose at random from the list, since we are sure that all characters in the list are not in the same settlement as this character
         if (nearest == null) {
             List<Character> hostileCharacters = hostilesInRange.Where(x => x.poiType == POINT_OF_INTEREST_TYPE.CHARACTER).Select(x => x as Character).ToList();
             if (hostileCharacters.Count > 0) {

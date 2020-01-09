@@ -6,6 +6,7 @@ using Pathfinding;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
+using Random = UnityEngine.Random;
 namespace Inner_Maps {
     public abstract class InnerTileMap : MonoBehaviour {
         
@@ -38,6 +39,14 @@ namespace Inner_Maps {
         [Header("Structures")]
         [SerializeField] protected GameObject buildSpotPrefab;
         
+        [Header("Perlin Noise")]
+        [SerializeField] protected float offsetX;
+        [SerializeField] protected float offsetY;
+        
+        [Header("For Testing")]
+        [SerializeField] protected LineRenderer pathLineRenderer;
+        
+        //properties
         public int width { get; set; }
         public int height { get; set; }
         public LocationGridTile[,] map { get; private set; }
@@ -47,13 +56,30 @@ namespace Inner_Maps {
         public GridGraph pathfindingGraph { get; set; }
         public Vector3 worldPos { get; private set; }
         public GameObject centerGo { get; private set; }
-        public abstract bool isSettlementMap { get; }
         public List<BurningSource> activeBurningSources { get; private set; }
         public BuildingSpot[,] buildingSpots { get; protected set; }
-        
+        public bool isShowing => InnerMapManager.Instance.currentlyShowingMap == this;
+        public virtual bool isSettlementMap => true;
+
+        #region Generation
         public virtual void Initialize(ILocation location) {
             this.location = location;
             activeBurningSources = new List<BurningSource>();
+            
+            //set tile map sorting orders
+            TilemapRenderer ground = groundTilemap.gameObject.GetComponent<TilemapRenderer>();
+            ground.sortingOrder = InnerMapManager.GroundTilemapSortingOrder;
+            TilemapRenderer details = detailsTilemap.gameObject.GetComponent<TilemapRenderer>();
+            details.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder;
+
+            TilemapRenderer northEdge = northEdgeTilemap.gameObject.GetComponent<TilemapRenderer>();
+            northEdge.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 1;
+            TilemapRenderer southEdge = southEdgeTilemap.gameObject.GetComponent<TilemapRenderer>();
+            southEdge.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 1;
+            TilemapRenderer westEdge = westEdgeTilemap.gameObject.GetComponent<TilemapRenderer>();
+            westEdge.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 2;
+            TilemapRenderer eastEdge = eastEdgeTilemap.gameObject.GetComponent<TilemapRenderer>();
+            eastEdge.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 2;
         }
         protected IEnumerator GenerateGrid(int width, int height) {
             this.width = width;
@@ -82,6 +108,8 @@ namespace Inner_Maps {
             allTiles.ForEach(x => x.FindNeighbours(map));
         }
 
+        #endregion
+        
         #region Loading
         protected void LoadGrid(SaveDataAreaInnerTileMap data) {
             map = new LocationGridTile[width, height];
@@ -92,7 +120,7 @@ namespace Inner_Maps {
 
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
-                    //groundTilemap.SetTile(new Vector3Int(x, y, 0), GetOutsideFloorTileForArea(area));
+                    //groundTilemap.SetTile(new Vector3Int(x, y, 0), GetOutsideFloorTileForArea(settlement));
                     LocationGridTile tile = data.map[x][y].Load(groundTilemap, this, tileDb);
                     allTiles.Add(tile);
                     if (tile.IsAtEdgeOfWalkableMap()) {
@@ -274,7 +302,7 @@ namespace Inner_Maps {
         private void OnPlaceCharacterOnTile(Character character, LocationGridTile tile) {
             GameObject markerGO = character.marker.gameObject; 
             if (markerGO.transform.parent != objectsParent) {
-                //This means that the character travelled to a different area
+                //This means that the character travelled to a different settlement
                 markerGO.transform.SetParent(objectsParent);
                 markerGO.transform.localPosition = tile.centeredLocalLocation;
                 // character.marker.UpdatePosition();
@@ -335,7 +363,7 @@ namespace Inner_Maps {
         public void LoadBurningSources(List<SaveDataBurningSource> sources) {
             //for (int i = 0; i < sources.Count; i++) {
             //    SaveDataBurningSource data = sources[i];
-            //    BurningSource bs = new BurningSource(area, data);
+            //    BurningSource bs = new BurningSource(settlement, data);
             //}
         }
         #endregion
@@ -343,12 +371,6 @@ namespace Inner_Maps {
         #region Utilities
         public void CleanUp() {
             Utilities.DestroyChildren(objectsParent);
-        }
-        public HexTile GetHexTileInRegionThatTileBelongsTo(LocationGridTile tile) {
-            int localX = tile.localPlace.x / 14;
-            int localY = tile.localPlace.y / 14;
-
-            return location.coreTile.region.hexTileMap[localX, localY];
         }
         public void Open() { }
         public void Close() { }
@@ -366,24 +388,68 @@ namespace Inner_Maps {
             centerGo = GameObject.Instantiate<GameObject>(centerGoPrefab, transform);
             centerGo.transform.position = new Vector3((cameraBounds.x + cameraBounds.z) * 0.5f, (cameraBounds.y + cameraBounds.w) * 0.5f);
         }
+        public void ShowPath(List<Vector3> points) {
+            pathLineRenderer.gameObject.SetActive(true);
+            pathLineRenderer.positionCount = points.Count;
+            Vector3[] positions = new Vector3[points.Count];
+            for (int i = 0; i < points.Count; i++) {
+                positions[i] = points[i];
+            }
+            pathLineRenderer.SetPositions(positions);
+        }
+        public void ShowPath(Character character) {
+            List<Vector3> points = new List<Vector3>(character.marker.pathfindingAI.currentPath.vectorPath);
+            int indexAt = 0; //the index that the character is at.
+            float nearestDistance = 9999f;
+            //refine the current path to remove points that the character has passed.
+            //to do that, get the point in the list that the character is nearest to, then remove all other points before that point
+            for (int i = 0; i < points.Count; i++) {
+                Vector3 currPoint = points[i];
+                float distance = Vector3.Distance(character.marker.transform.position, currPoint);
+                if (distance < nearestDistance) {
+                    indexAt = i;
+                    nearestDistance = distance;
+                }
+            }
+            //Debug.Log(character.name + " is at index " + indexAt.ToString() + ". current path length is " + points.Count);
+            if (points.Count > 0) {
+                for (int i = 0; i <= indexAt; i++) {
+                    points.RemoveAt(0);
+                }
+            }
+            //points.Insert(0, character.marker.transform.position);
+            //Debug.Log(character.name + " new path length is " + points.Count);
+            ShowPath(points);
+        }
+        public void HidePath() {
+            pathLineRenderer.gameObject.SetActive(false);
+        }
         #endregion
 
         #region Building Spots
-        private BuildingSpot GetRandomOpenBuildingSpot(HexTile tile) {
-            List<BuildingSpot> choices = GetOpenBuildingSpots(tile);
+        private BuildingSpot GetRandomOpenBuildingSpot() {
+            List<BuildingSpot> choices = GetOpenBuildingSpots();
             if (choices.Count > 0) {
                 return Utilities.GetRandomElement(choices);
             }
             return null;
         }
-        private bool TryGetValidBuildSpotForStructure(LocationStructureObject structureObject, HexTile tile, out BuildingSpot buildingSpot) {
+        public BuildingSpot GetRandomBuildingSpotFor(LocationStructureObject structureObject, Settlement settlement) {
+            List<BuildingSpot> choices = GetRandomBuildingSpotsFor(structureObject, settlement);
+            if (choices.Count > 0) {
+                return Utilities.GetRandomElement(choices);
+            }
+            return null;
+        }
+        public bool TryGetValidBuildSpotForStructure(LocationStructureObject structureObject,
+            out BuildingSpot buildingSpot) {
             if (structureObject.IsBiggerThanBuildSpot()) {
-                List<BuildingSpot> openSpots = GetOpenBuildingSpots(tile);
+                List<BuildingSpot> openSpots = GetOpenBuildingSpots();
                 if (openSpots.Count > 0) {
                     List<BuildingSpot> choices = new List<BuildingSpot>();
                     for (int i = 0; i < openSpots.Count; i++) {
                         BuildingSpot buildSpot = openSpots[i];
-                        if (buildSpot.CanPlaceStructureOnSpot(structureObject, this, tile)) {
+                        if (buildSpot.CanPlaceStructureOnSpot(structureObject, this)) {
                             choices.Add(buildSpot);
                         }
                     }
@@ -397,37 +463,28 @@ namespace Inner_Maps {
                 return false;
             } else {
                 //if the object does not exceed the size of a build spot, then just give it a random open build spot
-                buildingSpot = GetRandomOpenBuildingSpot(tile);
+                buildingSpot = GetRandomOpenBuildingSpot();
                 return buildingSpot != null;
             }
         }
-        protected BuildingSpot GetRandomBuildingSpotAtCenter(int allowance) {
-            int upperBoundX = buildingSpots.GetUpperBound(0);
-            int upperBoundY = buildingSpots.GetUpperBound(1);
-
-            int centerX = upperBoundX / 2;
-            int centerY = upperBoundY / 2;
-
-            List<BuildingSpot> choices = new List<BuildingSpot>();
-            for (int x = 0; x < upperBoundX; x++) {
-                for (int y = 0; y < upperBoundY; y++) {
-                    bool isXSatisfied = x == centerX || Utilities.IsInRange(x, centerX - allowance, centerX + allowance);
-                    bool isYSatisfied = y == centerY || Utilities.IsInRange(y, centerY - allowance, centerY + allowance);
-                    if (isXSatisfied && isYSatisfied) {
-                        BuildingSpot currSpot = buildingSpots[x, y];
-                        choices.Add(currSpot);
+        private List<BuildingSpot> GetOpenBuildingSpots() {
+            List<BuildingSpot> open = new List<BuildingSpot>();
+            for (int x = 0; x <= buildingSpots.GetUpperBound(0); x++) {
+                for (int y = 0; y <= buildingSpots.GetUpperBound(1); y++) {
+                    BuildingSpot currSpot = buildingSpots[x, y];
+                    if (currSpot.isOpen) {
+                        open.Add(currSpot);
                     }
                 }
             }
-            return Utilities.GetRandomElement(choices);
+            return open;
         }
-        private List<BuildingSpot> GetOpenBuildingSpots(HexTile tile) {
+        private List<BuildingSpot> GetRandomBuildingSpotsFor(LocationStructureObject structureObject, Settlement settlement) {
             List<BuildingSpot> open = new List<BuildingSpot>();
-            for (int x = 0; x < buildingSpots.GetUpperBound(0); x++) {
-                for (int y = 0; y < buildingSpots.GetUpperBound(1); y++) {
+            for (int x = 0; x <= buildingSpots.GetUpperBound(0); x++) {
+                for (int y = 0; y <= buildingSpots.GetUpperBound(1); y++) {
                     BuildingSpot currSpot = buildingSpots[x, y];
-                    //only get open spots that belong to the provided hexTile
-                    if (currSpot.isOpen && GetHexTileInRegionThatTileBelongsTo(currSpot.tilesInTerritory.First()) == tile) {
+                    if (settlement.tiles.Contains(currSpot.hexTileOwner) && currSpot.CanPlaceStructureOnSpot(structureObject, this)) {
                         open.Add(currSpot);
                     }
                 }
@@ -441,14 +498,14 @@ namespace Inner_Maps {
             }
             return null;
         }
-        public bool TryGetValidBuildSpotTileObjectForStructure(LocationStructureObject structureObject, HexTile hexTile, out BuildSpotTileObject buildingSpot) {
+        public bool TryGetValidBuildSpotTileObjectForStructure(LocationStructureObject structureObject, Settlement settlement, out BuildSpotTileObject buildingSpot) {
             if (structureObject.IsBiggerThanBuildSpot()) {
                 List<BuildSpotTileObject> openSpots = GetOpenBuildSpotTileObjects();
                 if (openSpots.Count > 0) {
                     List<BuildSpotTileObject> choices = new List<BuildSpotTileObject>();
                     for (int i = 0; i < openSpots.Count; i++) {
                         BuildSpotTileObject buildSpot = openSpots[i];
-                        if (buildSpot.spot.CanPlaceStructureOnSpot(structureObject, this, hexTile)) {
+                        if (buildSpot.spot.CanPlaceStructureOnSpot(structureObject, this)) {
                             choices.Add(buildSpot);
                         }
                     }
@@ -477,19 +534,17 @@ namespace Inner_Maps {
             }
             return open;
         }
-        public bool IsBuildSpotValidFor(LocationStructureObject structureObject, BuildingSpot spot, HexTile hexTile) {
+        public bool CanBuildSpotFit(LocationStructureObject structureObject, BuildingSpot spot) {
             bool isHorizontallyBig = structureObject.IsHorizontallyBig();
             bool isVerticallyBig = structureObject.IsVerticallyBig();
             BuildingSpot currSpot = spot;
             if (isHorizontallyBig && isVerticallyBig) {
                 //if it is bigger both horizontally and vertically
                 //only get build spots that do not have any occupied adjacent spots at their top and right
-                bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North) 
-                                          && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false
-                                          && GetHexTileInRegionThatTileBelongsTo(currSpot.neighbours[GridNeighbourDirection.North].tilesInTerritory.First()) == hexTile;
-                bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East) 
-                                         && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false
-                                         && GetHexTileInRegionThatTileBelongsTo(currSpot.neighbours[GridNeighbourDirection.East].tilesInTerritory.First()) == hexTile;
+                bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North)
+                                          && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false;
+                bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East)
+                                         && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false;
                 if (hasUnoccupiedNorth && hasUnoccupiedEast) {
                     return true;
                 }
@@ -497,8 +552,7 @@ namespace Inner_Maps {
                 //if it is bigger horizontally
                 //only get build spots that do not have any occupied adjacent spots at their right
                 bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East) 
-                                         && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false
-                                         && GetHexTileInRegionThatTileBelongsTo(currSpot.neighbours[GridNeighbourDirection.East].tilesInTerritory.First()) == hexTile;
+                                         && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false;
                 if (hasUnoccupiedEast) {
                     return true;
                 }
@@ -506,8 +560,7 @@ namespace Inner_Maps {
                 //if it is bigger vertically
                 //only get build spots that do not have any occupied adjacent spots at their top
                 bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North) 
-                                          && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false
-                                          && GetHexTileInRegionThatTileBelongsTo(currSpot.neighbours[GridNeighbourDirection.North].tilesInTerritory.First()) == hexTile;
+                                          && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false;
                 if (hasUnoccupiedNorth) {
                     return true;
                 }
@@ -520,26 +573,7 @@ namespace Inner_Maps {
         #endregion
 
         #region Structures
-        public void PlaceStructure(STRUCTURE_TYPE type, HexTile hexTile) {
-            LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(location, type);
-            List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structure.structureType);
-            GameObject chosenStructurePrefab = Utilities.GetRandomElement(choices);
-            LocationStructureObject lso = chosenStructurePrefab.GetComponent<LocationStructureObject>();
-            BuildingSpot chosenBuildingSpot;
-            if (TryGetValidBuildSpotForStructure(lso, hexTile, out chosenBuildingSpot) == false) {
-                chosenBuildingSpot = GetRandomOpenBuildingSpot(hexTile);
-                if (structure.structureType != STRUCTURE_TYPE.CITY_CENTER) {
-                    throw new System.Exception($"There was no valid spot to place {structure.ToString()} using prefab {chosenStructurePrefab.name} so it was placed at a random spot in the center");
-                }
-                Debug.LogWarning($"There was no valid spot to place {structure.ToString()} uso it was placed at a random spot in the center");
-            }
-            if (chosenBuildingSpot == null) {
-                throw new System.Exception($"Could not find valid building spot for { structure.ToString() } using prefab { chosenStructurePrefab.name }");
-            } else {
-                PlaceStructureObjectAt(chosenBuildingSpot, chosenStructurePrefab, structure);
-            }
-        }
-        private void PlaceStructureObjectAt(BuildingSpot chosenBuildingSpot, GameObject structurePrefab, LocationStructure structure) {
+        public void PlaceStructureObjectAt(BuildingSpot chosenBuildingSpot, GameObject structurePrefab, LocationStructure structure) {
             GameObject structureGo = ObjectPoolManager.Instance.InstantiateObjectFromPool(structurePrefab.name, Vector3.zero, Quaternion.identity, structureParent);
             LocationStructureObject structureObjectPrefab = structureGo.GetComponent<LocationStructureObject>();
             structureGo.transform.localPosition = chosenBuildingSpot.GetPositionToPlaceStructure(structureObjectPrefab);
@@ -564,5 +598,284 @@ namespace Inner_Maps {
             structureObject.OnStructureObjectPlaced(this, structure);
         }
         #endregion
+
+        #region Details
+        private void ConvertDetailToTileObject(LocationGridTile tile) {
+            Sprite sprite = detailsTilemap.GetSprite(tile.localPlace);
+            TileObject obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(InnerMapManager.Instance.GetTileObjectTypeFromTileAsset(sprite));
+            tile.structure.AddPOI(obj, tile);
+            obj.mapVisual.SetVisual(sprite);
+            detailsTilemap.SetTile(tile.localPlace, null);
+        }
+        /// <summary>
+        /// Generate details for the work settlement (Crates, Barrels, etc.)
+        /// </summary>
+        /// <param name="insideTiles">Tiles included in the work settlement</param>
+        private IEnumerator WorkAreaDetails(List<LocationGridTile> insideTiles) {
+            //5% of tiles that are adjacent to thin and thick walls should have crates or barrels
+            List<LocationGridTile> tilesForBarrels = new List<LocationGridTile>();
+            for (int i = 0; i < insideTiles.Count; i++) {
+                LocationGridTile currTile = insideTiles[i];
+                if (currTile.IsAdjacentToWall()) {
+                    tilesForBarrels.Add(currTile);
+                }
+            }
+
+            for (int i = 0; i < tilesForBarrels.Count; i++) {
+                LocationGridTile currTile = tilesForBarrels[i];
+                if (Random.Range(0, 100) < 5) {
+                    currTile.hasDetail = true;
+                    detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.crateBarrelTile);
+                    currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                    //place tile object
+                    ConvertDetailToTileObject(currTile);
+                    yield return null;
+                }
+            }
+
+            for (int i = 0; i < insideTiles.Count; i++) {
+                LocationGridTile currTile = insideTiles[i];
+                if (!currTile.hasDetail && currTile.HasNeighbouringWalledStructure() == false && currTile.structure.structureType.IsOpenSpace() && Random.Range(0, 100) < 3) {
+                    //3% of tiles should have random garbage
+                    currTile.hasDetail = true;
+                    detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.randomGarbTile);
+                    //place tile object
+                    ConvertDetailToTileObject(currTile);
+                    yield return null;
+                }
+            }
+        }
+        private List<LocationGridTile> GetTiles(Point size, LocationGridTile startingTile, List<LocationGridTile> mustBeIn = null) {
+            List<LocationGridTile> tiles = new List<LocationGridTile>();
+            for (int x = startingTile.localPlace.x; x < startingTile.localPlace.x + size.X; x++) {
+                for (int y = startingTile.localPlace.y; y < startingTile.localPlace.y + size.Y; y++) {
+                    if (x > map.GetUpperBound(0) || y > map.GetUpperBound(1)) {
+                        continue; //skip
+                    }
+                    if (mustBeIn != null && !mustBeIn.Contains(map[x, y])) {
+                        continue; //skip
+                    }
+                    tiles.Add(map[x, y]);
+                }
+            }
+            return tiles;
+        }
+        private IEnumerator MapPerlinDetails(List<LocationGridTile> tiles) {
+            offsetX = Random.Range(0f, 99999f);
+            offsetY = Random.Range(0f, 99999f);
+            int minX = tiles.Min(t => t.localPlace.x);
+            int maxX = tiles.Max(t => t.localPlace.x);
+            int minY = tiles.Min(t => t.localPlace.y);
+            int maxY = tiles.Max(t => t.localPlace.y);
+
+            int xSize = maxX - minX;
+            int ySize = maxY - minY;
+
+            int batchCount = 0;
+            
+            for (int i = 0; i < tiles.Count; i++) {
+                LocationGridTile currTile = tiles[i];
+                float xCoord = (float)currTile.localPlace.x / xSize * 11f + offsetX;
+                float yCoord = (float)currTile.localPlace.y / ySize * 11f + offsetY;
+
+                float xCoordDetail = (float)currTile.localPlace.x / xSize * 8f + offsetX;
+                float yCoordDetail = (float)currTile.localPlace.y / ySize * 8f + offsetY;
+
+                float sample = Mathf.PerlinNoise(xCoord, yCoord);
+                float sampleDetail = Mathf.PerlinNoise(xCoordDetail, yCoordDetail);
+                //ground
+                if (location.coreTile.biomeType == BIOMES.SNOW || location.coreTile.biomeType == BIOMES.TUNDRA) {
+                    if (sample < 0.5f) {
+                        currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.snowTile);
+                    } else if (sample >= 0.5f && sample < 0.8f) {
+                        currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.stoneTile);
+                    } else {
+                        currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.snowDirt);
+                    }
+                } else {
+                    if (sample < 0.5f) {
+                        currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.grassTile);
+                    } else if (sample >= 0.5f && sample < 0.8f) {
+                        currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.soilTile);
+                    } else {
+                        currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.stoneTile);
+                    }
+               
+                }
+                currTile.SetPreviousGroundVisual(null);
+
+                //trees and shrubs
+                if (!currTile.hasDetail && currTile.HasNeighbouringWalledStructure() == false) {
+                    if (sampleDetail < 0.5f) {
+                        if (currTile.groundType == LocationGridTile.Ground_Type.Grass || currTile.groundType == LocationGridTile.Ground_Type.Snow) {
+                            List<LocationGridTile> overlappedTiles = GetTiles(new Point(2, 2), currTile, tiles);
+                            int invalidOverlap = overlappedTiles.Count(t => t.hasDetail || !tiles.Contains(t) || t.objHere != null);
+                            if (!currTile.IsAtEdgeOfMap() 
+                                && !currTile.HasNeighborAtEdgeOfMap() && invalidOverlap == 0 
+                                && overlappedTiles.Count == 4 && Random.Range(0, 100) < 5) {
+                                //big tree
+                                for (int j = 0; j < overlappedTiles.Count; j++) {
+                                    LocationGridTile ovTile = overlappedTiles[j];
+                                    ovTile.hasDetail = true;
+                                    detailsTilemap.SetTile(ovTile.localPlace, null);
+                                    ovTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                                    //ovTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
+                                }
+                                detailsTilemap.SetTile(currTile.localPlace, GetBigTreeTile(location));
+                                currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                                //currTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
+                            } else {
+                                if (Random.Range(0, 100) < 50) {
+                                    //shrubs
+                                    if (location.coreTile.biomeType != BIOMES.SNOW && location.coreTile.biomeType != BIOMES.TUNDRA) {
+                                        currTile.hasDetail = true;
+                                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.shrubTile);
+                                        if (currTile.structure != null) {
+                                            //place tile object
+                                            ConvertDetailToTileObject(currTile);
+                                        } else {
+                                            //place detail instead
+                                            currTile.SetTileState(LocationGridTile.Tile_State.Empty);
+                                            Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Vector3.one);
+                                            detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
+                                            detailsTilemap.SetTransformMatrix(currTile.localPlace, m);
+                                        }
+                                    }
+                                } else {
+                                    currTile.hasDetail = true;
+                                    detailsTilemap.SetTile(currTile.localPlace, GetTreeTile(location));
+                                    if (currTile.structure != null) {
+                                        ConvertDetailToTileObject(currTile);
+                                    } else {
+                                        //this is for details on tiles on the border.
+                                        //normal tree
+                                        currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                                        Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Vector3.one);
+                                        detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
+                                        detailsTilemap.SetTransformMatrix(currTile.localPlace, m);
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        currTile.hasDetail = false;
+                        detailsTilemap.SetTile(currTile.localPlace, null);
+                    }
+                }
+                batchCount++;
+                if (batchCount == MapGenerationData.InnerMapDetailBatches) {
+                    batchCount = 0;
+                    yield return null;    
+                }
+            }
+
+            batchCount = 0;
+            //flower, rock and garbage
+            for (int i = 0; i < tiles.Count; i++) {
+                LocationGridTile currTile = tiles[i];
+                if (!currTile.hasDetail && currTile.HasNeighbouringWalledStructure() == false) {
+                    if (Random.Range(0, 100) < 3) {
+                        currTile.hasDetail = true;
+                        detailsTilemap.SetTile(currTile.localPlace, GetFlowerTile(location));
+                        if (currTile.structure != null) {
+                            ConvertDetailToTileObject(currTile);
+                        } else {
+                            currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                        }
+                        
+                    } else if (Random.Range(0, 100) < 4) {
+                        currTile.hasDetail = true;
+                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.rockTile);
+                        if (currTile.structure != null) {
+                            ConvertDetailToTileObject(currTile);
+                        } else {
+                            currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                        }
+                    } else if (Random.Range(0, 100) < 3) {
+                        currTile.hasDetail = true;
+                        detailsTilemap.SetTile(currTile.localPlace, GetGarbTile(location));
+                        if (currTile.structure != null) {
+                            ConvertDetailToTileObject(currTile);
+                        } else {
+                            currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                        }
+                    }
+                }
+                batchCount++;
+                if (batchCount == MapGenerationData.InnerMapDetailBatches) {
+                    batchCount = 0;
+                    yield return null;    
+                }
+            }
+        }
+        public IEnumerator GenerateDetails() {
+            //Generate details for the outside map
+            yield return StartCoroutine(MapPerlinDetails(
+                allTiles.Where(x =>
+                    x.objHere == null
+                    && x.buildSpotOwner.hexTileOwner != null
+                    && (x.structure == null || x.structure.structureType == STRUCTURE_TYPE.WILDERNESS || x.structure.structureType == STRUCTURE_TYPE.WORK_AREA)
+                    && x.tileType != LocationGridTile.Tile_Type.Wall
+                    && !x.isLocked
+                    && !x.IsAdjacentTo(typeof(MagicCircle))
+                ).ToList()
+            ));
+
+            if (location.locationType != LOCATION_TYPE.DUNGEON) {
+                if (location.structures.ContainsKey(STRUCTURE_TYPE.WORK_AREA)) {
+                    //only put details on tiles that
+                    //  - do not already have details
+                    //  - is not a road
+                    //  - does not have an object place there (Point of Interest)
+                    //  - is not near the gate (so as not to block path going outside)
+
+                    //Generate details for inside map (Trees, shrubs, etc.)
+                    yield return StartCoroutine(MapPerlinDetails(location.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).tiles
+                        .Where(x => 
+                            !x.hasDetail
+                            && x.objHere == null 
+                            && !x.isLocked).ToList()));
+
+                    //Generate details for work settlement (crates, barrels)
+                    yield return StartCoroutine(WorkAreaDetails(location.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).tiles
+                        .Where(x => 
+                            !x.hasDetail 
+                            && x.objHere == null 
+                            && !x.isLocked
+                            && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Structure_Entrance)).ToList()));
+                }
+            }
+            yield return StartCoroutine(CreateSeamlessEdges());
+        }
+        #endregion
+
+        #region Monobehaviours
+        public void Update() {
+            if (UIManager.Instance.characterInfoUI.isShowing 
+                && UIManager.Instance.characterInfoUI.activeCharacter.currentRegion == location.coreTile.region
+                && !UIManager.Instance.characterInfoUI.activeCharacter.isDead
+                //&& UIManager.Instance.characterInfoUI.activeCharacter.isWaitingForInteraction <= 0
+                && UIManager.Instance.characterInfoUI.activeCharacter.marker != null
+                && UIManager.Instance.characterInfoUI.activeCharacter.marker.pathfindingAI.hasPath
+                && (UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState == null 
+                    || (UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.PATROL 
+                        && UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.STROLL
+                        && UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.STROLL_OUTSIDE
+                        && UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED))) {
+
+                if (UIManager.Instance.characterInfoUI.activeCharacter.marker.pathfindingAI.currentPath != null
+                    && UIManager.Instance.characterInfoUI.activeCharacter.currentParty.icon.isTravelling) {
+                    //ShowPath(UIManager.Instance.characterInfoUI.activeCharacter.marker.currentPath);
+                    ShowPath(UIManager.Instance.characterInfoUI.activeCharacter);
+                    //UIManager.Instance.characterInfoUI.activeCharacter.marker.HighlightHostilesInRange();
+                } else {
+                    HidePath();
+                }
+            } else {
+                HidePath();
+            }
+        }
+        #endregion
+        
     }
 }

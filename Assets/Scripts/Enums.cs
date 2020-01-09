@@ -1888,11 +1888,11 @@ public static class Extensions {
             case COMBAT_ABILITY.SINGLE_HEAL:
                 return "Heals a friendly unit by a percentage of its max HP.";
             case COMBAT_ABILITY.FLAMESTRIKE:
-                return "Deal AOE damage in the surrounding area.";
+                return "Deal AOE damage in the surrounding settlement.";
             case COMBAT_ABILITY.FEAR_SPELL:
                 return "Makes a character fear any other character.";
             case COMBAT_ABILITY.SACRIFICE:
-                return "Sacrifice a friendly unit to deal AOE damage in the surrounding area.";
+                return "Sacrifice a friendly unit to deal AOE damage in the surrounding settlement.";
             case COMBAT_ABILITY.TAUNT:
                 return "Taunts enemies into attacking this character.";
             default:

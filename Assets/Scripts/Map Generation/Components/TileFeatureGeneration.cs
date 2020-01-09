@@ -28,6 +28,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				adjacentTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, adjacentTile);
 				LandmarkManager.Instance.CreateNewLandmarkOnTile(adjacentTile, LANDMARK_TYPE.VILLAGE, false);
 			}
+			settlementChoices.Remove(chosenRegion);
 		}
 	}
 	private void GenerateFeaturesForNonSettlementTiles() {

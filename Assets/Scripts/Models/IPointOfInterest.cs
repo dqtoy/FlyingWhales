@@ -50,7 +50,7 @@ public interface IPointOfInterest : ITraitable {
 [System.Serializable]
 public class POIData {
     public int poiID;
-    public int areaID; //area location
+    public int areaID; //settlement location
     public POINT_OF_INTEREST_TYPE poiType;
     public TILE_OBJECT_TYPE tileObjectType; //The type of tile object that this is, should only be used if poi type is TILE_OBJECT
     public SPECIAL_TOKEN specialTokenType; //The type of item that this is, should only be used if poi type is ITEM

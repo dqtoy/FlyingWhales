@@ -62,7 +62,7 @@ public class PlayerJobActionButton : MonoBehaviour {
     public void UpdateInteractableState() {
         SetInteractableState(
             //!action.parentData.hasActionInCooldown &&
-            InnerMapManager.Instance.isAnAreaMapShowing 
+            InnerMapManager.Instance.isAnInnerMapShowing 
             && actionSlot.ability != null
             && PlayerManager.Instance.player.currentActivePlayerJobAction != this.actionSlot.ability && !actionSlot.ability.isInCooldown
         );
@@ -128,7 +128,7 @@ public class PlayerJobActionButton : MonoBehaviour {
         UpdateInteractableState();
     }
     private void OnInnerMapClosed(ILocation location) {
-        //Upon closing of area map reset intervention ability cooldowns
+        //Upon closing of settlement map reset intervention ability cooldowns
         //action.InstantCooldown();
         UpdateInteractableState();
     }

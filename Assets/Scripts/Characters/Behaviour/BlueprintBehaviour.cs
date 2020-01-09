@@ -10,7 +10,7 @@ public class BlueprintBehaviour : CharacterBehaviourComponent {
 
     public override bool TryDoBehaviour(Character character, ref string log) {
         log += $"\n-{character.name} will try to place blueprint";
-        if (character.isAtHomeRegion && character.homeRegion.area != null && character.homeRegion.area.GetNumberOfJobsWith(JOB_TYPE.BUILD_BLUEPRINT) < 2 && HasCharacterWithPlaceBlueprintJobInSettlement(character.homeRegion.area) == false) {
+        if (character.isAtHomeRegion && character.homeSettlement != null && character.homeSettlement.GetNumberOfJobsWith(JOB_TYPE.BUILD_BLUEPRINT) < 2 && HasCharacterWithPlaceBlueprintJobInSettlement(character.homeSettlement) == false) {
             log += $"\n-{character.name} will roll for blueprint placement.";
             int chance = 35;
             int roll = Random.Range(0, 100);
@@ -43,9 +43,9 @@ public class BlueprintBehaviour : CharacterBehaviourComponent {
         return false;
     }
 
-    private bool HasCharacterWithPlaceBlueprintJobInSettlement(Area area) {
-        for (int i = 0; i < area.region.residents.Count; i++) {
-            Character resident = area.region.residents[i];
+    private bool HasCharacterWithPlaceBlueprintJobInSettlement(Settlement settlement) {
+        for (int i = 0; i < settlement.residents.Count; i++) {
+            Character resident = settlement.residents[i];
             if (resident.jobQueue.HasJob(JOB_TYPE.PLACE_BLUEPRINT)) {
                 return true;
             }

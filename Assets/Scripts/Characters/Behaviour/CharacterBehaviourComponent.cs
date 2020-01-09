@@ -24,7 +24,7 @@ public abstract class CharacterBehaviourComponent {
         return false;
     }
     public bool CanDoBehaviour(Character character) {
-        if(!character.gridTileLocation.parentMap.isSettlementMap && HasAttribute(BEHAVIOUR_COMPONENT_ATTRIBUTE.INSIDE_SETTLEMENT_ONLY)) { //character.specificLocation.region.area.areaMap - will be changed after specificLocation rework
+        if(!character.gridTileLocation.parentMap.isSettlementMap && HasAttribute(BEHAVIOUR_COMPONENT_ATTRIBUTE.INSIDE_SETTLEMENT_ONLY)) { //character.specificLocation.region.settlement.areaMap - will be changed after specificLocation rework
             //if character is not at a settlement map, and the current behaviour requires the character to be at a settlement map, then character cannot do this behaviour
             return false;
         }else if (character.gridTileLocation.parentMap.isSettlementMap && HasAttribute(BEHAVIOUR_COMPONENT_ATTRIBUTE.OUTSIDE_SETTLEMENT_ONLY)) {

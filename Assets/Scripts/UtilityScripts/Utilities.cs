@@ -74,7 +74,7 @@ public class Utilities : MonoBehaviour {
         } else if (obj is SpecialToken) {
             lastItemID += 1;
             return lastItemID;
-        } else if (obj is Area) {
+        } else if (obj is Settlement) {
             lastAreaID += 1;
             return lastAreaID;
         } else if (obj is Party) {
@@ -126,7 +126,7 @@ public class Utilities : MonoBehaviour {
             if (lastCharacterID <= idToUse) { lastCharacterID = idToUse; }
         } else if (obj is SpecialToken) {
             if (lastItemID <= idToUse) { lastItemID = idToUse; }
-        } else if (obj is Area) {
+        } else if (obj is Settlement) {
             if (lastAreaID <= idToUse) { lastAreaID = idToUse; }
         } else if (obj is Party) {
             if (lastPartyID <= idToUse) { lastPartyID = idToUse; }

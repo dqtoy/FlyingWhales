@@ -26,7 +26,7 @@ public interface ILocation {
     LocationStructure GetRandomStructureOfType(STRUCTURE_TYPE type);
     LocationStructure GetRandomStructure();
     LocationStructure GetStructureByID(STRUCTURE_TYPE type, int id);
-    List<LocationStructure> GetStructuresAtLocation(bool inside);
+    List<LocationStructure> GetStructuresAtLocation();
     bool HasStructure(STRUCTURE_TYPE type);
     void OnLocationStructureObjectPlaced(LocationStructure structure);
     #endregion

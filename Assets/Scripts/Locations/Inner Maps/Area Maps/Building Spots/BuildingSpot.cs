@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class BuildingSpot {
 
@@ -15,11 +17,11 @@ public class BuildingSpot {
     public LocationGridTile[] tilesInTerritory { get; private set; }
     public Vector2Int locationInBuildSpotGrid { get; private set; }
     public Dictionary<GridNeighbourDirection, BuildingSpot> neighbours { get; private set; }
+    public HexTile hexTileOwner { get; private set; } //if this is null then it means that this build spot belongs to a hex tile that is not in this build spots region
 
     //Building
     public LocationStructureObject blueprint { get; private set; }
     public STRUCTURE_TYPE blueprintType { get; private set; }
-
 
     #region getters
     public bool hasBlueprint {
@@ -44,7 +46,10 @@ public class BuildingSpot {
 
     public void Initialize(InnerTileMap tileMap) {
         //get the tiles in this spots territory.
-        tilesInTerritory = new LocationGridTile[(int)InnerMapManager.BuildingSpotSize.x * (int)InnerMapManager.BuildingSpotSize.y];
+        DetermineTilesInnTerritory(tileMap);
+    }
+    private void DetermineTilesInnTerritory(InnerTileMap tileMap) {
+        tilesInTerritory = new LocationGridTile[InnerMapManager.BuildingSpotSize.x * InnerMapManager.BuildingSpotSize.y];
         int radius = Mathf.FloorToInt(InnerMapManager.BuildingSpotSize.x / 2f);
         Vector2Int startingPos = new Vector2Int(location.x - radius, location.y - radius);
         Vector2Int endPos = new Vector2Int(location.x + radius, location.y + radius);
@@ -53,6 +58,7 @@ public class BuildingSpot {
             for (int y = startingPos.y; y <= endPos.y; y++) {
                 LocationGridTile tile = tileMap.map[x, y];
                 tilesInTerritory[tileCount] = tile;
+                tile.SetBuildSpotOwner(this);
                 tileCount++;
             }
         }
@@ -120,6 +126,9 @@ public class BuildingSpot {
             };
         }
     }
+    public void SetHexTileOwner(HexTile tile) {
+        hexTileOwner = tile;
+    }
     #endregion
 
     #region Checkers
@@ -149,8 +158,8 @@ public class BuildingSpot {
             SetIsOpen(true);
         }
     }
-    public bool CanPlaceStructureOnSpot(LocationStructureObject obj, InnerTileMap map, HexTile tile) {
-        return map.IsBuildSpotValidFor(obj, this, tile);
+    public bool CanPlaceStructureOnSpot(LocationStructureObject obj, InnerTileMap map) {
+        return map.CanBuildSpotFit(obj, this);
     }
     #endregion
 

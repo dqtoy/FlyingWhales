@@ -21,7 +21,7 @@ public class MapGenerator : MonoBehaviour {
             new WorldMapGridGeneration(), new WorldMapElevationGeneration(), new SupportingFactionGeneration(), 
             new WorldMapRegionGeneration(), new WorldMapBiomeGeneration(), new WorldMapOuterGridGeneration(),
             new TileFeatureGeneration(), new PortalLandmarkGeneration(), new WorldMapLandmarkGeneration(), 
-            new RegionInnerMapGeneration(), 
+            new RegionInnerMapGeneration(), new SettlementGeneration(), new PlayerDataGeneration(), 
              
             // new MainSettlementMapGeneration(), new SuppotingSettlementMapGeneration(), new RegionDataGeneration(), 
             // new PlayerDataGeneration(), 
@@ -45,16 +45,15 @@ public class MapGenerator : MonoBehaviour {
         Debug.Log($"Total loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
  
         LevelLoaderManager.SetLoadingState(false);
-        // CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerArea.coreTile.gameObject);
+        CameraMove.Instance.CenterCameraOn(data.portal.tileLocation.gameObject);
         AudioManager.Instance.TransitionTo("World Music", 10);
         Messenger.Broadcast(Signals.GAME_LOADED);
         yield return new WaitForSeconds(1f);
-        // PlayerManager.Instance.player.IncreaseArtifactSlot();
-        // PlayerManager.Instance.player.IncreaseSummonSlot();
+        PlayerManager.Instance.player.IncreaseArtifactSlot();
+        PlayerManager.Instance.player.IncreaseSummonSlot();
         GameManager.Instance.StartProgression();
-        UIManager.Instance.SetSpeedTogglesState(true);
-        // UIManager.Instance.SetSpeedTogglesState(false);
-        // PlayerUI.Instance.ShowStartingMinionPicker();
+        UIManager.Instance.SetSpeedTogglesState(false);
+        PlayerUI.Instance.ShowStartingMinionPicker();
 
     }
     private IEnumerator InitializeWorldCoroutine(Save data) {
@@ -89,7 +88,6 @@ public class MapGenerator : MonoBehaviour {
         data.LoadCharacterTraits();
         yield return null;
         data.LoadLandmarks();
-        data.LoadRegionConnections();
         data.LoadRegionCharacters();
         data.LoadRegionAdditionalData();
         yield return null;
@@ -118,7 +116,7 @@ public class MapGenerator : MonoBehaviour {
         data.LoadAllJobs();
         data.LoadTileObjectsDataAfterLoadingAreaMap();
 
-        //Note: Loading area items is after loading the inner map because LocationStructure and LocationGridTile is required
+        //Note: Loading settlement items is after loading the inner map because LocationStructure and LocationGridTile is required
         data.LoadPlayerAreaItems();
         data.LoadNonPlayerAreaItems();
         yield return null;
@@ -133,7 +131,8 @@ public class MapGenerator : MonoBehaviour {
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds.ToString()));
         LevelLoaderManager.SetLoadingState(false);
-        CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerArea.coreTile.gameObject);
+        //TODO:
+        // CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerSettlement.coreTile.gameObject);
         AudioManager.Instance.TransitionTo("World Music", 10);
         yield return new WaitForSeconds(1f);
         GameManager.Instance.StartProgression();

@@ -11,10 +11,10 @@ using UnityEngine.UI;
 public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
 
     public HexTileData data;
-    private Area _areaOfTile;
+    private Settlement _settlementOfTile;
     public SpriteRenderer spriteRenderer;
     private bool _isCorrupted = false;
-
+    
     [Space(10)]
     [Header("Tile Visuals")]
     [SerializeField] private GameObject _centerPiece;
@@ -59,16 +59,16 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     [SerializeField] private SpriteRenderer rightBeach;
     [SerializeField] private SpriteRenderer topRightBeach;
 
+    //properties
     public BaseLandmark landmarkOnTile { get; private set; }
     public Region region { get; private set; }
     public TileFeatureComponent featureComponent { get; private set; }
-    
-    private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
-
+    public Settlement settlementOnTile { get; private set; }
+    public BuildingSpot[] ownedBuildSpots { get; private set; }
     public List<HexTile> AllNeighbours { get; set; }
     public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList(); } }
-    
     private int _uncorruptibleLandmarkNeighbors = 0; //if 0, can be corrupted, otherwise, cannot be corrupted
+    private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
     private GameObject _spawnedTendril = null;
 
     public Sprite baseSprite { get; private set; }
@@ -84,7 +84,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     public float temperature => data.temperature;
     public BIOMES biomeType => data.biomeType;
     public ELEVATION elevationType => data.elevationType;
-    public Area areaOfTile => region.area;
     public string locationName => $"({xCoordinate.ToString()}, {yCoordinate.ToString()})";
     private GameObject centerPiece => this._centerPiece;
     private GameObject highlightGO => this._highlightGO;
@@ -96,6 +95,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         _structureAnimatorSpriteRenderer = structureAnimation.gameObject.GetComponent<SpriteRenderer>();
         _highlightGOSpriteRenderer = highlightGO.GetComponent<SpriteRenderer>();
         _hoverHighlightSpriteRenderer = _hoverHighlightGO.GetComponent<SpriteRenderer>();
+        Random.ColorHSV();
     }
     public void Initialize() {
         featureComponent = new TileFeatureComponent();
@@ -165,10 +165,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     private GameObject CreateLandmarkVisual(LANDMARK_TYPE landmarkType, BaseLandmark landmark, LandmarkData data) {
         GameObject landmarkGO = GameObject.Instantiate(LandmarkManager.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
         RACE race = RACE.NONE;
-        if (areaOfTile != null) {
-            if (areaOfTile.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT) {
+        if (region != null) {
+            if (region.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT) {
                 race = RACE.ELVES;
-            } else if (areaOfTile.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT) {
+            } else if (region.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT) {
                 race = RACE.HUMANS;
             }
         }
@@ -702,8 +702,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
             return;
         }
-        // if(region.area != null && region.area != PlayerManager.Instance.player.playerArea) {
-        //     InnerMapManager.Instance.TryShowLocationMap(region.area);
+        // if(region.settlement != null && region.settlement != PlayerManager.Instance.player.playerSettlement) {
+        //     InnerMapManager.Instance.TryShowLocationMap(region.settlement);
         // }
         if (region != null) {
             InnerMapManager.Instance.TryShowLocationMap(region);
@@ -735,7 +735,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         MouseExit();
     }
     public void CenterCameraHere() {
-        if (InnerMapManager.Instance.isAnAreaMapShowing) {
+        if (InnerMapManager.Instance.isAnInnerMapShowing) {
             InnerMapManager.Instance.HideAreaMap();
             UIManager.Instance.OnCameraOutOfFocus();
         }
@@ -766,8 +766,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         return $"{this.locationName} - {landmarkOnTile?.specificLandmarkType.ToString() ?? "No Landmark"} - {region?.name ?? "No Region"}";
     }
     public void ShowTileInfo() {
-        if (areaOfTile != null && areaOfTile.locationType != LOCATION_TYPE.DEMONIC_INTRUSION) {
-            UIManager.Instance.ShowSmallInfo("Double click to view.", areaOfTile.name);
+        if (region != null) {
+            UIManager.Instance.ShowSmallInfo("Double click to view.", region.name);
         }
     }
     #endregion
@@ -845,20 +845,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     }
     #endregion
 
-    #region Areas
-    //public void SetArea(Area area) {
-    //    _areaOfTile = area;
-    //    if (_areaOfTile == null) {
-    //        SetExternalState(false);
-    //        SetInternalState(false);
-    //    }
-    //}
-    //public void SetExternalState(bool state) {
-    //    _isExternal = state;
-    //}
-    //public void SetInternalState(bool state) {
-    //    _isInternal = state;
-    //}
+    #region Settlement
+    public void SetSettlementOnTile(Settlement settlement) {
+        settlementOnTile = settlement;
+    }
     #endregion
 
     #region Pathfinding
@@ -935,6 +925,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     #region Region
     public void SetRegion(Region region) {
         this.region = region;
+    }
+    #endregion
+
+    #region Inner Map
+    public void SetOwnedBuildSpot(BuildingSpot[] spot) {
+        ownedBuildSpots = spot;
     }
     #endregion
 }

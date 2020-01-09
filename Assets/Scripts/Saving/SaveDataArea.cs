@@ -28,45 +28,45 @@ public class SaveDataArea {
     public List<SaveDataLocationStructure> structures;
     public List<SaveDataJobQueueItem> jobs;
 
-    public void Save(Area area) {
-        id = area.id;
-        //isDead = area.isDead;
-        locationType = area.locationType;
-        citizenCount = area.citizenCount;
-        regionID = area.region.id;
-        //coreTileID = area.coreTile.id;
-        //areaColor = area.areaColor;
-        //ownerID = area.owner.id;
-        //if(area.previousOwner != null) {
-        //    previousOwnerID = area.previousOwner.id;
+    public void Save(Settlement settlement) {
+        id = settlement.id;
+        //isDead = settlement.isDead;
+        locationType = settlement.locationType;
+        citizenCount = settlement.citizenCount;
+        regionID = settlement.region.id;
+        //coreTileID = settlement.coreTile.id;
+        //areaColor = settlement.areaColor;
+        //ownerID = settlement.owner.id;
+        //if(settlement.previousOwner != null) {
+        //    previousOwnerID = settlement.previousOwner.id;
         //} else {
         //    previousOwnerID = -1;
         //}
 
         //tileIDs = new List<int>();
-        //for (int i = 0; i < area.tiles.Count; i++) {
-        //    tileIDs.Add(area.tiles[i].id);
+        //for (int i = 0; i < settlement.tiles.Count; i++) {
+        //    tileIDs.Add(settlement.tiles[i].id);
         //}
 
         //residentIDs = new List<int>();
-        //for (int i = 0; i < area.areaResidents.Count; i++) {
-        //    residentIDs.Add(area.areaResidents[i].id);
+        //for (int i = 0; i < settlement.areaResidents.Count; i++) {
+        //    residentIDs.Add(settlement.areaResidents[i].id);
         //}
 
         //charactersAtLocationIDs = new List<int>();
-        //for (int i = 0; i < area.charactersAtLocation.Count; i++) {
-        //    charactersAtLocationIDs.Add(area.charactersAtLocation[i].id);
+        //for (int i = 0; i < settlement.charactersAtLocation.Count; i++) {
+        //    charactersAtLocationIDs.Add(settlement.charactersAtLocation[i].id);
         //}
 
         //itemsInArea = new List<SaveDataItem>();
-        //for (int i = 0; i < area.itemsInArea.Count; i++) {
+        //for (int i = 0; i < settlement.itemsInArea.Count; i++) {
         //    SaveDataItem newSaveDataItem = new SaveDataItem();
-        //    newSaveDataItem.Save(area.itemsInArea[i]);
+        //    newSaveDataItem.Save(settlement.itemsInArea[i]);
         //    itemsInArea.Add(newSaveDataItem);
         //}
 
         structures = new List<SaveDataLocationStructure>();
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in area.structures) {
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in settlement.structures) {
             for (int i = 0; i < kvp.Value.Count; i++) {
                 SaveDataLocationStructure data = new SaveDataLocationStructure();
                 data.Save(kvp.Value[i]);
@@ -75,8 +75,8 @@ public class SaveDataArea {
         }
 
         jobs = new List<SaveDataJobQueueItem>();
-        for (int i = 0; i < area.availableJobs.Count; i++) {
-            JobQueueItem job = area.availableJobs[i];
+        for (int i = 0; i < settlement.availableJobs.Count; i++) {
+            JobQueueItem job = settlement.availableJobs[i];
             if (job.isNotSavable) {
                 continue;
             }
@@ -93,19 +93,20 @@ public class SaveDataArea {
     }
 
     public void Load() {
-        Area newArea = LandmarkManager.Instance.CreateNewArea(this);
-        newArea.region.SetArea(newArea); //Set area of region here not on SaveDataRegion because SaveDataRegion will be the first to load, there will be no areas there yet
-        //if(newArea.areaType != AREA_TYPE.DEMONIC_INTRUSION) {
-        //    LandmarkManager.Instance.SetEnemyPlayerArea(newArea);
+        Settlement newSettlement = LandmarkManager.Instance.CreateNewArea(this);
+        // newSettlement.region.SetArea(newSettlement); //Set settlement of region here not on SaveDataRegion because SaveDataRegion will be the first to load, there will be no areas there yet
+        
+        //if(newSettlement.areaType != AREA_TYPE.DEMONIC_INTRUSION) {
+        //    LandmarkManager.Instance.SetEnemyPlayerArea(newSettlement);
         //}
     }
-    //Loading area items is called separately because of sequencing issues
+    //Loading settlement items is called separately because of sequencing issues
     //Since loading an item requires faction owner, if this is called in Load(), there is still no faction owner yet, so it will be an issue
-    //The sequence for loading save data is LoadAreas -> LoadFactions -> LoadAreaItems, so as to ensure that the area already has a faction owner when loading the items and by that logic the items loaded will also have a faction owner
+    //The sequence for loading save data is LoadAreas -> LoadFactions -> LoadAreaItems, so as to ensure that the settlement already has a faction owner when loading the items and by that logic the items loaded will also have a faction owner
     public void LoadAreaItems() {
-        Area area = LandmarkManager.Instance.GetAreaByID(id);
+        Settlement settlement = LandmarkManager.Instance.GetAreaByID(id);
         //for (int i = 0; i < itemsInArea.Count; i++) {
-        //    itemsInArea[i].Load(area);
+        //    itemsInArea[i].Load(settlement);
         //}
     }
 
@@ -116,17 +117,17 @@ public class SaveDataArea {
     }
 
     public void LoadAreaJobs() {
-        Area area = LandmarkManager.Instance.GetAreaByID(id);
+        Settlement settlement = LandmarkManager.Instance.GetAreaByID(id);
         for (int i = 0; i < jobs.Count; i++) {
             JobQueueItem job = jobs[i].Load();
-            area.AddToAvailableJobs(job);
+            settlement.AddToAvailableJobs(job);
             //if (jobs[i] is SaveDataCharacterStateJob) {
             //    SaveDataCharacterStateJob dataStateJob = jobs[i] as SaveDataCharacterStateJob;
             //    CharacterStateJob stateJob = job as CharacterStateJob;
             //    if (dataStateJob.assignedCharacterID != -1) {
             //        Character assignedCharacter = CharacterManager.Instance.GetCharacterByID(dataStateJob.assignedCharacterID);
             //        stateJob.SetAssignedCharacter(assignedCharacter);
-            //        CharacterState newState = assignedCharacter.stateComponent.SwitchToState(stateJob.targetState, null, stateJob.targetArea);
+            //        CharacterState newState = assignedCharacter.stateComponent.SwitchToState(stateJob.targetState, null, stateJob.targetSettlement);
             //        if (newState != null) {
             //            stateJob.SetAssignedState(newState);
             //        } else {

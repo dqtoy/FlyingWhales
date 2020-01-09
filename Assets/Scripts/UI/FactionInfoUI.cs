@@ -45,8 +45,8 @@ public class FactionInfoUI : UIMenu {
         Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
         Messenger.AddListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
         Messenger.AddListener<Character, Faction>(Signals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
-        Messenger.AddListener<Faction, Region>(Signals.FACTION_OWNED_REGION_ADDED, OnFactionRegionAdded);
-        Messenger.AddListener<Faction, Region>(Signals.FACTION_OWNED_REGION_REMOVED, OnFactionRegionRemoved);
+        Messenger.AddListener<Faction, Settlement>(Signals.FACTION_OWNED_REGION_ADDED, OnFactionRegionAdded);
+        Messenger.AddListener<Faction, Settlement>(Signals.FACTION_OWNED_REGION_REMOVED, OnFactionRegionRemoved);
         Messenger.AddListener<FactionRelationship>(Signals.FACTION_RELATIONSHIP_CHANGED, OnFactionRelationshipChanged);
         Messenger.AddListener<Faction>(Signals.FACTION_ACTIVE_CHANGED, OnFactionActiveChanged);
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
@@ -165,10 +165,11 @@ public class FactionInfoUI : UIMenu {
         Utilities.DestroyChildren(regionsScrollView.content);
         locationItems.Clear();
 
-        for (int i = 0; i < activeFaction.ownedRegions.Count; i++) {
-            Region currRegion = activeFaction.ownedRegions[i];
-            CreateNewRegionItem(currRegion);
-        }
+        //TODO:
+        // for (int i = 0; i < activeFaction.ownedSettlements.Count; i++) {
+        //     Region currRegion = activeFaction.ownedSettlements[i];
+        //     CreateNewRegionItem(currRegion);
+        // }
     }
     private void CreateNewRegionItem(Region region) {
         GameObject characterGO = UIManager.Instance.InstantiateUIObject(regionNameplatePrefab.name, regionsScrollView.content);
@@ -192,14 +193,16 @@ public class FactionInfoUI : UIMenu {
             ObjectPoolManager.Instance.DestroyObject(item.gameObject);
         }
     }
-    private void OnFactionRegionAdded(Faction faction, Region region) {
+    private void OnFactionRegionAdded(Faction faction, Settlement region) {
         if (isShowing && activeFaction.id == faction.id) {
-            CreateNewRegionItem(region);
+            //TODO:
+            // CreateNewRegionItem(region);
         }
     }
-    private void OnFactionRegionRemoved(Faction faction, Region region) {
+    private void OnFactionRegionRemoved(Faction faction, Settlement region) {
         if (isShowing && activeFaction.id == faction.id) {
-            DestroyLocationItem(region);
+            //TODO:
+            // DestroyLocationItem(region);
         }
     }
     #endregion

@@ -41,14 +41,14 @@ public class Summon : Character, IWorldObject {
         needsComponent.Initialize();
         
         ConstructInitialGoapAdvertisementActions();
-        //SubscribeToSignals(); //NOTE: Only made characters subscribe to signals when their area is the one that is currently active. TODO: Also make sure to unsubscribe a character when the player has completed their map.
+        //SubscribeToSignals(); //NOTE: Only made characters subscribe to signals when their settlement is the one that is currently active. TODO: Also make sure to unsubscribe a character when the player has completed their map.
     }
     public override void OnAfterActionStateSet(string stateName, ActualGoapNode node) { } //overriddn OnActionStateSet so that summons cannot witness other events.
-    protected override void OnSuccessInvadeArea(Area area) {
-        base.OnSuccessInvadeArea(area);
+    protected override void OnSuccessInvadeArea(Settlement settlement) {
+        base.OnSuccessInvadeArea(settlement);
         //clean up
         Reset();
-        //PlayerManager.Instance.player.playerArea.AddCharacterToLocation(this);
+        //PlayerManager.Instance.player.playerSettlement.AddCharacterToLocation(this);
         //ResetToFullHP();
         Death();
     }
@@ -82,7 +82,7 @@ public class Summon : Character, IWorldObject {
             //if (currentActionNode != null) {
             //    currentActionNode.StopActionNode(false);
             //}
-            if (currentRegion.area != null && isHoldingItem) {
+            if (currentSettlement != null && isHoldingItem) {
                 DropAllTokens(currentStructure, deathTile, true);
             }
             //if (ownParty.specificLocation != null && isHoldingItem) {
@@ -108,13 +108,13 @@ public class Summon : Character, IWorldObject {
                 Region home = homeRegion;
                 Dwelling homeStructure = this.homeStructure;
                 homeRegion.RemoveResident(this);
-                SetHome(home); //keep this data with character to prevent errors
+                SetHomeRegion(home); //keep this data with character to prevent errors
                 SetHomeStructure(homeStructure); //keep this data with character to prevent errors
             }
-            //if (homeArea != null) {
-            //    Area home = homeArea;
+            //if (homeSettlement != null) {
+            //    Settlement home = homeSettlement;
             //    Dwelling homeStructure = this.homeStructure;
-            //    homeArea.RemoveResident(this);
+            //    homeSettlement.RemoveResident(this);
             //    SetHome(home); //keep this data with character to prevent errors
             //    SetHomeStructure(homeStructure); //keep this data with character to prevent errors
             //}

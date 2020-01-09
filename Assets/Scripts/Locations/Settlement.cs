@@ -5,7 +5,7 @@ using System;
 using Inner_Maps;
 using UnityEngine;
 
-public class Area : IJobOwner, ILocation {
+public class Settlement : IJobOwner {
 
     public int id { get; private set; }
     public LOCATION_TYPE locationType { get; private set; }
@@ -14,23 +14,18 @@ public class Area : IJobOwner, ILocation {
     public LocationStructure mainStorage { get; private set; }
     public int citizenCount { get; private set; }
 
-    //Data that are only referenced from this area's region
+    //Data that are only referenced from this settlement's region
     //These are only getter data, meaning it cannot be stored
-    public string name { get { return region.name; } }
-    public HexTile coreTile { get { return region.coreTile; } }
-    public Faction owner { get { return region.owner; } }
-    public Faction previousOwner { get { return region.previousOwner; } }
-    public List<HexTile> tiles { get { return region.tiles; } }
-    public List<Character> charactersAtLocation { get { return region.charactersAtLocation; } }
-
-    //special tokens
-    //public List<SpecialToken> itemsInArea { get; private set; }
-    public const int MAX_ITEM_CAPACITY = 15;
-
+    public string name { get; private set; }
+    public Faction owner { get; private set; }
+    public Faction previousOwner { get; private set; }
+    public List<HexTile> tiles { get; private set; }
+    public List<Character> charactersAtLocation { get; private set; }
+    public List<Character> residents { get; private set; }
+    
     //structures
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
-    public AreaInnerTileMap areaMap { get; private set; }
-    public InnerTileMap innerMap => areaMap;
+    public InnerTileMap innerMap => region.innerMap;
 
     //misc
     public Sprite locationPortrait { get; private set; }
@@ -45,18 +40,8 @@ public class Area : IJobOwner, ILocation {
 
     #region getters
     public List<Character> visitors {
-        get { return charactersAtLocation.Where(x => !region.residents.Contains(x)).ToList(); }
+        get { return charactersAtLocation.Where(x => !residents.Contains(x)).ToList(); }
     }
-    //public int suppliesInBank {
-    //    get {
-    //        if (this.supplyPile == null) {
-    //            return 0;
-    //        }
-    //        return this.supplyPile.resourceInPile;
-    //    }
-    //}
-    //public WoodPile supplyPile { get; private set; }
-    //public FoodPile foodPile { get; private set; }
     public int residentCapacity {
         get {
             if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
@@ -65,39 +50,38 @@ public class Area : IJobOwner, ILocation {
             return 0;
         }
     }
-    //public LocationStructure mainStorageStructure { get; private set; }
     #endregion
 
-    public Area(Region region, LOCATION_TYPE locationType, int citizenCount) {
+    public Settlement(Region region, LOCATION_TYPE locationType, int citizenCount) {
         this.region = region;
+        SetName(RandomNameGenerator.Instance.GenerateCityName(RACE.HUMANS));
         id = Utilities.SetID(this);
         this.citizenCount = citizenCount;
-        //charactersAtLocation = new List<Character>();
-        //defaultRace = new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL);
-        //itemsInArea = new List<SpecialToken>();
-        structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
-        //jobQueue = new JobQueue(this);
+        charactersAtLocation = new List<Character>();
+        tiles = new List<HexTile>();
+        residents = new List<Character>();
         SetAreaType(locationType);
-        //AddTile(coreTile);
-        nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
+        // nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
         availableJobs = new List<JobQueueItem>();
         classManager = new LocationClassManager();
         eventManager = new LocationEventManager(this);
         jobManager = new LocationJobManager(this);
 
     }
-    public Area(SaveDataArea saveDataArea) {
+    public Settlement(SaveDataArea saveDataArea) {
         region = GridMap.Instance.GetRegionByID(saveDataArea.regionID);
+        SetName(RandomNameGenerator.Instance.GenerateCityName(RACE.HUMANS));
         id = Utilities.SetID(this, saveDataArea.id);
         citizenCount = saveDataArea.citizenCount;
         //charactersAtLocation = new List<Character>();
+        tiles = new List<HexTile>();
+        residents = new List<Character>();
         //itemsInArea = new List<SpecialToken>();
-        structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
         //jobQueue = new JobQueue(null);
 
         SetAreaType(saveDataArea.locationType);
 
-        nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
+        // nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
 
         LoadStructures(saveDataArea);
     }
@@ -125,7 +109,7 @@ public class Area : IJobOwner, ILocation {
     }
     private void OnTileObjectRemoved(TileObject removedObj, Character character, LocationGridTile removedFrom) {
         //craft replacement tile object job
-        if (removedFrom.parentMap.location == this) {
+        if (removedFrom.structure.settlementLocation == this) {
             //&& removedFrom.structure.structureType != STRUCTURE_TYPE.DWELLING
             if (removedObj.CanBeReplaced()) { //if the removed object can be replaced and it is not part of a dwelling, create a replace job
                 if (removedFrom.structure.structureType == STRUCTURE_TYPE.DWELLING) {
@@ -167,7 +151,11 @@ public class Area : IJobOwner, ILocation {
     }
     #endregion
 
-    #region Area Type
+    public void SetName(string name) {
+        this.name = name;
+    }
+
+    #region Settlement Type
     public void SetAreaType(LOCATION_TYPE locationType) {
         this.locationType = locationType;
         OnAreaTypeSet();
@@ -206,7 +194,7 @@ public class Area : IJobOwner, ILocation {
             currTile.UnHighlightTile();
         }
     }
-    public void TintStructuresInArea(Color color) {
+    public void TintStructures(Color color) {
         for (int i = 0; i < tiles.Count; i++) {
             tiles[i].SetStructureTint(color);
         }
@@ -226,31 +214,13 @@ public class Area : IJobOwner, ILocation {
     public void LoadAdditionalData() {
         CreateNameplate();
     }
-    public string GetAreaTypeString() {
-        if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
-            return "Demonic Intrusion";
-        }
-        //if (_raceType != RACE.NONE) {
-        //    if (tiles.Count > 1) {
-        //        return Utilities.GetNormalizedRaceAdjective(_raceType) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(GetBaseAreaType().ToString());
-        //    } else {
-        //        return Utilities.GetNormalizedRaceAdjective(_raceType) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(coreTile.landmarkOnTile.specificLandmarkType.ToString());
-        //    }
-        //} else {
-        //    return Utilities.NormalizeStringUpperCaseFirstLetters(coreTile.landmarkOnTile.specificLandmarkType.ToString());
-        //}
-        return Utilities.NormalizeStringUpperCaseFirstLetters(coreTile.landmarkOnTile.specificLandmarkType.ToString());
-    }
     /// <summary>
-    /// Called when this area is set as the current active area.
+    /// Called when this settlement is set as the current active settlement.
     /// </summary>
     public void OnAreaSetAsActive() {
         SubscribeToSignals();
         //LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
         CheckAreaInventoryJobs(mainStorage);
-    }
-    public bool CanInvadeSettlement() {
-        return coreTile.region.HasCorruptedConnection() && PlayerManager.Instance.player.currentAreaBeingInvaded == null && PlayerManager.Instance.player.minions.Where(x => x.assignedRegion == null).ToList().Count > 0;
     }
     #endregion
 
@@ -300,15 +270,15 @@ public class Area : IJobOwner, ILocation {
         }
         Dwelling chosenDwelling = dwellingOverride;
         if (chosenDwelling == null) {
-            if (PlayerManager.Instance != null && PlayerManager.Instance.player != null && this.id == PlayerManager.Instance.player.playerArea.id) {
-                chosenDwelling = structures[STRUCTURE_TYPE.DWELLING][0] as Dwelling; //to avoid errors, residents in player area will all share the same dwelling
+            if (PlayerManager.Instance != null && PlayerManager.Instance.player != null && this.id == PlayerManager.Instance.player.playerSettlement.id) {
+                chosenDwelling = structures[STRUCTURE_TYPE.DWELLING][0] as Dwelling; //to avoid errors, residents in player settlement will all share the same dwelling
             } else {
                 Character lover = (character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) as AlterEgoData)?.owner ?? null;
-                if (lover != null && lover.faction.id == character.faction.id && region.residents.Contains(lover)) { //check if the character has a lover that lives in the area
+                if (lover != null && lover.faction.id == character.faction.id && residents.Contains(lover)) { //check if the character has a lover that lives in the settlement
                     chosenDwelling = lover.homeStructure;
                 }
             }
-            if (chosenDwelling == null && (character.homeStructure == null || character.homeStructure.location.id != this.id)) { //else, find an unoccupied dwelling (also check if the character doesn't already live in this area)
+            if (chosenDwelling == null && (character.homeStructure == null || character.homeStructure.location.id != this.id)) { //else, find an unoccupied dwelling (also check if the character doesn't already live in this settlement)
                 List<LocationStructure> structureList = structures[STRUCTURE_TYPE.DWELLING];
                 for (int i = 0; i < structureList.Count; i++) {
                     Dwelling currDwelling = structureList[i] as Dwelling;
@@ -321,23 +291,25 @@ public class Area : IJobOwner, ILocation {
         }
 
         if (chosenDwelling == null) {
-            //if the code reaches here, it means that the area could not find a dwelling for the character
+            //if the code reaches here, it means that the settlement could not find a dwelling for the character
             Debug.LogWarning(GameManager.Instance.TodayLogString() + "Could not find a dwelling for " + character.name + " at " + this.name);
         }
         character.MigrateHomeStructureTo(chosenDwelling);
     }
     public void AddCharacterToLocation(Character character, LocationGridTile tileOverride = null, bool isInitial = false) {
-        region.AddCharacterToLocation(character);
+        if (charactersAtLocation.Contains(character) == false) {
+            charactersAtLocation.Add(character);
+            region.AddCharacterToLocation(character);
+        }
     }
     public void RemoveCharacterFromLocation(Character character) {
-        region.RemoveCharacterFromLocation(character);
-    }
-    public void RemoveCharacterFromLocation(Party party) {
-        RemoveCharacterFromLocation(party.owner);
+        if (charactersAtLocation.Remove(character)) {
+            region.RemoveCharacterFromLocation(character);    
+        }
     }
     public bool IsResidentsFull() {
-        if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerArea.id == this.id) {
-            return false; //resident capacity is never full for player area
+        if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerSettlement.id == this.id) {
+            return false; //resident capacity is never full for player settlement
         }
         if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
             List<LocationStructure> dwellings = structures[STRUCTURE_TYPE.DWELLING];
@@ -351,7 +323,7 @@ public class Area : IJobOwner, ILocation {
         //return structures[STRUCTURE_TYPE.DWELLING].Where(x => !x.IsOccupied()).Count() == 0; //check if there are still unoccupied dwellings
     }
     public int GetNumberOfUnoccupiedStructure(STRUCTURE_TYPE structureType) {
-        if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerArea.id == this.id) {
+        if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerSettlement.id == this.id) {
             return 0;
         }
         int num = 0;
@@ -365,29 +337,17 @@ public class Area : IJobOwner, ILocation {
         }
         return num;
     }
-    public Character GetRandomCharacterAtLocationExcept(Character character) {
-        List<Character> choices = new List<Character>();
-        for (int i = 0; i < charactersAtLocation.Count; i++) {
-            if (charactersAtLocation[i] != character) {
-                choices.Add(charactersAtLocation[i]);
-            }
-        }
-        if (choices.Count > 0) {
-            return choices[UnityEngine.Random.Range(0, choices.Count)];
-        }
-        return null;
-    }
     public void SetInitialResidentCount(int count) {
         citizenCount = count;
     }
     private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass currentClass) {
-        if(character.homeRegion.area == this) {
+        if(character.homeSettlement == this) {
             classManager.OnResidentChangeClass(character, previousClass, currentClass);
         }
     }
     public Character AddNewResident(RACE race, Faction faction) {
         string className = classManager.GetCurrentClassToCreate();
-        Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, Utilities.GetRandomGender(), faction, region);
+        Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, Utilities.GetRandomGender(), faction, this);
         PlaceNewResidentInInnerMap(citizen);
         //citizen.CenterOnCharacter();
         return citizen;
@@ -401,14 +361,14 @@ public class Area : IJobOwner, ILocation {
     }
     public Character AddNewResident(RACE race, GENDER gender, Faction faction) {
         string className = classManager.GetCurrentClassToCreate();
-        Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, gender, faction, region);
+        Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, gender, faction, this);
         PlaceNewResidentInInnerMap(citizen);
         //citizen.CenterOnCharacter();
         return citizen;
     }
     public Character AddNewResident(RACE race, GENDER gender, SEXUALITY sexuality, Faction faction) {
         string className = classManager.GetCurrentClassToCreate();
-        Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, gender, sexuality, faction, region);
+        Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, gender, sexuality, faction, this);
         PlaceNewResidentInInnerMap(citizen);
         //citizen.CenterOnCharacter();
         return citizen;
@@ -418,9 +378,50 @@ public class Area : IJobOwner, ILocation {
         return citizen;
     }
     public void PlaceNewResidentInInnerMap(Character newResident) {
-        LocationGridTile mainEntrance = areaMap.GetRandomUnoccupiedEdgeTile();
+        LocationGridTile mainEntrance = innerMap.GetRandomUnoccupiedEdgeTile();
         newResident.CreateMarker();
         newResident.InitialCharacterPlacement(mainEntrance);
+    }
+    public bool AddResident(Character character, Dwelling chosenHome = null, bool ignoreCapacity = true) {
+        if (!residents.Contains(character)) {
+            if (!ignoreCapacity) {
+                if (IsResidentsFull()) {
+                    Debug.LogWarning(GameManager.Instance.TodayLogString() + "Cannot add " + character.name + " as resident of " + this.name + " because residency is already full!");
+                    return false; //settlement is at capacity
+                }
+            }
+            if (!CanCharacterBeAddedAsResidentBasedOnFaction(character)) {
+                character.PrintLogIfActive(GameManager.Instance.TodayLogString() + character.name + " tried to become a resident of " + name + " but their factions conflicted");
+                return false;
+            }
+            region.AddResident(character);
+            residents.Add(character);
+            //TODO:
+            // if(!coreTile.isCorrupted) {
+            //     classManager.OnAddResident(character);
+            // }
+            AssignCharacterToDwellingInArea(character, chosenHome);
+            return true;
+        }
+        return false;
+    }
+    public void RemoveResident(Character character) {
+        if (residents.Remove(character)) {
+            region.RemoveResident(character);
+            if (character.homeStructure != null && character.homeSettlement == this) {
+                character.homeStructure.RemoveResident(character);
+            }
+        }
+    }
+    private bool CanCharacterBeAddedAsResidentBasedOnFaction(Character character) {
+        if (owner != null && character.faction != null) {
+            //If character's faction is hostile with region's ruling faction, character cannot be a resident
+            return !owner.IsHostileWith(character.faction);
+        } else if (owner != null && character.faction == null) {
+            //If character has no faction and region has faction, character cannot be a resident
+            return false;
+        }
+        return true;
     }
     #endregion
 
@@ -429,7 +430,7 @@ public class Area : IJobOwner, ILocation {
     //    if (!itemsInArea.Contains(token)) {
     //        itemsInArea.Add(token);
     //        token.SetOwner(this.owner);
-    //        if (areaMap != null) { //if the area map of this area has already been created.
+    //        if (areaMap != null) { //if the settlement map of this settlement has already been created.
     //            //Debug.Log(GameManager.Instance.TodayLogString() + "Added " + token.name + " at " + name);
     //            if (structure != null) {
     //                structure.AddItem(token, gridLocation);
@@ -485,39 +486,23 @@ public class Area : IJobOwner, ILocation {
         }
         return false;
     }
-    public bool IsSameCoreLocationAs(ILocation location) {
-        return location.coreTile == this.coreTile;
-    }
     #endregion
 
     #region Structures
     public void GenerateStructures(int citizenCount) {
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
-        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.CITY_CENTER, true);
-        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WORK_AREA, true);
-        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WILDERNESS, false);
-        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.POND, true);
-        
-        // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.APOTHECARY, true);
-        // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.ASSASSIN_GUILD, true);
-        // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.BARRACKS, true);
-        // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.HUNTER_LODGE, true);
-        // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.MAGE_QUARTERS, true);
-        // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.MINER_CAMP, true);
-        // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.RAIDER_CAMP, true);
-        // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.SMITHY, true);
-
+        LandmarkManager.Instance.CreateNewStructureAt(region, STRUCTURE_TYPE.CITY_CENTER, this);
         for (int i = 0; i < citizenCount; i++) {
-            LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.DWELLING, true);
+            LandmarkManager.Instance.CreateNewStructureAt(region, STRUCTURE_TYPE.DWELLING, this);
         }
         AssignPrison();
     }
     public void LoadStructures(SaveDataArea data) {
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
 
-        for (int i = 0; i < data.structures.Count; i++) {
-            LandmarkManager.Instance.LoadStructureAt(this, data.structures[i]);
-        }
+        // for (int i = 0; i < data.structures.Count; i++) {
+        //     LandmarkManager.Instance.LoadStructureAt(this, data.structures[i]);
+        // }
         AssignPrison();
     }
     public void AddStructure(LocationStructure structure) {
@@ -569,17 +554,15 @@ public class Area : IJobOwner, ILocation {
         }
         return null;
     }
-    public List<LocationStructure> GetStructuresAtLocation(bool inside) {
-        List<LocationStructure> structures = new List<LocationStructure>();
+    public List<LocationStructure> GetStructuresAtLocation() {
+        List<LocationStructure> structuresAtLocation = new List<LocationStructure>();
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in this.structures) {
             for (int i = 0; i < kvp.Value.Count; i++) {
                 LocationStructure currStructure = kvp.Value[i];
-                if (currStructure.isInside == inside && currStructure.structureType != STRUCTURE_TYPE.EXIT) {
-                    structures.Add(currStructure);
-                }
+                structuresAtLocation.Add(currStructure);
             }
         }
-        return structures;
+        return structuresAtLocation;
     }
     public bool HasStructure(STRUCTURE_TYPE type) {
         return structures.ContainsKey(type);
@@ -587,15 +570,12 @@ public class Area : IJobOwner, ILocation {
     #endregion
 
     #region Inner Map
-    public void SetAreaMap(AreaInnerTileMap map) {
-        areaMap = map;
-    }
     public IEnumerator PlaceObjects() {
         //pre placed objects
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
             for (int i = 0; i < keyValuePair.Value.Count; i++) {
                 LocationStructure structure = keyValuePair.Value[i];
-                structure.structureObj?.RegisterPreplacedObjects(structure, this.areaMap);
+                structure.structureObj?.RegisterPreplacedObjects(structure, this.innerMap);
                 yield return null;
             }
         }
@@ -618,19 +598,21 @@ public class Area : IJobOwner, ILocation {
         }
     }
     private void PlaceBuildSpots() {
-        for (int x = 0; x < areaMap.buildingSpots.GetUpperBound(0); x++) {
-            for (int y = 0; y < areaMap.buildingSpots.GetUpperBound(1); y++) {
-                BuildingSpot spot = areaMap.buildingSpots[x, y];
-                BuildSpotTileObject tileObj = new BuildSpotTileObject();
-                tileObj.SetBuildingSpot(spot);
-                LocationGridTile tileLocation = areaMap.map[spot.location.x, spot.location.y];
-                //if (tileLocation.objHere != null) {
-                //    tileLocation.structure.RemovePOI(tileLocation.objHere);
-                //}
-                tileLocation.structure.AddPOI(tileObj, tileLocation, false);
-                tileObj.SetGridTileLocation(tileLocation); //manually placed so that only the data of the build spot will be set, and the tile will not consider the build spot as objHere
-                if (tileLocation.structure.structureType != STRUCTURE_TYPE.WORK_AREA && tileLocation.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
-                    tileLocation.structure.SetOccupiedBuildSpot(tileObj);
+        for (int x = 0; x <= innerMap.buildingSpots.GetUpperBound(0); x++) {
+            for (int y = 0; y <= innerMap.buildingSpots.GetUpperBound(1); y++) {
+                BuildingSpot spot = innerMap.buildingSpots[x, y];
+                if (spot.hexTileOwner != null) {
+                    BuildSpotTileObject tileObj = new BuildSpotTileObject();
+                    tileObj.SetBuildingSpot(spot);
+                    LocationGridTile tileLocation = innerMap.map[spot.location.x, spot.location.y];
+                    //if (tileLocation.objHere != null) {
+                    //    tileLocation.structure.RemovePOI(tileLocation.objHere);
+                    //}
+                    tileLocation.structure.AddPOI(tileObj, tileLocation, false);
+                    tileObj.SetGridTileLocation(tileLocation); //manually placed so that only the data of the build spot will be set, and the tile will not consider the build spot as objHere
+                    if (tileLocation.structure.structureType != STRUCTURE_TYPE.WORK_AREA && tileLocation.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
+                        tileLocation.structure.SetOccupiedBuildSpot(tileObj);
+                    }    
                 }
             }
         }
@@ -705,22 +687,6 @@ public class Area : IJobOwner, ILocation {
             }
         }
     }
-    public IPointOfInterest GetRandomTileObject() {
-        List<IPointOfInterest> tileObjects = new List<IPointOfInterest>();
-        foreach (List<LocationStructure> locationStructures in structures.Values) {
-            for (int i = 0; i < locationStructures.Count; i++) {
-                for (int j = 0; j < locationStructures[i].pointsOfInterest.Count; j++) {
-                    if (locationStructures[i].pointsOfInterest[j].poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
-                        tileObjects.Add(locationStructures[i].pointsOfInterest[j]);
-                    }
-                }
-            }
-        }
-        if (tileObjects.Count > 0) {
-            return tileObjects[UnityEngine.Random.Range(0, tileObjects.Count)];
-        }
-        return null;
-    }
     private void AssignPrison() {
         if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
             return;
@@ -737,20 +703,14 @@ public class Area : IJobOwner, ILocation {
                 if (chosenPrison != null) {
                     prison = chosenPrison;
                 } else {
-                    Debug.LogError("Cannot assign a prison! There is no warehouse, explore area, or work area structure in the location of " + name);
+                    prison = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
                 }
             }
         }
     }
-    //public void SetSupplyPile(WoodPile supplyPile) {
-    //    this.supplyPile = supplyPile;
-    //}
-    //public void SetFoodPile(FoodPile foodPile) {
-    //    this.foodPile = foodPile;
-    //}
     public void OnLocationStructureObjectPlaced(LocationStructure structure) {
         if (structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
-            //if a warehouse was placed, and this area does not yet have a main storage structure, or is using the city center as their main storage structure, then use the new warehouse instead.
+            //if a warehouse was placed, and this settlement does not yet have a main storage structure, or is using the city center as their main storage structure, then use the new warehouse instead.
             if (mainStorage == null || mainStorage.structureType == STRUCTURE_TYPE.CITY_CENTER) {
                 SetMainStorage(structure);
             }
@@ -1118,9 +1078,9 @@ public class Area : IJobOwner, ILocation {
     }
     #endregion
 
-    #region Area Map
+    #region Settlement Map
     //public void OnMapGenerationFinished() {
-    //    //place tokens in area to actual structures.
+    //    //place tokens in settlement to actual structures.
     //    //get structure for token
     //    for (int i = 0; i < itemsInArea.Count; i++) {
     //        SpecialToken token = itemsInArea[i];
@@ -1132,22 +1092,53 @@ public class Area : IJobOwner, ILocation {
     //    }
     //}
     #endregion
-
-    #region Awareness
-    public bool AddAwareness(IPointOfInterest pointOfInterest) {
-        return region.AddAwareness(pointOfInterest);
+    
+    #region Faction
+    public void SetOwner(Faction owner) {
+        SetPreviousOwner(this.owner);
+        this.owner = owner;
+        /*Whenever a location is occupied, 
+            all items in structures Inside Settlement will be owned by the occupying faction.*/
+        List<LocationStructure> insideStructures = GetStructuresAtLocation();
+        for (int i = 0; i < insideStructures.Count; i++) {
+            insideStructures[i].OwnItemsInLocation(owner);
+        }
+        Messenger.Broadcast(Signals.AREA_OWNER_CHANGED, this);
+        
+        bool isCorrupted = this.owner != null && this.owner.isPlayerFaction;
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile tile = tiles[i];
+            tile.SetCorruption(isCorrupted);
+        }
+        //TODO:
+        // mainLandmark.landmarkNameplate.UpdateFactionEmblem();
+        // regionTileObject?.UpdateAdvertisements(this);
     }
-    public void RemoveAwareness(IPointOfInterest pointOfInterest) {
-        region.RemoveAwareness(pointOfInterest);
-    }
-    public void RemoveAwareness(POINT_OF_INTEREST_TYPE poiType) {
-        region.RemoveAwareness(poiType);
-    }
-    public bool HasAwareness(IPointOfInterest poi) {
-        return region.HasAwareness(poi);
+    public void SetPreviousOwner(Faction faction) {
+        previousOwner = faction;
     }
     #endregion
 
+    #region Tiles
+    public void AddTileToSettlement(HexTile tile) {
+        if (tiles.Contains(tile) == false) {
+            tiles.Add(tile);
+            tile.SetSettlementOnTile(this);
+        }
+    }
+    public void AddTileToSettlement(params HexTile[] tiles) {
+        for (int i = 0; i < tiles.Length; i++) {
+            HexTile tile = tiles[i];
+            AddTileToSettlement(tile);
+        }
+    }
+    public void RemoveTileFromSettlement(HexTile tile) {
+        if (tiles.Remove(tile)) {
+            tile.SetSettlementOnTile(null);
+        }
+    }
+    #endregion
+    
     public override string ToString() {
         return name;
     }

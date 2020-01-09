@@ -26,9 +26,9 @@ public class PortalLandmarkGeneration : MapGenerationComponent {
 		}
 
 		HexTile portalTile = Utilities.GetRandomElement(validPortalTiles);
-		// Area portalArea = CreateNewArea(portalRegion, LOCATION_TYPE.DEMONIC_INTRUSION, 0);
+		// Settlement portalSettlement = CreateNewArea(portalRegion, LOCATION_TYPE.DEMONIC_INTRUSION, 0);
 		BaseLandmark portalLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(portalTile, LANDMARK_TYPE.THE_PORTAL, false);
-		// portalArea.region.SetName("Portal"); //need this so that when player is initialized. This area will be assigned to the player.
+		// portalSettlement.region.SetName("Portal"); //need this so that when player is initialized. This settlement will be assigned to the player.
 		data.portal = portalLandmark;
 	}
 

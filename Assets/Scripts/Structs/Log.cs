@@ -124,8 +124,8 @@ public class Log {
                 if (obj is Character) {
                     (obj as Character).AddHistory(this);
                 } 
-                //else if (obj is Area) {
-                //    (obj as Area).AddHistory(this);
+                //else if (obj is Settlement) {
+                //    (obj as Settlement).AddHistory(this);
                 //} 
                 //else if (obj is Minion) {
                 //    (obj as Minion).character.AddHistory(this);
@@ -145,8 +145,8 @@ public class Log {
                 if (obj is Character) {
                     (obj as Character).AddHistory(this);
                 } 
-                //else if (obj is Area) {
-                //    (obj as Area).AddHistory(this);
+                //else if (obj is Settlement) {
+                //    (obj as Settlement).AddHistory(this);
                 //} 
                 //else if (obj is Minion) {
                 //    (obj as Minion).character.AddHistory(this);

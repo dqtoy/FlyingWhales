@@ -30,9 +30,9 @@ public class MetalPile : ResourcePile {
     //public override void SetGridTileLocation(LocationGridTile tile) {
     //    base.SetGridTileLocation(tile);
     //    if (tile != null) {
-    //        //when a supply pile is placed, and the area does not yet have a supply pile, then set its supply pile to this
-    //        if (tile.parentAreaMap.area.supplyPile == null) {
-    //            tile.parentAreaMap.area.SetSupplyPile(this);
+    //        //when a supply pile is placed, and the settlement does not yet have a supply pile, then set its supply pile to this
+    //        if (tile.parentAreaMap.settlement.supplyPile == null) {
+    //            tile.parentAreaMap.settlement.SetSupplyPile(this);
     //        }
     //    }
     //}
@@ -42,10 +42,10 @@ public class MetalPile : ResourcePile {
         if (gridTileLocation != null) {
             if (structureLocation == structureLocation.location.mainStorage) {
                 if (resourceInPile < 100) {
-                    if (structureLocation.areaLocation != null && !structureLocation.areaLocation.HasJob(JOB_TYPE.PRODUCE_METAL)) {
-                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PRODUCE_METAL, new GoapEffect(GOAP_EFFECT_CONDITION.PRODUCE_METAL, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), this, structureLocation.areaLocation);
+                    if (structureLocation.settlementLocation != null && !structureLocation.settlementLocation.HasJob(JOB_TYPE.PRODUCE_METAL)) {
+                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PRODUCE_METAL, new GoapEffect(GOAP_EFFECT_CONDITION.PRODUCE_METAL, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), this, structureLocation.settlementLocation);
                         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainSupplyJob);
-                        structureLocation.areaLocation.AddToAvailableJobs(job);
+                        structureLocation.settlementLocation.AddToAvailableJobs(job);
                     }
                 } else {
                     ForceCancelNotAssignedProduceJob(JOB_TYPE.PRODUCE_METAL);

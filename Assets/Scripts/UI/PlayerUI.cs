@@ -193,7 +193,7 @@ public class PlayerUI : MonoBehaviour {
         LoadAttackSlot();
         LoadInterventionAbilitySlots();
         UpdateInterventionAbilitySlots();
-        //LoadKillCountCharacterItems();
+        // LoadKillCountCharacterItems();
         InitialUpdateKillCountCharacterItems();
 
         UpdateIntel();
@@ -272,13 +272,13 @@ public class PlayerUI : MonoBehaviour {
         //startInvasionButton.gameObject.SetActive(true);
         //saveGameButton.gameObject.SetActive(false);
 
-        //if (PlayerManager.Instance.player.currentAreaBeingInvaded == area) {
+        //if (PlayerManager.Instance.player.currentSettlementBeingInvaded == settlement) {
         //    ShowCombatAbilityUI();
         //}
 
         //Kill count UI
         //UpdateKillCountActiveState();
-        //LoadKillCountCharacterItems(area);
+        //LoadKillCountCharacterItems(settlement);
         //UpdateKillCount();
     }
     private void OnInnerMapClosed(ILocation location) {
@@ -380,11 +380,11 @@ public class PlayerUI : MonoBehaviour {
         OnCharacterBecomesNonMinionOrSummon(character);
     }
     private void CheckIfAllCharactersWipedOut() {
-        if (PlayerManager.Instance.player.currentAreaBeingInvaded != null) {
+        if (PlayerManager.Instance.player.currentSettlementBeingInvaded != null) {
             return; //player has initiated invasion of settlement, all checking of win condition will be executed in PerTickInvasion() in Player script. TODO: Unify them!
         }
         bool stillHasResidents = false;
-        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) { //Changed checking to faction members, because some characters may still consider the area as their home, but are no longer part of the faction
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) { //Changed checking to faction members, because some characters may still consider the settlement as their home, but are no longer part of the faction
             Character currCharacter = CharacterManager.Instance.allCharacters[i];
             if (currCharacter.IsAble() && currCharacter.isStillConsideredAlive && !(currCharacter is Summon) && currCharacter.faction.isMajorFriendlyNeutral) {
                 stillHasResidents = true;
@@ -413,9 +413,7 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     private void OnMenuOpened(UIMenu menu) {
-        if (menu is LandmarkInfoUI) {
-            UIManager.Instance.ShowMinionsMenu();
-        } else if (menu is AreaInfoUI || menu is CharacterInfoUI || menu is TileObjectInfoUI || menu is RegionInfoUI) {
+        if (menu is CharacterInfoUI || menu is TileObjectInfoUI || menu is RegionInfoUI) {
             HideKillSummary();
             if (menu is RegionInfoUI) {
                 UpdateClickedDemonicToggle();
@@ -423,19 +421,7 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     private void OnMenuClosed(UIMenu menu) {
-        if (menu is LandmarkInfoUI) {
-            if (string.IsNullOrEmpty(previousMenu)) {
-                UIManager.Instance.HideRightMenus();
-            } else if (previousMenu.Equals("minion")) {
-                UIManager.Instance.ShowMinionsMenu();
-            } else if (previousMenu.Equals("character")) {
-                UIManager.Instance.ShowCharacterTokenMenu();
-            } else if (previousMenu.Equals("location")) {
-                UIManager.Instance.ShowLocationTokenMenu();
-            } else if (previousMenu.Equals("faction")) {
-                UIManager.Instance.ShowFactionTokenMenu();
-            }
-        } else if (menu is RegionInfoUI) {
+        if (menu is RegionInfoUI) {
             UpdateClickedDemonicToggle();
         }
         //else if (menu is CharacterInfoUI || menu is TileObjectInfoUI) {
@@ -930,13 +916,15 @@ public class PlayerUI : MonoBehaviour {
         }
         startingAbilities = null;
         UIManager.Instance.SetSpeedTogglesState(true);
-        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
-            Faction faction = FactionManager.Instance.allFactions[i];
-            if (faction.isMajorNonPlayer) {
-                faction.CreateAndSetActiveQuest("Divine Intervention", faction.ownedRegions[0]);
-                break;
-            }
-        }
+        //TODO:
+        // for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+        //     Faction faction = FactionManager.Instance.allFactions[i];
+        //     if (faction.isMajorNonPlayer) {
+        //         faction.CreateAndSetActiveQuest("Divine Intervention", faction.ownedSettlements[0]);
+        //         break;
+        //     }
+        // }
+        
         
         // LANDMARK_TYPE[] landmarkTypes = Utilities.GetEnumValues<LANDMARK_TYPE>();
         // for (int i = 0; i < landmarkTypes.Length; i++) {
@@ -1087,15 +1075,15 @@ public class PlayerUI : MonoBehaviour {
             //    PlayerManager.Instance.player.SetMinionLeader(minion);
             //}
         }
-        if (PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile != null) {
-            InnerMapManager.Instance.TryShowLocationMap(PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile);
+        if (PlayerManager.Instance.player.currentTileBeingCorrupted.region != null) {
+            InnerMapManager.Instance.TryShowLocationMap(PlayerManager.Instance.player.currentTileBeingCorrupted.region);
         } else {
             //PlayerManager.Instance.player.currentTileBeingCorrupted.landmarkOnTile.ShowEventBasedOnYieldType();
             PlayerManager.Instance.player.InvadeATile();
         }
         //if (tempCurrentMinionLeaderPicker != null) {
         //    PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeaderPicker.minion);
-        //    if (PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile == null) {
+        //    if (PlayerManager.Instance.player.currentTileBeingCorrupted.settlementOfTile == null) {
         //        StoryEvent e = PlayerManager.Instance.player.currentTileBeingCorrupted.GetRandomStoryEvent();
         //        if (e != null) {
         //            Debug.Log("Will show event " + e.name);
@@ -1138,7 +1126,7 @@ public class PlayerUI : MonoBehaviour {
     private bool isSummoning = false; //if the player has clicked the summon button and is targetting a tile to place the summon on.
     private SummonSlot currentlySelectedSummonSlot; //the summon type that is currently shown in the UI
     private void UpdateSummonsInteraction() {
-        bool state = /*currentlySelectedSummonSlot != null && currentlySelectedSummonSlot.summon != null && !currentlySelectedSummonSlot.summon.hasBeenUsed &&*/ InnerMapManager.Instance.isAnAreaMapShowing;
+        bool state = /*currentlySelectedSummonSlot != null && currentlySelectedSummonSlot.summon != null && !currentlySelectedSummonSlot.summon.hasBeenUsed &&*/ InnerMapManager.Instance.isAnInnerMapShowing;
         //summonCover.SetActive(!state);
         summonBtn.interactable = state;
     }
@@ -1341,7 +1329,7 @@ public class PlayerUI : MonoBehaviour {
     private ArtifactSlot currentlySelectedArtifactSlot; //the artifact that is currently shown in the UI
     private void UpdateArtifactsInteraction() {
         bool state = currentlySelectedArtifactSlot != null && currentlySelectedArtifactSlot.artifact != null && !currentlySelectedArtifactSlot.artifact.hasBeenUsed;
-        summonArtifactBtn.interactable = state && InnerMapManager.Instance.isAnAreaMapShowing;
+        summonArtifactBtn.interactable = state && InnerMapManager.Instance.isAnInnerMapShowing;
         summonArtifactCover.SetActive(!summonArtifactBtn.interactable);
     }
     private void OnPlayerGainedArtifactSlot(ArtifactSlot slot) {
@@ -1516,7 +1504,7 @@ public class PlayerUI : MonoBehaviour {
     }
     #endregion
 
-    #region Area Corruption
+    #region Settlement Corruption
     public void SuccessfulAreaCorruption() {
         successfulAreaCorruptionGO.SetActive(true);
         //Utilities.DestroyChildren(killSummaryScrollView.content);
@@ -1556,12 +1544,12 @@ public class PlayerUI : MonoBehaviour {
         Utilities.DestroyChildren(combatAbilityGO.transform);
         for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
             Minion currMinion = PlayerManager.Instance.player.minions[i];
-            if (currMinion.assignedRegion != null && currMinion.assignedRegion.area != null && PlayerManager.Instance.player.currentAreaBeingInvaded == currMinion.assignedRegion.area) {
-                GameObject go = Instantiate(combatAbilityButtonPrefab, combatAbilityGO.transform);
-                CombatAbilityButton abilityButton = go.GetComponent<CombatAbilityButton>();
-                abilityButton.SetCombatAbility(currMinion.combatAbility);
-                currentCombatAbilityButtons.Add(abilityButton);
-            }
+            // if (currMinion.assignedRegion != null && currMinion.assignedRegion.settlement != null && PlayerManager.Instance.player.currentSettlementBeingInvaded == currMinion.assignedRegion.settlement) {
+            //     GameObject go = Instantiate(combatAbilityButtonPrefab, combatAbilityGO.transform);
+            //     CombatAbilityButton abilityButton = go.GetComponent<CombatAbilityButton>();
+            //     abilityButton.SetCombatAbility(currMinion.combatAbility);
+            //     currentCombatAbilityButtons.Add(abilityButton);
+            // }
         }
     }
     public CombatAbilityButton GetCombatAbilityButton(CombatAbility ability) {
@@ -1584,7 +1572,7 @@ public class PlayerUI : MonoBehaviour {
     public bool isShowingKillSummary { get { return killCountGO.activeSelf; } }
     [SerializeField] private Toggle killSummaryToggle;
     private void UpdateKillCountActiveState() {
-        bool state = InnerMapManager.Instance.isAnAreaMapShowing;
+        bool state = InnerMapManager.Instance.isAnInnerMapShowing;
         killCountGO.SetActive(state);
         killSummaryGO.SetActive(false);
     }
@@ -1845,6 +1833,7 @@ public class PlayerUI : MonoBehaviour {
 
     #region Intervention Abilities
     private void LoadInterventionAbilitySlots() {
+        Utilities.DestroyChildren(activeMinionActionsParent);
         interventionAbilityBtns = new PlayerJobActionButton[PlayerManager.Instance.player.MAX_INTERVENTION_ABILITIES];
         for (int i = 0; i < PlayerManager.Instance.player.MAX_INTERVENTION_ABILITIES; i++) {
             GameObject jobGO = UIManager.Instance.InstantiateUIObject(actionBtnPrefab.name, activeMinionActionsParent);

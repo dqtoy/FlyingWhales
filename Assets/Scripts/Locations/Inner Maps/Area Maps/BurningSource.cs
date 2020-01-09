@@ -22,14 +22,14 @@ public class BurningSource {
         location.innerMap.AddActiveBurningSource(this);
     }
 
-    public BurningSource(Area location, SaveDataBurningSource source) {
-        id = source.id;
-        dousers = new List<Character>();
-        objectsOnFire = new List<ITraitable>();
-        this.location = location;
-        location.areaMap.AddActiveBurningSource(this);
-        //LoadCharactersDousingFire(source); //This will just add the characters dousing the fires to the list.
-    }
+    // public BurningSource(Settlement location, SaveDataBurningSource source) {
+    //     id = source.id;
+    //     dousers = new List<Character>();
+    //     objectsOnFire = new List<ITraitable>();
+    //     this.location = location.region;
+    //     location.innerMap.AddActiveBurningSource(this);
+    //     //LoadCharactersDousingFire(source); //This will just add the characters dousing the fires to the list.
+    // }
 
     private void LoadCharactersDousingFire(SaveDataBurningSource source) {
         for (int i = 0; i < source.characterDouserIDs.Count; i++) {
