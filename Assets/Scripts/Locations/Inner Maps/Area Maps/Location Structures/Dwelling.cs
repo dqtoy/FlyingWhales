@@ -19,13 +19,13 @@ public class Dwelling : LocationStructure, IDwelling {
     //facilities
     public Dictionary<FACILITY_TYPE, int> facilities { get; protected set; }
 
-    public Dwelling(ILocation location, bool isInside) 
-        : base(STRUCTURE_TYPE.DWELLING, location, isInside) {
+    public Dwelling(ILocation location) 
+        : base(STRUCTURE_TYPE.DWELLING, location) {
         residents = new List<Character>();
         InitializeFacilities();
     }
 
-    public Dwelling(Area location, SaveDataLocationStructure data)
+    public Dwelling(ILocation location, SaveDataLocationStructure data)
     : base(location, data) {
         residents = new List<Character>();
         InitializeFacilities();

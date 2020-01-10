@@ -32,7 +32,7 @@ public class ForageFoodRegion : GoapAction {
             var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
             return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null &&
                    actor.traitContainer.GetNormalTrait<Trait>("Hunter") != null && 
-                   region.HasFeature(RegionFeatureDB.Game_Feature);
+                   region.HasTileWithFeature(TileFeatureDB.Game_Feature);
         }
         return false;
     }

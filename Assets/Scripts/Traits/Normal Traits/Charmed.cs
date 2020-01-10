@@ -22,9 +22,9 @@ namespace Traits {
         #region Overrides
         public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
             base.OnRemoveTrait(sourcePOI, removedBy);
-            if (sourcePOI is Character) {
-                (sourcePOI as Character).ReturnToOriginalHomeAndFaction(originalHome, originalFaction);
-            }
+            // if (sourcePOI is Character) {
+            //     (sourcePOI as Character).ReturnToOriginalHomeAndFaction(originalHome, originalFaction);
+            // }
         }
         public override string GetToolTipText() {
             if (responsibleCharacter == null) {

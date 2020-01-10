@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HallowedGroundFeature : RegionFeature {
+public class HallowedGroundFeature : TileFeature {
 
     public HallowedGroundFeature() {
         name = "Hallowed Ground";

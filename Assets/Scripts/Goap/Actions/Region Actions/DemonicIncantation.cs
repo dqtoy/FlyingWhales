@@ -30,7 +30,7 @@ public class DemonicIncantation : GoapAction {
             //**Requirements:** Actor is a Cultist. Region is Hallowed Ground.
             var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
             return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.traitContainer.GetNormalTrait<Trait>("Cultist") != null 
-                   && region.HasFeature(RegionFeatureDB.Hallowed_Ground_Feature);
+                   && region.HasTileWithFeature(TileFeatureDB.Hallowed_Ground_Feature);
         }
         return false;
     }

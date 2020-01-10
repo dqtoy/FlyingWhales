@@ -110,19 +110,12 @@ public class Save {
         for (int i = 0; i < hextileSaves.Count; i++) {
             SaveDataHextile saveDataHextile = hextileSaves[i];
             if (saveDataHextile.landmarkID != -1) {
-                HexTile currTile = GridMap.Instance.hexTiles[saveDataHextile.id];
+                HexTile currTile = GridMap.Instance.normalHexTiles[saveDataHextile.id];
                 //We get the index for the appropriate landmark of hextile through (landmarkID - 1) because the list of landmarksaves is properly ordered
                 //Example, the save data in index 0 of the list has an id of 1 since all ids in game start at 1, that is why to get the index of the landmark of the tile, we get the true landmark id and subtract it by 1
                 //This is done so that we will not loop every time we want to get the save data of a landmark and check all the ids if it will match
                 GetLandmarkSaveByID(saveDataHextile.landmarkID).Load(currTile);
             }
-        }
-    }
-
-    public void LoadWorldEventsAndWorldObject() {
-        for (int i = 0; i < regionSaves.Count; i++) {
-            SaveDataRegion data = regionSaves[i];
-            data.LoadActiveEvent(GridMap.Instance.hexTiles[data.coreTileID].region);
         }
     }
 
@@ -141,27 +134,21 @@ public class Save {
         }
         GridMap.Instance.LoadRegions(regions);
     }
-    public void LoadRegionConnections() {
-        for (int i = 0; i < regionSaves.Count; i++) {
-            SaveDataRegion data = regionSaves[i];
-            data.LoadRegionConnections(GridMap.Instance.hexTiles[data.coreTileID].region);
-        }
-    }
     public void LoadRegionCharacters() {
         for (int i = 0; i < regionSaves.Count; i++) {
             SaveDataRegion data = regionSaves[i];
-            data.LoadRegionCharacters(GridMap.Instance.hexTiles[data.coreTileID].region);
+            data.LoadRegionCharacters(GridMap.Instance.normalHexTiles[data.coreTileID].region);
         }
     }
     public void LoadRegionAdditionalData() {
         for (int i = 0; i < regionSaves.Count; i++) {
             SaveDataRegion data = regionSaves[i];
-            data.LoadRegionAdditionalData(GridMap.Instance.hexTiles[data.coreTileID].region);
+            data.LoadRegionAdditionalData(GridMap.Instance.normalHexTiles[data.coreTileID].region);
         }
     }
-    public void SavePlayerArea(Area area) {
+    public void SavePlayerArea(Settlement settlement) {
         playerAreaSave = new SaveDataArea();
-        playerAreaSave.Save(area);
+        playerAreaSave.Save(settlement);
     }
     public void LoadPlayerArea() {
         playerAreaSave.Load();
@@ -171,11 +158,11 @@ public class Save {
     }
     public void SaveNonPlayerAreas() {
         nonPlayerAreaSaves = new List<SaveDataArea>();
-        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-            Area area = LandmarkManager.Instance.allAreas[i];
-            if(area != PlayerManager.Instance.player.playerArea) {
+        for (int i = 0; i < LandmarkManager.Instance.allSetttlements.Count; i++) {
+            Settlement settlement = LandmarkManager.Instance.allSetttlements[i];
+            if(settlement != PlayerManager.Instance.player.playerSettlement) {
                 SaveDataArea saveDataArea = new SaveDataArea();
-                saveDataArea.Save(area);
+                saveDataArea.Save(settlement);
                 nonPlayerAreaSaves.Add(saveDataArea);
             }
         }
@@ -272,11 +259,11 @@ public class Save {
         }
     }
     public void LoadCharactersDousingFire() {
-        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-            Area currArea = LandmarkManager.Instance.allAreas[i];
-            if (currArea.areaMap != null) {
-                for (int j = 0; j < currArea.areaMap.activeBurningSources.Count; j++) {
-                    BurningSource currBurningSource = currArea.areaMap.activeBurningSources[j];
+        for (int i = 0; i < LandmarkManager.Instance.allSetttlements.Count; i++) {
+            Settlement currSettlement = LandmarkManager.Instance.allSetttlements[i];
+            if (currSettlement.innerMap != null) {
+                for (int j = 0; j < currSettlement.innerMap.activeBurningSources.Count; j++) {
+                    BurningSource currBurningSource = currSettlement.innerMap.activeBurningSources[j];
                     //currBurningSource.ActivateCharactersDousingFire();
                 }
             }

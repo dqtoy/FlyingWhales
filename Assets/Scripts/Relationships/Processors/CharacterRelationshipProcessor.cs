@@ -20,7 +20,7 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
 
         switch (relType) {
             case RELATIONSHIP_TYPE.LOVER:
-                if (character1.homeRegion.area != null && character2.homeRegion.area != null && character1.homeRegion == character2.homeRegion
+                if (character1.homeSettlement != null && character2.homeSettlement != null && character1.homeRegion == character2.homeRegion
                     && character1.homeStructure != character2.homeStructure) {
                     if(character1.homeStructure == null && character2.homeStructure != null) {
                         character1.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, character2);

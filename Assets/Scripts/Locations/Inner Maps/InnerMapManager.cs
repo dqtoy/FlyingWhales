@@ -48,7 +48,7 @@ namespace Inner_Maps {
         [SerializeField] private WallResourceAssetDictionary wallResourceAssets; //wall assets categorized by resource.
         [SerializeField] private List<TileBase> allTileAssets;
 
-        //Area Map Objects
+        //Settlement Map Objects
         [FormerlySerializedAs("areaMapObjectFactory")] public MapVisualFactory mapObjectFactory;
 
         //structure templates
@@ -63,13 +63,12 @@ namespace Inner_Maps {
 #endif
         };
         public Dictionary<TILE_OBJECT_TYPE, List<TileObject>> allTileObjects { get; private set; }
-        public AreaInnerTileMap currentlyShowingMap { get; private set; }
-        public Area currentlyShowingArea { get; private set; }
+        public InnerTileMap currentlyShowingMap { get; private set; }
+        public ILocation currentlyShowingLocation { get; private set; }
         public List<InnerTileMap> innerMaps { get; private set; }
-        public bool isAnAreaMapShowing => currentlyShowingMap != null;
+        public bool isAnInnerMapShowing => currentlyShowingMap != null;
 
         public IPointOfInterest currentlyHoveredPoi { get; private set; }
-        public LocationGridTile currentlyHoveredTile => GetTileFromMousePosition();
         public List<LocationGridTile> currentlyHighlightedTiles { get; private set; }
 
         #region Monobehaviours
@@ -109,47 +108,47 @@ namespace Inner_Maps {
             allTileObjects = new Dictionary<TILE_OBJECT_TYPE, List<TileObject>>();
             innerMaps = new List<InnerTileMap>();
             mapObjectFactory = new MapVisualFactory();
-            AreaMapCameraMove.Instance.Initialize();
+            InnerMapCameraMove.Instance.Initialize();
             Messenger.AddListener(Signals.TICK_ENDED, CheckForChangeLight);
         }
         /// <summary>
-        /// Try and show the area map of an area. If it does not have one, this will generate one instead.
+        /// Try and show the settlement map of an settlement. If it does not have one, this will generate one instead.
         /// </summary>
-        /// <param name="area"></param>
-        public void TryShowAreaMap(Area area) {
-            if (area.areaMap != null) {
+        /// <param name="location"></param>
+        public void TryShowLocationMap(ILocation location) {
+            if (location.innerMap != null) {
                 //show existing map
-                ShowAreaMap(area);
+                ShowInnerMap(location);
             } else {
-                throw new System.Exception($"{area.name} does not have a generated areaMap");
+                throw new System.Exception($"{location.name} does not have a generated inner map");
             }
         }
-        public void ShowAreaMap(Area area, bool centerCameraOnMapCenter = true, bool instantCenter = true) {
-            if (area.locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
+        public void ShowInnerMap(ILocation location, bool centerCameraOnMapCenter = true, bool instantCenter = true) {
+            if (location.locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
                 UIManager.Instance.portalPopup.SetActive(true);
                 return;
             }
-            area.areaMap.Open();
-            currentlyShowingMap = area.areaMap;
-            currentlyShowingArea = area;
-            Messenger.Broadcast(Signals.AREA_MAP_OPENED, area);
+            location.innerMap.Open();
+            currentlyShowingMap = location.innerMap;
+            currentlyShowingLocation = location;
+            Messenger.Broadcast(Signals.LOCATION_MAP_OPENED, location);
 
             if (centerCameraOnMapCenter) {
-                AreaMapCameraMove.Instance.JustCenterCamera(instantCenter);
+                InnerMapCameraMove.Instance.JustCenterCamera(instantCenter);
             }
         }
-        public Area HideAreaMap() {
+        public ILocation HideAreaMap() {
             if (currentlyShowingMap == null) {
                 return null;
             }
             currentlyShowingMap.Close();
-            Area closedArea = currentlyShowingArea;
-            AreaMapCameraMove.Instance.CenterCameraOn(null);
+            ILocation closedLocation = currentlyShowingLocation;
+            InnerMapCameraMove.Instance.CenterCameraOn(null);
             currentlyShowingMap = null;
-            currentlyShowingArea = null;
-            PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
-            Messenger.Broadcast(Signals.AREA_MAP_CLOSED, closedArea);
-            return closedArea;
+            currentlyShowingLocation = null;
+            // PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
+            Messenger.Broadcast(Signals.LOCATION_MAP_CLOSED, closedLocation);
+            return closedLocation;
         }
         public void OnCreateInnerMap(InnerTileMap newMap) {
             innerMaps.Add(newMap);
@@ -159,19 +158,19 @@ namespace Inner_Maps {
             newMap.UpdateTilesWorldPosition();
             PathfindingManager.Instance.CreatePathfindingGraphForLocation(newMap);
             _nextMapPos = new Vector3(_nextMapPos.x, _nextMapPos.y + newMap.height + 10, _nextMapPos.z);
+            newMap.OnMapGenerationFinished();
         }
-        public void DestroyAreaMap(Area area) {
-            foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in area.structures) {
+        public void DestroyInnerMap(ILocation location) {
+            foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in location.structures) {
                 for (var i = 0; i < keyValuePair.Value.Count; i++) {
                     keyValuePair.Value[i].DoCleanup();
                 }
             }
-            pathfinder.data.RemoveGraph(area.areaMap.pathfindingGraph);
-            area.areaMap.CleanUp();
-            innerMaps.Remove(area.areaMap);
-            GameObject.Destroy(area.areaMap.gameObject);
-            area.SetAreaMap(null);
-            Debug.LogError("Area map of " + area.name + " is destroyed!");
+            pathfinder.data.RemoveGraph(location.innerMap.pathfindingGraph);
+            location.innerMap.CleanUp();
+            innerMaps.Remove(location.innerMap);
+            GameObject.Destroy(location.innerMap.gameObject);
+            Debug.LogError("Settlement map of " + location.name + " is destroyed!");
         }
         #endregion
 
@@ -186,23 +185,8 @@ namespace Inner_Maps {
             }
             return null;
         }
-        public LocationStructure GetRandomStructureToPlaceItem(ILocation location, SpecialToken token) {
-            //Items are now placed specifically in a structure when spawning at world creation. 
-            //Randomly place it at any non-Dwelling structure in the location.
-            List<LocationStructure> choices = new List<LocationStructure>();
-            foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in location.structures) {
-                if (kvp.Key != STRUCTURE_TYPE.DWELLING && kvp.Key != STRUCTURE_TYPE.EXIT && kvp.Key != STRUCTURE_TYPE.CEMETERY
-                    && kvp.Key != STRUCTURE_TYPE.INN && kvp.Key != STRUCTURE_TYPE.WORK_AREA && kvp.Key != STRUCTURE_TYPE.PRISON && kvp.Key != STRUCTURE_TYPE.POND) {
-                    choices.AddRange(kvp.Value);
-                }
-            }
-            if (choices.Count > 0) {
-                return choices[UnityEngine.Random.Range(0, choices.Count)];
-            }
-            return null;
-        }
-        public bool IsShowingAreaMap(Area area) {
-            return area != null && isAnAreaMapShowing && area.areaMap == currentlyShowingMap;
+        public bool IsShowingInnerMap(ILocation location) {
+            return location != null && isAnInnerMapShowing && location.innerMap == currentlyShowingMap;
         }
         #endregion
 
@@ -282,12 +266,6 @@ namespace Inner_Maps {
                         if (except != null && except.Contains(loaded.name)) {
                             continue; //skip
                         }
-                        //Debug.Log(loaded.name);
-#if TRAILER_BUILD
-                    if (folderName == "TOWN CENTER/" && loaded.name != "TC_Template_3.json") {
-                        continue; //only use Template 3 on Trailer Build
-                    }
-#endif
                         templates.Add(loaded);
                     }
                 }
@@ -295,7 +273,7 @@ namespace Inner_Maps {
             return templates;
         }
         /// <summary>
-        /// Get Tile asset based on name. NOTE: Should only be used on the start of the game when building the area maps.
+        /// Get Tile asset based on name. NOTE: Should only be used on the start of the game when building the settlement maps.
         /// </summary>
         /// <param name="name">Name of the asset</param>
         public TileBase GetTileAsset(string name, bool logMissing = false) {
@@ -346,7 +324,9 @@ namespace Inner_Maps {
                 return;
             }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+            HexTile hexTile = tile.buildSpotOwner.hexTileOwner;
             string summary = tile.localPlace.ToString();
+            summary += "\n<b>HexTile:</b>" + (hexTile?.ToString() ?? "None");
             summary += "\n<b>Local Location:</b>" + tile.localLocation;
             summary += " <b>World Location:</b>" + tile.worldLocation;
             summary += " <b>Centered World Location:</b>" + tile.centeredWorldLocation;
@@ -361,7 +341,7 @@ namespace Inner_Maps {
                 summary += " <b>Furniture Spot:</b>" + tile.furnitureSpot;
             }
             summary += "\nTile Traits: ";
-            if (tile.normalTraits.Count > 0) {
+            if (tile.genericTileObject != null && tile.normalTraits.Count > 0) {
                 summary += "\n";
                 for (int i = 0; i < tile.normalTraits.Count; i++) {
                     summary += "|" + tile.normalTraits[i].name + "|";
@@ -419,7 +399,7 @@ namespace Inner_Maps {
                 }
             }
             if (tile.structure != null) {
-                summary += "\nStructure: " + tile.structure + ", Has Owner: " + tile.structure.IsOccupied();
+                summary += "\nStructure: " + tile.structure + ", Tiles: " + tile.structure.tiles.Count.ToString() + ", Has Owner: " + tile.structure.IsOccupied();
                 summary += "\nCharacters at " + tile.structure + ": ";
                 if (tile.structure.charactersHere.Count > 0) {
                     for (int i = 0; i < tile.structure.charactersHere.Count; i++) {

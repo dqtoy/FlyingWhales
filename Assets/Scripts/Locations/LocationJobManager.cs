@@ -5,13 +5,13 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class LocationJobManager {
-    private Area location { get; set; }
+    private Settlement location { get; set; }
 
     private int _createJobsTriggerTick;
     private int currentExistingJobsCount;
     private List<string> _jobNames;
 
-    public LocationJobManager(Area location) {
+    public LocationJobManager(Settlement location) {
         this.location = location;
         _jobNames = new List<string>();
         _createJobsTriggerTick = GameManager.Instance.GetTicksBasedOnHour(9); //150
@@ -119,39 +119,42 @@ public class LocationJobManager {
         return false;
     }
     private bool TryGetCorruptedRegionWithoutLandmark(out Region validRegion) {
-        List<Region> regions = PlayerManager.Instance.player.playerFaction.ownedRegions;
-        for (int i = 0; i < regions.Count; i++) {
-            Region region = regions[i];
-            if(region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE) {
-                validRegion = region;
-                return true;
-            }
-        }
+        //TODO:
+        // List<Region> regions = PlayerManager.Instance.player.playerFaction.ownedSettlements;
+        // for (int i = 0; i < regions.Count; i++) {
+        //     Region region = regions[i];
+        //     if(region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE) {
+        //         validRegion = region;
+        //         return true;
+        //     }
+        // }
         validRegion = null;
         return false;
     }
     private bool TryGetAdjacentRegionWithoutFactionOwner(out Region validRegion) {
-        List<RegionConnectionData> connectedRegions = location.region.connections;
-        for (int i = 0; i < connectedRegions.Count; i++) {
-            Region region = connectedRegions[i].region;
-            if (!region.coreTile.isCorrupted && region.owner == null) {
-                validRegion = region;
-                return true;
-            }
-        }
+        //TODO:
+        // List<RegionConnectionData> connectedRegions = location.region.connections;
+        // for (int i = 0; i < connectedRegions.Count; i++) {
+        //     Region region = connectedRegions[i].region;
+        //     if (!region.coreTile.isCorrupted && region.owner == null) {
+        //         validRegion = region;
+        //         return true;
+        //     }
+        // }
         validRegion = null;
         return false;
     }
     private bool TryGetAdjacentRegionAtWarWithThisLocation(out Region validRegion) {
-        List<RegionConnectionData> connectedRegions = location.region.connections;
-        for (int i = 0; i < connectedRegions.Count; i++) {
-            Region region = connectedRegions[i].region;
-            if (!region.coreTile.isCorrupted && region.area == null && region.owner != null
-                && region.residents.Count <= 0 && region.owner.HasRelationshipStatusWith(FACTION_RELATIONSHIP_STATUS.HOSTILE, location.region.owner)) {
-                validRegion = region;
-                return true;
-            }
-        }
+        //TODO:
+        // List<RegionConnectionData> connectedRegions = location.region.connections;
+        // for (int i = 0; i < connectedRegions.Count; i++) {
+        //     Region region = connectedRegions[i].region;
+        //     if (!region.coreTile.isCorrupted && region.settlement == null && region.owner != null
+        //         && region.residents.Count <= 0 && region.owner.HasRelationshipStatusWith(FACTION_RELATIONSHIP_STATUS.HOSTILE, location.region.owner)) {
+        //         validRegion = region;
+        //         return true;
+        //     }
+        // }
         validRegion = null;
         return false;
     }
@@ -204,14 +207,15 @@ public class LocationJobManager {
         return false;
     }
     private bool TryGetOccupiedNonSettlementTileAtWarWithThisLocation(out Region validRegion) {
-        Region[] regions = GridMap.Instance.allRegions;
-        for (int i = 0; i < regions.Length; i++) {
-            Region region = regions[i];
-            if (region.residents.Count > 0 && region.area == null && region.owner.HasRelationshipStatusWith(FACTION_RELATIONSHIP_STATUS.HOSTILE, location.region.owner)) {
-                validRegion = region;
-                return true;
-            }
-        }
+        //TODO:
+        // Region[] regions = GridMap.Instance.allRegions;
+        // for (int i = 0; i < regions.Length; i++) {
+        //     Region region = regions[i];
+        //     if (region.residents.Count > 0 && region.settlement == null && region.owner.HasRelationshipStatusWith(FACTION_RELATIONSHIP_STATUS.HOSTILE, location.region.owner)) {
+        //         validRegion = region;
+        //         return true;
+        //     }
+        // }
         validRegion = null;
         return false;
     }
@@ -260,24 +264,25 @@ public class LocationJobManager {
     }
     private bool IsAtWarWithFactionThatSettlementNotBlockedByGarrison() {
         //TODO: Is blocked by garrison checker
-        foreach (KeyValuePair<Faction, FactionRelationship> kvp in location.region.owner.relationships) {
-            if (kvp.Key.isPlayerFaction) {
-                continue; //exclude player faction
-            }
-            if (kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE && kvp.Key.HasOwnedRegionWithSettlement()) {
-                return true;
-            }
-        }
+        // foreach (KeyValuePair<Faction, FactionRelationship> kvp in location.region.owner.relationships) {
+        //     if (kvp.Key.isPlayerFaction) {
+        //         continue; //exclude player faction
+        //     }
+        //     // if (kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE && kvp.Key.HasOwnedRegionWithSettlement()) {
+        //     //     return true;
+        //     // }
+        // }
         return false;
     }
     private bool IsPlayerOnlyRemainingStructureIsPortal() {
-        List<Region> regions = PlayerManager.Instance.player.playerFaction.ownedRegions;
-        for (int i = 0; i < regions.Count; i++) {
-            Region region = regions[i];
-            if (region.mainLandmark != null && region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.THE_PORTAL) {
-                return false;
-            }
-        }
+        //TODO:
+        // List<Region> regions = PlayerManager.Instance.player.playerFaction.ownedSettlements;
+        // for (int i = 0; i < regions.Count; i++) {
+        //     Region region = regions[i];
+        //     if (region.mainLandmark != null && region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.THE_PORTAL) {
+        //         return false;
+        //     }
+        // }
         return false;
     }
     #endregion
@@ -285,44 +290,47 @@ public class LocationJobManager {
     #region Region Getters
     private Region AttackNonDemonicRegionRegionGetter() {
         List<Region> choices = new List<Region>();
-        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-            Region region = GridMap.Instance.allRegions[i];
-            if (region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE 
-                && region.locationType.IsSettlementType() == false
-                && region.owner != null && region.owner != PlayerManager.Instance.player.playerFaction) {
-                FactionRelationship rel = region.owner.GetRelationshipWith(location.owner);
-                if (rel != null && rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE 
-                    && region.IsConnectedToRegionOwnedBy(location.owner)) {
-                    choices.Add(region);
-                }
-            }
+        // for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+        //     Region region = GridMap.Instance.allRegions[i];
+        //     if (region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE 
+        //         && region.locationType.IsSettlementType() == false
+        //         && region.owner != null && region.owner != PlayerManager.Instance.player.playerFaction) {
+        //         FactionRelationship rel = region.owner.GetRelationshipWith(location.owner);
+        //         //TODO:
+        //         // if (rel != null && rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE 
+        //         //     && region.IsConnectedToRegionOwnedBy(location.owner)) {
+        //         //     choices.Add(region);
+        //         // }
+        //     }
+        // }
+
+        if (choices.Count == 0) {
+            //TODO:
+            // for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+            //     Region region = GridMap.Instance.allRegions[i];
+            //     if (region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE 
+            //         && region.locationType.IsSettlementType() == false
+            //         && region.owner != null && region.owner != PlayerManager.Instance.player.playerFaction) {
+            //         FactionRelationship rel = region.owner.GetRelationshipWith(location.owner);
+            //         if (rel != null && rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+            //             choices.Add(region);
+            //         }
+            //     }
+            // }    
         }
 
         if (choices.Count == 0) {
-            for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-                Region region = GridMap.Instance.allRegions[i];
-                if (region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE 
-                    && region.locationType.IsSettlementType() == false
-                    && region.owner != null && region.owner != PlayerManager.Instance.player.playerFaction) {
-                    FactionRelationship rel = region.owner.GetRelationshipWith(location.owner);
-                    if (rel != null && rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
-                        choices.Add(region);
-                    }
-                }
-            }    
-        }
-
-        if (choices.Count == 0) {
-            for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-                Region region = GridMap.Instance.allRegions[i];
-                if (region.locationType.IsSettlementType() == false
-                    && region.owner != null && region.owner != PlayerManager.Instance.player.playerFaction) {
-                    FactionRelationship rel = region.owner.GetRelationshipWith(location.owner);
-                    if (rel != null && rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
-                        choices.Add(region);
-                    }
-                }
-            }    
+            //TODO:
+            // for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+            //     Region region = GridMap.Instance.allRegions[i];
+            //     if (region.locationType.IsSettlementType() == false
+            //         && region.owner != null && region.owner != PlayerManager.Instance.player.playerFaction) {
+            //         FactionRelationship rel = region.owner.GetRelationshipWith(location.owner);
+            //         if (rel != null && rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+            //             choices.Add(region);
+            //         }
+            //     }
+            // }    
         }
 
         if (choices.Count > 0) {
@@ -335,49 +343,42 @@ public class LocationJobManager {
         List<Region> choices = new List<Region>();
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             Region region = GridMap.Instance.allRegions[i];
-            if (region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE 
-                && region.owner == PlayerManager.Instance.player.playerFaction 
-                && region.IsConnectedToRegionOwnedBy(location.owner)) {
-                choices.Add(region);
-            }
+            //TODO:
+            // if (region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE 
+            //     && region.owner == PlayerManager.Instance.player.playerFaction 
+            //     && region.IsConnectedToRegionOwnedBy(location.owner)) {
+            //     choices.Add(region);
+            // }
         }
 
         if (choices.Count == 0) {
             for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
                 Region region = GridMap.Instance.allRegions[i];
-                if (region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE 
-                    && region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.THE_PORTAL
-                    && region.owner == PlayerManager.Instance.player.playerFaction 
-                    && region.IsConnectedToRegionThatSatisfies(IsRegionConnectedToNonCorruptedRegion)) {
-                    choices.Add(region);
-                }
+                //TODO:
+                // if (region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE 
+                //     && region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.THE_PORTAL
+                //     && region.owner == PlayerManager.Instance.player.playerFaction 
+                //     && region.IsConnectedToRegionThatSatisfies(IsRegionConnectedToNonCorruptedRegion)) {
+                //     choices.Add(region);
+                // }
             }
         }
 
         // if (choices.Count == 0) {
-        //     return PlayerManager.Instance.player.playerArea.region;
+        //     return PlayerManager.Instance.player.playerSettlement.region;
         // }
         if (choices.Count > 0) {
             return Utilities.GetRandomElement(choices);    
         }
         return null;
     }
-    private bool IsRegionConnectedToNonCorruptedRegion(Region region) {
-        for (int i = 0; i < region.connections.Count; i++) {
-            Region connection = region.connections[i].region;
-            if (connection.coreTile.isCorrupted == false) {
-                return true;
-            }
-        }
-        return false;
-    }
     #endregion
 
     #region Job Creators
     private void CreateAttackDemonicRegionJob(Region targetRegion) {
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ATTACK_DEMONIC_REGION, INTERACTION_TYPE.ATTACK_REGION, targetRegion.regionTileObject, location);
-        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoAttackDemonicRegionJob);
-        location.AddToAvailableJobs(job);
+        // GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ATTACK_DEMONIC_REGION, INTERACTION_TYPE.ATTACK_REGION, targetRegion.regionTileObject, location);
+        // job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoAttackDemonicRegionJob);
+        // location.AddToAvailableJobs(job);
     }
     #endregion
 }

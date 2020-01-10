@@ -125,14 +125,14 @@ public class Minion {
             //if (character.currentActionNode != null) {
             //    character.currentActionNode.StopActionNode(false);
             //}
-            if (character.currentRegion.area != null && character.isHoldingItem) {
+            if (character.currentSettlement != null && character.isHoldingItem) {
                 character.DropAllTokens(character.currentStructure, deathTile, true);
             }
 
             //clear traits that need to be removed
             character.traitsNeededToBeRemoved.Clear();
 
-            bool wasOutsideSettlement = character.currentRegion.area == null;
+            bool wasOutsideSettlement = character.currentSettlement == null;
             //bool wasOutsideSettlement = false;
             //if (character.currentRegion != null) {
             //    wasOutsideSettlement = true;
@@ -170,7 +170,7 @@ public class Minion {
 
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character as IPointOfInterest, "target is already dead");
             character.CancelAllJobs();
-            StopInvasionProtocol(PlayerManager.Instance.player.currentAreaBeingInvaded);
+            StopInvasionProtocol(PlayerManager.Instance.player.currentSettlementBeingInvaded);
 
             //Debug.Log(GameManager.Instance.TodayLogString() + character.name + " died of " + cause);
             Log deathLog;
@@ -295,24 +295,26 @@ public class Minion {
     #endregion
 
     #region Invasion
-    public void StartInvasionProtocol(Area area) {
-        AddPendingTraits();
-        Messenger.AddListener(Signals.TICK_STARTED, PerTickInvasion);
-        Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
-        Messenger.AddListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
-        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
-        Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, character.OnCharacterEndedState);
-        SetAssignedRegion(area.region);
+    public void StartInvasionProtocol(Settlement settlement) {
+        //TODO:
+        // AddPendingTraits();
+        // Messenger.AddListener(Signals.TICK_STARTED, PerTickInvasion);
+        // Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
+        // Messenger.AddListener<Settlement>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
+        // Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
+        // Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, character.OnCharacterEndedState);
+        // SetAssignedRegion(settlement.region);
     }
-    public void StopInvasionProtocol(Area area) {
-        if(area != null && assignedRegion != null && assignedRegion.area == area) {
-            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickInvasion);
-            Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
-            Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
-            Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, character.OnCharacterEndedState);
-            SetAssignedRegion(null);
-        }
+    public void StopInvasionProtocol(Settlement settlement) {
+        //TODO:
+        // if(settlement != null && assignedRegion != null && assignedRegion.settlement == settlement) {
+        //     Messenger.RemoveListener(Signals.TICK_STARTED, PerTickInvasion);
+        //     Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
+        //     Messenger.RemoveListener<Settlement>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
+        //     Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
+        //     Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, character.OnCharacterEndedState);
+        //     SetAssignedRegion(null);
+        // }
     }
     private void PerTickInvasion() {
         if (character.isDead) {
@@ -341,7 +343,7 @@ public class Minion {
         LocationGridTile tile = structure.GetRandomTile();
         character.marker.GoTo(tile);
     }
-    private void OnSucceedInvadeArea(Area area) {
+    private void OnSucceedInvadeArea(Settlement settlement) {
         if (character.stateComponent.currentState != null) {
             character.stateComponent.ExitCurrentState();
             //This call is doubled so that it will also exit the previous major state if there's any
@@ -362,7 +364,7 @@ public class Minion {
         //character.marker.ClearAvoidInRange(false);
         //character.marker.ClearHostilesInRange(false);
         //character.marker.ClearPOIsInVisionRange();
-        PlayerManager.Instance.player.playerArea.AddCharacterToLocation(character);
+        PlayerManager.Instance.player.playerSettlement.AddCharacterToLocation(character);
         //character.ClearAllAwareness();
         character.CancelAllJobs();
         character.traitContainer.RemoveAllNonPersistentTraits(character);
@@ -388,10 +390,10 @@ public class Minion {
 
     #region Traits
     /// <summary>
-    /// Add trait function for minions. Added handling for when a minion gains a trait while outside of an area map. All traits are stored and will be added once the minion is placed at an area map.
+    /// Add trait function for minions. Added handling for when a minion gains a trait while outside of an settlement map. All traits are stored and will be added once the minion is placed at an settlement map.
     /// </summary>
     public bool AddTrait(string traitName, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
-        if (InnerMapManager.Instance.isAnAreaMapShowing) {
+        if (InnerMapManager.Instance.isAnInnerMapShowing) {
             return character.traitContainer.AddTrait(character, traitName, characterResponsible, gainedFromDoing);
         } else {
             traitsToAdd.Add(traitName);
@@ -416,21 +418,11 @@ public class Minion {
                 log.AddToFillers(assignedRegion, assignedRegion.name, LOG_IDENTIFIER.LANDMARK_1);
                 SetBusyReason(log);
             } else {
-                //the region that this minion is assigned to is a normal landmark
-                if (assignedRegion.activeEvent != null && assignedRegion.eventData.interferingCharacter == this.character) {
-                    //this minion is interferring with an event 
-                    Log log = new Log(GameManager.Instance.Today(), "Character", "Minion", "busy_interfere");
-                    log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddToFillers(null, assignedRegion.activeEvent.name, LOG_IDENTIFIER.STRING_1);
-                    log.AddToFillers(assignedRegion, assignedRegion.name, LOG_IDENTIFIER.LANDMARK_1);
-                    SetBusyReason(log);
-                } else {
-                    //this minion is invading
-                    Log log = new Log(GameManager.Instance.Today(), "Character", "Minion", "busy_invade");
-                    log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddToFillers(assignedRegion, assignedRegion.name, LOG_IDENTIFIER.LANDMARK_1);
-                    SetBusyReason(log);
-                }
+                //this minion is invading
+                Log log = new Log(GameManager.Instance.Today(), "Character", "Minion", "busy_invade");
+                log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(assignedRegion, assignedRegion.name, LOG_IDENTIFIER.LANDMARK_1);
+                SetBusyReason(log);
             }
         } else {
             SetBusyReason(null);

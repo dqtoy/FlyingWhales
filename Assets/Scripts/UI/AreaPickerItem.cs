@@ -6,19 +6,19 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class AreaPickerItem : ObjectPickerItem<Area>, IPointerClickHandler {
+public class AreaPickerItem : ObjectPickerItem<Settlement>, IPointerClickHandler {
 
-    public Action<Area> onClickAction;
+    public Action<Settlement> onClickAction;
 
-    private Area area;
+    private Settlement _settlement;
 
     [SerializeField] private LocationPortrait portrait;
     public GameObject portraitCover;
 
-    public override Area obj { get { return area; } }
+    public override Settlement obj { get { return _settlement; } }
 
-    public void SetArea(Area area) {
-        this.area = area;
+    public void SetArea(Settlement settlement) {
+        this._settlement = settlement;
         UpdateVisuals();
     }
 
@@ -28,14 +28,14 @@ public class AreaPickerItem : ObjectPickerItem<Area>, IPointerClickHandler {
     }
 
     private void UpdateVisuals() {
-        portrait.SetLocation(area.region);
-        mainLbl.text = area.name;
-        //subLbl.text = Utilities.GetNormalizedSingularRace(area.race) + " " + area.characterClass.className;
+        portrait.SetLocation(_settlement.region);
+        mainLbl.text = _settlement.name;
+        //subLbl.text = Utilities.GetNormalizedSingularRace(settlement.race) + " " + settlement.characterClass.className;
     }
 
     private void OnClick() {
         if (onClickAction != null) {
-            onClickAction.Invoke(area);
+            onClickAction.Invoke(_settlement);
         }
     }
 
@@ -43,7 +43,7 @@ public class AreaPickerItem : ObjectPickerItem<Area>, IPointerClickHandler {
         if (eventData.button == PointerEventData.InputButton.Right) {
             //Debug.Log("Right clicked character portrait!");
             //portrait.OnClick();
-            UIManager.Instance.ShowRegionInfo(area.coreTile.region);
+            UIManager.Instance.ShowRegionInfo(_settlement.region);
         } else {
             OnClick();
         }

@@ -30,10 +30,11 @@ public class ChopWoodRegion : GoapAction {
         if (satisfied) {
             //**Requirements:** Actor has Logger trait. Region has Lumberyard Landmark. Region is owned by Actor's Faction or Actor's Home's Ruling Faction.
             var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
-            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null &&
-                   actor.traitContainer.GetNormalTrait<Trait>("Logger") != null &&
-                   region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.LUMBERYARD &&
-                   (region.owner == actor.faction || region.owner == actor.homeRegion.owner);
+            //TODO:
+            // return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null &&
+            //        actor.traitContainer.GetNormalTrait<Trait>("Logger") != null &&
+            //        region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.LUMBERYARD &&
+            //        (region.owner == actor.faction || region.owner == actor.homeRegion.owner);
         }
         return false;
     }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using System.Globalization;
 using Inner_Maps;
 
 public class MapGenerator : MonoBehaviour {
@@ -16,68 +17,36 @@ public class MapGenerator : MonoBehaviour {
     }
 
     internal void InitializeWorld() {
-        StartCoroutine(InitializeWorldCoroutine());
+        MapGenerationComponent[] mapGenerationComponents = {
+            new WorldMapGridGeneration(), new WorldMapElevationGeneration(), new SupportingFactionGeneration(), 
+            new WorldMapRegionGeneration(), new WorldMapBiomeGeneration(), new WorldMapOuterGridGeneration(),
+            new TileFeatureGeneration(), new PortalLandmarkGeneration(), new WorldMapLandmarkGeneration(), 
+            new RegionInnerMapGeneration(), new SettlementGeneration(), new LandmarkStructureGeneration(), 
+            new ElevationStructureGeneration(), new MapGenerationFinalization(), new PlayerDataGeneration(), 
+             
+            // new MainSettlementMapGeneration(), new SuppotingSettlementMapGeneration(), new RegionDataGeneration(), 
+            // new PlayerDataGeneration(), 
+        };
+        StartCoroutine(InitializeWorldCoroutine(mapGenerationComponents));
     }
     public void InitializeWorld(Save data) {
         StartCoroutine(InitializeWorldCoroutine(data));
     }
-    private IEnumerator InitializeWorldCoroutine() {
+    private IEnumerator InitializeWorldCoroutine(MapGenerationComponent[] components) {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
         loadingWatch.Start();
 
-        LevelLoaderManager.UpdateLoadingInfo("Generating Map...");
-        yield return null;
-        int regionCount = Random.Range(WorldConfigManager.Instance.minRegionCount, WorldConfigManager.Instance.maxRegionCount + 1);
-        int width;
-        int height;
-        GenerateMapWidthAndHeightFromRegionCount(regionCount, out width, out height);
-        Debug.Log($"Width: {width.ToString()} Height: {height.ToString()} Region Count: {regionCount.ToString()}");
-        GridMap.Instance.SetupInitialData(width, height);
-        GridMap.Instance.GenerateGrid();
-        EquatorGenerator.Instance.GenerateEquator(GridMap.Instance.width, GridMap.Instance.height, GridMap.Instance.hexTiles);
-        Biomes.Instance.GenerateElevation(GridMap.Instance.hexTiles, GridMap.Instance.width, GridMap.Instance.height);
-
-        LevelLoaderManager.UpdateLoadingInfo("Generating Biomes...");
-        yield return null;
-        Biomes.Instance.GenerateBiome(GridMap.Instance.hexTiles);
-        yield return null;
-        FactionManager.Instance.CreateNeutralFaction();
-        FactionManager.Instance.CreateFriendlyNeutralFaction();
-        FactionManager.Instance.CreateDisguisedFaction();
-
-        BaseLandmark portal;
-        //New Map Generation
-        BaseLandmark settlement;
-        GridMap.Instance.DivideToRegions(GridMap.Instance.hexTiles, regionCount, width * height);
-        LandmarkManager.Instance.GenerateLandmarks(GridMap.Instance.allRegions, out portal, out settlement);
-        LandmarkManager.Instance.GenerateConnections(portal, settlement);
-        yield return null;
-
-
-        GridMap.Instance.GenerateOuterGrid();
-        Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
-        CameraMove.Instance.CalculateCameraBounds();
-        yield return null;
+        MapGenerationData data = new MapGenerationData();
+        for (int i = 0; i < components.Length; i++) {
+            MapGenerationComponent currComponent = components[i];
+            yield return StartCoroutine(currComponent.Execute(data));
+        }
         
-        CharacterManager.Instance.GiveInitialItems();
-
-        PlayerManager.Instance.InitializePlayer(portal);
-        yield return null;
-        LandmarkManager.Instance.GenerateAreaMap(settlement.tileLocation.areaOfTile);
-        yield return null;
-        LandmarkManager.Instance.CreateTwoNewSettlementsAtTheStartOfGame();
-        yield return null;
-        LandmarkManager.Instance.GenerateRegionFeatures();
-        yield return null;
-        LandmarkManager.Instance.LoadAdditionalAreaData();
-        yield return null;
-        LandmarkManager.Instance.GenerateRegionInnerMaps();
-        LandmarkManager.Instance.MakeAllRegionsAwareOfEachOther();
-
         loadingWatch.Stop();
-        Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds.ToString()));
+        Debug.Log($"Total loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
+ 
         LevelLoaderManager.SetLoadingState(false);
-        CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerArea.coreTile.gameObject);
+        CameraMove.Instance.CenterCameraOn(data.portal.tileLocation.gameObject);
         AudioManager.Instance.TransitionTo("World Music", 10);
         Messenger.Broadcast(Signals.GAME_LOADED);
         yield return new WaitForSeconds(1f);
@@ -87,7 +56,6 @@ public class MapGenerator : MonoBehaviour {
         UIManager.Instance.SetSpeedTogglesState(false);
         PlayerUI.Instance.ShowStartingMinionPicker();
 
-        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Necronomicon);
     }
     private IEnumerator InitializeWorldCoroutine(Save data) {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
@@ -121,7 +89,6 @@ public class MapGenerator : MonoBehaviour {
         data.LoadCharacterTraits();
         yield return null;
         data.LoadLandmarks();
-        data.LoadRegionConnections();
         data.LoadRegionCharacters();
         data.LoadRegionAdditionalData();
         yield return null;
@@ -133,7 +100,6 @@ public class MapGenerator : MonoBehaviour {
 
         TokenManager.Instance.Initialize();
         //CharacterManager.Instance.GenerateRelationships();
-        WorldEventsManager.Instance.Initialize();
 
         yield return null;
         //LandmarkManager.Instance.GenerateAreaMap(LandmarkManager.Instance.enemyOfPlayerArea, false);
@@ -151,13 +117,12 @@ public class MapGenerator : MonoBehaviour {
         data.LoadAllJobs();
         data.LoadTileObjectsDataAfterLoadingAreaMap();
 
-        //Note: Loading area items is after loading the inner map because LocationStructure and LocationGridTile is required
+        //Note: Loading settlement items is after loading the inner map because LocationStructure and LocationGridTile is required
         data.LoadPlayerAreaItems();
         data.LoadNonPlayerAreaItems();
         yield return null;
         data.LoadCharacterHistories();
 
-        data.LoadWorldEventsAndWorldObject();
         data.LoadCharacterCurrentStates();
         data.LoadFactionsActiveQuests();
 
@@ -167,7 +132,8 @@ public class MapGenerator : MonoBehaviour {
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds.ToString()));
         LevelLoaderManager.SetLoadingState(false);
-        CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerArea.coreTile.gameObject);
+        //TODO:
+        // CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerSettlement.coreTile.gameObject);
         AudioManager.Instance.TransitionTo("World Music", 10);
         yield return new WaitForSeconds(1f);
         GameManager.Instance.StartProgression();

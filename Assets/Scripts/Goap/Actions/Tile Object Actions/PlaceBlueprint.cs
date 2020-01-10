@@ -34,7 +34,7 @@ public class PlaceBlueprint : GoapAction {
                 return false;
             }
             BuildSpotTileObject buildSpot = poiTarget as BuildSpotTileObject;
-            return buildSpot.spot.isOpen && buildSpot.spot.isOccupied == false;
+            return buildSpot.spot.IsOpenFor(actor.homeSettlement);
         }
         return false;
     }
@@ -50,12 +50,12 @@ public class PlaceBlueprint : GoapAction {
         BuildSpotTileObject spot = goapNode.poiTarget as BuildSpotTileObject;
         spot.PlaceBlueprintOnBuildingSpot(structureType);
 
+
         //create new build job at settlement
-        Area area = spot.structureLocation.location as Area;
-        GoapPlanJob buildJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_BLUEPRINT, INTERACTION_TYPE.BUILD_STRUCTURE, spot, area);
+        GoapPlanJob buildJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_BLUEPRINT, INTERACTION_TYPE.BUILD_STRUCTURE, spot, goapNode.actor.homeSettlement);
         buildJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 50 });
         buildJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeBuildJob);
-        area.AddToAvailableJobs(buildJob);
+        goapNode.actor.homeSettlement.AddToAvailableJobs(buildJob);
 
         goapNode.actor.buildStructureComponent.OnCreateBlueprint(structureType);
     }

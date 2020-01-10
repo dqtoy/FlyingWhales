@@ -19,13 +19,13 @@ public class PoisonTableIntel : EventIntel {
 
     public PoisonTableIntel(SaveDataPoisonTableIntel data) : base(data) {
         if (data.poisonedTableID != -1) {
-            //Area area = LandmarkManager.Instance.GetAreaByID(data.poisonedTableAreaID);
+            //Settlement settlement = LandmarkManager.Instance.GetAreaByID(data.poisonedTableAreaID);
             poisonedTable = InnerMapManager.Instance.GetTileObject(TILE_OBJECT_TYPE.TABLE, data.poisonedTableID) as Table;
         }
 
         if (data.targetDwellingID != -1) {
-            Area area = LandmarkManager.Instance.GetAreaByID(data.targetDwellingAreaID);
-            targetDwelling = area.GetStructureByID(STRUCTURE_TYPE.DWELLING, data.targetDwellingID) as Dwelling;
+            Settlement settlement = LandmarkManager.Instance.GetAreaByID(data.targetDwellingAreaID);
+            targetDwelling = settlement.GetStructureByID(STRUCTURE_TYPE.DWELLING, data.targetDwellingID) as Dwelling;
         }
     }
 

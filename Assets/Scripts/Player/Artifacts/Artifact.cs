@@ -65,10 +65,10 @@ public class Artifact : TileObject, IWorldObject {
     #region Virtuals
     protected virtual void OnPlaceArtifactOn(LocationGridTile tile) {
         hasBeenUsed = true;
-        Messenger.AddListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
+        Messenger.AddListener<Settlement>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
     }
     protected virtual void OnRemoveArtifact() {
-        Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
+        Messenger.RemoveListener<Settlement>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Debug.Log(GameManager.Instance.TodayLogString() + "Artifact " + name + " has been removed");
     }
     public override void OnInspect(Character inspectedBy) { //, out Log result
@@ -86,7 +86,7 @@ public class Artifact : TileObject, IWorldObject {
     } 
     #endregion
 
-    private void OnSuccessInvadeArea(Area area) {
+    private void OnSuccessInvadeArea(Settlement settlement) {
         hasBeenUsed = false;
         gridTileLocation.structure.RemovePOI(this);
     }

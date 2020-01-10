@@ -5,16 +5,16 @@ using UnityEngine;
 public class Abduct : PlayerJobAction {
 
     private Character _targetCharacter;
-    private List<Area> _abductAreas;
+    private List<Settlement> _abductAreas;
 
     public Abduct() : base(INTERVENTION_ABILITY.ABDUCT) {
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
-        _abductAreas = new List<Area>();
-        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-            Area area = LandmarkManager.Instance.allAreas[i];
-            if (area.name == "Cardell" || area.name == "Denrio") {
-                _abductAreas.Add(area);
+        _abductAreas = new List<Settlement>();
+        for (int i = 0; i < LandmarkManager.Instance.allSetttlements.Count; i++) {
+            Settlement settlement = LandmarkManager.Instance.allSetttlements[i];
+            if (settlement.name == "Cardell" || settlement.name == "Denrio") {
+                _abductAreas.Add(settlement);
             }
         }
     }
@@ -55,12 +55,12 @@ public class Abduct : PlayerJobAction {
         return base.CanTarget(targetCharacter, ref hoverText);
     }
 
-    #region Area Checkers
-    private void OnClickArea(Area area) {
-        //UIManager.Instance.ShowClickableObjectPicker(area.charactersAtLocation, RileUpCharacter, null, CanRileUpCharacter, "Choose a character to abduct.");
+    #region Settlement Checkers
+    private void OnClickArea(Settlement settlement) {
+        //UIManager.Instance.ShowClickableObjectPicker(settlement.charactersAtLocation, RileUpCharacter, null, CanRileUpCharacter, "Choose a character to abduct.");
     }
-    private bool CanClickArea(Area area) {
-        if (PlayerManager.Instance.player.playerArea == area) {
+    private bool CanClickArea(Settlement settlement) {
+        if (PlayerManager.Instance.player.playerSettlement == settlement) {
             return false;
         }
         return true;
@@ -72,11 +72,11 @@ public class Abduct : PlayerJobAction {
         base.ActivateAction(_targetCharacter);
         UIManager.Instance.HideObjectPicker();
 
-        ////GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = _targetCharacter.homeArea, targetPOI = character };
+        ////GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = _targetCharacter.homeSettlement, targetPOI = character };
         //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABDUCT, INTERACTION_TYPE.DROP_CHARACTER, character);
         ////job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = _targetCharacter, targetPOI = character }, INTERACTION_TYPE.CARRY_CHARACTER);
         //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = character }, INTERACTION_TYPE.ABDUCT_CHARACTER);
-        ////job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = _targetCharacter.homeArea, targetPOI = character }, INTERACTION_TYPE.DROP_CHARACTER);
+        ////job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = _targetCharacter.homeSettlement, targetPOI = character }, INTERACTION_TYPE.DROP_CHARACTER);
         //job.SetCannotOverrideJob(true);
         ////job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
         //_targetCharacter.jobQueue.AddJobInQueue(job);

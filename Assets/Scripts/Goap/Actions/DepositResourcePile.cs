@@ -171,15 +171,24 @@ public class DepositResourcePile : GoapAction {
             if (poiTarget.gridTileLocation == null) {
                 return false;
             }
-            //Cannot be deposited if already in the storage
-            LocationStructure structure = poiTarget.gridTileLocation.structure;
-            if (structure == structure.location.mainStorage) {
-                return false;
+            if (poiTarget.gridTileLocation.structure.settlementLocation != null) {
+                if (poiTarget.gridTileLocation.structure == poiTarget.gridTileLocation.structure.settlementLocation.mainStorage) {
+                    return false;
+                }
+                if (poiTarget.gridTileLocation.structure.settlementLocation.mainStorage.unoccupiedTiles.Count <= 0) {
+                    return false;
+                }
+            } else {
+                //Cannot be deposited if already in the storage
+                LocationStructure structure = poiTarget.gridTileLocation.structure;
+                if (structure == structure.location.mainStorage) {
+                    return false;
+                }
+                if (structure.location.mainStorage != null && structure.location.mainStorage.unoccupiedTiles.Count <= 0) {
+                    return false;
+                }
             }
-            if (structure.location.mainStorage.unoccupiedTiles.Count <= 0) {
-                return false;
-            }
-            return actor.homeRegion.IsSameCoreLocationAs(structure.location);
+            return actor.homeRegion == poiTarget.gridTileLocation.parentMap.location;
         }
         return false;
     }

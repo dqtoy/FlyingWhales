@@ -51,35 +51,7 @@ public class LandmarkCharacterItem : PooledObject {
     }
 
     private void UpdateLocationIcons() {
-        if (parentMenu is AreaInfoUI) {
-            if(character.traitContainer.GetNormalTrait<Trait>("Abducted", "Restrained") != null) {
-                restrainedIcon.SetActive(true);
-                unrestrainedGO.SetActive(false);
-            } else {
-                restrainedIcon.SetActive(false);
-                unrestrainedGO.SetActive(true);
-            }
-            if ((character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine != null) || character.currentParty.icon.isTravellingOutside) {
-                travellingIcon.SetActive(true);
-                arrivedIcon.SetActive(false);
-                coverGO.SetActive(true);
-            } else if ((parentMenu as AreaInfoUI).activeTile.region.residents.Contains(character)) { //only check for arrival icon if the character is a resident of the showing area
-                if (character.isAtHomeRegion) {
-                    arrivedIcon.SetActive(false);
-                    travellingIcon.SetActive(false);
-                    coverGO.SetActive(false);
-                } else {
-                    arrivedIcon.SetActive(true);
-                    travellingIcon.SetActive(false);
-                    coverGO.SetActive(true);
-                }
-            } else {
-                travellingIcon.SetActive(false);
-                arrivedIcon.SetActive(false);
-                coverGO.SetActive(false);
-            }
-            (parentMenu as AreaInfoUI).OrderCharacterItems();
-        } else if (parentMenu is RegionInfoUI) {
+        if (parentMenu is RegionInfoUI) {
             if (character.traitContainer.GetNormalTrait<Trait>("Abducted", "Restrained") != null) {
                 restrainedIcon.SetActive(true);
                 unrestrainedGO.SetActive(false);
@@ -121,8 +93,8 @@ public class LandmarkCharacterItem : PooledObject {
     }
 
     public void ShowTravellingTooltip() {
-        //UIManager.Instance.ShowSmallInfo("Travelling to " + character.currentParty.icon.targetLocation.tileLocation.areaOfTile.name);
-        //UIManager.Instance.ShowSmallLocationInfo(character.currentParty.icon.targetLocation.tileLocation.areaOfTile, thisTrans, new Vector3(434f, 0f, 0f), "Travelling to:");
+        //UIManager.Instance.ShowSmallInfo("Travelling to " + character.currentParty.icon.targetLocation.tileLocation.settlementOfTile.name);
+        //UIManager.Instance.ShowSmallLocationInfo(character.currentParty.icon.targetLocation.tileLocation.settlementOfTile, thisTrans, new Vector3(434f, 0f, 0f), "Travelling to:");
         if (character.currentParty.icon.targetLocation == null) {
             return;
         }

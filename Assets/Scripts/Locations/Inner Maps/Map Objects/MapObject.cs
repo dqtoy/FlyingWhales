@@ -1,7 +1,7 @@
 ﻿using Inner_Maps;
 
 /// <summary>
-/// Base class for anything in the area map that can be damaged and has a physical object to be shown.
+/// Base class for anything in the settlement map that can be damaged and has a physical object to be shown.
 /// </summary>
 public abstract class MapObject<T> where T: IDamageable {
     public BaseCollisionTrigger<T> collisionTrigger => mapVisual.collisionTrigger;

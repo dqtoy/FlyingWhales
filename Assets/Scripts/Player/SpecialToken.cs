@@ -120,7 +120,7 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
         this.carriedByCharacter = character;
     }
 
-    #region Area Map
+    #region Settlement Map
     public void SetGridTileLocation(LocationGridTile tile) {
         previousTile = this.tile;
         this.tile = tile;
@@ -139,8 +139,8 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
         isDestroyed = false;
         PlaceMapObjectAt(tile);
         Messenger.Broadcast(Signals.ITEM_PLACED_ON_TILE, this, tile);
-        //for (int i = 0; i < tile.parentAreaMap.area.region.residents.Count; i++) {
-        //    Character character = tile.parentAreaMap.area.region.residents[i];
+        //for (int i = 0; i < tile.parentAreaMap.settlement.region.residents.Count; i++) {
+        //    Character character = tile.parentAreaMap.settlement.region.residents[i];
         //    character.AddAwareness(this);
         //}
     }
@@ -356,7 +356,7 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
         }
         if (characterOwner == null) {
             //Patrollers should not pick up items from their main storage structure
-            if (gridTileLocation != null && gridTileLocation.structure == character.homeRegion.mainStorage) { //&& token.currentRegion == characterThatWillDoJob.homeRegion
+            if (gridTileLocation != null && gridTileLocation.structure == character.homeSettlement.mainStorage) { //&& token.currentRegion == characterThatWillDoJob.homeRegion
                 return false;
             }
             //characters should not pick up items if that item is the target of it's current action

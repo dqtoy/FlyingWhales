@@ -32,9 +32,9 @@
         if (satisfied) {
             //**Requirements:** Actor has Purifier trait. Region is corrupted. Region does not have a landmark.
             var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
-            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && region.owner == null 
-                   && region.coreTile.isCorrupted == false 
-                   && region.regionTileObject.advertisedActions.Contains(this.goapType);;
+            // return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && region.owner == null 
+            //        && region.coreTile.isCorrupted == false 
+            //        && region.regionTileObject.advertisedActions.Contains(this.goapType);;
         }
         return false;
     }
@@ -49,7 +49,8 @@
     public void AfterClaimSuccess(ActualGoapNode goapNode) {
         goapNode.poiTarget.AddAdvertisedAction(this.goapType);
         var region = goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region;
-        LandmarkManager.Instance.OwnRegion(goapNode.actor.faction, goapNode.actor.faction.race, region);
+        //TODO:
+        // LandmarkManager.Instance.OwnRegion(goapNode.actor.faction, region);
     }
     #endregion
 }

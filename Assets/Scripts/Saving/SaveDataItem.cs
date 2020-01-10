@@ -46,7 +46,7 @@ public class SaveDataItem {
             gridTile = new Vector3Save(0f, 0f, -1f);
         }
     }
-    public void Load(Area areaOwner) {
+    public void Load(Settlement settlementOwner) {
         SpecialToken item = TokenManager.Instance.CreateSpecialToken(specialTokenType, weight);
         item.SetID(id);
         item.SetIsDisabledByPlayer(isDisabledByPlayer);
@@ -59,8 +59,8 @@ public class SaveDataItem {
         LocationStructure structure = null;
         LocationGridTile tile = null;
         if(gridTile.z != -1f) {
-            structure = areaOwner.GetStructureByID(structureType, structureID);
-            tile = areaOwner.areaMap.map[(int) gridTile.x, (int) gridTile.y];
+            structure = settlementOwner.GetStructureByID(structureType, structureID);
+            tile = settlementOwner.innerMap.map[(int) gridTile.x, (int) gridTile.y];
         }
         structure.AddItem(item, tile);
     }

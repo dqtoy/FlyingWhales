@@ -48,7 +48,8 @@ namespace Inner_Maps {
 
         public GenericTileObject genericTileObject { get; private set; }
         public List<WallObject> walls { get; private set; }
-
+        public bool isPartOfRegion => buildSpotOwner.hexTileOwner != null;
+        
         public LocationGridTile(int x, int y, Tilemap tilemap, InnerTileMap parentMap) {
             this.parentMap = parentMap;
             parentTileMap = tilemap;
@@ -493,6 +494,9 @@ namespace Inner_Maps {
         public void HighlightTile() {
             parentMap.groundTilemap.SetColor(localPlace, Color.blue);
         }
+        public void HighlightTile(Color color) {
+            parentMap.groundTilemap.SetColor(localPlace, color);
+        }
         public void UnhighlightTile() {
             parentMap.groundTilemap.SetColor(localPlace, defaultTileColor);
         }
@@ -536,29 +540,6 @@ namespace Inner_Maps {
                 }
             }
             return traitables;
-        }
-        public List<IDamageable> GetDamageablesOnTile() {
-            List<IDamageable> damagables = new List<IDamageable>();
-            if (structure.structureType.IsOpenSpace() == false) {
-                //only add floor and walls if structure is not open space
-                damagables.Add(genericTileObject);
-                for (int i = 0; i < walls.Count; i++) {
-                    WallObject wallObject = walls[i];
-                    damagables.Add(wallObject);
-                }
-            }
-        
-            if (objHere != null) {
-                if ((objHere is TileObject && (objHere as TileObject).mapObjectState == MAP_OBJECT_STATE.BUILT)
-                    || (objHere is SpecialToken && (objHere as SpecialToken).mapObjectState == MAP_OBJECT_STATE.BUILT)) {
-                    damagables.Add(objHere);
-                }
-            }
-            for (int i = 0; i < charactersHere.Count; i++) {
-                Character character = charactersHere[i];
-                damagables.Add(character);
-            }
-            return damagables;
         }
         #endregion
 
@@ -636,8 +617,12 @@ namespace Inner_Maps {
         #endregion
 
         #region Building
+        public BuildingSpot buildSpotOwner { get; private set; }
         public void SetHasBlueprint(bool hasBlueprint) {
             this.hasBlueprint = hasBlueprint;
+        }
+        public void SetBuildSpotOwner(BuildingSpot buildSpot) {
+            buildSpotOwner = buildSpot;
         }
         #endregion
 
@@ -777,7 +762,7 @@ namespace Inner_Maps {
             LocationGridTile tile = new LocationGridTile(this, tilemap, parentAreaMap);
 
             if(structureID != -1) {
-                LocationStructure structure = (parentAreaMap.location as Area).GetStructureByID(structureType, structureID);
+                LocationStructure structure = (parentAreaMap.location as Settlement).GetStructureByID(structureType, structureID);
                 tile.SetStructure(structure);
             }
 

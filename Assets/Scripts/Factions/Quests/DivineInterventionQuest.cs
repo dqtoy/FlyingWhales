@@ -107,11 +107,12 @@ public class DivineInterventionQuest : Quest {
         }
     }
     private bool AreThereProfaneLandmarks() {
-        for (int i = 0; i < PlayerManager.Instance.player.playerFaction.ownedRegions.Count; i++) {
-            BaseLandmark landmark = PlayerManager.Instance.player.playerFaction.ownedRegions[i].mainLandmark;
-            if(landmark.specificLandmarkType == LANDMARK_TYPE.THE_PROFANE) {
-                return true;
-            }
+        for (int i = 0; i < PlayerManager.Instance.player.playerFaction.ownedSettlements.Count; i++) {
+            //TODO:
+            // BaseLandmark landmark = PlayerManager.Instance.player.playerFaction.ownedSettlements[i].mainLandmark;
+            // if(landmark.specificLandmarkType == LANDMARK_TYPE.THE_PROFANE) {
+            //     return true;
+            // }
         }
         return false;
     }
@@ -135,7 +136,7 @@ public class DivineInterventionQuest : Quest {
     private bool AreThereHallowedGrounds() {
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             Region currRegion = GridMap.Instance.allRegions[i];
-            if (currRegion.HasFeature(RegionFeatureDB.Hallowed_Ground_Feature)) {
+            if (currRegion.HasTileWithFeature(TileFeatureDB.Hallowed_Ground_Feature)) {
                 return true;
             }
         }
@@ -144,7 +145,7 @@ public class DivineInterventionQuest : Quest {
 
     #region Build Goddess Statue
     private void CreateBuildGoddessStatueJob() {
-        LocationStructure structure = region.area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
+        LocationStructure structure = region.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
         GoddessStatue goddessStatue = InnerMapManager.Instance.CreateNewTileObject<GoddessStatue>(TILE_OBJECT_TYPE.GODDESS_STATUE);
         structure.AddPOI(goddessStatue);
         goddessStatue.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
@@ -176,7 +177,7 @@ public class DivineInterventionQuest : Quest {
 
     #region Holy Incantation
     private void CreateHolyIncantationJob() {
-        Region target = LandmarkManager.Instance.GetRandomRegionWithFeature(RegionFeatureDB.Hallowed_Ground_Feature);
+        Region target = LandmarkManager.Instance.GetRandomRegionWithFeature(TileFeatureDB.Hallowed_Ground_Feature);
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PERFORM_HOLY_INCANTATION, INTERACTION_TYPE.HOLY_INCANTATION, target.regionTileObject, this);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoHolyIncantationJob);
         AddToAvailableJobs(job);
@@ -191,7 +192,7 @@ public class DivineInterventionQuest : Quest {
     #region Sabotage Faction
     public void CreateSabotageFactionJob() {
         if (!HasJob(JOB_TYPE.SABOTAGE_FACTION)) {
-            Region target = LandmarkManager.Instance.GetRandomRegionWithFeature(RegionFeatureDB.Hallowed_Ground_Feature);
+            Region target = LandmarkManager.Instance.GetRandomRegionWithFeature(TileFeatureDB.Hallowed_Ground_Feature);
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SABOTAGE_FACTION, INTERACTION_TYPE.DEMONIC_INCANTATION, target.regionTileObject, this);
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoSabotageFactionJob);
             AddToAvailableJobs(job);

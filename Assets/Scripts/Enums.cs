@@ -227,6 +227,7 @@ public enum LANDMARK_TYPE {
     THE_PIT = 56,
     LUMBERYARD = 57,
     QUARRY = 58,
+    HOUSES
 }
 public enum TECHNOLOGY {
     //Weapon Production
@@ -1150,6 +1151,13 @@ public enum STRUCTURE_TYPE {
     HUNTER_LODGE,
     MAGE_QUARTERS,
     NONE,
+    MONSTER_LAIR,
+    ABANDONED_MINE,
+    TEMPLE,
+    MAGE_TOWER,
+    PORTAL,
+    CAVE,
+    OCEAN
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,
@@ -1242,6 +1250,7 @@ public enum TILE_OBJECT_TYPE {
     ROCK,
     FLOWER,
     KINDLING,
+    BIG_TREE_OBJECT,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -1444,12 +1453,27 @@ public static class Extensions {
                 return true;
         }
     }
-    /// <summary>
-    /// Get the priority that each structure should be generated in.
-    /// This determines what order the structures will be created during map generation. <see cref="AreaInnerTileMap.PlaceInitialStructures"/>
-    /// </summary>
-    /// <param name="sub">The type of structure</param>
-    /// <returns>The priority of a given structure type. 0 being the highest priority.</returns>
+    public static int StructurePriority(this STRUCTURE_TYPE sub) {
+        switch (sub) {
+            case STRUCTURE_TYPE.WILDERNESS:
+            case STRUCTURE_TYPE.WORK_AREA:
+            case STRUCTURE_TYPE.POND:
+            case STRUCTURE_TYPE.CEMETERY:
+                return -1;
+            case STRUCTURE_TYPE.DWELLING:
+                return 0;
+            case STRUCTURE_TYPE.CITY_CENTER:
+                return 1;
+            case STRUCTURE_TYPE.INN:
+                return 2;
+            case STRUCTURE_TYPE.WAREHOUSE:
+                return 3;
+            case STRUCTURE_TYPE.PRISON:
+                return 5;
+            default:
+                return 99;
+        }
+    }
     public static int StructureGenerationPriority(this STRUCTURE_TYPE sub) {
         switch (sub) {
             case STRUCTURE_TYPE.CITY_CENTER:
@@ -1916,11 +1940,11 @@ public static class Extensions {
             case COMBAT_ABILITY.SINGLE_HEAL:
                 return "Heals a friendly unit by a percentage of its max HP.";
             case COMBAT_ABILITY.FLAMESTRIKE:
-                return "Deal AOE damage in the surrounding area.";
+                return "Deal AOE damage in the surrounding settlement.";
             case COMBAT_ABILITY.FEAR_SPELL:
                 return "Makes a character fear any other character.";
             case COMBAT_ABILITY.SACRIFICE:
-                return "Sacrifice a friendly unit to deal AOE damage in the surrounding area.";
+                return "Sacrifice a friendly unit to deal AOE damage in the surrounding settlement.";
             case COMBAT_ABILITY.TAUNT:
                 return "Taunts enemies into attacking this character.";
             default:

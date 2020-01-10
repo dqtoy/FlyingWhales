@@ -15598,10 +15598,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed50c8ff9e1a3604cb589243a79c9bd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minRegionCount: 18
-  maxRegionCount: 22
-  minRegionWidthCount: 2
-  maxRegionWidthCount: 2
+  minRegionWidthCount: 3
+  maxRegionWidthCount: 3
   minRegionHeightCount: 3
   maxRegionHeightCount: 4
   minCitizenCount: 16

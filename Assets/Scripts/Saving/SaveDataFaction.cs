@@ -64,8 +64,8 @@ public class SaveDataFaction {
         //}
 
         ownedRegionIDs = new List<int>();
-        for (int i = 0; i < faction.ownedRegions.Count; i++) {
-            ownedRegionIDs.Add(faction.ownedRegions[i].id);
+        for (int i = 0; i < faction.ownedSettlements.Count; i++) {
+            ownedRegionIDs.Add(faction.ownedSettlements[i].id);
         }
 
         hasActiveQuest = faction.activeQuest != null;
@@ -88,10 +88,10 @@ public class SaveDataFaction {
             }
         }
 
-        for (int i = 0; i < ownedRegionIDs.Count; i++) {
-            Region region = GridMap.Instance.GetRegionByID(ownedRegionIDs[i]);
-            LandmarkManager.Instance.OwnRegion(faction, faction.race, region);
-        }
+        // for (int i = 0; i < ownedRegionIDs.Count; i++) {
+        //     Region region = GridMap.Instance.GetRegionByID(ownedRegionIDs[i]);
+        //     LandmarkManager.Instance.OwnRegion(faction, region);
+        // }
     }
 
     public void LoadFactionActiveQuest() {

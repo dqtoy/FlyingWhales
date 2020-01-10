@@ -20,7 +20,7 @@ public class InvestigationMinionDraggableItem : DraggableItem {
         _draggingObject = clone.GetComponent<RectTransform>();
         _draggingObject.gameObject.AddComponent<DragObject>().parentItem = gameObject.GetComponent<PlayerCharacterItem>();
 
-        //Put _dragging object into the dragging area
+        //Put _dragging object into the dragging settlement
         _draggingObject.sizeDelta = _portrait.gameObject.GetComponent<RectTransform>().rect.size;
         _draggingObject.SetParent(UIManager.Instance.gameObject.GetComponent<RectTransform>(), true);
         _isDragging = true;
@@ -42,15 +42,6 @@ public class InvestigationMinionDraggableItem : DraggableItem {
             Destroy(_draggingObject.gameObject);
             if (customDropzone == null) {
                 _portrait.gameObject.SetActive(false);
-                if (UIManager.Instance.areaInfoUI.isShowing) {
-                    if (_index == -1) {
-                        //UIManager.Instance.areaInfoUI.AssignMinionToInvestigate(null);
-                    } else if (_index == -2) {
-                        //UIManager.Instance.areaInfoUI.AssignMinionToTokenCollection(null);
-                    } else {
-                        //UIManager.Instance.areaInfoUI.AssignPartyMinionToInvestigate(null, _index);
-                    }
-                }
             }
         }
     }

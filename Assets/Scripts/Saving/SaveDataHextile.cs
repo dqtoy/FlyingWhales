@@ -33,8 +33,8 @@ public class SaveDataHextile {
         } else {
             landmarkID = -1;
         }
-        //if (tile.areaOfTile != null) {
-        //    areaID = tile.areaOfTile.id;
+        //if (tile.settlementOfTile != null) {
+        //    areaID = tile.settlementOfTile.id;
         //} else {
         //    areaID = -1;
         //}

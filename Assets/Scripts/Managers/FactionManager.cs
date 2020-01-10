@@ -121,7 +121,7 @@ public class FactionManager : MonoBehaviour {
     }
     public void DeleteFaction(Faction faction) {
         //for (int i = 0; i < faction.ownedRegions.Count; i++) {
-        //    Area ownedArea = faction.ownedRegions[i];
+        //    Settlement ownedArea = faction.ownedRegions[i];
         //    LandmarkManager.Instance.UnownArea(ownedArea);
         //}
         //RemoveRelationshipsWith(faction);
@@ -192,17 +192,6 @@ public class FactionManager : MonoBehaviour {
             }
         }
         return null;
-    }
-    public void TransferCharacter(Character character, Faction faction, Region newHome) {
-        if (character.faction != null) {
-            character.faction.LeaveFaction(character);
-        }
-        faction.JoinFaction(character);
-        character.MigrateHomeTo(newHome);
-        //character.homeLandmark.RemoveCharacterHomeOnLandmark(character);
-        //newHome.AddCharacterHomeOnLandmark(character);
-        //Interaction interaction = InteractionManager.Instance.CreateNewInteraction(INTERACTION_TYPE.MOVE_TO_RETURN_HOME, _characterInvolved.specificLocation.coreTile.landmarkOnTile);
-        //character.SetForcedInteraction(interaction);
     }
     public List<Character> GetViableRulers(Character previousRuler, GENDER gender, params RELATIONSHIP_TYPE[] type) {
         List<Character> characters = new List<Character>();

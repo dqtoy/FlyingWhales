@@ -9,7 +9,7 @@ public class DefaultOutside : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log) {
         if ((character.currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA || character.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || 
             character.currentStructure.structureType == STRUCTURE_TYPE.CEMETERY || character.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) && character.isAtHomeRegion) {
-            log += "\n-" + character.name + " is in the Work Area/Wilderness/Cemetery/City Center of home location";
+            log += "\n-" + character.name + " is in the Work Settlement/Wilderness/Cemetery/City Center of home location";
 
             log += "\n-If it is Morning or Afternoon, 25% chance to enter Stroll Outside Mode";
             TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(character);

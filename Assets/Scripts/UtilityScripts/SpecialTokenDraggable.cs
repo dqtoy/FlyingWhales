@@ -18,7 +18,7 @@ public class SpecialTokenDraggable : DraggableItem {
         _draggingObject = clone.GetComponent<RectTransform>();
         _draggingObject.gameObject.AddComponent<DragObject>().parentItem = gameObject.GetComponent<SpecialTokenItem>();
 
-        //Put _dragging object into the dragging area
+        //Put _dragging object into the dragging settlement
         _draggingObject.sizeDelta = visual.gameObject.GetComponent<RectTransform>().rect.size;
         _draggingObject.SetParent(UIManager.Instance.gameObject.GetComponent<RectTransform>(), true);
         _isDragging = true;

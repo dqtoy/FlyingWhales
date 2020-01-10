@@ -81,7 +81,7 @@ public class BuildStructure : GoapAction {
     }
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
         BuildSpotTileObject spot = goapNode.poiTarget as BuildSpotTileObject;
-        LocationStructure structure = spot.BuildBlueprint();
+        LocationStructure structure = spot.BuildBlueprint(goapNode.actor.homeSettlement);
         goapNode.poiTarget.AdjustResource(RESOURCE.WOOD, -50);
         //ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
         //carriedPile.AdjustResourceInPile(-50);

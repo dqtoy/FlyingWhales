@@ -24,7 +24,7 @@ namespace Traits {
                 Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "add_criminal");
                 addLog.AddToFillers(sourceCharacter, sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 sourceCharacter.AddHistory(addLog);
-                //TODO: sourceCharacter.homeArea.jobQueue.UnassignAllJobsTakenBy(sourceCharacter);
+                //TODO: sourceCharacter.homeSettlement.jobQueue.UnassignAllJobsTakenBy(sourceCharacter);
                 sourceCharacter.CancelOrUnassignRemoveTraitRelatedJobs();
             }
 
@@ -50,14 +50,14 @@ namespace Traits {
                 //TODO: (gainedFromDoing == null || gainedFromDoing.awareCharactersOfThisAction.Contains(characterThatWillDoJob)) &&
                 if (targetCharacter.isAtHomeRegion && characterThatWillDoJob.isAtHomeRegion
                     && targetCharacter.homeRegion == characterThatWillDoJob.homeRegion
-                    && targetCharacter.homeRegion.area != null
+                    && targetCharacter.homeSettlement != null
                     && !targetCharacter.isDead) { // && targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null
                     GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.APPREHEND);
                     if (currentJob == null) {
                         if (InteractionManager.Instance.CanCharacterTakeApprehendJob(characterThatWillDoJob, targetCharacter)) {
                             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, targetCharacter, characterThatWillDoJob);
                             //job.SetCanBeDoneInLocation(true);
-                            job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { characterThatWillDoJob.homeRegion.area.prison });
+                            job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { characterThatWillDoJob.homeSettlement.prison });
                             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                             return true;
                         }
