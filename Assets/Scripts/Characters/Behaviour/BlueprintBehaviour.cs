@@ -26,15 +26,14 @@ public class BlueprintBehaviour : CharacterBehaviourComponent {
 
                 LocationStructureObject lso = chosenStructurePrefab.GetComponent<LocationStructureObject>();
                 BuildSpotTileObject chosenBuildingSpot;
-                //TODO:
-                // if (character.homeRegion.innerMap.TryGetValidBuildSpotTileObjectForStructure(lso, out chosenBuildingSpot) == false) {
-                //     log += $"\n-Could not find spot that can house new structure. Abandoning...";
-                //     return false;
-                // }
-                // log += $"\n-Creating new Place Blueprint job targetting {chosenBuildingSpot.ToString()} at {chosenBuildingSpot.gridTileLocation.ToString()}";
-                // GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PLACE_BLUEPRINT, INTERACTION_TYPE.PLACE_BLUEPRINT, chosenBuildingSpot, character);
-                // job.AddOtherData(INTERACTION_TYPE.PLACE_BLUEPRINT, new object[] { neededStructure });
-                // character.jobQueue.AddJobInQueue(job);
+                if (character.homeRegion.innerMap.TryGetValidBuildSpotTileObjectForStructure(lso, character.homeSettlement, out chosenBuildingSpot) == false) {
+                    log += $"\n-Could not find spot that can house new structure. Abandoning...";
+                    return false;
+                }
+                log += $"\n-Creating new Place Blueprint job targeting {chosenBuildingSpot.ToString()} at {chosenBuildingSpot.gridTileLocation.ToString()}";
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PLACE_BLUEPRINT, INTERACTION_TYPE.PLACE_BLUEPRINT, chosenBuildingSpot, character);
+                job.AddOtherData(INTERACTION_TYPE.PLACE_BLUEPRINT, new object[] { neededStructure });
+                character.jobQueue.AddJobInQueue(job);
 
                 return true;
             }

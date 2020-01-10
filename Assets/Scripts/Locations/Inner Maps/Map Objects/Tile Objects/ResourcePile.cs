@@ -44,7 +44,7 @@ public abstract class ResourcePile : TileObject {
     #region Overrides
     public override void OnPlacePOI() {
         base.OnPlacePOI();
-        if(gridTileLocation != null && structureLocation != structureLocation.location.mainStorage) {
+        if(gridTileLocation != null && structureLocation.settlementLocation != null && structureLocation != structureLocation.settlementLocation.mainStorage) {
             CreateHaulJob();
         }
         Messenger.AddListener<Region>(Signals.REGION_CHANGE_STORAGE, OnRegionChangeStorage);

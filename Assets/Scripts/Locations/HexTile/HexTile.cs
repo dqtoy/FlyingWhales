@@ -673,11 +673,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         if (PlayerManager.Instance.isChoosingStartingTile) {
             return;
         }
-        if (region.coreTile == this) {
-            UIManager.Instance.ShowRegionInfo(this.region);
-        } else {
-            Messenger.Broadcast(Signals.HIDE_MENUS);
-        }
+        // if (region.coreTile == this) {
+        //     UIManager.Instance.ShowRegionInfo(this.region);
+        // } else {
+        //     Messenger.Broadcast(Signals.HIDE_MENUS);
+        // }
+        Messenger.Broadcast(Signals.HIDE_MENUS);
     }
     public void RightClick() {
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {

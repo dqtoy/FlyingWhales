@@ -52,7 +52,7 @@ public class FoodPile : ResourcePile {
 
     private void CheckSupply() {
         if (gridTileLocation != null) {
-            if (structureLocation == structureLocation.location.mainStorage) {
+            if (structureLocation.settlementLocation != null && structureLocation.settlementLocation.mainStorage == structureLocation) {
                 if (resourceInPile < 100) {
                     if (structureLocation.settlementLocation != null && !structureLocation.settlementLocation.HasJob(JOB_TYPE.PRODUCE_FOOD)) {
                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PRODUCE_FOOD, new GoapEffect(GOAP_EFFECT_CONDITION.PRODUCE_FOOD, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), this, structureLocation.settlementLocation);

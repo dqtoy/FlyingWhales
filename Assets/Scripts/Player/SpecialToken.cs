@@ -355,7 +355,7 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
         }
         if (characterOwner == null) {
             //Patrollers should not pick up items from their main storage structure
-            if (gridTileLocation != null && gridTileLocation.structure == character.homeRegion.mainStorage) { //&& token.currentRegion == characterThatWillDoJob.homeRegion
+            if (gridTileLocation != null && gridTileLocation.structure == character.homeSettlement.mainStorage) { //&& token.currentRegion == characterThatWillDoJob.homeRegion
                 return false;
             }
             //characters should not pick up items if that item is the target of it's current action

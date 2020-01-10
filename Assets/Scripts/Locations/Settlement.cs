@@ -212,7 +212,7 @@ public class Settlement : IJobOwner {
 
     #region Utilities
     public void LoadAdditionalData() {
-        CreateNameplate();
+        // CreateNameplate();
     }
     /// <summary>
     /// Called when this settlement is set as the current active settlement.
@@ -396,7 +396,9 @@ public class Settlement : IJobOwner {
             }
             region.AddResident(character);
             residents.Add(character);
-            //TODO:
+            if (character.race != RACE.DEMON) {
+                classManager.OnAddResident(character);    
+            }
             // if(!coreTile.isCorrupted) {
             //     classManager.OnAddResident(character);
             // }
@@ -410,6 +412,9 @@ public class Settlement : IJobOwner {
             region.RemoveResident(character);
             if (character.homeStructure != null && character.homeSettlement == this) {
                 character.homeStructure.RemoveResident(character);
+            }
+            if (character.race != RACE.DEMON) {
+                classManager.OnRemoveResident(character);
             }
         }
     }

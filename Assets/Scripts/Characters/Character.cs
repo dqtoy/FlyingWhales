@@ -173,7 +173,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             return _currentRegion;
         }
     }
-    public Settlement currentSettlement { get; private set; }
+    public Settlement currentSettlement => currentStructure.settlementLocation;
     public List<Log> history => _history;
     public int level => _level;
     public int experience => _experience;
@@ -211,11 +211,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 return currentParty.owner.gridTileLocation;
             }
             return GetLocationGridTileByXY(gridTilePosition.x, gridTilePosition.y);
-            //if (tile == null) {
-            //    LocationGridTile gridTile = specificLocation.areaMap.map[(int) marker.anchoredPos.x, (int) marker.anchoredPos.y];
-            //    return gridTile;
-            //}
-            //return tile;
         }
     }
     public Vector2Int gridTilePosition {
@@ -237,11 +232,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             return alterEgos[currentAlterEgoName];
         }
     }
-    //public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness {
-    //    get {
-    //        return currentAlterEgo.awareness;
-    //    }
-    //}
     public LocationStructure currentStructure {
         get {
             if (!IsInOwnParty()) {

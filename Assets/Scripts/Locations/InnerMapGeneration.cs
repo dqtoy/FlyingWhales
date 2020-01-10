@@ -11,27 +11,6 @@ public partial class LandmarkManager {
     [SerializeField] private GameObject regionInnerStructurePrefab;
     
     #region Settlement Maps
-    public IEnumerator GenerateAreaMap(Settlement settlement) {
-        GameObject areaMapGO = GameObject.Instantiate(areaInnerStructurePrefab, innerMapsParent);
-        AreaInnerTileMap areaMap = areaMapGO.GetComponent<AreaInnerTileMap>();
-        areaMap.ClearAllTilemaps();
-
-        string log = string.Empty;
-        areaMap.Initialize(settlement);
-        TownMapSettings generatedSettings = areaMap.GenerateTownMap(out log);
-        yield return StartCoroutine(areaMap.DrawMap(generatedSettings));
-        // yield return StartCoroutine(areaMap.PlaceInitialStructures(settlement));
-
-        yield return StartCoroutine(areaMap.GenerateDetails());
-        yield return StartCoroutine(settlement.PlaceObjects());
-
-        areaMap.OnMapGenerationFinished();
-        //settlement.OnMapGenerationFinished();
-        InnerMapManager.Instance.OnCreateInnerMap(areaMap);
-        TokenManager.Instance.LoadSpecialTokens(settlement);
-        CharacterManager.Instance.PlaceInitialCharacters(settlement);
-        settlement.OnAreaSetAsActive();
-    }
     public void LoadAreaMap(SaveDataAreaInnerTileMap data) {
         GameObject areaMapGO = GameObject.Instantiate(areaInnerStructurePrefab, innerMapsParent);
         AreaInnerTileMap areaMap = areaMapGO.GetComponent<AreaInnerTileMap>();
