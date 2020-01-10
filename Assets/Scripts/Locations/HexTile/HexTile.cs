@@ -67,6 +67,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     public BuildingSpot[] ownedBuildSpots { get; private set; }
     public List<HexTile> AllNeighbours { get; set; }
     public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList(); } }
+    public List<LocationGridTile> locationGridTiles { get; private set; }
     private int _uncorruptibleLandmarkNeighbors = 0; //if 0, can be corrupted, otherwise, cannot be corrupted
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
     private GameObject _spawnedTendril = null;
@@ -99,6 +100,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     }
     public void Initialize() {
         featureComponent = new TileFeatureComponent();
+        Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
+    }
+    private void OnGameLoaded() {
+        Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
+        SubscribeListeners();
     }
 
     #region Elevation Functions
@@ -114,17 +120,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     #endregion
 
     #region Landmarks
-    private void SetLandmarkOnTile(BaseLandmark landmarkOnTile, bool addFeatures = true) {
+    private void SetLandmarkOnTile(BaseLandmark landmarkOnTile) {
         this.landmarkOnTile = landmarkOnTile;
-        // if (addFeatures) {
-        //     landmarkOnTile?.AddFeaturesToRegion();
-        // }
         region.OnMainLandmarkChanged();
     }
-    public BaseLandmark CreateLandmarkOfType(LANDMARK_TYPE landmarkType, bool addFeatures) {
+    public BaseLandmark CreateLandmarkOfType(LANDMARK_TYPE landmarkType) {
         LandmarkData data = LandmarkManager.Instance.GetLandmarkData(landmarkType);
         //SetLandmarkOnTile(new BaseLandmark(this, landmarkType));
-        SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, landmarkType), addFeatures);
+        SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, landmarkType));
         if (data.minimumTileCount > 1) {
             if (neighbourDirections.ContainsKey(data.connectedTileDirection) && neighbourDirections[data.connectedTileDirection] != null) {
                 HexTile tileToConnect = neighbourDirections[data.connectedTileDirection];
@@ -152,7 +155,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     public BaseLandmark CreateLandmarkOfType(SaveDataLandmark saveData) {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(saveData.landmarkType);
         //SetLandmarkOnTile(new BaseLandmark(this, saveData));
-        SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, saveData), false);
+        SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, saveData));
         //Create Landmark Game Object on tile
         GameObject landmarkGO = CreateLandmarkVisual(saveData.landmarkType, this.landmarkOnTile, landmarkData);
         if (landmarkGO != null) {
@@ -189,8 +192,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         }
         return landmarkGO;
     }
-    public void UpdateLandmarkVisuals() {
-        LandmarkData _data = LandmarkManager.Instance.GetLandmarkData(landmarkOnTile.specificLandmarkType);
+    public void UpdateStructureVisuals(LANDMARK_TYPE landmarkType) {
+        LandmarkData _data = LandmarkManager.Instance.GetLandmarkData(landmarkType);
         List<LandmarkStructureSprite> landmarkTileSprites = LandmarkManager.Instance.GetLandmarkTileSprites(this, landmarkOnTile.specificLandmarkType);
         if (_data.minimumTileCount > 1) {
             SetLandmarkTileSprite(landmarkTileSprites[0]);
@@ -850,6 +853,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     #region Settlement
     public void SetSettlementOnTile(Settlement settlement) {
         settlementOnTile = settlement;
+        landmarkOnTile?.nameplate.UpdateVisuals();
     }
     #endregion
 
@@ -933,6 +937,57 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     #region Inner Map
     public void SetOwnedBuildSpot(BuildingSpot[] spot) {
         ownedBuildSpots = spot;
+        
+        locationGridTiles = new List<LocationGridTile>();
+        for (int i = 0; i < ownedBuildSpots.Length; i++) {
+            BuildingSpot currSpot = ownedBuildSpots[i];
+            locationGridTiles.AddRange(currSpot.tilesInTerritory);
+        }
+    }
+    public List<TileObject> GetTileObjectsInHexTile(TILE_OBJECT_TYPE type) {
+        List<TileObject> tileObjects = new List<TileObject>();
+        for (int i = 0; i < locationGridTiles.Count; i++) {
+            LocationGridTile tile = locationGridTiles[i];
+            if (tile.objHere is TileObject && (tile.objHere as TileObject).tileObjectType == type) {
+                tileObjects.Add(tile.objHere as TileObject);
+            }
+        }
+        return tileObjects;
+    }
+    #endregion
+
+    #region Listeners
+    private void SubscribeListeners() {    
+        Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnStructurePlaced);
+        Messenger.AddListener<LocationStructure, BuildingSpot>(Signals.STRUCTURE_OBJECT_REMOVED, OnStructureRemoved);
+    }
+    private void OnStructurePlaced(LocationStructure structure) {
+        if (ownedBuildSpots != null && ownedBuildSpots.Contains(structure.occupiedBuildSpot.spot)) {
+            CheckIfStructureVisualsAreStillValid();
+        }
+    }
+    private void OnStructureRemoved(LocationStructure structure, BuildingSpot spot) {
+        if (ownedBuildSpots != null && ownedBuildSpots.Contains(spot)) {
+            CheckIfStructureVisualsAreStillValid();
+        }
+    }
+    private STRUCTURE_TYPE GetMostImportantStructureOnTile() {
+        foreach (KeyValuePair<STRUCTURE_TYPE,List<LocationStructure>> pair in settlementOnTile.structures) {
+            if (pair.Value.Count > 0 && pair.Key.IsOpenSpace() == false) {
+                return pair.Key;
+            }
+        }
+        return STRUCTURE_TYPE.INN;
+    }
+    private void CheckIfStructureVisualsAreStillValid() {
+        STRUCTURE_TYPE mostImportantStructure = GetMostImportantStructureOnTile();
+        LANDMARK_TYPE landmarkType = LandmarkManager.Instance.GetLandmarkTypeFor(mostImportantStructure);
+        if (landmarkOnTile == null) {
+            LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkType, false);
+        } else {
+            landmarkOnTile.ChangeLandmarkType(landmarkType);    
+        }
+        
     }
     #endregion
 }

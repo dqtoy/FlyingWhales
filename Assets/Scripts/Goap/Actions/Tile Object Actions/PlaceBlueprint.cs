@@ -34,7 +34,7 @@ public class PlaceBlueprint : GoapAction {
                 return false;
             }
             BuildSpotTileObject buildSpot = poiTarget as BuildSpotTileObject;
-            return buildSpot.spot.isOpen && buildSpot.spot.isOccupied == false;
+            return buildSpot.spot.IsOpenFor(actor.homeSettlement);
         }
         return false;
     }

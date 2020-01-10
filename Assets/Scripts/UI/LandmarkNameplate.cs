@@ -18,8 +18,8 @@ public class LandmarkNameplate : PooledObject {
         UpdateFactionEmblem();
     }
 
-    private void UpdateVisuals() {
-        nameLbl.text = landmark.tileLocation.region.name;
+    public void UpdateVisuals() {
+        nameLbl.text = landmark.landmarkName;
     }
 
     private void UpdatePosition() {
@@ -28,12 +28,16 @@ public class LandmarkNameplate : PooledObject {
         //Vector2 ScreenPosition = Camera.main.WorldToScreenPoint(settlement.nameplatePos);
         this.transform.position = landmark.nameplatePos;
     }
-
-    public void UpdateFactionEmblem() {
-        // factionEmblem.gameObject.SetActive(landmark.tileLocation.settlementOnTile.owner != null);
-        // if (factionEmblem.gameObject.activeSelf) {
-        //     factionEmblem.SetFaction(landmark.tileLocation.settlementOnTile.owner);
-        // }
+    private void UpdateFactionEmblem() {
+        if (landmark.tileLocation.settlementOnTile != null) {
+            factionEmblem.gameObject.SetActive(landmark.tileLocation.settlementOnTile.owner != null);
+            if (factionEmblem.gameObject.activeSelf) {
+                factionEmblem.SetFaction(landmark.tileLocation.settlementOnTile.owner);
+            }
+        } else {
+            factionEmblem.gameObject.SetActive(false);
+        }
+        
     }
 
     public void LateUpdate() {

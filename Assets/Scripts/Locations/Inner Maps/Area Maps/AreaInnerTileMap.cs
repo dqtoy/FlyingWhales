@@ -98,34 +98,6 @@ namespace Inner_Maps {
         #endregion
 
         #region Structures
-        public TownMapSettings GenerateTownMap(out string log) {
-            log = "Generating Inner Structures for " + settlement.name;
-            insideTiles = new List<LocationGridTile>();
-            outsideTiles = new List<LocationGridTile>();
-            if (settlement.locationType != LOCATION_TYPE.DUNGEON && settlement.locationType != LOCATION_TYPE.DEMONIC_INTRUSION) {
-                //if this settlement is not a dungeon type
-                //first get a town center template that has the needed connections for the structures in the settlement
-                List<StructureTemplate> validTownCenters = GetValidTownCenterTemplates(settlement);
-                if (validTownCenters.Count == 0) {
-                    string error = "There are no valid town center structures for settlement " + settlement.name + ". Needed connectors are: ";
-                    foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in settlement.structures) {
-                        error += "\n" + keyValuePair.Key.ToString() + " - " + keyValuePair.Value.Count.ToString();
-                    }
-                    throw new System.Exception(error);
-                }
-                //Once a town center is chosen
-                StructureTemplate chosenTownCenter = validTownCenters[Utilities.rng.Next(0, validTownCenters.Count)];
-                usedTownCenterTemplateName = chosenTownCenter.name;
-                log += "\nChosen town center template is " + usedTownCenterTemplateName;
-                //Place that template in the settlement generation tilemap
-                Dictionary<int, Dictionary<int, LocationGridTileSettings>> mainGeneratedSettings = InnerMapManager.Instance.GenerateTownCenterTemplateForGeneration(chosenTownCenter, Vector3Int.zero);
-                chosenTownCenter.UpdatePositionsGivenOrigin(Vector3Int.zero);
-                Debug.Log(log);
-                //once all structures are placed, get the occupied bounds in the settlement generation tilemap, and use that size to generate the actual grid for this map
-                return InnerMapManager.Instance.GetTownMapSettings(mainGeneratedSettings);
-            }
-            return default(TownMapSettings);
-        }
         private void AssignOuterAreas(List<LocationGridTile> inTiles, List<LocationGridTile> outTiles) {
             if (settlement.locationType != LOCATION_TYPE.DUNGEON) {
                 if (settlement.HasStructure(STRUCTURE_TYPE.WORK_AREA)) {

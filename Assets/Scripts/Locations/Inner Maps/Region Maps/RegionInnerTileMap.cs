@@ -6,7 +6,7 @@ using UnityEngine.Tilemaps;
 
 namespace Inner_Maps {
     public class RegionInnerTileMap : InnerTileMap {
-        public override bool isSettlementMap => false;
+        public virtual bool isSettlementMap => false;
         private Region region { get; set; }
         
         public override void Initialize(ILocation location) {

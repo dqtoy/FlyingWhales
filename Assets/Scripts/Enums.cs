@@ -227,6 +227,7 @@ public enum LANDMARK_TYPE {
     THE_PIT = 56,
     LUMBERYARD = 57,
     QUARRY = 58,
+    HOUSES
 }
 public enum TECHNOLOGY {
     //Weapon Production
@@ -1127,6 +1128,8 @@ public enum STRUCTURE_TYPE {
     TEMPLE,
     MAGE_TOWER,
     PORTAL,
+    CAVE,
+    OCEAN
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,
@@ -1219,6 +1222,7 @@ public enum TILE_OBJECT_TYPE {
     ROCK,
     FLOWER,
     KINDLING,
+    BIG_TREE_OBJECT,
 }
 public enum POI_STATE {
     ACTIVE,

@@ -1,42 +1,34 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Inner_Maps;
 using UnityEngine;
 
-public class LandmarkStructureGeneration : MapGenerationComponent {
+public class ElevationStructureGeneration : MapGenerationComponent {
 	public override IEnumerator Execute(MapGenerationData data) {
-		List<BaseLandmark> landmarks = LandmarkManager.Instance.GetAllLandmarks();
-		for (int i = 0; i < landmarks.Count; i++) {
-			BaseLandmark landmark = landmarks[i];
-			if (landmark.specificLandmarkType != LANDMARK_TYPE.VILLAGE) {
-				yield return MapGenerator.Instance.StartCoroutine(CreateStructureObjectForLandmark(landmark));	
+		for (int i = 0; i < GridMap.Instance.normalHexTiles.Count; i++) {
+			HexTile tile = GridMap.Instance.normalHexTiles[i];
+			if (tile.landmarkOnTile == null && tile.elevationType != ELEVATION.PLAIN && tile.elevationType != ELEVATION.TREES) {
+				yield return MapGenerator.Instance.StartCoroutine(CreateStructureObjectForTile(tile));
 			}
 		}
 		yield return null;
 	}
-
-	private IEnumerator CreateStructureObjectForLandmark(BaseLandmark landmark) {
-		LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(landmark.tileLocation.region,
-			GetStructureTypeFor(landmark.specificLandmarkType));
-		 yield return MapGenerator.Instance.StartCoroutine(PlaceInitialStructure(structure, landmark.tileLocation.region.innerMap, landmark.tileLocation));
+	
+	private IEnumerator CreateStructureObjectForTile(HexTile tile) {
+		LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(tile.region,
+			GetStructureTypeFor(tile.elevationType));
+		 yield return MapGenerator.Instance.StartCoroutine(PlaceInitialStructure(structure, tile.region.innerMap, tile));
 	}
 
-	private STRUCTURE_TYPE GetStructureTypeFor(LANDMARK_TYPE landmarkType) {
-		switch (landmarkType) {
-			case LANDMARK_TYPE.MONSTER_LAIR:
-				return STRUCTURE_TYPE.MONSTER_LAIR;
-			case LANDMARK_TYPE.MINES:
-				return STRUCTURE_TYPE.ABANDONED_MINE;
-			case LANDMARK_TYPE.TEMPLE:
-				return STRUCTURE_TYPE.TEMPLE;
-			case LANDMARK_TYPE.MAGE_TOWER:
-				return STRUCTURE_TYPE.MAGE_TOWER;
-			case LANDMARK_TYPE.THE_PORTAL:
-				return STRUCTURE_TYPE.PORTAL;
+	private STRUCTURE_TYPE GetStructureTypeFor(ELEVATION elevation) {
+		switch (elevation) {
+			case ELEVATION.MOUNTAIN:
+				return STRUCTURE_TYPE.CAVE;
+			case ELEVATION.WATER:
+				return STRUCTURE_TYPE.OCEAN;
 		}
-		throw new Exception($"There is no corresponding structure type for {landmarkType.ToString()}");
+		throw new Exception($"There is no corresponding structure type for {elevation.ToString()}");
 	}
 	
 	private IEnumerator PlaceInitialStructure(LocationStructure structure, InnerTileMap innerTileMap, HexTile tile) {

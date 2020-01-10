@@ -77,7 +77,7 @@ public class SettlementGeneration : MapGenerationComponent {
 			HexTile currTile = settlement.tiles[i];
 			for (int j = 0; j < currTile.ownedBuildSpots.Length; j++) {
 				BuildingSpot currSpot = currTile.ownedBuildSpots[j];
-				if (currSpot.isOccupied == false && currSpot.CanPlaceStructureOnSpot(structureObject, settlement.innerMap)) {
+				if (currSpot.isOccupied == false && currSpot.CanFitStructureOnSpot(structureObject, settlement.innerMap)) {
 					spot = currSpot;
 					return true;
 				}

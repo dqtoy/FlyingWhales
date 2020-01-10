@@ -88,7 +88,7 @@ public partial class LandmarkManager : MonoBehaviour {
             //Destroy landmark on tile
             DestroyLandmarkOnTile(location);
         }
-        BaseLandmark newLandmark = location.CreateLandmarkOfType(landmarkType, addFeatures);
+        BaseLandmark newLandmark = location.CreateLandmarkOfType(landmarkType);
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
         location.UpdateBuildSprites();
         Messenger.Broadcast(Signals.LANDMARK_CREATED, newLandmark);
@@ -425,6 +425,38 @@ public partial class LandmarkManager : MonoBehaviour {
             else if (category == "Combat") { return elfCombatStructures; }
         }
         return null;
+    }
+    public LANDMARK_TYPE GetLandmarkTypeFor(STRUCTURE_TYPE structureType) {
+        switch (structureType) {
+            case STRUCTURE_TYPE.DWELLING:
+                return LANDMARK_TYPE.HOUSES;
+            case STRUCTURE_TYPE.MONSTER_LAIR:
+                return LANDMARK_TYPE.MONSTER_LAIR;
+            case STRUCTURE_TYPE.ABANDONED_MINE:
+                return LANDMARK_TYPE.MINES;
+            case STRUCTURE_TYPE.TEMPLE:
+                return LANDMARK_TYPE.TEMPLE;
+            case STRUCTURE_TYPE.MAGE_TOWER:
+                return LANDMARK_TYPE.MAGE_TOWER;
+            default:
+                return LANDMARK_TYPE.VILLAGE;
+        }
+    }
+    public STRUCTURE_TYPE GetLandmarkTypeFor(LANDMARK_TYPE landmarkType) {
+        switch (landmarkType) {
+            case LANDMARK_TYPE.HOUSES:
+                return STRUCTURE_TYPE.DWELLING;
+            case LANDMARK_TYPE.MONSTER_LAIR:
+                return STRUCTURE_TYPE.MONSTER_LAIR;
+            case LANDMARK_TYPE.MINES:
+                return STRUCTURE_TYPE.ABANDONED_MINE;
+            case LANDMARK_TYPE.TEMPLE:
+                return STRUCTURE_TYPE.TEMPLE;
+            case LANDMARK_TYPE.MAGE_TOWER:
+                return STRUCTURE_TYPE.MAGE_TOWER;
+            default:
+                return STRUCTURE_TYPE.INN;
+        }
     }
     #endregion
 

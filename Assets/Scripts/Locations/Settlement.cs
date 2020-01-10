@@ -572,6 +572,17 @@ public class Settlement : IJobOwner {
     public bool HasStructure(STRUCTURE_TYPE type) {
         return structures.ContainsKey(type);
     }
+    public LocationStructure GetStructureOccupyingSpot(BuildingSpot spot) {
+        foreach (KeyValuePair<STRUCTURE_TYPE,List<LocationStructure>> pair in structures) {
+            for (int i = 0; i < pair.Value.Count; i++) {
+                LocationStructure structure = pair.Value[i];
+                if (structure.occupiedBuildSpot.spot == spot) {
+                    return structure;
+                }
+            }
+        }
+        return null;
+    }
     #endregion
 
     #region Inner Map
@@ -589,12 +600,9 @@ public class Settlement : IJobOwner {
         PlaceBuildSpots();
         yield return null;
         
-        PlaceOres();
-        yield return null;
         PlaceResourcePiles();
         yield return null;
-        SpawnFoodObjects();
-        yield return null;
+        
 
         //magic circle
         if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {

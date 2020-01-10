@@ -15,7 +15,7 @@ public class BaseLandmark {
     protected HexTile _location;
     protected HexTile _connectedTile;
     protected LandmarkVisual _landmarkVisual;
-    protected LandmarkNameplate nameplate;
+    public LandmarkNameplate nameplate { get; }
     public List<LANDMARK_TAG> landmarkTags { get; private set; }
     public Vector2 nameplatePos { get; private set; }
     //public int invasionTicks { get { return GetInvasionTicks(); } }
@@ -24,7 +24,7 @@ public class BaseLandmark {
 
     #region getters/setters
     public int id => _id;
-    public string landmarkName => _landmarkName;
+    public string landmarkName => tileLocation.settlementOnTile == null ? _landmarkName : tileLocation.settlementOnTile.name;
     public string urlName => $"<link=\"{this._id.ToString()}_landmark\">{_landmarkName}</link>";
     public LANDMARK_TYPE specificLandmarkType => _specificLandmarkType;
     public LandmarkVisual landmarkVisual => _landmarkVisual;
@@ -70,8 +70,13 @@ public class BaseLandmark {
         _connectedTile = connectedTile;
     }
     public void ChangeLandmarkType(LANDMARK_TYPE type) {
+        if (this.specificLandmarkType.IsPlayerLandmark()) {
+            //if provided landmark type is player landmark, then create a new instance instead.
+            LandmarkManager.Instance.CreateNewLandmarkOnTile(tileLocation, type, false);
+            return;
+        }
         _specificLandmarkType = type;
-        tileLocation.UpdateLandmarkVisuals();
+        tileLocation.UpdateStructureVisuals(type);
         tileLocation.UpdateBuildSprites();
         //if (type == LANDMARK_TYPE.NONE) {
         //    ObjectPoolManager.Instance.DestroyObject(nameplate.gameObject);

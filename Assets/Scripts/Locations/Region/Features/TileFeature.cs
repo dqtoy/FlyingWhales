@@ -19,6 +19,7 @@ public class TileFeature  {
     public virtual void OnRemoveFeature(HexTile tile) { }
     public virtual void OnRemoveCharacterFromRegion(Region region, Character removedCharacter) { }
     public virtual void OnDemolishLandmark(HexTile tile, LANDMARK_TYPE demolishedLandmarkType) { }
+    public virtual void PerformInitialActions(HexTile tile) { }
     #endregion
 
 }

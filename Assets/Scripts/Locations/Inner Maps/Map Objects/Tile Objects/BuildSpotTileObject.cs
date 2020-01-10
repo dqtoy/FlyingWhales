@@ -38,7 +38,7 @@ public class BuildSpotTileObject : TileObject {
         for (int i = 0; i < choices.Count; i++) {
             GameObject currPrefab = choices[i];
             LocationStructureObject so = currPrefab.GetComponent<LocationStructureObject>();
-            if (spot.CanPlaceStructureOnSpot(so, gridTileLocation.parentMap.location.innerMap)) {
+            if (spot.CanFitStructureOnSpot(so, gridTileLocation.parentMap.location.innerMap)) {
                 chosenStructurePrefab = currPrefab;
                 break;
             }
@@ -47,7 +47,7 @@ public class BuildSpotTileObject : TileObject {
         if (chosenStructurePrefab != null) {
             GameObject structurePrefab = ObjectPoolManager.Instance.InstantiateObjectFromPool(chosenStructurePrefab.name, Vector3.zero, Quaternion.identity, gridTileLocation.parentMap.structureParent);
             LocationStructureObject structureObject = structurePrefab.GetComponent<LocationStructureObject>();
-            structurePrefab.transform.localPosition = spot.GetPositionToPlaceStructure(structureObject);
+            structurePrefab.transform.localPosition = spot.GetPositionToPlaceStructure(structureObject, structureType);
             
             structureObject.RefreshAllTilemaps();
             List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(gridTileLocation.parentMap);
@@ -55,9 +55,8 @@ public class BuildSpotTileObject : TileObject {
                 LocationGridTile tile = occupiedTiles[j];
                 tile.SetHasBlueprint(true);
             }
-            spot.SetIsOpen(false);
             spot.SetIsOccupied(true);
-            spot.SetAllAdjacentSpotsAsOpen(gridTileLocation.parentMap);
+            // spot.SetAllAdjacentSpotsAsOpen(gridTileLocation.parentMap);
             spot.UpdateAdjacentSpotsOccupancy(gridTileLocation.parentMap);
             structureObject.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Blueprint);
             spot.SetBlueprint(structureObject, structureType);
@@ -78,10 +77,11 @@ public class BuildSpotTileObject : TileObject {
         }
         structure.SetStructureObject(spot.blueprint);
         spot.blueprint.PlacePreplacedObjectsAsBlueprints(structure, settlement.innerMap, settlement);
+        
+        structure.SetOccupiedBuildSpot(this);
         spot.blueprint.OnStructureObjectPlaced(settlement.innerMap, structure);
         spot.ClearBlueprints();
 
-        structure.SetOccupiedBuildSpot(this);
         settlement.AddTileToSettlement(spot.hexTileOwner);
 
         return structure;
@@ -89,7 +89,6 @@ public class BuildSpotTileObject : TileObject {
     }
     public void RemoveOccupyingStructure(LocationStructure structure) {
         Settlement settlement = structure.settlementLocation;
-        spot.SetIsOpen(true);
         spot.SetIsOccupied(false);
         spot.UpdateAdjacentSpotsOccupancy(settlement.innerMap);
     }

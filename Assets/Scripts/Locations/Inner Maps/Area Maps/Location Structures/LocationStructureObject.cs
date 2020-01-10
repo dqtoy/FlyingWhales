@@ -225,8 +225,8 @@ public class LocationStructureObject : PooledObject {
         } else {
             innerMap.location.OnLocationStructureObjectPlaced(structure);    
         }
-        
         UpdateSortingOrders();
+        Messenger.Broadcast(Signals.STRUCTURE_OBJECT_PLACED, structure);
     }
     #endregion
 
@@ -416,7 +416,6 @@ public class LocationStructureObject : PooledObject {
             }
         }
     }
-
 
     [ContextMenu("Convert Objects")]
     public void ConvertObjects() {

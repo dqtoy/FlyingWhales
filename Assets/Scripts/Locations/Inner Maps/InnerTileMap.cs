@@ -50,7 +50,7 @@ namespace Inner_Maps {
         public int width { get; set; }
         public int height { get; set; }
         public LocationGridTile[,] map { get; private set; }
-        public List<LocationGridTile> allTiles { get; private set; }
+        protected List<LocationGridTile> allTiles { get; private set; }
         public List<LocationGridTile> allEdgeTiles { get; private set; }
         public ILocation location { get; private set; }
         public GridGraph pathfindingGraph { get; set; }
@@ -59,7 +59,6 @@ namespace Inner_Maps {
         public List<BurningSource> activeBurningSources { get; private set; }
         public BuildingSpot[,] buildingSpots { get; protected set; }
         public bool isShowing => InnerMapManager.Instance.currentlyShowingMap == this;
-        public virtual bool isSettlementMap => true;
 
         #region Generation
         public virtual void Initialize(ILocation location) {
@@ -276,7 +275,7 @@ namespace Inner_Maps {
                 }
             }
             if (unoccupiedEdgeTiles.Count > 0) {
-                return unoccupiedEdgeTiles[UnityEngine.Random.Range(0, unoccupiedEdgeTiles.Count)];
+                return unoccupiedEdgeTiles[Random.Range(0, unoccupiedEdgeTiles.Count)];
             }
             return null;
         }
@@ -328,7 +327,7 @@ namespace Inner_Maps {
                     if (to.structure != null) {
                         to.structure.AddCharacterAtLocation(character);
                     } else {
-                        throw new System.Exception(character.name + " is going to tile " + to.ToString() + " which does not have a structure!");
+                        throw new Exception(character.name + " is going to tile " + to.ToString() + " which does not have a structure!");
                     }
                 
                 }
@@ -360,12 +359,6 @@ namespace Inner_Maps {
         public void RemoveActiveBurningSources(BurningSource bs) {
             activeBurningSources.Remove(bs);
         }
-        public void LoadBurningSources(List<SaveDataBurningSource> sources) {
-            //for (int i = 0; i < sources.Count; i++) {
-            //    SaveDataBurningSource data = sources[i];
-            //    BurningSource bs = new BurningSource(settlement, data);
-            //}
-        }
         #endregion
 
         #region Utilities
@@ -375,7 +368,7 @@ namespace Inner_Maps {
         public void Open() { }
         public void Close() { }
         public void OnMapGenerationFinished() {
-            this.name = location.name + "'s Inner Map";
+            name = location.name + "'s Inner Map";
             worldUiCanvas.worldCamera = InnerMapCameraMove.Instance.innerMapsCamera;
             var orthographicSize = InnerMapCameraMove.Instance.innerMapsCamera.orthographicSize;
             cameraBounds = new Vector4 {x = -185.8f}; //x - minX, y - minY, z - maxX, w - maxY 
@@ -385,10 +378,10 @@ namespace Inner_Maps {
             SpawnCenterGo();
         }
         private void SpawnCenterGo() {
-            centerGo = GameObject.Instantiate<GameObject>(centerGoPrefab, transform);
+            centerGo = Instantiate<GameObject>(centerGoPrefab, transform);
             centerGo.transform.position = new Vector3((cameraBounds.x + cameraBounds.z) * 0.5f, (cameraBounds.y + cameraBounds.w) * 0.5f);
         }
-        public void ShowPath(List<Vector3> points) {
+        private void ShowPath(List<Vector3> points) {
             pathLineRenderer.gameObject.SetActive(true);
             pathLineRenderer.positionCount = points.Count;
             Vector3[] positions = new Vector3[points.Count];
@@ -397,7 +390,7 @@ namespace Inner_Maps {
             }
             pathLineRenderer.SetPositions(positions);
         }
-        public void ShowPath(Character character) {
+        private void ShowPath(Character character) {
             List<Vector3> points = new List<Vector3>(character.marker.pathfindingAI.currentPath.vectorPath);
             int indexAt = 0; //the index that the character is at.
             float nearestDistance = 9999f;
@@ -421,91 +414,20 @@ namespace Inner_Maps {
             //Debug.Log(character.name + " new path length is " + points.Count);
             ShowPath(points);
         }
-        public void HidePath() {
+        private void HidePath() {
             pathLineRenderer.gameObject.SetActive(false);
         }
         #endregion
 
         #region Building Spots
-        private BuildingSpot GetRandomOpenBuildingSpot() {
-            List<BuildingSpot> choices = GetOpenBuildingSpots();
-            if (choices.Count > 0) {
-                return Utilities.GetRandomElement(choices);
-            }
-            return null;
-        }
-        public BuildingSpot GetRandomBuildingSpotFor(LocationStructureObject structureObject, Settlement settlement) {
-            List<BuildingSpot> choices = GetRandomBuildingSpotsFor(structureObject, settlement);
-            if (choices.Count > 0) {
-                return Utilities.GetRandomElement(choices);
-            }
-            return null;
-        }
-        public bool TryGetValidBuildSpotForStructure(LocationStructureObject structureObject,
-            out BuildingSpot buildingSpot) {
-            if (structureObject.IsBiggerThanBuildSpot()) {
-                List<BuildingSpot> openSpots = GetOpenBuildingSpots();
-                if (openSpots.Count > 0) {
-                    List<BuildingSpot> choices = new List<BuildingSpot>();
-                    for (int i = 0; i < openSpots.Count; i++) {
-                        BuildingSpot buildSpot = openSpots[i];
-                        if (buildSpot.CanPlaceStructureOnSpot(structureObject, this)) {
-                            choices.Add(buildSpot);
-                        }
-                    }
-                    if (choices.Count > 0) {
-                        buildingSpot = Utilities.GetRandomElement(choices);
-                        return true;
-                    }
-                }
-                //could not find any spots
-                buildingSpot = null;
-                return false;
-            } else {
-                //if the object does not exceed the size of a build spot, then just give it a random open build spot
-                buildingSpot = GetRandomOpenBuildingSpot();
-                return buildingSpot != null;
-            }
-        }
-        private List<BuildingSpot> GetOpenBuildingSpots() {
-            List<BuildingSpot> open = new List<BuildingSpot>();
-            for (int x = 0; x <= buildingSpots.GetUpperBound(0); x++) {
-                for (int y = 0; y <= buildingSpots.GetUpperBound(1); y++) {
-                    BuildingSpot currSpot = buildingSpots[x, y];
-                    if (currSpot.isOpen) {
-                        open.Add(currSpot);
-                    }
-                }
-            }
-            return open;
-        }
-        private List<BuildingSpot> GetRandomBuildingSpotsFor(LocationStructureObject structureObject, Settlement settlement) {
-            List<BuildingSpot> open = new List<BuildingSpot>();
-            for (int x = 0; x <= buildingSpots.GetUpperBound(0); x++) {
-                for (int y = 0; y <= buildingSpots.GetUpperBound(1); y++) {
-                    BuildingSpot currSpot = buildingSpots[x, y];
-                    if (settlement.tiles.Contains(currSpot.hexTileOwner) && currSpot.CanPlaceStructureOnSpot(structureObject, this)) {
-                        open.Add(currSpot);
-                    }
-                }
-            }
-            return open;
-        }
-        private BuildSpotTileObject GetRandomOpenBuildSpotTileObject() {
-            List<BuildSpotTileObject> choices = GetOpenBuildSpotTileObjects();
-            if (choices.Count > 0) {
-                return Utilities.GetRandomElement(choices);
-            }
-            return null;
-        }
         public bool TryGetValidBuildSpotTileObjectForStructure(LocationStructureObject structureObject, Settlement settlement, out BuildSpotTileObject buildingSpot) {
+            List<BuildSpotTileObject> openSpots = GetOpenBuildSpotTileObjects(settlement);
             if (structureObject.IsBiggerThanBuildSpot()) {
-                List<BuildSpotTileObject> openSpots = GetOpenBuildSpotTileObjects();
                 if (openSpots.Count > 0) {
                     List<BuildSpotTileObject> choices = new List<BuildSpotTileObject>();
                     for (int i = 0; i < openSpots.Count; i++) {
                         BuildSpotTileObject buildSpot = openSpots[i];
-                        if (buildSpot.spot.CanPlaceStructureOnSpot(structureObject, this)) {
+                        if (buildSpot.spot.CanFitStructureOnSpot(structureObject, this)) {
                             choices.Add(buildSpot);
                         }
                     }
@@ -519,16 +441,16 @@ namespace Inner_Maps {
                 return false;
             } else {
                 //if the object does not exceed the size of a build spot, then just give it a random open build spot
-                buildingSpot = GetRandomOpenBuildSpotTileObject();
+                buildingSpot = Utilities.GetRandomElement(openSpots);
                 return buildingSpot != null;
             }
         }
-        private List<BuildSpotTileObject> GetOpenBuildSpotTileObjects() {
+        private List<BuildSpotTileObject> GetOpenBuildSpotTileObjects(Settlement settlement) {
             List<BuildSpotTileObject> spots = location.coreTile.region.GetTileObjectsOfType(TILE_OBJECT_TYPE.BUILD_SPOT_TILE_OBJECT).Select(x => x as BuildSpotTileObject).ToList();
             List<BuildSpotTileObject> open = new List<BuildSpotTileObject>();
             for (int i = 0; i < spots.Count; i++) {
                 BuildSpotTileObject buildSpotTileObject = spots[i];
-                if (buildSpotTileObject.spot.isOpen) {
+                if (buildSpotTileObject.spot.IsOpenFor(settlement)) {
                     open.Add(buildSpotTileObject);
                 }
             }
@@ -583,7 +505,7 @@ namespace Inner_Maps {
         public void PlaceStructureObjectAt(BuildingSpot chosenBuildingSpot, GameObject structurePrefab, LocationStructure structure) {
             GameObject structureGo = ObjectPoolManager.Instance.InstantiateObjectFromPool(structurePrefab.name, Vector3.zero, Quaternion.identity, structureParent);
             LocationStructureObject structureObjectPrefab = structureGo.GetComponent<LocationStructureObject>();
-            structureGo.transform.localPosition = chosenBuildingSpot.GetPositionToPlaceStructure(structureObjectPrefab);
+            structureGo.transform.localPosition = chosenBuildingSpot.GetPositionToPlaceStructure(structureObjectPrefab, structure.structureType);
         
             LocationStructureObject structureObject = structureGo.GetComponent<LocationStructureObject>();
             structureObject.RefreshAllTilemaps();
@@ -596,9 +518,8 @@ namespace Inner_Maps {
                 LocationGridTile tile = occupiedTiles[j];
                 tile.SetStructure(structure);
             }
-            chosenBuildingSpot.SetIsOpen(false);
             chosenBuildingSpot.SetIsOccupied(true);
-            chosenBuildingSpot.SetAllAdjacentSpotsAsOpen(this);
+            // chosenBuildingSpot.SetAllAdjacentSpotsAsOpen(this);
             chosenBuildingSpot.UpdateAdjacentSpotsOccupancy(this);
 
             structure.SetStructureObject(structureObject);
@@ -730,6 +651,7 @@ namespace Inner_Maps {
                                 }
                                 detailsTilemap.SetTile(currTile.localPlace, GetBigTreeTile(location));
                                 currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                                ConvertDetailToTileObject(currTile);
                                 //currTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
                             } else {
                                 if (Random.Range(0, 100) < 50) {

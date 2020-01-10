@@ -424,6 +424,12 @@ public static class Signals {
     public static string WALL_DESTROYED = "OnWallDestroyed";
     public static string WALL_DAMAGED = "OnWallDamaged";
     public static string WALL_REPAIRED = "OnWallRepaired";
+    /// <summary>
+    /// parameters:
+    /// LocationStructure placedStructure
+    /// </summary>
+    public static string STRUCTURE_OBJECT_PLACED = "OnStructureObjectPlaced";
+    public static string STRUCTURE_OBJECT_REMOVED = "OnStructureObjectRemoved";
     #endregion
 
     #region POI

@@ -424,8 +424,8 @@ public class LocationStructure {
             tile.SetPreviousGroundVisual(null); //so that the tile will never revert to the structure tile, unless a new structure is put on it.
             tile.genericTileObject.AdjustHP(tile.genericTileObject.maxHP);
         }
-        if (location is Settlement) {
-            Settlement settlement = location as Settlement;
+        if (settlementLocation != null) {
+            Settlement settlement = settlementLocation;
             JobQueueItem existingRepairJob = settlement.GetJob(JOB_TYPE.REPAIR, occupiedBuildSpot);
             if (existingRepairJob != null) {
                 settlement.RemoveFromAvailableJobs(existingRepairJob);
@@ -435,6 +435,9 @@ public class LocationStructure {
         occupiedBuildSpot.RemoveOccupyingStructure(this);
         ObjectPoolManager.Instance.DestroyObject(structureObj.gameObject);
         location.RemoveStructure(this);
+        settlementLocation.RemoveStructure(this);
+        Messenger.Broadcast(Signals.STRUCTURE_OBJECT_REMOVED, this, occupiedBuildSpot);
+        SetOccupiedBuildSpot(null);
     }
     private bool CheckIfStructureDestroyed() {
         string summary = $"Checking if {this.ToString()} has been destroyed...";

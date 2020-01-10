@@ -376,11 +376,7 @@ public class StructureTemplate {
 
     #region Building Spots
     public bool HasEnoughBuildSpotsForArea(Settlement settlement) {
-        int structureCount = 0;
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in settlement.structures) {
-            structureCount += keyValuePair.Value.Count;
-        }
-        return connectors.Length >= structureCount;
+        return connectors.Length >= settlement.structures.Count;
     }
     public bool TryGetOpenBuildingSpot(out BuildingSpotData spot) {
         for (int i = 0; i < connectors.Length; i++) {

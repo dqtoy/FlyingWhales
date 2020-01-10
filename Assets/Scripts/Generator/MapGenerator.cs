@@ -22,7 +22,7 @@ public class MapGenerator : MonoBehaviour {
             new WorldMapRegionGeneration(), new WorldMapBiomeGeneration(), new WorldMapOuterGridGeneration(),
             new TileFeatureGeneration(), new PortalLandmarkGeneration(), new WorldMapLandmarkGeneration(), 
             new RegionInnerMapGeneration(), new SettlementGeneration(), new LandmarkStructureGeneration(), 
-            new MapGenerationFinalization(), new PlayerDataGeneration(), 
+            new ElevationStructureGeneration(), new MapGenerationFinalization(), new PlayerDataGeneration(), 
              
             // new MainSettlementMapGeneration(), new SuppotingSettlementMapGeneration(), new RegionDataGeneration(), 
             // new PlayerDataGeneration(), 
