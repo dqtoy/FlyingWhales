@@ -441,7 +441,12 @@ namespace Inner_Maps {
                 return false;
             } else {
                 //if the object does not exceed the size of a build spot, then just give it a random open build spot
-                buildingSpot = Utilities.GetRandomElement(openSpots);
+                if (openSpots.Count > 0) {
+                    buildingSpot = Utilities.GetRandomElement(openSpots);    
+                } else {
+                    buildingSpot = null;
+                }
+                
                 return buildingSpot != null;
             }
         }
