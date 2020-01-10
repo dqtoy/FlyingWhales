@@ -22,7 +22,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			HexTile tile = GridMap.Instance.normalHexTiles[i];
 			for (int j = 0; j < tile.featureComponent.features.Count; j++) {
 				TileFeature feature = tile.featureComponent.features[j];
-				feature.PerformInitialActions(tile);
+				feature.GameStartActions(tile);
 			}
 			yield return null;
 		}

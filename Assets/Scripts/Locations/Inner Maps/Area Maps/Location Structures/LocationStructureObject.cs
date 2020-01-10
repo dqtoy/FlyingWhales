@@ -115,7 +115,7 @@ public class LocationStructureObject : PooledObject {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, newTileObject, settlement);
             job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(newTileObject.tileObjectType).constructionCost });
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
-            structure.settlementLocation.AddToAvailableJobs(job);
+            settlement.AddToAvailableJobs(job);
         }
     }
     private StructureTemplateObjectData[] GetPreplacedObjects() {

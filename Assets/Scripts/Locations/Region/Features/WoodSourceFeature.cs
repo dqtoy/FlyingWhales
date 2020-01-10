@@ -8,6 +8,12 @@ public class WoodSourceFeature : TileFeature {
     private const int MaxBigTrees = 4;
     private const int MaxSmallTrees = 8;
     
+    private HexTile owner;
+    private int currentBigTreeCount;
+    private int currentSmallTreeCount;
+    private bool isGeneratingBigTreePerHour;
+    private bool isGeneratingSmallTreePerHour;
+
     public WoodSourceFeature() {
         name = "Wood Source";
         description = "Provides wood.";
@@ -16,22 +22,14 @@ public class WoodSourceFeature : TileFeature {
     }  
     
     #region Overrides
-    public override void PerformInitialActions(HexTile tile) {
+    public override void GameStartActions(HexTile tile) {
+        owner = tile;
         List<TileObject> bigTrees = tile.GetTileObjectsInHexTile(TILE_OBJECT_TYPE.BIG_TREE_OBJECT);
+        currentBigTreeCount = bigTrees.Count;
         if (bigTrees.Count < MaxBigTrees) {
             int missingTrees = MaxBigTrees - bigTrees.Count;
-            LocationStructure wilderness = tile.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
             for (int i = 0; i <= missingTrees; i++) {
-                List<LocationGridTile> choices = tile.locationGridTiles
-                    .Where(x => x.isOccupied == false 
-                                && x.structure == wilderness)
-                    .ToList();
-                if (choices.Count > 0) {
-                    LocationGridTile chosenTile = Utilities.GetRandomElement(choices);
-                    wilderness.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.BIG_TREE_OBJECT),
-                        chosenTile);
-                } else {
-                    //no more tiles to place ore
+                if (CreateNewBigTree() == false) {
                     break;
                 }
             }
@@ -40,22 +38,105 @@ public class WoodSourceFeature : TileFeature {
         List<TileObject> smallTrees = tile.GetTileObjectsInHexTile(TILE_OBJECT_TYPE.TREE_OBJECT);
         if (smallTrees.Count < MaxSmallTrees) {
             int missingTrees = MaxSmallTrees - smallTrees.Count;
-            LocationStructure wilderness = tile.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
             for (int i = 0; i <= missingTrees; i++) {
-                List<LocationGridTile> choices = tile.locationGridTiles
-                    .Where(x => x.isOccupied == false 
-                                && x.structure == wilderness)
-                    .ToList();
-                if (choices.Count > 0) {
-                    LocationGridTile chosenTile = Utilities.GetRandomElement(choices);
-                    wilderness.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TREE_OBJECT),
-                        chosenTile);
-                } else {
-                    //no more tiles to place ore
+                if (CreateNewSmallTree() == false) {
                     break;
                 }
             }
         }
+        
+        Messenger.AddListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
+        Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
     }
     #endregion
+    
+    private void OnTileObjectPlaced(TileObject tileObject, LocationGridTile tile) {
+        if (tile.buildSpotOwner.hexTileOwner == owner) {
+            if (tileObject.tileObjectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
+                AdjustBigTreeCount(1);    
+            } else if (tileObject.tileObjectType == TILE_OBJECT_TYPE.TREE_OBJECT) {
+                AdjustSmallTreeCount(1);
+            }
+            
+        }
+    }
+    private void OnTileObjectRemoved(TileObject tileObject, Character character, LocationGridTile tile) {
+        if (tile.buildSpotOwner.hexTileOwner == owner) {
+            if (tileObject.tileObjectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
+                AdjustBigTreeCount(-1);    
+            } else if (tileObject.tileObjectType == TILE_OBJECT_TYPE.TREE_OBJECT) {
+                AdjustSmallTreeCount(-1);
+            }
+        }
+    }
+
+    #region Big Tree
+    private void AdjustBigTreeCount(int amount) {
+        currentBigTreeCount += amount;
+        OnBigTreeCountChanged();
+    }
+    private void OnBigTreeCountChanged() {
+        if (currentBigTreeCount < MaxBigTrees) {
+            if (isGeneratingBigTreePerHour == false) {
+                isGeneratingBigTreePerHour = true;
+                Messenger.AddListener(Signals.HOUR_STARTED, TryGenerateBigTreePerHour);    
+            }
+        } else {
+            isGeneratingBigTreePerHour = false;
+            Messenger.RemoveListener(Signals.HOUR_STARTED, TryGenerateBigTreePerHour);
+        }
+    }
+    private void TryGenerateBigTreePerHour() {
+        if (Random.Range(0, 100) < 10) {
+            CreateNewBigTree();
+        }
+    }
+    private bool CreateNewBigTree() {
+        List<LocationGridTile> choices = owner.locationGridTiles.Where(x => x.isOccupied == false 
+                                                                            && x.structure.structureType.IsOpenSpace()).ToList();
+        if (choices.Count > 0) {
+            LocationGridTile chosenTile = Utilities.GetRandomElement(choices);
+            chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.BIG_TREE_OBJECT),
+                chosenTile);
+            return true;
+        }
+        return false;
+    }
+    #endregion
+    
+    #region Small Tree
+    private void AdjustSmallTreeCount(int amount) {
+        currentSmallTreeCount += amount;
+        OnSmallTreeCountChanged();
+    }
+    private void OnSmallTreeCountChanged() {
+        if (currentSmallTreeCount < MaxSmallTrees) {
+            if (isGeneratingSmallTreePerHour == false) {
+                isGeneratingSmallTreePerHour = true;
+                Messenger.AddListener(Signals.HOUR_STARTED, TryGenerateSmallTreePerHour);    
+            }
+        } else {
+            isGeneratingSmallTreePerHour = false;
+            Messenger.RemoveListener(Signals.HOUR_STARTED, TryGenerateSmallTreePerHour);
+        }
+    }
+    private void TryGenerateSmallTreePerHour() {
+        if (Random.Range(0, 100) < 10) {
+            CreateNewSmallTree();
+        }
+    }
+    private bool CreateNewSmallTree() {
+        List<LocationGridTile> choices = owner.locationGridTiles.Where(x => x.isOccupied == false 
+                                                                            && x.structure.structureType.IsOpenSpace()).ToList();
+        if (choices.Count > 0) {
+            LocationGridTile chosenTile = Utilities.GetRandomElement(choices);
+            chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TREE_OBJECT),
+                chosenTile);
+            return true;
+        }
+        return false;
+    }
+    #endregion
+
+    
 }

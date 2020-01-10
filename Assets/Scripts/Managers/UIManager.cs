@@ -143,20 +143,20 @@ public class UIManager : MonoBehaviour {
             string summary = $"{currentTileHovered.ToString()}";
             summary += "\nLeft Most: " + (currentTileHovered.region.GetLeftMostTile()?.ToString() ?? "Null");
             summary += "\nRight Most: " + (currentTileHovered.region.GetRightMostTile()?.ToString() ?? "Null");
-            summary += "\nfeatures:";
+            summary += "\nFeatures:";
             for (int i = 0; i < currentTileHovered.featureComponent.features.Count; i++) {
                 TileFeature feature = currentTileHovered.featureComponent.features[i];
                 summary += $"{feature.name}, ";
             }
-            summary += "\nTile Map:\n";
-            for (int y = 0; y <= currentTileHovered.region.hexTileMap.GetUpperBound(1); y++) {
-                summary += $"Y: {y.ToString()} ";
-                for (int x = 0; x <= currentTileHovered.region.hexTileMap.GetUpperBound(0); x++) {
-                    HexTile tile = currentTileHovered.region.hexTileMap[x, y];
-                    summary += $"{tile?.locationName ?? "Null"}, ";
-                }
-                summary += "\n";
-            }
+            // summary += "\nTile Map:\n";
+            // for (int y = 0; y <= currentTileHovered.region.hexTileMap.GetUpperBound(1); y++) {
+            //     summary += $"Y: {y.ToString()} ";
+            //     for (int x = 0; x <= currentTileHovered.region.hexTileMap.GetUpperBound(0); x++) {
+            //         HexTile tile = currentTileHovered.region.hexTileMap[x, y];
+            //         summary += $"{tile?.locationName ?? "Null"}, ";
+            //     }
+            //     summary += "\n";
+            // }
             summary += "\nLeft Most Rows:";
             List<int> leftMostRows = currentTileHovered.region.GetLeftMostRows();
             for (int i = 0; i < leftMostRows.Count; i++) {
@@ -768,13 +768,6 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Settlement Info
-    //Why change data parameter from Settlement to Hextile?
-    //It's because the tile data is needed now since we can construct demonic landmarks, etc
-    //If we only pass the settlement data, the only tile we can get is the coreTile
-    //We have no way of knowing now how to get the actual tile the player clicked
-    //Thus, the information that will be shown to the player will be wrong
-    //So in order for us to process exactly what the player clicked, the tile must be passed not the settlement
-    //IMPORTANT NOTE: MAKE SURE THAT THE TILE PASSED HAS AN AREA
     public Sprite GetAreaCenterSprite(string name) {
         for (int i = 0; i < areaCenterSprites.Length; i++) {
             if (areaCenterSprites[i].name.ToLower() == name.ToLower()) {
