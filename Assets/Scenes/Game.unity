@@ -53329,7 +53329,7 @@ MonoBehaviour:
   _zoomSpeed: 15
   nameplateCamera: {fileID: 252774528}
   _uiCamera: {fileID: 0}
-  _raycaster: {fileID: 930355347}
+  _raycaster: {fileID: 0}
   target: {fileID: 0}
   MIN_X: 0
   MAX_X: 0
@@ -103194,7 +103194,7 @@ MonoBehaviour:
   _maxFov: 10
   zoomSensitivity: 20
   _zoomSpeed: 15
-  innerMapsCamera: {fileID: 1713567858}
+  innerMapsCamera: {fileID: 0}
   _target: {fileID: 0}
   MIN_X: -185.8
   MAX_X: -124.3
