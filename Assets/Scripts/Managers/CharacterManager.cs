@@ -99,17 +99,9 @@ public class CharacterManager : MonoBehaviour {
      Create a new character, given a role, class and race.
          */
     public Character CreateNewCharacter(CharacterRole role, RACE race, GENDER gender, Faction faction = null, 
-        Region homeLocation = null, IDwelling homeStructure = null) {
-        Character newCharacter = null;
-        //if (role == CharacterRole.LEADER) {
-        //    //If the role is leader, it must have a faction, so get the data for the class from the faction
-        //    newCharacter = new Character(role, faction.initialLeaderClass, race, gender);
-        //} else {
-        //    newCharacter = new Character(role, race, gender);
-        //}
-        newCharacter = new Character(role, race, gender);
+        Settlement homeLocation = null, IDwelling homeStructure = null) {
+        Character newCharacter = new Character(role, race, gender);
 
-        //Party party = newCharacter.CreateOwnParty();
         newCharacter.Initialize();
         if (faction != null) {
             if (!faction.JoinFaction(newCharacter)) {
@@ -121,18 +113,16 @@ public class CharacterManager : MonoBehaviour {
         }
         newCharacter.ownParty.CreateIcon();
         if(homeLocation != null) {
-            newCharacter.ownParty.icon.SetPosition(homeLocation.coreTile.transform.position);
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
             homeLocation.AddCharacterToLocation(newCharacter);
         }
-        //newCharacter.AddAwareness(newCharacter);
         newCharacter.CreateInitialTraitsByClass();
         //newCharacter.CreateInitialTraitsByRace();
         AddNewCharacter(newCharacter);
         return newCharacter;
     }
     public Character CreateNewCharacter(CharacterRole role, string className, RACE race, GENDER gender, Faction faction = null, 
-        Region homeLocation = null, IDwelling homeStructure = null) {
+        Settlement homeLocation = null, IDwelling homeStructure = null) {
         Character newCharacter = new Character(role, className, race, gender);
         newCharacter.Initialize();
         if (faction != null) {
@@ -144,7 +134,6 @@ public class CharacterManager : MonoBehaviour {
         }
         newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
-            newCharacter.ownParty.icon.SetPosition(homeLocation.coreTile.transform.position);
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
             homeLocation.AddCharacterToLocation(newCharacter);
         }
@@ -153,7 +142,7 @@ public class CharacterManager : MonoBehaviour {
         return newCharacter;
     }
     public Character CreateNewCharacter(CharacterRole role, string className, RACE race, GENDER gender, SEXUALITY sexuality, Faction faction = null,
-        Region homeLocation = null, IDwelling homeStructure = null) {
+        Settlement homeLocation = null, IDwelling homeStructure = null) {
         Character newCharacter = new Character(role, className, race, gender, sexuality);
         newCharacter.Initialize();
         if (faction != null) {
@@ -165,7 +154,6 @@ public class CharacterManager : MonoBehaviour {
         }
         newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
-            newCharacter.ownParty.icon.SetPosition(homeLocation.coreTile.transform.position);
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
             homeLocation.AddCharacterToLocation(newCharacter);
         }
@@ -189,10 +177,11 @@ public class CharacterManager : MonoBehaviour {
         }
         newCharacter.ownParty.CreateIcon();
 
-        Region home = null;
-        if (data.homeID != -1) {
-            home = GridMap.Instance.GetRegionByID(data.homeID);
-        }
+        Settlement home = null;
+        //TODO:
+        // if (data.homeID != -1) {
+        //     home = GridMap.Instance.GetRegionByID(data.homeID);
+        // }
         Region currRegion = null;
         if (data.currentLocationID != -1) {
             currRegion = GridMap.Instance.GetRegionByID(data.currentLocationID);
@@ -200,22 +189,22 @@ public class CharacterManager : MonoBehaviour {
         if (currRegion != null) {
             newCharacter.ownParty.icon.SetPosition(currRegion.coreTile.transform.position);
         }
-        if (data.isDead) {
-            if (home != null) {
-                newCharacter.SetHome(home); //keep this data with character to prevent errors
-                //home.AssignCharacterToDwellingInArea(newCharacter); //We do not save LocationStructure, so this is only done so that the dead character will not have null issues with homeStructure
-            }
-            if(currRegion != null) {
-                newCharacter.SetRegionLocation(currRegion);
-            }
-        } else {
-            if (home != null) {
-                newCharacter.MigrateHomeTo(home, null, false);
-            }
-            if (currRegion != null) {
-                currRegion.AddCharacterToLocation(newCharacter.ownParty.owner, null, false);
-            }
-        }
+        // if (data.isDead) {
+        //     if (home != null) {
+        //         newCharacter.SetHomeRegion(home); //keep this data with character to prevent errors
+        //         //home.AssignCharacterToDwellingInArea(newCharacter); //We do not save LocationStructure, so this is only done so that the dead character will not have null issues with homeStructure
+        //     }
+        //     if(currRegion != null) {
+        //         newCharacter.SetRegionLocation(currRegion);
+        //     }
+        // } else {
+        //     if (home != null) {
+        //         newCharacter.MigrateHomeTo(home, null, false);
+        //     }
+        //     if (currRegion != null) {
+        //         currRegion.AddCharacterToLocation(newCharacter.ownParty.owner, null, false);
+        //     }
+        // }
         for (int i = 0; i < data.items.Count; i++) {
             data.items[i].Load(newCharacter);
         }
@@ -255,20 +244,20 @@ public class CharacterManager : MonoBehaviour {
     //        character.AddInitialAwareness();
     //    }
     //}
-    public void PlaceInitialCharacters(Area area) {
-        for (int i = 0; i < area.charactersAtLocation.Count; i++) {
-            Character character = area.charactersAtLocation[i];
+    public void PlaceInitialCharacters(Settlement settlement) {
+        for (int i = 0; i < settlement.charactersAtLocation.Count; i++) {
+            Character character = settlement.charactersAtLocation[i];
             if (character.marker == null) {
                 character.CreateMarker();
             }
-            if (character.homeStructure != null && character.homeStructure.location == area) {
+            if (character.homeStructure != null && character.homeStructure.settlementLocation == settlement) {
                 //place the character at a random unoccupied tile in his/her home
                 List<LocationGridTile> choices = character.homeStructure.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
                 LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
                 character.InitialCharacterPlacement(chosenTile);
             } else {
-                //place the character at a random unoccupied tile in the area's wilderness
-                LocationStructure wilderness = area.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+                //place the character at a random unoccupied tile in the settlement's wilderness
+                LocationStructure wilderness = settlement.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
                 List<LocationGridTile> choices = wilderness.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
                 LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
                 character.InitialCharacterPlacement(chosenTile);
@@ -320,7 +309,7 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Summons
-    public Summon CreateNewSummon(SUMMON_TYPE summonType, Faction faction = null, Region homeLocation = null, IDwelling homeStructure = null) {
+    public Summon CreateNewSummon(SUMMON_TYPE summonType, Faction faction = null, Settlement homeLocation = null, IDwelling homeStructure = null) {
         Summon newCharacter = CreateNewSummonClassFromType(summonType) as Summon;
         newCharacter.Initialize();
         if (faction != null) {
@@ -330,7 +319,6 @@ public class CharacterManager : MonoBehaviour {
         }
         newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
-            newCharacter.ownParty.icon.SetPosition(homeLocation.coreTile.transform.position);
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
             homeLocation.AddCharacterToLocation(newCharacter.ownParty.owner);
         }
@@ -356,10 +344,11 @@ public class CharacterManager : MonoBehaviour {
         }
 
         newCharacter.ownParty.CreateIcon();
-        Region home = null;
-        if (data.homeID != -1) {
-            home = GridMap.Instance.GetRegionByID(data.homeID);
-        }
+        Settlement home = null;
+        //TODO:
+        // if (data.homeID != -1) {
+        //     home = GridMap.Instance.GetRegionByID(data.homeID);
+        // }
 
         Region currRegion = null;
         if (data.currentLocationID != -1) {
@@ -368,22 +357,22 @@ public class CharacterManager : MonoBehaviour {
         if (currRegion != null) {
             newCharacter.ownParty.icon.SetPosition(currRegion.coreTile.transform.position);
         }
-        if (data.isDead) {
-            if(home != null) {
-                newCharacter.SetHome(home); //keep this data with character to prevent errors
-                //home.AssignCharacterToDwellingInArea(newCharacter); //We do not save LocationStructure, so this is only done so that the dead character will not have null issues with homeStructure
-            }
-            if(currRegion != null) {
-                newCharacter.SetRegionLocation(currRegion);
-            }
-        } else {
-            if (home != null) {
-                newCharacter.MigrateHomeTo(home, null, false);
-            }
-            if (currRegion != null) {
-                currRegion.AddCharacterToLocation(newCharacter.ownParty.owner, null, false);
-            }
-        }
+        // if (data.isDead) {
+        //     if(home != null) {
+        //         newCharacter.SetHomeRegion(home); //keep this data with character to prevent errors
+        //         //home.AssignCharacterToDwellingInArea(newCharacter); //We do not save LocationStructure, so this is only done so that the dead character will not have null issues with homeStructure
+        //     }
+        //     if(currRegion != null) {
+        //         newCharacter.SetRegionLocation(currRegion);
+        //     }
+        // } else {
+        //     if (home != null) {
+        //         newCharacter.MigrateHomeTo(home, null, false);
+        //     }
+        //     if (currRegion != null) {
+        //         currRegion.AddCharacterToLocation(newCharacter.ownParty.owner, null, false);
+        //     }
+        // }
 
         for (int i = 0; i < data.items.Count; i++) {
             data.items[i].Load(newCharacter);

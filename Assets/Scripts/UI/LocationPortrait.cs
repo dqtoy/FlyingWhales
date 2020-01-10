@@ -33,11 +33,8 @@ public class LocationPortrait : PooledObject, IPointerClickHandler {
     public void SetLocation(Region region) {
         this.region = region;
         //this.landmark = null;
-        if(region.area != null) {
-            portrait.sprite = region.area.locationPortrait;
-        } else {
-            SetPortrait(region.mainLandmark.specificLandmarkType);
-        }
+        SetPortrait(region.mainLandmark.specificLandmarkType);
+        
     }
     public void SetPortrait(LANDMARK_TYPE landmarkType) {
         portrait.sprite = LandmarkManager.Instance.GetLandmarkData(landmarkType).landmarkPortrait;
@@ -56,11 +53,7 @@ public class LocationPortrait : PooledObject, IPointerClickHandler {
 
     public void ShowLocationInfo() {
         if (region != null) {
-            if(region.area != null) {
-                UIManager.Instance.ShowSmallInfo(region.area.name);
-            } else {
-                UIManager.Instance.ShowSmallInfo(region.name);
-            }
+            UIManager.Instance.ShowSmallInfo(region.name);
         } 
         //else if (this.landmark != null) {
         //    UIManager.Instance.ShowSmallInfo(this.landmark.tileLocation.region.name);

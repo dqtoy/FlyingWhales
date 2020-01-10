@@ -72,42 +72,4 @@ public class LandmarkVisual : MonoBehaviour {
             //iparty.icon.characterPortrait.SetBorderState(false);
         //}
     }
-    //public void SnapTo(RectTransform target) {
-    //    Canvas.ForceUpdateCanvases();
-
-    //    charactersScrollView.content.anchoredPosition =
-    //        (Vector2)charactersScrollView.transform.InverseTransformPoint(charactersScrollView.content.position)
-    //        - (Vector2)charactersScrollView.transform.InverseTransformPoint(target.position);
-    //}
-
-    public void ShowHPAndName(bool state) {
-        if (_landmark.tileLocation.areaOfTile == null) {
-            landmarkNameplateGO.SetActive(state);
-        } else {
-            if (state) {
-                UIManager.Instance.ShowSmallInfo(_landmark.tileLocation.areaOfTile.name);
-            }
-        }
-        landmarkHPGO.SetActive(state);
-    }
-    //public void ShowPartyPortrait(Party party) {
-    //    CharacterPortrait portrait = party.icon.characterPortrait;
-    //    if (!GameManager.Instance.allCharactersAreVisible) {
-    //        if (_landmark.isBeingInspected) {
-    //            portrait.gameObject.SetActive(true);
-    //            portrait.SetBorderState(true);
-    //        } else {
-    //            if (party.IsPartyBeingInspected()) {
-    //                portrait.gameObject.SetActive(true);
-    //                portrait.SetBorderState(true);
-    //            } else {
-    //                portrait.gameObject.SetActive(false);
-    //                portrait.SetBorderState(false);
-    //            }
-    //        }
-    //    } else {
-    //        portrait.gameObject.SetActive(true);
-    //        portrait.SetBorderState(true);
-    //    }
-    //}
 }

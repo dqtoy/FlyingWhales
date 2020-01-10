@@ -220,7 +220,7 @@ public class GoapAction {
         return false;
     }
     private int GetDistanceCost(Character actor, IPointOfInterest poiTarget) {
-        if (actor.currentRegion.area == null) {
+        if (actor.currentSettlement == null) {
             return 1;
         }
         LocationGridTile tile = poiTarget.gridTileLocation;
@@ -378,8 +378,8 @@ public struct GoapEffect {
     //        return conditionKey.ToString();
     //    } else if (conditionKey is Character) {
     //        return (conditionKey as Character).name;
-    //    } else if (conditionKey is Area) {
-    //        return (conditionKey as Area).name;
+    //    } else if (conditionKey is Settlement) {
+    //        return (conditionKey as Settlement).name;
     //    } else if (conditionKey is Region) {
     //        return (conditionKey as Region).name;
     //    } else if (conditionKey is SpecialToken) {
@@ -396,8 +396,8 @@ public struct GoapEffect {
     //        return ((int)conditionKey).ToString();
     //    } else if (conditionKey is Character) {
     //        return (conditionKey as Character).id.ToString();
-    //    } else if (conditionKey is Area) {
-    //        return (conditionKey as Area).id.ToString();
+    //    } else if (conditionKey is Settlement) {
+    //        return (conditionKey as Settlement).id.ToString();
     //    } else if (conditionKey is Region) {
     //        return (conditionKey as Region).id.ToString();
     //    } else if (conditionKey is SpecialToken) {
@@ -414,8 +414,8 @@ public struct GoapEffect {
     //        return "int";
     //    } else if (conditionKey is Character) {
     //        return "character";
-    //    } else if (conditionKey is Area) {
-    //        return "area";
+    //    } else if (conditionKey is Settlement) {
+    //        return "settlement";
     //    } else if (conditionKey is Region) {
     //        return "region";
     //    } else if (conditionKey is SpecialToken) {
@@ -505,7 +505,7 @@ public class SaveDataGoapEffect {
         //        tempEffect.conditionKey = int.Parse(conditionKey);
         //    } else if (conditionKey == "character") {
         //        tempEffect.conditionKey = CharacterManager.Instance.GetCharacterByID(int.Parse(conditionKey));
-        //    } else if (conditionKey == "area") {
+        //    } else if (conditionKey == "settlement") {
         //        tempEffect.conditionKey = LandmarkManager.Instance.GetAreaByID(int.Parse(conditionKey));
         //    } else if (conditionKey == "region") {
         //        tempEffect.conditionKey = GridMap.Instance.GetRegionByID(int.Parse(conditionKey));

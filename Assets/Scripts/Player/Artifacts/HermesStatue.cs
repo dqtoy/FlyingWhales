@@ -57,12 +57,12 @@ public class HermesStatue : Artifact {
     private void OnInspectActionDone(Character inspectedBy) { //string result, GoapAction action
         //action.actor.GoapActionResult(result, action);
         //Characters that inspect this will be teleported to a different settlement. If no other settlement exists, this will be useless.
-        if (chosenRegion.owner != null) {
-            inspectedBy.ChangeFactionTo(chosenRegion.owner);
-        } else {
-            inspectedBy.ChangeFactionTo(FactionManager.Instance.neutralFaction);
-        }
-        inspectedBy.MigrateHomeTo(chosenRegion);
+        // if (chosenRegion.owner != null) {
+        //     inspectedBy.ChangeFactionTo(chosenRegion.owner);
+        // } else {
+        //     inspectedBy.ChangeFactionTo(FactionManager.Instance.neutralFaction);
+        // }
+        // inspectedBy.MigrateHomeTo(chosenRegion);
         inspectedBy.SetPOIState(POI_STATE.INACTIVE);
         inspectedBy.marker.gameObject.SetActive(false);
         inspectedBy.marker.StopMovement();
@@ -73,10 +73,10 @@ public class HermesStatue : Artifact {
         inspectedBy.SetPOIState(POI_STATE.ACTIVE);
 
         inspectedBy.UnsubscribeSignals();
-        //inspectedBy.ClearAllAwareness(); //so teleported character won't revisit old area.
+        //inspectedBy.ClearAllAwareness(); //so teleported character won't revisit old settlement.
         ////remove character from other character's awareness
-        //for (int i = 0; i < gridTileLocation.parentAreaMap.area.charactersAtLocation.Count; i++) {
-        //    Character currCharacter = gridTileLocation.parentAreaMap.area.charactersAtLocation[i];
+        //for (int i = 0; i < gridTileLocation.parentAreaMap.settlement.charactersAtLocation.Count; i++) {
+        //    Character currCharacter = gridTileLocation.parentAreaMap.settlement.charactersAtLocation[i];
         //    currCharacter.RemoveAwareness(inspectedBy);
         //}
         currentUses++;

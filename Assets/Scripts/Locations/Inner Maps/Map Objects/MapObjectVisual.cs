@@ -17,7 +17,7 @@ public abstract class MapObjectVisual<T> : BaseMapObjectVisual where T : IDamage
         if (tile.structure.structureObj != null) {
             tile.structure.structureObj.ReceiveMapObject(this);
         } else {
-            //TODO: Make it so that work area and wilderness can also have a structure object to prevent this checking.
+            //TODO: Make it so that work settlement and wilderness can also have a structure object to prevent this checking.
             this.transform.SetParent(tile.parentMap.structureParent);
         }
         Vector3 worldPos = tile.centeredWorldLocation;

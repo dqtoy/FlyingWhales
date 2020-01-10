@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Events.World_Events;
 using Inner_Maps;
 using Pathfinding.Util;
 using TMPro;
@@ -60,8 +59,6 @@ public class RegionInfoUI : UIMenu {
         base.Initialize();
         Messenger.AddListener<Character, Region>(Signals.CHARACTER_ENTERED_REGION, OnCharacterEnteredRegion);
         Messenger.AddListener<Character, Region>(Signals.CHARACTER_EXITED_REGION, OnCharacterExitedRegion);
-        Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnWorldEventSpawned);
-        Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_DESPAWNED, OnWorldEventDespawned);
         Messenger.AddListener<Region>(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, ShowAppropriateContentOnSignal);
     }
 
@@ -100,22 +97,22 @@ public class RegionInfoUI : UIMenu {
         descriptionLbl.text = activeRegion.description;
         featuresLbl.text = string.Empty;
 
-        if (activeRegion.features.Count == 0) {
-            featuresLbl.text = $"{featuresLbl.text}None";
-        } else {
-            for (int i = 0; i < activeRegion.features.Count; i++) {
-                RegionFeature feature = activeRegion.features[i];
-                if (i != 0) {
-                    featuresLbl.text = $"{featuresLbl.text}, ";
-                }
-                featuresLbl.text = $"{featuresLbl.text}<link=\"{i}\">{feature.name}</link>";
-            }
-        }
+        // if (activeRegion.features.Count == 0) {
+        //     featuresLbl.text = $"{featuresLbl.text}None";
+        // } else {
+        //     for (int i = 0; i < activeRegion.features.Count; i++) {
+        //         TileFeature feature = activeRegion.features[i];
+        //         if (i != 0) {
+        //             featuresLbl.text = $"{featuresLbl.text}, ";
+        //         }
+        //         featuresLbl.text = $"{featuresLbl.text}<link=\"{i}\">{feature.name}</link>";
+        //     }
+        // }
     }
     public void OnHoverFeature(object obj) {
         if (obj is string) {
             int index = System.Int32.Parse((string)obj);
-            UIManager.Instance.ShowSmallInfo(activeRegion.features[index].description);
+            // UIManager.Instance.ShowSmallInfo(activeRegion.features[index].description);
         }
     }
     public void OnHoverExitFeature() {
@@ -222,18 +219,18 @@ public class RegionInfoUI : UIMenu {
 //        }
 //    }
     public void OnClickInvade() {
-        if (activeRegion.area != null) {
-            //simulate as if clicking the invade button while inside the are map
-            InnerMapManager.Instance.ShowAreaMap(activeRegion.area);
-            StartSettlementInvasion(activeRegion.area);
-            LoadActions();
-        } else {
-            chosenMinionToInvade = null;
-            UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), onClickAction: ChooseMinionForInvasion, validityChecker: CanMinionInvade,
-                title: "Invasion (" + ((int)activeRegion.mainLandmark.invasionTicks / (int)GameManager.ticksPerHour).ToString() + " hours)\nChoose a minion that will invade " + activeRegion.name + ". NOTE: That minion will be unavailable while the invasion is ongoing.",
-                onHoverAction: OnHoverEnterMinionInvade, onHoverExitAction: OnHoverExitMinionInvade,
-                showCover: true, layer: 25);
-        }
+        // if (activeRegion.settlement != null) {
+        //     //simulate as if clicking the invade button while inside the are map
+        //     InnerMapManager.Instance.ShowInnerMap(activeRegion);
+        //     StartSettlementInvasion(activeRegion.settlement);
+        //     LoadActions();
+        // } else {
+        //     chosenMinionToInvade = null;
+        //     UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), onClickAction: ChooseMinionForInvasion, validityChecker: CanMinionInvade,
+        //         title: "Invasion (" + ((int)activeRegion.mainLandmark.invasionTicks / (int)GameManager.ticksPerHour).ToString() + " hours)\nChoose a minion that will invade " + activeRegion.name + ". NOTE: That minion will be unavailable while the invasion is ongoing.",
+        //         onHoverAction: OnHoverEnterMinionInvade, onHoverExitAction: OnHoverExitMinionInvade,
+        //         showCover: true, layer: 25);
+        // }
         
     }
     private bool CanMinionInvade(Character character) {
@@ -269,8 +266,8 @@ public class RegionInfoUI : UIMenu {
         chosenMinionToInvade = null;
         invConfirmationGO.SetActive(false);
     }
-    private void StartSettlementInvasion(Area area) {
-        PlayerManager.Instance.player.StartInvasion(area);
+    private void StartSettlementInvasion(Settlement settlement) {
+        PlayerManager.Instance.player.StartInvasion(settlement);
         //ShowCombatAbilityUI();
     }
     public void StopSettlementInvasion() {
@@ -291,35 +288,12 @@ public class RegionInfoUI : UIMenu {
         if(worldEventsScrollView.content.childCount > 0) {
             Utilities.DestroyChildren(worldEventsScrollView.content);
         }
-        if (activeRegion.activeEvent != null) {
-            GenerateWorldEventNameplate(activeRegion);
-        }
-    }
-    private void OnWorldEventSpawned(Region region, WorldEvent we) {
-        if (isShowing && activeRegion == region) {
-            GenerateWorldEventNameplate(region);
-        }
-    }
-    private void OnWorldEventDespawned(Region region, WorldEvent we) {
-        if (isShowing && activeRegion == region) {
-            RemoveWorldEventNameplate(we);
-        }
     }
     private void GenerateWorldEventNameplate(Region region) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(worldEventNameplatePrefab.name, Vector3.zero, Quaternion.identity, worldEventsScrollView.content);
         WorldEventNameplate item = go.GetComponent<WorldEventNameplate>();
         item.SetObject(region);
         activeWorldEventNameplates.Add(item);
-    }
-    private void RemoveWorldEventNameplate(WorldEvent worldEvent) {
-        for (int i = 0; i < activeWorldEventNameplates.Count; i++) {
-            WorldEventNameplate worldEventNameplate = activeWorldEventNameplates[i];
-            if (worldEventNameplate.worldEvent == worldEvent) {
-                activeWorldEventNameplates.RemoveAt(i);
-                ObjectPoolManager.Instance.DestroyObject(worldEventNameplate.gameObject);
-                break;
-            }
-        }
     }
     #endregion
 
@@ -610,7 +584,7 @@ public class RegionInfoUI : UIMenu {
                     item.SetAsUninteractableUntil(remaining);
                 } 
                 //else {
-                //    item.SetInteractable(PlayerManager.Instance.player.currentAreaBeingInvaded != null);
+                //    item.SetInteractable(PlayerManager.Instance.player.currentSettlementBeingInvaded != null);
                 //}
             }
         }

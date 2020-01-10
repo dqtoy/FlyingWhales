@@ -24,8 +24,8 @@ public class Lullaby : PlayerJobAction {
         List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
 
         List<Character> charactersInHighlightedTiles = new List<Character>();
-        for (int i = 0; i < InnerMapManager.Instance.currentlyShowingArea.charactersAtLocation.Count; i++) {
-            Character currCharacter = InnerMapManager.Instance.currentlyShowingArea.charactersAtLocation[i];
+        for (int i = 0; i < InnerMapManager.Instance.currentlyShowingLocation.charactersAtLocation.Count; i++) {
+            Character currCharacter = InnerMapManager.Instance.currentlyShowingLocation.charactersAtLocation[i];
             if (tiles.Contains(currCharacter.gridTileLocation)) {
                 charactersInHighlightedTiles.Add(currCharacter);
             }
@@ -76,7 +76,7 @@ public class Lullaby : PlayerJobAction {
 public class LullabyData : PlayerJobActionData {
     public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.LULLABY;
     public override string name { get { return "Lullaby"; } }
-    public override string description { get { return "Makes characters in an area exhausted."; } }
+    public override string description { get { return "Makes characters in an settlement exhausted."; } }
     public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.SABOTAGE; } }
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public override int abilityRadius => 1;

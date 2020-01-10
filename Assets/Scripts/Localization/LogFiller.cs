@@ -27,9 +27,9 @@ public struct SaveDataLogFiller {
             if(filler.obj is Character) {
                 objID = (filler.obj as Character).id;
                 objIdentifier = "character";
-            }else if (filler.obj is Area) {
-                objID = (filler.obj as Area).id;
-                objIdentifier = "area";
+            }else if (filler.obj is Settlement) {
+                objID = (filler.obj as Settlement).id;
+                objIdentifier = "settlement";
             } else if (filler.obj is Region) {
                 objID = (filler.obj as Region).id;
                 objIdentifier = "region";
@@ -69,7 +69,7 @@ public struct SaveDataLogFiller {
             LogFiller tempFiller = filler;
             if (objIdentifier == "character") {
                 tempFiller.obj = CharacterManager.Instance.GetCharacterByID(objID);
-            } else if (objIdentifier == "area") {
+            } else if (objIdentifier == "settlement") {
                 tempFiller.obj = LandmarkManager.Instance.GetAreaByID(objID);
             } else if (objIdentifier == "region") {
                 tempFiller.obj = GridMap.Instance.GetRegionByID(objID);

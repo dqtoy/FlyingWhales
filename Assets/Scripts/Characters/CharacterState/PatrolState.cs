@@ -27,7 +27,7 @@ public class PatrolState : CharacterState {
     //        if(token.characterOwner == null) {
     //            //Patrollers should not pick up items from their warehouse
     //            if (token.structureLocation != null && token.structureLocation.structureType == STRUCTURE_TYPE.WAREHOUSE 
-    //                && token.specificLocation == stateComponent.character.homeArea) {
+    //                && token.specificLocation == stateComponent.character.homeSettlement) {
     //                return false;
     //            }
     //            GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_ITEM_GOAP, stateComponent.character, targetPOI);

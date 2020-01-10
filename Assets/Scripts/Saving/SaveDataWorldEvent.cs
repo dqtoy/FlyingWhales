@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Events.World_Events;
 using UnityEngine;
 
 [System.Serializable]
@@ -16,8 +15,4 @@ public class SaveDataWorldEvent {
     public int endTick;
 
     public WORLD_EVENT worldEvent;
-
-    public void Save(WorldEvent worldEvent) {
-
-    }
 }

@@ -81,12 +81,12 @@ public class LocationStructureObject : PooledObject {
     #endregion
 
     #region Tile Objects
-    public void RegisterPreplacedObjects(LocationStructure structure, AreaInnerTileMap areaMap) {
+    public void RegisterPreplacedObjects(LocationStructure structure, InnerTileMap innerMap) {
         StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
         for (int i = 0; i < preplacedObjs.Length; i++) {
             StructureTemplateObjectData preplacedObj = preplacedObjs[i];
-            Vector3Int tileCoords = areaMap.groundTilemap.WorldToCell(preplacedObj.transform.position);
-            LocationGridTile tile = areaMap.map[tileCoords.x, tileCoords.y];
+            Vector3Int tileCoords = innerMap.groundTilemap.WorldToCell(preplacedObj.transform.position);
+            LocationGridTile tile = innerMap.map[tileCoords.x, tileCoords.y];
             tile.SetReservedType(preplacedObj.tileObjectType);
 
             TileObject newTileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(preplacedObj.tileObjectType);
@@ -97,7 +97,7 @@ public class LocationStructureObject : PooledObject {
         }
         SetPreplacedObjectsState(false);
     }
-    public void PlacePreplacedObjectsAsBlueprints(LocationStructure structure, AreaInnerTileMap areaMap) {
+    public void PlacePreplacedObjectsAsBlueprints(LocationStructure structure, InnerTileMap areaMap, Settlement settlement) {
         StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
         for (int i = 0; i < preplacedObjs.Length; i++) {
             StructureTemplateObjectData preplacedObj = preplacedObjs[i];
@@ -112,10 +112,10 @@ public class LocationStructureObject : PooledObject {
             newTileObject.RevalidateTileObjectSlots();
             newTileObject.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
 
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, newTileObject, areaMap.area);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, newTileObject, settlement);
             job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(newTileObject.tileObjectType).constructionCost });
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
-            areaMap.area.AddToAvailableJobs(job);
+            settlement.AddToAvailableJobs(job);
         }
     }
     private StructureTemplateObjectData[] GetPreplacedObjects() {
@@ -180,7 +180,7 @@ public class LocationStructureObject : PooledObject {
     #endregion
 
     #region Furniture Spots
-    private void RegisterFurnitureSpots(AreaInnerTileMap areaMap) {
+    private void RegisterFurnitureSpots(InnerTileMap areaMap) {
         if (_furnitureSpotsParent == null) {
             return;
         }
@@ -201,8 +201,9 @@ public class LocationStructureObject : PooledObject {
     /// <summary>
     /// Actions to do when a structure object has been placed.
     /// </summary>
-    /// <param name="areaMap">The map where the structure was placed.</param>
-    public void OnStructureObjectPlaced(AreaInnerTileMap areaMap, LocationStructure structure) {
+    /// <param name="innerMap">The map where the structure was placed.</param>
+    /// <param name="structure">The structure that was placed.</param>
+    public void OnStructureObjectPlaced(InnerTileMap innerMap, LocationStructure structure) {
         for (int i = 0; i < tiles.Length; i++) {
             LocationGridTile tile = tiles[i];
             //check if the template has details at this tiles location
@@ -211,21 +212,26 @@ public class LocationStructureObject : PooledObject {
                 tile.SetTileState(LocationGridTile.Tile_State.Occupied);
             }
 
-            //set the ground asset of the parent area map to what this objects ground map uses, then clear this objects ground map
+            //set the ground asset of the parent settlement map to what this objects ground map uses, then clear this objects ground map
             ApplyGroundTileAssetForTile(tile);
             
             tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null);
         }
-        RegisterWalls(areaMap, structure);
+        RegisterWalls(innerMap, structure);
         _groundTileMap.gameObject.SetActive(false);
-        RegisterFurnitureSpots(areaMap);
-        areaMap.area.OnLocationStructureObjectPlaced(structure);
+        RegisterFurnitureSpots(innerMap);
+        if (structure.settlementLocation != null) {
+            structure.settlementLocation.OnLocationStructureObjectPlaced(structure);
+        } else {
+            innerMap.location.OnLocationStructureObjectPlaced(structure);    
+        }
         UpdateSortingOrders();
+        Messenger.Broadcast(Signals.STRUCTURE_OBJECT_PLACED, structure);
     }
     #endregion
 
     #region Inquiry
-    public List<LocationGridTile> GetTilesOccupiedByStructure(AreaInnerTileMap map) {
+    public List<LocationGridTile> GetTilesOccupiedByStructure(InnerTileMap map) {
         List<LocationGridTile> occupiedTiles = new List<LocationGridTile>();
         BoundsInt bounds = _groundTileMap.cellBounds;
 
@@ -270,7 +276,7 @@ public class LocationStructureObject : PooledObject {
     #endregion
 
     #region Visuals
-    public void SetVisualMode(Structure_Visual_Mode mode, AreaInnerTileMap map) {
+    public void SetVisualMode(Structure_Visual_Mode mode) {
         Color color = Color.white;
         switch (mode) {
             case Structure_Visual_Mode.Blueprint:
@@ -303,7 +309,7 @@ public class LocationStructureObject : PooledObject {
     #endregion
 
     #region Walls
-    private void RegisterWalls(AreaInnerTileMap map, LocationStructure structure) {
+    private void RegisterWalls(InnerTileMap map, LocationStructure structure) {
         walls = new WallObject[wallVisuals.Length];
         for (int i = 0; i < wallVisuals.Length; i++) {
             WallVisual wallVisual = wallVisuals[i];
@@ -411,7 +417,6 @@ public class LocationStructureObject : PooledObject {
         }
     }
 
-
     [ContextMenu("Convert Objects")]
     public void ConvertObjects() {
         Utilities.DestroyChildren(_objectsParent);
@@ -429,7 +434,7 @@ public class LocationStructureObject : PooledObject {
                     Vector2 centeredPos = new Vector2(worldPos.x + 0.5f, worldPos.y + 0.5f);
                     
                     GameObject newGo = new GameObject("StructureTemplateObjectData");
-                    newGo.layer = LayerMask.NameToLayer("Area Maps");
+                    newGo.layer = LayerMask.NameToLayer("Settlement Maps");
                     newGo.transform.SetParent(_objectsParent);
                     newGo.transform.position = centeredPos;
                     newGo.transform.localRotation = m.rotation;
@@ -437,7 +442,7 @@ public class LocationStructureObject : PooledObject {
                     StructureTemplateObjectData stod = newGo.AddComponent<StructureTemplateObjectData>();
                     SpriteRenderer spriteRenderer = newGo.AddComponent<SpriteRenderer>();
 
-                    spriteRenderer.sortingLayerName = "Area Maps";
+                    spriteRenderer.sortingLayerName = "Settlement Maps";
                     spriteRenderer.sortingOrder = 60;
                     spriteRenderer.material = mat;
                     

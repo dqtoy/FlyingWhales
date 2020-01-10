@@ -1,13 +1,87 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Inner_Maps;
 using UnityEngine;
 
-public class GameFeature : RegionFeature {
+public class GameFeature : TileFeature {
 
+    private const int MaxAnimals = 6;
+
+    private HexTile owner;
+    private int currentAnimalCount;
+    private bool isGeneratingPerHour;
+    
     public GameFeature() {
         name = "Game";
         description = "Hunters can obtain food here.";
         type = REGION_FEATURE_TYPE.PASSIVE;
         isRemovedOnInvade = true;
+    }
+    
+    #region Overrides
+    public override void GameStartActions(HexTile tile) {
+        owner = tile;
+        List<TileObject> animals = tile.GetTileObjectsInHexTile(TILE_OBJECT_TYPE.SMALL_ANIMAL);
+        currentAnimalCount = animals.Count;
+        if (animals.Count <= MaxAnimals) {
+            int missing = MaxAnimals - animals.Count;
+            for (int i = 0; i < missing; i++) {
+                if (CreateNewSmallAnimal() == false) {
+                    break;
+                }
+            }
+        }
+        Messenger.AddListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
+        Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+    }
+    #endregion
+
+
+    private void OnTileObjectPlaced(TileObject tileObject, LocationGridTile tile) {
+        if (tile.buildSpotOwner.hexTileOwner == owner && tileObject.tileObjectType == TILE_OBJECT_TYPE.SMALL_ANIMAL) {
+            AdjustAnimalCount(1);
+        }
+    }
+    private void OnTileObjectRemoved(TileObject tileObject, Character character, LocationGridTile tile) {
+        if (tile.buildSpotOwner.hexTileOwner == owner && tileObject.tileObjectType == TILE_OBJECT_TYPE.SMALL_ANIMAL) {
+            AdjustAnimalCount(-1);
+        }
+    }
+
+    private void AdjustAnimalCount(int amount) {
+        currentAnimalCount += amount;
+        OnAnimalCountChanged();
+    }
+
+
+    private void OnAnimalCountChanged() {
+        if (currentAnimalCount < MaxAnimals) {
+            if (isGeneratingPerHour == false) {
+                isGeneratingPerHour = true;
+                Messenger.AddListener(Signals.HOUR_STARTED, TryGeneratePerHour);    
+            }
+        } else {
+            isGeneratingPerHour = false;
+            Messenger.RemoveListener(Signals.HOUR_STARTED, TryGeneratePerHour);
+        }
+    }
+
+    private void TryGeneratePerHour() {
+        if (Random.Range(0, 100) < 25) {
+            CreateNewSmallAnimal();
+        }
+    }
+
+    private bool CreateNewSmallAnimal() {
+        List<LocationGridTile> choices = owner.locationGridTiles.Where(x => x.isOccupied == false 
+                                                                            && x.structure.structureType.IsOpenSpace()).ToList();
+        if (choices.Count > 0) {
+            LocationGridTile chosenTile = Utilities.GetRandomElement(choices);
+            chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.SMALL_ANIMAL),
+                chosenTile);
+            return true;
+        }
+        return false;
     }
 }

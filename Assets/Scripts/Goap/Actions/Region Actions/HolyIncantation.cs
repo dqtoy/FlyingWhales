@@ -27,7 +27,7 @@
         if (satisfied) {
             //**Requirements:** Region is Hallowed Ground
             var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
-            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && region.HasFeature(RegionFeatureDB.Hallowed_Ground_Feature);
+            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && region.HasTileWithFeature(TileFeatureDB.Hallowed_Ground_Feature);
         }
         return false;
     }

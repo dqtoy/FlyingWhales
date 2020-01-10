@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 /// <summary>
-/// Base class to be used for the visuals of any objects that are Area Map Objects.
+/// Base class to be used for the visuals of any objects that are Settlement Map Objects.
 /// </summary>
 public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, IPointerExitHandler {
     [SerializeField] protected SpriteRenderer objectVisual;

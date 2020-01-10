@@ -81,7 +81,7 @@ public class PlayerJobAction {
     public virtual void ActivateAction(IPointOfInterest targetPOI) { //this is called when the actions button is pressed
         ActivateAction();
     }
-    public virtual void ActivateAction(Area targetArea) { //this is called when the actions button is pressed
+    public virtual void ActivateAction(Settlement targetSettlement) { //this is called when the actions button is pressed
         ActivateAction();
     }
     public virtual void ActivateAction(LocationGridTile targetTile) { 
@@ -126,8 +126,8 @@ public class PlayerJobAction {
     public bool CanPerformActionTowards(object obj) {
         if (obj is Character) {
             return CanPerformActionTowards(obj as Character);
-        } else if (obj is Area) {
-            return CanPerformActionTowards(obj as Area);
+        } else if (obj is Settlement) {
+            return CanPerformActionTowards(obj as Settlement);
         } else if (obj is IPointOfInterest) {
             return CanPerformActionTowards(obj as IPointOfInterest);
         } else if (obj is LocationGridTile) {
@@ -145,7 +145,7 @@ public class PlayerJobAction {
         }
         return CanPerformAction();
     }
-    protected virtual bool CanPerformActionTowards(Area targetCharacter) {
+    protected virtual bool CanPerformActionTowards(Settlement targetCharacter) {
         return CanPerformAction();
     }
     protected virtual bool CanPerformActionTowards(IPointOfInterest targetPOI) {
@@ -204,7 +204,7 @@ public class PlayerJobAction {
     private void ActivateCooldown() {
         ticksInCooldown = 0;
         //parentData.SetLockedState(true);
-        //Messenger.AddListener(Signals.TICK_ENDED, CheckForCooldown); //IMPORTANT NOTE: Cooldown will start but will not actually finish because this line of code is removed. This is removed this so that the ability can only be used once. Upon every enter of the area map, all cooldowns of intervention abilities must be reset
+        //Messenger.AddListener(Signals.TICK_ENDED, CheckForCooldown); //IMPORTANT NOTE: Cooldown will start but will not actually finish because this line of code is removed. This is removed this so that the ability can only be used once. Upon every enter of the settlement map, all cooldowns of intervention abilities must be reset
         Messenger.Broadcast(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, this);
     }
     private void CheckForCooldown() {

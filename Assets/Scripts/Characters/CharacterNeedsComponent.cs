@@ -105,7 +105,7 @@ public class CharacterNeedsComponent {
         hasForcedTiredness = false;
     }
     public void Initialize() {
-        //NOTE: These values will be randomized when this character is placed in his/her area map.
+        //NOTE: These values will be randomized when this character is placed in his/her settlement map.
         //tiredness = TIREDNESS_DEFAULT;
         //fullness = FULLNESS_DEFAULT;
         //happiness = HAPPINESS_DEFAULT;
@@ -174,7 +174,7 @@ public class CharacterNeedsComponent {
 
     private bool HasNeeds() {
         return _character.race != RACE.SKELETON && _character.characterClass.className != "Zombie" && !_character.returnedToLife && _character.isAtHomeRegion && 
-               _character.homeRegion.area != null; //Characters living on a region without a settlement must not decrease needs
+               _character.homeSettlement != null; //Characters living on a region without a settlement must not decrease needs
     }
     public void DecreaseNeeds() {
         if (HasNeeds() == false) {

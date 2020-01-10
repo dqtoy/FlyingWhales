@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class ArtifactFeature : RegionFeature {
+public class ArtifactFeature : TileFeature {
     //This is only temporary since we cannot actually add artifacts to the region this feature is added because if the artifact is added there, it will be activated, and we don't want that
     public Artifact artifact { get; private set; }
     private Region homeRegionOfArtifact;
@@ -27,19 +27,19 @@ public class ArtifactFeature : RegionFeature {
     //        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new artifact: " + artifact.name + "!", () => PlayerManager.Instance.player.GainArtifact(artifact, true));
     //    }
     //}
-    public override void OnAddFeature(Region region) {
-        base.OnAddFeature(region);
-        homeRegionOfArtifact = region;
+    public override void OnAddFeature(HexTile tile) {
+        base.OnAddFeature(tile);
+        homeRegionOfArtifact = tile.region;
         ARTIFACT_TYPE[] artifactTypes = Utilities.GetEnumValues<ARTIFACT_TYPE>().Where(x => !x.CanBeSummoned()).ToArray();
         artifact = PlayerManager.Instance.CreateNewArtifact(artifactTypes[Random.Range(0, artifactTypes.Length)]);
         Messenger.AddListener<Artifact>(Signals.PLAYER_USED_ARTIFACT, OnUsedArtifact);
     }
-    public override void OnRemoveFeature(Region region) {
-        base.OnRemoveFeature(region);
+    public override void OnRemoveFeature(HexTile tile) {
+        base.OnRemoveFeature(tile);
         Messenger.RemoveListener<Artifact>(Signals.PLAYER_USED_ARTIFACT, OnUsedArtifact);
     }
-    public override void OnDemolishLandmark(Region region, LANDMARK_TYPE demolishedLandmarkType) {
-        base.OnDemolishLandmark(region, demolishedLandmarkType);
+    public override void OnDemolishLandmark(HexTile tile, LANDMARK_TYPE demolishedLandmarkType) {
+        base.OnDemolishLandmark(tile, demolishedLandmarkType);
         PlayerManager.Instance.player.RemoveArtifact(artifact);
     }
     #endregion
@@ -47,7 +47,7 @@ public class ArtifactFeature : RegionFeature {
     private void OnUsedArtifact(Artifact artifact) {
         if(this.artifact == artifact) {
             this.artifact = null;
-            homeRegionOfArtifact.RemoveFeature(this);
+            // homeRegionOfArtifact.RemoveFeature(this);
         }
     }
 }

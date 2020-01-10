@@ -464,7 +464,7 @@ SpriteAtlas:
   - horizontal_1
   - caveWallA-1101-01 - Copy (3)
   - caveWallA-0011-02
-  - pineBig00
+  - BIG_TREE_OBJECT#1
   - well00
   - stone_h00
   - cobble03
@@ -751,7 +751,7 @@ SpriteAtlas:
   - bed_clinic_sleeping2
   - Empty
   - oreDepleted00
-  - treeBig00
+  - BIG_TREE_OBJECT#1
   - caveWallA-1000-00
   - caveWallA-1110-02
   - well06
@@ -814,7 +814,7 @@ SpriteAtlas:
   - floorStone03
   - well03
   - caveWallA-0011-00
-  - pineSnowBig00
+  - BIG_TREE_OBJECT#2
   - TRAINING_DUMMY#2
   - horizontal_1
   - tableDecor01

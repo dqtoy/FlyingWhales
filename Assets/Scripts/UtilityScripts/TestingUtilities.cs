@@ -1,32 +1,35 @@
-﻿namespace UtilityScripts {
+﻿using Boo.Lang;
+namespace UtilityScripts {
     public static class TestingUtilities {
         
         public static void ShowLocationInfo(Region region) {
-            if(region.area != null) {
-                string summary = "Location Job Queue: ";
-                if (region.area.availableJobs.Count > 0) {
-                    for (int i = 0; i < region.area.availableJobs.Count; i++) {
-                        JobQueueItem jqi = region.area.availableJobs[i];
+            List<Settlement> settlements = GetSettlementsInRegion(region);
+            for (int i = 0; i < settlements.Count; i++) {
+                Settlement settlement = settlements[i];
+                string summary = $"\t{settlement.name} Location Job Queue: ";
+                if (settlement.availableJobs.Count > 0) {
+                    for (int j = 0; j < settlement.availableJobs.Count; j++) {
+                        JobQueueItem jqi = settlement.availableJobs[j];
                         if (jqi is GoapPlanJob) {
                             GoapPlanJob gpj = jqi as GoapPlanJob;
-                            summary += "\n" + gpj.name + " Targeting " + gpj.targetPOI?.name ?? "None";
+                            summary += "\n\t" + gpj.name + " Targeting " + gpj.targetPOI?.name ?? "None";
                         } else {
-                            summary += "\n" + jqi.name;
+                            summary += "\n\t" + jqi.name;
                         }
-                        summary += "\n\tAssigned Character: " + jqi.assignedCharacter?.name ?? "None";
+                        summary += "\n\t\tAssigned Character: " + jqi.assignedCharacter?.name ?? "None";
                         if (UIManager.Instance.characterInfoUI.isShowing) {
-                            summary += "\n\tCan character take job? " + jqi
+                            summary += "\n\t\tCan character take job? " + jqi
                                            .CanCharacterDoJob(UIManager.Instance.characterInfoUI.activeCharacter)
                                            .ToString();
                         }
-
+            
                     }
                 } else {
-                    summary += "\nNone";
+                    summary += "\n\tNone";
                 }
-                summary += "\nActive Quest: ";
-                if (region.owner != null && region.owner.activeQuest != null) {
-                    summary += region.owner.activeQuest.name;
+                summary += "\n\tActive Quest: ";
+                if (settlement.owner != null && settlement.owner.activeQuest != null) {
+                    summary += settlement.owner.activeQuest.name;
                 } else {
                     summary += "None";
                 }
@@ -35,6 +38,17 @@
         }
         public static void HideLocationInfo() {
             UIManager.Instance.HideSmallInfo();
+        }
+
+        private static List<Settlement> GetSettlementsInRegion(Region region) {
+            List<Settlement> settlements = new List<Settlement>();
+            for (int i = 0; i < LandmarkManager.Instance.allSetttlements.Count; i++) {
+                Settlement settlement = LandmarkManager.Instance.allSetttlements[i];
+                if (settlement.region == region) {
+                    settlements.Add(settlement);
+                }
+            }
+            return settlements;
         }
     }
 }

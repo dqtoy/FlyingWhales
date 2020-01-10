@@ -18,22 +18,26 @@ public class LandmarkNameplate : PooledObject {
         UpdateFactionEmblem();
     }
 
-    private void UpdateVisuals() {
-        nameLbl.text = landmark.tileLocation.region.name;
+    public void UpdateVisuals() {
+        nameLbl.text = landmark.landmarkName;
     }
 
     private void UpdatePosition() {
-        //Vector2 originalPos = area.coreTile.transform.position;
+        //Vector2 originalPos = settlement.coreTile.transform.position;
         //originalPos.y -= 1f;
-        //Vector2 ScreenPosition = Camera.main.WorldToScreenPoint(area.nameplatePos);
+        //Vector2 ScreenPosition = Camera.main.WorldToScreenPoint(settlement.nameplatePos);
         this.transform.position = landmark.nameplatePos;
     }
-
-    public void UpdateFactionEmblem() {
-        factionEmblem.gameObject.SetActive(landmark.tileLocation.region.owner != null);
-        if (factionEmblem.gameObject.activeSelf) {
-            factionEmblem.SetFaction(landmark.tileLocation.region.owner);
+    private void UpdateFactionEmblem() {
+        if (landmark.tileLocation.settlementOnTile != null) {
+            factionEmblem.gameObject.SetActive(landmark.tileLocation.settlementOnTile.owner != null);
+            if (factionEmblem.gameObject.activeSelf) {
+                factionEmblem.SetFaction(landmark.tileLocation.settlementOnTile.owner);
+            }
+        } else {
+            factionEmblem.gameObject.SetActive(false);
         }
+        
     }
 
     public void LateUpdate() {

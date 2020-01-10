@@ -248,7 +248,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
     /// Triggered when the grid tile location of this object is set to null.
     /// </summary>
     protected virtual void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom) {
-        Debug.Log(GameManager.Instance.TodayLogString() + "Tile Object " + this.name + " has been removed");
+        // Debug.Log(GameManager.Instance.TodayLogString() + "Tile Object " + this.name + " has been removed");
         this.removedBy = removedBy;
         Messenger.Broadcast(Signals.TILE_OBJECT_REMOVED, this, removedBy, removedFrom);
         if (hasCreatedSlots) {
@@ -725,7 +725,7 @@ public class SaveDataTileObject {
 
         if(tileObject.structureLocation != null) {
             structureLocationID = tileObject.structureLocation.id;
-            structureLocationAreaID = tileObject.structureLocation.location.id; //TODO: Refactor, because location is no longer guaranteed to be an area.
+            structureLocationAreaID = tileObject.structureLocation.location.id; //TODO: Refactor, because location is no longer guaranteed to be an settlement.
             structureLocationType = tileObject.structureLocation.structureType;
         } else {
             structureLocationID = -1;
@@ -760,8 +760,8 @@ public class SaveDataTileObject {
         TileObject tileObject = System.Activator.CreateInstance(System.Type.GetType(tileObjectName), this) as TileObject;
 
         //if(structureLocationID != -1 && structureLocationAreaID != -1) {
-        //    Area area = LandmarkManager.Instance.GetAreaByID(structureLocationAreaID);
-        //    tileObject.SetStructureLocation(area.GetStructureByID(structureLocationType, structureLocationID));
+        //    Settlement settlement = LandmarkManager.Instance.GetAreaByID(structureLocationAreaID);
+        //    tileObject.SetStructureLocation(settlement.GetStructureByID(structureLocationType, structureLocationID));
         //}
         //for (int i = 0; i < awareCharactersIDs.Count; i++) {
         //    tileObject.AddAwareCharacter(CharacterManager.Instance.GetCharacterByID(awareCharactersIDs[i]));
@@ -782,8 +782,8 @@ public class SaveDataTileObject {
 
     public void LoadPreviousTileAndCurrentTile() {
         if (previousTileAreaID != -1 && previousTileID.z != -1) {
-            Area area = LandmarkManager.Instance.GetAreaByID(previousTileAreaID);
-            LocationGridTile tile = area.areaMap.map[(int)previousTileID.x, (int)previousTileID.y];
+            Settlement settlement = LandmarkManager.Instance.GetAreaByID(previousTileAreaID);
+            LocationGridTile tile = settlement.innerMap.map[(int)previousTileID.x, (int)previousTileID.y];
             tile.structure.AddPOI(loadedTileObject, tile);
             if (!hasCurrentTile) {
                 tile.structure.RemovePOI(loadedTileObject);

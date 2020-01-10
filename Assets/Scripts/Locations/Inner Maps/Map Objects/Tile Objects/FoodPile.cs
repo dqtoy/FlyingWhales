@@ -30,9 +30,9 @@ public class FoodPile : ResourcePile {
     //public override void SetGridTileLocation(LocationGridTile tile) {
     //    base.SetGridTileLocation(tile);
     //    if (tile != null) {
-    //        //when a food pile is placed, and the area does not yet have a food pile, then set its food pile to this
-    //        if (tile.parentAreaMap.area.foodPile == null) {
-    //            tile.parentAreaMap.area.SetFoodPile(this);
+    //        //when a food pile is placed, and the settlement does not yet have a food pile, then set its food pile to this
+    //        if (tile.parentAreaMap.settlement.foodPile == null) {
+    //            tile.parentAreaMap.settlement.SetFoodPile(this);
     //        }
     //    }
     //}
@@ -52,12 +52,12 @@ public class FoodPile : ResourcePile {
 
     private void CheckSupply() {
         if (gridTileLocation != null) {
-            if (structureLocation == structureLocation.location.mainStorage) {
+            if (structureLocation.settlementLocation != null && structureLocation.settlementLocation.mainStorage == structureLocation) {
                 if (resourceInPile < 100) {
-                    if (structureLocation.areaLocation != null && !structureLocation.areaLocation.HasJob(JOB_TYPE.PRODUCE_FOOD)) {
-                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PRODUCE_FOOD, new GoapEffect(GOAP_EFFECT_CONDITION.PRODUCE_FOOD, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), this, structureLocation.areaLocation);
+                    if (structureLocation.settlementLocation != null && !structureLocation.settlementLocation.HasJob(JOB_TYPE.PRODUCE_FOOD)) {
+                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PRODUCE_FOOD, new GoapEffect(GOAP_EFFECT_CONDITION.PRODUCE_FOOD, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), this, structureLocation.settlementLocation);
                         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainSupplyJob);
-                        structureLocation.areaLocation.AddToAvailableJobs(job);
+                        structureLocation.settlementLocation.AddToAvailableJobs(job);
                     }
                 } else {
                     ForceCancelNotAssignedProduceJob(JOB_TYPE.PRODUCE_FOOD);

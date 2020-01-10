@@ -14,7 +14,7 @@ public class Skeleton : Summon {
     #region Overrides
     //public override void OnPlaceSummon(LocationGridTile tile) {
     //    base.OnPlaceSummon(tile);
-    //    //CharacterState state = stateComponent.SwitchToState(CHARACTER_STATE.STROLL, null, tile.parentAreaMap.area);
+    //    //CharacterState state = stateComponent.SwitchToState(CHARACTER_STATE.STROLL, null, tile.parentAreaMap.settlement);
     //    //state.SetIsUnending(true);
     //    GoToWorkArea();
     //}

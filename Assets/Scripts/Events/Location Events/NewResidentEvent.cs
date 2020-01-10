@@ -11,20 +11,14 @@ public class NewResidentEvent : LocationEvent {
         triggerCondition = Condition;
     }
 
-    private bool Condition(Area location) {
-        //if (location.structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
-        //    List<LocationStructure> structures = location.structures[STRUCTURE_TYPE.DWELLING];
-        //    for (int i = 0; i < structures.Count; i++) {
-        //        if (!structures[i].IsOccupied()) {
-        //            return true;
-        //        }
-        //    }
-        //}
-        return !location.region.coreTile.isCorrupted && !location.IsResidentsFull();
+    private bool Condition(Settlement location) {
+        return false;
+        //TODO:
+        // return !location.region.coreTile.isCorrupted && !location.IsResidentsFull();
     }
 
     #region Overrides
-    public override void TriggerEvent(Area location) {
+    public override void TriggerEvent(Settlement location) {
         base.TriggerEvent(location);
         //List<LocationStructure> structures = location.structures[STRUCTURE_TYPE.DWELLING];
         //int numberOfUnoccupiedDwellings = 0;
@@ -51,19 +45,19 @@ public class NewResidentEvent : LocationEvent {
                 }
             }
         }
-        PlayerUI.Instance.ShowGeneralConfirmation("New Residents", "New residents have arrived at " + location.region.name);
+        PlayerUI.Instance.ShowGeneralConfirmation("New Residents", "New residents have arrived at " + location.name);
     }
     #endregion
-    private void GenerateSingleResident(Area location) {
+    private void GenerateSingleResident(Settlement location) {
         RACE race = GetRaceForNewResident(location);
-        Character newResident = location.AddNewResident(race, location.region.owner);
+        Character newResident = location.AddNewResident(race, location.owner);
         Debug.Log(GameManager.Instance.TodayLogString() + "Generated new Single Resident " + newResident + " from New Resident Event");
         //CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, race, Utilities.GetRandomGender(), location.region.owner, location.region);
     }
-    private void GenerateCoupleResidents(Area location) {
+    private void GenerateCoupleResidents(Settlement location) {
         RACE race = GetRaceForNewResident(location);
         //string className = location.locationClassManager.GetCurrentClassToCreate();
-        Character spouse1 = location.AddNewResident(race, location.region.owner);
+        Character spouse1 = location.AddNewResident(race, location.owner);
 
         race = GetRaceForNewResident(location);
         SEXUALITY sexuality = Utilities.GetCompatibleSexuality(spouse1.sexuality);
@@ -82,7 +76,7 @@ public class NewResidentEvent : LocationEvent {
             }
         }
         //className = location.locationClassManager.GetNextClassToCreate();
-        Character spouse2 = location.AddNewResident(race, gender, sexuality, location.region.owner);
+        Character spouse2 = location.AddNewResident(race, gender, sexuality, location.owner);
 
         RelationshipManager.Instance.CreateNewRelationshipBetween(spouse1, spouse2, RELATIONSHIP_TYPE.LOVER);
 
@@ -101,11 +95,11 @@ public class NewResidentEvent : LocationEvent {
 
         Debug.Log(GameManager.Instance.TodayLogString() + "Generated new Couple Resident " + spouse1 + " and " + spouse2 + " from New Resident Event");
     }
-    private RACE GetRaceForNewResident(Area location) {
-        if(location.region.owner != null) {
+    private RACE GetRaceForNewResident(Settlement location) {
+        if(location.owner != null) {
             int chance = UnityEngine.Random.Range(0, 100);
             if(chance < 75) {
-                return location.region.owner.leader.race;
+                return location.owner.leader.race;
             }
         }
         return UnityEngine.Random.Range(0, 2) == 0 ? RACE.HUMANS : RACE.ELVES;

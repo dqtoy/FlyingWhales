@@ -47,7 +47,8 @@ public class CleanseRegion : GoapAction {
     }
     public void AfterCleanseSuccess(ActualGoapNode goapNode) {
         var region = goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region;
-        LandmarkManager.Instance.UnownRegion(region);
+        //TODO:
+        // LandmarkManager.Instance.UnownSettlement(region);
     }
     #endregion
 }

@@ -33,6 +33,7 @@ public class Utilities : MonoBehaviour {
     public static int lastJobID = 0;
     public static int lastBurningSourceID = 0;
     public static int lastSpecialObjectID = 0;
+    public static int lastBuildSpotID = 0;
 
     public static float defenseBuff = 1.20f;
     public static int defaultCityHP = 300;
@@ -73,7 +74,7 @@ public class Utilities : MonoBehaviour {
         } else if (obj is SpecialToken) {
             lastItemID += 1;
             return lastItemID;
-        } else if (obj is Area) {
+        } else if (obj is Settlement) {
             lastAreaID += 1;
             return lastAreaID;
         } else if (obj is Party) {
@@ -105,6 +106,9 @@ public class Utilities : MonoBehaviour {
         } else if (obj is SpecialObject) {
             lastSpecialObjectID += 1;
             return lastSpecialObjectID;
+        } else if (obj is BuildingSpot) {
+            lastBuildSpotID += 1;
+            return lastBuildSpotID;
         }
         return 0;
     }
@@ -122,7 +126,7 @@ public class Utilities : MonoBehaviour {
             if (lastCharacterID <= idToUse) { lastCharacterID = idToUse; }
         } else if (obj is SpecialToken) {
             if (lastItemID <= idToUse) { lastItemID = idToUse; }
-        } else if (obj is Area) {
+        } else if (obj is Settlement) {
             if (lastAreaID <= idToUse) { lastAreaID = idToUse; }
         } else if (obj is Party) {
             if (lastPartyID <= idToUse) { lastPartyID = idToUse; }
@@ -2105,4 +2109,5 @@ public class Utilities : MonoBehaviour {
         int random = UnityEngine.Random.Range(0, values.Length);
         return (T) values.GetValue(random);
     }
+    
 }

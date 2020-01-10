@@ -16,7 +16,7 @@ public class CharacterStateComponent {
     //public CharacterState previousMajorState { get; private set; }
     //This is the character's current state
     public CharacterState currentState { get; private set; }
-    //Right now this is only for Explore State so that we can store the state even when the character is still moving to the area that will be explored
+    //Right now this is only for Explore State so that we can store the state even when the character is still moving to the settlement that will be explored
     //public CharacterState stateToDo { get; private set; }
     public CharacterStateComponent(Character character) {
         this.character = character;
@@ -55,7 +55,7 @@ public class CharacterStateComponent {
 
     //This switches from one state to another
     //If the character is not in a state right now, this simply starts a new state instead of switching
-    public CharacterState SwitchToState(CHARACTER_STATE state, Character targetCharacter = null, Area targetArea = null, int durationOverride = -1, int level = 1) {
+    public CharacterState SwitchToState(CHARACTER_STATE state, Character targetCharacter = null, Settlement targetSettlement = null, int durationOverride = -1, int level = 1) {
         //Cannot switch state is has negative disabler
         if(character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
             return null;
@@ -113,7 +113,7 @@ public class CharacterStateComponent {
         //newState.SetEndStateAction(endStateAction);
         //newState.SetOtherDataOnStartState(otherData);
         //newState.SetTargetCharacter(targetCharacter);
-        //newState.SetTargetArea(targetArea);
+        //newState.SetTargetArea(targetSettlement);
         newState.EnterState();
         return newState;
     }

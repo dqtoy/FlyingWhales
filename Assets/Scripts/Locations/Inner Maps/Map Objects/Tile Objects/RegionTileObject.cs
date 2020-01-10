@@ -35,20 +35,21 @@ public class RegionTileObject : TileObject {
             }
 
             //features
-            if (region.HasFeature(RegionFeatureDB.Hallowed_Ground_Feature)) {
+            if (region.HasTileWithFeature(TileFeatureDB.Hallowed_Ground_Feature)) {
                 advertisedActions.Add(INTERACTION_TYPE.HOLY_INCANTATION);
                 advertisedActions.Add(INTERACTION_TYPE.DEMONIC_INCANTATION);
             }
         } else {
             advertisedActions.Add(INTERACTION_TYPE.STUDY);
             advertisedActions.Add(INTERACTION_TYPE.SEARCHING);
-            if (region.owner == null) {
-                advertisedActions.Add(INTERACTION_TYPE.CLAIM_REGION);
-            } else {
-                if (region.locationType.IsSettlementType()) {
-                    advertisedActions.Add(INTERACTION_TYPE.INVADE_REGION);      
-                }
-            }
+            //TODO:
+            // if (region.owner == null) {
+            //     advertisedActions.Add(INTERACTION_TYPE.CLAIM_REGION);
+            // } else {
+            //     if (region.locationType.IsSettlementType()) {
+            //         advertisedActions.Add(INTERACTION_TYPE.INVADE_REGION);      
+            //     }
+            // }
             
             //landmark types
             if (region.mainLandmark != null) {
@@ -63,10 +64,10 @@ public class RegionTileObject : TileObject {
             }
 
             //features
-            if (region.HasFeature(RegionFeatureDB.Game_Feature)) {
+            if (region.HasTileWithFeature(TileFeatureDB.Game_Feature)) {
                 advertisedActions.Add(INTERACTION_TYPE.FORAGE_FOOD_REGION);
             } 
-            if (region.HasFeature(RegionFeatureDB.Hallowed_Ground_Feature)) {
+            if (region.HasTileWithFeature(TileFeatureDB.Hallowed_Ground_Feature)) {
                 advertisedActions.Add(INTERACTION_TYPE.HOLY_INCANTATION);
                 advertisedActions.Add(INTERACTION_TYPE.DEMONIC_INCANTATION);
             }

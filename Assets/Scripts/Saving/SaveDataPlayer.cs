@@ -37,7 +37,7 @@ public class SaveDataPlayer {
 
     public void Save(Player player) {
         playerFactionID = player.playerFaction.id;
-        playerAreaID = player.playerArea.id;
+        playerAreaID = player.playerSettlement.id;
         threat = player.threat;
         mana = player.mana;
         maxSummonSlots = player.maxSummonSlots;

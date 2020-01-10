@@ -8,7 +8,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
         attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.INSIDE_SETTLEMENT_ONLY };
     }
     public override bool TryDoBehaviour(Character character, ref string log) {
-        if (character.currentStructure == character.homeStructure && character.currentRegion.area != null) {
+        if (character.currentStructure == character.homeStructure) {
             log += "\n-" + character.name + " is in home structure and previous action is not returned home";
             TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(character);
 
@@ -22,13 +22,13 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                         log += "\n  -Character is agoraphobic, nott going to inn";
                     } else {
                         //StartGOAP(INTERACTION_TYPE.DRINK, null, GOAP_CATEGORY.IDLE);
-                        LocationStructure structure = character.currentRegion.area.GetRandomStructureOfType(STRUCTURE_TYPE.INN);
+                        LocationStructure structure = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.INN);
                         if (structure != null) {
                             log += "\n  -Early Night: " + character.name + " will go to Inn and set Base Structure for 2.5 hours";
                             character.PlanIdle(INTERACTION_TYPE.VISIT, character, new object[] { structure });
                             return true;
                         } else {
-                            log += "\n  -No Inn Structure in the area";
+                            log += "\n  -No Inn Structure in the settlement";
                         }
                     }
                 }

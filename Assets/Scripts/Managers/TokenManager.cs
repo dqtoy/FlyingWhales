@@ -30,9 +30,9 @@ public class TokenManager : MonoBehaviour {
         //LoadSpecialTokens();
     }
 
-    public void LoadSpecialTokens(Area area) {
+    public void LoadSpecialTokens(Settlement settlement) {
         ////Reference: https://trello.com/c/Kuqt3ZSP/2610-put-2-healing-potions-in-the-warehouse-at-start-of-the-game
-        LocationStructure mainStorage = area.mainStorage;
+        LocationStructure mainStorage = settlement.mainStorage;
         for (int i = 0; i < 4; i++) {
             mainStorage.AddItem(CreateSpecialToken(SPECIAL_TOKEN.HEALING_POTION));
         }
@@ -42,10 +42,10 @@ public class TokenManager : MonoBehaviour {
 
         // for (int i = 0; i < specialTokenSettings.Count; i++) {
         //     SpecialTokenSettings currSetting = specialTokenSettings[i];
-        //     List<Area> areas = LandmarkManager.Instance.allNonPlayerAreas;
+        //     List<Settlement> areas = LandmarkManager.Instance.allNonPlayerAreas;
         //     for (int j = 0; j < currSetting.quantity; j++) {
         //         if (UnityEngine.Random.Range(0, 100) < currSetting.appearanceWeight) {
-        //             Area chosenArea = areas[UnityEngine.Random.Range(0, areas.Count)];
+        //             Settlement chosenArea = areas[UnityEngine.Random.Range(0, areas.Count)];
         //             SpecialToken createdToken = CreateSpecialToken(currSetting.tokenType, currSetting.appearanceWeight);
         //             if (createdToken != null) {
         //                 chosenArea.AddSpecialTokenToLocation(createdToken);
@@ -129,15 +129,15 @@ public class TokenManager : MonoBehaviour {
         }
         return null;
     }
-    public List<Area> GetPossibleAreaSpawns(SpecialTokenSettings setting) {
-        List<Area> areas = new List<Area>();
+    public List<Settlement> GetPossibleAreaSpawns(SpecialTokenSettings setting) {
+        List<Settlement> areas = new List<Settlement>();
         for (int i = 0; i < setting.areaLocations.Count; i++) {
             string areaName = setting.areaLocations[i];
-            Area area = LandmarkManager.Instance.GetAreaByName(areaName);
-            if (area == null) {
-                //throw new System.Exception("There is no area named " + areaName);
+            Settlement settlement = LandmarkManager.Instance.GetAreaByName(areaName);
+            if (settlement == null) {
+                //throw new System.Exception("There is no settlement named " + areaName);
             } else {
-                areas.Add(area);
+                areas.Add(settlement);
             }
         }
         return areas;

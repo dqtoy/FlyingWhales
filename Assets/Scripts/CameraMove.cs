@@ -10,9 +10,9 @@ public class CameraMove : MonoBehaviour {
 	[SerializeField] private float _maxFov;
 	[SerializeField] private float sensitivity;
     [SerializeField] private float _zoomSpeed = 5f;
-    public Camera nameplateCamera;
-    public Camera areaMapsCamera;
+    [SerializeField] private Camera nameplateCamera;
     [SerializeField] private Camera _uiCamera;
+    [SerializeField] private Physics2DRaycaster _raycaster;
 
     private float dampTime = 0.2f;
 	private Vector3 velocity = Vector3.zero;
@@ -63,40 +63,32 @@ public class CameraMove : MonoBehaviour {
         if (!cameraControlEnabled) {
             return;
         }
-
-#if WORLD_CREATION_TOOL
-        ArrowKeysMovement();
-        Zooming();
-        Targetting();
-        ConstrainCameraBounds();
-#else
+        
         ArrowKeysMovement();
         Dragging();
         Edging();
         Zooming();
-        Targetting();
+        Targeting();
         ConstrainCameraBounds();
-#endif
-
     }
     private void OnDestroy() {
         RemoveListeners();
     }
 
     public void Initialize() {
-        Messenger.AddListener(Signals.GAME_LOADED, SetInitialCameraPosition);
+        Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
-        Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
-        Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
+        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
     }
 
     private void RemoveListeners() {
-        Messenger.RemoveListener(Signals.GAME_LOADED, SetInitialCameraPosition);
+        Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
         Messenger.RemoveListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.RemoveListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
-        Messenger.RemoveListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
-        Messenger.RemoveListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
+        Messenger.RemoveListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.RemoveListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
     }
 
     #region Utilities
@@ -128,36 +120,19 @@ public class CameraMove : MonoBehaviour {
     #endregion
 
     #region Positioning
-    private void SetInitialCameraPosition() {
-        //Vector3 initialPos = Vector3.zero;
-        //initialPos.z = -10;
+    private void OnGameLoaded() {
         Vector3 initialPos = new Vector3(-2.35f, -1.02f, -10f);
         this.transform.position = initialPos;
+        _raycaster.enabled = true;
     }
     public void MoveMainCamera(Vector2 newPos) {
         Camera.main.transform.position = newPos;
         CameraMove.Instance.ConstrainCameraBounds();
     }
     public void CenterCameraOn(GameObject GO) {
-        if (GO == null) {
-            target = null;
-        } else {
-            target = GO.transform;
-        }
+        target = GO.transform;
     }
     private void ArrowKeysMovement() {
-#if WORLD_CREATION_TOOL
-        if (!worldcreator.WorldCreatorUI.Instance.IsUserOnUI()) {
-            if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) ||Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
-                float zAxisValue = Input.GetAxis("Vertical");
-                iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("y", Camera.main.transform.position.y + zAxisValue, "time", 0.1f));
-            }
-            if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) {
-                float xAxisValue = Input.GetAxis("Horizontal");
-                iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("x", Camera.main.transform.position.x + xAxisValue, "time", 0.1f));
-            }
-        }
-#else
         if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
             if (!UIManager.Instance.IsConsoleShowing() && (EventSystem.current.currentSelectedGameObject == null || EventSystem.current.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>() == null)) {  //UIManager.Instance.regionInfoUI.fingersUI.createNewFactionGO.activeSelf
                 float zAxisValue = Input.GetAxis("Vertical");
@@ -171,25 +146,14 @@ public class CameraMove : MonoBehaviour {
                 iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("x", Camera.main.transform.position.x + xAxisValue, "time", 0.1f));
             }
         }
-#endif
     }
     private void Zooming() {
         Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
-#if WORLD_CREATION_TOOL
-        if (worldcreator.WorldCreatorManager.Instance.isDoneLoadingWorld 
-            && screenRect.Contains(Input.mousePosition)) {
-#else
         if (allowZoom && screenRect.Contains(Input.mousePosition)) {
-#endif
             //camera scrolling code
             float fov = Camera.main.orthographicSize;
             float adjustment = Input.GetAxis("Mouse ScrollWheel") * (sensitivity);
-#if WORLD_CREATION_TOOL
-            if (adjustment != 0f && !worldcreator.WorldCreatorUI.Instance.IsMouseOnUI()
-            && !worldcreator.WorldCreatorUI.Instance.IsUserOnUI()) {
-#else
             if (adjustment != 0f && !UIManager.Instance.IsMouseOnUI()) {
-#endif
                 //Debug.Log(adjustment);
                 fov -= adjustment;
                 //fov = Mathf.Round(fov * 100f) / 100f;
@@ -199,9 +163,6 @@ public class CameraMove : MonoBehaviour {
                     previousCameraFOV = fov;
                     Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
                     nameplateCamera.orthographicSize = Mathf.Lerp(nameplateCamera.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
-#if WORLD_CREATION_TOOL
-                _uiCamera.orthographicSize = fov;
-#endif
                 } else {
                     Camera.main.orthographicSize = fov;
                     nameplateCamera.orthographicSize = fov;
@@ -210,7 +171,7 @@ public class CameraMove : MonoBehaviour {
             }
         }
     }
-    private void Targetting() {
+    private void Targeting() {
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow) ||
             Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D) || isDragging || Input.GetMouseButtonDown(0)) {
             //reset target when player pushes a button to pan the camera
@@ -318,52 +279,18 @@ public class CameraMove : MonoBehaviour {
 
     #region Bounds
     public void CalculateCameraBounds() {
-#if WORLD_CREATION_TOOL
-        if (worldcreator.WorldCreatorManager.Instance.map == null) {
-            return;
-        }
-        Vector2 topRightCornerCoordinates = worldcreator.WorldCreatorManager.Instance.map[worldcreator.WorldCreatorManager.Instance.width - 1, worldcreator.WorldCreatorManager.Instance.height - 1].transform.localPosition;
-        HexTile leftMostTile = worldcreator.WorldCreatorManager.Instance.map[0, worldcreator.WorldCreatorManager.Instance.height / 2];
-        HexTile rightMostTile = worldcreator.WorldCreatorManager.Instance.map[worldcreator.WorldCreatorManager.Instance.width - 1, worldcreator.WorldCreatorManager.Instance.height / 2];
-        HexTile topMostTile = worldcreator.WorldCreatorManager.Instance.map[worldcreator.WorldCreatorManager.Instance.width/2, worldcreator.WorldCreatorManager.Instance.height - 1];
-        HexTile botMostTile = worldcreator.WorldCreatorManager.Instance.map[worldcreator.WorldCreatorManager.Instance.width/2, 0];
-#else
         if (GridMap.Instance.map == null) {
             return;
         }
-        Vector2 topRightCornerCoordinates = GridMap.Instance.map[(int)GridMap.Instance.width - 1, (int)GridMap.Instance.height - 1].transform.localPosition;
-        //HexTile leftMostTile = GridMap.Instance.map[0, (int)GridMap.Instance.height / 2];
         HexTile rightMostTile = GridMap.Instance.map[(int)GridMap.Instance.width - 1, (int)GridMap.Instance.height / 2];
         HexTile topMostTile = GridMap.Instance.map[(int)GridMap.Instance.width/2, (int)GridMap.Instance.height - 1];
-        //HexTile botMostTile = GridMap.Instance.map[(int)GridMap.Instance.width/2, 0];
-#endif
-        //float mapX = Mathf.Floor(topRightCornerCoordinates.x);
-        //float mapY = Mathf.Floor(topRightCornerCoordinates.y);
 
         float vertExtent = Camera.main.orthographicSize;
         float horzExtent = vertExtent * Screen.width / Screen.height;
 
         Bounds newBounds = new Bounds();
-#if WORLD_CREATION_TOOL
-        newBounds.extents = new Vector3(Mathf.Abs(rightMostTile.transform.position.x) + (1.28f * (float)(worldcreator.WorldCreatorManager.Instance._borderThickness + 2f)), Mathf.Abs(topMostTile.transform.position.y) + (1.28f * 4f), 0f);
-#else
         newBounds.extents = new Vector3(Mathf.Abs(rightMostTile.transform.position.x), Mathf.Abs(topMostTile.transform.position.y), 0f);
-#endif
         SetCameraBounds(newBounds, horzExtent, vertExtent);
-
-        //if (Utilities.IsVisibleFrom(leftMostTile.gameObject.GetComponentInChildren<Renderer>(), Camera.main)
-        //    && Utilities.IsVisibleFrom(rightMostTile.gameObject.GetComponentInChildren<Renderer>(), Camera.main)) {
-        //    allowHorizontalMovement = false;
-        //} else {
-        //    allowHorizontalMovement = true;
-        //}
-
-        //if (Utilities.IsVisibleFrom(topMostTile.gameObject.GetComponentInChildren<Renderer>(), Camera.main)
-        //    && Utilities.IsVisibleFrom(botMostTile.gameObject.GetComponentInChildren<Renderer>(), Camera.main)) {
-        //    allowVerticalMovement = false;
-        //} else {
-        //    allowVerticalMovement = true;
-        //}
     }
     public void ConstrainCameraBounds() {
         float xLowerBound = MIN_X;
@@ -381,16 +308,6 @@ public class CameraMove : MonoBehaviour {
         float xCoord = Mathf.Clamp(transform.position.x, xLowerBound, xUpperBound);
         float yCoord = Mathf.Clamp(transform.position.y, yLowerBound, yUpperBound);
         float zCoord = Mathf.Clamp(transform.position.z, MIN_Z, MAX_Z);
-        //if (!allowHorizontalMovement) {
-        //    xCoord = 0f;
-        //}
-        //if (!allowVerticalMovement) {
-        //    yCoord = 0f;
-        //}
-        //if (!allowVerticalMovement && !allowHorizontalMovement) {
-        //    xCoord = 0f;
-        //    yCoord = 0f;
-        //}
         Camera.main.transform.position = new Vector3(
             xCoord,
             yCoord,
@@ -410,13 +327,8 @@ public class CameraMove : MonoBehaviour {
         return false;
     }
     private void SetCameraBounds(Bounds bounds, float horzExtent, float vertExtent) {
-        //boundDrawer.bounds = bounds;
         float halfOfHexagon = (256f) / 100f; //1.28
-#if WORLD_CREATION_TOOL
-        int borderCount = worldcreator.WorldCreatorManager.Instance._borderThickness;
-#else
         int borderCount = GridMap.Instance._borderThickness;
-#endif
         MIN_X = bounds.min.x + horzExtent - (halfOfHexagon * ((float)borderCount));
         MAX_X = bounds.max.x - horzExtent + (halfOfHexagon * (borderCount)); //removed -1 because of UI
         MIN_Y = bounds.min.y + vertExtent - (halfOfHexagon * ((float)borderCount - 2));
@@ -448,26 +360,13 @@ public class CameraMove : MonoBehaviour {
 
     #region Listeners
     private float lastZoomAmount = 0f;
-    private void OnMenuOpened(UIMenu openedMenu) {
-        if (openedMenu is LandmarkInfoUI) {
-            allowZoom = false;
-            if (!Mathf.Approximately(Camera.main.orthographicSize, 6.5f)) {
-                lastZoomAmount = Camera.main.orthographicSize;
-                ZoomToTarget(6.5f);
-            }
-        }
-    }
-    private void OnMenuClosed(UIMenu openedMenu) {
-        if (openedMenu is LandmarkInfoUI) {
-            allowZoom = true;
-            ZoomToTarget(lastZoomAmount);
-        }
-    }
-    private void OnAreaMapOpened(Area area) {
+    private void OnMenuOpened(UIMenu openedMenu) { }
+    private void OnMenuClosed(UIMenu openedMenu) { }
+    private void OnInnerMapOpened(ILocation location) {
         Camera.main.cullingMask = 0;
         SetCameraControlState(false);
     }
-    private void OnAreaMapClosed(Area area) {
+    private void OnInnerMapClosed(ILocation location) {
         Camera.main.cullingMask = defaultMask;
         SetCameraControlState(true);
     }

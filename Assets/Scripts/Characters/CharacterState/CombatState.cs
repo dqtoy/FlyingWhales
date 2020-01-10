@@ -49,11 +49,11 @@ public class CombatState : CharacterState {
         //    return;
         //}
         //if the character is away from home and is at an edge tile, go to home location
-        //if (!isAttacking && stateComponent.character.homeArea != null && stateComponent.character.homeArea != stateComponent.character.specificLocation && stateComponent.character.gridTileLocation.IsAtEdgeOfWalkableMap()) {
+        //if (!isAttacking && stateComponent.character.homeSettlement != null && stateComponent.character.homeSettlement != stateComponent.character.specificLocation && stateComponent.character.gridTileLocation.IsAtEdgeOfWalkableMap()) {
         //    StopStatePerTick();
         //    OnExitThisState();
         //    //stateComponent.character.PlanIdleReturnHome();
-        //    stateComponent.character.currentParty.GoToLocation(stateComponent.character.homeArea, PATHFINDING_MODE.NORMAL, stateComponent.character.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS), null, null, null, null);
+        //    stateComponent.character.currentParty.GoToLocation(stateComponent.character.homeSettlement, PATHFINDING_MODE.NORMAL, stateComponent.character.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS), null, null, null, null);
         //    return;
         //}
         if (_hasTimerStarted) {
@@ -130,8 +130,9 @@ public class CombatState : CharacterState {
                     stateComponent.character.ChangeFactionTo(FactionManager.Instance.neutralFaction);
                 }
 
-                Region newHomeRegion = GetCriminalNewHomeLocation();
-                stateComponent.character.MigrateHomeTo(newHomeRegion);
+                //TODO:
+                // Region newHomeRegion = GetCriminalNewHomeLocation();
+                // stateComponent.character.MigrateHomeTo(newHomeRegion);
 
                 string log = GameManager.Instance.TodayLogString() + stateComponent.character.name + " is a criminal and survived being apprehended." +
                     " Changed faction to: " + stateComponent.character.faction.name + " and home to: " + stateComponent.character.homeRegion.name;
@@ -163,17 +164,19 @@ public class CombatState : CharacterState {
             }
         }
 
-        if(potentialRegions.Count > 0) {
-            return potentialRegions[UnityEngine.Random.Range(0, potentialRegions.Count)];
-        } else {
-            for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-                Region region = GridMap.Instance.allRegions[i];
-                if (stateComponent.character.homeRegion != region && region != PlayerManager.Instance.player.playerArea.region) {
-                    potentialRegions.Add(region);
-                }
-            }
-            return potentialRegions[UnityEngine.Random.Range(0, potentialRegions.Count)];
-        }
+        //TODO:
+        // if(potentialRegions.Count > 0) {
+        //     return potentialRegions[UnityEngine.Random.Range(0, potentialRegions.Count)];
+        // } else {
+        //     for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+        //         Region region = GridMap.Instance.allRegions[i];
+        //         if (stateComponent.character.homeRegion != region && region != PlayerManager.Instance.player.playerSettlement.region) {
+        //             potentialRegions.Add(region);
+        //         }
+        //     }
+        //     return potentialRegions[UnityEngine.Random.Range(0, potentialRegions.Count)];
+        // }
+        return null;
     }
     /// <summary>
     /// Function that determines what a character should do in a certain point in time.

@@ -154,7 +154,7 @@ public partial class InteractionManager {
     }
     public bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter) {
         if (character.isAtHomeRegion && !character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL) &&
-            character.traitContainer.GetNormalTrait<Trait>("Coward") == null && character.currentRegion.area.prison != null) {
+            character.traitContainer.GetNormalTrait<Trait>("Coward") == null && character.currentSettlement.prison != null) {
             return character.traitContainer.GetNormalTrait<Trait>("Combatant") != null /*character.role.roleType == CHARACTER_ROLE.SOLDIER*/ &&
                    character.opinionComponent.GetRelationshipEffectWith(targetCharacter) !=
                    RELATIONSHIP_EFFECT.POSITIVE;
@@ -165,7 +165,7 @@ public partial class InteractionManager {
         return character.faction != targetCharacter.faction
             && character.faction.GetRelationshipWith(targetCharacter.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE 
             && character.isAtHomeRegion
-            && character.isPartOfHomeFaction && character.currentRegion.area.prison != null
+            && character.isPartOfHomeFaction && character.currentSettlement.prison != null
             //&& (character.role.roleType == CHARACTER_ROLE.SOLDIER ||
             //character.role.roleType == CHARACTER_ROLE.CIVILIAN ||
             //character.role.roleType == CHARACTER_ROLE.ADVENTURER)

@@ -7,12 +7,11 @@ public interface IDwelling {
     int id { get; }
     string name { get; }
     STRUCTURE_TYPE structureType { get; }
-    bool isInside { get; }
     bool isDwelling { get; }
     List<Character> charactersHere { get; }
     List<Character> residents { get; }
     ILocation location { get; }
-    Area areaLocation { get; }
+    Settlement settlementLocation { get; }
     List<SpecialToken> itemsInStructure { get; }
     List<IPointOfInterest> pointsOfInterest { get; }
     POI_STATE state { get; }

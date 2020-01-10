@@ -16,7 +16,7 @@ public class Party {
     protected CharacterAvatar _icon;
     protected Faction _attackedByFaction;
     //protected Combat _currentCombat;
-    //protected Area _specificLocation;
+    //protected Settlement _specificLocation;
     protected Character _owner;
     //protected int _maxCharacters;
 
@@ -54,7 +54,7 @@ public class Party {
     //public Character mainCharacter {
     //    get { return _characters[0]; }
     //}
-    //public Area specificLocation {
+    //public Settlement specificLocation {
     //    get { return _specificLocation; }
     //}
     public virtual Character owner {
@@ -124,7 +124,7 @@ public class Party {
         _isDead = true;
         //For now, when a party dies and there still members besides the owner of this party, kick them out of the party first before applying death
         RemoveCarriedPOI();
-        //Area deathLocation = this.specificLocation;
+        //Settlement deathLocation = this.specificLocation;
         //LocationStructure deathStructure = owner.currentStructure;
         //this.specificLocation?.RemoveCharacterFromLocation(this);
         //SetSpecificLocation(deathLocation); //set the specific location of this party, to the location it died at
@@ -145,7 +145,7 @@ public class Party {
     #endregion
 
     #region Interface
-    //public void SetSpecificLocation(Area location) {
+    //public void SetSpecificLocation(Settlement location) {
     //    if (_specificLocation == location) {
     //        return; //ignore change
     //    }

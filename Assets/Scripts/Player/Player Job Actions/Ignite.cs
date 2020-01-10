@@ -21,7 +21,7 @@ public class Ignite : PlayerJobAction {
         base.ActivateAction(targetTile);
         List<LocationGridTile> tiles = GetTargetTiles(targetTile);
         if (tiles.Count > 0) {
-            BurningSource bs = new BurningSource(InnerMapManager.Instance.currentlyShowingArea);
+            BurningSource bs = new BurningSource(InnerMapManager.Instance.currentlyShowingLocation);
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile tile = tiles[i];
                 Burning burning = new Burning();
@@ -71,7 +71,7 @@ public class IgniteData : PlayerJobActionData {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         LocationGridTile tile = targetPOI.gridTileLocation;
-        BurningSource bs = new BurningSource(targetPOI.gridTileLocation.structure.location.coreTile.region.area);
+        BurningSource bs = new BurningSource(targetPOI.gridTileLocation.structure.location.coreTile.region);
         Burning burning = new Burning();
         burning.SetSourceOfBurning(bs, tile.genericTileObject);
         tile.genericTileObject.traitContainer.AddTrait(tile.genericTileObject, burning);

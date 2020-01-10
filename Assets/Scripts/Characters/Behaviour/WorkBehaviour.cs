@@ -29,7 +29,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
         return false;
     }
     private bool PlanWorkActions(Character character) {
-        if (character.isAtHomeRegion && character.homeRegion.area != null && character.isPartOfHomeFaction) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
+        if (character.isAtHomeRegion && character.homeSettlement != null && character.isPartOfHomeFaction) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
             bool triggerLazy = false;
             Lazy lazy = character.traitContainer.GetNormalTrait<Trait>("Lazy") as Lazy;
             if (lazy != null) {
@@ -43,7 +43,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                 }
             }
             //check settlement job queue, if it has any jobs that target an object that is in view of the character
-            bool assignedFromVision = character.homeRegion.area.AssignCharacterToJobBasedOnVision(character);
+            bool assignedFromVision = character.homeSettlement.AssignCharacterToJobBasedOnVision(character);
             if (assignedFromVision == false) {
                 //if there are none, check the characters faction job queue under the same conditions.
                 if (character.faction?.activeQuest != null) {
@@ -54,9 +54,9 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                 //took job based from vision
                 return true;
             } else {
-                //if none of the jobs targets can be seen by the character, try and get a job from the area or faction
+                //if none of the jobs targets can be seen by the character, try and get a job from the settlement or faction
                 //regardless of vision instead.
-                if (!character.homeRegion.area.AddFirstUnassignedJobToCharacterJob(character)) {
+                if (!character.homeSettlement.AddFirstUnassignedJobToCharacterJob(character)) {
                     if (character.faction?.activeQuest != null) {
                         return character.faction.activeQuest.AddFirstUnassignedJobToCharacterJob(character);
                     }

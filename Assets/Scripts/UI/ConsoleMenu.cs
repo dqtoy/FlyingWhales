@@ -75,11 +75,8 @@ public class ConsoleMenu : UIMenu {
             {"/destroy_tile_obj", DestroyTileObj },
             {"/add_hostile", AddHostile },
             {"/force_update_animation", ForceUpdateAnimation },
-            {"/log_location_class_data", LogLocationClassData },
             {"/highlight_structure_tiles", HighlightStructureTiles },
-            {"/add_new_resident", AddNewResident },
             {"/log_obj_advertisements", LogObjectAdvertisements },
-            {"/cleanse_region", CleanseRegion },
             {"/adjust_opinion", AdjustOpinion },
         };
 
@@ -128,9 +125,6 @@ public class ConsoleMenu : UIMenu {
         if (UIManager.Instance != null && UIManager.Instance.characterInfoUI.isShowing) {
             fullDebugLbl.text += GetMainCharacterInfo();
             fullDebug2Lbl.text += GetSecondaryCharacterInfo();
-        } else if (UIManager.Instance != null && UIManager.Instance.areaInfoUI.isShowing) {
-            fullDebugLbl.text += GetMainAreaInfo();
-            fullDebug2Lbl.text += GetSecondaryAreaInfo();
         }
     }
     private string GetMainCharacterInfo() {
@@ -201,40 +195,6 @@ public class ConsoleMenu : UIMenu {
         for (int i = 0; i < character.locationHistory.Count; i++) {
             text += "\n\t" + character.locationHistory[i];
         }
-        return text;
-    }
-
-    private string GetMainAreaInfo() {
-        Area area = UIManager.Instance.areaInfoUI.activeTile.areaOfTile;
-        string text = area.name + "'s info:";
-        text += "\n<b>Owner:</b> " + area.owner?.name ?? "None";
-        //text += "\n<b>Race:</b> " + area.raceType.ToString();
-        text += "\n<b>Residents:</b> " + area.region.residents.Count + "/" + area.residentCapacity;
-        if (area.structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
-            for (int i = 0; i < area.structures[STRUCTURE_TYPE.DWELLING].Count; i++) {
-                Dwelling dwelling = area.structures[STRUCTURE_TYPE.DWELLING][i] as Dwelling;
-                text += "\n\t" + dwelling.ToString() + " Residents";
-                for (int j = 0; j < dwelling.residents.Count; j++) {
-                    text += "\n\t\t- " + dwelling.residents[j].name;
-                }
-            }
-        }
-        return text;
-    }
-    private string GetSecondaryAreaInfo() {
-        Area area = UIManager.Instance.areaInfoUI.activeTile.areaOfTile;
-        string text = area.name + "'s Structures:";
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in area.structures) {
-            for (int i = 0; i < keyValuePair.Value.Count; i++) {
-                LocationStructure structure = keyValuePair.Value[i];
-                text += "\n<b>" + structure.ToString() + "</b>";
-                text += "\n\tPoints of interest: ";
-                for (int j = 0; j < structure.pointsOfInterest.Count; j++) {
-                    text += "\n\t\t-" + structure.pointsOfInterest[j].ToString();
-                }
-            }
-        }
-
         return text;
     }
     #endregion
@@ -314,21 +274,21 @@ public class ConsoleMenu : UIMenu {
     }
     //private void CheckForWrongCharacterData() {
     //    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-    //        Area currArea = LandmarkManager.Instance.allAreas[i];
-    //        if (currArea == PlayerManager.Instance.player.playerArea) {
+    //        Settlement currSettlement = LandmarkManager.Instance.allAreas[i];
+    //        if (currSettlement == PlayerManager.Instance.player.playerSettlement) {
     //            continue;
     //        }
-    //        for (int j = 0; j < currArea.charactersAtLocation.Count; j++) {
-    //            Character character = currArea.charactersAtLocation[j];
+    //        for (int j = 0; j < currSettlement.charactersAtLocation.Count; j++) {
+    //            Character character = currSettlement.charactersAtLocation[j];
     //            if (character.isDead) {
-    //                Debug.LogWarning("There is still a dead character at " + currArea.name + " : " + character.name);
+    //                Debug.LogWarning("There is still a dead character at " + currSettlement.name + " : " + character.name);
     //                //UIManager.Instance.Pause();
     //            }
     //        }
-    //        //for (int j = 0; j < currArea.possibleSpecialTokenSpawns.Count; j++) {
-    //        //    SpecialToken token = currArea.possibleSpecialTokenSpawns[j];
+    //        //for (int j = 0; j < currSettlement.possibleSpecialTokenSpawns.Count; j++) {
+    //        //    SpecialToken token = currSettlement.possibleSpecialTokenSpawns[j];
     //        //    if (token.structureLocation == null) {
-    //        //        Debug.LogWarning("There is token at " + currArea.name + " that doesn't have a structure location : " + token.name);
+    //        //        Debug.LogWarning("There is token at " + currSettlement.name + " that doesn't have a structure location : " + token.name);
     //        //        //UIManager.Instance.Pause();
     //        //    }
     //        //}
@@ -517,21 +477,21 @@ public class ConsoleMenu : UIMenu {
 
         bool isAreaParameterNumeric = int.TryParse(areaParameterString, out areaID);
 
-        Area area = null;
+        Settlement settlement = null;
 
         if (isAreaParameterNumeric) {
-            area = LandmarkManager.Instance.GetAreaByID(areaID);
+            settlement = LandmarkManager.Instance.GetAreaByID(areaID);
         } else {
-            area = LandmarkManager.Instance.GetAreaByName(areaParameterString);
+            settlement = LandmarkManager.Instance.GetAreaByName(areaParameterString);
         }
 
-        if (area == null) {
+        if (settlement == null) {
             AddCommandHistory(consoleLbl.text);
             AddErrorMessage("There was an error in the command format of /kill_res");
             return;
         }
 
-        List<Character> characters = new List<Character>(area.region.residents);
+        List<Character> characters = new List<Character>(settlement.region.residents);
         for (int i = 0; i < characters.Count; i++) {
             characters[i].Death();
         }
@@ -1022,42 +982,6 @@ public class ConsoleMenu : UIMenu {
         }
         character.marker.UpdateAnimation();
     }
-    private void LogLocationClassData(string[] parameters) {
-        if (parameters.Length != 1) {
-            AddCommandHistory(consoleLbl.text);
-            AddErrorMessage("There was an error in the command format of LogLocationClassData");
-            return;
-        }
-        string regionParameterString = parameters[0];
-        Region region = GridMap.Instance.GetRegionByName(regionParameterString);
-        if (region == null) {
-            AddErrorMessage("There is no region with name " + regionParameterString);
-            return;
-        }
-        if(region.area == null) {
-            AddErrorMessage("Region " + regionParameterString + " has no area!");
-            return;
-        }
-        region.area.classManager.LogLocationRequirementsData(regionParameterString);
-    }
-    private void AddNewResident(string[] parameters) {
-        if (parameters.Length != 1) {
-            AddCommandHistory(consoleLbl.text);
-            AddErrorMessage("There was an error in the command format of LogLocationClassData");
-            return;
-        }
-        string regionParameterString = parameters[0];
-        Region region = GridMap.Instance.GetRegionByName(regionParameterString);
-        if (region == null) {
-            AddErrorMessage("There is no region with name " + regionParameterString);
-            return;
-        }
-        if (region.area == null) {
-            AddErrorMessage("Region " + regionParameterString + " has no area!");
-            return;
-        }
-        region.area.AddNewResident(RACE.HUMANS, region.owner);
-    }
     private void AdjustOpinion(string[] parameters) {
         if (parameters.Length != 3) { //parameters command, item
             AddCommandHistory(consoleLbl.text);
@@ -1126,7 +1050,7 @@ public class ConsoleMenu : UIMenu {
     //}
     #endregion
 
-    #region Area
+    #region Settlement
     private void LogAreaCharactersHistory(string[] parameters) {
         if (parameters.Length != 1) {
             AddCommandHistory(consoleLbl.text);
@@ -1138,38 +1062,18 @@ public class ConsoleMenu : UIMenu {
         //int areaID;
         //bool isAreaParameterNumeric = int.TryParse(areaParameterString, out areaID);
 
-        //Area area = null;
+        //Settlement settlement = null;
         //if (isAreaParameterNumeric) {
-        //    area = LandmarkManager.Instance.GetAreaByID(areaID);
+        //    settlement = LandmarkManager.Instance.GetAreaByID(areaID);
         //} else {
-        //    area = LandmarkManager.Instance.GetAreaByName(areaParameterString);
+        //    settlement = LandmarkManager.Instance.GetAreaByName(areaParameterString);
         //}
 
-        //string text = area.name + "'s Characters History: ";
-        //for (int i = 0; i < area.charactersAtLocationHistory.Count; i++) {
-        //    text += "\n" + area.charactersAtLocationHistory[i];
+        //string text = settlement.name + "'s Characters History: ";
+        //for (int i = 0; i < settlement.charactersAtLocationHistory.Count; i++) {
+        //    text += "\n" + settlement.charactersAtLocationHistory[i];
         //}
         //AddSuccessMessage(text);
-    }
-    #endregion
-
-    #region Region
-    private void CleanseRegion(string[] parameters) {
-        if (parameters.Length != 1) {
-            AddCommandHistory(consoleLbl.text);
-            AddErrorMessage("There was an error in the command format of /cleanse_region");
-            return;
-        }
-        string regionParameterString = parameters[0];
-        Region region = GridMap.Instance.GetRegionByName(regionParameterString);
-
-        if (region == null) {
-            AddCommandHistory(consoleLbl.text);
-            AddErrorMessage("There was an error in the command format of /cleanse_region");
-            return;
-        }
-        LandmarkManager.Instance.UnownRegion(region);
-        region.OnCleansedRegion();
     }
     #endregion
 
@@ -1375,7 +1279,7 @@ public class ConsoleMenu : UIMenu {
     }
     #endregion
 
-    #region Area Map
+    #region Settlement Map
     private void HighlightStructureTiles(string[] parameters) {
         if (parameters.Length != 3) {
             AddCommandHistory(consoleLbl.text);
@@ -1394,7 +1298,7 @@ public class ConsoleMenu : UIMenu {
             return;
         }
 
-        LocationStructure structure = InnerMapManager.Instance.currentlyShowingMap.area.GetStructureByID(structureType, id);
+        LocationStructure structure = InnerMapManager.Instance.currentlyShowingMap.location.GetStructureByID(structureType, id);
         if (structure == null) {
             AddErrorMessage("There is no " + structureType.ToString() + " with id " + id.ToString());
             return;

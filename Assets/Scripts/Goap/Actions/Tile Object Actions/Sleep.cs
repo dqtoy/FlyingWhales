@@ -108,7 +108,7 @@ public class Sleep : GoapAction {
             comfortAdjustment = 0.8f;
         } else if (actor.currentStructure.structureType == STRUCTURE_TYPE.PRISON) {
             comfortAdjustment = 0.4f;
-        } else if (!actor.currentStructure.isInside) {
+        } else if (actor.currentStructure.structureType.IsOpenSpace()) {
             comfortAdjustment = 0.3f;
         }
         needsComponent.AdjustComfort(comfortAdjustment);

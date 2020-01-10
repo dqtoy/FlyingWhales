@@ -53596,7 +53596,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 930355345}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: -1690312454, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
@@ -53671,8 +53671,8 @@ MonoBehaviour:
   sensitivity: 20
   _zoomSpeed: 15
   nameplateCamera: {fileID: 252774528}
-  areaMapsCamera: {fileID: 1713567858}
   _uiCamera: {fileID: 0}
+  _raycaster: {fileID: 930355347}
   target: {fileID: 0}
   MIN_X: 0
   MAX_X: 0
@@ -76018,7 +76018,7 @@ MonoBehaviour:
   elevationFrequency: 0
   moistureFrequency: 0
   outerGridList: []
-  hexTiles: []
+  normalHexTiles: []
 --- !u!1001 &1292027216
 Prefab:
   m_ObjectHideFlags: 0
@@ -91042,7 +91042,7 @@ MonoBehaviour:
     type: 2}
   areaMapLight: {fileID: 450682173}
   structurePrefabs:
-    m_keys: 030000000200000001000000090000000a000000080000000b0000000c0000000d0000000e0000000f0000001000000011000000120000001300000014000000
+    m_keys: 030000000200000001000000090000000a000000080000000b0000000c0000000d0000000e0000000f0000001000000011000000120000001300000014000000160000001700000018000000190000001a0000001b0000001c000000
     m_values:
     - data:
       - {fileID: 1293362371696982, guid: 191a9e123946de349a254ec4c008d174, type: 2}
@@ -91080,6 +91080,20 @@ MonoBehaviour:
       - {fileID: 1730934131256638, guid: aeabf6803503802489065897e35c53e5, type: 2}
     - data:
       - {fileID: 1357548140527432, guid: 9f7d5cd7007b73e4a9053a133e441266, type: 2}
+    - data:
+      - {fileID: 1363452570087690, guid: e966d9cf31621f74e9464c4e126e388b, type: 2}
+    - data:
+      - {fileID: 1052932554014340, guid: 128f887a5cf7a32458e387f1a5ac6f12, type: 2}
+    - data:
+      - {fileID: 1113093889188924, guid: 0f4724e896326b24fa9b1152a547479d, type: 2}
+    - data:
+      - {fileID: 1947060716518138, guid: 3083cd6075e5f4c4ebcf3b53cf198199, type: 2}
+    - data:
+      - {fileID: 1926241482549420, guid: 619492791824c8641ab5ab95845d20d7, type: 2}
+    - data:
+      - {fileID: 1345782391931142, guid: 202d9f21bca946a479850a1d7868547b, type: 2}
+    - data:
+      - {fileID: 1098772748618482, guid: f6408f41bc6dde64ab0690bffb21a71d, type: 2}
   assetManager: {fileID: 1536722386}
   itemTiles:
     m_keys: 000000000100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f00000010000000110000001200000013000000
@@ -91105,7 +91119,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
     - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
   tileObjectTiles:
-    m_keys: 0000000002000000030000000400000005000000060000000700000008000000090000000b0000000c0000000e0000000f000000100000001100000012000000130000001400000015000000160000001700000018000000190000001a0000001b0000001c000000
+    m_keys: 0000000002000000030000000400000005000000060000000700000008000000090000000b0000000c0000000e0000000f000000100000001100000012000000130000001400000015000000160000001700000018000000190000001a0000001b0000001c0000004b000000
     m_values:
     - biomeAssets:
         m_keys: 06000000
@@ -91246,6 +91260,15 @@ MonoBehaviour:
         - activeTile: {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
           inactiveTile: {fileID: 21300000, guid: c236f4926fa5e114ea5b76f7125fe18a,
             type: 3}
+    - biomeAssets:
+        m_keys: 060000000100000002000000
+        m_values:
+        - activeTile: {fileID: 21300000, guid: c5018b4cb25d48445a48272dbf7753f0, type: 3}
+          inactiveTile: {fileID: 0}
+        - activeTile: {fileID: 21300000, guid: 9ff393812f83af14098e33d1d553bc79, type: 3}
+          inactiveTile: {fileID: 0}
+        - activeTile: {fileID: 21300000, guid: f6ac7caed00cf71478c14b1e19a1572d, type: 3}
+          inactiveTile: {fileID: 0}
   wallResourceAssets:
     m_keys: 010000000200000003000000
     m_values:
@@ -91829,7 +91852,6 @@ MonoBehaviour:
   factionNameplatePrefab: {fileID: 1840253845197394, guid: 4cf50372472cfc74cabb645da6d531fe,
     type: 2}
   dualObjectPicker: {fileID: 1727737514}
-  areaInfoUI: {fileID: 1741253390}
   factionInfoUI: {fileID: 1485930123}
   characterInfoUI: {fileID: 572338040}
   regionInfoUI: {fileID: 867287454}
@@ -104059,7 +104081,7 @@ MonoBehaviour:
   _maxFov: 10
   zoomSensitivity: 20
   _zoomSpeed: 15
-  areaMapsCamera: {fileID: 1713567858}
+  innerMapsCamera: {fileID: 1713567858}
   _target: {fileID: 0}
   MIN_X: -185.8
   MAX_X: -124.3
@@ -106559,12 +106581,6 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &1741253390 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114679814638103120, guid: 92d03677d05ecec4ba3a597bfa1ae2ad,
-    type: 2}
-  m_PrefabInternal: {fileID: 1173777086}
-  m_Script: {fileID: 11500000, guid: fd9372e995dbb5446b79b6fb9e931e79, type: 3}
 --- !u!224 &1741253391 stripped
 RectTransform:
   m_PrefabParentObject: {fileID: 224519580947173752, guid: 92d03677d05ecec4ba3a597bfa1ae2ad,

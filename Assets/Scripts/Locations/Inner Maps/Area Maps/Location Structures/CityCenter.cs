@@ -10,11 +10,11 @@ public class CityCenter : LocationStructure, IDwelling {
     public List<Character> residents => null;
     #endregion
 
-    public CityCenter(ILocation location, bool isInside)
-        : base(STRUCTURE_TYPE.CITY_CENTER, location, isInside) {
+    public CityCenter(ILocation location)
+        : base(STRUCTURE_TYPE.CITY_CENTER, location) {
     }
 
-    public CityCenter(Area location, SaveDataLocationStructure data)
+    public CityCenter(ILocation location, SaveDataLocationStructure data)
     : base(location, data) {
     }
 

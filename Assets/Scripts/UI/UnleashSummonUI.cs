@@ -45,23 +45,24 @@ public class UnleashSummonUI : MonoBehaviour {
     private void PopulateSummons() {
         Utilities.DestroyChildren(summonsScrollRect.content);
         characterNameplateItems.Clear();
-        List<Region> playerOwnedRegions = PlayerManager.Instance.player.playerFaction.ownedRegions;
-        for (int i = 0; i < playerOwnedRegions.Count; i++) {
-            Region region = playerOwnedRegions[i];
-            if(region.mainLandmark != null && region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_KENNEL) {
-                for (int j = 0; j < region.charactersAtLocation.Count; j++) {
-                    Character character = region.charactersAtLocation[j];
-                    if(character is Summon && character.faction == PlayerManager.Instance.player.playerFaction) {
-                        CharacterNameplateItem item = CreateNewCharacterNameplateItem();
-                        item.SetAsToggle();
-                        item.SetObject(character);
-                        item.AddOnToggleAction(OnToggleCharacter);
-                        item.SetPortraitInteractableState(false);
-                        item.gameObject.SetActive(true);
-                    }
-                }
-            }
-        }
+        //TODO:
+        // List<Region> playerOwnedRegions = PlayerManager.Instance.player.playerFaction.ownedSettlements;
+        // for (int i = 0; i < playerOwnedRegions.Count; i++) {
+        //     Region region = playerOwnedRegions[i];
+        //     if(region.mainLandmark != null && region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_KENNEL) {
+        //         for (int j = 0; j < region.charactersAtLocation.Count; j++) {
+        //             Character character = region.charactersAtLocation[j];
+        //             if(character is Summon && character.faction == PlayerManager.Instance.player.playerFaction) {
+        //                 CharacterNameplateItem item = CreateNewCharacterNameplateItem();
+        //                 item.SetAsToggle();
+        //                 item.SetObject(character);
+        //                 item.AddOnToggleAction(OnToggleCharacter);
+        //                 item.SetPortraitInteractableState(false);
+        //                 item.gameObject.SetActive(true);
+        //             }
+        //         }
+        //     }
+        // }
     }
     private void OnToggleCharacter(Character character, bool isOn) {
         if (isOn) {

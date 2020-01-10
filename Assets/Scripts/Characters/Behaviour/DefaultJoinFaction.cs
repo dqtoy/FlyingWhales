@@ -12,43 +12,43 @@ public class DefaultJoinFaction : CharacterBehaviourComponent {
         if(UnityEngine.Random.Range(0, 100) < 15) {
             if (character.isFriendlyFactionless) {
                 log += "\n-" + character.name + " is factionless, 15% chance to join faction";
-                List<Faction> viableFactions = null;
-                if (character.currentRegion.area != null) {
-                    Region potentialRegion = character.currentRegion;
-                    log += "\n-" + character.name + " is factionless and in a settlement region: " + potentialRegion.name + ", will try to join a faction...";
-                    for (int i = 0; i < potentialRegion.factionsHere.Count; i++) {
-                        Faction potentialFaction = potentialRegion.factionsHere[i];
-                        if (!potentialFaction.isPlayerFaction
-                            && !potentialRegion.owner.IsCharacterBannedFromJoining(character) 
-                            && potentialFaction.ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
-                            if (viableFactions == null) { viableFactions = new List<Faction>(); }
-                            if (!viableFactions.Contains(potentialFaction)) {
-                                viableFactions.Add(potentialFaction);
-                            }
+                List<Faction> viableFactions = new List<Faction>();
+                if (character.currentRegion != null) {
+                    Settlement potentialSettlement = character.currentSettlement;
+                    log += "\n-" + character.name + " is factionless and in a settlement: " + potentialSettlement.name + ", will try to join a faction...";
+                    Faction potentialFaction = potentialSettlement.owner;
+                    if (!potentialFaction.isPlayerFaction
+                        && !potentialSettlement.owner.IsCharacterBannedFromJoining(character) 
+                        && potentialFaction.ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
+                        if (!viableFactions.Contains(potentialFaction)) {
+                            viableFactions.Add(potentialFaction);
                         }
                     }
-                }else if (character.currentRegion != null) {
-                    log += "\n-" + character.name + " is factionless and in a non settlement region: " + character.currentRegion.name + ", will try to join a faction...";
-                    Region potentialRegion = character.currentRegion;
-                    if (potentialRegion.owner != null && !potentialRegion.owner.isPlayerFaction
-                        && !potentialRegion.owner.IsCharacterBannedFromJoining(character) && potentialRegion.owner.ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
-                        if (viableFactions == null) { viableFactions = new List<Faction>(); }
-                        if (!viableFactions.Contains(potentialRegion.owner)) {
-                            viableFactions.Add(potentialRegion.owner);
-                        }
-                    }
-                    for (int i = 0; i < character.currentRegion.connections.Count; i++) {
-                        potentialRegion = character.currentRegion.connections[i].region;
-                        if (potentialRegion.owner != null && !potentialRegion.owner.isPlayerFaction
-                            && !potentialRegion.owner.IsCharacterBannedFromJoining(character) && potentialRegion.owner.ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
-                            if (viableFactions == null) { viableFactions = new List<Faction>(); }
-                            if (!viableFactions.Contains(potentialRegion.owner)) {
-                                viableFactions.Add(potentialRegion.owner);
-                            }
-                        }
-                    }
-                }
-                if (viableFactions != null && viableFactions.Count > 0) {
+                } 
+                // else if (character.currentRegion != null) {
+                //     log += "\n-" + character.name + " is factionless and in a non settlement region: " + character.currentRegion.name + ", will try to join a faction...";
+                //     Region potentialRegion = character.currentRegion;
+                //     //TODO:
+                //     // if (potentialRegion.owner != null && !potentialRegion.owner.isPlayerFaction
+                //     //     && !potentialRegion.owner.IsCharacterBannedFromJoining(character) && potentialRegion.owner.ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
+                //     //     if (viableFactions == null) { viableFactions = new List<Faction>(); }
+                //     //     if (!viableFactions.Contains(potentialRegion.owner)) {
+                //     //         viableFactions.Add(potentialRegion.owner);
+                //     //     }
+                //     // }
+                //     //TODO:
+                //     // for (int i = 0; i < character.currentRegion.connections.Count; i++) {
+                //     //     potentialRegion = character.currentRegion.connections[i].region;
+                //     //     if (potentialRegion.owner != null && !potentialRegion.owner.isPlayerFaction
+                //     //         && !potentialRegion.owner.IsCharacterBannedFromJoining(character) && potentialRegion.owner.ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
+                //     //         if (viableFactions == null) { viableFactions = new List<Faction>(); }
+                //     //         if (!viableFactions.Contains(potentialRegion.owner)) {
+                //     //             viableFactions.Add(potentialRegion.owner);
+                //     //         }
+                //     //     }
+                //     // }
+                // }
+                if (viableFactions.Count > 0) {
                     Faction chosenFaction = viableFactions[UnityEngine.Random.Range(0, viableFactions.Count)];
                     character.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, chosenFaction.leader as Character, "join_faction_normal");
                     //character.ChangeFactionTo(chosenFaction);
