@@ -21,7 +21,8 @@ public class MapGenerator : MonoBehaviour {
             new WorldMapGridGeneration(), new WorldMapElevationGeneration(), new SupportingFactionGeneration(), 
             new WorldMapRegionGeneration(), new WorldMapBiomeGeneration(), new WorldMapOuterGridGeneration(),
             new TileFeatureGeneration(), new PortalLandmarkGeneration(), new WorldMapLandmarkGeneration(), 
-            new RegionInnerMapGeneration(), new SettlementGeneration(), new PlayerDataGeneration(), 
+            new RegionInnerMapGeneration(), new SettlementGeneration(), new LandmarkStructureGeneration(), 
+            new MapGenerationFinalization(), new PlayerDataGeneration(), 
              
             // new MainSettlementMapGeneration(), new SuppotingSettlementMapGeneration(), new RegionDataGeneration(), 
             // new PlayerDataGeneration(), 

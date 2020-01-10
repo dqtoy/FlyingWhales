@@ -232,19 +232,15 @@ public partial class LandmarkManager : MonoBehaviour {
         return null;
     }
     public List<BaseLandmark> GetAllLandmarks() {
-        List<BaseLandmark> allLandmarks = new List<BaseLandmark>();
-#if WORLD_CREATION_TOOL
-        List<HexTile> choices = worldcreator.WorldCreatorManager.Instance.allTiles;
-#else
+        List<BaseLandmark> landmarks = new List<BaseLandmark>();
         List<HexTile> choices = GridMap.Instance.normalHexTiles;
-#endif
         for (int i = 0; i < choices.Count; i++) {
             HexTile currTile = choices[i];
             if (currTile.landmarkOnTile != null) {
-                allLandmarks.Add(currTile.landmarkOnTile);
+                landmarks.Add(currTile.landmarkOnTile);
             }
         }
-        return allLandmarks;
+        return landmarks;
     }
     public List<LandmarkStructureSprite> GetLandmarkTileSprites(HexTile tile, LANDMARK_TYPE landmarkType, RACE race = RACE.NONE) {
         LandmarkData data = GetLandmarkData(landmarkType);

@@ -70,8 +70,6 @@ public class SettlementGeneration : MapGenerationComponent {
 				}
 			}
 		}
-		
-		PathfindingManager.Instance.RescanGrid(innerTileMap.pathfindingGraph);
 	}
 
 	private bool TryGetBuildSpotForStructureInSettlement(LocationStructureObject structureObject, Settlement settlement, out BuildingSpot spot) {

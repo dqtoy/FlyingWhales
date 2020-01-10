@@ -108,7 +108,10 @@ public class BuildingSpot {
             throw new System.Exception($"Building spot { this.id } has a null neighbours dictionary!");
         }
         foreach (KeyValuePair<GridNeighbourDirection, BuildingSpot> kvp in neighbours) {
-            adjacent.Add(kvp.Value);
+            if (kvp.Key == GridNeighbourDirection.North || kvp.Key == GridNeighbourDirection.East ||
+                kvp.Key == GridNeighbourDirection.South || kvp.Key == GridNeighbourDirection.West) {
+                adjacent.Add(kvp.Value);    
+            }
         }
         return adjacent;
     }
@@ -119,10 +122,10 @@ public class BuildingSpot {
                 {GridNeighbourDirection.South, new Point(0,-1) },
                 {GridNeighbourDirection.West, new Point(-1,0) },
                 {GridNeighbourDirection.East, new Point(1,0) },
-                //{GridNeighbourDirection.North_West, new Point(-1,1) },
-                //{GridNeighbourDirection.North_East, new Point(1,1) },
-                //{GridNeighbourDirection.South_West, new Point(-1,-1) },
-                //{GridNeighbourDirection.South_East, new Point(1,-1) },
+                {GridNeighbourDirection.North_West, new Point(-1,1) },
+                {GridNeighbourDirection.North_East, new Point(1,1) },
+                {GridNeighbourDirection.South_West, new Point(-1,-1) },
+                {GridNeighbourDirection.South_East, new Point(1,-1) },
             };
         }
     }

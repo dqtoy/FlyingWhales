@@ -542,17 +542,23 @@ namespace Inner_Maps {
                 //if it is bigger both horizontally and vertically
                 //only get build spots that do not have any occupied adjacent spots at their top and right
                 bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North)
-                                          && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false;
+                                          && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false
+                                          && currSpot.neighbours[GridNeighbourDirection.North].hexTileOwner != null;
                 bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East)
-                                         && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false;
-                if (hasUnoccupiedNorth && hasUnoccupiedEast) {
+                                         && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false
+                                         && currSpot.neighbours[GridNeighbourDirection.East].hexTileOwner != null;
+                bool hasUnoccupiedNorthEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North_East)
+                                         && currSpot.neighbours[GridNeighbourDirection.North_East].isOccupied == false
+                                         && currSpot.neighbours[GridNeighbourDirection.North_East].hexTileOwner != null;
+                if (hasUnoccupiedNorth && hasUnoccupiedEast && hasUnoccupiedNorthEast) {
                     return true;
                 }
             } else if (isHorizontallyBig) {
                 //if it is bigger horizontally
                 //only get build spots that do not have any occupied adjacent spots at their right
                 bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East) 
-                                         && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false;
+                                         && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false
+                                         && currSpot.neighbours[GridNeighbourDirection.East].hexTileOwner != null;
                 if (hasUnoccupiedEast) {
                     return true;
                 }
@@ -560,7 +566,8 @@ namespace Inner_Maps {
                 //if it is bigger vertically
                 //only get build spots that do not have any occupied adjacent spots at their top
                 bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North) 
-                                          && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false;
+                                          && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false
+                                          && currSpot.neighbours[GridNeighbourDirection.North].hexTileOwner != null;
                 if (hasUnoccupiedNorth) {
                     return true;
                 }

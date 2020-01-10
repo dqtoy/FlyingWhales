@@ -341,7 +341,7 @@ namespace Inner_Maps {
                 summary += " <b>Furniture Spot:</b>" + tile.furnitureSpot;
             }
             summary += "\nTile Traits: ";
-            if (tile.normalTraits.Count > 0) {
+            if (tile.genericTileObject != null && tile.normalTraits.Count > 0) {
                 summary += "\n";
                 for (int i = 0; i < tile.normalTraits.Count; i++) {
                     summary += "|" + tile.normalTraits[i].name + "|";

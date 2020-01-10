@@ -68,7 +68,6 @@ public class GridMap : MonoBehaviour {
                 hex.transform.localScale = new Vector3(tileSize, tileSize, 0f);
                 hex.name = x + "," + y;
                 HexTile currHex = hex.GetComponent<HexTile>();
-                normalHexTiles.Add(currHex);
                 currHex.Initialize();
                 currHex.data.id = id;
 				currHex.data.tileName = RandomNameGenerator.Instance.GetTileName();

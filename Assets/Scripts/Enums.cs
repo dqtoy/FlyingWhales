@@ -1122,6 +1122,11 @@ public enum STRUCTURE_TYPE {
     HUNTER_LODGE,
     MAGE_QUARTERS,
     NONE,
+    MONSTER_LAIR,
+    ABANDONED_MINE,
+    TEMPLE,
+    MAGE_TOWER,
+    PORTAL,
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,
