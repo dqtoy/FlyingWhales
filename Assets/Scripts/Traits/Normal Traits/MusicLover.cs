@@ -53,13 +53,13 @@ namespace Traits {
             base.OnOwnerInitiallyPlaced(owner);
             //Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         }
-        public override void ExecuteActionPerTickEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
-            if (action == INTERACTION_TYPE.SING && owner == goapNode.actor) {
-                owner.needsComponent.AdjustHappiness(200);
-            } else if (action == INTERACTION_TYPE.PLAY_GUITAR && owner == goapNode.actor) {
-                owner.needsComponent.AdjustHappiness(100);
-            }
-        }
+        //public override void ExecuteActionPerTickEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
+        //    if (action == INTERACTION_TYPE.SING && owner == goapNode.actor) {
+        //        owner.needsComponent.AdjustHappiness(5f);
+        //    } else if (action == INTERACTION_TYPE.PLAY_GUITAR && owner == goapNode.actor) {
+        //        owner.needsComponent.AdjustHappiness(4f);
+        //    }
+        //}
         public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref int cost) {
             if (action == INTERACTION_TYPE.SING) {
                 cost = Utilities.rng.Next(10, 27);
@@ -94,8 +94,9 @@ namespace Traits {
 
         private void OnHearGuitarPlaying(Character guitarPlayer) {
             owner.traitContainer.AddTrait(owner, "Satisfied");
-            owner.needsComponent.AdjustTiredness(20);
-            owner.needsComponent.AdjustHappiness(40);
+            owner.needsComponent.AdjustTiredness(10f);
+            owner.needsComponent.AdjustHappiness(10f);
+            owner.opinionComponent.AdjustOpinion(guitarPlayer, "Base", 3);
             //Debug.Log(GameManager.Instance.TodayLogString() + owner.name + " heard " + guitarPlayer.name + " playing a guitar, and became happier.");
             Log log = new Log(GameManager.Instance.Today(), "Trait", "MusicLover", "heard_guitar");
             log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -106,8 +107,9 @@ namespace Traits {
         }
         private void OnHearSinging(Character singer) {
             owner.traitContainer.AddTrait(owner, "Satisfied");
-            owner.needsComponent.AdjustTiredness(20);
-            owner.needsComponent.AdjustHappiness(40);
+            owner.needsComponent.AdjustTiredness(10f);
+            owner.needsComponent.AdjustHappiness(10f);
+            owner.opinionComponent.AdjustOpinion(singer, "Base", 3);
             //Debug.Log(GameManager.Instance.TodayLogString() + owner.name + " heard " + guitarPlayer.name + " playing a guitar, and became happier.");
             Log log = new Log(GameManager.Instance.Today(), "Trait", "MusicLover", "heard_sing");
             log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

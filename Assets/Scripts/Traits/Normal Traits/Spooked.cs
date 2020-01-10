@@ -43,14 +43,15 @@ namespace Traits {
         //}
         #endregion
 
-        public GoapPlanJob TriggerFeelingSpooked() {
-            owner.needsComponent.SetHasCancelledSleepSchedule(false);
-            owner.needsComponent.ResetSleepTicks();
-            owner.jobQueue.CancelAllJobs(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED);
+        public bool TriggerFeelingSpooked() {
+            //owner.needsComponent.SetHasCancelledSleepSchedule(false);
+            //owner.needsComponent.ResetSleepTicks();
+            //owner.jobQueue.CancelAllJobs(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED);
 
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_SPOOKED, owner, owner);
-            owner.jobQueue.AddJobInQueue(job);
-            return job;
+            //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_SPOOKED, owner, owner);
+            //owner.jobQueue.AddJobInQueue(job);
+            //return job;
+            return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Feeling_Spooked, owner);
         }
     }
 

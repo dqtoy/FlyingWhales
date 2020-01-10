@@ -76,6 +76,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public Party ownParty { get; protected set; }
     public Party currentParty { get; protected set; }
     public Dictionary<RESOURCE, int> storedResources { get; protected set; }
+    public int currentMissingTicks { get; protected set; }
 
     private List<System.Action> onLeaveAreaActions;
     private POI_STATE _state;
@@ -259,6 +260,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public Transform worldObject => marker.transform;
     public bool isStillConsideredAlive => minion == null /*&& !(this is Summon)*/ && !faction.isPlayerFaction;
     public Character isBeingCarriedBy => IsInOwnParty() ? null : currentParty.owner;
+    public bool isMissing => currentMissingTicks > CharacterManager.Instance.CHARACTER_MISSING_THRESHOLD;
     //public JobQueueItem currentJob => jobQueue.jobsInQueue.Count > 0 ? jobQueue.jobsInQueue[0] : null; //The current job is always the top of the queue
     #endregion
 
@@ -482,6 +484,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.AddListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
         Messenger.AddListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
         Messenger.AddListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
+        Messenger.AddListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
+        Messenger.AddListener<Character>(Signals.CHARACTER_NO_LONGER_MISSING, OnCharacterNoLongerMissing);
         needsComponent.SubscribeToSignals();
     }
     public virtual void UnsubscribeSignals() {
@@ -501,6 +505,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.RemoveListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
         Messenger.RemoveListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
         Messenger.RemoveListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_NO_LONGER_MISSING, OnCharacterNoLongerMissing);
         needsComponent.UnsubscribeToSignals();
     }
     #endregion
@@ -1897,6 +1903,17 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             traitContainer.RemoveTrait(this, criminal); //TODO: RemoveTrait(criminal, false); do not trigger on remove
         }
     }
+    private void OnChangeFactionRelationship(Faction faction1, Faction faction2, FACTION_RELATIONSHIP_STATUS newStatus, FACTION_RELATIONSHIP_STATUS oldStatus) {
+        if(faction1 == faction) {
+            if(newStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+                //If at war with another faction, decrease hope 
+                needsComponent.AdjustHope(-5f);
+            }else if(oldStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE && newStatus != FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+                //If no longer at war with another faction, increase hope
+                needsComponent.AdjustHope(-5f);
+            }
+        }
+    }
     #endregion
 
     #region Party
@@ -2211,6 +2228,19 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
     public void OnOtherCharacterDied(Character characterThatDied) {
         if (characterThatDied.id != this.id) {
+            string opinionLabel = opinionComponent.GetOpinionLabel(characterThatDied);
+            if (opinionLabel == OpinionComponent.Friend) {
+                needsComponent.AdjustHope(-5f);
+            } else if (opinionLabel == OpinionComponent.Close_Friend) {
+                needsComponent.AdjustHope(-10f);
+            }
+
+            if (characterThatDied.currentRegion == homeRegion) {
+                //if a hostile character has been killed within the character's home settlement, Hope increases by XX amount.
+                if (IsHostileWith(characterThatDied)) {
+                    needsComponent.AdjustHope(5f);
+                }
+            }
             //RemoveRelationship(characterThatDied); //do not remove relationships when dying
             marker.OnOtherCharacterDied(characterThatDied);
         }
@@ -3798,6 +3828,20 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (!isDead && !isInCombat) {
             HPRecovery(0.0025f);
         }
+        if (isAtHomeRegion) {
+            if (currentMissingTicks != 0) {
+                currentMissingTicks = 0;
+                Messenger.Broadcast(Signals.CHARACTER_NO_LONGER_MISSING, this);
+            }
+        } else {
+            //If not home region, increment missing ticks
+            if(currentMissingTicks <= CharacterManager.Instance.CHARACTER_MISSING_THRESHOLD) {
+                currentMissingTicks++;
+                if (currentMissingTicks > CharacterManager.Instance.CHARACTER_MISSING_THRESHOLD) {
+                    Messenger.Broadcast(Signals.CHARACTER_MISSING, this);
+                }
+            }
+        }
         ProcessTraitsOnTickStarted();
         StartTickGoapPlanGeneration();
     }
@@ -5194,10 +5238,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             plan.SetNextNode();
             if (plan.currentNode == null) {
                 log += "\nThis action is the end of plan.";
-                if (job.originalOwner.ownerType != JOB_OWNER.CHARACTER && traitContainer.GetNormalTrait<Trait>("Hardworking") != null) {
-                    log += "\nFinished a settlement job and character is hardworking, increase happiness by 3000...";
-                    needsComponent.AdjustHappiness(3000); //TODO: Move this to hardworking trait.
-                }
+                //if (job.originalOwner.ownerType != JOB_OWNER.CHARACTER && traitContainer.GetNormalTrait<Trait>("Hardworking") != null) {
+                //    log += "\nFinished a settlement job and character is hardworking, increase happiness by 3000...";
+                //    needsComponent.AdjustHappiness(3000); //TODO: Move this to hardworking trait.
+                //}
                 PrintLogIfActive(log);
                 //bool forceRemoveJobInQueue = true;
                 ////If an action is stopped as current action (meaning it was cancelled) and it is a settlement/faction job, do not remove it from the queue
@@ -6307,6 +6351,29 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     #region IDamageable
     public bool CanBeDamaged() {
         return true;
+    }
+    #endregion
+
+    #region Missing
+    private void OnCharacterMissing(Character missingCharacter) {
+        if(missingCharacter != this) {
+            string opinionLabel = opinionComponent.GetOpinionLabel(missingCharacter);
+            if(opinionLabel == OpinionComponent.Friend) {
+                needsComponent.AdjustHope(-5f);
+            }else if (opinionLabel == OpinionComponent.Close_Friend) {
+                needsComponent.AdjustHope(-10f);
+            }
+        }
+    }
+    private void OnCharacterNoLongerMissing(Character missingCharacter) {
+        if (missingCharacter != this) {
+            string opinionLabel = opinionComponent.GetOpinionLabel(missingCharacter);
+            if (opinionLabel == OpinionComponent.Friend) {
+                needsComponent.AdjustHope(5f);
+            } else if (opinionLabel == OpinionComponent.Close_Friend) {
+                needsComponent.AdjustHope(10f);
+            }
+        }
     }
     #endregion
 }

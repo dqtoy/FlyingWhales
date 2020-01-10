@@ -69,12 +69,12 @@ public class SaveDataCharacter {
     public POI_STATE state;
 
     //Needs
-    public int tiredness;
-    public int fullness;
-    public int happiness;
-    public int fullnessDecreaseRate;
-    public int tirednessDecreaseRate;
-    public int happinessDecreaseRate;
+    public float tiredness;
+    public float fullness;
+    public float happiness;
+    public float fullnessDecreaseRate;
+    public float tirednessDecreaseRate;
+    public float happinessDecreaseRate;
 
     //portrait
     public float hSkinColor;

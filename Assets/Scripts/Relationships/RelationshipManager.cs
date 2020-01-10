@@ -66,6 +66,8 @@ public class RelationshipManager : MonoBehaviour {
                 return RELATIONSHIP_TYPE.SAVE_TARGET;
             case RELATIONSHIP_TYPE.SAVE_TARGET:
                 return RELATIONSHIP_TYPE.SAVER;
+            case RELATIONSHIP_TYPE.EX_LOVER:
+                return RELATIONSHIP_TYPE.EX_LOVER;
             default:
                 return RELATIONSHIP_TYPE.NONE;
         }

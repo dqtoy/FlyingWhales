@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Interrupts {
     public class Stumble : Interrupt {
         public Stumble() : base(INTERRUPT.Stumble) {
-            duration = 0;
+            duration = 2;
             doesStopCurrentAction = true;
         }
 

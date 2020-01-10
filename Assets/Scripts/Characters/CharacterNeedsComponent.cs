@@ -8,42 +8,69 @@ public class CharacterNeedsComponent {
     public int doNotGetHungry { get; private set; }
     public int doNotGetTired{ get; private set; }
     public int doNotGetLonely{ get; private set; }
-    
-    public bool isStarving => fullness <= FULLNESS_THRESHOLD_2;
-    public bool isExhausted => tiredness <= TIREDNESS_THRESHOLD_2;
-    public bool isForlorn => happiness <= HAPPINESS_THRESHOLD_2;
-    public bool isHungry => fullness <= FULLNESS_THRESHOLD_1;
-    public bool isTired => tiredness <= TIREDNESS_THRESHOLD_1;
-    public bool isLonely => happiness <= HAPPINESS_THRESHOLD_1;
+    public int doNotGetUncomfortable { get; private set; }
+    public int doNotGetGloomy { get; private set; }
+
+    public bool isStarving => fullness >= 0f && fullness <= 20f;
+    public bool isExhausted => tiredness >= 0f && tiredness <= EXHAUSTED_UPPER_LIMIT;
+    public bool isForlorn => happiness >= 0f && happiness <= FORLORN_UPPER_LIMIT;
+    public bool isAgonizing => comfort >= 0f && comfort <= 20f;
+    public bool isDisillusioned => hope >= 0f && hope <= 20f;
+
+    public bool isHungry => fullness > 20f && fullness <= 40f;
+    public bool isTired => tiredness > EXHAUSTED_UPPER_LIMIT && tiredness <= 40f;
+    public bool isLonely => happiness > FORLORN_UPPER_LIMIT && happiness <= 40f;
+    public bool isUncomfortable => comfort > 20f && comfort <= 40f;
+    public bool isGloomy => hope > 20f && hope <= 40f;
+
+    public bool isFull => fullness >= 91f && fullness <= 100f;
+    public bool isEnergized => tiredness >= 91f && tiredness <= 100f;
+    public bool isHappy => happiness >= 91f && happiness <= 100f;
+    public bool isRelaxed => comfort >= 91f && comfort <= 100f;
+    public bool isSanguine => hope >= 91f && hope <= 100f;
+
 
     //Tiredness
-    public int tiredness { get; private set; }
-    public int tirednessDecreaseRate { get; private set; }
+    public float tiredness { get; private set; }
+    public float tirednessDecreaseRate { get; private set; }
     public int tirednessForcedTick { get; private set; }
     public int currentSleepTicks { get; private set; }
     public int sleepScheduleJobID { get; set; }
     public bool hasCancelledSleepSchedule { get; private set; }
-    private int tirednessLowerBound; //how low can this characters tiredness go
-    public const int TIREDNESS_DEFAULT = 15000;
-    public const int TIREDNESS_THRESHOLD_1 = 10000;
-    public const int TIREDNESS_THRESHOLD_2 = 5000;
-    
+    private float tirednessLowerBound; //how low can this characters tiredness go
+    public const float TIREDNESS_DEFAULT = 100f;
+    public const float EXHAUSTED_UPPER_LIMIT = 20f;
+    //public const int TIREDNESS_THRESHOLD_1 = 10000;
+    //public const int TIREDNESS_THRESHOLD_2 = 5000;
+
     //Fullness
-    public int fullness { get; private set; }
-    public int fullnessDecreaseRate { get; private set; }
+    public float fullness { get; private set; }
+    public float fullnessDecreaseRate { get; private set; }
     public int fullnessForcedTick { get; private set; }
-    private int fullnessLowerBound; //how low can this characters fullness go
-    public const int FULLNESS_DEFAULT = 15000;
-    public const int FULLNESS_THRESHOLD_1 = 10000;
-    public const int FULLNESS_THRESHOLD_2 = 5000;
+    private float fullnessLowerBound; //how low can this characters fullness go
+    public const float FULLNESS_DEFAULT = 100f;
+    //public const int FULLNESS_THRESHOLD_1 = 10000;
+    //public const int FULLNESS_THRESHOLD_2 = 5000;
 
     //Happiness
-    public int happiness { get; private set; }
-    public int happinessDecreaseRate { get; private set; }
-    private int happinessLowerBound; //how low can this characters happiness go
-    public const int HAPPINESS_DEFAULT = 15000;
-    public const int HAPPINESS_THRESHOLD_1 = 10000;
-    public const int HAPPINESS_THRESHOLD_2 = 5000;
+    public float happiness { get; private set; }
+    public float happinessDecreaseRate { get; private set; }
+    private float happinessLowerBound; //how low can this characters happiness go
+    public const float HAPPINESS_DEFAULT = 100f;
+    public const float FORLORN_UPPER_LIMIT = 20f;
+    //public const int HAPPINESS_THRESHOLD_1 = 10000;
+    //public const int HAPPINESS_THRESHOLD_2 = 5000;
+
+    //Comfort
+    public float comfort { get; private set; }
+    public float comfortDecreaseRate { get; private set; }
+    private float comfortLowerBound; //how low can this characters happiness go
+    public const float COMFORT_DEFAULT = 100f;
+
+    //Hope
+    public float hope { get; private set; }
+    private float hopeLowerBound; //how low can this characters happiness go
+    public const float HOPE_DEFAULT = 100f;
 
     public bool hasForcedFullness { get; set; }
     public bool hasForcedTiredness { get; set; }
@@ -52,9 +79,11 @@ public class CharacterNeedsComponent {
 
     public CharacterNeedsComponent(Character character) {
         this._character = character;
-        tirednessLowerBound = 0;
-        fullnessLowerBound = 0;
-        happinessLowerBound = 0;
+        SetTirednessLowerBound(0f);
+        SetFullnessLowerBound(0f);
+        SetHappinessLowerBound(0f);
+        SetComfortLowerBound(0f);
+        SetHopeLowerBound(0f);
         SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LUNCH_TIME);
         SetForcedTirednessRecoveryTimeInWords(TIME_IN_WORDS.LATE_NIGHT);
         SetFullnessForcedTick();
@@ -64,11 +93,11 @@ public class CharacterNeedsComponent {
     
     #region Initialization
     public void SubscribeToSignals() {
-        Messenger.AddListener(Signals.HOUR_STARTED, DecreaseNeeds);
+        Messenger.AddListener(Signals.TICK_STARTED, DecreaseNeeds);
         Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB, OnCharacterFinishedJob);
     }
     public void UnsubscribeToSignals() {
-        Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseNeeds);
+        Messenger.RemoveListener(Signals.TICK_STARTED, DecreaseNeeds);
         Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB, OnCharacterFinishedJob);
     }
     public void DailyGoapProcesses() {
@@ -77,23 +106,34 @@ public class CharacterNeedsComponent {
     }
     public void Initialize() {
         //NOTE: These values will be randomized when this character is placed in his/her area map.
-        tiredness = TIREDNESS_DEFAULT;
-        fullness = FULLNESS_DEFAULT;
-        happiness = HAPPINESS_DEFAULT;
+        //tiredness = TIREDNESS_DEFAULT;
+        //fullness = FULLNESS_DEFAULT;
+        //happiness = HAPPINESS_DEFAULT;
+        ResetTirednessMeter();
+        ResetFullnessMeter();
+        ResetHappinessMeter();
+        ResetComfortMeter();
+        ResetHopeMeter();
     }
     public void InitialCharacterPlacement() {
-        tiredness = TIREDNESS_DEFAULT;
-        if (_character.role.roleType != CHARACTER_ROLE.MINION) {
-            ////Fullness value between 2600 and full.
-            //SetFullness(UnityEngine.Random.Range(2600, FULLNESS_DEFAULT + 1));
-            ////Happiness value between 2600 and full.
-            //SetHappiness(UnityEngine.Random.Range(2600, HAPPINESS_DEFAULT + 1));
-            fullness = FULLNESS_DEFAULT;
-            happiness = HAPPINESS_DEFAULT;
-        } else {
-            fullness = FULLNESS_DEFAULT;
-            happiness = HAPPINESS_DEFAULT;
-        }
+        ResetTirednessMeter();
+        ResetFullnessMeter();
+        ResetHappinessMeter();
+        ResetComfortMeter();
+        ResetHopeMeter();
+
+        //tiredness = TIREDNESS_DEFAULT;
+        //if (_character.role.roleType != CHARACTER_ROLE.MINION) {
+        //    ////Fullness value between 2600 and full.
+        //    //SetFullness(UnityEngine.Random.Range(2600, FULLNESS_DEFAULT + 1));
+        //    ////Happiness value between 2600 and full.
+        //    //SetHappiness(UnityEngine.Random.Range(2600, HAPPINESS_DEFAULT + 1));
+        //    fullness = FULLNESS_DEFAULT;
+        //    happiness = HAPPINESS_DEFAULT;
+        //} else {
+        //    fullness = FULLNESS_DEFAULT;
+        //    happiness = HAPPINESS_DEFAULT;
+        //}
     }
     #endregion
 
@@ -141,84 +181,175 @@ public class CharacterNeedsComponent {
             return;
         }
         if (doNotGetHungry <= 0) {
-            AdjustFullness(-(CharacterManager.FULLNESS_DECREASE_RATE + fullnessDecreaseRate));
+            AdjustFullness(-(CharacterManager.DEFAULT_FULLNESS_DECREASE_RATE + fullnessDecreaseRate));
         }
         if (doNotGetTired <= 0) {
-            AdjustTiredness(-(CharacterManager.TIREDNESS_DECREASE_RATE + tirednessDecreaseRate));
+            AdjustTiredness(-(CharacterManager.DEFAULT_TIREDNESS_DECREASE_RATE + tirednessDecreaseRate));
         }
         if (doNotGetLonely <= 0) {
-            AdjustHappiness(-(CharacterManager.HAPPINESS_DECREASE_RATE + happinessDecreaseRate));
+            AdjustHappiness(-(CharacterManager.DEFAULT_HAPPINESS_DECREASE_RATE + happinessDecreaseRate));
+        }
+        if (doNotGetUncomfortable <= 0) {
+            AdjustComfort(-(CharacterManager.DEFAULT_COMFORT_DECREASE_RATE + comfortDecreaseRate));
         }
     }
     public string GetNeedsSummary() {
-        string summary = "Fullness: " + fullness.ToString() + "/" + FULLNESS_DEFAULT.ToString();
-        summary += "\nTiredness: " + tiredness.ToString() + "/" + TIREDNESS_DEFAULT.ToString();
-        summary += "\nHappiness: " + happiness.ToString() + "/" + HAPPINESS_DEFAULT.ToString();
+        string summary = "Fullness: " + fullness + "/" + FULLNESS_DEFAULT;
+        summary += "\nTiredness: " + tiredness + "/" + TIREDNESS_DEFAULT;
+        summary += "\nHappiness: " + happiness + "/" + HAPPINESS_DEFAULT;
+        summary += "\nComfort: " + comfort + "/" + COMFORT_DEFAULT;
+        summary += "\nHope: " + hope + "/" + HOPE_DEFAULT;
         return summary;
     }
-    public void AdjustFullnessDecreaseRate(int amount) {
+    public void AdjustFullnessDecreaseRate(float amount) {
         fullnessDecreaseRate += amount;
     }
-    public void AdjustTirednessDecreaseRate(int amount) {
+    public void AdjustTirednessDecreaseRate(float amount) {
         tirednessDecreaseRate += amount;
     }
-    public void AdjustHappinessDecreaseRate(int amount) {
+    public void AdjustHappinessDecreaseRate(float amount) {
         happinessDecreaseRate += amount;
     }
-    public void SetTirednessLowerBound(int amount) {
+    public void SetTirednessLowerBound(float amount) {
         tirednessLowerBound = amount;
     }
-    public void SetFullnessLowerBound(int amount) {
+    public void SetFullnessLowerBound(float amount) {
         fullnessLowerBound = amount;
     }
-    public void SetHappinessLowerBound(int amount) {
+    public void SetHappinessLowerBound(float amount) {
         happinessLowerBound = amount;
+    }
+    public void SetComfortLowerBound(float amount) {
+        comfortLowerBound = amount;
+    }
+    public void SetHopeLowerBound(float amount) {
+        hopeLowerBound = amount;
     }
 
     #region Tiredness
     public void ResetTirednessMeter() {
+        bool wasTired = isTired;
+        bool wasExhausted = isExhausted;
+        bool wasEnergized = isEnergized;
+
         tiredness = TIREDNESS_DEFAULT;
-        RemoveTiredOrExhausted();
+        //RemoveTiredOrExhausted();
+        OnEnergized(wasEnergized, wasTired, wasExhausted);
     }
-    public void AdjustTiredness(int adjustment) {
+    public void AdjustTiredness(float adjustment) {
+        bool wasTired = isTired;
+        bool wasExhausted = isExhausted;
+        bool wasEnergized = isEnergized;
+
         tiredness += adjustment;
         tiredness = Mathf.Clamp(tiredness, tirednessLowerBound, TIREDNESS_DEFAULT);
-        if (tiredness == 0) {
-            _character.Death("exhaustion");
-        } else if (isExhausted) {
-            _character.traitContainer.RemoveTrait(_character, "Tired");
-            if (_character.traitContainer.AddTrait(_character, "Exhausted")) {
-                Messenger.Broadcast<Character, string>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, _character, "exhausted");
-            }
+        if (tiredness == 0f) {
+            _character.traitContainer.AddTrait(_character, "Unconscious");
+            OnExhausted(wasEnergized, wasTired, wasExhausted);
+            return;
+        }
+        if (isEnergized) {
+            OnEnergized(wasEnergized, wasTired, wasExhausted);
         } else if (isTired) {
-            _character.traitContainer.RemoveTrait(_character, "Exhausted");
-            _character.traitContainer.AddTrait(_character, "Tired");
-            //PlanTirednessRecoveryActions();
+            OnTired(wasEnergized, wasTired, wasExhausted);
+        } else if (isExhausted) {
+            OnExhausted(wasEnergized, wasTired, wasExhausted);
         } else {
-            //tiredness is higher than both thresholds
-            _character.needsComponent.RemoveTiredOrExhausted();
+            OnNormalEnergy(wasEnergized, wasTired, wasExhausted);
         }
+        //if (isExhausted) {
+        //    _character.traitContainer.RemoveTrait(_character, "Tired");
+        //    if (_character.traitContainer.AddTrait(_character, "Exhausted")) {
+        //        Messenger.Broadcast<Character, string>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, _character, "exhausted");
+        //    }
+        //} else if (isTired) {
+        //    _character.traitContainer.RemoveTrait(_character, "Exhausted");
+        //    _character.traitContainer.AddTrait(_character, "Tired");
+        //    //PlanTirednessRecoveryActions();
+        //} else {
+        //    //tiredness is higher than both thresholds
+        //    RemoveTiredOrExhausted();
+        //}
     }
-    public void ExhaustCharacter(Character character) {
-        if (!isExhausted) {
-            int diff = tiredness - TIREDNESS_THRESHOLD_2;
-            this.AdjustTiredness(-diff);
-        }
-    }
-    public void SetTiredness(int amount) {
+    public void SetTiredness(float amount) {
+        bool wasTired = isTired;
+        bool wasExhausted = isExhausted;
+        bool wasEnergized = isEnergized;
+
         tiredness = amount;
         tiredness = Mathf.Clamp(tiredness, tirednessLowerBound, TIREDNESS_DEFAULT);
-        if (tiredness == 0) {
-            _character.Death("exhaustion");
-        } else if (isExhausted) {
-            _character.traitContainer.RemoveTrait(_character, "Tired");
-            _character.traitContainer.AddTrait(_character, "Exhausted");
+        if (tiredness == 0f) {
+            _character.traitContainer.AddTrait(_character, "Unconscious");
+            OnExhausted(wasEnergized, wasTired, wasExhausted);
+            return;
+        }
+        if (isEnergized) {
+            OnEnergized(wasEnergized, wasTired, wasExhausted);
         } else if (isTired) {
-            _character.traitContainer.RemoveTrait(_character, "Exhausted");
-            _character.traitContainer.AddTrait(_character, "Tired");
+            OnTired(wasEnergized, wasTired, wasExhausted);
+        } else if (isExhausted) {
+            OnExhausted(wasEnergized, wasTired, wasExhausted);
         } else {
-            //tiredness is higher than both thresholds
-            _character.needsComponent.RemoveTiredOrExhausted();
+            OnNormalEnergy(wasEnergized, wasTired, wasExhausted);
+        }
+        //if (tiredness == 0f) {
+        //    _character.traitContainer.AddTrait(_character, "Unconscious");
+        //    return;
+        //}
+        //if (isExhausted) {
+        //    _character.traitContainer.RemoveTrait(_character, "Tired");
+        //    _character.traitContainer.AddTrait(_character, "Exhausted");
+        //} else if (isTired) {
+        //    _character.traitContainer.RemoveTrait(_character, "Exhausted");
+        //    _character.traitContainer.AddTrait(_character, "Tired");
+        //} else {
+        //    //tiredness is higher than both thresholds
+        //    _character.needsComponent.RemoveTiredOrExhausted();
+        //}
+    }
+    private void OnEnergized(bool wasEnergized, bool wasTired, bool wasExhausted) {
+        if (!wasEnergized) {
+            _character.traitContainer.AddTrait(_character, "Energized");
+        }
+        if (wasExhausted) {
+            _character.traitContainer.RemoveTrait(_character, "Exhausted");
+        }
+        if (wasTired) {
+            _character.traitContainer.RemoveTrait(_character, "Tired");
+        }
+    }
+    private void OnTired(bool wasEnergized, bool wasTired, bool wasExhausted) {
+        if (!wasTired) {
+            _character.traitContainer.AddTrait(_character, "Tired");
+        }
+        if (wasExhausted) {
+            _character.traitContainer.RemoveTrait(_character, "Exhausted");
+        }
+        if (wasEnergized) {
+            _character.traitContainer.RemoveTrait(_character, "Energized");
+        }
+    }
+    private void OnExhausted(bool wasEnergized, bool wasTired, bool wasExhausted) {
+        if (!wasExhausted) {
+            _character.traitContainer.AddTrait(_character, "Exhausted");
+            Messenger.Broadcast<Character, string>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, _character, "exhausted");
+        }
+        if (wasTired) {
+            _character.traitContainer.RemoveTrait(_character, "Tired");
+        }
+        if (wasEnergized) {
+            _character.traitContainer.RemoveTrait(_character, "Energized");
+        }
+    }
+    private void OnNormalEnergy(bool wasEnergized, bool wasTired, bool wasExhausted) {
+        if (wasExhausted) {
+            _character.traitContainer.RemoveTrait(_character, "Exhausted");
+        }
+        if (wasTired) {
+            _character.traitContainer.RemoveTrait(_character, "Tired");
+        }
+        if (wasEnergized) {
+            _character.traitContainer.RemoveTrait(_character, "Energized");
         }
     }
     private void RemoveTiredOrExhausted() {
@@ -356,22 +487,105 @@ public class CharacterNeedsComponent {
             this.ResetSleepTicks();
         }
     }
+    public void ExhaustCharacter(Character character) {
+        if (!isExhausted) {
+            SetTiredness(EXHAUSTED_UPPER_LIMIT);
+        }
+    }
     #endregion
 
     #region Happiness
     public void ResetHappinessMeter() {
+        bool wasLonely = isLonely;
+        bool wasForlorn = isForlorn;
+        bool wasHappy = isHappy;
+
         happiness = HAPPINESS_DEFAULT;
-        OnHappinessAdjusted();
+
+        OnHappy(wasHappy, wasLonely, wasForlorn);
+        //OnHappinessAdjusted();
     }
-    public void AdjustHappiness(int adjustment) {
+    public void AdjustHappiness(float adjustment) {
+        bool wasLonely = isLonely;
+        bool wasForlorn = isForlorn;
+        bool wasHappy = isHappy;
+
         happiness += adjustment;
         happiness = Mathf.Clamp(happiness, happinessLowerBound, HAPPINESS_DEFAULT);
-        OnHappinessAdjusted();
+
+        if (isHappy) {
+            OnHappy(wasHappy, wasLonely, wasForlorn);
+        } else if (isLonely) {
+            OnLonely(wasHappy, wasLonely, wasForlorn);
+        } else if (isForlorn) {
+            OnForlorn(wasHappy, wasLonely, wasForlorn);
+        } else {
+            OnNormalHappiness(wasHappy, wasLonely, wasForlorn);
+        }
+        //OnHappinessAdjusted();
     }
-    public void SetHappiness(int amount) {
+    public void SetHappiness(float amount) {
+        bool wasLonely = isLonely;
+        bool wasForlorn = isForlorn;
+        bool wasHappy = isHappy;
+
         happiness = amount;
         happiness = Mathf.Clamp(happiness, happinessLowerBound, HAPPINESS_DEFAULT);
-        OnHappinessAdjusted();
+
+        if (isHappy) {
+            OnHappy(wasHappy, wasLonely, wasForlorn);
+        } else if (isLonely) {
+            OnLonely(wasHappy, wasLonely, wasForlorn);
+        } else if (isForlorn) {
+            OnForlorn(wasHappy, wasLonely, wasForlorn);
+        } else {
+            OnNormalHappiness(wasHappy, wasLonely, wasForlorn);
+        }
+        //OnHappinessAdjusted();
+    }
+    private void OnHappy(bool wasHappy, bool wasLonely, bool wasForlorn) {
+        if (!wasHappy) {
+            _character.traitContainer.AddTrait(_character, "Happy");
+        }
+        if (wasLonely) {
+            _character.traitContainer.RemoveTrait(_character, "Lonely");
+        }
+        if (wasForlorn) {
+            _character.traitContainer.RemoveTrait(_character, "Forlorn");
+        }
+    }
+    private void OnLonely(bool wasHappy, bool wasLonely, bool wasForlorn) {
+        if (!wasLonely) {
+            _character.traitContainer.AddTrait(_character, "Lonely");
+        }
+        if (wasHappy) {
+            _character.traitContainer.RemoveTrait(_character, "Happy");
+        }
+        if (wasForlorn) {
+            _character.traitContainer.RemoveTrait(_character, "Forlorn");
+        }
+    }
+    private void OnForlorn(bool wasHappy, bool wasLonely, bool wasForlorn) {
+        if (!wasForlorn) {
+            _character.traitContainer.AddTrait(_character, "Forlorn");
+        }
+        if (wasHappy) {
+            _character.traitContainer.RemoveTrait(_character, "Happy");
+        }
+        if (wasLonely) {
+            _character.traitContainer.RemoveTrait(_character, "Lonely");
+        }
+    }
+    private void OnNormalHappiness(bool wasHappy, bool wasLonely, bool wasForlorn) {
+        if (wasForlorn) {
+            _character.traitContainer.RemoveTrait(_character, "Forlorn");
+        }
+        if (wasHappy) {
+            _character.traitContainer.RemoveTrait(_character, "Happy");
+        }
+        if (wasLonely) {
+            _character.traitContainer.RemoveTrait(_character, "Lonely");
+        }
     }
     private void RemoveLonelyOrForlorn() {
         if (_character.traitContainer.RemoveTrait(_character, "Lonely") == false) {
@@ -379,21 +593,21 @@ public class CharacterNeedsComponent {
         }
     }
     private void OnHappinessAdjusted() {
-        if (isForlorn) {
-            _character.traitContainer.RemoveTrait(_character, "Lonely");
-            _character.traitContainer.AddTrait(_character, "Forlorn");
-        } else if (isLonely) {
-            _character.traitContainer.RemoveTrait(_character, "Forlorn");
-            _character.traitContainer.AddTrait(_character, "Lonely");
-        } else {
-            RemoveLonelyOrForlorn();
-        }
+        //if (isForlorn) {
+        //    _character.traitContainer.RemoveTrait(_character, "Lonely");
+        //    _character.traitContainer.AddTrait(_character, "Forlorn");
+        //} else if (isLonely) {
+        //    _character.traitContainer.RemoveTrait(_character, "Forlorn");
+        //    _character.traitContainer.AddTrait(_character, "Lonely");
+        //} else {
+        //    RemoveLonelyOrForlorn();
+        //}
         JobQueueItem suicideJob = _character.jobQueue.GetJob(JOB_TYPE.SUICIDE);
-        if (happiness <= 0 && suicideJob == null) {
+        if (happiness <= 0f && suicideJob == null) {
             //When Happiness meter is reduced to 0, the character will create a Commit Suicide Job.
             Debug.Log(GameManager.Instance.TodayLogString() + _character.name + "'s happiness is " + happiness.ToString() + ", creating suicide job");
             _character.CreateSuicideJob();
-        } else if (happiness > HAPPINESS_THRESHOLD_2 && suicideJob != null) {
+        } else if (happiness > FORLORN_UPPER_LIMIT && suicideJob != null) {
             Debug.Log(GameManager.Instance.TodayLogString() + _character.name + "'s happiness is " + happiness.ToString() + ", canceling suicide job");
             suicideJob.CancelJob(false, reason: "no longer forlorn");
         }
@@ -488,44 +702,133 @@ public class CharacterNeedsComponent {
 
     #region Fullness
     public void ResetFullnessMeter() {
+        bool wasHungry = isHungry;
+        bool wasStarving = isStarving;
+        bool wasFull = isFull;
+
         fullness = FULLNESS_DEFAULT;
-        RemoveHungryOrStarving();
+
+        OnFull(wasFull, wasHungry, wasStarving);
+        //RemoveHungryOrStarving();
     }
-    public void AdjustFullness(int adjustment) {
+    public void AdjustFullness(float adjustment) {
+        bool wasHungry = isHungry;
+        bool wasStarving = isStarving;
+        bool wasFull = isFull;
+
         fullness += adjustment;
         fullness = Mathf.Clamp(fullness, fullnessLowerBound, FULLNESS_DEFAULT);
         if(adjustment > 0) {
             _character.HPRecovery(0.02f);
         }
-        if (fullness == 0) {
-            _character.Death("starvation");
-        } else if (isStarving) {
-            _character.traitContainer.RemoveTrait(_character, "Hungry");
-            if (_character.traitContainer.AddTrait(_character, "Starving") && _character.traitContainer.GetNormalTrait<Trait>("Vampiric") == null) { //only characters that are not vampires will flee when they are starving
-                Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, _character, "starving");
-            }
-        } else if (isHungry) {
-            _character.traitContainer.RemoveTrait(_character, "Starving");
-            _character.traitContainer.AddTrait(_character, "Hungry");
-        } else {
-            //fullness is higher than both thresholds
-            RemoveHungryOrStarving();
+        if (fullness == 0f) {
+            _character.traitContainer.AddTrait(_character, "Malnourished");
+            OnStarving(wasFull, wasHungry, wasStarving);
+            return;
         }
+        if (isFull) {
+            OnFull(wasFull, wasHungry, wasStarving);
+        } else if (isHungry) {
+            OnHungry(wasFull, wasHungry, wasStarving);
+        } else if (isStarving) {
+            OnStarving(wasFull, wasHungry, wasStarving);
+        } else {
+            OnNormalFullness(wasFull, wasHungry, wasStarving);
+        }
+
+        //if (fullness == 0) {
+        //    _character.Death("starvation");
+        //} else if (isStarving) {
+        //    _character.traitContainer.RemoveTrait(_character, "Hungry");
+        //    if (_character.traitContainer.AddTrait(_character, "Starving") && _character.traitContainer.GetNormalTrait<Trait>("Vampiric") == null) { //only characters that are not vampires will flee when they are starving
+        //        Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, _character, "starving");
+        //    }
+        //} else if (isHungry) {
+        //    _character.traitContainer.RemoveTrait(_character, "Starving");
+        //    _character.traitContainer.AddTrait(_character, "Hungry");
+        //} else {
+        //    //fullness is higher than both thresholds
+        //    RemoveHungryOrStarving();
+        //}
     }
-    public void SetFullness(int amount) {
+    public void SetFullness(float amount) {
+        bool wasHungry = isHungry;
+        bool wasStarving = isStarving;
+        bool wasFull = isFull;
+
         fullness = amount;
         fullness = Mathf.Clamp(fullness, fullnessLowerBound, FULLNESS_DEFAULT);
-        if (fullness == 0) {
-            _character.Death("starvation");
-        } else if (isStarving) {
-            _character.traitContainer.RemoveTrait(_character, "Hungry");
-            _character.traitContainer.AddTrait(_character, "Starving");
+
+        if (fullness == 0f) {
+            _character.traitContainer.AddTrait(_character, "Malnourished");
+            OnStarving(wasFull, wasHungry, wasStarving);
+            return;
+        }
+        if (isFull) {
+            OnFull(wasFull, wasHungry, wasStarving);
         } else if (isHungry) {
-            _character.traitContainer.RemoveTrait(_character, "Starving");
-            _character.traitContainer.AddTrait(_character, "Hungry");
+            OnHungry(wasFull, wasHungry, wasStarving);
+        } else if (isStarving) {
+            OnStarving(wasFull, wasHungry, wasStarving);
         } else {
-            //fullness is higher than both thresholds
-            RemoveHungryOrStarving();
+            OnNormalFullness(wasFull, wasHungry, wasStarving);
+        }
+
+        //if (fullness == 0) {
+        //    _character.Death("starvation");
+        //} else if (isStarving) {
+        //    _character.traitContainer.RemoveTrait(_character, "Hungry");
+        //    _character.traitContainer.AddTrait(_character, "Starving");
+        //} else if (isHungry) {
+        //    _character.traitContainer.RemoveTrait(_character, "Starving");
+        //    _character.traitContainer.AddTrait(_character, "Hungry");
+        //} else {
+        //    //fullness is higher than both thresholds
+        //    RemoveHungryOrStarving();
+        //}
+    }
+    private void OnFull(bool wasFull, bool wasHungry, bool wasStarving) {
+        if (!wasFull) {
+            _character.traitContainer.AddTrait(_character, "Full");
+        }
+        if (wasHungry) {
+            _character.traitContainer.RemoveTrait(_character, "Hungry");
+        }
+        if (wasStarving) {
+            _character.traitContainer.RemoveTrait(_character, "Starving");
+        }
+    }
+    private void OnHungry(bool wasFull, bool wasHungry, bool wasStarving) {
+        if (!wasHungry) {
+            _character.traitContainer.AddTrait(_character, "Hungry");
+        }
+        if (wasFull) {
+            _character.traitContainer.RemoveTrait(_character, "Full");
+        }
+        if (wasStarving) {
+            _character.traitContainer.RemoveTrait(_character, "Starving");
+        }
+    }
+    private void OnStarving(bool wasFull, bool wasHungry, bool wasStarving) {
+        if (!wasStarving) {
+            _character.traitContainer.AddTrait(_character, "Starving");
+        }
+        if (wasFull) {
+            _character.traitContainer.RemoveTrait(_character, "Full");
+        }
+        if (wasHungry) {
+            _character.traitContainer.RemoveTrait(_character, "Hungry");
+        }
+    }
+    private void OnNormalFullness(bool wasFull, bool wasHungry, bool wasStarving) {
+        if (wasStarving) {
+            _character.traitContainer.RemoveTrait(_character, "Starving");
+        }
+        if (wasFull) {
+            _character.traitContainer.RemoveTrait(_character, "Full");
+        }
+        if (wasHungry) {
+            _character.traitContainer.RemoveTrait(_character, "Hungry");
         }
     }
     private void RemoveHungryOrStarving() {
@@ -614,7 +917,7 @@ public class CharacterNeedsComponent {
                 bool triggerGrieving = false;
                 Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Trait>("Griefstricken") as Griefstricken;
                 if (griefstricken != null) {
-                    triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
+                    triggerGrieving = UnityEngine.Random.Range(0, 100) < 100;
                 }
                 if (!triggerGrieving) {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _character, _character);
@@ -658,6 +961,198 @@ public class CharacterNeedsComponent {
             }
         }
         return false;
+    }
+    #endregion
+
+    #region Comfort
+    public void ResetComfortMeter() {
+        bool wasUncomfortable = isUncomfortable;
+        bool wasAgonizing = isAgonizing;
+        bool wasRelaxed = isRelaxed;
+
+        comfort = COMFORT_DEFAULT;
+
+        OnRelaxed(wasRelaxed, wasUncomfortable, wasAgonizing);
+    }
+    public void AdjustComfort(float amount) {
+        bool wasUncomfortable = isUncomfortable;
+        bool wasAgonizing = isAgonizing;
+        bool wasRelaxed = isRelaxed;
+
+        comfort += amount;
+        comfort = Mathf.Clamp(comfort, comfortLowerBound, COMFORT_DEFAULT);
+
+        if (isRelaxed) {
+            OnRelaxed(wasRelaxed, wasUncomfortable, wasAgonizing);
+        } else if (isUncomfortable) {
+            OnUncomfortable(wasRelaxed, wasUncomfortable, wasAgonizing);
+        } else if (isAgonizing) {
+            OnAgonizing(wasRelaxed, wasUncomfortable, wasAgonizing);
+        } else {
+            OnNormalComfort(wasRelaxed, wasUncomfortable, wasAgonizing);
+        }
+    }
+    public void SetComfort(float amount) {
+        bool wasUncomfortable = isUncomfortable;
+        bool wasAgonizing = isAgonizing;
+        bool wasRelaxed = isRelaxed;
+
+        comfort = amount;
+        comfort = Mathf.Clamp(comfort, comfortLowerBound, COMFORT_DEFAULT);
+
+        if (isRelaxed) {
+            OnRelaxed(wasRelaxed, wasUncomfortable, wasAgonizing);
+        } else if (isUncomfortable) {
+            OnUncomfortable(wasRelaxed, wasUncomfortable, wasAgonizing);
+        } else if (isAgonizing) {
+            OnAgonizing(wasRelaxed, wasUncomfortable, wasAgonizing);
+        } else {
+            OnNormalComfort(wasRelaxed, wasUncomfortable, wasAgonizing);
+        }
+    }
+    private void OnRelaxed(bool wasRelaxed, bool wasUncomfortable, bool wasAgonizing) {
+        if (!wasRelaxed) {
+            _character.traitContainer.AddTrait(_character, "Relaxed");
+        }
+        if (wasUncomfortable) {
+            _character.traitContainer.RemoveTrait(_character, "Uncomfortable");
+        }
+        if (wasAgonizing) {
+            _character.traitContainer.RemoveTrait(_character, "Agonizing");
+        }
+    }
+    private void OnUncomfortable(bool wasRelaxed, bool wasUncomfortable, bool wasAgonizing) {
+        if (!wasUncomfortable) {
+            _character.traitContainer.AddTrait(_character, "Uncomfortable");
+        }
+        if (wasRelaxed) {
+            _character.traitContainer.RemoveTrait(_character, "Relaxed");
+        }
+        if (wasAgonizing) {
+            _character.traitContainer.RemoveTrait(_character, "Agonizing");
+        }
+    }
+    private void OnAgonizing(bool wasRelaxed, bool wasUncomfortable, bool wasAgonizing) {
+        if (!wasAgonizing) {
+            _character.traitContainer.AddTrait(_character, "Agonizing");
+        }
+        if (wasRelaxed) {
+            _character.traitContainer.RemoveTrait(_character, "Relaxed");
+        }
+        if (wasUncomfortable) {
+            _character.traitContainer.RemoveTrait(_character, "Uncomfortable");
+        }
+    }
+    private void OnNormalComfort(bool wasRelaxed, bool wasUncomfortable, bool wasAgonizing) {
+        if (wasAgonizing) {
+            _character.traitContainer.RemoveTrait(_character, "Agonizing");
+        }
+        if (wasRelaxed) {
+            _character.traitContainer.RemoveTrait(_character, "Relaxed");
+        }
+        if (wasUncomfortable) {
+            _character.traitContainer.RemoveTrait(_character, "Uncomfortable");
+        }
+    }
+    public void AdjustDoNotGetUncomfortable(int amount) {
+        doNotGetUncomfortable += amount;
+        doNotGetUncomfortable = Math.Max(doNotGetUncomfortable, 0);
+    }
+    #endregion
+
+    #region Hope
+    public void ResetHopeMeter() {
+        bool wasGloomy = isGloomy;
+        bool wasDisillusioned = isDisillusioned;
+        bool wasSanguine = isSanguine;
+
+        hope = HOPE_DEFAULT;
+
+        OnSanguine(wasSanguine, wasGloomy, wasDisillusioned);
+    }
+    public void AdjustHope(float amount) {
+        bool wasGloomy = isGloomy;
+        bool wasDisillusioned = isDisillusioned;
+        bool wasSanguine = isSanguine;
+
+        hope += amount;
+        hope = Mathf.Clamp(hope, hopeLowerBound, HOPE_DEFAULT);
+
+        if (isSanguine) {
+            OnSanguine(wasSanguine, wasGloomy, wasDisillusioned);
+        } else if (isGloomy) {
+            OnGloomy(wasSanguine, wasGloomy, wasDisillusioned);
+        } else if (isDisillusioned) {
+            OnDisillusioned(wasSanguine, wasGloomy, wasDisillusioned);
+        } else {
+            OnNormalHope(wasSanguine, wasGloomy, wasDisillusioned);
+        }
+    }
+    public void SetHope(float amount) {
+        bool wasGloomy = isGloomy;
+        bool wasDisillusioned = isDisillusioned;
+        bool wasSanguine = isSanguine;
+
+        hope = amount;
+        hope = Mathf.Clamp(hope, hopeLowerBound, HOPE_DEFAULT);
+
+        if (isSanguine) {
+            OnSanguine(wasSanguine, wasGloomy, wasDisillusioned);
+        } else if (isGloomy) {
+            OnGloomy(wasSanguine, wasGloomy, wasDisillusioned);
+        } else if (isDisillusioned) {
+            OnDisillusioned(wasSanguine, wasGloomy, wasDisillusioned);
+        } else {
+            OnNormalHope(wasSanguine, wasGloomy, wasDisillusioned);
+        }
+    }
+    private void OnSanguine(bool wasSanguine, bool wasGloomy, bool wasDisillusioned) {
+        if (!wasSanguine) {
+            _character.traitContainer.AddTrait(_character, "Sanguine");
+        }
+        if (wasGloomy) {
+            _character.traitContainer.RemoveTrait(_character, "Gloomy");
+        }
+        if (wasDisillusioned) {
+            _character.traitContainer.RemoveTrait(_character, "Disillusioned");
+        }
+    }
+    private void OnGloomy(bool wasSanguine, bool wasGloomy, bool wasDisillusioned) {
+        if (!wasGloomy) {
+            _character.traitContainer.AddTrait(_character, "Gloomy");
+        }
+        if (wasSanguine) {
+            _character.traitContainer.RemoveTrait(_character, "Sanguine");
+        }
+        if (wasDisillusioned) {
+            _character.traitContainer.RemoveTrait(_character, "Disillusioned");
+        }
+    }
+    private void OnDisillusioned(bool wasSanguine, bool wasGloomy, bool wasDisillusioned) {
+        if (!wasDisillusioned) {
+            _character.traitContainer.AddTrait(_character, "Disillusioned");
+        }
+        if (wasSanguine) {
+            _character.traitContainer.RemoveTrait(_character, "Sanguine");
+        }
+        if (wasGloomy) {
+            _character.traitContainer.RemoveTrait(_character, "Gloomy");
+        }
+    }
+    private void OnNormalHope(bool wasSanguine, bool wasGloomy, bool wasDisillusioned) {
+        if (wasDisillusioned) {
+            _character.traitContainer.RemoveTrait(_character, "Disillusioned");
+        }
+        if (wasSanguine) {
+            _character.traitContainer.RemoveTrait(_character, "Sanguine");
+        }
+        if (wasGloomy) {
+            _character.traitContainer.RemoveTrait(_character, "Gloomy");
+        }
+    }
+    public void AdjustDoNotGetGloomy(int amount) {
+        doNotGetGloomy += amount;
+        doNotGetGloomy = Math.Max(doNotGetGloomy, 0);
     }
     #endregion
 

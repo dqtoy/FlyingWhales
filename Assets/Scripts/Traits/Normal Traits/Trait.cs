@@ -20,6 +20,7 @@ namespace Traits {
         public List<INTERACTION_TYPE> advertisedInteractions;
         public int ticksDuration; //Zero (0) means Permanent
         public int level;
+        public int moodEffect;
         public List<TraitEffect> effects;
         public bool isHidden;
         public string[] mutuallyExclusive; //list of traits that this trait cannot be with.
@@ -43,16 +44,23 @@ namespace Traits {
             //    Character character = sourceCharacter as Character;
             //    character.CreateApprehendJob();
             //}
+            if(addedTo is Character) {
+                Character character = addedTo as Character;
+                character.AdjustMoodValue(moodEffect, this);
+            }
             if (level == 0) {
                 SetLevel(1);
             }
             SetDateEstablished(GameManager.Instance.Today());
         }
         public virtual void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
-            if (type == TRAIT_TYPE.CRIMINAL && removedFrom is Character) {
+            if (removedFrom is Character) {
                 Character character = removedFrom as Character;
-                if (!character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-                    character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
+                character.AdjustMoodValue(-moodEffect, this);
+                if (type == TRAIT_TYPE.CRIMINAL) {
+                    if (!character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+                        character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
+                    }
                 }
             }
         }

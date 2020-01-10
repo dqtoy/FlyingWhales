@@ -91,12 +91,27 @@ public class Sleep : GoapAction {
         //goapNode.action.states[goapNode.currentStateName].OverrideDuration(goapNode.actor.currentSleepTicks);
     }
     public void PerTickRestSuccess(ActualGoapNode goapNode) {
-        CharacterNeedsComponent needsComponent = goapNode.actor.needsComponent;
+        Character actor = goapNode.actor;
+        CharacterNeedsComponent needsComponent = actor.needsComponent;
         if (needsComponent.currentSleepTicks == 1) { //If sleep ticks is down to 1 tick left, set current duration to end duration so that the action will end now, we need this because the character must only sleep the remaining hours of his sleep if ever that character is interrupted while sleeping
             goapNode.OverrideCurrentStateDuration(goapNode.currentState.duration);
         }
-        needsComponent.AdjustTiredness(75);
+        needsComponent.AdjustTiredness(1.1f);
         needsComponent.AdjustSleepTicks(-1);
+
+        float comfortAdjustment = 0f;
+        if(actor.currentStructure == actor.homeStructure) {
+            comfortAdjustment = 1f;
+        } else if (actor.currentStructure is Dwelling && actor.currentStructure != actor.homeStructure) {
+            comfortAdjustment = 0.5f;
+        } else if (actor.currentStructure.structureType == STRUCTURE_TYPE.INN) {
+            comfortAdjustment = 0.8f;
+        } else if (actor.currentStructure.structureType == STRUCTURE_TYPE.PRISON) {
+            comfortAdjustment = 0.4f;
+        } else if (!actor.currentStructure.isInside) {
+            comfortAdjustment = 0.3f;
+        }
+        needsComponent.AdjustComfort(comfortAdjustment);
     }
     public void AfterRestSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Resting");

@@ -36,8 +36,10 @@ public class FactionRelationship {
 		if(newStatus == relationshipStatus) {
             return;
         }
+        FACTION_RELATIONSHIP_STATUS oldStatus = relationshipStatus;
         //_relationshipStatus = newStatus;
         relationshipStatInt = (int)newStatus;
+        Messenger.Broadcast(Signals.CHANGE_FACTION_RELATIONSHIP, _faction1, _faction2, relationshipStatus, oldStatus);
         //if (_relationshipStatus != FACTION_RELATIONSHIP_STATUS.AT_WAR) {
         //    currentWarCombatCount = 0;
         //}

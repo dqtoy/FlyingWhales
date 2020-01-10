@@ -10,9 +10,6 @@ namespace Traits {
             description = "Pessimists lose happiness more quickly than normal.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
-            
-            
-            
             ticksDuration = 0;
             canBeTriggered = true;
             mutuallyExclusive = new string[] { "Optimist" };
@@ -22,9 +19,9 @@ namespace Traits {
         public override string TriggerFlaw(Character character) {
             //Will reduce Happiness Meter to become Forlorn. If already Forlorn, reduce Happiness Meter by a further 1000.
             if (character.needsComponent.isForlorn) {
-                character.needsComponent.AdjustHappiness(-1000);
+                character.needsComponent.AdjustHappiness(-5f);
             } else {
-                character.needsComponent.SetHappiness(CharacterNeedsComponent.HAPPINESS_THRESHOLD_2);
+                character.needsComponent.SetHappiness(CharacterNeedsComponent.FORLORN_UPPER_LIMIT);
             }
             return base.TriggerFlaw(character);
         }

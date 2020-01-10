@@ -107,11 +107,11 @@ public class MakeLove : GoapAction {
         //TODO: currentState.SetIntelReaction(MakeLoveSuccessReactions);
     }
     public void PerTickMakeLoveSuccess(ActualGoapNode goapNode) {
-        //**Per Tick Effect 1 * *: Actor's Happiness Meter +500
-        goapNode.actor.needsComponent.AdjustHappiness(500);
-        //**Per Tick Effect 2**: Target's Happiness Meter +500
         Character targetCharacter = goapNode.poiTarget as Character;
-        targetCharacter.needsComponent.AdjustHappiness(500);
+        goapNode.actor.needsComponent.AdjustHappiness(3.35f);
+        targetCharacter.needsComponent.AdjustHappiness(3.35f);
+        goapNode.actor.needsComponent.AdjustComfort(1f);
+        targetCharacter.needsComponent.AdjustComfort(1f);
     }
     public void AfterMakeLoveSuccess(ActualGoapNode goapNode) {
         Bed bed = goapNode.actor.gridTileLocation.structure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).FirstOrDefault() as Bed;

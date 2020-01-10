@@ -69,6 +69,8 @@ public class ConsoleMenu : UIMenu {
             {"/set_fullness", SetFullness },
             {"/set_tiredness", SetTiredness },
             {"/set_happiness", SetHappiness },
+            {"/set_comfort", SetComfort },
+            {"/set_hope", SetHope },
             {"/gain_i_ability", GainInterventionAbility },
             {"/destroy_tile_obj", DestroyTileObj },
             {"/add_hostile", AddHostile },
@@ -779,9 +781,9 @@ public class ConsoleMenu : UIMenu {
         }
         string fullnessParameterString = parameters[1];
 
-        int fullness = character.needsComponent.fullness;
-        if (!int.TryParse(fullnessParameterString, out fullness)) {
-            AddErrorMessage("Fullness parameter is not an integer: " + fullnessParameterString);
+        float fullness = character.needsComponent.fullness;
+        if (!float.TryParse(fullnessParameterString, out fullness)) {
+            AddErrorMessage("Fullness parameter is not a float: " + fullnessParameterString);
             return;
         }
         character.needsComponent.SetFullness(fullness);
@@ -803,9 +805,9 @@ public class ConsoleMenu : UIMenu {
         }
         string happinessParameterString = parameters[1];
 
-        int happiness = character.needsComponent.happiness;
-        if (!int.TryParse(happinessParameterString, out happiness)) {
-            AddErrorMessage("Happiness parameter is not an integer: " + happinessParameterString);
+        float happiness = character.needsComponent.happiness;
+        if (!float.TryParse(happinessParameterString, out happiness)) {
+            AddErrorMessage("Happiness parameter is not a float: " + happinessParameterString);
             return;
         }
         character.needsComponent.SetHappiness(happiness);
@@ -827,13 +829,61 @@ public class ConsoleMenu : UIMenu {
         }
         string tirednessParameterString = parameters[1];
 
-        int tiredness = character.needsComponent.tiredness;
-        if (!int.TryParse(tirednessParameterString, out tiredness)) {
-            AddErrorMessage("Tiredness parameter is not an integer: " + tirednessParameterString);
+        float tiredness = character.needsComponent.tiredness;
+        if (!float.TryParse(tirednessParameterString, out tiredness)) {
+            AddErrorMessage("Tiredness parameter is not a float: " + tirednessParameterString);
             return;
         }
         character.needsComponent.SetTiredness(tiredness);
         AddSuccessMessage("Set Tiredness Value of " + character.name + " to " + tiredness);
+    }
+    private void SetComfort(string[] parameters) {
+        if (parameters.Length != 2) { //parameters command, item
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of SetComfort");
+            return;
+        }
+        string characterParameterString = parameters[0];
+
+        Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+
+        if (character == null) {
+            AddErrorMessage("There is no character named " + characterParameterString);
+            return;
+        }
+        string comfortParameterString = parameters[1];
+
+        float comfort = character.needsComponent.comfort;
+        if (!float.TryParse(comfortParameterString, out comfort)) {
+            AddErrorMessage("Comfort parameter is not a float: " + comfortParameterString);
+            return;
+        }
+        character.needsComponent.SetComfort(comfort);
+        AddSuccessMessage("Set Comfort Value of " + character.name + " to " + comfort);
+    }
+    private void SetHope(string[] parameters) {
+        if (parameters.Length != 2) { //parameters command, item
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of SetHope");
+            return;
+        }
+        string characterParameterString = parameters[0];
+
+        Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+
+        if (character == null) {
+            AddErrorMessage("There is no character named " + characterParameterString);
+            return;
+        }
+        string hopeParameterString = parameters[1];
+
+        float hope = character.needsComponent.hope;
+        if (!float.TryParse(hopeParameterString, out hope)) {
+            AddErrorMessage("Hope parameter is not a float: " + hopeParameterString);
+            return;
+        }
+        character.needsComponent.SetHope(hope);
+        AddSuccessMessage("Set Hope Value of " + character.name + " to " + hope);
     }
     private void LogAwareness(string[] parameters) {
         if (parameters.Length != 1) { //parameters command, item

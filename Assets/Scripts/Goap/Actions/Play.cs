@@ -49,7 +49,7 @@ public class Play : GoapAction {
         goapNode.actor.needsComponent.AdjustDoNotGetTired(1);
     }
     public void PerTickPlaySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(500);
+        goapNode.actor.needsComponent.AdjustHappiness(4f);
     }
     public void AfterPlaySuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetLonely(-1);

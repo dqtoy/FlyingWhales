@@ -44,7 +44,7 @@ public class NarcolepticNap : GoapAction {
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Resting");
     }
     public void PerTickNapSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustTiredness(30);
+        goapNode.actor.needsComponent.AdjustTiredness(1.1f);
     }
     public void AfterNapSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Resting");

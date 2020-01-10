@@ -53,7 +53,8 @@ namespace Traits {
         public override void ExecuteActionPerTickEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
             base.ExecuteActionPerTickEffects(action, goapNode);
             if (action == INTERACTION_TYPE.EAT) {
-                goapNode.actor.needsComponent.AdjustFullness(fullnessProvided);
+                goapNode.actor.needsComponent.AdjustFullness(8.5f);
+                goapNode.actor.needsComponent.AdjustComfort(2f);
             }
         }
         public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {

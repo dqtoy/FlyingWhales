@@ -7,7 +7,7 @@ namespace Traits {
         public List<Character> noItemCharacters { get; private set; }
         private Character traitOwner;
 
-        private int _happinessDecreaseRate;
+        //private int _happinessDecreaseRate;
         public Kleptomaniac() {
             name = "Kleptomaniac";
             description = "Kleptomaniacs enjoy stealing.";
@@ -24,7 +24,7 @@ namespace Traits {
         public override void OnAddTrait(ITraitable sourceCharacter) {
             //(sourceCharacter as Character).RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "afflicted", null, "Kleptomania");
             traitOwner = sourceCharacter as Character;
-            traitOwner.needsComponent.AdjustHappinessDecreaseRate(_happinessDecreaseRate);
+            //traitOwner.needsComponent.AdjustHappinessDecreaseRate(_happinessDecreaseRate);
             base.OnAddTrait(sourceCharacter);
             //owner.AddInteractionType(INTERACTION_TYPE.STEAL);
             Messenger.AddListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
@@ -32,7 +32,7 @@ namespace Traits {
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             base.OnRemoveTrait(sourceCharacter, removedBy);
             //owner.RemoveInteractionType(INTERACTION_TYPE.STEAL);
-            traitOwner.needsComponent.AdjustHappinessDecreaseRate(-_happinessDecreaseRate);
+            //traitOwner.needsComponent.AdjustHappinessDecreaseRate(-_happinessDecreaseRate);
             Messenger.RemoveListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
         }
         public override void OnDeath(Character character) {
@@ -51,16 +51,16 @@ namespace Traits {
             }
             return testingData;
         }
-        protected override void OnChangeLevel() {
-            base.OnChangeLevel();
-            if (level == 1) {
-                _happinessDecreaseRate = 10;
-            } else if (level == 2) {
-                _happinessDecreaseRate = 15;
-            } else if (level == 3) {
-                _happinessDecreaseRate = 20;
-            }
-        }
+        //protected override void OnChangeLevel() {
+        //    base.OnChangeLevel();
+        //    if (level == 1) {
+        //        _happinessDecreaseRate = 10;
+        //    } else if (level == 2) {
+        //        _happinessDecreaseRate = 15;
+        //    } else if (level == 3) {
+        //        _happinessDecreaseRate = 20;
+        //    }
+        //}
         public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is SpecialToken) {
                 SpecialToken token = targetPOI as SpecialToken;
@@ -136,12 +136,12 @@ namespace Traits {
                 cost = 10000;//Utilities.rng.Next(5, 10);//5,46
             }
         }
-        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
-            base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
-            if (action == INTERACTION_TYPE.STEAL) {
-                traitOwner.needsComponent.AdjustHappiness(6000);
-            }
-        }
+        //public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
+        //    base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
+        //    if (action == INTERACTION_TYPE.STEAL) {
+        //        traitOwner.needsComponent.AdjustHappiness(6000);
+        //    }
+        //}
         public override void ExecuteExpectedEffectModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref List<GoapEffect> effects) {
             if (action == INTERACTION_TYPE.STEAL) {
                 effects.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));

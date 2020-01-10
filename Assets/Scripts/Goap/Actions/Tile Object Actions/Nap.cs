@@ -83,7 +83,24 @@ public class Nap : GoapAction {
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Resting");
     }
     public void PerTickNapSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustTiredness(30);
+        Character actor = goapNode.actor;
+        CharacterNeedsComponent needsComponent = actor.needsComponent;
+
+        needsComponent.AdjustTiredness(1.1f);
+
+        float comfortAdjustment = 0f;
+        if (actor.currentStructure == actor.homeStructure) {
+            comfortAdjustment = 1f;
+        } else if (actor.currentStructure is Dwelling && actor.currentStructure != actor.homeStructure) {
+            comfortAdjustment = 0.5f;
+        } else if (actor.currentStructure.structureType == STRUCTURE_TYPE.INN) {
+            comfortAdjustment = 0.8f;
+        } else if (actor.currentStructure.structureType == STRUCTURE_TYPE.PRISON) {
+            comfortAdjustment = 0.4f;
+        } else if (!actor.currentStructure.isInside) {
+            comfortAdjustment = 0.3f;
+        }
+        needsComponent.AdjustComfort(comfortAdjustment);
     }
     public void AfterNapSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Resting");

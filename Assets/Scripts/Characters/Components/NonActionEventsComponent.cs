@@ -243,21 +243,11 @@ public class NonActionEventsComponent {
     }
     private void TriggerBreakUp(Character target, RELATIONSHIP_TYPE relationship) {
         RelationshipManager.Instance.RemoveRelationshipBetween(owner, target, relationship);
-        if (relationship == RELATIONSHIP_TYPE.LOVER) {
-            //**Effect 1**: Actor - Remove Lover relationship with Character 2
-            //if the relationship that was removed is lover, change home to a random unoccupied dwelling,
-            //otherwise, no home. Reference: https://trello.com/c/JUSt9bEa/1938-broken-up-characters-should-live-in-separate-house
-            owner.MigrateHomeStructureTo(null);
-            owner.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, owner);
-            //if (owner.homeRegion.area != null) {
-                //owner.homeRegion.area.AssignCharacterToDwellingInArea(owner);
-            //}
-        }
         //upon break up, if one of them still has a Positive opinion of the other, he will gain Heartbroken trait
-        if (owner.opinionComponent.GetTotalOpinion(target) > 0) {
+        if (owner.opinionComponent.GetTotalOpinion(target) >= 0) {
             owner.traitContainer.AddTrait(owner, "Heartbroken", target);
         }
-        if (target.opinionComponent.GetTotalOpinion(owner) > 0) {
+        if (target.opinionComponent.GetTotalOpinion(owner) >= 0) {
             target.traitContainer.AddTrait(target, "Heartbroken", owner);
         }
         RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.EX_LOVER);
@@ -266,6 +256,17 @@ public class NonActionEventsComponent {
         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         owner.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+
+        if (relationship == RELATIONSHIP_TYPE.LOVER) {
+            //**Effect 1**: Actor - Remove Lover relationship with Character 2
+            //if the relationship that was removed is lover, change home to a random unoccupied dwelling,
+            //otherwise, no home. Reference: https://trello.com/c/JUSt9bEa/1938-broken-up-characters-should-live-in-separate-house
+            owner.MigrateHomeStructureTo(null);
+            owner.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, owner);
+            //if (owner.homeRegion.area != null) {
+            //owner.homeRegion.area.AssignCharacterToDwellingInArea(owner);
+            //}
+        }
     }
     #endregion
 

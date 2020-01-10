@@ -494,10 +494,10 @@ public class Area : IJobOwner, ILocation {
     #region Structures
     public void GenerateStructures(int citizenCount) {
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
-        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.CITY_CENTER, true);
-        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WORK_AREA, true);
+        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.CITY_CENTER, false);
+        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WORK_AREA, false);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WILDERNESS, false);
-        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.POND, true);
+        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.POND, false);
         
         // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.APOTHECARY, true);
         // LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.ASSASSIN_GUILD, true);

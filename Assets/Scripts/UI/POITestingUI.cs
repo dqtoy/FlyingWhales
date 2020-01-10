@@ -136,8 +136,8 @@ public class POITestingUI : MonoBehaviour {
 
     #region Grid Tile Testing
     public void GoHere() {
-        STRUCTURE_TYPE[] _notAllowedStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.INN, STRUCTURE_TYPE.DWELLING, STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.PRISON };
-        UIManager.Instance.characterInfoUI.activeCharacter.marker.GoTo(this.gridTile, notAllowedStructures: _notAllowedStructures);
+        //STRUCTURE_TYPE[] _notAllowedStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.INN, STRUCTURE_TYPE.DWELLING, STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.PRISON };
+        UIManager.Instance.characterInfoUI.activeCharacter.marker.GoTo(this.poi.gridTileLocation/*, notAllowedStructures: _notAllowedStructures*/);
         HideUI();
     }
     #endregion

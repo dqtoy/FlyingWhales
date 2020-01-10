@@ -78,7 +78,7 @@ public class DrinkBlood : GoapAction {
         //TODO: currentState.SetIntelReaction(DrinkBloodSuccessIntelReaction);
     }
     public void PerTickDrinkSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustFullness(1100);
+        goapNode.actor.needsComponent.AdjustFullness(17f);
     }
     public void AfterDrinkSuccess(ActualGoapNode goapNode) {
         //poiTarget.SetPOIState(POI_STATE.ACTIVE);

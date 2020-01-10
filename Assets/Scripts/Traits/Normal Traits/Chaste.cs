@@ -20,12 +20,12 @@ namespace Traits {
                 cost = Utilities.rng.Next(40, 67);
             }
         }
-        public override void ExecuteActionPerTickEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
-            base.ExecuteActionPerTickEffects(action, goapNode);
-            if (action == INTERACTION_TYPE.MAKE_LOVE) {
-                goapNode.actor.needsComponent.AdjustHappiness(-100);
-            }
-        }
+        //public override void ExecuteActionPerTickEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
+        //    base.ExecuteActionPerTickEffects(action, goapNode);
+        //    if (action == INTERACTION_TYPE.MAKE_LOVE) {
+        //        goapNode.actor.needsComponent.AdjustHappiness(-100);
+        //    }
+        //}
         #endregion
 
 

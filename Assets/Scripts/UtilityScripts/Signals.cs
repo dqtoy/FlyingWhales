@@ -152,6 +152,8 @@ public static class Signals {
     public static string CHARACTER_CLASS_CHANGE = "CharacterClassChange";
     public static string ON_SEIZE_CHARACTER = "OnSeizeCharacter";
     public static string ON_SEIZE_TILE_OBJECT = "OnSeizeTileObject";
+    public static string CHARACTER_MISSING = "OnCharacterMissing";
+    public static string CHARACTER_NO_LONGER_MISSING = "OnCharacterNoLongerMissing";
 
     /// <summary>
     /// Parameters (Character characterWithVision, Character characterRemovedFromVision)
@@ -215,6 +217,7 @@ public static class Signals {
     public static string ON_CLOSE_SHARE_INTEL = "OnCloseShareIntel";
     public static string SHOW_TIMER_HUB_ITEM = "ShowTimerHubItem";
     public static string REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT = "OnAreaInfoUIUpdateAppropriateContent";
+    public static string UPDATE_THOUGHT_BUBBLE = "OnUpdateThoughtBubble";
     #endregion
 
     #region Quest Signals
@@ -244,6 +247,7 @@ public static class Signals {
     public static string FACTION_OWNED_REGION_REMOVED = "OnFactionOwnedAreaRemoved"; //Parameters (Faction affectedFaction, Area removedArea)
     public static string FACTION_RELATIONSHIP_CHANGED = "OnFactionRelationshipChanged"; //Parameters (FactionRelationship rel)
     public static string FACTION_ACTIVE_CHANGED = "OnFactionActiveChanged"; //Parameters (Faction affectedFaction)
+    public static string CHANGE_FACTION_RELATIONSHIP = "OnChangeFactionRelationship";
     #endregion
 
     #region Actions

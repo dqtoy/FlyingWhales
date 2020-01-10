@@ -114,9 +114,9 @@ namespace Traits {
                 character.needsComponent.AdjustDoNotGetHungry(1);
                 character.needsComponent.AdjustDoNotGetLonely(1);
             } else if (trait.name == "Optimist") {
-                character.needsComponent.AdjustHappinessDecreaseRate(-320); //Reference: https://trello.com/c/Aw8kIbB1/2654-optimist
+                character.needsComponent.AdjustHappinessDecreaseRate(-Mathf.CeilToInt(CharacterManager.DEFAULT_HAPPINESS_DECREASE_RATE * 0.5f)); //Reference: https://trello.com/c/Aw8kIbB1/2654-optimist
             } else if (trait.name == "Pessimist") {
-                character.needsComponent.AdjustHappinessDecreaseRate(320); //Reference: https://trello.com/c/lcen0P9l/2653-pessimist
+                character.needsComponent.AdjustHappinessDecreaseRate(Mathf.CeilToInt(CharacterManager.DEFAULT_HAPPINESS_DECREASE_RATE * 0.5f)); //Reference: https://trello.com/c/lcen0P9l/2653-pessimist
             } else if (trait.name == "Fast") {
                 character.AdjustSpeedModifier(0.25f); //Reference: https://trello.com/c/Gb3kfZEm/2658-fast
             } else if (trait.name == "Shellshocked") {
@@ -217,9 +217,9 @@ namespace Traits {
                 character.needsComponent.AdjustDoNotGetHungry(-1);
                 character.needsComponent.AdjustDoNotGetLonely(-1);
             } else if (trait.name == "Optimist") {
-                character.needsComponent.AdjustHappinessDecreaseRate(320); //Reference: https://trello.com/c/Aw8kIbB1/2654-optimist
+                character.needsComponent.AdjustHappinessDecreaseRate(Mathf.CeilToInt(CharacterManager.DEFAULT_HAPPINESS_DECREASE_RATE * 0.5f)); //Reference: https://trello.com/c/Aw8kIbB1/2654-optimist
             } else if (trait.name == "Pessimist") {
-                character.needsComponent.AdjustHappinessDecreaseRate(-320); //Reference: https://trello.com/c/lcen0P9l/2653-pessimist
+                character.needsComponent.AdjustHappinessDecreaseRate(-Mathf.CeilToInt(CharacterManager.DEFAULT_HAPPINESS_DECREASE_RATE * 0.5f)); //Reference: https://trello.com/c/lcen0P9l/2653-pessimist
             } else if (trait.name == "Fast") {
                 character.AdjustSpeedModifier(-0.25f); //Reference: https://trello.com/c/Gb3kfZEm/2658-fast
             } else if (trait.name == "Shellshocked") {

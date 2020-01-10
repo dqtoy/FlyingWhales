@@ -89,6 +89,9 @@ public class CharacterInfoUI : UIMenu {
         Messenger.AddListener<Character, Character>(Signals.OPINION_INCREASED, OnOpinionChanged);
         Messenger.AddListener<Character, Character>(Signals.OPINION_DECREASED, OnOpinionChanged);
 
+        Messenger.AddListener<Character>(Signals.UPDATE_THOUGHT_BUBBLE, UpdateThoughtBubbleFromSignal);
+
+
         normalTraitsEventLbl.SetOnClickAction(OnClickTrait);
         statusTraitsEventLbl.SetOnClickAction(OnClickTrait);
         relationshipNamesEventLbl.SetOnClickAction(OnClickCharacter);
@@ -227,6 +230,11 @@ public class CharacterInfoUI : UIMenu {
         }
         UpdateTraits();
         UpdateThoughtBubble();
+    }
+    private void UpdateThoughtBubbleFromSignal(Character character) {
+        if (isShowing && _activeCharacter == character) {
+            UpdateThoughtBubble();
+        }
     }
     private void UpdateTraits() {
         // if (_activeCharacter.minion != null) {
@@ -445,9 +453,7 @@ public class CharacterInfoUI : UIMenu {
         summary = $"{summary}{("\nDo Not Get Tired: " + activeCharacter.needsComponent.doNotGetTired.ToString())}";
         summary = $"{summary}{("\nDo Not Get Lonely: " + activeCharacter.needsComponent.doNotGetLonely.ToString())}";
         summary = $"{summary}{("\nDo Not Recover HP: " + activeCharacter.doNotRecoverHP.ToString())}";
-        summary = $"{summary}{("\nFullness: " + activeCharacter.needsComponent.fullness + "/" + CharacterNeedsComponent.FULLNESS_DEFAULT)}";
-        summary = $"{summary}{("\nTiredness: " + activeCharacter.needsComponent.tiredness + "/" + CharacterNeedsComponent.TIREDNESS_DEFAULT)}";
-        summary = $"{summary}{("\nHappiness: " + activeCharacter.needsComponent.happiness + "/" + CharacterNeedsComponent.HAPPINESS_DEFAULT)}";
+        summary = $"{summary}{("\n" + activeCharacter.needsComponent.GetNeedsSummary())}";
         summary = $"{summary}{("\nFullness Time: " + (activeCharacter.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.fullnessForcedTick)))}";
         summary = $"{summary}{("\nTiredness Time: " + (activeCharacter.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.tirednessForcedTick)))}";
         summary = $"{summary}{("\nRemaining Sleep Ticks: " + activeCharacter.needsComponent.currentSleepTicks.ToString())}";

@@ -10,6 +10,7 @@ namespace Traits {
         //IMPORTANT NOTE: When the owner of this trait changed its alter ego, this trait will not be present in the alter ego anymore
         //Meaning that he/she cannot do the things specified in here anymore unless he/she switch to the ego which this trait is present
         public List<TileObject> alreadyInspectedTileObjects { get; private set; }
+        public List<Character> charactersAlreadySawForHope { get; private set; }
         public bool hasSurvivedApprehension { get; private set; } //If a criminal character (is in original alter ego), and survived being apprehended, this must be turned on
         public Character owner { get; private set; }
 
@@ -22,6 +23,7 @@ namespace Traits {
             ticksDuration = 0;
             isHidden = true;
             alreadyInspectedTileObjects = new List<TileObject>();
+            charactersAlreadySawForHope = new List<Character>();
         }
         public void AddAlreadyInspectedObject(TileObject to) {
             if (!alreadyInspectedTileObjects.Contains(to)) {
@@ -34,20 +36,26 @@ namespace Traits {
         }
 
         #region Overrides
-        //public override void OnSeePOI(IPointOfInterest targetPOI, Character character) {
-        //    base.OnSeePOI(targetPOI, character);
-        //    if (targetPOI is Character) {
-        //        Character targetCharacter = targetPOI as Character;
-        //        Paralyzed paralyzed = targetCharacter.traitContainer.GetNormalTrait<Trait>("Paralyzed") as Paralyzed;
-        //        Catatonic catatonic = targetCharacter.traitContainer.GetNormalTrait<Trait>("Catatonic") as Catatonic;
-        //        if (paralyzed != null) {
-        //            paralyzed.AddCharacterThatKnows(character);
-        //        }
-        //        if (catatonic != null) {
-        //            catatonic.AddCharacterThatKnows(character);
-        //        }
-        //    }
-        //}
+        public override void OnSeePOI(IPointOfInterest targetPOI, Character character) {
+            base.OnSeePOI(targetPOI, character);
+            if (targetPOI is Character) {
+                Character targetCharacter = targetPOI as Character;
+                if (targetCharacter.race == RACE.SKELETON || targetCharacter.characterClass.className == "Zombie") {
+                    string opinionLabel = character.opinionComponent.GetOpinionLabel(targetCharacter);
+                    if (opinionLabel == OpinionComponent.Friend) {
+                        if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
+                            charactersAlreadySawForHope.Add(targetCharacter);
+                            character.needsComponent.AdjustHope(-5f);
+                        }
+                    } else if (opinionLabel == OpinionComponent.Close_Friend) {
+                        if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
+                            charactersAlreadySawForHope.Add(targetCharacter);
+                            character.needsComponent.AdjustHope(-10f);
+                        }
+                    }
+                }
+            }
+        }
         public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is Table) {
                 Table targetTable = targetPOI as Table;
@@ -122,17 +130,17 @@ namespace Traits {
                         if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.LOVER)) {
                             characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Heartbroken");
                             bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
-                            characterThatWillDoJob.needsComponent.AdjustHappiness(-6000);
+                            //characterThatWillDoJob.needsComponent.AdjustHappiness(-6000);
                             return hasCreatedJob;
                         } else if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.RELATIVE)) {
                             characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Griefstricken");
                             bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
-                            characterThatWillDoJob.needsComponent.AdjustHappiness(-4000);
+                            //characterThatWillDoJob.needsComponent.AdjustHappiness(-4000);
                             return hasCreatedJob;
                         } else if (characterThatWillDoJob.opinionComponent.IsFriendsWith(targetCharacter)) {
                             characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Griefstricken");
                             bool hasCreatedJob = CreatePrioritizedShockJob(characterThatWillDoJob);
-                            characterThatWillDoJob.needsComponent.AdjustHappiness(-2000);
+                            //characterThatWillDoJob.needsComponent.AdjustHappiness(-2000);
                             return hasCreatedJob;
                         }
                     }
@@ -157,7 +165,7 @@ namespace Traits {
                     ///NOTE: Puke and Stumble Reactions can be found at <see cref="Puke.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/> and <see cref="Stumble.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/> respectively
                     //They will trigger a personal https://trello.com/c/uCbLBXsF/2846-character-laugh-at job
                     if (characterThatWillDoJob.opinionComponent.IsEnemiesWith(targetCharacter) && targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Catatonic", "Restrained") != null && characterThatWillDoJob.faction == targetCharacter.faction
-                        && (characterThatWillDoJob.currentActionNode == null || characterThatWillDoJob.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)) {
+                        && (characterThatWillDoJob.currentActionNode == null || characterThatWillDoJob.currentActionNode.actionStatus != ACTION_STATUS.PERFORMING)) {
                         return CreateLaughAtJob(characterThatWillDoJob, targetCharacter);
                     }
 
@@ -167,7 +175,7 @@ namespace Traits {
                     //They will trigger a personal https://trello.com/c/iDsfwQ7d/2845-character-feeling-concerned job
                     else if (characterThatWillDoJob.opinionComponent.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE && targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Catatonic", "Restrained") != null
                         && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.REMOVE_TRAIT, targetCharacter) && characterThatWillDoJob.faction == targetCharacter.faction
-                         && (characterThatWillDoJob.currentActionNode == null || characterThatWillDoJob.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)) {
+                         && (characterThatWillDoJob.currentActionNode == null || characterThatWillDoJob.currentActionNode.actionStatus != ACTION_STATUS.PERFORMING)) {
                         return CreateFeelingConcernedJob(characterThatWillDoJob, targetCharacter);
                     }
 

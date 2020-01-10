@@ -70,7 +70,7 @@ public class Feed : GoapAction {
     }
     public void PerTickFeedSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
-        targetCharacter.needsComponent.AdjustFullness(585);
+        targetCharacter.needsComponent.AdjustFullness(8.5f);
     }
     public void AfterFeedSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;

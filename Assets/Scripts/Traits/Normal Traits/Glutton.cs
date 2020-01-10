@@ -22,7 +22,7 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             if (addedTo is Character) {
-                additionalFullnessDecreaseRate = Mathf.CeilToInt(CharacterManager.FULLNESS_DECREASE_RATE * 0.5f);
+                additionalFullnessDecreaseRate = Mathf.CeilToInt(CharacterManager.DEFAULT_FULLNESS_DECREASE_RATE * 0.5f);
                 Character character = addedTo as Character;
                 character.needsComponent.SetFullnessForcedTick(0);
                 character.needsComponent.AdjustFullnessDecreaseRate(additionalFullnessDecreaseRate);

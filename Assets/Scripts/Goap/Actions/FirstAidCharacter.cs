@@ -48,6 +48,8 @@ public class FirstAidCharacter : GoapAction {
 
     #region State Effects
     public void AfterFirstAidSuccess(ActualGoapNode goapNode) {
+        Character targetCharacter = goapNode.poiTarget as Character;
+        targetCharacter.opinionComponent.AdjustOpinion(goapNode.actor, "Base", 3);
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Injured", goapNode.actor);
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Unconscious", goapNode.actor);
         if (goapNode.actor.HasTokenInInventory(SPECIAL_TOKEN.HEALING_POTION)) {

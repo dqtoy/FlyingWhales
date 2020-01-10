@@ -23,9 +23,9 @@ public class TraitManager : MonoBehaviour {
     public readonly string[] traitPool = new string[] { "Vigilant", "Diplomatic",
         "Fireproof", "Accident Prone", "Unfaithful", "Drunkard", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
         "Herbalist", "Optimist", "Pessimist", "Fast", "Chaste", "Lustful", "Coward", "Lazy", "Hardworking", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
-        "Narcoleptic", "Hothead", "Evil", "Treacherous", "Disillusioned", "Ambitious", "Authoritative", "Healer"
+        "Narcoleptic", "Hothead", "Evil", "Treacherous", "Ambitious", "Authoritative", "Healer"
     };
-    //"Kleptomaniac","Curious", "Craftsman"
+    //"Kleptomaniac","Curious", "Craftsman", "Disillusioned",
     public List<string> buffTraitPool { get; private set; }
     public List<string> flawTraitPool { get; private set; }
     public List<string> neutralTraitPool { get; private set; }
@@ -143,12 +143,13 @@ public class TraitManager : MonoBehaviour {
             new Griefstricken(),
             new Heartbroken(),
             new Cultist(),
-            new Disillusioned(),
+            //new Disillusioned(),
             new Chaste(),
             new Lustful(),
             new Edible(),
             new ElementalMaster(),
             new Paralyzed(),
+            new Malnourished(),
         };
         for (int i = 0; i < instancedTraits.Length; i++) {
             Trait trait = instancedTraits[i];

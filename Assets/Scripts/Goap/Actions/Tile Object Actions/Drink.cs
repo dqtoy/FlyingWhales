@@ -46,7 +46,8 @@ public class Drink : GoapAction {
         goapNode.actor.needsComponent.AdjustDoNotGetLonely(1);
     }
     public void PerTickDrinkSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(500);
+        goapNode.actor.needsComponent.AdjustHappiness(3.35f);
+        goapNode.actor.needsComponent.AdjustComfort(2f);
     }
     public void AfterDrinkSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetLonely(-1);

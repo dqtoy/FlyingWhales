@@ -55,7 +55,7 @@ public class Dance : GoapAction {
         goapNode.actor.needsComponent.AdjustDoNotGetLonely(1);
     }
     public void PerTickDanceSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(1000);
+        goapNode.actor.needsComponent.AdjustHappiness(14f);
     }
     public void AfterDanceSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetLonely(-1);

@@ -48,7 +48,8 @@ public class Daydream : GoapAction {
         goapNode.actor.needsComponent.AdjustDoNotGetTired(1);
     }
     public void PerTickDaydreamSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(500);
+        goapNode.actor.needsComponent.AdjustHappiness(3.35f);
+        goapNode.actor.needsComponent.AdjustComfort(1f);
     }
     public void AfterDaydreamSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetLonely(-1);

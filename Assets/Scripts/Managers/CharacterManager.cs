@@ -17,9 +17,10 @@ public class CharacterManager : MonoBehaviour {
     public static readonly string[] sevenDeadlySinsClassNames = { "Lust", "Gluttony", "Greed", "Sloth", "Wrath", "Envy", "Pride" };
     public const int MAX_HISTORY_LOGS = 300;
     public const int CHARACTER_MAX_MEMORY = 20;
-    public const int FULLNESS_DECREASE_RATE = 380;
-    public const int TIREDNESS_DECREASE_RATE = 340;
-    public const int HAPPINESS_DECREASE_RATE = 640;
+    public const float DEFAULT_FULLNESS_DECREASE_RATE = 0.25f;
+    public const float DEFAULT_TIREDNESS_DECREASE_RATE = 0.34f;
+    public const float DEFAULT_HAPPINESS_DECREASE_RATE = 0.18f;
+    public const float DEFAULT_COMFORT_DECREASE_RATE = 0.15f;
     public const string Original_Alter_Ego = "Original";
 
     public GameObject characterIconPrefab;
@@ -66,6 +67,8 @@ public class CharacterManager : MonoBehaviour {
     public int defaultSleepTicks { get; private set; } //how many ticks does a character must sleep per day?
     public SUMMON_TYPE[] summonsPool { get; private set; }
 
+    public int CHARACTER_MISSING_THRESHOLD { get; private set; }
+
     #region getters/setters
     public List<Character> allCharacters {
         get { return _allCharacters; }
@@ -86,6 +89,7 @@ public class CharacterManager : MonoBehaviour {
         classManager.Initialize();
         CreateDeadlySinsData();
         defaultSleepTicks = GameManager.Instance.GetTicksBasedOnHour(8);
+        CHARACTER_MISSING_THRESHOLD = GameManager.Instance.GetTicksBasedOnHour(72);
         summonsPool = new SUMMON_TYPE[] { SUMMON_TYPE.Wolf, SUMMON_TYPE.Golem, SUMMON_TYPE.Incubus, SUMMON_TYPE.Succubus };
         Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }

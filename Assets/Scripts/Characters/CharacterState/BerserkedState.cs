@@ -32,8 +32,8 @@ public class BerserkedState : CharacterState {
         stateComponent.character.needsComponent.AdjustDoNotGetHungry(-1);
         stateComponent.character.needsComponent.AdjustDoNotGetLonely(-1);
         stateComponent.character.needsComponent.AdjustDoNotGetTired(-1);
-        stateComponent.character.needsComponent.AdjustHappiness(50);
-        stateComponent.character.needsComponent.AdjustTiredness(50);
+        //stateComponent.character.needsComponent.AdjustHappiness(50);
+        //stateComponent.character.needsComponent.AdjustTiredness(50);
         base.EndState();
         //stateComponent.character.traitContainer.RemoveTrait(stateComponent.character, "Berserked");
         //stateComponent.character.traitContainer.RemoveTrait(stateComponent.character, "Berserk Buff");

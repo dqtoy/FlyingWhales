@@ -276,9 +276,9 @@ namespace Traits {
     }
 
     public class LycanthropeData {
-        public int fullness { get; private set; }
-        public int tiredness { get; private set; }
-        public int happiness { get; private set; }
+        public float fullness { get; private set; }
+        public float tiredness { get; private set; }
+        public float happiness { get; private set; }
         public Faction faction { get; private set; }
         public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; private set; }
         //public List<RelationshipLycanthropyData> relationships { get; private set; }

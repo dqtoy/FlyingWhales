@@ -15,6 +15,7 @@ namespace Traits {
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 24;
+            hindersWitness = true;
         }
 
         #region Overrides
@@ -61,22 +62,37 @@ namespace Traits {
                 
             }
         }
-        public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
+        public override void OnSeePOI(IPointOfInterest targetPOI, Character character) {
+            base.OnSeePOI(targetPOI, character);
             if (targetPOI is Character) {
                 Character targetCharacter = targetPOI as Character;
                 if (!targetCharacter.isDead) {
-                    if (characterThatWillDoJob.faction.isPlayerFaction) {
-                        return characterThatWillDoJob.marker.AddHostileInRange(targetCharacter, isLethal: true); //check hostility if from player faction, so as not to attack other characters that are also from the same faction.
+                    if (character.faction.isPlayerFaction) {
+                        character.marker.AddHostileInRange(targetCharacter, isLethal: true); //check hostility if from player faction, so as not to attack other characters that are also from the same faction.
                     } else {
-                        return characterThatWillDoJob.marker.AddHostileInRange(targetCharacter, checkHostility: false, isLethal: false);
+                        character.marker.AddHostileInRange(targetCharacter, checkHostility: false, isLethal: false);
                     }
                 }
+            } else if (targetPOI is TileObject || targetPOI is SpecialToken) {
+                character.marker.AddHostileInRange(targetPOI, checkHostility: false, isLethal: false);
             }
-            else if (targetPOI is TileObject || targetPOI is SpecialToken) {
-                return characterThatWillDoJob.marker.AddHostileInRange(targetPOI, checkHostility: false, isLethal: false);
-            } 
-            return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
         }
+        //public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
+        //    if (targetPOI is Character) {
+        //        Character targetCharacter = targetPOI as Character;
+        //        if (!targetCharacter.isDead) {
+        //            if (characterThatWillDoJob.faction.isPlayerFaction) {
+        //                return characterThatWillDoJob.marker.AddHostileInRange(targetCharacter, isLethal: true); //check hostility if from player faction, so as not to attack other characters that are also from the same faction.
+        //            } else {
+        //                return characterThatWillDoJob.marker.AddHostileInRange(targetCharacter, checkHostility: false, isLethal: false);
+        //            }
+        //        }
+        //    }
+        //    else if (targetPOI is TileObject || targetPOI is SpecialToken) {
+        //        return characterThatWillDoJob.marker.AddHostileInRange(targetPOI, checkHostility: false, isLethal: false);
+        //    } 
+        //    return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
+        //}
         #endregion
     }
 }

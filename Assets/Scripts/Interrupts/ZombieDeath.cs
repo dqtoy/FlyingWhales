@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Interrupts {
     public class ZombieDeath : Interrupt {
         public ZombieDeath() : base(INTERRUPT.Zombie_Death) {
-            duration = 0;
+            duration = 3;
             doesStopCurrentAction = true;
         }
 

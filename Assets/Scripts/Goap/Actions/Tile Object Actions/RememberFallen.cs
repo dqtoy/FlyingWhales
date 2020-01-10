@@ -75,7 +75,7 @@ public class RememberFallen : GoapAction {
         goapNode.actor.needsComponent.AdjustDoNotGetLonely(1);
     }
     public void PerTickRememberSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(500);
+        goapNode.actor.needsComponent.AdjustHappiness(5f);
     }
     public void AfterRememberSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetLonely(-1);

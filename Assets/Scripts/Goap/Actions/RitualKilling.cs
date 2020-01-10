@@ -58,7 +58,7 @@ public class RitualKilling : GoapAction {
         
     }
     public void AfterKillingSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(10000);
+        //goapNode.actor.needsComponent.AdjustHappiness(10000);
         if (goapNode.poiTarget is Character) {
             Character targetCharacter = goapNode.poiTarget as Character;
             targetCharacter.Death(deathFromAction: goapNode, responsibleCharacter: goapNode.actor);

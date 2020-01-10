@@ -43,7 +43,7 @@ public class Pray : GoapAction {
         goapNode.actor.needsComponent.AdjustDoNotGetLonely(1);
     }
     public void PerTickPraySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(400);
+        goapNode.actor.needsComponent.AdjustHappiness(4f);
     }
     public void AfterPraySuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetLonely(-1);

@@ -32,6 +32,7 @@ namespace Traits {
             base.OnAddTrait(sourceCharacter);
             if (sourceCharacter is Character) {
                 _sourceCharacter = sourceCharacter as Character;
+                _sourceCharacter.needsComponent.AdjustDoNotGetTired(1);
                 if (_sourceCharacter.currentHP <= 0) {
                     _sourceCharacter.SetHP(1);
                 }
@@ -60,6 +61,7 @@ namespace Traits {
             //    _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
             //}
             //_sourceCharacter.CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE.RESTRAIN, removedBy); //so that the character that restrained him will not cancel his job.
+            _sourceCharacter.needsComponent.AdjustDoNotGetTired(-1);
             _sourceCharacter.ForceCancelAllJobsTargettingThisCharacterExcept(JOB_TYPE.REMOVE_TRAIT, name, removedBy); //so that the character that cured him will not cancel his job.
             _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
             _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
@@ -114,6 +116,10 @@ namespace Traits {
                 }
             }
             return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
+        }
+        public override void OnTickStarted() {
+            base.OnTickStarted();
+            _sourceCharacter.needsComponent.AdjustTiredness(1.4f);
         }
         #endregion
     }

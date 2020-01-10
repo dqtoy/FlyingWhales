@@ -30,7 +30,7 @@ public class Cry : GoapAction {
 
     #region State Effects
     public void PerTickCrySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(500);
+        goapNode.actor.needsComponent.AdjustHappiness(12f);
     }
     #endregion
 

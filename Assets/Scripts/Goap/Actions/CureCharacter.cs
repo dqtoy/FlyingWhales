@@ -50,6 +50,8 @@ public class CureCharacter : GoapAction {
     #region State Effects
     //public void PreCureSuccess(ActualGoapNode goapNode) { }
     public void AfterCureSuccess(ActualGoapNode goapNode) {
+        Character targetCharacter = goapNode.poiTarget as Character;
+        targetCharacter.opinionComponent.AdjustOpinion(goapNode.actor, "Base", 3);
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Sick", goapNode.actor);
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Plagued", goapNode.actor);
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Infected", goapNode.actor);

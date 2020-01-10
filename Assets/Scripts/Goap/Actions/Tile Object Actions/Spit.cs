@@ -55,7 +55,7 @@ public class Spit : GoapAction {
     //    //currentState.SetIntelReaction(SpitSuccessReactions);
     //}
     public void AfterSpitSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(5000);
+        goapNode.actor.needsComponent.AdjustHappiness(20f);
     }
     //public void PreTargetMissing(ActualGoapNode goapNode) {
     //    Tombstone tombstone = poiTarget as Tombstone;
