@@ -15600,7 +15600,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minRegionWidthCount: 3
   maxRegionWidthCount: 3
-  minRegionHeightCount: 4
+  minRegionHeightCount: 3
   maxRegionHeightCount: 4
   minCitizenCount: 16
   maxCitizenCount: 24

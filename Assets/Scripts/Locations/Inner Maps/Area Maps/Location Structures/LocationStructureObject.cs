@@ -97,7 +97,7 @@ public class LocationStructureObject : PooledObject {
         }
         SetPreplacedObjectsState(false);
     }
-    public void PlacePreplacedObjectsAsBlueprints(LocationStructure structure, InnerTileMap areaMap) {
+    public void PlacePreplacedObjectsAsBlueprints(LocationStructure structure, InnerTileMap areaMap, Settlement settlement) {
         StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
         for (int i = 0; i < preplacedObjs.Length; i++) {
             StructureTemplateObjectData preplacedObj = preplacedObjs[i];
@@ -112,7 +112,7 @@ public class LocationStructureObject : PooledObject {
             newTileObject.RevalidateTileObjectSlots();
             newTileObject.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
 
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, newTileObject, structure.settlementLocation);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, newTileObject, settlement);
             job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(newTileObject.tileObjectType).constructionCost });
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
             structure.settlementLocation.AddToAvailableJobs(job);

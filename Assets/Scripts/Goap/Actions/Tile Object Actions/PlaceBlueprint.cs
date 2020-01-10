@@ -50,12 +50,12 @@ public class PlaceBlueprint : GoapAction {
         BuildSpotTileObject spot = goapNode.poiTarget as BuildSpotTileObject;
         spot.PlaceBlueprintOnBuildingSpot(structureType);
 
+
         //create new build job at settlement
-        Settlement settlement = spot.structureLocation.location as Settlement;
-        GoapPlanJob buildJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_BLUEPRINT, INTERACTION_TYPE.BUILD_STRUCTURE, spot, settlement);
+        GoapPlanJob buildJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_BLUEPRINT, INTERACTION_TYPE.BUILD_STRUCTURE, spot, goapNode.actor.homeSettlement);
         buildJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 50 });
         buildJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeBuildJob);
-        settlement.AddToAvailableJobs(buildJob);
+        goapNode.actor.homeSettlement.AddToAvailableJobs(buildJob);
 
         goapNode.actor.buildStructureComponent.OnCreateBlueprint(structureType);
     }

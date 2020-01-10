@@ -137,6 +137,7 @@ public class CharacterClassManager : MonoBehaviour {
                 continue; //skip component
             }
             if (!component.CanDoBehaviour(character)) {
+                log += $"\nBehaviour Component: {component.ToString()} cannot be done by {character.name} skipping it...";
                 continue; //skip component
             }
             if (component.TryDoBehaviour(character, ref log)) {

@@ -2166,12 +2166,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             } else if (currentParty.icon.isTravelling) {
                 if (marker.gameObject.activeInHierarchy) {
                     bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(currentRegion);
-                    if (currentSettlement != null && instantCenter) {
+                    if (currentRegion != null && instantCenter) {
                         InnerMapManager.Instance.ShowInnerMap(currentRegion, false);
                     }
                     InnerMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
                 }
-            } else if (currentSettlement != null) {
+            } else if (currentRegion != null) {
                 bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(currentRegion);
                 if (instantCenter) {
                     InnerMapManager.Instance.ShowInnerMap(currentRegion, false);

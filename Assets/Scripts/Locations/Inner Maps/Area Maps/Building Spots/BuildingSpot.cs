@@ -18,6 +18,7 @@ public class BuildingSpot {
     public Vector2Int locationInBuildSpotGrid { get; private set; }
     public Dictionary<GridNeighbourDirection, BuildingSpot> neighbours { get; private set; }
     public HexTile hexTileOwner { get; private set; } //if this is null then it means that this build spot belongs to a hex tile that is not in this build spots region
+    public BuildingSpotItem spotItem { get; private set; }
 
     //Building
     public LocationStructureObject blueprint { get; private set; }
@@ -46,7 +47,11 @@ public class BuildingSpot {
 
     public void Initialize(InnerTileMap tileMap) {
         //get the tiles in this spots territory.
+        this.spotItem = spotItem;
         DetermineTilesInnTerritory(tileMap);
+    }
+    public void SetBuildSpotItem(BuildingSpotItem spotItem) {
+        this.spotItem = spotItem;
     }
     private void DetermineTilesInnTerritory(InnerTileMap tileMap) {
         tilesInTerritory = new LocationGridTile[InnerMapManager.BuildingSpotSize.x * InnerMapManager.BuildingSpotSize.y];
@@ -108,10 +113,7 @@ public class BuildingSpot {
             throw new System.Exception($"Building spot { this.id } has a null neighbours dictionary!");
         }
         foreach (KeyValuePair<GridNeighbourDirection, BuildingSpot> kvp in neighbours) {
-            if (kvp.Key == GridNeighbourDirection.North || kvp.Key == GridNeighbourDirection.East ||
-                kvp.Key == GridNeighbourDirection.South || kvp.Key == GridNeighbourDirection.West) {
-                adjacent.Add(kvp.Value);    
-            }
+            adjacent.Add(kvp.Value);
         }
         return adjacent;
     }

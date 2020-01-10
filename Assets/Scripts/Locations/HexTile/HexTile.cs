@@ -708,6 +708,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         // }
         if (region != null) {
             InnerMapManager.Instance.TryShowLocationMap(region);
+            InnerMapCameraMove.Instance.CenterCameraOn(ownedBuildSpots[3].spotItem.gameObject, true);
         }
     }
     public void PointerClick(BaseEventData bed) {

@@ -80,6 +80,7 @@ namespace Inner_Maps {
                     
                     BuildingSpotItem spotItem = buildSpotGo.GetComponent<BuildingSpotItem>();
                     spotItem.SetBuildingSpot(newSpot);
+                    newSpot.SetBuildSpotItem(spotItem);
                 }
             }
             return new Vector2Int(buildSpotGridWidth, buildSpotGridHeight);

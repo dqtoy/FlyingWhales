@@ -1129,6 +1129,7 @@ public class Settlement : IJobOwner {
         if (tiles.Contains(tile) == false) {
             tiles.Add(tile);
             tile.SetSettlementOnTile(this);
+            // tile.UpdateLandmarkVisuals();
         }
     }
     public void AddTileToSettlement(params HexTile[] tiles) {
