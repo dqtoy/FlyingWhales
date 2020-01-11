@@ -150,6 +150,7 @@ public class TraitManager : MonoBehaviour {
             new ElementalMaster(),
             new Paralyzed(),
             new Malnourished(),
+            new Withdrawal(),
         };
         for (int i = 0; i < instancedTraits.Length; i++) {
             Trait trait = instancedTraits[i];

@@ -18,11 +18,12 @@ namespace Traits {
             description = "This character is badly hurt.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            
-            
-            
-            ticksDuration = 480;
+            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FIRST_AID_CHARACTER, };
+            moodEffect = -4;
+            isStacking = true;
+            stackLimit = 5;
+            stackModifier = 0.5f;
             //effects = new List<TraitEffect>();
         }
 

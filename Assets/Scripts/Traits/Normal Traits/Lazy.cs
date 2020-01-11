@@ -56,7 +56,7 @@ namespace Traits {
         #endregion
 
         public bool TriggerLazy() {
-            if (!owner.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
+            if (!owner.jobQueue.HasJob(JOB_TYPE.INTERRUPTION)) {
                 //JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY;
                 //if (owner.isForlorn) {
                 //    jobType = JOB_TYPE.HAPPINESS_RECOVERY_FORLORN;
@@ -67,7 +67,7 @@ namespace Traits {
                     triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
                 }
                 if (!triggerBrokenhearted) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, target = GOAP_EFFECT_TARGET.ACTOR }, owner, owner);
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INTERRUPTION, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, target = GOAP_EFFECT_TARGET.ACTOR }, owner, owner);
                     owner.jobQueue.AddJobInQueue(job);
 
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "trigger_lazy");

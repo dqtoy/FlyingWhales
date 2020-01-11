@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace Traits {
     public class Relative : RelationshipTrait {
-        public override string nameInUI {
-            get { return "Relative: " + targetCharacter.name; }
-        }
+        //public override string nameInUI {
+        //    get { return "Relative: " + targetCharacter.name; }
+        //}
 
         public Relative(Character target) : base(target) {
             name = "Relative";
@@ -22,6 +22,9 @@ namespace Traits {
         #region overrides
         public override bool IsUnique() {
             return false;
+        }
+        public override string GetNameInUI(ITraitable traitable) {
+            return "Relative: " + traitable.name;
         }
         #endregion
     }

@@ -10,10 +10,8 @@ namespace Traits {
             thoughtText = "[Character] lost a lot of blood.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            
-            
-            
-            ticksDuration = GameManager.ticksPerDay;
+            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);
+            moodEffect = -4;
             //effects = new List<TraitEffect>();
             //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TRANSFORM_TO_WOLF, INTERACTION_TYPE.REVERT_TO_NORMAL };
         }

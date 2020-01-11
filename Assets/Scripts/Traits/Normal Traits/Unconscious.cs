@@ -15,7 +15,7 @@ namespace Traits {
             thoughtText = "[Character] is unconscious.";
             type = TRAIT_TYPE.DISABLER;
             effect = TRAIT_EFFECT.NEGATIVE;
-            ticksDuration = 24; //144
+            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(3); //144
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FIRST_AID_CHARACTER };
             hindersMovement = true;
             hindersWitness = true;

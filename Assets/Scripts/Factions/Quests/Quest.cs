@@ -54,6 +54,15 @@ public class Quest : IJobOwner {
         }
         return false;
     }
+    public JobQueueItem GetFirstUnassignedJobToCharacterJob(Character character) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (job.assignedCharacter == null && character.jobQueue.CanJobBeAddedToQueue(job)) {
+                return job;
+            }
+        }
+        return null;
+    }
     public bool AssignCharacterToJobBasedOnVision(Character character) {
         List<JobQueueItem> choices = new List<JobQueueItem>();
         for (int i = 0; i < availableJobs.Count; i++) {
@@ -70,6 +79,19 @@ public class Quest : IJobOwner {
             return character.jobQueue.AddJobInQueue(job);
         }
         return false;
+    }
+    public JobQueueItem GetFirstJobBasedOnVision(Character character) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (job.assignedCharacter == null && job is GoapPlanJob) {
+                GoapPlanJob goapJob = job as GoapPlanJob;
+                if (goapJob.targetPOI != null && character.marker.inVisionPOIs.Contains(goapJob.targetPOI) &&
+                    character.jobQueue.CanJobBeAddedToQueue(job)) {
+                    return job;
+                }
+            }
+        }
+        return null;
     }
     public bool HasJob(JOB_TYPE jobType) {
         for (int i = 0; i < availableJobs.Count; i++) {

@@ -240,11 +240,14 @@ public class CharacterNeedsComponent {
         bool wasTired = isTired;
         bool wasExhausted = isExhausted;
         bool wasEnergized = isEnergized;
+        bool wasUnconscious = tiredness == 0f;
 
         tiredness += adjustment;
         tiredness = Mathf.Clamp(tiredness, tirednessLowerBound, TIREDNESS_DEFAULT);
         if (tiredness == 0f) {
-            _character.traitContainer.AddTrait(_character, "Unconscious");
+            if (!wasUnconscious) {
+                _character.traitContainer.AddTrait(_character, "Unconscious");
+            }
             OnExhausted(wasEnergized, wasTired, wasExhausted);
             return;
         }
@@ -275,11 +278,14 @@ public class CharacterNeedsComponent {
         bool wasTired = isTired;
         bool wasExhausted = isExhausted;
         bool wasEnergized = isEnergized;
+        bool wasUnconscious = tiredness == 0f;
 
         tiredness = amount;
         tiredness = Mathf.Clamp(tiredness, tirednessLowerBound, TIREDNESS_DEFAULT);
         if (tiredness == 0f) {
-            _character.traitContainer.AddTrait(_character, "Unconscious");
+            if (!wasUnconscious) {
+                _character.traitContainer.AddTrait(_character, "Unconscious");
+            }
             OnExhausted(wasEnergized, wasTired, wasExhausted);
             return;
         }
@@ -705,16 +711,18 @@ public class CharacterNeedsComponent {
         bool wasHungry = isHungry;
         bool wasStarving = isStarving;
         bool wasFull = isFull;
+        bool wasMalnourished = fullness == 0f;
 
         fullness = FULLNESS_DEFAULT;
 
-        OnFull(wasFull, wasHungry, wasStarving);
+        OnFull(wasFull, wasHungry, wasStarving, wasMalnourished);
         //RemoveHungryOrStarving();
     }
     public void AdjustFullness(float adjustment) {
         bool wasHungry = isHungry;
         bool wasStarving = isStarving;
         bool wasFull = isFull;
+        bool wasMalnourished = fullness == 0f;
 
         fullness += adjustment;
         fullness = Mathf.Clamp(fullness, fullnessLowerBound, FULLNESS_DEFAULT);
@@ -722,18 +730,20 @@ public class CharacterNeedsComponent {
             _character.HPRecovery(0.02f);
         }
         if (fullness == 0f) {
-            _character.traitContainer.AddTrait(_character, "Malnourished");
+            if (!wasMalnourished) {
+                _character.traitContainer.AddTrait(_character, "Malnourished");
+            }
             OnStarving(wasFull, wasHungry, wasStarving);
             return;
         }
         if (isFull) {
-            OnFull(wasFull, wasHungry, wasStarving);
+            OnFull(wasFull, wasHungry, wasStarving, wasMalnourished);
         } else if (isHungry) {
             OnHungry(wasFull, wasHungry, wasStarving);
         } else if (isStarving) {
             OnStarving(wasFull, wasHungry, wasStarving);
         } else {
-            OnNormalFullness(wasFull, wasHungry, wasStarving);
+            OnNormalFullness(wasFull, wasHungry, wasStarving, wasMalnourished);
         }
 
         //if (fullness == 0) {
@@ -755,23 +765,26 @@ public class CharacterNeedsComponent {
         bool wasHungry = isHungry;
         bool wasStarving = isStarving;
         bool wasFull = isFull;
+        bool wasMalnourished = fullness == 0f;
 
         fullness = amount;
         fullness = Mathf.Clamp(fullness, fullnessLowerBound, FULLNESS_DEFAULT);
 
         if (fullness == 0f) {
-            _character.traitContainer.AddTrait(_character, "Malnourished");
+            if (!wasMalnourished) {
+                _character.traitContainer.AddTrait(_character, "Malnourished");
+            }
             OnStarving(wasFull, wasHungry, wasStarving);
             return;
         }
         if (isFull) {
-            OnFull(wasFull, wasHungry, wasStarving);
+            OnFull(wasFull, wasHungry, wasStarving, wasMalnourished);
         } else if (isHungry) {
             OnHungry(wasFull, wasHungry, wasStarving);
         } else if (isStarving) {
             OnStarving(wasFull, wasHungry, wasStarving);
         } else {
-            OnNormalFullness(wasFull, wasHungry, wasStarving);
+            OnNormalFullness(wasFull, wasHungry, wasStarving, wasMalnourished);
         }
 
         //if (fullness == 0) {
@@ -787,7 +800,7 @@ public class CharacterNeedsComponent {
         //    RemoveHungryOrStarving();
         //}
     }
-    private void OnFull(bool wasFull, bool wasHungry, bool wasStarving) {
+    private void OnFull(bool wasFull, bool wasHungry, bool wasStarving, bool wasMalnourished) {
         if (!wasFull) {
             _character.traitContainer.AddTrait(_character, "Full");
         }
@@ -796,6 +809,9 @@ public class CharacterNeedsComponent {
         }
         if (wasStarving) {
             _character.traitContainer.RemoveTrait(_character, "Starving");
+        }
+        if (wasMalnourished) {
+            _character.traitContainer.RemoveTrait(_character, "Malnourished");
         }
     }
     private void OnHungry(bool wasFull, bool wasHungry, bool wasStarving) {
@@ -820,7 +836,7 @@ public class CharacterNeedsComponent {
             _character.traitContainer.RemoveTrait(_character, "Hungry");
         }
     }
-    private void OnNormalFullness(bool wasFull, bool wasHungry, bool wasStarving) {
+    private void OnNormalFullness(bool wasFull, bool wasHungry, bool wasStarving, bool wasMalnourished) {
         if (wasStarving) {
             _character.traitContainer.RemoveTrait(_character, "Starving");
         }
@@ -829,6 +845,9 @@ public class CharacterNeedsComponent {
         }
         if (wasHungry) {
             _character.traitContainer.RemoveTrait(_character, "Hungry");
+        }
+        if (wasMalnourished) {
+            _character.traitContainer.RemoveTrait(_character, "Malnourished");
         }
     }
     private void RemoveHungryOrStarving() {

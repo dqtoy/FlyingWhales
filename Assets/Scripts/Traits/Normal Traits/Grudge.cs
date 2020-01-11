@@ -6,9 +6,9 @@ namespace Traits {
     public class Grudge : Trait {
         public Character targetCharacter;
 
-        public override string nameInUI {
-            get { return "Grudge: " + targetCharacter.name; }
-        }
+        //public override string nameInUI {
+        //    get { return "Grudge: " + targetCharacter.name; }
+        //}
 
         public Grudge() {
             name = "Grudge";
@@ -27,6 +27,10 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;
             //effects = new List<TraitEffect>();
+        }
+
+        public override string GetNameInUI(ITraitable traitable) {
+            return "Grudge: " + traitable.name;
         }
     }
 }

@@ -18,6 +18,7 @@ public class TraitPanelUI : MonoBehaviour {
     public InputField nameInput;
     public InputField descriptionInput;
     public InputField thoughtInput;
+    public InputField moodInput;
     public InputField durationInput;
     public Dropdown traitTypeOptions;
     public Dropdown traitEffectOptions;
@@ -48,6 +49,12 @@ public class TraitPanelUI : MonoBehaviour {
     public InputField mutuallyExclusiveInput;
     [NonSerialized] public TraitEffectButton currentSelectedTraitEffectButton;
     [NonSerialized] public RequirementButton currentSelectedRequirementButton;
+
+    //Stack
+    public Toggle isStackingToggle;
+    public GameObject stackGroupGO;
+    public InputField stackLimitInput;
+    public InputField stackModInput;
 
     private List<string> _allTraits;
     private List<TraitEffect> _effects;
@@ -146,11 +153,14 @@ public class TraitPanelUI : MonoBehaviour {
         mutuallyExclusiveInput.text = string.Empty;
         amountInput.text = "0";
         durationInput.text = "0";
+        stackLimitInput.text = "0";
+        stackModInput.text = "0";
 
         percentageToggle.isOn = false;
         hasRequirementToggle.isOn = false;
         isNotToggle.isOn = false;
         _isHidden.isOn = false;
+        isStackingToggle.isOn = false;
 
         _effects.Clear();
         _requirements.Clear();
@@ -199,13 +209,17 @@ public class TraitPanelUI : MonoBehaviour {
             name = nameInput.text,
             description = descriptionInput.text,
             thoughtText = thoughtInput.text,
-            type = (TRAIT_TYPE)System.Enum.Parse(typeof(TRAIT_TYPE), traitTypeOptions.options[traitTypeOptions.value].text),
-            effect = (TRAIT_EFFECT)System.Enum.Parse(typeof(TRAIT_EFFECT), traitEffectOptions.options[traitEffectOptions.value].text),
+            type = (TRAIT_TYPE) System.Enum.Parse(typeof(TRAIT_TYPE), traitTypeOptions.options[traitTypeOptions.value].text),
+            effect = (TRAIT_EFFECT) System.Enum.Parse(typeof(TRAIT_EFFECT), traitEffectOptions.options[traitEffectOptions.value].text),
             ticksDuration = int.Parse(durationInput.text),
             effects = _effects,
             isHidden = _isHidden.isOn,
             mutuallyExclusive = GetMutuallyExclusiveTraits(),
             advertisedInteractions = _advertisedInteractions,
+            moodEffect = int.Parse(moodInput.text),
+            isStacking = isStackingToggle.isOn,
+            stackLimit = int.Parse(stackLimitInput.text),
+            stackModifier = float.Parse(stackModInput.text),
         };
         string jsonString = JsonUtility.ToJson(newTrait);
 
@@ -242,6 +256,10 @@ public class TraitPanelUI : MonoBehaviour {
         durationInput.text = trait.ticksDuration.ToString();
         mutuallyExclusiveInput.text = ConvertMutuallyExclusiveTraitsToText(trait);
         _advertisedInteractions = trait.advertisedInteractions;
+        moodInput.text = trait.moodEffect.ToString();
+        isStackingToggle.isOn = trait.isStacking;
+        stackLimitInput.text = trait.stackLimit.ToString();
+        stackModInput.text = trait.stackModifier.ToString();
         UpdateAdvertisedInteractionsText();
 
         for (int i = 0; i < trait.effects.Count; i++) {
@@ -385,6 +403,12 @@ public class TraitPanelUI : MonoBehaviour {
         //    }
         //}
         //return text;
+    }
+    #endregion
+
+    #region Stack
+    public void OnToggleIsStacking(bool state) {
+        stackGroupGO.SetActive(state);
     }
     #endregion
 }
