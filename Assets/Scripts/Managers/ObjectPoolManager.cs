@@ -15,6 +15,8 @@ public class ObjectPoolManager : MonoBehaviour {
     [SerializeField] internal GameObject[] otherPrefabs;
     [SerializeField] private GameObject UIObjectPoolParent;
 
+    public List<GoapNode> goapNodesPool { get; private set; }
+
     private void Awake() {
         Instance = this;
         allObjectPools = new Dictionary<string, EZObjectPool>();
@@ -34,6 +36,7 @@ public class ObjectPoolManager : MonoBehaviour {
             CreateNewPool(currPrefab, currPrefab.name, 80, true, true, false);
             yield return null;
         }
+        ConstructGoapNodes();
         MapGenerator.Instance.SetIsCoroutineRunning(false);
     }
     public void InitializeObjectPools() {
@@ -47,6 +50,8 @@ public class ObjectPoolManager : MonoBehaviour {
             GameObject currPrefab = otherPrefabs[i];
             CreateNewPool(currPrefab, currPrefab.name, 80, true, true, false);
         }
+
+        ConstructGoapNodes();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null) {
@@ -101,4 +106,27 @@ public class ObjectPoolManager : MonoBehaviour {
         }
         return false;
     }
+
+    #region Goap Node
+    private void ConstructGoapNodes() {
+        goapNodesPool = new List<GoapNode>();
+    }
+    public GoapNode CreateNewGoapPlanJob(int cost, int level, GoapAction action, IPointOfInterest target) {
+        GoapNode node = GetGoapNodeFromPool();
+        node.Initialize(cost, level, action, target);
+        return node;
+    }
+    public void ReturnGoapNodeToPool(GoapNode node) {
+        node.Reset();
+        goapNodesPool.Add(node);
+    }
+    private GoapNode GetGoapNodeFromPool() {
+        if(goapNodesPool.Count > 0) {
+            GoapNode node = goapNodesPool[0];
+            goapNodesPool.RemoveAt(0);
+            return node;
+        }
+        return new GoapNode();
+    }
+    #endregion
 }

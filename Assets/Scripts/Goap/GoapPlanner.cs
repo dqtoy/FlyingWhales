@@ -291,7 +291,7 @@ public class GoapPlanner {
     //    //List of all starting nodes that can do the goal
     //    List<GoapNode> startingNodes = new List<GoapNode>();
 
-    //    GoapNode goalNode = new GoapNode(null, goalAction.cost, goalAction);
+    //    GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(null, goalAction.cost, goalAction);
     //    bool success = BuildGoapTree(goalNode, startingNodes, usableActions, ref log, job);
     //    if (!success) {
     //        return null;
@@ -330,7 +330,7 @@ public class GoapPlanner {
                 GoapAction currentAction = target.AdvertiseActionsToActor(actor, goalEffect, otherData, ref cost, ref log);
                 if (currentAction != null) {
                     //If an action is found, make it the goal node and start building the plan
-                    GoapNode goalNode = new GoapNode(cost, 0, currentAction, target);
+                    GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(cost, 0, currentAction, target);
                     rawPlan = new List<GoapNode>();
                     BuildGoapTree(goalNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness, ref log); //, ref log
                 }
@@ -399,7 +399,7 @@ public class GoapPlanner {
                 }
             }
             if (lowestCostAction != null) {
-                GoapNode leafNode = new GoapNode(lowestCost, 0, lowestCostAction, lowestCostTarget);
+                GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(lowestCost, 0, lowestCostAction, lowestCostTarget);
                 rawPlan = new List<GoapNode>();
                 BuildGoapTree(leafNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness, ref log); //, ref log
             }
@@ -437,7 +437,7 @@ public class GoapPlanner {
         }
         int cost = goalAction.GetCost(actor, target, data);
         log += "\n--Searching plan for target: " + target.name + " with goal action (" + cost + ")" + goalAction.goapName;
-        GoapNode goalNode = new GoapNode(cost, 0, goalAction, target);
+        GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(cost, 0, goalAction, target);
         BuildGoapTree(goalNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness, ref log); //, ref log
         if (rawPlan != null && rawPlan.Count > 0) {
             string rawPlanSummary = $"Generated raw plan for job { job.name } { actor.name }";
@@ -471,7 +471,7 @@ public class GoapPlanner {
                 //POI must either be the job's target or the actor is still aware of it
                 int cost = 0;
                 if (target.CanAdvertiseActionToActor(actor, goalAction, job.otherData, ref cost)) {
-                    GoapNode goalNode = new GoapNode(actualNode.cost, currentPlan.currentNodeIndex, goalAction, target);
+                    GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(actualNode.cost, currentPlan.currentNodeIndex, goalAction, target);
                     BuildGoapTree(goalNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness, ref log); //
                     if (rawPlan != null && rawPlan.Count > 0) {
                         //has a created plan
@@ -504,7 +504,7 @@ public class GoapPlanner {
                     rawPlan.Clear();
                     break;
                 } else {
-                    GoapNode goalNode = new GoapNode(actualNode.cost, currentPlan.currentNodeIndex, goalAction, target);
+                    GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(actualNode.cost, currentPlan.currentNodeIndex, goalAction, target);
                     BuildGoapTree(goalNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness, ref log);
                 }
             }
@@ -539,9 +539,9 @@ public class GoapPlanner {
         //            if(failedNode.action.goapType == currentUsableAction.goapType && failedNode.action.poiTarget == currentUsableAction.poiTarget) {
         //                hasUsableAction = true;
         //                if(currentLeafNode == null) {
-        //                    currentLeafNode = new GoapNode(failedNode.parent, failedNode.parent.runningCost + currentUsableAction.cost, currentUsableAction);
+        //                    currentLeafNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(failedNode.parent, failedNode.parent.runningCost + currentUsableAction.cost, currentUsableAction);
         //                } else {
-        //                    GoapNode leafNode = new GoapNode(currentLeafNode.parent, currentLeafNode.parent.runningCost + currentUsableAction.cost, currentUsableAction);
+        //                    GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(currentLeafNode.parent, currentLeafNode.parent.runningCost + currentUsableAction.cost, currentUsableAction);
         //                    currentLeafNode = leafNode;
         //                }
         //                break;
@@ -623,7 +623,7 @@ public class GoapPlanner {
                         }
                         if (currentAction != null) {
                             log += "\n--Found action: " + currentAction.goapName + ", creating new node...";
-                            GoapNode leafNode = new GoapNode(cost, node.level + 1, currentAction, target);
+                            GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(cost, node.level + 1, currentAction, target);
                             BuildGoapTree(leafNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness, ref log); //
                         } else {
                             //Fail - rawPlan must be set to null so the plan will fail
@@ -697,7 +697,7 @@ public class GoapPlanner {
                         }
                         if(lowestCostAction != null) {
                             log += "\n--Found action: " + lowestCostAction.goapName + ", creating new node...";
-                            GoapNode leafNode = new GoapNode(lowestCost, node.level + 1, lowestCostAction, lowestCostTarget);
+                            GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(lowestCost, node.level + 1, lowestCostAction, lowestCostTarget);
                             BuildGoapTree(leafNode, actor, job, rawPlan, allGoapActionAdvertisements, awareness, ref log); //, ref log
                         } else {
                             //Fail - rawPlan must be set to null so the plan will fail
@@ -714,7 +714,7 @@ public class GoapPlanner {
                         //        INTERACTION_TYPE actionType = poiTarget.AdvertiseActionsToActor(actor, preconditionEffect, job.otherData, ref cost);
                         //        if (actionType != INTERACTION_TYPE.NONE) {
                         //            GoapAction leafAction = InteractionManager.Instance.goapActionData[actionType];
-                        //            GoapNode leafNode = new GoapNode(cost, goalNode.level + 1, leafAction, poiTarget);
+                        //            GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(cost, goalNode.level + 1, leafAction, poiTarget);
                         //            BuildGoapTree(leafNode, rawPlan, usableActions, ref log, job);
                         //        }
                         //    }
@@ -782,7 +782,7 @@ public class GoapPlanner {
         //                }
         //            }
         //            if (canSatisfyAllPreconditions) {
-        //                GoapNode leafNode = new GoapNode(precondition, precondition.runningCost + usableAction.cost, usableAction);
+        //                GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(precondition, precondition.runningCost + usableAction.cost, usableAction);
         //                log += " - Satisfied"; 
         //                bool success = BuildGoapTree(leafNode, startingNodes, usableActions, ref log, job);
         //                return success;
@@ -837,7 +837,9 @@ public class GoapPlanner {
                     ActualGoapNode actualNode = new ActualGoapNode(rawNode.action, actor, rawNode.target, data, rawNode.cost);
                     SingleJobNode singleJobNode = new SingleJobNode(actualNode);
                     actualPlan.Insert(0, singleJobNode);
+                    GoapNode node = rawPlan[nodeIndex];
                     rawPlan.RemoveAt(nodeIndex);
+                    ObjectPoolManager.Instance.ReturnGoapNodeToPool(node);
                 } else {
                     //Multi Job Node
                     ActualGoapNode[] actualNodes = new ActualGoapNode[tempNodeIndexHolder.Count];
@@ -854,7 +856,9 @@ public class GoapPlanner {
                         }
                         ActualGoapNode actualNode = new ActualGoapNode(rawNode.action, actor, rawNode.target, data, rawNode.cost);
                         actualNodes[i] = actualNode;
+                        GoapNode node = rawPlan[nodeIndex];
                         rawPlan.RemoveAt(nodeIndex);
+                        ObjectPoolManager.Instance.ReturnGoapNodeToPool(node);
                     }
                     MultiJobNode multiJobNode = new MultiJobNode(actualNodes);
                     actualPlan.Insert(0, multiJobNode);

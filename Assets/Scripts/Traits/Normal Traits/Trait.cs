@@ -35,7 +35,7 @@ namespace Traits {
         public float stackModifier;
         //public bool isNonRemovable; //determines if trait can be removed through natural process (ie. RemoveTrait, etc.), if this is set to true, it means that it can only be removed by certain functions
 
-        public Character responsibleCharacter { get { return responsibleCharacters.FirstOrDefault(); } }
+        public Character responsibleCharacter { get { return responsibleCharacters != null ? responsibleCharacters.FirstOrDefault() : null; } }
         public List<Character> responsibleCharacters { get; protected set; }
         //public Dictionary<ITraitable, string> expiryTickets { get; private set; } //this is the key for the scheduled removal of this trait for each object
         public ActualGoapNode gainedFromDoing { get; private set; } //what action was this poi involved in that gave it this trait.
