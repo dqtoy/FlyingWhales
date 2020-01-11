@@ -30,7 +30,7 @@ public class LocationStructure {
     public LocationStructure(STRUCTURE_TYPE structureType, ILocation location) {
         id = Utilities.SetID(this);
         this.structureType = structureType;
-        this.name = $"{Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())} {id.ToString()}";
+        name = $"{Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())} {id.ToString()}";
         this.location = location;
         charactersHere = new List<Character>();
         itemsInStructure = new List<SpecialToken>();
@@ -42,8 +42,8 @@ public class LocationStructure {
     public LocationStructure(ILocation location, SaveDataLocationStructure data) {
         this.location = location;
         id = Utilities.SetID(this, data.id);
-        this.structureType = data.structureType;
-        this.name = data.name;
+        structureType = data.structureType;
+        name = data.name;
         charactersHere = new List<Character>();
         itemsInStructure = new List<SpecialToken>();
         pointsOfInterest = new List<IPointOfInterest>();
@@ -394,19 +394,19 @@ public class LocationStructure {
         this.structureObj = structureObj;
     }
     public void SetOccupiedBuildSpot(BuildSpotTileObject buildSpotTileObject) {
-        this.occupiedBuildSpot = buildSpotTileObject;
+        occupiedBuildSpot = buildSpotTileObject;
     }
     #endregion
 
     #region Destroy
     private void DestroyStructure() {
-        Debug.Log($"{GameManager.Instance.TodayLogString()}{this.ToString()} was destroyed!");
+        Debug.Log($"{GameManager.Instance.TodayLogString()}{ToString()} was destroyed!");
         //transfer tiles to either the wilderness or work settlement
-        List<LocationGridTile> tiles = new List<LocationGridTile>(this.tiles);
+        List<LocationGridTile> tilesInStructure = new List<LocationGridTile>(tiles);
         LocationStructure workArea = location.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
         LocationStructure wilderness = location.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-        for (int i = 0; i < tiles.Count; i++) {
-            LocationGridTile tile = tiles[i];
+        for (int i = 0; i < tilesInStructure.Count; i++) {
+            LocationGridTile tile = tilesInStructure[i];
             LocationStructure transferTo;
             if (tile.isInside) {
                 transferTo = workArea;
@@ -443,14 +443,14 @@ public class LocationStructure {
         SetOccupiedBuildSpot(null);
     }
     private bool CheckIfStructureDestroyed() {
-        string summary = $"Checking if {this.ToString()} has been destroyed...";
+        string summary = $"Checking if {ToString()} has been destroyed...";
         //check walls and floors, if all of them are destroyed consider this structure as destroyed
         bool allObjectsDestroyed = true;
         for (int i = 0; i < structureObj.walls.Length; i++) {
             WallObject wall = structureObj.walls[i];
             if (wall.currentHP > 0) {
                 //wall is not yet destroyed
-                summary += $"\n{this.ToString()} still has an intact wall. Not yet destroyed.";
+                summary += $"\n{ToString()} still has an intact wall. Not yet destroyed.";
                 allObjectsDestroyed = false;
                 break;
             }
@@ -461,7 +461,7 @@ public class LocationStructure {
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile tile = tiles[i];
                 if (tile.genericTileObject.currentHP > 0) {
-                    summary += $"\n{this.ToString()} still has an intact floor. Not yet destroyed.";
+                    summary += $"\n{ToString()} still has an intact floor. Not yet destroyed.";
                     allObjectsDestroyed = false;
                     break;
                 }
@@ -470,7 +470,7 @@ public class LocationStructure {
 
         //if at end of checking, all objects are destroyed, then consider this structure as destroyed
         if (allObjectsDestroyed) {
-            summary += $"\n{this.ToString()} has no intact walls or floors. It has been destroyed.";
+            summary += $"\n{ToString()} has no intact walls or floors. It has been destroyed.";
             DestroyStructure();
         }
         Debug.Log(summary);
@@ -543,11 +543,10 @@ public class LocationStructure {
 
     #region Repair
     private void CreateRepairJob() {
-        if (location is Settlement) {
-            Settlement settlement = location as Settlement;
-            GoapPlanJob repairJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPAIR, INTERACTION_TYPE.REPAIR_STRUCTURE, occupiedBuildSpot, settlement);
+        if (settlementLocation != null) {
+            GoapPlanJob repairJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPAIR, INTERACTION_TYPE.REPAIR_STRUCTURE, occupiedBuildSpot, settlementLocation);
             repairJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRepairStructureJob);
-            settlement.AddToAvailableJobs(repairJob);    
+            settlementLocation.AddToAvailableJobs(repairJob);    
         }
     }
     #endregion

@@ -381,7 +381,7 @@ public class GridMap : MonoBehaviour {
         Debug.Log(summary);
     }
     private Region[] CreateRandomRegions(int regionCount, List<HexTile> tiles, ref List<HexTile> remainingTiles) {
-        List<HexTile> regionCoreTileChoices = new List<HexTile>(tiles);
+        List<HexTile> regionCoreTileChoices = new List<HexTile>(tiles.Where(x => x.IsAtEdgeOfMap() == false));
         Region[] createdRegions = new Region[regionCount];
         for (int i = 0; i < regionCount; i++) {
             if (regionCoreTileChoices.Count == 0) {

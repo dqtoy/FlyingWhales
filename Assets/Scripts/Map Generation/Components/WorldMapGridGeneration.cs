@@ -6,9 +6,10 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 	
 	public override IEnumerator Execute(MapGenerationData data) {
 		data.regionCount = 5;
-		GenerateMapWidthAndHeightFromRegionCount(data.regionCount, out data.mapWidth, out data.mapHeight);
+		// GenerateMapWidthAndHeightFromRegionCount(data.regionCount, out data.mapWidth, out data.mapHeight);
 		Debug.Log($"Width: {data.mapWidth.ToString()} Height: {data.mapHeight.ToString()} Region Count: {data.regionCount.ToString()}");
-		GridMap.Instance.SetupInitialData(data.mapWidth, data.mapHeight);
+		// GridMap.Instance.SetupInitialData(data.mapWidth, data.mapHeight);
+		GridMap.Instance.SetupInitialData(8, 10);
 		yield return MapGenerator.Instance.StartCoroutine(GridMap.Instance.GenerateGrid());
 	}
 	
