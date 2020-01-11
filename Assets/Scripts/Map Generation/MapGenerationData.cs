@@ -20,5 +20,5 @@ public class MapGenerationData {
 	public int mapHeight;
 	public int regionCount;
 	public BaseLandmark portal;
-	public BaseLandmark settlement;
+	public LocationStructure portalStructure;
 }

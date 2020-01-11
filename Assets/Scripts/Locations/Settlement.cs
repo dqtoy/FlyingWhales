@@ -517,6 +517,13 @@ public class Settlement : IJobOwner {
         }
         AssignPrison();
     }
+    public void GeneratePlayerStructures(params LocationStructure[] initialPlayerStructures) {
+        structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
+        for (int i = 0; i < initialPlayerStructures.Length; i++) {
+            LocationStructure structure = initialPlayerStructures[i];
+            AddStructure(structure);
+        }
+    }
     public void LoadStructures(SaveDataArea data) {
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
 

@@ -11,16 +11,19 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 		for (int i = 0; i < landmarks.Count; i++) {
 			BaseLandmark landmark = landmarks[i];
 			if (landmark.specificLandmarkType != LANDMARK_TYPE.VILLAGE) {
-				yield return MapGenerator.Instance.StartCoroutine(CreateStructureObjectForLandmark(landmark));	
+				yield return MapGenerator.Instance.StartCoroutine(CreateStructureObjectForLandmark(landmark, data));	
 			}
 		}
 		yield return null;
 	}
 
-	private IEnumerator CreateStructureObjectForLandmark(BaseLandmark landmark) {
+	private IEnumerator CreateStructureObjectForLandmark(BaseLandmark landmark, MapGenerationData data) {
 		LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(landmark.tileLocation.region,
 			GetStructureTypeFor(landmark.specificLandmarkType));
 		 yield return MapGenerator.Instance.StartCoroutine(PlaceInitialStructure(structure, landmark.tileLocation.region.innerMap, landmark.tileLocation));
+		 if (structure.structureType == STRUCTURE_TYPE.PORTAL) {
+			 data.portalStructure = structure;
+		 }
 	}
 
 	private STRUCTURE_TYPE GetStructureTypeFor(LANDMARK_TYPE landmarkType) {

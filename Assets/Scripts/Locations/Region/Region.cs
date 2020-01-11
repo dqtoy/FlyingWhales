@@ -525,6 +525,7 @@ public class Region : ILocation {
 
         if (!structures[structure.structureType].Contains(structure)) {
             structures[structure.structureType].Add(structure);
+            Debug.Log($"New structure {structure.name} was added to region {name}" );
         }
     }
     public void RemoveStructure(LocationStructure structure) {

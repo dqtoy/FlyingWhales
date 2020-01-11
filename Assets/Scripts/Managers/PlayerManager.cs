@@ -67,13 +67,13 @@ public class PlayerManager : MonoBehaviour {
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressedDown);
     }
-    public void InitializePlayer(BaseLandmark portal) {
+    public void InitializePlayer(BaseLandmark portal, LocationStructure portalStructure) {
         player = new Player();
-        PlayerUI.Instance.Initialize();
+        // PlayerUI.Instance.Initialize();
         player.CreatePlayerFaction();
         
         Settlement existingPlayerSettlement = player.CreatePlayerSettlement(portal);
-        existingPlayerSettlement.GenerateStructures(0);
+        existingPlayerSettlement.GeneratePlayerStructures(portalStructure);
         
         // Settlement existingPlayerSettlement = LandmarkManager.Instance.GetAreaByName("Portal");
         // if (existingPlayerSettlement == null) {
