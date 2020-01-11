@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -25,11 +26,14 @@ public class PortalLandmarkGeneration : MapGenerationComponent {
 			}
 		}
 
-		HexTile portalTile = Utilities.GetRandomElement(validPortalTiles);
-		// Settlement portalSettlement = CreateNewArea(portalRegion, LOCATION_TYPE.DEMONIC_INTRUSION, 0);
-		BaseLandmark portalLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(portalTile, LANDMARK_TYPE.THE_PORTAL, false);
-		// portalSettlement.region.SetName("Portal"); //need this so that when player is initialized. This settlement will be assigned to the player.
-		data.portal = portalLandmark;
+		if (validPortalTiles.Count > 0) {
+			HexTile portalTile = Utilities.GetRandomElement(validPortalTiles);
+			BaseLandmark portalLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(portalTile, LANDMARK_TYPE.THE_PORTAL, false);
+			data.portal = portalLandmark;	
+		} else {
+			throw new Exception("No valid portal tiles were found!");
+		}
+		
 	}
 
 	private List<HexTile> GetAllSettlementTiles() {

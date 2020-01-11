@@ -95,7 +95,7 @@ public class CharacterAIPath : AILerp {
         if (onSearchPath != null) onSearchPath();
 
         lastRepath = Time.time;
-
+    
         // This is where the path should start to search from
         var currentPosition = GetFeetPosition();
 
@@ -112,23 +112,23 @@ public class CharacterAIPath : AILerp {
 
         canSearchAgain = false;
 
-        for (int i = 0; i < marker.terrifyingObjects.Count; i++) {
-            IPointOfInterest poi = marker.terrifyingObjects[i];
-            if (poi is Character) {
-                Character currCharacter = poi as Character;
-                if (!currCharacter.isDead && currCharacter.marker != null) {
-                    currCharacter.marker.UpdateCenteredWorldPos();
-                }
-            }
-        }
-        if (marker.character != null && marker.character.currentActionNode != null && marker.character.currentRegion != null) {//&& marker.character.currentActionNode.willAvoidCharactersWhileMoving
-            for (int i = 0; i < marker.character.currentRegion.charactersAtLocation.Count; i++) {
-                Character terrifyingCharacter = marker.character.currentRegion.charactersAtLocation[i];
-                if(terrifyingCharacter.marker != null) {
-                    terrifyingCharacter.marker.UpdateCenteredWorldPos();
-                }
-            }
-        }
+        // for (int i = 0; i < marker.terrifyingObjects.Count; i++) {
+        //     IPointOfInterest poi = marker.terrifyingObjects[i];
+        //     if (poi is Character) {
+        //         Character currCharacter = poi as Character;
+        //         if (!currCharacter.isDead && currCharacter.marker != null) {
+        //             currCharacter.marker.UpdateCenteredWorldPos();
+        //         }
+        //     }
+        // }
+        // if (marker.character != null && marker.character.currentActionNode != null && marker.character.currentSettlement != null) {//&& marker.character.currentActionNode.willAvoidCharactersWhileMoving
+        //     for (int i = 0; i < marker.character.currentRegion.charactersAtLocation.Count; i++) {
+        //         Character terrifyingCharacter = marker.character.currentRegion.charactersAtLocation[i];
+        //         if(terrifyingCharacter.marker != null) {
+        //             terrifyingCharacter.marker.UpdateCenteredWorldPos();
+        //         }
+        //     }
+        // }
 
         // Alternative way of requesting the path
         CustomABPath p = CustomABPath.Construct(currentPosition, destination, null);

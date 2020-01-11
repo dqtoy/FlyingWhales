@@ -22,9 +22,9 @@ public class SettlementGeneration : MapGenerationComponent {
 		int totalBuildSpots = settlementTiles.Count * 4; //*4 because each hex tile = 4 build spots
 		totalBuildSpots -= 2; //to accomodate for city center
 		
-		int randomCitizens = Random.Range(1, totalBuildSpots + 1);
+		int randomCitizens = Random.Range(2, totalBuildSpots + 1);
 		if (totalBuildSpots > 2) { //this is so that settlements that initially have more than 1 tile are sure to occupy it.
-			randomCitizens = Random.Range(2, totalBuildSpots + 1);
+			randomCitizens = Random.Range(3, totalBuildSpots + 1);
 		}
 		
 		

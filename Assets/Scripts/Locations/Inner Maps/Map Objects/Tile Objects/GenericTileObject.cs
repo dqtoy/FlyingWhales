@@ -29,7 +29,7 @@ public class GenericTileObject : TileObject {
             //gridTileLocation.structure.location.region.AddAwareness(this);
         }
         PlaceMapObjectAt(gridTileLocation);
-        OnPlaceObjectAtTile(gridTileLocation);
+        OnPlaceTileObjectAtTile(gridTileLocation);
         SetPOIState(POI_STATE.ACTIVE);
     }
     public override void OnDestroyPOI() {
@@ -80,7 +80,9 @@ public class GenericTileObject : TileObject {
         }
     }
     public override bool CanBeDamaged() {
-        return structureLocation.structureType.IsOpenSpace() == false; //only damage tiles that are part of non open space structures i.e structures with walls.
+        //only damage tiles that are part of non open space structures i.e structures with walls.
+        return structureLocation.structureType.IsOpenSpace() == false
+               && structureLocation.structureType.IsSettlementStructure();
     }
     #endregion
 

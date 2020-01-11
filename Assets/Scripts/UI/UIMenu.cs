@@ -31,7 +31,9 @@ public class UIMenu : MonoBehaviour {
         }
         Messenger.Broadcast(Signals.MENU_OPENED, this);
         UIManager.Instance.AddToUIMenuHistory(_data);
-        backButton.interactable = UIManager.Instance.GetLastUIMenuHistory() != null;
+        if (backButton != null) {
+            backButton.interactable = UIManager.Instance.GetLastUIMenuHistory() != null;    
+        }
         UIManager.Instance.poiTestingUI.HideUI();
         LoadActions();
     }

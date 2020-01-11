@@ -159,6 +159,9 @@ public class InnerMapCameraMove : MonoBehaviour {
             //}
         }
     }
+    public void CenterCameraOn(Vector2 pos) {
+        MoveCamera(pos);
+    }
     private void ArrowKeysMovement() {
         if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) ||Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
             if (!UIManager.Instance.IsConsoleShowing()) {

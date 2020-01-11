@@ -135,39 +135,29 @@ public class UIManager : MonoBehaviour {
     }
     private void Update() {
         if (isHoveringTile) {
-            // if (currentTileHovered.landmarkOnTile != null) {
-            //     currentTileHovered.ShowTileInfo();
-            //    
-            // }
+            if (currentTileHovered.landmarkOnTile != null) {
+                currentTileHovered.ShowTileInfo();
+            }
             currentTileHovered.region?.OnHoverOverAction();
-            string summary = $"{currentTileHovered.ToString()}";
-            summary += "\nLeft Most: " + (currentTileHovered.region.GetLeftMostTile()?.ToString() ?? "Null");
-            summary += "\nRight Most: " + (currentTileHovered.region.GetRightMostTile()?.ToString() ?? "Null");
-            summary += "\nFeatures:";
-            for (int i = 0; i < currentTileHovered.featureComponent.features.Count; i++) {
-                TileFeature feature = currentTileHovered.featureComponent.features[i];
-                summary += $"{feature.name}, ";
-            }
-            // summary += "\nTile Map:\n";
-            // for (int y = 0; y <= currentTileHovered.region.hexTileMap.GetUpperBound(1); y++) {
-            //     summary += $"Y: {y.ToString()} ";
-            //     for (int x = 0; x <= currentTileHovered.region.hexTileMap.GetUpperBound(0); x++) {
-            //         HexTile tile = currentTileHovered.region.hexTileMap[x, y];
-            //         summary += $"{tile?.locationName ?? "Null"}, ";
-            //     }
-            //     summary += "\n";
+            // string summary = $"{currentTileHovered.ToString()}";
+            // summary += "\nLeft Most: " + (currentTileHovered.region.GetLeftMostTile()?.ToString() ?? "Null");
+            // summary += "\nRight Most: " + (currentTileHovered.region.GetRightMostTile()?.ToString() ?? "Null");
+            // summary += "\nFeatures:";
+            // for (int i = 0; i < currentTileHovered.featureComponent.features.Count; i++) {
+            //     TileFeature feature = currentTileHovered.featureComponent.features[i];
+            //     summary += $"{feature.name}, ";
             // }
-            summary += "\nLeft Most Rows:";
-            List<int> leftMostRows = currentTileHovered.region.GetLeftMostRows();
-            for (int i = 0; i < leftMostRows.Count; i++) {
-                summary += $"{leftMostRows[i].ToString()}, ";
-            }
-            summary += "\nRight Most Rows:";
-            List<int> rightMostRows = currentTileHovered.region.GetRightMostRows();
-            for (int i = 0; i < rightMostRows.Count; i++) {
-                summary += $"{rightMostRows[i].ToString()}, ";
-            }
-            UIManager.Instance.ShowSmallInfo(summary);
+            // summary += "\nLeft Most Rows:";
+            // List<int> leftMostRows = currentTileHovered.region.GetLeftMostRows();
+            // for (int i = 0; i < leftMostRows.Count; i++) {
+            //     summary += $"{leftMostRows[i].ToString()}, ";
+            // }
+            // summary += "\nRight Most Rows:";
+            // List<int> rightMostRows = currentTileHovered.region.GetRightMostRows();
+            // for (int i = 0; i < rightMostRows.Count; i++) {
+            //     summary += $"{rightMostRows[i].ToString()}, ";
+            // }
+            // UIManager.Instance.ShowSmallInfo(summary);
         }
     }
     #endregion
@@ -251,6 +241,9 @@ public class UIManager : MonoBehaviour {
         if (PlayerUI.Instance.isShowingMinionList) {
             PlayerUI.Instance.HideMinionList();
         }
+        if (hexTileInfoUI.isShowing) {
+            hexTileInfoUI.CloseMenu();
+        }
         ClearUIMenuHistory();
     }
     public void AddToUIMenuHistory(object data) {
@@ -296,6 +289,8 @@ public class UIManager : MonoBehaviour {
         UpdateTileObjectInfo();
         UpdateRegionInfo();
         UpdateQuestInfo();
+        UpdateItemInfo();
+        UpdateHextileInfo();
     }
 
     #region World Controls
@@ -926,6 +921,25 @@ public class UIManager : MonoBehaviour {
 
     #endregion
 
+    #region Tile Info
+    [Space(10)]
+    [Header("Tile Info")]
+    [SerializeField] public HextileInfoUI hexTileInfoUI;
+    public void ShowHexTileInfo(HexTile item) {
+        if (tempDisableShowInfoUI) {
+            SetTempDisableShowInfoUI(false);
+            return;
+        }
+        hexTileInfoUI.SetData(item);
+        hexTileInfoUI.OpenMenu();
+    }
+    public void UpdateHextileInfo() {
+        if (hexTileInfoUI.isShowing) {
+            hexTileInfoUI.UpdateHexTileInfo();
+        }
+    }
+    #endregion
+
     #region Console
     [Space(10)]
     [Header("Console")]
@@ -992,62 +1006,6 @@ public class UIManager : MonoBehaviour {
         ShowDeveloperNotification("Combat at <b>" + combat.location.name + "</b>!", 5, () => ShowCombatLog(combat));
     }
     #endregion
-
-    public void ShowMinionsMenu() {
-        minionsMenuToggle.isOn = true;
-    }
-    public void ShowCharacterTokenMenu() {
-        charactersMenuToggle.isOn = true;
-    }
-    public void ShowLocationTokenMenu() {
-        locationsMenuToggle.isOn = true;
-    }
-    public void ShowFactionTokenMenu() {
-        factionsMenuToggle.isOn = true;
-    }
-    public void HideRightMenus() {
-        minionsMenuToggle.isOn = false;
-        charactersMenuToggle.isOn = false;
-        locationsMenuToggle.isOn = false;
-        factionsMenuToggle.isOn = false;
-    }
-
-    public void OnMinionsMenuToggled(bool state) {
-        if (!state) {
-            if (!AreAllSideMenusAreClosed()) {
-                PlayerUI.Instance.previousMenu = "minion";
-            }
-        }
-    }
-    public void OnCharacterTokenMenuToggled(bool state) {
-        if (!state) {
-            if (!AreAllSideMenusAreClosed()) {
-                PlayerUI.Instance.previousMenu = "character";
-            }
-        }
-    }
-    public void OnLocationTokenMenuToggled(bool state) {
-        if (!state) {
-            if (!AreAllSideMenusAreClosed()) {
-                PlayerUI.Instance.previousMenu = "location";
-            }
-        }
-    }
-    public void OnFactionTokenMenuToggled(bool state) {
-        if (!state) {
-            if (!AreAllSideMenusAreClosed()) {
-                PlayerUI.Instance.previousMenu = "faction";
-            }
-        }
-    }
-    private bool AreAllSideMenusAreClosed() {
-        if (!minionsMenuToggle.isOn && !charactersMenuToggle.isOn 
-            && !locationsMenuToggle.isOn && !factionsMenuToggle.isOn) {
-            PlayerUI.Instance.previousMenu = string.Empty;
-            return true;
-        }
-        return false;
-    }
 
     #region Inner Map
     [Header("Inner Maps")]

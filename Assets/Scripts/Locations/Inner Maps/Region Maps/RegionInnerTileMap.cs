@@ -42,7 +42,7 @@ namespace Inner_Maps {
                                  Utilities.IsInRange(tile.localPlace.x, width - EastEdge, width) ||
                                  Utilities.IsInRange(tile.localPlace.y, 0, SouthEdge) ||
                                  Utilities.IsInRange(tile.localPlace.y, height - NorthEdge, width);
-                if (isAtEdges == false && tile.buildSpotOwner.hexTileOwner != null) {
+                if (isAtEdges == false && tile.buildSpotOwner.isPartOfParentRegionMap) {
                     tile.CreateGenericTileObject();
                     tile.SetStructure(structure);
                 }
@@ -114,7 +114,7 @@ namespace Inner_Maps {
                             buildSpotColumn2 += 1;
                         }
 
-                        if (firstTileInRow == null) {
+                        if (firstTileInRow == null && isIndented) {
                             buildSpotColumn1 -= 1;
                             buildSpotColumn2 -= 1;
                         }
@@ -129,7 +129,7 @@ namespace Inner_Maps {
             for (int x = 0; x <= buildingSpots.GetUpperBound(0); x++) {
                 for (int y = 0; y <= buildingSpots.GetUpperBound(1); y++) {
                     BuildingSpot spot = buildingSpots[x, y];
-                    if (spot.hexTileOwner == null) {
+                    if (spot.isPartOfParentRegionMap == false) {
                         Messenger.Broadcast(Signals.MODIFY_BUILD_SPOT_WALKABILITY, spot, false);
                         for (int i = 0; i < spot.tilesInTerritory.Length; i++) {
                             LocationGridTile tile = spot.tilesInTerritory[i];

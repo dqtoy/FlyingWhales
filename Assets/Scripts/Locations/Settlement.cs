@@ -92,7 +92,6 @@ public class Settlement : IJobOwner {
         Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         Messenger.AddListener<FoodPile>(Signals.FOOD_IN_PILE_REDUCED, OnFoodInPileReduced);
         Messenger.AddListener<WoodPile>(Signals.WOOD_IN_PILE_REDUCED, OnWoodInPileReduced);
-        Messenger.AddListener(Signals.DAY_STARTED, PerDayHeroEventCreation);
         Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargettingCharacter);
         Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
@@ -636,7 +635,7 @@ public class Settlement : IJobOwner {
         for (int x = 0; x <= innerMap.buildingSpots.GetUpperBound(0); x++) {
             for (int y = 0; y <= innerMap.buildingSpots.GetUpperBound(1); y++) {
                 BuildingSpot spot = innerMap.buildingSpots[x, y];
-                if (spot.hexTileOwner != null) {
+                if (spot.isPartOfParentRegionMap) {
                     BuildSpotTileObject tileObj = new BuildSpotTileObject();
                     tileObj.SetBuildingSpot(spot);
                     LocationGridTile tileLocation = innerMap.map[spot.location.x, spot.location.y];
@@ -1045,74 +1044,6 @@ public class Settlement : IJobOwner {
     }
     #endregion
 
-    #region Hero Event Jobs
-    private int maxHeroEventJobs => region.residents.Count / 5; //There should be at most 1 Move Out Job per 5 residents
-    private int currentHeroEventJobs => GetNumberOfJobsWith(IsJobTypeAHeroEventJob);
-    private bool IsJobTypeAHeroEventJob(JobQueueItem item) {
-        switch (item.jobType) {
-            case JOB_TYPE.IMPROVE:
-            case JOB_TYPE.EXPLORE:
-                return true;
-            default:
-                return false;
-        }
-    }
-    private bool CanStillCreateHeroEventJob() {
-        return currentHeroEventJobs < maxHeroEventJobs;
-    }
-    private void PerDayHeroEventCreation() {
-        //improve job at 8 am
-        GameDate improveJobDate = GameManager.Instance.Today();
-        improveJobDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(8));
-        SchedulingManager.Instance.AddEntry(improveJobDate, TryCreateImproveJob, this);
-    }
-    /// <summary>
-    /// Try and create an improve job. This checks chances and max hero event jobs.
-    /// Criteria can be found at: https://trello.com/c/cICMVSch/2706-hero-events
-    /// NOTE: Since this will be checked each day at a specific time, I just added a scheduled event that calls this at the start of each day, rather than checking it every tick.
-    /// </summary>
-    private void TryCreateImproveJob() {
-        if (!CanStillCreateHeroEventJob()) {
-            return; //hero events are maxed.
-        }
-        Region validRegion;
-        if (UnityEngine.Random.Range(0, 100) < 15 && TryGetRegionToStudyAt(out validRegion)) {//15 
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IMPROVE, 
-                new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Buff", false, GOAP_EFFECT_TARGET.ACTOR),
-                validRegion.regionTileObject, this) ;
-            AddToAvailableJobs(job);
-            //expires at midnight
-            GameDate expiry = GameManager.Instance.Today();
-            expiry.SetTicks(GameManager.Instance.GetTicksBasedOnHour(24));
-            SchedulingManager.Instance.AddEntry(expiry, () => CheckIfJobWillExpire(job), this);
-        }
-    }
-    private bool TryGetRegionToStudyAt(out Region validRegion) {
-        var validRegions = new List<Region>();
-        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-            Region currRegion = GridMap.Instance.allRegions[i];
-            if (currRegion.mainLandmark.specificLandmarkType.IsPlayerLandmark() == false && currRegion.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE 
-                && currRegion.locationType.IsSettlementType() == false) {
-                validRegions.Add(currRegion);
-            }
-        }
-        if (validRegions.Count > 0) {
-            validRegion = Utilities.GetRandomElement(validRegions);
-            return true;
-        } else {
-            validRegion = null;
-            return false;    
-        }
-        
-    }
-    private void CheckIfJobWillExpire(JobQueueItem item) {
-        if (item.assignedCharacter == null) {
-            Debug.Log(GameManager.Instance.TodayLogString() + item.jobType.ToString() + " expired.");
-            item.CancelJob();
-        }
-    }
-    #endregion
-
     #region Settlement Map
     //public void OnMapGenerationFinished() {
     //    //place tokens in settlement to actual structures.
@@ -1159,6 +1090,9 @@ public class Settlement : IJobOwner {
         if (tiles.Contains(tile) == false) {
             tiles.Add(tile);
             tile.SetSettlementOnTile(this);
+            if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
+                tile.SetCorruption(true);
+            }
             // tile.UpdateLandmarkVisuals();
         }
     }
@@ -1171,6 +1105,9 @@ public class Settlement : IJobOwner {
     public void RemoveTileFromSettlement(HexTile tile) {
         if (tiles.Remove(tile)) {
             tile.SetSettlementOnTile(null);
+            if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
+                tile.SetCorruption(false);
+            }
         }
     }
     #endregion

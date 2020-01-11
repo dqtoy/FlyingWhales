@@ -27,7 +27,7 @@ public class Bed : TileObject {
     public override string ToString() {
         return "Bed " + id.ToString();
     }
-    public override void OnClickAction() {
+    public virtual void OnClickAction() {
         //base.OnClickAction();
         //cycle through characters in bed, and show the chosen characters ui
         if (UIManager.Instance.characterInfoUI.isShowing) {

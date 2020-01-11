@@ -4,9 +4,10 @@ namespace UtilityScripts {
         
         public static void ShowLocationInfo(Region region) {
             List<Settlement> settlements = GetSettlementsInRegion(region);
+            string summary = "Locations Job Queue";
             for (int i = 0; i < settlements.Count; i++) {
                 Settlement settlement = settlements[i];
-                string summary = $"\t{settlement.name} Location Job Queue: ";
+                summary += $"\n\t{settlement.name} Location Job Queue: ";
                 if (settlement.availableJobs.Count > 0) {
                     for (int j = 0; j < settlement.availableJobs.Count; j++) {
                         JobQueueItem jqi = settlement.availableJobs[j];
@@ -33,6 +34,7 @@ namespace UtilityScripts {
                 } else {
                     summary += "None";
                 }
+                summary += "\n";
                 UIManager.Instance.ShowSmallInfo(summary);
             }
         }

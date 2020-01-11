@@ -511,14 +511,14 @@ public class LocationStructure {
         CheckIfStructureDestroyed();
     }
     private void OnStructureDamaged() {
-        if (structureType.IsOpenSpace()) {
+        if (structureType.IsOpenSpace() || structureType.IsSettlementStructure() == false) {
             return; //do not check for damage if structure is open space (Wilderness, Work Settlement, Cemetery, etc.)
         }
         if (occupiedBuildSpot.advertisedActions.Contains(INTERACTION_TYPE.REPAIR_STRUCTURE) == false) {
             occupiedBuildSpot.AddAdvertisedAction(INTERACTION_TYPE.REPAIR_STRUCTURE);
         }
-        if (location is Settlement) {
-            if ((location as Settlement).HasJob(JOB_TYPE.REPAIR, occupiedBuildSpot) == false) {
+        if (settlementLocation != null) {
+            if (settlementLocation.HasJob(JOB_TYPE.REPAIR, occupiedBuildSpot) == false) {
                 CreateRepairJob();
             }    
         }

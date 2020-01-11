@@ -98,12 +98,13 @@ public class Region : ILocation {
 
     #region Utilities
     private string GetDescription() {
-        if (coreTile.isCorrupted) {
-            if (mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE) {
-                return "This region is empty. You may assign a minion to build a demonic landmark here.";
-            }
-        }
-        return LandmarkManager.Instance.GetLandmarkData(mainLandmark.specificLandmarkType).description;
+        // if (coreTile.isCorrupted) {
+        //     if (mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE) {
+        //         return "This region is empty. You may assign a minion to build a demonic landmark here.";
+        //     }
+        // }
+        // return LandmarkManager.Instance.GetLandmarkData(mainLandmark.specificLandmarkType).description;
+        return string.Empty;
     }
     public void FinalizeData() {
         //outerTiles = GetOuterTiles();
@@ -200,21 +201,29 @@ public class Region : ILocation {
 
     }
     public void ShowSolidBorder() {
-        for (int i = 0; i < _borderSprites.Count; i++) {
-            SpriteRenderer s = _borderSprites[i];
-            Color color = s.color;
-            color.a = HoveredBorderAlpha;
-            s.color = color;
-            s.gameObject.SetActive(true);
+        // for (int i = 0; i < _borderSprites.Count; i++) {
+        //     SpriteRenderer s = _borderSprites[i];
+        //     Color color = s.color;
+        //     color.a = HoveredBorderAlpha;
+        //     s.color = color;
+        //     s.gameObject.SetActive(true);
+        // }
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile tile = tiles[i];
+            tile.HighlightTile(Color.gray, 128f / 255f);
         }
     }
     public void ShowTransparentBorder() {
-        for (int i = 0; i < _borderSprites.Count; i++) {
-            SpriteRenderer s = _borderSprites[i];
-            Color color = s.color;
-            color.a = UnhoveredBorderAlpha;
-            s.color = color;
-            s.gameObject.SetActive(true);
+        // for (int i = 0; i < _borderSprites.Count; i++) {
+        //     SpriteRenderer s = _borderSprites[i];
+        //     Color color = s.color;
+        //     color.a = UnhoveredBorderAlpha;
+        //     s.color = color;
+        //     s.gameObject.SetActive(true);
+        // }
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile tile = tiles[i];
+            tile.UnHighlightTile();
         }
     }
     public void CenterCameraOnRegion() {

@@ -113,28 +113,6 @@ public class PartyInfoUI : UIMenu {
         
     }
     #region Create/Edit Party
-    public void ShowCreatePartyUI() {
-        base.OpenMenu();
-        for (int i = 0; i < partySlots.Length; i++) {
-            SlotItem currSlot = partySlots[i];
-            currSlot.ClearSlot(true);
-            //currSlot.SetNeededType(typeof(IUnit));
-            //currSlot.itemDroppedCallback = new ItemDroppedCallback();
-            currSlot.SetItemDroppedCallback(OnItemDroppedOnSlot);
-            currSlot.SetItemDroppedOutCallback(OnItemDroppedOutOfSlot);
-            currSlot.dropZone.SetEnabledState(true);
-            currSlot.draggable.SetDraggable(true);
-        }
-        partyNameErrorLbl.gameObject.SetActive(true);
-        partyMembersErrorLbl.gameObject.SetActive(true);
-        locationGO.SetActive(false);
-        confirmBtn.gameObject.SetActive(false);
-        UIManager.Instance.ShowMinionsMenu();
-        partyHolder = new PartyHolder();
-        partyEmblem.SetVisuals(partyHolder.emblemBG, partyHolder.emblem, partyHolder.partyColor);
-        partyField.text = partyHolder.name;
-        partyField.interactable = true;
-    }
     public void OnChangesMade() {
         if (currentlyShowingParty == null) {
             if (string.IsNullOrEmpty(partyField.text) || partyHolder.characters.Count <= 1) { //must have party name and more than 2 characters

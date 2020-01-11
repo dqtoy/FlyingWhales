@@ -21,10 +21,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
     public List<Character> owners { get; private set; }
     public virtual Character[] users {
         get {
-            if (slots == null) {
-                return null;
-            }
-            return slots.Where(x => x != null && x.user != null).Select(x => x.user).ToArray();
+            return slots?.Where(x => x != null && x.user != null).Select(x => x.user).ToArray() ?? null;
         }
     }//array of characters, currently using the tile object
     public Character removedBy { get; private set; }
@@ -127,11 +124,12 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         DestroyGameObject();
         OnRemoveTileObject(null, previousTile);
         SetPOIState(POI_STATE.INACTIVE);
-        //TODO: Make This Better!
-        //for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-        //    Character character = CharacterManager.Instance.allCharacters[i];
-        //    character.RemoveAwareness(this);
-        //}
+        TileObjectData objData;
+        if (TileObjectDB.TryGetTileObjectData(tileObjectType, out objData)) {
+            if (objData.occupiedSize.X > 1 || objData.occupiedSize.Y > 1) {
+                UnoccupyTiles(objData.occupiedSize, previousTile);
+            }
+        }
     }
     public virtual void OnPlacePOI() {
         SetPOIState(POI_STATE.ACTIVE);
@@ -140,11 +138,17 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
             gridTileLocation.parentMap.location.AddAwareness(this);
         }
         PlaceMapObjectAt(gridTileLocation);
-        OnPlaceObjectAtTile(gridTileLocation);
+        OnPlaceTileObjectAtTile(gridTileLocation);
+        TileObjectData objData;
+        if (TileObjectDB.TryGetTileObjectData(tileObjectType, out objData)) {
+            if (objData.occupiedSize.X > 1 || objData.occupiedSize.Y > 1) {
+                OccupyTiles(objData.occupiedSize, gridTileLocation);
+            }
+        }
     }
     public virtual void RemoveTileObject(Character removedBy) {
-        LocationGridTile previousTile = this.gridTileLocation;
-        this.gridTileLocation = null;
+        LocationGridTile previousTile = gridTileLocation;
+        gridTileLocation = null;
         //DisableGameObject();
         //DestroyGameObject();
         //OnRemoveTileObject(removedBy, previousTile);
@@ -241,10 +245,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         this.state = state;
     }
     /// <summary>
-    /// Action to do when the player clicks this object on the map.
-    /// </summary>
-    public virtual void OnClickAction() { Messenger.Broadcast(Signals.HIDE_MENUS); }
-    /// <summary>
     /// Triggered when the grid tile location of this object is set to null.
     /// </summary>
     protected virtual void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom) {
@@ -335,7 +335,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         }
         return false;
     }
-    public GoapPlanJob GetJobTargettingThisCharacter(JOB_TYPE jobType) {
+    public GoapPlanJob GetJobTargetingThisCharacter(JOB_TYPE jobType) {
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
             if (allJobsTargetingThis[i] is GoapPlanJob) {
                 GoapPlanJob job = allJobsTargetingThis[i] as GoapPlanJob;
@@ -353,8 +353,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         if (amount < 0 && source != null) {
             GameManager.Instance.CreateHitEffectAt(this);
         }
-        this.currentHP += amount;
-        this.currentHP = Mathf.Clamp(this.currentHP, 0, maxHP);
+        currentHP += amount;
+        currentHP = Mathf.Clamp(currentHP, 0, maxHP);
         if (currentHP == 0) {
             //object has been destroyed
             Character removedBy = null;
@@ -366,19 +366,19 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
     }
     public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {
         GameManager.Instance.CreateHitEffectAt(this);
-        if (this.currentHP <= 0) {
+        if (currentHP <= 0) {
             return; //if hp is already 0, do not deal damage
         }
-        this.AdjustHP(-characterThatAttacked.attackPower, source: characterThatAttacked);
+        AdjustHP(-characterThatAttacked.attackPower, source: characterThatAttacked);
         attackSummary += "\nDealt damage " + characterThatAttacked.attackPower.ToString();
-        if (this.currentHP <= 0) {
-            attackSummary += "\n" + this.name + "'s hp has reached 0.";
+        if (currentHP <= 0) {
+            attackSummary += "\n" + name + "'s hp has reached 0.";
         }
         //Messenger.Broadcast(Signals.CHARACTER_WAS_HIT, this, characterThatAttacked);
     }
     public void SetGridTileLocation(LocationGridTile tile) {
-        previousTile = this.gridTileLocation;
-        this.gridTileLocation = tile;
+        previousTile = gridTileLocation;
+        gridTileLocation = tile;
     }
     public void ConstructResources() {
         storedResources = new Dictionary<RESOURCE, int>() {
@@ -452,7 +452,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
     #endregion
 
     #region Tile Object Slots
-    protected virtual void OnPlaceObjectAtTile(LocationGridTile tile) {
+    protected virtual void OnPlaceTileObjectAtTile(LocationGridTile tile) {
         removedBy = null;
         CheckFurnitureSettings();
         if (hasCreatedSlots) {
@@ -467,13 +467,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         Sprite usedAsset = mapVisual.usedSprite;
         if (tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT && usedAsset != null && InnerMapManager.Instance.HasSettingForTileObjectAsset(usedAsset)) {
             List<TileObjectSlotSetting> slotSettings = InnerMapManager.Instance.GetTileObjectSlotSettings(usedAsset);
-            slotsParent = GameObject.Instantiate(InnerMapManager.Instance.tileObjectSlotsParentPrefab, mapVisual.transform);
+            slotsParent = Object.Instantiate(InnerMapManager.Instance.tileObjectSlotsParentPrefab, mapVisual.transform);
             slotsParent.transform.localPosition = Vector3.zero;
-            slotsParent.name = this.ToString() + " Slots";
+            slotsParent.name = ToString() + " Slots";
             slots = new TileObjectSlotItem[slotSettings.Count];
             for (int i = 0; i < slotSettings.Count; i++) {
                 TileObjectSlotSetting currSetting = slotSettings[i];
-                GameObject currSlot = GameObject.Instantiate(InnerMapManager.Instance.tileObjectSlotPrefab, Vector3.zero, Quaternion.identity, slotsParent.transform);
+                GameObject currSlot = Object.Instantiate(InnerMapManager.Instance.tileObjectSlotPrefab, Vector3.zero, Quaternion.identity, slotsParent.transform);
                 TileObjectSlotItem currSlotItem = currSlot.GetComponent<TileObjectSlotItem>();
                 currSlotItem.ApplySettings(this, currSetting);
                 slots[i] = currSlotItem;
@@ -491,7 +491,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
             return;
         }
         for (int i = 0; i < slots.Length; i++) {
-            GameObject.Destroy(slots[i].gameObject);
+            Object.Destroy(slots[i].gameObject);
         }
         slots = null;
         hasCreatedSlots = false;
@@ -599,6 +599,20 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
     public virtual bool CanBeDamaged() {
         return mapObjectState != MAP_OBJECT_STATE.UNBUILT;
     }
+    private void OccupyTiles(Point size, LocationGridTile tile) {
+        List<LocationGridTile> overlappedTiles = tile.parentMap.GetTiles(size, tile);
+        for (int i = 0; i < overlappedTiles.Count; i++) {
+            LocationGridTile currTile = overlappedTiles[i];
+            currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+        }
+    }
+    private void UnoccupyTiles(Point size, LocationGridTile tile) {
+        List<LocationGridTile> overlappedTiles = tile.parentMap.GetTiles(size, tile);
+        for (int i = 0; i < overlappedTiles.Count; i++) {
+            LocationGridTile currTile = overlappedTiles[i];
+            currTile.SetTileState(LocationGridTile.Tile_State.Empty);
+        }
+    }
     #endregion
 
     #region Inspect
@@ -617,11 +631,11 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool("LocationGridTileGUS", Vector3.zero, Quaternion.identity, mapVisual.transform);//gridTileLocation.parentAreaMap.graphUpdateScenesParent
         LocationGridTileGUS gus = go.GetComponent<LocationGridTileGUS>();
         gus.Initialize(offset, size, this);
-        this.graphUpdateScene = gus;
+        graphUpdateScene = gus;
     }
     protected void DestroyExistingGUS() {
-        if (this.graphUpdateScene != null) {
-            this.graphUpdateScene.Destroy();
+        if (graphUpdateScene != null) {
+            graphUpdateScene.Destroy();
         }
     }
     #endregion
@@ -630,8 +644,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
     private void CheckFurnitureSettings() {
         if (gridTileLocation.hasFurnitureSpot) {
             FurnitureSetting furnitureSetting;
-            if (gridTileLocation.furnitureSpot.TryGetFurnitureSettings(this.tileObjectType.ConvertTileObjectToFurniture(), out furnitureSetting)) {
-                this.mapVisual.ApplyFurnitureSettings(furnitureSetting);
+            if (gridTileLocation.furnitureSpot.TryGetFurnitureSettings(tileObjectType.ConvertTileObjectToFurniture(), out furnitureSetting)) {
+                mapVisual.ApplyFurnitureSettings(furnitureSetting);
             }
         }
     }
@@ -639,7 +653,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
 
     #region Map Object
     protected override void CreateAreaMapGameObject() {
-        GameObject obj = InnerMapManager.Instance.mapObjectFactory.CreateNewTileObjectAreaMapObject(this.tileObjectType);
+        GameObject obj = InnerMapManager.Instance.mapObjectFactory.CreateNewTileObjectAreaMapObject(tileObjectType);
         mapVisual = obj.GetComponent<TileObjectGameObject>();
     }
     private INTERACTION_TYPE[] storedActions;
