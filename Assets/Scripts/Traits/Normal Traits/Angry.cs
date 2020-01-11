@@ -9,9 +9,11 @@ namespace Traits {
             description = "This character will often argue with others and may destroy objects.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
-            
-            
-            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(4);
+            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(8);
+            moodEffect = -3;
+            isStacking = true;
+            stackLimit = 5;
+            stackModifier = 0.5f;
             //effects = new List<TraitEffect>();
         }
 

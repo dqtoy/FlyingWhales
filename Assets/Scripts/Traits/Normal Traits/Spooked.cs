@@ -12,8 +12,11 @@ namespace Traits {
             description = "This character is too scared and may refuse to sleep.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);
+            moodEffect = -3;
+            isStacking = true;
+            stackLimit = 5;
+            stackModifier = 0.5f;
             //effects = new List<TraitEffect>();
             //terrifyingCharacters = new List<Character>();
         }

@@ -18,6 +18,7 @@ namespace Traits {
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DISPEL_MAGIC, };
             cursedInteractions = new List<CursedInteraction>();
             //effects = new List<TraitEffect>();
+            moodEffect = -7;
         }
 
         public void SetCursedInteractions(List<CursedInteraction> cursedInteractions) {

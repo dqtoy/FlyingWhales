@@ -23,6 +23,7 @@ namespace Traits {
             canBeReanimated = false;
             willBeReanimated = false;
             doNotCheckPerHour = false;
+            moodEffect = -5;
         }
 
         #region Override

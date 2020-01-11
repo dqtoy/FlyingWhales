@@ -5,9 +5,9 @@ using UnityEngine;
 namespace Traits {
     public class Lover : RelationshipTrait {
 
-        public override string nameInUI {
-            get { return "Lover: " + targetCharacter.name; }
-        }
+        //public override string nameInUI {
+        //    get { return "Lover: " + targetCharacter.name; }
+        //}
 
         public Lover(Character target) : base(target) {
             name = "Lover";
@@ -20,5 +20,8 @@ namespace Traits {
             //effects = new List<TraitEffect>();
         }
 
+        public override string GetNameInUI(ITraitable traitable) {
+            return "Lover: " + traitable.name;
+        }
     }
 }

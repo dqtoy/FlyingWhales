@@ -10,9 +10,11 @@ namespace Traits {
             description = "This character is intoxicated and may lash out at nearby characters.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
-            
-            
-            ticksDuration = 24;
+            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(8);
+            moodEffect = 4;
+            isStacking = true;
+            stackLimit = 5;
+            stackModifier = 0.5f;
             //effects = new List<TraitEffect>();
         }
 

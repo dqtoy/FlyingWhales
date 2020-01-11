@@ -11,6 +11,7 @@ namespace Traits {
 
         List<Trait> allTraits { get; }
         Dictionary<Trait, int> stacks { get; }
+        //Dictionary<Trait, int> currentDurations { get; }
         //List<RelationshipTrait> relationshipTraits { get; }
 
         #region Adding
@@ -39,9 +40,9 @@ namespace Traits {
         #endregion
 
         #region Processes
-        void ProcessOnTickStarted();
-        void ProcessOnTickEnded();
-        void ProcessOnHourStarted();
+        void ProcessOnTickStarted(ITraitable owner);
+        void ProcessOnTickEnded(ITraitable owner);
+        void ProcessOnHourStarted(ITraitable owner);
         #endregion
     }
 }

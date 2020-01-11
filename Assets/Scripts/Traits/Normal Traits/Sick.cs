@@ -14,12 +14,13 @@ namespace Traits {
             description = "This character has caught a mild illness.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            
-            
-            
-            ticksDuration = 480;
+            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CURE_CHARACTER, };
             mutuallyExclusive = new string[] { "Robust" };
+            moodEffect = -4;
+            isStacking = true;
+            stackLimit = 5;
+            stackModifier = 0.5f;
             //effects = new List<TraitEffect>();
         }
 

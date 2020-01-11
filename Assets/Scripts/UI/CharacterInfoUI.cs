@@ -74,6 +74,8 @@ public class CharacterInfoUI : UIMenu {
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, UpdateTraitsFromSignal);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, UpdateTraitsFromSignal);
+        Messenger.AddListener<Character, Trait>(Signals.TRAIT_STACKED, UpdateTraitsFromSignal);
+        Messenger.AddListener<Character, Trait>(Signals.TRAIT_UNSTACKED, UpdateTraitsFromSignal);
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
@@ -263,7 +265,7 @@ public class CharacterInfoUI : UIMenu {
                 if (!string.IsNullOrEmpty(statusTraits)) {
                     statusTraits = $"{statusTraits}, ";
                 }
-                statusTraits = $"{statusTraits}<b><color={color}><link=\"{i}\">{currTrait.name}</link></color></b>";
+                statusTraits = $"{statusTraits}<b><color={color}><link=\"{i}\">{currTrait.GetNameInUI(activeCharacter)}</link></color></b>";
             } else {
                 string color = normalTextColor;
                 if (currTrait.type == TRAIT_TYPE.BUFF) {
@@ -274,7 +276,7 @@ public class CharacterInfoUI : UIMenu {
                 if (!string.IsNullOrEmpty(normalTraits)) {
                     normalTraits = $"{normalTraits}, ";
                 }
-                normalTraits = $"{normalTraits}<b><color={color}><link=\"{i}\">{currTrait.name}</link></color></b>";
+                normalTraits = $"{normalTraits}<b><color={color}><link=\"{i}\">{currTrait.GetNameInUI(activeCharacter)}</link></color></b>";
             }
         }
 
@@ -460,7 +462,7 @@ public class CharacterInfoUI : UIMenu {
         summary = $"{summary}{("\nFood: " + activeCharacter.food.ToString())}";
         summary = $"{summary}{("\nRole: " + activeCharacter.role.roleType.ToString())}";
         summary = $"{summary}{("\nSexuality: " + activeCharacter.sexuality.ToString())}";
-        summary = $"{summary}{("\nMood: " + activeCharacter.moodValue.ToString() + "(" + activeCharacter.currentMoodType.ToString() + ")")}";
+        summary = $"{summary}{("\nMood: " + activeCharacter.moodValue + "/100" + "(" + activeCharacter.currentMoodType.ToString() + ")")}";
         summary = $"{summary}{("\nHP: " + activeCharacter.currentHP.ToString() + "/" + activeCharacter.maxHP.ToString())}";
         summary = $"{summary}{("\nIgnore Hostiles: " + activeCharacter.ignoreHostility.ToString())}";
         summary = $"{summary}{("\nAttack Range: " + activeCharacter.characterClass.attackRange.ToString())}";
@@ -571,6 +573,9 @@ public class CharacterInfoUI : UIMenu {
     #region Actions
     protected override void LoadActions() {
         Utilities.DestroyChildren(actionsTransform);
+        if (activeCharacter.faction.isPlayerFaction) {
+            return;
+        }
         ActionItem afflictItem = AddNewAction("Afflict", null, ShowAfflictUI);
 
         ActionItem zapItem = AddNewAction("Zap", null, Zap);

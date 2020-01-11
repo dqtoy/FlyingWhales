@@ -5,9 +5,9 @@ using UnityEngine;
 namespace Traits {
     public class Saver : RelationshipTrait {
 
-        public override string nameInUI {
-            get { return "Saver: " + targetCharacter.name; }
-        }
+        //public override string nameInUI {
+        //    get { return "Saver: " + targetCharacter.name; }
+        //}
 
         public Saver(Character target) : base(target) {
             name = "Saver";
@@ -18,6 +18,9 @@ namespace Traits {
             
             ticksDuration = 0;
             //effects = new List<TraitEffect>();
+        }
+        public override string GetNameInUI(ITraitable traitable) {
+            return "Saver: " + traitable.name;
         }
     }
 

@@ -6,12 +6,14 @@ using UnityEngine;
 namespace Traits {
     [System.Serializable]
     public class Trait {
-        public virtual string nameInUI {
-            get { return name; }
-        }
+        //public virtual string nameInUI {
+        //    get { return name; }
+        //}
         public virtual bool isNotSavable {
             get { return false; }
         }
+
+        //Non-changeable values
         public string name;
         public string description;
         public string thoughtText;
@@ -28,20 +30,18 @@ namespace Traits {
         public bool hindersWitness; //if a character has this trait, and this is true, then he/she cannot witness events
         public bool hindersMovement; //if a character has this trait, and this is true, then he/she cannot move
         public bool hindersAttackTarget; //if a character has this trait, and this is true, then he/she cannot be attacked
+        public bool isStacking;
+        public int stackLimit;
+        public float stackModifier;
         //public bool isNonRemovable; //determines if trait can be removed through natural process (ie. RemoveTrait, etc.), if this is set to true, it means that it can only be removed by certain functions
 
         public Character responsibleCharacter { get { return responsibleCharacters.FirstOrDefault(); } }
         public List<Character> responsibleCharacters { get; protected set; }
-        public Dictionary<ITraitable, string> expiryTickets { get; private set; } //this is the key for the scheduled removal of this trait for each object
+        //public Dictionary<ITraitable, string> expiryTickets { get; private set; } //this is the key for the scheduled removal of this trait for each object
         public ActualGoapNode gainedFromDoing { get; private set; } //what action was this poi involved in that gave it this trait.
         public GameDate dateEstablished { get; protected set; }
         public virtual bool isPersistent { get { return false; } } //should this trait persist through all a character's alter egos
         //public virtual bool isRemovedOnSwitchAlterEgo { get { return false; } }
-
-        //Stacking
-        public bool isStacking;
-        public int stackLimit;
-        public float stackModifier;
 
         #region Virtuals
         public virtual void OnAddTrait(ITraitable addedTo) {
@@ -67,6 +67,19 @@ namespace Traits {
                         character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
                     }
                 }
+            }
+        }
+        public virtual void OnStackTrait(ITraitable addedTo) {
+            if (addedTo is Character) {
+                Character character = addedTo as Character;
+                character.AdjustMoodValue(Mathf.RoundToInt(moodEffect * stackModifier), this);
+            }
+            SetDateEstablished(GameManager.Instance.Today());
+        }
+        public virtual void OnUnstackTrait(ITraitable addedTo) {
+            if (addedTo is Character) {
+                Character character = addedTo as Character;
+                character.AdjustMoodValue(-Mathf.RoundToInt(moodEffect * stackModifier), this);
             }
         }
         public virtual string GetToolTipText() { return string.Empty; }
@@ -138,7 +151,9 @@ namespace Traits {
             return reasons;
 
         }
-        public virtual void OnTickStarted() { }
+        public virtual void OnTickStarted() {
+
+        }
         public virtual void OnTickEnded() { }
         public virtual void OnHourStarted() { }
         #endregion
@@ -169,11 +184,13 @@ namespace Traits {
             ticksDuration = newDuration;
         }
         public void AddCharacterResponsibleForTrait(Character character) {
-            if (responsibleCharacters == null) {
-                responsibleCharacters = new List<Character>();
-            }
-            if (character != null && !responsibleCharacters.Contains(character)) {
-                responsibleCharacters.Add(character);
+            if (character != null) {
+                if (responsibleCharacters == null) {
+                    responsibleCharacters = new List<Character>();
+                }
+                if (!responsibleCharacters.Contains(character)) {
+                    responsibleCharacters.Add(character);
+                }
             }
         }
         public bool IsResponsibleForTrait(Character character) {
@@ -184,21 +201,21 @@ namespace Traits {
             }
             return false;
         }
-        public void SetExpiryTicket(ITraitable obj, string expiryTicket) {
-            if (expiryTickets == null) {
-                expiryTickets = new Dictionary<ITraitable, string>();
-            }
-            if (!expiryTickets.ContainsKey(obj)) {
-                expiryTickets.Add(obj, expiryTicket);
-            } else {
-                expiryTickets[obj] = expiryTicket;
-            }
-        }
-        public void RemoveExpiryTicket(ITraitable traitable) {
-            if (expiryTickets != null) {
-                expiryTickets.Remove(traitable);
-            }
-        }
+        //public void SetExpiryTicket(ITraitable obj, string expiryTicket) {
+        //    if (expiryTickets == null) {
+        //        expiryTickets = new Dictionary<ITraitable, string>();
+        //    }
+        //    if (!expiryTickets.ContainsKey(obj)) {
+        //        expiryTickets.Add(obj, expiryTicket);
+        //    } else {
+        //        expiryTickets[obj] = expiryTicket;
+        //    }
+        //}
+        //public void RemoveExpiryTicket(ITraitable traitable) {
+        //    if (expiryTickets != null) {
+        //        expiryTickets.Remove(traitable);
+        //    }
+        //}
         public void LevelUp() {
             level++;
             level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY);
@@ -235,6 +252,13 @@ namespace Traits {
                 }
             }
             return false;
+        }
+        public virtual string GetNameInUI(ITraitable traitable) {
+            Dictionary<Trait, int> stacks = traitable.traitContainer.stacks;
+            if (isStacking && stacks.ContainsKey(this) && stacks[this] > 1) {
+                return name + " (x" + stacks[this] + ")";
+            }
+            return name;
         }
         #endregion
 

@@ -7,15 +7,17 @@ namespace Traits {
     public class TraitContainer : ITraitContainer {
 
         private List<Trait> _allTraits;
+        public Dictionary<Trait, int> stacks { get; private set; }
+        //public Dictionary<Trait, int> currentDurations { get; private set; } //Temporary only, fix this by making all traits instanced based and just object pool them
 
         #region getters/setters
         public List<Trait> allTraits { get { return _allTraits; } }
-        public Dictionary<Trait, int> stacks { get; private set; }
         #endregion
 
         public TraitContainer() {
             _allTraits = new List<Trait>();
             stacks = new Dictionary<Trait, int>();
+            //currentDurations = new Dictionary<Trait, int>();
         }
 
         #region Adding
@@ -78,11 +80,31 @@ namespace Traits {
         /// </summary>
         /// <returns>If the trait was removed or not.</returns>
         public bool RemoveTrait(ITraitable removeFrom, Trait trait, Character removedBy = null) {
-            bool removed = _allTraits.Remove(trait);
-            if (removed) {
-                removeFrom.traitProcessor.OnTraitRemoved(removeFrom, trait, removedBy);
+            bool removedOrUnstacked = false;
+            if (!trait.isStacking) {
+                removedOrUnstacked = _allTraits.Remove(trait);
+                if (removedOrUnstacked) {
+                    removeFrom.traitProcessor.OnTraitRemoved(removeFrom, trait, removedBy);
+                }
+            } else {
+                if (stacks.ContainsKey(trait)) {
+                    if(stacks[trait] > 1) {
+                        stacks[trait]--;
+                        removeFrom.traitProcessor.OnTraitUnstack(removeFrom, trait, removedBy);
+                        removedOrUnstacked = true;
+                    } else {
+                        stacks.Remove(trait);
+                        removedOrUnstacked = _allTraits.Remove(trait);
+                        if (removedOrUnstacked) {
+                            removeFrom.traitProcessor.OnTraitRemoved(removeFrom, trait, removedBy);
+                        }
+                    }
+                    
+                } else {
+                    throw new Exception("Removing stack of " + trait.name + " trait from " + removeFrom.name + " but there is not stack, this should not happen...");
+                }
             }
-            return removed;
+            return removedOrUnstacked;
         }
         public bool RemoveTrait(ITraitable removeFrom, string traitName, Character removedBy = null) {
             Trait trait = GetNormalTrait<Trait>(traitName);
@@ -92,15 +114,30 @@ namespace Traits {
             return false;
         }
         public bool RemoveTrait(ITraitable removeFrom, int index, Character removedBy = null) {
-            bool removed = true;
+            bool removedOrUnstacked = true;
             if(index < 0 || index >= _allTraits.Count) {
-                removed = false;
+                removedOrUnstacked = false;
             } else {
                 Trait trait = _allTraits[index];
-                _allTraits.RemoveAt(index);
-                removeFrom.traitProcessor.OnTraitRemoved(removeFrom, trait, removedBy);
+                if (!trait.isStacking) {
+                    _allTraits.RemoveAt(index);
+                    removeFrom.traitProcessor.OnTraitRemoved(removeFrom, trait, removedBy);
+                } else {
+                    if (stacks.ContainsKey(trait)) {
+                        if (stacks[trait] > 1) {
+                            stacks[trait]--;
+                            removeFrom.traitProcessor.OnTraitUnstack(removeFrom, trait, removedBy);
+                        } else {
+                            stacks.Remove(trait);
+                            _allTraits.RemoveAt(index);
+                            removeFrom.traitProcessor.OnTraitRemoved(removeFrom, trait, removedBy);
+                        }
+                    } else {
+                        throw new Exception("Removing stack of " + trait.name + " trait from " + removeFrom.name + " but there is not stack, this should not happen...");
+                    }
+                }
             }
-            return removed;
+            return removedOrUnstacked;
         }
         public void RemoveTrait(ITraitable removeFrom, List<Trait> traits) {
             for (int i = 0; i < traits.Count; i++) {
@@ -209,21 +246,34 @@ namespace Traits {
         #endregion
 
         #region Processes
-        public void ProcessOnTickStarted() {
+        public void ProcessOnTickStarted(ITraitable owner) {
             if(allTraits != null) {
                 for (int i = 0; i < allTraits.Count; i++) {
                     allTraits[i].OnTickStarted();
                 }
             }
         }
-        public void ProcessOnTickEnded() {
+        public void ProcessOnTickEnded(ITraitable owner) {
             if (allTraits != null) {
                 for (int i = 0; i < allTraits.Count; i++) {
-                    allTraits[i].OnTickEnded();
+                    Trait trait = allTraits[i];
+                    trait.OnTickEnded();
+                    //if (currentDurations.ContainsKey(trait)) {
+                    //    currentDurations[trait]++;
+                    //    if(currentDurations[trait] >= trait.ticksDuration) {
+                    //        int prevCount = allTraits.Count;
+                    //        bool removed = RemoveTrait(owner, i);
+                    //        if (removed) {
+                    //            if(allTraits.Count != prevCount) {
+                    //                i--;
+                    //            }
+                    //        }
+                    //    }
+                    //}
                 }
             }
         }
-        public void ProcessOnHourStarted() {
+        public void ProcessOnHourStarted(ITraitable owner) {
             if (allTraits != null) {
                 for (int i = 0; i < allTraits.Count; i++) {
                     allTraits[i].OnHourStarted();

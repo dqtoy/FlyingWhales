@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace Traits {
     public class Master : RelationshipTrait {
-        public override string nameInUI {
-            get { return "Master: " + targetCharacter.name; }
-        }
+        //public override string nameInUI {
+        //    get { return "Master: " + targetCharacter.name; }
+        //}
 
         public Master(Character target) : base(target) {
             name = "Master";
@@ -21,6 +21,9 @@ namespace Traits {
 
         public override bool IsUnique() {
             return false;
+        }
+        public override string GetNameInUI(ITraitable traitable) {
+            return "Master: " + traitable.name;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Traits {
             description = "This character will attack anyone at random and may destroy objects.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            ticksDuration = 24;
+            ticksDuration = 72;
             hindersWitness = true;
         }
 

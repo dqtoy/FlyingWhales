@@ -133,6 +133,8 @@ public static class Signals {
     public static string CHARACTER_LEVEL_CHANGED = "OnCharacterLevelChange"; //Parameters (Character character)
     public static string TRAIT_ADDED = "OnTraitAdded";
     public static string TRAIT_REMOVED = "OnTraitRemoved"; //Parameters (Character character, Trait)
+    public static string TRAIT_STACKED = "OnTraitStacked";
+    public static string TRAIT_UNSTACKED = "OnTraitUnstacked";
     public static string ADJUSTED_HP = "OnAdjustedHP";
     public static string PARTY_STARTED_TRAVELLING = "OnPartyStartedTravelling"; //Parameters (Party travellingParty)
     public static string PARTY_DONE_TRAVELLING = "OnPartyDoneTravelling"; //Parameters (Party travellingParty)

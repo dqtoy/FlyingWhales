@@ -14,7 +14,7 @@ namespace Traits {
             description = "This character is catatonic.";
             type = TRAIT_TYPE.DISABLER;
             effect = TRAIT_EFFECT.NEGATIVE;
-            ticksDuration = GameManager.ticksPerDay;
+            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED };
             //charactersThatKnow = new List<Character>();
             hindersMovement = true;

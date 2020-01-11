@@ -3639,17 +3639,17 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     private void ProcessTraitsOnTickStarted() {
         if (!interruptComponent.isInterrupted) {
-            traitContainer.ProcessOnTickStarted();
+            traitContainer.ProcessOnTickStarted(this);
         }
     }
     private void ProcessTraitsOnTickEnded() {
         if (!interruptComponent.isInterrupted) {
-            traitContainer.ProcessOnTickEnded();
+            traitContainer.ProcessOnTickEnded(this);
         }
     }
     private void ProcessTraitsOnHourStarted() {
         if (!interruptComponent.isInterrupted) {
-            traitContainer.ProcessOnHourStarted();
+            traitContainer.ProcessOnHourStarted(this);
         }
     }
     #endregion
@@ -3737,6 +3737,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     private void DailyGoapProcesses() {
         needsComponent.DailyGoapProcesses();
     }
+    protected virtual void OnTickStartedWhileSeized() {
+        CheckMissing();
+    }
     protected virtual void OnTickStarted() {
         //What happens every start of tick
 
@@ -3747,20 +3750,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (!isDead && !isInCombat) {
             HPRecovery(0.0025f);
         }
-        if (isAtHomeRegion) {
-            if (currentMissingTicks != 0) {
-                currentMissingTicks = 0;
-                Messenger.Broadcast(Signals.CHARACTER_NO_LONGER_MISSING, this);
-            }
-        } else {
-            //If not home region, increment missing ticks
-            if(currentMissingTicks <= CharacterManager.Instance.CHARACTER_MISSING_THRESHOLD) {
-                currentMissingTicks++;
-                if (currentMissingTicks > CharacterManager.Instance.CHARACTER_MISSING_THRESHOLD) {
-                    Messenger.Broadcast(Signals.CHARACTER_MISSING, this);
-                }
-            }
-        }
+        CheckMissing();
         ProcessTraitsOnTickStarted();
         StartTickGoapPlanGeneration();
     }
@@ -5592,9 +5582,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (marker != null) {
             DestroyMarker();
         }
+        Messenger.AddListener(Signals.TICK_STARTED, OnTickStartedWhileSeized);
         Messenger.Broadcast(Signals.ON_SEIZE_CHARACTER, this);
     }
     public void OnUnseizePOI(LocationGridTile tileLocation) {
+        Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStartedWhileSeized);
         needsComponent.OnCharacterArrivedAtLocation(tileLocation.structure.location.coreTile.region);
         SubscribeToSignals();
         SetPOIState(POI_STATE.ACTIVE);
@@ -5983,7 +5975,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             if(currentActionNode != null && currentActionNode.action.goapType == INTERACTION_TYPE.TANTRUM) {
                 return;
             }
-            string tantrumReason = "Became " + fromTrait.nameInUI;
+            string tantrumReason = "Became " + fromTrait.GetNameInUI(this);
             if (triggerAction != null) {
                 tantrumReason = Utilities.LogReplacer(triggerAction.currentState.descriptionLog);
             }
@@ -6274,6 +6266,24 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     #endregion
 
     #region Missing
+    public void CheckMissing() {
+        if (!isDead) {
+            if (marker != null && gridTileLocation != null && isAtHomeRegion && gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile != null) {
+                if (currentMissingTicks > CharacterManager.Instance.CHARACTER_MISSING_THRESHOLD) {
+                    currentMissingTicks = 0;
+                    Messenger.Broadcast(Signals.CHARACTER_NO_LONGER_MISSING, this);
+                }
+            } else {
+                //If not home region, increment missing ticks
+                if (currentMissingTicks <= CharacterManager.Instance.CHARACTER_MISSING_THRESHOLD) {
+                    currentMissingTicks++;
+                    if (currentMissingTicks > CharacterManager.Instance.CHARACTER_MISSING_THRESHOLD) {
+                        Messenger.Broadcast(Signals.CHARACTER_MISSING, this);
+                    }
+                }
+            }
+        }
+    }
     private void OnCharacterMissing(Character missingCharacter) {
         if(missingCharacter != this) {
             string opinionLabel = opinionComponent.GetOpinionLabel(missingCharacter);

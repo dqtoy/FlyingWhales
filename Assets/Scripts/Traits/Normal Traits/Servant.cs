@@ -5,9 +5,9 @@ using UnityEngine;
 namespace Traits {
     public class Servant : RelationshipTrait {
 
-        public override string nameInUI {
-            get { return "Servant: " + targetCharacter.name; }
-        }
+        //public override string nameInUI {
+        //    get { return "Servant: " + targetCharacter.name; }
+        //}
 
         public Servant(Character target) : base(target) {
             name = "Servant";
@@ -22,6 +22,9 @@ namespace Traits {
 
         public override bool IsUnique() {
             return false;
+        }
+        public override string GetNameInUI(ITraitable traitable) {
+            return "Servant: " + traitable.name;
         }
     }
 }

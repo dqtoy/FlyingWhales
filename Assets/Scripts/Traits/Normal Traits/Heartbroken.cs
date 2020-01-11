@@ -11,8 +11,11 @@ namespace Traits {
             description = "This character is heartbroken and may refuse entertainment.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);
+            moodEffect = -8;
+            isStacking = true;
+            stackLimit = 5;
+            stackModifier = 0.25f;
         }
 
         #region Overrides

@@ -17,7 +17,7 @@ public class TraitItem : MonoBehaviour {
 
     public void SetCombatAttribute(Trait trait) {
         this.trait = trait;
-        nameText.text = this.trait.nameInUI;
+        nameText.text = this.trait.name;
 
         if (this.trait is RelationshipTrait) {
             RelationshipTrait relTrait = this.trait as RelationshipTrait;
@@ -43,7 +43,7 @@ public class TraitItem : MonoBehaviour {
 
     public void OnHover() {
         if(trait != null) {
-            string summary = trait.nameInUI;
+            string summary = trait.name;
             summary += "\n" + trait.GetTestingData();
             if(summary != string.Empty) {
                 UIManager.Instance.ShowSmallInfo(summary);
