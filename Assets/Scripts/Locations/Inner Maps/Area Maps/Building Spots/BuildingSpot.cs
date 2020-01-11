@@ -25,6 +25,10 @@ public class BuildingSpot {
 
     #region getters
     public bool hasBlueprint => blueprint != null;
+    /// <summary>
+    /// Is this build spot to be considered as part of it's region map ("part" meaning if this spots tiles are valid)
+    /// </summary>
+    public bool isPartOfParentRegionMap => hexTileOwner != null;
     #endregion
 
     public BuildingSpot(BuildingSpotData data) {
@@ -147,7 +151,7 @@ public class BuildingSpot {
     /// <param name="settlement">The provided settlement</param>
     /// <returns>True or false</returns>
     public bool IsOpenFor(Settlement settlement) {
-        if (hexTileOwner == null) {
+        if (isPartOfParentRegionMap == false) {
             return false;
         }
         if (isOccupied) {

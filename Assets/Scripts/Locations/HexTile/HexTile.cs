@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using PathFind;
 using System.Linq;
 using Inner_Maps;
+using JetBrains.Annotations;
 using SpriteGlow;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -93,6 +94,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     #endregion
 
     private void Awake() {
+        _highlightSpriteRenderer = _highlightGO.GetComponent<SpriteRenderer>();
         _structureAnimatorSpriteRenderer = structureAnimation.gameObject.GetComponent<SpriteRenderer>();
         _highlightGOSpriteRenderer = highlightGO.GetComponent<SpriteRenderer>();
         _hoverHighlightSpriteRenderer = _hoverHighlightGO.GetComponent<SpriteRenderer>();
@@ -105,9 +107,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     private void OnGameLoaded() {
         Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
         SubscribeListeners();
-        // if (landmarkOnTile != null && landmarkOnTile.specificLandmarkType.IsPlayerLandmark() == false) {
-        //     CheckIfStructureVisualsAreStillValid();    
-        // }
+        if (landmarkOnTile != null && landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE) {
+            CheckIfStructureVisualsAreStillValid();    
+        }
     }
 
     #region Elevation Functions
@@ -614,7 +616,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     public void HighlightTile(Color color, float alpha) {
         color.a = alpha;
         _highlightGO.SetActive(true);
-        _highlightGO.GetComponent<SpriteRenderer>().color = color;
+        _highlightSpriteRenderer.color = color;
     }
     public void UnHighlightTile() {
             _highlightGO.SetActive(false);
@@ -679,12 +681,30 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         if (PlayerManager.Instance.isChoosingStartingTile) {
             return;
         }
-        // if (region.coreTile == this) {
-        //     UIManager.Instance.ShowRegionInfo(this.region);
-        // } else {
-        //     Messenger.Broadcast(Signals.HIDE_MENUS);
-        // }
-        Messenger.Broadcast(Signals.HIDE_MENUS);
+        if (region != null) {
+            //if region info ui is showing, show tile info ui
+            if (UIManager.Instance.regionInfoUI.isShowing && this.landmarkOnTile != null) {
+                if (UIManager.Instance.regionInfoUI.activeRegion == this.region) {
+                    UIManager.Instance.ShowHexTileInfo(this);    
+                } else {
+                    UIManager.Instance.ShowRegionInfo(this.region);
+                }
+            } else if (UIManager.Instance.hexTileInfoUI.isShowing) {
+                if (UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile.region == this.region) {
+                    if (UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile == this || this.landmarkOnTile == null) {
+                        UIManager.Instance.ShowRegionInfo(this.region);
+                    } else {
+                        UIManager.Instance.ShowHexTileInfo(this);
+                    }
+                } else {
+                    UIManager.Instance.ShowRegionInfo(this.region);    
+                }
+            } else {
+                UIManager.Instance.ShowRegionInfo(this.region);
+            }
+        } else {
+            Messenger.Broadcast(Signals.HIDE_MENUS);
+        }
     }
     public void RightClick() {
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
@@ -714,7 +734,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         // }
         if (region != null) {
             InnerMapManager.Instance.TryShowLocationMap(region);
-            InnerMapCameraMove.Instance.CenterCameraOn(ownedBuildSpots[3].spotItem.gameObject, true);
+            Vector2 pos = ownedBuildSpots[0].spotItem.transform.position;
+            pos.x += 3.5f;
+            pos.y += 3.5f;
+            InnerMapCameraMove.Instance.CenterCameraOn(pos);
         }
     }
     public void PointerClick(BaseEventData bed) {
@@ -759,6 +782,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     private SpriteRenderer _hoverHighlightSpriteRenderer;
     private SpriteRenderer _highlightGOSpriteRenderer;
     private SpriteRenderer _structureAnimatorSpriteRenderer;
+    private SpriteRenderer _highlightSpriteRenderer;
     [ContextMenu("Show Tiles In Range")]
     public void ShowTilesInRange() {
         for (int i = 0; i < tiles.Count; i++) {
@@ -774,7 +798,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         return $"{this.locationName} - {landmarkOnTile?.specificLandmarkType.ToString() ?? "No Landmark"} - {region?.name ?? "No Region"}";
     }
     public void ShowTileInfo() {
-        if (region != null) {
+        if (settlementOnTile != null) {
+            UIManager.Instance.ShowSmallInfo("Double click to view and center on settlement.", settlementOnTile.name);
+        } else if (region != null) {
             UIManager.Instance.ShowSmallInfo("Double click to view.", region.name);
         }
     }
@@ -938,7 +964,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     #endregion
 
     #region Inner Map
-    public void SetOwnedBuildSpot(BuildingSpot[] spot) {
+    public void SetOwnedBuildSpot([NotNull]BuildingSpot[] spot) {
         ownedBuildSpots = spot;
         
         locationGridTiles = new List<LocationGridTile>();
@@ -977,23 +1003,31 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     private STRUCTURE_TYPE GetMostImportantStructureOnTile() {
         STRUCTURE_TYPE mostImportant = STRUCTURE_TYPE.WILDERNESS;
         foreach (KeyValuePair<STRUCTURE_TYPE,List<LocationStructure>> pair in region.structures) {
-            int value = pair.Key.StructurePriority(); 
-            if (value > mostImportant.StructurePriority()) {
-                mostImportant = pair.Key;
+            for (int i = 0; i < pair.Value.Count; i++) {
+                LocationStructure structure = pair.Value[i];
+                if (structure.occupiedBuildSpot != null && structure.occupiedBuildSpot.spot.hexTileOwner == this) {
+                    int value = pair.Key.StructurePriority(); 
+                    if (value > mostImportant.StructurePriority()) {
+                        mostImportant = pair.Key;
+                    }    
+                }
             }
         }
         
         return mostImportant;
     }
     private void CheckIfStructureVisualsAreStillValid() {
+        string log = $"Checking {this.ToString()} to check if landmark on it is still valid";
         STRUCTURE_TYPE mostImportantStructure = GetMostImportantStructureOnTile();
         LANDMARK_TYPE landmarkType = LandmarkManager.Instance.GetLandmarkTypeFor(mostImportantStructure);
+        log += $"\nMost important structure is {mostImportantStructure.ToString()}";
+        log += $"\nLandmark to create is {landmarkType.ToString()}";
         if (landmarkOnTile == null) {
             LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkType, false);
         } else {
             landmarkOnTile.ChangeLandmarkType(landmarkType);    
         }
-        
+        Debug.Log(log);
     }
     #endregion
 }

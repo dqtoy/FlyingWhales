@@ -16,7 +16,7 @@ namespace Inner_Maps {
             boxCollider.offset = offset;
             boxCollider.size = size;
             gus.setWalkability = false;
-            this.transform.localPosition = poi.gridTileLocation.centeredLocalLocation;
+            this.transform.localPosition = Vector3.zero;
             Apply();
         }
 

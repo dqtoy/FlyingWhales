@@ -31,14 +31,12 @@ namespace Inner_Maps {
         public List<LocationGridTile> neighbourList { get; private set; }
         public IPointOfInterest objHere { get; private set; }
         public List<Character> charactersHere { get; private set; }
-        public bool isOccupied { get { return tileState == Tile_State.Occupied; } }
+        public bool isOccupied => tileState == Tile_State.Occupied;
         public bool isLocked { get; private set; } //if a tile is locked, any asset on it should not be replaced.
         public TILE_OBJECT_TYPE reservedObjectType { get; private set; } //the only type of tile object that can be placed here
         public FurnitureSpot furnitureSpot { get; private set; }
         public bool hasFurnitureSpot { get; private set; }
-        public List<Trait> normalTraits {
-            get { return genericTileObject.traitContainer.allTraits; }
-        }
+        public List<Trait> normalTraits => genericTileObject.traitContainer.allTraits;
         public bool hasBlueprint { get; private set; }
 
         private Color defaultTileColor;
@@ -48,7 +46,6 @@ namespace Inner_Maps {
 
         public GenericTileObject genericTileObject { get; private set; }
         public List<WallObject> walls { get; private set; }
-        public bool isPartOfRegion => buildSpotOwner.hexTileOwner != null;
         
         public LocationGridTile(int x, int y, Tilemap tilemap, InnerTileMap parentMap) {
             this.parentMap = parentMap;

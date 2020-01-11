@@ -80,8 +80,8 @@ public class Table : TileObject {
     public override bool CanBeReplaced() {
         return true;
     }
-    protected override void OnPlaceObjectAtTile(LocationGridTile tile) {
-        base.OnPlaceObjectAtTile(tile);
+    protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) {
+        base.OnPlaceTileObjectAtTile(tile);
         if (mapVisual.usedSprite.name.Contains("Bartop")) {
             CreateNewGUS(new Vector2(0f, 0.5f), new Vector2(1f, 0.5f));
         } else {

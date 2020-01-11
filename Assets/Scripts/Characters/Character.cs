@@ -175,7 +175,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             return _currentRegion;
         }
     }
-    public Settlement currentSettlement => currentStructure.settlementLocation;
+    public Settlement currentSettlement => currentStructure != null ? currentStructure.settlementLocation : null;
     public List<Log> history => _history;
     public int level => _level;
     public int experience => _experience;

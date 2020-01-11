@@ -59,6 +59,13 @@ public static class TileObjectDB {
             maxHP = 1000,
             neededTraitType = "Builder",
         } },
+        { TILE_OBJECT_TYPE.BIG_TREE_OBJECT, new TileObjectData() {
+            constructionCost = 10,
+            constructionTime = 12,
+            maxHP = 1000,
+            neededTraitType = "Builder",
+            occupiedSize =  new Point(2, 2),
+        } },
     };
 
     public static bool HasTileObjectData(TILE_OBJECT_TYPE objType) {
@@ -87,6 +94,8 @@ public struct TileObjectData {
     public int maxHP;
     public string neededTraitType;
     public ProvidedFacility[] providedFacilities;
+    //when this object is placed, how many tiles does it occupy? (Default is 0,0) meaning this object only occupies 1 tile.
+    public Point occupiedSize; 
 
     public bool CanProvideFacility(FACILITY_TYPE type) {
         if (providedFacilities != null) {
@@ -106,7 +115,8 @@ public struct TileObjectData {
                 constructionTime = 12,
                 maxHP = 1000,
                 neededTraitType = "Builder",
-                providedFacilities = null
+                providedFacilities = null,
+                occupiedSize = new Point(1, 1),
             };
         }
     }

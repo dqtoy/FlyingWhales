@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerDataGeneration : MapGenerationComponent {
 	public override IEnumerator Execute(MapGenerationData data) {
-		PlayerManager.Instance.InitializePlayer(data.portal);
+		PlayerManager.Instance.InitializePlayer(data.portal, data.portalStructure);
 		yield return null;
 	}
 }

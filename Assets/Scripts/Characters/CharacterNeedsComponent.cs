@@ -1177,20 +1177,20 @@ public class CharacterNeedsComponent {
 
     #region Events
     public void OnCharacterLeftLocation(ILocation location) {
-        if (location == _character.homeRegion) {
-            //character left home region
-            AdjustDoNotGetHungry(1);
-            AdjustDoNotGetLonely(1);
-            AdjustDoNotGetTired(1);
-        }
+        // if (location == _character.homeRegion) {
+        //     //character left home region
+        //     AdjustDoNotGetHungry(1);
+        //     AdjustDoNotGetLonely(1);
+        //     AdjustDoNotGetTired(1);
+        // }
     }
     public void OnCharacterArrivedAtLocation(ILocation location) {
-        if (location == _character.homeRegion) {
-            //character arrived at home region
-            AdjustDoNotGetHungry(-1);
-            AdjustDoNotGetLonely(-1);
-            AdjustDoNotGetTired(-1);
-        }
+        // if (location == _character.homeRegion) {
+        //     //character arrived at home region
+        //     AdjustDoNotGetHungry(-1);
+        //     AdjustDoNotGetLonely(-1);
+        //     AdjustDoNotGetTired(-1);
+        // }
     }
     private void OnCharacterFinishedJob(Character character, GoapPlanJob job) {
         if (_character == character) {

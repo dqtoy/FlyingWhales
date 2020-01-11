@@ -470,13 +470,13 @@ namespace Inner_Maps {
                 //only get build spots that do not have any occupied adjacent spots at their top and right
                 bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North)
                                           && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false
-                                          && currSpot.neighbours[GridNeighbourDirection.North].hexTileOwner != null;
+                                          && currSpot.neighbours[GridNeighbourDirection.North].isPartOfParentRegionMap;
                 bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East)
                                          && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false
-                                         && currSpot.neighbours[GridNeighbourDirection.East].hexTileOwner != null;
+                                         && currSpot.neighbours[GridNeighbourDirection.East].isPartOfParentRegionMap;
                 bool hasUnoccupiedNorthEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North_East)
                                          && currSpot.neighbours[GridNeighbourDirection.North_East].isOccupied == false
-                                         && currSpot.neighbours[GridNeighbourDirection.North_East].hexTileOwner != null;
+                                         && currSpot.neighbours[GridNeighbourDirection.North_East].isPartOfParentRegionMap;
                 if (hasUnoccupiedNorth && hasUnoccupiedEast && hasUnoccupiedNorthEast) {
                     return true;
                 }
@@ -485,7 +485,7 @@ namespace Inner_Maps {
                 //only get build spots that do not have any occupied adjacent spots at their right
                 bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East) 
                                          && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false
-                                         && currSpot.neighbours[GridNeighbourDirection.East].hexTileOwner != null;
+                                         && currSpot.neighbours[GridNeighbourDirection.East].isPartOfParentRegionMap;
                 if (hasUnoccupiedEast) {
                     return true;
                 }
@@ -494,7 +494,7 @@ namespace Inner_Maps {
                 //only get build spots that do not have any occupied adjacent spots at their top
                 bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North) 
                                           && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false
-                                          && currSpot.neighbours[GridNeighbourDirection.North].hexTileOwner != null;
+                                          && currSpot.neighbours[GridNeighbourDirection.North].isPartOfParentRegionMap;
                 if (hasUnoccupiedNorth) {
                     return true;
                 }
@@ -578,7 +578,7 @@ namespace Inner_Maps {
                 }
             }
         }
-        private List<LocationGridTile> GetTiles(Point size, LocationGridTile startingTile, List<LocationGridTile> mustBeIn = null) {
+        public List<LocationGridTile> GetTiles(Point size, LocationGridTile startingTile, List<LocationGridTile> mustBeIn = null) {
             List<LocationGridTile> tiles = new List<LocationGridTile>();
             for (int x = startingTile.localPlace.x; x < startingTile.localPlace.x + size.X; x++) {
                 for (int y = startingTile.localPlace.y; y < startingTile.localPlace.y + size.Y; y++) {
@@ -646,18 +646,18 @@ namespace Inner_Maps {
                             if (!currTile.IsAtEdgeOfMap() 
                                 && !currTile.HasNeighborAtEdgeOfMap() && invalidOverlap == 0 
                                 && overlappedTiles.Count == 4 && Random.Range(0, 100) < 5) {
-                                //big tree
-                                for (int j = 0; j < overlappedTiles.Count; j++) {
-                                    LocationGridTile ovTile = overlappedTiles[j];
-                                    ovTile.hasDetail = true;
-                                    detailsTilemap.SetTile(ovTile.localPlace, null);
-                                    ovTile.SetTileState(LocationGridTile.Tile_State.Occupied);
-                                    //ovTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
-                                }
-                                detailsTilemap.SetTile(currTile.localPlace, GetBigTreeTile(location));
-                                currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
-                                ConvertDetailToTileObject(currTile);
-                                //currTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
+                                // //big tree
+                                // for (int j = 0; j < overlappedTiles.Count; j++) {
+                                //     LocationGridTile ovTile = overlappedTiles[j];
+                                //     ovTile.hasDetail = true;
+                                //     detailsTilemap.SetTile(ovTile.localPlace, null);
+                                //     ovTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                                //     //ovTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
+                                // }
+                                // detailsTilemap.SetTile(currTile.localPlace, GetBigTreeTile(location));
+                                // currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                                // ConvertDetailToTileObject(currTile);
+                                // //currTile.SetTileAccess(LocationGridTile.Tile_Access.Impassable);
                             } else {
                                 if (Random.Range(0, 100) < 50) {
                                     //shrubs
@@ -676,18 +676,18 @@ namespace Inner_Maps {
                                         }
                                     }
                                 } else {
-                                    currTile.hasDetail = true;
-                                    detailsTilemap.SetTile(currTile.localPlace, GetTreeTile(location));
-                                    if (currTile.structure != null) {
-                                        ConvertDetailToTileObject(currTile);
-                                    } else {
-                                        //this is for details on tiles on the border.
-                                        //normal tree
-                                        currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
-                                        Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Vector3.one);
-                                        detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
-                                        detailsTilemap.SetTransformMatrix(currTile.localPlace, m);
-                                    }
+                                    // currTile.hasDetail = true;
+                                    // detailsTilemap.SetTile(currTile.localPlace, GetTreeTile(location));
+                                    // if (currTile.structure != null) {
+                                    //     ConvertDetailToTileObject(currTile);
+                                    // } else {
+                                    //     //this is for details on tiles on the border.
+                                    //     //normal tree
+                                    //     currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                                    //     Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Vector3.one);
+                                    //     detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
+                                    //     detailsTilemap.SetTransformMatrix(currTile.localPlace, m);
+                                    // }
                                 }
                             }
                         }
@@ -747,7 +747,7 @@ namespace Inner_Maps {
             yield return StartCoroutine(MapPerlinDetails(
                 allTiles.Where(x =>
                     x.objHere == null
-                    && x.buildSpotOwner.hexTileOwner != null
+                    && x.buildSpotOwner.isPartOfParentRegionMap
                     && (x.structure == null || x.structure.structureType == STRUCTURE_TYPE.WILDERNESS || x.structure.structureType == STRUCTURE_TYPE.WORK_AREA)
                     && x.tileType != LocationGridTile.Tile_Type.Wall
                     && !x.isLocked

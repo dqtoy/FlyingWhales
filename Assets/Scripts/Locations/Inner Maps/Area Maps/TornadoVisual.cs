@@ -17,7 +17,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     private float _speed;
     private int _radius;
     private List<IDamageable> _damagablesInTornado;
-    private Settlement _settlementLocation;
+    private ILocation _mapLocation;
     private TornadoTileObject _tornado;
     private string _expiryKey;
     private Vector3 pos;
@@ -31,7 +31,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
         this._tornado = tileObject as TornadoTileObject;
         this.transform.localPosition = tileObject.gridTileLocation.centeredLocalLocation;
         this._radius = _tornado.radius;
-        _settlementLocation = tileObject.gridTileLocation.structure.settlementLocation;
+        _mapLocation = tileObject.gridTileLocation.parentMap.location;
         // float scale = tornado.radius / 5f;
         for (int i = 0; i < particles.Length; i++) {
             ParticleSystem p = particles[i];
@@ -50,11 +50,11 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     private LocationGridTile GetLocationGridTileByXy(int x, int y, bool throwOnException = true) {
         try {
             if (throwOnException) {
-                return _settlementLocation.innerMap.map[x, y];
+                return _mapLocation.innerMap.map[x, y];
             } else {
-                if (Utilities.IsInRange(x, 0, _settlementLocation.innerMap.map.GetUpperBound(0) + 1) &&
-                    Utilities.IsInRange(y, 0, _settlementLocation.innerMap.map.GetUpperBound(1) + 1)) {
-                    return _settlementLocation.innerMap.map[x, y];
+                if (Utilities.IsInRange(x, 0, _mapLocation.innerMap.map.GetUpperBound(0) + 1) &&
+                    Utilities.IsInRange(y, 0, _mapLocation.innerMap.map.GetUpperBound(1) + 1)) {
+                    return _mapLocation.innerMap.map[x, y];
                 }
                 return null;
             }
@@ -130,7 +130,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
         base.Reset();
         isSpawned = false;
         destinationTile = null;
-        _settlementLocation = null;
+        _mapLocation = null;
         _journeyLength = 0f;
         _startPosition = Vector3.zero;
         _startTime = 0f;

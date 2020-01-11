@@ -2079,6 +2079,7 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     private void UpdateClickedDemonicToggle() {
+        return;
         if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType.IsPlayerLandmark()) {
             switch (UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType) {
                 case LANDMARK_TYPE.THE_PORTAL:

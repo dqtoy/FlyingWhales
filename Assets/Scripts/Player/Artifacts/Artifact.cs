@@ -53,8 +53,8 @@ public class Artifact : TileObject, IWorldObject {
         base.OnRemoveTileObject(removedBy, removedFrom);
         OnRemoveArtifact();
     }
-    protected override void OnPlaceObjectAtTile(LocationGridTile tile) {
-        base.OnPlaceObjectAtTile(tile);
+    protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) {
+        base.OnPlaceTileObjectAtTile(tile);
         OnPlaceArtifactOn(tile);
     }
     public override string ToString() {

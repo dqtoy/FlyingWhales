@@ -1444,6 +1444,27 @@ public static class Extensions {
                 return false;
         }
     }
+    public static bool IsSettlementStructure(this STRUCTURE_TYPE sub) {
+        switch (sub) {
+            case STRUCTURE_TYPE.CITY_CENTER:
+            case STRUCTURE_TYPE.WORK_AREA:
+            case STRUCTURE_TYPE.CEMETERY:
+            case STRUCTURE_TYPE.PRISON:
+            case STRUCTURE_TYPE.DWELLING:
+            case STRUCTURE_TYPE.SMITHY:
+            case STRUCTURE_TYPE.BARRACKS:
+            case STRUCTURE_TYPE.APOTHECARY:
+            case STRUCTURE_TYPE.GRANARY:
+            case STRUCTURE_TYPE.MINER_CAMP:
+            case STRUCTURE_TYPE.RAIDER_CAMP:
+            case STRUCTURE_TYPE.ASSASSIN_GUILD:
+            case STRUCTURE_TYPE.HUNTER_LODGE:
+            case STRUCTURE_TYPE.MAGE_QUARTERS:
+                return true;
+            default:
+                return false;
+        }
+    }
     public static bool ShouldBeGeneratedFromTemplate(this STRUCTURE_TYPE sub) {
         switch (sub) {
             case STRUCTURE_TYPE.WILDERNESS:

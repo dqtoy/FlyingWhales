@@ -23,8 +23,7 @@ public class Tombstone : TileObject {
         character.DisableMarker();
         character.SetGrave(this);
     }
-    public override void OnClickAction() {
-        base.OnClickAction();
+    public virtual void OnClickAction() {
         UIManager.Instance.ShowCharacterInfo(character, true);
     }
 
