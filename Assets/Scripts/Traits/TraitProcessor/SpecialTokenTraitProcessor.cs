@@ -4,7 +4,8 @@ using UnityEngine;
 
 namespace Traits {
     public class SpecialTokenTraitProcessor : TraitProcessor {
-
+        public override void OnTraitStacked(ITraitable traitable, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
+        }
         public override void OnTraitAdded(ITraitable traitable, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
             DefaultProcessOnAddTrait(traitable, trait, characterResponsible, gainedFromDoing);
         }

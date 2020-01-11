@@ -7,6 +7,8 @@ namespace Traits {
     /// Functions to be used to determine what happens when a trait is added/removed to a character
     /// </summary>
     public class CharacterTraitProcessor : TraitProcessor {
+        public override void OnTraitStacked(ITraitable traitable, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
+        }
         public override void OnTraitAdded(ITraitable traitable, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
             Character character = traitable as Character;
             ApplyTraitEffects(character, trait);

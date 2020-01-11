@@ -5,6 +5,7 @@ using UnityEngine;
 namespace Traits {
     public abstract class TraitProcessor {
         public abstract void OnTraitAdded(ITraitable traitable, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null);
+        public abstract void OnTraitStacked(ITraitable traitable, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null);
         public abstract void OnTraitRemoved(ITraitable traitable, Trait trait, Character removedBy = null);
 
         protected void DefaultProcessOnAddTrait(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing) {

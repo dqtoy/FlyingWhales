@@ -10,11 +10,12 @@ namespace Traits {
 
         #region getters/setters
         public List<Trait> allTraits { get { return _allTraits; } }
-        public List<RelationshipTrait> relationshipTraits { get { return new List<RelationshipTrait>(); } }
+        public Dictionary<Trait, int> stacks { get; private set; }
         #endregion
 
         public TraitContainer() {
             _allTraits = new List<Trait>();
+            stacks = new Dictionary<Trait, int>();
         }
 
         #region Adding
@@ -24,22 +25,33 @@ namespace Traits {
         /// <returns>If the trait was added or not.</returns>
         public bool AddTrait(ITraitable addTo, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
             //TODO: Either move or totally remove validation from inside this container
-            if (TraitValidator.CanAddTrait(addTo, trait) == false) {
-                if (trait.IsUnique()) {
-                    Trait oldTrait = GetNormalTrait<Trait>(trait.name);
-                    if (oldTrait != null) {
-                        oldTrait.AddCharacterResponsibleForTrait(characterResponsible);
-                        oldTrait.AddCharacterResponsibleForTrait(characterResponsible);
-                        //if (oldTrait.broadcastDuplicates) {
-                        //    Messenger.Broadcast(Signals.TRAIT_ADDED, this, oldTrait);
-                        //}
-                    }
-                }
+            if (TraitValidator.CanAddTrait(addTo, trait, this) == false) {
+                //if (trait.IsUnique()) {
+                //    Trait oldTrait = GetNormalTrait<Trait>(trait.name);
+                //    if (oldTrait != null) {
+                //        oldTrait.AddCharacterResponsibleForTrait(characterResponsible);
+                //        oldTrait.AddCharacterResponsibleForTrait(characterResponsible);
+                //        //if (oldTrait.broadcastDuplicates) {
+                //        //    Messenger.Broadcast(Signals.TRAIT_ADDED, this, oldTrait);
+                //        //}
+                //    }
+                //}
                 return false;
             }
 
-            _allTraits.Add(trait);
-            addTo.traitProcessor.OnTraitAdded(addTo, trait, characterResponsible, gainedFromDoing);
+            if (trait.isStacking) {
+                if (stacks.ContainsKey(trait)) {
+                    stacks[trait]++;
+                    addTo.traitProcessor.OnTraitStacked(addTo, trait, characterResponsible, gainedFromDoing);
+                } else {
+                    stacks.Add(trait, 1);
+                    _allTraits.Add(trait);
+                    addTo.traitProcessor.OnTraitAdded(addTo, trait, characterResponsible, gainedFromDoing);
+                }
+            } else {
+                _allTraits.Add(trait);
+                addTo.traitProcessor.OnTraitAdded(addTo, trait, characterResponsible, gainedFromDoing);
+            }
             return true;
         }
         public bool AddTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {

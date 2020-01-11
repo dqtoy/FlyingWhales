@@ -8,7 +8,7 @@ namespace Traits {
     /// </summary>
     public static class TraitValidator {
 
-        public static bool CanAddTrait(ITraitable obj, Trait trait) {
+        public static bool CanAddTrait(ITraitable obj, Trait trait, ITraitContainer traitContainer) {
             //Cannot add trait if there is an existing trait that is mutually exclusive of the trait to be added
             if (trait.mutuallyExclusive != null) {
                 for (int i = 0; i < trait.mutuallyExclusive.Length; i++) {
@@ -17,14 +17,20 @@ namespace Traits {
                     }
                 }
             }
-            //Cannot add trait if it is unique and the character already has that type of trait.
-            if (trait.IsUnique()) {
-                Trait oldTrait = obj.traitContainer.GetNormalTrait<Trait>(trait.name);
-                if (oldTrait != null) {
-                    return false;
+            if (trait.isStacking) {
+                if (traitContainer.stacks.ContainsKey(trait)) {
+                    if(traitContainer.stacks[trait] >= trait.stackLimit) {
+                        return false;
+                    }
                 }
             }
-
+            ////Cannot add trait if it is unique and the character already has that type of trait.
+            //if (trait.IsUnique()) {
+            //    Trait oldTrait = obj.traitContainer.GetNormalTrait<Trait>(trait.name);
+            //    if (oldTrait != null) {
+            //        return false;
+            //    }
+            //}
             return true;
         }
     }

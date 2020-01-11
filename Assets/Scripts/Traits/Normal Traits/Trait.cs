@@ -38,6 +38,11 @@ namespace Traits {
         public virtual bool isPersistent { get { return false; } } //should this trait persist through all a character's alter egos
         //public virtual bool isRemovedOnSwitchAlterEgo { get { return false; } }
 
+        //Stacking
+        public bool isStacking;
+        public int stackLimit;
+        public float stackModifier;
+
         #region Virtuals
         public virtual void OnAddTrait(ITraitable addedTo) {
             //if(type == TRAIT_TYPE.CRIMINAL && sourceCharacter is Character) {

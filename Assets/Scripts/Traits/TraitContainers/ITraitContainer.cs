@@ -10,7 +10,8 @@ namespace Traits {
     public interface ITraitContainer {
 
         List<Trait> allTraits { get; }
-        List<RelationshipTrait> relationshipTraits { get; }
+        Dictionary<Trait, int> stacks { get; }
+        //List<RelationshipTrait> relationshipTraits { get; }
 
         #region Adding
         bool AddTrait(ITraitable addTo, string traitName, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null);
