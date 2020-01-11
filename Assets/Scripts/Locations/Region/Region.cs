@@ -808,5 +808,17 @@ public class Region : ILocation {
         }
         return false;
     }
+    public int GetNullTilesInRow(int row) {
+        int count = 0;
+        for (int x = 0; x <= hexTileMap.GetUpperBound(0); x++) {
+            for (int y = 0; y <= hexTileMap.GetUpperBound(1); y++) {
+                HexTile tile = hexTileMap[x, y];
+                if (y == row && tile == null) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
     #endregion
 }

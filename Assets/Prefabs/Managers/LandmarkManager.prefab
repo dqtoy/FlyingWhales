@@ -154,7 +154,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 0}
+    landmarkPortrait: {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094, type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
