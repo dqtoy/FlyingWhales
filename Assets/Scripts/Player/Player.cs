@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
 using System.Linq;
 using Inner_Maps;
 using Traits;
+using Random = UnityEngine.Random;
 // ReSharper disable Unity.NoNullPropagation
 
 public class Player : ILeader {
@@ -123,11 +125,16 @@ public class Player : ILeader {
 
     #region Settlement
     public Settlement CreatePlayerSettlement(BaseLandmark portal) {
-        Settlement settlement = LandmarkManager.Instance.CreateNewSettlement(portal.tileLocation.region, LOCATION_TYPE.DEMONIC_INTRUSION, 0, portal.tileLocation);
-        settlement.LoadAdditionalData();
-        settlement.SetName("Portal");
-        SetPlayerArea(settlement);
-        return settlement;
+        try {
+            Settlement settlement = LandmarkManager.Instance.CreateNewSettlement(portal.tileLocation.region, LOCATION_TYPE.DEMONIC_INTRUSION, 0, portal.tileLocation);
+            settlement.LoadAdditionalData();
+            settlement.SetName("Portal");
+            SetPlayerArea(settlement);
+            return settlement;
+        } catch (Exception e) {
+            Console.WriteLine(e);
+            throw;
+        }
     }
     public void LoadPlayerArea(Settlement settlement) {
         //Biomes.Instance.CorruptTileVisuals(settlement.coreTile);

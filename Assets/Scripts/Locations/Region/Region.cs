@@ -120,7 +120,11 @@ public class Region : ILocation {
         int x = (minX + maxX) / 2;
         int y = (minY + maxY) / 2;
 
-        coreTile = GridMap.Instance.map[x, y];
+        HexTile newCoreTile = GridMap.Instance.map[x, y];
+        if (newCoreTile.IsAtEdgeOfMap() == false) {
+            coreTile = newCoreTile;
+        }
+        
 
         // while (tiles.Contains(coreTile) == false) {
         //     x++;

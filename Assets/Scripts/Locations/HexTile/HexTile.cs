@@ -336,6 +336,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
     public bool IsAtEdgeOfMap() {
         return AllNeighbours.Count < 6; //if this tile has less than 6 neighbours, it is at the edge of the map
     }
+    public bool HasNeighbourAtEdgeOfMap() {
+        for (int i = 0; i < AllNeighbours.Count; i++) {
+            HexTile currNeighbour = AllNeighbours[i];
+            if (currNeighbour.IsAtEdgeOfMap()) {
+                return true;
+            }
+        }
+        return false;
+    }
     public bool HasNeighbourFromOtherRegion() {
         for (int i = 0; i < AllNeighbours.Count; i++) {
             HexTile currNeighbour = AllNeighbours[i];

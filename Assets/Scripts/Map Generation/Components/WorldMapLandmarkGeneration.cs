@@ -21,7 +21,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		for (int i = 0; i < 3; i++) {
 			if (Random.Range(0, 100) < 50) {
 				List<HexTile> choices = GridMap.Instance.normalHexTiles
-					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0)
+					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null)
 					.ToList();
 				if (choices.Count > 0) {
 					HexTile chosenTile = Utilities.GetRandomElement(choices);
@@ -40,7 +40,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 			if (Random.Range(0, 100) < 50) {
 				List<HexTile> choices = GridMap.Instance.normalHexTiles
 					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0
-					            && x.HasNeighbourWithElevation(ELEVATION.MOUNTAIN))
+					            && x.HasNeighbourWithElevation(ELEVATION.MOUNTAIN) && x.landmarkOnTile == null)
 					.ToList();
 				if (choices.Count > 0) {
 					HexTile chosenTile = Utilities.GetRandomElement(choices);
@@ -58,7 +58,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		for (int i = 0; i < 2; i++) {
 			if (Random.Range(0, 100) < 35) {
 				List<HexTile> choices = GridMap.Instance.normalHexTiles
-					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0)
+					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null)
 					.ToList();
 				if (choices.Count > 0) {
 					HexTile chosenTile = Utilities.GetRandomElement(choices);
@@ -76,7 +76,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		for (int i = 0; i < 2; i++) {
 			if (Random.Range(0, 100) < 35) {
 				List<HexTile> choices = GridMap.Instance.normalHexTiles
-					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0)
+					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null)
 					.ToList();
 				if (choices.Count > 0) {
 					HexTile chosenTile = Utilities.GetRandomElement(choices);
