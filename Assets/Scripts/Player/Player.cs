@@ -889,7 +889,7 @@ public class Player : ILeader {
     }
     private void ClearSummonData(Summon summon) {
         PlayerManager.Instance.player.playerFaction.LeaveFaction(summon);
-        PlayerManager.Instance.player.playerSettlement.RemoveCharacterFromLocation(summon);
+        PlayerManager.Instance.player.playerSettlement.region.RemoveCharacterFromLocation(summon);
         PlayerManager.Instance.player.playerSettlement.region.RemoveResident(summon);
         CharacterManager.Instance.RemoveCharacter(summon);
     }

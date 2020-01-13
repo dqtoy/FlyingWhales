@@ -102,6 +102,7 @@ namespace Inner_Maps {
                 for (int localY = 0; localY <= region.hexTileMap.GetUpperBound(1); localY++) {
                     HexTile firstTileInRow = region.hexTileMap[0, localY];
                     HexTile tile = region.hexTileMap[localX, localY];
+                    int diffRegionTiles = region.GetDifferentRegionTilesInRow(localY);
                     if (tile.region == this.region) {
                         //the row will be indented if its row type (odd/even) is not the same as the row type of the left most tile.
                         //and the first tile in it's row is not null.

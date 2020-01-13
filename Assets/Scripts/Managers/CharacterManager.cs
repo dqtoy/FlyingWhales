@@ -114,7 +114,7 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.ownParty.CreateIcon();
         if(homeLocation != null) {
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
-            homeLocation.AddCharacterToLocation(newCharacter);
+            homeLocation.region.AddCharacterToLocation(newCharacter);
         }
         newCharacter.CreateInitialTraitsByClass();
         //newCharacter.CreateInitialTraitsByRace();
@@ -135,7 +135,7 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
-            homeLocation.AddCharacterToLocation(newCharacter);
+            homeLocation.region.AddCharacterToLocation(newCharacter);
         }
         newCharacter.CreateInitialTraitsByClass();
         AddNewCharacter(newCharacter);
@@ -155,7 +155,7 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
-            homeLocation.AddCharacterToLocation(newCharacter);
+            homeLocation.region.AddCharacterToLocation(newCharacter);
         }
         newCharacter.CreateInitialTraitsByClass();
         AddNewCharacter(newCharacter);
@@ -244,9 +244,9 @@ public class CharacterManager : MonoBehaviour {
     //        character.AddInitialAwareness();
     //    }
     //}
-    public void PlaceInitialCharacters(Settlement settlement) {
-        for (int i = 0; i < settlement.charactersAtLocation.Count; i++) {
-            Character character = settlement.charactersAtLocation[i];
+    public void PlaceInitialCharacters(List<Character> characters, Settlement settlement) {
+        for (int i = 0; i < characters.Count; i++) {
+            Character character = characters[i];
             if (character.marker == null) {
                 character.CreateMarker();
             }
@@ -320,7 +320,7 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
-            homeLocation.AddCharacterToLocation(newCharacter.ownParty.owner);
+            homeLocation.region.AddCharacterToLocation(newCharacter.ownParty.owner);
         }
         newCharacter.CreateInitialTraitsByClass();
         AddNewCharacter(newCharacter);

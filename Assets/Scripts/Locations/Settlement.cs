@@ -20,7 +20,6 @@ public class Settlement : IJobOwner {
     public Faction owner { get; private set; }
     public Faction previousOwner { get; private set; }
     public List<HexTile> tiles { get; private set; }
-    public List<Character> charactersAtLocation { get; private set; }
     public List<Character> residents { get; private set; }
     
     //structures
@@ -39,9 +38,6 @@ public class Settlement : IJobOwner {
     public LocationJobManager jobManager { get; private set; }
 
     #region getters
-    public List<Character> visitors {
-        get { return charactersAtLocation.Where(x => !residents.Contains(x)).ToList(); }
-    }
     public int residentCapacity {
         get {
             if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
@@ -57,7 +53,7 @@ public class Settlement : IJobOwner {
         SetName(RandomNameGenerator.Instance.GenerateCityName(RACE.HUMANS));
         id = Utilities.SetID(this);
         this.citizenCount = citizenCount;
-        charactersAtLocation = new List<Character>();
+        new List<Character>();
         tiles = new List<HexTile>();
         residents = new List<Character>();
         SetAreaType(locationType);
@@ -295,17 +291,6 @@ public class Settlement : IJobOwner {
             chosenDwelling = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER) as CityCenter;
         }
         character.MigrateHomeStructureTo(chosenDwelling);
-    }
-    public void AddCharacterToLocation(Character character, LocationGridTile tileOverride = null, bool isInitial = false) {
-        if (charactersAtLocation.Contains(character) == false) {
-            charactersAtLocation.Add(character);
-            region.AddCharacterToLocation(character);
-        }
-    }
-    public void RemoveCharacterFromLocation(Character character) {
-        if (charactersAtLocation.Remove(character)) {
-            region.RemoveCharacterFromLocation(character);    
-        }
     }
     public bool IsResidentsFull() {
         if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerSettlement.id == this.id) {

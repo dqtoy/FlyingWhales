@@ -44,7 +44,7 @@ public class SettlementGeneration : MapGenerationComponent {
 		yield return MapGenerator.Instance.StartCoroutine(PlaceInitialStructures(settlement, region.innerMap));
 		yield return MapGenerator.Instance.StartCoroutine(settlement.PlaceObjects());
 		
-		CharacterManager.Instance.PlaceInitialCharacters(settlement);
+		CharacterManager.Instance.PlaceInitialCharacters(createdCharacters, settlement);
 		settlement.OnAreaSetAsActive();
 	
 	}

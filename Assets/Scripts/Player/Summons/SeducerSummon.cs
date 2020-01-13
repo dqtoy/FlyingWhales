@@ -119,7 +119,7 @@ public class SeducerSummon : Summon {
         //StopCurrentAction(false);
         //AdjustIsWaitingForInteraction(-1);
         currentRegion.RemoveCharacterFromLocation(this);
-        PlayerManager.Instance.player.playerSettlement.AddCharacterToLocation(this);
+        PlayerManager.Instance.player.playerSettlement.region.AddCharacterToLocation(this);
         SetRegionLocation(PlayerManager.Instance.player.playerSettlement.region);
         //ownParty.SetSpecificLocation(PlayerManager.Instance.player.playerSettlement);
         //ClearAllAwareness();

@@ -3707,7 +3707,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         newMinion.SetCombatAbility(minionData.combatAbility);
 
 
-        PlayerManager.Instance.player.playerSettlement.AddCharacterToLocation(this);
+        PlayerManager.Instance.player.playerSettlement.region.AddCharacterToLocation(this);
 
         if (PlayerManager.Instance.player.minions.Count < Player.MAX_MINIONS) {
             PlayerManager.Instance.player.AddMinion(newMinion);
