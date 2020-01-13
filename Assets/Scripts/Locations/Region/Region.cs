@@ -691,11 +691,11 @@ public class Region : ILocation {
                 int mapYIndex = y - minY;
 
                 HexTile tile = GridMap.Instance.map[x, y];
-                if (tiles.Contains(tile)) {
+                // if (tiles.Contains(tile)) {
                     hexTileMap[mapXIndex, mapYIndex] = tile;
-                } else {
-                    hexTileMap[mapXIndex, mapYIndex] = null;
-                }
+                // } else {
+                //     hexTileMap[mapXIndex, mapYIndex] = null;
+                // }
             }
         }
     }
@@ -706,7 +706,7 @@ public class Region : ILocation {
         for (int x = 0; x <= hexTileMap.GetUpperBound(0); x++) {
             for (int y = 0; y <= hexTileMap.GetUpperBound(1); y++) {
                 HexTile tile = hexTileMap[x, y];
-                if (tile != null
+                if (tile.region == this
                     && Utilities.IsEven(tile.yCoordinate)
                     && tile.xCoordinate == leftMostXCoordinate) {
                     return tile;
@@ -718,7 +718,7 @@ public class Region : ILocation {
         for (int x = 0; x <= hexTileMap.GetUpperBound(0); x++) {
             for (int y = 0; y <= hexTileMap.GetUpperBound(1); y++) {
                 HexTile tile = hexTileMap[x, y];
-                if (tile != null && tile.xCoordinate == leftMostXCoordinate) {
+                if (tile.region == this && tile.xCoordinate == leftMostXCoordinate) {
                     return tile;
                 }
             }    
@@ -733,7 +733,7 @@ public class Region : ILocation {
         for (int x = 0; x <= hexTileMap.GetUpperBound(0); x++) {
             for (int y = 0; y <= hexTileMap.GetUpperBound(1); y++) {
                 HexTile tile = hexTileMap[x, y];
-                if (tile != null 
+                if (tile.region == this 
                     && Utilities.IsEven(tile.yCoordinate) == false 
                     && tile.xCoordinate == rightMostXCoordinate) {
                     return tile;
@@ -745,7 +745,7 @@ public class Region : ILocation {
         for (int x = 0; x <= hexTileMap.GetUpperBound(0); x++) {
             for (int y = 0; y <= hexTileMap.GetUpperBound(1); y++) {
                 HexTile tile = hexTileMap[x, y];
-                if (tile != null && tile.xCoordinate == rightMostXCoordinate) {
+                if (tile.region == this && tile.xCoordinate == rightMostXCoordinate) {
                     return tile;
                 }
             }    
@@ -765,7 +765,7 @@ public class Region : ILocation {
         for (int x = 0; x <= hexTileMap.GetUpperBound(0); x++) {
             for (int y = 0; y <= hexTileMap.GetUpperBound(1); y++) {
                 HexTile tile = hexTileMap[x, y];
-                if (tile != null 
+                if (tile.region == this
                     && tile.xCoordinate == leftMostTile.xCoordinate
                     && Utilities.IsEven(leftMostTile.yCoordinate) == Utilities.IsEven(tile.yCoordinate) //only include tiles that are on the same row type as the left most tile (odd/even)
                     && rows.Contains(y) == false) {
@@ -781,7 +781,7 @@ public class Region : ILocation {
         for (int x = 0; x <= hexTileMap.GetUpperBound(0); x++) {
             for (int y = 0; y <= hexTileMap.GetUpperBound(1); y++) {
                 HexTile tile = hexTileMap[x, y];
-                if (tile != null 
+                if (tile.region == this
                     && tile.xCoordinate == rightMostTile.xCoordinate
                     && Utilities.IsEven(rightMostTile.yCoordinate) == Utilities.IsEven(tile.yCoordinate) //only include tiles that are on the same row type as the right most tile (odd/even)
                     && rows.Contains(y) == false) {
@@ -811,18 +811,6 @@ public class Region : ILocation {
             }
         }
         return false;
-    }
-    public int GetNullTilesInRow(int row) {
-        int count = 0;
-        for (int x = 0; x <= hexTileMap.GetUpperBound(0); x++) {
-            for (int y = 0; y <= hexTileMap.GetUpperBound(1); y++) {
-                HexTile tile = hexTileMap[x, y];
-                if (y == row && tile == null) {
-                    count++;
-                }
-            }
-        }
-        return count;
     }
     #endregion
 }

@@ -807,11 +807,38 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         return $"{this.locationName} - {landmarkOnTile?.specificLandmarkType.ToString() ?? "No Landmark"} - {region?.name ?? "No Region"}";
     }
     public void ShowTileInfo() {
-        if (settlementOnTile != null) {
-            UIManager.Instance.ShowSmallInfo("Double click to view and center on settlement.", settlementOnTile.name);
-        } else if (region != null) {
-            UIManager.Instance.ShowSmallInfo("Double click to view.", region.name);
+        // if (settlementOnTile != null) {
+        //     UIManager.Instance.ShowSmallInfo("Double click to view and center on settlement.", settlementOnTile.name);
+        // } else if (region != null) {
+        //     UIManager.Instance.ShowSmallInfo("Double click to view.", region.name);
+        // }
+        
+        string summary = $"{this.ToString()}";
+        summary += "\nLeft Most: " + (this.region.GetLeftMostTile()?.ToString() ?? "Null");
+        summary += "\nRight Most: " + (this.region.GetRightMostTile()?.ToString() ?? "Null");
+        summary += "\nFeatures:";
+        for (int i = 0; i < this.featureComponent.features.Count; i++) {
+            TileFeature feature = this.featureComponent.features[i];
+            summary += $"{feature.name}, ";
         }
+        summary += "\nLeft Most Rows:";
+        List<int> leftMostRows = this.region.GetLeftMostRows();
+        for (int i = 0; i < leftMostRows.Count; i++) {
+            summary += $"{leftMostRows[i].ToString()}, ";
+        }
+        summary += "\nRight Most Rows:";
+        List<int> rightMostRows = this.region.GetRightMostRows();
+        for (int i = 0; i < rightMostRows.Count; i++) {
+            summary += $"{rightMostRows[i].ToString()}, ";
+        }
+        // summary += "\nTile Map:";
+        // for (int x = 0; x <= region.hexTileMap.GetUpperBound(0); x++) {
+        //     for (int y = 0; y <= region.hexTileMap.GetUpperBound(1); y++) {
+        //         
+        //     }
+        // }
+        UIManager.Instance.ShowSmallInfo(summary);
+        
     }
     #endregion
 
@@ -979,7 +1006,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         locationGridTiles = new List<LocationGridTile>();
         for (int i = 0; i < ownedBuildSpots.Length; i++) {
             BuildingSpot currSpot = ownedBuildSpots[i];
-            locationGridTiles.AddRange(currSpot.tilesInTerritory);
+            if (currSpot != null) {
+                locationGridTiles.AddRange(currSpot.tilesInTerritory);    
+            }
         }
     }
     public List<TileObject> GetTileObjectsInHexTile(TILE_OBJECT_TYPE type) {

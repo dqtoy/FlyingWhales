@@ -135,29 +135,10 @@ public class UIManager : MonoBehaviour {
     }
     private void Update() {
         if (isHoveringTile) {
-            if (currentTileHovered.landmarkOnTile != null) {
+            // if (currentTileHovered.landmarkOnTile != null) {
                 currentTileHovered.ShowTileInfo();
-            }
+            // }
             currentTileHovered.region?.OnHoverOverAction();
-            // string summary = $"{currentTileHovered.ToString()}";
-            // summary += "\nLeft Most: " + (currentTileHovered.region.GetLeftMostTile()?.ToString() ?? "Null");
-            // summary += "\nRight Most: " + (currentTileHovered.region.GetRightMostTile()?.ToString() ?? "Null");
-            // summary += "\nFeatures:";
-            // for (int i = 0; i < currentTileHovered.featureComponent.features.Count; i++) {
-            //     TileFeature feature = currentTileHovered.featureComponent.features[i];
-            //     summary += $"{feature.name}, ";
-            // }
-            // summary += "\nLeft Most Rows:";
-            // List<int> leftMostRows = currentTileHovered.region.GetLeftMostRows();
-            // for (int i = 0; i < leftMostRows.Count; i++) {
-            //     summary += $"{leftMostRows[i].ToString()}, ";
-            // }
-            // summary += "\nRight Most Rows:";
-            // List<int> rightMostRows = currentTileHovered.region.GetRightMostRows();
-            // for (int i = 0; i < rightMostRows.Count; i++) {
-            //     summary += $"{rightMostRows[i].ToString()}, ";
-            // }
-            // UIManager.Instance.ShowSmallInfo(summary);
         }
     }
     #endregion

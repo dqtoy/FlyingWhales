@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -96,30 +97,44 @@ namespace Inner_Maps {
         }
         private void ConnectHexTilesToBuildSpots() {
             HexTile leftMostTile = region.GetLeftMostTile();
+            List<int> leftMostRows = region.GetLeftMostRows();
             for (int localX = 0; localX <= region.hexTileMap.GetUpperBound(0); localX++) {
                 for (int localY = 0; localY <= region.hexTileMap.GetUpperBound(1); localY++) {
                     HexTile firstTileInRow = region.hexTileMap[0, localY];
                     HexTile tile = region.hexTileMap[localX, localY];
-                    int nullTilesInRow = region.GetNullTilesInRow(localY);
-                    if (tile != null) {
+                    if (tile.region == this.region) {
                         //the row will be indented if its row type (odd/even) is not the same as the row type of the left most tile.
                         //and the first tile in it's row is not null.
                         bool isIndented = Utilities.IsEven(tile.yCoordinate) !=
                                           Utilities.IsEven(leftMostTile.yCoordinate);
 
+                        // int differenceXFromLeftMost = Mathf.Abs(leftMostTile.xCoordinate - tile.xCoordinate);
+                        // int buildSpotColumn1 = differenceXFromLeftMost * 2;
+                        // int buildSpotColumn2 = buildSpotColumn1 + 1;
+                        //
+                        // if (isIndented) {
+                        //     buildSpotColumn1 += 1;
+                        //     buildSpotColumn2 += 1;
+                        // }
+                        //
+                        // int buildSpotRow1 = localY * 2;
+                        // int buildSpotRow2 = buildSpotRow1 + 1;
+                        // AssignBuildSpotsToHexTile(tile, buildSpotColumn1, buildSpotColumn2,
+                        //     buildSpotRow1, buildSpotRow2);    
+                        
                         int buildSpotColumn1 = localX * 2;
                         int buildSpotColumn2 = buildSpotColumn1 + 1;
-
+                        
                         if (isIndented) {
                             buildSpotColumn1 += 1;
                             buildSpotColumn2 += 1;
+                            if (firstTileInRow.region != this.region) {
+                                buildSpotColumn1 -= 2;
+                                buildSpotColumn2 -= 2;
+                            }
                         }
 
-                        if (firstTileInRow == null) {
-                            buildSpotColumn1 -= 1;
-                            buildSpotColumn2 -= 1;
-                        }
-                        
+
                         int buildSpotRow1 = localY * 2;
                         int buildSpotRow2 = buildSpotRow1 + 1;
                         AssignBuildSpotsToHexTile(tile, buildSpotColumn1, buildSpotColumn2,
