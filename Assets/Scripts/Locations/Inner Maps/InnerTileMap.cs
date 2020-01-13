@@ -747,7 +747,6 @@ namespace Inner_Maps {
             yield return StartCoroutine(MapPerlinDetails(
                 allTiles.Where(x =>
                     x.objHere == null
-                    && x.buildSpotOwner.isPartOfParentRegionMap
                     && (x.structure == null || x.structure.structureType == STRUCTURE_TYPE.WILDERNESS || x.structure.structureType == STRUCTURE_TYPE.WORK_AREA)
                     && x.tileType != LocationGridTile.Tile_Type.Wall
                     && !x.isLocked

@@ -327,12 +327,15 @@ public class CameraMove : MonoBehaviour {
         return false;
     }
     private void SetCameraBounds(Bounds bounds, float horzExtent, float vertExtent) {
-        float halfOfHexagon = (256f) / 100f; //1.28
-        int borderCount = GridMap.Instance._borderThickness;
-        MIN_X = bounds.min.x + horzExtent - (halfOfHexagon * ((float)borderCount));
-        MAX_X = bounds.max.x - horzExtent + (halfOfHexagon * (borderCount)); //removed -1 because of UI
-        MIN_Y = bounds.min.y + vertExtent - (halfOfHexagon * ((float)borderCount - 2));
-        MAX_Y = bounds.max.y - vertExtent + (halfOfHexagon * (borderCount - 2));
+        float halfOfHexagon = 256f / 100f;
+        // MIN_X = bounds.min.x + horzExtent - (halfOfHexagon * ((float)borderCount));
+        // MAX_X = bounds.max.x - horzExtent + (halfOfHexagon * (borderCount)); //removed -1 because of UI
+        // MIN_Y = bounds.min.y + vertExtent - (halfOfHexagon * ((float)borderCount - 2));
+        // MAX_Y = bounds.max.y - vertExtent + (halfOfHexagon * (borderCount - 2));
+        MIN_X = bounds.min.x + horzExtent - (halfOfHexagon);
+        MAX_X = bounds.max.x - horzExtent + (halfOfHexagon); //removed -1 because of UI
+        MIN_Y = bounds.min.y + vertExtent - (halfOfHexagon * 1.5f);
+        MAX_Y = bounds.max.y - vertExtent + (halfOfHexagon * 1.5f);
     }
     private Vector2[] GetCameraWorldCorners(Camera camera) {
         Vector2[] corners = new Vector2[4]; //4 corners

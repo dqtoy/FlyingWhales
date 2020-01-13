@@ -16,9 +16,14 @@ public class MapGenerationData {
 	public static int InnerMapDetailBatches = 200; 
 	
 	//world map
-	public int mapWidth;
-	public int mapHeight;
+	public const float xOffset = 2.56f;
+	public const float yOffset = 1.93f;
+	public const int tileSize = 1;
+	public int width;
+	public int height;
 	public int regionCount;
 	public BaseLandmark portal;
 	public LocationStructure portalStructure;
+	
+	
 }

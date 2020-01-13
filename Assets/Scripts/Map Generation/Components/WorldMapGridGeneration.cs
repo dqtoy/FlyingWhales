@@ -3,49 +3,59 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class WorldMapGridGeneration : MapGenerationComponent {
-	
+
 	public override IEnumerator Execute(MapGenerationData data) {
 		data.regionCount = 5;
-		// GenerateMapWidthAndHeightFromRegionCount(data.regionCount, out data.mapWidth, out data.mapHeight);
-		Debug.Log($"Width: {data.mapWidth.ToString()} Height: {data.mapHeight.ToString()} Region Count: {data.regionCount.ToString()}");
-		// GridMap.Instance.SetupInitialData(data.mapWidth, data.mapHeight);
-		GridMap.Instance.SetupInitialData(8, 10);
-		yield return MapGenerator.Instance.StartCoroutine(GridMap.Instance.GenerateGrid());
+		data.width = 10;
+		data.height = 12;
+		Debug.Log($"Width: {data.width.ToString()} Height: {data.height.ToString()} Region Count: {data.regionCount.ToString()}");
+		yield return MapGenerator.Instance.StartCoroutine(GenerateGrid(data));
 	}
-	
-	private void GenerateMapWidthAndHeightFromRegionCount(int regionCount, out int width, out int height) {
-		width = 0;
-		height = 0;
-		int maxColumns = 4;
-		int currColumn = 0;
-		
-		int currentRowWidth = 0;
-		
-		string summary = "Map Size Generation: ";
-		for (int i = 0; i < regionCount; i++) {
-			int regionWidth = Random.Range(WorldConfigManager.Instance.minRegionWidthCount, WorldConfigManager.Instance.maxRegionWidthCount + 1);
-			int regionHeight = Random.Range(WorldConfigManager.Instance.minRegionHeightCount, WorldConfigManager.Instance.maxRegionHeightCount + 1);
-			if (currColumn < maxColumns) {
-				//only directly add to width
-				currentRowWidth += regionWidth;
-				if (currentRowWidth > width) {
-					width = currentRowWidth;
-				}
-				if (regionHeight > height) {
-					height = regionHeight;
-				}
-				currColumn++;
-			} else {
-				//place next set into next row
-				currColumn = 1;
-				currentRowWidth = 0;
-				height += regionHeight;
-			}
-			summary += $"\n{i} - Width: {regionWidth.ToString()} Height: {regionHeight.ToString()}";
-		}
-		summary += "\nTotal tiles : " + (width * height).ToString();
-		
-		Debug.Log(summary);
-	}
+	private IEnumerator GenerateGrid(MapGenerationData data) {
+		GridMap.Instance.SetupInitialData(10, 12);
+		float newX = MapGenerationData.xOffset * (data.width / 2f);
+		float newY = MapGenerationData.yOffset * (data.height / 2f);
+		GridMap.Instance.transform.localPosition = new Vector2(-newX, -newY);
+		HexTile[,] map = new HexTile[data.width, data.height];
+		List<HexTile> normalHexTiles = new List<HexTile>();
+		List<HexTile> allTiles = new List<HexTile>();
+		int id = 0;
 
+		int batchCount = 0;
+		for (int x = 0; x < data.width; x++) {
+			for (int y = 0; y < data.height; y++) {
+				float xPosition = x * MapGenerationData.xOffset;
+
+				float yPosition = y * MapGenerationData.yOffset;
+				if (y % 2 == 1) {
+					xPosition += MapGenerationData.xOffset / 2;
+				}
+
+				GameObject hex = Object.Instantiate(GridMap.Instance.goHex, GridMap.Instance.transform, true) as GameObject;
+				hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
+				hex.transform.localScale = new Vector3(MapGenerationData.tileSize, MapGenerationData.tileSize, 0f);
+				hex.name = x + "," + y;
+				HexTile currHex = hex.GetComponent<HexTile>();
+				currHex.Initialize();
+				currHex.data.id = id;
+				currHex.data.tileName = RandomNameGenerator.Instance.GetTileName();
+				currHex.data.xCoordinate = x;
+				currHex.data.yCoordinate = y;
+				allTiles.Add(currHex);
+				normalHexTiles.Add(currHex);
+				map[x, y] = hex.GetComponent<HexTile>();
+				id++;
+
+				batchCount++;
+				if (batchCount == MapGenerationData.WorldMapTileGenerationBatches) {
+					batchCount = 0;
+					yield return null;    
+				}
+			}
+		}
+		
+		GridMap.Instance.SetMap(map, normalHexTiles, allTiles);
+		normalHexTiles.ForEach(o => o.FindNeighbours(map));
+		yield return null;
+	}
 }
