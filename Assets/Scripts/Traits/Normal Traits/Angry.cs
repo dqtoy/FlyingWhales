@@ -21,7 +21,7 @@ namespace Traits {
         public override void OnAddTrait(ITraitable sourceCharacter) {
             base.OnAddTrait(sourceCharacter);
             if (sourceCharacter is Character) {
-                (sourceCharacter as Character).AdjustMoodValue(-5, this);
+                (sourceCharacter as Character).moodComponent.AdjustMoodValue(-5, this);
             }
         }
         public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {

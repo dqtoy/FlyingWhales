@@ -100,6 +100,7 @@ public class CameraMove : MonoBehaviour {
         Vector3 initialPos = new Vector3(-2.35f, -1.02f, -10f);
         this.transform.position = initialPos;
         _raycaster.enabled = true;
+        CalculateCameraBounds();
     }
     public void CenterCameraOn(GameObject GO) {
         target = GO.transform;

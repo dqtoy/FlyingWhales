@@ -25,7 +25,7 @@ namespace Traits {
         public override void OnAddTrait(ITraitable sourcePOI) {
             if (sourcePOI is Character) {
                 owner = sourcePOI as Character;
-                owner.AdjustMoodValue(-10, this);
+                owner.moodComponent.AdjustMoodValue(-10, this);
             }
             base.OnAddTrait(sourcePOI);
         }

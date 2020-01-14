@@ -188,7 +188,7 @@ public class SaveDataCharacter {
 
         //currentInteractionTypes = character.currentInteractionTypes;
         supply = character.supply;
-        moodValue = character.moodValue;
+        moodValue = character.moodComponent.moodValue;
         isCombatant = character.canCombat;
         isDisabledByPlayer = character.isDisabledByPlayer;
         speedModifier = character.speedModifier;

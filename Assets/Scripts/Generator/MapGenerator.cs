@@ -93,7 +93,7 @@ public class MapGenerator : MonoBehaviour {
         data.LoadRegionAdditionalData();
         yield return null;
 
-        CameraMove.Instance.CalculateCameraBounds();
+        // CameraMove.Instance.CalculateCameraBounds();
         UIManager.Instance.InitializeUI();
         LevelLoaderManager.UpdateLoadingInfo("Starting Game...");
         yield return null;

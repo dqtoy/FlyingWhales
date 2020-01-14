@@ -26,14 +26,6 @@ namespace Inner_Maps {
             ConnectHexTilesToBuildSpots();
             AssignWilderness();
             yield return StartCoroutine(GenerateDetails());
-
-
-            // LocationStructure structure = location.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-            // RegionTileObject rto = InnerMapManager.Instance.CreateNewTileObject<RegionTileObject>(TILE_OBJECT_TYPE.REGION_TILE_OBJECT); 
-            // structure.AddPOI(rto);
-            // region.SetRegionTileObject(rto);
-            // rto.SetName(region);
-            // rto.UpdateAdvertisements(region);
         }
         private void AssignWilderness() {
             LocationStructure structure = location.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);

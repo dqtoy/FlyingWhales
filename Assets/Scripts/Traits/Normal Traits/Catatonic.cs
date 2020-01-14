@@ -7,16 +7,17 @@ namespace Traits {
     public class Catatonic : Trait {
 
         public Character owner { get; private set; }
-        //public List<Character> charactersThatKnow { get; private set; }
 
+        private float chanceToRemove;
+        private const int MaxDays = 4;
+        
         public Catatonic() {
             name = "Catatonic";
             description = "This character is catatonic.";
             type = TRAIT_TYPE.DISABLER;
             effect = TRAIT_EFFECT.NEGATIVE;
-            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);
+            // ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED };
-            //charactersThatKnow = new List<Character>();
             hindersMovement = true;
             hindersWitness = true;
         }
@@ -26,16 +27,16 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             if (addedTo is Character) {
                 owner = addedTo as Character;
-                owner.AdjustMoodValue(-15, this);
+                owner.moodComponent.AdjustMoodValue(-15, this);
                 owner.needsComponent.AdjustDoNotGetLonely(1);
-                //Messenger.AddListener(Signals.TICK_STARTED, CheckTrait);
+                Messenger.AddListener(Signals.HOUR_STARTED, CheckRemovalChance);
                 Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             if (owner != null) {
                 owner.needsComponent.AdjustDoNotGetLonely(1);
-                //Messenger.RemoveListener(Signals.TICK_STARTED, CheckTrait);
+                Messenger.RemoveListener(Signals.HOUR_STARTED, CheckRemovalChance);
                 Messenger.RemoveListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
@@ -73,12 +74,6 @@ namespace Traits {
             CheckTrait();
         }
         #endregion
-
-        //public void AddCharacterThatKnows(Character character) {
-        //    if (!charactersThatKnow.Contains(character)) {
-        //        charactersThatKnow.Add(character);
-        //    }
-        //}
 
         private void CheckTrait() {
             if (!owner.CanPlanGoap()) {
@@ -191,6 +186,19 @@ namespace Traits {
             } else {
                spooked.TriggerFeelingSpooked();
             }
+        }
+        #endregion
+
+        #region Removal
+        private void CheckRemovalChance() {
+            chanceToRemove += GetChanceIncreasePerHour();
+            float roll = Random.Range(0f, 100f);
+            if (roll <= chanceToRemove) {
+                owner.traitContainer.RemoveTrait(owner, this);
+            }
+        }
+        private float GetChanceIncreasePerHour() {
+            return 100f / (MaxDays * 24f);
         }
         #endregion
     }

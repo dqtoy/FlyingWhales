@@ -717,12 +717,12 @@ public class ConsoleMenu : UIMenu {
         }
         string moodParameterString = parameters[1];
 
-        int moodValue = character.moodValue;
+        int moodValue = character.moodComponent.moodValue;
         if (!int.TryParse(moodParameterString, out moodValue)) {
             AddErrorMessage("Mood value parameter is not an integer: " + moodParameterString);
             return;
         }
-        character.SetMoodValue(moodValue);
+        character.moodComponent.SetMoodValue(moodValue);
         AddSuccessMessage("Set Mood Value of " + character.name + " to " + moodValue);
     }
     private void SetFullness(string[] parameters) {
