@@ -24,6 +24,9 @@ public class WoodSourceFeature : TileFeature {
     #region Overrides
     public override void GameStartActions(HexTile tile) {
         owner = tile;
+        Messenger.AddListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
+        Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+        
         List<TileObject> bigTrees = tile.GetTileObjectsInHexTile(TILE_OBJECT_TYPE.BIG_TREE_OBJECT);
         currentBigTreeCount = bigTrees.Count;
         if (bigTrees.Count < MaxBigTrees) {
@@ -36,6 +39,7 @@ public class WoodSourceFeature : TileFeature {
         }
         
         List<TileObject> smallTrees = tile.GetTileObjectsInHexTile(TILE_OBJECT_TYPE.TREE_OBJECT);
+        currentSmallTreeCount = smallTrees.Count;
         if (smallTrees.Count < MaxSmallTrees) {
             int missingTrees = MaxSmallTrees - smallTrees.Count;
             for (int i = 0; i <= missingTrees; i++) {
@@ -44,9 +48,6 @@ public class WoodSourceFeature : TileFeature {
                 }
             }
         }
-        
-        Messenger.AddListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
-        Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
     }
     #endregion
     
