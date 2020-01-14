@@ -1,54 +1,37 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Traits;
 using UnityEngine;
+using Traits;
 
-public class DefaultAtHome : CharacterBehaviourComponent {
-    public DefaultAtHome() {
-        attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
+public class SuicidalBehaviour : CharacterBehaviourComponent {
+    public SuicidalBehaviour() {
+        //attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
     }
     public override bool TryDoBehaviour(Character character, ref string log) {
         if (character.currentStructure == character.homeStructure) {
             if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.action.goapType == INTERACTION_TYPE.RETURN_HOME) {
                 log += "\n-" + character.name + " is in home structure and just returned home";
-                TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
-                log += "\n-Sit if there is still an unoccupied Table or Desk in the current location";
-                if (deskOrTable != null) {
-                    log += "\n  -" + character.name + " will do action Sit on " + deskOrTable.ToString();
-                    character.PlanIdle(INTERACTION_TYPE.SIT, deskOrTable);
-                } else {
-                    log += "\n-Otherwise, stand idle";
-                    log += "\n  -" + character.name + " will do action Stand";
-                    character.PlanIdle(INTERACTION_TYPE.STAND, character);
+                log += "\n-50% chance to Sit if there is still an unoccupied Table or Desk in the current location";
+                int chance = UnityEngine.Random.Range(0, 100);
+                log += "\n  -RNG roll: " + chance;
+                if (chance < 50) {
+                    TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
+                    if (deskOrTable != null) {
+                        log += "\n  -" + character.name + " will do action Sit on " + deskOrTable.ToString();
+                        character.PlanIdle(INTERACTION_TYPE.SIT, deskOrTable);
+                        return true;
+                    } else {
+                        log += "\n  -No unoccupied table or desk";
+                    }
                 }
+                log += "\n-Otherwise, stand idle";
+                log += "\n  -" + character.name + " will do action Stand";
+                character.PlanIdle(INTERACTION_TYPE.STAND, character);
                 return true;
             } else {
                 log += "\n-" + character.name + " is in home structure and previous action is not returned home";
                 TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(character);
 
-                log += "\n-If it is Early Night, 35% chance to go to the current Inn and then set it as the Base Structure for 2.5 hours";
-                if (currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
-                    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
-                    int chance = UnityEngine.Random.Range(0, 100);
-                    log += "\n  -RNG roll: " + chance;
-                    if (chance < 35) {
-                        if (character.traitContainer.GetNormalTrait<Trait>("Agoraphobic") != null) {
-                            log += "\n  -Character is agoraphobic, not going to inn";
-                        } else {
-                            //StartGOAP(INTERACTION_TYPE.DRINK, null, GOAP_CATEGORY.IDLE);
-                            LocationStructure structure = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.INN);
-                            if (structure != null) {
-                                log += "\n  -Early Night: " + character.name + " will go to Inn and set Base Structure for 2.5 hours";
-                                character.PlanIdle(INTERACTION_TYPE.VISIT, character, new object[] { structure });
-                                return true;
-                            } else {
-                                log += "\n  -No Inn Structure in the settlement";
-                            }
-                        }
-                    }
-                } else {
-                    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
-                }
                 log += "\n-Otherwise, if it is Lunch Time or Afternoon, 25% chance to nap if there is still an unoccupied Bed in the house";
                 if (currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
@@ -79,7 +62,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     if (chance < 30) {
                         Character chosenCharacter = character.GetParalyzedOrCatatonicCharacterToCheckOut();
                         if (chosenCharacter != null) {
-                            if(chosenCharacter.homeStructure != null) {
+                            if (chosenCharacter.homeStructure != null) {
                                 log += "\n  -Will visit house of Paralyzed/Catatonic " + chosenCharacter.name;
                                 character.PlanIdle(INTERACTION_TYPE.VISIT, character, new object[] { chosenCharacter.homeStructure });
                             } else {
@@ -141,19 +124,29 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 } else {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                 }
-                log += "\n-Otherwise, sit if there is still an unoccupied Table or Desk";
-                TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
-                if (deskOrTable != null) {
-                    log += "\n  -" + character.name + " will do action Sit on " + deskOrTable.ToString();
-                    character.PlanIdle(INTERACTION_TYPE.SIT, deskOrTable);
-                    return true;
-                } else {
-                    log += "\n  -No unoccupied Table or Desk";
+                log += "\n-Otherwise, 25% chance to sit if there is still an unoccupied Table or Desk";
+                int sitChance = UnityEngine.Random.Range(0, 100);
+                log += "\n  -RNG roll: " + sitChance;
+                if (sitChance < 25) {
+                    TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
+                    if (deskOrTable != null) {
+                        log += "\n  -" + character.name + " will do action Sit on " + deskOrTable.ToString();
+                        character.PlanIdle(INTERACTION_TYPE.SIT, deskOrTable);
+                        return true;
+                    } else {
+                        log += "\n  -No unoccupied Table or Desk";
+                    }
                 }
 
-                log += "\n-Otherwise, stand idle";
-                log += "\n  -" + character.name + " will do action Stand";
-                character.PlanIdle(INTERACTION_TYPE.STAND, character);
+                log += "\n-Otherwise, 25% chance to stand idle";
+                int standChance = UnityEngine.Random.Range(0, 100);
+                log += "\n  -RNG roll: " + standChance;
+                if (standChance < 25) {
+                    log += "\n  -" + character.name + " will do action Stand";
+                    character.PlanIdle(INTERACTION_TYPE.STAND, character);
+                    return true;
+                }
+                character.CreateSuicideJob();
                 //PlanIdleStroll(currentStructure);
                 return true;
             }

@@ -181,8 +181,7 @@ namespace Traits {
 
                     if(!characterThatWillDoJob.interruptComponent.isInterrupted && UnityEngine.Random.Range(0, 2) == 0) {
                         if (characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Diplomatic") == null) {
-                            string opinionLabel = characterThatWillDoJob.opinionComponent.GetOpinionLabel(targetCharacter);
-                            if (opinionLabel == OpinionComponent.Enemy || opinionLabel == OpinionComponent.Rival) {
+                            if (characterThatWillDoJob.opinionComponent.IsEnemiesWith(targetCharacter)) {
                                 if(targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Injured") != null
                                     || (targetCharacter.currentActionNode != null && targetCharacter.currentActionNode.action.goapType == INTERACTION_TYPE.CRY)
                                     || (targetCharacter.interruptComponent.isInterrupted && (targetCharacter.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Puke || targetCharacter.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Stumble || targetCharacter.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Accident))) {

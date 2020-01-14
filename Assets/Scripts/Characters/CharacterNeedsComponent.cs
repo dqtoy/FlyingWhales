@@ -953,34 +953,59 @@ public class CharacterNeedsComponent {
                 }
                 return true;
             }
-        } else if (this.isHungry) {
-            if (UnityEngine.Random.Range(0, 2) == 0 && character.traitContainer.GetNormalTrait<Trait>("Glutton") != null) {
-                if (!character.jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY)) {
-                    JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY;
-                    bool triggerGrieving = false;
-                    Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Trait>("Griefstricken") as Griefstricken;
-                    if (griefstricken != null) {
-                        triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
-                    }
-                    if (!triggerGrieving) {
-                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _character, _character);
-                        //if (traitContainer.GetNormalTrait<Trait>("Vampiric") != null) {
-                        //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-                        //}
-                        //else if (GetNormalTrait<Trait>("Cannibal") != null) {
-                        //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
-                        //}
-                        //job.SetCancelOnFail(true);
-                        character.jobQueue.AddJobInQueue(job);
-                    } else {
-                        griefstricken.TriggerGrieving();
-                    }
-                    return true;
-                }
-            }
-        }
+        } 
+        //else if (this.isHungry) {
+        //    if (UnityEngine.Random.Range(0, 2) == 0 && character.traitContainer.GetNormalTrait<Trait>("Glutton") != null) {
+        //        if (!character.jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY)) {
+        //            JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY;
+        //            bool triggerGrieving = false;
+        //            Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Trait>("Griefstricken") as Griefstricken;
+        //            if (griefstricken != null) {
+        //                triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
+        //            }
+        //            if (!triggerGrieving) {
+        //                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _character, _character);
+        //                //if (traitContainer.GetNormalTrait<Trait>("Vampiric") != null) {
+        //                //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
+        //                //}
+        //                //else if (GetNormalTrait<Trait>("Cannibal") != null) {
+        //                //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
+        //                //}
+        //                //job.SetCancelOnFail(true);
+        //                character.jobQueue.AddJobInQueue(job);
+        //            } else {
+        //                griefstricken.TriggerGrieving();
+        //            }
+        //            return true;
+        //        }
+        //    }
+        //}
         return false;
     }
+    public void PlanFullnessRecoveryNormal() {
+        if (!_character.jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY)) {
+            JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY;
+            bool triggerGrieving = false;
+            Griefstricken griefstricken = _character.traitContainer.GetNormalTrait<Trait>("Griefstricken") as Griefstricken;
+            if (griefstricken != null) {
+                triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
+            }
+            if (!triggerGrieving) {
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _character, _character);
+                //if (traitContainer.GetNormalTrait<Trait>("Vampiric") != null) {
+                //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
+                //}
+                //else if (GetNormalTrait<Trait>("Cannibal") != null) {
+                //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
+                //}
+                //job.SetCancelOnFail(true);
+                _character.jobQueue.AddJobInQueue(job);
+            } else {
+                griefstricken.TriggerGrieving();
+            }
+        }
+    }
+
     #endregion
 
     #region Comfort

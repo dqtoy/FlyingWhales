@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DefaultBaseStructure : CharacterBehaviourComponent {
     public DefaultBaseStructure() {
-        attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.INSIDE_SETTLEMENT_ONLY };
+        attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
     }
     public override bool TryDoBehaviour(Character character, ref string log) {
         if (character.trapStructure.structure != null && character.currentStructure == character.trapStructure.structure) {

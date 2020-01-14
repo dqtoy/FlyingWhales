@@ -23,7 +23,7 @@ namespace Traits {
                     if ((targetCharacter.stateComponent.currentState == null || (targetCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT && targetCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED))
                         && targetCharacter.faction == characterThatWillDoJob.faction && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST
                         && !targetCharacter.returnedToLife && !targetCharacter.doNotDisturb
-                        && targetCharacter.opinionComponent.HasCharacterWithOpinionLabel(OpinionComponent.Enemy, OpinionComponent.Rival)) {
+                        && targetCharacter.opinionComponent.HasEnemyCharacter()) {
                         characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Reduce_Conflict, targetCharacter);
                         //if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.RESOLVE_CONFLICT)) {
                         //    GoapPlanJob resolveConflictJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESOLVE_CONFLICT, INTERACTION_TYPE.RESOLVE_CONFLICT, targetCharacter, characterThatWillDoJob);
