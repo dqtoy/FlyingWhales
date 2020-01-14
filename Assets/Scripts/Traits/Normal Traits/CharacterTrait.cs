@@ -173,9 +173,7 @@ namespace Traits {
                     //catatonic, unconscious, restrained, puked
                     ///NOTE: Puke Reactions can be found at <see cref="Puke.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/>
                     //They will trigger a personal https://trello.com/c/iDsfwQ7d/2845-character-feeling-concerned job
-                    else if (characterThatWillDoJob.opinionComponent.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE && targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Catatonic", "Restrained") != null
-                        && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.REMOVE_TRAIT, targetCharacter) && characterThatWillDoJob.faction == targetCharacter.faction
-                         && (characterThatWillDoJob.currentActionNode == null || characterThatWillDoJob.currentActionNode.actionStatus != ACTION_STATUS.PERFORMING)) {
+                    else if (!targetCharacter.canMove && !characterThatWillDoJob.IsHostileWith(targetCharacter) && !characterThatWillDoJob.opinionComponent.IsEnemiesWith(targetCharacter)) {
                         return CreateFeelingConcernedJob(characterThatWillDoJob, targetCharacter);
                     }
 

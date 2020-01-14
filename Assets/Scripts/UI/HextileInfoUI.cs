@@ -65,4 +65,13 @@ public class HextileInfoUI : UIMenu {
         UIManager.Instance.HideSmallInfo();
     }
 
+    #region For Testing
+    public void ShowTestingInfo() {
+        string summary = "Settlement Ruler: " + currentlyShowingHexTile.settlementOnTile?.ruler?.name ?? "None";
+        UIManager.Instance.ShowSmallInfo(summary);
+    }
+    public void HideTestingInfo() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    #endregion
 }

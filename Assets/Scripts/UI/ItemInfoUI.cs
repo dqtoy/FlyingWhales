@@ -74,7 +74,7 @@ public class ItemInfoUI : UIMenu {
         ActionItem animateItem = AddNewAction("Animate", null, Animate);
 
         ActionItem seizeItem = AddNewAction("Seize", null, () => PlayerManager.Instance.player.seizeComponent.SeizePOI(activeItem));
-        bool isInteractable = PlayerManager.Instance.player.seizeComponent.seizedPOI == null && activeItem.mapVisual != null && (activeItem.isBeingCarriedBy != null || activeItem.gridTileLocation != null);
+        bool isInteractable = !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && activeItem.mapVisual != null && (activeItem.isBeingCarriedBy != null || activeItem.gridTileLocation != null);
         seizeItem.SetInteractable(isInteractable);
     }
     #endregion

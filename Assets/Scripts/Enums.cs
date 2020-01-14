@@ -1000,6 +1000,8 @@ public enum INTERRUPT {
     Stumble,
     Watch,
     Zombie_Death,
+    Become_Settlement_Ruler,
+    Become_Faction_Leader,
 }
 public enum REWARD {
     SUPPLY,

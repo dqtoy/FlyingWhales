@@ -18,12 +18,21 @@ namespace Traits {
         }
 
         #region Overrides
+<<<<<<< HEAD
+        public override void OnAddTrait(ITraitable sourceCharacter) {
+            base.OnAddTrait(sourceCharacter);
+            if (sourceCharacter is Character) {
+                (sourceCharacter as Character).moodComponent.AdjustMoodValue(-5, this);
+            }
+        }
+=======
         //public override void OnAddTrait(ITraitable sourceCharacter) {
         //    base.OnAddTrait(sourceCharacter);
         //    if (sourceCharacter is Character) {
         //        (sourceCharacter as Character).AdjustMoodValue(-5, this);
         //    }
         //}
+>>>>>>> 5782ab582859728826b01d1d9ef22920e39fe72e
         public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is TileObject) {
                 TileObject tileObject = targetPOI as TileObject;

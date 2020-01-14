@@ -114,7 +114,7 @@ public class TileObjectInfoUI : UIMenu {
         ActionItem animateItem = AddNewAction("Animate", null, Animate);
 
         ActionItem seizeItem = AddNewAction("Seize", null, () => PlayerManager.Instance.player.seizeComponent.SeizePOI(activeTileObject));
-        bool isInteractable = PlayerManager.Instance.player.seizeComponent.seizedPOI == null && activeTileObject.mapVisual != null && (activeTileObject.isBeingCarriedBy != null || activeTileObject.gridTileLocation != null);
+        bool isInteractable = !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && activeTileObject.mapVisual != null && (activeTileObject.isBeingCarriedBy != null || activeTileObject.gridTileLocation != null);
         seizeItem.SetInteractable(isInteractable);
     }
     #endregion

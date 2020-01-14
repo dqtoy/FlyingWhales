@@ -12,9 +12,11 @@ public class NonActionEventsComponent {
     private const string Insult = "Insult";
     private const string Praise = "Praise";
 
+    private WeightedDictionary<string> chatWeights;
 
     public NonActionEventsComponent(Character owner) {
         this.owner = owner;
+        chatWeights = new WeightedDictionary<string>();
         Messenger.AddListener<Character, Character>(Signals.OPINION_DECREASED, OnOpinionDecreased);
     }
 
@@ -67,14 +69,14 @@ public class NonActionEventsComponent {
     }
     private void TriggerChatCharacter(Character target) {
         string strLog = owner.name + " chat with " + target.name;
-        WeightedDictionary<string> weights = new WeightedDictionary<string>();
-        weights.AddElement(Warm_Chat, 100);
-        weights.AddElement(Awkward_Chat, 30);
-        weights.AddElement(Argument, 20);
-        weights.AddElement(Insult, 20);
-        weights.AddElement(Praise, 20);
+        chatWeights.Clear();
+        chatWeights.AddElement(Warm_Chat, 100);
+        chatWeights.AddElement(Awkward_Chat, 30);
+        chatWeights.AddElement(Argument, 20);
+        chatWeights.AddElement(Insult, 20);
+        chatWeights.AddElement(Praise, 20);
 
-        strLog += "\n\n" + weights.GetWeightsSummary("Base Weights");
+        strLog += "\n\n" + chatWeights.GetWeightsSummary("Base Weights");
 
         CHARACTER_MOOD actorMood = owner.currentMoodType;
         CHARACTER_MOOD targetMood = target.currentMoodType;
@@ -83,47 +85,47 @@ public class NonActionEventsComponent {
         int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(owner, target);
 
         if (actorMood == CHARACTER_MOOD.BAD) {
-            weights.AddWeightToElement(Warm_Chat, -20);
-            weights.AddWeightToElement(Argument, 15);
-            weights.AddWeightToElement(Insult, 20);
+            chatWeights.AddWeightToElement(Warm_Chat, -20);
+            chatWeights.AddWeightToElement(Argument, 15);
+            chatWeights.AddWeightToElement(Insult, 20);
             strLog += "\n\nActor Mood is Low, modified weights...";
             strLog += "\nWarm Chat: -20, Argument: +15, Insult: +20";
         } else if (actorMood == CHARACTER_MOOD.DARK) {
-            weights.AddWeightToElement(Warm_Chat, -40);
-            weights.AddWeightToElement(Argument, 30);
-            weights.AddWeightToElement(Insult, 50);
+            chatWeights.AddWeightToElement(Warm_Chat, -40);
+            chatWeights.AddWeightToElement(Argument, 30);
+            chatWeights.AddWeightToElement(Insult, 50);
             strLog += "\n\nActor Mood is Critical, modified weights...";
             strLog += "\nWarm Chat: -40, Argument: +30, Insult: +50";
         }
 
         if (targetMood == CHARACTER_MOOD.BAD) {
-            weights.AddWeightToElement(Warm_Chat, -20);
-            weights.AddWeightToElement(Argument, 15);
+            chatWeights.AddWeightToElement(Warm_Chat, -20);
+            chatWeights.AddWeightToElement(Argument, 15);
             strLog += "\n\nTarget Mood is Low, modified weights...";
             strLog += "\nWarm Chat: -20, Argument: +15";
         } else if (targetMood == CHARACTER_MOOD.DARK) {
-            weights.AddWeightToElement(Warm_Chat, -40);
-            weights.AddWeightToElement(Argument, 30);
+            chatWeights.AddWeightToElement(Warm_Chat, -40);
+            chatWeights.AddWeightToElement(Argument, 30);
             strLog += "\n\nTarget Mood is Critical, modified weights...";
             strLog += "\nWarm Chat: -40, Argument: +30";
         }
 
         if (actorOpinionLabel == OpinionComponent.Close_Friend || actorOpinionLabel == OpinionComponent.Friend) {
-            weights.AddWeightToElement(Awkward_Chat, -15);
+            chatWeights.AddWeightToElement(Awkward_Chat, -15);
             strLog += "\n\nActor's opinion of Target is Close Friend or Friend, modified weights...";
             strLog += "\nAwkward Chat: -15";
         } else if (actorOpinionLabel == OpinionComponent.Enemy || actorOpinionLabel == OpinionComponent.Rival) {
-            weights.AddWeightToElement(Awkward_Chat, 15);
+            chatWeights.AddWeightToElement(Awkward_Chat, 15);
             strLog += "\n\nActor's opinion of Target is Enemy or Rival, modified weights...";
             strLog += "\nAwkward Chat: +15";
         }
 
         if (targetOpinionLabel == OpinionComponent.Close_Friend || targetOpinionLabel == OpinionComponent.Friend) {
-            weights.AddWeightToElement(Awkward_Chat, -15);
+            chatWeights.AddWeightToElement(Awkward_Chat, -15);
             strLog += "\n\nTarget's opinion of Actor is Close Friend or Friend, modified weights...";
             strLog += "\nAwkward Chat: -15";
         } else if (targetOpinionLabel == OpinionComponent.Enemy || targetOpinionLabel == OpinionComponent.Rival) {
-            weights.AddWeightToElement(Awkward_Chat, 15);
+            chatWeights.AddWeightToElement(Awkward_Chat, 15);
             strLog += "\n\nTarget's opinion of Actor is Enemy or Rival, modified weights...";
             strLog += "\nAwkward Chat: +15";
         }
@@ -131,53 +133,53 @@ public class NonActionEventsComponent {
         if(compatibility != -1) {
             strLog += "\n\nActor and Target Compatibility is " + compatibility + ", modified weights...";
             if (compatibility == 0) {
-                weights.AddWeightToElement(Awkward_Chat, 15);
-                weights.AddWeightToElement(Argument, 20);
-                weights.AddWeightToElement(Insult, 15);
+                chatWeights.AddWeightToElement(Awkward_Chat, 15);
+                chatWeights.AddWeightToElement(Argument, 20);
+                chatWeights.AddWeightToElement(Insult, 15);
                 strLog += "\nAwkward Chat: +15, Argument: +20, Insult: +15";
             } else if (compatibility == 1) {
-                weights.AddWeightToElement(Awkward_Chat, 10);
-                weights.AddWeightToElement(Argument, 10);
-                weights.AddWeightToElement(Insult, 10);
+                chatWeights.AddWeightToElement(Awkward_Chat, 10);
+                chatWeights.AddWeightToElement(Argument, 10);
+                chatWeights.AddWeightToElement(Insult, 10);
                 strLog += "\nAwkward Chat: +10, Argument: +10, Insult: +10";
             } else if (compatibility == 2) {
-                weights.AddWeightToElement(Awkward_Chat, 5);
-                weights.AddWeightToElement(Argument, 5);
-                weights.AddWeightToElement(Insult, 5);
+                chatWeights.AddWeightToElement(Awkward_Chat, 5);
+                chatWeights.AddWeightToElement(Argument, 5);
+                chatWeights.AddWeightToElement(Insult, 5);
                 strLog += "\nAwkward Chat: +5, Argument: +5, Insult: +5";
             } else if (compatibility == 3) {
-                weights.AddWeightToElement(Praise, 5);
+                chatWeights.AddWeightToElement(Praise, 5);
                 strLog += "\nPraise: +5";
             } else if (compatibility == 4) {
-                weights.AddWeightToElement(Praise, 10);
+                chatWeights.AddWeightToElement(Praise, 10);
                 strLog += "\nPraise: +10";
             } else if (compatibility == 5) {
-                weights.AddWeightToElement(Praise, 20);
+                chatWeights.AddWeightToElement(Praise, 20);
                 strLog += "\nPraise: +20";
             }
         }
 
         if (owner.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
-            weights.AddWeightToElement(Argument, 15);
+            chatWeights.AddWeightToElement(Argument, 15);
             strLog += "\n\nActor is Hotheaded, modified weights...";
             strLog += "\nArgument: +15";
         }
         if (target.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
-            weights.AddWeightToElement(Argument, 15);
+            chatWeights.AddWeightToElement(Argument, 15);
             strLog += "\n\nTarget is Hotheaded, modified weights...";
             strLog += "\nArgument: +15";
         }
 
         if (owner.traitContainer.GetNormalTrait<Trait>("Diplomatic") != null) {
-            weights.AddWeightToElement(Insult, -30);
-            weights.AddWeightToElement(Praise, 30);
+            chatWeights.AddWeightToElement(Insult, -30);
+            chatWeights.AddWeightToElement(Praise, 30);
             strLog += "\n\nActor is Diplomatic, modified weights...";
             strLog += "\nInsult: -30, Praise: +30";
         }
 
-        strLog += "\n\n" + weights.GetWeightsSummary("Final Weights");
+        strLog += "\n\n" + chatWeights.GetWeightsSummary("Final Weights");
 
-        string result = weights.PickRandomElementGivenWeights();
+        string result = chatWeights.PickRandomElementGivenWeights();
         strLog += "\nResult: " + result;
 
         bool adjustOpinionBothSides = false;

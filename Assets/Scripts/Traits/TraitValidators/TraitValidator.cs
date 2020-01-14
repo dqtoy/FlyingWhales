@@ -17,13 +17,7 @@ namespace Traits {
                     }
                 }
             }
-            if (trait.isStacking) {
-                if (traitContainer.stacks.ContainsKey(trait)) {
-                    if(traitContainer.stacks[trait] >= trait.stackLimit) {
-                        return false;
-                    }
-                }
-            } else {
+            if (!trait.isStacking) {
                 //Cannot add trait if it is unique and the character already has that type of trait.
                 if (trait.IsUnique()) {
                     Trait oldTrait = obj.traitContainer.GetNormalTrait<Trait>(trait.name);
@@ -32,6 +26,21 @@ namespace Traits {
                     }
                 }
             }
+            //if (trait.isStacking) {
+            //    if (traitContainer.stacks.ContainsKey(trait)) {
+            //        if (traitContainer.stacks[trait] >= trait.stackLimit) {
+            //            return false;
+            //        }
+            //    }
+            //} else {
+            //    //Cannot add trait if it is unique and the character already has that type of trait.
+            //    if (trait.IsUnique()) {
+            //        Trait oldTrait = obj.traitContainer.GetNormalTrait<Trait>(trait.name);
+            //        if (oldTrait != null) {
+            //            return false;
+            //        }
+            //    }
+            //}
             return true;
         }
     }

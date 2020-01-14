@@ -93,16 +93,17 @@ namespace Traits {
                         removeFrom.traitProcessor.OnTraitUnstack(removeFrom, trait, removedBy);
                         removedOrUnstacked = true;
                     } else {
-                        stacks.Remove(trait);
                         removedOrUnstacked = _allTraits.Remove(trait);
                         if (removedOrUnstacked) {
+                            stacks.Remove(trait);
                             removeFrom.traitProcessor.OnTraitRemoved(removeFrom, trait, removedBy);
                         }
                     }
                     
-                } else {
-                    throw new Exception("Removing stack of " + trait.name + " trait from " + removeFrom.name + " but there is not stack, this should not happen...");
                 }
+                //else {
+                //    throw new Exception("Removing stack of " + trait.name + " trait from " + removeFrom.name + " but there is not stack, this should not happen...");
+                //}
             }
             return removedOrUnstacked;
         }
@@ -132,9 +133,10 @@ namespace Traits {
                             _allTraits.RemoveAt(index);
                             removeFrom.traitProcessor.OnTraitRemoved(removeFrom, trait, removedBy);
                         }
-                    } else {
-                        throw new Exception("Removing stack of " + trait.name + " trait from " + removeFrom.name + " but there is not stack, this should not happen...");
-                    }
+                    } 
+                    //else {
+                    //    throw new Exception("Removing stack of " + trait.name + " trait from " + removeFrom.name + " but there is not stack, this should not happen...");
+                    //}
                 }
             }
             return removedOrUnstacked;

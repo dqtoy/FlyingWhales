@@ -36,19 +36,19 @@ public class MoodComponent {
 	}
 	public void SetMoodValue(int amount) {
 		moodValue = amount;
-		moodValue = Mathf.Clamp(moodValue, 1, 100);
+		// moodValue = Mathf.Clamp(moodValue, 1, 100);
 		// OnMoodChanged();
 	}
 	public void AdjustMoodValue(int amount, Trait fromTrait, ActualGoapNode triggerAction = null) {
 		moodValue += amount;
-		moodValue = Mathf.Clamp(moodValue, 1, 100);
+		// moodValue = Mathf.Clamp(moodValue, 1, 100);
 		// OnMoodChanged();
 	}
 	public CHARACTER_MOOD ConvertCurrentMoodValueToType() {
 		return _owner.moodComponent.ConvertMoodValueToType(moodValue);
 	}
 	private CHARACTER_MOOD ConvertMoodValueToType(int amount) {
-		if (amount >= 1 && amount < 26) {
+		if (amount < 26) {
 			return CHARACTER_MOOD.DARK;
 		} else if (amount >= 26 && amount < 51) {
 			return CHARACTER_MOOD.BAD;

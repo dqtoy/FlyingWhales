@@ -132,7 +132,7 @@ public class CombatManager : MonoBehaviour {
                 if (character.race == RACE.DRAGON) {
                     totalPower *= 1.25f;
                 }
-                if (character.isLeader) {
+                if (character.isFactionLeader) {
                     totalPower *= 1.25f;
                 }
 
