@@ -21,6 +21,9 @@ public class MetalSourceFeature : TileFeature {
     #region Overrides
     public override void GameStartActions(HexTile tile) {
         owner = tile;
+        Messenger.AddListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
+        Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+        
         List<TileObject> ores = tile.GetTileObjectsInHexTile(TILE_OBJECT_TYPE.ORE);
         currentOreCount = ores.Count;
         if (ores.Count < MaxOres) {
@@ -31,8 +34,6 @@ public class MetalSourceFeature : TileFeature {
                 }
             }
         }
-        Messenger.AddListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
-        Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
     }
     #endregion
     
