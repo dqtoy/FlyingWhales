@@ -32,9 +32,9 @@ namespace Traits {
             base.OnAddTrait(sourceCharacter);
             if (sourceCharacter is Character) {
                 character = sourceCharacter as Character;
-                if (victim1Requirement == null) { // || victim2Requirement == null
-                    GenerateSerialVictims();
-                }
+                //if (victim1Requirement == null) { // || victim2Requirement == null
+                //    GenerateSerialVictims();
+                //}
                 //Messenger.AddListener(Signals.TICK_STARTED, CheckSerialKiller);
                 Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
             }
@@ -69,10 +69,10 @@ namespace Traits {
             }
             return base.TriggerFlaw(character);
         }
-        public override void OnTickStarted() {
-            base.OnTickStarted();
-            CheckSerialKiller();
-        }
+        //public override void OnTickStarted() {
+        //    base.OnTickStarted();
+        //    CheckSerialKiller();
+        //}
         #endregion
 
         public void SetVictim1Requirement(SerialVictim serialVictim) {
@@ -224,7 +224,7 @@ namespace Traits {
                 character.marker.GoToPOI(targetVictim);
             }
         }
-        private void CheckTargetVictimIfStillAvailable() {
+        public void CheckTargetVictimIfStillAvailable() {
             if (targetVictim != null) {
                 if (targetVictim.currentRegion != this.character.currentRegion || targetVictim.isDead || targetVictim is Summon) {
                     SetTargetVictim(null);
@@ -235,11 +235,13 @@ namespace Traits {
                 }
             }
         }
-        public void CreateHuntVictimJob() {
+        public bool CreateHuntVictimJob() {
             if (character.jobQueue.HasJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM)) {
-                return;
+                return false;
             }
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM, INTERACTION_TYPE.RITUAL_KILLING, targetVictim, character);
+            character.jobQueue.AddJobInQueue(job);
+            return true;
             //GoapAction goapAction6 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.BURY_CHARACTER, character, targetVictim);
             //GoapAction goapAction5 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CARRY_CORPSE, character, targetVictim);
             //GoapAction goapAction4 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RITUAL_KILLING, character, targetVictim);
@@ -276,7 +278,6 @@ namespace Traits {
             //job.SetAssignedCharacter(character);
             //job.SetCancelOnFail(true);
 
-            character.jobQueue.AddJobInQueue(job);
 
             //character.AdjustIsWaitingForInteraction(1);
             //if (character.stateComponent.currentState != null) {

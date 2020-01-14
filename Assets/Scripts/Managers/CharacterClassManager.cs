@@ -16,8 +16,7 @@ public class CharacterClassManager : MonoBehaviour {
         { "Default",
             new Type[]{
                 typeof(WorkBehaviour),
-                // typeof(DefaultJoinFaction),
-                typeof(DefaultJustReturnedHome),
+                typeof(DefaultFactionRelated),
                 typeof(DefaultAtHome),
                 typeof(DefaultOutside),
                 typeof(DefaultBaseStructure),
@@ -25,24 +24,38 @@ public class CharacterClassManager : MonoBehaviour {
                 typeof(DefaultExtraCatcher),
             }
         },
-        { "Leader",
-            new Type[]{
-                typeof(WorkBehaviour),
-                typeof(DefaultJustReturnedHome),
-                typeof(BlueprintBehaviour),
-                typeof(DefaultAtHome),
-                typeof(DefaultOutside),
-                typeof(DefaultBaseStructure),
-                typeof(DefaultOtherStructure),
-                typeof(DefaultExtraCatcher),
-            }
-        },
+        //{ "Leader",
+        //    new Type[]{
+        //        typeof(WorkBehaviour),
+        //        typeof(BlueprintBehaviour),
+        //        typeof(DefaultAtHome),
+        //        typeof(DefaultOutside),
+        //        typeof(DefaultBaseStructure),
+        //        typeof(DefaultOtherStructure),
+        //        typeof(DefaultExtraCatcher),
+        //    }
+        //},
     };
 
     private Dictionary<string, System.Type[]> traitIdlePlans = new Dictionary<string, Type[]>() {
         { "Berserked",
             new Type[]{
                 typeof(BerserkBehaviour),
+            }
+        },
+        { "Glutton",
+            new Type[]{
+                typeof(GluttonBehaviour),
+            }
+        },
+        { "SerialKiller",
+            new Type[]{
+                typeof(SerialKillerBehaviour),
+            }
+        },
+        { "Suicidal",
+            new Type[]{
+                typeof(SuicidalBehaviour),
             }
         },
     };
@@ -126,42 +139,30 @@ public class CharacterClassManager : MonoBehaviour {
             behaviourComponents.Add(behaviour.GetType(), behaviour);
         }
     }
-    public string RunIdlePlanForCharacter(Character character) {
-        System.Type[] actions = GetIdlePlansForCharacter(character);
-        string log = $"{GameManager.Instance.TodayLogString()}{character.name} Idle Plan Decision Making:";
-        for (int i = 0; i < actions.Length; i++) {
-            System.Type type = actions[i];
-            CharacterBehaviourComponent component = behaviourComponents[type];
-            if (component.IsDisabledFor(character)) {
-                log += $"\nBehaviour Component: {component.ToString()} is disabled for {character.name} skipping it...";
-                continue; //skip component
-            }
-            if (!component.CanDoBehaviour(character)) {
-                log += $"\nBehaviour Component: {component.ToString()} cannot be done by {character.name} skipping it...";
-                continue; //skip component
-            }
-            if (component.TryDoBehaviour(character, ref log)) {
-                component.PostProcessAfterSucessfulDoBehaviour(character);
-                if (!component.WillContinueProcess()) { break; }
-            }
-        }
-        return log;
-    }
-    private System.Type[] GetIdlePlansForCharacter(Character character) {
-        //In getting an idle plan for a character, check for idle plans given by traits, once an idle plan for a trait has bee found, disregard class idle plan and just do the trait idle plan
-        for (int i = 0; i < character.traitContainer.allTraits.Count; i++) {
-            Traits.Trait trait = character.traitContainer.allTraits[i];
-            if (traitIdlePlans.ContainsKey(trait.name)) {
-                return traitIdlePlans[trait.name];
-            }
-        }
-
-        string className = character.characterClass.className;
+    public System.Type[] GetClassBehaviourComponents(string className) {
         if (classIdlePlans.ContainsKey(className)) {
             return classIdlePlans[className];
         } else {
             return classIdlePlans["Default"];
         }
+    }
+    public System.Type[] GetTraitBehaviourComponents(string traitName) {
+        if (traitIdlePlans.ContainsKey(traitName)) {
+            return traitIdlePlans[traitName];
+        }
+        return null;
+    }
+    public CharacterBehaviourComponent GetCharacterBehaviourComponent(System.Type type) {
+        if (behaviourComponents.ContainsKey(type)) {
+            return behaviourComponents[type];
+        }
+        return null;
+    }
+    public string GetClassBehaviourComponentKey(string className) {
+        if (classIdlePlans.ContainsKey(className)) {
+            return className;
+        }
+        return "Default";
     }
     //private string DefaultClassIdlePlan(Character character) {
     //    string log = "Default Class Idle Plan for " + character.name;

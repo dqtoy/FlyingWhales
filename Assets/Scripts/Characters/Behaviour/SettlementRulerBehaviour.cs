@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
 
-public class BlueprintBehaviour : CharacterBehaviourComponent {
-    public BlueprintBehaviour() {
-        attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.INSIDE_SETTLEMENT_ONLY, BEHAVIOUR_COMPONENT_ATTRIBUTE.ONCE_PER_DAY };
+public class SettlementRulerBehaviour : CharacterBehaviourComponent {
+    public SettlementRulerBehaviour() {
+        attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY, BEHAVIOUR_COMPONENT_ATTRIBUTE.ONCE_PER_DAY };
     }
 
     public override bool TryDoBehaviour(Character character, ref string log) {

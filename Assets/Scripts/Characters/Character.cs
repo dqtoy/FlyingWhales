@@ -118,6 +118,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public NonActionEventsComponent nonActionEventsComponent { get; private set; }
     public OpinionComponent opinionComponent { get; private set; }
     public InterruptComponent interruptComponent { get; private set; }
+    public BehaviourComponent behaviourComponent { get; private set; }
 
     #region getters / setters
     public virtual string name => _firstName;
@@ -261,7 +262,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
         AssignRole(role, false);
-        _characterClass = CharacterManager.Instance.CreateNewCharacterClass(GetClassForRole(role));
+        AssignClassByRole(role, true);
+        //_characterClass = CharacterManager.Instance.CreateNewCharacterClass(GetClassForRole(role));
         originalClassName = _characterClass.className;
         SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
         GenerateSexuality();
@@ -275,7 +277,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
         AssignRole(role, false);
-        _characterClass = CharacterManager.Instance.CreateNewCharacterClass(className);
+        AssignClass(className, true);
+        //_characterClass = CharacterManager.Instance.CreateNewCharacterClass(className);
         originalClassName = _characterClass.className;
         SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
         GenerateSexuality();
@@ -289,7 +292,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
         AssignRole(role, false);
-        _characterClass = CharacterManager.Instance.CreateNewCharacterClass(className);
+        AssignClass(className, true);
+        //_characterClass = CharacterManager.Instance.CreateNewCharacterClass(className);
         originalClassName = _characterClass.className;
         SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
         SetSexuality(sexuality);
@@ -301,7 +305,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         _id = Utilities.SetID(this, data.id);
         _gender = data.gender;
         SetSexuality(data.sexuality);
-        _characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
+        AssignClass(data.className, true);
+        //_characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
         RaceSetting raceSetting = RaceManager.Instance.racesDictionary[data.race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
         AssignRole(CharacterManager.Instance.GetRoleByRoleType(data.roleType), false);
@@ -371,6 +376,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         nonActionEventsComponent = new NonActionEventsComponent(this);
         opinionComponent = new OpinionComponent(this);
         interruptComponent = new InterruptComponent(this);
+        behaviourComponent = new BehaviourComponent(this);
     }
 
     //This is done separately after all traits have been loaded so that the data will be accurate
@@ -908,17 +914,17 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
         }
     }
-    public void AssignClassByRole(CharacterRole role) {
-        AssignClass(GetClassForRole(role));
+    public void AssignClassByRole(CharacterRole role, bool isInitial = false) {
+        AssignClass(GetClassForRole(role), isInitial);
     }
     public void RemoveClass() {
         if (_characterClass == null) { return; }
         traitContainer.RemoveTrait(this, traitContainer.GetNormalTrait<Trait>(_characterClass.traitNames)); //Remove traits from class
         _characterClass = null;
     }
-    public void AssignClass(string className) {
+    public void AssignClass(string className, bool isInitial = false) {
         if (CharacterManager.Instance.HasCharacterClass(className)) {
-            AssignClass(CharacterManager.Instance.CreateNewCharacterClass(className));
+            AssignClass(CharacterManager.Instance.CreateNewCharacterClass(className), isInitial);
         } else {
             throw new Exception("There is no class named " + className + " but it is being assigned to " + this.name);
         }
@@ -939,7 +945,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         UpdateCanCombatState();
     }
-    public void AssignClass(CharacterClass characterClass) {
+    public void AssignClass(CharacterClass characterClass, bool isInitial = false) {
         CharacterClass previousClass = _characterClass;
         if (previousClass != null) {
             //This means that the character currently has a class and it will be replaced with a new class
@@ -948,8 +954,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
         }
         _characterClass = characterClass;
-        OnUpdateCharacterClass();
-        Messenger.Broadcast(Signals.CHARACTER_CLASS_CHANGE, this, previousClass, _characterClass);
+        behaviourComponent.OnChangeClass(_characterClass, previousClass);
+        if (!isInitial) {
+            OnUpdateCharacterClass();
+            Messenger.Broadcast(Signals.CHARACTER_CLASS_CHANGE, this, previousClass, _characterClass);
+        }
     }
     #endregion
 
@@ -2135,6 +2144,16 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void SetRegionLocation(Region region) {
         _currentRegion = region;
     }
+    public bool IsInHomeSettlement() {
+        if (isAtHomeRegion) {
+            Settlement currentSettlement = currentStructure.settlementLocation;
+            Settlement home = homeSettlement;
+            if(home != null) {
+                return currentSettlement == home;
+            }
+        }
+        return false;
+    } 
     #endregion
 
     #region Utilities
@@ -3921,7 +3940,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (!isFactionless) {
             CreatePersonalJobs();
         }
-        string classIdlePlanLog = CharacterManager.Instance.RunCharacterIdlePlan(this);
+        string classIdlePlanLog = behaviourComponent.RunBehaviour();
         log += "\n" + classIdlePlanLog;
         return log;
 
@@ -3997,7 +4016,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             List<Character> positiveCharactersWithParalyzedOrCatatonic = new List<Character>();
             for (int i = 0; i < charactersWithRel.Count; i++) {
                 Character character = charactersWithRel[i];
-                if (opinionComponent.GetRelationshipEffectWith(character) == RELATIONSHIP_EFFECT.POSITIVE) {
+                if (opinionComponent.IsFriendsWith(character)) {
                     Trait trait = character.traitContainer.GetNormalTrait<Trait>("Paralyzed", "Catatonic");
                     if (trait != null) {
                         positiveCharactersWithParalyzedOrCatatonic.Add(character);

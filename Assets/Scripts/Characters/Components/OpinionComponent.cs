@@ -183,6 +183,17 @@ public class OpinionComponent {
         }
         return characters;
     }
+    public List<Character> GetFriendCharacters() {
+        List<Character> characters = new List<Character>();
+        //List<Character> charactersWithOpinion = opinions.Keys.ToList();
+        for (int i = 0; i < charactersWithOpinion.Count; i++) {
+            Character otherCharacter = charactersWithOpinion[i];
+            if (IsFriendsWith(otherCharacter)) {
+                characters.Add(otherCharacter);
+            }
+        }
+        return characters;
+    }
     public bool HasCharacterWithOpinionLabel(params string[] labels) {
         for (int i = 0; i < charactersWithOpinion.Count; i++) {
             Character otherCharacter = charactersWithOpinion[i];
@@ -191,6 +202,15 @@ public class OpinionComponent {
                 if (labels[j] == opinionLabel) {
                     return true;
                 }
+            }
+        }
+        return false;
+    }
+    public bool HasEnemyCharacter() {
+        for (int i = 0; i < charactersWithOpinion.Count; i++) {
+            Character otherCharacter = charactersWithOpinion[i];
+            if (IsEnemiesWith(otherCharacter)) {
+                return true;
             }
         }
         return false;

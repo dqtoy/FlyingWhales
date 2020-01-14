@@ -282,9 +282,6 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Character Class Manager
-    public string RunCharacterIdlePlan(Character character) {
-        return classManager.RunIdlePlanForCharacter(character);
-    }
     public CharacterClass CreateNewCharacterClass(string className) {
         return classManager.CreateNewCharacterClass(className);
     }
@@ -305,6 +302,18 @@ public class CharacterManager : MonoBehaviour {
     }
     public List<CharacterClass> GetNormalCombatantClasses() {
         return classManager.normalCombatantClasses;
+    }
+    public System.Type[] GetClassBehaviourComponents(string className) {
+        return classManager.GetClassBehaviourComponents(className);
+    }
+    public System.Type[] GetTraitBehaviourComponents(string traitName) {
+        return classManager.GetTraitBehaviourComponents(traitName);
+    }
+    public CharacterBehaviourComponent GetCharacterBehaviourComponent(System.Type type) {
+        return classManager.GetCharacterBehaviourComponent(type);
+    }
+    public string GetClassBehaviourComponentKey(string className) {
+        return classManager.GetClassBehaviourComponentKey(className);
     }
     #endregion
 

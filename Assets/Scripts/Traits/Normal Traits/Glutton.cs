@@ -12,8 +12,6 @@ namespace Traits {
             description = "Gluttons consume more food than normal.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
-            
-            
             ticksDuration = 0;
             canBeTriggered = true;
         }

@@ -3,7 +3,7 @@ using Traits;
 
 public class WorkBehaviour : CharacterBehaviourComponent {
     public WorkBehaviour() {
-        attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.INSIDE_SETTLEMENT_ONLY };
+        //attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
     }
     
     public override bool TryDoBehaviour(Character character, ref string log) {
