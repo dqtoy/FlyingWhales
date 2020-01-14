@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BayatGames.SaveGameFree.Types;
 using Inner_Maps;
@@ -7,13 +8,13 @@ using Traits;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
-
+using Random = UnityEngine.Random;
 namespace Inner_Maps {
     public class LocationGridTile : IHasNeighbours<LocationGridTile> {
 
         public enum Tile_Type { Empty, Wall, Structure_Entrance }
         public enum Tile_State { Empty, Occupied }
-        public enum Ground_Type { Soil, Grass, Stone, Snow, Tundra, Cobble, Wood, Snow_Dirt, Water }
+        public enum Ground_Type { Soil, Grass, Stone, Snow, Tundra, Cobble, Wood, Snow_Dirt, Water, Cave }
         public bool hasDetail { get; set; }
         public InnerTileMap parentMap { get; private set; }
         public Tilemap parentTileMap { get; private set; }
@@ -187,6 +188,8 @@ namespace Inner_Maps {
                     SetGroundType(Ground_Type.Tundra);
                     //override tile to use tundra soil
                     parentMap.groundTilemap.SetTile(this.localPlace, InnerMapManager.Instance.assetManager.tundraTile);
+                }  else if (assetName.Contains("Dungeon") || assetName.Contains("Cave") || assetName.Contains("cave")) {
+                    SetGroundType(Ground_Type.Cave);
                 } 
             }
         }
@@ -231,7 +234,8 @@ namespace Inner_Maps {
                 //grass should be higher than dirt
                 //dirt should be higher than cobble
                 //cobble should be higher than grass
-                foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
+                Dictionary<GridNeighbourDirection, LocationGridTile> fourNeighbours = FourNeighboursDictionary();
+                foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in fourNeighbours) {
                     LocationGridTile currNeighbour = keyValuePair.Value;
                     //if (currNeighbour.structure != null && !currNeighbour.structure.structureType.IsOpenSpace()) { continue; } //skip non open space structure tiles.
                     bool createEdge = false;
@@ -241,9 +245,13 @@ namespace Inner_Maps {
                     summary += $"\n\tChecking {currNeighbour.ToString()}. Ground type is {groundType.ToString()}. Neighbour Ground Type is {currNeighbour.groundType.ToString()}";
                     if (currNeighbour.tileType == Tile_Type.Wall || currNeighbour.tileType == Tile_Type.Structure_Entrance) {
                         createEdge = false;
+                    } else if (groundType == LocationGridTile.Ground_Type.Cave || currNeighbour.groundType == LocationGridTile.Ground_Type.Cave) {
+                        createEdge = false;
                     } else if (groundType != LocationGridTile.Ground_Type.Water && currNeighbour.groundType == LocationGridTile.Ground_Type.Water) {
                         createEdge = true;
-                    } else if (groundType == LocationGridTile.Ground_Type.Snow) {
+                    } else if (groundType == LocationGridTile.Ground_Type.Water && currNeighbour.groundType == LocationGridTile.Ground_Type.Water) {
+                        createEdge = false;
+                    }  else if (groundType == LocationGridTile.Ground_Type.Snow) {
                         createEdge = true;
                     } else if (groundType == LocationGridTile.Ground_Type.Cobble && currNeighbour.groundType != LocationGridTile.Ground_Type.Snow) {
                         createEdge = true;
@@ -278,7 +286,14 @@ namespace Inner_Maps {
                                 break;
                         }
                         System.Diagnostics.Debug.Assert(mapToUse != null, nameof(mapToUse) + " != null");
-                        mapToUse.SetTile(localPlace, InnerMapManager.Instance.assetManager.edgeAssets[groundType][(int)keyValuePair.Key]);
+                        System.Diagnostics.Debug.Assert(InnerMapManager.Instance.assetManager.edgeAssets.ContainsKey(groundType), $"No edge asset for {groundType.ToString()} for neighbour {currNeighbour.groundType.ToString()} ");
+                        try {
+                            mapToUse.SetTile(localPlace, InnerMapManager.Instance.assetManager.edgeAssets[groundType][(int)keyValuePair.Key]);
+                        }
+                        catch (Exception e) {
+                            Console.WriteLine(e);
+                            throw;
+                        }
                     }
                 }
             }
@@ -422,6 +437,30 @@ namespace Inner_Maps {
             }
             return false;
         }
+        public bool HasNeighbourOfType(Ground_Type type, bool useFourNeighbours = false) {
+            Dictionary<GridNeighbourDirection, LocationGridTile> n = neighbours;
+            if (useFourNeighbours) {
+                n = FourNeighboursDictionary();
+            }
+            for (int i = 0; i < n.Values.Count; i++) {
+                if (neighbours.Values.ElementAt(i).groundType == type) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool HasNeighbourNotInList(List<LocationGridTile> list, bool useFourNeighbours = false) {
+            Dictionary<GridNeighbourDirection, LocationGridTile> n = neighbours;
+            if (useFourNeighbours) {
+                n = FourNeighboursDictionary();
+            }
+            for (int i = 0; i < n.Values.Count; i++) {
+                if (list.Contains(neighbours.Values.ElementAt(i)) == false) {
+                    return true;
+                }
+            }
+            return false;
+        }
         public bool IsNeighbour(LocationGridTile tile) {
             foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
                 if (keyValuePair.Value == tile) {
@@ -497,7 +536,7 @@ namespace Inner_Maps {
         public void UnhighlightTile() {
             parentMap.groundTilemap.SetColor(localPlace, defaultTileColor);
         }
-        public bool HasCardinalNeighbourOfDifferentGroundType(out Dictionary<GridNeighbourDirection, LocationGridTile> differentTiles) {
+        private bool HasCardinalNeighbourOfDifferentGroundType(out Dictionary<GridNeighbourDirection, LocationGridTile> differentTiles) {
             bool hasDiff = false;
             differentTiles = new Dictionary<GridNeighbourDirection, LocationGridTile>();
             Dictionary<GridNeighbourDirection, LocationGridTile> cardinalNeighbours = FourNeighboursDictionary();
@@ -537,6 +576,19 @@ namespace Inner_Maps {
                 }
             }
             return traitables;
+        }
+        public int GetNeighbourOfTypeCount(Ground_Type type, bool useFourNeighbours = false) {
+            int count = 0;
+            Dictionary<GridNeighbourDirection, LocationGridTile> n = neighbours;
+            if (useFourNeighbours) {
+                n = FourNeighboursDictionary();
+            }
+            for (int i = 0; i < n.Values.Count; i++) {
+                if (neighbours.Values.ElementAt(i).groundType == type) {
+                    count++;
+                }
+            }
+            return count;
         }
         #endregion
 

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -51525,6 +51525,34 @@ MonoBehaviour:
   m_Script: {fileID: -146154839, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &853108555
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 853108556}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &853108556
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 853108555}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -171.38359, y: 9.159202, z: 3.96875}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 14
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &853810639
 GameObject:
   m_ObjectHideFlags: 0
@@ -55864,24 +55892,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 706cea5054341e84987e39607d290221, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _minFov: 5
-  _maxFov: 10
-  sensitivity: 20
-  _zoomSpeed: 15
   nameplateCamera: {fileID: 252774528}
-  _uiCamera: {fileID: 0}
   _raycaster: {fileID: 930355347}
-  target: {fileID: 0}
   MIN_X: 0
   MAX_X: 0
   MIN_Y: 0
   MAX_Y: 0
+  _minFov: 5
+  _maxFov: 10
+  dampTime: 0.2
+  velocity: {x: 0, y: 0, z: 0}
+  target: {fileID: 0}
   allowZoom: 1
+  _zoomSpeed: 15
+  sensitivity: 20
+  cameraPanSpeed: 50
+  dragThreshold: 0.13
   currDragTime: 0
   dragOrigin: {x: 0, y: 0, z: 0}
   isDragging: 0
   edgeBoundary: 30
   edgingSpeed: 30
+  allowEdgePanning: 0
 --- !u!1 &932256817
 GameObject:
   m_ObjectHideFlags: 0
@@ -79195,13 +79227,11 @@ MonoBehaviour:
   goHex: {fileID: 1000010250898800, guid: 8971afa34d474ec4387a7b00dd0bbef3, type: 2}
   width: 35
   height: 45
-  _borderParent: {fileID: 1771222031}
+  borderParent: {fileID: 1771222031}
   _borderThickness: 4
   xOffset: 2.56
   yOffset: 1.93
   tileSize: 1
-  elevationFrequency: 0
-  moistureFrequency: 0
   outerGridList: []
   normalHexTiles: []
 --- !u!1001 &1292027216
@@ -95584,6 +95614,9 @@ MonoBehaviour:
       - {fileID: 0}
       - {fileID: 0}
       - {fileID: 0}
+  waterTle: {fileID: 11400000, guid: c0b31ac02d9ac8849818798789e80415, type: 2}
+  shoreTle: {fileID: 11400000, guid: e83a6083d3b5e404ab91ccf1bb8a0c5a, type: 2}
+  caveWallTile: {fileID: 11400000, guid: 0e76310f7d566d54c98f2d850927ab6d, type: 2}
 --- !u!1 &1538653383
 GameObject:
   m_ObjectHideFlags: 0

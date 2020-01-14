@@ -148,51 +148,6 @@ public class MapGenerator : MonoBehaviour {
         //PlayerManager.Instance.player.LoadResearchNewInterventionAbility(data.playerSave);
 
     }
-
-    private void GenerateMapWidthAndHeightFromRegionCount(int regionCount, out int width, out int height) {
-        width = 0;
-        height = 0;
-
-        int maxColumns = 6;
-        int currColumn = 0;
-
-        int currentRowWidth = 0;
-
-        string summary = "Map Size Generation: ";
-        for (int i = 0; i < regionCount; i++) {
-            int regionWidth = Random.Range(WorldConfigManager.Instance.minRegionWidthCount, WorldConfigManager.Instance.maxRegionWidthCount + 1);
-            int regionHeight = Random.Range(WorldConfigManager.Instance.minRegionHeightCount, WorldConfigManager.Instance.maxRegionHeightCount + 1);
-            if (currColumn < maxColumns) {
-                //only directly add to width
-                currentRowWidth += regionWidth;
-                if (currentRowWidth > width) {
-                    width = currentRowWidth;
-                }
-                if (regionHeight > height) {
-                    height = regionHeight;
-                }
-                currColumn++;
-            } else {
-                //place next set into next row
-                currColumn = 1;
-                currentRowWidth = 0;
-                height += regionHeight;
-            }
-            
-            //if (Utilities.IsEven(i)) {
-            //    width += regionWidth;
-            //} else {
-            //    height += regionHeight;
-            //}
-            
-            //totalTiles += regionWidth * regionHeight;
-            summary += "\n" + i + " - Width: " + regionWidth + " Height: " + regionHeight;
-        }
-        //summary += "\nComputed total tiles : " + totalTiles.ToString();
-        summary += "\nTotal tiles : " + (width * height).ToString();
-
-        Debug.Log(summary);
-    }
     public void SetIsCoroutineRunning(bool state) {
         isCoroutineRunning = state;
     }

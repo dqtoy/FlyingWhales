@@ -74,7 +74,8 @@ public class MetalSourceFeature : TileFeature {
 
     private bool CreateNewOre() {
         List<LocationGridTile> choices = owner.locationGridTiles.Where(x => x.isOccupied == false 
-                                                                            && x.structure.structureType.IsOpenSpace()).ToList();
+                                                                            && x.structure.structureType.IsOpenSpace() 
+                                                                            && x.GetNeighbourOfTypeCount(LocationGridTile.Ground_Type.Cave, true) == 1).ToList();
         if (choices.Count > 0) {
             LocationGridTile chosenTile = Utilities.GetRandomElement(choices);
             chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ORE),

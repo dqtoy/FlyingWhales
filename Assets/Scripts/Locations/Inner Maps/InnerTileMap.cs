@@ -19,6 +19,7 @@ namespace Inner_Maps {
         public Tilemap groundTilemap;
         public Tilemap detailsTilemap;
         public Tilemap structureTilemap;
+        public TilemapCollider2D structureTilemapCollider;
         
         [Header("Seamless Edges")]
         public Tilemap northEdgeTilemap;
@@ -747,7 +748,7 @@ namespace Inner_Maps {
             yield return StartCoroutine(MapPerlinDetails(
                 allTiles.Where(x =>
                     x.objHere == null
-                    && x.buildSpotOwner.isPartOfParentRegionMap
+                    && (x.buildSpotOwner.hexTileOwner == null || (x.buildSpotOwner.hexTileOwner.elevationType != ELEVATION.WATER && x.buildSpotOwner.hexTileOwner.elevationType != ELEVATION.MOUNTAIN)) 
                     && (x.structure == null || x.structure.structureType == STRUCTURE_TYPE.WILDERNESS || x.structure.structureType == STRUCTURE_TYPE.WORK_AREA)
                     && x.tileType != LocationGridTile.Tile_Type.Wall
                     && !x.isLocked

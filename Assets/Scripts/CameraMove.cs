@@ -1,69 +1,64 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class CameraMove : MonoBehaviour {
 
-	public static CameraMove Instance = null;
-
-	[SerializeField] private float _minFov;
-	[SerializeField] private float _maxFov;
-	[SerializeField] private float sensitivity;
-    [SerializeField] private float _zoomSpeed = 5f;
+	public static CameraMove Instance;
+    
     [SerializeField] private Camera nameplateCamera;
-    [SerializeField] private Camera _uiCamera;
     [SerializeField] private Physics2DRaycaster _raycaster;
 
-    private float dampTime = 0.2f;
-	private Vector3 velocity = Vector3.zero;
-	[SerializeField] private Transform target;
-
-	const float MIN_Z = -10f;
-	const float MAX_Z = -10f;
+    [Header("Bounds")]
+    private const float MIN_Z = -10f;
+    private const float MAX_Z = -10f;
     [SerializeField] internal float MIN_X;
     [SerializeField] internal float MAX_X;
     [SerializeField] internal float MIN_Y;
     [SerializeField] internal float MAX_Y;
+    [SerializeField] private float _minFov;
+    [SerializeField] private float _maxFov;
+    
+    [Header("Targeting")]
+    [SerializeField] private float dampTime = 0.2f;
+    [SerializeField] private Vector3 velocity = Vector3.zero;
+	[SerializeField] private Transform target;
 
+    [Header("Zooming")]
     [SerializeField] private bool allowZoom = true;
-
+    [SerializeField] private float _zoomSpeed = 5f;
+    [SerializeField] private float sensitivity;
+    
+    [Header("Panning")]
+    [SerializeField] private float cameraPanSpeed = 50f;
+    
     [Header("Dragging")]
-    private float dragThreshold = 0.13f;
+    [SerializeField] private float dragThreshold = 0.13f;
     [SerializeField] private float currDragTime;
     [SerializeField] private Vector3 dragOrigin;
-    public bool isDragging = false;
+    public bool isDragging;
 
     [Header("Edging")]
     [SerializeField] private int edgeBoundary = 30;
     [SerializeField] private float edgingSpeed = 30f;
-    private bool allowEdgePanning = false;
+    [SerializeField] private bool allowEdgePanning;
 
+    //private properties
     private float previousCameraFOV;
-
     private bool cameraControlEnabled = true;
-
-    int defaultMask;
-
-    #region getters/setters
-    public Camera uiCamera {
-        get { return _uiCamera; }
-    }
-    public float currentFOV {
-        get { return Camera.main.orthographicSize; }
-    }
-    public float maxFOV {
-        get { return _maxFov; }
-    }
-    #endregion
+    private int defaultMask;
+    private Camera _mainCamera;
+    private Transform _mainCameraTransform;
 
     private void Awake(){
 		Instance = this;
-	}
+        _mainCamera = Camera.main;
+        _mainCameraTransform = _mainCamera.transform;
+    }
     private void Update() {
         if (!cameraControlEnabled) {
             return;
         }
-        
         ArrowKeysMovement();
         Dragging();
         Edging();
@@ -93,29 +88,10 @@ public class CameraMove : MonoBehaviour {
 
     #region Utilities
     public void ToggleMainCameraLayer(string layerName) {
-        Camera.main.cullingMask ^= 1 << LayerMask.NameToLayer(layerName);
-        defaultMask = Camera.main.cullingMask;
-    }
-    public void ZoomToTarget(float targetZoom) {
-        StartCoroutine(lerpFieldOfView(Camera.main, targetZoom, 0.1f));
-        StartCoroutine(lerpFieldOfView(nameplateCamera, targetZoom, 0.1f));
-    }
-    private IEnumerator lerpFieldOfView(Camera targetCamera, float toFOV, float duration) {
-        float counter = 0;
-
-        float fromFOV = targetCamera.orthographicSize;
-
-        while (counter < duration) {
-            counter += Time.deltaTime;
-
-            float fOVTime = counter / duration;
-            //Debug.Log(fOVTime);
-
-            //Change FOV
-            targetCamera.orthographicSize = Mathf.Lerp(fromFOV, toFOV, fOVTime);
-            //Wait for a frame
-            yield return null;
-        }
+        int cullingMask = _mainCamera.cullingMask;
+        cullingMask ^= 1 << LayerMask.NameToLayer(layerName);
+        _mainCamera.cullingMask = cullingMask;
+        defaultMask = cullingMask;
     }
     #endregion
 
@@ -125,25 +101,24 @@ public class CameraMove : MonoBehaviour {
         this.transform.position = initialPos;
         _raycaster.enabled = true;
     }
-    public void MoveMainCamera(Vector2 newPos) {
-        Camera.main.transform.position = newPos;
-        CameraMove.Instance.ConstrainCameraBounds();
-    }
     public void CenterCameraOn(GameObject GO) {
         target = GO.transform;
     }
     private void ArrowKeysMovement() {
         if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
-            if (!UIManager.Instance.IsConsoleShowing() && (EventSystem.current.currentSelectedGameObject == null || EventSystem.current.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>() == null)) {  //UIManager.Instance.regionInfoUI.fingersUI.createNewFactionGO.activeSelf
+            //&& (EventSystem.current.currentSelectedGameObject == null || EventSystem.current.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>() == null)
+            if (!UIManager.Instance.IsConsoleShowing()) { 
                 float zAxisValue = Input.GetAxis("Vertical");
-                iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("y", Camera.main.transform.position.y + zAxisValue, "time", 0.1f));
+                // iTween.MoveUpdate(_mainCamera.gameObject, iTween.Hash("y", _mainCamera.transform.position.y + zAxisValue, "time", 0.1f));
+                transform.Translate(new Vector3(0f, zAxisValue * Time.deltaTime * cameraPanSpeed, 0f));
             }
         }
 
         if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) {
-            if (!UIManager.Instance.IsConsoleShowing() && (EventSystem.current.currentSelectedGameObject == null || EventSystem.current.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>() == null)) {
+            if (!UIManager.Instance.IsConsoleShowing()) {
                 float xAxisValue = Input.GetAxis("Horizontal");
-                iTween.MoveUpdate(Camera.main.gameObject, iTween.Hash("x", Camera.main.transform.position.x + xAxisValue, "time", 0.1f));
+                // iTween.MoveUpdate(_mainCamera.gameObject, iTween.Hash("x", _mainCamera.transform.position.x + xAxisValue, "time", 0.1f));
+                transform.Translate(new Vector3(xAxisValue * Time.deltaTime * cameraPanSpeed, 0f, 0f));
             }
         }
     }
@@ -151,20 +126,18 @@ public class CameraMove : MonoBehaviour {
         Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
         if (allowZoom && screenRect.Contains(Input.mousePosition)) {
             //camera scrolling code
-            float fov = Camera.main.orthographicSize;
+            float fov = _mainCamera.orthographicSize;
             float adjustment = Input.GetAxis("Mouse ScrollWheel") * (sensitivity);
-            if (adjustment != 0f && !UIManager.Instance.IsMouseOnUI()) {
-                //Debug.Log(adjustment);
+            if (Math.Abs(adjustment) > 0.1f && !UIManager.Instance.IsMouseOnUI()) {
                 fov -= adjustment;
-                //fov = Mathf.Round(fov * 100f) / 100f;
                 fov = Mathf.Clamp(fov, _minFov, _maxFov);
 
                 if (!Mathf.Approximately(previousCameraFOV, fov)) {
                     previousCameraFOV = fov;
-                    Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
+                    _mainCamera.orthographicSize = Mathf.Lerp(_mainCamera.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
                     nameplateCamera.orthographicSize = Mathf.Lerp(nameplateCamera.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
                 } else {
-                    Camera.main.orthographicSize = fov;
+                    _mainCamera.orthographicSize = fov;
                     nameplateCamera.orthographicSize = fov;
                 }
                 CalculateCameraBounds();
@@ -179,17 +152,19 @@ public class CameraMove : MonoBehaviour {
         }
 
         if (target) { //smooth camera center
-            Vector3 point = Camera.main.WorldToViewportPoint(target.position);
-            Vector3 delta = target.position - Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z)); //(new Vector3(0.5, 0.5, point.z));
-            Vector3 destination = transform.position + delta;
-            transform.position = Vector3.SmoothDamp(transform.position, destination, ref velocity, dampTime);
+            var position = target.position;
+            var thisPosition = transform.position;
+            Vector3 point = _mainCamera.WorldToViewportPoint(position);
+            Vector3 delta = position - _mainCamera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z)); //(new Vector3(0.5, 0.5, point.z));
+            Vector3 destination = thisPosition + delta;
+            transform.position = Vector3.SmoothDamp(thisPosition, destination, ref velocity, dampTime);
             if (HasReachedBounds() || (Mathf.Approximately(transform.position.x, destination.x) && Mathf.Approximately(transform.position.y, destination.y))) {
                 target = null;
             }
         }
     }
-    private bool startedOnUI = false;
-    private bool hasReachedThreshold = false;
+    private bool startedOnUI;
+    private bool hasReachedThreshold;
     private Vector3 originMousePos;
     private void Dragging() {
         if (startedOnUI) {
@@ -204,12 +179,11 @@ public class CameraMove : MonoBehaviour {
                     startedOnUI = true;
                     return;
                 }
-                //dragOrigin = Input.mousePosition; //on first press of mouse
             } else if (Input.GetMouseButton(2)) {
                 currDragTime += Time.deltaTime; //while the left mouse button is pressed
                 if (currDragTime >= dragThreshold) {
                     if (!hasReachedThreshold) {
-                        dragOrigin = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                        dragOrigin = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
                         originMousePos = Input.mousePosition;
                         hasReachedThreshold = true;
                     }
@@ -224,8 +198,8 @@ public class CameraMove : MonoBehaviour {
 
 
         if (isDragging) {
-            Vector3 difference = (Camera.main.ScreenToWorldPoint(Input.mousePosition)) - Camera.main.transform.position;
-            Camera.main.transform.position = dragOrigin - difference;
+            Vector3 difference = (_mainCamera.ScreenToWorldPoint(Input.mousePosition)) - _mainCameraTransform.position;
+            _mainCameraTransform.position = dragOrigin - difference;
             if (Input.GetMouseButtonUp(2)) {
                 ResetDragValues();
                 CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
@@ -282,17 +256,19 @@ public class CameraMove : MonoBehaviour {
         if (GridMap.Instance.map == null) {
             return;
         }
-        HexTile rightMostTile = GridMap.Instance.map[(int)GridMap.Instance.width - 1, (int)GridMap.Instance.height / 2];
-        HexTile topMostTile = GridMap.Instance.map[(int)GridMap.Instance.width/2, (int)GridMap.Instance.height - 1];
+        HexTile rightMostTile = GridMap.Instance.map[GridMap.Instance.width - 1, GridMap.Instance.height / 2];
+        HexTile topMostTile = GridMap.Instance.map[GridMap.Instance.width/2, GridMap.Instance.height - 1];
 
-        float vertExtent = Camera.main.orthographicSize;
+        float vertExtent = _mainCamera.orthographicSize;
         float horzExtent = vertExtent * Screen.width / Screen.height;
 
-        Bounds newBounds = new Bounds();
-        newBounds.extents = new Vector3(Mathf.Abs(rightMostTile.transform.position.x), Mathf.Abs(topMostTile.transform.position.y), 0f);
+        Bounds newBounds = new Bounds {
+            extents = new Vector3(Mathf.Abs(rightMostTile.transform.position.x),
+                Mathf.Abs(topMostTile.transform.position.y), 0f)
+        };
         SetCameraBounds(newBounds, horzExtent, vertExtent);
     }
-    public void ConstrainCameraBounds() {
+    private void ConstrainCameraBounds() {
         float xLowerBound = MIN_X;
         float xUpperBound = MAX_X;
         float yLowerBound = MIN_Y;
@@ -305,10 +281,11 @@ public class CameraMove : MonoBehaviour {
             yLowerBound = MAX_Y;
             yUpperBound = MIN_Y;
         }
-        float xCoord = Mathf.Clamp(transform.position.x, xLowerBound, xUpperBound);
-        float yCoord = Mathf.Clamp(transform.position.y, yLowerBound, yUpperBound);
-        float zCoord = Mathf.Clamp(transform.position.z, MIN_Z, MAX_Z);
-        Camera.main.transform.position = new Vector3(
+        Vector3 thisPos = transform.position;
+        float xCoord = Mathf.Clamp(thisPos.x, xLowerBound, xUpperBound);
+        float yCoord = Mathf.Clamp(thisPos.y, yLowerBound, yUpperBound);
+        float zCoord = Mathf.Clamp(thisPos.z, MIN_Z, MAX_Z);
+        _mainCameraTransform.position = new Vector3(
             xCoord,
             yCoord,
             zCoord);
@@ -320,60 +297,34 @@ public class CameraMove : MonoBehaviour {
         }
         return false;
     }
-    private bool IsWithinBounds(float value, float lowerBound, float upperBound) {
-        if (value >= lowerBound && value <= upperBound) {
-            return true;
-        }
-        return false;
-    }
     private void SetCameraBounds(Bounds bounds, float horzExtent, float vertExtent) {
-        float halfOfHexagon = (256f) / 100f; //1.28
-        int borderCount = GridMap.Instance._borderThickness;
-        MIN_X = bounds.min.x + horzExtent - (halfOfHexagon * ((float)borderCount));
-        MAX_X = bounds.max.x - horzExtent + (halfOfHexagon * (borderCount)); //removed -1 because of UI
-        MIN_Y = bounds.min.y + vertExtent - (halfOfHexagon * ((float)borderCount - 2));
-        MAX_Y = bounds.max.y - vertExtent + (halfOfHexagon * (borderCount - 2));
-    }
-    private Vector2[] GetCameraWorldCorners(Camera camera) {
-        Vector2[] corners = new Vector2[4]; //4 corners
-
-        // Screens coordinate corner location
-        var upperLeftScreen = new Vector2(0, Screen.height);
-        var upperRightScreen = new Vector2(Screen.width, Screen.height);
-        var lowerLeftScreen = new Vector2(0, 0);
-        var lowerRightScreen = new Vector2(Screen.width, 0);
-
-        //Corner locations in world coordinates
-        var upperLeft = camera.ScreenToWorldPoint(upperLeftScreen);
-        var upperRight = camera.ScreenToWorldPoint(upperRightScreen);
-        var lowerRight = camera.ScreenToWorldPoint(lowerRightScreen);
-        var lowerLeft = camera.ScreenToWorldPoint(lowerLeftScreen);
-
-        corners[0] = upperLeft;
-        corners[1] = upperRight;
-        corners[2] = lowerRight;
-        corners[3] = lowerLeft;
-
-        return corners;
+        float halfOfHexagon = 256f / 100f;
+        // MIN_X = bounds.min.x + horzExtent - (halfOfHexagon * ((float)borderCount));
+        // MAX_X = bounds.max.x - horzExtent + (halfOfHexagon * (borderCount)); //removed -1 because of UI
+        // MIN_Y = bounds.min.y + vertExtent - (halfOfHexagon * ((float)borderCount - 2));
+        // MAX_Y = bounds.max.y - vertExtent + (halfOfHexagon * (borderCount - 2));
+        MIN_X = bounds.min.x + horzExtent - (halfOfHexagon);
+        MAX_X = bounds.max.x - horzExtent + (halfOfHexagon); //removed -1 because of UI
+        MIN_Y = bounds.min.y + vertExtent - (halfOfHexagon * 1.5f);
+        MAX_Y = bounds.max.y - vertExtent + (halfOfHexagon * 1.5f);
     }
     #endregion
 
     #region Listeners
-    private float lastZoomAmount = 0f;
     private void OnMenuOpened(UIMenu openedMenu) { }
     private void OnMenuClosed(UIMenu openedMenu) { }
     private void OnInnerMapOpened(ILocation location) {
-        Camera.main.cullingMask = 0;
+        _mainCamera.cullingMask = 0;
         SetCameraControlState(false);
     }
     private void OnInnerMapClosed(ILocation location) {
-        Camera.main.cullingMask = defaultMask;
+        _mainCamera.cullingMask = defaultMask;
         SetCameraControlState(true);
     }
     #endregion
 
     #region Camera Control
-    public void SetCameraControlState(bool state) {
+    private void SetCameraControlState(bool state) {
         cameraControlEnabled = state;
     }
     #endregion

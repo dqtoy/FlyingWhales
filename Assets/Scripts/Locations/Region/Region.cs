@@ -44,7 +44,6 @@ public class Region : ILocation {
 
     private Region() {
         charactersAtLocation = new List<Character>();
-        new List<System.Action>();
         factionsHere = new List<Faction>();
         residents = new List<Character>();
         awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>>();
@@ -55,18 +54,8 @@ public class Region : ILocation {
         this.coreTile = coreTile;
         tiles = new List<HexTile>();
         AddTile(coreTile);
-        if (id == 1) {
-            regionColor = Color.blue;
-        } else if (id == 2) {
-            regionColor = Color.yellow;
-        } else if (id == 3) {
-            regionColor = Color.green;
-        } else if (id == 4) {
-            regionColor = Color.red;
-        } else if (id == 5) {
-            regionColor = Color.yellow;
-        }
-        // regionColor = Random.ColorHSV();
+        regionColor = GenerateRandomRegionColor();
+        Debug.Log($"Created region {this.name} with core tile {coreTile.ToString()}");
     }
     public Region(SaveDataRegion data) : this() {
         id = Utilities.SetID(this, data.id);
@@ -76,6 +65,20 @@ public class Region : ILocation {
         regionColor = data.regionColor;
     }
 
+    private Color GenerateRandomRegionColor() {
+        if (id == 1) {
+            return Color.blue;
+        } else if (id == 2) {
+            return Color.yellow;
+        } else if (id == 3) {
+            return Color.green;
+        } else if (id == 4) {
+            return Color.red;
+        } else if (id == 5) {
+            return Color.yellow;
+        }
+        return Random.ColorHSV();
+    }
     public void SetName(string name) {
         this.name = name;
     }
@@ -538,7 +541,7 @@ public class Region : ILocation {
 
         if (!structures[structure.structureType].Contains(structure)) {
             structures[structure.structureType].Add(structure);
-            Debug.Log($"New structure {structure.name} was added to region {name}" );
+            // Debug.Log($"New structure {structure.name} was added to region {name}" );
         }
     }
     public void RemoveStructure(LocationStructure structure) {

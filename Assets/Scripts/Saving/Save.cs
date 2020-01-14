@@ -132,7 +132,7 @@ public class Save {
         for (int i = 0; i < regionSaves.Count; i++) {
             regions[i] = regionSaves[i].Load();
         }
-        GridMap.Instance.LoadRegions(regions);
+        GridMap.Instance.SetRegions(regions);
     }
     public void LoadRegionCharacters() {
         for (int i = 0; i < regionSaves.Count; i++) {

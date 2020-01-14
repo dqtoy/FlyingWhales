@@ -3,6 +3,7 @@ using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.Serialization;
 
 public class GridMap : MonoBehaviour {
 	public static GridMap Instance;
@@ -12,19 +13,14 @@ public class GridMap : MonoBehaviour {
     [Header("Map Settings")]
     public int width;
 	public int height;
-    [SerializeField] private Transform _borderParent;
+    [FormerlySerializedAs("_borderParent")] public Transform borderParent;
     [SerializeField] internal int _borderThickness;
 
     public float xOffset;
     public float yOffset;
 
     public int tileSize;
-
-    public float elevationFrequency;
-    public float moistureFrequency;
-
     [Space(10)]
-	//public List<GameObject> listHexes;
     public List<HexTile> outerGridList;
     public List<HexTile> normalHexTiles;
 	public HexTile[,] map;
@@ -44,50 +40,11 @@ public class GridMap : MonoBehaviour {
         this.width = width;
         this.height = height;
     }
-    public IEnumerator GenerateGrid() {
-        float newX = xOffset * (width / 2);
-        float newY = yOffset * (height / 2);
-        this.transform.localPosition = new Vector2(-newX, -newY);
-        map = new HexTile[width, height];
-        normalHexTiles = new List<HexTile>();
-        allTiles = new List<HexTile>();
-        int id = 0;
 
-        int batchCount = 0;
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                float xPosition = x * xOffset;
-
-                float yPosition = y * yOffset;
-                if (y % 2 == 1) {
-                    xPosition += xOffset / 2;
-                }
-
-                GameObject hex = GameObject.Instantiate(goHex, this.transform, true) as GameObject;
-                hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
-                hex.transform.localScale = new Vector3(tileSize, tileSize, 0f);
-                hex.name = x + "," + y;
-                HexTile currHex = hex.GetComponent<HexTile>();
-                currHex.Initialize();
-                currHex.data.id = id;
-				currHex.data.tileName = RandomNameGenerator.Instance.GetTileName();
-                currHex.data.xCoordinate = x;
-                currHex.data.yCoordinate = y;
-                allTiles.Add(currHex);
-                normalHexTiles.Add(currHex);
-                map[x, y] = hex.GetComponent<HexTile>();
-                id++;
-
-                batchCount++;
-                if (batchCount == MapGenerationData.WorldMapTileGenerationBatches) {
-                    batchCount = 0;
-                    yield return null;    
-                }
-            }
-        }
-        normalHexTiles.ForEach(o => o.FindNeighbours(map));
-        yield return null;
-        //listHexes.ForEach(o => Debug.Log(o.name + " id: " + o.GetComponent<HexTile>().id));
+    public void SetMap(HexTile[,] map, List<HexTile> normalHexTiles, List<HexTile> allTiles) {
+        this.map = map;
+        this.normalHexTiles = normalHexTiles;
+        this.allTiles = allTiles;
     }
     internal void GenerateGrid(Save data) {
         this.width = data.width;
@@ -122,101 +79,10 @@ public class GridMap : MonoBehaviour {
         }
         normalHexTiles.ForEach(o => o.FindNeighbours(map));
     }
-    internal IEnumerator GenerateOuterGrid() {
-        int newWidth = width + (_borderThickness * 2);
-        int newHeight = height + (_borderThickness * 2);
 
-        float newX = xOffset * (newWidth / 2);
-        float newY = yOffset * (newHeight / 2);
-
-        int id = 0;
-
-        outerGridList = new List<HexTile>();
-        _borderParent.transform.localPosition = new Vector2(-newX, -newY);
-
-        int batchCount = 0;
-        
-        for (int x = 0; x < newWidth; x++) {
-            for (int y = 0; y < newHeight; y++) {
-                if ((x >= _borderThickness && x < newWidth - _borderThickness) && (y >= _borderThickness && y < newHeight - _borderThickness)) {
-                    continue;
-                }
-                float xPosition = x * xOffset;
-
-                float yPosition = y * yOffset;
-                if (y % 2 == 1) {
-                    xPosition += xOffset / 2;
-                }
-
-                GameObject hex = GameObject.Instantiate(goHex) as GameObject;
-                hex.transform.SetParent(_borderParent.transform);
-                hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
-                hex.transform.localScale = new Vector3(tileSize, tileSize, 0f);
-                HexTile currHex = hex.GetComponent<HexTile>();
-                currHex.Initialize();
-                currHex.data.id = id;
-                currHex.data.tileName = hex.name;
-                currHex.data.xCoordinate = x - _borderThickness;
-                currHex.data.yCoordinate = y - _borderThickness;
-                
-                outerGridList.Add(currHex);
-                allTiles.Add(currHex);
-
-                int xToCopy = x - _borderThickness;
-                int yToCopy = y - _borderThickness;
-                if (x < _borderThickness && y - _borderThickness >= 0 && y < height) { //if border thickness is 2 (0 and 1)
-                    //left border
-                    xToCopy = 0;
-                    yToCopy = y - _borderThickness;
-                } else if (x >= _borderThickness && x <= width && y < _borderThickness) {
-                    //bottom border
-                    xToCopy = x - _borderThickness;
-                    yToCopy = 0;
-                } else if (x > width && (y - _borderThickness >= 0 && y - _borderThickness <= height - 1)) {
-                    //right border
-                    xToCopy = (int)width - 1;
-                    yToCopy = y - _borderThickness;
-                } else if (x >= _borderThickness && x <= width && y - _borderThickness >= height) {
-                    //top border
-                    xToCopy = x - _borderThickness;
-                    yToCopy = (int)height - 1;
-                } else {
-                    //corners
-                    xToCopy = x;
-                    yToCopy = y;
-                    xToCopy = Mathf.Clamp(xToCopy, 0, (int)width - 1);
-                    yToCopy = Mathf.Clamp(yToCopy, 0, (int)height - 1);
-                }
-
-                HexTile hexToCopy = map[xToCopy, yToCopy];
-
-                currHex.name = currHex.xCoordinate + "," + currHex.yCoordinate + "(Border) Copied from " + hexToCopy.name;
-
-                currHex.SetElevation(hexToCopy.elevationType);
-                Biomes.Instance.SetBiomeForTile(hexToCopy.biomeType, currHex);
-                // Biomes.Instance.UpdateTileVisuals(currHex);
-
-                currHex.DisableColliders();
-                id++;
-                
-                batchCount++;
-                if (batchCount == MapGenerationData.WorldMapOuterGridGenerationBatches) {
-                    batchCount = 0;
-                    yield return null;    
-                }
-            }
-        }
-
-        batchCount = 0;
-        for (int i = 0; i < outerGridList.Count; i++) {
-            HexTile tile = outerGridList[i];
-            tile.FindNeighboursForBorders();
-            batchCount++;
-            if (batchCount == MapGenerationData.WorldMapOuterGridGenerationBatches) {
-                batchCount = 0;
-                yield return null;    
-            }
-        }
+    public void SetOuterGridList(List<HexTile> outerTiles) {
+        outerGridList = outerTiles;
+        allTiles.AddRange(outerTiles);
     }
     internal void GenerateOuterGrid(Save data) {
         _borderThickness = data.borderThickness;
@@ -227,7 +93,7 @@ public class GridMap : MonoBehaviour {
         float newY = yOffset * (int) (newHeight / 2);
 
         outerGridList = new List<HexTile>();
-        _borderParent.transform.localPosition = new Vector2(-newX, -newY);
+        borderParent.transform.localPosition = new Vector2(-newX, -newY);
         for (int i = 0; i < data.outerHextileSaves.Count; i++) {
             SaveDataHextile saveDataHextile = data.outerHextileSaves[i];
             int x = saveDataHextile.xCoordinate + _borderThickness;
@@ -244,7 +110,7 @@ public class GridMap : MonoBehaviour {
             }
 
             GameObject hex = GameObject.Instantiate(goHex) as GameObject;
-            hex.transform.SetParent(_borderParent.transform);
+            hex.transform.SetParent(borderParent.transform);
             hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
             hex.transform.localScale = new Vector3(tileSize, tileSize, 0f);
             HexTile currHex = hex.GetComponent<HexTile>();
@@ -341,7 +207,7 @@ public class GridMap : MonoBehaviour {
     #endregion
 
     #region Regions
-    public void LoadRegions(Region[] regions) {
+    public void SetRegions(Region[] regions) {
         allRegions = regions;
         for (int i = 0; i < allRegions.Length; i++) {
             allRegions[i].FinalizeData();

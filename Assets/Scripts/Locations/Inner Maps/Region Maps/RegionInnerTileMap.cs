@@ -102,27 +102,12 @@ namespace Inner_Maps {
                 for (int localY = 0; localY <= region.hexTileMap.GetUpperBound(1); localY++) {
                     HexTile firstTileInRow = region.hexTileMap[0, localY];
                     HexTile tile = region.hexTileMap[localX, localY];
-                    int diffRegionTiles = region.GetDifferentRegionTilesInRow(localY);
                     if (tile.region == this.region) {
                         //the row will be indented if its row type (odd/even) is not the same as the row type of the left most tile.
                         //and the first tile in it's row is not null.
                         bool isIndented = Utilities.IsEven(tile.yCoordinate) !=
                                           Utilities.IsEven(leftMostTile.yCoordinate);
 
-                        // int differenceXFromLeftMost = Mathf.Abs(leftMostTile.xCoordinate - tile.xCoordinate);
-                        // int buildSpotColumn1 = differenceXFromLeftMost * 2;
-                        // int buildSpotColumn2 = buildSpotColumn1 + 1;
-                        //
-                        // if (isIndented) {
-                        //     buildSpotColumn1 += 1;
-                        //     buildSpotColumn2 += 1;
-                        // }
-                        //
-                        // int buildSpotRow1 = localY * 2;
-                        // int buildSpotRow2 = buildSpotRow1 + 1;
-                        // AssignBuildSpotsToHexTile(tile, buildSpotColumn1, buildSpotColumn2,
-                        //     buildSpotRow1, buildSpotRow2);    
-                        
                         int buildSpotColumn1 = localX * 2;
                         int buildSpotColumn2 = buildSpotColumn1 + 1;
                         
@@ -148,11 +133,11 @@ namespace Inner_Maps {
                     BuildingSpot spot = buildingSpots[x, y];
                     if (spot.isPartOfParentRegionMap == false) {
                         Messenger.Broadcast(Signals.MODIFY_BUILD_SPOT_WALKABILITY, spot, false);
-                        for (int i = 0; i < spot.tilesInTerritory.Length; i++) {
-                            LocationGridTile tile = spot.tilesInTerritory[i];
-                            tile.SetDefaultTileColor(Color.black);
-                            tile.HighlightTile(Color.black);
-                        }
+                        // for (int i = 0; i < spot.tilesInTerritory.Length; i++) {
+                        //     LocationGridTile tile = spot.tilesInTerritory[i];
+                        //     tile.SetDefaultTileColor(Color.black);
+                        //     tile.HighlightTile(Color.black);
+                        // }
                     }
                 }
             }
