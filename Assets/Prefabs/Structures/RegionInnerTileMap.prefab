@@ -512,6 +512,7 @@ MonoBehaviour:
   groundTilemap: {fileID: 8195094279584054616}
   detailsTilemap: {fileID: 8195094281699066566}
   structureTilemap: {fileID: 8195094282362935316}
+  structureTilemapCollider: {fileID: 2113883504750345892}
   northEdgeTilemap: {fileID: 8195094281023578680}
   southEdgeTilemap: {fileID: 8195094279894205890}
   westEdgeTilemap: {fileID: 8195094281082430106}

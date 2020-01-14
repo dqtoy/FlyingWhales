@@ -37,5 +37,22 @@ namespace Inner_Maps {
 
         [Header("Seamless Edges")]
         public SeamlessEdgeAssetsDictionary edgeAssets; //0-north, 1-south, 2-west, 3-east
+
+        [Header("Water Tiles")] 
+        public TileBase waterTle;
+        public TileBase shoreTle;
+
+        [Header("Cave Tiles")] 
+        public TileBase caveWallTile;
+        
+        public TileBase GetOutsideFloorTile(ILocation location) {
+            switch (location.coreTile.biomeType) {
+                case BIOMES.SNOW:
+                case BIOMES.TUNDRA:
+                    return snowOutsideTile;
+                default:
+                    return outsideTile;
+            }
+        }
     }
 }

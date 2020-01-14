@@ -20,6 +20,36 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 					}
 				}
 			}
+		}, 
+		new WorldMapTemplate() {
+			regions = new Dictionary<int, RegionTemplate[]>() {
+				{0, new[] {
+						new RegionTemplate(3, 6),
+						new RegionTemplate(4, 6),
+						new RegionTemplate(3, 6),
+					}
+				},
+				{1, new[] {
+						new RegionTemplate(5, 6),
+						new RegionTemplate(5, 6),
+					}
+				}
+			}
+		}, 
+		new WorldMapTemplate() {
+			regions = new Dictionary<int, RegionTemplate[]>() {
+				{0, new[] {
+						new RegionTemplate(6, 6),
+						new RegionTemplate(4, 6),
+					}
+				},
+				{1, new[] {
+						new RegionTemplate(3, 6),
+						new RegionTemplate(3, 6),
+						new RegionTemplate(4, 6),
+					}
+				}
+			}
 		}
 	};
 

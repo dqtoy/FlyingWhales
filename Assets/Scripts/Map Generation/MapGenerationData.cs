@@ -13,7 +13,8 @@ public class MapGenerationData {
 	public static int WorldMapOuterGridGenerationBatches = 200;
 	public static int InnerMapTileGenerationBatches = 200;
 	public static int InnerMapSeamlessEdgeBatches = 200;
-	public static int InnerMapDetailBatches = 200; 
+	public static int InnerMapDetailBatches = 200;
+	public static int InnerMapElevationBatches = 200; 
 	
 	//world map
 	public const float xOffset = 2.56f;
