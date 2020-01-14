@@ -5982,11 +5982,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     #region Mood
     public void SetMoodValue(int amount) {
         moodValue = amount;
-        moodValue = Mathf.Clamp(moodValue, 1, 100);
+        //moodValue = Mathf.Clamp(moodValue, 1, 100);
     }
     public void AdjustMoodValue(int amount, Trait fromTrait, ActualGoapNode triggerAction = null) {
         moodValue += amount;
-        moodValue = Mathf.Clamp(moodValue, 1, 100);
+        //moodValue = Mathf.Clamp(moodValue, 1, 100);
         if(amount < 0 && currentMoodType == CHARACTER_MOOD.DARK) {
             if (doNotDisturb) {
                 return;
@@ -6027,7 +6027,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         return ConvertMoodValueToType(moodValue);
     }
     public CHARACTER_MOOD ConvertMoodValueToType(int amount) {
-        if (amount >= 1 && amount < 26) {
+        if (amount < 26) {
             return CHARACTER_MOOD.DARK;
         } else if (amount >= 26 && amount < 51) {
             return CHARACTER_MOOD.BAD;

@@ -26,7 +26,7 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             if (addedTo is Character) {
                 owner = addedTo as Character;
-                owner.AdjustMoodValue(-15, this);
+                //owner.AdjustMoodValue(-15, this);
                 owner.needsComponent.AdjustDoNotGetLonely(1);
                 //Messenger.AddListener(Signals.TICK_STARTED, CheckTrait);
                 Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
