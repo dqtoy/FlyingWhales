@@ -47,7 +47,7 @@ public class LocationClassManager {
 
     private void CreateCharacterClassOrderAndGuide() {
         characterClassOrder = new string[] {
-            "Leader",
+            //"Leader",
             "Craftsman",
             "Peasant",
             "Combatant",
@@ -62,7 +62,7 @@ public class LocationClassManager {
         };
 
         characterClassGuide = new Dictionary<string, LocationClassNumberGuide>() {
-            { "Leader", new LocationClassNumberGuide() { supposedNumber = 0, currentNumber = 0, } },
+            //{ "Leader", new LocationClassNumberGuide() { supposedNumber = 0, currentNumber = 0, } },
             { "Peasant", new LocationClassNumberGuide() { supposedNumber = 0, currentNumber = 0, } },
             { "Combatant", new LocationClassNumberGuide() { supposedNumber = 0, currentNumber = 0, }},
             { "Druid", new LocationClassNumberGuide() { supposedNumber = 0, currentNumber = 0, } },

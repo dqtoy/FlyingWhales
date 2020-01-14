@@ -500,6 +500,9 @@ public class Faction {
         }
         settlement.SetInitialResidentCount(citizenCount);
         RelationshipManager.Instance.GenerateRelationships(this.characters);
+        if (leader == null) {
+            SetLeader(null);
+        }
         return createdCharacters;
     }
    

@@ -63,7 +63,7 @@ public partial class InteractionManager {
         return character.characterClass.isNonCombatant == false || character.characterClass.className.Equals("Noble") || character.characterClass.className.Equals("Leader");
     }
     public bool CanDoJudgementJob(Character character) {
-        return character.traitContainer.GetNormalTrait<Trait>("Royalty") != null;
+        return character.isSettlementRuler;
         //return character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER;
     }
     public bool CanDoSabotageFactionJob(Character character) {

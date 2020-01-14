@@ -4,6 +4,7 @@ using System.Linq;
 using System;
 using Inner_Maps;
 using UnityEngine;
+using Traits;
 
 public class Settlement : IJobOwner {
 
@@ -19,9 +20,10 @@ public class Settlement : IJobOwner {
     public string name { get; private set; }
     public Faction owner { get; private set; }
     public Faction previousOwner { get; private set; }
+    public Character ruler { get; private set; }
     public List<HexTile> tiles { get; private set; }
     public List<Character> residents { get; private set; }
-    
+
     //structures
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
     public InnerTileMap innerMap => region.innerMap;
@@ -36,6 +38,9 @@ public class Settlement : IJobOwner {
     public LocationClassManager classManager { get; private set; }
     public LocationEventManager eventManager { get; private set; }
     public LocationJobManager jobManager { get; private set; }
+
+    private int newRulerDesignationChance;
+    private WeightedDictionary<Character> newRulerDesignationWeights;
 
     #region getters
     public int residentCapacity {
@@ -56,6 +61,8 @@ public class Settlement : IJobOwner {
         new List<Character>();
         tiles = new List<HexTile>();
         residents = new List<Character>();
+        newRulerDesignationWeights = new WeightedDictionary<Character>();
+        ResetNewRulerDesignationChance();
         SetAreaType(locationType);
         // nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
         availableJobs = new List<JobQueueItem>();
@@ -72,9 +79,10 @@ public class Settlement : IJobOwner {
         //charactersAtLocation = new List<Character>();
         tiles = new List<HexTile>();
         residents = new List<Character>();
+        newRulerDesignationWeights = new WeightedDictionary<Character>();
         //itemsInArea = new List<SpecialToken>();
         //jobQueue = new JobQueue(null);
-
+        ResetNewRulerDesignationChance();
         SetAreaType(saveDataArea.locationType);
 
         // nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
@@ -91,7 +99,8 @@ public class Settlement : IJobOwner {
         Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargettingCharacter);
         Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
-
+        Messenger.AddListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
     }
     private void UnsubscribeToSignals() {
         Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyJobActions);
@@ -101,6 +110,8 @@ public class Settlement : IJobOwner {
         Messenger.RemoveListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargettingCharacter);
         Messenger.RemoveListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
     }
     private void OnTileObjectRemoved(TileObject removedObj, Character character, LocationGridTile removedFrom) {
         //craft replacement tile object job
@@ -145,10 +156,6 @@ public class Settlement : IJobOwner {
         //}
     }
     #endregion
-
-    public void SetName(string name) {
-        this.name = name;
-    }
 
     #region Settlement Type
     public void SetAreaType(LOCATION_TYPE locationType) {
@@ -206,6 +213,9 @@ public class Settlement : IJobOwner {
     #endregion
 
     #region Utilities
+    public void SetName(string name) {
+        this.name = name;
+    }
     public void LoadAdditionalData() {
         // CreateNameplate();
     }
@@ -216,6 +226,7 @@ public class Settlement : IJobOwner {
         SubscribeToSignals();
         //LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
         CheckAreaInventoryJobs(mainStorage);
+        SetRuler(null);
     }
     #endregion
 
@@ -326,7 +337,7 @@ public class Settlement : IJobOwner {
         citizenCount = count;
     }
     private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass currentClass) {
-        if(character.homeSettlement == this) {
+        if (character.homeSettlement == this) {
             classManager.OnResidentChangeClass(character, previousClass, currentClass);
         }
     }
@@ -382,7 +393,7 @@ public class Settlement : IJobOwner {
             region.AddResident(character);
             residents.Add(character);
             if (character.race != RACE.DEMON) {
-                classManager.OnAddResident(character);    
+                classManager.OnAddResident(character);
             }
             // if(!coreTile.isCorrupted) {
             //     classManager.OnAddResident(character);
@@ -412,6 +423,126 @@ public class Settlement : IJobOwner {
             return false;
         }
         return true;
+    }
+    private void OnCharacterMissing(Character missingCharacter) {
+        if (ruler != null && missingCharacter == ruler) {
+            SetRuler(null);
+        }
+    }
+    private void OnCharacterDied(Character deadCharacter) {
+        if (ruler != null && deadCharacter == ruler) {
+            SetRuler(null);
+        }
+    }
+    public void SetRuler(Character newRuler) {
+        if(ruler != null) {
+            ruler.SetIsSettlementRuler(false);
+        }
+        ruler = newRuler;
+        if(ruler != null) {
+            ruler.SetIsSettlementRuler(true);
+            ResetNewRulerDesignationChance();
+            if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
+                Messenger.RemoveListener(Signals.HOUR_STARTED, CheckForNewRulerDesignation);
+            }
+        } else {
+            Messenger.AddListener(Signals.HOUR_STARTED, CheckForNewRulerDesignation);
+        }
+    }
+    private void CheckForNewRulerDesignation() {
+        if(UnityEngine.Random.Range(0, 100) < newRulerDesignationChance) {
+            DesignateNewRuler();
+        } else {
+            newRulerDesignationChance += 2;
+        }
+    }
+    private void DesignateNewRuler() {
+        string log = "Designating a new settlement ruler for: " + region.name;
+        newRulerDesignationWeights.Clear();
+        for (int i = 0; i < residents.Count; i++) {
+            Character resident = residents[i];
+            log += "\n\n-" + resident.name;
+            if(resident.isDead || resident.isBeingSeized) {
+                log += "\nEither dead or seized, will not be part of candidates for ruler";
+                continue;
+            }
+            int weight = 50;
+            log += "\n  -Base Weight: +50";
+            if (resident.isFactionLeader) {
+                weight += 100;
+                log += "\n  -Faction Leader: +100";
+            }
+            if (resident.characterClass.className == "Noble") {
+                weight += 40;
+                log += "\n  -Noble: +40";
+            }
+            int numberOfFriends = 0;
+            int numberOfEnemies = 0;
+            for (int j = 0; j < resident.opinionComponent.charactersWithOpinion.Count; j++) {
+                Character otherCharacter = resident.opinionComponent.charactersWithOpinion[j];
+                if (otherCharacter.homeSettlement == this) {
+                    if (resident.opinionComponent.IsFriendsWith(otherCharacter)) {
+                        numberOfFriends++;
+                    }else if (resident.opinionComponent.IsEnemiesWith(otherCharacter)) {
+                        numberOfEnemies++;
+                    }
+                }
+            }
+            if(numberOfFriends > 0) {
+                weight += (numberOfFriends * 20);
+                log += "\n  -Num of Friend/Close Friend in the Settlement: " + numberOfFriends + ", +" + (numberOfFriends * 20);
+            }
+            if (resident.traitContainer.GetNormalTrait<Trait>("Inspiring") != null) {
+                weight += 25;
+                log += "\n  -Inspiring: +25";
+            }
+            if (resident.traitContainer.GetNormalTrait<Trait>("Authoritative") != null) {
+                weight += 50;
+                log += "\n  -Authoritative: +50";
+            }
+
+
+            if (numberOfEnemies > 0) {
+                weight += (numberOfEnemies * -10);
+                log += "\n  -Num of Enemies/Rivals in the Settlement: " + numberOfEnemies + ", +" + (numberOfEnemies * -10);
+            }
+            if (resident.traitContainer.GetNormalTrait<Trait>("Ugly") != null) {
+                weight += -20;
+                log += "\n  -Ugly: -20";
+            }
+            if (resident.hasUnresolvedCrime) {
+                weight += -50;
+                log += "\n  -Has Unresolved Crime: -50";
+            }
+            if (resident.traitContainer.GetNormalTrait<Trait>("Worker") != null) {
+                weight += -40;
+                log += "\n  -Civilian: -40";
+            }
+            if (resident.traitContainer.GetNormalTrait<Trait>("Ambitious") != null) {
+                weight = Mathf.RoundToInt(weight * 1.5f);
+                log += "\n  -Ambitious: x1.5";
+            }
+            log += "\n  -TOTAL WEIGHT: " + weight;
+            if (weight > 0) {
+                newRulerDesignationWeights.AddElement(resident, weight);
+            }
+        }
+        if(newRulerDesignationWeights.Count > 0) {
+            Character chosenRuler = newRulerDesignationWeights.PickRandomElementGivenWeights();
+            if (chosenRuler != null) {
+                log += "\nCHOSEN RULER: " + chosenRuler.name;
+                //SetRuler(chosenRuler);
+                chosenRuler.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Settlement_Ruler, chosenRuler);
+            } else {
+                log += "\nCHOSEN RULER: NONE";
+            }
+        } else {
+            log += "\nCHOSEN RULER: NONE";
+        }
+        Debug.Log(log);
+    }
+    private void ResetNewRulerDesignationChance() {
+        newRulerDesignationChance = 5;
     }
     #endregion
 

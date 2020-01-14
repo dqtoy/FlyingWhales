@@ -194,6 +194,19 @@ public class OpinionComponent {
         }
         return characters;
     }
+    public List<Character> GetCharactersWithOpinionLabel(params string[] labels) {
+        List<Character> characters = new List<Character>();
+        for (int i = 0; i < charactersWithOpinion.Count; i++) {
+            Character otherCharacter = charactersWithOpinion[i];
+            string opinionLabel = GetOpinionLabel(otherCharacter);
+            for (int j = 0; j < labels.Length; j++) {
+                if (labels[j] == opinionLabel) {
+                    characters.Add(otherCharacter);
+                }
+            }
+        }
+        return characters;
+    }
     public bool HasCharacterWithOpinionLabel(params string[] labels) {
         for (int i = 0; i < charactersWithOpinion.Count; i++) {
             Character otherCharacter = charactersWithOpinion[i];
@@ -215,18 +228,15 @@ public class OpinionComponent {
         }
         return false;
     }
-    public List<Character> GetCharactersWithOpinionLabel(params string[] labels) {
-        List<Character> characters = new List<Character>();
+    public int GetNumberOfFriendCharacters() {
+        int count = 0;
         for (int i = 0; i < charactersWithOpinion.Count; i++) {
             Character otherCharacter = charactersWithOpinion[i];
-            string opinionLabel = GetOpinionLabel(otherCharacter);
-            for (int j = 0; j < labels.Length; j++) {
-                if(labels[j] == opinionLabel) {
-                    characters.Add(otherCharacter);
-                }
+            if (IsFriendsWith(otherCharacter)) {
+                count++;
             }
         }
-        return characters;
+        return count;
     }
     public RELATIONSHIP_EFFECT GetRelationshipEffectWith(Character character) {
         if (HasOpinion(character)) {

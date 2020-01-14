@@ -40,8 +40,9 @@ namespace Traits {
         }
         public override void OnTraitStacked(ITraitable traitable, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
             Character character = traitable as Character;
-            DefaultProcessOnStackTrait(traitable, trait, characterResponsible, gainedFromDoing);
-            Messenger.Broadcast(Signals.TRAIT_STACKED, character, trait);
+            if(DefaultProcessOnStackTrait(traitable, trait, characterResponsible, gainedFromDoing)) {
+                Messenger.Broadcast(Signals.TRAIT_STACKED, character, trait);
+            }
         }
         public override void OnTraitUnstack(ITraitable traitable, Trait trait, Character removedBy = null) {
             Character character = traitable as Character;

@@ -34,10 +34,7 @@ namespace Traits {
             trait.OnRemoveTrait(traitable, removedBy);
             Messenger.Broadcast(Signals.TRAITABLE_LOST_TRAIT, traitable, trait, removedBy);
         }
-        protected void DefaultProcessOnStackTrait(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing) {
-            trait.SetGainedFromDoing(gainedFromDoing);
-            trait.AddCharacterResponsibleForTrait(characterResponsible);
-            trait.AddCharacterResponsibleForTrait(characterResponsible);
+        protected bool DefaultProcessOnStackTrait(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing) {
             if (trait.ticksDuration > 0) {
                 //traitable.traitContainer.currentDurations[trait] = 0;
                 GameDate removeDate = GameManager.Instance.Today();
@@ -45,11 +42,20 @@ namespace Traits {
                 string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => traitable.traitContainer.RemoveTraitOnSchedule(traitable, trait), this);
                 //trait.SetExpiryTicket(traitable, ticket);
             }
-            trait.OnStackTrait(traitable);
+            if(traitable.traitContainer.stacks[trait] <= trait.stackLimit) {
+                trait.SetGainedFromDoing(gainedFromDoing);
+                trait.AddCharacterResponsibleForTrait(characterResponsible);
+                trait.AddCharacterResponsibleForTrait(characterResponsible);
+                trait.OnStackTrait(traitable);
+                return true;
+            }
+            return false;
         }
         protected void DefaultProcessOnUnstackTrait(ITraitable traitable, Trait trait, Character removedBy) {
             //trait.RemoveExpiryTicket(traitable);
-            trait.OnUnstackTrait(traitable);
+            if (traitable.traitContainer.stacks[trait] < trait.stackLimit) {
+                trait.OnUnstackTrait(traitable);
+            }
         }
         private void ApplyPOITraitInteractions(ITraitable traitable, Trait trait) {
             if (trait.advertisedInteractions != null) {

@@ -77,6 +77,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public Party currentParty { get; protected set; }
     public Dictionary<RESOURCE, int> storedResources { get; protected set; }
     public int currentMissingTicks { get; protected set; }
+    public bool isSettlementRuler { get; protected set; }
+    public bool hasUnresolvedCrime { get; protected set; }
 
     private List<System.Action> onLeaveAreaActions;
     private POI_STATE _state;
@@ -106,6 +108,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public bool isFollowingPlayerInstruction { get; private set; } //is this character moving/attacking because of the players instruction
     public bool returnedToLife { get; private set; }
     public Tombstone grave { get; private set; }
+    private WeightedDictionary<string> combatResultWeights;
 
     //For Testing
     public List<string> locationHistory { get; private set; }
@@ -154,7 +157,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
         }
     }
-    public bool isLeader => characterClass.className == "Leader";
+    public bool isFactionLeader => faction != null && faction.leader == this;
     public bool isHoldingItem => items.Count > 0;
     public bool isAtHomeRegion => currentRegion == homeRegion && !currentParty.icon.isTravellingOutside;
     public bool isPartOfHomeFaction => homeRegion != null && faction != null && homeRegion.IsFactionHere(faction); //is this character part of the faction that owns his home settlement
@@ -253,6 +256,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public bool isStillConsideredAlive => minion == null /*&& !(this is Summon)*/ && !faction.isPlayerFaction;
     public Character isBeingCarriedBy => IsInOwnParty() ? null : currentParty.owner;
     public bool isMissing => currentMissingTicks > CharacterManager.Instance.CHARACTER_MISSING_THRESHOLD;
+    public bool isBeingSeized => PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
     //public JobQueueItem currentJob => jobQueue.jobsInQueue.Count > 0 ? jobQueue.jobsInQueue[0] : null; //The current job is always the top of the queue
     #endregion
 
@@ -2154,6 +2158,16 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         return false;
     } 
+    public void SetIsSettlementRuler(bool state) {
+        if(isSettlementRuler != state) {
+            isSettlementRuler = state;
+            if (isSettlementRuler) {
+                behaviourComponent.AddBehaviourComponent(typeof(SettlementRulerBehaviour));
+            } else {
+                behaviourComponent.RemoveBehaviourComponent(typeof(SettlementRulerBehaviour));
+            }
+        }
+    }
     #endregion
 
     #region Utilities
@@ -3048,8 +3062,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //If the hostile reaches 0 hp, evalueate if he/she dies, get knock out, or get injured
         if (this.currentHP <= 0) {
             attackSummary += "\n" + this.name + "'s hp has reached 0.";
-            WeightedDictionary<string> loserResults = new WeightedDictionary<string>();
-
+            if(combatResultWeights == null) {
+                combatResultWeights = new WeightedDictionary<string>();
+            } else {
+                combatResultWeights.Clear();
+            }
             int deathWeight = 70; //70
             int unconsciousWeight = 30; //30
             if (!characterThatAttacked.marker.IsLethalCombatForTarget(this)) {
@@ -3061,19 +3078,19 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 + ", isLethal: " + characterThatAttacked.marker.IsLethalCombatForTarget(this);
 
             if (minion == null && this.traitContainer.GetNormalTrait<Trait>("Unconscious") == null) {
-                loserResults.AddElement("Unconscious", unconsciousWeight);
+                combatResultWeights.AddElement("Unconscious", unconsciousWeight);
                 rollLog += "\n- Unconscious weight will be added";
             }
             //if (currentClosestHostile.GetNormalTrait<Trait>("Injured") == null) {
             //    loserResults.AddElement("Injured", 10);
             //}
             if (!isDead) {
-                loserResults.AddElement("Death", deathWeight);
+                combatResultWeights.AddElement("Death", deathWeight);
                 rollLog += "\n- Death weight will be added";
             }
 
-            if (loserResults.Count > 0) {
-                string result = loserResults.PickRandomElementGivenWeights();
+            if (combatResultWeights.Count > 0) {
+                string result = combatResultWeights.PickRandomElementGivenWeights();
                 rollLog += "\n- Pick result is: " + result;
                 characterThatAttacked.PrintLogIfActive(rollLog);
                 attackSummary += "\ncombat result is " + result; ;

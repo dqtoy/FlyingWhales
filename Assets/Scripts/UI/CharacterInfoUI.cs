@@ -170,7 +170,14 @@ public class CharacterInfoUI : UIMenu {
     }
     public void UpdateBasicInfo() {
         nameLbl.text = _activeCharacter.name;
-        lvlClassLbl.text = _activeCharacter.raceClassName;
+        string lvlClassText = _activeCharacter.raceClassName;
+        if (activeCharacter.isSettlementRuler) {
+            lvlClassText += " (Settlement Ruler)";
+        }
+        if (activeCharacter.isFactionLeader) {
+            lvlClassText += " (Faction Leader)";
+        }
+        lvlClassLbl.text = lvlClassText;
         UpdateThoughtBubble();
     }
     public void UpdateThoughtBubble() {
@@ -455,6 +462,10 @@ public class CharacterInfoUI : UIMenu {
         summary = $"{summary}{("\nDo Not Get Tired: " + activeCharacter.needsComponent.doNotGetTired.ToString())}";
         summary = $"{summary}{("\nDo Not Get Lonely: " + activeCharacter.needsComponent.doNotGetLonely.ToString())}";
         summary = $"{summary}{("\nDo Not Recover HP: " + activeCharacter.doNotRecoverHP.ToString())}";
+        summary = $"{summary}{("\nCan Move: " + activeCharacter.canMove)}";
+        summary = $"{summary}{("\nCan Witness: " + activeCharacter.canWitness)}";
+        summary = $"{summary}{("\nCan Be Attacked: " + activeCharacter.canBeAtttacked)}";
+        summary = $"{summary}{("\nIs Missing: " + activeCharacter.isMissing)}";
         summary = $"{summary}{("\n" + activeCharacter.needsComponent.GetNeedsSummary())}";
         summary = $"{summary}{("\nFullness Time: " + (activeCharacter.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.fullnessForcedTick)))}";
         summary = $"{summary}{("\nTiredness Time: " + (activeCharacter.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.tirednessForcedTick)))}";
@@ -582,7 +593,7 @@ public class CharacterInfoUI : UIMenu {
         zapItem.SetInteractable(CanBeZapped());
 
         ActionItem seizeItem = AddNewAction("Seize", null, () => PlayerManager.Instance.player.seizeComponent.SeizePOI(activeCharacter));
-        bool isInteractable = PlayerManager.Instance.player.seizeComponent.seizedPOI == null && activeCharacter.minion == null && !(activeCharacter is Summon) && activeCharacter.traitContainer.GetNormalTrait<Trait>("Leader", "Blessed") == null;
+        bool isInteractable = !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && activeCharacter.minion == null && !(activeCharacter is Summon) && activeCharacter.traitContainer.GetNormalTrait<Trait>("Leader", "Blessed") == null;
         seizeItem.SetInteractable(isInteractable);
 
         ActionItem shareIntelItem = AddNewAction("Share Intel", null, ShareIntel);

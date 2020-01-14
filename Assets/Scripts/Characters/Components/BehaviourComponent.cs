@@ -50,8 +50,14 @@ public class BehaviourComponent {
         }
         return AddBehaviourComponentInOrder(component);
     }
+    public bool AddBehaviourComponent(System.Type componentType) {
+        return AddBehaviourComponent(CharacterManager.Instance.GetCharacterBehaviourComponent(componentType));
+    }
     public bool RemoveBehaviourComponent(CharacterBehaviourComponent component) {
         return currentBehaviourComponents.Remove(component);
+    }
+    public bool RemoveBehaviourComponent(System.Type componentType) {
+        return RemoveBehaviourComponent(CharacterManager.Instance.GetCharacterBehaviourComponent(componentType));
     }
     public bool ReplaceBehaviourComponent(CharacterBehaviourComponent componentToBeReplaced, CharacterBehaviourComponent componentToReplace) {
         if (RemoveBehaviourComponent(componentToBeReplaced)) {
