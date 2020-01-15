@@ -7,7 +7,7 @@ namespace Traits {
     public class TraitContainer : ITraitContainer {
 
         private List<Trait> _allTraits;
-        public Dictionary<Trait, int> stacks { get; private set; }
+        public Dictionary<string, int> stacks { get; private set; }
         //public Dictionary<Trait, int> currentDurations { get; private set; } //Temporary only, fix this by making all traits instanced based and just object pool them
 
         #region getters/setters
@@ -16,7 +16,7 @@ namespace Traits {
 
         public TraitContainer() {
             _allTraits = new List<Trait>();
-            stacks = new Dictionary<Trait, int>();
+            stacks = new Dictionary<string, int>();
             //currentDurations = new Dictionary<Trait, int>();
         }
 
@@ -42,11 +42,16 @@ namespace Traits {
             }
 
             if (trait.isStacking) {
-                if (stacks.ContainsKey(trait)) {
-                    stacks[trait]++;
-                    addTo.traitProcessor.OnTraitStacked(addTo, trait, characterResponsible, gainedFromDoing);
+                if (stacks.ContainsKey(trait.name)) {
+                    stacks[trait.name]++;
+                    if (TraitManager.Instance.IsInstancedTrait(trait.name)) {
+                        Trait existingTrait = GetNormalTrait<Trait>(trait.name);
+                        addTo.traitProcessor.OnTraitStacked(addTo, existingTrait, characterResponsible, gainedFromDoing);
+                    } else {
+                        addTo.traitProcessor.OnTraitStacked(addTo, trait, characterResponsible, gainedFromDoing);
+                    }
                 } else {
-                    stacks.Add(trait, 1);
+                    stacks.Add(trait.name, 1);
                     _allTraits.Add(trait);
                     addTo.traitProcessor.OnTraitAdded(addTo, trait, characterResponsible, gainedFromDoing);
                 }
@@ -87,15 +92,15 @@ namespace Traits {
                     removeFrom.traitProcessor.OnTraitRemoved(removeFrom, trait, removedBy);
                 }
             } else {
-                if (stacks.ContainsKey(trait)) {
-                    if(stacks[trait] > 1) {
-                        stacks[trait]--;
+                if (stacks.ContainsKey(trait.name)) {
+                    if(stacks[trait.name] > 1) {
+                        stacks[trait.name]--;
                         removeFrom.traitProcessor.OnTraitUnstack(removeFrom, trait, removedBy);
                         removedOrUnstacked = true;
                     } else {
                         removedOrUnstacked = _allTraits.Remove(trait);
                         if (removedOrUnstacked) {
-                            stacks.Remove(trait);
+                            stacks.Remove(trait.name);
                             removeFrom.traitProcessor.OnTraitRemoved(removeFrom, trait, removedBy);
                         }
                     }
@@ -124,12 +129,12 @@ namespace Traits {
                     _allTraits.RemoveAt(index);
                     removeFrom.traitProcessor.OnTraitRemoved(removeFrom, trait, removedBy);
                 } else {
-                    if (stacks.ContainsKey(trait)) {
-                        if (stacks[trait] > 1) {
-                            stacks[trait]--;
+                    if (stacks.ContainsKey(trait.name)) {
+                        if (stacks[trait.name] > 1) {
+                            stacks[trait.name]--;
                             removeFrom.traitProcessor.OnTraitUnstack(removeFrom, trait, removedBy);
                         } else {
-                            stacks.Remove(trait);
+                            stacks.Remove(trait.name);
                             _allTraits.RemoveAt(index);
                             removeFrom.traitProcessor.OnTraitRemoved(removeFrom, trait, removedBy);
                         }

@@ -254,9 +254,9 @@ namespace Traits {
             return false;
         }
         public virtual string GetNameInUI(ITraitable traitable) {
-            Dictionary<Trait, int> stacks = traitable.traitContainer.stacks;
-            if (isStacking && stacks.ContainsKey(this) && stacks[this] > 1) {
-                int num = stacks[this];
+            Dictionary<string, int> stacks = traitable.traitContainer.stacks;
+            if (isStacking && stacks.ContainsKey(name) && stacks[name] > 1) {
+                int num = stacks[name];
                 if(num > stackLimit) { num = stackLimit; }
                 return name + " (x" + num + ")";
             }

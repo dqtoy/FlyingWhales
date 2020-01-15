@@ -1026,7 +1026,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
                                     if(character.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.PARAMOUR)
                                         || character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) == null
                                         || character.traitContainer.GetNormalTrait<Trait>("Unfaithful") != null) {
-                                        int value = 2 * RelationshipManager.Instance.GetCompatibilityBetween(character, targetCharacter);
+                                        int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(character, targetCharacter);
+                                        int value = 4;
+                                        if (compatibility != -1) {
+                                            value = 2 * compatibility;
+                                        }
                                         int chance = UnityEngine.Random.Range(0, 100);
                                         string flirtLog = character.name + " will try to flirt with " + targetCharacter.name;
                                         flirtLog += "\n-Chance: " + value;

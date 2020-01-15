@@ -42,7 +42,7 @@ namespace Traits {
                 string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => traitable.traitContainer.RemoveTraitOnSchedule(traitable, trait), this);
                 //trait.SetExpiryTicket(traitable, ticket);
             }
-            if(traitable.traitContainer.stacks[trait] <= trait.stackLimit) {
+            if(traitable.traitContainer.stacks[trait.name] <= trait.stackLimit) {
                 trait.SetGainedFromDoing(gainedFromDoing);
                 trait.AddCharacterResponsibleForTrait(characterResponsible);
                 trait.AddCharacterResponsibleForTrait(characterResponsible);
@@ -53,7 +53,7 @@ namespace Traits {
         }
         protected void DefaultProcessOnUnstackTrait(ITraitable traitable, Trait trait, Character removedBy) {
             //trait.RemoveExpiryTicket(traitable);
-            if (traitable.traitContainer.stacks[trait] < trait.stackLimit) {
+            if (traitable.traitContainer.stacks[trait.name] < trait.stackLimit) {
                 trait.OnUnstackTrait(traitable);
             }
         }

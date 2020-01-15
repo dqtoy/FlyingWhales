@@ -10,7 +10,7 @@ namespace Traits {
     public interface ITraitContainer {
 
         List<Trait> allTraits { get; }
-        Dictionary<Trait, int> stacks { get; }
+        Dictionary<string, int> stacks { get; }
         //Dictionary<Trait, int> currentDurations { get; }
         //List<RelationshipTrait> relationshipTraits { get; }
 
