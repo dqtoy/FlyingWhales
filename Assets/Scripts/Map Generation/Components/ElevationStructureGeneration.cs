@@ -197,10 +197,19 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 				gridTile.parentMap.structureTilemap.SetTile(gridTile.localPlace, GetWallTileAssetForElevation(ELEVATION.PLAIN));
 				gridTile.SetStructure(wilderness);
 			}
-			// else if (gridTile.groundType !) {
-			// 	
-			// }
 		}
+
+		for (int i = 0; i < island.tilesInIsland.Count; i++) {
+			HexTile hexTile = island.tilesInIsland[i];
+			for (int j = 0; j < hexTile.ownedBuildSpots.Length; j++) {
+				BuildingSpot spot = hexTile.ownedBuildSpots[j];
+				if (spot.isOccupied == false) {
+					spot.SetIsOccupied(true);
+					spot.UpdateAdjacentSpotsOccupancy(hexTile.region.innerMap);	
+				}
+			}
+		}
+		
 		yield return null;
 	}
 

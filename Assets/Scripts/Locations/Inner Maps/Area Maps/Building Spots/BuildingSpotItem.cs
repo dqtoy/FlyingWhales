@@ -24,7 +24,12 @@ public class BuildingSpotItem : MonoBehaviour {
         }
     }
     void OnDrawGizmos() {
-        Gizmos.color = Color.red;
+        Gizmos.color = Color.blue;
+        if (buildingSpot != null) {
+            if (buildingSpot.isOccupied) {
+                Gizmos.color = Color.red;        
+            }
+        }
         Vector3 position = this.transform.position;
         Gizmos.DrawWireCube(position, new Vector3(InnerMapManager.BuildingSpotSize.x - 0.5f, InnerMapManager.BuildingSpotSize.y - 0.5f, 0));    
     }
