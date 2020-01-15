@@ -2163,8 +2163,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if(isSettlementRuler != state) {
             isSettlementRuler = state;
             if (isSettlementRuler) {
+                AssignBuildStructureComponent();
                 behaviourComponent.AddBehaviourComponent(typeof(SettlementRulerBehaviour));
             } else {
+                UnassignBuildStructureComponent();
                 behaviourComponent.RemoveBehaviourComponent(typeof(SettlementRulerBehaviour));
             }
         }

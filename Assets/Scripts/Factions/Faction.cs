@@ -356,17 +356,17 @@ public class Faction {
             //Neutral, Friendly Neutral, Disguised Factions cannot have a leader
             return;
         }
-        if (this.leader != null && this.leader is Character) {
-            Character previousRuler = this.leader as Character;
-            //if (previousRuler.role.roleType != CHARACTER_ROLE.NOBLE) {
-            //    previousRuler.AssignRole(CharacterRole.NOBLE);
-            //    previousRuler.AssignClassByRole(previousRuler.role);
-            //}
-            //if (previousRuler.characterClass.className != previousRuler.GetClassForRole(previousRuler.role)) {
-            //    previousRuler.AssignClassByRole(previousRuler.role);
-            //}
-            previousRuler.UnassignBuildStructureComponent();
-        }
+        //if (this.leader != null && this.leader is Character) {
+        //    Character previousRuler = this.leader as Character;
+        //    //if (previousRuler.role.roleType != CHARACTER_ROLE.NOBLE) {
+        //    //    previousRuler.AssignRole(CharacterRole.NOBLE);
+        //    //    previousRuler.AssignClassByRole(previousRuler.role);
+        //    //}
+        //    //if (previousRuler.characterClass.className != previousRuler.GetClassForRole(previousRuler.role)) {
+        //    //    previousRuler.AssignClassByRole(previousRuler.role);
+        //    //}
+        //    previousRuler.UnassignBuildStructureComponent();
+        //}
         //if (newLeader != null && newLeader is Character) {
         //    Character newRuler = newLeader as Character;
         //    if (newRuler.role.roleType != CHARACTER_ROLE.LEADER) {
@@ -385,7 +385,7 @@ public class Faction {
             if (newLeader != null) {
                 if (newLeader is Character) {
                     Character newRuler = newLeader as Character;
-                    newRuler.AssignBuildStructureComponent();
+                    //newRuler.AssignBuildStructureComponent();
                     if (setIdeology) {
                         ideologyComponent.RerollIdeologies();
                     }
