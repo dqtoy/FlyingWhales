@@ -473,7 +473,7 @@ public class CharacterInfoUI : UIMenu {
         summary = $"{summary}{("\nFood: " + activeCharacter.food.ToString())}";
         summary = $"{summary}{("\nRole: " + activeCharacter.role.roleType.ToString())}";
         summary = $"{summary}{("\nSexuality: " + activeCharacter.sexuality.ToString())}";
-        summary = $"{summary}{("\nMood: " + activeCharacter.moodValue + "/100" + "(" + activeCharacter.currentMoodType.ToString() + ")")}";
+        summary = $"{summary}{("\nMood: " + activeCharacter.moodComponent.moodValue + "/100" + "(" + activeCharacter.currentMoodType.ToString() + ")")}";
         summary = $"{summary}{("\nHP: " + activeCharacter.currentHP.ToString() + "/" + activeCharacter.maxHP.ToString())}";
         summary = $"{summary}{("\nIgnore Hostiles: " + activeCharacter.ignoreHostility.ToString())}";
         summary = $"{summary}{("\nAttack Range: " + activeCharacter.characterClass.attackRange.ToString())}";

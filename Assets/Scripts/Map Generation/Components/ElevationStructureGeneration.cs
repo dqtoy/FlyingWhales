@@ -179,14 +179,10 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 				//set as elevation
 				gridTile.SetGroundTilemapVisual(GetGroundTileAssetForElevation(island.elevation, region));
 				gridTile.parentMap.structureTilemap.SetTile(gridTile.localPlace, GetWallTileAssetForElevation(island.elevation));
-				// gridTile.CreateSeamlessEdgesForTile(gridTile.parentMap);
-				// gridTile.CreateSeamlessEdgesForSelfAndNeighbours();
 			} else {
 				//set as ground
 				gridTile.SetGroundTilemapVisual(GetGroundTileAssetForElevation(ELEVATION.PLAIN, region));
 				gridTile.parentMap.structureTilemap.SetTile(gridTile.localPlace, GetWallTileAssetForElevation(ELEVATION.PLAIN));
-				// gridTile.CreateSeamlessEdgesForTile(gridTile.parentMap);
-				// gridTile.CreateSeamlessEdgesForSelfAndNeighbours();
 				gridTile.SetStructure(wilderness);
 			}
 		}
@@ -199,9 +195,11 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 				//if current outer tile does not have neighbour of the same elevation type, then set it as ground
 				gridTile.SetGroundTilemapVisual(GetGroundTileAssetForElevation(ELEVATION.PLAIN, region));
 				gridTile.parentMap.structureTilemap.SetTile(gridTile.localPlace, GetWallTileAssetForElevation(ELEVATION.PLAIN));
-				// gridTile.CreateSeamlessEdgesForSelfAndNeighbours();
 				gridTile.SetStructure(wilderness);
 			}
+			// else if (gridTile.groundType !) {
+			// 	
+			// }
 		}
 		yield return null;
 	}

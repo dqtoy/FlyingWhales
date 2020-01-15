@@ -63,7 +63,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public List<SpecialToken> items { get; private set; }
     public JobQueue jobQueue { get; private set; }
     public List<JobQueueItem> allJobsTargetingThis { get; private set; }
-    public int moodValue { get; private set; }
     public bool canCombat { get; private set; } //This should only be a getter but since we need to know when the value changes it now has a setter
     public List<Trait> traitsNeededToBeRemoved { get; private set; }
     public TrapStructure trapStructure { get; private set; }
@@ -122,6 +121,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public OpinionComponent opinionComponent { get; private set; }
     public InterruptComponent interruptComponent { get; private set; }
     public BehaviourComponent behaviourComponent { get; private set; }
+    public MoodComponent moodComponent { get; private set; }
 
     #region getters / setters
     public virtual string name => _firstName;
@@ -228,7 +228,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
     }
     public POI_STATE state => _state;
-    public CHARACTER_MOOD currentMoodType => ConvertCurrentMoodValueToType();
+    public CHARACTER_MOOD currentMoodType => moodComponent.ConvertCurrentMoodValueToType();
     public AlterEgoData currentAlterEgo {
         get {
             if (alterEgos == null || !alterEgos.ContainsKey(currentAlterEgoName)) {
@@ -381,6 +381,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         opinionComponent = new OpinionComponent(this);
         interruptComponent = new InterruptComponent(this);
         behaviourComponent = new BehaviourComponent(this);
+        moodComponent = new MoodComponent(this);
     }
 
     //This is done separately after all traits have been loaded so that the data will be accurate
@@ -410,13 +411,13 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
         //currentInteractionTypes = data.currentInteractionTypes;
         supply = data.supply;
-        moodValue = data.moodValue;
         canCombat = data.isCombatant;
         isDisabledByPlayer = data.isDisabledByPlayer;
         speedModifier = data.speedModifier;
         deathStr = data.deathStr;
         _state = data.state;
 
+        moodComponent.Load(data);
         needsComponent.LoadAllStatsOfCharacter(data);
 
         ignoreHostility = data.ignoreHostility;
@@ -431,7 +432,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         OnUpdateRace();
         OnUpdateCharacterClass();
 
-        SetMoodValue(90);
+        moodComponent.SetMoodValue(90);
         CreateOwnParty();
 
         needsComponent.Initialize();
@@ -5992,66 +5993,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         if (trait != null) {
             traitContainer.AddTrait(this, trait, null, crimeAction);
-        }
-    }
-    #endregion
-
-    #region Mood
-    public void SetMoodValue(int amount) {
-        moodValue = amount;
-        //moodValue = Mathf.Clamp(moodValue, 1, 100);
-    }
-    public void AdjustMoodValue(int amount, Trait fromTrait, ActualGoapNode triggerAction = null) {
-        moodValue += amount;
-        //moodValue = Mathf.Clamp(moodValue, 1, 100);
-        if(amount < 0 && currentMoodType == CHARACTER_MOOD.DARK) {
-            if (doNotDisturb) {
-                return;
-            }
-            if(currentActionNode != null && currentActionNode.action.goapType == INTERACTION_TYPE.TANTRUM) {
-                return;
-            }
-            string tantrumReason = "Became " + fromTrait.GetNameInUI(this);
-            if (triggerAction != null) {
-                tantrumReason = Utilities.LogReplacer(triggerAction.currentState.descriptionLog);
-            }
-
-            //string tantrumLog = this.name + "'s mood was adjusted by " + amount.ToString() + " and current mood is " + currentMoodType.ToString() + ".";
-            //tantrumLog += "Reason: " + tantrumReason;
-            //tantrumLog += "\nRolling for Tantrum..."; 
-
-            int chance = UnityEngine.Random.Range(0, 100);
-
-            //tantrumLog += "\nRolled: " + chance.ToString();
-
-            if (chance < 10) { 
-                //Note: Do not cancel jobs and plans anymore, let the job priority decide if the character will do tantrum already
-                //CancelAllJobsAndPlans();
-                //Create Tantrum action
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TANTRUM, INTERACTION_TYPE.TANTRUM, this, this);
-                job.AddOtherData(INTERACTION_TYPE.TANTRUM, new object[] { tantrumReason });
-
-                //tantrum.SetCannotOverrideJob(true);
-                //tantrum.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-                jobQueue.AddJobInQueue(job);
-                //jobQueue.ProcessFirstJobInQueue(this);
-                //tantrumLog += "\n" + this.name + " started having a tantrum!";
-            }
-            //Debug.Log(tantrumLog);
-        }
-    }
-    public CHARACTER_MOOD ConvertCurrentMoodValueToType() {
-        return ConvertMoodValueToType(moodValue);
-    }
-    public CHARACTER_MOOD ConvertMoodValueToType(int amount) {
-        if (amount < 26) {
-            return CHARACTER_MOOD.DARK;
-        } else if (amount >= 26 && amount < 51) {
-            return CHARACTER_MOOD.BAD;
-        } else if (amount >= 51 && amount < 76) {
-            return CHARACTER_MOOD.GOOD;
-        } else {
-            return CHARACTER_MOOD.GREAT;
         }
     }
     #endregion

@@ -1813,6 +1813,14 @@ public class Utilities : MonoBehaviour {
         }
         return false;
     }
+    /// <summary>
+    /// Is the given value within the given range
+    /// lower bound is inclusive, upper bound is exclusive
+    /// </summary>
+    /// <param name="value">The value to check</param>
+    /// <param name="lowerBound">Lower bound [inclusive]</param>
+    /// <param name="upperBound">Upper Bound [exclusive]</param>
+    /// <returns>True or false</returns>
     public static bool IsInRange(int value, int lowerBound, int upperBound) {
         if (value >= lowerBound && value < upperBound) {
             return true;

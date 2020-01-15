@@ -9,7 +9,7 @@ public class WorldMapOuterGridGeneration : MapGenerationComponent {
 	public override IEnumerator Execute(MapGenerationData data) {
 		yield return MapGenerator.Instance.StartCoroutine(GenerateOuterGrid(data));
 		Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
-		CameraMove.Instance.CalculateCameraBounds();
+		// CameraMove.Instance.CalculateCameraBounds();
 		yield return null;
 	}
 	

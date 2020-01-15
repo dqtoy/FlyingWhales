@@ -51,7 +51,7 @@ namespace Traits {
             //}
             if(addedTo is Character) {
                 Character character = addedTo as Character;
-                character.AdjustMoodValue(moodEffect, this);
+                character.moodComponent.AdjustMoodValue(moodEffect, this);
             }
             if (level == 0) {
                 SetLevel(1);
@@ -61,7 +61,7 @@ namespace Traits {
         public virtual void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             if (removedFrom is Character) {
                 Character character = removedFrom as Character;
-                character.AdjustMoodValue(-moodEffect, this);
+                character.moodComponent.AdjustMoodValue(-moodEffect, this);
                 if (type == TRAIT_TYPE.CRIMINAL) {
                     if (!character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
                         character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
@@ -72,14 +72,14 @@ namespace Traits {
         public virtual void OnStackTrait(ITraitable addedTo) {
             if (addedTo is Character) {
                 Character character = addedTo as Character;
-                character.AdjustMoodValue(Mathf.RoundToInt(moodEffect * stackModifier), this);
+                character.moodComponent.AdjustMoodValue(Mathf.RoundToInt(moodEffect * stackModifier), this);
             }
             SetDateEstablished(GameManager.Instance.Today());
         }
         public virtual void OnUnstackTrait(ITraitable addedTo) {
             if (addedTo is Character) {
                 Character character = addedTo as Character;
-                character.AdjustMoodValue(-Mathf.RoundToInt(moodEffect * stackModifier), this);
+                character.moodComponent.AdjustMoodValue(-Mathf.RoundToInt(moodEffect * stackModifier), this);
             }
         }
         public virtual string GetToolTipText() { return string.Empty; }

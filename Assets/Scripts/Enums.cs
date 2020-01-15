@@ -1347,6 +1347,9 @@ public enum CRIME {
 public enum CHARACTER_MOOD {
     DARK, BAD, GOOD, GREAT,
 }
+public enum MOOD_STATE {
+    NORMAL, LOW, CRITICAL
+}
 public enum SEXUALITY {
     STRAIGHT, BISEXUAL, GAY
 }
