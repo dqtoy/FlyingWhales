@@ -18,6 +18,7 @@ public class InterruptComponent {
 
     public InterruptComponent(Character owner) {
         this.owner = owner;
+        identifier = string.Empty;
     }
 
     #region General
@@ -55,9 +56,9 @@ public class InterruptComponent {
     }
     private bool TriggeredSimultaneousInterrupt(Interrupt interrupt, IPointOfInterest targetPOI, string identifier) {
         owner.PrintLogIfActive(GameManager.Instance.TodayLogString() + owner.name + " triggered a simultaneous interrupt: " + interrupt.name);
+        this.identifier = identifier;
         interrupt.ExecuteInterruptStartEffect(owner, targetPOI);
         CreateAndAddEffectLog(interrupt, targetPOI);
-        this.identifier = identifier;
         interrupt.ExecuteInterruptEndEffect(owner, currentTargetPOI);
         return true;
     }

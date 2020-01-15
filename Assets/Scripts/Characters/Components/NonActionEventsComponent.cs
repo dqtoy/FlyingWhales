@@ -76,7 +76,7 @@ public class NonActionEventsComponent {
         chatWeights.AddElement(Insult, 20);
         chatWeights.AddElement(Praise, 20);
 
-        strLog += "\n\n" + chatWeights.GetWeightsSummary("Base Weights");
+        strLog += "\n\n" + chatWeights.GetWeightsSummary("BASE WEIGHTS");
 
         CHARACTER_MOOD actorMood = owner.currentMoodType;
         CHARACTER_MOOD targetMood = target.currentMoodType;
@@ -177,7 +177,7 @@ public class NonActionEventsComponent {
             strLog += "\nInsult: -30, Praise: +30";
         }
 
-        strLog += "\n\n" + chatWeights.GetWeightsSummary("Final Weights");
+        strLog += "\n\n" + chatWeights.GetWeightsSummary("FINAL WEIGHTS");
 
         string result = chatWeights.PickRandomElementGivenWeights();
         strLog += "\nResult: " + result;

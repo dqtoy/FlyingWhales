@@ -356,17 +356,17 @@ public class Faction {
             //Neutral, Friendly Neutral, Disguised Factions cannot have a leader
             return;
         }
-        if (this.leader != null && this.leader is Character) {
-            Character previousRuler = this.leader as Character;
-            //if (previousRuler.role.roleType != CHARACTER_ROLE.NOBLE) {
-            //    previousRuler.AssignRole(CharacterRole.NOBLE);
-            //    previousRuler.AssignClassByRole(previousRuler.role);
-            //}
-            //if (previousRuler.characterClass.className != previousRuler.GetClassForRole(previousRuler.role)) {
-            //    previousRuler.AssignClassByRole(previousRuler.role);
-            //}
-            previousRuler.UnassignBuildStructureComponent();
-        }
+        //if (this.leader != null && this.leader is Character) {
+        //    Character previousRuler = this.leader as Character;
+        //    //if (previousRuler.role.roleType != CHARACTER_ROLE.NOBLE) {
+        //    //    previousRuler.AssignRole(CharacterRole.NOBLE);
+        //    //    previousRuler.AssignClassByRole(previousRuler.role);
+        //    //}
+        //    //if (previousRuler.characterClass.className != previousRuler.GetClassForRole(previousRuler.role)) {
+        //    //    previousRuler.AssignClassByRole(previousRuler.role);
+        //    //}
+        //    previousRuler.UnassignBuildStructureComponent();
+        //}
         //if (newLeader != null && newLeader is Character) {
         //    Character newRuler = newLeader as Character;
         //    if (newRuler.role.roleType != CHARACTER_ROLE.LEADER) {
@@ -385,7 +385,7 @@ public class Faction {
             if (newLeader != null) {
                 if (newLeader is Character) {
                     Character newRuler = newLeader as Character;
-                    newRuler.AssignBuildStructureComponent();
+                    //newRuler.AssignBuildStructureComponent();
                     if (setIdeology) {
                         ideologyComponent.RerollIdeologies();
                     }
@@ -413,7 +413,7 @@ public class Faction {
         }
     }
     private void DesignateNewLeader() {
-        string log = "Designating a new settlement faction leader for: " + name;
+        string log = "Designating a new settlement faction leader for: " + name + "(chance it triggered: " + newLeaderDesignationChance + ")";
         newLeaderDesignationWeights.Clear();
         for (int i = 0; i < characters.Count; i++) {
             Character member = characters[i];
@@ -477,6 +477,10 @@ public class Faction {
             if (member.traitContainer.GetNormalTrait<Trait>("Ambitious") != null) {
                 weight = Mathf.RoundToInt(weight * 1.5f);
                 log += "\n  -Ambitious: x1.5";
+            }
+            if(weight < 1) {
+                weight = 1;
+                log += "\n  -Weight cannot be less than 1, setting weight to 1";
             }
             log += "\n  -TOTAL WEIGHT: " + weight;
             if (weight > 0) {

@@ -1027,7 +1027,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
                                         || character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) == null
                                         || character.traitContainer.GetNormalTrait<Trait>("Unfaithful") != null) {
                                         int value = 2 * RelationshipManager.Instance.GetCompatibilityBetween(character, targetCharacter);
-                                        if(UnityEngine.Random.Range(0, 100) < value) {
+                                        int chance = UnityEngine.Random.Range(0, 100);
+                                        string flirtLog = character.name + " will try to flirt with " + targetCharacter.name;
+                                        flirtLog += "\n-Chance: " + value;
+                                        flirtLog += "\n-Roll: " + chance;
+                                        character.PrintLogIfActive(flirtLog);
+                                        if (chance < value) {
                                             character.interruptComponent.TriggerInterrupt(INTERRUPT.Flirt, targetCharacter);
                                         }
                                     }
