@@ -434,7 +434,7 @@ namespace Inner_Maps {
         private string GetCharacterHoverData(Character character) {
             Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter;
             string summary = "Character: " + character.name;
-            summary += "\n<b>Mood:</b>" + character.currentMoodType;
+            summary += "\n<b>Mood:</b>" + character.moodComponent.moodState;
             summary += " <b>Supply:</b>" + character.supply;
             summary += " <b>Can Move:</b>" + character.canMove;
             summary += " <b>Can Witness:</b>" + character.canWitness;

@@ -227,7 +227,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
     }
     public POI_STATE state => _state;
-    public CHARACTER_MOOD currentMoodType => moodComponent.ConvertCurrentMoodValueToType();
     public AlterEgoData currentAlterEgo {
         get {
             if (alterEgos == null || !alterEgos.ContainsKey(currentAlterEgoName)) {
@@ -431,7 +430,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         OnUpdateRace();
         OnUpdateCharacterClass();
 
-        moodComponent.SetMoodValue(90);
+        moodComponent.SetMoodValue(50);
         CreateOwnParty();
 
         needsComponent.Initialize();
@@ -1277,7 +1276,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", reason + "_and_undermine");
         log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        log.AddToFillers(null, currentMoodType.ToString().ToLower(), LOG_IDENTIFIER.STRING_1);
+        // log.AddToFillers(null, currentMoodType.ToString().ToLower(), LOG_IDENTIFIER.STRING_1);
         AddHistory(log);
 
         PlayerManager.Instance.player.ShowNotificationFrom(log, this, false);
@@ -1510,41 +1509,41 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
 
         //Undermine Enemy Job
-        List<Character> enemyCharacters = opinionComponent.GetEnemyCharacters();
-        if (!hasCreatedJob && enemyCharacters.Count > 0) {
-            int chance = UnityEngine.Random.Range(0, 100);
-            int value = 3;
-            CHARACTER_MOOD currentMood = currentMoodType;
-            if (currentMood == CHARACTER_MOOD.DARK) {
-                value += 1;
-            } else if (currentMood == CHARACTER_MOOD.GOOD) {
-                value -= 1;
-            } else if (currentMood == CHARACTER_MOOD.GREAT) {
-                value -= 3;
-            }
-            if (chance < value) {
-                Character chosenCharacter = null;
-                while (chosenCharacter == null && enemyCharacters.Count > 0) {
-                    int index = UnityEngine.Random.Range(0, enemyCharacters.Count);
-                    Character character = enemyCharacters[index];
-                    if (character.HasJobTargetingThis(JOB_TYPE.UNDERMINE_ENEMY) || jobQueue.HasJob(JOB_TYPE.UNDERMINE_ENEMY, character)) {
-                        enemyCharacters.RemoveAt(index);
-                    } else {
-                        chosenCharacter = character;
-                    }
-                }
-                if (chosenCharacter != null) {
-                    hasCreatedJob = CreateUndermineJobOnly(chosenCharacter, "idle");
-                    //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = chosenCharacter });
-                    //job.SetCancelOnFail(true);
-                    //job.SetCannotOverrideJob(true);
-                    ////GameManager.Instance.SetPausedState(true);
-                    //Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job to " + this.name + " with target " + chosenCharacter.name);
-                    //jobQueue.AddJobInQueue(job);
-                    //hasCreatedJob = true;
-                }
-            }
-        }
+        // List<Character> enemyCharacters = opinionComponent.GetEnemyCharacters();
+        // if (!hasCreatedJob && enemyCharacters.Count > 0) {
+        //     int chance = UnityEngine.Random.Range(0, 100);
+        //     int value = 3;
+        //     CHARACTER_MOOD currentMood = currentMoodType;
+        //     if (currentMood == CHARACTER_MOOD.DARK) {
+        //         value += 1;
+        //     } else if (currentMood == CHARACTER_MOOD.GOOD) {
+        //         value -= 1;
+        //     } else if (currentMood == CHARACTER_MOOD.GREAT) {
+        //         value -= 3;
+        //     }
+        //     if (chance < value) {
+        //         Character chosenCharacter = null;
+        //         while (chosenCharacter == null && enemyCharacters.Count > 0) {
+        //             int index = UnityEngine.Random.Range(0, enemyCharacters.Count);
+        //             Character character = enemyCharacters[index];
+        //             if (character.HasJobTargetingThis(JOB_TYPE.UNDERMINE_ENEMY) || jobQueue.HasJob(JOB_TYPE.UNDERMINE_ENEMY, character)) {
+        //                 enemyCharacters.RemoveAt(index);
+        //             } else {
+        //                 chosenCharacter = character;
+        //             }
+        //         }
+        //         if (chosenCharacter != null) {
+        //             hasCreatedJob = CreateUndermineJobOnly(chosenCharacter, "idle");
+        //             //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = chosenCharacter });
+        //             //job.SetCancelOnFail(true);
+        //             //job.SetCannotOverrideJob(true);
+        //             ////GameManager.Instance.SetPausedState(true);
+        //             //Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job to " + this.name + " with target " + chosenCharacter.name);
+        //             //jobQueue.AddJobInQueue(job);
+        //             //hasCreatedJob = true;
+        //         }
+        //     }
+        // }
     }
     public Character troubledCharacter { get; private set; }
     public void CreateAskForHelpJob(Character troubledCharacter, INTERACTION_TYPE helpType, params object[] otherData) {

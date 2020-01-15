@@ -44,7 +44,7 @@ public class Dance : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
                 return false;
             }
-            return actor == poiTarget && (actor.currentMoodType == CHARACTER_MOOD.GOOD || actor.currentMoodType == CHARACTER_MOOD.GREAT);
+            return actor == poiTarget && (actor.moodComponent.moodState == MOOD_STATE.NORMAL);
         }
         return false;
     }
@@ -70,6 +70,6 @@ public class DanceData : GoapActionData {
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor == poiTarget && (actor.currentMoodType == CHARACTER_MOOD.GOOD || actor.currentMoodType == CHARACTER_MOOD.GREAT);
+        return actor == poiTarget;
     }
 }

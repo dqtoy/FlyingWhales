@@ -88,11 +88,17 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
 
     #region Colliders
     public override void UpdateCollidersState(TileObject obj) {
-        if (obj.advertisedActions.Count > 0) {
+        if (obj is GenericTileObject) {
+            //Generic tile object is always visible
             SetAsVisibleToCharacters();
         } else {
-            SetAsInvisibleToCharacters();
+            if (obj.advertisedActions.Count > 0) {
+                SetAsVisibleToCharacters();
+            } else {
+                SetAsInvisibleToCharacters();
+            }    
         }
+        
     }
     #endregion
 }

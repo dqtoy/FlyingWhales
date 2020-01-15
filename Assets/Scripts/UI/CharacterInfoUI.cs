@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,6 +60,20 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI relationshipTypesLbl;
     [SerializeField] private TextMeshProUGUI relationshipNamesLbl;
     [SerializeField] private TextMeshProUGUI relationshipValuesLbl;
+
+    [Space(10)] 
+    [Header("Mood")] 
+    [SerializeField] private MarkedMeter moodMeter;
+    [SerializeField] private TextMeshProUGUI moodSummary;
+    
+    [Space(10)] 
+    [Header("Needs")] 
+    [SerializeField] private MarkedMeter energyMeter;
+    [SerializeField] private MarkedMeter fullnessMeter;
+    [SerializeField] private MarkedMeter happinessMeter;
+    [SerializeField] private MarkedMeter hopeMeter;
+    [SerializeField] private MarkedMeter comfortMeter;
+    
     
     private Character _activeCharacter;
     private Character _previousCharacter;
@@ -92,7 +107,7 @@ public class CharacterInfoUI : UIMenu {
         Messenger.AddListener<Character, Character, string>(Signals.OPINION_DECREASED, OnOpinionChanged);
 
         Messenger.AddListener<Character>(Signals.UPDATE_THOUGHT_BUBBLE, UpdateThoughtBubbleFromSignal);
-
+        Messenger.AddListener<MoodComponent>(Signals.MOOD_SUMMARY_MODIFIED, OnMoodModified);
 
         normalTraitsEventLbl.SetOnClickAction(OnClickTrait);
         statusTraitsEventLbl.SetOnClickAction(OnClickTrait);
@@ -103,6 +118,35 @@ public class CharacterInfoUI : UIMenu {
         homeRegionEventLbl.SetOnClickAction(OnClickHomeLocation);
         houseEventLbl.SetOnClickAction(OnClickHomeStructure);
 
+        moodMeter.ResetMarks();
+        moodMeter.AddMark(EditableValuesManager.Instance.criticalMoodHighThreshold/100f, Color.red);
+        moodMeter.AddMark(EditableValuesManager.Instance.lowMoodHighThreshold/100f, Color.yellow);
+
+        energyMeter.ResetMarks();
+        energyMeter.AddMark(CharacterNeedsComponent.ENERGIZED_LOWER_LIMIT/100f, Color.green);
+        energyMeter.AddMark(CharacterNeedsComponent.TIRED_UPPER_LIMIT/100f, Color.yellow);
+        energyMeter.AddMark(CharacterNeedsComponent.EXHAUSTED_UPPER_LIMIT/100f, Color.red);
+        
+        fullnessMeter.ResetMarks();
+        fullnessMeter.AddMark(CharacterNeedsComponent.FULL_LOWER_LIMIT/100f, Color.green);
+        fullnessMeter.AddMark(CharacterNeedsComponent.HUNGRY_UPPER_LIMIT/100f, Color.yellow);
+        fullnessMeter.AddMark(CharacterNeedsComponent.STARVING_UPPER_LIMIT/100f, Color.red);
+        
+        happinessMeter.ResetMarks();
+        happinessMeter.AddMark(CharacterNeedsComponent.HAPPY_LOWER_LIMIT/100f, Color.green);
+        happinessMeter.AddMark(CharacterNeedsComponent.SAD_UPPER_LIMIT/100f, Color.yellow);
+        happinessMeter.AddMark(CharacterNeedsComponent.FORLORN_UPPER_LIMIT/100f, Color.red);
+        
+        comfortMeter.ResetMarks();
+        comfortMeter.AddMark(CharacterNeedsComponent.RELAXED_LOWER_LIMIT/100f, Color.green);
+        comfortMeter.AddMark(CharacterNeedsComponent.UNCOMFORTABLE_UPPER_LIMIT/100f, Color.yellow);
+        comfortMeter.AddMark(CharacterNeedsComponent.AGONIZING_UPPER_LIMIT/100f, Color.red);
+        
+        hopeMeter.ResetMarks();
+        hopeMeter.AddMark(CharacterNeedsComponent.SANGUINE_LOWER_LIMIT/100f, Color.green);
+        hopeMeter.AddMark(CharacterNeedsComponent.GLOOMY_UPPER_LIMIT/100f, Color.yellow);
+        hopeMeter.AddMark(CharacterNeedsComponent.DISILLUSIONED_UPPER_LIMIT/100f, Color.red);
+        
         InitializeLogsMenu();
     }
 
@@ -130,6 +174,7 @@ public class CharacterInfoUI : UIMenu {
         UpdateInventoryInfo();
         UpdateAllHistoryInfo();
         ResetAllScrollPositions();
+        UpdateMoodSummary();
     }
     public override void SetData(object data) {
         base.SetData(data);
@@ -164,6 +209,8 @@ public class CharacterInfoUI : UIMenu {
         UpdateBasicInfo();
         UpdateStatInfo();
         UpdateLocationInfo();
+        UpdateMoodMeter();
+        UpdateNeedMeters();
     }
     private void UpdatePortrait() {
         characterPortrait.GeneratePortrait(_activeCharacter);
@@ -473,7 +520,7 @@ public class CharacterInfoUI : UIMenu {
         summary = $"{summary}{("\nFood: " + activeCharacter.food.ToString())}";
         summary = $"{summary}{("\nRole: " + activeCharacter.role.roleType.ToString())}";
         summary = $"{summary}{("\nSexuality: " + activeCharacter.sexuality.ToString())}";
-        summary = $"{summary}{("\nMood: " + activeCharacter.moodComponent.moodValue + "/100" + "(" + activeCharacter.currentMoodType.ToString() + ")")}";
+        summary = $"{summary}{("\nMood: " + activeCharacter.moodComponent.moodValue + "/100" + "(" + activeCharacter.moodComponent.moodState.ToString() + ")")}";
         summary = $"{summary}{("\nHP: " + activeCharacter.currentHP.ToString() + "/" + activeCharacter.maxHP.ToString())}";
         summary = $"{summary}{("\nIgnore Hostiles: " + activeCharacter.ignoreHostility.ToString())}";
         summary = $"{summary}{("\nAttack Range: " + activeCharacter.characterClass.attackRange.ToString())}";
@@ -483,7 +530,11 @@ public class CharacterInfoUI : UIMenu {
             summary = $"{summary}{"\n\tDuration in state: " + activeCharacter.stateComponent.currentState.currentDuration.ToString() + "/" + activeCharacter.stateComponent.currentState.duration.ToString()}";
         }
         
-        summary = $"{summary}\nActions targeting this character: ";
+        summary += "\nBehaviour Components: ";
+        for (int i = 0; i < activeCharacter.behaviourComponent.currentBehaviourComponents.Count; i++) {
+            CharacterBehaviourComponent component = activeCharacter.behaviourComponent.currentBehaviourComponents[i];
+            summary += $"{component.ToString()}, ";
+        }
         
         summary += "\nPersonal Job Queue: ";
         if (activeCharacter.jobQueue.jobsInQueue.Count > 0) {
@@ -643,6 +694,64 @@ public class CharacterInfoUI : UIMenu {
     #region Share Intel
     protected void ShareIntel() {
 
+    }
+    #endregion
+
+    #region Mood
+    private void OnMoodModified(MoodComponent moodComponent) {
+        if (_activeCharacter != null && _activeCharacter.moodComponent == moodComponent) {
+            UpdateMoodMeter();
+            UpdateMoodSummary();
+        }
+    }
+    private void UpdateMoodMeter() {
+        moodMeter.SetFillAmount(_activeCharacter.moodComponent.moodValue/100f);
+    }
+    private void UpdateMoodSummary() {
+        moodSummary.text = string.Empty;
+        string summary = string.Empty;
+        foreach (KeyValuePair<string, int> pair in _activeCharacter.moodComponent.moodModificationsSummary) {
+            string color = "green";
+            if (pair.Value < 0) {
+                color = "red";
+            }
+            summary += $"<color={color}>{pair.Value.ToString()}</color> {pair.Key}\n";
+        }
+        moodSummary.text = summary;
+    }
+    public void ShowMoodTooltip() {
+        string summary = $"{_activeCharacter.moodComponent.moodValue.ToString()}/100 ({_activeCharacter.moodComponent.moodState})";
+        summary += $"\nChance to trigger Major Mental Break " +
+                   $"{_activeCharacter.moodComponent.currentCriticalMoodEffectChance.ToString()}";
+        UIManager.Instance.ShowSmallInfo(summary);
+    }
+    public void HideSmallInfo() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    #endregion
+
+    #region Needs
+    private void UpdateNeedMeters() {
+        energyMeter.SetFillAmount(_activeCharacter.needsComponent.tiredness/CharacterNeedsComponent.TIREDNESS_DEFAULT);
+        fullnessMeter.SetFillAmount(_activeCharacter.needsComponent.fullness/CharacterNeedsComponent.FULLNESS_DEFAULT);
+        happinessMeter.SetFillAmount(_activeCharacter.needsComponent.happiness/CharacterNeedsComponent.HAPPINESS_DEFAULT);
+        hopeMeter.SetFillAmount(_activeCharacter.needsComponent.hope/CharacterNeedsComponent.HOPE_DEFAULT);
+        comfortMeter.SetFillAmount(_activeCharacter.needsComponent.comfort/CharacterNeedsComponent.COMFORT_DEFAULT);
+    }
+    public void ShowEnergyTooltip() {
+        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.tiredness.ToString()}/100");
+    }
+    public void ShowFullnessTooltip() {
+        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.fullness.ToString()}/100");
+    }
+    public void ShowHappinessTooltip() {
+        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.happiness.ToString()}/100");
+    }
+    public void ShowHopeTooltip() {
+        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.hope.ToString()}/100");
+    }
+    public void ShowComfortTooltip() {
+        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.comfort.ToString()}/100");
     }
     #endregion
 }

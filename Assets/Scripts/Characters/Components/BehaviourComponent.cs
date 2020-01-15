@@ -65,10 +65,16 @@ public class BehaviourComponent {
         }
         return false;
     }
-    public bool ReplaceBehaviourComponent(List<CharacterBehaviourComponent> componentsToBeReplaced) {
+    public bool ReplaceBehaviourComponent(System.Type componentToBeReplaced, System.Type componentToReplace) {
+        if (RemoveBehaviourComponent(componentToBeReplaced)) {
+            return AddBehaviourComponent(componentToReplace);
+        }
+        return false;
+    }
+    public bool ReplaceBehaviourComponent(List<CharacterBehaviourComponent> newComponents) {
         currentBehaviourComponents.Clear();
-        for (int i = 0; i < componentsToBeReplaced.Count; i++) {
-            AddBehaviourComponent(componentsToBeReplaced[i]);
+        for (int i = 0; i < newComponents.Count; i++) {
+            AddBehaviourComponent(newComponents[i]);
         }
         return true;
     }

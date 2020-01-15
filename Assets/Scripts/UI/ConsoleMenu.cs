@@ -717,7 +717,7 @@ public class ConsoleMenu : UIMenu {
         }
         string moodParameterString = parameters[1];
 
-        int moodValue = character.moodComponent.moodValue;
+        int moodValue;
         if (!int.TryParse(moodParameterString, out moodValue)) {
             AddErrorMessage("Mood value parameter is not an integer: " + moodParameterString);
             return;

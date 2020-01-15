@@ -9,6 +9,8 @@ namespace Traits {
             get { return true; }
         }
 
+        private List<CharacterBehaviourComponent> _behaviourComponentsBeforeBerserked;
+        
         public Berserked() {
             name = "Berserked";
             description = "This character will attack anyone at random and may destroy objects.";
@@ -27,6 +29,9 @@ namespace Traits {
                     character.marker.BerserkedMarker();
                 }
                 character.CancelAllJobs();
+                _behaviourComponentsBeforeBerserked = new List<CharacterBehaviourComponent>(character.behaviourComponent.currentBehaviourComponents);
+                character.behaviourComponent.ReplaceBehaviourComponent(new List<CharacterBehaviourComponent>()
+                    {CharacterManager.Instance.GetCharacterBehaviourComponent(typeof(BerserkBehaviour))});
                 //character.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED);
             }
         }
@@ -59,7 +64,8 @@ namespace Traits {
                     IPointOfInterest hostile = hostilesToRemove[i];
                     character.marker.RemoveHostileInRange(hostile);
                 }
-                
+                character.behaviourComponent.ReplaceBehaviourComponent(_behaviourComponentsBeforeBerserked);
+                _behaviourComponentsBeforeBerserked.Clear();
             }
         }
         public override void OnSeePOI(IPointOfInterest targetPOI, Character character) {

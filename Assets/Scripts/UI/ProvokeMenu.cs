@@ -52,26 +52,26 @@ public class ProvokeMenu : MonoBehaviour {
         bool succeedProvoke = false;
         if (targetCharacter.opinionComponent.GetEnemyCharacters().Count > 0) {
             //succeedProvoke = true;
-            CHARACTER_MOOD currentMood = targetCharacter.currentMoodType;
-            if (currentMood == CHARACTER_MOOD.GREAT) {
-                int chance = UnityEngine.Random.Range(0, 100);
-                if (chance < 70) {
-                    actorText = "You should take revenge on your enemies.";
-                    targetText = "I am too happy right now to even care about my enemies.";
-                } else {
-                    succeedProvoke = true;
-                }
-            } else if (currentMood == CHARACTER_MOOD.GOOD) {
-                int chance = UnityEngine.Random.Range(0, 2);
-                if (chance == 0) {
-                    actorText = "You should take revenge on your enemies.";
-                    targetText = "I am too happy right now to even care about my enemies.";
-                } else {
-                    succeedProvoke = true;
-                }
-            } else {
-                succeedProvoke = true;
-            }
+            // CHARACTER_MOOD currentMood = targetCharacter.currentMoodType;
+            // if (currentMood == CHARACTER_MOOD.GREAT) {
+            //     int chance = UnityEngine.Random.Range(0, 100);
+            //     if (chance < 70) {
+            //         actorText = "You should take revenge on your enemies.";
+            //         targetText = "I am too happy right now to even care about my enemies.";
+            //     } else {
+            //         succeedProvoke = true;
+            //     }
+            // } else if (currentMood == CHARACTER_MOOD.GOOD) {
+            //     int chance = UnityEngine.Random.Range(0, 2);
+            //     if (chance == 0) {
+            //         actorText = "You should take revenge on your enemies.";
+            //         targetText = "I am too happy right now to even care about my enemies.";
+            //     } else {
+            //         succeedProvoke = true;
+            //     }
+            // } else {
+            //     succeedProvoke = true;
+            // }
         } else {
             actorText = "You should take revenge on your enemies.";
             if(targetCharacter.traitContainer.GetNormalTrait<Trait>("Diplomatic") != null) {

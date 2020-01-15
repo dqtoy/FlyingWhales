@@ -125,16 +125,11 @@ public class Player : ILeader {
 
     #region Settlement
     public Settlement CreatePlayerSettlement(BaseLandmark portal) {
-        try {
-            Settlement settlement = LandmarkManager.Instance.CreateNewSettlement(portal.tileLocation.region, LOCATION_TYPE.DEMONIC_INTRUSION, 0, portal.tileLocation);
-            settlement.LoadAdditionalData();
-            settlement.SetName("Portal");
-            SetPlayerArea(settlement);
-            return settlement;
-        } catch (Exception e) {
-            Console.WriteLine(e);
-            throw;
-        }
+        Settlement settlement = LandmarkManager.Instance.CreateNewSettlement(portal.tileLocation.region, LOCATION_TYPE.DEMONIC_INTRUSION, 0, portal.tileLocation);
+        settlement.LoadAdditionalData();
+        settlement.SetName("Portal");
+        SetPlayerArea(settlement);
+        return settlement;
     }
     public void LoadPlayerArea(Settlement settlement) {
         //Biomes.Instance.CorruptTileVisuals(settlement.coreTile);

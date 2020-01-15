@@ -195,16 +195,16 @@ public class Region : ILocation {
         return adjacent;
     }
     public void OnHoverOverAction() {
-        ShowSolidBorder();
+        // ShowSolidBorder();
     }
     public void OnHoverOutAction() {
-        if (UIManager.Instance.regionInfoUI.isShowing) {
-            if (UIManager.Instance.regionInfoUI.activeRegion != this) {
-                ShowTransparentBorder();
-            }
-        } else {
-            ShowTransparentBorder();
-        }
+        // if (UIManager.Instance.regionInfoUI.isShowing) {
+        //     if (UIManager.Instance.regionInfoUI.activeRegion != this) {
+        //         ShowTransparentBorder();
+        //     }
+        // } else {
+        //     ShowTransparentBorder();
+        // }
 
     }
     public void ShowSolidBorder() {

@@ -159,8 +159,8 @@ MonoBehaviour:
       m_keys: 
       m_values: []
     neutralTileSprites:
-    - mainSprite: {fileID: 21300000, guid: 25ad2f1445b44a44780267f577682fc6, type: 3}
-      tintSprite: {fileID: 21300000, guid: 2509d8d1c25f61343a7e20c936950617, type: 3}
+    - mainSprite: {fileID: 21300000, guid: 6b15ab4e0c664d94f906a2b783906619, type: 3}
+      tintSprite: {fileID: 21300000, guid: d25eaa8dbe14ebb4e96d58aabf1b978f, type: 3}
       animation: {fileID: 0}
     humansLandmarkTileSprites:
     - mainSprite: {fileID: 21300000, guid: 25ad2f1445b44a44780267f577682fc6, type: 3}

@@ -29,14 +29,14 @@ namespace Traits {
             if (addedTo is Character) {
                 owner = addedTo as Character;
                 //owner.AdjustMoodValue(-15, this);
-                owner.needsComponent.AdjustDoNotGetLonely(1);
+                // owner.needsComponent.AdjustDoNotGetLonely(1);
                 Messenger.AddListener(Signals.HOUR_STARTED, CheckRemovalChance);
                 Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             if (owner != null) {
-                owner.needsComponent.AdjustDoNotGetLonely(1);
+                // owner.needsComponent.AdjustDoNotGetLonely(-1);
                 Messenger.RemoveListener(Signals.HOUR_STARTED, CheckRemovalChance);
                 Messenger.RemoveListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
@@ -194,6 +194,8 @@ namespace Traits {
         private void CheckRemovalChance() {
             chanceToRemove += GetChanceIncreasePerHour();
             float roll = Random.Range(0f, 100f);
+            Debug.Log($"{GameManager.Instance.TodayLogString()} {owner.name} is rolling for chance to remove catatonic. " +
+                      $"Roll is {roll.ToString()}. Chance is {chanceToRemove.ToString()}");
             if (roll <= chanceToRemove) {
                 owner.traitContainer.RemoveTrait(owner, this);
             }

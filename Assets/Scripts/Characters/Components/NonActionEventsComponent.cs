@@ -76,19 +76,19 @@ public class NonActionEventsComponent {
 
         strLog += "\n\n" + chatWeights.GetWeightsSummary("BASE WEIGHTS");
 
-        CHARACTER_MOOD actorMood = owner.currentMoodType;
-        CHARACTER_MOOD targetMood = target.currentMoodType;
+        MOOD_STATE actorMood = owner.moodComponent.moodState;
+        MOOD_STATE targetMood = target.moodComponent.moodState;
         string actorOpinionLabel = owner.opinionComponent.GetOpinionLabel(target);
         string targetOpinionLabel = target.opinionComponent.GetOpinionLabel(owner);
         int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(owner, target);
 
-        if (actorMood == CHARACTER_MOOD.BAD) {
+        if (actorMood == MOOD_STATE.LOW) {
             chatWeights.AddWeightToElement(Warm_Chat, -20);
             chatWeights.AddWeightToElement(Argument, 15);
             chatWeights.AddWeightToElement(Insult, 20);
             strLog += "\n\nActor Mood is Low, modified weights...";
             strLog += "\nWarm Chat: -20, Argument: +15, Insult: +20";
-        } else if (actorMood == CHARACTER_MOOD.DARK) {
+        } else if (actorMood == MOOD_STATE.CRITICAL) {
             chatWeights.AddWeightToElement(Warm_Chat, -40);
             chatWeights.AddWeightToElement(Argument, 30);
             chatWeights.AddWeightToElement(Insult, 50);
@@ -96,12 +96,12 @@ public class NonActionEventsComponent {
             strLog += "\nWarm Chat: -40, Argument: +30, Insult: +50";
         }
 
-        if (targetMood == CHARACTER_MOOD.BAD) {
+        if (targetMood == MOOD_STATE.LOW) {
             chatWeights.AddWeightToElement(Warm_Chat, -20);
             chatWeights.AddWeightToElement(Argument, 15);
             strLog += "\n\nTarget Mood is Low, modified weights...";
             strLog += "\nWarm Chat: -20, Argument: +15";
-        } else if (targetMood == CHARACTER_MOOD.DARK) {
+        } else if (targetMood == MOOD_STATE.CRITICAL) {
             chatWeights.AddWeightToElement(Warm_Chat, -40);
             chatWeights.AddWeightToElement(Argument, 30);
             strLog += "\n\nTarget Mood is Critical, modified weights...";

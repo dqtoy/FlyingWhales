@@ -21,8 +21,10 @@ public class HextileInfoUI : UIMenu {
     public HexTile currentlyShowingHexTile { get; private set; }
     
     public override void OpenMenu() {
+        currentlyShowingHexTile?.UnHighlightTile();
         base.OpenMenu();
         currentlyShowingHexTile = _data as HexTile;
+        currentlyShowingHexTile.HighlightTile(Color.gray, 128f / 255f);
         UpdateBasicInfo();
         UpdateHexTileInfo();
     }
@@ -32,7 +34,11 @@ public class HextileInfoUI : UIMenu {
             UpdateHexTileInfo();
         }
     }
-
+    public override void CloseMenu() {
+        currentlyShowingHexTile.UnHighlightTile();
+        base.CloseMenu();
+        currentlyShowingHexTile = null;
+    }
     private void UpdateBasicInfo() {
         _locationPortrait.SetPortrait(currentlyShowingHexTile.landmarkOnTile.specificLandmarkType);
         nameLbl.text = currentlyShowingHexTile.landmarkOnTile.landmarkName;

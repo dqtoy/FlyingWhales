@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Traits {
     [System.Serializable]
-    public class Trait {
+    public class Trait : IMoodModifier{
         //public virtual string nameInUI {
         //    get { return name; }
         //}
@@ -43,6 +43,8 @@ namespace Traits {
         public GameDate dateEstablished { get; protected set; }
         public virtual bool isPersistent { get { return false; } } //should this trait persist through all a character's alter egos
         //public virtual bool isRemovedOnSwitchAlterEgo { get { return false; } }
+        public string moodModificationDescription => name;
+        public int moodModifier => moodEffect;
 
         #region Virtuals
         public virtual void OnAddTrait(ITraitable addedTo) {
@@ -52,7 +54,7 @@ namespace Traits {
             //}
             if(addedTo is Character) {
                 Character character = addedTo as Character;
-                character.moodComponent.AdjustMoodValue(moodEffect, this);
+                character.moodComponent.AddMoodEffect(moodEffect, this);    
             }
             if (level == 0) {
                 SetLevel(1);
@@ -62,7 +64,7 @@ namespace Traits {
         public virtual void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             if (removedFrom is Character) {
                 Character character = removedFrom as Character;
-                character.moodComponent.AdjustMoodValue(-moodEffect, this);
+                character.moodComponent.RemoveMoodEffect(-moodEffect, this);    
                 if (type == TRAIT_TYPE.CRIMINAL) {
                     if (!character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
                         character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
@@ -73,14 +75,14 @@ namespace Traits {
         public virtual void OnStackTrait(ITraitable addedTo) {
             if (addedTo is Character) {
                 Character character = addedTo as Character;
-                character.moodComponent.AdjustMoodValue(Mathf.RoundToInt(moodEffect * stackModifier), this);
+                character.moodComponent.AddMoodEffect(Mathf.RoundToInt(moodEffect * stackModifier), this);
             }
             SetDateEstablished(GameManager.Instance.Today());
         }
         public virtual void OnUnstackTrait(ITraitable addedTo) {
             if (addedTo is Character) {
                 Character character = addedTo as Character;
-                character.moodComponent.AdjustMoodValue(-Mathf.RoundToInt(moodEffect * stackModifier), this);
+                character.moodComponent.RemoveMoodEffect(-Mathf.RoundToInt(moodEffect * stackModifier), this);
             }
         }
         public virtual string GetToolTipText() { return string.Empty; }
@@ -162,13 +164,7 @@ namespace Traits {
         #region Utilities
         public int GetTriggerFlawManaCost(Character character) {
             //Triggering while in a bad mood costs more Mana (100) than triggering while in a dark mood (50). Great and good mood costs 200 mana.
-            if (character.currentMoodType == CHARACTER_MOOD.BAD) {
-                return 25;
-            } else if (character.currentMoodType == CHARACTER_MOOD.DARK) {
-                return 10;
-            } else {
-                return 50; //great or good
-            }
+            return 25; //great or good
         }
         public string GetTriggerFlawEffectDescription(Character character, string key) {
             if (LocalizationManager.Instance.HasLocalizedValue("Trait", name, key)) {

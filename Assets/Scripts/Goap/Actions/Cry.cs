@@ -52,6 +52,6 @@ public class CryData : GoapActionData {
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor == poiTarget && actor.currentMoodType == CHARACTER_MOOD.DARK;
+        return actor == poiTarget;
     }
 }

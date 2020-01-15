@@ -11,23 +11,23 @@ public class CharacterNeedsComponent {
     public int doNotGetUncomfortable { get; private set; }
     public int doNotGetGloomy { get; private set; }
 
-    public bool isStarving => fullness >= 0f && fullness <= 20f;
+    public bool isStarving => fullness >= 0f && fullness <= STARVING_UPPER_LIMIT;
     public bool isExhausted => tiredness >= 0f && tiredness <= EXHAUSTED_UPPER_LIMIT;
     public bool isForlorn => happiness >= 0f && happiness <= FORLORN_UPPER_LIMIT;
-    public bool isAgonizing => comfort >= 0f && comfort <= 20f;
-    public bool isDisillusioned => hope >= 0f && hope <= 20f;
+    public bool isAgonizing => comfort >= 0f && comfort <= AGONIZING_UPPER_LIMIT;
+    public bool isDisillusioned => hope >= 0f && hope <= DISILLUSIONED_UPPER_LIMIT;
 
-    public bool isHungry => fullness > 20f && fullness <= 40f;
-    public bool isTired => tiredness > EXHAUSTED_UPPER_LIMIT && tiredness <= 40f;
-    public bool isLonely => happiness > FORLORN_UPPER_LIMIT && happiness <= 40f;
-    public bool isUncomfortable => comfort > 20f && comfort <= 40f;
-    public bool isGloomy => hope > 20f && hope <= 40f;
+    public bool isHungry => fullness > STARVING_UPPER_LIMIT && fullness <= HUNGRY_UPPER_LIMIT;
+    public bool isTired => tiredness > EXHAUSTED_UPPER_LIMIT && tiredness <= TIRED_UPPER_LIMIT;
+    public bool isLonely => happiness > FORLORN_UPPER_LIMIT && happiness <= SAD_UPPER_LIMIT;
+    public bool isUncomfortable => comfort > AGONIZING_UPPER_LIMIT && comfort <= UNCOMFORTABLE_UPPER_LIMIT;
+    public bool isGloomy => hope > DISILLUSIONED_UPPER_LIMIT && hope <= GLOOMY_UPPER_LIMIT;
 
-    public bool isFull => fullness >= 91f && fullness <= 100f;
-    public bool isEnergized => tiredness >= 91f && tiredness <= 100f;
-    public bool isHappy => happiness >= 91f && happiness <= 100f;
-    public bool isRelaxed => comfort >= 91f && comfort <= 100f;
-    public bool isSanguine => hope >= 91f && hope <= 100f;
+    public bool isFull => fullness >= FULL_LOWER_LIMIT && fullness <= 100f;
+    public bool isEnergized => tiredness >= ENERGIZED_LOWER_LIMIT && tiredness <= 100f;
+    public bool isHappy => happiness >= HAPPY_LOWER_LIMIT && happiness <= 100f;
+    public bool isRelaxed => comfort >= RELAXED_LOWER_LIMIT && comfort <= 100f;
+    public bool isSanguine => hope >= SANGUINE_LOWER_LIMIT && hope <= 100f;
 
 
     //Tiredness
@@ -40,8 +40,8 @@ public class CharacterNeedsComponent {
     private float tirednessLowerBound; //how low can this characters tiredness go
     public const float TIREDNESS_DEFAULT = 100f;
     public const float EXHAUSTED_UPPER_LIMIT = 20f;
-    //public const int TIREDNESS_THRESHOLD_1 = 10000;
-    //public const int TIREDNESS_THRESHOLD_2 = 5000;
+    public const float TIRED_UPPER_LIMIT = 40f;
+    public const float ENERGIZED_LOWER_LIMIT = 91f;
 
     //Fullness
     public float fullness { get; private set; }
@@ -49,8 +49,9 @@ public class CharacterNeedsComponent {
     public int fullnessForcedTick { get; private set; }
     private float fullnessLowerBound; //how low can this characters fullness go
     public const float FULLNESS_DEFAULT = 100f;
-    //public const int FULLNESS_THRESHOLD_1 = 10000;
-    //public const int FULLNESS_THRESHOLD_2 = 5000;
+    public const float STARVING_UPPER_LIMIT = 20f;
+    public const float HUNGRY_UPPER_LIMIT = 40f;
+    public const float FULL_LOWER_LIMIT = 91f;
 
     //Happiness
     public float happiness { get; private set; }
@@ -58,19 +59,25 @@ public class CharacterNeedsComponent {
     private float happinessLowerBound; //how low can this characters happiness go
     public const float HAPPINESS_DEFAULT = 100f;
     public const float FORLORN_UPPER_LIMIT = 20f;
-    //public const int HAPPINESS_THRESHOLD_1 = 10000;
-    //public const int HAPPINESS_THRESHOLD_2 = 5000;
+    public const float SAD_UPPER_LIMIT = 40f;
+    public const float HAPPY_LOWER_LIMIT = 91f;
 
     //Comfort
     public float comfort { get; private set; }
     public float comfortDecreaseRate { get; private set; }
     private float comfortLowerBound; //how low can this characters happiness go
     public const float COMFORT_DEFAULT = 100f;
+    public const float AGONIZING_UPPER_LIMIT = 20f;
+    public const float UNCOMFORTABLE_UPPER_LIMIT = 40f;
+    public const float RELAXED_LOWER_LIMIT = 91f;
 
     //Hope
     public float hope { get; private set; }
     private float hopeLowerBound; //how low can this characters happiness go
     public const float HOPE_DEFAULT = 100f;
+    public const float DISILLUSIONED_UPPER_LIMIT = 20f;
+    public const float GLOOMY_UPPER_LIMIT = 40f;
+    public const float SANGUINE_LOWER_LIMIT = 91f;
 
     public bool hasForcedFullness { get; set; }
     public bool hasForcedTiredness { get; set; }
@@ -181,16 +188,16 @@ public class CharacterNeedsComponent {
             return;
         }
         if (doNotGetHungry <= 0) {
-            AdjustFullness(-(CharacterManager.DEFAULT_FULLNESS_DECREASE_RATE + fullnessDecreaseRate));
+            AdjustFullness(-(EditableValuesManager.Instance.baseFullnessDecreaseRate + fullnessDecreaseRate));
         }
         if (doNotGetTired <= 0) {
-            AdjustTiredness(-(CharacterManager.DEFAULT_TIREDNESS_DECREASE_RATE + tirednessDecreaseRate));
+            AdjustTiredness(-(EditableValuesManager.Instance.baseTirednessDecreaseRate + tirednessDecreaseRate));
         }
         if (doNotGetLonely <= 0) {
-            AdjustHappiness(-(CharacterManager.DEFAULT_HAPPINESS_DECREASE_RATE + happinessDecreaseRate));
+            AdjustHappiness(-(EditableValuesManager.Instance.baseHappinessDecreaseRate + happinessDecreaseRate));
         }
         if (doNotGetUncomfortable <= 0) {
-            AdjustComfort(-(CharacterManager.DEFAULT_COMFORT_DECREASE_RATE + comfortDecreaseRate));
+            AdjustComfort(-(EditableValuesManager.Instance.baseComfortDecreaseRate + comfortDecreaseRate));
         }
     }
     public string GetNeedsSummary() {

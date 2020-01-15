@@ -17,10 +17,6 @@ public class CharacterManager : MonoBehaviour {
     public static readonly string[] sevenDeadlySinsClassNames = { "Lust", "Gluttony", "Greed", "Sloth", "Wrath", "Envy", "Pride" };
     public const int MAX_HISTORY_LOGS = 300;
     public const int CHARACTER_MAX_MEMORY = 20;
-    public const float DEFAULT_FULLNESS_DECREASE_RATE = 0.25f;
-    public const float DEFAULT_TIREDNESS_DECREASE_RATE = 0.34f;
-    public const float DEFAULT_HAPPINESS_DECREASE_RATE = 0.18f;
-    public const float DEFAULT_COMFORT_DECREASE_RATE = 0.15f;
     public const string Original_Alter_Ego = "Original";
 
     public GameObject characterIconPrefab;

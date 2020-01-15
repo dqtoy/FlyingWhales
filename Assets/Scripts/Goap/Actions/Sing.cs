@@ -98,6 +98,6 @@ public class SingData : GoapActionData {
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor == poiTarget && actor.traitContainer.GetNormalTrait<Trait>("Music Hater") == null && (actor.currentMoodType == CHARACTER_MOOD.GOOD || actor.currentMoodType == CHARACTER_MOOD.GREAT);
+        return actor == poiTarget && actor.traitContainer.GetNormalTrait<Trait>("Music Hater") == null && (actor.moodComponent.moodState == MOOD_STATE.NORMAL);
     }
 }

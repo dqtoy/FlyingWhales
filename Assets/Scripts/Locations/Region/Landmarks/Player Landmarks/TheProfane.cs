@@ -87,13 +87,13 @@ public class TheProfane : BaseLandmark {
             manaCost = 300;
         }
 
-        if (character.currentMoodType == CHARACTER_MOOD.GREAT || character.currentMoodType == CHARACTER_MOOD.GOOD) {
-            manaCost *= 1.5f;
-        } else if (character.currentMoodType == CHARACTER_MOOD.BAD) {
-            manaCost *= 1f;
-        } else if (character.currentMoodType == CHARACTER_MOOD.DARK) {
-            manaCost *= 0.75f;
-        }
+        // if (character.currentMoodType == CHARACTER_MOOD.GREAT || character.currentMoodType == CHARACTER_MOOD.GOOD) {
+        //     manaCost *= 1.5f;
+        // } else if (character.currentMoodType == CHARACTER_MOOD.BAD) {
+        //     manaCost *= 1f;
+        // } else if (character.currentMoodType == CHARACTER_MOOD.DARK) {
+        //     manaCost *= 0.75f;
+        // }
 
         return Mathf.FloorToInt(manaCost);
     }

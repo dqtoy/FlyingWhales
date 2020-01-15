@@ -111,25 +111,15 @@ public static class Signals {
     #endregion
 
     #region Character
-    public static string ATTRIBUTE_ADDED = "OnCharacterAttributeAdded"; //Parameters (Character affectedCharacter, CharacterAttribute addedTag)
-    public static string ATTRIBUTE_REMOVED = "OnCharacterAttributeRemoved"; //Parameters (Character affectedCharacter, CharacterAttribute removedTag)
-    public static string ITEM_PLACED_INVENTORY = "OnItemPlacedAtInventory"; //Parameters (Item item, Character character)
     public static string CHARACTER_DEATH = "OnCharacterDied"; //Parameters (Character characterThatDied)
-    public static string CHARACTER_KILLED = "OnCharacterKilled"; //Parameters (Character killer, Character characterThatDied)
-    public static string MONSTER_DEATH = "OnMonsterDied"; //Parameters (Monster monsterThatDied)
-    public static string COLLIDED_WITH_CHARACTER = "OnCollideWithCharacter"; //Parameters (Character character1, Character character2)
     public static string CHARACTER_CREATED = "OnCharacterCreated"; //Parameters (Character createdCharacter)
     public static string ROLE_CHANGED = "OnCharacterRoleChanged"; //Parameters (Character characterThatChangedRole)
     //public static string RELATIONSHIP_CREATED = "OnRelationshipCreated"; //Parameters (Relationship createdRelationship)
     //public static string RELATIONSHIP_REMOVED = "OnRelationshipRemoved"; //Parameters (Relationship removedRelationship)
     public static string GENDER_CHANGED = "OnGenderChanged"; //Parameters (Character characterThatChangedGender, GENDER newGender)
     public static string CHARACTER_REMOVED = "OnCharacterRemoved"; //Parameters (Character removedCharacter)
-    public static string ITEM_EQUIPPED = "OnItemEquipped"; //Parameters (Item equippedItem, Character character)
-    public static string ITEM_UNEQUIPPED = "OnItemUnequipped"; //Parameters (Item unequippedItem, Character character)
     public static string CHARACTER_OBTAINED_ITEM = "OnCharacterObtainItem"; //Parameters (SpecialToken obtainedItem, Character characterThatObtainedItem)
     public static string CHARACTER_LOST_ITEM = "OnCharacterLostItem"; //Parameters (SpecialToken unobtainedItem, Character character)
-    public static string CHARACTER_MARKED = "OnCharacterMarked";
-    public static string CHARACTER_INSPECTED = "OnCharacterInspected"; //Parameters (Character inspectedCharacter)
     public static string CHARACTER_LEVEL_CHANGED = "OnCharacterLevelChange"; //Parameters (Character character)
     public static string TRAIT_ADDED = "OnTraitAdded";
     public static string TRAIT_REMOVED = "OnTraitRemoved"; //Parameters (Character character, Trait)
@@ -143,8 +133,6 @@ public static class Signals {
     public static string CHARACTER_ARRIVED_AT_STRUCTURE = "OnCharacterArrivedAtStructure"; //Parameters (Character, LocationStructure); 
     public static string RELATIONSHIP_ADDED = "OnCharacterGainedRelationship"; //Parameters (Relatable, Relatable)
     public static string RELATIONSHIP_REMOVED = "OnCharacterRemovedRelationship"; //Parameters (Relatable, RELATIONSHIP_TRAIT, Relatable)
-    public static string ALL_RELATIONSHIP_REMOVED = "OnCharacterRemovedAllRelationship"; //Parameters (Character, Character)
-    public static string CHARACTER_TRACKED = "OnCharacterTracked"; //Parameters (Character character)
     public static string FORCE_CANCEL_ALL_JOBS_TARGETING_POI = "OnForceCancelAllJobsTargetingCharacter"; //Parameters (Character target, string cause)
     public static string FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI = "OnForceCancelAllJobTypesTargetingPOI"; //Parameters (Character target, string cause)
     public static string CHARACTER_STARTED_STATE = "OnCharacterStartedState"; //Parameters (Character character, CharacterState state)
@@ -157,6 +145,10 @@ public static class Signals {
     public static string ON_SEIZE_TILE_OBJECT = "OnSeizeTileObject";
     public static string CHARACTER_MISSING = "OnCharacterMissing";
     public static string CHARACTER_NO_LONGER_MISSING = "OnCharacterNoLongerMissing";
+    /// <summary>
+    /// Parameters (MoodComponent moodComponentModified)
+    /// </summary>
+    public static string MOOD_SUMMARY_MODIFIED = "OnMoodSummaryModified";
 
     /// <summary>
     /// Parameters (Character characterWithVision, Character characterRemovedFromVision)

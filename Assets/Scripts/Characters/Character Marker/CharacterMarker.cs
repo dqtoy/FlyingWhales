@@ -210,7 +210,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public void OnCharacterLostTrait(Character character, Trait trait) {
         if (character == this.character) {
-            string lostTraitSummary = character.name + " has lost trait " + trait.name;
+            string lostTraitSummary =
+                $"{GameManager.Instance.TodayLogString()}{character.name} has <color=red>lost</color> trait <b>{trait.name}</b>";
             //if the character does not have any other negative disabler trait
             //check for reactions.
             switch (trait.name) {
@@ -300,7 +301,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     }
     private void SelfGainedTrait(Character characterThatGainedTrait, Trait trait) {
-        string gainTraitSummary = characterThatGainedTrait.name + " has gained trait " + trait.name;
+        string gainTraitSummary =
+            $"{GameManager.Instance.TodayLogString()}{characterThatGainedTrait.name} has <color=green>gained</color> trait <b>{trait.name}</b>";
         //if (trait.type == TRAIT_TYPE.DISABLER) { //if the character gained a disabler trait, hinder movement
         //    pathfindingAI.ClearAllCurrentPathData();
         //    pathfindingAI.canSearch = false;

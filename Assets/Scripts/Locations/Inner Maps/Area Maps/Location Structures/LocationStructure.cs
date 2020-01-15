@@ -101,8 +101,11 @@ public class LocationStructure {
             itemsInStructure.Add(token);
             token.SetStructureLocation(this);
             if(AddPOI(token, gridLocation)) {
-                token.SetOwner(token.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile.owner);
-                token.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemAddedToLocation(token, this);
+                if (token.gridTileLocation.buildSpotOwner.hexTileOwner != null 
+                    && token.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile != null) {
+                    token.SetOwner(token.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile.owner);
+                    token.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemAddedToLocation(token, this);
+                }
             }
         }
     }
