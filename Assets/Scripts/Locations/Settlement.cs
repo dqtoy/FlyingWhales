@@ -457,7 +457,7 @@ public class Settlement : IJobOwner {
         }
     }
     private void DesignateNewRuler() {
-        string log = "Designating a new settlement ruler for: " + region.name;
+        string log = "Designating a new settlement ruler for: " + region.name + "(chance it triggered: " + newRulerDesignationChance + ")";
         newRulerDesignationWeights.Clear();
         for (int i = 0; i < residents.Count; i++) {
             Character resident = residents[i];
@@ -521,6 +521,10 @@ public class Settlement : IJobOwner {
             if (resident.traitContainer.GetNormalTrait<Trait>("Ambitious") != null) {
                 weight = Mathf.RoundToInt(weight * 1.5f);
                 log += "\n  -Ambitious: x1.5";
+            }
+            if (weight < 1) {
+                weight = 1;
+                log += "\n  -Weight cannot be less than 1, setting weight to 1";
             }
             log += "\n  -TOTAL WEIGHT: " + weight;
             if (weight > 0) {

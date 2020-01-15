@@ -413,7 +413,7 @@ public class Faction {
         }
     }
     private void DesignateNewLeader() {
-        string log = "Designating a new settlement faction leader for: " + name;
+        string log = "Designating a new settlement faction leader for: " + name + "(chance it triggered: " + newLeaderDesignationChance + ")";
         newLeaderDesignationWeights.Clear();
         for (int i = 0; i < characters.Count; i++) {
             Character member = characters[i];
@@ -477,6 +477,10 @@ public class Faction {
             if (member.traitContainer.GetNormalTrait<Trait>("Ambitious") != null) {
                 weight = Mathf.RoundToInt(weight * 1.5f);
                 log += "\n  -Ambitious: x1.5";
+            }
+            if(weight < 1) {
+                weight = 1;
+                log += "\n  -Weight cannot be less than 1, setting weight to 1";
             }
             log += "\n  -TOTAL WEIGHT: " + weight;
             if (weight > 0) {

@@ -3,6 +3,7 @@ using Traits;
 
 public class WorkBehaviour : CharacterBehaviourComponent {
     public WorkBehaviour() {
+        priority = 40;
         //attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
     }
     

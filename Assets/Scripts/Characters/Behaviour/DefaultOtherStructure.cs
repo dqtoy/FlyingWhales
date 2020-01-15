@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class DefaultOtherStructure : CharacterBehaviourComponent {
     public DefaultOtherStructure() {
+        priority = 70;
         attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
     }
     public override bool TryDoBehaviour(Character character, ref string log) {
