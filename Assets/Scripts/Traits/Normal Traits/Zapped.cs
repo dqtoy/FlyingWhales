@@ -12,6 +12,8 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 3;
             hindersMovement = true;
+            hindersWitness = true;
+            hindersPerform = true;
         }
 
         #region Overrides
@@ -43,14 +45,14 @@ namespace Traits {
                 //}
                 character.marker.ClearHostilesInRange(false);
                 character.marker.ClearAvoidInRange(false);
-                character.AdjustDoNotDisturb(1);
+                //character.AdjustCanPerform(1);
             }
             base.OnAddTrait(sourcePOI);
         }
         public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
             if (sourcePOI is Character) {
                 Character character = sourcePOI as Character;
-                character.AdjustDoNotDisturb(-1);
+                //character.AdjustCanPerform(-1);
                 if(character.marker != null) {
                     character.marker.ClearHostilesInRange(false);
                     character.marker.ClearAvoidInRange(false);

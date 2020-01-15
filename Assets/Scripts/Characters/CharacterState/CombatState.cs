@@ -91,7 +91,7 @@ public class CombatState : CharacterState {
                 stateComponent.character.ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
             }
         }
-        stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Starting combat state for " + stateComponent.character.name);
+        stateComponent.character.PrintLogIfActive("Starting combat state for " + stateComponent.character.name);
         stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
     }
     protected override void EndState() {
@@ -103,7 +103,7 @@ public class CombatState : CharacterState {
 
         stateComponent.character.marker.HideHPBar();
         stateComponent.character.marker.SetAnimationBool("InCombat", false);
-        stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Ending combat state for " + stateComponent.character.name);
+        stateComponent.character.PrintLogIfActive("Ending combat state for " + stateComponent.character.name);
         Messenger.RemoveListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
 
@@ -134,7 +134,7 @@ public class CombatState : CharacterState {
                 // Region newHomeRegion = GetCriminalNewHomeLocation();
                 // stateComponent.character.MigrateHomeTo(newHomeRegion);
 
-                string log = GameManager.Instance.TodayLogString() + stateComponent.character.name + " is a criminal and survived being apprehended." +
+                string log = stateComponent.character.name + " is a criminal and survived being apprehended." +
                     " Changed faction to: " + stateComponent.character.faction.name + " and home to: " + stateComponent.character.homeRegion.name;
                 stateComponent.character.PrintLogIfActive(log);
 
@@ -281,7 +281,7 @@ public class CombatState : CharacterState {
         if(stateComponent.currentState != this) {
             return;
         }
-        string log = GameManager.Instance.TodayLogString() + "Reevaluating combat behavior of " + stateComponent.character.name;
+        string log = "Reevaluating combat behavior of " + stateComponent.character.name;
         if (isAttacking) {
             stateComponent.character.marker.StopPerTickFlee();
             log += "\n" + stateComponent.character.name + " is attacking!";
@@ -498,14 +498,14 @@ public class CombatState : CharacterState {
     }
     private void StartPursueTimer() {
         if (!_hasTimerStarted) {
-            stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Starting pursue timer for " + stateComponent.character.name);
+            stateComponent.character.PrintLogIfActive("Starting pursue timer for " + stateComponent.character.name);
             _currentAttackTimer = 0;
             _hasTimerStarted = true;
         }
     }
     private void StopPursueTimer() {
         if (_hasTimerStarted) {
-            stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Stopping pursue timer for " + stateComponent.character.name);
+            stateComponent.character.PrintLogIfActive("Stopping pursue timer for " + stateComponent.character.name);
             _hasTimerStarted = false;
         }
     }
@@ -513,7 +513,7 @@ public class CombatState : CharacterState {
 
     #region Flee
     public void FinishedTravellingFleePath() {
-        string log = GameManager.Instance.TodayLogString() + "Finished travelling flee path of " + stateComponent.character.name;
+        string log = "Finished travelling flee path of " + stateComponent.character.name;
         //After travelling flee path, check hostile characters if they are still in vision, every hostile character that is not in vision must be removed form hostile list
         //Consequently, the removed character must also remove this character from his/her hostile list
         //Then check if hostile list is empty
@@ -524,7 +524,7 @@ public class CombatState : CharacterState {
         DetermineReaction(stateComponent.character);
     }
     public void OnReachLowFleeSpeedThreshold() {
-        string log = GameManager.Instance.TodayLogString() + stateComponent.character.name + " has reached low flee speed threshold, determining action...";
+        string log = stateComponent.character.name + " has reached low flee speed threshold, determining action...";
         stateComponent.character.PrintLogIfActive(log);
         DetermineReaction(stateComponent.character);
     }

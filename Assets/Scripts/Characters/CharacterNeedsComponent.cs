@@ -393,7 +393,7 @@ public class CharacterNeedsComponent {
         doNotGetTired = Math.Max(doNotGetTired, 0);
     }
     public bool PlanTirednessRecoveryActions(Character character) {
-        if (character.doNotDisturb || !character.canWitness) { //character.doNotDisturb > 0 || !character.canWitness
+        if (!character.canPerform) { //character.doNotDisturb > 0 || !character.canWitness
             return false;
         }
         if (this.isExhausted) {
@@ -428,7 +428,7 @@ public class CharacterNeedsComponent {
         return false;
     }
     public void PlanScheduledTirednessRecovery(Character character) {
-        if (!hasForcedTiredness && tirednessForcedTick != 0 && GameManager.Instance.tick >= tirednessForcedTick && !character.doNotDisturb && doNotGetTired <= 0) {
+        if (!hasForcedTiredness && tirednessForcedTick != 0 && GameManager.Instance.tick >= tirednessForcedTick && character.canPerform && doNotGetTired <= 0) {
             if (!character.jobQueue.HasJob(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
                 JOB_TYPE jobType = JOB_TYPE.TIREDNESS_RECOVERY;
                 if (isExhausted) {
@@ -456,7 +456,7 @@ public class CharacterNeedsComponent {
         }
         //If a character current sleep ticks is less than the default, this means that the character already started sleeping but was awaken midway that is why he/she did not finish the allotted sleeping time
         //When this happens, make sure to queue tiredness recovery again so he can finish the sleeping time
-        else if ((hasCancelledSleepSchedule || currentSleepTicks < CharacterManager.Instance.defaultSleepTicks) && !character.doNotDisturb) {
+        else if ((hasCancelledSleepSchedule || currentSleepTicks < CharacterManager.Instance.defaultSleepTicks) && character.canPerform) {
             if (!character.jobQueue.HasJob(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
                 JOB_TYPE jobType = JOB_TYPE.TIREDNESS_RECOVERY;
                 if (isExhausted) {
@@ -623,7 +623,7 @@ public class CharacterNeedsComponent {
         doNotGetLonely = Math.Max(doNotGetLonely, 0);
     }
     public bool PlanHappinessRecoveryActions(Character character) {
-        if (character.doNotDisturb || !character.canWitness) { //character.doNotDisturb > 0 || !character.canWitness
+        if (!character.canPerform) { //character.doNotDisturb > 0 || !character.canWitness
             return false;
         }
         if (this.isForlorn) {
@@ -885,7 +885,7 @@ public class CharacterNeedsComponent {
         doNotGetHungry = Math.Max(doNotGetHungry, 0);
     }
     public void PlanScheduledFullnessRecovery(Character character) {
-        if (!hasForcedFullness && fullnessForcedTick != 0 && GameManager.Instance.tick >= fullnessForcedTick && !character.doNotDisturb && doNotGetHungry <= 0) {
+        if (!hasForcedFullness && fullnessForcedTick != 0 && GameManager.Instance.tick >= fullnessForcedTick && character.canPerform && doNotGetHungry <= 0) {
             if (!character.jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING)) {
                 JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY;
                 if (isStarving) {
@@ -916,7 +916,7 @@ public class CharacterNeedsComponent {
         }
     }
     public bool PlanFullnessRecoveryActions(Character character) {
-        if (character.doNotDisturb || !character.canWitness) { //character.doNotDisturb > 0 || !character.canWitness
+        if (!character.canPerform) { //character.doNotDisturb > 0 || !character.canWitness
             return false;
         }
         if (this.isStarving) {

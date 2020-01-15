@@ -210,7 +210,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public void OnCharacterLostTrait(Character character, Trait trait) {
         if (character == this.character) {
-            string lostTraitSummary = GameManager.Instance.TodayLogString() + character.name + " has lost trait " + trait.name;
+            string lostTraitSummary = character.name + " has lost trait " + trait.name;
             //if the character does not have any other negative disabler trait
             //check for reactions.
             switch (trait.name) {
@@ -300,7 +300,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     }
     private void SelfGainedTrait(Character characterThatGainedTrait, Trait trait) {
-        string gainTraitSummary = GameManager.Instance.TodayLogString() + characterThatGainedTrait.name + " has gained trait " + trait.name;
+        string gainTraitSummary = characterThatGainedTrait.name + " has gained trait " + trait.name;
         //if (trait.type == TRAIT_TYPE.DISABLER) { //if the character gained a disabler trait, hinder movement
         //    pathfindingAI.ClearAllCurrentPathData();
         //    pathfindingAI.canSearch = false;
@@ -391,17 +391,22 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (character == null) {
             return;
         }
-        int negativeDisablerCount = character.traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE).Count;
-        if ((negativeDisablerCount >= 2 || (negativeDisablerCount == 1 && character.traitContainer.GetNormalTrait<Trait>("Paralyzed") == null)) || character.isDead) {
+        //int negativeDisablerCount = character.traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE).Count;
+        //if ((negativeDisablerCount >= 2 || (negativeDisablerCount == 1 && character.traitContainer.GetNormalTrait<Trait>("Paralyzed") == null)) || character.isDead) {
+        //    actionIcon.gameObject.SetActive(false);
+        //    return;
+        //}
+        if (!character.canWitness) {
             actionIcon.gameObject.SetActive(false);
             return;
         }
-        if (character.isChatting && !character.isInCombat) {
-            if (character.isFlirting) {
-                actionIcon.sprite = actionIconDictionary[GoapActionStateDB.Flirt_Icon];
-            } else {
-                actionIcon.sprite = actionIconDictionary[GoapActionStateDB.Social_Icon];
-            }
+        if (character.isConversing && !character.isInCombat) {
+            actionIcon.sprite = actionIconDictionary[GoapActionStateDB.Social_Icon];
+            //if (character.isFlirting) {
+            //    actionIcon.sprite = actionIconDictionary[GoapActionStateDB.Flirt_Icon];
+            //} else {
+            //    actionIcon.sprite = actionIconDictionary[GoapActionStateDB.Social_Icon];
+            //}
             actionIcon.gameObject.SetActive(true);
         } else {
             if (character.currentActionNode != null) {
@@ -986,7 +991,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     private void ProcessAllUnprocessedVisionPOIs() {
         if(unprocessedVisionPOIs.Count > 0) { //&& (character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)
-            string log = GameManager.Instance.TodayLogString() + character.name + " tick ended! Processing all unprocessed in visions...";
+            string log = character.name + " tick ended! Processing all unprocessed in visions...";
             if (!character.isDead && character.canWitness) { //character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting", "Zapped") == null
                 for (int i = 0; i < unprocessedVisionPOIs.Count; i++) {
                     IPointOfInterest poi = unprocessedVisionPOIs[i];
@@ -1017,30 +1022,34 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     //Character reacts to traits
                     if(character.stateComponent.currentState == null || !character.stateComponent.currentState.OnEnterVisionWith(poi)) {
                         if (!character.CreateJobsOnEnterVisionWith(poi)) {
-                            if (poi is Character) {
-                                if (UnityEngine.Random.Range(0, 100) < 5) {
-                                    character.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, poi);
-                                    //character.nonActionEventsComponent.NormalChatCharacter(poi as Character);
-                                } else {
-                                    Character targetCharacter = poi as Character;
-                                    if(character.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.PARAMOUR)
-                                        || character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) == null
-                                        || character.traitContainer.GetNormalTrait<Trait>("Unfaithful") != null) {
-                                        int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(character, targetCharacter);
-                                        int value = 4;
-                                        if (compatibility != -1) {
-                                            value = 2 * compatibility;
-                                        }
-                                        int chance = UnityEngine.Random.Range(0, 100);
-                                        string flirtLog = character.name + " will try to flirt with " + targetCharacter.name;
-                                        flirtLog += "\n-Chance: " + value;
-                                        flirtLog += "\n-Roll: " + chance;
-                                        character.PrintLogIfActive(flirtLog);
-                                        if (chance < value) {
-                                            character.interruptComponent.TriggerInterrupt(INTERRUPT.Flirt, targetCharacter);
+                            if (!character.isConversing && poi is Character) {
+                                Character target = poi as Character;
+                                if (!target.isConversing) {
+                                    if (UnityEngine.Random.Range(0, 100) < 3) {
+                                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, poi);
+                                        //character.nonActionEventsComponent.NormalChatCharacter(poi as Character);
+                                    } else {
+                                        Character targetCharacter = poi as Character;
+                                        if (character.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.PARAMOUR)
+                                            || character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) == null
+                                            || character.traitContainer.GetNormalTrait<Trait>("Unfaithful") != null) {
+                                            int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(character, targetCharacter);
+                                            int value = 2;
+                                            if (compatibility != -1) {
+                                                value = 1 * compatibility;
+                                            }
+                                            int chance = UnityEngine.Random.Range(0, 100);
+                                            string flirtLog = character.name + " will try to flirt with " + targetCharacter.name;
+                                            flirtLog += "\n-Chance: " + value;
+                                            flirtLog += "\n-Roll: " + chance;
+                                            character.PrintLogIfActive(flirtLog);
+                                            if (chance < value) {
+                                                character.interruptComponent.TriggerInterrupt(INTERRUPT.Flirt, targetCharacter);
+                                            }
                                         }
                                     }
                                 }
+ 
                             }
                         }
                     }
@@ -1065,7 +1074,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         actionsToWitness.Clear();
         if (willProcessCombat && (hostilesInRange.Count > 0 || avoidInRange.Count > 0)) {
-            string log = GameManager.Instance.TodayLogString() + character.name + " process combat switch is turned on and there are hostiles or avoid in list, processing combat...";
+            string log = character.name + " process combat switch is turned on and there are hostiles or avoid in list, processing combat...";
             ProcessCombatBehavior();
             avoidReason = string.Empty;
             willProcessCombat = false;
@@ -1085,7 +1094,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                         lethalCharacters.Add(poi as Character, isLethal);
                     }
-                    this.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + poi.name + " was added to " + this.character.name + "'s hostile range!");
+                    this.character.PrintLogIfActive(poi.name + " was added to " + this.character.name + "'s hostile range!");
                     //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
                     //if (processCombatBehavior) {
                     //    ProcessCombatBehavior();
@@ -1132,7 +1141,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             if (poi is Character) {
                 lethalCharacters.Remove(poi as Character);
             }
-            string removeHostileSummary = GameManager.Instance.TodayLogString() + poi.name + " was removed from " + character.name + "'s hostile range.";
+            string removeHostileSummary = poi.name + " was removed from " + character.name + "'s hostile range.";
             character.PrintLogIfActive(removeHostileSummary);
             //When removing hostile in range, check if character is still in combat state, if it is, reevaluate combat behavior, if not, do nothing
             if (processCombatBehavior && character.isInCombat) {
@@ -1383,7 +1392,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     /// <param name="character">The character that should determine the transfer.</param>
     private void TransferEngageToFleeList(Character character, string reason) {
         if (this.character == character) {
-            string summary = GameManager.Instance.TodayLogString() + character.name + " will determine the transfer from engage list to flee list";
+            string summary = character.name + " will determine the transfer from engage list to flee list";
             if(character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
                 summary += "\n" + character.name + " has negative disabler trait. Ignoring transfer.";
                 character.PrintLogIfActive(summary);

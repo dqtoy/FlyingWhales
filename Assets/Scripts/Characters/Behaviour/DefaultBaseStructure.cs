@@ -14,10 +14,13 @@ public class DefaultBaseStructure : CharacterBehaviourComponent {
             int chance = UnityEngine.Random.Range(0, 100);
             log += "\n  -RNG roll: " + chance;
             if (chance < 15) {
-                if (character.marker.inVisionCharacters.Count > 0) {
+                if (!character.isConversing && character.marker.inVisionCharacters.Count > 0) {
                     bool hasForcedChat = false;
                     for (int i = 0; i < character.marker.inVisionCharacters.Count; i++) {
                         Character targetCharacter = character.marker.inVisionCharacters[i];
+                        if (targetCharacter.isConversing) {
+                            continue;
+                        }
                         //if (character.nonActionEventsComponent.ForceChatCharacter(targetCharacter)) {
                         if (character.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, targetCharacter)) {
                             log += "\n  -Chat with: " + targetCharacter.name;
@@ -31,7 +34,7 @@ public class DefaultBaseStructure : CharacterBehaviourComponent {
                         log += "\n  -Could not chat with anyone in vision";
                     }
                 } else {
-                    log += "\n  -No characters in vision";
+                    log += "\n  -No characters in vision or is already conversing";
                 }
             }
             log += "\n-Sit if there is still an unoccupied Table or Desk";

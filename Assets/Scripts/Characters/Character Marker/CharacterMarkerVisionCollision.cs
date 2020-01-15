@@ -122,7 +122,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
          //if the character that arrived at the new structure is in this character different structure list
          //check if that character now has the same structure as this character,
-        if (poisInRangeButDiffStructure.Contains(character) && structure == parentMarker.character.currentStructure) {
+        if (poisInRangeButDiffStructure.Contains(character) && (structure == parentMarker.character.currentStructure || (structure.structureType.IsOpenSpace() && parentMarker.character.currentStructure.structureType.IsOpenSpace()))) {
             //if it does, add as normal
             NormalEnterHandling(character);
             RemovePOIAsInRangeButDifferentStructure(character);

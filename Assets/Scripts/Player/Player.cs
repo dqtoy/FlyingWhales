@@ -1299,7 +1299,7 @@ public class Player : ILeader {
             if (currMinion.assignedRegion != currentSettlementBeingInvaded.region) {
                 continue; //do not include minions that are not invading the main settlement.
             }
-            if(currMinion.character.currentHP > 0 && !currMinion.character.isDead && !currMinion.character.doNotDisturb) {
+            if(currMinion.character.currentHP > 0 && !currMinion.character.isDead && currMinion.character.canPerform) {
                 stillHasMinions = true;
                 break;
             }

@@ -17,6 +17,7 @@ namespace Traits {
             hindersMovement = true;
             hindersWitness = true;
             hindersAttackTarget = true;
+            hindersPerform = true;
         }
 
         #region General

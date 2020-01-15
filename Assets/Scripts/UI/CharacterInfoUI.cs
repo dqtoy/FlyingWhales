@@ -457,7 +457,6 @@ public class CharacterInfoUI : UIMenu {
         string summary = "Home structure: " + activeCharacter.homeStructure?.ToString() ?? "None";
         summary = $"{summary}{("\nCurrent structure: " + activeCharacter.currentStructure?.ToString() ?? "None")}";
         summary = $"{summary}{("\nPOI State: " + activeCharacter.state.ToString())}";
-        summary = $"{summary}{("\nDo Not Disturb: " + activeCharacter.doNotDisturb)}";
         summary = $"{summary}{("\nDo Not Get Hungry: " + activeCharacter.needsComponent.doNotGetHungry.ToString())}";
         summary = $"{summary}{("\nDo Not Get Tired: " + activeCharacter.needsComponent.doNotGetTired.ToString())}";
         summary = $"{summary}{("\nDo Not Get Lonely: " + activeCharacter.needsComponent.doNotGetLonely.ToString())}";
@@ -465,6 +464,7 @@ public class CharacterInfoUI : UIMenu {
         summary = $"{summary}{("\nCan Move: " + activeCharacter.canMove)}";
         summary = $"{summary}{("\nCan Witness: " + activeCharacter.canWitness)}";
         summary = $"{summary}{("\nCan Be Attacked: " + activeCharacter.canBeAtttacked)}";
+        summary = $"{summary}{("\nCan Perform: " + activeCharacter.canPerform)}";
         summary = $"{summary}{("\nIs Missing: " + activeCharacter.isMissing)}";
         summary = $"{summary}{("\n" + activeCharacter.needsComponent.GetNeedsSummary())}";
         summary = $"{summary}{("\nFullness Time: " + (activeCharacter.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.fullnessForcedTick)))}";

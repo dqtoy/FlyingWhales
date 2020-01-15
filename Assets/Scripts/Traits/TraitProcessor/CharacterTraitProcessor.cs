@@ -22,7 +22,7 @@ namespace Traits {
                     character.needsComponent.PlanTirednessRecoveryActions(character);
                 }
             }
-            if (character.canMove == false || character.canWitness == false) {
+            if (!character.canPerform) {
                 //when a character gains a negative disabler trait, drop all location jobs that this character is assigned to
                 //TODO: //character.jobQueue.UnassignAllJobsTakenBy(character);
             }
@@ -60,8 +60,11 @@ namespace Traits {
             if (trait.hindersAttackTarget) {
                 character.DecreaseCanBeAttacked();
             }
+            if (trait.hindersPerform) {
+                character.DecreaseCanPerform();
+            }
             if (trait.type == TRAIT_TYPE.DISABLER) {
-                character.AdjustDoNotDisturb(1);
+                //character.AdjustCanPerform(1);
                 if (trait.effect == TRAIT_EFFECT.NEGATIVE) {
                     character.AdjustIgnoreHostilities(1);
                     //character.CancelAllJobsAndPlansExceptNeedsRecovery();
@@ -175,8 +178,11 @@ namespace Traits {
             if (trait.hindersAttackTarget) {
                 character.IncreaseCanBeAttacked();
             }
+            if (trait.hindersPerform) {
+                character.IncreaseCanPerform();
+            }
             if (trait.type == TRAIT_TYPE.DISABLER) {
-                character.AdjustDoNotDisturb(-1);
+                //character.AdjustCanPerform(-1);
                 if (trait.effect == TRAIT_EFFECT.NEGATIVE) {
                     character.AdjustIgnoreHostilities(-1);
                 }

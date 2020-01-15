@@ -108,7 +108,7 @@ public class GoapPlanner {
                 goapThread.createdPlan.SetIsBeingRecalculated(false);
             }
             if (!actor.canWitness) {
-                actor.PrintLogIfActive(GameManager.Instance.TodayLogString() + actor.name + " is scrapping plan since " + actor.name + " cannot witness. " + goapThread.job.name + " is the job.");
+                actor.PrintLogIfActive(actor.name + " is scrapping plan since " + actor.name + " cannot witness. " + goapThread.job.name + " is the job.");
                 goapThread.job.CancelJob(false);
                 return;
             }
@@ -149,7 +149,7 @@ public class GoapPlanner {
             if (actor.IsInOwnParty()) {
                 if (actor.ownParty.isCarryingAnyPOI) {
                     IPointOfInterest carriedPOI = actor.ownParty.carriedPOI;
-                    string log = GameManager.Instance.TodayLogString() + "Dropping carried POI: " + carriedPOI.name + " because no plan was generated.";
+                    string log = "Dropping carried POI: " + carriedPOI.name + " because no plan was generated.";
                     log += "\nAdditional Info:";
                     if(carriedPOI is ResourcePile) {
                         ResourcePile pile = carriedPOI as ResourcePile;

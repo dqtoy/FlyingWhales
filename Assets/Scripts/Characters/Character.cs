@@ -11,11 +11,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     protected string _name;
     protected string _firstName;
     protected int _id;
-    protected int _doNotDisturb;
     protected float _actRate;
     protected bool _isDead;
-    protected bool _isChatting;
-    protected bool _isFlirting;
+    //protected bool _isFlirting;
     protected GENDER _gender;
     protected CharacterClass _characterClass;
     protected RaceSetting _raceSetting;
@@ -78,6 +76,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public int currentMissingTicks { get; protected set; }
     public bool isSettlementRuler { get; protected set; }
     public bool hasUnresolvedCrime { get; protected set; }
+    public bool isConversing { get; protected set; }
 
     private List<System.Action> onLeaveAreaActions;
     private POI_STATE _state;
@@ -87,9 +86,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     private int canWitnessValue; //if this is >= 0 then character can witness events
     private int canMoveValue; //if this is >= 0 then character can move
     private int canBeAtttackedValue; //if this is >= 0 then character can be attacked
+    private int canPerformValue; //if this is >= 0 then character can perform
     public bool canWitness => canWitnessValue >= 0;
     public bool canMove => canMoveValue >= 0;
     public bool canBeAtttacked => canBeAtttackedValue >= 0;
+    public bool canPerform => canPerformValue >= 0;
 
     //Needs
     public CharacterNeedsComponent needsComponent { get; private set; }
@@ -161,8 +162,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public bool isHoldingItem => items.Count > 0;
     public bool isAtHomeRegion => currentRegion == homeRegion && !currentParty.icon.isTravellingOutside;
     public bool isPartOfHomeFaction => homeRegion != null && faction != null && homeRegion.IsFactionHere(faction); //is this character part of the faction that owns his home settlement
-    public bool isChatting => _isChatting;
-    public bool isFlirting => _isFlirting;
+    //public bool isFlirting => _isFlirting;
     public GENDER gender => _gender;
     public RACE race => _raceSetting.race;
     public CharacterClass characterClass => _characterClass;
@@ -206,7 +206,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public int currentHP => this._currentHP;
     public int attackSpeed => _characterClass.baseAttackSpeed; //in milliseconds, The lower the amount the faster the attack rate
     public Minion minion => _minion;
-    public bool doNotDisturb => _doNotDisturb > 0; //!canMove || !canWitness
     public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.CHARACTER;
     public LocationGridTile gridTileLocation {
         get {
@@ -711,7 +710,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             if (currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
                 SwitchAlterEgo(CharacterManager.Original_Alter_Ego); //revert the character to his/her original alter ego
             }
-            SetIsChatting(false);
+            SetIsConversing(false);
             //SetIsFlirting(false);
             Region deathLocation = currentRegion;
             LocationStructure deathStructure = currentStructure;
@@ -853,7 +852,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //dead.SetCharacterResponsibleForTrait(responsibleCharacter);
             traitContainer.AddTrait(this, "Dead", responsibleCharacter, gainedFromDoing: deathFromAction);
 
-            PrintLogIfActive(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
+            PrintLogIfActive(name + " died of " + cause);
             Log deathLog;
             if (_deathLog == null) {
                 deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
@@ -1406,7 +1405,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public bool CreateKnockoutJob(Character targetCharacter) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KNOCKOUT, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, this);
         jobQueue.AddJobInQueue(job);
-        PrintLogIfActive(GameManager.Instance.TodayLogString() + "Added a KNOCKOUT Job to " + this.name + " with target " + targetCharacter.name);
+        PrintLogIfActive("Added a KNOCKOUT Job to " + this.name + " with target " + targetCharacter.name);
         return true;
     }
     /// <summary>
@@ -2291,11 +2290,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
         }
     }
-    public void AdjustDoNotDisturb(int amount) {
-        _doNotDisturb += amount;
-        _doNotDisturb = Math.Max(_doNotDisturb, 0);
-        //Debug.Log(GameManager.Instance.TodayLogString() + " adjusted do not disturb of " + this.name + " by " + amount + " new value is " + _doNotDisturb.ToString());
-    }
     public void AdjustDoNotRecoverHP(int amount) {
         doNotRecoverHP += amount;
         doNotRecoverHP = Math.Max(doNotRecoverHP, 0);
@@ -2316,7 +2310,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
     }
     private bool CanCharacterReact(IPointOfInterest targetPOI = null) {
-        if (this.canWitness == false) {
+        if (!canWitness || !canPerform) {
             return false; //this character cannot witness
         }
         if (interruptComponent.isInterrupted) {
@@ -2531,14 +2525,14 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
 
         //Disabler Thought
-        if (doNotDisturb) {
-            Trait disablerTrait = traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER).FirstOrDefault();
-            if (disablerTrait != null) {
-                if (!string.IsNullOrEmpty(disablerTrait.thoughtText)) {
-                    return disablerTrait.thoughtText.Replace("[Character]", name);
-                }
-            }
-        }
+        //if (canPerform) {
+        //    Trait disablerTrait = traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER).FirstOrDefault();
+        //    if (disablerTrait != null) {
+        //        if (!string.IsNullOrEmpty(disablerTrait.thoughtText)) {
+        //            return disablerTrait.thoughtText.Replace("[Character]", name);
+        //        }
+        //    }
+        //}
 
         //Character State
         if (stateComponent.currentState != null) {
@@ -3076,7 +3070,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 deathWeight = 5;
                 unconsciousWeight = 95;
             }
-            string rollLog = GameManager.Instance.TodayLogString() + characterThatAttacked.name + " attacked " + name
+            string rollLog = characterThatAttacked.name + " attacked " + name
                 + ", death weight: " + deathWeight + ", unconscious weight: " + unconsciousWeight
                 + ", isLethal: " + characterThatAttacked.marker.IsLethalCombatForTarget(this);
 
@@ -3816,7 +3810,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public bool CanPlanGoap() {
         //If there is no settlement, it means that there is no inner map, so character must not do goap actions, jobs, and plans
         //characters that cannot witness, cannot plan actions.
-        return minion == null && !isDead && isStoppedByOtherCharacter <= 0 && !doNotDisturb
+        return minion == null && !isDead && isStoppedByOtherCharacter <= 0 && canPerform
             && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count <= 0
             && !marker.hasFleePath && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterrupted;
     }
@@ -3827,8 +3821,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
         }
     }
-    private bool CanPerformEndTickJobs() {
-        return !isDead && isStoppedByOtherCharacter <= 0 && canWitness
+    public bool CanPerformEndTickJobs() {
+        return !isDead && isStoppedByOtherCharacter <= 0 /*&& canWitness*/
             && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count > 0 
             && currentParty.icon.isTravellingOutside == false && !marker.hasFleePath 
             && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterrupted; //minion == null && doNotDisturb <= 0
@@ -3952,7 +3946,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         return true;
     }
     private string OtherIdlePlans() {
-        string log = GameManager.Instance.TodayLogString() + " IDLE PLAN FOR " + name;
+        string log = " IDLE PLAN FOR " + name;
         if (isDead) {
             log += this.name + " is already dead not planning other idle plans.";
             return log;
@@ -4308,8 +4302,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //    marker.UpdateActionIcon();
     //    //targetCharacter.marker.UpdateActionIcon();
     //}
-    public void SetIsChatting(bool state) {
-        _isChatting = state;
+    public void SetIsConversing(bool state) {
+        isConversing = state;
         if(marker != null) {
             marker.UpdateActionIcon();
         }
@@ -4907,7 +4901,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //    return false;
     //}
     public void PerformTopPriorityJob() {
-        string log = GameManager.Instance.TodayLogString() + "PERFORMING GOAP PLANS OF " + name;
+        string log = "PERFORMING GOAP PLANS OF " + name;
         if (currentActionNode != null) {
             log += "\n" + name + " can't perform another action because he/she is currently performing " + currentActionNode.action.goapName;
             PrintLogIfActive(log);
@@ -5071,7 +5065,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void PerformGoapAction() {
         string log = string.Empty;
         if (currentActionNode == null) {
-            log = GameManager.Instance.TodayLogString() + name + " cannot PerformGoapAction because there is no current action!";
+            log = name + " cannot PerformGoapAction because there is no current action!";
             PrintLogIfActive(log);
             //Debug.LogError(log);
             //if (!DropPlan(plan)) {
@@ -5165,7 +5159,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //}
     }
     public void GoapActionResult(string result, ActualGoapNode actionNode) {
-        string log = GameManager.Instance.TodayLogString() + name + " is done performing goap action: " + actionNode.action.goapName;
+        string log = name + " is done performing goap action: " + actionNode.action.goapName;
         //Debug.Log(log);
         GoapPlan plan = currentPlan;
         GoapPlanJob job = currentJob as GoapPlanJob;
@@ -5174,8 +5168,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             SetCurrentActionNode(null, null, null);
         }
 
-        if (isDead || !canWitness) {
-            log += "\n" + name + " is dead! Do not do GoapActionResult, automatically CancelJob";
+        if (isDead || !canPerform) {
+            log += "\n" + name + " is dead or cannot perform! Do not do GoapActionResult, automatically CancelJob";
             PrintLogIfActive(log);
             job.CancelJob(false);
             return;
@@ -5362,7 +5356,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         currentActionNode = actionNode;
         if (currentActionNode != null) {
-            PrintLogIfActive(GameManager.Instance.TodayLogString() + this.name + " will do action " + actionNode.action.goapType.ToString() + " to " + actionNode.poiTarget.ToString());
+            PrintLogIfActive(this.name + " will do action " + actionNode.action.goapType.ToString() + " to " + actionNode.poiTarget.ToString());
             if (currentActionNode.action.goapType.IsHostileAction()) { //if the character will do a combat action, remove all ignore hostilities value
                 ClearIgnoreHostilities();
             }
@@ -5442,7 +5436,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (IsInOwnParty()) {
             if (ownParty.isCarryingAnyPOI) {
                 IPointOfInterest carriedPOI = ownParty.carriedPOI;
-                string log = GameManager.Instance.TodayLogString() + "Dropping carried POI: " + carriedPOI.name + " because current action node is stopped: " + currentActionNode.StringText();
+                string log = "Dropping carried POI: " + carriedPOI.name + " because current action node is stopped: " + currentActionNode.StringText();
                 log += "\nAdditional Info:";
                 if (carriedPOI is ResourcePile) {
                     ResourcePile pile = carriedPOI as ResourcePile;
@@ -5467,7 +5461,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             UIManager.Instance.characterInfoUI.UpdateBasicInfo();
         }
         //Messenger.Broadcast<GoapAction>(Signals.STOP_ACTION, this);
-        PrintLogIfActive(GameManager.Instance.TodayLogString() + "Stopped action of " + name + " which is " + previousCurrentActionNode.action.goapName + " targetting " + previousCurrentActionNode.poiTarget.name + "!");
+        PrintLogIfActive("Stopped action of " + name + " which is " + previousCurrentActionNode.action.goapName + " targetting " + previousCurrentActionNode.poiTarget.name + "!");
         return true;
     }
     //public void SetHasAlreadyAskedForPlan(bool state) {
@@ -5475,7 +5469,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     //}
     public void PrintLogIfActive(string log) {
         //if (InteriorMapManager.Instance.currentlyShowingArea == specificLocation) {//UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this
-        Debug.Log(log);
+        Debug.Log(GameManager.Instance.TodayLogString() + log);
         //}
     }
     //public void AddTargettedByAction(GoapAction action) {
@@ -5534,7 +5528,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
     }
     private void HeardAScream(Character characterThatScreamed) {
-        if(doNotDisturb) {
+        if(!canPerform || !canWitness) {
             //Do not react to scream if character has disabler trait
             return;
         }
@@ -5568,7 +5562,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //If we let the AddJobInQueue simply process the job, it will still be added regardless if it cannot override the current job, it means that it will just be pushed back in queue and will be done by the character when the time comes
         //We don't want that because we want to have a spontaneous reaction from this character, so the only way that the character will react is if he can do it immediately
 
-        string log = GameManager.Instance.TodayLogString() + name + " heard the scream of " + characterThatScreamed.name + ", reacting...";
+        string log = name + " heard the scream of " + characterThatScreamed.name + ", reacting...";
 
         bool canReact = true;
         int reactJobPriority = JOB_TYPE.REACT_TO_SCREAM.GetJobTypePriority();
@@ -5615,7 +5609,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
 
         CancelAllJobs();
         UnsubscribeSignals();
-        SetIsChatting(false);
+        SetIsConversing(false);
         SetPOIState(POI_STATE.INACTIVE);
         SchedulingManager.Instance.ClearAllSchedulesBy(this);
         if (marker != null) {
@@ -5811,7 +5805,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //    }
         //}
         
-        string reactSummary = GameManager.Instance.TodayLogString() + this.name + " will react to crime committed by " + criminal.owner.name;
+        string reactSummary = this.name + " will react to crime committed by " + criminal.owner.name;
         if(committedCrime == CRIME.NONE) {
             reactSummary += "\nNo reaction because committed crime is " + committedCrime.ToString();
             PrintLogIfActive(reactSummary);
@@ -6214,6 +6208,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     public void DecreaseCanBeAttacked() {
         canBeAtttackedValue--;
+    }
+    public void IncreaseCanPerform() {
+        canPerformValue++;
+    }
+    public void DecreaseCanPerform() {
+        canPerformValue--;
     }
     #endregion
 

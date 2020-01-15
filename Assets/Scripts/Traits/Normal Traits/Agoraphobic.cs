@@ -94,7 +94,7 @@ namespace Traits {
         #endregion
 
         private void ApplyAgoraphobicEffect(Character character/*, bool processCombat*/) {
-            if (!character.canWitness) {
+            if (!character.canPerform || !character.canWitness) {
                 return;
             }
             if(character.marker.inVisionCharacters.Count < 3) {

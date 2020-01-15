@@ -452,7 +452,7 @@ public class Region : ILocation {
 
     #region Faction
     public void AddFactionHere(Faction faction) {
-        if (!IsFactionHere(faction)) {
+        if (!IsFactionHere(faction) && (faction.isMajorFaction || faction.isPlayerFaction)) {
             factionsHere.Add(faction);
             //Once a faction is added and there is no ruling faction yet, automatically let the added faction own the region
             //TODO:

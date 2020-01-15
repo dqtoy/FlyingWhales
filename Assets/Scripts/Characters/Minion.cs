@@ -322,7 +322,7 @@ public class Minion {
         }
         if (!character.isInCombat) {
             character.HPRecovery(0.0025f);
-            if (character.IsInOwnParty() && character.marker != null && !character.doNotDisturb && !character.ownParty.icon.isTravelling) {
+            if (character.IsInOwnParty() && character.marker != null && character.canPerform && !character.ownParty.icon.isTravelling) {
                 GoToWorkArea();
             }
         }

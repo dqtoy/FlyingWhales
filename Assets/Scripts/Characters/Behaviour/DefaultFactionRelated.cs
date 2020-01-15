@@ -15,16 +15,26 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
                 log += "\n-" + character.name + " is factionless, 15% chance to join faction";
                 List<Faction> viableFactions = new List<Faction>();
                 if (character.currentRegion != null) {
-                    Settlement potentialSettlement = character.currentSettlement;
-                    log += "\n-" + character.name + " is factionless and in a settlement: " + potentialSettlement.name + ", will try to join a faction...";
-                    Faction potentialFaction = potentialSettlement.owner;
-                    if (!potentialFaction.isPlayerFaction && !potentialFaction.isDestroyed
-                        && !potentialSettlement.owner.IsCharacterBannedFromJoining(character) 
-                        && potentialFaction.ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
-                        if (!viableFactions.Contains(potentialFaction)) {
-                            viableFactions.Add(potentialFaction);
+                    for (int i = 0; i < character.currentRegion.factionsHere.Count; i++) {
+                        Faction potentialFaction = character.currentRegion.factionsHere[i];
+                        if (!potentialFaction.isPlayerFaction && !potentialFaction.isDestroyed
+                            && !potentialFaction.IsCharacterBannedFromJoining(character)
+                            && potentialFaction.ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
+                            if (!viableFactions.Contains(potentialFaction)) {
+                                viableFactions.Add(potentialFaction);
+                            }
                         }
                     }
+                    //Settlement potentialSettlement = character.currentSettlement;
+                    //log += "\n-" + character.name + " is factionless and in a settlement: " + potentialSettlement.name + ", will try to join a faction...";
+                    //Faction potentialFaction = potentialSettlement.owner;
+                    //if (!potentialFaction.isPlayerFaction && !potentialFaction.isDestroyed
+                    //    && !potentialSettlement.owner.IsCharacterBannedFromJoining(character) 
+                    //    && potentialFaction.ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
+                    //    if (!viableFactions.Contains(potentialFaction)) {
+                    //        viableFactions.Add(potentialFaction);
+                    //    }
+                    //}
                 } 
                 if (viableFactions.Count > 0) {
                     Faction chosenFaction = viableFactions[UnityEngine.Random.Range(0, viableFactions.Count)];

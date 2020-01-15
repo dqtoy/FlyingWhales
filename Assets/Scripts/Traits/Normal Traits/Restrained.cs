@@ -25,6 +25,7 @@ namespace Traits {
             ticksDuration = 0;
             hindersMovement = true;
             hindersAttackTarget = true;
+            hindersPerform = true;
         }
 
         #region Overrides

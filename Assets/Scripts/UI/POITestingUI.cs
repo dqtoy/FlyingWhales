@@ -50,7 +50,11 @@ public class POITestingUI : MonoBehaviour {
     }
     public void ChatWithThisCharacter() {
         if (poi is Character) {
-            UIManager.Instance.characterInfoUI.activeCharacter.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, poi);
+            Character source = UIManager.Instance.characterInfoUI.activeCharacter;
+            Character target = poi as Character;
+            if(!source.isConversing && !target.isConversing) {
+                source.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, poi);
+            }
             //UIManager.Instance.characterInfoUI.activeCharacter.nonActionEventsComponent.ForceChatCharacter(poi as Character);
         } else {
             Debug.LogError(poi.name + " is not a character!");

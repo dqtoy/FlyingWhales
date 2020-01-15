@@ -387,7 +387,7 @@ public class Settlement : IJobOwner {
                 }
             }
             if (!CanCharacterBeAddedAsResidentBasedOnFaction(character)) {
-                character.PrintLogIfActive(GameManager.Instance.TodayLogString() + character.name + " tried to become a resident of " + name + " but their factions conflicted");
+                character.PrintLogIfActive(character.name + " tried to become a resident of " + name + " but their factions conflicted");
                 return false;
             }
             region.AddResident(character);

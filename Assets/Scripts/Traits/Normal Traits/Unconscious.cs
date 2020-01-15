@@ -19,6 +19,7 @@ namespace Traits {
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FIRST_AID_CHARACTER };
             hindersMovement = true;
             hindersWitness = true;
+            hindersPerform = true;
         }
 
         #region Overrides

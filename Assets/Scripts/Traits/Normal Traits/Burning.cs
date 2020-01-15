@@ -30,7 +30,7 @@ namespace Traits {
                 if (addedTo is Character) {
                     Character character = addedTo as Character;
                     character.AdjustDoNotRecoverHP(1);
-                    if(character.canMove && character.canWitness) {
+                    if(character.canMove && character.canWitness && character.canPerform) {
                         CreateJobsOnEnterVisionBasedOnTrait(character, character);
                     }
                 } else {

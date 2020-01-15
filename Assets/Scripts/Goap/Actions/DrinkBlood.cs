@@ -43,7 +43,7 @@ public class DrinkBlood : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         if (actionInvalidity.isInvalid == false) {
             Character targetCharacter = poiTarget as Character;
-            if (targetCharacter.canMove || targetCharacter.canWitness || targetCharacter.IsAvailable() == false) {
+            if (targetCharacter.canMove /*|| targetCharacter.canWitness || targetCharacter.IsAvailable() == false*/) {
                 actionInvalidity.isInvalid = true;
                 actionInvalidity.stateName = "Drink Fail";
             }

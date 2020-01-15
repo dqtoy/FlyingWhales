@@ -20,6 +20,7 @@ namespace Traits {
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED };
             hindersMovement = true;
             hindersWitness = true;
+            hindersPerform = true;
         }
 
         #region Overrides

@@ -49,7 +49,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                     if (lazy.TriggerLazy()) {
                         return true;
                     } else {
-                        character.PrintLogIfActive($"{GameManager.Instance.TodayLogString()}Triggered LAZY happiness recovery but {character.name} already has that job type in queue and will not do it anymore!");
+                        character.PrintLogIfActive($"Triggered LAZY happiness recovery but {character.name} already has that job type in queue and will not do it anymore!");
                     }
                 }
                 character.jobQueue.AddJobInQueue(jobToAssign);
@@ -74,7 +74,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                         if (lazy.TriggerLazy()) {
                             return true;
                         } else {
-                            character.PrintLogIfActive($"{GameManager.Instance.TodayLogString()}Triggered LAZY happiness recovery but {character.name} already has that job type in queue and will not do it anymore!");
+                            character.PrintLogIfActive($"Triggered LAZY happiness recovery but {character.name} already has that job type in queue and will not do it anymore!");
                         }
                     }
                     character.jobQueue.AddJobInQueue(jobToAssign);

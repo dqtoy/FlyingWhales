@@ -30,6 +30,7 @@ namespace Traits {
         public bool hindersWitness; //if a character has this trait, and this is true, then he/she cannot witness events
         public bool hindersMovement; //if a character has this trait, and this is true, then he/she cannot move
         public bool hindersAttackTarget; //if a character has this trait, and this is true, then he/she cannot be attacked
+        public bool hindersPerform; //if a character has this trait, and this is true, then he/she cannot be attacked
         public bool isStacking;
         public int stackLimit;
         public float stackModifier;
@@ -126,7 +127,7 @@ namespace Traits {
             int manaCost = GetTriggerFlawManaCost(character);
 
             return PlayerManager.Instance.player.mana >= manaCost
-                && character.canWitness
+                && character.canPerform
                 //&& !character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER) //disabled characters cannot be triggered
                 && character.traitContainer.GetNormalTrait<Trait>("Blessed") == null
                 && !character.currentParty.icon.isTravellingOutside; //characters travelling outside cannot be triggered
@@ -142,8 +143,8 @@ namespace Traits {
             if (character.traitContainer.GetNormalTrait<Trait>("Blessed") != null) {
                 reasons.Add("Blessed characters cannot be targeted by Trigger Flaw.");
             }
-            if (!character.canWitness) {
-                reasons.Add("Characters that cannot witness events cannot be targeted by Trigger Flaw.");
+            if (!character.canPerform) {
+                reasons.Add("Characters that cannot perform cannot be targeted by Trigger Flaw.");
             }
             //if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER)) {
             //    reasons.Add("Inactive characters cannot be targeted by Trigger Flaw.");

@@ -20,21 +20,31 @@ public class NonActionEventsComponent {
         Messenger.AddListener<Character, Character>(Signals.OPINION_DECREASED, OnOpinionDecreased);
     }
 
-    #region Chat
-    public bool NormalChatCharacter(Character target) {
+    #region Utilities
+    private bool CanInteract(Character target) {
         if (target.isDead
             || !target.canWitness
             || !owner.canWitness
             || target.role.roleType == CHARACTER_ROLE.BEAST
             || owner.role.roleType == CHARACTER_ROLE.BEAST
-            || target.faction.isPlayerFaction
-            || owner.faction.isPlayerFaction
-            || target.characterClass.className == "Zombie"
-            || owner.characterClass.className == "Zombie"
+            //|| target.faction.isPlayerFaction
+            //|| owner.faction.isPlayerFaction
+            //|| target.characterClass.className == "Zombie"
+            //|| owner.characterClass.className == "Zombie"
             || (owner.currentActionNode != null && owner.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)
             || (target.currentActionNode != null && target.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)
-            || owner.isChatting
-            || target.isChatting) {
+            //|| owner.isChatting
+            //|| target.isChatting
+            ) {
+            return false;
+        }
+        return true;
+    }
+    #endregion
+
+    #region Chat
+    public bool NormalChatCharacter(Character target) {
+        if (!CanInteract(target)) {
             return false;
         }
         if (UnityEngine.Random.Range(0, 100) < 50) {
@@ -46,19 +56,7 @@ public class NonActionEventsComponent {
         return false;
     }
     public bool ForceChatCharacter(Character target) {
-        if (target.isDead
-            || !target.canWitness
-            || !owner.canWitness
-            || target.role.roleType == CHARACTER_ROLE.BEAST
-            || owner.role.roleType == CHARACTER_ROLE.BEAST
-            || target.faction.isPlayerFaction
-            || owner.faction.isPlayerFaction
-            || target.characterClass.className == "Zombie"
-            || owner.characterClass.className == "Zombie"
-            || (owner.currentActionNode != null && owner.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)
-            || (target.currentActionNode != null && target.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)
-            || owner.isChatting
-            || target.isChatting) {
+        if (!CanInteract(target)) {
             return false;
         }
         if (!owner.IsHostileWith(target)) {
@@ -213,12 +211,12 @@ public class NonActionEventsComponent {
         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         owner.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
-        owner.SetIsChatting(true);
-        target.SetIsChatting(true);
+        owner.SetIsConversing(true);
+        target.SetIsConversing(true);
 
         dueDate.AddTicks(2);
-        SchedulingManager.Instance.AddEntry(dueDate, () => owner.SetIsChatting(false), owner);
-        SchedulingManager.Instance.AddEntry(dueDate, () => target.SetIsChatting(false), target);
+        SchedulingManager.Instance.AddEntry(dueDate, () => owner.SetIsConversing(false), owner);
+        SchedulingManager.Instance.AddEntry(dueDate, () => target.SetIsConversing(false), target);
 
         owner.PrintLogIfActive(strLog);
     }
@@ -274,28 +272,22 @@ public class NonActionEventsComponent {
 
     #region Flirt
     public bool NormalFlirtCharacter(Character target) {
-        if (target.isDead
-            || !target.canWitness
-            || !owner.canWitness
-            || target.role.roleType == CHARACTER_ROLE.BEAST
-            || owner.role.roleType == CHARACTER_ROLE.BEAST
-            || target.faction.isPlayerFaction
-            || owner.faction.isPlayerFaction
-            || target.characterClass.className == "Zombie"
-            || owner.characterClass.className == "Zombie"
-            || (owner.currentActionNode != null && owner.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)
-            || (target.currentActionNode != null && target.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)
-            //|| owner.isChatting
-            //|| target.isChatting
-            ) {
+        if (!CanInteract(target)) {
             return false;
         }
         if (!owner.IsHostileWith(target)) {
             string result = TriggerFlirtCharacter(target);
-            Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Flirt", result);
+            GameDate dueDate = GameManager.Instance.Today();
+            Log log = new Log(dueDate, "Interrupt", "Flirt", result);
             log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             owner.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            owner.SetIsConversing(true);
+            target.SetIsConversing(true);
+
+            dueDate.AddTicks(2);
+            SchedulingManager.Instance.AddEntry(dueDate, () => owner.SetIsConversing(false), owner);
+            SchedulingManager.Instance.AddEntry(dueDate, () => target.SetIsConversing(false), target);
             return true;
         }
         return false;

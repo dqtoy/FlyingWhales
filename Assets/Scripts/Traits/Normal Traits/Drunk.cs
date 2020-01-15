@@ -35,7 +35,7 @@ namespace Traits {
                     }
                     int chance = UnityEngine.Random.Range(0, 100);
                     if (chance < value) {
-                        characterThatWillDoJob.PrintLogIfActive(GameManager.Instance.TodayLogString() + characterThatWillDoJob.name
+                        characterThatWillDoJob.PrintLogIfActive(characterThatWillDoJob.name
                             + " Drunk Assault Chance: " + value + ", Roll: " + chance);
                         if (characterThatWillDoJob.marker.AddHostileInRange(targetCharacter, false, false, false)) {
                             if (!characterThatWillDoJob.marker.avoidInRange.Contains(targetCharacter)) {

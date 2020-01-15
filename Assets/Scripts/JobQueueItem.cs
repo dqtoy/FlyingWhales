@@ -172,11 +172,11 @@ public class JobQueueItem {
         if (assignedCharacter != null) {
             previousAssignedCharacter = assignedCharacter;
             //assignedCharacter.SetCurrentJob(null);
-            assignedCharacter.PrintLogIfActive(GameManager.Instance.TodayLogString() + assignedCharacter.name + " quit job " + name);
+            assignedCharacter.PrintLogIfActive(assignedCharacter.name + " quit job " + name);
         }
         if (character != null) {
             //character.SetCurrentJob(this);
-            character.PrintLogIfActive(GameManager.Instance.TodayLogString() + character.name + " took job " + name);
+            character.PrintLogIfActive(character.name + " took job " + name);
         }
         
         assignedCharacter = character;
