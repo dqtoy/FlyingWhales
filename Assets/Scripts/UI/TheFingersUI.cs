@@ -61,6 +61,7 @@ public class TheFingersUI : MonoBehaviour {
             Faction newFaction = FactionManager.Instance.CreateNewFaction(factionName: factionNameInput.text);
             chosenLeader.ChangeFactionTo(newFaction);
             newFaction.SetLeader(chosenLeader, false);
+
             //for (int i = 0; i < ideologies.Count; i++) {
             //    newFaction.ideologyComponent.SetCurrentIdeology(i, ideologies[i]);
             //}
@@ -83,6 +84,8 @@ public class TheFingersUI : MonoBehaviour {
             log.AddToFillers(regionLocation, regionLocation.name, LOG_IDENTIFIER.LANDMARK_1);
             log.AddLogToInvolvedObjects();
             PlayerManager.Instance.player.ShowNotification(log);
+
+            //chosenLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Faction_Leader, chosenLeader);
 
             fingers.Activate();
 
@@ -172,7 +175,7 @@ public class TheFingersUI : MonoBehaviour {
         characterNameplateItems.Clear();
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
-            if(character.isFriendlyFactionless && character.faction.leader != character) {
+            if(character.isFriendlyFactionless /*&& character.faction.leader != character*/) {
                 CharacterNameplateItem item = CreateNewCharacterNameplateItem();
                 item.SetObject(character);
                 item.SetAsToggle();
@@ -366,13 +369,13 @@ public class TheFingersUI : MonoBehaviour {
         UIManager.Instance.dualObjectPicker.PopulateColumn(viableFactions, (faction) => CanChooseFactionToJoin(faction, character), null, null, UIManager.Instance.dualObjectPicker.column2ScrollView, UIManager.Instance.dualObjectPicker.column2ToggleGroup, "Choose Faction");
     }
     private bool CanChooseFactionToJoin(Faction faction, Character character) {
-        return faction.ideologyComponent.DoesCharacterFitCurrentIdeologies(character);
+        return !faction.isDestroyed && faction.ideologyComponent.DoesCharacterFitCurrentIdeologies(character);
     }
     private void ConfirmJoin(object obj1, object obj2) {
         Character character = obj1 as Character;
         Faction faction = obj2 as Faction;
 
-        character.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, faction.leader as Character, "join_faction_normal");
+        character.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, faction.characters[0], "join_faction_normal");
         //character.ChangeFactionTo(faction);
         //Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_faction_normal");
         //log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

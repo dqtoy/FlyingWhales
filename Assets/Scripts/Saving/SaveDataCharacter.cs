@@ -131,7 +131,7 @@ public class SaveDataCharacter {
         //doNotGetTired = character.doNotGetTired;
         if (character.faction != null) {
             factionID = character.faction.id;
-            isFactionLeader = character.faction.leader == character;
+            isFactionLeader = character.isFactionLeader;
         } else {
             factionID = -1;
         }

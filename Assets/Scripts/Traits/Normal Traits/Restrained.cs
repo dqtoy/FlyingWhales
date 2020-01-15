@@ -48,9 +48,9 @@ namespace Traits {
                 _sourceCharacter.AddTraitNeededToBeRemoved(this);
 
                 //Once a faction leader is restrained set new faction leader
-                if (isLeader) {
-                    _sourceCharacter.faction.SetNewLeader();
-                }
+                //if (isLeader) {
+                //    _sourceCharacter.faction.SetNewLeader();
+                //}
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
@@ -66,15 +66,15 @@ namespace Traits {
                 //If restrained trait is removed from this character this means that the character is set free from imprisonment, either he/she was saved from abduction or freed from criminal charges
                 //When this happens, check if he/she was the leader of the faction, if true, he/she can only go back to being the ruler if he/she was not imprisoned because he/she was a criminal
                 //But if he/she was a criminal, he/she cannot go back to being the ruler
-                if (isLeader && !isCriminal) {
-                    _sourceCharacter.faction.SetLeader(character);
+                //if (isLeader && !isCriminal) {
+                //    _sourceCharacter.faction.SetLeader(character);
 
-                    Log logNotif = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "return_faction_leader");
-                    logNotif.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    logNotif.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
-                    _sourceCharacter.AddHistory(logNotif);
-                    PlayerManager.Instance.player.ShowNotification(logNotif);
-                }
+                //    Log logNotif = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "return_faction_leader");
+                //    logNotif.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                //    logNotif.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
+                //    _sourceCharacter.AddHistory(logNotif);
+                //    PlayerManager.Instance.player.ShowNotification(logNotif);
+                //}
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }

@@ -134,7 +134,7 @@ public class FactionInfoUI : UIMenu {
         return item;
     }
     private void OrderCharacterItems() {
-        if (activeFaction.leader is Character) {
+        if (activeFaction.leader != null && activeFaction.leader is Character) {
             Character leader = activeFaction.leader as Character;
             CharacterNameplateItem leaderItem = GetItem(leader);
             if (leaderItem == null) {

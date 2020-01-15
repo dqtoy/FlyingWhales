@@ -804,9 +804,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //if (faction != null) {
             //    faction.LeaveFaction(this); //remove this character from it's factions list of characters
             //}
-            if (faction != null && faction.leader == this) {
-                faction.SetNewLeader();
-            }
+            //if (faction != null && faction.leader == this) {
+            //    faction.SetNewLeader();
+            //}
 
             if (_role != null) {
                 _role.OnDeath(this);

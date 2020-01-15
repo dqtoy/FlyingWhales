@@ -96,7 +96,7 @@ public class NewResidentEvent : LocationEvent {
         Debug.Log(GameManager.Instance.TodayLogString() + "Generated new Couple Resident " + spouse1 + " and " + spouse2 + " from New Resident Event");
     }
     private RACE GetRaceForNewResident(Settlement location) {
-        if(location.owner != null) {
+        if(location.owner != null && location.owner.leader != null) {
             int chance = UnityEngine.Random.Range(0, 100);
             if(chance < 75) {
                 return location.owner.leader.race;

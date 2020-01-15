@@ -50,7 +50,7 @@ public class TheProfaneUI : MonoBehaviour {
             if (PlayerManager.Instance.player.mana < manaCost) {
                 message += "\n\t- Insufficient Mana. Cost is " + manaCost.ToString();
             }
-            if (character.traitContainer.GetNormalTrait<Trait>("Treacherous") != null) {
+            if (character.faction.leader != null && character.traitContainer.GetNormalTrait<Trait>("Treacherous") != null) {
                 Character factionLeader = character.faction.leader as Character;
                 if (!character.opinionComponent.IsEnemiesWith(factionLeader)) {
                     message += "\n\t- Treacherous characters must be enemies with their faction leader to be converted to a cultist.";
@@ -116,7 +116,7 @@ public class TheProfaneUI : MonoBehaviour {
             return true;
         } else if (character.traitContainer.GetNormalTrait<Trait>("Disillusioned") != null) {
             return true;
-        } else if (character.traitContainer.GetNormalTrait<Trait>("Treacherous") != null) {
+        } else if (character.faction.leader != null && character.traitContainer.GetNormalTrait<Trait>("Treacherous") != null) {
             Character factionLeader = character.faction.leader as Character;
             return character.opinionComponent.IsEnemiesWith(factionLeader);
         }

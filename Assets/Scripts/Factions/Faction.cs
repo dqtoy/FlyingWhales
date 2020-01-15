@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using Traits;
 
 
 public class Faction {
@@ -37,14 +38,19 @@ public class Faction {
     public List<Log> history { get; private set; }
     public Settlement mainRegion { get { return ownedSettlements[0]; } }
     public Quest activeQuest { get; protected set; }
+
+    //Components
     public FactionIdeologyComponent ideologyComponent { get; protected set; }
+
+    private int newLeaderDesignationChance;
+    private WeightedDictionary<Character> newLeaderDesignationWeights;
 
     #region getters/setters
     public string urlName {
         get { return "<link=" + '"' + this.id.ToString() + "_faction" + '"' + ">" + this.name + "</link>"; }
     }
     public bool isDestroyed {
-        get { return leader == null; }
+        get { return characters.Count <= 0; }
     }
     public bool isMajorFriendlyNeutral {
         get { return isMajorFaction || this == FactionManager.Instance.friendlyNeutralFaction; }
@@ -74,7 +80,9 @@ public class Faction {
         //recruitableRaces = new List<RACE>();
         //startingFollowers = new List<RACE>();
         history = new List<Log>();
+        newLeaderDesignationWeights = new WeightedDictionary<Character>();
         ideologyComponent = new FactionIdeologyComponent(this);
+        ResetNewLeaderDesignationChance();
         AddListeners();
     }
     public Faction(SaveDataFaction data) {
@@ -102,59 +110,11 @@ public class Faction {
         //recruitableRaces = new List<RACE>();
         //startingFollowers = new List<RACE>();
         history = new List<Log>();
+        newLeaderDesignationWeights = new WeightedDictionary<Character>();
         ideologyComponent = new FactionIdeologyComponent(this);
+        ResetNewLeaderDesignationChance();
         AddListeners();
     }
-
-    #region Virtuals
-    /*
-     Set the leader of this faction, change this per faction type if needed.
-     This creates relationships between the leader and it's village heads by default.
-         */
-    public virtual void SetLeader(ILeader leader, bool setIdeology = true) {
-        if (this.leader != null && this.leader is Character) {
-            Character previousRuler = this.leader as Character;
-            if (previousRuler.role.roleType != CHARACTER_ROLE.NOBLE) {
-                previousRuler.AssignRole(CharacterRole.NOBLE);
-                previousRuler.AssignClassByRole(previousRuler.role);
-            }
-            if (previousRuler.characterClass.className != previousRuler.GetClassForRole(previousRuler.role)) {
-                previousRuler.AssignClassByRole(previousRuler.role);
-            }
-            previousRuler.UnassignBuildStructureComponent();
-        }
-        if (leader != null && leader is Character) {
-            Character newRuler = leader as Character;
-            if (newRuler.role.roleType != CHARACTER_ROLE.LEADER) {
-                newRuler.AssignRole(CharacterRole.LEADER);
-                newRuler.AssignClassByRole(newRuler.role);
-            }
-            newRuler.AssignBuildStructureComponent();
-
-
-            //if (newRuler.characterClass.className != initialLeaderClass) {
-            //    newRuler.AssignClass(CharacterManager.Instance.CreateNewCharacterClass(initialLeaderClass));
-            //}
-        }
-        OnlySetLeader(leader);
-
-        //Every time the leader changes, faction ideology changes
-        if (leader is Character) {
-            if (setIdeology) {
-                //FACTION_IDEOLOGY newIdeology = Utilities.GetRandomEnumValue<FACTION_IDEOLOGY>();
-                //ideologyComponent.SwitchToIdeology(newIdeology);
-                ideologyComponent.RerollIdeologies();
-            }
-            Character characterLeader = leader as Character;
-            characterLeader.currentRegion.AddFactionHere(characterLeader.faction);
-            //if(characterLeader.currentRegion != null) {
-            //    characterLeader.currentRegion.AddFactionHere(characterLeader.faction);
-            //} else if (characterLeader.currentArea != null) {
-            //    characterLeader.currentArea.region.AddFactionHere(characterLeader.faction);
-            //}
-        }
-    }
-    #endregion
 
     #region Landmarks
     public void OwnLandmark(BaseLandmark landmark) {
@@ -197,7 +157,7 @@ public class Faction {
     public bool LeaveFaction(Character character) {
         if (characters.Remove(character)) {
             if (leader == character) {
-                SetNewLeader(); //so a new leader can be set if the leader is ever removed from the list of characters of this faction
+                SetLeader(null); //so a new leader can be set if the leader is ever removed from the list of characters of this faction
             }
             character.SetFaction(null);
             Messenger.Broadcast(Signals.CHARACTER_REMOVED_FROM_FACTION, character, this);
@@ -249,85 +209,85 @@ public class Faction {
         }
         return chars;
     }
-    public void SetNewLeader() {
-        if (leader != null) {
-            Character previousRuler = leader as Character;
-            Character newRuler = null;
-            string log = GameManager.Instance.TodayLogString() + name + " faction is deciding a new leader...";
+    //public void SetNewLeader() {
+    //    if (leader != null) {
+    //        Character previousRuler = leader as Character;
+    //        Character newRuler = null;
+    //        string log = GameManager.Instance.TodayLogString() + name + " faction is deciding a new leader...";
 
-            log += "\nChecking male relatives of the king...";
-            List<Character> maleRelatives = FactionManager.Instance.GetViableRulers(previousRuler, GENDER.MALE, RELATIONSHIP_TYPE.RELATIVE);
-            if (maleRelatives.Count > 0) {
-                newRuler = maleRelatives[UnityEngine.Random.Range(0, maleRelatives.Count)];
-                log += "\nNew Ruler: " + newRuler.name;
-            } else {
-                log += "\nChecking male nobles...";
-                List<Character> maleNobles = GetViableCharacters(GENDER.MALE, "Noble");
-                if (maleNobles.Count > 0) {
-                    newRuler = maleNobles[UnityEngine.Random.Range(0, maleNobles.Count)];
-                    log += "\nNew Ruler: " + newRuler.name;
-                } else {
-                    log += "\nChecking female relatives of the king...";
-                    List<Character> femaleRelatives = FactionManager.Instance.GetViableRulers(previousRuler, GENDER.FEMALE, RELATIONSHIP_TYPE.RELATIVE);
-                    if (femaleRelatives.Count > 0) {
-                        newRuler = femaleRelatives[UnityEngine.Random.Range(0, femaleRelatives.Count)];
-                        log += "\nNew Ruler: " + newRuler.name;
-                    } else {
-                        log += "\nChecking female nobles...";
-                        List<Character> femaleNobles = GetViableCharacters(GENDER.FEMALE, "Noble");
-                        if (femaleNobles.Count > 0) {
-                            newRuler = femaleNobles[UnityEngine.Random.Range(0, femaleNobles.Count)];
-                            log += "\nNew Ruler: " + newRuler.name;
-                        } else {
-                            log += "\nChecking male soldiers and adventurers...";
-                            List<Character> maleSoldiersAndAdventurers = GetViableCharacters(GENDER.MALE, CHARACTER_ROLE.SOLDIER, CHARACTER_ROLE.ADVENTURER);
-                            if (maleSoldiersAndAdventurers.Count > 0) {
-                                newRuler = maleSoldiersAndAdventurers[UnityEngine.Random.Range(0, maleSoldiersAndAdventurers.Count)];
-                                log += "\nNew Ruler: " + newRuler.name;
-                            } else {
-                                log += "\nChecking female soldiers and adventurers...";
-                                List<Character> femaleSoldiersAndAdventurers = GetViableCharacters(GENDER.FEMALE, CHARACTER_ROLE.SOLDIER, CHARACTER_ROLE.ADVENTURER);
-                                if (femaleSoldiersAndAdventurers.Count > 0) {
-                                    newRuler = femaleSoldiersAndAdventurers[UnityEngine.Random.Range(0, femaleSoldiersAndAdventurers.Count)];
-                                    log += "\nNew Ruler: " + newRuler.name;
-                                } else {
-                                    log += "\nChecking male civilians...";
-                                    List<Character> maleCivilians = GetViableCharacters(GENDER.MALE, CHARACTER_ROLE.CIVILIAN);
-                                    if (maleCivilians.Count > 0) {
-                                        newRuler = maleCivilians[UnityEngine.Random.Range(0, maleCivilians.Count)];
-                                        log += "\nNew Ruler: " + newRuler.name;
-                                    } else {
-                                        log += "\nChecking female civilians...";
-                                        List<Character> femaleCivilians = GetViableCharacters(GENDER.FEMALE, CHARACTER_ROLE.CIVILIAN);
-                                        if (femaleCivilians.Count > 0) {
-                                            newRuler = femaleCivilians[UnityEngine.Random.Range(0, femaleCivilians.Count)];
-                                            log += "\nNew Ruler: " + newRuler.name;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+    //        log += "\nChecking male relatives of the king...";
+    //        List<Character> maleRelatives = FactionManager.Instance.GetViableRulers(previousRuler, GENDER.MALE, RELATIONSHIP_TYPE.RELATIVE);
+    //        if (maleRelatives.Count > 0) {
+    //            newRuler = maleRelatives[UnityEngine.Random.Range(0, maleRelatives.Count)];
+    //            log += "\nNew Ruler: " + newRuler.name;
+    //        } else {
+    //            log += "\nChecking male nobles...";
+    //            List<Character> maleNobles = GetViableCharacters(GENDER.MALE, "Noble");
+    //            if (maleNobles.Count > 0) {
+    //                newRuler = maleNobles[UnityEngine.Random.Range(0, maleNobles.Count)];
+    //                log += "\nNew Ruler: " + newRuler.name;
+    //            } else {
+    //                log += "\nChecking female relatives of the king...";
+    //                List<Character> femaleRelatives = FactionManager.Instance.GetViableRulers(previousRuler, GENDER.FEMALE, RELATIONSHIP_TYPE.RELATIVE);
+    //                if (femaleRelatives.Count > 0) {
+    //                    newRuler = femaleRelatives[UnityEngine.Random.Range(0, femaleRelatives.Count)];
+    //                    log += "\nNew Ruler: " + newRuler.name;
+    //                } else {
+    //                    log += "\nChecking female nobles...";
+    //                    List<Character> femaleNobles = GetViableCharacters(GENDER.FEMALE, "Noble");
+    //                    if (femaleNobles.Count > 0) {
+    //                        newRuler = femaleNobles[UnityEngine.Random.Range(0, femaleNobles.Count)];
+    //                        log += "\nNew Ruler: " + newRuler.name;
+    //                    } else {
+    //                        log += "\nChecking male soldiers and adventurers...";
+    //                        List<Character> maleSoldiersAndAdventurers = GetViableCharacters(GENDER.MALE, CHARACTER_ROLE.SOLDIER, CHARACTER_ROLE.ADVENTURER);
+    //                        if (maleSoldiersAndAdventurers.Count > 0) {
+    //                            newRuler = maleSoldiersAndAdventurers[UnityEngine.Random.Range(0, maleSoldiersAndAdventurers.Count)];
+    //                            log += "\nNew Ruler: " + newRuler.name;
+    //                        } else {
+    //                            log += "\nChecking female soldiers and adventurers...";
+    //                            List<Character> femaleSoldiersAndAdventurers = GetViableCharacters(GENDER.FEMALE, CHARACTER_ROLE.SOLDIER, CHARACTER_ROLE.ADVENTURER);
+    //                            if (femaleSoldiersAndAdventurers.Count > 0) {
+    //                                newRuler = femaleSoldiersAndAdventurers[UnityEngine.Random.Range(0, femaleSoldiersAndAdventurers.Count)];
+    //                                log += "\nNew Ruler: " + newRuler.name;
+    //                            } else {
+    //                                log += "\nChecking male civilians...";
+    //                                List<Character> maleCivilians = GetViableCharacters(GENDER.MALE, CHARACTER_ROLE.CIVILIAN);
+    //                                if (maleCivilians.Count > 0) {
+    //                                    newRuler = maleCivilians[UnityEngine.Random.Range(0, maleCivilians.Count)];
+    //                                    log += "\nNew Ruler: " + newRuler.name;
+    //                                } else {
+    //                                    log += "\nChecking female civilians...";
+    //                                    List<Character> femaleCivilians = GetViableCharacters(GENDER.FEMALE, CHARACTER_ROLE.CIVILIAN);
+    //                                    if (femaleCivilians.Count > 0) {
+    //                                        newRuler = femaleCivilians[UnityEngine.Random.Range(0, femaleCivilians.Count)];
+    //                                        log += "\nNew Ruler: " + newRuler.name;
+    //                                    }
+    //                                }
+    //                            }
+    //                        }
+    //                    }
+    //                }
+    //            }
+    //        }
 
-            previousRuler.PrintLogIfActive(log);
-            if (newRuler != null) {
-                SetLeader(newRuler);
+    //        previousRuler.PrintLogIfActive(log);
+    //        if (newRuler != null) {
+    //            SetLeader(newRuler);
 
-                Log logNotif = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_faction_leader");
-                logNotif.AddToFillers(newRuler, newRuler.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                logNotif.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
-                newRuler.AddHistory(logNotif);
-                PlayerManager.Instance.player.ShowNotification(logNotif);
-            }
-            //else {
-            //    Debug.LogError(GameManager.Instance.TodayLogString() + name + " couldn't set a new leader replacing " + previousRuler.name);
-            //}
-        } else {
-            Debug.LogError(GameManager.Instance.TodayLogString() + name + " cannot set new leader because there is no previous leader!");
-        }
-    }
+    //            Log logNotif = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_faction_leader");
+    //            logNotif.AddToFillers(newRuler, newRuler.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+    //            logNotif.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
+    //            newRuler.AddHistory(logNotif);
+    //            PlayerManager.Instance.player.ShowNotification(logNotif);
+    //        }
+    //        //else {
+    //        //    Debug.LogError(GameManager.Instance.TodayLogString() + name + " couldn't set a new leader replacing " + previousRuler.name);
+    //        //}
+    //    } else {
+    //        Debug.LogError(GameManager.Instance.TodayLogString() + name + " cannot set new leader because there is no previous leader!");
+    //    }
+    //}
     public void OnlySetLeader(ILeader leader) {
         this.leader = leader;
     }
@@ -381,6 +341,165 @@ public class Faction {
             //character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
         }
     }
+    private void OnCharacterMissing(Character missingCharacter) {
+        if (leader != null && missingCharacter == leader) {
+            SetLeader(null);
+        }
+    }
+    private void OnCharacterDied(Character deadCharacter) {
+        if (leader != null && deadCharacter == leader) {
+            SetLeader(null);
+        }
+    }
+    public void SetLeader(ILeader newLeader, bool setIdeology = true) {
+        if(!isMajorFaction && !isPlayerFaction) {
+            //Neutral, Friendly Neutral, Disguised Factions cannot have a leader
+            return;
+        }
+        if (this.leader != null && this.leader is Character) {
+            Character previousRuler = this.leader as Character;
+            //if (previousRuler.role.roleType != CHARACTER_ROLE.NOBLE) {
+            //    previousRuler.AssignRole(CharacterRole.NOBLE);
+            //    previousRuler.AssignClassByRole(previousRuler.role);
+            //}
+            //if (previousRuler.characterClass.className != previousRuler.GetClassForRole(previousRuler.role)) {
+            //    previousRuler.AssignClassByRole(previousRuler.role);
+            //}
+            previousRuler.UnassignBuildStructureComponent();
+        }
+        //if (newLeader != null && newLeader is Character) {
+        //    Character newRuler = newLeader as Character;
+        //    if (newRuler.role.roleType != CHARACTER_ROLE.LEADER) {
+        //        newRuler.AssignRole(CharacterRole.LEADER);
+        //        newRuler.AssignClassByRole(newRuler.role);
+        //    }
+        //    newRuler.AssignBuildStructureComponent();
+        //    //if (newRuler.characterClass.className != initialLeaderClass) {
+        //    //    newRuler.AssignClass(CharacterManager.Instance.CreateNewCharacterClass(initialLeaderClass));
+        //    //}
+        //}
+        OnlySetLeader(newLeader);
+
+        //Every time the leader changes, faction ideology changes
+        if (!isPlayerFaction) {
+            if (newLeader != null) {
+                if (newLeader is Character) {
+                    Character newRuler = newLeader as Character;
+                    newRuler.AssignBuildStructureComponent();
+                    if (setIdeology) {
+                        ideologyComponent.RerollIdeologies();
+                    }
+                    newRuler.currentRegion.AddFactionHere(this);
+                    ResetNewLeaderDesignationChance();
+                    if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
+                        Messenger.RemoveListener(Signals.HOUR_STARTED, CheckForNewLeaderDesignation);
+                    }
+                }
+                //if(characterLeader.currentRegion != null) {
+                //    characterLeader.currentRegion.AddFactionHere(characterLeader.faction);
+                //} else if (characterLeader.currentArea != null) {
+                //    characterLeader.currentArea.region.AddFactionHere(characterLeader.faction);
+                //}
+            } else {
+                Messenger.AddListener(Signals.HOUR_STARTED, CheckForNewLeaderDesignation);
+            }
+        }
+    }
+    private void CheckForNewLeaderDesignation() {
+        if (UnityEngine.Random.Range(0, 100) < newLeaderDesignationChance) {
+            DesignateNewLeader();
+        } else {
+            newLeaderDesignationChance += 2;
+        }
+    }
+    private void DesignateNewLeader() {
+        string log = "Designating a new settlement faction leader for: " + name;
+        newLeaderDesignationWeights.Clear();
+        for (int i = 0; i < characters.Count; i++) {
+            Character member = characters[i];
+            log += "\n\n-" + member.name;
+            if (member.isDead || member.isBeingSeized) {
+                log += "\nEither dead or seized, will not be part of candidates for faction leader";
+                continue;
+            }
+            int weight = 50;
+            log += "\n  -Base Weight: +50";
+            if (member.isSettlementRuler) {
+                weight += 30;
+                log += "\n  -Settlement Ruler: +30";
+            }
+            if (member.characterClass.className == "Noble") {
+                weight += 40;
+                log += "\n  -Noble: +40";
+            }
+            int numberOfFriends = 0;
+            int numberOfEnemies = 0;
+            for (int j = 0; j < member.opinionComponent.charactersWithOpinion.Count; j++) {
+                Character otherCharacter = member.opinionComponent.charactersWithOpinion[j];
+                if (otherCharacter.faction == this) {
+                    if (member.opinionComponent.IsFriendsWith(otherCharacter)) {
+                        numberOfFriends++;
+                    } else if (member.opinionComponent.IsEnemiesWith(otherCharacter)) {
+                        numberOfEnemies++;
+                    }
+                }
+            }
+            if (numberOfFriends > 0) {
+                weight += (numberOfFriends * 20);
+                log += "\n  -Num of Friend/Close Friend in the Settlement: " + numberOfFriends + ", +" + (numberOfFriends * 20);
+            }
+            if (member.traitContainer.GetNormalTrait<Trait>("Inspiring") != null) {
+                weight += 25;
+                log += "\n  -Inspiring: +25";
+            }
+            if (member.traitContainer.GetNormalTrait<Trait>("Authoritative") != null) {
+                weight += 50;
+                log += "\n  -Authoritative: +50";
+            }
+
+
+            if (numberOfEnemies > 0) {
+                weight += (numberOfEnemies * -10);
+                log += "\n  -Num of Enemies/Rivals in the Settlement: " + numberOfEnemies + ", +" + (numberOfEnemies * -10);
+            }
+            if (member.traitContainer.GetNormalTrait<Trait>("Ugly") != null) {
+                weight += -20;
+                log += "\n  -Ugly: -20";
+            }
+            if (member.hasUnresolvedCrime) {
+                weight += -50;
+                log += "\n  -Has Unresolved Crime: -50";
+            }
+            if (member.traitContainer.GetNormalTrait<Trait>("Worker") != null) {
+                weight += -40;
+                log += "\n  -Civilian: -40";
+            }
+            if (member.traitContainer.GetNormalTrait<Trait>("Ambitious") != null) {
+                weight = Mathf.RoundToInt(weight * 1.5f);
+                log += "\n  -Ambitious: x1.5";
+            }
+            log += "\n  -TOTAL WEIGHT: " + weight;
+            if (weight > 0) {
+                newLeaderDesignationWeights.AddElement(member, weight);
+            }
+        }
+        if (newLeaderDesignationWeights.Count > 0) {
+            Character chosenLeader = newLeaderDesignationWeights.PickRandomElementGivenWeights();
+            if (chosenLeader != null) {
+                log += "\nCHOSEN LEADER: " + chosenLeader.name;
+                //SetRuler(chosenRuler);
+                chosenLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Faction_Leader, chosenLeader);
+            } else {
+                log += "\nCHOSEN LEADER: NONE";
+            }
+        } else {
+            log += "\nCHOSEN LEADER: NONE";
+        }
+        Debug.Log(log);
+    }
+    private void ResetNewLeaderDesignationChance() {
+        newLeaderDesignationChance = 5;
+    }
     #endregion
 
     #region Utilities
@@ -388,6 +507,8 @@ public class Faction {
         Messenger.AddListener<Character>(Signals.CHARACTER_REMOVED, OnCharacterRemoved);
         Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
         Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
+        Messenger.AddListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         //if (!_isPlayerFaction) {
         //    Messenger.AddListener(Signals.TICK_STARTED, DailyInteractionGeneration);
@@ -397,6 +518,8 @@ public class Faction {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_REMOVED, OnCharacterRemoved);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
         Messenger.RemoveListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         //Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         //if (!_isPlayerFaction) {
         //    Messenger.RemoveListener(Signals.TICK_STARTED, DailyInteractionGeneration);
@@ -490,22 +613,20 @@ public class Faction {
         for (int i = 0; i < citizenCount; i++) {
             string className = classManager.GetCurrentClassToCreate();
             Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, Utilities.GetRandomGender(), this, settlement);
-            if(className == "Leader") {
-                citizen.LevelUp(leaderLevel - 1);
-                SetLeader(citizen);
-            } else {
-                citizen.LevelUp(citizensLevel - 1);
-            }
+            citizen.LevelUp(citizensLevel - 1);
+            //if (className == "Leader") {
+            //    citizen.LevelUp(leaderLevel - 1);
+            //    SetLeader(citizen);
+            //} else {
+            //    citizen.LevelUp(citizensLevel - 1);
+            //}
             createdCharacters.Add(citizen);
         }
         settlement.SetInitialResidentCount(citizenCount);
         RelationshipManager.Instance.GenerateRelationships(this.characters);
-        if (leader == null) {
-            SetLeader(null);
-        }
+        SetLeader(null);
         return createdCharacters;
     }
-   
     public string GetRaceText() {
         return Utilities.GetNormalizedRaceAdjective(race) + " Faction";
     }

@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BecomeFactionLeader : MonoBehaviour {
+namespace Interrupts {
+    public class BecomeFactionLeader : Interrupt {
+        public BecomeFactionLeader() : base(INTERRUPT.Become_Faction_Leader) {
+            duration = 0;
+            isSimulateneous = true;
+        }
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+        #region Overrides
+        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target) {
+            actor.faction.SetLeader(actor);
+            return true;
+        }
+        #endregion
+    }
 }

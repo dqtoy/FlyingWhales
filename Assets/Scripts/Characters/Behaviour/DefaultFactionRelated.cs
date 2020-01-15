@@ -17,7 +17,7 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
                     Settlement potentialSettlement = character.currentSettlement;
                     log += "\n-" + character.name + " is factionless and in a settlement: " + potentialSettlement.name + ", will try to join a faction...";
                     Faction potentialFaction = potentialSettlement.owner;
-                    if (!potentialFaction.isPlayerFaction
+                    if (!potentialFaction.isPlayerFaction && !potentialFaction.isDestroyed
                         && !potentialSettlement.owner.IsCharacterBannedFromJoining(character) 
                         && potentialFaction.ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
                         if (!viableFactions.Contains(potentialFaction)) {
@@ -27,7 +27,7 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
                 } 
                 if (viableFactions.Count > 0) {
                     Faction chosenFaction = viableFactions[UnityEngine.Random.Range(0, viableFactions.Count)];
-                    character.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, chosenFaction.leader as Character, "join_faction_normal");
+                    character.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, chosenFaction.characters[0], "join_faction_normal");
                     //character.ChangeFactionTo(chosenFaction);
                     log += "\n-Chosen faction to join: " + chosenFaction.name;
                 } else {
