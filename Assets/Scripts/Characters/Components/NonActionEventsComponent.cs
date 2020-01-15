@@ -17,7 +17,7 @@ public class NonActionEventsComponent {
     public NonActionEventsComponent(Character owner) {
         this.owner = owner;
         chatWeights = new WeightedDictionary<string>();
-        Messenger.AddListener<Character, Character>(Signals.OPINION_DECREASED, OnOpinionDecreased);
+        Messenger.AddListener<Character, Character, string>(Signals.OPINION_DECREASED, OnOpinionDecreased);
     }
 
     #region Utilities
@@ -224,24 +224,22 @@ public class NonActionEventsComponent {
 
     #region Break Up
     //Char1 decreased his/her opinion of char2
-    private void OnOpinionDecreased(Character char1, Character char2) {
+    private void OnOpinionDecreased(Character char1, Character char2, string reason) {
         if(char1 == owner) {
             if (UnityEngine.Random.Range(0, 5) == 0) {
                 if (owner.opinionComponent.GetTotalOpinion(char2) < -25) {
                     if (owner.relationshipContainer.HasRelationshipWith(char2, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.PARAMOUR)) {
-                        char1.interruptComponent.TriggerInterrupt(INTERRUPT.Break_Up, char2);
+                        char1.interruptComponent.TriggerInterrupt(INTERRUPT.Break_Up, char2, reason);
                     }
                 }
             }
         }
     }
-    public void NormalBreakUp(Character target) {
+    public void NormalBreakUp(Character target, string reason) {
         RELATIONSHIP_TYPE relationship = owner.relationshipContainer.GetRelationshipFromParametersWith(target, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.PARAMOUR);
-        if (relationship != RELATIONSHIP_TYPE.NONE) {
-            TriggerBreakUp(target, relationship);
-        }
+        TriggerBreakUp(target, relationship, reason);
     }
-    private void TriggerBreakUp(Character target, RELATIONSHIP_TYPE relationship) {
+    private void TriggerBreakUp(Character target, RELATIONSHIP_TYPE relationship, string reason) {
         RelationshipManager.Instance.RemoveRelationshipBetween(owner, target, relationship);
         //upon break up, if one of them still has a Positive opinion of the other, he will gain Heartbroken trait
         if (owner.opinionComponent.GetTotalOpinion(target) >= 0) {
@@ -252,7 +250,13 @@ public class NonActionEventsComponent {
         }
         RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.EX_LOVER);
 
-        Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Break Up", "break_up");
+        Log log = null;
+        if (reason != string.Empty) {
+            log = new Log(GameManager.Instance.Today(), "Interrupt", "Break Up", "break_up_reason");
+            log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
+        } else {
+            log = new Log(GameManager.Instance.Today(), "Interrupt", "Break Up", "break_up");
+        }
         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         owner.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);

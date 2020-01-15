@@ -88,8 +88,8 @@ public class CharacterInfoUI : UIMenu {
         //Messenger.AddListener<Relatable, RELATIONSHIP_TRAIT, Relatable>(Signals.RELATIONSHIP_REMOVED, OnRelationshipRemoved);
         Messenger.AddListener<Character, Character>(Signals.OPINION_ADDED, OnOpinionChanged);
         Messenger.AddListener<Character, Character>(Signals.OPINION_REMOVED, OnOpinionChanged);
-        Messenger.AddListener<Character, Character>(Signals.OPINION_INCREASED, OnOpinionChanged);
-        Messenger.AddListener<Character, Character>(Signals.OPINION_DECREASED, OnOpinionChanged);
+        Messenger.AddListener<Character, Character, string>(Signals.OPINION_INCREASED, OnOpinionChanged);
+        Messenger.AddListener<Character, Character, string>(Signals.OPINION_DECREASED, OnOpinionChanged);
 
         Messenger.AddListener<Character>(Signals.UPDATE_THOUGHT_BUBBLE, UpdateThoughtBubbleFromSignal);
 
@@ -533,6 +533,11 @@ public class CharacterInfoUI : UIMenu {
             if (target != null) {
                 ShowOpinionData(target);
             }
+        }
+    }
+    private void OnOpinionChanged(Character owner, Character target, string reason) {
+        if (isShowing && (owner == activeCharacter || target == activeCharacter)) {
+            UpdateRelationships();
         }
     }
     private void OnOpinionChanged(Character owner, Character target) {

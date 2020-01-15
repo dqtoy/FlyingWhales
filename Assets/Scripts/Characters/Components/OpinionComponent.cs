@@ -24,7 +24,7 @@ public class OpinionComponent {
         charactersWithOpinion = new List<Character>();
     }
 
-    public void AdjustOpinion(Character target, string opinionText, int opinionValue) {
+    public void AdjustOpinion(Character target, string opinionText, int opinionValue, string reason = "") {
         if (!HasOpinion(target)) {
             opinions.Add(target, new OpinionData());
             opinions[target].AdjustOpinion("Base", 0);
@@ -41,9 +41,9 @@ public class OpinionComponent {
         }
         opinions[target].AdjustOpinion(opinionText, opinionValue);
         if (opinionValue > 0) {
-            Messenger.Broadcast(Signals.OPINION_INCREASED, owner, target);
+            Messenger.Broadcast(Signals.OPINION_INCREASED, owner, target, reason);
         } else if (opinionValue < 0) {
-            Messenger.Broadcast(Signals.OPINION_DECREASED, owner, target);
+            Messenger.Broadcast(Signals.OPINION_DECREASED, owner, target, reason);
         }
         if (!target.opinionComponent.HasOpinion(owner)) {
             target.opinionComponent.AdjustOpinion(owner, "Base", 0);
