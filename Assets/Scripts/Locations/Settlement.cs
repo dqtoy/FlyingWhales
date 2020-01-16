@@ -23,6 +23,7 @@ public class Settlement : IJobOwner {
     public Character ruler { get; private set; }
     public List<HexTile> tiles { get; private set; }
     public List<Character> residents { get; private set; }
+    public bool isUnderSeige { get; private set; }
 
     //structures
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
@@ -101,6 +102,7 @@ public class Settlement : IJobOwner {
         Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
         Messenger.AddListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
     }
     private void UnsubscribeToSignals() {
         Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyJobActions);
@@ -112,6 +114,7 @@ public class Settlement : IJobOwner {
         Messenger.RemoveListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
     }
     private void OnTileObjectRemoved(TileObject removedObj, Character character, LocationGridTile removedFrom) {
         //craft replacement tile object job
@@ -227,6 +230,11 @@ public class Settlement : IJobOwner {
         //LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
         CheckAreaInventoryJobs(mainStorage);
         SetRuler(null);
+    }
+    public void SetIsUnderSeige(bool state) {
+        if(isUnderSeige != state) {
+            isUnderSeige = state;
+        }
     }
     #endregion
 
@@ -723,6 +731,13 @@ public class Settlement : IJobOwner {
             }
         }
         return null;
+    }
+    private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
+        if(owner != null && structure.settlementLocation == this && character.canPerform && character.canMove) {
+            if (owner.GetRelationshipWith(character.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+                SetIsUnderSeige(true);
+            }
+        }
     }
     #endregion
 

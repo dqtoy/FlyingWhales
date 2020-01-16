@@ -12,7 +12,7 @@ public class LocationStructure {
     public STRUCTURE_TYPE structureType { get; private set; }
     public List<Character> charactersHere { get; private set; }
     public ILocation location { get; private set; }
-    public Settlement settlementLocation => tiles.First().buildSpotOwner.hexTileOwner.settlementOnTile;
+    public Settlement settlementLocation => tiles[0].buildSpotOwner.hexTileOwner.settlementOnTile;
     public List<SpecialToken> itemsInStructure { get; private set; }
     public List<IPointOfInterest> pointsOfInterest { get; private set; }
     public POI_STATE state { get; private set; }
@@ -27,6 +27,7 @@ public class LocationStructure {
     #region getters
     public virtual bool isDwelling => false;
     #endregion
+
     public LocationStructure(STRUCTURE_TYPE structureType, ILocation location) {
         id = Utilities.SetID(this);
         this.structureType = structureType;
