@@ -123,7 +123,7 @@ public class CombatState : CharacterState {
     public override void AfterExitingState() {
         base.AfterExitingState();
         if (!stateComponent.character.isDead) {
-            if(isBeingApprehended && stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL) && !stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
+            if(isBeingApprehended && stateComponent.character.isCriminal && !stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
                 //If this criminal character is being apprehended and survived (meaning he did not die, or is not unconscious or restrained)
                 if (!stateComponent.character.isFactionless) {
                     //Leave current faction

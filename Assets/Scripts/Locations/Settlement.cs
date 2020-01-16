@@ -734,7 +734,7 @@ public class Settlement : IJobOwner {
     }
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
         if(owner != null && structure.settlementLocation == this && character.canPerform && character.canMove) {
-            if (owner.GetRelationshipWith(character.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+            if (owner != character.faction && owner.GetRelationshipWith(character.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
                 SetIsUnderSeige(true);
             }
         }

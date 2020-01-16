@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Reflection;
+using Traits;
 
 public class JobQueueItem {
     public int id { get; protected set; }
@@ -69,7 +70,7 @@ public class JobQueueItem {
 
     #region Virtuals
     protected virtual bool CanTakeJob(Character character) {
-        return !character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL) && !character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE);
+        return !character.isCriminal && !character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE);
     }
     public virtual void UnassignJob(bool shouldDoAfterEffect, string reason) { }
     public virtual void OnAddJobToQueue() { }

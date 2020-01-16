@@ -108,9 +108,12 @@ public class ActualGoapNode {
     public LocationStructure targetStructure { get; private set; }
     public LocationGridTile targetTile { get; private set; }
     public IPointOfInterest targetPOIToGoTo { get; private set; }
+    public JOB_TYPE associatedJobType { get; private set; }
 
     public string currentStateName { get; private set; }
     public int currentStateDuration { get; private set; }
+
+    //public CRIME_TYPE crimeType { get; private set; }
 
     #region getters
     //TODO: Refactor these getters after all errors are resolved.
@@ -144,6 +147,7 @@ public class ActualGoapNode {
         this.cost = cost;
         actionStatus = ACTION_STATUS.NONE;
         currentStateName = string.Empty;
+        associatedJobType = JOB_TYPE.NONE;
         //Messenger.AddListener<string, ActualGoapNode>(Signals.ACTION_STATE_SET, OnActionStateSet);
     }
 
@@ -154,6 +158,7 @@ public class ActualGoapNode {
     #region Action
     public virtual void DoAction(JobQueueItem job, GoapPlan plan) {
         actionStatus = ACTION_STATUS.STARTED;
+        associatedJobType = job.jobType;
         actor.SetCurrentActionNode(this, job, plan);
         CreateThoughtBubbleLog(targetStructure);
         //parentPlan?.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
@@ -371,6 +376,7 @@ public class ActualGoapNode {
             }
         }
         action.Perform(this);
+        Messenger.Broadcast(Signals.ACTION_PERFORMED, this);
     }
     public void ActionInterruptedWhilePerforming() {
         string log = GameManager.Instance.TodayLogString() + actor.name + " is interrupted while doing goap action: " + action.goapName;
@@ -691,4 +697,10 @@ public class ActualGoapNode {
         isStealth = job.isStealth;
     }
     #endregion
+
+    //#region Crime
+    //public void SetAsCrime(CRIME_TYPE crimeType) {
+    //    this.crimeType = crimeType;
+    //}
+    //#endregion
 }

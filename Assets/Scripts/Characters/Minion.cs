@@ -152,7 +152,7 @@ public class Minion {
                 character.role.OnDeath(character);
             }
 
-            character.traitContainer.RemoveAllTraitsByType(character, TRAIT_TYPE.CRIMINAL); //remove all criminal type traits
+            character.traitContainer.RemoveAllTraitsByName(character, "Criminal"); //remove all criminal type traits
 
             for (int i = 0; i < character.traitContainer.allTraits.Count; i++) {
                 character.traitContainer.allTraits[i].OnDeath(character);

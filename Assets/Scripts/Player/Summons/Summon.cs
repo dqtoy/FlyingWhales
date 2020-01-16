@@ -119,7 +119,7 @@ public class Summon : Character, IWorldObject {
             //    SetHomeStructure(homeStructure); //keep this data with character to prevent errors
             //}
 
-            traitContainer.RemoveAllTraitsByType(this, TRAIT_TYPE.CRIMINAL); //remove all criminal type traits
+            traitContainer.RemoveAllTraitsByName(this, "Criminal"); //remove all criminal type traits
 
             for (int i = 0; i < traitContainer.allTraits.Count; i++) {
                 traitContainer.allTraits[i].OnDeath(this);

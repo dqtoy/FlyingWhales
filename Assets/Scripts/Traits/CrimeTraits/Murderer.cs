@@ -11,7 +11,7 @@ namespace Traits {
             type = TRAIT_TYPE.CRIMINAL;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;
-            crimeSeverity = CRIME_CATEGORY.SERIOUS;
+            //crimeSeverity = CRIME_TYPE.SERIOUS;
         }
     }
 }

@@ -105,7 +105,7 @@ public class TraitPanelUI : MonoBehaviour {
         string[] traitEffects = System.Enum.GetNames(typeof(TRAIT_EFFECT));
         string[] traitTriggers = System.Enum.GetNames(typeof(TRAIT_TRIGGER));
         string[] actions = System.Enum.GetNames(typeof(INTERACTION_TYPE));
-        string[] crimeSeverities = System.Enum.GetNames(typeof(CRIME_CATEGORY));
+        string[] crimeSeverities = System.Enum.GetNames(typeof(CRIME_TYPE));
         string[] requirementTypes = System.Enum.GetNames(typeof(TRAIT_REQUIREMENT));
         string[] requirementTargets = System.Enum.GetNames(typeof(TRAIT_REQUIREMENT_TARGET));
         string[] requirementCheckers = System.Enum.GetNames(typeof(TRAIT_REQUIREMENT_CHECKER));

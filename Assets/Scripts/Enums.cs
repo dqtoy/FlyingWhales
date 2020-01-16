@@ -1314,34 +1314,41 @@ public enum ACTION_LOCATION_TYPE {
 public enum CHARACTER_STATE_CATEGORY { MAJOR, MINOR,}
 //public enum MOVEMENT_MODE { NORMAL, FLEE, ENGAGE }
 public enum CHARACTER_STATE { NONE, PATROL, HUNT, STROLL, BERSERKED, STROLL_OUTSIDE, COMBAT, DOUSE_FIRE }
-public enum CRIME_CATEGORY {
+public enum CRIME_TYPE {
     NONE,
-    INFRACTIONS,
+    INFRACTION,
     MISDEMEANOR,
     SERIOUS,
     HEINOUS,
 }
+public enum CRIME_STATUS {
+    Unpunished,
+    Imprisoned,
+    Punished,
+    Exiled,
+    Absolved,
+}
 public enum CRIME {
     NONE,
-    [SubcategoryOf(CRIME_CATEGORY.MISDEMEANOR)]
+    [SubcategoryOf(CRIME_TYPE.MISDEMEANOR)]
     THEFT,
-    [SubcategoryOf(CRIME_CATEGORY.MISDEMEANOR)]
+    [SubcategoryOf(CRIME_TYPE.MISDEMEANOR)]
     ASSAULT,
-    [SubcategoryOf(CRIME_CATEGORY.MISDEMEANOR)]
+    [SubcategoryOf(CRIME_TYPE.MISDEMEANOR)]
     ATTEMPTED_MURDER,
-    [SubcategoryOf(CRIME_CATEGORY.SERIOUS)]
+    [SubcategoryOf(CRIME_TYPE.SERIOUS)]
     MURDER,
-    [SubcategoryOf(CRIME_CATEGORY.HEINOUS)]
+    [SubcategoryOf(CRIME_TYPE.HEINOUS)]
     ABERRATION,
-    [SubcategoryOf(CRIME_CATEGORY.INFRACTIONS)]
+    [SubcategoryOf(CRIME_TYPE.INFRACTION)]
     INFIDELITY,
-    [SubcategoryOf(CRIME_CATEGORY.HEINOUS)]
+    [SubcategoryOf(CRIME_TYPE.HEINOUS)]
     HERETIC,
-    [SubcategoryOf(CRIME_CATEGORY.INFRACTIONS)]
+    [SubcategoryOf(CRIME_TYPE.INFRACTION)]
     MINOR_ASSAULT,
-    [SubcategoryOf(CRIME_CATEGORY.MISDEMEANOR)]
+    [SubcategoryOf(CRIME_TYPE.MISDEMEANOR)]
     MANSLAUGHTER,
-    [SubcategoryOf(CRIME_CATEGORY.SERIOUS)]
+    [SubcategoryOf(CRIME_TYPE.SERIOUS)]
     ARSON,
 }
 public enum CHARACTER_MOOD {
@@ -1400,33 +1407,33 @@ public enum ACTION_STATUS { NONE, STARTED, PERFORMING, SUCCESS, FAIL }
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]
 public class SubcategoryOf : System.Attribute {
-    public SubcategoryOf(CRIME_CATEGORY cat) {
+    public SubcategoryOf(CRIME_TYPE cat) {
         Category = cat;
     }
-    public CRIME_CATEGORY Category { get; private set; }
+    public CRIME_TYPE Category { get; private set; }
 }
 #endregion
 public static class Extensions {
 
     #region Crimes
-    public static bool IsSubcategoryOf(this CRIME sub, CRIME_CATEGORY cat) {
+    public static bool IsSubcategoryOf(this CRIME sub, CRIME_TYPE cat) {
         System.Type t = typeof(CRIME);
         MemberInfo mi = t.GetMember(sub.ToString()).FirstOrDefault(m => m.GetCustomAttribute(typeof(SubcategoryOf)) != null);
         if (mi == null) throw new System.ArgumentException("Subcategory " + sub + " has no category.");
         SubcategoryOf subAttr = (SubcategoryOf)mi.GetCustomAttribute(typeof(SubcategoryOf));
         return subAttr.Category == cat;
     }
-    public static CRIME_CATEGORY GetCategory(this CRIME sub) {
+    public static CRIME_TYPE GetCategory(this CRIME sub) {
         System.Type t = typeof(CRIME);
         MemberInfo mi = t.GetMember(sub.ToString()).FirstOrDefault(m => m.GetCustomAttribute(typeof(SubcategoryOf)) != null);
         if (mi == null) throw new System.ArgumentException("Subcategory " + sub + " has no category.");
         SubcategoryOf subAttr = (SubcategoryOf)mi.GetCustomAttribute(typeof(SubcategoryOf));
         return subAttr.Category;
     }
-    public static bool IsLessThan(this CRIME_CATEGORY sub, CRIME_CATEGORY other) {
+    public static bool IsLessThan(this CRIME_TYPE sub, CRIME_TYPE other) {
         return sub < other;
     }
-    public static bool IsGreaterThanOrEqual(this CRIME_CATEGORY sub, CRIME_CATEGORY other) {
+    public static bool IsGreaterThanOrEqual(this CRIME_TYPE sub, CRIME_TYPE other) {
         return sub >= other;
     }
     #endregion

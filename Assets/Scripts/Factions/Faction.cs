@@ -183,7 +183,7 @@ public class Faction {
         List<Character> chars = new List<Character>();
         for (int i = 0; i < characters.Count; i++) {
             Character currCharacter = characters[i];
-            if (currCharacter.gender == gender && !currCharacter.isDead && !currCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && !currCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+            if (currCharacter.gender == gender && !currCharacter.isDead && !currCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && !currCharacter.isCriminal) {
                 for (int j = 0; j < role.Length; j++) {
                     if (currCharacter.role.roleType == role[j]) {
                         chars.Add(currCharacter);
@@ -198,7 +198,7 @@ public class Faction {
         List<Character> chars = new List<Character>();
         for (int i = 0; i < characters.Count; i++) {
             Character currCharacter = characters[i];
-            if (currCharacter.gender == gender && !currCharacter.isDead && !currCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && !currCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+            if (currCharacter.gender == gender && !currCharacter.isDead && !currCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && !currCharacter.isCriminal) {
                 for (int j = 0; j < classNames.Length; j++) {
                     if (currCharacter.characterClass.className == classNames[j]) {
                         chars.Add(currCharacter);

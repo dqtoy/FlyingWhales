@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public abstract class Criminal : Trait {
+    public class Criminal : Trait {
 
-        public CRIME_CATEGORY crimeSeverity { get; protected set; }
+        public CrimeData crimeData { get; protected set; }
+        public Character owner { get; private set; }
 
         public Criminal() {
             name = "Criminal";
             description = "This character has been branded as a criminal by his/her own faction.";
-            type = TRAIT_TYPE.CRIMINAL;
+            type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;
         }
@@ -19,26 +20,26 @@ namespace Traits {
         public override void OnAddTrait(ITraitable sourcePOI) {
             base.OnAddTrait(sourcePOI);
             if (sourcePOI is Character) {
-                Character sourceCharacter = sourcePOI as Character;
+                owner = sourcePOI as Character;
                 //When a character gains this Trait, add this log to the location and the character:
-                Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "add_criminal");
-                addLog.AddToFillers(sourceCharacter, sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                sourceCharacter.AddHistory(addLog);
+                //Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "add_criminal");
+                //addLog.AddToFillers(sourceCharacter, sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                //sourceCharacter.AddHistory(addLog);
                 //TODO: sourceCharacter.homeSettlement.jobQueue.UnassignAllJobsTakenBy(sourceCharacter);
-                sourceCharacter.CancelOrUnassignRemoveTraitRelatedJobs();
+                owner.CancelOrUnassignRemoveTraitRelatedJobs();
             }
 
         }
-        public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
-            if (sourcePOI is Character) {
-                Character sourceCharacter = sourcePOI as Character;
-                //When a character loses this Trait, add this log to the location and the character:
-                Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "remove_criminal");
-                addLog.AddToFillers(sourceCharacter, sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                sourceCharacter.AddHistory(addLog);
-            }
-            base.OnRemoveTrait(sourcePOI, removedBy);
-        }
+        //public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
+        //    if (sourcePOI is Character) {
+        //        Character sourceCharacter = sourcePOI as Character;
+        //        //When a character loses this Trait, add this log to the location and the character:
+        //        Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "remove_criminal");
+        //        addLog.AddToFillers(sourceCharacter, sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //        sourceCharacter.AddHistory(addLog);
+        //    }
+        //    base.OnRemoveTrait(sourcePOI, removedBy);
+        //}
         /// <summary>
         /// Make this character create an apprehend job at his home location targetting a specific character.
         /// </summary>
@@ -50,7 +51,7 @@ namespace Traits {
                 //TODO: (gainedFromDoing == null || gainedFromDoing.awareCharactersOfThisAction.Contains(characterThatWillDoJob)) &&
                 if (targetCharacter.isAtHomeRegion && characterThatWillDoJob.isAtHomeRegion
                     && targetCharacter.homeRegion == characterThatWillDoJob.homeRegion
-                    && targetCharacter.homeSettlement != null
+                    && characterThatWillDoJob.homeSettlement != null
                     && !targetCharacter.isDead) { // && targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null
                     GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.APPREHEND);
                     if (currentJob == null) {
@@ -61,7 +62,7 @@ namespace Traits {
                             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                             return true;
                         }
-                    } 
+                    }
                     //else {
                     //    if (InteractionManager.Instance.CanCharacterTakeApprehendJob(characterThatWillDoJob, targetCharacter, currentJob)) {
                     //        return TryTransferJob(currentJob, characterThatWillDoJob);
@@ -70,6 +71,16 @@ namespace Traits {
                 }
             }
             return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
+        }
+        #endregion
+
+        #region General
+        public void SetCrime(CRIME_TYPE crimeType, GoapAction action) {
+            if(crimeData != null) {
+                Debug.LogError("Cannot set crime to criminal " + owner.name + " because it already has a crime: " + crimeData.crimeType.ToString());
+                return;
+            }
+            crimeData = new CrimeData(crimeType, action, owner);
         }
         #endregion
     }

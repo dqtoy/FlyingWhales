@@ -255,6 +255,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public Character isBeingCarriedBy => IsInOwnParty() ? null : currentParty.owner;
     public bool isMissing => currentMissingTicks > CharacterManager.Instance.CHARACTER_MISSING_THRESHOLD;
     public bool isBeingSeized => PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
+    public bool isCriminal => traitContainer.GetNormalTrait<Trait>("Criminal") != null;
     //public JobQueueItem currentJob => jobQueue.jobsInQueue.Count > 0 ? jobQueue.jobsInQueue[0] : null; //The current job is always the top of the queue
     #endregion
 
@@ -486,6 +487,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.AddListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
         Messenger.AddListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
         Messenger.AddListener<Character>(Signals.CHARACTER_NO_LONGER_MISSING, OnCharacterNoLongerMissing);
+        //Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnCharacterPerformedAction);
         needsComponent.SubscribeToSignals();
     }
     public virtual void UnsubscribeSignals() {
@@ -507,6 +509,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.RemoveListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_NO_LONGER_MISSING, OnCharacterNoLongerMissing);
+        //Messenger.RemoveListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnCharacterPerformedAction);
         needsComponent.UnsubscribeToSignals();
     }
     #endregion
@@ -1391,7 +1394,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //return false;
     }
     public void CreateLocationKnockoutJobs(Character targetCharacter, int amount) {
-        if (isAtHomeRegion && homeSettlement != null && isPartOfHomeFaction && !targetCharacter.isDead && !targetCharacter.isAtHomeRegion && !traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+        if (isAtHomeRegion && homeSettlement != null && isPartOfHomeFaction && !targetCharacter.isDead && !targetCharacter.isAtHomeRegion && !isCriminal) {
             for (int i = 0; i < amount; i++) {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KNOCKOUT, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, homeSettlement);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeKnockoutJob);
@@ -1414,7 +1417,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     /// <returns>The created job.</returns>
     public GoapPlanJob CreateApprehendJobFor(Character targetCharacter, bool assignSelfToJob = false) {
         //if (homeSettlement.id == specificLocation.id) {
-        if (isAtHomeRegion && homeSettlement != null && !targetCharacter.HasJobTargetingThis(JOB_TYPE.APPREHEND) && targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null && !traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+        if (isAtHomeRegion && homeSettlement != null && !targetCharacter.HasJobTargetingThis(JOB_TYPE.APPREHEND) && targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null && !isCriminal) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, targetCharacter, homeSettlement);
             job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { homeSettlement.prison });
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeApprehendJob);
@@ -2784,10 +2787,15 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         witnessLog.AddToFillers(witnessedEvent.descriptionLog.fillers);
         AddHistory(witnessLog);
 
-        if (faction.isPlayerFaction) {
-            //Player characters cannot react to witnessed events
-            return;
+        CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(this, witnessedEvent);
+        if (crimeType != CRIME_TYPE.NONE) {
+            CrimeManager.Instance.ReactToCrime(this, witnessedEvent, witnessedEvent.associatedJobType, crimeType);
         }
+
+        //if (faction.isPlayerFaction) {
+        //    //Player characters cannot react to witnessed events
+        //    return;
+        //}
         //if (witnessedEvent.currentState.shareIntelReaction != null && !isFactionless) { //Characters with no faction cannot witness react
         //    List<string> reactions = witnessedEvent.currentState.shareIntelReaction.Invoke(this, null, SHARE_INTEL_STATUS.WITNESSED);
         //    if(reactions != null) {
@@ -5813,10 +5821,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //Log witnessLog = null;
         //Log reportLog = null;
         RELATIONSHIP_EFFECT relationshipEfffectWithCriminal = opinionComponent.GetRelationshipEffectWith(criminal.owner);
-        CRIME_CATEGORY category = committedCrime.GetCategory();
+        CRIME_TYPE category = committedCrime.GetCategory();
 
         //If character witnessed an Infraction crime:
-        if (category == CRIME_CATEGORY.INFRACTIONS) {
+        if (category == CRIME_TYPE.INFRACTION) {
             //-Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]."
             //- Report / Share Intel Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]."
             //- no additional response
@@ -5828,7 +5836,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         else if (relationshipEfffectWithCriminal == RELATIONSHIP_EFFECT.POSITIVE) {
             reactSummary += "\n" + this.name + " has a positive relationship with " + criminal.owner.name;
             //and crime severity is a Misdemeanor:
-            if (category == CRIME_CATEGORY.MISDEMEANOR) {
+            if (category == CRIME_TYPE.MISDEMEANOR) {
                 reactSummary += "\nCrime committed is misdemeanor.";
                 //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder] but did not do anything due to their relationship."
                 //-Report / Share Intel Log: "[Character Name] was informed that [Criminal Name] committed [Theft/Assault/Murder] but did not do anything due to their relationship."
@@ -5836,7 +5844,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing");
             }
             //and crime severity is Serious Crimes or worse:
-            else if (category.IsGreaterThanOrEqual(CRIME_CATEGORY.SERIOUS)) {
+            else if (category.IsGreaterThanOrEqual(CRIME_TYPE.SERIOUS)) {
                 reactSummary += "\nCrime committed is serious or worse. Removing positive relationships.";
                 //- Relationship Degradation between Character and Criminal
                 hasRelationshipDegraded = RelationshipManager.Instance.RelationshipDegradation(criminal.owner, this, witnessedCrime);
@@ -5858,7 +5866,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         //If character has no relationships with the criminal or they are enemies and the crime is a Misdemeanor or worse:
         else if ((!this.relationshipContainer.HasRelationshipWith(criminal) || this.opinionComponent.IsEnemiesWith(criminal.owner)) 
-            && category.IsGreaterThanOrEqual(CRIME_CATEGORY.MISDEMEANOR)) {
+            && category.IsGreaterThanOrEqual(CRIME_TYPE.MISDEMEANOR)) {
             reactSummary += "\n" + this.name + " does not have a relationship with or is an enemy of " + criminal.name + " and the committed crime is misdemeanor or worse";
             //- Relationship Degradation between Character and Criminal
             hasRelationshipDegraded = RelationshipManager.Instance.RelationshipDegradation(criminal.owner, this, witnessedCrime);
@@ -5990,6 +5998,24 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             traitContainer.AddTrait(this, trait, null, crimeAction);
         }
     }
+    //private void OnCharacterPerformedAction(ActualGoapNode node) {
+    //    if (canWitness && marker != null && node.actor != this && node.poiTarget != this) {
+    //        bool isInVision = false;
+    //        for (int i = 0; i < marker.inVisionCharacters.Count; i++) {
+    //            Character characterInVision = marker.inVisionCharacters[i];
+    //            if(node.actor == characterInVision || node.poiTarget == characterInVision) {
+    //                isInVision = true;
+    //                break;
+    //            }
+    //        }
+    //        if (isInVision) {
+    //            CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(this, node);
+    //            if (crimeType != CRIME_TYPE.NONE) {
+    //                CrimeManager.Instance.ReactToCrime(this, node, node.actor.currentJob as GoapPlanJob, crimeType);
+    //            }
+    //        }
+    //    }
+    //}
     #endregion
 
     #region Pathfinding

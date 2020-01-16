@@ -4,12 +4,12 @@ using UnityEngine;
 
 namespace Traits {
     public class Restrained : Trait {
-        private Character _sourceCharacter;
+        private Character owner;
         //private bool _createdFeedJob;
 
         public bool isPrisoner { get; private set; }
-        public bool isCriminal { get; private set; }
-        public bool isLeader { get; private set; }
+        //public bool isCriminal { get; private set; }
+        //public bool isLeader { get; private set; }
 
         //public override bool isRemovedOnSwitchAlterEgo {
         //    get { return true; }
@@ -38,15 +38,15 @@ namespace Traits {
         public override void OnAddTrait(ITraitable sourceCharacter) {
             base.OnAddTrait(sourceCharacter);
             if (sourceCharacter is Character) {
-                _sourceCharacter = sourceCharacter as Character;
-                isCriminal = _sourceCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL);
-                isLeader = _sourceCharacter.role.roleType == CHARACTER_ROLE.LEADER;
+                owner = sourceCharacter as Character;
+                //isCriminal = _sourceCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL);
+                //isLeader = _sourceCharacter.role.roleType == CHARACTER_ROLE.LEADER;
                 //Messenger.AddListener(Signals.TICK_STARTED, CheckRestrainTrait);
                 //Messenger.AddListener(Signals.HOUR_STARTED, CheckRestrainTraitPerHour);
                 //_sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_restrained");
                 //_sourceCharacter.RemoveTrait("Unconscious", removedBy: responsibleCharacter);
                 //_sourceCharacter.CancelAllJobsAndPlans();
-                _sourceCharacter.AddTraitNeededToBeRemoved(this);
+                owner.AddTraitNeededToBeRemoved(this);
 
                 //Once a faction leader is restrained set new faction leader
                 //if (isLeader) {
@@ -62,8 +62,8 @@ namespace Traits {
                 //Messenger.RemoveListener(Signals.TICK_STARTED, CheckRestrainTrait);
                 //Messenger.RemoveListener(Signals.HOUR_STARTED, CheckRestrainTraitPerHour);
                 //_sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
-                _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
-
+                owner.RemoveTraitNeededToBeRemoved(this);
+                Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.APPREHEND, owner as IPointOfInterest);
                 //If restrained trait is removed from this character this means that the character is set free from imprisonment, either he/she was saved from abduction or freed from criminal charges
                 //When this happens, check if he/she was the leader of the faction, if true, he/she can only go back to being the ruler if he/she was not imprisoned because he/she was a criminal
                 //But if he/she was a criminal, he/she cannot go back to being the ruler
@@ -85,7 +85,7 @@ namespace Traits {
                 if (targetCharacter.isDead) {
                     return false;
                 }
-                if (!targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+                if (!targetCharacter.isCriminal) {
                     SerialKiller serialKiller = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Serial Killer") as SerialKiller;
                     if (serialKiller != null) {
                         serialKiller.SerialKillerSawButWillNotAssist(targetCharacter, this);
@@ -122,32 +122,32 @@ namespace Traits {
         #endregion
 
         private void CheckRestrainTrait() {
-            if (isPrisoner && _sourceCharacter.IsInOwnParty()) {
-                if (_sourceCharacter.needsComponent.isStarving) {
+            if (isPrisoner && owner.IsInOwnParty()) {
+                if (owner.needsComponent.isStarving) {
                     MoveFeedJobToTopPriority();
-                } else if (_sourceCharacter.needsComponent.isHungry) {
+                } else if (owner.needsComponent.isHungry) {
                     CreateFeedJob();
                 }
             }
         }
         private void CheckRestrainTraitPerHour() {
-            if (!isPrisoner && _sourceCharacter.IsInOwnParty()) { //applies even if character is being Carried: so just remove the _sourceCharacter.IsInOwnParty(), right now it cannot happen while character is being carried
-                if (_sourceCharacter.currentActionNode.action == null && _sourceCharacter.stateComponent.currentState == null
-                    && UnityEngine.Random.Range(0, 100) < 75 && !_sourceCharacter.jobQueue.HasJob(JOB_TYPE.SCREAM)
-                    && _sourceCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") == null) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SCREAM, INTERACTION_TYPE.SCREAM_FOR_HELP, _sourceCharacter, _sourceCharacter);
-                    _sourceCharacter.jobQueue.AddJobInQueue(job);
+            if (!isPrisoner && owner.IsInOwnParty()) { //applies even if character is being Carried: so just remove the _sourceCharacter.IsInOwnParty(), right now it cannot happen while character is being carried
+                if (owner.currentActionNode.action == null && owner.stateComponent.currentState == null
+                    && UnityEngine.Random.Range(0, 100) < 75 && !owner.jobQueue.HasJob(JOB_TYPE.SCREAM)
+                    && owner.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") == null) {
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SCREAM, INTERACTION_TYPE.SCREAM_FOR_HELP, owner, owner);
+                    owner.jobQueue.AddJobInQueue(job);
                 }
             }
         }
 
         private void CreateFeedJob() {
-            if (!_sourceCharacter.HasJobTargetingThis(JOB_TYPE.FEED)) {
+            if (!owner.HasJobTargetingThis(JOB_TYPE.FEED)) {
                 GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, target = GOAP_EFFECT_TARGET.TARGET };
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, _sourceCharacter, _sourceCharacter.currentSettlement);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, owner, owner.currentSettlement);
                 job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 20 });
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRestrainedFeedJob);
-                _sourceCharacter.currentSettlement.AddToAvailableJobs(job);
+                owner.currentSettlement.AddToAvailableJobs(job);
             }
         }
         private void MoveFeedJobToTopPriority() {
@@ -165,16 +165,23 @@ namespace Traits {
             //}
         }
         private void CreateJudgementJob() {
-            if (!_sourceCharacter.HasJobTargetingThis(JOB_TYPE.JUDGEMENT)) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGEMENT, INTERACTION_TYPE.JUDGE_CHARACTER, _sourceCharacter, _sourceCharacter.currentSettlement);
+            if (!owner.HasJobTargetingThis(JOB_TYPE.JUDGEMENT)) {
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGEMENT, INTERACTION_TYPE.JUDGE_CHARACTER, owner, owner.currentSettlement);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoJudgementJob);
-                _sourceCharacter.currentSettlement.AddToAvailableJobs(job);
+                job.SetStillApplicableChecker(() => InteractionManager.Instance.IsJudgementJobStillApplicable(owner));
+                owner.currentSettlement.AddToAvailableJobs(job);
             }
         }
         public void SetIsPrisoner(bool state) {
-            isPrisoner = state;
-            if (isPrisoner && _sourceCharacter.IsInOwnParty()) {
-                CreateJudgementJob();
+            if(isPrisoner != state) {
+                isPrisoner = state;
+                if (isPrisoner) {
+                    CreateJudgementJob();
+                    Criminal criminalTrait = owner.traitContainer.GetNormalTrait<Trait>("Criminal") as Criminal;
+                    if (criminalTrait != null) {
+                        criminalTrait.crimeData.SetCrimeStatus(CRIME_STATUS.Imprisoned);
+                    }
+                }
             }
         }
     }

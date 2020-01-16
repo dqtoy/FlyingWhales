@@ -165,6 +165,20 @@ namespace Traits {
             }
             return removedTraits;
         }
+        public void RemoveAllTraitsByName(ITraitable removeFrom, string name) {
+            //List<Trait> removedTraits = new List<Trait>();
+            //List<Trait> all = new List<Trait>(allTraits);
+            for (int i = 0; i < allTraits.Count; i++) {
+                Trait trait = allTraits[i];
+                if (trait.name == name) {
+                    //removedTraits.Add(trait);
+                    if (RemoveTrait(removeFrom, i)) {
+                        i--;
+                    }
+                }
+            }
+            //return removedTraits;
+        }
         public bool RemoveTraitOnSchedule(ITraitable removeFrom, Trait trait) {
             return RemoveTrait(removeFrom, trait);
         }

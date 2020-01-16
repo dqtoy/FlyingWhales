@@ -63,7 +63,7 @@ public partial class InteractionManager {
         return character.characterClass.isNonCombatant == false || character.characterClass.className.Equals("Noble") || character.characterClass.className.Equals("Leader");
     }
     public bool CanDoJudgementJob(Character character) {
-        return character.isSettlementRuler;
+        return character.isSettlementRuler || character.isFactionLeader || character.characterClass.className == "Noble";
         //return character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER;
     }
     public bool CanDoSabotageFactionJob(Character character) {
@@ -85,7 +85,7 @@ public partial class InteractionManager {
         return SPECIAL_TOKEN.HEALING_POTION.CanBeCraftedBy(character);
     }
     public bool CanTakeBuryJob(Character character) {
-        if (!character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL) && character.isAtHomeRegion &&
+        if (!character.isCriminal && character.isAtHomeRegion &&
             character.isPartOfHomeFaction
             && character.traitContainer.GetNormalTrait<Trait>("Beast") == null /*character.role.roleType != CHARACTER_ROLE.BEAST*/) {
             return character.traitContainer.GetNormalTrait<Trait>("Worker", "Combatant") != null;
@@ -153,7 +153,7 @@ public partial class InteractionManager {
         return false;
     }
     public bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter) {
-        if (character.isAtHomeRegion && !character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL) &&
+        if (character.isAtHomeRegion && !character.isCriminal &&
             character.traitContainer.GetNormalTrait<Trait>("Coward") == null && character.currentSettlement.prison != null) {
             return character.traitContainer.GetNormalTrait<Trait>("Combatant") != null /*character.role.roleType == CHARACTER_ROLE.SOLDIER*/ &&
                    character.opinionComponent.GetRelationshipEffectWith(targetCharacter) !=
@@ -171,7 +171,7 @@ public partial class InteractionManager {
             //character.role.roleType == CHARACTER_ROLE.ADVENTURER)
             && character.traitContainer.GetNormalTrait<Trait>("Worker", "Combatant") != null
             && character.opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE 
-            && !character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)
+            && !character.isCriminal
             && targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null;
     }
     public bool CanCharacterTakeRepairJob(Character character) {
@@ -220,4 +220,23 @@ public partial class InteractionManager {
     public bool CanCharacterTakeRepairStructureJob(Character character) {
         return character.traitContainer.GetNormalTrait<Trait>("Builder") != null;
     }
+
+
+    #region Job Applicability
+    public bool IsJudgementJobStillApplicable(Character criminal) {
+        if (criminal.isDead) {
+            //Character is dead
+            return false;
+        }
+        if (criminal.currentStructure != criminal.currentSettlement.prison) {
+            //Character is no longer in jail
+            return false;
+        }
+        if (criminal.traitContainer.GetNormalTrait<Trait>("Restrained") == null) {
+            //Character is no longer restrained
+            return false;
+        }
+        return true;
+    }
+    #endregion
 }

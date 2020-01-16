@@ -25,6 +25,7 @@ namespace Traits {
         bool RemoveTrait(ITraitable removeFrom, int index, Character removedBy = null);
         void RemoveTrait(ITraitable removeFrom, List<Trait> traits);
         List<Trait> RemoveAllTraitsByType(ITraitable removeFrom, TRAIT_TYPE traitType);
+        void RemoveAllTraitsByName(ITraitable removeFrom, string name);
         bool RemoveTraitOnSchedule(ITraitable removeFrom, Trait trait);
         void RemoveAllNonPersistentTraits(ITraitable traitable);
         void RemoveAllTraits(ITraitable traitable);

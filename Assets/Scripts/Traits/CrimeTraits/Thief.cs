@@ -13,7 +13,7 @@ namespace Traits {
             type = TRAIT_TYPE.CRIMINAL;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;
-            crimeSeverity = CRIME_CATEGORY.MISDEMEANOR;
+            //crimeSeverity = CRIME_TYPE.MISDEMEANOR;
         }
     }
 }

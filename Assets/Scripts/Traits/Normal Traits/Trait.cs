@@ -65,8 +65,8 @@ namespace Traits {
             if (removedFrom is Character) {
                 Character character = removedFrom as Character;
                 character.moodComponent.RemoveMoodEffect(-moodEffect, this);    
-                if (type == TRAIT_TYPE.CRIMINAL) {
-                    if (!character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+                if (name == "Criminal") {
+                    if (!character.isCriminal) {
                         character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
                     }
                 }
