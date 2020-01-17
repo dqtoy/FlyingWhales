@@ -38,6 +38,15 @@ public class Drop : GoapAction {
         }
         return base.GetTargetStructure(node);
     }
+    public override LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {
+        object[] otherData = goapNode.otherData;
+        if (otherData != null) {
+            if (otherData.Length == 2 && otherData[0] is LocationStructure && otherData[1] is LocationGridTile) {
+                return otherData[1] as LocationGridTile;
+            }
+        }
+        return null;
+    }
     public override void OnStopWhileStarted(ActualGoapNode node) {
         base.OnStopWhileStarted(node);
         Character actor = node.actor;
@@ -78,7 +87,14 @@ public class Drop : GoapAction {
     //}
     public void AfterDropSuccess(ActualGoapNode goapNode) {
         //Character target = goapNode.poiTarget as Character;
-        goapNode.actor.currentParty.RemovePOI(goapNode.poiTarget);
+        object[] otherData = goapNode.otherData;
+        LocationGridTile tile = null;
+        if (otherData != null) {
+            if (otherData.Length == 2 && otherData[0] is LocationStructure && otherData[1] is LocationGridTile) {
+                tile = otherData[1] as LocationGridTile;
+            }
+        }
+        goapNode.actor.currentParty.RemovePOI(goapNode.poiTarget, dropLocation: tile);
         if(goapNode.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER && goapNode.associatedJobType == JOB_TYPE.APPREHEND 
             && goapNode.poiTarget.gridTileLocation.structure == goapNode.actor.homeSettlement.prison) {
             Restrained restrainedTrait = goapNode.poiTarget.traitContainer.GetNormalTrait<Trait>("Restrained") as Restrained;

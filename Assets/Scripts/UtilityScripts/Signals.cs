@@ -145,6 +145,8 @@ public static class Signals {
     public static string ON_SEIZE_TILE_OBJECT = "OnSeizeTileObject";
     public static string CHARACTER_MISSING = "OnCharacterMissing";
     public static string CHARACTER_NO_LONGER_MISSING = "OnCharacterNoLongerMissing";
+    public static string ON_SET_AS_FACTION_LEADER = "OnSetAsFactionLeader";
+    public static string ON_SET_AS_SETTLEMENT_RULER = "OnSetAsFactionLeader";
     /// <summary>
     /// Parameters (MoodComponent moodComponentModified)
     /// </summary>

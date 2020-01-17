@@ -217,14 +217,20 @@ public class CharacterInfoUI : UIMenu {
     }
     public void UpdateBasicInfo() {
         nameLbl.text = _activeCharacter.name;
-        string lvlClassText = _activeCharacter.raceClassName;
-        if (activeCharacter.isSettlementRuler) {
-            lvlClassText += " (Settlement Ruler)";
+        lvlClassLbl.text = _activeCharacter.raceClassName;
+        if(activeCharacter.isSettlementRuler || activeCharacter.isFactionLeader) {
+            string additionalText = string.Empty;
+            if (activeCharacter.isSettlementRuler) {
+                additionalText += "Settlement Ruler";
+            }
+            if (activeCharacter.isFactionLeader) {
+                if(additionalText != string.Empty) {
+                    additionalText += ", ";
+                }
+                additionalText += "Faction Leader";
+            }
+            nameLbl.text += " (" + additionalText + ")";
         }
-        if (activeCharacter.isFactionLeader) {
-            lvlClassText += " (Faction Leader)";
-        }
-        lvlClassLbl.text = lvlClassText;
         UpdateThoughtBubble();
     }
     public void UpdateThoughtBubble() {

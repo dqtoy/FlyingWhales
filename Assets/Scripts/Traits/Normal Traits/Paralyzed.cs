@@ -58,7 +58,7 @@ namespace Traits {
                         }
                     } else {
                         if (characterThatWillDoJob.opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE) {
-                            if (owner.CanPerformEndTickJobs() && !owner.HasJobTargetingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
+                            if (/*owner.CanPerformEndTickJobs() && */!owner.HasJobTargetingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
                                 if (!PlanFullnessRecovery(characterThatWillDoJob)) {
                                     if (!CreateDropJobForTirednessRecovery(characterThatWillDoJob)) {
                                         CreateDropJobForHappinessRecovery(characterThatWillDoJob);
@@ -115,8 +115,8 @@ namespace Traits {
             if (owner.marker == null) {
                 return;
             }
-            if (owner.CanPerformEndTickJobs()
-                    && (owner.needsComponent.isStarving || owner.needsComponent.isExhausted || owner.needsComponent.isForlorn || owner.traitContainer.GetNormalTrait<Trait>("Burning") != null)
+            if (/*owner.CanPerformEndTickJobs()*/
+                    /*&& */(owner.needsComponent.isStarving || owner.needsComponent.isExhausted || owner.needsComponent.isForlorn || owner.traitContainer.GetNormalTrait<Trait>("Burning") != null)
                     && UnityEngine.Random.Range(0, 100) < 75 && !owner.jobQueue.HasJob(JOB_TYPE.SCREAM)
                     && owner.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") == null
                     && !owner.HasJobTargetingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
@@ -177,12 +177,12 @@ namespace Traits {
         private bool CreateDropJobForHappinessRecovery(Character characterThatWillDoJob) {
             if (owner.needsComponent.isForlorn || owner.needsComponent.isLonely) {
                 if ((owner.homeStructure != null && owner.currentStructure != owner.homeStructure) &&
-                    (owner.currentRegion.HasStructure(STRUCTURE_TYPE.WORK_AREA) && owner.currentStructure.structureType != STRUCTURE_TYPE.WORK_AREA)) {
+                    (owner.currentRegion.HasStructure(STRUCTURE_TYPE.WILDERNESS) && owner.currentStructure.structureType != STRUCTURE_TYPE.WILDERNESS)) {
                     int chance = UnityEngine.Random.Range(0, 2);
                     if (chance == 0) {
                         return CreateActualDropJob(characterThatWillDoJob, owner.homeStructure.GetLocationStructure());
                     } else {
-                        return CreateActualDropJob(characterThatWillDoJob, owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA));
+                        return CreateActualDropJob(characterThatWillDoJob, owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
                     }
                 }
             }
@@ -196,11 +196,11 @@ namespace Traits {
         }
         private bool CreateDaydreamOrPrayJob() {
             if (owner.currentRegion.IsResident(owner)) {
-                if (owner.homeStructure != null && owner.currentRegion.HasStructure(STRUCTURE_TYPE.WORK_AREA)) {
+                if (owner.homeStructure != null && owner.currentRegion.HasStructure(STRUCTURE_TYPE.WILDERNESS)) {
                     if (owner.currentStructure == owner.homeStructure) {
                         CreateActualHappinessRecoveryJob(INTERACTION_TYPE.PRAY);
                         return true;
-                    } else if (owner.currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA) {
+                    } else if (owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
                         CreateActualHappinessRecoveryJob(INTERACTION_TYPE.DAYDREAM);
                         return true;
                     }
@@ -232,7 +232,7 @@ namespace Traits {
             return false;
         }
         private bool CreateDaydreamJob() {
-            if (owner.currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA || !owner.currentRegion.HasStructure(STRUCTURE_TYPE.WORK_AREA)) {
+            if (owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || !owner.currentRegion.HasStructure(STRUCTURE_TYPE.WILDERNESS)) {
                 CreateActualHappinessRecoveryJob(INTERACTION_TYPE.DAYDREAM);
                 return true;
             }

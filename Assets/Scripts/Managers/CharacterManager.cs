@@ -1,11 +1,8 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using Inner_Maps;
 using System.Collections.Generic;
-using System.Linq;
-using Traits;
 using System.IO;
-using System;
-using Inner_Maps;
+using System.Linq;
+using UnityEngine;
 
 public class CharacterManager : MonoBehaviour {
 
@@ -232,9 +229,18 @@ public class CharacterManager : MonoBehaviour {
         AddNewCharacter(newCharacter);
         return newCharacter;
     }
-    public void AddNewCharacter(Character character) {
+    public void AddNewCharacter(Character character, bool broadcastSignal = true) {
         _allCharacters.Add(character);
-        Messenger.Broadcast(Signals.CHARACTER_CREATED, character);
+        if (broadcastSignal) {
+            Messenger.Broadcast(Signals.CHARACTER_CREATED, character);
+        }
+    }
+    public void RemoveCharacter(Character character, bool broadcastSignal = true) {
+        if (_allCharacters.Remove(character)) {
+            if (broadcastSignal) {
+                Messenger.Broadcast(Signals.CHARACTER_REMOVED, character);
+            }
+        }
     }
     public void AddNewLimboCharacter(Character character) {
         limboCharacters.Add(character);
@@ -242,10 +248,7 @@ public class CharacterManager : MonoBehaviour {
     public void RemoveLimboCharacter(Character character) {
         limboCharacters.Remove(character);
     }
-    public void RemoveCharacter(Character character) {
-        _allCharacters.Remove(character);
-        Messenger.Broadcast<Character>(Signals.CHARACTER_REMOVED, character);
-    }
+
     public string GetDeadlySinsClassNameFromRotation() {
         if (deadlySinsRotation.Count == 0) {
             deadlySinsRotation.AddRange(sevenDeadlySinsClassNames);
@@ -457,6 +460,16 @@ public class CharacterManager : MonoBehaviour {
             Character currChar = _allCharacters[i];
             if (currChar.id == id) {
                 return currChar;
+            }
+        }
+        for (int i = 0; i < limboCharacters.Count; i++) {
+            Character currChar = limboCharacters[i];
+            if (currChar.id == id) {
+                if (currChar.isLycanthrope) {
+                    return currChar.lycanData.activeForm;
+                } else {
+                    return currChar;
+                }
             }
         }
         return null;

@@ -77,6 +77,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public bool isSettlementRuler { get; protected set; }
     public bool hasUnresolvedCrime { get; protected set; }
     public bool isConversing { get; protected set; }
+    public LycanthropeData lycanData { get; protected set; }
 
     private List<System.Action> onLeaveAreaActions;
     private POI_STATE _state;
@@ -256,6 +257,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public bool isMissing => currentMissingTicks > CharacterManager.Instance.CHARACTER_MISSING_THRESHOLD;
     public bool isBeingSeized => PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
     public bool isCriminal => traitContainer.GetNormalTrait<Trait>("Criminal") != null;
+    public bool isLycanthrope => lycanData != null;
     //public JobQueueItem currentJob => jobQueue.jobsInQueue.Count > 0 ? jobQueue.jobsInQueue[0] : null; //The current job is always the top of the queue
     #endregion
 
@@ -465,7 +467,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
 
     #region Signals
-    protected void SubscribeToSignals() {
+    public void SubscribeToSignals() {
         if (minion != null) {
             Debug.LogError(name + " is a minion and has subscribed to the signals!");
         }
@@ -2420,6 +2422,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //    log.goapAction.AdjustReferenceCount(1);
             //}
             Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
+            if (isLycanthrope) {
+                lycanData.limboForm.AddHistory(log);
+            }
             return true;
         }
         return false;
@@ -3780,7 +3785,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     private void DailyGoapProcesses() {
         needsComponent.DailyGoapProcesses();
     }
-    protected virtual void OnTickStartedWhileSeized() {
+    public virtual void OnTickStartedWhileSeized() {
         CheckMissing();
     }
     protected virtual void OnTickStarted() {
@@ -4040,6 +4045,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             List<Character> positiveCharactersWithParalyzedOrCatatonic = new List<Character>();
             for (int i = 0; i < charactersWithRel.Count; i++) {
                 Character character = charactersWithRel[i];
+                if(character.isDead || character.isMissing || homeStructure == character.homeStructure) {
+                    continue;
+                }
                 if (opinionComponent.IsFriendsWith(character)) {
                     Trait trait = character.traitContainer.GetNormalTrait<Trait>("Paralyzed", "Catatonic");
                     if (trait != null) {
@@ -6310,6 +6318,14 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 needsComponent.AdjustHope(10f);
             }
         }
+    }
+    #endregion
+
+    #region Lycanthropy
+    //NOTE: This might a bad practice since we have a special case here for lycanthrope, but I see no other way to easily know if the character is a lycan or not
+    //This way we can easily know and access the lycan data
+    public void SetLycanthropeData(LycanthropeData data) {
+        lycanData = data;
     }
     #endregion
 }

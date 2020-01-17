@@ -109,6 +109,9 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                                 } else if (targetStructure == character.homeStructure) {
                                     targetStructure = null;
                                     positiveRelatables.RemoveAt(index);
+                                } else if (chosenRelatable.isDead || chosenRelatable.isMissing) {
+                                    targetStructure = null;
+                                    positiveRelatables.RemoveAt(index);
                                 }
                             }
                             if (targetStructure != null) {

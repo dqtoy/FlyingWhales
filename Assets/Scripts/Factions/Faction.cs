@@ -390,10 +390,11 @@ public class Faction {
                         ideologyComponent.RerollIdeologies();
                     }
                     newRuler.currentRegion.AddFactionHere(this);
-                    ResetNewLeaderDesignationChance();
+                    //ResetNewLeaderDesignationChance();
                     if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
                         Messenger.RemoveListener(Signals.HOUR_STARTED, CheckForNewLeaderDesignation);
                     }
+                    Messenger.Broadcast(Signals.ON_SET_AS_FACTION_LEADER, newRuler);
                 }
                 //if(characterLeader.currentRegion != null) {
                 //    characterLeader.currentRegion.AddFactionHere(characterLeader.faction);
@@ -406,7 +407,12 @@ public class Faction {
         }
     }
     private void CheckForNewLeaderDesignation() {
-        if (UnityEngine.Random.Range(0, 100) < newLeaderDesignationChance) {
+        string debugLog = GameManager.Instance.TodayLogString() + "Checking for new faction leader designation for " + name;
+        debugLog += "\n-Chance: " + newLeaderDesignationChance;
+        int chance = UnityEngine.Random.Range(0, 100);
+        debugLog += "\n-Roll: " + chance;
+        Debug.Log(debugLog);
+        if (chance < newLeaderDesignationChance) {
             DesignateNewLeader();
         } else {
             newLeaderDesignationChance += 2;
@@ -418,8 +424,8 @@ public class Faction {
         for (int i = 0; i < characters.Count; i++) {
             Character member = characters[i];
             log += "\n\n-" + member.name;
-            if (member.isDead || member.isBeingSeized) {
-                log += "\nEither dead or seized, will not be part of candidates for faction leader";
+            if (member.isDead || member.isMissing || member.isBeingSeized) {
+                log += "\nEither dead or missing or seized, will not be part of candidates for faction leader";
                 continue;
             }
             int weight = 50;
@@ -502,7 +508,8 @@ public class Faction {
         } else {
             log += "\nCHOSEN LEADER: NONE";
         }
-        Debug.Log(log);
+        ResetNewLeaderDesignationChance();
+        Debug.Log(GameManager.Instance.TodayLogString() + log);
     }
     private void ResetNewLeaderDesignationChance() {
         newLeaderDesignationChance = 5;

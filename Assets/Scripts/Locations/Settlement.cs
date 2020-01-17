@@ -449,29 +449,35 @@ public class Settlement : IJobOwner {
         ruler = newRuler;
         if(ruler != null) {
             ruler.SetIsSettlementRuler(true);
-            ResetNewRulerDesignationChance();
+            //ResetNewRulerDesignationChance();
             if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
                 Messenger.RemoveListener(Signals.HOUR_STARTED, CheckForNewRulerDesignation);
             }
+            Messenger.Broadcast(Signals.ON_SET_AS_SETTLEMENT_RULER, ruler);
         } else {
             Messenger.AddListener(Signals.HOUR_STARTED, CheckForNewRulerDesignation);
         }
     }
     private void CheckForNewRulerDesignation() {
-        if(UnityEngine.Random.Range(0, 100) < newRulerDesignationChance) {
+        string debugLog = GameManager.Instance.TodayLogString() + "Checking for new settlement ruler designation for " + name;
+        debugLog += "\n-Chance: " + newRulerDesignationChance;
+        int chance = UnityEngine.Random.Range(0, 100);
+        debugLog += "\n-Roll: " + chance;
+        Debug.Log(debugLog);
+        if (chance < newRulerDesignationChance) {
             DesignateNewRuler();
         } else {
             newRulerDesignationChance += 2;
         }
     }
     public void DesignateNewRuler(bool willLog = true) {
-        string log = "Designating a new settlement ruler for: " + region.name + "(chance it triggered: " + newRulerDesignationChance + ")";
+        string log = GameManager.Instance.TodayLogString() + "Designating a new settlement ruler for: " + region.name + "(chance it triggered: " + newRulerDesignationChance + ")";
         newRulerDesignationWeights.Clear();
         for (int i = 0; i < residents.Count; i++) {
             Character resident = residents[i];
             log += "\n\n-" + resident.name;
-            if(resident.isDead || resident.isBeingSeized) {
-                log += "\nEither dead or seized, will not be part of candidates for ruler";
+            if(resident.isDead || resident.isMissing || resident.isBeingSeized) {
+                log += "\nEither dead or missing or seized, will not be part of candidates for ruler";
                 continue;
             }
             int weight = 50;
@@ -554,6 +560,7 @@ public class Settlement : IJobOwner {
         } else {
             log += "\nCHOSEN RULER: NONE";
         }
+        ResetNewRulerDesignationChance();
         Debug.Log(log);
     }
     private void ResetNewRulerDesignationChance() {

@@ -179,6 +179,7 @@ public class NonActionEventsComponent {
 
         string result = chatWeights.PickRandomElementGivenWeights();
         strLog += "\nResult: " + result;
+        owner.PrintLogIfActive(strLog);
 
         bool adjustOpinionBothSides = false;
         int opinionValue = 0;
@@ -218,7 +219,6 @@ public class NonActionEventsComponent {
         SchedulingManager.Instance.AddEntry(dueDate, () => owner.SetIsConversing(false), owner);
         SchedulingManager.Instance.AddEntry(dueDate, () => target.SetIsConversing(false), target);
 
-        owner.PrintLogIfActive(strLog);
     }
     #endregion
 

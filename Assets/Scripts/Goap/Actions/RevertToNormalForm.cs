@@ -37,8 +37,8 @@ public class RevertToNormalForm : GoapAction {
         //TODO: currentState.SetIntelReaction(TransformSuccessIntelReaction);
     }
     public void AfterTransformSuccess(ActualGoapNode goapNode) {
-        Lycanthrope lycanthropy = goapNode.actor.traitContainer.GetNormalTrait<Trait>("Lycanthrope") as Lycanthrope;
-        lycanthropy.RevertToNormal();
+        //Lycanthrope lycanthropy = goapNode.actor.traitContainer.GetNormalTrait<Trait>("Lycanthrope") as Lycanthrope;
+        //lycanthropy.RevertToNormal();
     }
     #endregion
 

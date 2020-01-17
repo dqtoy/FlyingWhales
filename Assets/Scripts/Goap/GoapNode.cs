@@ -205,11 +205,14 @@ public class ActualGoapNode {
                 throw new System.Exception(actor.name + " target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
             }
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION_B) {
-            List<LocationGridTile> choices = targetStructure.unoccupiedTiles.Where(x => x.UnoccupiedNeighbours.Count > 0).ToList();
-            if (choices.Count > 0) {
-                targetTile = choices[Utilities.rng.Next(0, choices.Count)];
-            } else {
-                throw new System.Exception(actor.name + " target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
+            targetTile = action.GetTargetTileToGoTo(this);
+            if(targetTile == null) {
+                List<LocationGridTile> choices = targetStructure.unoccupiedTiles.Where(x => x.UnoccupiedNeighbours.Count > 0).ToList();
+                if (choices.Count > 0) {
+                    targetTile = choices[Utilities.rng.Next(0, choices.Count)];
+                } else {
+                    throw new System.Exception(actor.name + " target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
+                }
             }
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION_B) {
             List<LocationGridTile> choices = targetStructure.unoccupiedTiles.Where(x => x.UnoccupiedNeighbours.Count > 0).ToList();
@@ -256,7 +259,12 @@ public class ActualGoapNode {
                     actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
                 }
             } else {
-                actor.marker.GoToPOI(targetPOIToGoTo, OnArriveAtTargetLocation);
+                if(actor.gridTileLocation == targetPOIToGoTo.gridTileLocation) {
+                    actor.marker.StopMovement();
+                    actor.PerformGoapAction();
+                } else {
+                    actor.marker.GoToPOI(targetPOIToGoTo, OnArriveAtTargetLocation);
+                }
             }
         }
     }
