@@ -68,7 +68,7 @@ namespace Traits {
             _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
-        public override void OnDeath(Character character) {
+        public override bool OnDeath(Character character) {
             //base.OnDeath(character);
             return character.traitContainer.RemoveTrait(character, this);
         }
