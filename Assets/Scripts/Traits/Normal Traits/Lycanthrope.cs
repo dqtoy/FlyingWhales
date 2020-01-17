@@ -43,8 +43,17 @@ namespace Traits {
             //originalForm.RemoveAlterEgo("Lycanthrope");
             //originalForm = null;
             base.OnRemoveTrait(sourceCharacter, removedBy);
-            owner.lycanData.EraseThisData(owner);
+            owner.lycanData.EraseThisDataWhenTraitIsRemoved(owner);
         }
+        //public override bool OnAfterDeath(Character character) {
+        //    if(owner.lycanData.lycanthropeForm == owner) {
+        //        owner.lycanData.EraseThisDataWhenFormDies(owner);
+        //    } else {
+        //        owner.lycanData.EraseThisDataWhenFormDies(owner);
+        //        return true;
+        //    }
+        //    return base.OnAfterDeath(character);
+        //}
         //public override void ExecuteActionPerTickEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
         //    base.ExecuteActionPerTickEffects(action, goapNode);
         //    //if (action == INTERACTION_TYPE.NAP || action == INTERACTION_TYPE.SLEEP || action == INTERACTION_TYPE.SLEEP_OUTSIDE || action == INTERACTION_TYPE.NARCOLEPTIC_NAP) {
@@ -268,13 +277,19 @@ namespace Traits {
 
         public LycanthropeData(Character originalForm) {
             this.originalForm = originalForm;
+            CreateLycanthropeForm();
             activeForm = originalForm;
-            lycanthropeForm = CharacterManager.Instance.CreateNewLimboCharacter(CharacterRole.BEAST, RACE.WOLF, originalForm.gender, FactionManager.Instance.neutralFaction);
-            lycanthropeForm.SetName(originalForm.name);
+            limboForm = lycanthropeForm;
             originalForm.traitContainer.AddTrait(originalForm, "Lycanthrope");
             lycanthropeForm.traitContainer.AddTrait(lycanthropeForm, "Lycanthrope");
             originalForm.SetLycanthropeData(this);
             lycanthropeForm.SetLycanthropeData(this);
+        }
+
+        private void CreateLycanthropeForm() {
+            lycanthropeForm = CharacterManager.Instance.CreateNewLimboCharacter(CharacterRole.BEAST, RACE.WOLF, originalForm.gender, FactionManager.Instance.neutralFaction);
+            lycanthropeForm.ConstructInitialGoapAdvertisementActions();
+            lycanthropeForm.SetName(originalForm.name);
         }
 
         public void Transform(Character character) {
@@ -291,16 +306,20 @@ namespace Traits {
             activeForm = lycanthropeForm;
             limboForm = originalForm;
             LocationGridTile tile = originalForm.gridTileLocation;
+            Region homeRegion = originalForm.homeRegion;
             PutToLimbo(originalForm);
-            ReleaseFromLimbo(lycanthropeForm, tile);
+            ReleaseFromLimbo(lycanthropeForm, tile, homeRegion);
+            Messenger.Broadcast(Signals.ON_SWITCH_FROM_LIMBO, originalForm, lycanthropeForm);
         }
 
         public void RevertToNormal() {
             activeForm = originalForm;
             limboForm = lycanthropeForm;
             LocationGridTile tile = lycanthropeForm.gridTileLocation;
+            Region homeRegion = lycanthropeForm.homeRegion;
             PutToLimbo(lycanthropeForm);
-            ReleaseFromLimbo(originalForm, tile);
+            ReleaseFromLimbo(originalForm, tile, homeRegion);
+            Messenger.Broadcast(Signals.ON_SWITCH_FROM_LIMBO, lycanthropeForm, originalForm);
         }
 
         private void PutToLimbo(Character form) {
@@ -326,43 +345,59 @@ namespace Traits {
             if (form.marker != null) {
                 form.DestroyMarker();
             }
+            form.currentRegion.RemoveCharacterFromLocation(form);
+            form.homeRegion.RemoveResident(form);
             CharacterManager.Instance.AddNewLimboCharacter(form);
             CharacterManager.Instance.RemoveCharacter(form, false);
             Messenger.AddListener(Signals.TICK_STARTED, form.OnTickStartedWhileSeized);
         }
-        private void ReleaseFromLimbo(Character form, LocationGridTile tileLocation) {
+        private void ReleaseFromLimbo(Character form, LocationGridTile tileLocation, Region homeRegion) {
             if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
                 Messenger.RemoveListener(Signals.TICK_STARTED, form.OnTickStartedWhileSeized);
             }
+            homeRegion.AddResident(form);
             form.needsComponent.OnCharacterArrivedAtLocation(tileLocation.structure.location.coreTile.region);
             form.SubscribeToSignals();
             form.SetPOIState(POI_STATE.ACTIVE);
             if (form.marker == null) {
                 form.CreateMarker();
             }
-            if (tileLocation.structure.location.coreTile.region != form.currentRegion) {
-                form.currentRegion.RemoveCharacterFromLocation(form);
-                form.marker.InitialPlaceMarkerAt(tileLocation);
-            } else {
-                form.marker.InitialPlaceMarkerAt(tileLocation, false);
-            }
+            form.marker.InitialPlaceMarkerAt(tileLocation);
+            //if (tileLocation.structure.location.coreTile.region != form.currentRegion) {
+            //    if(form.currentRegion != null) {
+            //        form.currentRegion.RemoveCharacterFromLocation(form);
+            //    }
+            //    form.marker.InitialPlaceMarkerAt(tileLocation);
+            //} else {
+            //    form.marker.InitialPlaceMarkerAt(tileLocation, false);
+            //}
             CharacterManager.Instance.AddNewCharacter(form, false);
             CharacterManager.Instance.RemoveLimboCharacter(form);
         }
 
         //Parameter: which form is this data erased?
-        public void EraseThisData(Character form) {
+        public void EraseThisDataWhenTraitIsRemoved(Character form) {
             if(form != activeForm) {
                 return;
             }
             if(form == lycanthropeForm) {
-                RevertToNormal();
                 originalForm.traitContainer.RemoveTrait(originalForm, "Lycanthrope");
-            } else {
-                lycanthropeForm.traitContainer.RemoveTrait(lycanthropeForm, "Lycanthrope");
+                RevertToNormal();
+                CharacterManager.Instance.RemoveLimboCharacter(lycanthropeForm);
             }
             originalForm.SetLycanthropeData(null);
             lycanthropeForm.SetLycanthropeData(null);
+        }
+        //Parameter: which form is this data erased?
+        public void EraseThisDataWhenFormDies(Character form) {
+            if (form != activeForm) {
+                return;
+            }
+            if (form == lycanthropeForm) {
+                RevertToNormal();
+                CharacterManager.Instance.RemoveLimboCharacter(lycanthropeForm);
+            }
+            originalForm.traitContainer.RemoveTrait(originalForm, "Lycanthrope");
         }
     }
 }

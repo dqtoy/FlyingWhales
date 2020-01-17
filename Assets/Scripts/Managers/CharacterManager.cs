@@ -119,14 +119,14 @@ public class CharacterManager : MonoBehaviour {
     public Character CreateNewLimboCharacter(CharacterRole role, RACE race, GENDER gender, Faction faction = null,
     Settlement homeLocation = null, IDwelling homeStructure = null) {
         Character newCharacter = new Character(role, race, gender);
-
+        //newCharacter.SetIsLimboCharacter(true);
         newCharacter.Initialize();
         if (faction != null) {
-            if (!faction.JoinFaction(newCharacter)) {
-                FactionManager.Instance.friendlyNeutralFaction.JoinFaction(newCharacter);
+            if (!faction.JoinFaction(newCharacter, false)) {
+                FactionManager.Instance.friendlyNeutralFaction.JoinFaction(newCharacter, false);
             }
         } else {
-            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
+            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter, false);
         }
         newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {

@@ -38,17 +38,17 @@ namespace Traits {
             owner.marker.SetMarkerColor(Color.white);
             owner.ForceCancelAllJobsTargettingThisCharacterExcept(JOB_TYPE.REMOVE_TRAIT, name, removedBy);
         }
-        public override void OnDeath(Character character) {
-            base.OnDeath(character);
+        public override bool OnDeath(Character character) {
             if (character.characterClass.className == "Zombie") {
                 //if the character that died is a zombie, remove this trait
                 Messenger.RemoveListener<Character, Character>(Signals.CHARACTER_WAS_HIT, OnCharacterHit);
-                owner.traitContainer.RemoveTrait(owner, this);
+                return owner.traitContainer.RemoveTrait(owner, this);
             } else {
                 //Messenger.RemoveListener(Signals.HOUR_STARTED, PerHour);
                 doNotCheckPerHour = true;
                 SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(30)), StartReanimationCheck, this);
             }
+            return base.OnDeath(character);
         }
         public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
             if (traitOwner is Character) {

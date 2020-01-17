@@ -35,9 +35,9 @@ namespace Traits {
             //traitOwner.needsComponent.AdjustHappinessDecreaseRate(-_happinessDecreaseRate);
             Messenger.RemoveListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
         }
-        public override void OnDeath(Character character) {
-            base.OnDeath(character);
+        public override bool OnDeath(Character character) {
             Messenger.RemoveListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
+            return base.OnDeath(character);
         }
         public override void OnReturnToLife(Character character) {
             base.OnReturnToLife(character);

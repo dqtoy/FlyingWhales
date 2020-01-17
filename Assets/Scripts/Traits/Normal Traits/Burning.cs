@@ -57,9 +57,9 @@ namespace Traits {
             } 
             sourceOfBurning.RemoveObjectOnFire(owner);
         }
-        public override void OnDeath(Character character) {
-            base.OnDeath(character);
-            character.traitContainer.RemoveTrait(character, this);
+        public override bool OnDeath(Character character) {
+            //base.OnDeath(character);
+            return character.traitContainer.RemoveTrait(character, this);
         }
         public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
             if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.DOUSE_FIRE) && (characterThatWillDoJob.stateComponent.currentState == null || characterThatWillDoJob.stateComponent.currentState.characterState != CHARACTER_STATE.DOUSE_FIRE)) {

@@ -37,11 +37,11 @@ namespace Traits {
             //    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, character);
             //}
         }
-        public override void OnDeath(Character character) {
-            base.OnDeath(character);
+        public override bool OnDeath(Character character) {
+            //base.OnDeath(character);
             Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
             Messenger.RemoveListener<Character, Character>(Signals.CHARACTER_REMOVED_FROM_VISION, OnCharacterRemovedFromVision);
-            _sourceCharacter.traitContainer.RemoveTrait(_sourceCharacter, this);
+            return _sourceCharacter.traitContainer.RemoveTrait(_sourceCharacter, this);
         }
         #endregion
 

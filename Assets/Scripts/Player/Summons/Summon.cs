@@ -122,7 +122,9 @@ public class Summon : Character, IWorldObject {
             traitContainer.RemoveAllTraitsByName(this, "Criminal"); //remove all criminal type traits
 
             for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-                traitContainer.allTraits[i].OnDeath(this);
+                if (traitContainer.allTraits[i].OnDeath(this)) {
+                    i--;
+                }
             }
 
             marker?.OnDeath(deathTile);

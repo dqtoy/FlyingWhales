@@ -77,6 +77,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public bool isSettlementRuler { get; protected set; }
     public bool hasUnresolvedCrime { get; protected set; }
     public bool isConversing { get; protected set; }
+    //public bool isLimboCharacter { get; protected set; }
     public LycanthropeData lycanData { get; protected set; }
 
     private List<System.Action> onLeaveAreaActions;
@@ -720,7 +721,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             LocationStructure deathStructure = currentStructure;
             LocationGridTile deathTile = gridTileLocation;
             for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-                traitContainer.allTraits[i].OnDeath(this);
+                if (traitContainer.allTraits[i].OnDeath(this)) {
+                    i--;
+                }
             }
             //------------------------ Things that are above this line are called before letting the character die so that if we need things done before actually setting the death of character we can do it here like cleaning up necessary things, etc.
             SetIsDead(true);
@@ -2403,6 +2406,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void SetHaUnresolvedCrime(bool state) {
         hasUnresolvedCrime = state;
     }
+    //public void SetIsLimboCharacter(bool state) {
+    //    isLimboCharacter = state;
+    //}
     #endregion    
 
     #region History/Logs
@@ -4769,7 +4775,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void OnPlacePOI() { /*FOR INTERFACE ONLY*/ }
     public void OnDestroyPOI() { /*FOR INTERFACE ONLY*/ }
     public virtual bool IsStillConsideredPartOfAwarenessByCharacter(Character character) {
-        if(character.currentRegion == currentRegion) {
+        if(character.currentRegion == currentRegion && !isBeingSeized && !isMissing) {
             if (!isDead && currentParty.icon.isTravellingOutside) {
                 return false;
             }

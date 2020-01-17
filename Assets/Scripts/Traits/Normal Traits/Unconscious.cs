@@ -69,8 +69,8 @@ namespace Traits {
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
         public override void OnDeath(Character character) {
-            base.OnDeath(character);
-            character.traitContainer.RemoveTrait(character, this);
+            //base.OnDeath(character);
+            return character.traitContainer.RemoveTrait(character, this);
         }
         public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
             if (traitOwner is Character) {

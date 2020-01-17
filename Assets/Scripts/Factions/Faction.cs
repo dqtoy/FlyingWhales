@@ -128,7 +128,7 @@ public class Faction {
     #endregion
 
     #region Characters
-    public bool JoinFaction(Character character) {
+    public bool JoinFaction(Character character, bool broadcastSignal = true) {
         if (ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
             if (!characters.Contains(character)) {
                 characters.Add(character);
@@ -140,7 +140,9 @@ public class Faction {
                         character.AssignRole(CharacterRole.ADVENTURER);
                     }
                 }
-                Messenger.Broadcast(Signals.CHARACTER_ADDED_TO_FACTION, character, this);
+                if (broadcastSignal) {
+                    Messenger.Broadcast(Signals.CHARACTER_ADDED_TO_FACTION, character, this);
+                }
             }
             return true;
         }

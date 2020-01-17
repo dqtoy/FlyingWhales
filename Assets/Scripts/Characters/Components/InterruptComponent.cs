@@ -79,7 +79,7 @@ public class InterruptComponent {
         bool willCheckInvision = currentInterrupt.duration > 0;
         currentInterrupt = null;
         currentDuration = 0;
-        if (willCheckInvision) {
+        if (willCheckInvision && owner.marker != null) {
             for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
                 Character inVisionCharacter = owner.marker.inVisionCharacters[i];
                 owner.CreateJobsOnEnterVisionWith(inVisionCharacter);

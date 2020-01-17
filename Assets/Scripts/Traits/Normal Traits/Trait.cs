@@ -41,10 +41,11 @@ namespace Traits {
         //public Dictionary<ITraitable, string> expiryTickets { get; private set; } //this is the key for the scheduled removal of this trait for each object
         public ActualGoapNode gainedFromDoing { get; private set; } //what action was this poi involved in that gave it this trait.
         public GameDate dateEstablished { get; protected set; }
-        public virtual bool isPersistent { get { return false; } } //should this trait persist through all a character's alter egos
         //public virtual bool isRemovedOnSwitchAlterEgo { get { return false; } }
         public string moodModificationDescription => name;
         public int moodModifier => moodEffect;
+
+        public virtual bool isPersistent { get { return false; } } //should this trait persist through all a character's alter egos
 
         #region Virtuals
         public virtual void OnAddTrait(ITraitable addedTo) {
@@ -92,7 +93,8 @@ namespace Traits {
         /// This function will be called to ensure that any unneeded resources in traits can be freed up when a character dies.
         /// <see cref="Character.Death(string)"/>
         /// </summary>
-        public virtual void OnDeath(Character character) { }
+        public virtual bool OnDeath(Character character) { return false; }
+        public virtual bool OnAfterDeath(Character character) { return false; }
         /// <summary>
         /// Used to return necessary actions when a character with this trait
         /// returns to life.

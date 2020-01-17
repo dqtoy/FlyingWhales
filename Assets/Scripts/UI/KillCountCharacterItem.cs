@@ -24,6 +24,11 @@ public class KillCountCharacterItem : CharacterNameplateItem {
         SetSupportingLabelState(true);
         UpdateInfo();
     }
+    public override void UpdateObject(Character character) {
+        base.UpdateObject(character);
+        SetSupportingLabelState(true);
+        UpdateInfo();
+    }
     public override void Reset() {
         base.Reset();
         Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);

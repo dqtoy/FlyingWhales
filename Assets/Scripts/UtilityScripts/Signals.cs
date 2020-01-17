@@ -147,6 +147,8 @@ public static class Signals {
     public static string CHARACTER_NO_LONGER_MISSING = "OnCharacterNoLongerMissing";
     public static string ON_SET_AS_FACTION_LEADER = "OnSetAsFactionLeader";
     public static string ON_SET_AS_SETTLEMENT_RULER = "OnSetAsFactionLeader";
+    public static string ON_SWITCH_FROM_LIMBO = "OnSwitchFromLimbo";
+
     /// <summary>
     /// Parameters (MoodComponent moodComponentModified)
     /// </summary>

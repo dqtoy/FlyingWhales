@@ -12,10 +12,19 @@ public class CharacterNameplateItem : NameplateItem<Character> {
     [SerializeField] private GameObject restrainedIcon;
 
     public Character character { get; private set; }
+    public bool isActive { get; private set; }
 
     #region Overrides
     public override void SetObject(Character character) {
         base.SetObject(character);
+        this.character = character;
+        mainLbl.text = character.name;
+        subLbl.text = character.raceClassName;
+        portrait.GeneratePortrait(character);
+        UpdateStatusIcons();
+    }
+    public override void UpdateObject(Character character) {
+        base.UpdateObject(character);
         this.character = character;
         mainLbl.text = character.name;
         subLbl.text = character.raceClassName;
@@ -41,6 +50,10 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         SetPortraitInteractableState(true);
     }
     #endregion
+
+    public void SetIsActive(bool state) {
+        isActive = state;
+    }
 
     /// <summary>
     /// Set this nameplate to behave in the default settings (button, onclick shows character UI, etc.)

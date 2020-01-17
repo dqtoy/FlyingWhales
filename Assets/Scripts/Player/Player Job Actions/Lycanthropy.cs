@@ -130,7 +130,8 @@ public class LycanthropyData : PlayerJobActionData {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
-        targetPOI.traitContainer.AddTrait(targetPOI, "Lycanthrope");
+        //targetPOI.traitContainer.AddTrait(targetPOI, "Lycanthrope");
+        LycanthropeData lycanthropeData = new LycanthropeData(targetPOI as Character);
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, "Lycanthrope", LOG_IDENTIFIER.STRING_1);

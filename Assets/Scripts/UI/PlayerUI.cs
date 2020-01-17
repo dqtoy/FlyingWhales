@@ -266,6 +266,7 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<Character>(Signals.CHARACTER_BECOMES_MINION_OR_SUMMON, CharacterBecomesMinionOrSummon);
         Messenger.AddListener<Character>(Signals.CHARACTER_BECOMES_NON_MINION_OR_SUMMON, CharacterBecomesNonMinionOrSummon);
         Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
+        Messenger.AddListener<Character, Character>(Signals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
     }
 
     #region Listeners
@@ -358,9 +359,10 @@ public class PlayerUI : MonoBehaviour {
         //CheckIfAllCharactersWipedOut();
     }
     private void OnCharacterAddedToFaction(Character character, Faction faction) {
-        if (faction == FactionManager.Instance.neutralFaction) {
-            TransferCharacterFromActiveToInactive(character);
-        } else if (faction.isPlayerFaction /*|| faction == FactionManager.Instance.friendlyNeutralFaction*/) {
+        //if (faction == FactionManager.Instance.neutralFaction) {
+        //    TransferCharacterFromActiveToInactive(character);
+        //} else 
+        if (faction.isPlayerFaction /*|| faction == FactionManager.Instance.friendlyNeutralFaction*/) {
             OnCharacterBecomesMinionOrSummon(character);
         } else {
             TransferCharacterFromInactiveToActive(character);
@@ -371,8 +373,32 @@ public class PlayerUI : MonoBehaviour {
     private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass currentClass) {
         CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
         if (item != null) {
-            item.SetObject(character);
+            item.UpdateObject(character);
+        } else {
+            item = GetInactiveCharacterNameplateItem(character);
+            if (item != null) {
+                item.UpdateObject(character);
+            }
         }
+    }
+    private void OnCharacterSwitchFromLimbo(Character fromCharacter, Character toCharacter) {
+        CharacterNameplateItem item = GetActiveCharacterNameplateItem(fromCharacter);
+        if (item != null) {
+            item.UpdateObject(toCharacter);
+        } else {
+            item = GetInactiveCharacterNameplateItem(fromCharacter);
+            if (item != null) {
+                item.UpdateObject(toCharacter);
+            }
+        }
+        if (!toCharacter.IsAble()/* || toCharacter.isFactionless*/) {
+            TransferCharacterFromActiveToInactive(toCharacter);
+        } else if (toCharacter.faction.isPlayerFaction /*|| faction == FactionManager.Instance.friendlyNeutralFaction*/) {
+            OnCharacterBecomesMinionOrSummon(toCharacter);
+        } else {
+            TransferCharacterFromInactiveToActive(toCharacter);
+        }
+        UpdateKillCount();
     }
     private void AddedNewCharacter(Character character) {
         OnAddNewCharacter(character);
@@ -1659,11 +1685,13 @@ public class PlayerUI : MonoBehaviour {
         aliveHeader.transform.SetAsFirstSibling();
         for (int i = 0; i < alive.Count; i++) {
             CharacterNameplateItem currItem = alive[i];
+            currItem.SetIsActive(true);
             currItem.transform.SetSiblingIndex(i + 1);
         }
         deadHeader.transform.SetSiblingIndex(alive.Count + 1);
         for (int i = 0; i < dead.Count; i++) {
             CharacterNameplateItem currItem = dead[i];
+            currItem.SetIsActive(false);
             currItem.transform.SetSiblingIndex(alive.Count + i + 2);
         }
         //OrderKillSummaryItems();
@@ -1687,18 +1715,20 @@ public class PlayerUI : MonoBehaviour {
         item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, false));
         item.gameObject.SetActive(true);
         unusedKillCountCharacterItems--;
-        if (character.isFactionless
+        if (/*character.isFactionless*/
             //|| character.faction == PlayerManager.Instance.player.playerFaction
             //|| character.faction == FactionManager.Instance.disguisedFaction
-            || !character.IsAble()) { //added checking for faction in cases that the character was raised from dead (Myk, if the concern here is only from raise dead, I changed the checker to returnedToLife to avoid conflicts with factions, otherwise you can return it to normal. -Chy)
+            /*||*/ !character.IsAble()) { //added checking for faction in cases that the character was raised from dead (Myk, if the concern here is only from raise dead, I changed the checker to returnedToLife to avoid conflicts with factions, otherwise you can return it to normal. -Chy)
             if (allFilteredCharactersCount == killCountCharacterItems.Count) {
                 item.transform.SetAsLastSibling();
             } else {
                 item.transform.SetSiblingIndex(allFilteredCharactersCount + 2);
             }
+            item.SetIsActive(false);
         } else {
             aliveCount++;
             item.transform.SetSiblingIndex(deadHeader.transform.GetSiblingIndex());
+            item.SetIsActive(true);
         }
         UpdateKillCount();
     }
@@ -1707,28 +1737,58 @@ public class PlayerUI : MonoBehaviour {
             return;
         }
         CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
+        if(item != null) {
+            if (allFilteredCharactersCount == killCountCharacterItems.Count) {
+                item.transform.SetAsLastSibling();
+            } else {
+                item.transform.SetSiblingIndex(allFilteredCharactersCount + 2);
+            }
+            aliveCount--;
+            item.SetIsActive(false);
+        }
+        //UpdateKillCount();
+    }
+    private void TransferCharacterFromActiveToInactive(CharacterNameplateItem nameplate) {
+        if (!WillCharacterBeShownInKillCount(nameplate.character)) {
+            return;
+        }
+        if (!nameplate.isActive) {
+            return;
+        }
         if (allFilteredCharactersCount == killCountCharacterItems.Count) {
-            item.transform.SetAsLastSibling();
+            nameplate.transform.SetAsLastSibling();
         } else {
-            item.transform.SetSiblingIndex(allFilteredCharactersCount + 2);
+            nameplate.transform.SetSiblingIndex(allFilteredCharactersCount + 2);
         }
         aliveCount--;
-        //UpdateKillCount();
+        nameplate.SetIsActive(false);
     }
     private void TransferCharacterFromInactiveToActive(Character character) {
         if (!WillCharacterBeShownInKillCount(character)) {
             return;
         }
         CharacterNameplateItem item = GetInactiveCharacterNameplateItem(character);
-
         if (item != null) {
             int index = item.transform.GetSiblingIndex();
             int deadHeaderIndex = deadHeader.transform.GetSiblingIndex();
-            if (index > deadHeaderIndex) {
-                item.transform.SetSiblingIndex(deadHeaderIndex);
-                aliveCount++;
-            }
+            item.transform.SetSiblingIndex(deadHeaderIndex);
+            aliveCount++;
+            item.SetIsActive(true);
         }
+        //UpdateKillCount();
+    }
+    private void TransferCharacterFromInactiveToActive(CharacterNameplateItem nameplate) {
+        if (!WillCharacterBeShownInKillCount(nameplate.character)) {
+            return;
+        }
+        if (nameplate.isActive) {
+            return;
+        }
+        int index = nameplate.transform.GetSiblingIndex();
+        int deadHeaderIndex = deadHeader.transform.GetSiblingIndex();
+        nameplate.transform.SetSiblingIndex(deadHeaderIndex);
+        aliveCount++;
+        nameplate.SetIsActive(true);
         //UpdateKillCount();
     }
     private void OnCharacterBecomesMinionOrSummon(Character character) {
@@ -1739,6 +1799,15 @@ public class PlayerUI : MonoBehaviour {
             allFilteredCharactersCount--;
             unusedKillCountCharacterItems++;
             //UpdateKillCount();
+        } else {
+            item = GetInactiveCharacterNameplateItem(character);
+            if (item != null) {
+                item.gameObject.SetActive(false);
+                aliveCount--;
+                allFilteredCharactersCount--;
+                unusedKillCountCharacterItems++;
+                //UpdateKillCount();
+            }
         }
     }
     private void OnCharacterBecomesNonMinionOrSummon(Character character) {
@@ -1758,7 +1827,7 @@ public class PlayerUI : MonoBehaviour {
         int killCountCharacterItemsCount = killCountCharacterItems.Count;
         for (int i = 0; i < killCountCharacterItemsCount; i++) {
             CharacterNameplateItem item = killCountCharacterItems[i];
-            if (item.gameObject.activeSelf && item.character == character) {
+            if (item.gameObject.activeSelf && item.isActive && item.character == character) {
                 return item;
             }
         }
@@ -1768,7 +1837,7 @@ public class PlayerUI : MonoBehaviour {
         int killCountCharacterItemsCount = killCountCharacterItems.Count;
         for (int i = killCountCharacterItemsCount - 1; i >= 0; i--) {
             CharacterNameplateItem item = killCountCharacterItems[i];
-            if (item.gameObject.activeSelf && item.character == character) {
+            if (item.gameObject.activeSelf && !item.isActive && item.character == character) {
                 return item;
             }
         }
