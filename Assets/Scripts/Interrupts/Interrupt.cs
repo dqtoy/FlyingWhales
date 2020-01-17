@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Interrupts {
-    public class Interrupt {
+    public class Interrupt : IReactable {
         public INTERRUPT interrupt { get; protected set; }
         public string name { get; protected set; }
         public int duration { get; protected set; }

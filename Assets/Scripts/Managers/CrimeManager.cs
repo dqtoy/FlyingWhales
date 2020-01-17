@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Traits;
+using Interrupts;
 
 public class CrimeManager : MonoBehaviour {
     public static CrimeManager Instance;
@@ -12,7 +13,7 @@ public class CrimeManager : MonoBehaviour {
 	}
 
     #region Character
-    public void MakeCharacterACriminal(Character character, CRIME_TYPE crimeType, GoapAction committedCrime) {
+    public void MakeCharacterACriminal(Character character, CRIME_TYPE crimeType, IReactable committedCrime) {
         Criminal criminalTrait = new Criminal();
         character.traitContainer.AddTrait(character, criminalTrait);
         criminalTrait.SetCrime(crimeType, committedCrime);
@@ -46,6 +47,13 @@ public class CrimeManager : MonoBehaviour {
         }
         return CRIME_TYPE.NONE;
     }
+    public CRIME_TYPE GetCrimeTypeConsideringInterrupt(Character considerer, Character actor, Interrupt interrupt) {
+        if (interrupt.interrupt == INTERRUPT.Transform_To_Wolf
+            || interrupt.interrupt == INTERRUPT.Revert_To_Normal) {
+            return CRIME_TYPE.HEINOUS;
+        }
+        return CRIME_TYPE.NONE;
+    }
     #endregion
 
     #region Processes
@@ -66,6 +74,22 @@ public class CrimeManager : MonoBehaviour {
                 break;
             case CRIME_TYPE.HEINOUS:
                 ReactToHeinousCrime(reactor, committedCrime, crimeJobType);
+                break;
+        }
+    }
+    public void ReactToCrime(Character reactor, Character actor, Interrupt interrupt, CRIME_TYPE crimeType) {
+        switch (crimeType) {
+            //case CRIME_TYPE.INFRACTION:
+            //    ReactToInfraction(reactor, committedCrime, crimeJobType);
+            //    break;
+            //case CRIME_TYPE.MISDEMEANOR:
+            //    ReactToMisdemeanor(reactor, committedCrime, crimeJobType);
+            //    break;
+            //case CRIME_TYPE.SERIOUS:
+            //    ReactToSeriousCrime(reactor, committedCrime, crimeJobType);
+            //    break;
+            case CRIME_TYPE.HEINOUS:
+                ReactToHeinousCrime(reactor, actor, interrupt);
                 break;
         }
     }
@@ -110,20 +134,29 @@ public class CrimeManager : MonoBehaviour {
         reactor.opinionComponent.AdjustOpinion(committedCrime.actor, "Heinous Crime", -20);
         MakeCharacterACriminal(committedCrime.actor, CRIME_TYPE.HEINOUS, committedCrime.action);
     }
+    private void ReactToHeinousCrime(Character reactor, Character actor, Interrupt interrupt) {
+        string lastStrawReason = string.Empty;
+        if (interrupt.interrupt == INTERRUPT.Transform_To_Wolf || interrupt.interrupt == INTERRUPT.Revert_To_Normal) {
+            lastStrawReason = "is a werewolf";
+        }
+        reactor.opinionComponent.AdjustOpinion(actor, "Heinous Crime", -20);
+        MakeCharacterACriminal(actor, CRIME_TYPE.HEINOUS, interrupt);
+    }
     #endregion
 }
 
 public class CrimeData {
     public CRIME_TYPE crimeType { get; private set; }
     public CRIME_STATUS crimeStatus { get; private set; }
-    public GoapAction action { get; private set; }
+    public IReactable crime { get; private set; }
+
     public Character criminal { get; private set; }
     public Character judge { get; private set; }
     public List<Character> witnesses { get; private set; }
 
-    public CrimeData(CRIME_TYPE crimeType, GoapAction action, Character criminal) {
+    public CrimeData(CRIME_TYPE crimeType, IReactable crime, Character criminal) {
         this.crimeType = crimeType;
-        this.action = action;
+        this.crime = crime;
         this.criminal = criminal;
         witnesses = new List<Character>();
         SetCrimeStatus(CRIME_STATUS.Unpunished);

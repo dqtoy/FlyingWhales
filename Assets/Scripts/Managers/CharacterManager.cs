@@ -25,6 +25,7 @@ public class CharacterManager : MonoBehaviour {
     public int maxLevel;
     private List<Character> _allCharacters;
     private List<CharacterAvatar> _allCharacterAvatars;
+    public List<Character> limboCharacters { get; private set; }
 
     public Sprite heroSprite;
 
@@ -77,6 +78,7 @@ public class CharacterManager : MonoBehaviour {
     private void Awake() {
         Instance = this;
         _allCharacters = new List<Character>();
+        limboCharacters = new List<Character>();
         _allCharacterAvatars = new List<CharacterAvatar>();
         allCharacterLogs = new Dictionary<Character, List<string>>();
     }
@@ -115,6 +117,28 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.CreateInitialTraitsByClass();
         //newCharacter.CreateInitialTraitsByRace();
         AddNewCharacter(newCharacter);
+        return newCharacter;
+    }
+    public Character CreateNewLimboCharacter(CharacterRole role, RACE race, GENDER gender, Faction faction = null,
+    Settlement homeLocation = null, IDwelling homeStructure = null) {
+        Character newCharacter = new Character(role, race, gender);
+
+        newCharacter.Initialize();
+        if (faction != null) {
+            if (!faction.JoinFaction(newCharacter)) {
+                FactionManager.Instance.friendlyNeutralFaction.JoinFaction(newCharacter);
+            }
+        } else {
+            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
+        }
+        newCharacter.ownParty.CreateIcon();
+        if (homeLocation != null) {
+            newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
+            homeLocation.region.AddCharacterToLocation(newCharacter);
+        }
+        newCharacter.CreateInitialTraitsByClass();
+        //newCharacter.CreateInitialTraitsByRace();
+        AddNewLimboCharacter(newCharacter);
         return newCharacter;
     }
     public Character CreateNewCharacter(CharacterRole role, string className, RACE race, GENDER gender, Faction faction = null, 
@@ -211,6 +235,12 @@ public class CharacterManager : MonoBehaviour {
     public void AddNewCharacter(Character character) {
         _allCharacters.Add(character);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, character);
+    }
+    public void AddNewLimboCharacter(Character character) {
+        limboCharacters.Add(character);
+    }
+    public void RemoveLimboCharacter(Character character) {
+        limboCharacters.Remove(character);
     }
     public void RemoveCharacter(Character character) {
         _allCharacters.Remove(character);
@@ -434,6 +464,15 @@ public class CharacterManager : MonoBehaviour {
     public Character GetCharacterByName(string name) {
         for (int i = 0; i < _allCharacters.Count; i++) {
             Character currChar = _allCharacters[i];
+            if (currChar.name.Equals(name, System.StringComparison.CurrentCultureIgnoreCase)) {
+                return currChar;
+            }
+        }
+        return null;
+    }
+    public Character GetLimboCharacterByName(string name) {
+        for (int i = 0; i < limboCharacters.Count; i++) {
+            Character currChar = limboCharacters[i];
             if (currChar.name.Equals(name, System.StringComparison.CurrentCultureIgnoreCase)) {
                 return currChar;
             }

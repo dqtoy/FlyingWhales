@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Interrupts;
 
 namespace Traits {
     public class Criminal : Trait {
@@ -72,15 +73,21 @@ namespace Traits {
             }
             return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
         }
+        public override string GetNameInUI(ITraitable traitable) {
+            if(crimeData != null) {
+                return name + ":" + crimeData.crime.name;
+            }
+            return name;
+        }
         #endregion
 
         #region General
-        public void SetCrime(CRIME_TYPE crimeType, GoapAction action) {
+        public void SetCrime(CRIME_TYPE crimeType, IReactable crime) {
             if(crimeData != null) {
                 Debug.LogError("Cannot set crime to criminal " + owner.name + " because it already has a crime: " + crimeData.crimeType.ToString());
                 return;
             }
-            crimeData = new CrimeData(crimeType, action, owner);
+            crimeData = new CrimeData(crimeType, crime, owner);
         }
         #endregion
     }

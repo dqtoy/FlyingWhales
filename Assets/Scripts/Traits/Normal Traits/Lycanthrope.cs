@@ -8,6 +8,9 @@ namespace Traits {
 
         private Character _character;
 
+        public Character lycanthropeForm { get; private set; }
+        public Character originalForm { get; private set; }
+
         public override bool isPersistent { get { return true; } }
 
         private int _level;
@@ -17,9 +20,6 @@ namespace Traits {
             thoughtText = "[Character] can transform into a wolf.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
-            
-            
-            
             ticksDuration = 0;
             canBeTriggered = true;
             //effects = new List<TraitEffect>();

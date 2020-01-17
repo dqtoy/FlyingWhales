@@ -7,7 +7,7 @@ using System.Linq;
 using Inner_Maps;
 using Traits;
 
-public class GoapAction {
+public class GoapAction : IReactable {
 
     public INTERACTION_TYPE goapType { get; private set; }
     public virtual ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
@@ -28,6 +28,10 @@ public class GoapAction {
     public bool canBeAdvertisedEvenIfActorIsUnavailable { get; protected set; }
     protected TIME_IN_WORDS[] validTimeOfDays;
     public POINT_OF_INTEREST_TYPE[] advertisedBy { get; protected set; } //list of poi types that can advertise this action
+
+    #region getters
+    public string name => goapName;
+    #endregion
 
     public GoapAction(INTERACTION_TYPE goapType) { //, INTERACTION_ALIGNMENT alignment, Character actor, IPointOfInterest poiTarget
         this.goapType = goapType;

@@ -1002,6 +1002,8 @@ public enum INTERRUPT {
     Zombie_Death,
     Become_Settlement_Ruler,
     Become_Faction_Leader,
+    Transform_To_Wolf,
+    Revert_To_Normal,
 }
 public enum REWARD {
     SUPPLY,
