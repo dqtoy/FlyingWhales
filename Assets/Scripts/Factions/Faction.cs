@@ -412,7 +412,7 @@ public class Faction {
             newLeaderDesignationChance += 2;
         }
     }
-    private void DesignateNewLeader() {
+    public void DesignateNewLeader(bool willLog = true) {
         string log = "Designating a new settlement faction leader for: " + name + "(chance it triggered: " + newLeaderDesignationChance + ")";
         newLeaderDesignationWeights.Clear();
         for (int i = 0; i < characters.Count; i++) {
@@ -437,9 +437,9 @@ public class Faction {
             for (int j = 0; j < member.opinionComponent.charactersWithOpinion.Count; j++) {
                 Character otherCharacter = member.opinionComponent.charactersWithOpinion[j];
                 if (otherCharacter.faction == this) {
-                    if (member.opinionComponent.IsFriendsWith(otherCharacter)) {
+                    if (otherCharacter.opinionComponent.IsFriendsWith(member)) {
                         numberOfFriends++;
-                    } else if (member.opinionComponent.IsEnemiesWith(otherCharacter)) {
+                    } else if (otherCharacter.opinionComponent.IsEnemiesWith(member)) {
                         numberOfEnemies++;
                     }
                 }
@@ -491,8 +491,11 @@ public class Faction {
             Character chosenLeader = newLeaderDesignationWeights.PickRandomElementGivenWeights();
             if (chosenLeader != null) {
                 log += "\nCHOSEN LEADER: " + chosenLeader.name;
-                //SetRuler(chosenRuler);
-                chosenLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Faction_Leader, chosenLeader);
+                if (willLog) {
+                    chosenLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Faction_Leader, chosenLeader);
+                } else {
+                    SetLeader(chosenLeader);
+                }
             } else {
                 log += "\nCHOSEN LEADER: NONE";
             }
@@ -628,7 +631,7 @@ public class Faction {
         }
         settlement.SetInitialResidentCount(citizenCount);
         RelationshipManager.Instance.GenerateRelationships(this.characters);
-        SetLeader(null);
+        //DesignateNewLeader();
         return createdCharacters;
     }
     public string GetRaceText() {

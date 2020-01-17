@@ -63,7 +63,7 @@ public partial class InteractionManager {
         return character.characterClass.isNonCombatant == false || character.characterClass.className.Equals("Noble") || character.characterClass.className.Equals("Leader");
     }
     public bool CanDoJudgementJob(Character character) {
-        return character.isSettlementRuler || character.isFactionLeader || character.characterClass.className == "Noble";
+        return character.isSettlementRuler || character.isFactionLeader || character.characterClass.className == "Noble" || character.traitContainer.GetNormalTrait<Trait>("Combatant") != null;
         //return character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER;
     }
     public bool CanDoSabotageFactionJob(Character character) {
@@ -154,10 +154,13 @@ public partial class InteractionManager {
     }
     public bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter) {
         if (character.isAtHomeRegion && !character.isCriminal &&
-            character.traitContainer.GetNormalTrait<Trait>("Coward") == null && character.currentSettlement.prison != null) {
-            return character.traitContainer.GetNormalTrait<Trait>("Combatant") != null /*character.role.roleType == CHARACTER_ROLE.SOLDIER*/ &&
+            character.traitContainer.GetNormalTrait<Trait>("Coward") == null && character.homeSettlement != null && character.homeSettlement.prison != null) {
+            Restrained restrainedTrait = targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") as Restrained;
+            if (restrainedTrait == null || !restrainedTrait.isPrisoner) {
+                return character.traitContainer.GetNormalTrait<Trait>("Combatant") != null /*character.role.roleType == CHARACTER_ROLE.SOLDIER*/ &&
                    character.opinionComponent.GetRelationshipEffectWith(targetCharacter) !=
                    RELATIONSHIP_EFFECT.POSITIVE;
+            }
         }
         return false;
     }

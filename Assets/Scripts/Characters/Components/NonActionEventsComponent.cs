@@ -21,7 +21,7 @@ public class NonActionEventsComponent {
     }
 
     #region Utilities
-    private bool CanInteract(Character target) {
+    public bool CanInteract(Character target) {
         if (target.isDead
             || !target.canWitness
             || !owner.canWitness
@@ -31,8 +31,8 @@ public class NonActionEventsComponent {
             //|| owner.faction.isPlayerFaction
             //|| target.characterClass.className == "Zombie"
             //|| owner.characterClass.className == "Zombie"
-            || (owner.currentActionNode != null && owner.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)
-            || (target.currentActionNode != null && target.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)
+            //|| (owner.currentActionNode != null && owner.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)
+            //|| (target.currentActionNode != null && target.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)
             //|| owner.isChatting
             //|| target.isChatting
             ) {
@@ -44,9 +44,9 @@ public class NonActionEventsComponent {
 
     #region Chat
     public bool NormalChatCharacter(Character target) {
-        if (!CanInteract(target)) {
-            return false;
-        }
+        //if (!CanInteract(target)) {
+        //    return false;
+        //}
         if (UnityEngine.Random.Range(0, 100) < 50) {
             if (!owner.IsHostileWith(target)) {
                 TriggerChatCharacter(target);
@@ -56,9 +56,9 @@ public class NonActionEventsComponent {
         return false;
     }
     public bool ForceChatCharacter(Character target) {
-        if (!CanInteract(target)) {
-            return false;
-        }
+        //if (!CanInteract(target)) {
+        //    return false;
+        //}
         if (!owner.IsHostileWith(target)) {
             TriggerChatCharacter(target);
             return true;
@@ -276,9 +276,9 @@ public class NonActionEventsComponent {
 
     #region Flirt
     public bool NormalFlirtCharacter(Character target) {
-        if (!CanInteract(target)) {
-            return false;
-        }
+        //if (!CanInteract(target)) {
+        //    return false;
+        //}
         if (!owner.IsHostileWith(target)) {
             string result = TriggerFlirtCharacter(target);
             GameDate dueDate = GameManager.Instance.Today();

@@ -18,7 +18,7 @@ public class DefaultBaseStructure : CharacterBehaviourComponent {
                     bool hasForcedChat = false;
                     for (int i = 0; i < character.marker.inVisionCharacters.Count; i++) {
                         Character targetCharacter = character.marker.inVisionCharacters[i];
-                        if (targetCharacter.isConversing) {
+                        if (targetCharacter.isConversing || !character.nonActionEventsComponent.CanInteract(targetCharacter)) {
                             continue;
                         }
                         //if (character.nonActionEventsComponent.ForceChatCharacter(targetCharacter)) {

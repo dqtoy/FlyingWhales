@@ -129,8 +129,13 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         return hair.color;
     }
     private void UpdateFrame() {
-        if (_character != null && _character.role.roleType != CHARACTER_ROLE.NONE) {
-            PortraitFrame frame = CharacterManager.Instance.GetPortraitFrame(_character.role.roleType);
+        if (_character != null) {
+            PortraitFrame frame = null;
+            if (_character.isFactionLeader || _character.isSettlementRuler) {
+                frame = CharacterManager.Instance.GetPortraitFrame(CHARACTER_ROLE.LEADER);
+            } else if(_character.role != null) {
+                frame = CharacterManager.Instance.GetPortraitFrame(_character.role.roleType);
+            }
             baseBG.sprite = frame.baseBG;
             lockedFrame.sprite = frame.frameOutline;
             SetBaseBGState(true);

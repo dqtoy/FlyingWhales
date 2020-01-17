@@ -2398,6 +2398,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         pendingActionsAfterMultiThread.Clear();
     }
+    public void SetHaUnresolvedCrime(bool state) {
+        hasUnresolvedCrime = state;
+    }
     #endregion    
 
     #region History/Logs
@@ -5081,7 +5084,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //StartDailyGoapPlanGeneration();
             return;
         }
-        log = GameManager.Instance.TodayLogString() + name + " is performing goap action: " + currentActionNode.action.goapName;
+        log = name + " is performing goap action: " + currentActionNode.action.goapName;
         FaceTarget(currentActionNode.poiTarget);
         bool willStillContinueAction = true;
         OnStartPerformGoapAction(currentActionNode, ref willStillContinueAction);

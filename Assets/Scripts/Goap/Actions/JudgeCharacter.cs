@@ -24,7 +24,7 @@ public class JudgeCharacter : GoapAction {
     #endregion
 
     #region State Effects
-    public void AfterJudgeSuccess(ActualGoapNode goapNode) {
+    public void PreJudgeSuccess(ActualGoapNode goapNode) {
         WeightedDictionary<string> weights = new WeightedDictionary<string>();
         Character targetCharacter = goapNode.poiTarget as Character;
         Character actor = goapNode.actor;
@@ -127,7 +127,7 @@ public class JudgeCharacter : GoapAction {
 
         string chosen = weights.PickRandomElementGivenWeights();
         debugLog += "\n\n" + chosen;
-
+        actor.PrintLogIfActive(debugLog);
         CreateJudgeLog(goapNode, chosen);
 
         if (chosen == "Absolve") {
@@ -238,7 +238,7 @@ public class JudgeCharacter : GoapAction {
     }
     private void TargetExecuted(ActualGoapNode goapNode) {
         (goapNode.poiTarget as Character).Death("executed", deathFromAction: goapNode, responsibleCharacter: goapNode.actor);
-        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Restrained");
+        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Restrained", goapNode.actor);
     }
     private void TargetReleased(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
@@ -255,7 +255,7 @@ public class JudgeCharacter : GoapAction {
         //    goapNode.poiTarget.traitContainer.RemoveAllTraitsByType(goapNode.poiTarget, TRAIT_TYPE.CRIMINAL);
         //}
         //**Effect 1**: Remove target's Restrained trait
-        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Restrained");
+        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Restrained", goapNode.actor);
     }
     public void TargetExiled(ActualGoapNode goapNode) {
         //**Effect 2**: Target becomes unaligned and will have his Home Location set to a random different location
@@ -279,7 +279,7 @@ public class JudgeCharacter : GoapAction {
         goapNode.poiTarget.traitContainer.RemoveAllTraitsByName(goapNode.poiTarget, "Criminal");
 
         //**Effect 1**: Remove target's Restrained trait
-        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Restrained");
+        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Restrained", goapNode.actor);
     }
     public void TargetWhip(ActualGoapNode goapNode) {
         goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Injured");
@@ -287,7 +287,7 @@ public class JudgeCharacter : GoapAction {
         //**Effect 4**: Remove any Criminal type trait from him.
         goapNode.poiTarget.traitContainer.RemoveAllTraitsByName(goapNode.poiTarget, "Criminal");
         //**Effect 1**: Remove target's Restrained trait
-        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Restrained");
+        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Restrained", goapNode.actor);
     }
     #endregion
 

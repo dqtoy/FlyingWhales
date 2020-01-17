@@ -229,7 +229,7 @@ public class Settlement : IJobOwner {
         SubscribeToSignals();
         //LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
         CheckAreaInventoryJobs(mainStorage);
-        SetRuler(null);
+        //DesignateNewRuler();
     }
     public void SetIsUnderSeige(bool state) {
         if(isUnderSeige != state) {
@@ -464,7 +464,7 @@ public class Settlement : IJobOwner {
             newRulerDesignationChance += 2;
         }
     }
-    private void DesignateNewRuler() {
+    public void DesignateNewRuler(bool willLog = true) {
         string log = "Designating a new settlement ruler for: " + region.name + "(chance it triggered: " + newRulerDesignationChance + ")";
         newRulerDesignationWeights.Clear();
         for (int i = 0; i < residents.Count; i++) {
@@ -489,9 +489,9 @@ public class Settlement : IJobOwner {
             for (int j = 0; j < resident.opinionComponent.charactersWithOpinion.Count; j++) {
                 Character otherCharacter = resident.opinionComponent.charactersWithOpinion[j];
                 if (otherCharacter.homeSettlement == this) {
-                    if (resident.opinionComponent.IsFriendsWith(otherCharacter)) {
+                    if (otherCharacter.opinionComponent.IsFriendsWith(resident)) {
                         numberOfFriends++;
-                    }else if (resident.opinionComponent.IsEnemiesWith(otherCharacter)) {
+                    }else if (otherCharacter.opinionComponent.IsEnemiesWith(resident)) {
                         numberOfEnemies++;
                     }
                 }
@@ -543,8 +543,11 @@ public class Settlement : IJobOwner {
             Character chosenRuler = newRulerDesignationWeights.PickRandomElementGivenWeights();
             if (chosenRuler != null) {
                 log += "\nCHOSEN RULER: " + chosenRuler.name;
-                //SetRuler(chosenRuler);
-                chosenRuler.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Settlement_Ruler, chosenRuler);
+                if (willLog) {
+                    chosenRuler.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Settlement_Ruler, chosenRuler);
+                } else {
+                    SetRuler(chosenRuler);
+                }
             } else {
                 log += "\nCHOSEN RULER: NONE";
             }

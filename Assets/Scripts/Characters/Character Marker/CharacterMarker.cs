@@ -211,7 +211,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void OnCharacterLostTrait(Character character, Trait trait) {
         if (character == this.character) {
             string lostTraitSummary =
-                $"{GameManager.Instance.TodayLogString()}{character.name} has <color=red>lost</color> trait <b>{trait.name}</b>";
+                $"{character.name} has <color=red>lost</color> trait <b>{trait.name}</b>";
             //if the character does not have any other negative disabler trait
             //check for reactions.
             switch (trait.name) {
@@ -1026,7 +1026,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                         if (!character.CreateJobsOnEnterVisionWith(poi)) {
                             if (!character.isConversing && poi is Character) {
                                 Character target = poi as Character;
-                                if (!target.isConversing) {
+                                if (!target.isConversing && character.nonActionEventsComponent.CanInteract(target)) {
                                     if (UnityEngine.Random.Range(0, 100) < 3) {
                                         character.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, poi);
                                         //character.nonActionEventsComponent.NormalChatCharacter(poi as Character);

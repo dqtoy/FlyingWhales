@@ -55,7 +55,21 @@ public class MapGenerator : MonoBehaviour {
         GameManager.Instance.StartProgression();
         UIManager.Instance.SetSpeedTogglesState(false);
         PlayerUI.Instance.ShowStartingMinionPicker();
-
+        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+            Faction faction = FactionManager.Instance.allFactions[i];
+            if (faction.isMajorFaction) {
+                faction.DesignateNewLeader(false);
+            }
+        }
+        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+            Region region = GridMap.Instance.allRegions[i];
+            for (int j = 0; j < region.tiles.Count; j++) {
+                HexTile tile = region.tiles[j];
+                if (!tile.isCorrupted && tile.settlementOnTile != null && tile.settlementOnTile.ruler == null) {
+                    tile.settlementOnTile.DesignateNewRuler(false);
+                }
+            }
+        }
     }
     private IEnumerator InitializeWorldCoroutine(Save data) {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();

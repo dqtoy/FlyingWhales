@@ -14,8 +14,9 @@ public class RestrainCharacter : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.CANNOT_MOVE, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.TARGET }, CannotMove);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", target = GOAP_EFFECT_TARGET.TARGET }, CannotMove);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", target = GOAP_EFFECT_TARGET.TARGET });
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.CANNOT_MOVE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET));
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = poiTarget });
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -65,7 +66,7 @@ public class RestrainCharacter : GoapAction {
 
     #region Preconditions
     private bool CannotMove(Character actor, IPointOfInterest target, object[] otherData) {
-        return (target as Character).canMove == false;
+        return (target as Character).traitContainer.GetNormalTrait<Trait>("Unconscious") != null;
     }
     #endregion
 

@@ -173,9 +173,9 @@ namespace Traits {
                     //catatonic, unconscious, restrained, puked
                     ///NOTE: Puke Reactions can be found at <see cref="Puke.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/>
                     //They will trigger a personal https://trello.com/c/iDsfwQ7d/2845-character-feeling-concerned job
-                    else if (!targetCharacter.canMove && !characterThatWillDoJob.IsHostileWith(targetCharacter) && !characterThatWillDoJob.opinionComponent.IsEnemiesWith(targetCharacter)) {
-                        return CreateFeelingConcernedJob(characterThatWillDoJob, targetCharacter);
-                    }
+                    //else if (!targetCharacter.canMove && !characterThatWillDoJob.IsHostileWith(targetCharacter) && !characterThatWillDoJob.opinionComponent.IsEnemiesWith(targetCharacter)) {
+                    //    return CreateFeelingConcernedJob(characterThatWillDoJob, targetCharacter);
+                    //}
 
                     if(!characterThatWillDoJob.interruptComponent.isInterrupted && UnityEngine.Random.Range(0, 2) == 0) {
                         if (characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Diplomatic") == null) {

@@ -147,8 +147,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         }
     }
     public virtual void RemoveTileObject(Character removedBy) {
-        LocationGridTile previousTile = gridTileLocation;
-        gridTileLocation = null;
+        SetGridTileLocation(null);
         //DisableGameObject();
         //DestroyGameObject();
         //OnRemoveTileObject(removedBy, previousTile);

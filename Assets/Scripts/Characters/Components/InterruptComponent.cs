@@ -47,7 +47,7 @@ public class InterruptComponent {
                     owner.currentJob.CancelJob(false);
                 }
             }
-            triggeredInterrupt.ExecuteInterruptStartEffect(owner, targetPOI);
+            ExecuteStartInterrupt(triggeredInterrupt, targetPOI);
             Messenger.Broadcast(Signals.UPDATE_THOUGHT_BUBBLE, owner);
         } else {
             TriggeredSimultaneousInterrupt(triggeredInterrupt, targetPOI, identifier);
@@ -57,10 +57,13 @@ public class InterruptComponent {
     private bool TriggeredSimultaneousInterrupt(Interrupt interrupt, IPointOfInterest targetPOI, string identifier) {
         owner.PrintLogIfActive(owner.name + " triggered a simultaneous interrupt: " + interrupt.name);
         this.identifier = identifier;
-        interrupt.ExecuteInterruptStartEffect(owner, targetPOI);
+        ExecuteStartInterrupt(interrupt, targetPOI);
         CreateAndAddEffectLog(interrupt, targetPOI);
         interrupt.ExecuteInterruptEndEffect(owner, currentTargetPOI);
         return true;
+    }
+    private void ExecuteStartInterrupt(Interrupt interrupt, IPointOfInterest targetPOI) {
+        interrupt.ExecuteInterruptStartEffect(owner, targetPOI);
     }
     public void OnTickEnded() {
         if (isInterrupted) {

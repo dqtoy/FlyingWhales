@@ -53,7 +53,7 @@ namespace Traits {
                 if (targetCharacter.isAtHomeRegion && characterThatWillDoJob.isAtHomeRegion
                     && targetCharacter.homeRegion == characterThatWillDoJob.homeRegion
                     && characterThatWillDoJob.homeSettlement != null
-                    && !targetCharacter.isDead) { // && targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null
+                    && !targetCharacter.isDead) {
                     GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.APPREHEND);
                     if (currentJob == null) {
                         if (InteractionManager.Instance.CanCharacterTakeApprehendJob(characterThatWillDoJob, targetCharacter)) {
