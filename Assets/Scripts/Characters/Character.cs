@@ -882,6 +882,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
             deathStr = Utilities.LogReplacer(deathLog);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
+
+            for (int i = 0; i < traitContainer.allTraits.Count; i++) {
+                if (traitContainer.allTraits[i].OnAfterDeath(this, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers)) {
+                    i--;
+                }
+            }
         }
     }
     public void SetGrave(Tombstone grave) {

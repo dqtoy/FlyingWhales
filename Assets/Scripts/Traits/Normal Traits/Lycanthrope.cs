@@ -45,15 +45,10 @@ namespace Traits {
             base.OnRemoveTrait(sourceCharacter, removedBy);
             owner.lycanData.EraseThisDataWhenTraitIsRemoved(owner);
         }
-        //public override bool OnAfterDeath(Character character) {
-        //    if(owner.lycanData.lycanthropeForm == owner) {
-        //        owner.lycanData.EraseThisDataWhenFormDies(owner);
-        //    } else {
-        //        owner.lycanData.EraseThisDataWhenFormDies(owner);
-        //        return true;
-        //    }
-        //    return base.OnAfterDeath(character);
-        //}
+        public override bool OnAfterDeath(Character character, string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
+            owner.lycanData.EraseThisDataWhenFormDies(owner, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
+            return base.OnAfterDeath(character, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
+        }
         //public override void ExecuteActionPerTickEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
         //    base.ExecuteActionPerTickEffects(action, goapNode);
         //    //if (action == INTERACTION_TYPE.NAP || action == INTERACTION_TYPE.SLEEP || action == INTERACTION_TYPE.SLEEP_OUTSIDE || action == INTERACTION_TYPE.NARCOLEPTIC_NAP) {
@@ -383,21 +378,24 @@ namespace Traits {
             if(form == lycanthropeForm) {
                 originalForm.traitContainer.RemoveTrait(originalForm, "Lycanthrope");
                 RevertToNormal();
-                CharacterManager.Instance.RemoveLimboCharacter(lycanthropeForm);
             }
+            CharacterManager.Instance.RemoveLimboCharacter(lycanthropeForm);
             originalForm.SetLycanthropeData(null);
             lycanthropeForm.SetLycanthropeData(null);
         }
         //Parameter: which form is this data erased?
-        public void EraseThisDataWhenFormDies(Character form) {
+        public void EraseThisDataWhenFormDies(Character form, string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
             if (form != activeForm) {
                 return;
             }
             if (form == lycanthropeForm) {
+                originalForm.traitContainer.RemoveTrait(originalForm, "Lycanthrope");
                 RevertToNormal();
-                CharacterManager.Instance.RemoveLimboCharacter(lycanthropeForm);
             }
-            originalForm.traitContainer.RemoveTrait(originalForm, "Lycanthrope");
+            CharacterManager.Instance.RemoveLimboCharacter(lycanthropeForm);
+            originalForm.SetLycanthropeData(null);
+            lycanthropeForm.SetLycanthropeData(null);
+            form.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
         }
     }
 }

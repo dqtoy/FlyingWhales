@@ -94,7 +94,7 @@ namespace Traits {
         /// <see cref="Character.Death(string)"/>
         /// </summary>
         public virtual bool OnDeath(Character character) { return false; }
-        public virtual bool OnAfterDeath(Character character) { return false; }
+        public virtual bool OnAfterDeath(Character character, string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) { return false; }
         /// <summary>
         /// Used to return necessary actions when a character with this trait
         /// returns to life.
