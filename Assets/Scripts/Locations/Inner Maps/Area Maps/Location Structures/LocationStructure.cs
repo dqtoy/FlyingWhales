@@ -195,6 +195,28 @@ public class LocationStructure {
         }
         return objs;
     }
+    public List<T> GetTileObjectsOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject {
+        List<T> objs = new List<T>();
+        for (int i = 0; i < pointsOfInterest.Count; i++) {
+            if (pointsOfInterest[i] is TileObject) {
+                TileObject obj = pointsOfInterest[i] as TileObject;
+                if (obj.tileObjectType == type) {
+                    objs.Add(obj as T);
+                }
+            }
+        }
+        return objs;
+    }
+    public List<T> GetTileObjectsOfType<T>() where T : TileObject {
+        List<T> objs = new List<T>();
+        for (int i = 0; i < pointsOfInterest.Count; i++) {
+            if (pointsOfInterest[i] is T) {
+                T obj = pointsOfInterest[i] as T;
+                objs.Add(obj);
+            }
+        }
+        return objs;
+    }
     public T GetTileObjectOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject{
         List<TileObject> objs = new List<TileObject>();
         for (int i = 0; i < pointsOfInterest.Count; i++) {

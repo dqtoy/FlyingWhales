@@ -51,11 +51,13 @@ public class QuestJobNameplate : PooledObject {
         if (job != null) {
             if (job.jobType == JOB_TYPE.CRAFT_OBJECT) {
                 hoverText = "This quest aims to build a new Goddess Statue at " + quest.region.name + ". A Goddess Statue allows any resident to assist in speeding up the ritual by offering their own sincere prayer.";
-            } else if (job.jobType == JOB_TYPE.DESTROY_PROFANE_LANDMARK) {
-                hoverText = "This quest aims to destroy one of Ruinarch's Profane structures.";
-            } else if (job.jobType == JOB_TYPE.PERFORM_HOLY_INCANTATION) {
-                hoverText = "This quest aims to perform a holy incantation at a Hallowed Grounds. If successful, it will significantly speed up the ritual.";
-            }
+            } 
+            // else if (job.jobType == JOB_TYPE.DESTROY_PROFANE_LANDMARK) {
+            //     hoverText = "This quest aims to destroy one of Ruinarch's Profane structures.";
+            // }
+            // else if (job.jobType == JOB_TYPE.PERFORM_HOLY_INCANTATION) {
+            //     hoverText = "This quest aims to perform a holy incantation at a Hallowed Grounds. If successful, it will significantly speed up the ritual.";
+            // }
             if (job.assignedCharacter != null) {
                 hoverText += " " + job.assignedCharacter.name + " is currently undertaking this quest.";
             }

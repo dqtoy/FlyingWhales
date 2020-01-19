@@ -110,48 +110,6 @@ public partial class InteractionManager {
         }
         return false;
     }
-    public bool CanCharacterTakeRemoveIllnessesJob(Character character, Character targetCharacter) {
-        if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeRegion) {
-            //if (job != null) {
-            //    GoapPlanJob goapJob = job as GoapPlanJob;
-            //    if (targetCharacter.traitContainer.GetNormalTrait<Trait>((string) goapJob.goal.conditionKey).IsResponsibleForTrait(character)) {
-            //        return false;
-            //    }
-            //    //try {
-            //    //} catch {
-            //    //    throw new Exception("Problem with CanCharacterTakeRemoveIllnessesJob of " + character.name + ". Target character is " + (targetCharacter?.name ?? "Null") + ". Job is " + (goapJob?.name ?? "Null"));
-            //    //}
-            //}
-            if (character.isFactionless) {
-                return character.race == targetCharacter.race && character.homeRegion == targetCharacter.homeRegion &&
-                       !targetCharacter.opinionComponent.IsEnemiesWith(character);
-            }
-            return !character.opinionComponent.IsEnemiesWith(targetCharacter);
-        }
-        return false;
-    }
-    public bool CanCharacterTakeRemoveSpecialIllnessesJob(Character character, Character targetCharacter) {
-        if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeRegion) {
-            //if (job != null) {
-            //    GoapPlanJob goapJob = job as GoapPlanJob;
-            //    if (targetCharacter.traitContainer.GetNormalTrait<Trait>((string) goapJob.goal.conditionKey).IsResponsibleForTrait(character)) {
-            //        return false;
-            //    }
-            //    //try {
-            //    //} catch {
-            //    //    return false;
-            //    //    //throw new Exception("Problem with CanCharacterTakeRemoveSpecialIllnessesJob of " + character.name + ". Target character is " + (targetCharacter?.name ?? "Null") + ". Job is " + (goapJob?.name ?? "Null"));
-            //    //}
-
-            //}
-            if (character.isFactionless) {
-                return character.race == targetCharacter.race && character.homeRegion == targetCharacter.homeRegion &&
-                       !targetCharacter.opinionComponent.IsEnemiesWith(character);
-            }
-            return !character.opinionComponent.IsEnemiesWith(targetCharacter) && character.traitContainer.GetNormalTrait<Trait>("Healer") != null;
-        }
-        return false;
-    }
     public bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter) {
         if (character.isAtHomeRegion && !character.isCriminal &&
             character.traitContainer.GetNormalTrait<Trait>("Coward") == null && character.homeSettlement != null && character.homeSettlement.prison != null) {

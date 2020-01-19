@@ -80,7 +80,9 @@ namespace Traits {
                     }
                 }
             } else if (targetPOI is TileObject || targetPOI is SpecialToken) {
-                character.marker.AddHostileInRange(targetPOI, checkHostility: false, isLethal: false);
+                if (Random.Range(0, 100) < 35) {
+                    character.jobComponent.TriggerDestroy(targetPOI);
+                }
             }
         }
         //public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {

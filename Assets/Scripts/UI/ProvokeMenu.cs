@@ -88,7 +88,7 @@ public class ProvokeMenu : MonoBehaviour {
             while (chosenCharacter == null && enemyCharacters.Count > 0) {
                 int index = UnityEngine.Random.Range(0, enemyCharacters.Count);
                 Character character = enemyCharacters[index];
-                if (character.HasJobTargetingThis(JOB_TYPE.UNDERMINE_ENEMY) || targetCharacter.jobQueue.HasJob(JOB_TYPE.UNDERMINE_ENEMY, character)) {
+                if (character.HasJobTargetingThis(JOB_TYPE.UNDERMINE) || targetCharacter.jobQueue.HasJob(JOB_TYPE.UNDERMINE, character)) {
                     enemyCharacters.RemoveAt(index);
                 } else {
                     chosenCharacter = character;
@@ -96,7 +96,7 @@ public class ProvokeMenu : MonoBehaviour {
             }
             if (chosenCharacter == null) {
                 actorText = "You should take revenge on your enemies.";
-                if (targetCharacter.jobQueue.HasJob(JOB_TYPE.UNDERMINE_ENEMY)) {
+                if (targetCharacter.jobQueue.HasJob(JOB_TYPE.UNDERMINE)) {
                     targetText = "That's exactly what I'm doing!"; //Don't tell me what to do!
                 } else {
                     targetText = "I should, but I rather let them fight each other.";

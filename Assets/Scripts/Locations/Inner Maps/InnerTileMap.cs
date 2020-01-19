@@ -324,14 +324,14 @@ namespace Inner_Maps {
                 from.RemoveCharacterHere(character);
                 to.AddCharacterHere(character);
                 if (from.structure != to.structure) {
-                    @from.structure?.RemoveCharacterAtLocation(character);
+                    from.structure?.RemoveCharacterAtLocation(character);
                     if (to.structure != null) {
                         to.structure.AddCharacterAtLocation(character);
                     } else {
                         throw new Exception(character.name + " is going to tile " + to.ToString() + " which does not have a structure!");
                     }
-                
                 }
+                Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.REMOVE_STATUS, character as IPointOfInterest);
             }
         
         }

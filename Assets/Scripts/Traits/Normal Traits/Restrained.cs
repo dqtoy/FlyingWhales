@@ -59,7 +59,7 @@ namespace Traits {
                 Character character = sourceCharacter as Character;
                 character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.FEED);
                 if(!(removedBy != null && removedBy.currentActionNode.action.goapType == INTERACTION_TYPE.JUDGE_CHARACTER && removedBy.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)) {
-                    character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.JUDGEMENT);
+                    character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.JUDGE_PRISONER);
                 }
                 //Messenger.RemoveListener(Signals.TICK_STARTED, CheckRestrainTrait);
                 //Messenger.RemoveListener(Signals.HOUR_STARTED, CheckRestrainTraitPerHour);
@@ -93,11 +93,11 @@ namespace Traits {
                         serialKiller.SerialKillerSawButWillNotAssist(targetCharacter, this);
                         return false;
                     }
-                    GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
+                    GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.REMOVE_STATUS, name);
                     if (currentJob == null) {
                         if (!IsResponsibleForTrait(characterThatWillDoJob) && InteractionManager.Instance.CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter)) {
                             GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, target = GOAP_EFFECT_TARGET.TARGET };
-                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect, targetCharacter, characterThatWillDoJob);
+                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_STATUS, goapEffect, targetCharacter, characterThatWillDoJob);
                             job.AddOtherData(INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.TOOL });
                             job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TokenManager.Instance.itemData[SPECIAL_TOKEN.TOOL].craftCost });
                             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
@@ -113,76 +113,23 @@ namespace Traits {
             }
             return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
         }
-        public override void OnTickStarted() {
-            base.OnTickStarted();
-            CheckRestrainTrait();
-        }
-        public override void OnHourStarted() {
-            base.OnHourStarted();
-            CheckRestrainTraitPerHour();
-        }
         #endregion
-
-        private void CheckRestrainTrait() {
-            if (isPrisoner && owner.IsInOwnParty()) {
-                if (owner.needsComponent.isStarving) {
-                    MoveFeedJobToTopPriority();
-                } else if (owner.needsComponent.isHungry) {
-                    CreateFeedJob();
-                }
-            }
-        }
-        private void CheckRestrainTraitPerHour() {
-            if (!isPrisoner && owner.IsInOwnParty()) { //applies even if character is being Carried: so just remove the _sourceCharacter.IsInOwnParty(), right now it cannot happen while character is being carried
-                if (owner.currentActionNode.action == null && owner.stateComponent.currentState == null
-                    && UnityEngine.Random.Range(0, 100) < 75 && !owner.jobQueue.HasJob(JOB_TYPE.SCREAM)
-                    && owner.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") == null) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SCREAM, INTERACTION_TYPE.SCREAM_FOR_HELP, owner, owner);
-                    owner.jobQueue.AddJobInQueue(job);
-                }
-            }
-        }
-
-        private void CreateFeedJob() {
-            if (!owner.HasJobTargetingThis(JOB_TYPE.FEED)) {
-                GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, target = GOAP_EFFECT_TARGET.TARGET };
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, owner, owner.currentSettlement);
-                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 20 });
-                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRestrainedFeedJob);
-                owner.currentSettlement.AddToAvailableJobs(job);
-            }
-        }
-        private void MoveFeedJobToTopPriority() {
-            //TODO:
-            //JobQueueItem feedJob = _sourceCharacter.specificLocation.GetJob(JOB_TYPE.FEED, _sourceCharacter);
-            //if (feedJob != null) {
-            //    if (!_sourceCharacter.specificLocation.IsJobInTopPriority(feedJob)) {
-            //        _sourceCharacter.specificLocation.MoveJobToTopPriority(feedJob);
-            //    }
-            //} else {
-            //    GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = _sourceCharacter };
-            //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect);
-            //    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRestrainedFeedJob);
-            //    _sourceCharacter.specificLocation.jobQueue.AddJobInQueue(job);
-            //}
-        }
-        private void CreateJudgementJob() {
-            if (!owner.HasJobTargetingThis(JOB_TYPE.JUDGEMENT)) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGEMENT, INTERACTION_TYPE.JUDGE_CHARACTER, owner, owner.currentSettlement);
-                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoJudgementJob);
-                job.SetStillApplicableChecker(() => InteractionManager.Instance.IsJudgementJobStillApplicable(owner));
-                owner.currentSettlement.AddToAvailableJobs(job);
-            }
-        }
+        
+        // private void CreateJudgementJob() {
+        //     if (!owner.HasJobTargetingThis(JOB_TYPE.JUDGE_PRISONER)) {
+        //         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGE_PRISONER, INTERACTION_TYPE.JUDGE_CHARACTER, owner, owner.currentSettlement);
+        //         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoJudgementJob);
+        //         job.SetStillApplicableChecker(() => InteractionManager.Instance.IsJudgementJobStillApplicable(owner));
+        //         owner.currentSettlement.AddToAvailableJobs(job);
+        //     }
+        // }
         public void SetIsPrisoner(bool state) {
             if(isPrisoner != state) {
                 isPrisoner = state;
                 if (isPrisoner) {
-                    CreateJudgementJob();
+                    // CreateJudgementJob();
                     Criminal criminalTrait = owner.traitContainer.GetNormalTrait<Trait>("Criminal") as Criminal;
-                    if (criminalTrait != null) {
-                        criminalTrait.crimeData.SetCrimeStatus(CRIME_STATUS.Imprisoned);
-                    }
+                    criminalTrait?.crimeData.SetCrimeStatus(CRIME_STATUS.Imprisoned);
                 }
             }
         }

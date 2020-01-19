@@ -35,7 +35,7 @@ public class DefaultOutside : CharacterBehaviourComponent {
                     Character chosenCharacter = character.GetParalyzedOrCatatonicCharacterToCheckOut();
                     if (chosenCharacter != null) {
                         log += "\n  -Will Check Out character " + chosenCharacter.name;
-                        character.PlanIdle(new GoapEffect(GOAP_EFFECT_CONDITION.IN_VISION, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), chosenCharacter);
+                        character.PlanIdle(JOB_TYPE.CHECK_PARALYZED_FRIEND, new GoapEffect(GOAP_EFFECT_CONDITION.IN_VISION, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), chosenCharacter);
                         return true;
                     } else {
                         log += "\n  -No available character to check out ";

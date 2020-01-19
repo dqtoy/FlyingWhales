@@ -83,7 +83,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public float attackSpeedMeter { get; private set; }
     private AnimatorOverrideController animatorOverrideController; //this is the controller that is made per character
     public float attackExecutedTime { get; private set; } //how long into the attack animation is this character's attack actually executed.
-
+    private HexTile _previousHexTileLocation;
+    
     public void SetCharacter(Character character) {
         base.Initialize(character);
         this.name = character.name + "'s Marker";
@@ -446,13 +447,17 @@ public class CharacterMarker : MapObjectVisual<Character> {
         StopPerTickFlee();
         PathfindingManager.Instance.RemoveAgent(pathfindingAI);
         RemoveListeners();
-
+        
+        Messenger.Broadcast(Signals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);
+        
         visionCollision.Reset();
         GameObject.Destroy(collisionTrigger.gameObject);
         collisionTrigger = null;
         SetCollidersState(false);
         pathfindingAI.ResetThis();
         character = null;
+        _previousGridTile = null;
+        _previousHexTileLocation = null;
     }
     #endregion
 
@@ -812,6 +817,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (_previousGridTile != character.gridTileLocation) {
             character.gridTileLocation.parentMap.location.innerMap.OnCharacterMovedTo(character, character.gridTileLocation, _previousGridTile);
             _previousGridTile = character.gridTileLocation;
+            if (_previousHexTileLocation == null || _previousHexTileLocation != character.gridTileLocation.buildSpotOwner.hexTileOwner) {
+                if (_previousHexTileLocation != null) {
+                    Messenger.Broadcast(Signals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);    
+                }
+                _previousHexTileLocation = character.gridTileLocation.buildSpotOwner.hexTileOwner;
+                Messenger.Broadcast(Signals.CHARACTER_ENTERED_HEXTILE, character, character.gridTileLocation.buildSpotOwner.hexTileOwner);
+            }
         }
     }
     /// <summary>

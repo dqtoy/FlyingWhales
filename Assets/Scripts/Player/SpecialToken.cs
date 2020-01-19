@@ -148,6 +148,7 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
         isDestroyed = true;
         DisableGameObject();
         Messenger.Broadcast(Signals.ITEM_REMOVED_FROM_TILE, this, tile);
+        Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.REPAIR, this as IPointOfInterest);
         //for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
         //    Character character = CharacterManager.Instance.allCharacters[i];
         //    character.RemoveAwareness(this);
@@ -273,6 +274,11 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
                 removedBy = source as Character;
             }
             gridTileLocation.structure.RemovePOI(this, removedBy);
+        }
+        if (amount < 0) {
+            Messenger.Broadcast(Signals.OBJECT_DAMAGED, this as IPointOfInterest);    
+        } else if (currentHP == maxHP) {
+            Messenger.Broadcast(Signals.OBJECT_REPAIRED, this as IPointOfInterest);
         }
     }
     public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {

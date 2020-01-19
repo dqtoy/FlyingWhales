@@ -62,10 +62,10 @@ namespace Traits {
                 if (targetTable.food < 20 && targetTable.structureLocation.isDwelling) {
                     IDwelling dwelling = targetTable.structureLocation as IDwelling;
                     if (dwelling.IsResident(characterThatWillDoJob)) {
-                        if (!targetTable.HasJobTargetingThis(JOB_TYPE.TAKE_PERSONAL_FOOD)) {
+                        if (!targetTable.HasJobTargetingThis(JOB_TYPE.OBTAIN_PERSONAL_FOOD)) {
                             int neededFood = 60 - targetTable.food;
                             GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_FOOD, "0", true, GOAP_EFFECT_TARGET.TARGET);
-                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TAKE_PERSONAL_FOOD, effect, targetTable, characterThatWillDoJob);
+                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_FOOD, effect, targetTable, characterThatWillDoJob);
                             //job.AddOtherData(INTERACTION_TYPE.DROP_RESOURCE, new object[] { neededFood });
                             job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { neededFood });
                             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
@@ -82,20 +82,7 @@ namespace Traits {
                         characterThatWillDoJob.jobQueue.AddJobInQueue(inspectJob);
                         return true;
                     }
-                } else if (tileObj is GoddessStatue) {
-                    if (Random.Range(0, 100) < 15 && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.PRAY_GODDESS_STATUE, tileObj) && tileObj.state == POI_STATE.ACTIVE) {
-                        GoapPlanJob prayJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PRAY_GODDESS_STATUE, INTERACTION_TYPE.PRAY_TILE_OBJECT, tileObj, characterThatWillDoJob);
-                        characterThatWillDoJob.jobQueue.AddJobInQueue(prayJob);
-                        return true;
-                    }
-                } 
-                //else {
-                //    if (tileObj.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
-                //        GoapPlanJob buildJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_TILE_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, tileObj, characterThatWillDoJob);
-                //        characterThatWillDoJob.jobQueue.AddJobInQueue(buildJob);
-                //        return true;
-                //    }
-                //}
+                }
             }
             if (targetPOI is SpecialToken) {
                 if (characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Beast") == null /*characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST*/) {
@@ -146,17 +133,9 @@ namespace Traits {
                     }
                 } else { 
                     //character is not dead
-                     //When someone sees another character carrying a character that is unconscious or restrained, and that character is not a branded criminal, and not the carrier's lover or relative, the carrier will be branded as Assaulter and Crime Handling will take place.
-                     //if (targetCharacter.IsInOwnParty() && targetCharacter.currentParty.characters.Count > 1 && !targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) { //This means that this character is carrrying another character
-                     //    Character carriedCharacter = targetCharacter.currentParty.characters[1];
-                     //    if (characterThatWillDoJob != carriedCharacter && !carriedCharacter.isDead && carriedcharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Restrained") != null) {
-                     //        if (!targetCharacter.HasRelationshipOfTypeWith(carriedCharacter, false, RELATIONSHIP_TRAIT.RELATIVE, RELATIONSHIP_TRAIT.LOVER)) {
-                     //            if (targetCharacter.currentActionNode.action != null && !targetCharacter.currentActionNode.action.hasCrimeBeenReported) {
-                     //                characterThatWillDoJob.ReactToCrime(CRIME.ASSAULT, targetCharacter.currentActionNode.action, targetCharacter.currentAlterEgo, SHARE_INTEL_STATUS.WITNESSED);
-                     //            }
-                     //        }
-                     //    }
-                     //}
+                    if (targetCharacter.canMove == false || targetCharacter.canWitness == false) {
+                        characterThatWillDoJob.jobComponent.TryTriggerFeed(targetCharacter);
+                    }
 
                     #region Check Up
                     //If a character cannot assist a character in vision, they may stay with it and check up on it for a bit. Reference: https://trello.com/c/hW7y6d5W/2841-if-a-character-cannot-assist-a-character-in-vision-they-may-stay-with-it-and-check-up-on-it-for-a-bit
@@ -202,7 +181,7 @@ namespace Traits {
         #endregion
 
         private void CheckAsCriminal() {
-            if (owner.stateComponent.currentState == null && !owner.isAtHomeRegion && !owner.jobQueue.HasJob(JOB_TYPE.IDLE, INTERACTION_TYPE.RETURN_HOME)) {
+            if (owner.stateComponent.currentState == null && !owner.isAtHomeRegion && !owner.jobQueue.HasJob(JOB_TYPE.IDLE_RETURN_HOME, INTERACTION_TYPE.RETURN_HOME)) {
                 if (owner.jobQueue.jobsInQueue.Count > 0) {
                     owner.CancelAllJobs();
                 }

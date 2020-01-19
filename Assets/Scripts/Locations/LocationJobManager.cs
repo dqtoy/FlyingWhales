@@ -53,8 +53,7 @@ public class LocationJobManager {
         }
     }
     private bool IsJobAnOutsideJob(JobQueueItem job) {
-        if (job.jobType == JOB_TYPE.CLEANSE_REGION || job.jobType == JOB_TYPE.CLAIM_REGION || job.jobType == JOB_TYPE.INVADE_REGION
-            || job.jobType == JOB_TYPE.ATTACK_NON_DEMONIC_REGION || job.jobType == JOB_TYPE.ATTACK_DEMONIC_REGION) {
+        if (job.jobType == JOB_TYPE.CLEANSE_CORRUPTION || job.jobType == JOB_TYPE.CLAIM_REGION) {
             return true;
         }
         return false;
@@ -75,9 +74,10 @@ public class LocationJobManager {
                 hasCreateJob = CreateCleanseRegionJob();
             }else if (chosenJobName == "Claim") {
                 hasCreateJob = CreateClaimRegionJob();
-            } else if (chosenJobName == "Invade") {
-                hasCreateJob = CreateInvadeRegionJob();
-            }
+            } 
+            // else if (chosenJobName == "Invade") {
+            //     hasCreateJob = CreateInvadeRegionJob();
+            // }
             _jobNames.RemoveAt(index);
         }
         return hasCreateJob;
@@ -86,7 +86,7 @@ public class LocationJobManager {
         if (Random.Range(0, 2) <= 0) {
             Region region;
             if (TryGetCorruptedRegionWithoutLandmark(out region)) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CLEANSE_REGION, INTERACTION_TYPE.CLEANSE_REGION, region.regionTileObject, location);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CLEANSE_CORRUPTION, INTERACTION_TYPE.CLEANSE_REGION, region.regionTileObject, location);
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCleanseRegionJob);
                 location.AddToAvailableJobs(job);
                 return true;
@@ -106,18 +106,18 @@ public class LocationJobManager {
         }
         return false;
     }
-    private bool CreateInvadeRegionJob() {
-        if (Random.Range(0, 2) == 0) {
-            Region region;
-            if (TryGetAdjacentRegionAtWarWithThisLocation(out region)) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INVADE_REGION, INTERACTION_TYPE.INVADE_REGION, region.regionTileObject, location);
-                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoInvadeRegionJob);
-                location.AddToAvailableJobs(job);
-                return true;
-            }
-        }
-        return false;
-    }
+    // private bool CreateInvadeRegionJob() {
+    //     if (Random.Range(0, 2) == 0) {
+    //         Region region;
+    //         if (TryGetAdjacentRegionAtWarWithThisLocation(out region)) {
+    //             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INVADE_REGION, INTERACTION_TYPE.INVADE_REGION, region.regionTileObject, location);
+    //             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoInvadeRegionJob);
+    //             location.AddToAvailableJobs(job);
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
     private bool TryGetCorruptedRegionWithoutLandmark(out Region validRegion) {
         //TODO:
         // List<Region> regions = PlayerManager.Instance.player.playerFaction.ownedSettlements;
@@ -170,31 +170,32 @@ public class LocationJobManager {
         while (!hasCreateJob && _jobNames.Count > 0) {
             var index = Random.Range(0, _jobNames.Count);
             var chosenJobName = _jobNames[index];
-            if (chosenJobName == "AttackNonDemonic") {
-                hasCreateJob = CreateAttackNonDemonicRegionJobPart2();
-            } else if (chosenJobName == "AttackDemonic") {
+            // if (chosenJobName == "AttackNonDemonic") {
+            //     hasCreateJob = CreateAttackNonDemonicRegionJobPart2();
+            // } else 
+            if (chosenJobName == "AttackDemonic") {
                 hasCreateJob = CreateAttackDemonicRegionJobPart2();
             }
             _jobNames.RemoveAt(index);
         }
         return hasCreateJob;
     }
-    private bool CreateAttackNonDemonicRegionJobPart2() {
-        if (Random.Range(0, 2) == 0) {
-            Region validRegion;
-            if (TryGetOccupiedNonSettlementTileAtWarWithThisLocation(out validRegion)) {
-                validRegion = AttackNonDemonicRegionRegionGetter();
-                if (validRegion.regionTileObject == null) {
-                    throw new Exception($"Valid region's tile object is null! Valid region is {validRegion.name}");
-                }
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ATTACK_NON_DEMONIC_REGION, INTERACTION_TYPE.ATTACK_REGION, validRegion.regionTileObject, location);
-                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoAttackNonDemonicRegionJob);
-                location.AddToAvailableJobs(job);
-                return true;
-            }
-        }
-        return false;
-    }
+    // private bool CreateAttackNonDemonicRegionJobPart2() {
+    //     if (Random.Range(0, 2) == 0) {
+    //         Region validRegion;
+    //         if (TryGetOccupiedNonSettlementTileAtWarWithThisLocation(out validRegion)) {
+    //             validRegion = AttackNonDemonicRegionRegionGetter();
+    //             if (validRegion.regionTileObject == null) {
+    //                 throw new Exception($"Valid region's tile object is null! Valid region is {validRegion.name}");
+    //             }
+    //             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ATTACK_NON_DEMONIC_REGION, INTERACTION_TYPE.ATTACK_REGION, validRegion.regionTileObject, location);
+    //             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoAttackNonDemonicRegionJob);
+    //             location.AddToAvailableJobs(job);
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
     private bool CreateAttackDemonicRegionJobPart2() {
         // if (Random.Range(0, 2) == 0) {
             Region region;
@@ -231,27 +232,28 @@ public class LocationJobManager {
         while (!hasCreateJob && _jobNames.Count > 0) {
             var index = Random.Range(0, _jobNames.Count);
             var chosenJobName = _jobNames[index];
-            if (chosenJobName == "AttackNonDemonic") {
-                hasCreateJob = CreateAttackNonDemonicRegionJobPart3();
-            } else if (chosenJobName == "AttackDemonic") {
+            // if (chosenJobName == "AttackNonDemonic") {
+            //     hasCreateJob = CreateAttackNonDemonicRegionJobPart3();
+            // } else 
+            if (chosenJobName == "AttackDemonic") {
                 hasCreateJob = CreateAttackDemonicRegionJobPart3();
             }
             _jobNames.RemoveAt(index);
         }
     }
-    private bool CreateAttackNonDemonicRegionJobPart3() {
-        if (Random.Range(0, 4) == 0) {
-            if (IsAtWarWithFactionThatSettlementNotBlockedByGarrison()) {
-                Region target = AttackNonDemonicRegionRegionGetter();
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ATTACK_NON_DEMONIC_REGION,
-                    INTERACTION_TYPE.ATTACK_REGION, target.regionTileObject, location);
-                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoAttackNonDemonicRegionJob);
-                location.AddToAvailableJobs(job);
-                return true;
-            }
-        }
-        return false;
-    }
+    // private bool CreateAttackNonDemonicRegionJobPart3() {
+    //     if (Random.Range(0, 4) == 0) {
+    //         if (IsAtWarWithFactionThatSettlementNotBlockedByGarrison()) {
+    //             Region target = AttackNonDemonicRegionRegionGetter();
+    //             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ATTACK_NON_DEMONIC_REGION,
+    //                 INTERACTION_TYPE.ATTACK_REGION, target.regionTileObject, location);
+    //             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoAttackNonDemonicRegionJob);
+    //             location.AddToAvailableJobs(job);
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
     private bool CreateAttackDemonicRegionJobPart3() {
         if (Random.Range(0, 2) == 0) {
             if (IsPlayerOnlyRemainingStructureIsPortal()) {

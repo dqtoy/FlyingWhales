@@ -12,7 +12,7 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
-            actor.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN);
+            actor.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY);
             return true;
         }
         #endregion

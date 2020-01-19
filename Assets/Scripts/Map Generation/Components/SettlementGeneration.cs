@@ -24,7 +24,7 @@ public class SettlementGeneration : MapGenerationComponent {
 		
 		int randomCitizens = Random.Range(2, totalBuildSpots + 1);
 		if (totalBuildSpots > 2) { //this is so that settlements that initially have more than 1 tile are sure to occupy it.
-			randomCitizens = Random.Range(3, totalBuildSpots + 1);
+			randomCitizens = Random.Range(5, totalBuildSpots + 1);
 		}
 		
 		
@@ -33,6 +33,7 @@ public class SettlementGeneration : MapGenerationComponent {
 		int dwellingCount = GetNumberOfDwellingsToHouseCharacters(createdCharacters);
 		
 		settlement.GenerateStructures(dwellingCount);
+		settlement.AddStructure(region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
 		
 		LandmarkManager.Instance.OwnSettlement(faction, settlement);
 		//assign characters to their respective homes. No one should be homeless

@@ -18,21 +18,10 @@ namespace Traits {
         }
 
         #region Overrides
-        //public override void OnAddTrait(ITraitable sourceCharacter) {
-        //    base.OnAddTrait(sourceCharacter);
-        //    if (sourceCharacter is Character) {
-        //        (sourceCharacter as Character).AdjustMoodValue(-5, this);
-        //    }
-        //}
         public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is TileObject) {
-                TileObject tileObject = targetPOI as TileObject;
                 if (UnityEngine.Random.Range(0, 100) < 3) {
-                    if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.DESTROY, tileObject)) {
-                        GoapPlanJob destroyJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DESTROY, INTERACTION_TYPE.ASSAULT, tileObject, characterThatWillDoJob);
-                        characterThatWillDoJob.jobQueue.AddJobInQueue(destroyJob);
-                        return true;
-                    }
+                    return characterThatWillDoJob.jobComponent.TriggerDestroy(targetPOI);
                 }
             } else if (targetPOI is Character) {
                 Character targetCharacter = targetPOI as Character;

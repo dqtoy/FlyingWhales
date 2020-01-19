@@ -130,6 +130,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
                 UnoccupyTiles(objData.occupiedSize, previousTile);
             }
         }
+        Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.REPAIR, this as IPointOfInterest);
     }
     public virtual void OnPlacePOI() {
         SetPOIState(POI_STATE.ACTIVE);
@@ -356,11 +357,16 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
         if (currentHP == 0) {
             //object has been destroyed
-            Character removedBy = null;
+            Character removed = null;
             if (source is Character) {
-                removedBy = source as Character;
+                removed = source as Character;
             }
-            gridTileLocation.structure.RemovePOI(this, removedBy);
+            gridTileLocation.structure.RemovePOI(this, removed);
+        }
+        if (amount < 0) {
+            Messenger.Broadcast(Signals.OBJECT_DAMAGED, this as IPointOfInterest);    
+        } else if (currentHP == maxHP) {
+            Messenger.Broadcast(Signals.OBJECT_REPAIRED, this as IPointOfInterest);
         }
     }
     public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {

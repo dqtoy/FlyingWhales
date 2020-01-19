@@ -12,7 +12,13 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i];
 			List<ElevationIsland> islandsInRegion = GetElevationIslandsInRegion(region);
-			Debug.Log($"Islands in region {region.name} is {islandsInRegion.Count.ToString()}");
+			string islandsSummary = $"Islands in region {region.name} is {islandsInRegion.Count.ToString()}";
+			for (int j = 0; j < islandsInRegion.Count; j++) {
+				ElevationIsland island = islandsInRegion[j];
+				islandsSummary +=
+					$"\n{j.ToString()} - {island.elevation.ToString()} - {island.tilesInIsland.Count.ToString()}";
+			}
+			// Debug.Log(islandsSummary);
 			LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
 			for (int j = 0; j < islandsInRegion.Count; j++) {
 				ElevationIsland currIsland = islandsInRegion[j];
@@ -110,16 +116,22 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		return islands;
 	}
 	private List<ElevationIsland> MergeIslands(List<ElevationIsland> islands) {
-		List<ElevationIsland> mergedIslands = new List<ElevationIsland>(islands);
 		for (int i = 0; i < islands.Count; i++) {
 			ElevationIsland currIsland = islands[i];
 			for (int j = 0; j < islands.Count; j++) {
 				ElevationIsland otherIsland = islands[j];
 				if (currIsland != otherIsland) {
 					if (currIsland.IsAdjacentToIsland(otherIsland)) {
-						currIsland.MergeWithIsland(otherIsland, ref mergedIslands);
+						currIsland.MergeWithIsland(otherIsland);
 					}
 				}
+			}
+		}
+		List<ElevationIsland> mergedIslands = new List<ElevationIsland>();
+		for (int i = 0; i < islands.Count; i++) {
+			ElevationIsland island = islands[i];
+			if (island.tilesInIsland.Count > 0) {
+				mergedIslands.Add(island);
 			}
 		}
 		return mergedIslands;
@@ -254,19 +266,23 @@ public class ElevationIsland {
 	}
 
 	public void AddTile(HexTile tile) {
-		tilesInIsland.Add(tile);
+		if (tilesInIsland.Contains(tile) == false) {
+			tilesInIsland.Add(tile);	
+		}
 	}
 	private void RemoveTile(HexTile tile) {
 		tilesInIsland.Remove(tile);
 	}
-
-	public void MergeWithIsland(ElevationIsland otherIsland, ref List<ElevationIsland> allIslands) {
+	private void RemoveAllTiles() {
+		tilesInIsland.Clear();
+	}
+	
+	public void MergeWithIsland(ElevationIsland otherIsland) {
 		for (int i = 0; i < otherIsland.tilesInIsland.Count; i++) {
 			HexTile tileInOtherIsland = otherIsland.tilesInIsland[i];
 			AddTile(tileInOtherIsland);
-			otherIsland.RemoveTile(tileInOtherIsland);
 		}
-		allIslands.Remove(otherIsland);
+		otherIsland.RemoveAllTiles();
 	}
 
 	public bool IsAdjacentToIsland(ElevationIsland otherIsland) {

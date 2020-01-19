@@ -77,6 +77,7 @@ public class InterruptComponent {
     }
     private void EndInterrupt() {
         bool willCheckInvision = currentInterrupt.duration > 0;
+        Interrupt finishedInterrupt = currentInterrupt;
         currentInterrupt = null;
         currentDuration = 0;
         if (willCheckInvision && owner.marker != null) {
@@ -85,6 +86,7 @@ public class InterruptComponent {
                 owner.CreateJobsOnEnterVisionWith(inVisionCharacter);
             }
         }
+        Messenger.Broadcast(Signals.INTERRUPT_FINISHED, finishedInterrupt.interrupt, owner);
     }
     private void CreateThoughtBubbleLog() {
         if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", currentInterrupt.name, "thought_bubble")) {

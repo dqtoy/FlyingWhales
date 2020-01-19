@@ -268,7 +268,7 @@ public class GoapPlanJob : JobQueueItem {
             //    return false;
             //}
         }
-        if(jobType == JOB_TYPE.REMOVE_TRAIT && !string.IsNullOrEmpty(goal.conditionKey) && targetPOI.traitContainer.GetNormalTrait<Trait>((string) goal.conditionKey).IsResponsibleForTrait(character)) {
+        if(jobType == JOB_TYPE.REMOVE_STATUS && !string.IsNullOrEmpty(goal.conditionKey) && targetPOI.traitContainer.GetNormalTrait<Trait>((string) goal.conditionKey).IsResponsibleForTrait(character)) {
             return false;
         }
         //if(character.HasTraitOf(TRAIT_TYPE.CRIMINAL) || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -383,20 +383,19 @@ public class GoapPlanJob : JobQueueItem {
     public string GetJobDetailString() {
         switch (jobType) {
             case JOB_TYPE.OBTAIN_PERSONAL_ITEM:
-            case JOB_TYPE.REMOVE_TRAIT:
+            case JOB_TYPE.REMOVE_STATUS:
                 string text = Utilities.NormalizeStringUpperCaseFirstLetters(jobType.ToString());
                 if (!string.IsNullOrEmpty(goal.conditionKey)) {
                     text += " " + Utilities.NormalizeStringUpperCaseFirstLetters(goal.conditionKey);
                 }
                 return text;
-            case JOB_TYPE.HUNGER_RECOVERY:
-            case JOB_TYPE.HUNGER_RECOVERY_STARVING:
+            case JOB_TYPE.FULLNESS_RECOVERY_NORMAL:
+            case JOB_TYPE.FULLNESS_RECOVERY_URGENT:
                 return "Hunger Recovery";
             case JOB_TYPE.HAPPINESS_RECOVERY:
-            case JOB_TYPE.HAPPINESS_RECOVERY_FORLORN:
                 return "Happiness Recovery";
-            case JOB_TYPE.TIREDNESS_RECOVERY:
-            case JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED:
+            case JOB_TYPE.ENERGY_RECOVERY_NORMAL:
+            case JOB_TYPE.ENERGY_RECOVERY_URGENT:
                 return "Tiredness Recovery";
             default:
                 if (targetInteractionType != INTERACTION_TYPE.NONE) {

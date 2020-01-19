@@ -87,13 +87,13 @@ namespace Traits {
             //} else {
             //    return "fail_no_home";
             //}
-            ApplyAgoraphobicEffect(character);
+            ApplyAgoraphobicEffect(character, JOB_TYPE.TRIGGER_FLAW);
             return base.TriggerFlaw(character);
 
         }
         #endregion
 
-        private void ApplyAgoraphobicEffect(Character character/*, bool processCombat*/) {
+        private void ApplyAgoraphobicEffect(Character character, JOB_TYPE jobType = JOB_TYPE.FLEE_TO_HOME/*, bool processCombat*/) {
             if (!character.canPerform || !character.canWitness) {
                 return;
             }
@@ -102,13 +102,7 @@ namespace Traits {
             }
             character.traitContainer.AddTrait(character, "Anxious");
             if(character.homeStructure != null && character.currentStructure != character.homeStructure) {
-                ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], character, character, null, 0);
-                GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, character);
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.RETURN_HOME, character, character);
-                goapPlan.SetDoNotRecalculate(true);
-                job.SetCannotBePushedBack(true);
-                job.SetAssignedPlan(goapPlan);
-                character.jobQueue.AddJobInQueue(job);
+                character.jobComponent.TriggerFleeHome(jobType);
             } else {
                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character);
             }

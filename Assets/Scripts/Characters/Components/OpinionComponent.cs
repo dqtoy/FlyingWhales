@@ -219,6 +219,17 @@ public class OpinionComponent {
         }
         return false;
     }
+    public bool HasOpinionLabelWithCharacter(Character character, params string[] labels) {
+        if (HasOpinion(character)) {
+            string opinionLabel = GetOpinionLabel(character);
+            for (int j = 0; j < labels.Length; j++) {
+                if (labels[j] == opinionLabel) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     public bool HasEnemyCharacter() {
         for (int i = 0; i < charactersWithOpinion.Count; i++) {
             Character otherCharacter = charactersWithOpinion[i];

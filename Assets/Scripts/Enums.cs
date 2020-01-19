@@ -821,11 +821,7 @@ public enum FACTION_TYPE {
     BALANCED,
     DEFENSIVE,
 }
-public enum MINIONS_SORT_TYPE {
-    DEFAULT,
-    LEVEL,
-    TYPE,
-}
+
 public enum INTERACTION_TYPE {
     NONE,
     RETURN_HOME,
@@ -947,11 +943,7 @@ public enum INTERACTION_TYPE {
     SEARCHING,
     SNUFF_TORNADO
 }
-public enum INTERACTION_ALIGNMENT {
-    EVIL,
-    NEUTRAL,
-    GOOD,
-}
+
 public enum INTERACTION_CATEGORY {
     INVENTORY,
     RECRUITMENT,
@@ -1005,11 +997,7 @@ public enum INTERRUPT {
     Transform_To_Wolf,
     Revert_To_Normal,
 }
-public enum REWARD {
-    SUPPLY,
-    MANA,
-    LEVEL,
-}
+
 public enum TRAIT_TYPE {
     ILLNESS,
     ATTACK,
@@ -1068,21 +1056,6 @@ public enum JOB {
     DEBILITATOR,
     LEADER,
     WORKER,
-}
-public enum RESULT {
-    SUCCESS,
-    FAIL,
-    CRITICAL_FAIL
-}
-public enum RACE_SUB_TYPE {
-    NORMAL,
-    BANDIT,
-}
-public enum TOKEN_TYPE {
-    CHARACTER,
-    LOCATION,
-    FACTION,
-    SPECIAL,
 }
 public enum SPECIAL_TOKEN {
     BLIGHTED_POTION,
@@ -1260,24 +1233,12 @@ public enum POI_STATE {
     ACTIVE,
     INACTIVE,
 }
-public enum INTERACTION_CHARACTER_EFFECT {
-    NONE,
-    TRAIT_GAIN,
-    TRAIT_REMOVE,
-    OBTAIN_ITEM,
-    OBTAIN_SUPPLY,
-    FULLNESS_RECOVERY,
-    DEATH,
-    CHANGE_FACTION,
-    LOSE_ITEM,
-    CHANGE_HOME,
-    TIREDNESS_RECOVERY,
-}
+
 public enum TARGET_POI { ACTOR, TARGET, }
 public enum GridNeighbourDirection { North, South, West, East, North_West,  North_East, South_West, South_East }
 public enum TIME_IN_WORDS { AFTER_MIDNIGHT, AFTER_MIDNIGHT_1, AFTER_MIDNIGHT_2, MORNING, MORNING_1, MORNING_2, AFTERNOON, AFTERNOON_1, AFTERNOON_2, EARLY_NIGHT, LATE_NIGHT, NIGHT_1, NIGHT_2, LUNCH_TIME, NONE }
 //public enum CRIME_SEVERITY { NONE, INFRACTION, MISDEMEANOUR, SERIOUS_CRIME, }
-public enum FOOD { BERRY, MUSHROOM, RABBIT, RAT }
+public enum Food { BERRY, MUSHROOM, RABBIT, RAT }
 public enum GOAP_EFFECT_CONDITION { NONE, REMOVE_TRAIT, HAS_TRAIT, HAS_WOOD, HAS_STONE, HAS_METAL, HAS_ITEM, FULLNESS_RECOVERY, TIREDNESS_RECOVERY, HAPPINESS_RECOVERY, CANNOT_MOVE, IN_PARTY, REMOVE_FROM_PARTY, DESTROY, DEATH, PATROL, EXPLORE, REMOVE_ITEM, HAS_TRAIT_EFFECT, HAS_PLAN, HAS_FOOD
         , TARGET_REMOVE_RELATIONSHIP, TARGET_STOP_ACTION_AND_JOB, RESTRAIN_CARRY, REMOVE_FROM_PARTY_NO_CONSENT, IN_VISION, REDUCE_HP, INVITED, MAKE_NOISE, STARTS_COMBAT, CHANGE_CLASS
         , PRODUCE_FOOD, PRODUCE_WOOD, PRODUCE_STONE, PRODUCE_METAL, DEPOSIT_RESOURCE, REMOVE_REGION_CORRUPTION, CLEAR_REGION_FACTION_OWNER, REGION_OWNED_BY_ACTOR_FACTION,
@@ -1291,15 +1252,14 @@ public enum GOAP_EFFECT_CONDITION { NONE, REMOVE_TRAIT, HAS_TRAIT, HAS_WOOD, HAS
 public enum GOAP_EFFECT_TARGET { ACTOR, TARGET, }
 public enum GOAP_PLAN_STATE { IN_PROGRESS, SUCCESS, FAILED, CANCELLED, }
 public enum GOAP_PLANNING_STATUS { NONE, RUNNING, PROCESSING_RESULT }
-public enum GOAP_CATEGORY { NONE, IDLE, FULLNESS, TIREDNESS, HAPPINESS, WORK, REACTION,}
-public enum JOB_TYPE { NONE, UNDERMINE_ENEMY, TIREDNESS_RECOVERY_EXHAUSTED, HUNGER_RECOVERY_STARVING, HAPPINESS_RECOVERY_FORLORN, TIREDNESS_RECOVERY, HUNGER_RECOVERY, HAPPINESS_RECOVERY, REMOVE_TRAIT, RESTRAIN
-        , PRODUCE_WOOD, PRODUCE_FOOD, PRODUCE_STONE, PRODUCE_METAL
-        , REMOVE_POISON, ASK_FOR_HELP_REMOVE_POISON_TABLE, FEED, KNOCKOUT, APPREHEND, DESTROY_FRIENDSHIP
-        , DESTROY_LOVE, BURY, CRAFT_OBJECT, JUDGEMENT, BREAK_UP, SAVE_CHARACTER, ASK_FOR_HELP_SAVE_CHARACTER, TANTRUM, STEAL
-        , BERSERK, PATROL, EXPLORE, OBTAIN_PERSONAL_ITEM, WATCH, DROP, DEATH, HUNT_SERIAL_KILLER_VICTIM, INSPECT, RESOLVE_CONFLICT, DOUSE_FIRE, MISC, SUICIDE, SEDUCE, REPAIR
-        , DESTROY, IMPROVE, DESTROY_PROFANE_LANDMARK, PERFORM_HOLY_INCANTATION, PRAY_GODDESS_STATUE, TRIGGER_FLAW
-        , CORRUPT_CULTIST, DESTROY_SUPPLY, DESTROY_FOOD, SABOTAGE_FACTION, REACT_TO_SCREAM, SCREAM, IDLE, INTERRUPTION, CLEANSE_REGION, CLAIM_REGION, INVADE_REGION, ATTACK_NON_DEMONIC_REGION, ATTACK_DEMONIC_REGION
-        , BUILD_BLUEPRINT, PLACE_BLUEPRINT, COMBAT, STROLL, HAUL, TAKE_PERSONAL_FOOD, STOP_TORNADO }
+
+public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVERY_URGENT, ENERGY_RECOVERY_NORMAL, FULLNESS_RECOVERY_NORMAL, HAPPINESS_RECOVERY, REMOVE_STATUS, RESTRAIN
+        , PRODUCE_WOOD, PRODUCE_FOOD, PRODUCE_STONE, PRODUCE_METAL, FEED, KNOCKOUT, APPREHEND, BURY, CRAFT_OBJECT, JUDGE_PRISONER
+        , PATROL, OBTAIN_PERSONAL_ITEM, MOVE_CHARACTER, HUNT_SERIAL_KILLER_VICTIM, INSPECT, DOUSE_FIRE, MISC, COMMIT_SUICIDE, SEDUCE, REPAIR
+        , DESTROY, TRIGGER_FLAW, CORRUPT_CULTIST, CORRUPT_CULTIST_SABOTAGE_FACTION, SCREAM, CLEANSE_CORRUPTION, CLAIM_REGION
+        , BUILD_BLUEPRINT, PLACE_BLUEPRINT, COMBAT, STROLL, HAUL, OBTAIN_PERSONAL_FOOD, SNUFF_TORNADO, FLEE_TO_HOME, BURY_SERIAL_KILLER_VICTIM, KILL, GO_TO, CHECK_PARALYZED_FRIEND, VISIT_FRIEND
+        , IDLE_RETURN_HOME, IDLE_NAP, IDLE_SIT, IDLE_STAND, IDLE_GO_TO_INN, COMBINE_STOCKPILE
+}
 public enum JOB_OWNER { CHARACTER, LOCATION, QUEST, }
 public enum Cardinal_Direction { North, South, East, West };
 public enum ACTION_LOCATION_TYPE {
@@ -1697,134 +1657,252 @@ public static class Extensions {
     #region Jobs
     public static bool IsNeedsTypeJob(this JOB_TYPE type) {
         switch (type) {
-            case JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED:
-            case JOB_TYPE.HUNGER_RECOVERY_STARVING:
-            case JOB_TYPE.HAPPINESS_RECOVERY_FORLORN:
-            case JOB_TYPE.TIREDNESS_RECOVERY:
-            case JOB_TYPE.HUNGER_RECOVERY:
+            case JOB_TYPE.ENERGY_RECOVERY_URGENT:
+            case JOB_TYPE.FULLNESS_RECOVERY_URGENT:
+            case JOB_TYPE.ENERGY_RECOVERY_NORMAL:
+            case JOB_TYPE.FULLNESS_RECOVERY_NORMAL:
             case JOB_TYPE.HAPPINESS_RECOVERY:
                 return true;
             default:
                 return false;
         }
     }
-    public static bool IsAnInterruptionJobType(this JOB_TYPE jobType) {
-        return jobType == JOB_TYPE.INTERRUPTION || jobType == JOB_TYPE.DEATH || jobType == JOB_TYPE.COMBAT;
-    }
     public static int GetJobTypePriority(this JOB_TYPE jobType) {
         int priority = 0;
         switch (jobType) {
-            case JOB_TYPE.STOP_TORNADO:
-            case JOB_TYPE.INTERRUPTION:
-                priority = 2;
+            case JOB_TYPE.FLEE_TO_HOME:
+            case JOB_TYPE.MISC:
+                priority = 1200;
+                break;
+            case JOB_TYPE.SNUFF_TORNADO:
+                priority = 1100;
                 break;
             case JOB_TYPE.COMBAT:
-                priority = 3;
+                priority = 1090;
                 break;
             case JOB_TYPE.TRIGGER_FLAW:
-                priority = 4;
+                priority = 1050;
                 break;
-            case JOB_TYPE.MISC:
-            case JOB_TYPE.CORRUPT_CULTIST:
-            case JOB_TYPE.DESTROY_FOOD:
-            case JOB_TYPE.DESTROY_SUPPLY:
-            case JOB_TYPE.SABOTAGE_FACTION:
             case JOB_TYPE.SCREAM:
-            case JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM:
-                //case JOB_TYPE.INTERRUPTION:
-                priority = 5;
+                priority = 1020;
                 break;
-            case JOB_TYPE.TANTRUM:
-            case JOB_TYPE.CLAIM_REGION:
-            case JOB_TYPE.CLEANSE_REGION:
-            case JOB_TYPE.ATTACK_DEMONIC_REGION:
-            case JOB_TYPE.ATTACK_NON_DEMONIC_REGION:
-            case JOB_TYPE.INVADE_REGION:
-                priority = 6;
+            case JOB_TYPE.BURY_SERIAL_KILLER_VICTIM:
+                priority = 1010;
                 break;
-            // case JOB_TYPE.IDLE:
-            //     priority = 7;
-            //     break;
-            case JOB_TYPE.DEATH:
-            case JOB_TYPE.BERSERK:
-            case JOB_TYPE.STEAL:
-            case JOB_TYPE.RESOLVE_CONFLICT:
-            case JOB_TYPE.DESTROY:
-                priority = 10;
+            case JOB_TYPE.ENERGY_RECOVERY_URGENT:
+                priority = 1000;
+                break;
+            case JOB_TYPE.FULLNESS_RECOVERY_URGENT:
+                priority = 1020;
                 break;
             case JOB_TYPE.KNOCKOUT:
-            case JOB_TYPE.SEDUCE:
-            case JOB_TYPE.UNDERMINE_ENEMY:
-                priority = 20;
+                priority = 970;
                 break;
-            case JOB_TYPE.HUNGER_RECOVERY_STARVING:
-            case JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED:
-                priority = 30;
-                break;
-            case JOB_TYPE.APPREHEND:
             case JOB_TYPE.DOUSE_FIRE:
-                priority = 40;
+                priority = 950;
                 break;
-            case JOB_TYPE.REMOVE_TRAIT:
-                priority = 50;
+            case JOB_TYPE.DESTROY:
+                priority = 940;
                 break;
-            case JOB_TYPE.RESTRAIN:
-                priority = 60;
+            case JOB_TYPE.KILL:
+            case JOB_TYPE.REMOVE_STATUS:
+                priority = 930;
                 break;
-            case JOB_TYPE.HAPPINESS_RECOVERY_FORLORN:
-                priority = 100;
+            case JOB_TYPE.GO_TO:
+                priority = 925;
+                break;
+            case JOB_TYPE.UNDERMINE:
+                priority = 910;
                 break;
             case JOB_TYPE.FEED:
-                priority = 110;
+            case JOB_TYPE.RESTRAIN:
+                priority = 900;
                 break;
             case JOB_TYPE.BURY:
-            case JOB_TYPE.REPAIR:
-            case JOB_TYPE.WATCH:
-            case JOB_TYPE.DESTROY_PROFANE_LANDMARK:
-            case JOB_TYPE.PERFORM_HOLY_INCANTATION:
-            case JOB_TYPE.PRAY_GODDESS_STATUE:
-            case JOB_TYPE.REACT_TO_SCREAM:
-                priority = 120;
+                priority = 870;
                 break;
-            case JOB_TYPE.BREAK_UP:
-                priority = 130;
+            case JOB_TYPE.BUILD_BLUEPRINT:
+            case JOB_TYPE.PLACE_BLUEPRINT:
+                priority = 850;
                 break;
-            case JOB_TYPE.PATROL:
-                priority = 170;
-                break;
-            case JOB_TYPE.JUDGEMENT:
-                priority = 220;
-                break;
-            case JOB_TYPE.SUICIDE:
-            case JOB_TYPE.HAUL:
-                priority = 230;
+            case JOB_TYPE.PRODUCE_FOOD:
+            case JOB_TYPE.PRODUCE_METAL:
+            case JOB_TYPE.PRODUCE_STONE:
+            case JOB_TYPE.PRODUCE_WOOD:
+                priority = 800;
                 break;
             case JOB_TYPE.CRAFT_OBJECT:
-            case JOB_TYPE.PRODUCE_FOOD:
-            case JOB_TYPE.PRODUCE_WOOD:
-            case JOB_TYPE.PRODUCE_STONE:
-            case JOB_TYPE.PRODUCE_METAL:
-            case JOB_TYPE.TAKE_PERSONAL_FOOD:
-            case JOB_TYPE.DROP:
-            case JOB_TYPE.INSPECT:
-            case JOB_TYPE.PLACE_BLUEPRINT:
-            case JOB_TYPE.BUILD_BLUEPRINT:
-            case JOB_TYPE.OBTAIN_PERSONAL_ITEM:
-                priority = 240;
+                priority = 750;
                 break;
-            case JOB_TYPE.HUNGER_RECOVERY:
-            case JOB_TYPE.TIREDNESS_RECOVERY:
+            case JOB_TYPE.HAUL:
+                priority = 700;
+                break;
+            case JOB_TYPE.REPAIR:
+                priority = 650;
+                break;
+            case JOB_TYPE.CLEANSE_CORRUPTION:
+                priority = 600;
+                break;
+            case JOB_TYPE.JUDGE_PRISONER:
+                priority = 570;
+                break;
+            case JOB_TYPE.APPREHEND:
+                priority = 550;
+                break;
+            case JOB_TYPE.MOVE_CHARACTER:
+                priority = 520;
+                break;
+            case JOB_TYPE.ENERGY_RECOVERY_NORMAL:
+            case JOB_TYPE.FULLNESS_RECOVERY_NORMAL:
             case JOB_TYPE.HAPPINESS_RECOVERY:
-                priority = 270;
+                priority = 500;
                 break;
-            case JOB_TYPE.STROLL:
-            case JOB_TYPE.IDLE:
-                priority = 290;
+            case JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM:
+                priority = 480;
                 break;
-            case JOB_TYPE.IMPROVE:
-            case JOB_TYPE.EXPLORE:
+            case JOB_TYPE.PATROL:
+                priority = 450;
+                break;
+            case JOB_TYPE.CHECK_PARALYZED_FRIEND:
+                priority = 400;
+                break;
+            case JOB_TYPE.OBTAIN_PERSONAL_FOOD:
                 priority = 300;
                 break;
+            case JOB_TYPE.VISIT_FRIEND:
+                priority = 280;
+                break;
+            case JOB_TYPE.OBTAIN_PERSONAL_ITEM:
+                priority = 260;
+                break;
+            case JOB_TYPE.IDLE_RETURN_HOME:
+            case JOB_TYPE.IDLE_NAP:
+            case JOB_TYPE.IDLE_SIT:
+            case JOB_TYPE.IDLE_STAND:
+            case JOB_TYPE.IDLE_GO_TO_INN:
+                priority = 250;
+                break;
+            case JOB_TYPE.COMBINE_STOCKPILE:
+                priority = 200;
+                break;
+            case JOB_TYPE.COMMIT_SUICIDE:
+                priority = 150;
+                break;
+            case JOB_TYPE.STROLL:
+                priority = 100;
+                break;
+
+            // case JOB_TYPE.SNUFF_TORNADO:
+            // case JOB_TYPE.INTERRUPTION:
+            //     priority = 2;
+            //     break;
+            // case JOB_TYPE.COMBAT:
+            //     priority = 3;
+            //     break;
+            // case JOB_TYPE.TRIGGER_FLAW:
+            //     priority = 4;
+            //     break;
+            // case JOB_TYPE.MISC:
+            // case JOB_TYPE.CORRUPT_CULTIST:
+            // case JOB_TYPE.DESTROY_FOOD:
+            // case JOB_TYPE.DESTROY_SUPPLY:
+            // case JOB_TYPE.SABOTAGE_FACTION:
+            // case JOB_TYPE.SCREAM:
+            // case JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM:
+            //     //case JOB_TYPE.INTERRUPTION:
+            //     priority = 5;
+            //     break;
+            // case JOB_TYPE.TANTRUM:
+            // case JOB_TYPE.CLAIM_REGION:
+            // case JOB_TYPE.CLEANSE_REGION:
+            // case JOB_TYPE.ATTACK_DEMONIC_REGION:
+            // case JOB_TYPE.ATTACK_NON_DEMONIC_REGION:
+            // case JOB_TYPE.INVADE_REGION:
+            //     priority = 6;
+            //     break;
+            // // case JOB_TYPE.IDLE:
+            // //     priority = 7;
+            // //     break;
+            // case JOB_TYPE.DEATH:
+            // case JOB_TYPE.BERSERK:
+            // case JOB_TYPE.STEAL:
+            // case JOB_TYPE.RESOLVE_CONFLICT:
+            // case JOB_TYPE.DESTROY:
+            //     priority = 10;
+            //     break;
+            // case JOB_TYPE.KNOCKOUT:
+            // case JOB_TYPE.SEDUCE:
+            // case JOB_TYPE.UNDERMINE_ENEMY:
+            //     priority = 20;
+            //     break;
+            // case JOB_TYPE.HUNGER_RECOVERY_STARVING:
+            // case JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED:
+            //     priority = 30;
+            //     break;
+            // case JOB_TYPE.APPREHEND:
+            // case JOB_TYPE.DOUSE_FIRE:
+            //     priority = 40;
+            //     break;
+            // case JOB_TYPE.REMOVE_TRAIT:
+            //     priority = 50;
+            //     break;
+            // case JOB_TYPE.RESTRAIN:
+            //     priority = 60;
+            //     break;
+            // case JOB_TYPE.HAPPINESS_RECOVERY_FORLORN:
+            //     priority = 100;
+            //     break;
+            // case JOB_TYPE.FEED:
+            //     priority = 110;
+            //     break;
+            // case JOB_TYPE.BURY:
+            // case JOB_TYPE.REPAIR:
+            // case JOB_TYPE.WATCH:
+            // case JOB_TYPE.DESTROY_PROFANE_LANDMARK:
+            // case JOB_TYPE.PERFORM_HOLY_INCANTATION:
+            // case JOB_TYPE.PRAY_GODDESS_STATUE:
+            // case JOB_TYPE.REACT_TO_SCREAM:
+            //     priority = 120;
+            //     break;
+            // case JOB_TYPE.BREAK_UP:
+            //     priority = 130;
+            //     break;
+            // case JOB_TYPE.PATROL:
+            //     priority = 170;
+            //     break;
+            // case JOB_TYPE.JUDGEMENT:
+            //     priority = 220;
+            //     break;
+            // case JOB_TYPE.SUICIDE:
+            // case JOB_TYPE.HAUL:
+            //     priority = 230;
+            //     break;
+            // case JOB_TYPE.CRAFT_OBJECT:
+            // case JOB_TYPE.PRODUCE_FOOD:
+            // case JOB_TYPE.PRODUCE_WOOD:
+            // case JOB_TYPE.PRODUCE_STONE:
+            // case JOB_TYPE.PRODUCE_METAL:
+            // case JOB_TYPE.TAKE_PERSONAL_FOOD:
+            // case JOB_TYPE.DROP:
+            // case JOB_TYPE.INSPECT:
+            // case JOB_TYPE.PLACE_BLUEPRINT:
+            // case JOB_TYPE.BUILD_BLUEPRINT:
+            // case JOB_TYPE.OBTAIN_PERSONAL_ITEM:
+            //     priority = 240;
+            //     break;
+            // case JOB_TYPE.HUNGER_RECOVERY:
+            // case JOB_TYPE.TIREDNESS_RECOVERY:
+            // case JOB_TYPE.HAPPINESS_RECOVERY:
+            //     priority = 270;
+            //     break;
+            // case JOB_TYPE.STROLL:
+            // case JOB_TYPE.IDLE:
+            //     priority = 290;
+            //     break;
+            // case JOB_TYPE.IMPROVE:
+            // case JOB_TYPE.EXPLORE:
+            //     priority = 300;
+            //     break;
         }
         return priority;
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Traits {
@@ -217,6 +218,16 @@ namespace Traits {
                 }
             }
             return null;
+        }
+        public List<T> GetNormalTraits<T>(params string[] traitNames) where T : Trait {
+            List<T> traits = new List<T>();
+            for (int i = 0; i < allTraits.Count; i++) {
+                Trait trait = allTraits[i];
+                if (traitNames.Contains(trait.name)) {
+                    traits.Add(trait as T);
+                }
+            }
+            return traits;
         }
         public bool HasTraitOf(TRAIT_TYPE traitType) {
             for (int i = 0; i < allTraits.Count; i++) {

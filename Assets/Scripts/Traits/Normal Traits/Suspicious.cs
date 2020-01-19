@@ -19,10 +19,7 @@ namespace Traits {
             if (targetPOI is TileObject) {
                 TileObject objectToBeInspected = targetPOI as TileObject;
                 if (objectToBeInspected.isSummonedByPlayer) {
-                    if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.DESTROY, objectToBeInspected)) {
-                        GoapPlanJob destroyJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DESTROY, INTERACTION_TYPE.ASSAULT, objectToBeInspected, characterThatWillDoJob);
-                        characterThatWillDoJob.jobQueue.AddJobInQueue(destroyJob);
-                    }
+                    characterThatWillDoJob.jobComponent.TriggerDestroy(objectToBeInspected);
                 }
             }
             return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);

@@ -16,11 +16,11 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 log += "\n-Sit if there is still an unoccupied Table or Desk in the current location";
                 if (deskOrTable != null) {
                     log += "\n  -" + character.name + " will do action Sit on " + deskOrTable.ToString();
-                    character.PlanIdle(INTERACTION_TYPE.SIT, deskOrTable);
+                    character.PlanIdle(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable);
                 } else {
                     log += "\n-Otherwise, stand idle";
                     log += "\n  -" + character.name + " will do action Stand";
-                    character.PlanIdle(INTERACTION_TYPE.STAND, character);
+                    character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character);
                 }
                 return true;
             } else {
@@ -40,7 +40,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                             LocationStructure structure = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.INN);
                             if (structure != null) {
                                 log += "\n  -Early Night: " + character.name + " will go to Inn and set Base Structure for 2.5 hours";
-                                character.PlanIdle(INTERACTION_TYPE.VISIT, character, new object[] { structure });
+                                character.PlanIdle(JOB_TYPE.VISIT_FRIEND, INTERACTION_TYPE.VISIT, character, new object[] { structure });
                                 return true;
                             } else {
                                 log += "\n  -No Inn Structure in the settlement";
@@ -62,7 +62,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                                 log += "\n  -Character is vampiric, cannot do nap action";
                             } else {
                                 log += "\n  -Afternoon: " + character.name + " will do action Nap on " + bed.ToString();
-                                character.PlanIdle(INTERACTION_TYPE.NAP, bed);
+                                character.PlanIdle(JOB_TYPE.IDLE_NAP, INTERACTION_TYPE.NAP, bed);
                                 return true;
                             }
                         } else {
@@ -82,10 +82,10 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                         if (chosenCharacter != null) {
                             if(chosenCharacter.homeStructure != null) {
                                 log += "\n  -Will visit house of Paralyzed/Catatonic " + chosenCharacter.name;
-                                character.PlanIdle(INTERACTION_TYPE.VISIT, character, new object[] { chosenCharacter.homeStructure });
+                                character.PlanIdle(JOB_TYPE.CHECK_PARALYZED_FRIEND, INTERACTION_TYPE.VISIT, character, new object[] { chosenCharacter.homeStructure });
                             } else {
                                 log += "\n  -" + chosenCharacter.name + " has no house. Will check out character instead";
-                                character.PlanIdle(new GoapEffect(GOAP_EFFECT_CONDITION.IN_VISION, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), chosenCharacter);
+                                character.PlanIdle(JOB_TYPE.CHECK_PARALYZED_FRIEND,  new GoapEffect(GOAP_EFFECT_CONDITION.IN_VISION, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), chosenCharacter);
                             }
                             return true;
                         } else {
@@ -133,7 +133,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                             }
                             if (targetStructure != null) {
                                 log += "\n  -Morning or Afternoon: " + character.name + " will go to dwelling of character with positive relationship and set Base Structure for 2.5 hours";
-                                character.PlanIdle(INTERACTION_TYPE.VISIT, character, new object[] { targetStructure });
+                                character.PlanIdle(JOB_TYPE.VISIT_FRIEND, INTERACTION_TYPE.VISIT, character, new object[] { targetStructure });
                                 return true;
                             } else {
                                 log += "\n  -No positive relationship with home structure";
@@ -149,7 +149,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
                 if (deskOrTable != null) {
                     log += "\n  -" + character.name + " will do action Sit on " + deskOrTable.ToString();
-                    character.PlanIdle(INTERACTION_TYPE.SIT, deskOrTable);
+                    character.PlanIdle(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable);
                     return true;
                 } else {
                     log += "\n  -No unoccupied Table or Desk";
@@ -157,7 +157,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
 
                 log += "\n-Otherwise, stand idle";
                 log += "\n  -" + character.name + " will do action Stand";
-                character.PlanIdle(INTERACTION_TYPE.STAND, character);
+                character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character);
                 //PlanIdleStroll(currentStructure);
                 return true;
             }

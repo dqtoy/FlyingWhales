@@ -562,7 +562,6 @@ public class Region : ILocation {
     }
     public LocationStructure GetRandomStructure() {
         Dictionary<STRUCTURE_TYPE, List<LocationStructure>> _structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>(this.structures);
-        _structures.Remove(STRUCTURE_TYPE.EXIT);
         _structures.Remove(STRUCTURE_TYPE.CAVE);
         _structures.Remove(STRUCTURE_TYPE.OCEAN);
         int dictIndex = UnityEngine.Random.Range(0, _structures.Count);
@@ -591,9 +590,7 @@ public class Region : ILocation {
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in this.structures) {
             for (int i = 0; i < kvp.Value.Count; i++) {
                 LocationStructure currStructure = kvp.Value[i];
-                if (currStructure.structureType != STRUCTURE_TYPE.EXIT) {
-                    _structures.Add(currStructure);
-                }
+                _structures.Add(currStructure);
             }
         }
         return _structures;

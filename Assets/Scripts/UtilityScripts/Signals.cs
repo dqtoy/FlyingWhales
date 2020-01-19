@@ -179,13 +179,26 @@ public static class Signals {
     /// <summary>
     /// Parameters (Character, JobQueueItem)
     /// </summary>
-    public static string CHARACTER_FINISHED_JOB = "OnCharacterFinishedJob";
-
+    public static string CHARACTER_FINISHED_JOB_SUCCESSFULLY = "OnCharacterFinishedJob";
     //Opinion
     public static string OPINION_INCREASED = "OnOpinionIncreased";
     public static string OPINION_DECREASED = "OnOpinionDecreased";
     public static string OPINION_ADDED = "OnOpinionAdded";
     public static string OPINION_REMOVED = "OnOpinionRemoved";
+    /// <summary>
+    /// Parameters (Character character, Hextile enteredTile)
+    /// </summary>
+    public static string CHARACTER_ENTERED_HEXTILE = "OnCharacterEnteredHexTile";
+    /// <summary>
+    /// Parameters (Character character, HexTile exitedTile)
+    /// </summary>
+    public static string CHARACTER_EXITED_HEXTILE = "OnCharacterExitedHexTile";
+    public static string CHARACTER_CAN_NO_LONGER_MOVE = "OnCharacterCannotMove";
+    public static string CHARACTER_CAN_MOVE_AGAIN = "OnCharacterCannotMove";
+    /// <summary>
+    /// Parameters (INTERRUPT finishedInterrupt, Character character)
+    /// </summary>
+    public static string INTERRUPT_FINISHED = "OnInterruptFinished";
     #endregion
 
     #region UI
@@ -438,6 +451,25 @@ public static class Signals {
     #endregion
 
     #region POI
+    /// <summary>
+    /// Parameters (IPointOfInterest damagedObj)
+    /// </summary>
+    public static string OBJECT_DAMAGED = "OnObjectDamaged";
+    /// <summary>
+    /// Parameters (IPointOfInterest repairedObj)
+    /// </summary>
+    public static string OBJECT_REPAIRED = "OnObjectRepaired";
+    #endregion
+
+    #region Settlements
+    /// <summary>
+    /// Parameters (Settlement affectedSettlement, bool siegeState)
+    /// </summary>
+    public static string SETTLEMENT_UNDER_SIEGE_STATE_CHANGED = "OnSettlementSiegeStateChanged";
+    /// <summary>
+    /// Parameters (ResourcePile resource)
+    /// </summary>
+    public static string RESOURCE_IN_PILE_CHANGED = "OnResourceInPileChanged";
     #endregion
 
     public static Dictionary<string, SignalMethod[]> orderedSignalExecution = new Dictionary<string, SignalMethod[]>() {
@@ -466,7 +498,7 @@ public static class Signals {
             new SignalMethod() { methodName = "OnTickEnded", objectType = typeof(Character) },
         }},
     };
-
+    
     public static bool TryGetMatchingSignalMethod(string eventType, Callback method, out SignalMethod matching) {
         for (int i = 0; i < orderedSignalExecution[eventType].Length; i++) {
             SignalMethod sm = orderedSignalExecution[eventType][i];

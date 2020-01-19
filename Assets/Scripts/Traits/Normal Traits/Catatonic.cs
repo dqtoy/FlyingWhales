@@ -46,23 +46,10 @@ namespace Traits {
             if (traitOwner is Character) {
                 Character targetCharacter = traitOwner as Character;
                 if (!targetCharacter.isDead) {
-                    if (characterThatWillDoJob.faction != targetCharacter.faction) {
-                        GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.RESTRAIN);
-                        if (currentJob == null) {
-                            if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter)) {
-                                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESTRAIN, INTERACTION_TYPE.RESTRAIN_CHARACTER, targetCharacter, characterThatWillDoJob);
-                                //job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { characterThatWillDoJob.currentArea.prison });
-                                //job.SetCanBeDoneInLocation(true);
-                                characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                                return true;
-                            }
-                        }
-                    } else {
+                    if (characterThatWillDoJob.faction == targetCharacter.faction) {
                         if (characterThatWillDoJob.opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE) {
-                            if (owner.CanPlanGoap() && !owner.HasJobTargetingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
-                                if (!PlanFullnessRecovery(characterThatWillDoJob)) {
-                                    CreateDropJobForTirednessRecovery(characterThatWillDoJob);
-                                }
+                            if (owner.CanPlanGoap() && !owner.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER)) {
+                                CreateDropJobForTirednessRecovery(characterThatWillDoJob);
                             }
                         }
                     }
@@ -83,7 +70,7 @@ namespace Traits {
             if (!owner.IsInOwnParty()) {
                 return;
             }
-            if (owner.HasJobTargetingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
+            if (owner.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER)) {
                 return;
             }
             if (owner.jobQueue.jobsInQueue.Count > 0) {
@@ -95,14 +82,14 @@ namespace Traits {
 
         #region Carry/Drop
         private bool CreateActualDropJob(Character characterThatWillDoJob, LocationStructure dropLocationStructure) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DROP, INTERACTION_TYPE.DROP, owner, characterThatWillDoJob);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, owner, characterThatWillDoJob);
             //job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeDropJob);
             job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { dropLocationStructure });
             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
             return true;
         }
         private bool CreateActualDropJob(Character characterThatWillDoJob, LocationStructure dropLocationStructure, LocationGridTile dropGridTile) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DROP, INTERACTION_TYPE.DROP, owner, characterThatWillDoJob);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, owner, characterThatWillDoJob);
             //job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeDropJob);
             job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { dropLocationStructure, dropGridTile });
             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
@@ -114,26 +101,6 @@ namespace Traits {
                     CreateActualSleepJob(owner.gridTileLocation.objHere as Bed);
                 }
             }
-        }
-        #endregion
-
-        #region Fullness Recovery
-        private bool PlanFullnessRecovery(Character characterThatWillDoJob) {
-            if (owner.needsComponent.isStarving || owner.needsComponent.isHungry) {
-                return CreateFeedJob(characterThatWillDoJob);
-            }
-            return false;
-        }
-        private bool CreateFeedJob(Character characterThatWillDoJob) {
-            if (characterThatWillDoJob.currentRegion.IsResident(owner)) {
-                GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET };
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, owner, characterThatWillDoJob);
-                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 20 });
-                //job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeParalyzedFeedJob);
-                characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                return true;
-            }
-            return false;
         }
         #endregion
 
@@ -150,7 +117,7 @@ namespace Traits {
             return false;
         }
         private bool PlanTirednessRecovery() {
-            if ((owner.needsComponent.isExhausted || owner.needsComponent.isTired) && !owner.HasJobTargetingThis(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
+            if ((owner.needsComponent.isExhausted || owner.needsComponent.isTired) && !owner.HasJobTargetingThis(JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
                 return CreateSleepJob();
             }
             return false;
@@ -171,9 +138,9 @@ namespace Traits {
             return false;
         }
         private void CreateActualSleepJob(Bed bed) {
-            JOB_TYPE jobType = JOB_TYPE.TIREDNESS_RECOVERY;
+            JOB_TYPE jobType = JOB_TYPE.ENERGY_RECOVERY_NORMAL;
             if (owner.needsComponent.isExhausted) {
-                jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
+                jobType = JOB_TYPE.ENERGY_RECOVERY_URGENT;
             }
             bool triggerSpooked = false;
             Spooked spooked = owner.traitContainer.GetNormalTrait<Trait>("Spooked") as Spooked;

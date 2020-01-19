@@ -27,21 +27,6 @@ public class FoodPile : ResourcePile {
         }
         base.SetPOIState(state);
     }
-    //public override void SetGridTileLocation(LocationGridTile tile) {
-    //    base.SetGridTileLocation(tile);
-    //    if (tile != null) {
-    //        //when a food pile is placed, and the settlement does not yet have a food pile, then set its food pile to this
-    //        if (tile.parentAreaMap.settlement.foodPile == null) {
-    //            tile.parentAreaMap.settlement.SetFoodPile(this);
-    //        }
-    //    }
-    //}
-    //public override void AdjustResourceInPile(int adjustment) {
-    //    base.AdjustResourceInPile(adjustment);
-    //    if (adjustment < 0) {
-    //        Messenger.Broadcast(Signals.FOOD_IN_PILE_REDUCED, this);
-    //    }
-    //}
     public override string ToString() {
         return "Food Pile " + id.ToString();
     }

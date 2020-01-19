@@ -27,8 +27,8 @@ namespace Traits {
                     triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
                 }
                 if (!triggerBrokenhearted) {
-                    if (character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
-                        character.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN);
+                    if (character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY)) {
+                        character.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY);
                     }
 
                     //TileObject to = character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.INN).GetTileObjectsThatAdvertise(INTERACTION_TYPE.DRINK).First();

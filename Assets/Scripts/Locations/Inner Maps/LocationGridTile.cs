@@ -590,6 +590,45 @@ namespace Inner_Maps {
             }
             return count;
         }
+        public bool IsPartOfSettlement(out Settlement settlement) {
+            if (buildSpotOwner.hexTileOwner != null && buildSpotOwner.hexTileOwner.settlementOnTile != null) {
+                settlement = buildSpotOwner.hexTileOwner.settlementOnTile;
+                return true;
+            }
+            settlement = null;
+            return false;
+        }
+        public bool IsPartOfSettlement(Settlement settlement) {
+            return buildSpotOwner.hexTileOwner != null && buildSpotOwner.hexTileOwner.settlementOnTile == settlement;
+        }
+        public bool IsPartOfSettlement() {
+            return buildSpotOwner.hexTileOwner != null && buildSpotOwner.hexTileOwner.settlementOnTile != null;
+        }
+        public bool IsNextToSettlement(out Settlement settlement) {
+            for (int i = 0; i < neighbourList.Count; i++) {
+                LocationGridTile tile = neighbourList[i];
+                if (tile.IsPartOfSettlement(out settlement)) {
+                    return true;
+                }
+            }
+            settlement = null;
+            return false;
+        }
+        public bool IsNextToSettlement(Settlement settlement) {
+            for (int i = 0; i < neighbourList.Count; i++) {
+                LocationGridTile tile = neighbourList[i];
+                if (tile.IsPartOfSettlement(settlement)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool IsNextToOrPartOfSettlement(out Settlement settlement) {
+            return IsPartOfSettlement( out settlement) || IsNextToSettlement(out settlement);
+        }
+        public bool IsNextToOrPartOfSettlement(Settlement settlement) {
+            return IsPartOfSettlement(settlement) || IsNextToSettlement(settlement);
+        }
         #endregion
 
         #region Mouse Actions

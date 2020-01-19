@@ -50,7 +50,7 @@ public class JobQueue {
             bool hasBeenInserted = false;
             if(jobsInQueue.Count > 1) {
                 for (int i = 1; i < jobsInQueue.Count; i++) {
-                    if (job.priority < jobsInQueue[i].priority) {
+                    if (job.priority > jobsInQueue[i].priority) {
                         jobsInQueue.Insert(i, job);
                         hasBeenInserted = true;
                         break;
@@ -136,8 +136,8 @@ public class JobQueue {
     private bool IsJobTopPriorityWhenAdded(JobQueueItem newJob) {
         if (jobsInQueue.Count > 0) { //characterOwner.CanCurrentJobBeOverriddenByJob(job))
             JobQueueItem topJob = jobsInQueue[0];
-            if (newJob.priority < topJob.priority) {
-                if (topJob.CanBeInterrupted() || newJob.IsAnInterruptionJob()) {
+            if (newJob.priority > topJob.priority) {
+                if (topJob.CanBeInterrupted()) {
                     return true;
                 }
             }
@@ -149,8 +149,8 @@ public class JobQueue {
     public bool IsJobTopTypePriorityWhenAdded(JOB_TYPE jobType) {
         if (jobsInQueue.Count > 0) { //characterOwner.CanCurrentJobBeOverriddenByJob(job))
             JobQueueItem topJob = jobsInQueue[0];
-            if (jobType.GetJobTypePriority() < topJob.priority) {
-                if (topJob.CanBeInterrupted() || jobType.IsAnInterruptionJobType()) {
+            if (jobType.GetJobTypePriority() > topJob.priority) {
+                if (topJob.CanBeInterrupted()) {
                     return true;
                 }
             }
@@ -298,7 +298,7 @@ public class JobQueue {
         } else {
             //Only add settlement/quest jobs if character it is the top priority and the owner of this job queue can do the job
             if (jobsInQueue.Count > 0) {
-                if (job.priority < jobsInQueue[0].priority) {
+                if (job.priority > jobsInQueue[0].priority) {
                     return job.CanCharacterDoJob(owner);
                 } else {
                     return false;

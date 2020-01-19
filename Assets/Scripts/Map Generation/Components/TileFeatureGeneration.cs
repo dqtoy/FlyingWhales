@@ -24,8 +24,8 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			if (Random.Range(0, 2) == 1) {
 				//2 tiles are settlements
 				HexTile adjacentTile = Utilities.GetRandomElement(randomTile.AllNeighbours
-					.Where(x => x.featureComponent.HasFeature(TileFeatureDB.Inhabited_Feature) == false)
-					.ToList());
+					.Where(x => x.featureComponent.HasFeature(TileFeatureDB.Inhabited_Feature) == false
+					            && x.region == randomTile.region).ToList());
 				adjacentTile.SetElevation(ELEVATION.PLAIN);
 				adjacentTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, adjacentTile);
 				LandmarkManager.Instance.CreateNewLandmarkOnTile(adjacentTile, LANDMARK_TYPE.VILLAGE, false);

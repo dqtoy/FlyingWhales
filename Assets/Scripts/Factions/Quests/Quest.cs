@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,7 +14,8 @@ public class Quest : IJobOwner {
     public int duration { get; protected set; }
     public int currentDuration { get; protected set; }
     public List<JobQueueItem> availableJobs { get; protected set; }
-
+    public JobTriggerComponent jobTriggerComponent { get; }
+    
     public Quest(Faction factionOwner, Region region) {
         this.factionOwner = factionOwner;
         this.region = region;

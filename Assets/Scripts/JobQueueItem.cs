@@ -143,9 +143,9 @@ public class JobQueueItem {
             CancelJob(false);
         } else {
             string stopText = "Have something important to do";
-            if (jobThatPushedBack.IsAnInterruptionJob()) {
-                stopText = "Interrupted";
-            }
+            // if (jobThatPushedBack.IsAnInterruptionJob()) {
+            //     stopText = "Interrupted";
+            // }
             assignedCharacter.StopCurrentActionNode(false, stopText);
             //if (originalOwner.ownerType != JOB_OWNER.CHARACTER) {
             //    //NOTE! This is temporary only! All jobs, even settlement jobs are just pushed back right now
@@ -255,9 +255,6 @@ public class JobQueueItem {
     }
     public override string ToString() {
         return jobType.ToString() + " assigned to " + assignedCharacter?.name ?? "None";
-    }
-    public bool IsAnInterruptionJob() {
-        return jobType.IsAnInterruptionJobType();
     }
     public bool IsJobStillApplicable() {
         if (stillApplicable != null) {

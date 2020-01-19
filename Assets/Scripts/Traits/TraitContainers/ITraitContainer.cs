@@ -33,6 +33,7 @@ namespace Traits {
 
         #region Getting
         T GetNormalTrait<T>(params string[] traitNames) where T : Trait;
+        List<T> GetNormalTraits<T>(params string[] traitNames) where T : Trait;
         bool HasTraitOf(TRAIT_TYPE traitType);
         bool HasTraitOf(TRAIT_TYPE type, TRAIT_EFFECT effect);
         bool HasTraitOf(TRAIT_EFFECT traitEffect);

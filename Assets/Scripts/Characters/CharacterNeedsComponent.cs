@@ -101,11 +101,11 @@ public class CharacterNeedsComponent {
     #region Initialization
     public void SubscribeToSignals() {
         Messenger.AddListener(Signals.TICK_STARTED, DecreaseNeeds);
-        Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB, OnCharacterFinishedJob);
+        Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
     }
     public void UnsubscribeToSignals() {
         Messenger.RemoveListener(Signals.TICK_STARTED, DecreaseNeeds);
-        Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB, OnCharacterFinishedJob);
+        Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
     }
     public void DailyGoapProcesses() {
         hasForcedFullness = false;
@@ -404,9 +404,9 @@ public class CharacterNeedsComponent {
             return false;
         }
         if (this.isExhausted) {
-            if (!character.jobQueue.HasJob(JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
+            if (!character.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
                 //If there is already a TIREDNESS_RECOVERY JOB and the character becomes Exhausted, replace TIREDNESS_RECOVERY with TIREDNESS_RECOVERY_STARVING only if that character is not doing the job already
-                JobQueueItem tirednessRecoveryJob = character.jobQueue.GetJob(JOB_TYPE.TIREDNESS_RECOVERY);
+                JobQueueItem tirednessRecoveryJob = character.jobQueue.GetJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL);
                 if (tirednessRecoveryJob != null) {
                     //Replace this with Tiredness Recovery Exhausted only if the character is not doing the Tiredness Recovery Job already
                     JobQueueItem currJob = character.currentJob;
@@ -416,7 +416,7 @@ public class CharacterNeedsComponent {
                         tirednessRecoveryJob.CancelJob();
                     }
                 }
-                JOB_TYPE jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
+                JOB_TYPE jobType = JOB_TYPE.ENERGY_RECOVERY_URGENT;
                 bool triggerSpooked = false;
                 Spooked spooked = character.traitContainer.GetNormalTrait<Trait>("Spooked") as Spooked;
                 if (spooked != null) {
@@ -436,10 +436,10 @@ public class CharacterNeedsComponent {
     }
     public void PlanScheduledTirednessRecovery(Character character) {
         if (!hasForcedTiredness && tirednessForcedTick != 0 && GameManager.Instance.tick >= tirednessForcedTick && character.canPerform && doNotGetTired <= 0) {
-            if (!character.jobQueue.HasJob(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
-                JOB_TYPE jobType = JOB_TYPE.TIREDNESS_RECOVERY;
+            if (!character.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
+                JOB_TYPE jobType = JOB_TYPE.ENERGY_RECOVERY_NORMAL;
                 if (isExhausted) {
-                    jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
+                    jobType = JOB_TYPE.ENERGY_RECOVERY_URGENT;
                 }
 
                 bool triggerSpooked = false;
@@ -464,10 +464,10 @@ public class CharacterNeedsComponent {
         //If a character current sleep ticks is less than the default, this means that the character already started sleeping but was awaken midway that is why he/she did not finish the allotted sleeping time
         //When this happens, make sure to queue tiredness recovery again so he can finish the sleeping time
         else if ((hasCancelledSleepSchedule || currentSleepTicks < CharacterManager.Instance.defaultSleepTicks) && character.canPerform) {
-            if (!character.jobQueue.HasJob(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
-                JOB_TYPE jobType = JOB_TYPE.TIREDNESS_RECOVERY;
+            if (!character.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
+                JOB_TYPE jobType = JOB_TYPE.ENERGY_RECOVERY_NORMAL;
                 if (isExhausted) {
-                    jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
+                    jobType = JOB_TYPE.ENERGY_RECOVERY_URGENT;
                 }
                 bool triggerSpooked = false;
                 Spooked spooked = character.traitContainer.GetNormalTrait<Trait>("Spooked") as Spooked;
@@ -615,7 +615,7 @@ public class CharacterNeedsComponent {
         //} else {
         //    RemoveLonelyOrForlorn();
         //}
-        JobQueueItem suicideJob = _character.jobQueue.GetJob(JOB_TYPE.SUICIDE);
+        JobQueueItem suicideJob = _character.jobQueue.GetJob(JOB_TYPE.COMMIT_SUICIDE);
         if (happiness <= 0f && suicideJob == null) {
             //When Happiness meter is reduced to 0, the character will create a Commit Suicide Job.
             Debug.Log(GameManager.Instance.TodayLogString() + _character.name + "'s happiness is " + happiness.ToString() + ", creating suicide job");
@@ -633,44 +633,8 @@ public class CharacterNeedsComponent {
         if (!character.canPerform) { //character.doNotDisturb > 0 || !character.canWitness
             return false;
         }
-        if (this.isForlorn) {
-            if (!character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
-                //If there is already a HUNGER_RECOVERY JOB and the character becomes Starving, replace HUNGER_RECOVERY with HUNGER_RECOVERY_STARVING only if that character is not doing the job already
-                JobQueueItem happinessRecoveryJob = character.jobQueue.GetJob(JOB_TYPE.HAPPINESS_RECOVERY);
-                if (happinessRecoveryJob != null) {
-                    //Replace this with Hunger Recovery Starving only if the character is not doing the Hunger Recovery Job already
-                    JobQueueItem currJob = character.currentJob;
-                    if (currJob == happinessRecoveryJob) {
-                        return false;
-                    } else {
-                        happinessRecoveryJob.CancelJob();
-                    }
-                }
-                bool triggerBrokenhearted = false;
-                Heartbroken heartbroken = character.traitContainer.GetNormalTrait<Trait>("Heartbroken") as Heartbroken;
-                if (heartbroken != null) {
-                    triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
-                }
-                if (!triggerBrokenhearted) {
-                    Hardworking hardworking = character.traitContainer.GetNormalTrait<Trait>("Hardworking") as Hardworking;
-                    if (hardworking != null) {
-                        bool isPlanningRecoveryProcessed = false;
-                        if (hardworking.ProcessHardworkingTrait(character, ref isPlanningRecoveryProcessed)) {
-                            return isPlanningRecoveryProcessed;
-                        }
-                    }
-                    JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY_FORLORN;
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _character, _character);
-                    //job.SetCancelOnFail(true);
-                    character.jobQueue.AddJobInQueue(job);
-                } else {
-                    heartbroken.TriggerBrokenhearted();
-                }
-                return true;
-            }
-        } else if (this.isLonely) {
-            if (!character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
-                JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY;
+        if (this.isLonely || this.isForlorn) {
+            if (!character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY)) {
                 int chance = UnityEngine.Random.Range(0, 100);
                 int value = 0;
                 TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick(character);
@@ -699,8 +663,7 @@ public class CharacterNeedsComponent {
                                 return isPlanningRecoveryProcessed;
                             }
                         }
-                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _character, _character);
-                        //job.SetCancelOnFail(true);
+                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _character, _character);
                         character.jobQueue.AddJobInQueue(job);
                     } else {
                         heartbroken.TriggerBrokenhearted();
@@ -893,10 +856,10 @@ public class CharacterNeedsComponent {
     }
     public void PlanScheduledFullnessRecovery(Character character) {
         if (!hasForcedFullness && fullnessForcedTick != 0 && GameManager.Instance.tick >= fullnessForcedTick && character.canPerform && doNotGetHungry <= 0) {
-            if (!character.jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING)) {
-                JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY;
+            if (!character.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT)) {
+                JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_NORMAL;
                 if (isStarving) {
-                    jobType = JOB_TYPE.HUNGER_RECOVERY_STARVING;
+                    jobType = JOB_TYPE.FULLNESS_RECOVERY_URGENT;
                 }
                 bool triggerGrieving = false;
                 Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Trait>("Griefstricken") as Griefstricken;
@@ -927,9 +890,9 @@ public class CharacterNeedsComponent {
             return false;
         }
         if (this.isStarving) {
-            if (!character.jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY_STARVING)) {
+            if (!character.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT)) {
                 //If there is already a HUNGER_RECOVERY JOB and the character becomes Starving, replace HUNGER_RECOVERY with HUNGER_RECOVERY_STARVING only if that character is not doing the job already
-                JobQueueItem hungerRecoveryJob = character.jobQueue.GetJob(JOB_TYPE.HUNGER_RECOVERY);
+                JobQueueItem hungerRecoveryJob = character.jobQueue.GetJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL);
                 if (hungerRecoveryJob != null) {
                     //Replace this with Hunger Recovery Starving only if the character is not doing the Hunger Recovery Job already
                     JobQueueItem currJob = character.currentJob;
@@ -939,7 +902,7 @@ public class CharacterNeedsComponent {
                         hungerRecoveryJob.CancelJob();
                     }
                 }
-                JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY_STARVING;
+                JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_URGENT;
                 bool triggerGrieving = false;
                 Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Trait>("Griefstricken") as Griefstricken;
                 if (griefstricken != null) {
@@ -990,8 +953,8 @@ public class CharacterNeedsComponent {
         return false;
     }
     public void PlanFullnessRecoveryNormal() {
-        if (!_character.jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY)) {
-            JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY;
+        if (!_character.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL)) {
+            JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_NORMAL;
             bool triggerGrieving = false;
             Griefstricken griefstricken = _character.traitContainer.GetNormalTrait<Trait>("Griefstricken") as Griefstricken;
             if (griefstricken != null) {
@@ -1228,11 +1191,9 @@ public class CharacterNeedsComponent {
         if (_character == character) {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{character.name} has finished job {job.ToString()}");
             //after doing an extreme needs type job, check again if the character needs to recover more of that need.
-            if (job.jobType == JOB_TYPE.HAPPINESS_RECOVERY_FORLORN) {
-                PlanHappinessRecoveryActions(_character);
-            } else if (job.jobType == JOB_TYPE.HUNGER_RECOVERY_STARVING) {
+            if (job.jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT) {
                 PlanFullnessRecoveryActions(_character);
-            } else if (job.jobType == JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED) {
+            } else if (job.jobType == JOB_TYPE.ENERGY_RECOVERY_URGENT) {
                 PlanTirednessRecoveryActions(_character);
             }
         }

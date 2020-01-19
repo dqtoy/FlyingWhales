@@ -62,85 +62,44 @@ namespace Traits {
             return character.traitContainer.RemoveTrait(character, this);
         }
         public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
-            if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.DOUSE_FIRE) && (characterThatWillDoJob.stateComponent.currentState == null || characterThatWillDoJob.stateComponent.currentState.characterState != CHARACTER_STATE.DOUSE_FIRE)) {
-                string summary = GameManager.Instance.TodayLogString() + characterThatWillDoJob.name + " saw a fire from source " + sourceOfBurning.ToString();
-                if (!TryToCreateDouseFireJob(traitOwner, characterThatWillDoJob)) {
-                    Pyrophobic pyrophobic = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Pyrophobic") as Pyrophobic;
-                    if (pyrophobic != null) {
-                        //pyrophobic
-                        summary += "\nDid not create douse fire job because character is pyrophobic!";
-                        //When he sees a fire source for the first time, reduce Happiness by 2000. Do not create Douse Fire job. It should always Flee from fire. Add log showing reason for fleeing is Pyrophobia
-                        if (pyrophobic.AddKnownBurningSource(sourceOfBurning)) {
-                            characterThatWillDoJob.needsComponent.AdjustHappiness(-20f);
-                        }
-                        //It will trigger one of the following:
-                        if (!characterThatWillDoJob.marker.hasFleePath && characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Catatonic") == null) { //if not already fleeing or catatonic
-                            //50% gain Shellshocked and Flee from fire. Log "[Actor Name] saw a fire and fled from it."
-                            if (UnityEngine.Random.Range(0, 100) < 50) {
-                                pyrophobic.BeShellshocked(sourceOfBurning, characterThatWillDoJob);
-                            }
-                            //50% gain Catatonic. Log "[Actor Name] saw a fire and became Catatonic."
-                            else {
-                                pyrophobic.BeCatatonic(sourceOfBurning, characterThatWillDoJob);
-                            }
-                        }
-                    } else {
-                        summary += "\nDid not create douse fire job because maximum dousers has been reached!";
-                        //if the character did not create a douse fire job. Check if he/she will watch instead. (Characters will just watch if their current actions are lower priority than Watch) NOTE: Lower priority value is considered higher priority
-                        //also make sure that character is not already watching.
-                        //int currentPriorityValue = characterThatWillDoJob.GetCurrentPriorityValue();
-                        //if (characterThatWillDoJob != traitOwner
-                        //    && (characterThatWillDoJob.currentActionNode == null || characterThatWillDoJob.currentActionNode.action.goapType != INTERACTION_TYPE.WATCH)
-                        //    && currentPriorityValue > JOB_TYPE.WATCH.GetJobTypePriority()) {
-                        //    summary += "\nWill watch because current priority value is  " + currentPriorityValue.ToString();
-                        //    Character nearestDouser = sourceOfBurning.GetNearestDouserFrom(characterThatWillDoJob);
-                        //    if (nearestDouser != null && nearestDouser.stateComponent.currentState is DouseFireState) {
-                        //        characterThatWillDoJob.CreateWatchEvent(null, nearestDouser.stateComponent.currentState, nearestDouser);
-                        //        summary += "\nCreated watch event targetting " + nearestDouser.name;
-                        //    } else {
-                        //        summary += "\nDid not watch because nearest douser is null or nearest douser is not in douse fire state. Nearest douser is: " + (nearestDouser?.name ?? "None");
-                        //    }
-                        //} else {
-                        //    summary += "\nDid not watch because current priority value is " + currentPriorityValue.ToString() + " or is already doing watch.";
-                        //}
-                    }
-                    Debug.Log(summary);
-                    return false;
-                }
-                summary += "\nCreated douse fire job!";
-                Debug.Log(summary);
-                return true;
-            }
-            return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
-        }
-        private bool TryToCreateDouseFireJob(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
-            //only create a remove fire job if the characters dousing the fire of a specific source is less than the required amount
-            if (sourceOfBurning.dousers.Count < 3 && characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Pyrophobic") == null) {  //3
-                bool willCreateDouseFireJob = false;
-                if (traitOwner is Character) {
-                    Character targetCharacter = traitOwner as Character;
-                    //When a character sees someone burning, it must create a Remove Fire job targetting that character (if they are not enemies).
-                    if (targetCharacter.isPartOfHomeFaction && characterThatWillDoJob.isPartOfHomeFaction
-                        && (targetCharacter == characterThatWillDoJob || !characterThatWillDoJob.opinionComponent.IsEnemiesWith(targetCharacter))) {
-                        willCreateDouseFireJob = true;
-                    }
-                } else {
-                    //if anything else other than a character always create douse fire job.
-                    willCreateDouseFireJob = true;
+            if (traitOwner.gridTileLocation != null 
+                && traitOwner.gridTileLocation.IsPartOfSettlement(characterThatWillDoJob.homeSettlement)
+                && characterThatWillDoJob.homeSettlement.HasJob(JOB_TYPE.DOUSE_FIRE) == false) {
+
+                int douseFireJobs = 3;
+                for (int i = 0; i < douseFireJobs; i++) {
+                    CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.DOUSE_FIRE, 
+                        CHARACTER_STATE.DOUSE_FIRE, characterThatWillDoJob.homeSettlement);
+                    job.SetCanTakeThisJobChecker(CanTakeRemoveFireJob);
+                    characterThatWillDoJob.homeSettlement.AddToAvailableJobs(job);
+                    
                 }
 
-                if (willCreateDouseFireJob) {
-                    CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.DOUSE_FIRE, CHARACTER_STATE.DOUSE_FIRE, characterThatWillDoJob);
-                    if (CanTakeRemoveFireJob(characterThatWillDoJob, traitOwner)) {
-                        sourceOfBurning.AddCharactersDousingFire(characterThatWillDoJob); //adjust the number of characters dousing the fire source. NOTE: Make sure to reduce that number if a character decides to quit the job for any reason.
-                        job.AddOnUnassignAction(sourceOfBurning.RemoveCharactersDousingFire); //This is the action responsible for reducing the number of characters dousing the fire when a character decides to quit the job.
-                        //TODO: characterThatWillDoJob.CancelAllJobsAndPlans(); //cancel all other plans except douse fire.
-                        characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                        return true;
+            }
+            
+            //pyrophobic handling
+            Pyrophobic pyrophobic = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Pyrophobic") as Pyrophobic;
+            if (pyrophobic != null) {
+                //pyrophobic
+                //When he sees a fire source for the first time, reduce Happiness by 2000. Do not create Douse Fire job. It should always Flee from fire. Add log showing reason for fleeing is Pyrophobia
+                if (pyrophobic.AddKnownBurningSource(sourceOfBurning)) {
+                    characterThatWillDoJob.needsComponent.AdjustHappiness(-20f);
+                }
+                //It will trigger one of the following:
+                if (!characterThatWillDoJob.marker.hasFleePath &&
+                    characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Catatonic") == null) {
+                    //if not already fleeing or catatonic
+                    //50% gain Shellshocked and Flee from fire. Log "[Actor Name] saw a fire and fled from it."
+                    if (UnityEngine.Random.Range(0, 100) < 50) {
+                        pyrophobic.BeShellshocked(sourceOfBurning, characterThatWillDoJob);
+                    }
+                    //50% gain Catatonic. Log "[Actor Name] saw a fire and became Catatonic."
+                    else {
+                        pyrophobic.BeCatatonic(sourceOfBurning, characterThatWillDoJob);
                     }
                 }
             }
-            return false;
+            return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
         }
         public override bool IsTangible() {
             return true;
@@ -159,21 +118,10 @@ namespace Traits {
         }
         public void SetSourceOfBurning(BurningSource source, ITraitable obj) {
             sourceOfBurning = source;
-            IPointOfInterest poiOnFire;
-            if (obj is LocationGridTile) {
-                poiOnFire = (obj as LocationGridTile).genericTileObject;
-            } else {
-                poiOnFire = obj as IPointOfInterest; //assuming that everything else is POI other than LocationGridTile
+            if (obj is IPointOfInterest) {
+                var poiOnFire = obj as IPointOfInterest;
+                source.AddObjectOnFire(poiOnFire);
             }
-            source.AddObjectOnFire(poiOnFire);
-        }
-
-        private bool CanTakeRemoveFireJob(Character character, JobQueueItem item) {
-            if (item is GoapPlanJob) {
-                GoapPlanJob job = item as GoapPlanJob;
-                return CanTakeRemoveFireJob(character, job.targetPOI);
-            }
-            return false;
         }
         private bool CanTakeRemoveFireJob(Character character, IPointOfInterest target) {
             if (target is Character) {

@@ -125,6 +125,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public InterruptComponent interruptComponent { get; private set; }
     public BehaviourComponent behaviourComponent { get; private set; }
     public MoodComponent moodComponent { get; private set; }
+    public CharacterJobComponent jobComponent { get; private set; }
 
     #region getters / setters
     public virtual string name => _firstName;
@@ -181,7 +182,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             return _currentRegion;
         }
     }
-    public Settlement currentSettlement => currentStructure != null ? currentStructure.settlementLocation : null;
+    public Settlement currentSettlement => gridTileLocation != null 
+        && gridTileLocation.buildSpotOwner.hexTileOwner != null ? 
+        gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile : null;
     public List<Log> history => _history;
     public int level => _level;
     public int experience => _experience;
@@ -260,6 +263,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public bool isCriminal => traitContainer.GetNormalTrait<Trait>("Criminal") != null;
     public bool isLycanthrope => lycanData != null;
     //public JobQueueItem currentJob => jobQueue.jobsInQueue.Count > 0 ? jobQueue.jobsInQueue[0] : null; //The current job is always the top of the queue
+    public JobTriggerComponent jobTriggerComponent => jobComponent;
     #endregion
 
     public Character(CharacterRole role, RACE race, GENDER gender) : this() {
@@ -384,6 +388,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         interruptComponent = new InterruptComponent(this);
         behaviourComponent = new BehaviourComponent(this);
         moodComponent = new MoodComponent(this);
+        jobComponent = new CharacterJobComponent(this);
     }
 
     //This is done separately after all traits have been loaded so that the data will be accurate
@@ -492,6 +497,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.AddListener<Character>(Signals.CHARACTER_NO_LONGER_MISSING, OnCharacterNoLongerMissing);
         //Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnCharacterPerformedAction);
         needsComponent.SubscribeToSignals();
+        jobComponent.SubscribeToListeners();
     }
     public virtual void UnsubscribeSignals() {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
@@ -514,6 +520,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_NO_LONGER_MISSING, OnCharacterNoLongerMissing);
         //Messenger.RemoveListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnCharacterPerformedAction);
         needsComponent.UnsubscribeToSignals();
+        jobComponent.UnsubscribeListeners();
     }
     #endregion
 
@@ -1063,20 +1070,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         return false;
     }
-    /// <summary>
-    /// Checker if this character has a job of type targeting it that is currently being done.
-    /// </summary>
-    /// <param name="jobType">The type of job targetting this character.</param>
-    /// <returns>True or false.</returns>
-    public bool HasActiveJobTargettingThisCharacter(JOB_TYPE jobType) {
-        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
-            JobQueueItem job = allJobsTargetingThis[i];
-            if (job.jobType == jobType && job.assignedCharacter != null) {
-                return true;
-            }
-        }
-        return false;
-    }
     public int GetNumOfJobsTargettingThisCharacter(JOB_TYPE jobType) {
         int count = 0;
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
@@ -1086,17 +1079,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
         }
         return count;
-    }
-    public bool HasJobTargettingThisCharacter(JOB_TYPE jobType, string conditionKey) {
-        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
-            if (allJobsTargetingThis[i] is GoapPlanJob) {
-                GoapPlanJob job = allJobsTargetingThis[i] as GoapPlanJob;
-                if (job.jobType == jobType && job.HasGoalConditionKey(conditionKey)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
     public GoapPlanJob GetJobTargettingThisCharacter(JOB_TYPE jobType, string conditionKey) {
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
@@ -1120,18 +1102,6 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         return null;
     }
-    public List<GoapPlanJob> GetJobsTargettingThisCharacter(JOB_TYPE jobType, string conditionKey) {
-        List<GoapPlanJob> jobs = new List<GoapPlanJob>();
-        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
-            if (allJobsTargetingThis[i] is GoapPlanJob) {
-                GoapPlanJob job = allJobsTargetingThis[i] as GoapPlanJob;
-                if (job.jobType == jobType && job.HasGoalConditionKey(conditionKey)) {
-                    jobs.Add(job);
-                }
-            }
-        }
-        return jobs;
-    }
     private void CheckApprehendRelatedJobsOnLeaveLocation() {
         ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
         CancelAllJobs(JOB_TYPE.APPREHEND);
@@ -1145,8 +1115,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //}
     }
     public void CancelOrUnassignRemoveTraitRelatedJobs() {
-        ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT);
-        CancelAllJobs(JOB_TYPE.REMOVE_TRAIT);
+        ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_STATUS);
+        CancelAllJobs(JOB_TYPE.REMOVE_STATUS);
         //TODO:
         //All remove trait jobs that are being done by this character must be unassigned
         //for (int i = 0; i < allGoapPlans.Count; i++) {
@@ -1272,7 +1242,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
     }
     public bool CreateUndermineJobOnly(Character targetCharacter, string reason, SHARE_INTEL_STATUS status = SHARE_INTEL_STATUS.INFORMED) {
-        if (jobQueue.HasJob(JOB_TYPE.UNDERMINE_ENEMY, targetCharacter)) {
+        if (jobQueue.HasJob(JOB_TYPE.UNDERMINE, targetCharacter)) {
             return false;
         }
         if (traitContainer.GetNormalTrait<Trait>("Diplomatic") != null) {
@@ -1283,7 +1253,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             //This means that all undermine jobs that are caused by witnessing an event will become knockout jobs
             return CreateKnockoutJob(targetCharacter);
         }
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE_ENEMY, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, "Negative", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, this);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, "Negative", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, this);
         Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job: negative trait to " + this.name + " with target " + targetCharacter.name);
         jobQueue.AddJobInQueue(job);
 
@@ -1453,46 +1423,46 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         bool hasCreatedJob = false;
 
         //build furniture job
-        if (!hasCreatedJob && isAtHomeRegion && homeSettlement != null && currentStructure is Dwelling) {
-            IDwelling dwelling = currentStructure as IDwelling;
-            if (dwelling.HasUnoccupiedFurnitureSpot()) { //&& advertisedActions.Contains(INTERACTION_TYPE.CRAFT_TILE_OBJECT)
-                if (UnityEngine.Random.Range(0, 100) < 10) { //if the dwelling has a facility deficit(facility at 0) or if chance is met.
-                    FACILITY_TYPE mostNeededFacility = dwelling.GetMostNeededValidFacility();
-                    if (mostNeededFacility != FACILITY_TYPE.NONE) {
-                        List<LocationGridTile> validSpots = dwelling.GetUnoccupiedFurnitureSpotsThatCanProvide(mostNeededFacility);
-                        if(validSpots != null && validSpots.Count > 0) {
-                            LocationGridTile chosenTile = validSpots[UnityEngine.Random.Range(0, validSpots.Count)];
-                            FURNITURE_TYPE furnitureToCreate = chosenTile.GetFurnitureThatCanProvide(mostNeededFacility);
-                            TILE_OBJECT_TYPE tileObj = furnitureToCreate.ConvertFurnitureToTileObject();
-
-                            //create new unbuilt furniture on spot, and target that in the job
-                            TileObject furniture = InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObj);
-                            dwelling.AddPOI(furniture, chosenTile);
-                            furniture.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
-                            Debug.Log($"Created new unbuilt {furniture.name} at {chosenTile}");
-
-                            if (tileObj.CanBeCraftedBy(this)) { //check first if the character can build that specific type of furniture
-                                if (jobQueue.HasJob(JOB_TYPE.CRAFT_OBJECT, furniture) == false) {
-                                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, furniture, this);
-                                    job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(furniture.tileObjectType).constructionCost });
-                                    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
-                                    jobQueue.AddJobInQueue(job);
-                                    Debug.Log($"{GameManager.Instance.TodayLogString()}{job.ToString()} was added to {this.name}'s jobqueue");
-                                }
-                            } else {
-                            //furniture cannot be crafted by this character, post a job on the settlement
-                            if (homeSettlement.HasJob(JOB_TYPE.CRAFT_OBJECT, furniture) == false) {
-                                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, furniture, homeSettlement);
-                                    job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(furniture.tileObjectType).constructionCost });
-                                    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
-                                homeSettlement.AddToAvailableJobs(job);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        // if (!hasCreatedJob && isAtHomeRegion && homeSettlement != null && currentStructure is Dwelling) {
+        //     IDwelling dwelling = currentStructure as IDwelling;
+        //     if (dwelling.HasUnoccupiedFurnitureSpot()) { //&& advertisedActions.Contains(INTERACTION_TYPE.CRAFT_TILE_OBJECT)
+        //         if (UnityEngine.Random.Range(0, 100) < 10) { //if the dwelling has a facility deficit(facility at 0) or if chance is met.
+        //             FACILITY_TYPE mostNeededFacility = dwelling.GetMostNeededValidFacility();
+        //             if (mostNeededFacility != FACILITY_TYPE.NONE) {
+        //                 List<LocationGridTile> validSpots = dwelling.GetUnoccupiedFurnitureSpotsThatCanProvide(mostNeededFacility);
+        //                 if(validSpots != null && validSpots.Count > 0) {
+        //                     LocationGridTile chosenTile = validSpots[UnityEngine.Random.Range(0, validSpots.Count)];
+        //                     FURNITURE_TYPE furnitureToCreate = chosenTile.GetFurnitureThatCanProvide(mostNeededFacility);
+        //                     TILE_OBJECT_TYPE tileObj = furnitureToCreate.ConvertFurnitureToTileObject();
+        //
+        //                     //create new unbuilt furniture on spot, and target that in the job
+        //                     TileObject furniture = InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObj);
+        //                     dwelling.AddPOI(furniture, chosenTile);
+        //                     furniture.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
+        //                     Debug.Log($"Created new unbuilt {furniture.name} at {chosenTile}");
+        //
+        //                     if (tileObj.CanBeCraftedBy(this)) { //check first if the character can build that specific type of furniture
+        //                         if (jobQueue.HasJob(JOB_TYPE.CRAFT_OBJECT, furniture) == false) {
+        //                             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, furniture, this);
+        //                             job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(furniture.tileObjectType).constructionCost });
+        //                             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
+        //                             jobQueue.AddJobInQueue(job);
+        //                             Debug.Log($"{GameManager.Instance.TodayLogString()}{job.ToString()} was added to {this.name}'s jobqueue");
+        //                         }
+        //                     } else {
+        //                     //furniture cannot be crafted by this character, post a job on the settlement
+        //                     if (homeSettlement.HasJob(JOB_TYPE.CRAFT_OBJECT, furniture) == false) {
+        //                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, furniture, homeSettlement);
+        //                             job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(furniture.tileObjectType).constructionCost });
+        //                             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
+        //                         homeSettlement.AddToAvailableJobs(job);
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
 
         //Obtain Item job
         //if the character is part of a Faction and he doesnt have an Obtain Item Job in his personal job queue, 
@@ -1608,12 +1578,12 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                     targetCharacter = nonEnemyCharacters[UnityEngine.Random.Range(0, nonEnemyCharacters.Count)];
                 }
             }
-            if (targetCharacter != null) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ASK_FOR_HELP_SAVE_CHARACTER, INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER, targetCharacter, this);
-                jobQueue.AddJobInQueue(job);
-            } else {
-                RegisterLogAndShowNotifToThisCharacterOnly("Generic", "ask_for_help_fail", troubledCharacter, troubledCharacter.name);
-            }
+            // if (targetCharacter != null) {
+            //     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ASK_FOR_HELP_SAVE_CHARACTER, INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER, targetCharacter, this);
+            //     jobQueue.AddJobInQueue(job);
+            // } else {
+            //     RegisterLogAndShowNotifToThisCharacterOnly("Generic", "ask_for_help_fail", troubledCharacter, troubledCharacter.name);
+            // }
         } else {
             if (troubledCharacter == null) {
                 Debug.LogError(name + " cannot create ask for help save character job because troubled character is null!");
@@ -1844,7 +1814,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //return true;
     }
     public GoapPlanJob CreateSuicideJob() {
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SUICIDE, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), this, this);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COMMIT_SUICIDE, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), this, this);
         //job.SetCanTakeThisJobChecker(InteractionManager.Instance.IsSuicideJobStillValid);
         jobQueue.AddJobInQueue(job);
         return job;
@@ -2163,7 +2133,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     public bool IsInHomeSettlement() {
         if (isAtHomeRegion) {
-            Settlement currentSettlement = currentStructure.settlementLocation;
+            Settlement currentSettlement = this.currentSettlement;
             Settlement home = homeSettlement;
             if(home != null) {
                 return currentSettlement == home;
@@ -3949,7 +3919,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public bool PlanIdleReturnHome() { //bool forceDoAction = false
         ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], this, this, null, 0);
         GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, this);
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.RETURN_HOME, this, this);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE_RETURN_HOME, INTERACTION_TYPE.RETURN_HOME, this, this);
         goapPlan.SetDoNotRecalculate(true);
         job.SetCannotBePushedBack(true);
         job.SetAssignedPlan(goapPlan);
@@ -4010,10 +3980,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //    PlanIdleStroll(currentStructure);
         //}
     }
-    public void PlanIdle(INTERACTION_TYPE type, IPointOfInterest target, object[] otherData = null) {
+    public void PlanIdle(JOB_TYPE jobType, INTERACTION_TYPE type, IPointOfInterest target, object[] otherData = null) {
         ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[type], this, target, otherData, 0);
         GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, target);
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, type, target, this);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, type, target, this);
         goapPlan.SetDoNotRecalculate(true);
         job.SetCannotBePushedBack(true);
         job.SetAssignedPlan(goapPlan);
@@ -4026,8 +3996,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //AddPlan(goapPlan);
         //PlanGoapActions(goapAction);
     }
-    public void PlanIdle(GoapEffect effect, IPointOfInterest target) {
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, effect, target, this);
+    public void PlanIdle(JOB_TYPE jobType, GoapEffect effect, IPointOfInterest target) {
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, effect, target, this);
         jobQueue.AddJobInQueue(job);
         //if (effect.targetPOI != null && effect.targetPOI != this) {
         //    AddAwareness(effect.targetPOI);
@@ -5223,7 +5193,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 //this means that this is the end goal so end this plan now
                 job.ForceCancelJob(false);
                 
-                Messenger.Broadcast(Signals.CHARACTER_FINISHED_JOB, this, job);
+                Messenger.Broadcast(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, this, job);
             } else {
                 log += "\nNext action for this plan: " + plan.currentActualNode.goapName;
                 //if (plan.job != null && plan.job.assignedCharacter != this) {
@@ -5420,7 +5390,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             return false;
         }
         bool shouldLogReason = true;
-        if (reason != "" && currentActionNode.poiTarget != this && !currentJob.IsAnInterruptionJob()/* && currentJob.jobType != JOB_TYPE.WATCH*/) {
+        if (reason != "" && currentActionNode.poiTarget != this/* && currentJob.jobType != JOB_TYPE.WATCH*/) {
             //if(currentActionNode.poiTarget is Character) {
             //    Trait targetDeadTrait = currentActionNode.poiTarget.traitContainer.GetNormalTrait<Trait>("Dead");
             //    if(targetDeadTrait.gainedFromDoing == currentActionNode) {
@@ -5577,7 +5547,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 return;
             }
         }
-        if(jobQueue.HasJob(JOB_TYPE.REACT_TO_SCREAM, characterThatScreamed)) {
+        if(jobQueue.HasJob(JOB_TYPE.GO_TO, characterThatScreamed)) {
             //Do not react if character will already react to a scream;
             return;
         }
@@ -5595,18 +5565,18 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         string log = name + " heard the scream of " + characterThatScreamed.name + ", reacting...";
 
         bool canReact = true;
-        int reactJobPriority = JOB_TYPE.REACT_TO_SCREAM.GetJobTypePriority();
-        if (stateComponent.currentState != null && stateComponent.currentState.job != null && stateComponent.currentState.job.priority <= reactJobPriority) {
+        int reactJobPriority = JOB_TYPE.GO_TO.GetJobTypePriority();
+        if (stateComponent.currentState != null && stateComponent.currentState.job != null && stateComponent.currentState.job.priority >= reactJobPriority) {
             canReact = false;
         } 
         //else if (stateComponent.stateToDo != null && stateComponent.stateToDo.job != null && stateComponent.stateToDo.job.priority <= reactJobPriority) {
         //    canReact = false;
         //} 
-        else if (currentJob != null && currentJob.priority <= reactJobPriority) {
+        else if (currentJob != null && currentJob.priority >= reactJobPriority) {
             canReact = false;
         }
         if (canReact) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REACT_TO_SCREAM, INTERACTION_TYPE.GO_TO, characterThatScreamed, this);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO, characterThatScreamed, this);
             jobQueue.AddJobInQueue(job);
             //if (CanCurrentJobBeOverriddenByJob(job)) {
             //    jobQueue.AddJobInQueue(job, false);
@@ -6246,10 +6216,20 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         canWitnessValue--;
     }
     public void IncreaseCanMove() {
+        bool couldNotMoveBefore = canMove == false;
         canMoveValue++;
+        if (couldNotMoveBefore && canMove) {
+            //character could not move before adjustment, but can move after adjustment
+            Messenger.Broadcast(Signals.CHARACTER_CAN_MOVE_AGAIN, this);
+        }
     }
     public void DecreaseCanMove() {
+        bool couldMoveBefore = canMove;
         canMoveValue--;
+        if (couldMoveBefore && canMove == false) {
+            //character could move before adjustment, but cannot move after adjustment
+            Messenger.Broadcast(Signals.CHARACTER_CAN_NO_LONGER_MOVE, this);
+        }
     }
     public void IncreaseCanBeAttacked() {
         canBeAtttackedValue++;

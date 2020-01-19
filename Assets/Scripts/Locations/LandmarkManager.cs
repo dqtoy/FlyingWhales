@@ -104,11 +104,11 @@ public partial class LandmarkManager : MonoBehaviour {
         tile.RemoveLandmarkVisuals();
         tile.RemoveLandmarkOnTile();
         Messenger.Broadcast(Signals.LANDMARK_DESTROYED, landmarkOnTile, tile);
-        if (landmarkOnTile.specificLandmarkType.IsPlayerLandmark() && tile.region.locationType.IsSettlementType() == false) {
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, 
-                tile.region.regionTileObject as IPointOfInterest, 
-                "target has been destroyed", JOB_TYPE.ATTACK_DEMONIC_REGION);    
-        }
+        // if (landmarkOnTile.specificLandmarkType.IsPlayerLandmark() && tile.region.locationType.IsSettlementType() == false) {
+        //     Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, 
+        //         tile.region.regionTileObject as IPointOfInterest, 
+        //         "target has been destroyed", JOB_TYPE.ATTACK_DEMONIC_REGION);    
+        // }
     }
     public BaseLandmark LoadLandmarkOnTile(HexTile location, BaseLandmark landmark) {
         BaseLandmark newLandmark = location.LoadLandmark(landmark);

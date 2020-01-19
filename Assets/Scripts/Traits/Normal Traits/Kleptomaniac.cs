@@ -61,27 +61,27 @@ namespace Traits {
         //        _happinessDecreaseRate = 20;
         //    }
         //}
-        public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
-            if (targetPOI is SpecialToken) {
-                SpecialToken token = targetPOI as SpecialToken;
-                if (token.characterOwner != null && token.characterOwner != characterThatWillDoJob && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetPOI) && token.mapObjectState == MAP_OBJECT_STATE.BUILT) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.STEAL, INTERACTION_TYPE.STEAL, targetPOI, characterThatWillDoJob);
-                    job.SetIsStealth(true);
-                    characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                    return true;
-                }
-            } else if (targetPOI is Character) {
-                Character targetCharacter = targetPOI as Character;
-                if (characterThatWillDoJob.opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetCharacter) && targetCharacter.items.Count > 0) {
-                    SpecialToken item = targetCharacter.items[Random.Range(0, targetCharacter.items.Count)];
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.STEAL, INTERACTION_TYPE.STEAL, item, characterThatWillDoJob);
-                    job.SetIsStealth(true);
-                    characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                    return true;
-                }
-            }
-            return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
-        }
+        // public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
+        //     if (targetPOI is SpecialToken) {
+        //         SpecialToken token = targetPOI as SpecialToken;
+        //         if (token.characterOwner != null && token.characterOwner != characterThatWillDoJob && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetPOI) && token.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+        //             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.STEAL, INTERACTION_TYPE.STEAL, targetPOI, characterThatWillDoJob);
+        //             job.SetIsStealth(true);
+        //             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+        //             return true;
+        //         }
+        //     } else if (targetPOI is Character) {
+        //         Character targetCharacter = targetPOI as Character;
+        //         if (characterThatWillDoJob.opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetCharacter) && targetCharacter.items.Count > 0) {
+        //             SpecialToken item = targetCharacter.items[Random.Range(0, targetCharacter.items.Count)];
+        //             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.STEAL, INTERACTION_TYPE.STEAL, item, characterThatWillDoJob);
+        //             job.SetIsStealth(true);
+        //             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+        //             return true;
+        //         }
+        //     }
+        //     return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
+        // }
         public override string TriggerFlaw(Character character) {
             //The character will begin Hunt for Blood.
             if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
@@ -91,8 +91,8 @@ namespace Traits {
                     triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
                 }
                 if (!triggerBrokenhearted) {
-                    if (character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
-                        character.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN);
+                    if (character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY)) {
+                        character.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY);
                     }
 
                     List<SpecialToken> choices = new List<SpecialToken>();

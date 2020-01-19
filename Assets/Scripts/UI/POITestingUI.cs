@@ -64,7 +64,7 @@ public class POITestingUI : MonoBehaviour {
     public void InviteToMakeLove() {
         if (poi is Character) {
             Character target = poi as Character;
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY_FORLORN, INTERACTION_TYPE.INVITE, target, UIManager.Instance.characterInfoUI.activeCharacter);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, INTERACTION_TYPE.INVITE, target, UIManager.Instance.characterInfoUI.activeCharacter);
             UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
             //if (UIManager.Instance.characterInfoUI.activeCharacter.HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
             //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY_FORLORN, INTERACTION_TYPE.INVITE_TO_MAKE_LOVE, target);
@@ -90,7 +90,7 @@ public class POITestingUI : MonoBehaviour {
     }
     public void DrinkBlood() {
         if (poi is Character) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNGER_RECOVERY_STARVING, INTERACTION_TYPE.DRINK_BLOOD, poi, UIManager.Instance.characterInfoUI.activeCharacter);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, INTERACTION_TYPE.DRINK_BLOOD, poi, UIManager.Instance.characterInfoUI.activeCharacter);
             UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
             Debug.LogError(poi.name + " is not a character!");
@@ -99,7 +99,7 @@ public class POITestingUI : MonoBehaviour {
     }
     public void Feed() {
         if (poi is Character) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNGER_RECOVERY_STARVING, INTERACTION_TYPE.FEED, poi, UIManager.Instance.characterInfoUI.activeCharacter);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, INTERACTION_TYPE.FEED, poi, UIManager.Instance.characterInfoUI.activeCharacter);
             UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
             Debug.LogError(poi.name + " is not a character!");
@@ -111,7 +111,7 @@ public class POITestingUI : MonoBehaviour {
     #region Tile Object Testing
     public void PoisonTable() {
         if (poi is Table) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE_ENEMY, INTERACTION_TYPE.POISON, poi, UIManager.Instance.characterInfoUI.activeCharacter);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE, INTERACTION_TYPE.POISON, poi, UIManager.Instance.characterInfoUI.activeCharacter);
             UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
             Debug.LogError(poi.name + " is not a table!");
@@ -120,7 +120,7 @@ public class POITestingUI : MonoBehaviour {
     }
     public void EatAtTable() {
         if (poi is Table) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNGER_RECOVERY_STARVING, INTERACTION_TYPE.EAT, poi, UIManager.Instance.characterInfoUI.activeCharacter);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, INTERACTION_TYPE.EAT, poi, UIManager.Instance.characterInfoUI.activeCharacter);
             UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
             Debug.LogError(poi.name + " is not a table!");
@@ -129,7 +129,7 @@ public class POITestingUI : MonoBehaviour {
     }
     public void Sleep() {
         if (poi is Bed) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TIREDNESS_RECOVERY, INTERACTION_TYPE.SLEEP, poi, UIManager.Instance.characterInfoUI.activeCharacter);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, INTERACTION_TYPE.SLEEP, poi, UIManager.Instance.characterInfoUI.activeCharacter);
             UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
             Debug.LogError(poi.name + " is not a bed!");

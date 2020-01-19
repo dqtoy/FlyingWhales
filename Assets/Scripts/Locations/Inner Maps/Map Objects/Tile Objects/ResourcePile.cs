@@ -15,16 +15,13 @@ public abstract class ResourcePile : TileObject {
     #region Virtuals
     public virtual void SetResourceInPile(int amount) {
         SetResource(providedResource, amount);
-        //resourceInPile = amount;
-        //resourceInPile = Mathf.Max(0, resourceInPile);
         if(resourceInPile <= 0 && gridTileLocation != null && isBeingCarriedBy == null) {
             gridTileLocation.structure.RemovePOI(this);
         }
     }
     public virtual void AdjustResourceInPile(int adjustment) {
-        //resourceInPile += adjustment;
-        //resourceInPile = Mathf.Max(0, resourceInPile);
         AdjustResource(providedResource, adjustment);
+        Messenger.Broadcast(Signals.RESOURCE_IN_PILE_CHANGED, this);
         if (resourceInPile <= 0) {
             if(gridTileLocation != null && isBeingCarriedBy == null) {
                 gridTileLocation.structure.RemovePOI(this);
@@ -52,7 +49,8 @@ public abstract class ResourcePile : TileObject {
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
         Messenger.RemoveListener<Region>(Signals.REGION_CHANGE_STORAGE, OnRegionChangeStorage);
-        Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.HAUL, this as IPointOfInterest);
+        // Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.HAUL, this as IPointOfInterest);
+        Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.DESTROY, this as IPointOfInterest);
     }
     #endregion
 
