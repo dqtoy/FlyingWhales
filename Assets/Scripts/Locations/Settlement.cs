@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System;
+using System.Linq;
 using Inner_Maps;
 using UnityEngine;
 using Traits;
@@ -42,10 +42,11 @@ public class Settlement : IJobOwner {
 
     private int newRulerDesignationChance;
     private WeightedDictionary<Character> newRulerDesignationWeights;
-    private SettlementJobTriggerComponent _jobTriggerComponent;
+    private SettlementJobTriggerComponent _settlementJobTriggerComponent;
     
     #region getters
-    public JobTriggerComponent jobTriggerComponent => _jobTriggerComponent;
+    public JobTriggerComponent jobTriggerComponent => settlementJobTriggerComponent;
+    public SettlementJobTriggerComponent settlementJobTriggerComponent => _settlementJobTriggerComponent;
     #endregion
 
     public Settlement(Region region, LOCATION_TYPE locationType, int citizenCount) {
@@ -64,7 +65,7 @@ public class Settlement : IJobOwner {
         classManager = new LocationClassManager();
         eventManager = new LocationEventManager(this);
         jobManager = new LocationJobManager(this);
-        _jobTriggerComponent = new SettlementJobTriggerComponent(this);
+        _settlementJobTriggerComponent = new SettlementJobTriggerComponent(this);
 
     }
     public Settlement(SaveDataArea saveDataArea) {
@@ -88,7 +89,6 @@ public class Settlement : IJobOwner {
 
     #region Listeners
     private void SubscribeToSignals() {
-        Messenger.AddListener(Signals.HOUR_STARTED, HourlyJobActions);
         Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingCharacter);
         Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
@@ -97,10 +97,9 @@ public class Settlement : IJobOwner {
         Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         // Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
         // Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
-        _jobTriggerComponent.SubscribeToListeners();
+        settlementJobTriggerComponent.SubscribeToListeners();
     }
     private void UnsubscribeToSignals() {
-        Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyJobActions);
         Messenger.RemoveListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingCharacter);
         Messenger.RemoveListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
@@ -109,7 +108,7 @@ public class Settlement : IJobOwner {
         Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         // Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
         // Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
-        _jobTriggerComponent.UnsubscribeListeners();
+        settlementJobTriggerComponent.UnsubscribeListeners();
     }
     #endregion
 
@@ -530,6 +529,18 @@ public class Settlement : IJobOwner {
     //         //character has entered settlement
     //     }
     // }
+    public List<Character> GetHostileCharactersInSettlement() {
+        List<Character> hostileCharacters = new List<Character>();
+        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
+            Character character = region.charactersAtLocation[i];
+            if (character.gridTileLocation.IsPartOfSettlement(this)
+            && character.faction != owner 
+            && owner.GetRelationshipWith(character.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+                hostileCharacters.Add(character);
+            }
+        }
+        return hostileCharacters;
+    }
     #endregion
 
     #region Special Tokens
@@ -761,21 +772,6 @@ public class Settlement : IJobOwner {
             }
         }
     }
-    private void PlaceOres() {
-        if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
-            LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][0];
-            int oreCount = 4;
-            for (int i = 0; i < oreCount; i++) {
-                List<LocationGridTile> validTiles = structure.unoccupiedTiles.ToList();
-                if (validTiles.Count > 0) {
-                    LocationGridTile chosenTile = validTiles[UnityEngine.Random.Range(0, validTiles.Count)];
-                    structure.AddPOI(new Ore(), chosenTile);
-                } else {
-                    break;
-                }
-            }
-        }
-    }
     private void PlaceResourcePiles() {
         if (structures.ContainsKey(STRUCTURE_TYPE.WAREHOUSE)) {
             mainStorage = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
@@ -783,53 +779,24 @@ public class Settlement : IJobOwner {
             mainStorage = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
         }
         WoodPile woodPile = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
-        woodPile.SetResourceInPile(10000);
+        woodPile.SetResourceInPile(100);
         mainStorage.AddPOI(woodPile);
         woodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.WOOD_PILE);
 
         StonePile stonePile = InnerMapManager.Instance.CreateNewTileObject<StonePile>(TILE_OBJECT_TYPE.STONE_PILE);
-        stonePile.SetResourceInPile(10000);
+        stonePile.SetResourceInPile(100);
         mainStorage.AddPOI(stonePile);
         stonePile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.STONE_PILE);
 
         MetalPile metalPile = InnerMapManager.Instance.CreateNewTileObject<MetalPile>(TILE_OBJECT_TYPE.METAL_PILE);
-        metalPile.SetResourceInPile(10000);
+        metalPile.SetResourceInPile(100);
         mainStorage.AddPOI(metalPile);
         metalPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.METAL_PILE);
 
         FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.FOOD_PILE);
-        foodPile.SetResourceInPile(10000);
+        foodPile.SetResourceInPile(100);
         mainStorage.AddPOI(foodPile);
         foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
-    }
-    private void SpawnFoodObjects() {
-        if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
-            LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][0];
-            //Reduce number of Small Animals and Edible Plants in the wilderness to 4 and 6 respectively. 
-            //Also, they should all be placed in spots adjacent to at least three passsable tiles.
-            int smallAnimalCount = 4;
-            int ediblePlantsCount = 6;
-
-            for (int i = 0; i < smallAnimalCount; i++) {
-                List<LocationGridTile> validTiles = structure.unoccupiedTiles.ToList();
-                if (validTiles.Count > 0) {
-                    LocationGridTile chosenTile = validTiles[UnityEngine.Random.Range(0, validTiles.Count)];
-                    structure.AddPOI(new SmallAnimal(), chosenTile);
-                } else {
-                    break;
-                }
-            }
-
-            for (int i = 0; i < ediblePlantsCount; i++) {
-                List<LocationGridTile> validTiles = structure.unoccupiedTiles.ToList();
-                if (validTiles.Count > 0) {
-                    LocationGridTile chosenTile = validTiles[UnityEngine.Random.Range(0, validTiles.Count)];
-                    structure.AddPOI(new EdiblePlant(), chosenTile);
-                } else {
-                    break;
-                }
-            }
-        }
     }
     private void AssignPrison() {
         if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
@@ -868,7 +835,7 @@ public class Settlement : IJobOwner {
         bool shouldCheckResourcePiles = mainStorage != null && structure != null && mainStorage != structure;
         mainStorage = structure;
         if (shouldCheckResourcePiles) {
-            Messenger.Broadcast(Signals.REGION_CHANGE_STORAGE, region);
+            Messenger.Broadcast(Signals.SETTLEMENT_CHANGE_STORAGE, this);
         }
     }
     #endregion
@@ -895,8 +862,12 @@ public class Settlement : IJobOwner {
     #endregion
 
     #region Jobs
-    public void AddToAvailableJobs(JobQueueItem job) {
-        availableJobs.Add(job);
+    public void AddToAvailableJobs(JobQueueItem job, int position = -1) {
+        if (position == -1) {
+            availableJobs.Add(job);    
+        } else {
+            availableJobs.Insert(position, job);
+        }
         jobManager.OnAddToAvailableJobs(job);
         if (job is GoapPlanJob) {
             GoapPlanJob goapJob = job as GoapPlanJob;
@@ -910,9 +881,9 @@ public class Settlement : IJobOwner {
         if (availableJobs.Remove(job)) {
             if (job is GoapPlanJob) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
-                Debug.Log($"{GameManager.Instance.TodayLogString()}{goapJob.ToString()} targeting {goapJob.targetPOI?.name} was added to {this.name}'s available jobs");
+                Debug.Log($"{GameManager.Instance.TodayLogString()}{goapJob.ToString()} targeting {goapJob.targetPOI?.name} was removed from {this.name}'s available jobs");
             } else {
-                Debug.Log($"{GameManager.Instance.TodayLogString()}{job.ToString()} was added to {this.name}'s available jobs");    
+                Debug.Log($"{GameManager.Instance.TodayLogString()}{job.ToString()} was removed from {this.name}'s available jobs");    
             }
             OnJobRemovedFromAvailableJobs(job);
             return true;
@@ -1030,6 +1001,16 @@ public class Settlement : IJobOwner {
         }
         return null;
     }
+    public List<JobQueueItem> GetJobs(params JOB_TYPE[] jobTypes) {
+        List<JobQueueItem> jobs = new List<JobQueueItem>();
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (jobTypes.Contains(job.jobType)) {
+                jobs.Add(job);
+            }
+        }
+        return jobs;
+    }
     public JobQueueItem GetJob(JOB_TYPE job, IPointOfInterest target) {
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem jqi = availableJobs[i];
@@ -1090,17 +1071,6 @@ public class Settlement : IJobOwner {
             }
         }
         return null;
-    }
-    private void HourlyJobActions() {
-        CreatePatrolJobs();
-    }
-    private void CreatePatrolJobs() {
-        int patrolChance = UnityEngine.Random.Range(0, 100);
-        if (patrolChance < 25 && GetNumberOfJobsWith(CHARACTER_STATE.PATROL) < 2) {
-            CharacterStateJob stateJob = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.PATROL, CHARACTER_STATE.PATROL, this);
-            stateJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoPatrolAndExplore);
-            AddToAvailableJobs(stateJob);
-        }
     }
     private void CheckAreaInventoryJobs(LocationStructure affectedStructure) {
         if (affectedStructure == mainStorage) {

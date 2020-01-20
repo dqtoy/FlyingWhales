@@ -26,24 +26,24 @@ public class DefaultOutside : CharacterBehaviourComponent {
             } else {
                 log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
             }
-            log += "\n-Otherwise, if it is Morning or Afternoon or Early Night, and the character has a positive relationship with someone currently Paralyzed or Catatonic, 30% chance to Check Out one at random";
-            if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON || currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
-                log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
-                int chance = UnityEngine.Random.Range(0, 100);
-                log += "\n  -RNG roll: " + chance;
-                if (chance < 30) {
-                    Character chosenCharacter = character.GetParalyzedOrCatatonicCharacterToCheckOut();
-                    if (chosenCharacter != null) {
-                        log += "\n  -Will Check Out character " + chosenCharacter.name;
-                        character.PlanIdle(JOB_TYPE.CHECK_PARALYZED_FRIEND, new GoapEffect(GOAP_EFFECT_CONDITION.IN_VISION, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), chosenCharacter);
-                        return true;
-                    } else {
-                        log += "\n  -No available character to check out ";
-                    }
-                }
-            } else {
-                log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
-            }
+            // log += "\n-Otherwise, if it is Morning or Afternoon or Early Night, and the character has a positive relationship with someone currently Paralyzed or Catatonic, 30% chance to Check Out one at random";
+            // if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON || currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
+            //     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+            //     int chance = UnityEngine.Random.Range(0, 100);
+            //     log += "\n  -RNG roll: " + chance;
+            //     if (chance < 30) {
+            //         Character chosenCharacter = character.GetParalyzedOrCatatonicCharacterToCheckOut();
+            //         if (chosenCharacter != null) {
+            //             log += "\n  -Will Check Out character " + chosenCharacter.name;
+            //             character.PlanIdle(JOB_TYPE.CHECK_PARALYZED_FRIEND, new GoapEffect(GOAP_EFFECT_CONDITION.IN_VISION, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), chosenCharacter);
+            //             return true;
+            //         } else {
+            //             log += "\n  -No available character to check out ";
+            //         }
+            //     }
+            // } else {
+            //     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+            // }
             log += "\n-Otherwise, return home";
             log += "\n  -" + character.name + " will do action Return Home";
             character.PlanIdleReturnHome();

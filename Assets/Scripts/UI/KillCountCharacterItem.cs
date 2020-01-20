@@ -55,7 +55,13 @@ public class KillCountCharacterItem : CharacterNameplateItem {
                 if (negDisTrait is Unconscious) {
                     text = "\"" + character.name + " was knocked out";
                 } else if (negDisTrait is Restrained) {
-                    text = "\"" + character.name + " was restrained by " + negDisTrait.responsibleCharacter.name + ".\"";
+                    Character responsibleCharacter = negDisTrait.responsibleCharacter;
+                    if (responsibleCharacter != null) {
+                        text = "\"" + character.name + " was restrained by " + responsibleCharacter.name + ".\"";    
+                    } else {
+                        text = "\"" + character.name + " was restrained by something.\"";
+                    }
+                    
                 } else if (negDisTrait is Paralyzed) {
                     text = "\"" + character.name + " became paralyzed.\"";
                 }

@@ -2,7 +2,7 @@
 
 public partial class InteractionManager {
     
-    public bool CanDoPatrolAndExplore(Character character) {
+    public bool CanDoPatrol(Character character) {
         return character.canCombat;
     }
     public bool IsSuicideJobStillValid(Character character) {
@@ -75,6 +75,14 @@ public partial class InteractionManager {
     }
     public bool CanDoObtainSupplyJob(Character character) {
         return character.traitContainer.GetNormalTrait<Trait>("Combatant") != null;
+        //return character.role.roleType == CHARACTER_ROLE.SOLDIER;
+    }
+    public bool CanDoProduceWoodJob(Character character) {
+        return character.traitContainer.GetNormalTrait<Trait>("Logger") != null;
+        //return character.role.roleType == CHARACTER_ROLE.SOLDIER;
+    }
+    public bool CanDoProduceMetalJob(Character character) {
+        return character.traitContainer.GetNormalTrait<Trait>("Miner") != null;
         //return character.role.roleType == CHARACTER_ROLE.SOLDIER;
     }
     public bool CanCharacterTakeBuildGoddessStatueJob(Character character) {

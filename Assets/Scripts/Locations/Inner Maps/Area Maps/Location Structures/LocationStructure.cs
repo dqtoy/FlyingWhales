@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using BayatGames.SaveGameFree.Types;
 using Inner_Maps;
+using UnityEngine.Assertions;
 
 [System.Serializable]
 public class LocationStructure {
@@ -519,6 +520,7 @@ public class LocationStructure {
         }
     }
     public void OnWallDamaged(WallObject wall) {
+        Assert.IsNotNull(structureObj, $"Wall of {this.ToString()} was damaged, but it has no structure object");
         if (structureObj.walls.Contains(wall)) {
             //create repair job
             OnStructureDamaged();

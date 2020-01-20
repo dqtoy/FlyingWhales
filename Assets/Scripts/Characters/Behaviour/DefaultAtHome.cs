@@ -78,10 +78,10 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += "\n  -RNG roll: " + chance;
                     if (chance < 30) {
-                        Character chosenCharacter = character.GetParalyzedOrCatatonicCharacterToCheckOut();
+                        Character chosenCharacter = character.GetDisabledCharacterToCheckOut();
                         if (chosenCharacter != null) {
                             if(chosenCharacter.homeStructure != null) {
-                                log += "\n  -Will visit house of Paralyzed/Catatonic " + chosenCharacter.name;
+                                log += "\n  -Will visit house of Disabled Character " + chosenCharacter.name;
                                 character.PlanIdle(JOB_TYPE.CHECK_PARALYZED_FRIEND, INTERACTION_TYPE.VISIT, character, new object[] { chosenCharacter.homeStructure });
                             } else {
                                 log += "\n  -" + chosenCharacter.name + " has no house. Will check out character instead";

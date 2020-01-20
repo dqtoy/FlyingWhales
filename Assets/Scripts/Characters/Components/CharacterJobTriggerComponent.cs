@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Traits;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
-public class CharacterJobComponent : JobTriggerComponent {
+public class CharacterJobTriggerComponent : JobTriggerComponent {
 
 	private Character _owner;
 	
@@ -18,7 +20,7 @@ public class CharacterJobComponent : JobTriggerComponent {
 		nameof(Sick), nameof(Plagued), nameof(Infected)
 	};
 	
-	public CharacterJobComponent(Character owner) {
+	public CharacterJobTriggerComponent(Character owner) {
 		_owner = owner;
 	}
 
@@ -32,6 +34,8 @@ public class CharacterJobComponent : JobTriggerComponent {
 		Messenger.AddListener<Settlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
 		Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
 		Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
+		Messenger.AddListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizedCharacter);
+		Messenger.AddListener<Character>(Signals.ON_UNSEIZE_CHARACTER, OnUnseizeCharacter);
 	}
 	public void UnsubscribeListeners() {
 		Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
@@ -42,6 +46,7 @@ public class CharacterJobComponent : JobTriggerComponent {
 		Messenger.RemoveListener<Settlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
 		Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
 		Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
+		TryStopScreamCheck();
 	}
 	private void OnCharacterCanNoLongerMove(Character character) {
 		if (character == _owner) {
@@ -51,7 +56,7 @@ public class CharacterJobComponent : JobTriggerComponent {
 	}
 	private void OnCharacterCanMoveAgain(Character character) {
 		if (character == _owner) {
-			Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RESTRAIN, _owner as IPointOfInterest);
+			// Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RESTRAIN, _owner as IPointOfInterest);
 			TryStopScreamCheck();
 		}
 	}
@@ -90,7 +95,17 @@ public class CharacterJobComponent : JobTriggerComponent {
 	}
 	private void OnCharacterExitedHexTile(Character character, HexTile tile) {
 		if (character == _owner) {
-			Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RESTRAIN, _owner as IPointOfInterest);
+			// Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RESTRAIN, _owner as IPointOfInterest);
+		}
+	}
+	private void OnSeizedCharacter(Character character) {
+		if (character == _owner) {
+			TryStopScreamCheck();
+		}
+	}
+	private void OnUnseizeCharacter(Character character) {
+		if (character == _owner) {
+			TryStartScreamCheck();
 		}
 	}
 	#endregion
@@ -134,7 +149,7 @@ public class CharacterJobComponent : JobTriggerComponent {
 		if (_owner.homeSettlement.HasJob(goapEffect, _owner) == false) {
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_STATUS, goapEffect, _owner, _owner.homeSettlement);
 			job.SetCanTakeThisJobChecker((Character character, JobQueueItem jqi) => CanTakeRemoveStatus(character, job, trait));
-			job.SetStillApplicableChecker(() => IsRemoveStatusJobStillApplicable(_owner, job));
+			job.SetStillApplicableChecker(() => IsRemoveStatusJobStillApplicable(_owner, job, trait));
 			job.AddOtherData(INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION });
 			job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TokenManager.Instance.itemData[SPECIAL_TOKEN.HEALING_POTION].craftCost });
 			_owner.homeSettlement.AddToAvailableJobs(job);
@@ -152,13 +167,40 @@ public class CharacterJobComponent : JobTriggerComponent {
 		job.SetStillApplicableChecker(() => IsRestrainApplicable(_owner, settlement));
 		settlement.AddToAvailableJobs(job);
 	}
+	private bool TriggerMoveCharacterToBed(Character target) {
+		if (target.homeStructure != null && target.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER) == false) {
+			Bed bed = target.homeStructure.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);
+			if (bed != null && bed.CanSleepInBed(target)) {
+				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, target, _owner);
+				job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { target.homeStructure, bed.gridTileLocation });
+				_owner.jobQueue.AddJobInQueue(job);
+				return true;
+			}
+		}
+		return false;
+	}
+	private bool TriggerMoveCharacterForHappinessRecovery(Character target) {
+		if (target.currentStructure == target.homeStructure.GetLocationStructure() || 
+		    target.currentStructure == target.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS)) {
+			return false; //character is already at 1 of the target structures, do not create move job.
+		}
+		if (target.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER)) {
+			return false;
+		}
+		int chance = UnityEngine.Random.Range(0, 2);
+		LocationStructure targetStructure = chance == 0 ? target.homeStructure.GetLocationStructure() : target.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, target, _owner);
+		job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { targetStructure });
+		_owner.jobQueue.AddJobInQueue(job);
+		return true;
+	}
 	#endregion
 
 	#region Applicability Checkers
 	private bool IsDestroyJobApplicable(IPointOfInterest target) {
 		return target.gridTileLocation != null;
 	}
-	private bool IsRemoveStatusJobStillApplicable(Character target, GoapPlanJob job) {
+	private bool IsRemoveStatusJobStillApplicable(Character target, GoapPlanJob job, Trait trait) {
 		if (target.gridTileLocation == null || target.isDead) {
 			return false;
 		}
@@ -167,6 +209,9 @@ public class CharacterJobComponent : JobTriggerComponent {
 		}
 		if (target.isCriminal) {
 			return false;
+		}
+		if (target.traitContainer.GetNormalTrait<Trait>(trait.name) == null) {
+			return false; //target no longer has the given trait
 		}
 		return true;
 	}
@@ -210,30 +255,46 @@ public class CharacterJobComponent : JobTriggerComponent {
 			return;
 		}
 		if ((_owner.canMove == false && 
-		     _owner.traitContainer.GetNormalTrait<Trait>("Exhausted", "Starving", "Depressed") != null)
+		     _owner.traitContainer.GetNormalTrait<Trait>("Exhausted", "Starving", "Sulking", "Forlorn") != null)
 		    || (_owner.traitContainer.GetNormalTrait<Trait>("Restrained") != null && _owner.currentStructure.structureType != STRUCTURE_TYPE.PRISON)) {
 			hasStartedScreamCheck = true;
 			Messenger.AddListener(Signals.HOUR_STARTED, HourlyScreamCheck);
+			Debug.Log($"<color=green>{GameManager.Instance.TodayLogString()}{_owner.name} has started scream check</color>");
 		}
 	}
 	private void TryStopScreamCheck() {
 		if (hasStartedScreamCheck == false) {
 			return;
 		}
-		if (_owner.canMove || 
-		    (_owner.traitContainer.GetNormalTrait<Trait>("Restrained") != null &&
-		     _owner.currentStructure.structureType == STRUCTURE_TYPE.PRISON)) {
+		bool isNotNeedy = _owner.traitContainer.GetNormalTrait<Trait>("Exhausted", "Starving", "Sulking", "Forlorn") == null;
+		bool isNotRestrained = _owner.traitContainer.GetNormalTrait<Trait>("Restrained") == null;
+		bool isRestrainedButInPrison = _owner.traitContainer.GetNormalTrait<Trait>("Restrained") != null &&
+		                               _owner.currentStructure.structureType == STRUCTURE_TYPE.PRISON;
+		
+		//scream will stop check if
+		// - character can already move or
+		// - character is no longer exhausted, starving or sulking and
+		// - character is no longer restrained or
+		// - character is still restrained, but is at prison.
+		if (((_owner.canMove || isNotNeedy) && (isNotRestrained || isRestrainedButInPrison)) 
+		    || _owner.gridTileLocation == null || _owner.isDead) {
 			hasStartedScreamCheck = false;
 			Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyScreamCheck);
+			Debug.Log($"<color=red>{GameManager.Instance.TodayLogString()}{_owner.name} has stopped scream check</color>");
 		}
 	}
 	private void HourlyScreamCheck() {
+		string summary = $"{_owner.name} is checking for scream.";
 		int chance = 50;
 		if (_owner.canMove == false && 
-		    _owner.traitContainer.GetNormalTrait<Trait>("Exhausted", "Starving", "Depressed") != null) {
+		    _owner.traitContainer.GetNormalTrait<Trait>("Exhausted", "Starving", "Sulking", "Forlorn") != null) {
 			chance = 75;
 		}
-		if (Random.Range(0,100) < chance) {
+		summary += $"Chance is {chance.ToString()}.";
+		int roll = Random.Range(0, 100); 
+		summary += $"Roll is {roll.ToString()}.";
+		Debug.Log($"<color=blue>{summary}</color>");
+		if (roll < chance) {
 			TriggerScreamJob();
 		}
 	}
@@ -250,13 +311,13 @@ public class CharacterJobComponent : JobTriggerComponent {
 
 	#region Remove Status
 	private void TryCreateRemoveStatusJob(Trait trait) {
-		if (_owner.homeSettlement != null && _owner.homeSettlement == _owner.currentSettlement 
+		if (_owner.homeSettlement != null && _owner.gridTileLocation.IsNextToOrPartOfSettlement(_owner.homeSettlement)
 		    && _owner.isCriminal == false) {
 			TriggerRemoveStatus(trait);
 		}
 	}
 	private void TryCreateRemoveStatusJob() {
-		if (_owner.homeSettlement != null && _owner.homeSettlement == _owner.currentSettlement
+		if (_owner.homeSettlement != null && _owner.gridTileLocation.IsNextToOrPartOfSettlement(_owner.homeSettlement)
 		    && _owner.isCriminal == false) {
 			List<Trait> statusTraits = _owner.traitContainer.GetNormalTraits<Trait>(this.removeStatusTraits);
 			for (int i = 0; i < statusTraits.Count; i++) {
@@ -268,15 +329,18 @@ public class CharacterJobComponent : JobTriggerComponent {
 	#endregion
 
 	#region Feed
-	public void TryTriggerFeed(Character targetCharacter) {
+	public bool TryTriggerFeed(Character targetCharacter) {
 		if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Hungry", "Starving") != null
 		    && (_owner.homeSettlement == targetCharacter.homeSettlement || _owner.faction == targetCharacter.faction)
 		    && _owner.IsHostileWith(targetCharacter, false) == false 
 		    && _owner.opinionComponent.HasOpinionLabelWithCharacter(targetCharacter,
 			    OpinionComponent.Rival, OpinionComponent.Enemy) == false
-		    && _owner.jobQueue.HasJob(JOB_TYPE.FEED, targetCharacter) == false) {
+		    && _owner.jobQueue.HasJob(JOB_TYPE.FEED, targetCharacter) == false
+		    && targetCharacter.HasJobTargetingThis(JOB_TYPE.FEED) == false) {
 			TriggerFeed(targetCharacter);
+			return true;
 		}
+		return false;
 	}
 	#endregion
 
@@ -297,4 +361,49 @@ public class CharacterJobComponent : JobTriggerComponent {
 		
 	}
 	#endregion
+
+	#region Move Character
+	public bool TryTriggerMoveCharacterTirednessRecovery(Character target) {
+		if (target.traitContainer.GetNormalTrait<Trait>("Tired", "Exhausted") != null) {
+			bool isSameHome = target.homeSettlement == _owner.homeSettlement;
+			bool isNotHostileFaction = target.faction == _owner.faction
+				|| target.faction.GetRelationshipWith(_owner.faction).relationshipStatus
+				!= FACTION_RELATIONSHIP_STATUS.HOSTILE;
+			bool isNotEnemy =
+				_owner.opinionComponent.HasOpinionLabelWithCharacter(target, OpinionComponent.Enemy,
+					OpinionComponent.Rival) == false;
+			if ((isSameHome || isNotHostileFaction) && isNotEnemy) {
+				return TriggerMoveCharacterToBed(target);
+			}
+		}
+		return false;
+	}
+	public bool TryTriggerMoveCharacterHappinessRecovery(Character target) {
+		if (target.traitContainer.GetNormalTrait<Trait>("Bored", "Sulking", "Forlorn", "Lonely") != null) {
+			bool isSameHome = target.homeSettlement == _owner.homeSettlement;
+			bool isNotHostileFaction = target.faction == _owner.faction
+			                           || target.faction.GetRelationshipWith(_owner.faction).relationshipStatus
+			                           != FACTION_RELATIONSHIP_STATUS.HOSTILE;
+			bool isNotEnemy =
+				_owner.opinionComponent.HasOpinionLabelWithCharacter(target, OpinionComponent.Enemy,
+					OpinionComponent.Rival) == false;
+			if ((isSameHome || isNotHostileFaction) && isNotEnemy) {
+				return TriggerMoveCharacterForHappinessRecovery(target);
+			}
+		}
+		return false;
+	}
+	#endregion
+
+	public GoapPlanJob TriggerSuicideJob() {
+		if (_owner.jobQueue.HasJob(JOB_TYPE.COMMIT_SUICIDE) == false) {
+			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COMMIT_SUICIDE, 
+				new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, 
+					false, GOAP_EFFECT_TARGET.ACTOR),
+				_owner,  _owner);
+			_owner.jobQueue.AddJobInQueue(job);
+			return job;	
+		}
+		return null;
+	}
 }

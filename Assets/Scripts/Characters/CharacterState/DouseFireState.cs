@@ -37,10 +37,19 @@ public class DouseFireState : CharacterState {
     }
     protected override void StartState() {
         //add initial objects on fire
-        for (int i = 0; i < stateComponent.character.marker.inVisionPOIs.Count; i++) {
-            IPointOfInterest poi = stateComponent.character.marker.inVisionPOIs[i];
-            AddFire(poi);
+        for (int i = 0; i < stateComponent.character.currentRegion.innerMap.activeBurningSources.Count; i++) {
+            BurningSource burningSource = stateComponent.character.currentRegion.innerMap.activeBurningSources[i];
+            for (int j = 0; j < burningSource.objectsOnFire.Count; j++) {
+                ITraitable traitable = burningSource.objectsOnFire[j];
+                if (traitable is IPointOfInterest) {
+                    AddFire(traitable as IPointOfInterest);
+                }
+            }
         }
+        // for (int i = 0; i < stateComponent.character.marker.inVisionPOIs.Count; i++) {
+        //     IPointOfInterest poi = stateComponent.character.marker.inVisionPOIs[i];
+        //     AddFire(poi);
+        // }
         AddFire(stateComponent.character);
         base.StartState();
         Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);

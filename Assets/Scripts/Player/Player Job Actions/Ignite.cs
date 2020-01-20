@@ -58,7 +58,7 @@ public class Ignite : PlayerJobAction {
         } else if (level >= 3) {
             tiles.AddRange(origin.neighbourList);
         }
-        return tiles.Where(x => x.genericTileObject.traitContainer.GetNormalTrait<Trait>("Burning", "Burnt", "Wet", "Fireproof") == null && x.genericTileObject.traitContainer.GetNormalTrait<Trait>("Flammable") != null).ToList();
+        return tiles.Where(x => x.genericTileObject != null && x.genericTileObject.traitContainer.GetNormalTrait<Trait>("Burning", "Burnt", "Wet", "Fireproof") == null && x.genericTileObject.traitContainer.GetNormalTrait<Trait>("Flammable") != null).ToList();
     }
 }
 

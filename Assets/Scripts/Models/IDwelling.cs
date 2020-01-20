@@ -40,4 +40,5 @@ public interface IDwelling {
     TileObject GetUnoccupiedTileObject(params TILE_OBJECT_TYPE[] type);
     List<LocationGridTile> GetUnoccupiedFurnitureSpotsThatCanProvide(FACILITY_TYPE type);
     List<TileObject> GetTileObjectsOfType(TILE_OBJECT_TYPE type);
+    T GetTileObjectOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject;
 }

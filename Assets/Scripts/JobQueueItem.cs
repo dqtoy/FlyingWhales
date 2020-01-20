@@ -48,6 +48,7 @@ public class JobQueueItem {
         //this.blacklistedCharacters = new List<Character>();
         SetInitialPriority();
         Messenger.AddListener<JOB_TYPE, IPointOfInterest>(Signals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
+        Messenger.AddListener<IPointOfInterest>(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);
     }
     protected void Initialize(SaveDataJobQueueItem data) {
         id = Utilities.SetID(this, data.id);
@@ -66,6 +67,7 @@ public class JobQueueItem {
         SetIsStealth(data.isStealth);
         SetInitialPriority();
         Messenger.AddListener<JOB_TYPE, IPointOfInterest>(Signals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
+        Messenger.AddListener<IPointOfInterest>(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);
     }
 
     #region Virtuals
@@ -166,6 +168,7 @@ public class JobQueueItem {
     }
     public virtual bool CanBeInterrupted() { return true; }
     protected virtual void CheckJobApplicability(JOB_TYPE jobType, IPointOfInterest targetPOI) { }
+    protected virtual void CheckJobApplicability(IPointOfInterest targetPOI) { }
     #endregion
 
     public void SetAssignedCharacter(Character character) {
@@ -281,6 +284,7 @@ public class JobQueueItem {
         SetPriority(-1);
         SetCannotBePushedBack(false);
         Messenger.RemoveListener<JOB_TYPE, IPointOfInterest>(Signals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
+        Messenger.RemoveListener<IPointOfInterest>(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);
     }
     #endregion
 }

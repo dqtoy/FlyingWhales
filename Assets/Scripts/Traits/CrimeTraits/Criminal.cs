@@ -41,38 +41,6 @@ namespace Traits {
         //    }
         //    base.OnRemoveTrait(sourcePOI, removedBy);
         //}
-        /// <summary>
-        /// Make this character create an apprehend job at his home location targetting a specific character.
-        /// </summary>
-        /// <param name="targetCharacter">The character to be apprehended.</param>
-        /// <returns>The created job.</returns>
-        public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
-            if (traitOwner is Character) {
-                Character targetCharacter = traitOwner as Character;
-                //TODO: (gainedFromDoing == null || gainedFromDoing.awareCharactersOfThisAction.Contains(characterThatWillDoJob)) &&
-                if (targetCharacter.isAtHomeRegion && characterThatWillDoJob.isAtHomeRegion
-                    && targetCharacter.homeRegion == characterThatWillDoJob.homeRegion
-                    && characterThatWillDoJob.homeSettlement != null
-                    && !targetCharacter.isDead) {
-                    GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.APPREHEND);
-                    if (currentJob == null) {
-                        if (InteractionManager.Instance.CanCharacterTakeApprehendJob(characterThatWillDoJob, targetCharacter)) {
-                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, targetCharacter, characterThatWillDoJob);
-                            //job.SetCanBeDoneInLocation(true);
-                            job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { characterThatWillDoJob.homeSettlement.prison });
-                            characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                            return true;
-                        }
-                    }
-                    //else {
-                    //    if (InteractionManager.Instance.CanCharacterTakeApprehendJob(characterThatWillDoJob, targetCharacter, currentJob)) {
-                    //        return TryTransferJob(currentJob, characterThatWillDoJob);
-                    //    }
-                    //}
-                }
-            }
-            return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
-        }
         public override string GetNameInUI(ITraitable traitable) {
             if(crimeData != null) {
                 return name + ":" + crimeData.crime.name;

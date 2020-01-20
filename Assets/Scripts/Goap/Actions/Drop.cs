@@ -61,6 +61,32 @@ public class Drop : GoapAction {
         Character targetCharacter = poiTarget as Character;
         actor.currentParty.RemovePOI(targetCharacter);
     }
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        string stateName = "Target Missing";
+        bool defaultTargetMissing = IsDropTargetMissing(node);
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
+        if (defaultTargetMissing == false) {
+            //check the target's traits, if any of them can make this action invalid
+            for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
+                Trait trait = poiTarget.traitContainer.allTraits[i];
+                if (trait.TryStopAction(goapType, actor, poiTarget, ref goapActionInvalidity)) {
+                    break; //a trait made this action invalid, stop loop
+                }
+            }
+        }
+        return goapActionInvalidity;
+    }
+    private bool IsDropTargetMissing(ActualGoapNode node) {
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        if (poiTarget.IsAvailable() == false 
+            || (poiTarget.gridTileLocation == null && node.actor.ownParty.IsPOICarried(poiTarget) == false)) {
+            return true;
+        }
+        return false;
+    }
     #endregion
 
     #region Requirements
@@ -75,8 +101,13 @@ public class Drop : GoapAction {
 
     #region Preconditions
     private bool IsInActorParty(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        Character target = poiTarget as Character;
-        return target.currentParty == actor.currentParty;
+        if (poiTarget is Character) {
+            Character target = poiTarget as Character;
+            return target.currentParty == actor.currentParty;    
+        } else {
+            return actor.ownParty.IsPOICarried(poiTarget);
+        }
+        
     }
     #endregion
 

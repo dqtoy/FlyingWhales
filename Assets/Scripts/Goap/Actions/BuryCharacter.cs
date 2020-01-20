@@ -26,6 +26,9 @@ public class BuryCharacter : GoapAction {
             return actor.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY);
         }
     }
+    public override LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {
+        return null;
+    }
     protected override void ConstructBasePreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET }, IsInActorParty);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET });

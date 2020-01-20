@@ -63,18 +63,9 @@ namespace Traits {
         }
         public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
             if (traitOwner.gridTileLocation != null 
-                && traitOwner.gridTileLocation.IsPartOfSettlement(characterThatWillDoJob.homeSettlement)
-                && characterThatWillDoJob.homeSettlement.HasJob(JOB_TYPE.DOUSE_FIRE) == false) {
+                && traitOwner.gridTileLocation.IsPartOfSettlement(characterThatWillDoJob.homeSettlement)) {
 
-                int douseFireJobs = 3;
-                for (int i = 0; i < douseFireJobs; i++) {
-                    CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.DOUSE_FIRE, 
-                        CHARACTER_STATE.DOUSE_FIRE, characterThatWillDoJob.homeSettlement);
-                    job.SetCanTakeThisJobChecker(CanTakeRemoveFireJob);
-                    characterThatWillDoJob.homeSettlement.AddToAvailableJobs(job);
-                    
-                }
-
+                characterThatWillDoJob.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
             }
             
             //pyrophobic handling
@@ -121,21 +112,6 @@ namespace Traits {
             if (obj is IPointOfInterest) {
                 var poiOnFire = obj as IPointOfInterest;
                 source.AddObjectOnFire(poiOnFire);
-            }
-        }
-        private bool CanTakeRemoveFireJob(Character character, IPointOfInterest target) {
-            if (target is Character) {
-                Character targetCharacter = target as Character;
-                if (character == target) {
-                    //the burning character is himself
-                    return true;
-                } else {
-                    //if burning character is other character, make sure that the character that will do the job is not burning.
-                    return character.traitContainer.GetNormalTrait<Trait>("Burning") == null && !character.opinionComponent.IsEnemiesWith(targetCharacter);
-                }
-            } else {
-                //make sure that the character that will do the job is not burning.
-                return character.traitContainer.GetNormalTrait<Trait>("Burning") == null;
             }
         }
         private void PerTickEnded() {

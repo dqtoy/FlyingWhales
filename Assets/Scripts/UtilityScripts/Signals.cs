@@ -59,6 +59,10 @@ public static class Signals {
     public static string LOCATION_MAP_CLOSED = "OnAreaMapClosed"; //parameters (Settlement settlement)
     public static string REGION_CHANGE_STORAGE = "OnRegionChangeStorage";
     /// <summary>
+    /// Parameters (Settlement)
+    /// </summary>
+    public static string SETTLEMENT_CHANGE_STORAGE = "OnSettlementChangeStorage";
+    /// <summary>
     /// Parameters: Food Pile (affected food pile)
     /// </summary>
     public static string FOOD_IN_PILE_REDUCED = "OnFoodInPileReduced";
@@ -142,6 +146,7 @@ public static class Signals {
     public static string TRANSFER_ENGAGE_TO_FLEE_LIST = "TransferEngageToFleeList"; //Parameters (Character character)
     public static string CHARACTER_CLASS_CHANGE = "CharacterClassChange";
     public static string ON_SEIZE_CHARACTER = "OnSeizeCharacter";
+    public static string ON_UNSEIZE_CHARACTER = "OnUnseizeCharacter";
     public static string ON_SEIZE_TILE_OBJECT = "OnSeizeTileObject";
     public static string CHARACTER_MISSING = "OnCharacterMissing";
     public static string CHARACTER_NO_LONGER_MISSING = "OnCharacterNoLongerMissing";
@@ -199,6 +204,10 @@ public static class Signals {
     /// Parameters (INTERRUPT finishedInterrupt, Character character)
     /// </summary>
     public static string INTERRUPT_FINISHED = "OnInterruptFinished";
+    /// <summary>
+    /// Parameters (Character character, IPointOfInterest whatCharacterSaw)
+    /// </summary>
+    public static string CHARACTER_SAW = "OnCharacterSaw";
     #endregion
 
     #region UI
@@ -410,6 +419,7 @@ public static class Signals {
     public static string CHARACTER_PERFORMING_ACTION = "OnCharacterPerformingAction"; //Parameters (Character, GoapAction)
     public static string ON_SET_JOB = "OnSetJob"; //Parameters (GoapPlanJob)
     public static string CHECK_JOB_APPLICABILITY = "OnCheckJobApplicability"; //Parameters (JOB_TYPE, IPointOfInterest)
+    public static string CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING = "OnCheckAllJobsTargetingApplicability"; //Parameters (IPointOfInterest)
     #endregion
 
     #region Location Grid Tile
@@ -470,6 +480,10 @@ public static class Signals {
     /// Parameters (ResourcePile resource)
     /// </summary>
     public static string RESOURCE_IN_PILE_CHANGED = "OnResourceInPileChanged";
+    /// <summary>
+    /// Parameters (Table table)
+    /// </summary>
+    public static string FOOD_IN_DWELLING_CHANGED = "OnFoodInDwellingChanged";
     #endregion
 
     public static Dictionary<string, SignalMethod[]> orderedSignalExecution = new Dictionary<string, SignalMethod[]>() {

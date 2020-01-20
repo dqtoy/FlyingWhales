@@ -5,6 +5,7 @@ using UnityEngine;
 using BayatGames.SaveGameFree.Types;
 using Inner_Maps;
 using Traits;
+using UnityEngine.Experimental.U2D;
 
 public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
     public string name { get; protected set; }
@@ -44,6 +45,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
     public LocationGridTile previousTile { get; protected set; }
     public Character isBeingCarriedBy { get; protected set; }
     public Dictionary<RESOURCE, int> storedResources { get; protected set; }
+    protected Dictionary<RESOURCE, int> maxResourceValues { get; set; }
 
     #region getters
     public POINT_OF_INTEREST_TYPE poiType {
@@ -130,7 +132,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
                 UnoccupyTiles(objData.occupiedSize, previousTile);
             }
         }
-        Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.REPAIR, this as IPointOfInterest);
+        Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
     }
     public virtual void OnPlacePOI() {
         SetPOIState(POI_STATE.ACTIVE);
@@ -384,25 +386,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
     public void SetGridTileLocation(LocationGridTile tile) {
         previousTile = gridTileLocation;
         gridTileLocation = tile;
-    }
-    public void ConstructResources() {
-        storedResources = new Dictionary<RESOURCE, int>() {
-            { RESOURCE.FOOD, 0 },
-            { RESOURCE.WOOD, 0 },
-            { RESOURCE.STONE, 0 },
-            { RESOURCE.METAL, 0 },
-        };
-    }
-    public void SetResource(RESOURCE resourceType, int amount) {
-        storedResources[resourceType] = amount;
-        storedResources[resourceType] = Mathf.Max(0, storedResources[resourceType]);
-    }
-    public void AdjustResource(RESOURCE resourceType, int amount) {
-        storedResources[resourceType] += amount;
-        storedResources[resourceType] = Mathf.Max(0, storedResources[resourceType]);
-    }
-    public bool HasResourceAmount(RESOURCE resourceType, int amount) {
-        return storedResources[resourceType] >= amount;
     }
     public void OnSeizePOI() {
         if (UIManager.Instance.tileObjectInfoUI.isShowing && UIManager.Instance.tileObjectInfoUI.activeTileObject == this) {
@@ -685,6 +668,44 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
             }
             storedActions = null;
         }
+    }
+    #endregion
+
+    #region Resources
+    public void ConstructResources() {
+        storedResources = new Dictionary<RESOURCE, int>() {
+            { RESOURCE.FOOD, 0 },
+            { RESOURCE.WOOD, 0 },
+            { RESOURCE.STONE, 0 },
+            { RESOURCE.METAL, 0 },
+        };
+        ConstructMaxResources();
+    }
+    protected virtual void ConstructMaxResources() {
+        maxResourceValues = new Dictionary<RESOURCE, int>();
+        RESOURCE[] resourceTypes = Utilities.GetEnumValues<RESOURCE>();
+        for (int i = 0; i < resourceTypes.Length; i++) {
+            RESOURCE resourceType = resourceTypes[i];
+            maxResourceValues.Add(resourceType, 1000);
+        }
+    }
+    public void SetResource(RESOURCE resourceType, int amount) {
+        storedResources[resourceType] = amount;
+        storedResources[resourceType] = Mathf.Clamp(storedResources[resourceType], 0, maxResourceValues[resourceType]);
+    }
+    public void AdjustResource(RESOURCE resourceType, int amount) {
+        storedResources[resourceType] += amount;
+        storedResources[resourceType] = Mathf.Clamp(storedResources[resourceType], 0, maxResourceValues[resourceType]);
+    }
+    public bool HasResourceAmount(RESOURCE resourceType, int amount) {
+        return storedResources[resourceType] >= amount;
+    }
+    public bool IsAtMaxResource(RESOURCE resource) {
+        return storedResources[resource] >= maxResourceValues[resource];
+    }
+    public bool HasEnoughSpaceFor(RESOURCE resource, int amount) {
+        int newAmount = storedResources[resource] + amount;
+        return newAmount <= maxResourceValues[resource];
     }
     #endregion
 

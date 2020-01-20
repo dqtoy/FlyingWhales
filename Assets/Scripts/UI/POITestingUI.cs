@@ -35,18 +35,24 @@ public class POITestingUI : MonoBehaviour {
     #region Character Testing
     public void KnockoutThisCharacter() {
         if(poi is Character) {
-            UIManager.Instance.characterInfoUI.activeCharacter.CreateKnockoutJob(poi as Character);
+            CreateKnockoutJob(UIManager.Instance.characterInfoUI.activeCharacter, poi as Character);
         } else if (poi is Bed) {
             Bed bed = poi as Bed;
             if(bed.users[0] != null) {
-                UIManager.Instance.characterInfoUI.activeCharacter.CreateKnockoutJob(bed.users[0]);
+                CreateKnockoutJob(UIManager.Instance.characterInfoUI.activeCharacter, bed.users[0]);
             }else if (bed.users[1] != null) {
-                UIManager.Instance.characterInfoUI.activeCharacter.CreateKnockoutJob(bed.users[1]);
+                CreateKnockoutJob(UIManager.Instance.characterInfoUI.activeCharacter, bed.users[1]);
             }
         } else {
             Debug.LogError(poi.name + " is not a character!");
         }
         HideUI();
+    }
+    public bool CreateKnockoutJob(Character character, Character targetCharacter) {
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KNOCKOUT, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, character);
+        character.jobQueue.AddJobInQueue(job);
+        character.PrintLogIfActive("Added a KNOCKOUT Job to " + this.name + " with target " + targetCharacter.name);
+        return true;
     }
     public void ChatWithThisCharacter() {
         if (poi is Character) {

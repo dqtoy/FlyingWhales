@@ -270,24 +270,20 @@ public class Table : TileObject {
     #region Food
     public void AdjustFood(int amount) {
         storedResources[RESOURCE.FOOD] += amount;
-        //if (food < 20) {
-        //    traitContainer.RemoveTrait(this, "Edible"); //to stop advertising eat
-        //} else {
-        //    traitContainer.AddTrait(this, "Edible"); //to advertise eat
-        //}
         if (food < 0) {
             storedResources[RESOURCE.FOOD] = 0;
+        }
+        if (gridTileLocation != null && structureLocation is Dwelling) {
+            Messenger.Broadcast(Signals.FOOD_IN_DWELLING_CHANGED, this);   
         }
     }
     public void SetFood(int amount) {
         storedResources[RESOURCE.FOOD] = amount;
-        //if (food < 20) {
-        //    traitContainer.RemoveTrait(this, "Edible"); //to stop advertising eat
-        //} else {
-        //    traitContainer.AddTrait(this, "Edible"); //to advertise eat
-        //}
         if (food < 0) {
             storedResources[RESOURCE.FOOD] = 0;
+        }
+        if (gridTileLocation != null && structureLocation is Dwelling) {
+            Messenger.Broadcast(Signals.FOOD_IN_DWELLING_CHANGED, this);   
         }
     }
     #endregion

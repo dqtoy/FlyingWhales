@@ -534,31 +534,6 @@ public class CombatState : CharacterState {
             if (stateComponent.character.IsHostileWith(character)) {
                 stateComponent.character.marker.AddTerrifyingObject(fledFrom);
             }
-            if (stateComponent.character.IsHostileOutsider(character)) {
-                if (stateComponent.character.role.roleType == CHARACTER_ROLE.LEADER || stateComponent.character.role.roleType == CHARACTER_ROLE.NOBLE || stateComponent.character.role.roleType == CHARACTER_ROLE.SOLDIER) {
-                    int numOfJobs = 3 - character.GetNumOfJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
-                    if (numOfJobs > 0) {
-                        stateComponent.character.CreateLocationKnockoutJobs(character, numOfJobs);
-                    }
-                } else {    
-                    if (!(character.isDead || (character.isAtHomeRegion && character.isPartOfHomeFaction))) {
-                        if (stateComponent.character.isAtHomeRegion && stateComponent.character.isPartOfHomeFaction) {
-                            int numOfJobs = 3 - character.GetNumOfJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
-                            if (numOfJobs > 0) {
-                                stateComponent.character.CreateLocationKnockoutJobs(character, numOfJobs);
-                            }
-                            //if (!stateComponent.character.jobQueue.HasJobWithOtherData(JOB_TYPE.REPORT_HOSTILE, fledFrom)) {
-                            //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPORT_HOSTILE, INTERACTION_TYPE.REPORT_HOSTILE, new Dictionary<INTERACTION_TYPE, object[]>() {
-                            //    { INTERACTION_TYPE.REPORT_HOSTILE, new object[] { fledFrom }}
-                            //});
-                            //    //job.SetCannotOverrideJob(true);
-                            //    job.SetCancelOnFail(true);
-                            //    stateComponent.character.jobQueue.AddJobInQueue(job, false);
-                            //}
-                        }
-                    }
-                }
-            }
         }
         
     }

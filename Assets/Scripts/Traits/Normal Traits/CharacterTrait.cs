@@ -57,23 +57,6 @@ namespace Traits {
             }
         }
         public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
-            if (targetPOI is Table) {
-                Table targetTable = targetPOI as Table;
-                if (targetTable.food < 20 && targetTable.structureLocation.isDwelling) {
-                    IDwelling dwelling = targetTable.structureLocation as IDwelling;
-                    if (dwelling.IsResident(characterThatWillDoJob)) {
-                        if (!targetTable.HasJobTargetingThis(JOB_TYPE.OBTAIN_PERSONAL_FOOD)) {
-                            int neededFood = 60 - targetTable.food;
-                            GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_FOOD, "0", true, GOAP_EFFECT_TARGET.TARGET);
-                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_FOOD, effect, targetTable, characterThatWillDoJob);
-                            //job.AddOtherData(INTERACTION_TYPE.DROP_RESOURCE, new object[] { neededFood });
-                            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { neededFood });
-                            characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                            return true;
-                        }
-                    }
-                }
-            }
             if (targetPOI is TileObject) {
                 TileObject tileObj = targetPOI as TileObject;
                 if (tileObj.isSummonedByPlayer && characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Suspicious") == null && !alreadyInspectedTileObjects.Contains(tileObj)) {
@@ -99,7 +82,7 @@ namespace Traits {
                 Character targetCharacter = null;
                 if (targetPOI is Character) {
                     targetCharacter = targetPOI as Character;
-                } else if (targetPOI is Tombstone) {
+                } else {
                     targetCharacter = (targetPOI as Tombstone).character;
                 }
                 if (targetCharacter.isDead) {
@@ -134,7 +117,12 @@ namespace Traits {
                 } else { 
                     //character is not dead
                     if (targetCharacter.canMove == false || targetCharacter.canWitness == false) {
-                        characterThatWillDoJob.jobComponent.TryTriggerFeed(targetCharacter);
+                        if (characterThatWillDoJob.jobComponent.TryTriggerFeed(targetCharacter) == false) {
+                            if (characterThatWillDoJob.jobComponent.TryTriggerMoveCharacterTirednessRecovery(targetCharacter) == false) {
+                                characterThatWillDoJob.jobComponent.TryTriggerMoveCharacterHappinessRecovery(targetCharacter);
+                            }    
+                        }
+                        
                     }
 
                     #region Check Up

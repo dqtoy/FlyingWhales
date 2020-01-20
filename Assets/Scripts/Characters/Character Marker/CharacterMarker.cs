@@ -974,6 +974,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
             //character.AddAwareness(poi);
             OnAddPOIAsInVisionRange(poi);
+            Messenger.Broadcast(Signals.CHARACTER_SAW, character, poi);
         }
     }
     public void RemovePOIFromInVisionRange(IPointOfInterest poi) {

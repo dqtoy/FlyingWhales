@@ -65,7 +65,7 @@ namespace Traits {
                 //Messenger.RemoveListener(Signals.HOUR_STARTED, CheckRestrainTraitPerHour);
                 //_sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
                 owner.RemoveTraitNeededToBeRemoved(this);
-                Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.APPREHEND, owner as IPointOfInterest);
+                // Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.APPREHEND, owner as IPointOfInterest);
                 //If restrained trait is removed from this character this means that the character is set free from imprisonment, either he/she was saved from abduction or freed from criminal charges
                 //When this happens, check if he/she was the leader of the faction, if true, he/she can only go back to being the ruler if he/she was not imprisoned because he/she was a criminal
                 //But if he/she was a criminal, he/she cannot go back to being the ruler

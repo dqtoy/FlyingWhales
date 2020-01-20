@@ -51,6 +51,16 @@ public class BurningSource {
         onBurningObjectRemoved -= action;
     }
 
+    public bool HasFireInSettlement(Settlement settlement) {
+        for (int i = 0; i < objectsOnFire.Count; i++) {
+            ITraitable traitable = objectsOnFire[i];
+            if (traitable.gridTileLocation.IsPartOfSettlement(settlement)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public override string ToString() {
         return $"Burning Source {id.ToString()}. Objects: {objectsOnFire.Count.ToString()}";
     }

@@ -605,26 +605,6 @@ public class CharacterNeedsComponent {
             _character.traitContainer.RemoveTrait(_character, "Forlorn");
         }
     }
-    private void OnHappinessAdjusted() {
-        //if (isForlorn) {
-        //    _character.traitContainer.RemoveTrait(_character, "Lonely");
-        //    _character.traitContainer.AddTrait(_character, "Forlorn");
-        //} else if (isLonely) {
-        //    _character.traitContainer.RemoveTrait(_character, "Forlorn");
-        //    _character.traitContainer.AddTrait(_character, "Lonely");
-        //} else {
-        //    RemoveLonelyOrForlorn();
-        //}
-        JobQueueItem suicideJob = _character.jobQueue.GetJob(JOB_TYPE.COMMIT_SUICIDE);
-        if (happiness <= 0f && suicideJob == null) {
-            //When Happiness meter is reduced to 0, the character will create a Commit Suicide Job.
-            Debug.Log(GameManager.Instance.TodayLogString() + _character.name + "'s happiness is " + happiness.ToString() + ", creating suicide job");
-            _character.CreateSuicideJob();
-        } else if (happiness > FORLORN_UPPER_LIMIT && suicideJob != null) {
-            Debug.Log(GameManager.Instance.TodayLogString() + _character.name + "'s happiness is " + happiness.ToString() + ", canceling suicide job");
-            suicideJob.CancelJob(false, reason: "no longer forlorn");
-        }
-    }
     public void AdjustDoNotGetLonely(int amount) {
         doNotGetLonely += amount;
         doNotGetLonely = Math.Max(doNotGetLonely, 0);

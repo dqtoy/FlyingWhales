@@ -167,6 +167,7 @@ namespace Traits {
                     }
                 }
             }
+            Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, character as IPointOfInterest);
         }
         public void UnapplyTraitEffects(Character character, Trait trait) {
             if (trait.hindersWitness) {
@@ -279,6 +280,8 @@ namespace Traits {
                     }
                 }
             }
+            
+            Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, character as IPointOfInterest);
         }
     }
 }
