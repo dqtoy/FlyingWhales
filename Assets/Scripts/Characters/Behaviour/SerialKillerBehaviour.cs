@@ -14,7 +14,7 @@ public class SerialKillerBehaviour : CharacterBehaviourComponent {
         log += "\n  -RNG roll: " + chance;
         if (chance < 15) {
             SerialKiller serialKiller = character.traitContainer.GetNormalTrait<SerialKiller>() as SerialKiller;
-            serialKiller.CheckTargetVictimIfStillAvailable();
+            //serialKiller.CheckTargetVictimIfStillAvailable();
             if(serialKiller.targetVictim != null) {
                 log += "\n  -Target victim is " + serialKiller.targetVictim.name + ", will try to Hunt Victim";
                 if (serialKiller.CreateHuntVictimJob()) {

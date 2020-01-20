@@ -77,7 +77,7 @@ public class DropResource : GoapAction {
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
         ResourcePile pile = node.actor.ownParty.carriedPOI as ResourcePile;
-        log.AddToFillers(null, Utilities.NormalizeString(pile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
+        log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetterOnly(pile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
         base.OnStopWhileStarted(node);

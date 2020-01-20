@@ -198,8 +198,8 @@ public class FactionManager : MonoBehaviour {
         List<Relatable> relatables = previousRuler.relationshipContainer.GetRelatablesWithRelationship(type);
         for (int i = 0; i < relatables.Count; i++) {
             Relatable r = relatables[i];
-            if (r is AlterEgoData) {
-                Character character = (r as AlterEgoData).owner;
+            if (r is Character) {
+                Character character = r as Character;
                 if (character.isDead || character.gender != gender || character.faction.IsHostileWith(previousRuler.faction) || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) || character.isCriminal || characters.Contains(character)) {
                     continue;
                 }

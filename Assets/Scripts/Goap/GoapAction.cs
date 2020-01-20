@@ -251,7 +251,7 @@ public class GoapAction : IReactable {
         Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Generic", "Invalid");
         log.AddToFillers(node.actor, node.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(node.poiTarget, node.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        log.AddToFillers(null, Utilities.NormalizeString(goapType.ToString()), LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetterOnly(goapType.ToString()), LOG_IDENTIFIER.STRING_1);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotificationFrom(node.actor, log);
     }

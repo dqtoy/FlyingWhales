@@ -347,6 +347,9 @@ public class CharacterManager : MonoBehaviour {
     public string GetClassBehaviourComponentKey(string className) {
         return classManager.GetClassBehaviourComponentKey(className);
     }
+    public List<CharacterClass> GetAllClasses() {
+        return classManager.allClasses;
+    }
     #endregion
 
     #region Summons

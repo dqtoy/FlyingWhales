@@ -55,6 +55,15 @@ public class Utilities : MonoBehaviour {
     public static string portraitsSavePath { get { return dataPath + "PortraitSettings/"; } }
     public static string portraitFileExt { get { return ".portraitSetting"; } }
 
+    private static Dictionary<string, string> pluralExceptions = new Dictionary<string, string>() {
+                { "man", "men" },
+                { "woman", "women" },
+                { "child", "children" },
+                { "tooth", "teeth" },
+                { "foot", "feet" },
+                { "mouse", "mice" },
+                { "belief", "beliefs" } };
+
     /*
 	 * Set unique id
 	 * */
@@ -822,22 +831,28 @@ public class Utilities : MonoBehaviour {
         }
         return normalizedString;
     }
-    public static string NormalizeString(string s) {
-        s = s.ToLower();
-        string[] words = s.Split('_');
-        string normalizedString = Utilities.FirstLetterToUpperCase(words[0]);
-        for (int i = 1; i < words.Length; i++) {
-            normalizedString += " " + words[i];
-        }
+    public static string NormalizeStringUpperCaseFirstLetterOnly(string s) {
+        //s = s.ToLower();
+        //string[] words = s.Split('_');
+        //string normalizedString = Utilities.FirstLetterToUpperCase(words[0]);
+        //for (int i = 1; i < words.Length; i++) {
+        //    normalizedString += " " + words[i];
+        //}
+        //return normalizedString;
+        string normalizedString = s.Replace('_', ' ').ToLower();
+        normalizedString = FirstLetterToUpperCase(normalizedString);
         return normalizedString;
     }
     public static string NormalizeStringUpperCaseFirstLetters(string s) {
-        s = s.ToLower();
-        string[] words = s.Split('_');
-        string normalizedString = Utilities.FirstLetterToUpperCase(words[0]);
-        for (int i = 1; i < words.Length; i++) {
-            normalizedString += " " + Utilities.FirstLetterToUpperCase(words[i]);
-        }
+        //s = s.ToLower();
+        //string[] words = s.Split('_');
+        //string normalizedString = Utilities.FirstLetterToUpperCase(words[0]);
+        //for (int i = 1; i < words.Length; i++) {
+        //    normalizedString += " " + Utilities.FirstLetterToUpperCase(words[i]);
+        //}
+        //return normalizedString;
+        string normalizedString = s.Replace('_', ' ').ToLower();
+        normalizedString = UpperCaseFirstLetters(normalizedString);
         return normalizedString;
     }
     public static string NormalizeStringUpperCaseFirstLettersNoSpace(string s) {
@@ -866,6 +881,28 @@ public class Utilities : MonoBehaviour {
         char[] a = s.ToCharArray();
         a[0] = char.ToUpper(a[0]);
         return new string(a);
+    }
+    public static string UpperCaseFirstLetters(string s) { //Upper case first letters following spaces
+        //s = s.ToLower();
+        //string[] words = s.Split('_');
+        //string normalizedString = Utilities.FirstLetterToUpperCase(words[0]);
+        //for (int i = 1; i < words.Length; i++) {
+        //    normalizedString += " " + Utilities.FirstLetterToUpperCase(words[i]);
+        //}
+        //return normalizedString;
+        if (s.Length == 1) {
+            return s.ToUpper();
+        } else if (s.Length > 1) {
+            char[] strCharacters = s.ToCharArray();
+            if (char.IsLower(strCharacters[0])) { strCharacters[0] = char.ToUpper(strCharacters[0]); }
+            for (int i = 1; i < strCharacters.Length; i++) {
+                if (strCharacters[i - 1] == ' ' && char.IsLower(strCharacters[i])) {
+                    strCharacters[i] = char.ToUpper(strCharacters[i]);
+                }
+            }
+            return new string(strCharacters);
+        }
+        return s;
     }
     public static List<string> GetEnumChoices<T>(bool includeNone = false, List<T> exclude = null) {
         List<string> options = new List<string>();
@@ -997,6 +1034,39 @@ public class Utilities : MonoBehaviour {
             joinedStr += str[i];
         }
         return joinedStr;
+    }
+    public static string PluralizeString(string s) {
+        if(s.Length <= 1) {
+            return s;
+        } else {
+            if (pluralExceptions.ContainsKey(s.ToLowerInvariant())) {
+                return pluralExceptions[s.ToLowerInvariant()];
+            } else if (s.EndsWith("y", StringComparison.OrdinalIgnoreCase) &&
+                  !s.EndsWith("ay", StringComparison.OrdinalIgnoreCase) &&
+                  !s.EndsWith("ey", StringComparison.OrdinalIgnoreCase) &&
+                  !s.EndsWith("iy", StringComparison.OrdinalIgnoreCase) &&
+                  !s.EndsWith("oy", StringComparison.OrdinalIgnoreCase) &&
+                  !s.EndsWith("uy", StringComparison.OrdinalIgnoreCase)) {
+                return s.Substring(0, s.Length - 1) + "ies";
+            } else if (s.EndsWith("us", StringComparison.InvariantCultureIgnoreCase)) {
+                //http://en.wikipedia.org/wiki/Plural_form_of_words_ending_in_-us
+                return s + "es";
+            } else if (s.EndsWith("ss", StringComparison.InvariantCultureIgnoreCase)) {
+                return s + "es";
+            } else if (s.EndsWith("s", StringComparison.InvariantCultureIgnoreCase)) {
+                return s;
+            } else if (s.EndsWith("x", StringComparison.InvariantCultureIgnoreCase) ||
+                  s.EndsWith("ch", StringComparison.InvariantCultureIgnoreCase) ||
+                  s.EndsWith("sh", StringComparison.InvariantCultureIgnoreCase)) {
+                return s + "es";
+            } else if (s.EndsWith("f", StringComparison.InvariantCultureIgnoreCase) && s.Length > 1) {
+                return s.Substring(0, s.Length - 1) + "ves";
+            } else if (s.EndsWith("fe", StringComparison.InvariantCultureIgnoreCase) && s.Length > 2) {
+                return s.Substring(0, s.Length - 2) + "ves";
+            } else {
+                return s + "s";
+            }
+        }
     }
     #endregion
 
@@ -1389,7 +1459,7 @@ public class Utilities : MonoBehaviour {
             case RACE.DRAGON:
             return "Dragon";
             default:
-            return Utilities.NormalizeString(race.ToString());
+            return Utilities.NormalizeStringUpperCaseFirstLetterOnly(race.ToString());
         }
     }
     public static string GetNormalizedRaceAdjective(RACE race) {
@@ -1409,7 +1479,7 @@ public class Utilities : MonoBehaviour {
             case RACE.DRAGON:
             return "Dragon";
             default:
-            return Utilities.NormalizeString(race.ToString());
+            return Utilities.NormalizeStringUpperCaseFirstLetterOnly(race.ToString());
         }
     }
     public static HexTile GetCenterTile(List<HexTile> tiles, HexTile[,] map, int width, int height) {

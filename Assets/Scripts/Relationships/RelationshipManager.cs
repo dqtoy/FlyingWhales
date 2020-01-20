@@ -28,7 +28,7 @@ public class RelationshipManager : MonoBehaviour {
 
     #region Validators
     public IRelationshipValidator GetValidator(Relatable obj) {
-        if (obj is AlterEgoData) {
+        if (obj is Character) {
             return CharacterRelationshipValidator.Instance;
         }
         return null;
@@ -501,7 +501,7 @@ public class RelationshipManager : MonoBehaviour {
 
     #region Processors
     public IRelationshipProcessor GetProcessor(Relatable relatable) {
-        if (relatable is AlterEgoData) {
+        if (relatable is Character) {
             return CharacterRelationshipProcessor.Instance;
         }
         return null;

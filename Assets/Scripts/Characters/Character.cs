@@ -79,6 +79,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
     public bool isConversing { get; protected set; }
     public bool isInLimbo { get; protected set; }
     public bool isLimboCharacter { get; protected set; }
+    public bool isSerialKiller { get; protected set; }
     public LycanthropeData lycanData { get; protected set; }
 
     private List<System.Action> onLeaveAreaActions;
@@ -134,7 +135,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
     public string raceClassName {
         get {
             if (Utilities.IsRaceBeast(race)) {
-                return Utilities.NormalizeString(race.ToString()) + " " + role.name;
+                return Utilities.NormalizeStringUpperCaseFirstLetterOnly(race.ToString()) + " " + role.name;
             }
             //if(role.name == characterClass.className) {
             return Utilities.GetNormalizedRaceAdjective(race) + " " + characterClass.className;
@@ -2398,6 +2399,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
     public void SetIsLimboCharacter(bool state) {
         isLimboCharacter = state;
     }
+    public void SetIsSerialKiller(bool state) {
+        isSerialKiller = state;
+    }
     #endregion    
 
     #region History/Logs
@@ -2790,7 +2794,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
         witnessLog.AddToFillers(witnessedEvent.descriptionLog.fillers);
         AddHistory(witnessLog);
 
-        CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(this, witnessedEvent);
+        CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(witnessedEvent);
         if (crimeType != CRIME_TYPE.NONE) {
             CrimeManager.Instance.ReactToCrime(this, witnessedEvent, witnessedEvent.associatedJobType, crimeType);
         }
@@ -4287,7 +4291,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
             }
             Relatable lover = relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TYPE.LOVER).FirstOrDefault();
             //x3 all positive modifiers if character considers lover as Enemy
-            if (lover != null && opinionComponent.IsEnemiesWith((lover as AlterEgoData).owner)) {
+            if (lover != null && opinionComponent.IsEnemiesWith(lover as Character)) {
                 positiveWeight *= 3f;
             }
             if (relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.RELATIVE)) {
@@ -5786,7 +5790,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
     /// A variation of react to crime in which the parameter SHARE_INTEL_STATUS will be the one to determine if it is informed or witnessed crime
     /// Returns true or false, if the relationship between the reactor and the criminal has degraded
     /// </summary>
-    public bool ReactToCrime(CRIME committedCrime, ActualGoapNode crimeAction, AlterEgoData criminal, SHARE_INTEL_STATUS status) {
+    public bool ReactToCrime(CRIME committedCrime, ActualGoapNode crimeAction, Character criminal, SHARE_INTEL_STATUS status) {
         bool hasRelationshipDegraded = false;
         if (status == SHARE_INTEL_STATUS.WITNESSED) {
             ReactToCrime(committedCrime, crimeAction, criminal, ref hasRelationshipDegraded, crimeAction, null);
@@ -5804,7 +5808,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
     /// <param name="criminal">The character that committed the crime</param>
     /// <param name="witnessedCrime">The crime witnessed by this character, if this is null, character was only informed of the crime by someone else.</param>
     /// <param name="informedCrime">The crime this character was informed of. NOTE: Should only have value if Share Intel</param>
-    public void ReactToCrime(CRIME committedCrime, ActualGoapNode crimeAction, AlterEgoData criminal, ref bool hasRelationshipDegraded, ActualGoapNode witnessedCrime = null, ActualGoapNode informedCrime = null) {
+    public void ReactToCrime(CRIME committedCrime, ActualGoapNode crimeAction, Character criminal, ref bool hasRelationshipDegraded, ActualGoapNode witnessedCrime = null, ActualGoapNode informedCrime = null) {
         //NOTE: Moved this to be per action specific. See GoapAction.IsConsideredACrimeBy and GoapAction.CanReactToThisCrime for necessary mechanics.
         //if (witnessedCrime != null) {
         //    //if the action that should be considered a crime is part of a job from this character's settlement, do not consider it a crime
@@ -5818,7 +5822,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
         //    }
         //}
         
-        string reactSummary = this.name + " will react to crime committed by " + criminal.owner.name;
+        string reactSummary = this.name + " will react to crime committed by " + criminal.name;
         if(committedCrime == CRIME.NONE) {
             reactSummary += "\nNo reaction because committed crime is " + committedCrime.ToString();
             PrintLogIfActive(reactSummary);
@@ -5826,7 +5830,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
         }
         //Log witnessLog = null;
         //Log reportLog = null;
-        RELATIONSHIP_EFFECT relationshipEfffectWithCriminal = opinionComponent.GetRelationshipEffectWith(criminal.owner);
+        RELATIONSHIP_EFFECT relationshipEfffectWithCriminal = opinionComponent.GetRelationshipEffectWith(criminal);
         CRIME_TYPE category = committedCrime.GetCategory();
 
         //If character witnessed an Infraction crime:
@@ -5840,7 +5844,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
         }
         //If character has a positive relationship (Friend, Lover, Paramour) with the criminal
         else if (relationshipEfffectWithCriminal == RELATIONSHIP_EFFECT.POSITIVE) {
-            reactSummary += "\n" + this.name + " has a positive relationship with " + criminal.owner.name;
+            reactSummary += "\n" + this.name + " has a positive relationship with " + criminal.name;
             //and crime severity is a Misdemeanor:
             if (category == CRIME_TYPE.MISDEMEANOR) {
                 reactSummary += "\nCrime committed is misdemeanor.";
@@ -5853,15 +5857,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
             else if (category.IsGreaterThanOrEqual(CRIME_TYPE.SERIOUS)) {
                 reactSummary += "\nCrime committed is serious or worse. Removing positive relationships.";
                 //- Relationship Degradation between Character and Criminal
-                hasRelationshipDegraded = RelationshipManager.Instance.RelationshipDegradation(criminal.owner, this, witnessedCrime);
+                hasRelationshipDegraded = RelationshipManager.Instance.RelationshipDegradation(criminal, this, witnessedCrime);
                 if (hasRelationshipDegraded) {
                     //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed_degraded");
                     //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed_degraded");
                     PerRoleCrimeReaction(committedCrime, crimeAction, criminal, witnessedCrime, informedCrime);
                 } else {
                     if (witnessedCrime != null) {
-                        if (marker.inVisionCharacters.Contains(criminal.owner)) {
-                            marker.AddAvoidInRange(criminal.owner);
+                        if (marker.inVisionCharacters.Contains(criminal)) {
+                            marker.AddAvoidInRange(criminal);
                         }
                     }
                     //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
@@ -5871,11 +5875,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
             }
         }
         //If character has no relationships with the criminal or they are enemies and the crime is a Misdemeanor or worse:
-        else if ((!this.relationshipContainer.HasRelationshipWith(criminal) || this.opinionComponent.IsEnemiesWith(criminal.owner)) 
+        else if ((!this.relationshipContainer.HasRelationshipWith(criminal) || this.opinionComponent.IsEnemiesWith(criminal)) 
             && category.IsGreaterThanOrEqual(CRIME_TYPE.MISDEMEANOR)) {
             reactSummary += "\n" + this.name + " does not have a relationship with or is an enemy of " + criminal.name + " and the committed crime is misdemeanor or worse";
             //- Relationship Degradation between Character and Criminal
-            hasRelationshipDegraded = RelationshipManager.Instance.RelationshipDegradation(criminal.owner, this, witnessedCrime);
+            hasRelationshipDegraded = RelationshipManager.Instance.RelationshipDegradation(criminal, this, witnessedCrime);
             //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]!"
             if (hasRelationshipDegraded) {
                 //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed_degraded");
@@ -5883,8 +5887,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
                 PerRoleCrimeReaction(committedCrime, crimeAction, criminal, witnessedCrime, informedCrime);
             } else {
                 if (witnessedCrime != null) {
-                    if (marker.inVisionCharacters.Contains(criminal.owner)) {
-                        marker.AddAvoidInRange(criminal.owner);
+                    if (marker.inVisionCharacters.Contains(criminal)) {
+                        marker.AddAvoidInRange(criminal);
                     }
                 }
                 //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
@@ -5919,7 +5923,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
     /// <param name="criminal">The character that committed the crime</param>
     /// <param name="witnessedCrime">The crime witnessed by this character, if this is null, character was only informed of the crime by someone else.</param>
     /// <param name="informedCrime">The crime this character was informed of. NOTE: Should only have value if Share Intel</param>
-    private void PerRoleCrimeReaction(CRIME committedCrime, ActualGoapNode crimeAction, AlterEgoData criminal, ActualGoapNode witnessedCrime = null, ActualGoapNode informedCrime = null) {
+    private void PerRoleCrimeReaction(CRIME committedCrime, ActualGoapNode crimeAction, Character criminal, ActualGoapNode witnessedCrime = null, ActualGoapNode informedCrime = null) {
         //GoapPlanJob job = null;
         switch (role.roleType) {
             case CHARACTER_ROLE.CIVILIAN:
@@ -5944,8 +5948,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
                 //If he is a Noble or Faction Leader, he will create the Apprehend Job Type in the Location job queue instead.
                 if (!isFactionless && criminal.faction == this.faction) {
                     //only add apprehend job if the criminal is part of this characters faction
-                    criminal.owner.AddCriminalTrait(committedCrime, crimeAction);
-                    CreateApprehendJobFor(criminal.owner);
+                    criminal.AddCriminalTrait(committedCrime, crimeAction);
+                    CreateApprehendJobFor(criminal);
                     //crimeAction.OnReportCrime();
                     //job = JobManager.Instance.CreateNewGoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeSettlement, targetPOI = actor });
                     //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
@@ -5959,13 +5963,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
                 //- If the character is a Soldier, the criminal will gain the relevant Crime-type trait
                 if (!isFactionless && criminal.faction == this.faction) {
                     //only add apprehend job if the criminal is part of this characters faction
-                    criminal.owner.AddCriminalTrait(committedCrime, crimeAction);
+                    criminal.AddCriminalTrait(committedCrime, crimeAction);
                     //- If the character is a Soldier, he will also create an Apprehend Job Type in his personal job queue.
                     //job = JobManager.Instance.CreateNewGoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeSettlement, targetPOI = actor });
                     //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                     //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
                     //homeSettlement.jobQueue.AddJobInQueue(job);
-                    CreateApprehendJobFor(criminal.owner, true); //job =
+                    CreateApprehendJobFor(criminal, true); //job =
                     //if (job != null) {
                     //    homeSettlement.jobQueue.ForceAssignCharacterToJob(job, this);
                     //}

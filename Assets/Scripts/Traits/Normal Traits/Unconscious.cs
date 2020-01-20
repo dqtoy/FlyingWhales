@@ -64,19 +64,21 @@ namespace Traits {
             //base.OnDeath(character);
             return character.traitContainer.RemoveTrait(character, this);
         }
-        public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
-            if (traitOwner is Character) {
-                Character targetCharacter = traitOwner as Character;
-                if (!targetCharacter.isDead && targetCharacter.faction == characterThatWillDoJob.faction && !targetCharacter.isCriminal) {
-                    SerialKiller serialKiller = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Serial Killer") as SerialKiller;
-                    if (serialKiller != null) {
-                        serialKiller.SerialKillerSawButWillNotAssist(targetCharacter, this);
-                        return false;
-                    }
-                }
-            }
-            return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
-        }
+        //public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
+        //    if (traitOwner is Character) {
+        //        Character targetCharacter = traitOwner as Character;
+        //        if (!targetCharacter.isDead && targetCharacter.faction == characterThatWillDoJob.faction && !targetCharacter.isCriminal && characterThatWillDoJob.isSerialKiller) {
+        //            SerialKiller serialKiller = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Serial Killer") as SerialKiller;
+        //            serialKiller.SerialKillerSawButWillNotAssist(targetCharacter, this);
+        //            return false;
+        //            //if (serialKiller != null) {
+        //            //    serialKiller.SerialKillerSawButWillNotAssist(targetCharacter, this);
+        //            //    return false;
+        //            //}
+        //        }
+        //    }
+        //    return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
+        //}
         public override void OnTickStarted() {
             base.OnTickStarted();
             _sourceCharacter.needsComponent.AdjustTiredness(1.4f);

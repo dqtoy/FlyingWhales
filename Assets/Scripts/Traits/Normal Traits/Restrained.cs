@@ -88,10 +88,14 @@ namespace Traits {
                     return false;
                 }
                 if (!targetCharacter.isCriminal) {
-                    SerialKiller serialKiller = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Serial Killer") as SerialKiller;
-                    if (serialKiller != null) {
-                        serialKiller.SerialKillerSawButWillNotAssist(targetCharacter, this);
+                    if (characterThatWillDoJob.isSerialKiller) {
+                        //SerialKiller serialKiller = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Serial Killer") as SerialKiller;
+                        //serialKiller.SerialKillerSawButWillNotAssist(targetCharacter, this);
                         return false;
+                        //if (serialKiller != null) {
+                        //    serialKiller.SerialKillerSawButWillNotAssist(targetCharacter, this);
+                        //    return false;
+                        //}
                     }
                     GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.REMOVE_STATUS, name);
                     if (currentJob == null) {

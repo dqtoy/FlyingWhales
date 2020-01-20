@@ -56,19 +56,21 @@ namespace Traits {
             _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
-        public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
-            if (traitOwner is Character) {
-                Character targetCharacter = traitOwner as Character;
-                if (!targetCharacter.isDead && !targetCharacter.isCriminal) {
-                    SerialKiller serialKiller = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Serial Killer") as SerialKiller;
-                    if (serialKiller != null) {
-                        serialKiller.SerialKillerSawButWillNotAssist(targetCharacter, this);
-                        return false;
-                    }
-                }
-            }
-            return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
-        }
+        //public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
+        //    if (traitOwner is Character) {
+        //        Character targetCharacter = traitOwner as Character;
+        //        if (!targetCharacter.isDead && !targetCharacter.isCriminal && characterThatWillDoJob.isSerialKiller) {
+        //            SerialKiller serialKiller = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Serial Killer") as SerialKiller;
+        //            serialKiller.SerialKillerSawButWillNotAssist(targetCharacter, this);
+        //            return false;
+        //            //if (serialKiller != null) {
+        //            //    serialKiller.SerialKillerSawButWillNotAssist(targetCharacter, this);
+        //            //    return false;
+        //            //}
+        //        }
+        //    }
+        //    return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
+        //}
         #endregion
     }
 

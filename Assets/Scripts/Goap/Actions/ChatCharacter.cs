@@ -44,7 +44,7 @@ public class ChatCharacter : GoapAction {
         RELATIONSHIP_EFFECT relationshipEffectWithTarget = goapNode.actor.opinionComponent.GetRelationshipEffectWith(targetCharacter);
         //**if no relationship yet, may become friends**
         if (relData == null) {
-            if (goapNode.actor.traitContainer.GetNormalTrait<Trait>("Serial Killer") == null && targetCharacter.traitContainer.GetNormalTrait<Trait>("Serial Killer") == null) {
+            if (!goapNode.actor.isSerialKiller && !targetCharacter.isSerialKiller) {
                 int weight = 0;
                 // if (thisCharacterMood == CHARACTER_MOOD.DARK) {
                 //     weight += -30;

@@ -30,7 +30,7 @@ namespace Traits {
         public override string TriggerFlaw(Character character) {
             string successLogKey = base.TriggerFlaw(character);
             if (character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) != null) {
-                Character paramour = (character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.PARAMOUR) as AlterEgoData)?.owner ?? null;
+                Character paramour = (character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.PARAMOUR) as Character) ?? null;
                 if (paramour == null) {
                     if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
                         List<Character> choices = new List<Character>();
