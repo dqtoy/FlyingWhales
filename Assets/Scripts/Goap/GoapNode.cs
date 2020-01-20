@@ -93,9 +93,9 @@ public abstract class JobNode {
 //actual nodes located in a finished plan that is going to be executed by a character
 public class ActualGoapNode {
     public IPointOfInterest poiTarget { get; private set; }
-    public AlterEgoData poiTargetAlterEgo { get; private set; } //The alter ego the target was using while doing this action. only occupied if target is a character
+    //public AlterEgoData poiTargetAlterEgo { get; private set; } //The alter ego the target was using while doing this action. only occupied if target is a character
     public Character actor { get; private set; }
-    public AlterEgoData actorAlterEgo { get; private set; } //The alter ego the character was using while doing this action.
+    //public AlterEgoData actorAlterEgo { get; private set; } //The alter ego the character was using while doing this action.
     public bool isStealth { get; private set; }
     public object[] otherData { get; private set; }
     public int cost { get; private set; }
@@ -360,12 +360,12 @@ public class ActualGoapNode {
             return;
         }
         actionStatus = ACTION_STATUS.PERFORMING;
-        actorAlterEgo = actor.currentAlterEgo;
+        //actorAlterEgo = actor.currentAlterEgo;
         actor.marker.UpdateAnimation();
 
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character targetCharacter = poiTarget as Character;
-            poiTargetAlterEgo = targetCharacter.currentAlterEgo;
+            //poiTargetAlterEgo = targetCharacter.currentAlterEgo;
             if (!action.doesNotStopTargetCharacter && actor != poiTarget) {
                 if (!targetCharacter.isDead) {
                     if (targetCharacter.currentParty.icon.isTravelling) {

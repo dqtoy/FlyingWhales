@@ -91,9 +91,9 @@ public class Invite : GoapAction {
             if (target == actor) {
                 return false;
             }
-            if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) { //do not woo characters that have transformed to other alter egos
-                return false;
-            }
+            //if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) { //do not woo characters that have transformed to other alter egos
+            //    return false;
+            //}
             if (target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
                 return false;
             }
@@ -127,9 +127,9 @@ public class InviteData : GoapActionData {
         if (target == actor) {
             return false;
         }
-        if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
-            return false;
-        }
+        //if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
+        //    return false;
+        //}
         if (target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
             return false;
         }

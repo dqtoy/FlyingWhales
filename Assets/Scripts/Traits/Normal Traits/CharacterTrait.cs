@@ -114,12 +114,12 @@ namespace Traits {
                         PlayerManager.Instance.player.ShowNotificationFrom(sawDeadLog, characterThatWillDoJob, false);
 
 
-                        if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.LOVER)) {
+                        if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER)) {
                             characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Heartbroken");
                             bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
                             //characterThatWillDoJob.needsComponent.AdjustHappiness(-6000);
                             return hasCreatedJob;
-                        } else if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.RELATIVE)) {
+                        } else if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.RELATIVE)) {
                             characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Griefstricken");
                             bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
                             //characterThatWillDoJob.needsComponent.AdjustHappiness(-4000);

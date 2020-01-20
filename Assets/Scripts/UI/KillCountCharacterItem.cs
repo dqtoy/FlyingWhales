@@ -71,9 +71,10 @@ public class KillCountCharacterItem : CharacterNameplateItem {
                     } else {
                         text = "\"" + character.name + " was resurrected into a mindless skeleton.\"";
                     }
-                } else if (character.currentAlterEgo.name != CharacterManager.Original_Alter_Ego) {
-                    text = "\"" + character.name + " turned into a " + character.currentAlterEgo.name + ".\"";
                 } 
+                //else if (character.currentAlterEgo.name != CharacterManager.Original_Alter_Ego) {
+                //    text = "\"" + character.name + " turned into a " + character.currentAlterEgo.name + ".\"";
+                //} 
                 // else if (character.role.roleType == CHARACTER_ROLE.MINION) {
                 //     text = "\"" + character.name + " became a minion.\"";
                 // }

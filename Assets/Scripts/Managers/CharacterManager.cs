@@ -119,7 +119,7 @@ public class CharacterManager : MonoBehaviour {
     public Character CreateNewLimboCharacter(CharacterRole role, RACE race, GENDER gender, Faction faction = null,
     Settlement homeLocation = null, IDwelling homeStructure = null) {
         Character newCharacter = new Character(role, race, gender);
-        //newCharacter.SetIsLimboCharacter(true);
+        newCharacter.SetIsLimboCharacter(true);
         newCharacter.Initialize();
         if (faction != null) {
             if (!faction.JoinFaction(newCharacter, false)) {
@@ -181,9 +181,9 @@ public class CharacterManager : MonoBehaviour {
     public Character CreateNewCharacter(SaveDataCharacter data) {
         Character newCharacter = new Character(data);
         newCharacter.CreateOwnParty();
-        for (int i = 0; i < data.alterEgos.Count; i++) {
-            data.alterEgos[i].Load(newCharacter);
-        }
+        //for (int i = 0; i < data.alterEgos.Count; i++) {
+        //    data.alterEgos[i].Load(newCharacter);
+        //}
 
         Faction faction = FactionManager.Instance.GetFactionBasedOnID(data.factionID);
         if(faction != null) {
@@ -244,9 +244,12 @@ public class CharacterManager : MonoBehaviour {
     }
     public void AddNewLimboCharacter(Character character) {
         limboCharacters.Add(character);
+        character.SetIsInLimbo(true);
     }
     public void RemoveLimboCharacter(Character character) {
-        limboCharacters.Remove(character);
+        if (limboCharacters.Remove(character)) {
+            character.SetIsInLimbo(false);
+        }
     }
 
     public string GetDeadlySinsClassNameFromRotation() {
@@ -369,9 +372,9 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.CreateOwnParty();
         newCharacter.ConstructInitialGoapAdvertisementActions();
 
-        for (int i = 0; i < data.alterEgos.Count; i++) {
-            data.alterEgos[i].Load(newCharacter);
-        }
+        //for (int i = 0; i < data.alterEgos.Count; i++) {
+        //    data.alterEgos[i].Load(newCharacter);
+        //}
 
         Faction faction = FactionManager.Instance.GetFactionBasedOnID(data.factionID);
         if (faction != null) {

@@ -126,10 +126,10 @@ public class MakeLove : GoapAction {
             targetCharacter.Death("seduced", goapNode, goapNode.actor);
         }
 
-        if (goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.LOVER)) {
+        if (goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER)) {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Satisfied", targetCharacter);
             targetCharacter.traitContainer.AddTrait(targetCharacter, "Satisfied", goapNode.actor);
-        } else if (goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.PARAMOUR)) {
+        } else if (goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.PARAMOUR)) {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Ashamed", targetCharacter);
             targetCharacter.traitContainer.AddTrait(targetCharacter, "Ashamed", goapNode.actor);
         }
@@ -160,9 +160,9 @@ public class MakeLove : GoapAction {
             if (target == actor) {
                 return false;
             }
-            if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) { //do not woo characters that have transformed to other alter egos
-                return false;
-            }
+            //if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) { //do not woo characters that have transformed to other alter egos
+            //    return false;
+            //}
             if (target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
                 return false;
             }
@@ -179,7 +179,7 @@ public class MakeLove : GoapAction {
                 return false;
             }
             if (!(actor is SeducerSummon)) { //ignore relationships if succubus
-                if (!actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TYPE.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TYPE.PARAMOUR)) {
+                if (!actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.PARAMOUR)) {
                     return false; //only lovers and paramours can make love
                 }
             }
@@ -467,9 +467,9 @@ public class MakeLoveData : GoapActionData {
         if (target == actor) {
             return false;
         }
-        if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
-            return false;
-        }
+        //if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
+        //    return false;
+        //}
         if (target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
             return false;
         }
@@ -480,7 +480,7 @@ public class MakeLoveData : GoapActionData {
             return false;
         }
         if (!(actor is SeducerSummon)) { //ignore relationships if succubus
-            if (!actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TYPE.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TYPE.PARAMOUR)) {
+            if (!actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.PARAMOUR)) {
                 return false; //only lovers and paramours can make love
             }
         }

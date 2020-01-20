@@ -40,7 +40,7 @@ public class ChatCharacter : GoapAction {
         WeightedFloatDictionary<string> weights = new WeightedFloatDictionary<string>();
         weights.AddElement("Quick Chat", 250);
 
-        IRelationshipData relData = goapNode.actor.relationshipContainer.GetRelationshipDataWith(targetCharacter.currentAlterEgo);
+        IRelationshipData relData = goapNode.actor.relationshipContainer.GetRelationshipDataWith(targetCharacter);
         RELATIONSHIP_EFFECT relationshipEffectWithTarget = goapNode.actor.opinionComponent.GetRelationshipEffectWith(targetCharacter);
         //**if no relationship yet, may become friends**
         if (relData == null) {
@@ -70,7 +70,7 @@ public class ChatCharacter : GoapAction {
             }
         } else {
             //**if no relationship other than relative, may become enemies**
-            List<RELATIONSHIP_TYPE> relTraits = goapNode.actor.relationshipContainer.GetRelationshipDataWith(targetCharacter.currentAlterEgo)?.relationships ?? null;
+            List<RELATIONSHIP_TYPE> relTraits = goapNode.actor.relationshipContainer.GetRelationshipDataWith(targetCharacter)?.relationships ?? null;
             if (relTraits != null && relTraits.Count == 1 && relTraits[0] == RELATIONSHIP_TYPE.RELATIVE) {
                 int weight = 0;
                 // if (thisCharacterMood == CHARACTER_MOOD.DARK) {

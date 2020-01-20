@@ -86,7 +86,7 @@ public class SaveDataCharacter {
 
     //alter egos
     public string currentAlterEgoName;
-    public List<SaveDataAlterEgo> alterEgos;
+    //public List<SaveDataAlterEgo> alterEgos;
 
     public string originalClassName;
     public bool isMinion;
@@ -211,7 +211,7 @@ public class SaveDataCharacter {
         happinessDecreaseRate = character.needsComponent.happinessDecreaseRate;
 
         ignoreHostility = character.ignoreHostility;
-        originalClassName = character.originalClassName;
+        //originalClassName = character.originalClassName;
         isMinion = character.minion != null;
         isSummon = character is Summon;
         if (isSummon) {
@@ -219,13 +219,13 @@ public class SaveDataCharacter {
             summonType = summon.summonType;
         }
 
-        currentAlterEgoName = character.currentAlterEgoName;
-        alterEgos = new List<SaveDataAlterEgo>();
-        foreach (AlterEgoData alterEgo in character.alterEgos.Values) {
-            SaveDataAlterEgo saveDataAlterEgo = new SaveDataAlterEgo();
-            saveDataAlterEgo.Save(alterEgo);
-            alterEgos.Add(saveDataAlterEgo);
-        }
+        //currentAlterEgoName = character.currentAlterEgoName;
+        //alterEgos = new List<SaveDataAlterEgo>();
+        //foreach (AlterEgoData alterEgo in character.alterEgos.Values) {
+        //    SaveDataAlterEgo saveDataAlterEgo = new SaveDataAlterEgo();
+        //    saveDataAlterEgo.Save(alterEgo);
+        //    alterEgos.Add(saveDataAlterEgo);
+        //}
 
         fullnessForcedTick = character.needsComponent.fullnessForcedTick;
         tirednessForcedTick = character.needsComponent.tirednessForcedTick;
@@ -329,9 +329,9 @@ public class SaveDataCharacter {
     }
 
     public void LoadRelationships(Character character) {
-        for (int i = 0; i < alterEgos.Count; i++) {
-            alterEgos[i].LoadRelationships(character);
-        }
+        //for (int i = 0; i < alterEgos.Count; i++) {
+        //    alterEgos[i].LoadRelationships(character);
+        //}
     }
 
     public void LoadHomeStructure(Character character) {

@@ -34,9 +34,9 @@ public class CharacterVisuals {
     }
 
     public void UpdateAllVisuals(Character character) {
-        if (character.isSwitchingAlterEgo) {
-            return;
-        }
+        //if (character.isSwitchingAlterEgo) {
+        //    return;
+        //}
         UpdateMarkerAnimations(character);
         UpdatePortraitSettings(character);
         if (character.marker != null) {

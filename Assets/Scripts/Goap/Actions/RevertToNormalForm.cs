@@ -23,17 +23,17 @@ public class RevertToNormalForm : GoapAction {
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
         Character actor = node.actor;
-        AlterEgoData ogData = actor.GetAlterEgoData(CharacterManager.Original_Alter_Ego);
-        log.AddToFillers(null, Utilities.GetNormalizedSingularRace(ogData.race), LOG_IDENTIFIER.STRING_1);
+        //AlterEgoData ogData = actor.GetAlterEgoData(CharacterManager.Original_Alter_Ego);
+        //log.AddToFillers(null, Utilities.GetNormalizedSingularRace(ogData.race), LOG_IDENTIFIER.STRING_1);
     }
 
     #endregion
 
     #region State Effects
     public void PreTransformSuccess(ActualGoapNode goapNode) {
-        AlterEgoData ogData = goapNode.actor.GetAlterEgoData(CharacterManager.Original_Alter_Ego);
-        GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        goapNode.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(ogData.race), LOG_IDENTIFIER.STRING_1);
+        //AlterEgoData ogData = goapNode.actor.GetAlterEgoData(CharacterManager.Original_Alter_Ego);
+        //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
+        //goapNode.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(ogData.race), LOG_IDENTIFIER.STRING_1);
         //TODO: currentState.SetIntelReaction(TransformSuccessIntelReaction);
     }
     public void AfterTransformSuccess(ActualGoapNode goapNode) {

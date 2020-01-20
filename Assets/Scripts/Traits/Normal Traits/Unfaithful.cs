@@ -37,8 +37,8 @@ namespace Traits {
                         for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
                             Character choice = character.currentRegion.charactersAtLocation[i];
                             if (RelationshipManager.Instance.IsSexuallyCompatible(character, choice) &&
-                                RelationshipManager.Instance.GetValidator(character.currentAlterEgo).
-                                    CanHaveRelationship(character.currentAlterEgo, choice.currentAlterEgo, RELATIONSHIP_TYPE.PARAMOUR)) {
+                                RelationshipManager.Instance.GetValidator(character).
+                                    CanHaveRelationship(character, choice, RELATIONSHIP_TYPE.PARAMOUR)) {
                                 choices.Add(choice);
                             }
                         }
