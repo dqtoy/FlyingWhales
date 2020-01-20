@@ -11,8 +11,8 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
     }
 
     public void OnRelationshipAdded(Relatable rel1, Relatable rel2, RELATIONSHIP_TYPE relType) {
-        Character character1 = (rel1 as AlterEgoData).owner;
-        Character character2 = (rel2 as AlterEgoData).owner;
+        Character character1 = rel1 as Character;
+        Character character2 = rel2 as Character;
         string relString = Utilities.NormalizeStringUpperCaseFirstLetters(relType.ToString());
 
         character1.opinionComponent.AdjustOpinion(character2, relString, 0);
@@ -52,8 +52,8 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
     }
 
     public void OnRelationshipRemoved(Relatable rel1, Relatable rel2, RELATIONSHIP_TYPE relType) {
-        Character character1 = (rel1 as AlterEgoData).owner;
-        Character character2 = (rel2 as AlterEgoData).owner;
+        Character character1 = rel1 as Character;
+        Character character2 = rel2 as Character;
         string relString = Utilities.NormalizeStringUpperCaseFirstLetters(relType.ToString());
         character1.opinionComponent.RemoveOpinion(character2, relString);
         //character2.opinionComponent.RemoveOpinion(character1, relString);
@@ -67,7 +67,7 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
     }
 
     private void CreateRelationshipLog(string key, Character character1, Character character2) {
-        if (!GameManager.Instance.gameHasStarted || character1.isSwitchingAlterEgo) {
+        if (!GameManager.Instance.gameHasStarted /*|| character1.isSwitchingAlterEgo*/) {
             return; //do not log initial relationships or when switching alter egos
         }
         Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", key);

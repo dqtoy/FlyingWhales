@@ -30,15 +30,15 @@ namespace Traits {
         public override string TriggerFlaw(Character character) {
             string successLogKey = base.TriggerFlaw(character);
             if (character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) != null) {
-                Character paramour = (character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.PARAMOUR) as AlterEgoData)?.owner ?? null;
+                Character paramour = (character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.PARAMOUR) as Character) ?? null;
                 if (paramour == null) {
                     if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
                         List<Character> choices = new List<Character>();
                         for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
                             Character choice = character.currentRegion.charactersAtLocation[i];
                             if (RelationshipManager.Instance.IsSexuallyCompatible(character, choice) &&
-                                RelationshipManager.Instance.GetValidator(character.currentAlterEgo).
-                                    CanHaveRelationship(character.currentAlterEgo, choice.currentAlterEgo, RELATIONSHIP_TYPE.PARAMOUR)) {
+                                RelationshipManager.Instance.GetValidator(character).
+                                    CanHaveRelationship(character, choice, RELATIONSHIP_TYPE.PARAMOUR)) {
                                 choices.Add(choice);
                             }
                         }

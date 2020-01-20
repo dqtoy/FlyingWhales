@@ -110,6 +110,17 @@ namespace Traits {
             //character.needsComponent.AdjustHappiness(-50);
             //character.needsComponent.AdjustTiredness(-150);
         }
+        private bool WillTriggerAgoraphobia(Character character) {
+            int count = 0;
+            if (character.marker.inVisionCharacters.Count >= 3) {
+                for (int i = 0; i < character.marker.inVisionCharacters.Count; i++) {
+                    if (!character.marker.inVisionCharacters[i].isDead) {
+                        count++;
+                    }
+                }
+            }
+            return count >= 3;
+        }
     }
 }
 

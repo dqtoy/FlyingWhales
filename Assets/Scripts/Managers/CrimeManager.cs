@@ -18,34 +18,15 @@ public class CrimeManager : MonoBehaviour {
         character.traitContainer.AddTrait(character, criminalTrait);
         criminalTrait.SetCrime(crimeType, committedCrime);
     }
-    public CRIME_TYPE GetCrimeType(ActualGoapNode consideredAction) {
-        INTERACTION_TYPE actionType = consideredAction.action.goapType;
-        if (consideredAction.associatedJobType == JOB_TYPE.DESTROY) {
-            return CRIME_TYPE.INFRACTION;
-        } else if (actionType == INTERACTION_TYPE.STEAL
-            || actionType == INTERACTION_TYPE.POISON
-            || actionType == INTERACTION_TYPE.KNOCKOUT_CHARACTER
-            || actionType == INTERACTION_TYPE.ASSAULT) {
-            return CRIME_TYPE.MISDEMEANOR;
-        } else if (actionType == INTERACTION_TYPE.STRANGLE
-            || actionType == INTERACTION_TYPE.RITUAL_KILLING) {
-            return CRIME_TYPE.SERIOUS;
-        } else if (actionType == INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM
-            || actionType == INTERACTION_TYPE.REVERT_TO_NORMAL_FORM
-            || actionType == INTERACTION_TYPE.DRINK_BLOOD) {
-            return CRIME_TYPE.HEINOUS;
-        }
-        return CRIME_TYPE.NONE;
-    }
-    public CRIME_TYPE GetCrimeTypeConsideringAction(Character considerer, ActualGoapNode consideredAction) {
+    public CRIME_TYPE GetCrimeTypeConsideringAction(ActualGoapNode consideredAction) {
         Character actor = consideredAction.actor;
         IPointOfInterest target = consideredAction.poiTarget;
         INTERACTION_TYPE actionType = consideredAction.action.goapType;
         if(actionType == INTERACTION_TYPE.MAKE_LOVE) {
-            if(considerer.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER)) {
-                return CRIME_TYPE.INFRACTION;
-            }else if (target is Character) {
-                if(considerer.relationshipContainer.HasRelationshipWith(target as Character, RELATIONSHIP_TYPE.LOVER)) {
+            if (target is Character) {
+                Character targetCharacter = target as Character;
+                Character lover = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) as Character;
+                if (lover != null && lover != targetCharacter) {
                     return CRIME_TYPE.INFRACTION;
                 }
             }

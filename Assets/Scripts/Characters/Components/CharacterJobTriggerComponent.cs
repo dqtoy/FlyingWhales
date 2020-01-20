@@ -235,14 +235,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 					return isHostile == false &&
 					       character.opinionComponent.HasOpinionLabelWithCharacter(targetCharacter,
 						       OpinionComponent.Rival, OpinionComponent.Enemy) == false 
-					       && isResponsibleForTrait == false 
-						&& character.traitContainer.GetNormalTrait<Trait>("Healer") != null;	
+					       && isResponsibleForTrait == false
+                           && !character.isSerialKiller
+                           && character.traitContainer.GetNormalTrait<Trait>("Healer") != null;	
 				}
 				
 				return isHostile == false &&
 				       character.opinionComponent.HasOpinionLabelWithCharacter(targetCharacter,
 					       OpinionComponent.Rival, OpinionComponent.Enemy) == false 
-				       && isResponsibleForTrait == false;
+				       && isResponsibleForTrait == false
+                       && !character.isSerialKiller;
 			}
 		}
 		return false;

@@ -9,6 +9,7 @@ public class CharacterClassManager : MonoBehaviour {
     public Dictionary<string, CharacterClass> classesDictionary { get; private set; }
     public Dictionary<string, List<CharacterClass>> identifierClasses { get; private set; }
     public List<CharacterClass> normalCombatantClasses { get; private set; }
+    public List<CharacterClass> allClasses { get; private set; }
 
     private Dictionary<System.Type, CharacterBehaviourComponent> behaviourComponents;
 
@@ -68,6 +69,7 @@ public class CharacterClassManager : MonoBehaviour {
     #region Classes
     private void ConstructAllClasses() {
         classesDictionary = new Dictionary<string, CharacterClass>();
+        allClasses = new List<CharacterClass>();
         //normalClasses = new Dictionary<string, CharacterClass>();
         //uniqueClasses = new Dictionary<string, CharacterClass>();
         //beastClasses = new Dictionary<string, CharacterClass>();
@@ -81,6 +83,7 @@ public class CharacterClassManager : MonoBehaviour {
             CharacterClass currentClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText(classes[i]));
             //currentClass.ConstructData();
             classesDictionary.Add(currentClass.className, currentClass);
+            allClasses.Add(currentClass);
             //if(currentClass.identifier == "Normal") {
             //    normalClasses.Add(currentClass.className, currentClass);
             //    //if (!identifierClasses.ContainsKey(currentClass.identifier)) {

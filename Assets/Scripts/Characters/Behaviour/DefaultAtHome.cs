@@ -120,7 +120,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                             while (positiveRelatables.Count > 0 && targetStructure == null) {
                                 int index = UnityEngine.Random.Range(0, positiveRelatables.Count);
                                 Character chosenRelatable = positiveRelatables[index];
-                                targetStructure = chosenRelatable.currentAlterEgo.owner.homeStructure.GetLocationStructure();
+                                targetStructure = chosenRelatable.homeStructure.GetLocationStructure();
                                 if (targetStructure == null) {
                                     positiveRelatables.RemoveAt(index);
                                 } else if (targetStructure == character.homeStructure) {

@@ -91,7 +91,7 @@ public class POIRelationshipContainer : IRelationshipContainer {
         if (HasRelationshipWith(relatable)) {
             IRelationshipData data = relationships[relatable];
             RELATIONSHIP_TYPE relType = data.GetFirstMajorRelationship();
-            return Utilities.NormalizeString(relType.ToString());    
+            return Utilities.NormalizeStringUpperCaseFirstLetterOnly(relType.ToString());    
         }
         return "Acquaintance";
     }

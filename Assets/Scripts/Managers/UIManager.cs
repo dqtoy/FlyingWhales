@@ -115,6 +115,10 @@ public class UIManager : MonoBehaviour {
     [Header("Dual Object Picker")]
     public DualObjectPicker dualObjectPicker;
 
+    [Space(10)]
+    [Header("Psychopath")]
+    public PsychopathUI psychopathUI;
+
     public bool isShowingAreaTooltip { get; private set; } //is the tooltip for settlement double clicks showing?
     private UIMenu lastOpenedMenu = null;
     private List<object> _uiMenuHistory;

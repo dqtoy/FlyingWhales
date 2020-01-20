@@ -16,8 +16,8 @@ public class CharacterRelationshipValidator : IRelationshipValidator {
         //    return false; //Zombies cannot create relationships
         //}
 
-        Character targetCharacter = (target as AlterEgoData).owner;
-        Character sourceCharacter = (character as AlterEgoData).owner; 
+        Character targetCharacter = target as Character;
+        Character sourceCharacter = character as Character; 
         
         //NOTE: This is only one way checking. This character will only check itself, if he/she meets the requirements of a given relationship
         List<RELATIONSHIP_TYPE> relationshipsWithTarget = character.relationshipContainer.GetRelationshipDataWith(target)?.relationships ?? null;

@@ -34,7 +34,7 @@ public class BreakUp : GoapAction {
     #region Effects
     public void PreBreakUpSuccess(ActualGoapNode goapNode) {
         Character target = goapNode.poiTarget as Character;
-        if (goapNode.actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TYPE.LOVER)) {
+        if (goapNode.actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.LOVER)) {
             //**Effect 1**: Actor - Remove Lover relationship with Character 2
             RelationshipManager.Instance.RemoveRelationshipBetween(goapNode.actor, target, RELATIONSHIP_TYPE.LOVER);
             //if the relationship that was removed is lover, change home to a random unoccupied dwelling,
@@ -65,13 +65,13 @@ public class BreakUp : GoapAction {
             if (target == actor) {
                 return false;
             }
-            if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
-                return false;
-            }
+            //if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
+            //    return false;
+            //}
             if (target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
                 return false;
             }
-            if (!actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TYPE.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TYPE.PARAMOUR)) {
+            if (!actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.PARAMOUR)) {
                 return false; //**Advertised To**: All characters with Lover or Paramour relationship with the character
             }
             return target.IsInOwnParty();
@@ -171,13 +171,13 @@ public class BreakUpData : GoapActionData {
         if (target == actor) {
             return false;
         }
-        if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
-            return false;
-        }
+        //if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
+        //    return false;
+        //}
         if (target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
             return false;
         }
-        if (!actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TYPE.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TYPE.PARAMOUR)) {
+        if (!actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.PARAMOUR)) {
             return false; //**Advertised To**: All characters with Lover or Paramour relationship with the character
         }
         return target.IsInOwnParty();

@@ -31,7 +31,7 @@ public class Psychopathy : PlayerJobAction {
         if (targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.GetNormalTrait<Trait>("Beast") != null /*targetCharacter.role.roleType == CHARACTER_ROLE.BEAST*/) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Serial Killer") != null) {
+        if (targetCharacter.isSerialKiller) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -48,7 +48,7 @@ public class Psychopathy : PlayerJobAction {
         if (targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.GetNormalTrait<Trait>("Beast") != null /*targetCharacter.role.roleType == CHARACTER_ROLE.BEAST*/) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Serial Killer") != null) {
+        if (targetCharacter. isSerialKiller) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -68,15 +68,10 @@ public class PsychopathyData : PlayerJobActionData {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
-        targetPOI.traitContainer.AddTrait(targetPOI, "Serial Killer");
-        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
-        log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(null, "Serial Killer", LOG_IDENTIFIER.STRING_1);
-        log.AddLogToInvolvedObjects();
-        PlayerManager.Instance.player.ShowNotification(log);
+        UIManager.Instance.psychopathUI.ShowPsychopathUI(targetPOI as Character);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.GetNormalTrait<Trait>("Beast", "Serial Killer") != null) {
+        if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.isSerialKiller || targetCharacter.traitContainer.GetNormalTrait<Trait>("Beast") != null) {
             return false;
         }
         return base.CanPerformAbilityTowards(targetCharacter);

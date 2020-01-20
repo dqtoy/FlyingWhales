@@ -45,10 +45,18 @@ namespace Traits {
             base.OnRemoveTrait(sourceCharacter, removedBy);
             owner.lycanData.EraseThisDataWhenTraitIsRemoved(owner);
         }
-        public override bool OnAfterDeath(Character character, string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
-            owner.lycanData.EraseThisDataWhenFormDies(owner, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
-            return base.OnAfterDeath(character, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
-        }
+        //public override bool OnDeath(Character character) {
+        //    if(character == owner.lycanData.lycanthropeForm) {
+        //        owner.lycanData.LycanDies(character);
+        //    } else if (character == owner.lycanData.originalForm) {
+        //        return character.traitContainer.RemoveTrait(character, this);
+        //    }
+        //    return base.OnDeath(character);
+        //}
+        //public override bool OnAfterDeath(Character character, string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
+        //    owner.lycanData.EraseThisDataWhenFormDies(owner, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
+        //    return base.OnAfterDeath(character, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
+        //}
         //public override void ExecuteActionPerTickEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
         //    base.ExecuteActionPerTickEffects(action, goapNode);
         //    //if (action == INTERACTION_TYPE.NAP || action == INTERACTION_TYPE.SLEEP || action == INTERACTION_TYPE.SLEEP_OUTSIDE || action == INTERACTION_TYPE.NARCOLEPTIC_NAP) {
@@ -317,6 +325,8 @@ namespace Traits {
             Messenger.Broadcast(Signals.ON_SWITCH_FROM_LIMBO, lycanthropeForm, originalForm);
         }
 
+
+
         private void PutToLimbo(Character form) {
             if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == form) {
                 UIManager.Instance.characterInfoUI.CloseMenu();
@@ -338,6 +348,18 @@ namespace Traits {
             form.SetPOIState(POI_STATE.INACTIVE);
             SchedulingManager.Instance.ClearAllSchedulesBy(this);
             if (form.marker != null) {
+                for (int i = 0; i < form.marker.inVisionCharacters.Count; i++) {
+                    Character otherCharacter = form.marker.inVisionCharacters[i];
+                    if(otherCharacter.marker != null) {
+                        otherCharacter.marker.RemovePOIFromInVisionRange(form);
+                    }
+                }
+                for (int i = 0; i < form.marker.visionCollision.poisInRangeButDiffStructure.Count; i++) {
+                    IPointOfInterest otherPOI = form.marker.visionCollision.poisInRangeButDiffStructure[i];
+                    if (otherPOI is Character) {
+                        (otherPOI as Character).marker.visionCollision.RemovePOIAsInRangeButDifferentStructure(form);
+                    }
+                }
                 form.DestroyMarker();
             }
             form.currentRegion.RemoveCharacterFromLocation(form);
@@ -383,19 +405,23 @@ namespace Traits {
             originalForm.SetLycanthropeData(null);
             lycanthropeForm.SetLycanthropeData(null);
         }
+
         //Parameter: which form is this data erased?
-        public void EraseThisDataWhenFormDies(Character form, string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
+        public void LycanDies(Character form, string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
             if (form != activeForm) {
                 return;
             }
+            originalForm.traitContainer.RemoveTrait(originalForm, "Lycanthrope");
             if (form == lycanthropeForm) {
-                originalForm.traitContainer.RemoveTrait(originalForm, "Lycanthrope");
                 RevertToNormal();
-            }
-            CharacterManager.Instance.RemoveLimboCharacter(lycanthropeForm);
-            originalForm.SetLycanthropeData(null);
-            lycanthropeForm.SetLycanthropeData(null);
-            form.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
+                //CharacterManager.Instance.RemoveLimboCharacter(lycanthropeForm);
+                originalForm.SetLycanthropeData(null);
+                lycanthropeForm.SetLycanthropeData(null);
+                originalForm.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
+            } 
+            //else if (form == originalForm) {
+            //    originalForm.traitContainer.RemoveTrait(originalForm, "Lycanthrope");
+            //}
         }
     }
 }

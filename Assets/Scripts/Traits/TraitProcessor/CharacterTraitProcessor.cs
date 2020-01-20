@@ -11,7 +11,7 @@ namespace Traits {
             Character character = traitable as Character;
             ApplyTraitEffects(character, trait);
             //ApplyPOITraitInteractions(character, trait);
-            character.currentAlterEgo.AddTrait(trait);
+            //character.currentAlterEgo.AddTrait(trait);
 
             if (GameManager.Instance.gameHasStarted) {
                 if (trait.name == "Starving") {
@@ -33,7 +33,7 @@ namespace Traits {
             Character character = traitable as Character;
             UnapplyTraitEffects(character, trait);
             //UnapplyPOITraitInteractions(character, trait);
-            character.currentAlterEgo.RemoveTrait(trait);
+            //character.currentAlterEgo.RemoveTrait(trait);
 
             DefaultProcessOnRemoveTrait(traitable, trait, removedBy);
             Messenger.Broadcast(Signals.TRAIT_REMOVED, character, trait);

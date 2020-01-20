@@ -28,7 +28,7 @@ public class RelationshipManager : MonoBehaviour {
 
     #region Validators
     public IRelationshipValidator GetValidator(Relatable obj) {
-        if (obj is AlterEgoData) {
+        if (obj is Character) {
             return CharacterRelationshipValidator.Instance;
         }
         return null;
@@ -125,8 +125,8 @@ public class RelationshipManager : MonoBehaviour {
                     for (int l = 0; l < currCharacter.faction.characters.Count; l++) {
                         Character otherCharacter = currCharacter.faction.characters[l];
                         if (currCharacter.id != otherCharacter.id) { //&& currCharacter.faction == otherCharacter.faction
-                            List<RELATIONSHIP_TYPE> existingRelsOfCurrentCharacter = currCharacter.relationshipContainer.GetRelationshipDataWith(otherCharacter.currentAlterEgo)?.relationships ?? null;
-                            List<RELATIONSHIP_TYPE> existingRelsOfOtherCharacter = otherCharacter.relationshipContainer.GetRelationshipDataWith(currCharacter.currentAlterEgo)?.relationships ?? null;
+                            List<RELATIONSHIP_TYPE> existingRelsOfCurrentCharacter = currCharacter.relationshipContainer.GetRelationshipDataWith(otherCharacter)?.relationships ?? null;
+                            List<RELATIONSHIP_TYPE> existingRelsOfOtherCharacter = otherCharacter.relationshipContainer.GetRelationshipDataWith(currCharacter)?.relationships ?? null;
                             //if the current character already has a relationship of the same type with the other character, skip
                             if (existingRelsOfCurrentCharacter != null && existingRelsOfCurrentCharacter.Contains(currRel)) {
                                 continue; //skip
@@ -377,23 +377,23 @@ public class RelationshipManager : MonoBehaviour {
     /// </summary>
     /// <param name="actor">The character that did something to degrade the relationship.</param>
     /// <param name="target">The character that will change their relationship with the actor.</param>
+    //public bool RelationshipDegradation(Character actor, Character target, ActualGoapNode cause = null) {
+    //    return RelationshipDegradation(actor.currentAlterEgo, target, cause);
+    //}
     public bool RelationshipDegradation(Character actor, Character target, ActualGoapNode cause = null) {
-        return RelationshipDegradation(actor.currentAlterEgo, target, cause);
-    }
-    public bool RelationshipDegradation(AlterEgoData actorAlterEgo, Character target, ActualGoapNode cause = null) {
-        if (actorAlterEgo.owner.race == RACE.DEMON || target.race == RACE.DEMON || actorAlterEgo.owner is Summon || target is Summon) {
+        if (actor.race == RACE.DEMON || target.race == RACE.DEMON || actor is Summon || target is Summon) {
             return false; //do not let demons and summons have relationships
         }
-        if (actorAlterEgo.owner.returnedToLife || target.returnedToLife) {
+        if (actor.returnedToLife || target.returnedToLife) {
             return false; //do not let zombies or skeletons develop other relationships
         }
 
         bool hasDegraded = false;
-        if (actorAlterEgo.owner.isFactionless || target.isFactionless) {
+        if (actor.isFactionless || target.isFactionless) {
             Debug.LogWarning("Relationship degredation was called and one or both of those characters is factionless");
             return hasDegraded;
         }
-        if (actorAlterEgo.owner == target) {
+        if (actor == target) {
             Debug.LogWarning("Relationship degredation was called and provided same characters " + target.name);
             return hasDegraded;
         }
@@ -408,13 +408,13 @@ public class RelationshipManager : MonoBehaviour {
             opinionText = cause.goapName;
         }
         
-        actorAlterEgo.owner.opinionComponent.AdjustOpinion(target, opinionText, -10);
-        target.opinionComponent.AdjustOpinion(actorAlterEgo.owner, opinionText, -10);
+        actor.opinionComponent.AdjustOpinion(target, opinionText, -10);
+        target.opinionComponent.AdjustOpinion(actor, opinionText, -10);
         
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "rel_degrade");
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
+        log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        PlayerManager.Instance.player.ShowNotificationFrom(log, target, actor);
         hasDegraded = true;
         
         // string summary = "Relationship degradation between " + actorAlterEgo.owner.name + " and " + target.name;
@@ -501,7 +501,7 @@ public class RelationshipManager : MonoBehaviour {
 
     #region Processors
     public IRelationshipProcessor GetProcessor(Relatable relatable) {
-        if (relatable is AlterEgoData) {
+        if (relatable is Character) {
             return CharacterRelationshipProcessor.Instance;
         }
         return null;

@@ -20,6 +20,7 @@ public class RitualKilling : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, target = GOAP_EFFECT_TARGET.TARGET }, IsTargetInWildernessOrHome);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -47,7 +48,14 @@ public class RitualKilling : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            return actor != poiTarget && actor.traitContainer.GetNormalTrait<Trait>("Serial Killer") != null;
+            return actor != poiTarget && actor.isSerialKiller;
+        }
+        return false;
+    }
+    private bool IsTargetInWildernessOrHome(Character actor, IPointOfInterest target, object[] otherData) {
+        if(target is Character) {
+            Character targetCharacter = target as Character;
+            return targetCharacter.IsInOwnParty() && (targetCharacter.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || targetCharacter.currentStructure == actor.homeStructure);
         }
         return false;
     }
@@ -74,7 +82,7 @@ public class RitualKillingData : GoapActionData {
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor != poiTarget && actor.traitContainer.GetNormalTrait<Trait>("Serial Killer") != null;
+        return actor != poiTarget && actor.isSerialKiller;
     }
 }
 

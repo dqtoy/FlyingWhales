@@ -39,6 +39,11 @@ public class OpinionComponent {
             }
             Messenger.Broadcast(Signals.OPINION_ADDED, owner, target);
         }
+        if (owner.isSerialKiller) {
+            //Psychopaths do not gain or lose Opinion towards other characters (ensure that logs related to Opinion changes also do not show up)
+            owner.PrintLogIfActive(owner.name + " wants to adjust " + opinionText + " opinion towards " + target.name + " by " + opinionValue + " but " + owner.name + " is a Serial Killer");
+            return;
+        }
         opinions[target].AdjustOpinion(opinionText, opinionValue);
         if (opinionValue > 0) {
             Messenger.Broadcast(Signals.OPINION_INCREASED, owner, target, reason);

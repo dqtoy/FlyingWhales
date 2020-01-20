@@ -240,7 +240,7 @@ public class Settlement : IJobOwner {
             if (PlayerManager.Instance != null && PlayerManager.Instance.player != null && this.id == PlayerManager.Instance.player.playerSettlement.id) {
                 chosenDwelling = structures[STRUCTURE_TYPE.DWELLING][0] as Dwelling; //to avoid errors, residents in player settlement will all share the same dwelling
             } else {
-                Character lover = (character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) as AlterEgoData)?.owner ?? null;
+                Character lover = (character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) as Character) ?? null;
                 if (lover != null && lover.faction.id == character.faction.id && residents.Contains(lover)) { //check if the character has a lover that lives in the settlement
                     chosenDwelling = lover.homeStructure;
                 }

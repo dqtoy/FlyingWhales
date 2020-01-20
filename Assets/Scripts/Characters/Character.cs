@@ -6,7 +6,7 @@ using Inner_Maps;
 using UnityEngine;
 using Traits;
 
-public class Character : ILeader, IPointOfInterest, IJobOwner {
+public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
 
     protected string _name;
     protected string _firstName;
@@ -47,8 +47,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public Region homeRegion { get; protected set; }
     public Settlement homeSettlement => homeStructure?.settlementLocation ?? null;
     public IDwelling homeStructure { get; protected set; }
-    public IRelationshipContainer relationshipContainer => currentAlterEgo.relationshipContainer;
-    public IRelationshipValidator relationshipValidator => currentAlterEgo.relationshipValidator;
+    //public IRelationshipContainer relationshipContainer => currentAlterEgo.relationshipContainer;
+    //public IRelationshipValidator relationshipValidator => currentAlterEgo.relationshipValidator;
     public List<INTERACTION_TYPE> advertisedActions { get; private set; }
     public int supply { get; set; }
     public int food { get; set; }
@@ -77,7 +77,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public bool isSettlementRuler { get; protected set; }
     public bool hasUnresolvedCrime { get; protected set; }
     public bool isConversing { get; protected set; }
-    //public bool isLimboCharacter { get; protected set; }
+    public bool isInLimbo { get; protected set; }
+    public bool isLimboCharacter { get; protected set; }
+    public bool isSerialKiller { get; protected set; }
     public LycanthropeData lycanData { get; protected set; }
 
     private List<System.Action> onLeaveAreaActions;
@@ -101,9 +103,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public virtual int ignoreHostility { get; protected set; }
 
     //alter egos
-    public string currentAlterEgoName { get; private set; } //this character's currently active alter ego. Usually just Original.
-    public Dictionary<string, AlterEgoData> alterEgos { get; private set; }
-    public string originalClassName { get; private set; } //the class that this character started with
+    //public string currentAlterEgoName { get; private set; } //this character's currently active alter ego. Usually just Original.
+    //public Dictionary<string, AlterEgoData> alterEgos { get; private set; }
+    //public string originalClassName { get; private set; } //the class that this character started with
     private List<Action> pendingActionsAfterMultiThread; //List of actions to perform after a character is finished with all his/her multithread processing (This is to prevent errors while the character has a thread running)
 
     //misc
@@ -133,7 +135,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public string raceClassName {
         get {
             if (Utilities.IsRaceBeast(race)) {
-                return Utilities.NormalizeString(race.ToString()) + " " + role.name;
+                return Utilities.NormalizeStringUpperCaseFirstLetterOnly(race.ToString()) + " " + role.name;
             }
             //if(role.name == characterClass.className) {
             return Utilities.GetNormalizedRaceAdjective(race) + " " + characterClass.className;
@@ -232,15 +234,15 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
     }
     public POI_STATE state => _state;
-    public AlterEgoData currentAlterEgo {
-        get {
-            if (alterEgos == null || !alterEgos.ContainsKey(currentAlterEgoName)) {
-                Debug.LogWarning(this.name + " Alter Ego Relationship Problem! Current alter ego is: " + currentAlterEgoName);
-                return null;
-            }
-            return alterEgos[currentAlterEgoName];
-        }
-    }
+    //public AlterEgoData currentAlterEgo {
+    //    get {
+    //        if (alterEgos == null || !alterEgos.ContainsKey(currentAlterEgoName)) {
+    //            Debug.LogWarning(this.name + " Alter Ego Relationship Problem! Current alter ego is: " + currentAlterEgoName);
+    //            return null;
+    //        }
+    //        return alterEgos[currentAlterEgoName];
+    //    }
+    //}
     public LocationStructure currentStructure {
         get {
             if (!IsInOwnParty()) {
@@ -274,11 +276,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         AssignRole(role, false);
         AssignClassByRole(role, true);
         //_characterClass = CharacterManager.Instance.CreateNewCharacterClass(GetClassForRole(role));
-        originalClassName = _characterClass.className;
+        //originalClassName = _characterClass.className;
         SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
         GenerateSexuality();
         StartingLevel();
-        InitializeAlterEgos();
+        //InitializeAlterEgos();
         visuals = new CharacterVisuals(this);
     }
     public Character(CharacterRole role, string className, RACE race, GENDER gender) : this() {
@@ -289,11 +291,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         AssignRole(role, false);
         AssignClass(className, true);
         //_characterClass = CharacterManager.Instance.CreateNewCharacterClass(className);
-        originalClassName = _characterClass.className;
+        //originalClassName = _characterClass.className;
         SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
         GenerateSexuality();
         StartingLevel();
-        InitializeAlterEgos();
+        //InitializeAlterEgos();
         visuals = new CharacterVisuals(this);
     }
     public Character(CharacterRole role, string className, RACE race, GENDER gender, SEXUALITY sexuality) : this() {
@@ -304,11 +306,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         AssignRole(role, false);
         AssignClass(className, true);
         //_characterClass = CharacterManager.Instance.CreateNewCharacterClass(className);
-        originalClassName = _characterClass.className;
+        //originalClassName = _characterClass.className;
         SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
         SetSexuality(sexuality);
         StartingLevel();
-        InitializeAlterEgos();
+        //InitializeAlterEgos();
         visuals = new CharacterVisuals(this);
     }
     public Character(SaveDataCharacter data) {
@@ -323,8 +325,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         SetName(data.name);
         visuals = new CharacterVisuals(data);
 
-        currentAlterEgoName = data.currentAlterEgoName;
-        originalClassName = data.originalClassName;
+        //currentAlterEgoName = data.currentAlterEgoName;
+        //originalClassName = data.originalClassName;
         isStoppedByOtherCharacter = data.isStoppedByOtherCharacter;
 
         _history = new List<Log>();
@@ -343,7 +345,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         actionHistory = new List<string>();
         planner = new GoapPlanner(this);
 
-        alterEgos = new Dictionary<string, AlterEgoData>();
+        //alterEgos = new Dictionary<string, AlterEgoData>();
         items = new List<SpecialToken>();
         SetIsDead(data.isDead);
     }
@@ -719,9 +721,9 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             return;
         }
         if (!_isDead) {
-            if (currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
-                SwitchAlterEgo(CharacterManager.Original_Alter_Ego); //revert the character to his/her original alter ego
-            }
+            //if (currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
+            //    SwitchAlterEgo(CharacterManager.Original_Alter_Ego); //revert the character to his/her original alter ego
+            //}
             SetIsConversing(false);
             //SetIsFlirting(false);
             Region deathLocation = currentRegion;
@@ -732,8 +734,17 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                     i--;
                 }
             }
+            if (lycanData != null) {
+                lycanData.LycanDies(this, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
+            }
             //------------------------ Things that are above this line are called before letting the character die so that if we need things done before actually setting the death of character we can do it here like cleaning up necessary things, etc.
             SetIsDead(true);
+            if (isLimboCharacter && isInLimbo) {
+                //If a limbo character dies while in limbo, that character should not process death, instead he/she will be removed from the list
+                CharacterManager.Instance.RemoveLimboCharacter(this);
+                return;
+            }
+
             UnsubscribeSignals();
             SetPOIState(POI_STATE.INACTIVE);
             //CombatManager.Instance.ReturnCharacterColorToPool(_characterColor);
@@ -890,11 +901,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             deathStr = Utilities.LogReplacer(deathLog);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
 
-            for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-                if (traitContainer.allTraits[i].OnAfterDeath(this, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers)) {
-                    i--;
-                }
-            }
+            //for (int i = 0; i < traitContainer.allTraits.Count; i++) {
+            //    if (traitContainer.allTraits[i].OnAfterDeath(this, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers)) {
+            //        i--;
+            //    }
+            //}
         }
     }
     public void SetGrave(Tombstone grave) {
@@ -1823,7 +1834,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             return;
         }
         _faction = newFaction;
-        currentAlterEgo.SetFaction(faction);
+        //currentAlterEgo.SetFaction(faction);
         OnChangeFaction();
         UpdateTokenOwner();
         if (_faction != null) {
@@ -2339,9 +2350,15 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void SetHaUnresolvedCrime(bool state) {
         hasUnresolvedCrime = state;
     }
-    //public void SetIsLimboCharacter(bool state) {
-    //    isLimboCharacter = state;
-    //}
+    public void SetIsInLimbo(bool state) {
+        isInLimbo = state;
+    }
+    public void SetIsLimboCharacter(bool state) {
+        isLimboCharacter = state;
+    }
+    public void SetIsSerialKiller(bool state) {
+        isSerialKiller = state;
+    }
     #endregion    
 
     #region History/Logs
@@ -2734,7 +2751,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         witnessLog.AddToFillers(witnessedEvent.descriptionLog.fillers);
         AddHistory(witnessLog);
 
-        CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(this, witnessedEvent);
+        CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(witnessedEvent);
         if (crimeType != CRIME_TYPE.NONE) {
             CrimeManager.Instance.ReactToCrime(this, witnessedEvent, witnessedEvent.associatedJobType, crimeType);
         }
@@ -3345,28 +3362,28 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     public void AdjustAttackMod(int amount) {
         attackPowerMod += amount;
-        currentAlterEgo.SetAttackPowerMod(attackPowerMod);
+        //currentAlterEgo.SetAttackPowerMod(attackPowerMod);
     }
     public void AdjustAttackPercentMod(int amount) {
         attackPowerPercentMod += amount;
-        currentAlterEgo.SetAttackPowerPercentMod(attackPowerPercentMod);
+        //currentAlterEgo.SetAttackPowerPercentMod(attackPowerPercentMod);
     }
     public void SetAttackMod(int amount) {//, bool includeAlterEgo = true
         attackPowerMod = amount;
         //if (includeAlterEgo) {
-        currentAlterEgo.SetAttackPowerMod(attackPowerMod);
+        //currentAlterEgo.SetAttackPowerMod(attackPowerMod);
         //}
     }
     public void SetAttackPercentMod(int amount) {//, bool includeAlterEgo = true
         attackPowerPercentMod = amount;
         //if (includeAlterEgo) {
-        currentAlterEgo.SetAttackPowerPercentMod(attackPowerPercentMod);
+        //currentAlterEgo.SetAttackPowerPercentMod(attackPowerPercentMod);
         //}
     }
     public void AdjustMaxHPMod(int amount) {
         int previousMaxHP = maxHP;
         maxHPMod += amount;
-        currentAlterEgo.SetMaxHPMod(maxHPMod);
+        //currentAlterEgo.SetMaxHPMod(maxHPMod);
         UpdateMaxHP();
         int currentMaxHP = maxHP;
         if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
@@ -3376,7 +3393,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public void AdjustMaxHPPercentMod(int amount) {
         int previousMaxHP = maxHP;
         maxHPPercentMod += amount;
-        currentAlterEgo.SetMaxHPPercentMod(maxHPPercentMod);
+        //currentAlterEgo.SetMaxHPPercentMod(maxHPPercentMod);
         UpdateMaxHP();
         int currentMaxHP = maxHP;
         if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
@@ -3387,7 +3404,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         int previousMaxHP = maxHP;
         maxHPMod = amount;
         //if (includeAlterEgo) {
-        currentAlterEgo.SetMaxHPMod(maxHPMod);
+        //currentAlterEgo.SetMaxHPMod(maxHPMod);
         //}
         UpdateMaxHP();
         int currentMaxHP = maxHP;
@@ -3399,7 +3416,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         int previousMaxHP = maxHP;
         maxHPPercentMod = amount;
         //if (includeAlterEgo) {
-        currentAlterEgo.SetMaxHPPercentMod(maxHPPercentMod);
+        //currentAlterEgo.SetMaxHPPercentMod(maxHPPercentMod);
         //}
         UpdateMaxHP();
         int currentMaxHP = maxHP;
@@ -3420,22 +3437,22 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     public void AdjustSpeedMod(int amount) {
         speedMod += amount;
-        currentAlterEgo.SetSpeedMod(speedMod);
+        //currentAlterEgo.SetSpeedMod(speedMod);
     }
     public void AdjustSpeedPercentMod(int amount) {
         speedPercentMod += amount;
-        currentAlterEgo.SetSpeedPercentMod(speedPercentMod);
+        //currentAlterEgo.SetSpeedPercentMod(speedPercentMod);
     }
     public void SetSpeedMod(int amount) { //, bool includeAlterEgo = true
         speedMod = amount;
         //if (includeAlterEgo) {
-        currentAlterEgo.SetSpeedMod(speedMod);
+        //currentAlterEgo.SetSpeedMod(speedMod);
         //}
     }
     public void SetSpeedPercentMod(int amount) { //, bool includeAlterEgo = true
         speedPercentMod = amount;
         //if (includeAlterEgo) {
-        currentAlterEgo.SetSpeedPercentMod(speedPercentMod);
+        //currentAlterEgo.SetSpeedPercentMod(speedPercentMod);
         //}
     }
     public bool IsHealthFull() {
@@ -3481,7 +3498,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     }
     public void SetHomeStructure(IDwelling homeStructure) {
         this.homeStructure = homeStructure;
-        currentAlterEgo.SetHomeStructure(homeStructure);
+        //currentAlterEgo.SetHomeStructure(homeStructure);
     }
     public bool MigrateHomeTo(Settlement newHomeSettlement, IDwelling homeStructure = null, bool broadcast = true) {
         Settlement previousHome = null;
@@ -4120,7 +4137,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         float positiveWeight = 0;
         float negativeWeight = 0;
         if (opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.opinionComponent.GetRelationshipEffectWith(this) != RELATIONSHIP_EFFECT.NEGATIVE
-            && relationshipValidator.CanHaveRelationship(this.currentAlterEgo, targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.LOVER) && targetCharacter.relationshipValidator.CanHaveRelationship(targetCharacter.currentAlterEgo, this.currentAlterEgo, RELATIONSHIP_TYPE.LOVER)
+            && relationshipValidator.CanHaveRelationship(this, targetCharacter, RELATIONSHIP_TYPE.LOVER) && targetCharacter.relationshipValidator.CanHaveRelationship(targetCharacter, this, RELATIONSHIP_TYPE.LOVER)
             && role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
             for (int i = 0; i < moods.Length; i++) {
                 CHARACTER_MOOD mood = moods[i];
@@ -4177,7 +4194,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         float positiveWeight = 0;
         float negativeWeight = 0;
         if (opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.opinionComponent.GetRelationshipEffectWith(this) != RELATIONSHIP_EFFECT.NEGATIVE
-            && relationshipValidator.CanHaveRelationship(this.currentAlterEgo, targetCharacter.currentAlterEgo,  RELATIONSHIP_TYPE.PARAMOUR) && targetCharacter.relationshipValidator.CanHaveRelationship(targetCharacter.currentAlterEgo, this.currentAlterEgo, RELATIONSHIP_TYPE.PARAMOUR)
+            && relationshipValidator.CanHaveRelationship(this, targetCharacter,  RELATIONSHIP_TYPE.PARAMOUR) && targetCharacter.relationshipValidator.CanHaveRelationship(targetCharacter, this, RELATIONSHIP_TYPE.PARAMOUR)
             && role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
             for (int i = 0; i < moods.Length; i++) {
                 CHARACTER_MOOD mood = moods[i];
@@ -4227,10 +4244,10 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
             Relatable lover = relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TYPE.LOVER).FirstOrDefault();
             //x3 all positive modifiers if character considers lover as Enemy
-            if (lover != null && opinionComponent.IsEnemiesWith((lover as AlterEgoData).owner)) {
+            if (lover != null && opinionComponent.IsEnemiesWith(lover as Character)) {
                 positiveWeight *= 3f;
             }
-            if (relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.RELATIVE)) {
+            if (relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.RELATIVE)) {
                 positiveWeight *= 0.01f;
             }
             if (lover != null && lover is ITraitable && (lover as ITraitable).traitContainer.GetNormalTrait<Trait>("Ugly") != null) { //if lover is ugly
@@ -4769,8 +4786,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         advertisedActions.Add(INTERACTION_TYPE.RETURN_HOME);
         //advertisedActions.Add(INTERACTION_TYPE.RETURN_HOME_LOCATION);
         advertisedActions.Add(INTERACTION_TYPE.CHAT_CHARACTER);
-        advertisedActions.Add(INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM);
-        advertisedActions.Add(INTERACTION_TYPE.REVERT_TO_NORMAL_FORM);
+        //advertisedActions.Add(INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM);
+        //advertisedActions.Add(INTERACTION_TYPE.REVERT_TO_NORMAL_FORM);
         advertisedActions.Add(INTERACTION_TYPE.CHANGE_CLASS);
         //advertisedActions.Add(INTERACTION_TYPE.ZOMBIE_DEATH);
         //advertisedActions.Add(INTERACTION_TYPE.STAND);
@@ -5727,7 +5744,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     /// A variation of react to crime in which the parameter SHARE_INTEL_STATUS will be the one to determine if it is informed or witnessed crime
     /// Returns true or false, if the relationship between the reactor and the criminal has degraded
     /// </summary>
-    public bool ReactToCrime(CRIME committedCrime, ActualGoapNode crimeAction, AlterEgoData criminal, SHARE_INTEL_STATUS status) {
+    public bool ReactToCrime(CRIME committedCrime, ActualGoapNode crimeAction, Character criminal, SHARE_INTEL_STATUS status) {
         bool hasRelationshipDegraded = false;
         if (status == SHARE_INTEL_STATUS.WITNESSED) {
             ReactToCrime(committedCrime, crimeAction, criminal, ref hasRelationshipDegraded, crimeAction, null);
@@ -5745,7 +5762,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     /// <param name="criminal">The character that committed the crime</param>
     /// <param name="witnessedCrime">The crime witnessed by this character, if this is null, character was only informed of the crime by someone else.</param>
     /// <param name="informedCrime">The crime this character was informed of. NOTE: Should only have value if Share Intel</param>
-    public void ReactToCrime(CRIME committedCrime, ActualGoapNode crimeAction, AlterEgoData criminal, ref bool hasRelationshipDegraded, ActualGoapNode witnessedCrime = null, ActualGoapNode informedCrime = null) {
+    public void ReactToCrime(CRIME committedCrime, ActualGoapNode crimeAction, Character criminal, ref bool hasRelationshipDegraded, ActualGoapNode witnessedCrime = null, ActualGoapNode informedCrime = null) {
         //NOTE: Moved this to be per action specific. See GoapAction.IsConsideredACrimeBy and GoapAction.CanReactToThisCrime for necessary mechanics.
         //if (witnessedCrime != null) {
         //    //if the action that should be considered a crime is part of a job from this character's settlement, do not consider it a crime
@@ -5759,7 +5776,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //    }
         //}
         
-        string reactSummary = this.name + " will react to crime committed by " + criminal.owner.name;
+        string reactSummary = this.name + " will react to crime committed by " + criminal.name;
         if(committedCrime == CRIME.NONE) {
             reactSummary += "\nNo reaction because committed crime is " + committedCrime.ToString();
             PrintLogIfActive(reactSummary);
@@ -5767,7 +5784,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         //Log witnessLog = null;
         //Log reportLog = null;
-        RELATIONSHIP_EFFECT relationshipEfffectWithCriminal = opinionComponent.GetRelationshipEffectWith(criminal.owner);
+        RELATIONSHIP_EFFECT relationshipEfffectWithCriminal = opinionComponent.GetRelationshipEffectWith(criminal);
         CRIME_TYPE category = committedCrime.GetCategory();
 
         //If character witnessed an Infraction crime:
@@ -5781,7 +5798,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         }
         //If character has a positive relationship (Friend, Lover, Paramour) with the criminal
         else if (relationshipEfffectWithCriminal == RELATIONSHIP_EFFECT.POSITIVE) {
-            reactSummary += "\n" + this.name + " has a positive relationship with " + criminal.owner.name;
+            reactSummary += "\n" + this.name + " has a positive relationship with " + criminal.name;
             //and crime severity is a Misdemeanor:
             if (category == CRIME_TYPE.MISDEMEANOR) {
                 reactSummary += "\nCrime committed is misdemeanor.";
@@ -5794,15 +5811,15 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             else if (category.IsGreaterThanOrEqual(CRIME_TYPE.SERIOUS)) {
                 reactSummary += "\nCrime committed is serious or worse. Removing positive relationships.";
                 //- Relationship Degradation between Character and Criminal
-                hasRelationshipDegraded = RelationshipManager.Instance.RelationshipDegradation(criminal.owner, this, witnessedCrime);
+                hasRelationshipDegraded = RelationshipManager.Instance.RelationshipDegradation(criminal, this, witnessedCrime);
                 if (hasRelationshipDegraded) {
                     //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed_degraded");
                     //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed_degraded");
                     PerRoleCrimeReaction(committedCrime, crimeAction, criminal, witnessedCrime, informedCrime);
                 } else {
                     if (witnessedCrime != null) {
-                        if (marker.inVisionCharacters.Contains(criminal.owner)) {
-                            marker.AddAvoidInRange(criminal.owner);
+                        if (marker.inVisionCharacters.Contains(criminal)) {
+                            marker.AddAvoidInRange(criminal);
                         }
                     }
                     //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
@@ -5812,11 +5829,11 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             }
         }
         //If character has no relationships with the criminal or they are enemies and the crime is a Misdemeanor or worse:
-        else if ((!this.relationshipContainer.HasRelationshipWith(criminal) || this.opinionComponent.IsEnemiesWith(criminal.owner)) 
+        else if ((!this.relationshipContainer.HasRelationshipWith(criminal) || this.opinionComponent.IsEnemiesWith(criminal)) 
             && category.IsGreaterThanOrEqual(CRIME_TYPE.MISDEMEANOR)) {
             reactSummary += "\n" + this.name + " does not have a relationship with or is an enemy of " + criminal.name + " and the committed crime is misdemeanor or worse";
             //- Relationship Degradation between Character and Criminal
-            hasRelationshipDegraded = RelationshipManager.Instance.RelationshipDegradation(criminal.owner, this, witnessedCrime);
+            hasRelationshipDegraded = RelationshipManager.Instance.RelationshipDegradation(criminal, this, witnessedCrime);
             //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]!"
             if (hasRelationshipDegraded) {
                 //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed_degraded");
@@ -5824,8 +5841,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 PerRoleCrimeReaction(committedCrime, crimeAction, criminal, witnessedCrime, informedCrime);
             } else {
                 if (witnessedCrime != null) {
-                    if (marker.inVisionCharacters.Contains(criminal.owner)) {
-                        marker.AddAvoidInRange(criminal.owner);
+                    if (marker.inVisionCharacters.Contains(criminal)) {
+                        marker.AddAvoidInRange(criminal);
                     }
                 }
                 //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
@@ -5860,7 +5877,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     /// <param name="criminal">The character that committed the crime</param>
     /// <param name="witnessedCrime">The crime witnessed by this character, if this is null, character was only informed of the crime by someone else.</param>
     /// <param name="informedCrime">The crime this character was informed of. NOTE: Should only have value if Share Intel</param>
-    private void PerRoleCrimeReaction(CRIME committedCrime, ActualGoapNode crimeAction, AlterEgoData criminal, ActualGoapNode witnessedCrime = null, ActualGoapNode informedCrime = null) {
+    private void PerRoleCrimeReaction(CRIME committedCrime, ActualGoapNode crimeAction, Character criminal, ActualGoapNode witnessedCrime = null, ActualGoapNode informedCrime = null) {
         //GoapPlanJob job = null;
         switch (role.roleType) {
             case CHARACTER_ROLE.CIVILIAN:
@@ -5885,7 +5902,8 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 //If he is a Noble or Faction Leader, he will create the Apprehend Job Type in the Location job queue instead.
                 if (!isFactionless && criminal.faction == this.faction) {
                     //only add apprehend job if the criminal is part of this characters faction
-                    criminal.owner.AddCriminalTrait(committedCrime, crimeAction);
+                    criminal.AddCriminalTrait(committedCrime, crimeAction);
+                    // CreateApprehendJobFor(criminal);
                     //crimeAction.OnReportCrime();
                     //job = JobManager.Instance.CreateNewGoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeSettlement, targetPOI = actor });
                     //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
@@ -5899,12 +5917,13 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
                 //- If the character is a Soldier, the criminal will gain the relevant Crime-type trait
                 if (!isFactionless && criminal.faction == this.faction) {
                     //only add apprehend job if the criminal is part of this characters faction
-                    criminal.owner.AddCriminalTrait(committedCrime, crimeAction);
+                    criminal.AddCriminalTrait(committedCrime, crimeAction);
                     //- If the character is a Soldier, he will also create an Apprehend Job Type in his personal job queue.
                     //job = JobManager.Instance.CreateNewGoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeSettlement, targetPOI = actor });
                     //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                     //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
                     //homeSettlement.jobQueue.AddJobInQueue(job);
+                    // CreateApprehendJobFor(criminal, true); //job =
                     //if (job != null) {
                     //    homeSettlement.jobQueue.ForceAssignCharacterToJob(job, this);
                     //}
@@ -6049,115 +6068,115 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     #endregion
 
     #region Alter Egos
-    private void InitializeAlterEgos() {
-        alterEgos = new Dictionary<string, AlterEgoData> {
-            {CharacterManager.Original_Alter_Ego, new AlterEgoData(this, CharacterManager.Original_Alter_Ego)}
-        };
-        currentAlterEgoName = CharacterManager.Original_Alter_Ego;
-        currentAlterEgo.SetFaction(faction);
-        currentAlterEgo.SetCharacterClass(characterClass);
-        currentAlterEgo.SetRace(race);
-        currentAlterEgo.SetRole(role);
-        currentAlterEgo.SetHomeStructure(homeStructure);
-    }
-    public AlterEgoData CreateNewAlterEgo(string alterEgoName) {
-        if (alterEgos.ContainsKey(alterEgoName)) {
-            throw new Exception(this.name + " already has an alter ego named " + alterEgoName + " but something is trying to create a new one!");
-        }
-        AlterEgoData newData = new AlterEgoData(this, alterEgoName);
-        AddAlterEgo(newData);
-        return newData;
-    }
-    private void AddAlterEgo(AlterEgoData data) {
-        if (!alterEgos.ContainsKey(data.name)) {
-            alterEgos.Add(data.name, data);
-        }
-    }
-    public void RemoveAlterEgo(string alterEgoName) {
-        if (alterEgoName == CharacterManager.Original_Alter_Ego) {
-            throw new Exception("Something is trying to remove " + this.name + "'s original alter ego! This should not happen!");
-        }
-        if (currentAlterEgoName == alterEgoName) {
-            //switch to the original alter ego
-            SwitchAlterEgo(CharacterManager.Original_Alter_Ego);
-        }
-        if (alterEgos.ContainsKey(alterEgoName)) {
-            alterEgos.Remove(alterEgoName);
-        }
-    }
-    public bool isSwitchingAlterEgo { get; private set; } //is this character in the process of switching alter egos?
-    public void SwitchAlterEgo(string alterEgoName) {
-        if (currentAlterEgoName == alterEgoName) {
-            return; //ignore change
-        }
-        if (alterEgos.ContainsKey(alterEgoName)) {
-            isSwitchingAlterEgo = true;
-            //for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-            //    Trait currTrait = traitContainer.allTraits[i];
-            //    if (currTrait.isRemovedOnSwitchAlterEgo) {
-            //        if (traitContainer.RemoveTrait(this, currTrait)) {
-            //            i--;
-            //        }
-            //    }
-            //}
-            //apply all alter ego changes here
-            AlterEgoData alterEgoData = alterEgos[alterEgoName];
-            //currentAlterEgo.CopySpecialTraits();
+    //private void InitializeAlterEgos() {
+    //    alterEgos = new Dictionary<string, AlterEgoData> {
+    //        {CharacterManager.Original_Alter_Ego, new AlterEgoData(this, CharacterManager.Original_Alter_Ego)}
+    //    };
+    //    currentAlterEgoName = CharacterManager.Original_Alter_Ego;
+    //    currentAlterEgo.SetFaction(faction);
+    //    currentAlterEgo.SetCharacterClass(characterClass);
+    //    currentAlterEgo.SetRace(race);
+    //    currentAlterEgo.SetRole(role);
+    //    currentAlterEgo.SetHomeStructure(homeStructure);
+    //}
+    //public AlterEgoData CreateNewAlterEgo(string alterEgoName) {
+    //    if (alterEgos.ContainsKey(alterEgoName)) {
+    //        throw new Exception(this.name + " already has an alter ego named " + alterEgoName + " but something is trying to create a new one!");
+    //    }
+    //    AlterEgoData newData = new AlterEgoData(this, alterEgoName);
+    //    AddAlterEgo(newData);
+    //    return newData;
+    //}
+    //private void AddAlterEgo(AlterEgoData data) {
+    //    if (!alterEgos.ContainsKey(data.name)) {
+    //        alterEgos.Add(data.name, data);
+    //    }
+    //}
+    //public void RemoveAlterEgo(string alterEgoName) {
+    //    if (alterEgoName == CharacterManager.Original_Alter_Ego) {
+    //        throw new Exception("Something is trying to remove " + this.name + "'s original alter ego! This should not happen!");
+    //    }
+    //    if (currentAlterEgoName == alterEgoName) {
+    //        //switch to the original alter ego
+    //        SwitchAlterEgo(CharacterManager.Original_Alter_Ego);
+    //    }
+    //    if (alterEgos.ContainsKey(alterEgoName)) {
+    //        alterEgos.Remove(alterEgoName);
+    //    }
+    //}
+    //public bool isSwitchingAlterEgo { get; private set; } //is this character in the process of switching alter egos?
+    //public void SwitchAlterEgo(string alterEgoName) {
+    //    if (currentAlterEgoName == alterEgoName) {
+    //        return; //ignore change
+    //    }
+    //    if (alterEgos.ContainsKey(alterEgoName)) {
+    //        isSwitchingAlterEgo = true;
+    //        //for (int i = 0; i < traitContainer.allTraits.Count; i++) {
+    //        //    Trait currTrait = traitContainer.allTraits[i];
+    //        //    if (currTrait.isRemovedOnSwitchAlterEgo) {
+    //        //        if (traitContainer.RemoveTrait(this, currTrait)) {
+    //        //            i--;
+    //        //        }
+    //        //    }
+    //        //}
+    //        //apply all alter ego changes here
+    //        AlterEgoData alterEgoData = alterEgos[alterEgoName];
+    //        //currentAlterEgo.CopySpecialTraits();
 
-            //Drop all plans except for the current action
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "target is not found");
-            if (currentActionNode != null) {
-                CancelAllJobsExceptForCurrent();
-            } else {
-                CancelAllJobs();
-            }
+    //        //Drop all plans except for the current action
+    //        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "target is not found");
+    //        if (currentActionNode != null) {
+    //            CancelAllJobsExceptForCurrent();
+    //        } else {
+    //            CancelAllJobs();
+    //        }
 
-            if(alterEgoName == "Lycanthrope") {
-                needsComponent.hasForcedTiredness = true;
-            }
-            needsComponent.SetHasCancelledSleepSchedule(false);
-            needsComponent.ResetSleepTicks();
-            needsComponent.ResetFullnessMeter();
-            needsComponent.ResetHappinessMeter();
-            needsComponent.ResetTirednessMeter();
+    //        if(alterEgoName == "Lycanthrope") {
+    //            needsComponent.hasForcedTiredness = true;
+    //        }
+    //        needsComponent.SetHasCancelledSleepSchedule(false);
+    //        needsComponent.ResetSleepTicks();
+    //        needsComponent.ResetFullnessMeter();
+    //        needsComponent.ResetHappinessMeter();
+    //        needsComponent.ResetTirednessMeter();
 
-            SetHomeStructure(alterEgoData.homeStructure);
-            ChangeFactionTo(alterEgoData.faction);
-            AssignRole(alterEgoData.role);
-            AssignClass(alterEgoData.characterClass);
-            ChangeRace(alterEgoData.race);
-            SetLevel(alterEgoData.level);
-            SetMaxHPMod(alterEgoData.maxHPMod);
-            SetMaxHPPercentMod(alterEgoData.maxHPPercentMod);
-            SetAttackMod(alterEgoData.attackPowerMod);
-            SetAttackPercentMod(alterEgoData.attackPowerPercentMod);
-            SetSpeedMod(alterEgoData.speedMod);
-            SetSpeedPercentMod(alterEgoData.speedPercentMod);
-            traitContainer.RemoveAllNonPersistentTraits(this); //remove all non persistent traits (include alter ego: false)
+    //        SetHomeStructure(alterEgoData.homeStructure);
+    //        ChangeFactionTo(alterEgoData.faction);
+    //        AssignRole(alterEgoData.role);
+    //        AssignClass(alterEgoData.characterClass);
+    //        ChangeRace(alterEgoData.race);
+    //        SetLevel(alterEgoData.level);
+    //        SetMaxHPMod(alterEgoData.maxHPMod);
+    //        SetMaxHPPercentMod(alterEgoData.maxHPPercentMod);
+    //        SetAttackMod(alterEgoData.attackPowerMod);
+    //        SetAttackPercentMod(alterEgoData.attackPowerPercentMod);
+    //        SetSpeedMod(alterEgoData.speedMod);
+    //        SetSpeedPercentMod(alterEgoData.speedPercentMod);
+    //        traitContainer.RemoveAllNonPersistentTraits(this); //remove all non persistent traits (include alter ego: false)
 
-            //ForceCancelAllJobsTargettingCharacter(false, "target is not found");
+    //        //ForceCancelAllJobsTargettingCharacter(false, "target is not found");
 
-            for (int i = 0; i < alterEgoData.traits.Count; i++) {
-                traitContainer.AddTrait(this, alterEgoData.traits[i]);
-            }
-            currentAlterEgoName = alterEgoName;
-            isSwitchingAlterEgo = false;
-            visuals.UpdateAllVisuals(this);
-            Messenger.Broadcast(Signals.CHARACTER_SWITCHED_ALTER_EGO, this);
-        } else {
-            throw new Exception(this.name + " is trying to switch to alter ego " + alterEgoName + " but doesn't have an alter ego of that name!");
-        }
-    }
-    public AlterEgoData GetAlterEgoData(string alterEgoName) {
-        if (alterEgos.ContainsKey(alterEgoName)) {
-            return alterEgos[alterEgoName];
-        }
-        return null;
-    }
+    //        for (int i = 0; i < alterEgoData.traits.Count; i++) {
+    //            traitContainer.AddTrait(this, alterEgoData.traits[i]);
+    //        }
+    //        currentAlterEgoName = alterEgoName;
+    //        isSwitchingAlterEgo = false;
+    //        visuals.UpdateAllVisuals(this);
+    //        Messenger.Broadcast(Signals.CHARACTER_SWITCHED_ALTER_EGO, this);
+    //    } else {
+    //        throw new Exception(this.name + " is trying to switch to alter ego " + alterEgoName + " but doesn't have an alter ego of that name!");
+    //    }
+    //}
+    //public AlterEgoData GetAlterEgoData(string alterEgoName) {
+    //    if (alterEgos.ContainsKey(alterEgoName)) {
+    //        return alterEgos[alterEgoName];
+    //    }
+    //    return null;
+    //}
     #endregion
 
     #region Converters
-    public static implicit operator Relatable(Character d) => d.currentAlterEgo;
+    //public static implicit operator Relatable(Character d) => d.currentAlterEgo;
     #endregion
 
     #region Limiters

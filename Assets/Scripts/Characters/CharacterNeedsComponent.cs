@@ -509,6 +509,10 @@ public class CharacterNeedsComponent {
 
     #region Happiness
     public void ResetHappinessMeter() {
+        if (_character.isSerialKiller) {
+            //Psychopath's Happiness is always fixed at 50 and is not changed by anything.
+            return;
+        }
         bool wasLonely = isLonely;
         bool wasForlorn = isForlorn;
         bool wasHappy = isHappy;
@@ -519,6 +523,10 @@ public class CharacterNeedsComponent {
         //OnHappinessAdjusted();
     }
     public void AdjustHappiness(float adjustment) {
+        if (_character.isSerialKiller) {
+            //Psychopath's Happiness is always fixed at 50 and is not changed by anything.
+            return;
+        }
         bool wasLonely = isLonely;
         bool wasForlorn = isForlorn;
         bool wasHappy = isHappy;
@@ -538,6 +546,10 @@ public class CharacterNeedsComponent {
         //OnHappinessAdjusted();
     }
     public void SetHappiness(float amount) {
+        if (_character.isSerialKiller) {
+            //Psychopath's Happiness is always fixed at 50 and is not changed by anything.
+            return;
+        }
         bool wasLonely = isLonely;
         bool wasForlorn = isForlorn;
         bool wasHappy = isHappy;

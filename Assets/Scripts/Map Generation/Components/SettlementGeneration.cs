@@ -103,7 +103,7 @@ public class SettlementGeneration : MapGenerationComponent {
 
 		while (listOfCharacters.Count != 0) {
 			Character currCharacter = listOfCharacters[0];
-			Character lover = (currCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) as AlterEgoData)?.owner ?? null;
+			Character lover = (currCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) as Character) ?? null;
 			if (lover != null) {
 				listOfCharacters.Remove(lover);
 			}

@@ -14,7 +14,7 @@ public class CharacterNamePlate {
         _character = character;
         characterNameLbl.text = string.Empty;
         if (character.role != null) {
-            characterNameLbl.text = Utilities.NormalizeString(character.role.roleType.ToString()) + " ";
+            characterNameLbl.text = Utilities.NormalizeStringUpperCaseFirstLetterOnly(character.role.roleType.ToString()) + " ";
             roleSprite.sprite2D = CharacterManager.Instance.GetSpriteByRole(character.role.roleType);
             roleSprite.gameObject.SetActive(true);
         } else {

@@ -45,75 +45,75 @@ public class AlterEgoData : Relatable{
     }
 
     public void SetFaction(Faction faction) {
-        if (owner.isSwitchingAlterEgo) {
-            return; //ignore any changes while the owner is switching alter egos
-        }
+        //if (owner.isSwitchingAlterEgo) {
+        //    return; //ignore any changes while the owner is switching alter egos
+        //}
         this.faction = faction;
     }
     public void SetRace(RACE race) {
-        if (owner.isSwitchingAlterEgo) {
-            return; //ignore any changes while the owner is switching alter egos
-        }
+        //if (owner.isSwitchingAlterEgo) {
+        //    return; //ignore any changes while the owner is switching alter egos
+        //}
         this.race = race;
     }
     public void SetRole(CharacterRole role) {
-        if (owner.isSwitchingAlterEgo) {
-            return; //ignore any changes while the owner is switching alter egos
-        }
+        //if (owner.isSwitchingAlterEgo) {
+        //    return; //ignore any changes while the owner is switching alter egos
+        //}
         this.role = role;
     }
     public void SetCharacterClass(CharacterClass characterClass) {
-        if (owner.isSwitchingAlterEgo) {
-            return; //ignore any changes while the owner is switching alter egos
-        }
+        //if (owner.isSwitchingAlterEgo) {
+        //    return; //ignore any changes while the owner is switching alter egos
+        //}
         this.characterClass = characterClass;
     }
     public void SetHomeStructure(IDwelling homeStructure) {
-        if (owner.isSwitchingAlterEgo) {
-            return; //ignore any changes while the owner is switching alter egos
-        }
+        //if (owner.isSwitchingAlterEgo) {
+        //    return; //ignore any changes while the owner is switching alter egos
+        //}
         this.homeStructure = homeStructure;
     }
     public void SetLevel(int level) {
-        if (owner.isSwitchingAlterEgo) {
-            return; //ignore any changes while the owner is switching alter egos
-        }
+        //if (owner.isSwitchingAlterEgo) {
+        //    return; //ignore any changes while the owner is switching alter egos
+        //}
         this.level = level;
     }
     public void SetAttackPowerMod(int amount) {
-        if (owner.isSwitchingAlterEgo) {
-            return; //ignore any changes while the owner is switching alter egos
-        }
+        //if (owner.isSwitchingAlterEgo) {
+        //    return; //ignore any changes while the owner is switching alter egos
+        //}
         attackPowerMod = amount;
     }
     public void SetSpeedMod(int amount) {
-        if (owner.isSwitchingAlterEgo) {
-            return; //ignore any changes while the owner is switching alter egos
-        }
+        //if (owner.isSwitchingAlterEgo) {
+        //    return; //ignore any changes while the owner is switching alter egos
+        //}
         speedMod = amount;
     }
     public void SetMaxHPMod(int amount) {
-        if (owner.isSwitchingAlterEgo) {
-            return; //ignore any changes while the owner is switching alter egos
-        }
+        //if (owner.isSwitchingAlterEgo) {
+        //    return; //ignore any changes while the owner is switching alter egos
+        //}
         maxHPMod = amount;
     }
     public void SetAttackPowerPercentMod(int amount) {
-        if (owner.isSwitchingAlterEgo) {
-            return; //ignore any changes while the owner is switching alter egos
-        }
+        //if (owner.isSwitchingAlterEgo) {
+        //    return; //ignore any changes while the owner is switching alter egos
+        //}
         attackPowerPercentMod = amount;
     }
     public void SetSpeedPercentMod(int amount) {
-        if (owner.isSwitchingAlterEgo) {
-            return; //ignore any changes while the owner is switching alter egos
-        }
+        //if (owner.isSwitchingAlterEgo) {
+        //    return; //ignore any changes while the owner is switching alter egos
+        //}
         speedPercentMod = amount;
     }
     public void SetMaxHPPercentMod(int amount) {
-        if (owner.isSwitchingAlterEgo) {
-            return; //ignore any changes while the owner is switching alter egos
-        }
+        //if (owner.isSwitchingAlterEgo) {
+        //    return; //ignore any changes while the owner is switching alter egos
+        //}
         maxHPPercentMod = amount;
     }
 
@@ -204,17 +204,17 @@ public class AlterEgoData : Relatable{
 
     #region Traits
     public void AddTrait(Trait trait) {
-        if (owner.isSwitchingAlterEgo) {
-            return; //ignore any changes while the owner is switching alter egos
-        }
+        //if (owner.isSwitchingAlterEgo) {
+        //    return; //ignore any changes while the owner is switching alter egos
+        //}
         if (!traits.Contains(trait)) {
             traits.Add(trait);
         }
     }
     public void RemoveTrait(Trait trait) {
-        if (owner.isSwitchingAlterEgo) {
-            return; //ignore any changes while the owner is switching alter egos
-        }
+        //if (owner.isSwitchingAlterEgo) {
+        //    return; //ignore any changes while the owner is switching alter egos
+        //}
         traits.Remove(trait);
     }
     #endregion
