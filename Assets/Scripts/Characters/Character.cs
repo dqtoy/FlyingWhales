@@ -3631,6 +3631,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
 
         traitContainer.AddTrait(this, "Character Trait");
         traitContainer.AddTrait(this, "Flammable");
+        //traitContainer.AddTrait(this, "Drunkard");
         //traitContainer.AddTrait(this, "Accident Prone");
 
         defaultCharacterTrait = traitContainer.GetNormalTrait<Trait>("Character Trait") as CharacterTrait;

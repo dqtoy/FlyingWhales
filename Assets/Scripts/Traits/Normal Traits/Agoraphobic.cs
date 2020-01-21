@@ -97,9 +97,11 @@ namespace Traits {
             if (!character.canPerform || !character.canWitness) {
                 return;
             }
-            if(character.marker.inVisionCharacters.Count < 3) {
+            if(!WillTriggerAgoraphobia(character)) {
                 return;
             }
+            character.StopCurrentActionNode(false);
+            character.jobQueue.CancelAllJobs();
             character.traitContainer.AddTrait(character, "Anxious");
             if(character.homeStructure != null && character.currentStructure != character.homeStructure) {
                 character.jobComponent.TriggerFleeHome(jobType);

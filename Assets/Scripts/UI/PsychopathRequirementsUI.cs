@@ -101,8 +101,11 @@ public class PsychopathRequirementsUI : MonoBehaviour {
 
     #region Button Functions
     public void OnClickAddReq() {
-        victimDescriptions.Add(reqDescriptionDropdown.options[reqDescriptionDropdown.value].text);
-        UpdateRequirementsLabel();
+        string desc = reqDescriptionDropdown.options[reqDescriptionDropdown.value].text;
+        if (!victimDescriptions.Contains(desc)) {
+            victimDescriptions.Add(desc);
+            UpdateRequirementsLabel();
+        }
     }
     public void OnClickRemoveReq() {
         victimDescriptions.Remove(reqDescriptionDropdown.options[reqDescriptionDropdown.value].text);
