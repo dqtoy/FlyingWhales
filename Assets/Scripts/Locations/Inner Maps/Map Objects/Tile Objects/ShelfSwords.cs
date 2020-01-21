@@ -4,7 +4,7 @@ public class ShelfSwords : TileObject{
     public ShelfSwords() {
         advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.SHELF_SWORDS);
-        RemoveCommonAdvertisments();
+        RemoveCommonAdvertisements();
     }
     public ShelfSwords(SaveDataTileObject data) {
         advertisedActions = new List<INTERACTION_TYPE>();

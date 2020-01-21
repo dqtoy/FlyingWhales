@@ -4,7 +4,7 @@ public class Wheelbarrow : TileObject{
     public Wheelbarrow() {
         advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.WHEELBARROW);
-        RemoveCommonAdvertisments();
+        RemoveCommonAdvertisements();
     }
     public Wheelbarrow(SaveDataTileObject data) {
         advertisedActions = new List<INTERACTION_TYPE>();

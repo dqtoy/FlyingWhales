@@ -473,13 +473,13 @@ namespace Inner_Maps {
                 //only get build spots that do not have any occupied adjacent spots at their top and right
                 bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North)
                                           && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false
-                                          && currSpot.neighbours[GridNeighbourDirection.North].isPartOfParentRegionMap;
+                                          && currSpot.neighbours[GridNeighbourDirection.North].canBeBuiltOn;
                 bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East)
                                          && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false
-                                         && currSpot.neighbours[GridNeighbourDirection.East].isPartOfParentRegionMap;
+                                         && currSpot.neighbours[GridNeighbourDirection.East].canBeBuiltOn;
                 bool hasUnoccupiedNorthEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North_East)
                                          && currSpot.neighbours[GridNeighbourDirection.North_East].isOccupied == false
-                                         && currSpot.neighbours[GridNeighbourDirection.North_East].isPartOfParentRegionMap;
+                                         && currSpot.neighbours[GridNeighbourDirection.North_East].canBeBuiltOn;
                 if (hasUnoccupiedNorth && hasUnoccupiedEast && hasUnoccupiedNorthEast) {
                     return true;
                 }
@@ -488,7 +488,7 @@ namespace Inner_Maps {
                 //only get build spots that do not have any occupied adjacent spots at their right
                 bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East) 
                                          && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false
-                                         && currSpot.neighbours[GridNeighbourDirection.East].isPartOfParentRegionMap;
+                                         && currSpot.neighbours[GridNeighbourDirection.East].canBeBuiltOn;
                 if (hasUnoccupiedEast) {
                     return true;
                 }
@@ -497,7 +497,7 @@ namespace Inner_Maps {
                 //only get build spots that do not have any occupied adjacent spots at their top
                 bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North) 
                                           && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false
-                                          && currSpot.neighbours[GridNeighbourDirection.North].isPartOfParentRegionMap;
+                                          && currSpot.neighbours[GridNeighbourDirection.North].canBeBuiltOn;
                 if (hasUnoccupiedNorth) {
                     return true;
                 }

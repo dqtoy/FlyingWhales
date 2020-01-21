@@ -13,7 +13,9 @@ public class LocationStructure {
     public STRUCTURE_TYPE structureType { get; private set; }
     public List<Character> charactersHere { get; private set; }
     public ILocation location { get; private set; }
-    public Settlement settlementLocation => tiles[0].buildSpotOwner.hexTileOwner.settlementOnTile;
+    public Settlement settlementLocation => tiles[0].buildSpotOwner.isPartOfParentRegionMap 
+                                            && tiles[0].buildSpotOwner.hexTileOwner.settlementOnTile != null 
+        ? tiles[0].buildSpotOwner.hexTileOwner.settlementOnTile : null;
     public List<SpecialToken> itemsInStructure { get; private set; }
     public List<IPointOfInterest> pointsOfInterest { get; private set; }
     public POI_STATE state { get; private set; }

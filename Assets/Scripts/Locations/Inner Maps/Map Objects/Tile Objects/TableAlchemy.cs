@@ -4,7 +4,7 @@ public class TableAlchemy : TileObject{
     public TableAlchemy() {
         advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.TABLE_ALCHEMY);
-        RemoveCommonAdvertisments();
+        RemoveCommonAdvertisements();
     }
     public TableAlchemy(SaveDataTileObject data) {
         advertisedActions = new List<INTERACTION_TYPE>();

@@ -22,7 +22,7 @@ public class BigTreeObject : TreeObject {
 
 	public static bool CanBePlacedOnTile(LocationGridTile tile) {
 		List<LocationGridTile> overlappedTiles = tile.parentMap.GetTiles(new Point(2, 2), tile);
-		int invalidOverlap = overlappedTiles.Count(t => t.hasDetail || t.objHere != null|| t.buildSpotOwner.isPartOfParentRegionMap == false);
+		int invalidOverlap = overlappedTiles.Count(t => t.hasDetail || t.objHere != null|| t.buildSpotOwner.canBeBuiltOn == false);
 
 		return invalidOverlap <= 0;
 	}

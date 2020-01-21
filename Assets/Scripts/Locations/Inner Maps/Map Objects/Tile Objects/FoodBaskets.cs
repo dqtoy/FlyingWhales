@@ -4,7 +4,7 @@ public class FoodBaskets : TileObject{
     public FoodBaskets() {
         advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.FOOD_BASKETS);
-        RemoveCommonAdvertisments();
+        RemoveCommonAdvertisements();
     }
     public FoodBaskets(SaveDataTileObject data) {
         advertisedActions = new List<INTERACTION_TYPE>();

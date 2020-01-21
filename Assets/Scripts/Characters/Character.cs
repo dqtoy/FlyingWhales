@@ -6246,7 +6246,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
     #region Missing
     public void CheckMissing() {
         if (!isDead) {
-            if (marker != null && gridTileLocation != null && isAtHomeRegion && gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile != null) {
+            if (marker != null && gridTileLocation != null && isAtHomeRegion && gridTileLocation.buildSpotOwner.isPartOfParentRegionMap 
+                && gridTileLocation.IsPartOfSettlement()) {
                 if (currentMissingTicks > CharacterManager.Instance.CHARACTER_MISSING_THRESHOLD) {
                     currentMissingTicks = 0;
                     Messenger.Broadcast(Signals.CHARACTER_NO_LONGER_MISSING, this);

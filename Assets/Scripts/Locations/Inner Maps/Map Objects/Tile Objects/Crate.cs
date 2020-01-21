@@ -4,7 +4,7 @@ public class Crate : TileObject{
     public Crate() {
         advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.CRATE);
-        RemoveCommonAdvertisments();
+        RemoveCommonAdvertisements();
     }
     public Crate(SaveDataTileObject data) {
         advertisedActions = new List<INTERACTION_TYPE>();

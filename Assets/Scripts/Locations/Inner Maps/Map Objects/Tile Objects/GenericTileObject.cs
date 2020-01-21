@@ -50,12 +50,14 @@ public class GenericTileObject : TileObject {
         base.OnTileObjectGainedTrait(trait);
         if (trait.IsTangible()) {
             EnableGameObject();
+            SubscribeListeners();
         }
     }
     public override void OnTileObjectLostTrait(Trait trait) {
         base.OnTileObjectLostTrait(trait);
         if (HasTangibleTrait() == false) {
             DisableGameObject();
+            UnsubscribeListeners();
         }
     }
     public override string ToString() {
@@ -103,6 +105,6 @@ public class GenericTileObject : TileObject {
         SetGridTileLocation(tile);
         OnPlacePOI();
         DisableGameObject();
-        RemoveCommonAdvertisments();
+        RemoveCommonAdvertisements();
     }
 }

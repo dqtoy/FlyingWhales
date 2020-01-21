@@ -4,7 +4,7 @@ public class Fireplace : TileObject{
     public Fireplace() {
         advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.FIREPLACE);
-        RemoveCommonAdvertisments();
+        RemoveCommonAdvertisements();
     }
     public Fireplace(SaveDataTileObject data) {
         advertisedActions = new List<INTERACTION_TYPE>();

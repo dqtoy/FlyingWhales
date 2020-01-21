@@ -4,7 +4,7 @@ public class RackTools : TileObject{
     public RackTools() {
         advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.RACK_TOOLS);
-        RemoveCommonAdvertisments();
+        RemoveCommonAdvertisements();
     }
     public RackTools(SaveDataTileObject data) {
         advertisedActions = new List<INTERACTION_TYPE>();
