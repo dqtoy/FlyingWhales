@@ -4,7 +4,7 @@ public class RackFarmingTools : TileObject{
     public RackFarmingTools() {
         advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.RACK_FARMING_TOOLS);
-        RemoveCommonAdvertisments();
+        RemoveCommonAdvertisements();
     }
     public RackFarmingTools(SaveDataTileObject data) {
         advertisedActions = new List<INTERACTION_TYPE>();

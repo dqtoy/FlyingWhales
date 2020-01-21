@@ -35,7 +35,7 @@ namespace Inner_Maps {
                                  Utilities.IsInRange(tile.localPlace.x, width - EastEdge, width) ||
                                  Utilities.IsInRange(tile.localPlace.y, 0, SouthEdge) ||
                                  Utilities.IsInRange(tile.localPlace.y, height - NorthEdge, width);
-                if (isAtEdges == false && tile.buildSpotOwner.isPartOfParentRegionMap) {
+                if (isAtEdges == false) { //&& tile.buildSpotOwner.isPartOfParentRegionMap
                     tile.CreateGenericTileObject();
                     tile.SetStructure(structure);
                 }
@@ -120,19 +120,14 @@ namespace Inner_Maps {
                     }
                 }
             }
-            for (int x = 0; x <= buildingSpots.GetUpperBound(0); x++) {
-                for (int y = 0; y <= buildingSpots.GetUpperBound(1); y++) {
-                    BuildingSpot spot = buildingSpots[x, y];
-                    if (spot.isPartOfParentRegionMap == false) {
-                        Messenger.Broadcast(Signals.MODIFY_BUILD_SPOT_WALKABILITY, spot, false);
-                        // for (int i = 0; i < spot.tilesInTerritory.Length; i++) {
-                        //     LocationGridTile tile = spot.tilesInTerritory[i];
-                        //     tile.SetDefaultTileColor(Color.black);
-                        //     tile.HighlightTile(Color.black);
-                        // }
-                    }
-                }
-            }
+            // for (int x = 0; x <= buildingSpots.GetUpperBound(0); x++) {
+            //     for (int y = 0; y <= buildingSpots.GetUpperBound(1); y++) {
+            //         BuildingSpot spot = buildingSpots[x, y];
+            //         if (spot.isPartOfParentRegionMap == false) {
+            //             Messenger.Broadcast(Signals.MODIFY_BUILD_SPOT_WALKABILITY, spot, false);
+            //         }
+            //     }
+            // }
         }
         private void AssignBuildSpotsToHexTile(HexTile tile, int column1, int column2, int row1, int row2) {
             int width = (column2 - column1) + 1;

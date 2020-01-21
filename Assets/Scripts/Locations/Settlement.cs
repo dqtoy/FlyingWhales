@@ -756,7 +756,7 @@ public class Settlement : IJobOwner {
         for (int x = 0; x <= innerMap.buildingSpots.GetUpperBound(0); x++) {
             for (int y = 0; y <= innerMap.buildingSpots.GetUpperBound(1); y++) {
                 BuildingSpot spot = innerMap.buildingSpots[x, y];
-                if (spot.isPartOfParentRegionMap) {
+                if (spot.canBeBuiltOn) {
                     BuildSpotTileObject tileObj = new BuildSpotTileObject();
                     tileObj.SetBuildingSpot(spot);
                     LocationGridTile tileLocation = innerMap.map[spot.location.x, spot.location.y];

@@ -4,7 +4,7 @@ public class TableMetalworkingTools : TileObject{
     public TableMetalworkingTools() {
         advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.TABLE_METALWORKING_TOOLS);
-        RemoveCommonAdvertisments();
+        RemoveCommonAdvertisements();
     }
     public TableMetalworkingTools(SaveDataTileObject data) {
         advertisedActions = new List<INTERACTION_TYPE>();

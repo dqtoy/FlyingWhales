@@ -6,7 +6,7 @@ public class Kindling : TileObject{
 	public Kindling() {
 		advertisedActions = new List<INTERACTION_TYPE>();
 		Initialize(TILE_OBJECT_TYPE.KINDLING);
-		RemoveCommonAdvertisments();
+		RemoveCommonAdvertisements();
 	}
 	public Kindling(SaveDataTileObject data) {
 		advertisedActions = new List<INTERACTION_TYPE>();

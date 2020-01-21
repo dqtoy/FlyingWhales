@@ -4,7 +4,7 @@ public class Barrel : TileObject{
     public Barrel() {
         advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.BARREL);
-        RemoveCommonAdvertisments();
+        RemoveCommonAdvertisements();
     }
     public Barrel(SaveDataTileObject data) {
         advertisedActions = new List<INTERACTION_TYPE>();

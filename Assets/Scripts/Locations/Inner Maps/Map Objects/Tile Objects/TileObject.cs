@@ -47,6 +47,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
     public Dictionary<RESOURCE, int> storedResources { get; protected set; }
     protected Dictionary<RESOURCE, int> maxResourceValues { get; set; }
 
+    private bool hasSubscribedToListeners;
+    
     #region getters
     public POINT_OF_INTEREST_TYPE poiType {
         get { return POINT_OF_INTEREST_TYPE.TILE_OBJECT; }
@@ -77,8 +79,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         CreateTraitContainer();
         traitContainer.AddTrait(this, "Flammable");
         ConstructResources();
-        AddCommonAdvertisments();
+        AddCommonAdvertisements();
         InnerMapManager.Instance.AddTileObject(this);
+        SubscribeListeners();
     }
     protected void Initialize(SaveDataTileObject data) {
         id = Utilities.SetID(this, data.id);
@@ -88,22 +91,38 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         owners = new List<Character>();
         hasCreatedSlots = false;
         CreateTraitContainer();
-        AddCommonAdvertisments();
+        AddCommonAdvertisements();
         ConstructResources();
         InnerMapManager.Instance.AddTileObject(this);
+        SubscribeListeners();
     }
 
-    private void AddCommonAdvertisments() {
+    private void AddCommonAdvertisements() {
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.POISON);
         AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
     }
-    protected void RemoveCommonAdvertisments() {
+    protected void RemoveCommonAdvertisements() {
         RemoveAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         RemoveAdvertisedAction(INTERACTION_TYPE.POISON);
         RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
     }
 
+    #region Listeners
+    protected void SubscribeListeners() {
+        // if (hasSubscribedToListeners == false) {
+        //     hasSubscribedToListeners = true;
+        //     Messenger.AddListener(Signals.TICK_ENDED, () => traitContainer.ProcessOnTickEnded(this));    
+        // }
+    }
+    protected void UnsubscribeListeners() {
+        // if (hasSubscribedToListeners) {
+        //     hasSubscribedToListeners = false;
+        //     Messenger.RemoveListener(Signals.TICK_ENDED, () => traitContainer.ProcessOnTickEnded(this));    
+        // }
+    }
+    #endregion
+    
     #region Virtuals
     /// <summary>
     /// Called when a character starts to do an action towards this object.
@@ -133,6 +152,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
             }
         }
         Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
+        UnsubscribeListeners();
     }
     public virtual void OnPlacePOI() {
         SetPOIState(POI_STATE.ACTIVE);
@@ -148,6 +168,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
                 OccupyTiles(objData.occupiedSize, gridTileLocation);
             }
         }
+        SubscribeListeners();
     }
     public virtual void RemoveTileObject(Character removedBy) {
         SetGridTileLocation(null);
@@ -656,6 +677,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
             }
             advertisedActions.Clear();
             AddAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
+            UnsubscribeListeners();
         } else if (mapObjectState == MAP_OBJECT_STATE.BUILDING) {
             mapVisual.SetVisualAlpha(128f / 255f);
             SetSlotAlpha(128f / 255f);
@@ -667,6 +689,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
                 AddAdvertisedAction(storedActions[i]);
             }
             storedActions = null;
+            SubscribeListeners();
         }
     }
     #endregion

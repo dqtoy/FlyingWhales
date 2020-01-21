@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Traits;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class RelationshipManager : MonoBehaviour {
 
@@ -12,9 +14,9 @@ public class RelationshipManager : MonoBehaviour {
         Instance = this;
         //TODO: Use Reflection.
         //validators
-        new CharacterRelationshipValidator();
+        var characterRelationshipValidator = new CharacterRelationshipValidator();
         //processors
-        new CharacterRelationshipProcessor();
+        var characterRelationshipProcessor = new CharacterRelationshipProcessor();
     }
 
     #region Containers
@@ -31,7 +33,7 @@ public class RelationshipManager : MonoBehaviour {
         if (obj is Character) {
             return CharacterRelationshipValidator.Instance;
         }
-        return null;
+        throw new Exception($"There is no relationship validator for {obj.relatableName}");
     }
     public bool CanHaveRelationship(Relatable rel1, Relatable rel2, RELATIONSHIP_TYPE rel) {
         IRelationshipValidator validator = GetValidator(rel1);

@@ -4,7 +4,7 @@ public class Cauldron : TileObject{
     public Cauldron() {
         advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.CAULDRON);
-        RemoveCommonAdvertisments();
+        RemoveCommonAdvertisements();
     }
     public Cauldron(SaveDataTileObject data) {
         advertisedActions = new List<INTERACTION_TYPE>();

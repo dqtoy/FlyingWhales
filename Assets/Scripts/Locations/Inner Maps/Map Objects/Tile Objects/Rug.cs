@@ -4,7 +4,7 @@ public class Rug : TileObject{
      public Rug() {
             advertisedActions = new List<INTERACTION_TYPE>();
             Initialize(TILE_OBJECT_TYPE.RUG);
-            RemoveCommonAdvertisments();
+            RemoveCommonAdvertisements();
      }
      public Rug(SaveDataTileObject data) {
         advertisedActions = new List<INTERACTION_TYPE>();

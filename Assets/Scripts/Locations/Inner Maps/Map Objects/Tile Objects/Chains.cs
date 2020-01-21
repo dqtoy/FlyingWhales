@@ -4,7 +4,7 @@ public class Chains : TileObject {
     public Chains() {
         advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.CHAINS);
-        RemoveCommonAdvertisments();
+        RemoveCommonAdvertisements();
     }
     public Chains(SaveDataTileObject data) {
         advertisedActions = new List<INTERACTION_TYPE>();
