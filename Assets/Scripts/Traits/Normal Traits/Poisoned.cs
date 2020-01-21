@@ -45,11 +45,13 @@ namespace Traits {
                 WeightedDictionary<string> result = GetResultWeights();
                 string res = result.PickRandomElementGivenWeights();
                 if (res == "Sick") {
-                    Sick sick = new Sick();
-                    for (int i = 0; i < responsibleCharacters.Count; i++) {
-                        sick.AddCharacterResponsibleForTrait(responsibleCharacters[i]);
+                    if(goapNode.actor.traitContainer.AddTrait(goapNode.actor, res)) {
+                        //TODO: Can still be improved: Create a function that returns the trait that's been added instead of boolean
+                        Sick sick = goapNode.actor.traitContainer.GetNormalTrait<Trait>("Sick") as Sick;
+                        for (int i = 0; i < responsibleCharacters.Count; i++) {
+                            sick.AddCharacterResponsibleForTrait(responsibleCharacters[i]);
+                        }
                     }
-                    goapNode.actor.traitContainer.AddTrait(goapNode.actor, sick);
                 } else { //if (res == "Death")
                     goapNode.actor.Death("poisoned", deathFromAction: goapNode);
                 }

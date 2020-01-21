@@ -996,6 +996,9 @@ public enum INTERRUPT {
     Become_Faction_Leader,
     Transform_To_Wolf,
     Revert_To_Normal,
+    Angered,
+    Inspired,
+    Feeling_Lazy,
 }
 
 public enum TRAIT_TYPE {

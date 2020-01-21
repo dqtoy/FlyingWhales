@@ -370,6 +370,9 @@ public class GoapPlanJob : JobQueueItem {
         //    plan.SetJob(this);
         //}
         assignedPlan = plan;
+        if(assignedPlan != null) {
+            plan.OnAttachPlanToJob(this);
+        }
     }
     private void OnArriveAtLocationStopMovement() {
         if (assignedCharacter != null) {

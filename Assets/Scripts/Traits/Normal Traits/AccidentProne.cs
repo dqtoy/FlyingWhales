@@ -18,12 +18,8 @@ namespace Traits {
             description = "Accident Prone characters often gets injured.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
-            
-            //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ACCIDENT, INTERACTION_TYPE.STUMBLE };
-            
             ticksDuration = 0;
             canBeTriggered = true;
-
         }
 
         #region Overrides

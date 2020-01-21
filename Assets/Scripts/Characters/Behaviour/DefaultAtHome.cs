@@ -58,7 +58,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     if (chance < 25) {
                         TileObject bed = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED);
                         if (bed != null) {
-                            if (character.traitContainer.GetNormalTrait<Trait>("Vampiric") != null) {
+                            if (character.isVampire) {
                                 log += "\n  -Character is vampiric, cannot do nap action";
                             } else {
                                 log += "\n  -Afternoon: " + character.name + " will do action Nap on " + bed.ToString();

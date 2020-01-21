@@ -11,10 +11,7 @@ namespace Traits {
             description = "Narcoleptics may sometimes suddenly fall asleep.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
-            
-            
             //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.NARCOLEPTIC_NAP };
-            
             ticksDuration = 0;
             canBeTriggered = true;
         }

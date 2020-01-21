@@ -23,7 +23,9 @@ public class Butcher : GoapAction {
         SetState("Transform Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return Utilities.rng.Next(15, 26);
+        Character deadCharacter = GetDeadCharacter(target);
+        int transformedFood = GetFoodAmountTakenFromDead(deadCharacter);
+        return transformedFood;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
@@ -54,7 +56,8 @@ public class Butcher : GoapAction {
                 return false;
             }
             Character deadCharacter = GetDeadCharacter(poiTarget);
-            if (deadCharacter != null && (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES)) {
+            if (deadCharacter != null && (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES)
+                && actor.faction != deadCharacter.faction && actor.homeSettlement != deadCharacter.homeSettlement) {
                 if (actor.traitContainer.GetNormalTrait<Trait>("Cannibal") != null) {
                     return true;
                 }
@@ -86,19 +89,8 @@ public class Butcher : GoapAction {
 
     #region State Effects
     public void PreTransformSuccess(ActualGoapNode goapNode) {
-        int transformedFood = 0;
         Character deadCharacter = GetDeadCharacter(goapNode.poiTarget);
-        if (deadCharacter != null) {
-            if (deadCharacter.race == RACE.WOLF) {
-                transformedFood = 150;
-            } else if (deadCharacter.race == RACE.HUMANS) {
-                transformedFood = 200;
-            } else if (deadCharacter.race == RACE.ELVES) {
-                transformedFood = 200;
-            }
-        } else {
-            transformedFood = 100;
-        }
+        int transformedFood = GetFoodAmountTakenFromDead(deadCharacter);
 
         //if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
         //    currentState.SetIntelReaction(CannibalTransformSuccessIntelReaction);
@@ -111,19 +103,8 @@ public class Butcher : GoapAction {
     public void AfterTransformSuccess(ActualGoapNode goapNode) {
         IPointOfInterest poiTarget = goapNode.poiTarget;
         LocationGridTile tileLocation = poiTarget.gridTileLocation;
-        int transformedFood = 0;
         Character deadCharacter = GetDeadCharacter(poiTarget);
-        if (deadCharacter != null) {
-            if (deadCharacter.race == RACE.WOLF) {
-                transformedFood = 150;
-            } else if (deadCharacter.race == RACE.HUMANS) {
-                transformedFood = 200;
-            } else if (deadCharacter.race == RACE.ELVES) {
-                transformedFood = 200;
-            }
-        } else {
-            transformedFood = 100;
-        }
+        int transformedFood = GetFoodAmountTakenFromDead(deadCharacter);
         //TODO: deadCharacter.CancelAllJobsTargettingThisCharacter(JOB_TYPE.BURY);
         //goapNode.actor.AdjustFood(transformedFood);
 
@@ -143,6 +124,18 @@ public class Butcher : GoapAction {
     //}
     #endregion
 
+    private int GetFoodAmountTakenFromDead(Character deadCharacter) {
+        if (deadCharacter != null) {
+            if (deadCharacter.race == RACE.WOLF) {
+                return 150;
+            } else if (deadCharacter.race == RACE.HUMANS) {
+                return 200;
+            } else if (deadCharacter.race == RACE.ELVES) {
+                return 200;
+            }
+        }
+        return 100;
+    }
     //#region Intel Reactions
     //private List<string> NormalTransformSuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
     //    List<string> reactions = new List<string>();

@@ -80,6 +80,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
     public bool isInLimbo { get; protected set; }
     public bool isLimboCharacter { get; protected set; }
     public bool isSerialKiller { get; protected set; }
+    public bool isLazy { get; protected set; }
+    public bool isVampire { get; protected set; }
     public LycanthropeData lycanData { get; protected set; }
 
     private List<System.Action> onLeaveAreaActions;
@@ -2359,6 +2361,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
     public void SetIsSerialKiller(bool state) {
         isSerialKiller = state;
     }
+    public void SetIsLazy(bool state) {
+        isLazy = state;
+    }
+    public void SetIsVampire(bool state) {
+        isVampire = state;
+    }
     #endregion    
 
     #region History/Logs
@@ -3108,7 +3116,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
         if (IsHealthCriticallyLow()) {
             return false;
         }
-        if (needsComponent.isStarving && traitContainer.GetNormalTrait<Trait>("Vampiric") == null) {
+        if (needsComponent.isStarving && !isVampire) {
             return false; //only characters that are not vampires will flee if they are starving
         }
         if (needsComponent.isExhausted) {
@@ -4914,7 +4922,27 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
                             //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
                             if (marker.inVisionPOIs.Contains(currentNode.poiTarget) && !marker.CanDoStealthActionToTarget(currentNode.poiTarget)) {
                                 log += "\n - Action is stealth and character cannot do stealth action right now...";
+                                PrintLogIfActive(log);
                                 return;
+                            }
+                        }
+                        if(isLazy) {
+                            log += "\n - Character is lazy, has 20% chance to not perform job if it is a needs type job...";
+                            if (currentTopPrioJob.jobType.IsNeedsTypeJob()) {
+                                int chance = UnityEngine.Random.Range(0, 100);
+                                log += "\n - Roll: " + chance;
+                                if (chance < 20) {
+                                    Lazy lazy = traitContainer.GetNormalTrait<Trait>("Lazy") as Lazy;
+                                    if (lazy.TriggerLazy()) {
+                                        log += "\n - Character triggered lazy, not going to do job";
+                                        PrintLogIfActive(log);
+                                        return;
+                                    } else {
+                                        log += "\n - Character did not trigger lazy, continue to do action";
+                                    }
+                                }
+                            } else {
+                                log += "\n - Job is not a needs type job, continue to do job";
                             }
                         }
                         log += "\n - Action's preconditions are all satisfied, doing action...";

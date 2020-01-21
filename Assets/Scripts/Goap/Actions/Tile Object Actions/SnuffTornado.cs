@@ -21,7 +21,7 @@
            
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 1;
+        return 10;
     }
     #endregion
 

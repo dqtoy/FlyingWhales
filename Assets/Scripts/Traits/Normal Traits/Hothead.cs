@@ -10,11 +10,8 @@ namespace Traits {
             description = "Hotheads are easy to anger and may have bouts of rage fits.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
-            
-            
-            
             ticksDuration = 0;
-            canBeTriggered = true;
+            //canBeTriggered = true;
             //effects = new List<TraitEffect>();
         }
 
@@ -24,16 +21,21 @@ namespace Traits {
             if (targetPOI is Character) {
                 if (UnityEngine.Random.Range(0, 100) < 20) {
                     Character targetCharacter = targetPOI as Character;
-                    if (character.opinionComponent.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
-                        character.traitContainer.AddTrait(character, "Angry");
-                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_saw");
-                        log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+                    if (character.opinionComponent.IsEnemiesWith(targetCharacter)) {
+                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Angered, targetCharacter);
+                        //character.traitContainer.AddTrait(character, "Angry");
+                        //Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_saw");
+                        //log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        //log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                        //character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
                     }
                 }
             }
         }
+        //public override string TriggerFlaw(Character character) {
+        //    character.traitContainer.AddTrait(character, "Angry");
+        //    return base.TriggerFlaw(character);
+        //}
         //public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
         //    if (targetPOI is Character) {
         //        Character targetCharacter = targetPOI as Character;
@@ -58,10 +60,6 @@ namespace Traits {
         //    }
         //    return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
         //}
-        public override string TriggerFlaw(Character character) {
-            character.traitContainer.AddTrait(character, "Angry");
-            return base.TriggerFlaw(character);
-        }
         #endregion
     }
 

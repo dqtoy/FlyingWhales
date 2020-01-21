@@ -10,8 +10,6 @@ namespace Traits {
             description = "This character eats his own kind.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEGATIVE;
-            
-            
             ticksDuration = 0;
             canBeTriggered = true;
             //effects = new List<TraitEffect>();
