@@ -15,14 +15,14 @@ namespace Traits {
         }
 
         #region Overrides
-        public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
+        public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is TileObject) {
                 TileObject objectToBeInspected = targetPOI as TileObject;
                 if (objectToBeInspected.isSummonedByPlayer) {
                     characterThatWillDoJob.jobComponent.TriggerDestroy(objectToBeInspected);
                 }
             }
-            return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
+            return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }
         #endregion
     }

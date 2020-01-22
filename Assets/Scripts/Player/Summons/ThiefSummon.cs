@@ -34,17 +34,17 @@ public class ThiefSummon : Summon {
         //    }
         //}
     }
-    public override List<ActualGoapNode> ThisCharacterSaw(IPointOfInterest target) {
-        List<ActualGoapNode> actions = base.ThisCharacterSaw(target);
-        if (target is Character) {
-            Character targetCharacter = target as Character;
-            //if the target is not from the player faction, add them to the terrifying characters list
-            if (targetCharacter.faction != this.faction) {
-                marker.AddTerrifyingObject(target);
-            }
-        }
-        return actions;
-    }
+    //public override List<ActualGoapNode> ThisCharacterSaw(IPointOfInterest target) {
+    //    List<ActualGoapNode> actions = base.ThisCharacterSaw(target);
+    //    if (target is Character) {
+    //        Character targetCharacter = target as Character;
+    //        //if the target is not from the player faction, add them to the terrifying characters list
+    //        if (targetCharacter.faction != this.faction) {
+    //            marker.AddTerrifyingObject(target);
+    //        }
+    //    }
+    //    return actions;
+    //}
     protected override void OnTickStarted() {
         //if (_hasAlreadyAskedForPlan) {
         //    return;

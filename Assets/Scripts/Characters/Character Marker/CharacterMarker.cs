@@ -57,7 +57,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public List<Character> inVisionCharacters { get; private set; } //POI's in this characters vision collider
     public List<IPointOfInterest> hostilesInRange { get; private set; } //POI's in this characters hostility collider
     public List<IPointOfInterest> avoidInRange { get; private set; } //POI's in this characters hostility collider
-    public List<ActualGoapNode> actionsToWitness { get; private set; } //List of actions this character can witness, and has not been processed yet. Will be cleared after processing
+    //public List<ActualGoapNode> actionsToWitness { get; private set; } //List of actions this character can witness, and has not been processed yet. Will be cleared after processing
     public Dictionary<Character, bool> lethalCharacters { get; private set; }
     public string avoidReason { get; private set; }
     public bool willProcessCombat { get; private set; }
@@ -113,7 +113,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         terrifyingObjects = new List<IPointOfInterest>();
         avoidInRange = new List<IPointOfInterest>();
         lethalCharacters = new Dictionary<Character, bool>();
-        actionsToWitness = new List<ActualGoapNode>();
+        //actionsToWitness = new List<ActualGoapNode>();
         avoidReason = string.Empty;
         attackSpeedMeter = 0f;
         OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
@@ -223,7 +223,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                         Character currCharacter = inVisionCharacters[i];
                         if (!AddHostileInRange(currCharacter)) {
                             //If not hostile, try to react to character's action
-                            character.ThisCharacterSaw(currCharacter);
+                            character.marker.unprocessedVisionPOIs.Add(currCharacter);
                         }
                     }
                     break;
@@ -980,9 +980,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void RemovePOIFromInVisionRange(IPointOfInterest poi) {
         if (inVisionPOIs.Remove(poi)) {
             unprocessedVisionPOIs.Remove(poi);
+            RemoveAvoidInRange(poi);
             if (poi is Character) {
-                inVisionCharacters.Remove(poi as Character);
-                Messenger.Broadcast(Signals.CHARACTER_REMOVED_FROM_VISION, character, poi as Character);
+                Character target = poi as Character;
+                inVisionCharacters.Remove(target);
+                Messenger.Broadcast(Signals.CHARACTER_REMOVED_FROM_VISION, character, target);
             }
         }
     }
@@ -1010,84 +1012,78 @@ public class CharacterMarker : MapObjectVisual<Character> {
             if (!character.isDead && character.canWitness) { //character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting", "Zapped") == null
                 for (int i = 0; i < unprocessedVisionPOIs.Count; i++) {
                     IPointOfInterest poi = unprocessedVisionPOIs[i];
-                    log += "\n - Reacting to " + poi.name;
-                    //Collect all actions to witness and avoid duplicates
-                    List<ActualGoapNode> nodes = character.ThisCharacterSaw(poi);
-                    if (nodes != null && nodes.Count > 0) {
-                        for (int j = 0; j < nodes.Count; j++) {
-                            ActualGoapNode node = nodes[j];
-                            if (node.actionStatus == ACTION_STATUS.PERFORMING && node.goapType != INTERACTION_TYPE.WATCH) { // ||(action.currentState != null && action.currentState.name == action.whileMovingState)
-                                //Cannot witness a watch action
-                                //IPointOfInterest poiTarget = node.poiTarget;
-                                //if (node.goapType == INTERACTION_TYPE.MAKE_LOVE) {
-                                //    poiTarget = (node as MakeLove).targetCharacter;
-                                //} else {
-                                //    poiTarget = node.poiTarget;
-                                //}
-                                if (node.actor != character && node.poiTarget != character) {
-                                    if (!actionsToWitness.Contains(node)) {
-                                        actionsToWitness.Add(node);
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    character.ThisCharacterSaw(poi);
+                    ////Collect all actions to witness and avoid duplicates
+                    //List<ActualGoapNode> nodes = character.ThisCharacterSaw(poi);
+                    //if (nodes != null && nodes.Count > 0) {
+                    //    for (int j = 0; j < nodes.Count; j++) {
+                    //        ActualGoapNode node = nodes[j];
+                    //        if (node.actionStatus == ACTION_STATUS.PERFORMING && node.goapType != INTERACTION_TYPE.WATCH) { // ||(action.currentState != null && action.currentState.name == action.whileMovingState)
+                    //            //Cannot witness a watch action
+                    //            if (node.actor != character && node.poiTarget != character) {
+                    //                if (!actionsToWitness.Contains(node)) {
+                    //                    actionsToWitness.Add(node);
+                    //                }
+                    //            }
+                    //        }
+                    //    }
+                    //}
 
-                    log += "\n - Reacting to character traits...";
-                    //Character reacts to traits
-                    if(character.stateComponent.currentState == null || !character.stateComponent.currentState.OnEnterVisionWith(poi)) {
-                        if (!character.CreateJobsOnEnterVisionWith(poi)) {
-                            if (!character.isConversing && poi is Character) {
-                                Character target = poi as Character;
-                                if (!target.isConversing && character.nonActionEventsComponent.CanInteract(target)) {
-                                    if (UnityEngine.Random.Range(0, 100) < 3) {
-                                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, poi);
-                                        //character.nonActionEventsComponent.NormalChatCharacter(poi as Character);
-                                    } else {
-                                        Character targetCharacter = poi as Character;
-                                        if (character.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.PARAMOUR)
-                                            || character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) == null
-                                            || character.traitContainer.GetNormalTrait<Trait>("Unfaithful") != null) {
-                                            int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(character, targetCharacter);
-                                            int value = 2;
-                                            if (compatibility != -1) {
-                                                value = 1 * compatibility;
-                                            }
-                                            int chance = UnityEngine.Random.Range(0, 100);
-                                            string flirtLog = character.name + " will try to flirt with " + targetCharacter.name;
-                                            flirtLog += "\n-Chance: " + value;
-                                            flirtLog += "\n-Roll: " + chance;
-                                            character.PrintLogIfActive(flirtLog);
-                                            if (chance < value) {
-                                                character.interruptComponent.TriggerInterrupt(INTERRUPT.Flirt, targetCharacter);
-                                            }
-                                        }
-                                    }
-                                }
+                    //log += "\n - Reacting to character traits...";
+                    ////Character reacts to traits
+                    //if(character.stateComponent.currentState == null || !character.stateComponent.currentState.OnEnterVisionWith(poi)) {
+                    //    if (!character.CreateJobsOnEnterVisionWith(poi)) {
+                    //        if (!character.isConversing && poi is Character) {
+                    //            Character target = poi as Character;
+                    //            if (!target.isConversing && character.nonActionEventsComponent.CanInteract(target)) {
+                    //                if (UnityEngine.Random.Range(0, 100) < 3) {
+                    //                    character.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, poi);
+                    //                    //character.nonActionEventsComponent.NormalChatCharacter(poi as Character);
+                    //                } else {
+                    //                    Character targetCharacter = poi as Character;
+                    //                    if (character.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.PARAMOUR)
+                    //                        || character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) == null
+                    //                        || character.traitContainer.GetNormalTrait<Trait>("Unfaithful") != null) {
+                    //                        int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(character, targetCharacter);
+                    //                        int value = 2;
+                    //                        if (compatibility != -1) {
+                    //                            value = 1 * compatibility;
+                    //                        }
+                    //                        int chance = UnityEngine.Random.Range(0, 100);
+                    //                        string flirtLog = character.name + " will try to flirt with " + targetCharacter.name;
+                    //                        flirtLog += "\n-Chance: " + value;
+                    //                        flirtLog += "\n-Roll: " + chance;
+                    //                        character.PrintLogIfActive(flirtLog);
+                    //                        if (chance < value) {
+                    //                            character.interruptComponent.TriggerInterrupt(INTERRUPT.Flirt, targetCharacter);
+                    //                        }
+                    //                    }
+                    //                }
+                    //            }
  
-                            }
-                        }
-                    }
+                    //        }
+                    //    }
+                    //}
                 }
 
-                //Witness all actions
-                log += "\n - Witnessing collected actions:";
-                if (actionsToWitness.Count > 0) {
-                    for (int i = 0; i < actionsToWitness.Count; i++) {
-                        ActualGoapNode node = actionsToWitness[i];
-                        log += "\n   - Witnessed: " + node.goapName + " of " + node.actor.name + " with target " + node.poiTarget.name;
-                        character.ThisCharacterWitnessedEvent(node);
-                    }
-                } else {
-                    log += "\n   - No collected actions";
-                }
+                ////Witness all actions
+                //log += "\n - Witnessing collected actions:";
+                //if (actionsToWitness.Count > 0) {
+                //    for (int i = 0; i < actionsToWitness.Count; i++) {
+                //        ActualGoapNode node = actionsToWitness[i];
+                //        log += "\n   - Witnessed: " + node.goapName + " of " + node.actor.name + " with target " + node.poiTarget.name;
+                //        character.ThisCharacterWitnessedEvent(node);
+                //    }
+                //} else {
+                //    log += "\n   - No collected actions";
+                //}
             } else {
-                log += "\n - Character is either dead, unconscious, resting, or zapped, not processing...";
+                log += "\n - Character is either dead or cannot witness, not processing...";
             }
             unprocessedVisionPOIs.Clear();
             character.PrintLogIfActive(log);
         }
-        actionsToWitness.Clear();
+        //actionsToWitness.Clear();
         if (willProcessCombat && (hostilesInRange.Count > 0 || avoidInRange.Count > 0)) {
             string log = character.name + " process combat switch is turned on and there are hostiles or avoid in list, processing combat...";
             ProcessCombatBehavior();

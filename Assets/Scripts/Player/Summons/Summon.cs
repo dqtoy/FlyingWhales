@@ -43,7 +43,7 @@ public class Summon : Character, IWorldObject {
         ConstructInitialGoapAdvertisementActions();
         //SubscribeToSignals(); //NOTE: Only made characters subscribe to signals when their settlement is the one that is currently active. TODO: Also make sure to unsubscribe a character when the player has completed their map.
     }
-    public override void OnAfterActionStateSet(string stateName, ActualGoapNode node) { } //overriddn OnActionStateSet so that summons cannot witness other events.
+    public override void OnActionPerformed(ActualGoapNode node) { } //overridden OnActionStateSet so that summons cannot witness other events.
     protected override void OnSuccessInvadeArea(Settlement settlement) {
         base.OnSuccessInvadeArea(settlement);
         //clean up

@@ -36,27 +36,7 @@ namespace Traits {
         }
 
         #region Overrides
-        public override void OnSeePOI(IPointOfInterest targetPOI, Character character) {
-            base.OnSeePOI(targetPOI, character);
-            if (targetPOI is Character) {
-                Character targetCharacter = targetPOI as Character;
-                if (targetCharacter.race == RACE.SKELETON || targetCharacter.characterClass.className == "Zombie") {
-                    string opinionLabel = character.opinionComponent.GetOpinionLabel(targetCharacter);
-                    if (opinionLabel == OpinionComponent.Friend) {
-                        if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
-                            charactersAlreadySawForHope.Add(targetCharacter);
-                            character.needsComponent.AdjustHope(-5f);
-                        }
-                    } else if (opinionLabel == OpinionComponent.Close_Friend) {
-                        if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
-                            charactersAlreadySawForHope.Add(targetCharacter);
-                            character.needsComponent.AdjustHope(-10f);
-                        }
-                    }
-                }
-            }
-        }
-        public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
+        public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is TileObject) {
                 TileObject tileObj = targetPOI as TileObject;
                 if (tileObj.isSummonedByPlayer && characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Suspicious") == null && !alreadyInspectedTileObjects.Contains(tileObj)) {
@@ -122,43 +102,24 @@ namespace Traits {
                                 characterThatWillDoJob.jobComponent.TryTriggerMoveCharacterHappinessRecovery(targetCharacter);
                             }    
                         }
-                        
                     }
-
-                    #region Check Up
-                    //If a character cannot assist a character in vision, they may stay with it and check up on it for a bit. Reference: https://trello.com/c/hW7y6d5W/2841-if-a-character-cannot-assist-a-character-in-vision-they-may-stay-with-it-and-check-up-on-it-for-a-bit
-                    //If they are enemies and the character in vision has any of the following:
-                    //- unconscious, catatonic, restrained, puked, stumbled
-                    ///NOTE: Puke and Stumble Reactions can be found at <see cref="Puke.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/> and <see cref="Stumble.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/> respectively
-                    //They will trigger a personal https://trello.com/c/uCbLBXsF/2846-character-laugh-at job
-                    if (characterThatWillDoJob.opinionComponent.IsEnemiesWith(targetCharacter) && targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Catatonic", "Restrained") != null && characterThatWillDoJob.faction == targetCharacter.faction
-                        && (characterThatWillDoJob.currentActionNode == null || characterThatWillDoJob.currentActionNode.actionStatus != ACTION_STATUS.PERFORMING)) {
-                        return CreateLaughAtJob(characterThatWillDoJob, targetCharacter);
-                    }
-
-                    //If they have a positive relationship but the character cannot perform the necessary job to remove the following traits:
-                    //catatonic, unconscious, restrained, puked
-                    ///NOTE: Puke Reactions can be found at <see cref="Puke.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/>
-                    //They will trigger a personal https://trello.com/c/iDsfwQ7d/2845-character-feeling-concerned job
-                    //else if (!targetCharacter.canMove && !characterThatWillDoJob.IsHostileWith(targetCharacter) && !characterThatWillDoJob.opinionComponent.IsEnemiesWith(targetCharacter)) {
-                    //    return CreateFeelingConcernedJob(characterThatWillDoJob, targetCharacter);
-                    //}
-
-                    if(!characterThatWillDoJob.interruptComponent.isInterrupted && UnityEngine.Random.Range(0, 2) == 0) {
-                        if (characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Diplomatic") == null) {
-                            if (characterThatWillDoJob.opinionComponent.IsEnemiesWith(targetCharacter)) {
-                                if(targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Injured") != null
-                                    || (targetCharacter.currentActionNode != null && targetCharacter.currentActionNode.action.goapType == INTERACTION_TYPE.CRY)
-                                    || (targetCharacter.interruptComponent.isInterrupted && (targetCharacter.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Puke || targetCharacter.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Stumble || targetCharacter.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Accident))) {
-                                    CreateMockJob(characterThatWillDoJob, targetCharacter);
-                                }
+                    if (targetCharacter.race == RACE.SKELETON || targetCharacter.characterClass.className == "Zombie") {
+                        string opinionLabel = characterThatWillDoJob.opinionComponent.GetOpinionLabel(targetCharacter);
+                        if (opinionLabel == OpinionComponent.Friend) {
+                            if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
+                                charactersAlreadySawForHope.Add(targetCharacter);
+                                characterThatWillDoJob.needsComponent.AdjustHope(-5f);
+                            }
+                        } else if (opinionLabel == OpinionComponent.Close_Friend) {
+                            if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
+                                charactersAlreadySawForHope.Add(targetCharacter);
+                                characterThatWillDoJob.needsComponent.AdjustHope(-10f);
                             }
                         }
                     }
-                    #endregion
                 }
             }
-            return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
+            return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }
         public override void OnTickStarted() {
             base.OnTickStarted();

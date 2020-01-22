@@ -103,8 +103,8 @@ namespace Traits {
         public virtual void OnReturnToLife(Character character) { }
         public virtual string GetTestingData() { return string.Empty; }
         public virtual bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) { return false; } //What jobs a character can create based on the target's traits?
-        public virtual bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) { return false; } //What jobs a character can create based on the his/her own traits, considering the target?
-        public virtual void OnSeePOI(IPointOfInterest targetPOI, Character character) { }
+        public virtual bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) { return false; } //What jobs a character can create based on the his/her own traits, considering the target?
+        public virtual void OnSeePOIEvenCannotWitness(IPointOfInterest targetPOI, Character character) { }
         protected virtual void OnChangeLevel() { }
         public virtual void OnOwnerInitiallyPlaced(Character owner) { }
         public virtual bool IsTangible() { return false; } //is this trait tangible? Only used for traits on tiles, so that the tile's tile object will be activated when it has a tangible trait

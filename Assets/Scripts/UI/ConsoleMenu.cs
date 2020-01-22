@@ -78,6 +78,7 @@ public class ConsoleMenu : UIMenu {
             {"/highlight_structure_tiles", HighlightStructureTiles },
             {"/log_obj_advertisements", LogObjectAdvertisements },
             {"/adjust_opinion", AdjustOpinion },
+            {"/join_faction", JoinFaction },
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -1011,6 +1012,29 @@ public class ConsoleMenu : UIMenu {
         }
         character1.opinionComponent.AdjustOpinion(character2, "Base", value);
         AddSuccessMessage("Adjusted Opinion of " + character1.name + " towards " + character2.name + " by " + value);
+    }
+    private void JoinFaction(string[] parameters) {
+        if (parameters.Length != 2) { //parameters command, item
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of JoinFaction");
+            return;
+        }
+        string character1ParameterString = parameters[0];
+        string factionParameterString = parameters[1];
+
+        Character character1 = CharacterManager.Instance.GetCharacterByName(character1ParameterString);
+        Faction faction = FactionManager.Instance.GetFactionBasedOnName(factionParameterString);
+
+        if (character1 == null) {
+            AddErrorMessage("There is no character named " + character1ParameterString);
+            return;
+        }
+        if (faction == null) {
+            AddErrorMessage("There is no faction named " + factionParameterString);
+            return;
+        }
+        character1.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, faction.characters[0], "join_faction_normal");
+        AddSuccessMessage(character1.name + " joined faction " + faction.name);
     }
     #endregion
 

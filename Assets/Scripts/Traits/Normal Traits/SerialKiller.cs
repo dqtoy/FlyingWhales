@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
+using System.Linq;
 
 namespace Traits {
     public class SerialKiller : Trait {
@@ -13,6 +14,7 @@ namespace Traits {
         public Character targetVictim { get; private set; }
         //public bool isFollowing { get; private set; }
         //public bool hasStartedFollowing { get; private set; }
+        private Dictionary<Character, OpinionData> opinionCopy;
 
         public SerialKiller() {
             name = "Serial Killer";
@@ -22,6 +24,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             canBeTriggered = true;
+            opinionCopy = new Dictionary<Character, OpinionData>();
         }
 
         #region Overrides
@@ -31,6 +34,7 @@ namespace Traits {
                 character = sourceCharacter as Character;
                 character.needsComponent.SetHappiness(50f);
                 character.needsComponent.AdjustDoNotGetLonely(1);
+                CopyOpinionAndSetAllOpinionToZero();
                 character.SetIsSerialKiller(true);
                 //if (victim1Requirement == null) { // || victim2Requirement == null
                 //    GenerateSerialVictims();
@@ -45,6 +49,7 @@ namespace Traits {
             if (character != null) {
                 character.needsComponent.AdjustDoNotGetLonely(-1);
                 character.SetIsSerialKiller(false);
+                BringBackOpinion();
                 //Messenger.RemoveListener(Signals.TICK_STARTED, CheckSerialKiller);
                 //Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
                 //Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
@@ -52,8 +57,7 @@ namespace Traits {
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
-        public override void OnSeePOI(IPointOfInterest targetPOI, Character character) {
-            base.OnSeePOI(targetPOI, character);
+        public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is Character) {
                 Character potentialVictim = targetPOI as Character;
                 CheckTargetVictimIfStillAvailable();
@@ -65,9 +69,11 @@ namespace Traits {
                         log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(targetVictim, targetVictim.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         this.character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+                        return true;
                     }
                 }
             }
+            return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }
         public override string TriggerFlaw(Character character) {
             if (targetVictim == null) {
@@ -399,6 +405,53 @@ namespace Traits {
             log.AddToFillers(null, negativeTrait.name, LOG_IDENTIFIER.STRING_1);
             character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
         }
+
+        #region Opinion
+        private void CopyOpinionAndSetAllOpinionToZero() {
+            foreach (KeyValuePair<Character, OpinionData> kvp in character.opinionComponent.opinions) {
+                OpinionData data = ObjectPoolManager.Instance.CreateNewOpinionData();
+                data.SetCompatibilityValue(kvp.Value.compatibilityValue);
+                List<string> keys = kvp.Value.allOpinions.Keys.ToList();
+                for (int i = 0; i < keys.Count; i++) {
+                    string key = keys[i];
+                    data.SetOpinion(key, kvp.Value.allOpinions[key]);
+                    kvp.Value.allOpinions[key] = 0;
+                }
+                opinionCopy.Add(kvp.Key, data);
+            }
+        }
+        private void BringBackOpinion() {
+            //if(opinionCopy.Count > 0) {
+            //    List<Character> keys = opinionCopy.Keys.ToList();
+            //    for (int i = 0; i < keys.Count; i++) {
+            //        Character currChar = keys[i];
+                    
+            //    }
+            //}
+            foreach (KeyValuePair<Character, OpinionData> kvp in opinionCopy) {
+                if (character.opinionComponent.HasOpinion(kvp.Key)) {
+                    foreach (KeyValuePair<string, int> dataKvp in kvp.Value.allOpinions) {
+                        if(dataKvp.Key == "Base") { continue; }
+                        if (character.opinionComponent.HasOpinion(kvp.Key, dataKvp.Key)) {
+                            character.opinionComponent.SetOpinion(kvp.Key, dataKvp.Key, dataKvp.Value);
+                        }
+                    }
+                }
+                ObjectPoolManager.Instance.ReturnOpinionDataToPool(kvp.Value);
+            }
+            opinionCopy.Clear();
+        }
+        public void AdjustOpinion(Character target, string opinionText, int opinionValue) {
+            if (opinionText == "Base") {
+                //Do not copy Base opinion
+                return;
+            }
+            if (!opinionCopy.ContainsKey(target)) {
+                opinionCopy.Add(target, ObjectPoolManager.Instance.CreateNewOpinionData());
+            }
+            opinionCopy[target].AdjustOpinion(opinionText, opinionValue);
+        }
+        #endregion
     }
 
     [System.Serializable]

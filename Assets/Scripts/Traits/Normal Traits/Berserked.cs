@@ -68,8 +68,8 @@ namespace Traits {
                 _behaviourComponentsBeforeBerserked.Clear();
             }
         }
-        public override void OnSeePOI(IPointOfInterest targetPOI, Character character) {
-            base.OnSeePOI(targetPOI, character);
+        public override void OnSeePOIEvenCannotWitness(IPointOfInterest targetPOI, Character character) {
+            base.OnSeePOIEvenCannotWitness(targetPOI, character);
             if (targetPOI is Character) {
                 Character targetCharacter = targetPOI as Character;
                 if (!targetCharacter.isDead) {
