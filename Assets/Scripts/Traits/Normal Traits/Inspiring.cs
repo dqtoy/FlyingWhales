@@ -13,16 +13,17 @@ namespace Traits {
         }
 
         #region Overrides
-        public override void OnSeePOI(IPointOfInterest targetPOI, Character character) {
-            base.OnSeePOI(targetPOI, character);
+        public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is Character) {
                 Character targetCharacter = targetPOI as Character;
-                if(character.faction == targetCharacter.faction || character.homeSettlement == targetCharacter.homeSettlement) {
+                if (characterThatWillDoJob.faction == targetCharacter.faction || characterThatWillDoJob.homeSettlement == targetCharacter.homeSettlement) {
                     if (UnityEngine.Random.Range(0, 100) < 8) {
-                        targetCharacter.interruptComponent.TriggerInterrupt(INTERRUPT.Inspired, character);
+                        targetCharacter.interruptComponent.TriggerInterrupt(INTERRUPT.Inspired, characterThatWillDoJob);
+                        return true;
                     }
                 }
             }
+            return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }
         #endregion
     }

@@ -166,7 +166,7 @@ public class JobQueueItem {
             assignedCharacter.StopCurrentActionNode(false);
         }
     }
-    public virtual bool CanBeInterrupted() { return true; }
+    public virtual bool CanBeInterruptedBy(JOB_TYPE jobType) { return true; }
     protected virtual void CheckJobApplicability(JOB_TYPE jobType, IPointOfInterest targetPOI) { }
     protected virtual void CheckJobApplicability(IPointOfInterest targetPOI) { }
     #endregion

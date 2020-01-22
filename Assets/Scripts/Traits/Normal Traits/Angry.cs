@@ -18,7 +18,7 @@ namespace Traits {
         }
 
         #region Overrides
-        public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
+        public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is TileObject) {
                 if (UnityEngine.Random.Range(0, 100) < 3) {
                     return characterThatWillDoJob.jobComponent.TriggerDestroy(targetPOI);
@@ -29,7 +29,7 @@ namespace Traits {
                     characterThatWillDoJob.marker.AddHostileInRange(targetCharacter, false, isLethal: false);
                 }
             }
-            return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
+            return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }
         #endregion
     }

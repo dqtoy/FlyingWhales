@@ -315,11 +315,14 @@ public class GoapPlanJob : JobQueueItem {
             Debug.LogError("Job " + name + " already has other data for " + actionType.ToString());
         }
     }
-    public override bool CanBeInterrupted() {
+    public override bool CanBeInterruptedBy(JOB_TYPE jobType) {
         if(assignedPlan != null && assignedPlan.currentActualNode.actionStatus == ACTION_STATUS.PERFORMING) {
+            if(jobType == JOB_TYPE.COMBAT) {
+                return true;
+            }
             return false;
         }
-        return base.CanBeInterrupted();
+        return base.CanBeInterruptedBy(jobType);
     }
     protected override void CheckJobApplicability(JOB_TYPE jobType, IPointOfInterest targetPOI) {
         if (this.jobType == jobType && this.targetPOI == targetPOI) {

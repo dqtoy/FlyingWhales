@@ -25,16 +25,16 @@ public class Golem : Summon {
     //    //state.SetIsUnending(true);
     //    GoToWorkArea();
     //}
-    protected override void OnSeenBy(Character character) {
-        base.OnSeenBy(character);
-        if (traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
-            return;
-        }
-        if (!character.IsHostileWith(this)) {
-            return;
-        }
-        //add taunted trait to the character
-        character.traitContainer.AddTrait(character, new Taunted(), this);
-    }
+    //protected override void OnSeenBy(Character character) {
+    //    base.OnSeenBy(character);
+    //    if (traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
+    //        return;
+    //    }
+    //    if (!character.IsHostileWith(this)) {
+    //        return;
+    //    }
+    //    //add taunted trait to the character
+    //    character.traitContainer.AddTrait(character, new Taunted(), this);
+    //}
     #endregion
 }

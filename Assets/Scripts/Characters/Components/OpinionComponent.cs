@@ -26,7 +26,39 @@ public class OpinionComponent {
 
     public void AdjustOpinion(Character target, string opinionText, int opinionValue, string reason = "") {
         if (!HasOpinion(target)) {
-            opinions.Add(target, new OpinionData());
+            opinions.Add(target, ObjectPoolManager.Instance.CreateNewOpinionData());
+            opinions[target].AdjustOpinion("Base", 0);
+            charactersWithOpinion.Add(target);
+
+            //Note: I did this because compatibility value between two characters must only be 1 instance, but since we have compatibilityValue variable per opinion, it now has 2 instances
+            //In order for us to be sure that only 1 compatibility value is set, we check if the newly added target to the opinion already has opinion towards the owner, then it must mean that there is already a compatibility value, that's why we set it to 0
+            if (!target.opinionComponent.HasOpinion(owner)) {
+                opinions[target].SetRandomCompatibilityValue();
+            } else {
+                opinions[target].SetCompatibilityValue(0);
+            }
+            Messenger.Broadcast(Signals.OPINION_ADDED, owner, target);
+        }
+        if (owner.isSerialKiller) {
+            SerialKiller serialKiller = owner.traitContainer.GetNormalTrait<Trait>("Serial Killer") as SerialKiller;
+            serialKiller.AdjustOpinion(target, opinionText, opinionValue);
+            //Psychopaths do not gain or lose Opinion towards other characters (ensure that logs related to Opinion changes also do not show up)
+            owner.PrintLogIfActive(owner.name + " wants to adjust " + opinionText + " opinion towards " + target.name + " by " + opinionValue + " but " + owner.name + " is a Serial Killer");
+            opinionValue = 0;
+        }
+        opinions[target].AdjustOpinion(opinionText, opinionValue);
+        if (opinionValue > 0) {
+            Messenger.Broadcast(Signals.OPINION_INCREASED, owner, target, reason);
+        } else if (opinionValue < 0) {
+            Messenger.Broadcast(Signals.OPINION_DECREASED, owner, target, reason);
+        }
+        if (!target.opinionComponent.HasOpinion(owner)) {
+            target.opinionComponent.AdjustOpinion(owner, "Base", 0);
+        }
+    }
+    public void SetOpinion(Character target, string opinionText, int opinionValue, string reason = "") {
+        if (!HasOpinion(target)) {
+            opinions.Add(target, ObjectPoolManager.Instance.CreateNewOpinionData());
             opinions[target].AdjustOpinion("Base", 0);
             charactersWithOpinion.Add(target);
 
@@ -41,17 +73,17 @@ public class OpinionComponent {
         }
         if (owner.isSerialKiller) {
             //Psychopaths do not gain or lose Opinion towards other characters (ensure that logs related to Opinion changes also do not show up)
-            owner.PrintLogIfActive(owner.name + " wants to adjust " + opinionText + " opinion towards " + target.name + " by " + opinionValue + " but " + owner.name + " is a Serial Killer");
-            return;
+            owner.PrintLogIfActive(owner.name + " wants to adjust " + opinionText + " opinion towards " + target.name + " by " + opinionValue + " but " + owner.name + " is a Serial Killer, setting the value to zero...");
+            opinionValue = 0;
         }
-        opinions[target].AdjustOpinion(opinionText, opinionValue);
+        opinions[target].SetOpinion(opinionText, opinionValue);
         if (opinionValue > 0) {
             Messenger.Broadcast(Signals.OPINION_INCREASED, owner, target, reason);
         } else if (opinionValue < 0) {
             Messenger.Broadcast(Signals.OPINION_DECREASED, owner, target, reason);
         }
         if (!target.opinionComponent.HasOpinion(owner)) {
-            target.opinionComponent.AdjustOpinion(owner, "Base", 0);
+            target.opinionComponent.SetOpinion(owner, "Base", 0);
         }
     }
 
@@ -62,9 +94,11 @@ public class OpinionComponent {
     }
     public void RemoveOpinion(Character target) {
         if (HasOpinion(target)) {
+            OpinionData data = opinions[target];
             opinions.Remove(target);
             charactersWithOpinion.Remove(target);
             Messenger.Broadcast(Signals.OPINION_REMOVED, owner, target);
+            ObjectPoolManager.Instance.ReturnOpinionDataToPool(data);
         }
     }
     public bool HasOpinion(Character target) {
@@ -294,6 +328,13 @@ public class OpinionData {
             allOpinions.Add(text, value);
         }
     }
+    public void SetOpinion(string text, int value) {
+        if (allOpinions.ContainsKey(text)) {
+            allOpinions[text] = value;
+        } else {
+            allOpinions.Add(text, value);
+        }
+    }
     public bool RemoveOpinion(string text) {
         if (allOpinions.ContainsKey(text)) {
             return allOpinions.Remove(text);
@@ -309,4 +350,12 @@ public class OpinionData {
     public void SetCompatibilityValue(int value) {
         compatibilityValue = value;
     }
+
+    #region Object Pool
+    public void Initialize() { }
+    public void Reset() {
+        allOpinions.Clear();
+        compatibilityValue = 0;
+    }
+    #endregion
 }

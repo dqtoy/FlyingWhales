@@ -37,28 +37,16 @@ namespace Traits {
                 //}
             }
         }
-        public override void OnSeePOI(IPointOfInterest targetPOI, Character character) {
-            base.OnSeePOI(targetPOI, character);
+        public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 //Character targetCharacter = targetPOI as Character;
-                if (character.traitContainer.GetNormalTrait<Trait>("Berserked") != null) {
-                    return;
+                if (characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Berserked") != null) {
+                    return false;
                 }
-                ApplyAgoraphobicEffect(character);
-                //if (!character.isInCombat) {
-                //    if (character.marker.inVisionCharacters.Count >= 3) {
-                //        ApplyAgoraphobicEffect(character, true);
-                //    }
-                //} else {
-                //    CombatState combatState = character.stateComponent.currentState as CombatState;
-                //    if (combatState.isAttacking) {
-                //        if (character.marker.inVisionCharacters.Count >= 3) {
-                //            ApplyAgoraphobicEffect(character, false);
-                //            Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, character, "agoraphobia");
-                //        }
-                //    }
-                //}
+                ApplyAgoraphobicEffect(characterThatWillDoJob);
+                return true;
             }
+            return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }
         public override string TriggerFlaw(Character character) {
             //If outside and the character lives in a house, the character will flee and go back home.

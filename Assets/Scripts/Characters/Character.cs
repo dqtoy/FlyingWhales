@@ -131,6 +131,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public BehaviourComponent behaviourComponent { get; private set; }
     public MoodComponent moodComponent { get; private set; }
     public CharacterJobTriggerComponent jobComponent { get; private set; }
+    public ReactionComponent reactionComponent { get; private set; }
 
     #region getters / setters
     public virtual string name => _firstName;
@@ -396,6 +397,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         behaviourComponent = new BehaviourComponent(this);
         moodComponent = new MoodComponent(this);
         jobComponent = new CharacterJobTriggerComponent(this);
+        reactionComponent = new ReactionComponent(this);
     }
 
     //This is done separately after all traits have been loaded so that the data will be accurate
@@ -497,7 +499,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         Messenger.AddListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
-        Messenger.AddListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
+        Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnActionPerformed);
         Messenger.AddListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
         Messenger.AddListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
         Messenger.AddListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
@@ -520,7 +522,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         Messenger.RemoveListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
-        Messenger.RemoveListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
+        Messenger.RemoveListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnActionPerformed);
         Messenger.RemoveListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
         Messenger.RemoveListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
@@ -1154,7 +1156,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         log += "\nChecking source character traits...";
         for (int i = 0; i < traitContainer.allTraits.Count; i++) {
             log += "\n- " + traitContainer.allTraits[i].name;
-            if (traitContainer.allTraits[i].CreateJobsOnEnterVisionBasedOnOwnerTrait(targetCharacter, this)) {
+            if (traitContainer.allTraits[i].OnSeePOI(targetCharacter, this)) {
                 log += ": created a job!";
                 hasCreatedJob = true;
             } else {
@@ -1207,7 +1209,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         log += "\nChecking source character traits...";
         for (int i = 0; i < traitContainer.allTraits.Count; i++) {
             log += "\n- " + traitContainer.allTraits[i].name;
-            if (traitContainer.allTraits[i].CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, this)) {
+            if (traitContainer.allTraits[i].OnSeePOI(targetPOI, this)) {
                 log += ": created a job!";
                 hasCreatedJob = true;
             } else {
@@ -2422,51 +2424,32 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         addLog.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotificationFrom(addLog, this, onlyClickedCharacter);
     }
-    public virtual void OnAfterActionStateSet(string stateName, ActualGoapNode node) {
-        //IPointOfInterest target = null;
-        //if (action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
-        //    target = (action as MakeLove).targetCharacter;
-        //} else {
-        //    target = action.poiTarget;
-        //}
-        //if (action.actor != this && target != this) {
-        //    if (action.goapType == INTERACTION_TYPE.WATCH) {
-        //        //Cannot witness/watch a watch action
-        //        return;
-        //    }
-        //    if (GetNormalTrait<Trait>("Unconscious", "Resting") != null) {
-        //        return;
-        //    }
-        //    if (marker.inVisionCharacters.Contains(action.actor)) {
-        //        ThisCharacterWitnessedEvent(action);
-        //        ThisCharacterWatchEvent(null, action, state);
-        //    }
-        //}
+    public virtual void OnActionPerformed(ActualGoapNode node) {
         ///Moved all needed checking <see cref="CharacterManager.OnActionStateSet(GoapAction, GoapActionState)"/>
         ///
         if (isDead || !canWitness) {
             return;
         }
-        if (node.action.goapType == INTERACTION_TYPE.WATCH) {
-            //Cannot witness/watch a watch action
-            return;
-        }
+        //if (node.action.goapType == INTERACTION_TYPE.WATCH) {
+        //    //Cannot witness/watch a watch action
+        //    return;
+        //}
         if (node.actor == this || node.poiTarget == this) {
             //Cannot witness if character is part of the action
             return;
         }
-        if (!node.action.shouldAddLogs) {
-            return;
-        }
+        //if (!node.action.shouldAddLogs) {
+        //    return;
+        //}
 
         //Instead of witnessing the action immediately, it needs to be pooled to avoid duplicates, so add the supposed to be witnessed action to the list and let ProcessAllUnprocessedVisionPOIs in CharacterMarker do its thing
         if (marker != null) { //&& !marker.actionsToWitness.Contains(node)
             if (marker.inVisionCharacters.Contains(node.actor)) {
-                marker.actionsToWitness.Add(node);
+                //marker.actionsToWitness.Add(node);
                 //This is done so that the character will react again
                 marker.unprocessedVisionPOIs.Add(node.actor);
             } else if (marker.inVisionCharacters.Contains(node.poiTarget)) {
-                marker.actionsToWitness.Add(node);
+                //marker.actionsToWitness.Add(node);
                 //This is done so that the character will react again
                 marker.unprocessedVisionPOIs.Add(node.poiTarget);
             }
@@ -2539,9 +2522,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return $"{name} is in {currentRegion.name}";
     }
     //Returns the list of goap actions to be witnessed by this character
-    public virtual List<ActualGoapNode> ThisCharacterSaw(IPointOfInterest target) {
-        if (isDead || !canWitness) {
-            return null;
+    public void ThisCharacterSaw(IPointOfInterest target) {
+        if (isDead) {
+            return;
+        }
+
+        for (int i = 0; i < traitContainer.allTraits.Count; i++) {
+            traitContainer.allTraits[i].OnSeePOIEvenCannotWitness(target, this);
+        }
+
+        if (!canWitness) {
+            return;
         }
 
         if (currentActionNode != null && currentActionNode.actionStatus == ACTION_STATUS.STARTED && currentActionNode.isStealth) {
@@ -2556,91 +2547,48 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     currentJob.CancelJob(reason: "There is a witness around");
                 }
             }
-
         }
-        //if (target.allJobsTargettingThis.Count > 0) {
-        //    //Upon seeing a character and that character is being targetted by a stealth job and the actor of that job is not this one, and the actor is performing that job and the actor already sees the target
-        //    List<GoapAction> allActionsTargettingTargetCharacter = new List<GoapAction>(target.targettedByAction);
-        //    for (int i = 0; i < allActionsTargettingTargetCharacter.Count; i++) {
-        //        GoapAction action = allActionsTargettingTargetCharacter[i];
-        //        if (action.isStealth && action.actor != this) {
-        //            if (!action.isDone && !action.isPerformingActualAction && action.actor.currentAction == action
-        //                && action.actor.marker.inVisionPOIs.Contains(target)) {
-        //                action.StopAction(true, "There is a witness around");
-        //            }
-        //        }
-        //    }
-        //}
 
-        for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-            traitContainer.allTraits[i].OnSeePOI(target, this);
-        }
+        //React To Actions
+        ActualGoapNode targetCharacterCurrentActionNode = null;
+        Character targetCharacter = null;
         if (target is Character) {
-            Character targetCharacter = target as Character;
-            targetCharacter.OnSeenBy(this); //trigger that the target character was seen by this character.
-
-            List<ActualGoapNode> actionsToWitness = new List<ActualGoapNode>();
-            if (target.allJobsTargetingThis.Count > 0) {
-                //We get the actions targetting the target character because a character must also witness an action even if he only sees the target and not the actor
-                //Collect all actions first to avoid duplicates 
-                for (int i = 0; i < target.allJobsTargetingThis.Count; i++) {
-                    if (target.allJobsTargetingThis[i] is GoapPlanJob) {
-                        GoapPlanJob job = target.allJobsTargetingThis[i] as GoapPlanJob;
-                        GoapPlan plan = job.assignedPlan;
-                        if (plan != null && plan.currentActualNode.action.shouldAddLogs && plan.currentActualNode.actionStatus == ACTION_STATUS.PERFORMING) {
-                            actionsToWitness.Add(plan.currentActualNode);
-                        }
+            targetCharacter = target as Character;
+            //targetCharacter.OnSeenBy(this); //trigger that the target character was seen by this character.
+            targetCharacterCurrentActionNode = targetCharacter.currentActionNode;
+            if (targetCharacterCurrentActionNode != null /*&& node.action.shouldAddLogs*/ && targetCharacterCurrentActionNode.actionStatus == ACTION_STATUS.PERFORMING) {
+                reactionComponent.ReactTo(targetCharacterCurrentActionNode);
+            }
+        }
+        if (target.allJobsTargetingThis.Count > 0) {
+            //We get the actions targetting the target character because a character must also witness an action even if he only sees the target and not the actor
+            for (int i = 0; i < target.allJobsTargetingThis.Count; i++) {
+                if (target.allJobsTargetingThis[i] is GoapPlanJob) {
+                    GoapPlanJob job = target.allJobsTargetingThis[i] as GoapPlanJob;
+                    GoapPlan plan = job.assignedPlan;
+                    if (plan != null /*&& plan.currentActualNode.action.shouldAddLogs*/ 
+                        && plan.currentActualNode.actionStatus == ACTION_STATUS.PERFORMING
+                        && plan.currentActualNode != targetCharacterCurrentActionNode) {
+                        reactionComponent.ReactTo(plan.currentActualNode);
                     }
                 }
             }
-            ActualGoapNode node = targetCharacter.currentActionNode;
-            if (node != null && node.action.shouldAddLogs && node.actionStatus == ACTION_STATUS.PERFORMING) {
-                actionsToWitness.Add(node);
-            }
-            //if (targetCharacter.currentAction != null && targetCharacter.currentAction.isPerformingActualAction && !targetCharacter.currentAction.isDone && targetCharacter.currentAction.goapType != INTERACTION_TYPE.WATCH) {
-            //    //Cannot witness/watch a watch action
-            //    IPointOfInterest poiTarget = null;
-            //    if (targetCharacter.currentAction.goapType == INTERACTION_TYPE.MAKE_LOVE) {
-            //        poiTarget = (targetCharacter.currentAction as MakeLove).targetCharacter;
-            //    } else {
-            //        poiTarget = targetCharacter.currentAction.poiTarget;
-            //    }
-            //    if (targetCharacter.currentAction.actor != this && poiTarget != this) {
-            //        actionsToWitness.Add(targetCharacter.currentAction);
-            //        //ThisCharacterWitnessedEvent(targetCharacter.currentAction);
-            //        //ThisCharacterWatchEvent(targetCharacter, targetCharacter.currentAction, targetCharacter.currentAction.currentState);
-            //    }
-            //} 
-            //else if (targetCharacter.currentAction != null && targetCharacter.currentAction.currentState != null && targetCharacter.currentAction.currentState.name == targetCharacter.currentAction.whileMovingState) {
-            //    //Must also witness whileMovingState
-            //    IPointOfInterest poiTarget = null;
-            //    if (targetCharacter.currentAction.goapType == INTERACTION_TYPE.MAKE_LOVE) {
-            //        poiTarget = (targetCharacter.currentAction as MakeLove).targetCharacter;
-            //    } else {
-            //        poiTarget = targetCharacter.currentAction.poiTarget;
-            //    }
-            //    if (targetCharacter.currentAction.actor != this && poiTarget != this) {
-            //        actionsToWitness.Add(targetCharacter.currentAction);
-            //        //ThisCharacterWitnessedEvent(targetCharacter.currentAction);
-            //        //ThisCharacterWatchEvent(targetCharacter, targetCharacter.currentAction, targetCharacter.currentAction.currentState);
-            //    }
-            //}
-            //This will only happen if target is in combat
-            ThisCharacterWatchEvent(targetCharacter, null, null);
-            return actionsToWitness;
         }
-        //else {
-        //    for (int i = 0; i < normalTraits.Count; i++) {
-        //        normalTraits[i].OnSeePOI(target, this);
-        //    }
-        //}
-        return null;
+
+        //React To Character, Object, and Item
+        string debugLog = string.Empty;
+        reactionComponent.ReactTo(target, ref debugLog);
+        PrintLogIfActive(debugLog);
+
+        if(targetCharacter != null) {
+            ThisCharacterWatchEvent(targetCharacter, null, null);
+        }
     }
     /// <summary>
     /// What should happen if another character sees this character?
     /// </summary>
     /// <param name="character">The character that saw this character.</param>
-    protected virtual void OnSeenBy(Character character) { }
+    //protected virtual void OnSeenBy(Character character) { }
     public List<Log> GetMemories(int dayFrom, int dayTo, bool eventMemoriesOnly = false) {
         List<Log> memories = new List<Log>();
         if (eventMemoriesOnly) {
@@ -2706,115 +2654,80 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         informedLog.AddToFillers(this, this.name, LOG_IDENTIFIER.OTHER);
         informedLog.AddToFillers(null, Utilities.LogDontReplace(eventToBeInformed.descriptionLog), LOG_IDENTIFIER.APPEND);
         AddHistory(informedLog);
-
-        //if (invokeShareIntelReaction) {
-        //    if (eventToBeInformed.currentState.shareIntelReaction != null) {
-        //        eventToBeInformed.currentState.shareIntelReaction.Invoke(this, null, SHARE_INTEL_STATUS.INFORMED);
-        //    }
-        //}
-        //eventToBeInformed.AddAwareCharacter(this);
-
-        ////If a character sees or informed about a lover performing Making Love or Ask to Make Love, they will feel Betrayed
-        //if (eventToBeInformed.actor != this && !eventToBeInformed.IsTarget(this)) {
-        //    Character target = eventToBeInformed.poiTarget as Character;
-        //    if (eventToBeInformed.goapType == INTERACTION_TYPE.MAKE_LOVE) {
-        //        target = (eventToBeInformed as MakeLove).targetCharacter; //NOTE: Changed this, because technically the Make Love Action targets the bed, and the target character is stored in the event itself.
-        //        if (HasRelationshipOfTypeWith(eventToBeInformed.actor, RELATIONSHIP_TRAIT.LOVER) || HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
-        //            Betrayed betrayed = new Betrayed();
-        //            AddTrait(betrayed);
-        //            RelationshipManager.Instance.RelationshipDegradation(eventToBeInformed.actor, this, eventToBeInformed);
-        //            RelationshipManager.Instance.RelationshipDegradation(target, this, eventToBeInformed);
-        //        }
-        //    } else if (eventToBeInformed.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE) {
-        //        if (HasRelationshipOfTypeWith(eventToBeInformed.actor, RELATIONSHIP_TRAIT.LOVER)) {
-        //            Betrayed betrayed = new Betrayed();
-        //            AddTrait(betrayed);
-        //            RelationshipManager.Instance.RelationshipDegradation(eventToBeInformed.actor, this, eventToBeInformed);
-        //            RelationshipManager.Instance.RelationshipDegradation(target, this, eventToBeInformed);
-        //        } else if (HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
-        //            if (eventToBeInformed.currentState.name == "Invite Success") {
-        //                Betrayed betrayed = new Betrayed();
-        //                AddTrait(betrayed);
-        //                RelationshipManager.Instance.RelationshipDegradation(eventToBeInformed.actor, this, eventToBeInformed);
-        //                RelationshipManager.Instance.RelationshipDegradation(target, this, eventToBeInformed);
-        //            }
-        //        }
-        //    }
-        //}
     }
-    public void ThisCharacterWitnessedEvent(ActualGoapNode witnessedEvent) {
-        //if (isDead || !canWitness) {
-        //    return;
-        //}
-        if (faction != witnessedEvent.actor.faction && //only check faction relationship if involved characters are of different factions
-            faction.IsHostileWith(witnessedEvent.actor.faction)) {
-            //Must not react if the faction of the actor of witnessed action is hostile with the faction of the witness
-            return;
-        }
+    //public void ThisCharacterWitnessedEvent(ActualGoapNode witnessedEvent) {
+    //    //if (isDead || !canWitness) {
+    //    //    return;
+    //    //}
+    //    if (faction != witnessedEvent.actor.faction && //only check faction relationship if involved characters are of different factions
+    //        faction.IsHostileWith(witnessedEvent.actor.faction)) {
+    //        //Must not react if the faction of the actor of witnessed action is hostile with the faction of the witness
+    //        return;
+    //    }
 
 
-        if (witnessedEvent.currentStateName == null) {
-            throw new System.Exception(GameManager.Instance.TodayLogString() + this.name + " witnessed event " + witnessedEvent.action.goapName + " by " + witnessedEvent.actor.name + " but it does not have a current state!");
-        }
-        if (witnessedEvent.descriptionLog == null) {
-            throw new Exception(GameManager.Instance.TodayLogString() + this.name + " witnessed event " + witnessedEvent.action.goapName + " by " + witnessedEvent.actor.name + " with state " + witnessedEvent.currentStateName + " but it does not have a description log!");
-        }
-        Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", witnessedEvent);
-        witnessLog.AddToFillers(this, name, LOG_IDENTIFIER.OTHER);
-        witnessLog.AddToFillers(null, Utilities.LogDontReplace(witnessedEvent.descriptionLog), LOG_IDENTIFIER.APPEND);
-        witnessLog.AddToFillers(witnessedEvent.descriptionLog.fillers);
-        AddHistory(witnessLog);
+    //    if (witnessedEvent.currentStateName == null) {
+    //        throw new System.Exception(GameManager.Instance.TodayLogString() + this.name + " witnessed event " + witnessedEvent.action.goapName + " by " + witnessedEvent.actor.name + " but it does not have a current state!");
+    //    }
+    //    if (witnessedEvent.descriptionLog == null) {
+    //        throw new Exception(GameManager.Instance.TodayLogString() + this.name + " witnessed event " + witnessedEvent.action.goapName + " by " + witnessedEvent.actor.name + " with state " + witnessedEvent.currentStateName + " but it does not have a description log!");
+    //    }
+    //    Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", witnessedEvent);
+    //    witnessLog.AddToFillers(this, name, LOG_IDENTIFIER.OTHER);
+    //    witnessLog.AddToFillers(null, Utilities.LogDontReplace(witnessedEvent.descriptionLog), LOG_IDENTIFIER.APPEND);
+    //    witnessLog.AddToFillers(witnessedEvent.descriptionLog.fillers);
+    //    AddHistory(witnessLog);
 
-        CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(witnessedEvent);
-        if (crimeType != CRIME_TYPE.NONE) {
-            CrimeManager.Instance.ReactToCrime(this, witnessedEvent, witnessedEvent.associatedJobType, crimeType);
-        }
+    //    CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(witnessedEvent);
+    //    if (crimeType != CRIME_TYPE.NONE) {
+    //        CrimeManager.Instance.ReactToCrime(this, witnessedEvent, witnessedEvent.associatedJobType, crimeType);
+    //    }
 
-        //if (faction.isPlayerFaction) {
-        //    //Player characters cannot react to witnessed events
-        //    return;
-        //}
-        //if (witnessedEvent.currentState.shareIntelReaction != null && !isFactionless) { //Characters with no faction cannot witness react
-        //    List<string> reactions = witnessedEvent.currentState.shareIntelReaction.Invoke(this, null, SHARE_INTEL_STATUS.WITNESSED);
-        //    if(reactions != null) {
-        //        string reactionLog = name + " witnessed event: " + witnessedEvent.goapName;
-        //        reactionLog += "\nREACTION:";
-        //        for (int i = 0; i < reactions.Count; i++) {
-        //            reactionLog += "\n" + reactions[i];
-        //        }
-        //        PrintLogIfActive(reactionLog);
-        //    }
-        //}
-        //witnessedEvent.AddAwareCharacter(this);
+    //    //if (faction.isPlayerFaction) {
+    //    //    //Player characters cannot react to witnessed events
+    //    //    return;
+    //    //}
+    //    //if (witnessedEvent.currentState.shareIntelReaction != null && !isFactionless) { //Characters with no faction cannot witness react
+    //    //    List<string> reactions = witnessedEvent.currentState.shareIntelReaction.Invoke(this, null, SHARE_INTEL_STATUS.WITNESSED);
+    //    //    if(reactions != null) {
+    //    //        string reactionLog = name + " witnessed event: " + witnessedEvent.goapName;
+    //    //        reactionLog += "\nREACTION:";
+    //    //        for (int i = 0; i < reactions.Count; i++) {
+    //    //            reactionLog += "\n" + reactions[i];
+    //    //        }
+    //    //        PrintLogIfActive(reactionLog);
+    //    //    }
+    //    //}
+    //    //witnessedEvent.AddAwareCharacter(this);
 
-        //If a character sees or informed about a lover performing Making Love or Ask to Make Love, they will feel Betrayed
-        //if (witnessedEvent.actor != this && !witnessedEvent.IsTarget(this)) {
-        //    Character target = witnessedEvent.poiTarget as Character;
-        //    if (witnessedEvent.goapType == INTERACTION_TYPE.MAKE_LOVE) {
-        //        target = (witnessedEvent as MakeLove).targetCharacter;
-        //        if (relationshipContainer.HasRelationshipWith(witnessedEvent.actor.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) || relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
-        //            Betrayed betrayed = new Betrayed();
-        //            traitContainer.AddTrait(this, betrayed);
-        //            //RelationshipManager.Instance.RelationshipDegradation(witnessedEvent.actor, this, witnessedEvent);
-        //            //RelationshipManager.Instance.RelationshipDegradation(target, this, witnessedEvent);
-        //        } 
-        //    } else if (witnessedEvent.goapType == INTERACTION_TYPE.INVITE) {
-        //        if (relationshipContainer.HasRelationshipWith(witnessedEvent.actor.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
-        //            Betrayed betrayed = new Betrayed();
-        //            traitContainer.AddTrait(this, betrayed);
-        //            //RelationshipManager.Instance.RelationshipDegradation(witnessedEvent.actor, this, witnessedEvent);
-        //            //RelationshipManager.Instance.RelationshipDegradation(target, this, witnessedEvent);
-        //        } else if (relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
-        //            if (witnessedEvent.currentState.name == "Invite Success") {
-        //                Betrayed betrayed = new Betrayed();
-        //                traitContainer.AddTrait(this, betrayed);
-        //                //RelationshipManager.Instance.RelationshipDegradation(witnessedEvent.actor, this, witnessedEvent);
-        //                //RelationshipManager.Instance.RelationshipDegradation(target, this, witnessedEvent);
-        //            }
-        //        }
-        //    }
-        //}
-    }
+    //    //If a character sees or informed about a lover performing Making Love or Ask to Make Love, they will feel Betrayed
+    //    //if (witnessedEvent.actor != this && !witnessedEvent.IsTarget(this)) {
+    //    //    Character target = witnessedEvent.poiTarget as Character;
+    //    //    if (witnessedEvent.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+    //    //        target = (witnessedEvent as MakeLove).targetCharacter;
+    //    //        if (relationshipContainer.HasRelationshipWith(witnessedEvent.actor.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) || relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
+    //    //            Betrayed betrayed = new Betrayed();
+    //    //            traitContainer.AddTrait(this, betrayed);
+    //    //            //RelationshipManager.Instance.RelationshipDegradation(witnessedEvent.actor, this, witnessedEvent);
+    //    //            //RelationshipManager.Instance.RelationshipDegradation(target, this, witnessedEvent);
+    //    //        } 
+    //    //    } else if (witnessedEvent.goapType == INTERACTION_TYPE.INVITE) {
+    //    //        if (relationshipContainer.HasRelationshipWith(witnessedEvent.actor.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
+    //    //            Betrayed betrayed = new Betrayed();
+    //    //            traitContainer.AddTrait(this, betrayed);
+    //    //            //RelationshipManager.Instance.RelationshipDegradation(witnessedEvent.actor, this, witnessedEvent);
+    //    //            //RelationshipManager.Instance.RelationshipDegradation(target, this, witnessedEvent);
+    //    //        } else if (relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
+    //    //            if (witnessedEvent.currentState.name == "Invite Success") {
+    //    //                Betrayed betrayed = new Betrayed();
+    //    //                traitContainer.AddTrait(this, betrayed);
+    //    //                //RelationshipManager.Instance.RelationshipDegradation(witnessedEvent.actor, this, witnessedEvent);
+    //    //                //RelationshipManager.Instance.RelationshipDegradation(target, this, witnessedEvent);
+    //    //            }
+    //    //        }
+    //    //    }
+    //    //}
+    //}
     /// <summary>
     /// This character watched an action happen.
     /// </summary>

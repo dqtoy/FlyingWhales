@@ -45,15 +45,15 @@ public class SeducerSummon : Summon {
         //Messenger.AddListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration);
         AdjustIgnoreHostilities(1);
     }
-    public override List<ActualGoapNode> ThisCharacterSaw(IPointOfInterest target) {
-        if (traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") != null) {
-            return null;
-        }
-        for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-            traitContainer.allTraits[i].OnSeePOI(target, this);
-        }
-        return null;
-    }
+    //public override List<ActualGoapNode> ThisCharacterSaw(IPointOfInterest target) {
+    //    if (traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") != null) {
+    //        return null;
+    //    }
+    //    for (int i = 0; i < traitContainer.allTraits.Count; i++) {
+    //        traitContainer.allTraits[i].OnSeePOI(target, this);
+    //    }
+    //    return null;
+    //}
     protected override void OnTickStarted() {
         if (hasSucceeded) {
             //disappear
@@ -75,7 +75,7 @@ public class SeducerSummon : Summon {
         }
         
     }
-    public override void OnAfterActionStateSet(string stateName, ActualGoapNode node) {
+    public override void OnActionPerformed(ActualGoapNode node) {
         if (node.actor == this && node.goapType == INTERACTION_TYPE.INVITE) {
             doneCharacters.Add(node.poiTarget as Character);
         } else if (node.actor == this && node.goapType == INTERACTION_TYPE.MAKE_LOVE) {

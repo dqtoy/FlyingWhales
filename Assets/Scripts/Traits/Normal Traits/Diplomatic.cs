@@ -13,7 +13,7 @@ namespace Traits {
         }
 
         #region Overrides
-        public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
+        public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is Character) {
                 Character targetCharacter = targetPOI as Character;
                 if(targetCharacter.canPerform
@@ -35,7 +35,7 @@ namespace Traits {
                 }
                 
             }
-            return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
+            return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }
         #endregion
     }

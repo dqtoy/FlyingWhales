@@ -16,6 +16,7 @@ public class ObjectPoolManager : MonoBehaviour {
     [SerializeField] private GameObject UIObjectPoolParent;
 
     public List<GoapNode> goapNodesPool { get; private set; }
+    public List<OpinionData> opinionDataPool { get; private set; }
 
     private void Awake() {
         Instance = this;
@@ -52,6 +53,7 @@ public class ObjectPoolManager : MonoBehaviour {
         }
 
         ConstructGoapNodes();
+        ConstructOpinionDataPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null) {
@@ -127,6 +129,29 @@ public class ObjectPoolManager : MonoBehaviour {
             return node;
         }
         return new GoapNode();
+    }
+    #endregion
+
+    #region Opinion Data
+    private void ConstructOpinionDataPool() {
+        opinionDataPool = new List<OpinionData>();
+    }
+    public OpinionData CreateNewOpinionData() {
+        OpinionData data = GetOpinionDataFromPool();
+        data.Initialize();
+        return data;
+    }
+    public void ReturnOpinionDataToPool(OpinionData data) {
+        data.Reset();
+        opinionDataPool.Add(data);
+    }
+    private OpinionData GetOpinionDataFromPool() {
+        if (opinionDataPool.Count > 0) {
+            OpinionData data = opinionDataPool[0];
+            opinionDataPool.RemoveAt(0);
+            return data;
+        }
+        return new OpinionData();
     }
     #endregion
 }

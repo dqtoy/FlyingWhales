@@ -137,7 +137,7 @@ public class JobQueue {
         if (jobsInQueue.Count > 0) { //characterOwner.CanCurrentJobBeOverriddenByJob(job))
             JobQueueItem topJob = jobsInQueue[0];
             if (newJob.priority > topJob.priority) {
-                if (topJob.CanBeInterrupted()) {
+                if (topJob.CanBeInterruptedBy(newJob.jobType)) {
                     return true;
                 }
             }
@@ -150,7 +150,7 @@ public class JobQueue {
         if (jobsInQueue.Count > 0) { //characterOwner.CanCurrentJobBeOverriddenByJob(job))
             JobQueueItem topJob = jobsInQueue[0];
             if (jobType.GetJobTypePriority() > topJob.priority) {
-                if (topJob.CanBeInterrupted()) {
+                if (topJob.CanBeInterruptedBy(jobType)) {
                     return true;
                 }
             }

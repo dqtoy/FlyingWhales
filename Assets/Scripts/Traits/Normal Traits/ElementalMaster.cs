@@ -13,7 +13,7 @@ namespace Traits {
 		}
 
 		#region Overrides
-		public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
+		public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
 			if (targetPOI is TornadoTileObject) {
                 if(!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.SNUFF_TORNADO, targetPOI)) {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SNUFF_TORNADO,
@@ -21,7 +21,7 @@ namespace Traits {
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                 }
 			}
-			return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
+			return base.OnSeePOI(targetPOI, characterThatWillDoJob);
 		}
 		#endregion
 		
