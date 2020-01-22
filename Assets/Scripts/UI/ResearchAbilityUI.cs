@@ -45,30 +45,30 @@ public class ResearchAbilityUI : MonoBehaviour {
 
         gameObject.SetActive(true);
     }
-    public void SetAbility1(INTERVENTION_ABILITY ability) {
+    public void SetAbility1(SPELL_TYPE ability) {
         //ability1 = ability;
         string name = Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString());
         ability1Icon.sprite = PlayerManager.Instance.GetJobActionSprite(name);
         string text = name;
-        text += "\n" + PlayerManager.Instance.allInterventionAbilitiesData[ability].description;
+        text += "\n" + PlayerManager.Instance.allSpellsData[ability].description;
         //text += "\nTier: " + PlayerManager.Instance.GetInterventionAbilityTier(ability);
         ability1Text.text = text;
     }
-    public void SetAbility2(INTERVENTION_ABILITY ability) {
+    public void SetAbility2(SPELL_TYPE ability) {
         //ability2 = ability;
         string name = Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString());
         ability2Icon.sprite = PlayerManager.Instance.GetJobActionSprite(name);
         string text = name;
-        text += "\n" + PlayerManager.Instance.allInterventionAbilitiesData[ability].description;
+        text += "\n" + PlayerManager.Instance.allSpellsData[ability].description;
         //text += "\nTier: " + PlayerManager.Instance.GetInterventionAbilityTier(ability);
         ability2Text.text = text;
     }
-    public void SetAbility3(INTERVENTION_ABILITY ability) {
+    public void SetAbility3(SPELL_TYPE ability) {
         //ability3 = ability;
         string name = Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString());
         ability3Icon.sprite = PlayerManager.Instance.GetJobActionSprite(name);
         string text = name;
-        text += "\n" + PlayerManager.Instance.allInterventionAbilitiesData[ability].description;
+        text += "\n" + PlayerManager.Instance.allSpellsData[ability].description;
         //text += "\nTier: " + PlayerManager.Instance.GetInterventionAbilityTier(ability);
         ability3Text.text = text;
     }

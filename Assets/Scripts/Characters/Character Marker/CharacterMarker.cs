@@ -447,6 +447,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         StopPerTickFlee();
         PathfindingManager.Instance.RemoveAgent(pathfindingAI);
         RemoveListeners();
+        HideHPBar();
         
         Messenger.Broadcast(Signals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);
         
@@ -852,6 +853,32 @@ public class CharacterMarker : MapObjectVisual<Character> {
         SetCollidersState(true);
         tile.parentMap.location.AddAwareness(character);
     }
+    public void InitialPlaceMarkerAt(Vector3 worldPosition, Region region, bool addToLocation = true) {
+        PlaceMarkerAt(worldPosition, region, addToLocation);
+        pathfindingAI.UpdateMe();
+        SetCollidersState(true);
+        visionCollision.Initialize();
+        CreateCollisionTrigger();
+        UpdateSpeed();
+    }
+    public void PlaceMarkerAt(Vector3 worldPosition, Region region, bool addToLocation = true) {
+        Vector3 localPos = region.innerMap.grid.WorldToLocal(worldPosition);
+        Vector3Int coordinate = region.innerMap.grid.LocalToCell(localPos);
+        LocationGridTile tile = region.innerMap.map[coordinate.x, coordinate.y];
+        
+        this.gameObject.transform.SetParent(tile.parentMap.objectsParent);
+        pathfindingAI.Teleport(worldPosition);
+        if (addToLocation) {
+            tile.structure.location.AddCharacterToLocation(character);
+            tile.structure.AddCharacterAtLocation(character, tile);
+        }
+        SetActiveState(true);
+        UpdateAnimation();
+        UpdatePosition();
+        UpdateActionIcon();
+        SetCollidersState(true);
+        tile.parentMap.location.AddAwareness(character);
+    }
     private IEnumerator Positioner(Vector3 localPos, Vector3 lookAt) {
         yield return null;
         transform.localPosition = localPos;
@@ -862,8 +889,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         transform.localPosition = localPos;
         Rotate(lookAt, true);
     }
-    public void OnDeath(LocationGridTile deathTileLocation, bool isOutsideSettlement = false) {
-        if (character.race == RACE.SKELETON || character is Summon || character.minion != null || isOutsideSettlement) {
+    public void OnDeath(LocationGridTile deathTileLocation) {
+        if (character.race == RACE.SKELETON || character is Summon || character.minion != null) {
             character.DestroyMarker();
         } else {
             SetCollidersState(false);

@@ -50,10 +50,10 @@ public class NewAbilityUI : MonoBehaviour {
         obtainText.gameObject.SetActive(false);
         minionGO.SetActive(false);
         obtainText.gameObject.SetActive(false);
-        if (obj is PlayerJobAction) {
+        if (obj is PlayerSpell) {
             titleText.text = "New Spell";
             obtainText.text = "You obtained a new Spell!";
-            PlayerJobAction action = obj as PlayerJobAction;
+            PlayerSpell action = obj as PlayerSpell;
             abilityIcon.sprite = PlayerManager.Instance.GetJobActionSprite(action.name);
             string text = action.name;
             //text += "\nLevel: " + action.level;

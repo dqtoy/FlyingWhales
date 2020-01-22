@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using Traits;
 using UnityEngine;
 
-public class ShareIntel : PlayerJobAction {
+public class ShareIntel : PlayerSpell {
     //TODO: REDO SHARE INTEL TO BE A PLAYER ABILITY!
     public Character targetCharacter { get; private set; }
 
-    public ShareIntel() : base(INTERVENTION_ABILITY.ABDUCT) {
+    public ShareIntel() : base(SPELL_TYPE.ABDUCT) {
         //description = "The Diplomat will reach out to a character and share a piece of information with them.";
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }
 
     public override void ActivateAction(IPointOfInterest targetPOI) {

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using Traits;
 using UnityEngine;
 
-public class Psychopathy : PlayerJobAction {
+public class Psychopathy : PlayerSpell {
 
-    public Psychopathy() : base(INTERVENTION_ABILITY.PSYCHOPATHY) {
+    public Psychopathy() : base(SPELL_TYPE.PSYCHOPATHY) {
         tier = 1;
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
         //abilityTags.Add(ABILITY_TAG.NONE);
     }
 
@@ -58,11 +58,11 @@ public class Psychopathy : PlayerJobAction {
     }
 }
 
-public class PsychopathyData : PlayerJobActionData {
-    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.PSYCHOPATHY;
+public class PsychopathyData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.PSYCHOPATHY;
     public override string name { get { return "Psychopathy"; } }
     public override string description { get { return "Turns a character into a serial killer."; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.MONSTER; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.MONSTER; } }
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
 

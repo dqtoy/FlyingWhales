@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Traits;
 
-public class CursedObject : PlayerJobAction {
-    public CursedObject() : base(INTERVENTION_ABILITY.CURSED_OBJECT) {
+public class CursedObject : PlayerSpell {
+    public CursedObject() : base(SPELL_TYPE.CURSED_OBJECT) {
         tier = 2;
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE_OBJECT };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE_OBJECT };
         //abilityTags.Add(ABILITY_TAG.NONE);
     }
 
@@ -47,9 +47,9 @@ public class CursedObject : PlayerJobAction {
     #endregion
 }
 
-public class CursedObjectData : PlayerJobActionData {
-    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.CURSED_OBJECT;
+public class CursedObjectData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.CURSED_OBJECT;
     public override string name { get { return "Cursed Object"; } }
     public override string description { get { return "Put a curse on an object"; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.HEX; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.HEX; } }
 }

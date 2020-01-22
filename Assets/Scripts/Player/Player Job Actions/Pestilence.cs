@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using Traits;
 using UnityEngine;
 
-public class Pestilence : PlayerJobAction {
+public class Pestilence : PlayerSpell {
 
-    public Pestilence() : base(INTERVENTION_ABILITY.PESTILENCE) {
+    public Pestilence() : base(SPELL_TYPE.PESTILENCE) {
         tier = 1;
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
         //abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 
@@ -105,11 +105,11 @@ public class Pestilence : PlayerJobAction {
     }
 }
 
-public class PestilenceData : PlayerJobActionData {
-    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.PESTILENCE;
+public class PestilenceData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.PESTILENCE;
     public override string name { get { return "Pestilence"; } }
     public override string description { get { return "Afflict a character with a virulent and deadly disease. Disease is spread through chatting and sexual contact."; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.DEVASTATION; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
     #region Overrides

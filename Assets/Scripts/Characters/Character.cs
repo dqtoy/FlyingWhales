@@ -2,11 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Actionables;
 using Inner_Maps;
 using UnityEngine;
 using Traits;
 
-public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
+public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget {
 
     protected string _name;
     protected string _firstName;
@@ -383,6 +384,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
         //hostiltiy
         ignoreHostility = 0;
 
+        ConstructDefaultActions();
+        
         //Components
         stateComponent = new CharacterStateComponent(this);
         jobQueue = new JobQueue(this);
@@ -874,7 +877,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
 
             SetHP(0);
 
-            marker.OnDeath(deathTile, wasOutsideSettlement);
+            marker.OnDeath(deathTile);
 
             //SetNumWaitingForGoapThread(0); //for raise dead
             //Dead dead = new Dead();
@@ -1860,6 +1863,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
         Trait criminal = traitContainer.GetNormalTrait<Trait>("Criminal");
         if (criminal != null) {
             traitContainer.RemoveTrait(this, criminal); //TODO: RemoveTrait(criminal, false); do not trigger on remove
+        }
+        if (PlayerManager.Instance.player != null && this.faction == PlayerManager.Instance.player.playerFaction) {
+            ClearPlayerActions();
         }
     }
     private void OnChangeFactionRelationship(Faction faction1, Faction faction2, FACTION_RELATIONSHIP_STATUS newStatus, FACTION_RELATIONSHIP_STATUS oldStatus) {
@@ -3251,13 +3257,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
         int previous = this._currentHP;
         this._currentHP += amount;
         this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
-        if (marker.hpBarGO.activeSelf) {
-            marker.UpdateHP();
-        } else {
-            if (amount < 0 && _currentHP > 0) {
-                //only show hp bar if hp was reduced and hp is greater than 0
-                marker.QuickShowHPBar();
-            }
+        if (marker != null) {
+            if (marker.hpBarGO.activeSelf) {
+                marker.UpdateHP();
+            } else {
+                if (amount < 0 && _currentHP > 0) {
+                    //only show hp bar if hp was reduced and hp is greater than 0
+                    marker.QuickShowHPBar();
+                }
+            }    
         }
         Messenger.Broadcast(Signals.ADJUSTED_HP, this);
         if (amount < 0 && IsHealthCriticallyLow()) {
@@ -3703,7 +3711,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
     public bool CanPlanGoap() {
         //If there is no settlement, it means that there is no inner map, so character must not do goap actions, jobs, and plans
         //characters that cannot witness, cannot plan actions.
-        return minion == null && !isDead && isStoppedByOtherCharacter <= 0 && canPerform
+        //minion == null &&
+        return !isDead && isStoppedByOtherCharacter <= 0 && canPerform
             && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count <= 0
             && !marker.hasFleePath && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterrupted;
     }
@@ -3744,7 +3753,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
     //        PlanPerTickGoap();
     //    }
     //}
-    protected void PerStartTickActionPlanning() {
+    public void PerStartTickActionPlanning() {
         //if (_hasAlreadyAskedForPlan || isDead) {
         //    return;
         //}
@@ -6232,6 +6241,39 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner {
     //This way we can easily know and access the lycan data
     public void SetLycanthropeData(LycanthropeData data) {
         lycanData = data;
+    }
+    #endregion
+
+    #region Player Action Target
+    public List<PlayerAction> actions { get; private set; }
+    public void ConstructDefaultActions() {
+        actions = new List<PlayerAction>();
+        
+        PlayerAction afflictAction = new PlayerAction("Afflict", 
+            () => true,
+            UIManager.Instance.characterInfoUI.ShowAfflictUI);
+        
+        PlayerAction zapAction = new PlayerAction("Zap", 
+            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].CanPerformAbilityTowards(this), 
+            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].ActivateAbility(this));
+        PlayerAction seizeAction = new PlayerAction("Seize", 
+            () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && this.minion == null && !(this is Summon) && this.traitContainer.GetNormalTrait<Trait>("Leader", "Blessed") == null, 
+            () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
+        PlayerAction shareIntelAction = new PlayerAction("Share Intel", () => false, null);
+        
+        AddPlayerAction(afflictAction);
+        AddPlayerAction(zapAction);
+        AddPlayerAction(seizeAction);
+        AddPlayerAction(shareIntelAction);
+    }
+    public void AddPlayerAction(PlayerAction action) {
+        actions.Add(action);
+    }
+    public void RemovePlayerAction(PlayerAction action) {
+        actions.Remove(action);
+    }
+    public void ClearPlayerActions() {
+        actions.Clear();
     }
     #endregion
 }

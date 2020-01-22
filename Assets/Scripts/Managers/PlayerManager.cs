@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using UnityEngine;
-
+using UnityEngine.Serialization;
 
 public class PlayerManager : MonoBehaviour {
     public static PlayerManager Instance = null;
@@ -16,22 +16,24 @@ public class PlayerManager : MonoBehaviour {
 
     public bool isChoosingStartingTile = false;
     public Player player = null;
-    public INTERVENTION_ABILITY[] allInterventionAbilities;
-    public Dictionary<INTERVENTION_ABILITY, PlayerJobActionData> allInterventionAbilitiesData;
+    [FormerlySerializedAs("allInterventionAbilities")] public SPELL_TYPE[] allSpellTypes;
+    [FormerlySerializedAs("allInterventionAbilitiesData")] public Dictionary<SPELL_TYPE, SpellData> allSpellsData;
     public COMBAT_ABILITY[] allCombatAbilities;
     public LANDMARK_TYPE[] allLandmarksThatCanBeBuilt;
 
     [SerializeField] private Sprite[] _playerAreaFloorSprites;
     [SerializeField] private LandmarkStructureSprite[] _playerAreaDefaultStructureSprites;
 
+    [FormerlySerializedAs("jobActionIcons")]
     [Header("Job Action Icons")]
-    [SerializeField] private StringSpriteDictionary jobActionIcons;
+    [SerializeField] private StringSpriteDictionary spellIcons;
 
     [Header("Combat Ability Icons")]
     [SerializeField] private StringSpriteDictionary combatAbilityIcons;
 
+    [FormerlySerializedAs("interventionAbilityTiers")]
     [Header("Intervention Ability Tiers")]
-    [SerializeField] private InterventionAbilityTierDictionary interventionAbilityTiers;
+    [SerializeField] private InterventionAbilityTierDictionary spellTiers;
 
     #region getters/setters
     public Sprite[] playerAreaFloorSprites {
@@ -47,18 +49,18 @@ public class PlayerManager : MonoBehaviour {
     }
     public void Initialize() {
         // , INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY
-        allInterventionAbilities = new INTERVENTION_ABILITY[] { INTERVENTION_ABILITY.ZAP, INTERVENTION_ABILITY.RAISE_DEAD, INTERVENTION_ABILITY.CANNIBALISM
-            , INTERVENTION_ABILITY.LYCANTHROPY, INTERVENTION_ABILITY.VAMPIRISM, INTERVENTION_ABILITY.KLEPTOMANIA
-            , INTERVENTION_ABILITY.UNFAITHFULNESS, INTERVENTION_ABILITY.ENRAGE, INTERVENTION_ABILITY.PROVOKE, INTERVENTION_ABILITY.EXPLOSION
-            , INTERVENTION_ABILITY.IGNITE, INTERVENTION_ABILITY.LURE, INTERVENTION_ABILITY.CURSED_OBJECT, INTERVENTION_ABILITY.SPOIL, INTERVENTION_ABILITY.ALCOHOLIC
-            , INTERVENTION_ABILITY.LULLABY, INTERVENTION_ABILITY.AGORAPHOBIA, INTERVENTION_ABILITY.PARALYSIS, INTERVENTION_ABILITY.RELEASE, INTERVENTION_ABILITY.ZOMBIE_VIRUS
-            , INTERVENTION_ABILITY.PESTILENCE, INTERVENTION_ABILITY.PSYCHOPATHY, INTERVENTION_ABILITY.TORNADO , INTERVENTION_ABILITY.DESTROY }; //INTERVENTION_ABILITY.JOLT, , INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY//
+        allSpellTypes = new SPELL_TYPE[] { SPELL_TYPE.ZAP, SPELL_TYPE.RAISE_DEAD, SPELL_TYPE.CANNIBALISM
+            , SPELL_TYPE.LYCANTHROPY, SPELL_TYPE.VAMPIRISM, SPELL_TYPE.KLEPTOMANIA
+            , SPELL_TYPE.UNFAITHFULNESS, SPELL_TYPE.ENRAGE, SPELL_TYPE.PROVOKE, SPELL_TYPE.EXPLOSION
+            , SPELL_TYPE.IGNITE, SPELL_TYPE.LURE, SPELL_TYPE.CURSED_OBJECT, SPELL_TYPE.SPOIL, SPELL_TYPE.ALCOHOLIC
+            , SPELL_TYPE.LULLABY, SPELL_TYPE.AGORAPHOBIA, SPELL_TYPE.PARALYSIS, SPELL_TYPE.RELEASE, SPELL_TYPE.ZOMBIE_VIRUS
+            , SPELL_TYPE.PESTILENCE, SPELL_TYPE.PSYCHOPATHY, SPELL_TYPE.TORNADO , SPELL_TYPE.DESTROY }; //INTERVENTION_ABILITY.JOLT, , INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY//
         allCombatAbilities = (COMBAT_ABILITY[]) System.Enum.GetValues(typeof(COMBAT_ABILITY));
 
-        allInterventionAbilitiesData = new Dictionary<INTERVENTION_ABILITY, PlayerJobActionData>();
-        for (int i = 0; i < allInterventionAbilities.Length; i++) {
-            var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(allInterventionAbilities[i].ToString()) + "Data";
-            allInterventionAbilitiesData.Add(allInterventionAbilities[i], System.Activator.CreateInstance(System.Type.GetType(typeName)) as PlayerJobActionData);
+        allSpellsData = new Dictionary<SPELL_TYPE, SpellData>();
+        for (int i = 0; i < allSpellTypes.Length; i++) {
+            var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(allSpellTypes[i].ToString()) + "Data";
+            allSpellsData.Add(allSpellTypes[i], System.Activator.CreateInstance(System.Type.GetType(typeName)) as SpellData);
         }
 
         allLandmarksThatCanBeBuilt = new LANDMARK_TYPE[] { LANDMARK_TYPE.THE_ANVIL, LANDMARK_TYPE.THE_EYE , LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.THE_CRYPT, LANDMARK_TYPE.THE_SPIRE, LANDMARK_TYPE.THE_NEEDLES, LANDMARK_TYPE.THE_PROFANE, LANDMARK_TYPE.THE_PIT, LANDMARK_TYPE.GOADER };
@@ -126,7 +128,7 @@ public class PlayerManager : MonoBehaviour {
         }
         //player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
     }
-    public int GetManaCostForInterventionAbility(int tier) {
+    public int GetManaCostForSpell(int tier) {
         if (tier == 1) {
             return 150;
         } else if (tier == 2) {
@@ -138,8 +140,8 @@ public class PlayerManager : MonoBehaviour {
 
     #region Utilities
     public Sprite GetJobActionSprite(string actionName) {
-        if (jobActionIcons.ContainsKey(actionName)) {
-            return jobActionIcons[actionName];
+        if (spellIcons.ContainsKey(actionName)) {
+            return spellIcons[actionName];
         }
         return null;
     }
@@ -152,78 +154,78 @@ public class PlayerManager : MonoBehaviour {
     #endregion
 
     #region Intervention Ability
-    public PlayerJobAction CreateNewInterventionAbility(INTERVENTION_ABILITY abilityType) {
+    public PlayerSpell CreateNewInterventionAbility(SPELL_TYPE abilityType) {
         switch (abilityType) {
-            case INTERVENTION_ABILITY.ABDUCT:
+            case SPELL_TYPE.ABDUCT:
                 return new Abduct();
-            case INTERVENTION_ABILITY.ACCESS_MEMORIES:
+            case SPELL_TYPE.ACCESS_MEMORIES:
                 return new AccessMemories();
-            case INTERVENTION_ABILITY.DESTROY:
+            case SPELL_TYPE.DESTROY:
                 return new Destroy();
-            case INTERVENTION_ABILITY.DISABLE:
+            case SPELL_TYPE.DISABLE:
                 return new Disable();
-            case INTERVENTION_ABILITY.ENRAGE:
+            case SPELL_TYPE.ENRAGE:
                 return new Enrage();
-            case INTERVENTION_ABILITY.KLEPTOMANIA:
+            case SPELL_TYPE.KLEPTOMANIA:
                 return new Kleptomania();
-            case INTERVENTION_ABILITY.LYCANTHROPY:
+            case SPELL_TYPE.LYCANTHROPY:
                 return new Lycanthropy();
-            case INTERVENTION_ABILITY.UNFAITHFULNESS:
+            case SPELL_TYPE.UNFAITHFULNESS:
                 return new Unfaithfulness();
-            case INTERVENTION_ABILITY.VAMPIRISM:
+            case SPELL_TYPE.VAMPIRISM:
                 return new Vampirism();
-            case INTERVENTION_ABILITY.JOLT:
+            case SPELL_TYPE.JOLT:
                 return new Jolt();
-            case INTERVENTION_ABILITY.PROVOKE:
+            case SPELL_TYPE.PROVOKE:
                 return new Provoke();
-            case INTERVENTION_ABILITY.RAISE_DEAD:
+            case SPELL_TYPE.RAISE_DEAD:
                 return new RaiseDead();
             //case INTERVENTION_ABILITY.SHARE_INTEL:
             //    return new ShareIntel();
-            case INTERVENTION_ABILITY.SPOOK:
+            case SPELL_TYPE.SPOOK:
                 return new Spook();
-            case INTERVENTION_ABILITY.ZAP:
+            case SPELL_TYPE.ZAP:
                 return new Zap();
-            case INTERVENTION_ABILITY.CANNIBALISM:
+            case SPELL_TYPE.CANNIBALISM:
                 return new Cannibalism();
-            case INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY:
+            case SPELL_TYPE.CLOAK_OF_INVISIBILITY:
                 return new CloakOfInvisibility();
-            case INTERVENTION_ABILITY.LURE:
+            case SPELL_TYPE.LURE:
                 return new Lure();
-            case INTERVENTION_ABILITY.EXPLOSION:
+            case SPELL_TYPE.EXPLOSION:
                 return new Explosion();
-            case INTERVENTION_ABILITY.IGNITE:
+            case SPELL_TYPE.IGNITE:
                 return new Ignite();
-            case INTERVENTION_ABILITY.CURSED_OBJECT:
+            case SPELL_TYPE.CURSED_OBJECT:
                 return new CursedObject();
-            case INTERVENTION_ABILITY.SPOIL:
+            case SPELL_TYPE.SPOIL:
                 return new Spoil();
-            case INTERVENTION_ABILITY.ALCOHOLIC:
+            case SPELL_TYPE.ALCOHOLIC:
                 return new Alcoholic();
-            case INTERVENTION_ABILITY.LULLABY:
+            case SPELL_TYPE.LULLABY:
                 return new Lullaby();
-            case INTERVENTION_ABILITY.PESTILENCE:
+            case SPELL_TYPE.PESTILENCE:
                 return new Pestilence();
-            case INTERVENTION_ABILITY.AGORAPHOBIA:
+            case SPELL_TYPE.AGORAPHOBIA:
                 return new Agoraphobia();
-            case INTERVENTION_ABILITY.PARALYSIS:
+            case SPELL_TYPE.PARALYSIS:
                 return new Paralysis();
-            case INTERVENTION_ABILITY.RELEASE:
+            case SPELL_TYPE.RELEASE:
                 return new Release();
-            case INTERVENTION_ABILITY.ZOMBIE_VIRUS:
+            case SPELL_TYPE.ZOMBIE_VIRUS:
                 return new ZombieVirus();
-            case INTERVENTION_ABILITY.PSYCHOPATHY:
+            case SPELL_TYPE.PSYCHOPATHY:
                 return new Psychopathy();
-            case INTERVENTION_ABILITY.TORNADO:
+            case SPELL_TYPE.TORNADO:
                 return new Tornado();
         }
         return null;
     }
-    public List<INTERVENTION_ABILITY> GetInterventionAbilitiesWithTag(ABILITY_TAG tag) {
-        List<INTERVENTION_ABILITY> valid = new List<INTERVENTION_ABILITY>();
-        INTERVENTION_ABILITY[] abilities = allInterventionAbilities;
+    public List<SPELL_TYPE> GetInterventionAbilitiesWithTag(ABILITY_TAG tag) {
+        List<SPELL_TYPE> valid = new List<SPELL_TYPE>();
+        SPELL_TYPE[] abilities = allSpellTypes;
         for (int i = 0; i < abilities.Length; i++) {
-            INTERVENTION_ABILITY currAbility = abilities[i];
+            SPELL_TYPE currAbility = abilities[i];
             List<ABILITY_TAG> tags = currAbility.GetAbilityTags();
             if (tags.Contains(tag)) {
                 valid.Add(currAbility);
@@ -231,40 +233,40 @@ public class PlayerManager : MonoBehaviour {
         }
         return valid;
     }
-    public int GetInterventionAbilityTier(INTERVENTION_ABILITY abilityType) {
-        if (interventionAbilityTiers.ContainsKey(abilityType)) {
-            return interventionAbilityTiers[abilityType];
+    public int GetSpellTier(SPELL_TYPE abilityType) {
+        if (spellTiers.ContainsKey(abilityType)) {
+            return spellTiers[abilityType];
         }
         return 3;
     }
-    public INTERVENTION_ABILITY GetRandomAbilityByTier(int tier) {
-        List<INTERVENTION_ABILITY> abilityTiers = new List<INTERVENTION_ABILITY>();
-        for (int i = 0; i < allInterventionAbilities.Length; i++) {
-            INTERVENTION_ABILITY ability = allInterventionAbilities[i];
-            if (GetInterventionAbilityTier(ability) == tier) {
+    public SPELL_TYPE GetRandomAbilityByTier(int tier) {
+        List<SPELL_TYPE> abilityTiers = new List<SPELL_TYPE>();
+        for (int i = 0; i < allSpellTypes.Length; i++) {
+            SPELL_TYPE ability = allSpellTypes[i];
+            if (GetSpellTier(ability) == tier) {
                 abilityTiers.Add(ability);
             }
         }
         if (abilityTiers.Count > 0) {
             return abilityTiers[UnityEngine.Random.Range(0, abilityTiers.Count)];
         }
-        return INTERVENTION_ABILITY.ABDUCT;
+        return SPELL_TYPE.ABDUCT;
     }
-    public List<INTERVENTION_ABILITY> GetAbilitiesByTier(int tier) {
-        List<INTERVENTION_ABILITY> abilityTiers = new List<INTERVENTION_ABILITY>();
-        for (int i = 0; i < allInterventionAbilities.Length; i++) {
-            INTERVENTION_ABILITY ability = allInterventionAbilities[i];
-            if (GetInterventionAbilityTier(ability) == tier) {
+    public List<SPELL_TYPE> GetAbilitiesByTier(int tier) {
+        List<SPELL_TYPE> abilityTiers = new List<SPELL_TYPE>();
+        for (int i = 0; i < allSpellTypes.Length; i++) {
+            SPELL_TYPE ability = allSpellTypes[i];
+            if (GetSpellTier(ability) == tier) {
                 abilityTiers.Add(ability);
             }
         }
         return abilityTiers;
     }
-    public List<INTERVENTION_ABILITY> GetAllInterventionAbilityByCategory(INTERVENTION_ABILITY_CATEGORY category) {
-        List<INTERVENTION_ABILITY> abilities = new List<INTERVENTION_ABILITY>();
-        for (int i = 0; i < allInterventionAbilities.Length; i++) {
-            INTERVENTION_ABILITY ability = allInterventionAbilities[i];
-            if (allInterventionAbilitiesData[ability].category == category) {
+    public List<SPELL_TYPE> GetAllInterventionAbilityByCategory(SPELL_CATEGORY category) {
+        List<SPELL_TYPE> abilities = new List<SPELL_TYPE>();
+        for (int i = 0; i < allSpellTypes.Length; i++) {
+            SPELL_TYPE ability = allSpellTypes[i];
+            if (allSpellsData[ability].category == category) {
                 abilities.Add(ability);
             }
         }

@@ -371,11 +371,11 @@ public class Player : ILeader {
     #endregion
 
     #region Role Actions
-    public PlayerJobAction currentActivePlayerJobAction { get; private set; }
-    public void SetCurrentlyActivePlayerJobAction(PlayerJobAction action) {
-        PlayerJobAction previousActiveAction = currentActivePlayerJobAction;
-        currentActivePlayerJobAction = action;
-        if (currentActivePlayerJobAction == null) {
+    public PlayerSpell currentActivePlayerSpell { get; private set; }
+    public void SetCurrentlyActivePlayerJobAction(PlayerSpell action) {
+        PlayerSpell previousActiveAction = currentActivePlayerSpell;
+        currentActivePlayerSpell = action;
+        if (currentActivePlayerSpell == null) {
             Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
             CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
             PlayerJobActionButton jobActionButton = PlayerUI.Instance.GetPlayerJobActionButton(previousActiveAction);
@@ -385,7 +385,7 @@ public class Player : ILeader {
             //     previousActiveAction.HideRange(InnerMapManager.Instance.GetTileFromMousePosition());
             // }
         } else {
-            PlayerJobActionButton jobActionButton = PlayerUI.Instance.GetPlayerJobActionButton(currentActivePlayerJobAction);
+            PlayerJobActionButton jobActionButton = PlayerUI.Instance.GetPlayerJobActionButton(currentActivePlayerSpell);
             CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Cross);
             Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
             jobActionButton?.SetSelectedIconState(true);
@@ -403,35 +403,35 @@ public class Player : ILeader {
         if (UIManager.Instance.IsMouseOnUI()) {
             return; //clicked on UI;
         }
-        for (int i = 0; i < currentActivePlayerJobAction.targetTypes.Length; i++) {
+        for (int i = 0; i < currentActivePlayerSpell.targetTypes.Length; i++) {
             bool activatedAction = false;
-            switch (currentActivePlayerJobAction.targetTypes[i]) {
-                case JOB_ACTION_TARGET.NONE:
+            switch (currentActivePlayerSpell.targetTypes[i]) {
+                case SPELL_TARGET.NONE:
                     break;
-                case JOB_ACTION_TARGET.CHARACTER:
+                case SPELL_TARGET.CHARACTER:
                     if (InnerMapManager.Instance.currentlyShowingMap != null && InnerMapManager.Instance.currentlyHoveredPoi is Character) {
-                        if (currentActivePlayerJobAction.CanPerformActionTowards(InnerMapManager.Instance.currentlyHoveredPoi)) {
-                            currentActivePlayerJobAction.ActivateAction(InnerMapManager.Instance.currentlyHoveredPoi);
+                        if (currentActivePlayerSpell.CanPerformActionTowards(InnerMapManager.Instance.currentlyHoveredPoi)) {
+                            currentActivePlayerSpell.ActivateAction(InnerMapManager.Instance.currentlyHoveredPoi);
                             activatedAction = true;
                         } else {
                         }
                         UIManager.Instance.SetTempDisableShowInfoUI(true);
                     }
                     break;
-                case JOB_ACTION_TARGET.TILE_OBJECT:
+                case SPELL_TARGET.TILE_OBJECT:
                     if (InnerMapManager.Instance.currentlyHoveredPoi is TileObject) {
-                        if (currentActivePlayerJobAction.CanPerformActionTowards(InnerMapManager.Instance.currentlyHoveredPoi)) {
-                            currentActivePlayerJobAction.ActivateAction(InnerMapManager.Instance.currentlyHoveredPoi);
+                        if (currentActivePlayerSpell.CanPerformActionTowards(InnerMapManager.Instance.currentlyHoveredPoi)) {
+                            currentActivePlayerSpell.ActivateAction(InnerMapManager.Instance.currentlyHoveredPoi);
                             activatedAction = true;
                         }
                         UIManager.Instance.SetTempDisableShowInfoUI(true);
                     }
                     break;
-                case JOB_ACTION_TARGET.TILE:
+                case SPELL_TARGET.TILE:
                     LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
                     if (hoveredTile != null) {
-                        if (currentActivePlayerJobAction.CanPerformActionTowards(hoveredTile)) {
-                            currentActivePlayerJobAction.ActivateAction(hoveredTile);
+                        if (currentActivePlayerSpell.CanPerformActionTowards(hoveredTile)) {
+                            currentActivePlayerSpell.ActivateAction(hoveredTile);
                             activatedAction = true;
                         } 
                         UIManager.Instance.SetTempDisableShowInfoUI(true);
@@ -1426,11 +1426,11 @@ public class Player : ILeader {
             }
         }
     }
-    public void GainNewInterventionAbility(INTERVENTION_ABILITY ability, bool showNewAbilityUI = false) {
-        PlayerJobAction playerJobAction = PlayerManager.Instance.CreateNewInterventionAbility(ability);
-        GainNewInterventionAbility(playerJobAction, showNewAbilityUI);
+    public void GainNewInterventionAbility(SPELL_TYPE ability, bool showNewAbilityUI = false) {
+        PlayerSpell playerSpell = PlayerManager.Instance.CreateNewInterventionAbility(ability);
+        GainNewInterventionAbility(playerSpell, showNewAbilityUI);
     }
-    public void GainNewInterventionAbility(PlayerJobAction ability, bool showNewAbilityUI = false) {
+    public void GainNewInterventionAbility(PlayerSpell ability, bool showNewAbilityUI = false) {
         if (!HasEmptyInterventionSlot()) {
             PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllInterventionAbilities(), ability, OnReplaceInterventionAbility, OnRejectInterventionAbility);
         } else {
@@ -1446,7 +1446,7 @@ public class Player : ILeader {
             }
         }
     }
-    public void ConsumeAbility(PlayerJobAction ability) {
+    public void ConsumeAbility(PlayerSpell ability) {
         for (int i = 0; i < interventionAbilitySlots.Length; i++) {
             if (interventionAbilitySlots[i].ability == ability) {
                 interventionAbilitySlots[i].SetAbility(null);
@@ -1456,8 +1456,8 @@ public class Player : ILeader {
         }
     }
     private void OnReplaceInterventionAbility(object objToReplace, object objToAdd) {
-        PlayerJobAction replace = objToReplace as PlayerJobAction;
-        PlayerJobAction add = objToAdd as PlayerJobAction;
+        PlayerSpell replace = objToReplace as PlayerSpell;
+        PlayerSpell add = objToAdd as PlayerSpell;
         for (int i = 0; i < interventionAbilitySlots.Length; i++) {
             if (interventionAbilitySlots[i].ability == replace) {
                 interventionAbilitySlots[i].SetAbility(add);
@@ -1484,8 +1484,8 @@ public class Player : ILeader {
         }
         return false;
     }
-    public List<PlayerJobAction> GetAllInterventionAbilities() {
-        List<PlayerJobAction> abilities = new List<PlayerJobAction>();
+    public List<PlayerSpell> GetAllInterventionAbilities() {
+        List<PlayerSpell> abilities = new List<PlayerSpell>();
         for (int i = 0; i < interventionAbilitySlots.Length; i++) {
             if (interventionAbilitySlots[i].ability != null) {
                 abilities.Add(interventionAbilitySlots[i].ability);
@@ -1615,14 +1615,14 @@ public class Player : ILeader {
         maxMana = Mathf.Max(0, maxMana);
     }
     public int GetManaCostForInterventionAbility(string ability) {
-        INTERVENTION_ABILITY converted = (INTERVENTION_ABILITY)System.Enum.Parse(typeof(INTERVENTION_ABILITY), ability);
+        SPELL_TYPE converted = (SPELL_TYPE)System.Enum.Parse(typeof(SPELL_TYPE), ability);
         return GetManaCostForInterventionAbility(converted);
     }
-    public int GetManaCostForInterventionAbility(INTERVENTION_ABILITY ability) {
-        int tier = PlayerManager.Instance.GetInterventionAbilityTier(ability);
-        return PlayerManager.Instance.GetManaCostForInterventionAbility(tier);
+    public int GetManaCostForInterventionAbility(SPELL_TYPE ability) {
+        int tier = PlayerManager.Instance.GetSpellTier(ability);
+        return PlayerManager.Instance.GetManaCostForSpell(tier);
     }
-    public bool CanAffordInterventionAbility(INTERVENTION_ABILITY ability) {
+    public bool CanAffordInterventionAbility(SPELL_TYPE ability) {
         return mana >= GetManaCostForInterventionAbility(ability);
     }
     #endregion

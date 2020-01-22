@@ -270,12 +270,6 @@ public class CharacterManager : MonoBehaviour {
     public void RemoveCharacterAvatar(CharacterAvatar characterAvatar) {
         _allCharacterAvatars.Remove(characterAvatar);
     }
-    //public void GenerateInitialAwareness() {
-    //    for (int i = 0; i < allCharacters.Count; i++) {
-    //        Character character = allCharacters[i];
-    //        character.AddInitialAwareness();
-    //    }
-    //}
     public void PlaceInitialCharacters(List<Character> characters, Settlement settlement) {
         for (int i = 0; i < characters.Count; i++) {
             Character character = characters[i];
@@ -293,21 +287,6 @@ public class CharacterManager : MonoBehaviour {
                 List<LocationGridTile> choices = wilderness.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
                 LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
                 character.InitialCharacterPlacement(chosenTile);
-            }
-        }
-    }
-    public void GiveInitialItems() {
-        List<SPECIAL_TOKEN> choices = Utilities.GetEnumValues<SPECIAL_TOKEN>().ToList();
-        choices.Remove(SPECIAL_TOKEN.HEALING_POTION);
-        choices.Remove(SPECIAL_TOKEN.TOOL);
-        for (int i = 0; i < allCharacters.Count; i++) {
-            Character character = allCharacters[i];
-            if (character.minion == null) {
-                if (UnityEngine.Random.Range(0, 2) == 0) {
-                    SPECIAL_TOKEN randomItem = choices[UnityEngine.Random.Range(0, choices.Count)];
-                    SpecialToken token = TokenManager.Instance.CreateSpecialToken(randomItem);
-                    character.ObtainToken(token);
-                }
             }
         }
     }
@@ -831,11 +810,11 @@ public class CharacterManager : MonoBehaviour {
     public bool CanDoDeadlySinAction(string deadlySinName, DEADLY_SIN_ACTION action) {
         return deadlySins[deadlySinName].CanDoDeadlySinAction(action);
     }
-    public List<INTERVENTION_ABILITY> Get3RandomResearchInterventionAbilities(DeadlySin deadlySin) {
-        List<INTERVENTION_ABILITY> interventionAbilitiesToResearch = new List<INTERVENTION_ABILITY>();
-        INTERVENTION_ABILITY_CATEGORY category = deadlySin.GetInterventionAbilityCategory();
-        if (category != INTERVENTION_ABILITY_CATEGORY.NONE) {
-            List<INTERVENTION_ABILITY> possibleAbilities = PlayerManager.Instance.GetAllInterventionAbilityByCategory(category);
+    public List<SPELL_TYPE> Get3RandomResearchInterventionAbilities(DeadlySin deadlySin) {
+        List<SPELL_TYPE> interventionAbilitiesToResearch = new List<SPELL_TYPE>();
+        SPELL_CATEGORY category = deadlySin.GetInterventionAbilityCategory();
+        if (category != SPELL_CATEGORY.NONE) {
+            List<SPELL_TYPE> possibleAbilities = PlayerManager.Instance.GetAllInterventionAbilityByCategory(category);
             if (possibleAbilities.Count > 0) {
 
                 int index1 = UnityEngine.Random.Range(0, possibleAbilities.Count);

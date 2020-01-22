@@ -30,7 +30,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
         return false;
     }
     private bool PlanWorkActions(Character character) {
-        if (character.isAtHomeRegion && character.homeSettlement != null && character.isPartOfHomeFaction) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
+        if (character.isAtHomeRegion && character.homeSettlement != null) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
             //check settlement job queue, if it has any jobs that target an object that is in view of the character
             JobQueueItem jobToAssign = character.homeSettlement.GetFirstJobBasedOnVision(character);
             if (jobToAssign == null) {

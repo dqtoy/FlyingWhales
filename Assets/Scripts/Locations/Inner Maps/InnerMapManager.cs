@@ -92,7 +92,14 @@ namespace Inner_Maps {
 
             if (Input.GetMouseButtonDown(0)) {
                 if (UIManager.Instance.IsMouseOnUI() == false && IsMouseOnMapObject() == false && currentlyShowingMap != null) {
-                    Messenger.Broadcast(Signals.HIDE_MENUS);    
+                    LocationGridTile clickedTile = GetTileFromMousePosition();
+                    if (clickedTile.buildSpotOwner.isPartOfParentRegionMap) {
+                      //show hextile info
+                      UIManager.Instance.ShowHexTileInfo(clickedTile.buildSpotOwner.hexTileOwner);
+                    } else {
+                        Messenger.Broadcast(Signals.HIDE_MENUS);    
+                    }
+                        
                 }
             }
         }

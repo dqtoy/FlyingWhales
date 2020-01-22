@@ -4,12 +4,6 @@ using UnityEngine;
 
 public class CharacterRelationshipProcessor : IRelationshipProcessor {
 
-    public static CharacterRelationshipProcessor Instance = null;
-
-    public CharacterRelationshipProcessor() {
-        Instance = this;
-    }
-
     public void OnRelationshipAdded(Relatable rel1, Relatable rel2, RELATIONSHIP_TYPE relType) {
         Character character1 = rel1 as Character;
         Character character2 = rel2 as Character;

@@ -4,12 +4,12 @@ using Inner_Maps;
 using Traits;
 using UnityEngine;
 
-public class Lullaby : PlayerJobAction {
-    public Lullaby() : base(INTERVENTION_ABILITY.LULLABY) {
+public class Lullaby : PlayerSpell {
+    public Lullaby() : base(SPELL_TYPE.LULLABY) {
         tier = 2;
         abilityRadius = 1;
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
         //abilityTags.Add(ABILITY_TAG.NONE);
     }
 
@@ -73,11 +73,11 @@ public class Lullaby : PlayerJobAction {
     #endregion
 }
 
-public class LullabyData : PlayerJobActionData {
-    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.LULLABY;
+public class LullabyData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.LULLABY;
     public override string name { get { return "Lullaby"; } }
     public override string description { get { return "Makes characters in an settlement exhausted."; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.SABOTAGE; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SABOTAGE; } }
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public override int abilityRadius => 1;
 }

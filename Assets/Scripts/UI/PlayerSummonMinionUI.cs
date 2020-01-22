@@ -49,7 +49,7 @@ public class PlayerSummonMinionUI : MonoBehaviour {
             minion.SetAssignedRegion(portal.tileLocation.region);
             portal.tileLocation.region.SetAssignedMinion(minion);
         }
-        portal.StartSummon(System.Array.IndexOf(PlayerManager.Instance.player.minionsToSummon, data), 0, summonDuration);
+        // portal.StartSummon(System.Array.IndexOf(PlayerManager.Instance.player.minionsToSummon, data), 0, summonDuration);
         
     }
     #endregion

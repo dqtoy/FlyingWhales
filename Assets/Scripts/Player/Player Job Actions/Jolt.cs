@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using Traits;
 using UnityEngine;
 
-public class Jolt : PlayerJobAction {
+public class Jolt : PlayerSpell {
 
     private int _durationInMinutes;
-    public Jolt() : base(INTERVENTION_ABILITY.JOLT) {
+    public Jolt() : base(SPELL_TYPE.JOLT) {
         //description = "Temporarily speeds up the movement of a character.";
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
         //abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 

@@ -31,10 +31,10 @@ public class PlayerResearchUI : MonoBehaviour {
     private void OnConfirmExtract(object minionObj, object abilityObj) {
         Minion minion = (minionObj as Character).minion;
         string abilityName = (string)abilityObj;
-        INTERVENTION_ABILITY ability = INTERVENTION_ABILITY.NONE;
+        SPELL_TYPE ability = SPELL_TYPE.NONE;
         for (int i = 0; i < chosenMinion.interventionAbilitiesToResearch.Count; i++) {
-            INTERVENTION_ABILITY currAbility = chosenMinion.interventionAbilitiesToResearch[i];
-            if (PlayerManager.Instance.allInterventionAbilitiesData[currAbility].name == abilityName) {
+            SPELL_TYPE currAbility = chosenMinion.interventionAbilitiesToResearch[i];
+            if (PlayerManager.Instance.allSpellsData[currAbility].name == abilityName) {
                 ability = currAbility;
                 break;
             }
@@ -53,7 +53,7 @@ public class PlayerResearchUI : MonoBehaviour {
         this.chosenMinion = chosenMinion;
         List<string> abilities = new List<string>();
         for (int i = 0; i < chosenMinion.interventionAbilitiesToResearch.Count; i++) {
-            abilities.Add(PlayerManager.Instance.allInterventionAbilitiesData[chosenMinion.interventionAbilitiesToResearch[i]].name);
+            abilities.Add(PlayerManager.Instance.allSpellsData[chosenMinion.interventionAbilitiesToResearch[i]].name);
         }
         UIManager.Instance.dualObjectPicker.PopulateColumn(abilities, CanChooseAbility, OnHoverAbilityChoice, OnHoverExitAbilityChoice, UIManager.Instance.dualObjectPicker.column2ScrollView, UIManager.Instance.dualObjectPicker.column2ToggleGroup, "Choose Ability");
     }
@@ -67,11 +67,11 @@ public class PlayerResearchUI : MonoBehaviour {
         return true;
     }
     private void OnHoverAbilityChoice(string abilityName) {
-        PlayerJobActionData data = null;
+        SpellData data = null;
         for (int i = 0; i < chosenMinion.interventionAbilitiesToResearch.Count; i++) {
-            INTERVENTION_ABILITY currAbility = chosenMinion.interventionAbilitiesToResearch[i];
-            if (PlayerManager.Instance.allInterventionAbilitiesData[currAbility].name == abilityName) {
-                data = PlayerManager.Instance.allInterventionAbilitiesData[currAbility];
+            SPELL_TYPE currAbility = chosenMinion.interventionAbilitiesToResearch[i];
+            if (PlayerManager.Instance.allSpellsData[currAbility].name == abilityName) {
+                data = PlayerManager.Instance.allSpellsData[currAbility];
                 break;
             }
         }

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using Traits;
 using UnityEngine;
 
-public class Provoke : PlayerJobAction {
+public class Provoke : PlayerSpell {
 
-    public Provoke() : base(INTERVENTION_ABILITY.PROVOKE) {
+    public Provoke() : base(SPELL_TYPE.PROVOKE) {
         tier = 2;
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
         //abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 
@@ -55,9 +55,9 @@ public class Provoke : PlayerJobAction {
     }
 }
 
-public class ProvokeData : PlayerJobActionData {
-    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.PROVOKE;
+public class ProvokeData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.PROVOKE;
     public override string name { get { return "Provoke"; } }
     public override string description { get { return "Makes a character undermine his/her enemies."; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.SABOTAGE; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SABOTAGE; } }
 }

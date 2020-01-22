@@ -15,7 +15,9 @@ public class ActionItem : PooledObject {
 	private string expiryKey;
 	
 	public void SetAction(System.Action action, Sprite icon, string actionName) {
-		button.onClick.AddListener(action.Invoke);
+		if (action != null) {
+			button.onClick.AddListener(action.Invoke);	
+		}
 		if (icon != null) {
 			actionImg.sprite = icon;	
 		}

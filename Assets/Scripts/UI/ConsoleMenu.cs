@@ -1259,7 +1259,7 @@ public class ConsoleMenu : UIMenu {
             return;
         }
         string typeParameterString = parameters[0];
-        INTERVENTION_ABILITY type;
+        SPELL_TYPE type;
         if (Enum.TryParse(typeParameterString, out type)) {
             PlayerManager.Instance.player.GainNewInterventionAbility(type, true);
             AddSuccessMessage("Gained new Spell: " + type);

@@ -436,13 +436,8 @@ public class LocationStructure {
         LocationStructure wilderness = location.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
         for (int i = 0; i < tilesInStructure.Count; i++) {
             LocationGridTile tile = tilesInStructure[i];
-            LocationStructure transferTo;
-            if (tile.isInside) {
-                transferTo = workArea;
-            } else {
-                transferTo = wilderness;
-            }
-
+            LocationStructure transferTo = wilderness;
+            
             tile.ClearWallObjects();
 
             tile.SetStructure(transferTo);

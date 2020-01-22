@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using Traits;
 using UnityEngine;
 
-public class ZombieVirus : PlayerJobAction {
+public class ZombieVirus : PlayerSpell {
 
-    public ZombieVirus() : base(INTERVENTION_ABILITY.ZOMBIE_VIRUS) {
+    public ZombieVirus() : base(SPELL_TYPE.ZOMBIE_VIRUS) {
         tier = 2;
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT};
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT};
         //abilityTags.Add(ABILITY_TAG.MAGIC);
         //abilityTags.Add(ABILITY_TAG.CRIME);
     }
@@ -98,11 +98,11 @@ public class ZombieVirus : PlayerJobAction {
     }
 }
 
-public class ZombieVirusData : PlayerJobActionData {
-    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.ZOMBIE_VIRUS;
+public class ZombieVirusData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.ZOMBIE_VIRUS;
     public override string name { get { return "Zombie Virus"; } }
     public override string description { get { return "Afflict a character with the zombie virus. When this character dies, it will turn into a zombie. Other characters that gets attacked by a zombie may also contract the zombie virus."; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.MONSTER; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.MONSTER; } }
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
     #region Overrides

@@ -5,13 +5,13 @@ using Inner_Maps;
 using UnityEngine;
 using Traits;
 
-public class Explosion : PlayerJobAction {
+public class Explosion : PlayerSpell {
 
     private int radius;
 
-    public Explosion() : base(INTERVENTION_ABILITY.EXPLOSION) {
+    public Explosion() : base(SPELL_TYPE.EXPLOSION) {
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
         radius = 1;
         tier = 1;
     }
@@ -74,11 +74,11 @@ public class Explosion : PlayerJobAction {
     #endregion
 }
 
-public class ExplosionData : PlayerJobActionData {
-    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.EXPLOSION;
+public class ExplosionData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.EXPLOSION;
     public override string name { get { return "Explosion"; } }
     public override string description { get { return "Destroy objects and structures within a huge radius and significantly damage characters within."; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.DEVASTATION; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public override int abilityRadius => 1;
 }

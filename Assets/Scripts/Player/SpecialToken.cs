@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Actionables;
 using Inner_Maps;
 using UnityEngine;
 using Traits;
 
-public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
+public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest, IPlayerActionTarget {
     public int id { get; private set; }
     public string name { get; private set; }
     public SPECIAL_TOKEN specialTokenType;
@@ -73,6 +74,7 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
         uses = 1;
         CreateTraitContainer();
         ConstructResources();
+        ConstructDefaultActions();
     }
     public void SetID(int id) {
         this.id = Utilities.SetID(this, id);
@@ -362,7 +364,8 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
         }
         if (characterOwner == null) {
             //Patrollers should not pick up items from their main storage structure
-            if (gridTileLocation != null && gridTileLocation.structure == character.homeSettlement.mainStorage) { //&& token.currentRegion == characterThatWillDoJob.homeRegion
+            if (gridTileLocation != null && character.homeSettlement != null && 
+                gridTileLocation.structure == character.homeSettlement.mainStorage) { //&& token.currentRegion == characterThatWillDoJob.homeRegion
                 return false;
             }
             //characters should not pick up items if that item is the target of it's current action
@@ -402,6 +405,42 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
     }
     public bool CanBeDamaged() {
         return mapObjectState != MAP_OBJECT_STATE.UNBUILT;
+    }
+    #endregion
+    
+    #region Player Action Target
+    public List<PlayerAction> actions { get; private set; }
+    public void ConstructDefaultActions() {
+        actions = new List<PlayerAction>();
+        
+        PlayerAction destroyAction = new PlayerAction("Destroy", 
+            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.DESTROY].CanPerformAbilityTowards(this),
+            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.DESTROY].ActivateAbility(this));
+        PlayerAction igniteAction = new PlayerAction("Ignite", 
+            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.IGNITE].CanPerformAbilityTowards(this), 
+            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.IGNITE].ActivateAbility(this));
+        PlayerAction poisonAction = new PlayerAction("Poison", 
+            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.SPOIL].CanPerformAbilityTowards(this), 
+            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.SPOIL].ActivateAbility(this));
+        PlayerAction animateAction = new PlayerAction("Animate", () => false, null);
+        PlayerAction seizeAction = new PlayerAction("Seize", 
+            () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && this.mapVisual != null && (this.isBeingCarriedBy != null || this.gridTileLocation != null), 
+            () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
+        
+        AddPlayerAction(destroyAction);
+        AddPlayerAction(igniteAction);
+        AddPlayerAction(poisonAction);
+        AddPlayerAction(animateAction);
+        AddPlayerAction(seizeAction);
+    }
+    public void AddPlayerAction(PlayerAction action) {
+        actions.Add(action);
+    }
+    public void RemovePlayerAction(PlayerAction action) {
+        actions.Remove(action);
+    }
+    public void ClearPlayerActions() {
+        actions.Clear();
     }
     #endregion
 }

@@ -444,8 +444,12 @@ public class CharacterInfoUI : UIMenu {
     #region History
     private void UpdateHistory(object obj) {
         var character = obj as Character;
-        if (character != null && _activeCharacter != null && character.id == _activeCharacter.id && _activeCharacter.minion == null) {
-            UpdateAllHistoryInfo();
+        if (isShowing && character == _activeCharacter) {
+            if (_activeCharacter.minion != null) {
+                ClearHistory();
+            } else if (character != null && _activeCharacter != null && character.id == _activeCharacter.id) {
+                UpdateAllHistoryInfo();
+            }    
         }
     }
     private void UpdateAllHistoryInfo() {
@@ -466,8 +470,11 @@ public class CharacterInfoUI : UIMenu {
             }
         }
     }
-    private void SetLogMenuState(bool state) {
-        logParentGO.SetActive(state);
+    private void ClearHistory() {
+        for (int i = 0; i < logHistoryItems.Length; i++) {
+            LogHistoryItem currItem = logHistoryItems[i];
+            currItem.gameObject.SetActive(false);
+        }
     }
     #endregion   
 
@@ -643,29 +650,10 @@ public class CharacterInfoUI : UIMenu {
     }
     #endregion
 
-    #region Actions
-    protected override void LoadActions() {
-        Utilities.DestroyChildren(actionsTransform);
-        if (activeCharacter.faction.isPlayerFaction) {
-            return;
-        }
-        ActionItem afflictItem = AddNewAction("Afflict", null, ShowAfflictUI);
-
-        ActionItem zapItem = AddNewAction("Zap", null, Zap);
-        zapItem.SetInteractable(CanBeZapped());
-
-        ActionItem seizeItem = AddNewAction("Seize", null, () => PlayerManager.Instance.player.seizeComponent.SeizePOI(activeCharacter));
-        bool isInteractable = !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && activeCharacter.minion == null && !(activeCharacter is Summon) && activeCharacter.traitContainer.GetNormalTrait<Trait>("Leader", "Blessed") == null;
-        seizeItem.SetInteractable(isInteractable);
-
-        ActionItem shareIntelItem = AddNewAction("Share Intel", null, ShareIntel);
-    }
-    #endregion
-
     #region Afflict
-    protected void ShowAfflictUI() {
+    public void ShowAfflictUI() {
         List<string> afflictions = new List<string>();
-        foreach (PlayerJobActionData abilityData in PlayerManager.Instance.allInterventionAbilitiesData.Values) {
+        foreach (SpellData abilityData in PlayerManager.Instance.allSpellsData.Values) {
             if (abilityData.type == INTERVENTION_ABILITY_TYPE.AFFLICTION) {
                 afflictions.Add(abilityData.name);
             }
@@ -674,32 +662,14 @@ public class CharacterInfoUI : UIMenu {
     }
     private void ActivateAffliction(object o) {
         string afflictionName = (string) o;
-        INTERVENTION_ABILITY afflictionType = (INTERVENTION_ABILITY) System.Enum.Parse(typeof(INTERVENTION_ABILITY), afflictionName.ToUpper().Replace(' ', '_'));
-        PlayerManager.Instance.allInterventionAbilitiesData[afflictionType].ActivateAbility(activeCharacter);
+        SPELL_TYPE afflictionType = (SPELL_TYPE) System.Enum.Parse(typeof(SPELL_TYPE), afflictionName.ToUpper().Replace(' ', '_'));
+        PlayerManager.Instance.allSpellsData[afflictionType].ActivateAbility(activeCharacter);
 
         UIManager.Instance.HideObjectPicker();
     }
     private bool CanActivateAffliction(string afflictionName) {
-        INTERVENTION_ABILITY afflictionType = (INTERVENTION_ABILITY) System.Enum.Parse(typeof(INTERVENTION_ABILITY), afflictionName.ToUpper().Replace(' ', '_'));
-        return PlayerManager.Instance.allInterventionAbilitiesData[afflictionType].CanPerformAbilityTowards(activeCharacter);
-    }
-    #endregion
-
-    #region Zap
-    protected void Zap() {
-        PlayerManager.Instance.allInterventionAbilitiesData[INTERVENTION_ABILITY.ZAP].ActivateAbility(activeCharacter);
-
-        //Find better way to load only the button that was clicked
-        LoadActions();
-    }
-    protected bool CanBeZapped() {
-        return PlayerManager.Instance.allInterventionAbilitiesData[INTERVENTION_ABILITY.ZAP].CanPerformAbilityTowards(activeCharacter);
-    }
-    #endregion
-
-    #region Share Intel
-    protected void ShareIntel() {
-
+        SPELL_TYPE afflictionType = (SPELL_TYPE) System.Enum.Parse(typeof(SPELL_TYPE), afflictionName.ToUpper().Replace(' ', '_'));
+        return PlayerManager.Instance.allSpellsData[afflictionType].CanPerformAbilityTowards(activeCharacter);
     }
     #endregion
 

@@ -9,14 +9,17 @@ public class RelationshipManager : MonoBehaviour {
 
     public static RelationshipManager Instance = null;
 
+    private IRelationshipValidator _characterRelationshipValidator;
+    private IRelationshipProcessor _characterRelationshipProcessor;
+    
 
     void Awake() {
         Instance = this;
         //TODO: Use Reflection.
         //validators
-        var characterRelationshipValidator = new CharacterRelationshipValidator();
+        _characterRelationshipValidator = new CharacterRelationshipValidator();
         //processors
-        var characterRelationshipProcessor = new CharacterRelationshipProcessor();
+        _characterRelationshipProcessor = new CharacterRelationshipProcessor();
     }
 
     #region Containers
@@ -31,7 +34,7 @@ public class RelationshipManager : MonoBehaviour {
     #region Validators
     public IRelationshipValidator GetValidator(Relatable obj) {
         if (obj is Character) {
-            return CharacterRelationshipValidator.Instance;
+            return _characterRelationshipValidator;
         }
         throw new Exception($"There is no relationship validator for {obj.relatableName}");
     }
@@ -504,7 +507,7 @@ public class RelationshipManager : MonoBehaviour {
     #region Processors
     public IRelationshipProcessor GetProcessor(Relatable relatable) {
         if (relatable is Character) {
-            return CharacterRelationshipProcessor.Instance;
+            return _characterRelationshipProcessor;
         }
         return null;
     }

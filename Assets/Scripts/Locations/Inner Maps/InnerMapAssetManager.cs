@@ -3,35 +3,34 @@ using UnityEngine.Tilemaps;
 
 namespace Inner_Maps {
     public class InnerMapAssetManager : MonoBehaviour {
-        
-        [Header("Tiles")]
-        public TileBase outsideTile;
-        public TileBase snowOutsideTile;
 
-        [Header("Outside Tiles")]
+        [Header("Grassland Tiles")]
+        public TileBase outsideTile;
         public TileBase grassTile;
         public TileBase soilTile;
         public TileBase stoneTile;
-
-        [Header("Snow Outside Tiles")]
-        public TileBase snowTile;
-        public TileBase tundraTile;
-        public TileBase snowDirt;
-
-        [Header("Outside Detail Tiles")]
-        public TileBase bigTreeTile;
-        public TileBase treeTile;
         public TileBase shrubTile;
         public TileBase flowerTile;
         public TileBase rockTile;
         public TileBase randomGarbTile;
 
-        [Header("Snow Detail Tiles")]
-        public TileBase snowBigTreeTile;
-        public TileBase snowTreeTile;
+        [Header("Snow Tiles")]
+        public TileBase snowOutsideTile;
+        public TileBase snowTile;
+        public TileBase tundraTile;
+        public TileBase snowDirt;
         public TileBase snowFlowerTile;
         public TileBase snowGarbTile;
-
+        
+        [Header("Desert Tiles")]
+        public TileBase desertOutsideTile;
+        public TileBase desertGrassTile;
+        public TileBase desertSandTile;
+        public TileBase desertStoneGroundTile;
+        public TileBase desertFlowerTile;
+        public TileBase desertGarbTile;
+        public TileBase desertRockTile;
+        
         [Header("Inside Detail Tiles")]
         public TileBase crateBarrelTile;
 
@@ -44,12 +43,21 @@ namespace Inner_Maps {
 
         [Header("Cave Tiles")] 
         public TileBase caveWallTile;
+        public TileBase caveGroundTile;
+
+        [Header("Corrupted Tiles")] 
+        public TileBase corruptedTile;
+        public TileBase corruptedDetailTile;
+        public Sprite[] corruptedTreeAssets;
+        public Sprite[] corruptedBigTreeAssets;
         
         public TileBase GetOutsideFloorTile(ILocation location) {
             switch (location.coreTile.biomeType) {
                 case BIOMES.SNOW:
                 case BIOMES.TUNDRA:
                     return snowOutsideTile;
+                case BIOMES.DESERT:
+                    return desertOutsideTile;
                 default:
                     return outsideTile;
             }

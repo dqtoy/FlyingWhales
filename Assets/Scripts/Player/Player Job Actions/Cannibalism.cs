@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using Traits;
 
-public class Cannibalism : PlayerJobAction {
+public class Cannibalism : PlayerSpell {
 
-    public Cannibalism() : base(INTERVENTION_ABILITY.CANNIBALISM) {
+    public Cannibalism() : base(SPELL_TYPE.CANNIBALISM) {
         tier = 2;
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT};
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT};
         //abilityTags.Add(ABILITY_TAG.MAGIC);
         //abilityTags.Add(ABILITY_TAG.CRIME);
     }
@@ -105,11 +105,11 @@ public class Cannibalism : PlayerJobAction {
     }
 }
 
-public class CannibalismData : PlayerJobActionData {
-    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.CANNIBALISM;
+public class CannibalismData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.CANNIBALISM;
     public override string name { get { return "Cannibalism"; } }
     public override string description { get { return "Makes a character eat other characters with the same race for sustenance."; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.MONSTER; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.MONSTER; } }
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
     #region Overrides

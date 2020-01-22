@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using Traits;
 using UnityEngine;
 
-public class Spoil : PlayerJobAction {
+public class Spoil : PlayerSpell {
 
-    public Spoil() : base(INTERVENTION_ABILITY.SPOIL) {
+    public Spoil() : base(SPELL_TYPE.SPOIL) {
         tier = 3;
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE_OBJECT };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE_OBJECT };
     }
 
     #region Overrides
@@ -37,11 +37,11 @@ public class Spoil : PlayerJobAction {
     #endregion
 }
 
-public class SpoilData : PlayerJobActionData {
-    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.SPOIL;
+public class SpoilData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.SPOIL;
     public override string name { get { return "Spoil"; } }
     public override string description { get { return "Poison the food at the target table."; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.SABOTAGE; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SABOTAGE; } }
 
 
     #region Overrides

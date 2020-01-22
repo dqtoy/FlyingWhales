@@ -4,14 +4,14 @@ using System.Linq;
 using Inner_Maps;
 using UnityEngine;
 
-public class Tornado : PlayerJobAction {
+public class Tornado : PlayerSpell {
 
     private int radius;
     private int durationInTicks;
 
-    public Tornado() : base(INTERVENTION_ABILITY.TORNADO) {
+    public Tornado() : base(SPELL_TYPE.TORNADO) {
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
         radius = 1;
         tier = 1;
         durationInTicks = GameManager.Instance.GetTicksBasedOnHour(2);
@@ -60,11 +60,11 @@ public class Tornado : PlayerJobAction {
     #endregion
 }
 
-public class TornadoData : PlayerJobActionData {
-    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.TORNADO;
+public class TornadoData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.TORNADO;
     public override string name { get { return "Tornado"; } }
     public override string description { get { return "Spawn a tornado that randomly moves around dealing heavy damage to objects and characters caught in its path."; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.DEVASTATION; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public override int abilityRadius => 1;
 }

@@ -84,8 +84,8 @@ public class ReplaceUI : MonoBehaviour {
             otaText.text = text;
             otaImage.sprite = CharacterManager.Instance.GetArtifactSettings(artifact.type).artifactPortrait;
             otaImage.gameObject.SetActive(true);
-        } else if (obj is PlayerJobAction) {
-            PlayerJobAction action = obj as PlayerJobAction;
+        } else if (obj is PlayerSpell) {
+            PlayerSpell action = obj as PlayerSpell;
             string text = action.name;
             text += "\nDescription: " + action.description;
             otaText.text = text;

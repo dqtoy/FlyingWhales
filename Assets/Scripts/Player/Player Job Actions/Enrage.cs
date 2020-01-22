@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using Traits;
 using UnityEngine;
 
-public class Enrage : PlayerJobAction {
+public class Enrage : PlayerSpell {
 
     private int _durationInMinutes;
-    public Enrage() : base(INTERVENTION_ABILITY.ENRAGE) {
+    public Enrage() : base(SPELL_TYPE.ENRAGE) {
         tier = 2;
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
         //abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 
@@ -117,9 +117,9 @@ public class Enrage : PlayerJobAction {
     }
 }
 
-public class EnrageData : PlayerJobActionData {
-    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.ENRAGE;
+public class EnrageData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.ENRAGE;
     public override string name { get { return "Enrage"; } }
     public override string description { get { return "Temporarily enrages a character to attack any character he/she sees."; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.HEX; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.HEX; } }
 }

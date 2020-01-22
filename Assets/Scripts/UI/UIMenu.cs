@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using System;
+using Actionables;
 
 public class UIMenu : MonoBehaviour {
     public Button backButton;
@@ -18,9 +19,6 @@ public class UIMenu : MonoBehaviour {
     internal virtual void Initialize() {
         Messenger.AddListener<UIMenu>(Signals.BEFORE_MENU_OPENED, BeforeMenuOpens);
     }
-    /*
-     When a menu is opened from being closed
-         */
     public virtual void OpenMenu() {
         Messenger.Broadcast(Signals.BEFORE_MENU_OPENED, this);
         isShowing = true;
@@ -35,7 +33,9 @@ public class UIMenu : MonoBehaviour {
             backButton.interactable = UIManager.Instance.GetLastUIMenuHistory() != null;    
         }
         UIManager.Instance.poiTestingUI.HideUI();
-        LoadActions();
+        if (_data is Actionables.IPlayerActionTarget) {
+            LoadActions(_data as IPlayerActionTarget);    
+        }
     }
     public virtual void CloseMenu() {
         isShowing = false;
@@ -56,22 +56,12 @@ public class UIMenu : MonoBehaviour {
     public virtual void ShowTooltip(GameObject objectHovered) {
 
     }
-    public void ToggleMenu(bool state) {
-        if (state) {
-            OpenMenu();
-        } else {
-            CloseMenu();
-        }
-    }
     public void OnClickCloseMenu() {
         CloseMenu();
         UIManager.Instance.ClearUIMenuHistory();
     }
     #endregion
 
-    public void SetOpenMenuAction(Action action) {
-        openMenuAction = action;
-    }
     private void GoBackToPreviousUIMenu(object data) {
         if(data != null) {
             if(data is Character) {
@@ -99,7 +89,15 @@ public class UIMenu : MonoBehaviour {
     }
 
     #region Actions
-    protected virtual void LoadActions() {
+    protected virtual void LoadActions(IPlayerActionTarget target) {
+        Utilities.DestroyChildren(actionsTransform);
+
+        for (int i = 0; i < target.actions.Count; i++) {
+            PlayerAction action = target.actions[i];
+            ActionItem actionItem = AddNewAction(action.actionName, null, action.action);
+            actionItem.SetInteractable(action.isActionValidChecker.Invoke());
+        }
+        
     }
     protected ActionItem AddNewAction(string actionName, Sprite actionIcon, System.Action action) {
         GameObject obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(actionItemPrefab.name, Vector3.zero,

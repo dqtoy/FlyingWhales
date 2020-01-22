@@ -217,8 +217,8 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
 
         //job action buttons
-        Messenger.AddListener<PlayerJobAction>(Signals.PLAYER_LEARNED_INTERVENE_ABILITY, OnPlayerLearnedInterventionAbility);
-        Messenger.AddListener<PlayerJobAction>(Signals.PLAYER_CONSUMED_INTERVENE_ABILITY, OnPlayerLearnedInterventionAbility);
+        Messenger.AddListener<PlayerSpell>(Signals.PLAYER_LEARNED_INTERVENE_ABILITY, OnPlayerLearnedInterventionAbility);
+        Messenger.AddListener<PlayerSpell>(Signals.PLAYER_CONSUMED_INTERVENE_ABILITY, OnPlayerLearnedInterventionAbility);
 
         //summons
         Messenger.AddListener<Summon>(Signals.PLAYER_GAINED_SUMMON, OnGainNewSummon);
@@ -297,7 +297,7 @@ public class PlayerUI : MonoBehaviour {
     }
     private void OnKeyPressed(KeyCode pressedKey) {
         if (pressedKey == KeyCode.Escape) {
-            if (PlayerManager.Instance.player.currentActivePlayerJobAction != null) {
+            if (PlayerManager.Instance.player.currentActivePlayerSpell != null) {
                 PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
                 CursorManager.Instance.ClearLeftClickActions();
             } else if (isSummoning) {
@@ -585,7 +585,7 @@ public class PlayerUI : MonoBehaviour {
         //}
 
     }
-    public PlayerJobActionButton GetPlayerJobActionButton(PlayerJobAction action) {
+    public PlayerJobActionButton GetPlayerJobActionButton(PlayerSpell action) {
         PlayerJobActionButton[] buttons = Utilities.GetComponentsInDirectChildren<PlayerJobActionButton>(activeMinionActionsParent.gameObject);
         for (int i = 0; i < buttons.Length; i++) {
             PlayerJobActionButton currButton = buttons[i];
@@ -595,7 +595,7 @@ public class PlayerUI : MonoBehaviour {
         }
         return null;
     }
-    private void OnPlayerLearnedInterventionAbility(PlayerJobAction action) {
+    private void OnPlayerLearnedInterventionAbility(PlayerSpell action) {
         UpdateInterventionAbilitySlots();
     }
     #endregion
@@ -881,7 +881,7 @@ public class PlayerUI : MonoBehaviour {
     #endregion
 
     #region Start Picker
-    private INTERVENTION_ABILITY[] startingAbilities;
+    private SPELL_TYPE[] startingAbilities;
     public void ShowStartingMinionPicker() {
 
         UnsummonedMinionData minion1Data = new UnsummonedMinionData();
@@ -900,7 +900,7 @@ public class PlayerUI : MonoBehaviour {
         startingMinionCard1.SetMinion(minion1Data);
         startingMinionCard2.SetMinion(minion2Data);
         //startingMinionCard3.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
-        startingAbilities = new INTERVENTION_ABILITY[PlayerManager.Instance.player.MAX_INTERVENTION_ABILITIES];
+        startingAbilities = new SPELL_TYPE[PlayerManager.Instance.player.MAX_INTERVENTION_ABILITIES];
         RandomizeStartingAbilities();
         startingMinionPickerGO.SetActive(true);
     }
@@ -999,19 +999,19 @@ public class PlayerUI : MonoBehaviour {
         leaderPicker.imgHighlight.gameObject.SetActive(true);
         tempCurrentMinionLeaderPicker = leaderPicker;
     }
-    private List<INTERVENTION_ABILITY> chosenAbilities;
+    private List<SPELL_TYPE> chosenAbilities;
     private void RandomizeStartingAbilities() {
-        List<INTERVENTION_ABILITY> abilitiesPool = PlayerManager.Instance.allInterventionAbilities.ToList();
-        chosenAbilities = new List<INTERVENTION_ABILITY>();
+        List<SPELL_TYPE> abilitiesPool = PlayerManager.Instance.allSpellTypes.ToList();
+        chosenAbilities = new List<SPELL_TYPE>();
 
         while (chosenAbilities.Count != startingAbilityIcons.Length) {
-            INTERVENTION_ABILITY randomAbility = abilitiesPool[UnityEngine.Random.Range(0, abilitiesPool.Count)];
+            SPELL_TYPE randomAbility = abilitiesPool[UnityEngine.Random.Range(0, abilitiesPool.Count)];
             chosenAbilities.Add(randomAbility);
             abilitiesPool.Remove(randomAbility);
         }
 
         for (int i = 0; i < startingAbilityIcons.Length; i++) {
-            INTERVENTION_ABILITY randomAbility = chosenAbilities[i];
+            SPELL_TYPE randomAbility = chosenAbilities[i];
             string abilityName = Utilities.NormalizeStringUpperCaseFirstLetters(randomAbility.ToString());
             startingAbilityIcons[i].sprite = PlayerManager.Instance.GetJobActionSprite(abilityName);
             startingAbilityLbls[i].text = abilityName;
@@ -1019,8 +1019,8 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     public void OnHoverStartingSpell(int index) {
-        INTERVENTION_ABILITY spell = chosenAbilities[index];
-        UIManager.Instance.ShowSmallInfo(PlayerManager.Instance.allInterventionAbilitiesData[spell].description, Utilities.NormalizeStringUpperCaseFirstLetters(spell.ToString()));
+        SPELL_TYPE spell = chosenAbilities[index];
+        UIManager.Instance.ShowSmallInfo(PlayerManager.Instance.allSpellsData[spell].description, Utilities.NormalizeStringUpperCaseFirstLetters(spell.ToString()));
     }
     public void RerollAbilities() {
         RandomizeStartingAbilities();
@@ -2225,12 +2225,12 @@ public class PlayerUI : MonoBehaviour {
         customDropdownList.HideDropdown();
     }
     private void OnClickSpell(string spellName) {
-        if(PlayerManager.Instance.player.currentActivePlayerJobAction != null) {
+        if(PlayerManager.Instance.player.currentActivePlayerSpell != null) {
             return;
         }
-        INTERVENTION_ABILITY spell = (INTERVENTION_ABILITY) System.Enum.Parse(typeof(INTERVENTION_ABILITY), spellName.ToUpper().Replace(' ', '_'));
+        SPELL_TYPE spell = (SPELL_TYPE) System.Enum.Parse(typeof(SPELL_TYPE), spellName.ToUpper().Replace(' ', '_'));
         //This is temporary only because we will eliminate instanced intervention abilities in the future, they will become singleton
-        PlayerJobAction ability = PlayerManager.Instance.CreateNewInterventionAbility(spell);
+        PlayerSpell ability = PlayerManager.Instance.CreateNewInterventionAbility(spell);
         PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(ability);
     }
     #endregion

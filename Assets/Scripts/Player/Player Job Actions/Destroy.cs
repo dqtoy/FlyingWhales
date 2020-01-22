@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Destroy : PlayerJobAction {
+public class Destroy : PlayerSpell {
 
-    public Destroy() : base(INTERVENTION_ABILITY.DESTROY) {
+    public Destroy() : base(SPELL_TYPE.DESTROY) {
         //description = "Remove this object from the world.";
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE_OBJECT };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE_OBJECT };
     }
 
     public override void ActivateAction(IPointOfInterest targetPOI) {
@@ -41,11 +41,11 @@ public class Destroy : PlayerJobAction {
     }
 }
 
-public class DestroyData : PlayerJobActionData {
-    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.DESTROY;
+public class DestroyData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.DESTROY;
     public override string name { get { return "Destroy"; } }
     public override string description { get { return "Destroys an object"; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.SABOTAGE; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SABOTAGE; } }
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
