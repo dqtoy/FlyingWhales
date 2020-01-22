@@ -44,6 +44,12 @@ namespace Inner_Maps {
 
         [Header("Cave Tiles")] 
         public TileBase caveWallTile;
+
+        [Header("Corrupted Tiles")] 
+        public TileBase corruptedTile;
+        public TileBase corruptedDetailTile;
+        public Sprite[] corruptedTreeAssets;
+        public Sprite[] corruptedBigTreeAssets;
         
         public TileBase GetOutsideFloorTile(ILocation location) {
             switch (location.coreTile.biomeType) {

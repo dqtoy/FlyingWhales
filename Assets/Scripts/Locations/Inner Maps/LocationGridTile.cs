@@ -14,7 +14,7 @@ namespace Inner_Maps {
 
         public enum Tile_Type { Empty, Wall, Structure_Entrance }
         public enum Tile_State { Empty, Occupied }
-        public enum Ground_Type { Soil, Grass, Stone, Snow, Tundra, Cobble, Wood, Snow_Dirt, Water, Cave }
+        public enum Ground_Type { Soil, Grass, Stone, Snow, Tundra, Cobble, Wood, Snow_Dirt, Water, Cave, Corrupted }
         public bool hasDetail { get; set; }
         public InnerTileMap parentMap { get; private set; }
         public Tilemap parentTileMap { get; private set; }
@@ -23,7 +23,6 @@ namespace Inner_Maps {
         public Vector3 centeredWorldLocation { get; private set; }
         public Vector3 localLocation { get; private set; }
         public Vector3 centeredLocalLocation { get; private set; }
-        public bool isInside { get; private set; }
         public Tile_Type tileType { get; private set; }
         public Tile_State tileState { get; private set; }
         public Ground_Type groundType { get; private set; }
@@ -47,6 +46,7 @@ namespace Inner_Maps {
 
         public GenericTileObject genericTileObject { get; private set; }
         public List<WallObject> walls { get; private set; }
+        public bool isCorrupted => groundType == Ground_Type.Corrupted;
         
         public LocationGridTile(int x, int y, Tilemap tilemap, InnerTileMap parentMap) {
             this.parentMap = parentMap;
@@ -97,7 +97,7 @@ namespace Inner_Maps {
             }
             return fn;
         }
-        public Dictionary<GridNeighbourDirection, LocationGridTile> FourNeighboursDictionary() {
+        private Dictionary<GridNeighbourDirection, LocationGridTile> FourNeighboursDictionary() {
             Dictionary<GridNeighbourDirection, LocationGridTile> fn = new Dictionary<GridNeighbourDirection, LocationGridTile>();
             foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
                 if (keyValuePair.Key.IsCardinalDirection()) {
@@ -124,23 +124,17 @@ namespace Inner_Maps {
 
             }
         }
-        public Dictionary<GridNeighbourDirection, Point> possibleExits {
-            get {
-                return new Dictionary<GridNeighbourDirection, Point>() {
-                    {GridNeighbourDirection.North, new Point(0,1) },
-                    {GridNeighbourDirection.South, new Point(0,-1) },
-                    {GridNeighbourDirection.West, new Point(-1,0) },
-                    {GridNeighbourDirection.East, new Point(1,0) },
-                    {GridNeighbourDirection.North_West, new Point(-1,1) },
-                    {GridNeighbourDirection.North_East, new Point(1,1) },
-                    {GridNeighbourDirection.South_West, new Point(-1,-1) },
-                    {GridNeighbourDirection.South_East, new Point(1,-1) },
-                };
-            }
-        }
-        public void SetIsInside(bool isInside) {
-            this.isInside = isInside;
-        }
+        private Dictionary<GridNeighbourDirection, Point> possibleExits =>
+            new Dictionary<GridNeighbourDirection, Point>() {
+                {GridNeighbourDirection.North, new Point(0,1) },
+                {GridNeighbourDirection.South, new Point(0,-1) },
+                {GridNeighbourDirection.West, new Point(-1,0) },
+                {GridNeighbourDirection.East, new Point(1,0) },
+                {GridNeighbourDirection.North_West, new Point(-1,1) },
+                {GridNeighbourDirection.North_East, new Point(1,1) },
+                {GridNeighbourDirection.South_West, new Point(-1,-1) },
+                {GridNeighbourDirection.South_East, new Point(1,-1) },
+            };
         public void SetTileType(Tile_Type tileType) {
             this.tileType = tileType;
         }
@@ -162,13 +156,15 @@ namespace Inner_Maps {
             Sprite groundAsset = parentMap.groundTilemap.GetSprite(this.localPlace);
             if (groundAsset != null) {
                 string assetName = groundAsset.name.ToLower();
-                if (assetName.Contains("structure floor") || assetName.Contains("wood")) {
+                if (assetName.Contains("corruption") || assetName.Contains("corrupted")) {
+                    SetGroundType(Ground_Type.Corrupted);
+                } if (assetName.Contains("structure floor") || assetName.Contains("wood")) {
                     SetGroundType(Ground_Type.Wood);
                 } else if (assetName.Contains("cobble")) {
                     SetGroundType(Ground_Type.Cobble);
                 } else if (assetName.Contains("water") || assetName.Contains("pond")) {
                     SetGroundType(Ground_Type.Water);
-                } else if ((assetName.Contains("Dirt") || assetName.Contains("dirt") || assetName.Contains("snowoutside")) && (parentMap.location.coreTile.biomeType == BIOMES.SNOW || parentMap.location.coreTile.biomeType == BIOMES.TUNDRA)) {
+                } else if ((assetName.Contains("dirt") || assetName.Contains("snowoutside")) && (parentMap.location.coreTile.biomeType == BIOMES.SNOW || parentMap.location.coreTile.biomeType == BIOMES.TUNDRA)) {
                     SetGroundType(Ground_Type.Tundra);
                     //override tile to use tundra soil
                     parentMap.groundTilemap.SetTile(this.localPlace, InnerMapManager.Instance.assetManager.tundraTile);
@@ -188,9 +184,9 @@ namespace Inner_Maps {
                     SetGroundType(Ground_Type.Tundra);
                     //override tile to use tundra soil
                     parentMap.groundTilemap.SetTile(this.localPlace, InnerMapManager.Instance.assetManager.tundraTile);
-                }  else if (assetName.Contains("Dungeon") || assetName.Contains("Cave") || assetName.Contains("cave")) {
+                } else if (assetName.Contains("dungeon") || assetName.Contains("cave")) {
                     SetGroundType(Ground_Type.Cave);
-                } 
+                }
             }
         }
         public bool TryGetNeighbourDirection(LocationGridTile tile, out GridNeighbourDirection dir) {
@@ -249,9 +245,11 @@ namespace Inner_Maps {
                         createEdge = false;
                     } else if (groundType != LocationGridTile.Ground_Type.Water && currNeighbour.groundType == LocationGridTile.Ground_Type.Water) {
                         createEdge = true;
-                    } else if (groundType == LocationGridTile.Ground_Type.Water && currNeighbour.groundType == LocationGridTile.Ground_Type.Water) {
+                    } else if (groundType == Ground_Type.Corrupted) {
+                        createEdge = true;
+                    } else if (groundType != Ground_Type.Corrupted && currNeighbour.groundType == Ground_Type.Corrupted) {
                         createEdge = false;
-                    }  else if (groundType == LocationGridTile.Ground_Type.Snow) {
+                    } else if (groundType == LocationGridTile.Ground_Type.Snow) {
                         createEdge = true;
                     } else if (groundType == LocationGridTile.Ground_Type.Cobble && currNeighbour.groundType != LocationGridTile.Ground_Type.Snow) {
                         createEdge = true;
@@ -266,38 +264,35 @@ namespace Inner_Maps {
                         createEdge = true;
                     }
                     summary += $"\n\tWill create edge? {createEdge.ToString()}. At {keyValuePair.Key.ToString()}";
+                    Tilemap mapToUse;
+                    switch (keyValuePair.Key) {
+                        case GridNeighbourDirection.North:
+                            mapToUse = map.northEdgeTilemap;
+                            break;
+                        case GridNeighbourDirection.South:
+                            mapToUse = map.southEdgeTilemap;
+                            break;
+                        case GridNeighbourDirection.West:
+                            mapToUse = map.westEdgeTilemap;
+                            break;
+                        case GridNeighbourDirection.East:
+                            mapToUse = map.eastEdgeTilemap;
+                            break;
+                        default:
+                            mapToUse = null;
+                            break;
+                    }
+                    System.Diagnostics.Debug.Assert(mapToUse != null, nameof(mapToUse) + " != null");
                     if (createEdge) {
-                        Tilemap mapToUse;
-                        switch (keyValuePair.Key) {
-                            case GridNeighbourDirection.North:
-                                mapToUse = map.northEdgeTilemap;
-                                break;
-                            case GridNeighbourDirection.South:
-                                mapToUse = map.southEdgeTilemap;
-                                break;
-                            case GridNeighbourDirection.West:
-                                mapToUse = map.westEdgeTilemap;
-                                break;
-                            case GridNeighbourDirection.East:
-                                mapToUse = map.eastEdgeTilemap;
-                                break;
-                            default:
-                                mapToUse = null;
-                                break;
-                        }
-                        System.Diagnostics.Debug.Assert(mapToUse != null, nameof(mapToUse) + " != null");
-                        System.Diagnostics.Debug.Assert(InnerMapManager.Instance.assetManager.edgeAssets.ContainsKey(groundType), $"No edge asset for {groundType.ToString()} for neighbour {currNeighbour.groundType.ToString()} ");
-                        try {
-                            mapToUse.SetTile(localPlace, InnerMapManager.Instance.assetManager.edgeAssets[groundType][(int)keyValuePair.Key]);
-                        }
-                        catch (Exception e) {
-                            Console.WriteLine(e);
-                            throw;
-                        }
+                        System.Diagnostics.Debug.Assert(InnerMapManager.Instance.assetManager.edgeAssets.ContainsKey(groundType), 
+                            $"No edge asset for {groundType.ToString()} for neighbour {currNeighbour.groundType.ToString()} ");
+                        mapToUse.SetTile(localPlace, InnerMapManager.Instance.assetManager.edgeAssets[groundType][(int)keyValuePair.Key]);    
+                    } else {
+                        mapToUse.SetTile(localPlace, null);
                     }
                 }
+                // Debug.Log(summary);    
             }
-//            Debug.Log(summary);
         }
         #endregion
 
@@ -397,7 +392,7 @@ namespace Inner_Maps {
         /// </summary>
         public bool HasDifferentDwellingOrOutsideNeighbour() {
             foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> kvp in neighbours) {
-                if (!kvp.Value.isInside || (kvp.Value.structure != this.structure)) {
+                if (kvp.Value.structure != this.structure) {
                     return true;
                 }
             }
@@ -725,6 +720,25 @@ namespace Inner_Maps {
             walls.Clear();
         }
         #endregion
+
+        #region Corruption
+        public void CorruptTile() {
+            SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.corruptedTile);
+            CreateSeamlessEdgesForSelfAndNeighbours();
+            if (hasDetail) {
+                parentMap.detailsTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.corruptedDetailTile);
+            }
+            if (objHere != null) {
+                if (objHere is BigTreeObject) {
+                    objHere.mapObjectVisual.SetVisual(Utilities.GetRandomElement(InnerMapManager.Instance.assetManager.corruptedBigTreeAssets));
+                } else if (objHere is TreeObject) {
+                    objHere.mapObjectVisual.SetVisual(Utilities.GetRandomElement(InnerMapManager.Instance.assetManager.corruptedTreeAssets));
+                } else {
+                    structure.RemovePOI(objHere);
+                }
+            }
+        }
+        #endregion
     }
 
     [System.Serializable]
@@ -800,7 +814,6 @@ namespace Inner_Maps {
             furnitureSpot = gridTile.furnitureSpot;
             hasFurnitureSpot = gridTile.hasFurnitureSpot;
             hasDetail = gridTile.hasDetail;
-            isInside = gridTile.isInside;
             isLocked = gridTile.isLocked;
 
             if(gridTile.structure != null) {

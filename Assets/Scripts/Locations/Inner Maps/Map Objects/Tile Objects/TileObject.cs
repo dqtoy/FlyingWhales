@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Actionables;
 using UnityEngine;
 using BayatGames.SaveGameFree.Types;
 using Inner_Maps;
 using Traits;
 using UnityEngine.Experimental.U2D;
 
-public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
+public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPlayerActionTarget {
     public string name { get; protected set; }
     public int id { get; private set; }
     public TILE_OBJECT_TYPE tileObjectType { get; private set; }
@@ -80,6 +81,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         traitContainer.AddTrait(this, "Flammable");
         ConstructResources();
         AddCommonAdvertisements();
+        ConstructDefaultActions();
         InnerMapManager.Instance.AddTileObject(this);
         SubscribeListeners();
     }
@@ -93,6 +95,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         CreateTraitContainer();
         AddCommonAdvertisements();
         ConstructResources();
+        ConstructDefaultActions();
         InnerMapManager.Instance.AddTileObject(this);
         SubscribeListeners();
     }
@@ -735,6 +738,44 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
     public override string ToString() {
         return $"{name} {id.ToString()}";
     }
+
+    #region Player Action Target
+    public List<PlayerAction> actions { get; private set; }
+    public void ConstructDefaultActions() {
+        actions = new List<PlayerAction>();
+        
+        PlayerAction destroyAction = new PlayerAction("Destroy", 
+            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.DESTROY].CanPerformAbilityTowards(this),
+            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.DESTROY].ActivateAbility(this));
+        PlayerAction igniteAction = new PlayerAction("Ignite", 
+            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.IGNITE].CanPerformAbilityTowards(this), 
+            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.IGNITE].ActivateAbility(this));
+        PlayerAction poisonAction = new PlayerAction("Poison", 
+            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.SPOIL].CanPerformAbilityTowards(this), 
+            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.SPOIL].ActivateAbility(this));
+        PlayerAction animateAction = new PlayerAction("Animate", () => false, null);
+        PlayerAction seizeAction = new PlayerAction("Seize", 
+            () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && this.mapVisual != null && (this.isBeingCarriedBy != null || this.gridTileLocation != null), 
+             () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
+        
+        AddPlayerAction(destroyAction);
+        AddPlayerAction(igniteAction);
+        AddPlayerAction(poisonAction);
+        AddPlayerAction(animateAction);
+        AddPlayerAction(seizeAction);
+    }
+    public void AddPlayerAction(PlayerAction action) {
+        actions.Add(action);
+    }
+    public void RemovePlayerAction(PlayerAction action) {
+        actions.Remove(action);
+    }
+    public void ClearPlayerActions() {
+        actions.Clear();
+    }
+    #endregion
+    
+    
 }
 
 [System.Serializable]

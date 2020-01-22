@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using Traits;
 using UnityEngine;
 
-public class Vampirism : PlayerJobAction {
+public class Vampirism : PlayerSpell {
 
-    public Vampirism() : base(INTERVENTION_ABILITY.VAMPIRISM) {
+    public Vampirism() : base(SPELL_TYPE.VAMPIRISM) {
         tier = 1;
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
         //abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 
@@ -105,11 +105,11 @@ public class Vampirism : PlayerJobAction {
     }
 }
 
-public class VampirismData : PlayerJobActionData {
-    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.VAMPIRISM;
+public class VampirismData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.VAMPIRISM;
     public override string name { get { return "Vampirism"; } }
     public override string description { get { return "Makes a character have uncontrollable urge to drink blood for sustenance."; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.MONSTER; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.MONSTER; } }
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
     #region Overrides

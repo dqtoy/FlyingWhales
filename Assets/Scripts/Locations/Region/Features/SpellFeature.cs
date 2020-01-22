@@ -14,8 +14,8 @@ public class SpellFeature : TileFeature {
     #region Overrides
     public override void Activate(HexTile tile) {
         base.Activate(tile);
-        INTERVENTION_ABILITY[] spells = PlayerManager.Instance.allInterventionAbilities;
-        PlayerJobAction newAbility = PlayerManager.Instance.CreateNewInterventionAbility(spells[Random.Range(0, spells.Length)]);
+        SPELL_TYPE[] spells = PlayerManager.Instance.allSpellTypes;
+        PlayerSpell newAbility = PlayerManager.Instance.CreateNewInterventionAbility(spells[Random.Range(0, spells.Length)]);
         if (PlayerManager.Instance.player.HasEmptyInterventionSlot()) {
             PlayerManager.Instance.player.GainNewInterventionAbility(newAbility);
             UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained Spell: " + newAbility.name, null);

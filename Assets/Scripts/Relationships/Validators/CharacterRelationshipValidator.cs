@@ -4,12 +4,6 @@ using UnityEngine;
 
 public class CharacterRelationshipValidator : IRelationshipValidator {
 
-    public static CharacterRelationshipValidator Instance = null;
-
-    public CharacterRelationshipValidator() {
-        Instance = this;
-    }
-
     public bool CanHaveRelationship(Relatable character, Relatable target, RELATIONSHIP_TYPE type) {
         //TODO:
         //if (target.characterClass.className == "Zombie" || character.characterClass.className == "Zombie") {

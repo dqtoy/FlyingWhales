@@ -261,7 +261,7 @@ public class RegionInfoUI : UIMenu {
     public void StartInvasion() {
         activeRegion.StartInvasion(chosenMinionToInvade);
         HideStartInvasionConfirmation();
-        LoadActions();
+        // LoadActions();
     }
     public void HideStartInvasionConfirmation() {
         chosenMinionToInvade = null;
@@ -301,7 +301,7 @@ public class RegionInfoUI : UIMenu {
     #region Demonic Landmarks
     private void ShowAppropriateContentOnSignal(Region region) {
         if (region == activeRegion) {
-            LoadActions();
+            // LoadActions();
         }
     }
     //private void ShowAppropriateContentOnOpen() {
@@ -490,113 +490,113 @@ public class RegionInfoUI : UIMenu {
     }
     #endregion
 
-    #region Actions
-    //[Header("Actions")] 
-    //[SerializeField] private RectTransform actionsTransform;
-    //[SerializeField] private GameObject actionItemPrefab;
-    protected override void LoadActions() {
-        Utilities.DestroyChildren(actionsTransform);
-        // if (activeRegion.coreTile.isCorrupted) {
-        //     //region is corrupted
-        //     if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE) {
-        //         //if it doesn't have a landmark, show the build action
-        //         ActionItem item = AddNewAction("Build", null, () => playerBuildLandmarkUI.OnClickBuild(activeRegion));
-        //         if (activeRegion.demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE) {
-        //             int remaining = activeRegion.demonicBuildingData.buildDuration -
-        //                             activeRegion.demonicBuildingData.currentDuration;
-        //             item.SetAsUninteractableUntil(remaining);
-        //         }
-        //     } else {
-        //         //if it has a landmark then assume that the landmark is a demonic landmark and show that landmarks action.
-        //         //if the landmark is not the portal, then show the demolish action
-        //         if (activeRegion.mainLandmark.specificLandmarkType != LANDMARK_TYPE.THE_PORTAL) {
-        //             AddNewAction("Demolish", null, OnClickDemolish);    
-        //         }
-        //         ActionItem item;
-        //         int remaining = 0;
-        //         switch (activeRegion.mainLandmark.specificLandmarkType) {
-        //             case LANDMARK_TYPE.THE_SPIRE:
-        //                 TheSpire spire = activeRegion.mainLandmark as TheSpire;
-        //                 item = AddNewAction("Extract Spell", null, () => playerResearchUI.OnClickResearch(spire));
-        //                 if (spire.isInCooldown) {
-        //                     remaining = spire.cooldownDuration - spire.currentCooldownTick;
-        //                     item.SetAsUninteractableUntil(remaining);
-        //                 }
-        //                 break;
-        //             case LANDMARK_TYPE.THE_EYE:
-        //                 TheEye eye = activeRegion.mainLandmark as TheEye;
-        //                 item = AddNewAction("Interfere", null, () => theEyeUI.OnClickInterfere(eye));
-        //                 if (eye.isInCooldown) {
-        //                     remaining = eye.cooldownDuration - eye.currentCooldownTick;
-        //                     item.SetAsUninteractableUntil(remaining);
-        //                 }
-        //                 break;
-        //             case LANDMARK_TYPE.THE_ANVIL:
-        //                 TheAnvil anvil = activeRegion.mainLandmark as TheAnvil;
-        //                 item = AddNewAction("Upgrade", null, () => playerUpgradeUI.OnClickUpgrade(anvil));
-        //                 if (string.IsNullOrEmpty(anvil.upgradeIdentifier) == false) {
-        //                     item.SetAsUninteractableUntil(anvil.dueDate);
-        //                 }
-        //                 break;
-        //             case LANDMARK_TYPE.THE_PORTAL:
-        //                 ThePortal portal = activeRegion.mainLandmark as ThePortal;
-        //                 item = AddNewAction("Summon", null, () => playerSummonMinionUI.OnClickSummon(portal));
-        //                 if (portal.currentMinionToSummonIndex != -1) {
-        //                     remaining = portal.currentSummonDuration - portal.currentSummonTick;
-        //                     item.SetAsUninteractableUntil(remaining);
-        //                 }
-        //                 break;
-        //             case LANDMARK_TYPE.GOADER:
-        //                 Goader fingers = activeRegion.mainLandmark as Goader;
-        //                 item = AddNewAction("Create Faction", null, () => fingersUI.OnClickCreate(fingers));
-        //                 item = AddNewAction("Force Leave Faction", null, () => fingersUI.OnClickForceLeaveFaction());
-        //                 item = AddNewAction("Force Join Faction", null, () => fingersUI.OnClickForceJoinFaction());
-        //                 if (fingers.hasBeenActivated) {
-        //                     remaining = fingers.duration - fingers.currentTick;
-        //                     item.SetAsUninteractableUntil(remaining);
-        //                 }
-        //                 break;
-        //             case LANDMARK_TYPE.THE_NEEDLES:
-        //                 TheNeedles needles = activeRegion.mainLandmark as TheNeedles;
-        //                 item = AddNewAction("Convert to Mana", null, () => needlesUI.OnClickConvert(needles));
-        //                 if (needles.isInCooldown) {
-        //                     remaining = needles.cooldownDuration - needles.currentCooldownTick;
-        //                     item.SetAsUninteractableUntil(remaining);
-        //                 }
-        //                 break;
-        //             case LANDMARK_TYPE.THE_PROFANE:
-        //                 TheProfane profane = activeRegion.mainLandmark as TheProfane;
-        //                 item = AddNewAction("Corrupt", null, () => theProfaneUI.OnClickCorrupt(profane));
-        //                 if (profane.isInCooldown) {
-        //                     remaining = profane.cooldownDuration - profane.currentCooldownTick;
-        //                     item.SetAsUninteractableUntil(remaining);
-        //                 }
-        //                 break;
-        //         }
-        //     }
-        // } 
-        // else {
-        //     //region is not corrupted
-        //     //show invade action.
-        //     if (activeRegion.CanBeInvaded()) {
-        //         ActionItem item = AddNewAction("Invade", null, OnClickInvade);
-        //         if (activeRegion.demonicInvasionData.beingInvaded) {
-        //             int remaining = activeRegion.mainLandmark.invasionTicks -
-        //                             activeRegion.demonicInvasionData.currentDuration;
-        //             item.SetAsUninteractableUntil(remaining);
-        //         } 
-        //         //else {
-        //         //    item.SetInteractable(PlayerManager.Instance.player.currentSettlementBeingInvaded != null);
-        //         //}
-        //     }
-        // }
-    }
-    //private ActionItem AddNewAction(string actionName, Sprite actionIcon, System.Action action) {
-    //    GameObject obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(actionItemPrefab.name, Vector3.zero,
-    //        Quaternion.identity, actionsTransform);
-    //    ActionItem item = obj.GetComponent<ActionItem>();
-    //    item.SetAction(action, actionIcon, actionName);
-    //    return item;
-    //}
-    #endregion
+    // #region Actions
+    // //[Header("Actions")] 
+    // //[SerializeField] private RectTransform actionsTransform;
+    // //[SerializeField] private GameObject actionItemPrefab;
+    // protected override void LoadActions() {
+    //     Utilities.DestroyChildren(actionsTransform);
+    //     // if (activeRegion.coreTile.isCorrupted) {
+    //     //     //region is corrupted
+    //     //     if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE) {
+    //     //         //if it doesn't have a landmark, show the build action
+    //     //         ActionItem item = AddNewAction("Build", null, () => playerBuildLandmarkUI.OnClickBuild(activeRegion));
+    //     //         if (activeRegion.demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE) {
+    //     //             int remaining = activeRegion.demonicBuildingData.buildDuration -
+    //     //                             activeRegion.demonicBuildingData.currentDuration;
+    //     //             item.SetAsUninteractableUntil(remaining);
+    //     //         }
+    //     //     } else {
+    //     //         //if it has a landmark then assume that the landmark is a demonic landmark and show that landmarks action.
+    //     //         //if the landmark is not the portal, then show the demolish action
+    //     //         if (activeRegion.mainLandmark.specificLandmarkType != LANDMARK_TYPE.THE_PORTAL) {
+    //     //             AddNewAction("Demolish", null, OnClickDemolish);    
+    //     //         }
+    //     //         ActionItem item;
+    //     //         int remaining = 0;
+    //     //         switch (activeRegion.mainLandmark.specificLandmarkType) {
+    //     //             case LANDMARK_TYPE.THE_SPIRE:
+    //     //                 TheSpire spire = activeRegion.mainLandmark as TheSpire;
+    //     //                 item = AddNewAction("Extract Spell", null, () => playerResearchUI.OnClickResearch(spire));
+    //     //                 if (spire.isInCooldown) {
+    //     //                     remaining = spire.cooldownDuration - spire.currentCooldownTick;
+    //     //                     item.SetAsUninteractableUntil(remaining);
+    //     //                 }
+    //     //                 break;
+    //     //             case LANDMARK_TYPE.THE_EYE:
+    //     //                 TheEye eye = activeRegion.mainLandmark as TheEye;
+    //     //                 item = AddNewAction("Interfere", null, () => theEyeUI.OnClickInterfere(eye));
+    //     //                 if (eye.isInCooldown) {
+    //     //                     remaining = eye.cooldownDuration - eye.currentCooldownTick;
+    //     //                     item.SetAsUninteractableUntil(remaining);
+    //     //                 }
+    //     //                 break;
+    //     //             case LANDMARK_TYPE.THE_ANVIL:
+    //     //                 TheAnvil anvil = activeRegion.mainLandmark as TheAnvil;
+    //     //                 item = AddNewAction("Upgrade", null, () => playerUpgradeUI.OnClickUpgrade(anvil));
+    //     //                 if (string.IsNullOrEmpty(anvil.upgradeIdentifier) == false) {
+    //     //                     item.SetAsUninteractableUntil(anvil.dueDate);
+    //     //                 }
+    //     //                 break;
+    //     //             case LANDMARK_TYPE.THE_PORTAL:
+    //     //                 ThePortal portal = activeRegion.mainLandmark as ThePortal;
+    //     //                 item = AddNewAction("Summon", null, () => playerSummonMinionUI.OnClickSummon(portal));
+    //     //                 if (portal.currentMinionToSummonIndex != -1) {
+    //     //                     remaining = portal.currentSummonDuration - portal.currentSummonTick;
+    //     //                     item.SetAsUninteractableUntil(remaining);
+    //     //                 }
+    //     //                 break;
+    //     //             case LANDMARK_TYPE.GOADER:
+    //     //                 Goader fingers = activeRegion.mainLandmark as Goader;
+    //     //                 item = AddNewAction("Create Faction", null, () => fingersUI.OnClickCreate(fingers));
+    //     //                 item = AddNewAction("Force Leave Faction", null, () => fingersUI.OnClickForceLeaveFaction());
+    //     //                 item = AddNewAction("Force Join Faction", null, () => fingersUI.OnClickForceJoinFaction());
+    //     //                 if (fingers.hasBeenActivated) {
+    //     //                     remaining = fingers.duration - fingers.currentTick;
+    //     //                     item.SetAsUninteractableUntil(remaining);
+    //     //                 }
+    //     //                 break;
+    //     //             case LANDMARK_TYPE.THE_NEEDLES:
+    //     //                 TheNeedles needles = activeRegion.mainLandmark as TheNeedles;
+    //     //                 item = AddNewAction("Convert to Mana", null, () => needlesUI.OnClickConvert(needles));
+    //     //                 if (needles.isInCooldown) {
+    //     //                     remaining = needles.cooldownDuration - needles.currentCooldownTick;
+    //     //                     item.SetAsUninteractableUntil(remaining);
+    //     //                 }
+    //     //                 break;
+    //     //             case LANDMARK_TYPE.THE_PROFANE:
+    //     //                 TheProfane profane = activeRegion.mainLandmark as TheProfane;
+    //     //                 item = AddNewAction("Corrupt", null, () => theProfaneUI.OnClickCorrupt(profane));
+    //     //                 if (profane.isInCooldown) {
+    //     //                     remaining = profane.cooldownDuration - profane.currentCooldownTick;
+    //     //                     item.SetAsUninteractableUntil(remaining);
+    //     //                 }
+    //     //                 break;
+    //     //         }
+    //     //     }
+    //     // } 
+    //     // else {
+    //     //     //region is not corrupted
+    //     //     //show invade action.
+    //     //     if (activeRegion.CanBeInvaded()) {
+    //     //         ActionItem item = AddNewAction("Invade", null, OnClickInvade);
+    //     //         if (activeRegion.demonicInvasionData.beingInvaded) {
+    //     //             int remaining = activeRegion.mainLandmark.invasionTicks -
+    //     //                             activeRegion.demonicInvasionData.currentDuration;
+    //     //             item.SetAsUninteractableUntil(remaining);
+    //     //         } 
+    //     //         //else {
+    //     //         //    item.SetInteractable(PlayerManager.Instance.player.currentSettlementBeingInvaded != null);
+    //     //         //}
+    //     //     }
+    //     // }
+    // }
+    // //private ActionItem AddNewAction(string actionName, Sprite actionIcon, System.Action action) {
+    // //    GameObject obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(actionItemPrefab.name, Vector3.zero,
+    // //        Quaternion.identity, actionsTransform);
+    // //    ActionItem item = obj.GetComponent<ActionItem>();
+    // //    item.SetAction(action, actionIcon, actionName);
+    // //    return item;
+    // //}
+    // #endregion
 }

@@ -135,13 +135,13 @@ public class MinionCard : MonoBehaviour {
     public void OnHoverResearchSpell(object obj) {
         if (obj is string) {
             int index = System.Int32.Parse((string)obj);
-            INTERVENTION_ABILITY spell;
+            SPELL_TYPE spell;
             if (minion != null) {
                 spell = minion.interventionAbilitiesToResearch[index];
             } else {
                 spell = minionData.interventionAbilitiesToResearch[index];
             }
-            UIManager.Instance.ShowSmallInfo(PlayerManager.Instance.allInterventionAbilitiesData[spell].description, Utilities.NormalizeStringUpperCaseFirstLetters(spell.ToString()));
+            UIManager.Instance.ShowSmallInfo(PlayerManager.Instance.allSpellsData[spell].description, Utilities.NormalizeStringUpperCaseFirstLetters(spell.ToString()));
         }
     }
     public void OnHoverExitSpell() {

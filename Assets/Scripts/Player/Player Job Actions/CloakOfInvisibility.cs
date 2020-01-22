@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Traits;
 
-public class CloakOfInvisibility : PlayerJobAction {
+public class CloakOfInvisibility : PlayerSpell {
 
-    public CloakOfInvisibility() : base(INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY) {
+    public CloakOfInvisibility() : base(SPELL_TYPE.CLOAK_OF_INVISIBILITY) {
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
         //abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 
@@ -97,8 +97,8 @@ public class CloakOfInvisibility : PlayerJobAction {
     }
 }
 
-public class CloakOfInvisibilityData : PlayerJobActionData {
-    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY;
+public class CloakOfInvisibilityData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.CLOAK_OF_INVISIBILITY;
     public override string name { get { return "Cloak Of Invisibility"; } }
     public override string description { get { return "Makes a character invisible from all other characters."; } }
 }

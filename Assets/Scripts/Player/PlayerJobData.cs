@@ -6,14 +6,14 @@ public class PlayerJobData {
 
     public JOB jobType { get; private set; }
 	public Character assignedCharacter { get; private set; } //this is a minion
-    public List<PlayerJobAction> jobActions { get; private set; }
-    public PlayerJobAction activeAction { get; private set; }
+    public List<PlayerSpell> jobActions { get; private set; }
+    public PlayerSpell activeAction { get; private set; }
     public bool isSlotLocked { get; private set; } //this says whether the job slot can be assigned to.
 
     public bool hasActionInCooldown {
         get {
             for (int i = 0; i < jobActions.Count; i++) {
-                PlayerJobAction currAction = jobActions[i];
+                PlayerSpell currAction = jobActions[i];
                 if (currAction.isInCooldown) {
                     return true;
                 }
@@ -28,7 +28,7 @@ public class PlayerJobData {
         ConstructRoleActions();
     }
     private void ConstructRoleActions() {
-        jobActions = new List<PlayerJobAction>();
+        jobActions = new List<PlayerSpell>();
         switch (jobType) {
             case JOB.SPY:
                 //jobActions.Add(new Track());
@@ -68,13 +68,13 @@ public class PlayerJobData {
     public void AssignCharacter(Character character) {
         assignedCharacter = character;
     }
-    public void SetActiveAction(PlayerJobAction action) {
+    public void SetActiveAction(PlayerSpell action) {
         activeAction = action;
     }
 
-    public PlayerJobAction GetAction(System.Type type) {
+    public PlayerSpell GetAction(System.Type type) {
         for (int i = 0; i < jobActions.Count; i++) {
-            PlayerJobAction currAction = jobActions[i];
+            PlayerSpell currAction = jobActions[i];
             if (currAction.GetType() == type) {
                 return currAction;
             }

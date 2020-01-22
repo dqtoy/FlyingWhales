@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Abduct : PlayerJobAction {
+public class Abduct : PlayerSpell {
 
     private Character _targetCharacter;
     private List<Settlement> _abductAreas;
 
-    public Abduct() : base(INTERVENTION_ABILITY.ABDUCT) {
+    public Abduct() : base(SPELL_TYPE.ABDUCT) {
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
         _abductAreas = new List<Settlement>();
         for (int i = 0; i < LandmarkManager.Instance.allSetttlements.Count; i++) {
             Settlement settlement = LandmarkManager.Instance.allSetttlements[i];
@@ -104,9 +104,9 @@ public class Abduct : PlayerJobAction {
     #endregion
 }
 
-public class AbductData : PlayerJobActionData {
-    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.ABDUCT;
+public class AbductData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.ABDUCT;
     public override string name { get { return "Abduct"; } }
     public override string description { get { return "Makes a character abduct other characters of different race."; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.SABOTAGE; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SABOTAGE; } }
 }

@@ -13,7 +13,7 @@ public class SaveDataMinion {
     public int assignedRegionID;
 
     public List<string> traitsToAdd;
-    public List<INTERVENTION_ABILITY> interventionAbilitiesToResearch;
+    public List<SPELL_TYPE> interventionAbilitiesToResearch;
     public int spellExtractionCount;
 
     public void Save(Minion minion) {

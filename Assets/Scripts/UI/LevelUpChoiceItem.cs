@@ -38,8 +38,8 @@ public class LevelUpChoiceItem : PooledObject {
             } else if (artifactSlot.artifact != null) {
                 img.sprite = CharacterManager.Instance.GetArtifactSettings(artifactSlot.artifact.type).artifactPortrait;
             }
-        } else if (obj is PlayerJobAction) {
-            PlayerJobAction interventionAbility = obj as PlayerJobAction;
+        } else if (obj is PlayerSpell) {
+            PlayerSpell interventionAbility = obj as PlayerSpell;
             toggle.interactable = interventionAbility.level < PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY;
             img.sprite = PlayerManager.Instance.GetJobActionSprite(interventionAbility.name);
         } else if (obj is CombatAbility) {
@@ -77,8 +77,8 @@ public class LevelUpChoiceItem : PooledObject {
                 text += "\nAttached Artifact: None";
             }
             info.text = text;
-        } else if (obj is PlayerJobAction) {
-            PlayerJobAction action = obj as PlayerJobAction;
+        } else if (obj is PlayerSpell) {
+            PlayerSpell action = obj as PlayerSpell;
             string text = action.name;
             text += "\nDescription: " + action.description;
             info.text = text;

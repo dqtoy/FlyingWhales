@@ -58,63 +58,14 @@ public class ItemInfoUI : UIMenu {
         }
     }
 
-    #region Actions
-    protected override void LoadActions() {
-        Utilities.DestroyChildren(actionsTransform);
-
-        ActionItem destroyItem = AddNewAction("Destroy", null, Destroy);
-        destroyItem.SetInteractable(CanBeDestroyed());
-
-        ActionItem ignitedItem = AddNewAction("Ignite", null, Ignite);
-        ignitedItem.SetInteractable(CanBeIgnited());
-
-        ActionItem poisonItem = AddNewAction("Poison", null, Poison);
-        poisonItem.SetInteractable(CanBePoisoned());
-
-        ActionItem animateItem = AddNewAction("Animate", null, Animate);
-
-        ActionItem seizeItem = AddNewAction("Seize", null, () => PlayerManager.Instance.player.seizeComponent.SeizePOI(activeItem));
-        bool isInteractable = !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && activeItem.mapVisual != null && (activeItem.isBeingCarriedBy != null || activeItem.gridTileLocation != null);
-        seizeItem.SetInteractable(isInteractable);
-    }
-    #endregion
-
     #region Destroy
     protected void Destroy() {
         SpecialToken item = activeItem;
         CloseMenu();
-        PlayerManager.Instance.allInterventionAbilitiesData[INTERVENTION_ABILITY.DESTROY].ActivateAbility(item);
+        PlayerManager.Instance.allSpellsData[SPELL_TYPE.DESTROY].ActivateAbility(item);
     }
     protected bool CanBeDestroyed() {
-        return PlayerManager.Instance.allInterventionAbilitiesData[INTERVENTION_ABILITY.DESTROY].CanPerformAbilityTowards(activeItem);
-    }
-    #endregion
-
-    #region Ignite
-    protected void Ignite() {
-        PlayerManager.Instance.allInterventionAbilitiesData[INTERVENTION_ABILITY.IGNITE].ActivateAbility(activeItem);
-        //Find better way to load only the button that was clicked
-        LoadActions();
-    }
-    protected bool CanBeIgnited() {
-        return PlayerManager.Instance.allInterventionAbilitiesData[INTERVENTION_ABILITY.IGNITE].CanPerformAbilityTowards(activeItem);
-    }
-    #endregion
-
-    #region Poison
-    protected void Poison() {
-        PlayerManager.Instance.allInterventionAbilitiesData[INTERVENTION_ABILITY.SPOIL].ActivateAbility(activeItem);
-        //Find better way to load only the button that was clicked
-        LoadActions();
-    }
-    protected bool CanBePoisoned() {
-        return PlayerManager.Instance.allInterventionAbilitiesData[INTERVENTION_ABILITY.SPOIL].CanPerformAbilityTowards(activeItem);
-    }
-    #endregion
-
-    #region Animate
-    protected void Animate() {
-        //Animate
+        return PlayerManager.Instance.allSpellsData[SPELL_TYPE.DESTROY].CanPerformAbilityTowards(activeItem);
     }
     #endregion
 }

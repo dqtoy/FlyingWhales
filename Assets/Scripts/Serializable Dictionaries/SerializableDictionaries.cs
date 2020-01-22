@@ -43,7 +43,7 @@ public class SeamlessEdgeAssetsDictionary : SerializableDictionary<LocationGridT
 [System.Serializable]
 public class YieldTypeLandmarksDictionary : SerializableDictionary<LANDMARK_YIELD_TYPE, List<LANDMARK_TYPE>, LandmarkTypeListStorage> { }
 [System.Serializable]
-public class InterventionAbilityTierDictionary : SerializableDictionary<INTERVENTION_ABILITY, int> { }
+public class InterventionAbilityTierDictionary : SerializableDictionary<SPELL_TYPE, int> { }
 [System.Serializable]
 public class CharacterClassAssetDictionary : SerializableDictionary<string, CharacterClassAsset> { }
 [System.Serializable]

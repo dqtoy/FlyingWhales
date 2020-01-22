@@ -13,6 +13,7 @@ public class ItemGameObject : MapObjectVisual<SpecialToken> {
         SetVisual(InnerMapManager.Instance.GetItemAsset(obj.specialTokenType));
         collisionTrigger = transform.GetComponentInChildren<SpecialTokenCollisionTrigger>();
         _isMenuShowing = () => IsMenuShowing(obj);
+        UpdateSortingOrders();
     }
 
     public override void UpdateTileObjectVisual(SpecialToken specialToken) { }

@@ -1099,7 +1099,7 @@ public enum COMBAT_OCCUPIED_TILE {
     ROW,
     ALL,
 }
-public enum JOB_ACTION_TARGET {
+public enum SPELL_TARGET {
     NONE,
     CHARACTER,
     TILE_OBJECT,
@@ -1331,11 +1331,11 @@ public enum RELATIONSHIP_EFFECT {
     NEGATIVE,
 }
 public enum SHARE_INTEL_STATUS { NONE, WITNESSED, INFORMED,}
-public enum INTERVENTION_ABILITY { NONE, ACCESS_MEMORIES, LYCANTHROPY, KLEPTOMANIA, VAMPIRISM, UNFAITHFULNESS, CANNIBALISM, ZAP, JOLT, SPOOK, ENRAGE, DISABLE
+public enum SPELL_TYPE { NONE, ACCESS_MEMORIES, LYCANTHROPY, KLEPTOMANIA, VAMPIRISM, UNFAITHFULNESS, CANNIBALISM, ZAP, JOLT, SPOOK, ENRAGE, DISABLE
         , RILE_UP, ABDUCT, PROVOKE, DESTROY, RAISE_DEAD, CLOAK_OF_INVISIBILITY, EXPLOSION, IGNITE, LURE, CURSED_OBJECT, LULLABY, AGORAPHOBIA, SPOIL, ALCOHOLIC, PESTILENCE
         , PARALYSIS, RELEASE, ZOMBIE_VIRUS, PSYCHOPATHY, TORNADO }
 public enum INTERVENTION_ABILITY_TYPE { NONE, AFFLICTION, SPELL, }
-public enum INTERVENTION_ABILITY_CATEGORY { NONE, SABOTAGE, MONSTER, DEVASTATION, HEX }
+public enum SPELL_CATEGORY { NONE, SABOTAGE, MONSTER, DEVASTATION, HEX }
 public enum COMBAT_ABILITY {
     SINGLE_HEAL, FLAMESTRIKE, FEAR_SPELL, SACRIFICE, TAUNT,
 }
@@ -1943,41 +1943,41 @@ public static class Extensions {
     #endregion
 
     #region Intervention Abilities
-    public static List<ABILITY_TAG> GetAbilityTags(this INTERVENTION_ABILITY type) {
+    public static List<ABILITY_TAG> GetAbilityTags(this SPELL_TYPE type) {
         List<ABILITY_TAG> tags = new List<ABILITY_TAG>();
         switch (type) {
-            case INTERVENTION_ABILITY.LYCANTHROPY:
+            case SPELL_TYPE.LYCANTHROPY:
                 tags.Add(ABILITY_TAG.MAGIC);
                 break;
-            case INTERVENTION_ABILITY.KLEPTOMANIA:
+            case SPELL_TYPE.KLEPTOMANIA:
                 tags.Add(ABILITY_TAG.CRIME);
                 break;
-            case INTERVENTION_ABILITY.VAMPIRISM:
+            case SPELL_TYPE.VAMPIRISM:
                 tags.Add(ABILITY_TAG.MAGIC);
                 break;
-            case INTERVENTION_ABILITY.UNFAITHFULNESS:
+            case SPELL_TYPE.UNFAITHFULNESS:
                 tags.Add(ABILITY_TAG.CRIME);
                 break;
-            case INTERVENTION_ABILITY.CANNIBALISM:
+            case SPELL_TYPE.CANNIBALISM:
                 tags.Add(ABILITY_TAG.MAGIC);
                 tags.Add(ABILITY_TAG.CRIME);
                 break;
-            case INTERVENTION_ABILITY.ZAP:
+            case SPELL_TYPE.ZAP:
                 tags.Add(ABILITY_TAG.MAGIC);
                 break;
-            case INTERVENTION_ABILITY.JOLT:
+            case SPELL_TYPE.JOLT:
                 tags.Add(ABILITY_TAG.MAGIC);
                 break;
-            case INTERVENTION_ABILITY.ENRAGE:
+            case SPELL_TYPE.ENRAGE:
                 tags.Add(ABILITY_TAG.MAGIC);
                 break;
-            case INTERVENTION_ABILITY.PROVOKE:
+            case SPELL_TYPE.PROVOKE:
                 tags.Add(ABILITY_TAG.MAGIC);
                 break;
-            case INTERVENTION_ABILITY.RAISE_DEAD:
+            case SPELL_TYPE.RAISE_DEAD:
                 tags.Add(ABILITY_TAG.MAGIC);
                 break;
-            case INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY:
+            case SPELL_TYPE.CLOAK_OF_INVISIBILITY:
                 tags.Add(ABILITY_TAG.MAGIC);
                 break;
         }

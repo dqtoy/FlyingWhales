@@ -27,8 +27,8 @@ public class ReplaceChoiceItem : PooledObject {
         } else if (obj is Artifact) {
             img.sprite = CharacterManager.Instance.GetArtifactSettings((obj as Artifact).type).artifactPortrait;
             img.gameObject.SetActive(true);
-        } else if (obj is PlayerJobAction) {
-            img.sprite = PlayerManager.Instance.GetJobActionSprite((obj as PlayerJobAction).name);
+        } else if (obj is PlayerSpell) {
+            img.sprite = PlayerManager.Instance.GetJobActionSprite((obj as PlayerSpell).name);
             img.gameObject.SetActive(true);
         } else if (obj is CombatAbility) {
             img.sprite = PlayerManager.Instance.GetCombatAbilitySprite((obj as CombatAbility).name);
@@ -60,8 +60,8 @@ public class ReplaceChoiceItem : PooledObject {
             text += "\nLevel: " + artifact.level.ToString();
             text += "\nDescription: " + PlayerManager.Instance.player.GetArtifactDescription(artifact.type);
             info.text = text;
-        } else if (obj is PlayerJobAction) {
-            PlayerJobAction action = obj as PlayerJobAction;
+        } else if (obj is PlayerSpell) {
+            PlayerSpell action = obj as PlayerSpell;
             string text = action.name;
             text += "\nSlot Level: " + action.level;
             info.text = text;

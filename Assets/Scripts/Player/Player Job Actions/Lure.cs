@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Lure : PlayerJobAction {
+public class Lure : PlayerSpell {
 
     //private int _lureRange;
 
@@ -12,12 +12,12 @@ public class Lure : PlayerJobAction {
     public bool isGamePausedOnLure { get; private set; }
     public Character targetCharacter { get; private set; }
 
-    public Lure() : base(INTERVENTION_ABILITY.LURE) {
+    public Lure() : base(SPELL_TYPE.LURE) {
         SetDefaultCooldownTime(24);
         //abilityTags.Add(ABILITY_TAG.NONE);
         //targetCharacters = new List<Character>();
         //tileChoices = new List<LocationGridTile>();
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
         //hasSecondPhase = true;
     }
 
@@ -149,9 +149,9 @@ public class Lure : PlayerJobAction {
     //#endregion
 }
 
-public class LureData : PlayerJobActionData {
-    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.LURE;
+public class LureData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.LURE;
     public override string name { get { return "Lure"; } }
     public override string description { get { return "Force a character to go to a specified nearby location."; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.SABOTAGE; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SABOTAGE; } }
 }

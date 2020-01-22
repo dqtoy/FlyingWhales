@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Disable : PlayerJobAction {
+public class Disable : PlayerSpell {
 
-    public Disable() : base(INTERVENTION_ABILITY.DISABLE) {
+    public Disable() : base(SPELL_TYPE.DISABLE) {
         //description = "Prevent characters from using this object for 4 hours.";
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE_OBJECT };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE_OBJECT };
     }
 
     public override void ActivateAction(IPointOfInterest targetPOI) {

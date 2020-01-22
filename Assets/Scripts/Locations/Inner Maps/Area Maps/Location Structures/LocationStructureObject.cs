@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
 
 public class LocationStructureObject : PooledObject {
@@ -246,7 +247,8 @@ public class LocationStructureObject : PooledObject {
             }
         }
 
-        Vector3Int actualLocation = new Vector3Int(Mathf.FloorToInt(this.transform.localPosition.x), Mathf.FloorToInt(this.transform.localPosition.y), 0);
+        var localPosition = this.transform.localPosition;
+        Vector3Int actualLocation = new Vector3Int(Mathf.FloorToInt(localPosition.x), Mathf.FloorToInt(localPosition.y), 0);
         for (int i = 0; i < occupiedCoordinates.Count; i++) {
             Vector3Int currCoordinate = occupiedCoordinates[i];
 
@@ -339,8 +341,6 @@ public class LocationStructureObject : PooledObject {
                 case RESOURCE.METAL:
                     tile.SetGroundTilemapVisual(InnerMapManager.Instance.GetTileAsset("Stone Floor Tile"));
                     break;
-                default:
-                    break;
             }
         }
     }
@@ -352,6 +352,12 @@ public class LocationStructureObject : PooledObject {
     }
     #endregion
 
+    #region Interaction
+    public void OnPointerClick(BaseEventData data) {
+        Debug.Log($"Player clicked {this.name}");
+    }
+    #endregion
+    
     [Header("Wall Converter")]
     [SerializeField] private Tilemap wallTileMap;
     [SerializeField] private GameObject leftWall;

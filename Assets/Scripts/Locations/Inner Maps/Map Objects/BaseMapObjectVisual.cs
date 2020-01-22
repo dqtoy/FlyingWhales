@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -18,8 +19,18 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     protected System.Action onRightClickAction;
     public GameObject gameObjectVisual => this.gameObject;
     public Sprite usedSprite => objectVisual.sprite;
-    
+
     #region Visuals
+    public void UpdateSortingOrders() {
+        if (objectVisual != null) {
+            objectVisual.sortingLayerName = "Area Maps";
+            objectVisual.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder;    
+        }
+        if (hoverObject != null) {
+            hoverObject.sortingLayerName = "Area Maps";
+            hoverObject.sortingOrder = objectVisual.sortingOrder - 1;    
+        }
+    }
     public void SetRotation(float rotation) {
         this.transform.localRotation = Quaternion.Euler(0f, 0f, rotation);
     }

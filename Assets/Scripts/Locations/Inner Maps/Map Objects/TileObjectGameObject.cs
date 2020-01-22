@@ -17,7 +17,8 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject.tileObjectType, tileObject.state, tileObject.structureLocation.location.coreTile.biomeType));
         collisionTrigger = this.transform.GetComponentInChildren<TileObjectCollisionTrigger>();
         _isMenuShowing = () => IsMenuShowing(tileObject);
-        
+        UpdateSortingOrders();
+
     }
 
     public override void UpdateTileObjectVisual(TileObject tileObject) {

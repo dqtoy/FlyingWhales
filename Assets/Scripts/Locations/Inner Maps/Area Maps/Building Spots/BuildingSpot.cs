@@ -29,7 +29,7 @@ public class BuildingSpot {
     /// Is this build spot to be considered as part of it's region map ("part" meaning if this spots tiles are valid)
     /// </summary>
     public bool isPartOfParentRegionMap => hexTileOwner != null;
-    public bool canBeBuiltOn => isPartOfParentRegionMap; //can only be built on if part of region map.
+    public bool canBeBuiltOnByNPC => isPartOfParentRegionMap && HasCorruptedTile() == false; //can only be built on if part of region map.
     #endregion
 
     public BuildingSpot(BuildingSpotData data) {
@@ -152,7 +152,7 @@ public class BuildingSpot {
     /// <param name="settlement">The provided settlement</param>
     /// <returns>True or false</returns>
     public bool IsOpenFor(Settlement settlement) {
-        if (canBeBuiltOn == false) {
+        if (canBeBuiltOnByNPC == false) {
             return false;
         }
         if (isOccupied) {
@@ -176,6 +176,15 @@ public class BuildingSpot {
             }    
         }
         return open;
+    }
+    private bool HasCorruptedTile() {
+        for (int i = 0; i < tilesInTerritory.Length; i++) {
+            LocationGridTile tile = tilesInTerritory[i];
+            if (tile.isCorrupted) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 

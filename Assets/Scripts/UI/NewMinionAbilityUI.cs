@@ -37,7 +37,7 @@ public class NewMinionAbilityUI : MonoBehaviour {
         if (objectToAdd is CombatAbility) {
             titleText.text = "New Combat Ability";
             identifier = "combat";
-        }else if(objectToAdd is PlayerJobAction) {
+        }else if(objectToAdd is PlayerSpell) {
             titleText.text = "New Spell";
             identifier = "intervention";
         }
@@ -55,8 +55,8 @@ public class NewMinionAbilityUI : MonoBehaviour {
 
     private void UpdateObjectToAdd(object obj) {
         objToAdd = obj;
-        if (obj is PlayerJobAction) {
-            PlayerJobAction action = obj as PlayerJobAction;
+        if (obj is PlayerSpell) {
+            PlayerSpell action = obj as PlayerSpell;
             string text = action.name;
             text += "\nLevel: " + action.level;
             text += "\nDescription: " + action.description;

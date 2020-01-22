@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AccessMemories : PlayerJobAction {
+public class AccessMemories : PlayerSpell {
 
-    public AccessMemories() : base(INTERVENTION_ABILITY.ACCESS_MEMORIES) {
+    public AccessMemories() : base(SPELL_TYPE.ACCESS_MEMORIES) {
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }
 
     public override void ActivateAction(IPointOfInterest targetPOI) {
@@ -38,8 +38,8 @@ public class AccessMemories : PlayerJobAction {
     }
 }
 
-public class AccessMemoriesData : PlayerJobActionData {
-    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.ACCESS_MEMORIES;
+public class AccessMemoriesData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.ACCESS_MEMORIES;
     public override string name { get { return "Access Memories"; } }
     public override string description { get { return "Access the memories of a character."; } }
 }

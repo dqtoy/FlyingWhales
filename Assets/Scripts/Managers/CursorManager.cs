@@ -49,7 +49,7 @@ public class CursorManager : MonoBehaviour {
     //}
     private void Update() {
         if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
-            if (PlayerManager.Instance.player.currentActivePlayerJobAction != null) {
+            if (PlayerManager.Instance.player.currentActivePlayerSpell != null) {
                 LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
                 if (previousHoveredTile != null && previousHoveredTile != hoveredTile) {
                     // PlayerManager.Instance.player.currentActivePlayerJobAction.HideRange(previousHoveredTile);
@@ -57,17 +57,17 @@ public class CursorManager : MonoBehaviour {
                 bool canTarget = false;
                 IPointOfInterest hoveredPOI = InnerMapManager.Instance.currentlyHoveredPoi;
                 string hoverText = string.Empty;
-                for (int i = 0; i < PlayerManager.Instance.player.currentActivePlayerJobAction.targetTypes.Length; i++) {
-                    switch (PlayerManager.Instance.player.currentActivePlayerJobAction.targetTypes[i]) {
-                        case JOB_ACTION_TARGET.CHARACTER:
-                        case JOB_ACTION_TARGET.TILE_OBJECT:
+                for (int i = 0; i < PlayerManager.Instance.player.currentActivePlayerSpell.targetTypes.Length; i++) {
+                    switch (PlayerManager.Instance.player.currentActivePlayerSpell.targetTypes[i]) {
+                        case SPELL_TARGET.CHARACTER:
+                        case SPELL_TARGET.TILE_OBJECT:
                             if (hoveredPOI != null) {
-                                canTarget = PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(hoveredPOI, ref hoverText);
+                                canTarget = PlayerManager.Instance.player.currentActivePlayerSpell.CanTarget(hoveredPOI, ref hoverText);
                             }
                             break;
-                        case JOB_ACTION_TARGET.TILE:
+                        case SPELL_TARGET.TILE:
                             if (hoveredTile != null) {
-                                canTarget = PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(hoveredTile);
+                                canTarget = PlayerManager.Instance.player.currentActivePlayerSpell.CanTarget(hoveredTile);
                             }
                             break;
                         default:
@@ -253,6 +253,7 @@ public class CursorManager : MonoBehaviour {
     public void ClearRightClickActions() {
         rightClickActions.Clear();
     }
+    private readonly List<RaycastResult> raycastResults = new List<RaycastResult>();
     private void MapVisualClick(PointerEventData.InputButton button) {
         if (UIManager.Instance != null && (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing())) {
             return;
@@ -260,7 +261,7 @@ public class CursorManager : MonoBehaviour {
         PointerEventData pointer = new PointerEventData(EventSystem.current);
         pointer.position = Input.mousePosition;
 
-        List<RaycastResult> raycastResults = new List<RaycastResult>();
+        raycastResults.Clear();
         EventSystem.current.RaycastAll(pointer, raycastResults);
 
         if (raycastResults.Count > 0) {

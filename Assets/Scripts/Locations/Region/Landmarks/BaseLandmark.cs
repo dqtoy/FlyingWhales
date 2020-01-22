@@ -24,7 +24,7 @@ public class BaseLandmark {
 
     #region getters/setters
     public int id => _id;
-    public string landmarkName => tileLocation.settlementOnTile == null ? _landmarkName : tileLocation.settlementOnTile.name;
+    public string landmarkName => _landmarkName;
     public string urlName => $"<link=\"{this._id.ToString()}_landmark\">{_landmarkName}</link>";
     public LANDMARK_TYPE specificLandmarkType => _specificLandmarkType;
     public LandmarkVisual landmarkVisual => _landmarkVisual;

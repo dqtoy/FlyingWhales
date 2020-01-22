@@ -501,17 +501,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dcce79a4dfc8a7488415d9acab1dcae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ParentPool: {fileID: 0}
   _groundTileMap: {fileID: 8195094281944449832}
-  _wallTileMap: {fileID: 8195094281944449832}
   _detailTileMap: {fileID: 8195094281180980344}
   _groundTileMapRenderer: {fileID: 3664157343248906784}
-  _wallTileMapRenderer: {fileID: 3664157343248906784}
   _detailTileMapRenderer: {fileID: 3664157345323636878}
   _size: {x: 3, y: 3}
   _center: {x: 1, y: 1, z: 0}
   _objectsParent: {fileID: 4226897711592226}
   _furnitureSpotsParent: {fileID: 0}
-  tilemapCollider: {fileID: 0}
+  wallTileMap: {fileID: 0}
+  leftWall: {fileID: 0}
+  rightWall: {fileID: 0}
+  topWall: {fileID: 0}
+  bottomWall: {fileID: 0}
+  cornerPrefab: {fileID: 0}
 --- !u!114 &114441727736511206
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -564,7 +568,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6da8b5efaf9a78f4e92e27d71b9892d6, type: 2}
   - {fileID: 11400000, guid: 9546d935cff0c05429b29a6fba9e67ea, type: 2}
   - {fileID: 11400000, guid: 599461497f345a54585318f5dfcf7d69, type: 2}
-  - {fileID: 11400000, guid: aeebc3ad7a553ef4da12d2b75ed67b43, type: 2}
+  - {fileID: 0}
   - {fileID: 11400000, guid: a239852b95d2ac44cb73b70858c2df56, type: 2}
   - {fileID: 11400000, guid: 88f2c4ff60211f540a404c8719f04fd5, type: 2}
   - {fileID: 11400000, guid: 10f266605bbc02049871060dfbc3e339, type: 2}

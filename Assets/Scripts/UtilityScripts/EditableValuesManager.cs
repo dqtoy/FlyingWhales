@@ -23,6 +23,9 @@ public class EditableValuesManager : MonoBehaviour {
 	[SerializeField] private float _baseHappinessDecreaseRate;
 	[SerializeField] private float _baseComfortDecreaseRate;
 	
+	[Header("Mana Costs")]
+	[SerializeField] private int _summonMinionManaCost;
+	
 	//getters
 	//mood
 	public int normalMoodMinThreshold => _normalMoodMinThreshold;
@@ -37,7 +40,8 @@ public class EditableValuesManager : MonoBehaviour {
 	public float baseHappinessDecreaseRate => _baseHappinessDecreaseRate;
 	public float baseComfortDecreaseRate => _baseComfortDecreaseRate;
 
-	//needs
+	//mana costs
+	public int summonMinionManaCost => _summonMinionManaCost;
 	
 	private void Awake() {
 		Instance = this;

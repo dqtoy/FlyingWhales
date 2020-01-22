@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using Traits;
 using UnityEngine;
 
-public class Lycanthropy : PlayerJobAction {
+public class Lycanthropy : PlayerSpell {
 
     private int _level;
 
-    public Lycanthropy() : base(INTERVENTION_ABILITY.LYCANTHROPY) {
+    public Lycanthropy() : base(SPELL_TYPE.LYCANTHROPY) {
         tier = 1;
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
         //abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 
@@ -120,11 +120,11 @@ public class Lycanthropy : PlayerJobAction {
     }
 }
 
-public class LycanthropyData : PlayerJobActionData {
-    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.LYCANTHROPY;
+public class LycanthropyData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.LYCANTHROPY;
     public override string name { get { return "Lycanthropy"; } }
     public override string description { get { return "Makes a character transform into a wild wolf whenever he/she sleeps."; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.MONSTER; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.MONSTER; } }
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
 

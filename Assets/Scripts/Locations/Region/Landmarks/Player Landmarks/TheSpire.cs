@@ -24,7 +24,7 @@ public class TheSpire : BaseLandmark {
         currentCooldownTick = data.currentCooldownTick;
     }
 
-    public void ExtractInterventionAbility(INTERVENTION_ABILITY ability) {
+    public void ExtractInterventionAbility(SPELL_TYPE ability) {
         //UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained Intervention Ability: " + Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString()), () => PlayerManager.Instance.player.GainNewInterventionAbility(ability, true));
         PlayerManager.Instance.player.GainNewInterventionAbility(ability, true);
         PlayerManager.Instance.player.AdjustMana(-PlayerManager.Instance.player.GetManaCostForInterventionAbility(ability));
@@ -62,7 +62,7 @@ public class TheSpire : BaseLandmark {
     }
     #endregion
 
-    private void CheckForMinionDeath(Minion minion, INTERVENTION_ABILITY ability) {
+    private void CheckForMinionDeath(Minion minion, SPELL_TYPE ability) {
         //first extraction: 0% chance to die
         //second extraction: 10 % chance to die
         //third and future extractions: depends on the Spell's tier level. Tier 1: 35%, Tier 2: 25%, Tier 3: 15%
@@ -71,7 +71,7 @@ public class TheSpire : BaseLandmark {
         if (minion.spellExtractionCount == 2) {
             deathChance = 10;
         } else if (minion.spellExtractionCount >= 3) {
-            int tier = PlayerManager.Instance.GetInterventionAbilityTier(ability);
+            int tier = PlayerManager.Instance.GetSpellTier(ability);
             if (tier == 1) {
                 deathChance = 35;
             } else if (tier == 2) {

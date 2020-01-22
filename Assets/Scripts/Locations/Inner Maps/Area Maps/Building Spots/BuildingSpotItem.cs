@@ -28,7 +28,7 @@ public class BuildingSpotItem : MonoBehaviour {
         if (buildingSpot != null) {
             if (buildingSpot.isOccupied) {
                 Gizmos.color = Color.red;        
-            }else if (buildingSpot.canBeBuiltOn == false) {
+            }else if (buildingSpot.canBeBuiltOnByNPC == false) {
                 Gizmos.color = Color.yellow;
             }
         }

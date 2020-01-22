@@ -115,8 +115,8 @@ public class LevelUpUI : MonoBehaviour {
         if(selectedObj != null) {
             if (selectedObj is CombatAbility) {
                 (selectedObj as CombatAbility).LevelUp();
-            } else if (selectedObj is PlayerJobAction) {
-                (selectedObj as PlayerJobAction).LevelUp();
+            } else if (selectedObj is PlayerSpell) {
+                (selectedObj as PlayerSpell).LevelUp();
             } else if (selectedObj is SummonSlot) {
                 SummonSlot summonSlot = selectedObj as SummonSlot;
                 //if (summonSlot.isLocked) {

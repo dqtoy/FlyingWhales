@@ -5,14 +5,14 @@ using Inner_Maps;
 using UnityEngine;
 using Traits;
 
-public class Ignite : PlayerJobAction {
+public class Ignite : PlayerSpell {
 
     private List<LocationGridTile> highlightedTiles;
 
-    public Ignite() : base(INTERVENTION_ABILITY.IGNITE) {
+    public Ignite() : base(SPELL_TYPE.IGNITE) {
         tier = 1;
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
         highlightedTiles = new List<LocationGridTile>();
     }
 
@@ -62,11 +62,11 @@ public class Ignite : PlayerJobAction {
     }
 }
 
-public class IgniteData : PlayerJobActionData {
-    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.IGNITE;
+public class IgniteData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.IGNITE;
     public override string name { get { return "Ignite"; } }
     public override string description { get { return "Targets a spot. Target will ignite and start spreading fire."; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.DEVASTATION; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {

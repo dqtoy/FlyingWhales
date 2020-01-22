@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using Traits;
 using UnityEngine;
 
-public class Alcoholic : PlayerJobAction {
+public class Alcoholic : PlayerSpell {
 
-    public Alcoholic() : base(INTERVENTION_ABILITY.ALCOHOLIC) {
+    public Alcoholic() : base(SPELL_TYPE.ALCOHOLIC) {
         tier = 3;
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
     }
 
     #region Overrides
@@ -88,11 +88,11 @@ public class Alcoholic : PlayerJobAction {
     #endregion
 }
 
-public class AlcoholicData : PlayerJobActionData {
-    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.ALCOHOLIC;
+public class AlcoholicData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.ALCOHOLIC;
     public override string name { get { return "Alcoholic"; } }
     public override string description { get { return "Makes a character often want to drink."; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.HEX; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.HEX; } }
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
     #region Overrides

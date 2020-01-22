@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using Traits;
 using UnityEngine;
 
-public class Release : PlayerJobAction {
+public class Release : PlayerSpell {
 
-    public Release() : base(INTERVENTION_ABILITY.RELEASE) {
+    public Release() : base(SPELL_TYPE.RELEASE) {
         tier = 3;
         SetDefaultCooldownTime(24);
-        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
         //abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 
@@ -55,9 +55,9 @@ public class Release : PlayerJobAction {
     }
 }
 
-public class ReleaseData : PlayerJobActionData {
-    public override INTERVENTION_ABILITY ability => INTERVENTION_ABILITY.RELEASE;
+public class ReleaseData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.RELEASE;
     public override string name { get { return "Release"; } }
     public override string description { get { return "Release a prisoner from captivity."; } }
-    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.SABOTAGE; } }
+    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SABOTAGE; } }
 }

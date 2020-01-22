@@ -40,10 +40,13 @@ public class HextileInfoUI : UIMenu {
         currentlyShowingHexTile = null;
     }
     private void UpdateBasicInfo() {
-        _locationPortrait.SetPortrait(currentlyShowingHexTile.landmarkOnTile.specificLandmarkType);
-        nameLbl.text = currentlyShowingHexTile.landmarkOnTile.landmarkName;
-        tileTypeLbl.text =
-            Utilities.NormalizeStringUpperCaseFirstLetters(currentlyShowingHexTile.landmarkOnTile.specificLandmarkType.ToString());
+        if (currentlyShowingHexTile.landmarkOnTile != null) {
+            _locationPortrait.SetPortrait(currentlyShowingHexTile.landmarkOnTile.specificLandmarkType);    
+        } else {
+            _locationPortrait.SetPortrait(LANDMARK_TYPE.NONE);
+        }
+        nameLbl.text = currentlyShowingHexTile.GetDisplayName();
+        tileTypeLbl.text = currentlyShowingHexTile.GetSubName();
     }
     
     public void UpdateHexTileInfo() {
