@@ -31,13 +31,13 @@ public class PsychopathUI : MonoBehaviour {
             PlayerUI.Instance.ShowGeneralConfirmation("Error", "Cannot have the same requirements.");
             return;
         }
-        if (requirements1UI.victimType == SERIAL_VICTIM_TYPE.RACE || requirements1UI.victimType == SERIAL_VICTIM_TYPE.TRAIT) {
+        if (requirements1UI.victimType == SERIAL_VICTIM_TYPE.CLASS || requirements1UI.victimType == SERIAL_VICTIM_TYPE.TRAIT) {
             if(requirements1UI.victimDescriptions == null || requirements1UI.victimDescriptions.Count <= 0) {
                 PlayerUI.Instance.ShowGeneralConfirmation("Error", "Requirements are lacking. Please check again.");
                 return;
             }
         }
-        if (requirements2UI.victimType == SERIAL_VICTIM_TYPE.RACE || requirements2UI.victimType == SERIAL_VICTIM_TYPE.TRAIT) {
+        if (requirements2UI.victimType == SERIAL_VICTIM_TYPE.CLASS || requirements2UI.victimType == SERIAL_VICTIM_TYPE.TRAIT) {
             if (requirements2UI.victimDescriptions == null || requirements2UI.victimDescriptions.Count <= 0) {
                 PlayerUI.Instance.ShowGeneralConfirmation("Error", "Requirements are lacking. Please check again.");
                 return;

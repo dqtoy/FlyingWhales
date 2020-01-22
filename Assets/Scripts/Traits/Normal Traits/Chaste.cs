@@ -11,6 +11,7 @@ namespace Traits {
             type = TRAIT_TYPE.PERSONALITY;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
+            mutuallyExclusive = new string[] { "Lustful" };
         }
 
         #region Overrides

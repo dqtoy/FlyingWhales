@@ -384,11 +384,11 @@ public class ActualGoapNode {
             }
         }
         action.Perform(this);
+        Messenger.Broadcast(Signals.ACTION_PERFORMED, this);
         //CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeType(this);
         //if(crimeType != CRIME_TYPE.NONE) {
         //    CrimeManager.Instance.MakeCharacterACriminal(actor, crimeType, action);
         //}
-        //Messenger.Broadcast(Signals.ACTION_PERFORMED, this);
     }
     public void ActionInterruptedWhilePerforming() {
         string log = GameManager.Instance.TodayLogString() + actor.name + " is interrupted while doing goap action: " + action.goapName;

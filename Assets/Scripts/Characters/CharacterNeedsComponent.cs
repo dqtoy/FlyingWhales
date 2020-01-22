@@ -180,8 +180,8 @@ public class CharacterNeedsComponent {
     }
 
     private bool HasNeeds() {
-        return _character.race != RACE.SKELETON && _character.characterClass.className != "Zombie" && !_character.returnedToLife && _character.isAtHomeRegion && 
-               _character.homeSettlement != null; //Characters living on a region without a settlement must not decrease needs
+        return _character.race != RACE.SKELETON && _character.characterClass.className != "Zombie" && !_character.returnedToLife 
+            /*&& _character.isAtHomeRegion && _character.homeSettlement != null*/; //Characters living on a region without a settlement must not decrease needs
     }
     public void DecreaseNeeds() {
         if (HasNeeds() == false) {
@@ -244,6 +244,10 @@ public class CharacterNeedsComponent {
         OnEnergized(wasEnergized, wasTired, wasExhausted);
     }
     public void AdjustTiredness(float adjustment) {
+        if(adjustment < 0 && _character.isVampire) {
+            _character.PrintLogIfActive("Trying to reduce energy meter but character is a vampire, will ignore reduction.");
+            return;
+        }
         bool wasTired = isTired;
         bool wasExhausted = isExhausted;
         bool wasEnergized = isEnergized;

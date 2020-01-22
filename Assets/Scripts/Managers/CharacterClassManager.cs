@@ -38,28 +38,28 @@ public class CharacterClassManager : MonoBehaviour {
         //},
     };
 
-    private Dictionary<string, System.Type[]> traitIdlePlans = new Dictionary<string, Type[]>() {
-        { "Berserked",
-            new Type[]{
-                typeof(BerserkBehaviour),
-            }
-        },
-        { "Glutton",
-            new Type[]{
-                typeof(GluttonBehaviour),
-            }
-        },
-        { "SerialKiller",
-            new Type[]{
-                typeof(SerialKillerBehaviour),
-            }
-        },
-        { "Suicidal",
-            new Type[]{
-                typeof(SuicidalBehaviour),
-            }
-        },
-    };
+    //private Dictionary<string, System.Type[]> traitIdlePlans = new Dictionary<string, Type[]>() {
+    //    { "Berserked",
+    //        new Type[]{
+    //            typeof(BerserkBehaviour),
+    //        }
+    //    },
+    //    { "Glutton",
+    //        new Type[]{
+    //            typeof(GluttonBehaviour),
+    //        }
+    //    },
+    //    { "SerialKiller",
+    //        new Type[]{
+    //            typeof(SerialKillerBehaviour),
+    //        }
+    //    },
+    //    { "Suicidal",
+    //        new Type[]{
+    //            typeof(SuicidalBehaviour),
+    //        }
+    //    },
+    //};
 
     public void Initialize() {
         ConstructAllClasses();
@@ -149,12 +149,12 @@ public class CharacterClassManager : MonoBehaviour {
             return classIdlePlans["Default"];
         }
     }
-    public System.Type[] GetTraitBehaviourComponents(string traitName) {
-        if (traitIdlePlans.ContainsKey(traitName)) {
-            return traitIdlePlans[traitName];
-        }
-        return null;
-    }
+    //public System.Type[] GetTraitBehaviourComponents(string traitName) {
+    //    if (traitIdlePlans.ContainsKey(traitName)) {
+    //        return traitIdlePlans[traitName];
+    //    }
+    //    return null;
+    //}
     public CharacterBehaviourComponent GetCharacterBehaviourComponent(System.Type type) {
         if (behaviourComponents.ContainsKey(type)) {
             return behaviourComponents[type];

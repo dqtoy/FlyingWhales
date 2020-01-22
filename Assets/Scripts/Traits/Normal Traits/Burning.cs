@@ -73,22 +73,20 @@ namespace Traits {
             if (pyrophobic != null) {
                 //pyrophobic
                 //When he sees a fire source for the first time, reduce Happiness by 2000. Do not create Douse Fire job. It should always Flee from fire. Add log showing reason for fleeing is Pyrophobia
-                if (pyrophobic.AddKnownBurningSource(sourceOfBurning)) {
-                    characterThatWillDoJob.needsComponent.AdjustHappiness(-20f);
-                }
+                pyrophobic.AddKnownBurningSource(sourceOfBurning, traitOwner);
                 //It will trigger one of the following:
-                if (!characterThatWillDoJob.marker.hasFleePath &&
-                    characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Catatonic") == null) {
-                    //if not already fleeing or catatonic
-                    //50% gain Shellshocked and Flee from fire. Log "[Actor Name] saw a fire and fled from it."
-                    if (UnityEngine.Random.Range(0, 100) < 50) {
-                        pyrophobic.BeShellshocked(sourceOfBurning, characterThatWillDoJob);
-                    }
-                    //50% gain Catatonic. Log "[Actor Name] saw a fire and became Catatonic."
-                    else {
-                        pyrophobic.BeCatatonic(sourceOfBurning, characterThatWillDoJob);
-                    }
-                }
+                //if (!characterThatWillDoJob.marker.hasFleePath &&
+                //    characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Catatonic") == null) {
+                //    //if not already fleeing or catatonic
+                //    //50% gain Shellshocked and Flee from fire. Log "[Actor Name] saw a fire and fled from it."
+                //    if (UnityEngine.Random.Range(0, 100) < 50) {
+                //        pyrophobic.BeShellshocked(sourceOfBurning, characterThatWillDoJob);
+                //    }
+                //    //50% gain Catatonic. Log "[Actor Name] saw a fire and became Catatonic."
+                //    else {
+                //        pyrophobic.BeCatatonic(sourceOfBurning, characterThatWillDoJob);
+                //    }
+                //}
             }
             return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
         }

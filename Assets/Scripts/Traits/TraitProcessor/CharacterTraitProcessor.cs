@@ -125,9 +125,11 @@ namespace Traits {
             //} 
             else if (trait.name == "Encumbered") {
                 character.AdjustSpeedModifier(-0.5f);
-            } else if (trait.name == "Vampiric") {
-                character.needsComponent.AdjustDoNotGetTired(1);
-            } else if (trait.name == "Unconscious") {
+            } 
+            //else if (trait.name == "Vampiric") {
+            //    character.needsComponent.AdjustDoNotGetTired(1);
+            //} 
+            else if (trait.name == "Unconscious") {
                 character.needsComponent.AdjustDoNotGetTired(1);
                 character.needsComponent.AdjustDoNotGetHungry(1);
                 character.needsComponent.AdjustDoNotGetLonely(1);
@@ -237,9 +239,11 @@ namespace Traits {
             //} 
             else if (trait.name == "Encumbered") {
                 character.AdjustSpeedModifier(0.5f);
-            } else if (trait.name == "Vampiric") {
-                character.needsComponent.AdjustDoNotGetTired(-1);
-            } else if (trait.name == "Unconscious") {
+            } 
+            //else if (trait.name == "Vampiric") {
+            //    character.needsComponent.AdjustDoNotGetTired(-1);
+            //} 
+            else if (trait.name == "Unconscious") {
                 character.needsComponent.AdjustDoNotGetTired(-1);
                 character.needsComponent.AdjustDoNotGetHungry(-1);
                 character.needsComponent.AdjustDoNotGetLonely(-1);

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Traits {
     public class Pyrophobic : Trait {
 
-        //private Character owner;
+        private Character owner;
         private List<BurningSource> seenBurningSources;
 
         public Pyrophobic() {
@@ -13,27 +13,25 @@ namespace Traits {
             description = "Pyrophobics are afraid of fires.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
-            
-            
-            
             ticksDuration = 0;
             seenBurningSources = new List<BurningSource>();
         }
 
-        //public override void OnAddTrait(ITraitable addedTo) {
-        //    base.OnAddTrait(addedTo);
-        //    if (addedTo is Character) {
-        //        owner = addedTo as Character;
-        //    }
-        //}
+        public override void OnAddTrait(ITraitable addedTo) {
+            base.OnAddTrait(addedTo);
+            if (addedTo is Character) {
+                owner = addedTo as Character;
+            }
+        }
 
 
-        public bool AddKnownBurningSource(BurningSource burningSource) {
+        public bool AddKnownBurningSource(BurningSource burningSource, IPointOfInterest burningPOI) {
             if (!seenBurningSources.Contains(burningSource)) {
                 seenBurningSources.Add(burningSource);
                 burningSource.AddOnBurningExtinguishedAction(RemoveKnownBurningSource);
                 burningSource.AddOnBurningObjectAddedAction(OnObjectStartedBurning);
                 burningSource.AddOnBurningObjectRemovedAction(OnObjectStoppedBurning);
+                TriggerReactionToFireOnFirstTimeSeeing(burningPOI);
                 return true;
             }
             return false;
@@ -45,7 +43,19 @@ namespace Traits {
                 burningSource.RemoveOnBurningObjectRemovedAction(OnObjectStoppedBurning);
             }
         }
-
+        private void TriggerReactionToFireOnFirstTimeSeeing(IPointOfInterest burningPOI) {
+            owner.needsComponent.AdjustHappiness(-20f);
+            owner.traitContainer.AddTrait(owner, "Anxious");
+            int chance = UnityEngine.Random.Range(0, 2);
+            if(chance == 0) {
+                Log log = new Log(GameManager.Instance.Today(), "Trait", name, "flee");
+                log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                owner.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+                owner.marker.AddAvoidInRange(burningPOI);
+            } else {
+                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, owner);
+            }
+        }
         public void BeShellshocked(BurningSource source, Character character) {
             string summary = GameManager.Instance.TodayLogString() + character.name + " saw burning source " + source.ToString();
             //TODO:

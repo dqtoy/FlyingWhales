@@ -31,7 +31,7 @@ public class KnockoutCharacter : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            return actor != poiTarget && actor.isSerialKiller;
+            return actor != poiTarget && (actor.isSerialKiller || actor.isVampire);
         }
         return false;
     }

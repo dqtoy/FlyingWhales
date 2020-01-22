@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Traits;
 
 namespace Interrupts {
     public class ReduceConflict : Interrupt {
@@ -15,8 +16,13 @@ namespace Interrupts {
             List<Character> enemyOrRivalCharacters = targetCharacter.opinionComponent.GetEnemyCharacters();
             if(enemyOrRivalCharacters.Count > 0) {
                 Character chosenEnemyOrRival = enemyOrRivalCharacters[UnityEngine.Random.Range(0, enemyOrRivalCharacters.Count)];
-                targetCharacter.opinionComponent.AdjustOpinion(chosenEnemyOrRival, "Base", 15);
-                Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Reduce Conflict", "reduce_conflict");
+                string logKey = "reduce_conflict";
+                if (UnityEngine.Random.Range(0, 2) == 0 && chosenEnemyOrRival.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
+                    logKey = "reduce_conflict_rebuffed";
+                } else {
+                    targetCharacter.opinionComponent.AdjustOpinion(chosenEnemyOrRival, "Base", 15);
+                }
+                Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Reduce Conflict", logKey);
                 log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 log.AddToFillers(chosenEnemyOrRival, chosenEnemyOrRival.name, LOG_IDENTIFIER.CHARACTER_3);

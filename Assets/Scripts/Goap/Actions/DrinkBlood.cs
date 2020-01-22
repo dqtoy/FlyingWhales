@@ -26,8 +26,7 @@ public class DrinkBlood : GoapAction {
         SetState("Drink Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        if (actor.needsComponent.isStarving)
-        {
+        if (actor.needsComponent.isStarving) {
             return Utilities.rng.Next(20, 35);
         }
         return Utilities.rng.Next(45, 60);

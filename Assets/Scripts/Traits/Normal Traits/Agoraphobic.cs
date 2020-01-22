@@ -11,8 +11,6 @@ namespace Traits {
             description = "Agoraphobics avoid crowds.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
-            
-            
             ticksDuration = 0;
             canBeTriggered = true;
             //effects = new List<TraitEffect>();
@@ -97,9 +95,11 @@ namespace Traits {
             if (!character.canPerform || !character.canWitness) {
                 return;
             }
-            if(character.marker.inVisionCharacters.Count < 3) {
+            if(!WillTriggerAgoraphobia(character)) {
                 return;
             }
+            character.StopCurrentActionNode(false);
+            character.jobQueue.CancelAllJobs();
             character.traitContainer.AddTrait(character, "Anxious");
             if(character.homeStructure != null && character.currentStructure != character.homeStructure) {
                 character.jobComponent.TriggerFleeHome(jobType);

@@ -11,9 +11,6 @@ namespace Traits {
             description = "Lazy characters often daydream and are less likely to take on settlement tasks.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
-            
-            
-            
             ticksDuration = 0;
             canBeTriggered = true;
             mutuallyExclusive = new string[] { "Hardworking" };
@@ -24,7 +21,12 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             if (addedTo is Character) {
                 owner = addedTo as Character;
+                owner.SetIsLazy(true);
             }
+        }
+        public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+            base.OnRemoveTrait(removedFrom, removedBy);
+            owner.SetIsLazy(false);
         }
         public override string TriggerFlaw(Character character) {
             //Will drop current action and will perform Happiness Recovery.
@@ -56,29 +58,7 @@ namespace Traits {
         #endregion
 
         public bool TriggerLazy() {
-            // if (!owner.jobQueue.HasJob(JOB_TYPE.INTERRUPTION)) {
-            //     //JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY;
-            //     //if (owner.isForlorn) {
-            //     //    jobType = JOB_TYPE.HAPPINESS_RECOVERY_FORLORN;
-            //     //}
-            //     bool triggerBrokenhearted = false;
-            //     Heartbroken heartbroken = owner.traitContainer.GetNormalTrait<Trait>("Heartbroken") as Heartbroken;
-            //     if (heartbroken != null) {
-            //         triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
-            //     }
-            //     if (!triggerBrokenhearted) {
-            //         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INTERRUPTION, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, target = GOAP_EFFECT_TARGET.ACTOR }, owner, owner);
-            //         owner.jobQueue.AddJobInQueue(job);
-            //
-            //         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "trigger_lazy");
-            //         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            //         owner.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
-            //     } else {
-            //         heartbroken.TriggerBrokenhearted();
-            //     }
-            //     return true;
-            // }
-            return false;
+            return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Feeling_Lazy, owner);
         }
     }
 }

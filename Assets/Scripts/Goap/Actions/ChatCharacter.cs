@@ -215,12 +215,12 @@ public class ChatCharacter : GoapAction {
             targetCharacter.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
         }
 
-        if (goapNode.actor.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
-            goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Angry");
-        }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
-            targetCharacter.traitContainer.AddTrait(targetCharacter, "Angry");
-        }
+        //if (goapNode.actor.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
+        //    goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Angry");
+        //}
+        //if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
+        //    targetCharacter.traitContainer.AddTrait(targetCharacter, "Angry");
+        //}
         
         //adjust opinion -2 both ways
         Character target = goapNode.poiTarget as Character;

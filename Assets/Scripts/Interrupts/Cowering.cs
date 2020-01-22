@@ -10,11 +10,11 @@ namespace Interrupts {
             doesDropCurrentJob = true;
         }
 
-        #region Overrides
-        public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
-            actor.CancelAllJobs();
-            return true;
-        }
-        #endregion
+        //#region Overrides
+        //public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
+        //    actor.CancelAllJobs();
+        //    return true;
+        //}
+        //#endregion
     }
 }

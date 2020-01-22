@@ -1592,7 +1592,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //    //- fear-type status effect
         //    willTransfer = true;
         //} 
-        else if (character.needsComponent.isStarving && character.traitContainer.GetNormalTrait<Trait>("Vampiric") == null) {
+        else if (character.needsComponent.isStarving && !character.isVampire) {
             //-character is starving and is not a vampire
             willTransfer = true;
             reason = "starving";

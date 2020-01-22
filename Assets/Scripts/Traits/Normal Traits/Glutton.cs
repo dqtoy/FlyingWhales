@@ -24,6 +24,7 @@ namespace Traits {
                 Character character = addedTo as Character;
                 character.needsComponent.SetFullnessForcedTick(0);
                 character.needsComponent.AdjustFullnessDecreaseRate(additionalFullnessDecreaseRate);
+                character.behaviourComponent.AddBehaviourComponent(typeof(GluttonBehaviour));
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
@@ -32,6 +33,7 @@ namespace Traits {
                 Character character = removedFrom as Character;
                 character.needsComponent.SetFullnessForcedTick();
                 character.needsComponent.AdjustFullnessDecreaseRate(-additionalFullnessDecreaseRate);
+                character.behaviourComponent.RemoveBehaviourComponent(typeof(GluttonBehaviour));
             }
         }
         public override string TriggerFlaw(Character character) {

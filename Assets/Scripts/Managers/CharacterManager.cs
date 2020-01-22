@@ -317,9 +317,9 @@ public class CharacterManager : MonoBehaviour {
     public System.Type[] GetClassBehaviourComponents(string className) {
         return classManager.GetClassBehaviourComponents(className);
     }
-    public System.Type[] GetTraitBehaviourComponents(string traitName) {
-        return classManager.GetTraitBehaviourComponents(traitName);
-    }
+    //public System.Type[] GetTraitBehaviourComponents(string traitName) {
+    //    return classManager.GetTraitBehaviourComponents(traitName);
+    //}
     public CharacterBehaviourComponent GetCharacterBehaviourComponent(System.Type type) {
         return classManager.GetCharacterBehaviourComponent(type);
     }
