@@ -25,6 +25,13 @@ public class CharacterClassManager : MonoBehaviour {
                 typeof(DefaultExtraCatcher),
             }
         },
+        {"Lust", new []{typeof(MinionBehaviour)}},
+        {"Greed", new []{typeof(MinionBehaviour)}},
+        {"Wrath", new []{typeof(MinionBehaviour)}},
+        {"Gluttony", new []{typeof(MinionBehaviour)}},
+        {"Sloth", new []{typeof(MinionBehaviour)}},
+        {"Pride", new []{typeof(MinionBehaviour)}},
+        {"Envy", new []{typeof(MinionBehaviour)}},
         //{ "Leader",
         //    new Type[]{
         //        typeof(WorkBehaviour),

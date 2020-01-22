@@ -142,7 +142,7 @@ namespace Inner_Maps {
                 maps[i].ClearAllTiles();
             }
         }
-        protected TileBase GetOutsideFloorTile(ILocation location) {
+        private TileBase GetOutsideFloorTile(ILocation location) {
             switch (location.coreTile.biomeType) {
                 case BIOMES.SNOW:
                 case BIOMES.TUNDRA:
@@ -151,40 +151,34 @@ namespace Inner_Maps {
                     return InnerMapManager.Instance.assetManager.outsideTile;
             }
         }
-        protected TileBase GetBigTreeTile(ILocation location) {
-            switch (location.coreTile.biomeType) {
-                case BIOMES.SNOW:
-                case BIOMES.TUNDRA:
-                    return InnerMapManager.Instance.assetManager.snowBigTreeTile;
-                default:
-                    return InnerMapManager.Instance.assetManager.bigTreeTile;
-            }
-        }
-        protected TileBase GetTreeTile(ILocation location) {
-            switch (location.coreTile.biomeType) {
-                case BIOMES.SNOW:
-                case BIOMES.TUNDRA:
-                    return InnerMapManager.Instance.assetManager.snowTreeTile;
-                default:
-                    return InnerMapManager.Instance.assetManager.treeTile;
-            }
-        }
-        protected TileBase GetFlowerTile(ILocation location) {
+        private TileBase GetFlowerTile(ILocation location) {
             switch (location.coreTile.biomeType) {
                 case BIOMES.SNOW:
                 case BIOMES.TUNDRA:
                     return InnerMapManager.Instance.assetManager.snowFlowerTile;
+                case BIOMES.DESERT:
+                    return InnerMapManager.Instance.assetManager.desertFlowerTile;
                 default:
                     return InnerMapManager.Instance.assetManager.flowerTile;
             }
         }
-        protected TileBase GetGarbTile(ILocation location) {
+        private TileBase GetGarbTile(ILocation location) {
             switch (location.coreTile.biomeType) {
                 case BIOMES.SNOW:
                 case BIOMES.TUNDRA:
                     return InnerMapManager.Instance.assetManager.snowGarbTile;
+                case BIOMES.DESERT:
+                    return InnerMapManager.Instance.assetManager.desertGarbTile;
                 default:
                     return InnerMapManager.Instance.assetManager.randomGarbTile;
+            }
+        }
+        private TileBase GetRockTile(ILocation location) {
+            switch (location.coreTile.biomeType) {
+                case BIOMES.DESERT:
+                    return InnerMapManager.Instance.assetManager.desertRockTile;
+                default:
+                    return InnerMapManager.Instance.assetManager.rockTile;
             }
         }
         public IEnumerator CreateSeamlessEdges() {
@@ -628,6 +622,14 @@ namespace Inner_Maps {
                     } else {
                         currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.snowDirt);
                     }
+                } else if (location.coreTile.biomeType == BIOMES.DESERT) {
+                    if (sample < 0.5f) {
+                        currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.desertGrassTile);
+                    } else if (sample >= 0.5f && sample < 0.8f) {
+                        currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.desertSandTile);
+                    } else {
+                        currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.desertStoneGroundTile);
+                    }
                 } else {
                     if (sample < 0.5f) {
                         currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.grassTile);
@@ -636,7 +638,6 @@ namespace Inner_Maps {
                     } else {
                         currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.stoneTile);
                     }
-               
                 }
                 currTile.SetPreviousGroundVisual(null);
 
@@ -722,7 +723,7 @@ namespace Inner_Maps {
                         
                     } else if (Random.Range(0, 100) < 4) {
                         currTile.hasDetail = true;
-                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.rockTile);
+                        detailsTilemap.SetTile(currTile.localPlace, GetRockTile(location));
                         if (currTile.structure != null) {
                             ConvertDetailToTileObject(currTile);
                         } else {

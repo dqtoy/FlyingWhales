@@ -447,6 +447,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         StopPerTickFlee();
         PathfindingManager.Instance.RemoveAgent(pathfindingAI);
         RemoveListeners();
+        HideHPBar();
         
         Messenger.Broadcast(Signals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);
         

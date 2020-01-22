@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 using Inner_Maps;
 using Traits;
 
@@ -296,6 +297,11 @@ public class Minion {
         character.stateComponent.OnTickEnded();
         character.EndTickPerformJobs();
     }
+    private void OnTickStarted() {
+        if (character.CanPlanGoap()) {
+            character.PerStartTickActionPlanning();
+        }
+    }
     private void GoToWorkArea() {
         LocationStructure structure = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
         LocationGridTile tile = structure.GetRandomTile();
@@ -361,9 +367,21 @@ public class Minion {
         character.CreateMarker();
         LocationStructure portalStructure =
             portal.tileLocation.settlementOnTile.GetRandomStructureOfType(STRUCTURE_TYPE.PORTAL);
-        Vector3 pos = portalStructure.structureObj.transform.position;
-        pos.x -= 0.5f;
-        
+
+        int minX = portalStructure.tiles.Min(t => t.localPlace.x);
+        int maxX = portalStructure.tiles.Max(t => t.localPlace.x);
+        int minY = portalStructure.tiles.Min(t => t.localPlace.y);
+        int maxY = portalStructure.tiles.Max(t => t.localPlace.y);
+
+        int differenceX = (maxX - minX) + 1;
+        int differenceY = (maxY - minY) + 1;
+
+        int centerX = minX + (differenceX / 2);
+        int centerY = minY + (differenceY / 2);
+
+        LocationGridTile centerTile = portalStructure.location.innerMap.map[centerX, centerY];
+        Vector3 pos = centerTile.worldLocation;
+
         character.marker.InitialPlaceMarkerAt(pos, portal.tileLocation.region);
         character.SetIsDead(false);
 
@@ -372,10 +390,15 @@ public class Minion {
         character.marker.GoTo(tileToGoTo);
         
         PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.summonMinionManaCost);
+        
+        Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
+        Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
     }
     private void Unsummon() {
         character.SetHP(0);
         Messenger.AddListener(Signals.TICK_ENDED, UnsummonedHPRecovery);
+        Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
+        Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStarted);
     }
     private void UnsummonedHPRecovery() {
         this.character.AdjustHP((int)(character.maxHP * 0.02f));

@@ -3798,7 +3798,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool CanPlanGoap() {
         //If there is no settlement, it means that there is no inner map, so character must not do goap actions, jobs, and plans
         //characters that cannot witness, cannot plan actions.
-        return minion == null && !isDead && isStoppedByOtherCharacter <= 0 && canPerform
+        //minion == null &&
+        return !isDead && isStoppedByOtherCharacter <= 0 && canPerform
             && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count <= 0
             && !marker.hasFleePath && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterrupted;
     }
@@ -3839,7 +3840,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //        PlanPerTickGoap();
     //    }
     //}
-    protected void PerStartTickActionPlanning() {
+    public void PerStartTickActionPlanning() {
         //if (_hasAlreadyAskedForPlan || isDead) {
         //    return;
         //}
