@@ -81,7 +81,8 @@ namespace Traits {
                 }
             } else if (targetPOI is TileObject || targetPOI is SpecialToken) {
                 if (Random.Range(0, 100) < 35) {
-                    character.jobComponent.TriggerDestroy(targetPOI);
+                    //character.jobComponent.TriggerDestroy(targetPOI);
+                    character.marker.AddHostileInRange(targetPOI, checkHostility: false, isLethal: false);
                 }
             }
         }

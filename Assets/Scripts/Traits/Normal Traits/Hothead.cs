@@ -22,9 +22,15 @@ namespace Traits {
         //}
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is Character) {
-                if (UnityEngine.Random.Range(0, 100) < 20) {
+                string debugLog = characterThatWillDoJob.name + " saw " + targetPOI.name + " and has " + name;
+                debugLog += "\n-20% chance to trigger Angered interrupt if saw an Enemy or Rival";
+                int chance = UnityEngine.Random.Range(0, 100);
+                debugLog += "\n-Roll: " + chance;
+                if (chance < 20) {
                     Character targetCharacter = targetPOI as Character;
                     if (characterThatWillDoJob.opinionComponent.IsEnemiesWith(targetCharacter)) {
+                        debugLog += "\n-Character considers Target as Enemy or Rival, will trigger Angered interrupt";
+                        characterThatWillDoJob.PrintLogIfActive(debugLog);
                         characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Angered, targetCharacter);
                         //character.traitContainer.AddTrait(character, "Angry");
                         //Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_saw");
@@ -32,8 +38,11 @@ namespace Traits {
                         //log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         //character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
                         return true;
+                    } else {
+                        debugLog += "\n-Character does not consider Target as Enemy or Rival";
                     }
                 }
+                characterThatWillDoJob.PrintLogIfActive(debugLog);
             }
             return base.OnSeePOI(targetPOI, characterThatWillDoJob);
             //if (targetPOI is Character) {
