@@ -2523,9 +2523,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     //Returns the list of goap actions to be witnessed by this character
     public void ThisCharacterSaw(IPointOfInterest target) {
-        if (isDead) {
-            return;
-        }
+        //if (isDead) {
+        //    return;
+        //}
 
         for (int i = 0; i < traitContainer.allTraits.Count; i++) {
             traitContainer.allTraits[i].OnSeePOIEvenCannotWitness(target, this);
