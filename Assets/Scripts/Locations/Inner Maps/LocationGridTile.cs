@@ -163,7 +163,9 @@ namespace Inner_Maps {
                 string assetName = structureAsset.name.ToLower();
                 if (assetName.Contains("dungeon") || assetName.Contains("cave")) {
                     SetGroundType(Ground_Type.Cave);
-                }
+                } else if (assetName.Contains("water") || assetName.Contains("pond") || assetName.Contains("shore")) {
+                    SetGroundType(Ground_Type.Water);
+                } 
             } else if (groundAsset != null) {
                 string assetName = groundAsset.name.ToLower();
                 if (assetName.Contains("desert")) {

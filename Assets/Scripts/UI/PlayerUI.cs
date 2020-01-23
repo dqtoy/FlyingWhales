@@ -1074,23 +1074,6 @@ public class PlayerUI : MonoBehaviour {
     #endregion
 
     #region Corruption and Threat
-    public void ShowCorruptTileConfirmation(HexTile tile) {
-        if (tile.CanBeCorrupted() && !tile.isCorrupted) {//&& tile.elevationType != ELEVATION.WATER && !PlayerManager.Instance.player.isTileCurrentlyBeingCorrupted 
-            PlayerManager.Instance.player.SetCurrentTileBeingCorrupted(tile);
-            //if(tile.landmarkOnTile.yieldType == LANDMARK_YIELD_TYPE.SKIRMISH) {
-            //    //tile.landmarkOnTile.GenerateSkirmishEnemy();
-            //    skirmishEnemyPortrait.GeneratePortrait(tile.landmarkOnTile.skirmishEnemy);
-            //    string text = tile.landmarkOnTile.skirmishEnemy.name;
-            //    text += "\nLvl." + tile.landmarkOnTile.skirmishEnemy.level + " " + tile.landmarkOnTile.skirmishEnemy.raceClassName;
-            //    skirmishEnemyText.text = text;
-            //    skirmishConfirmationGO.SetActive(true);
-            //    ShowSelectMinionLeader();
-            //} else {
-            tempCurrentMinionLeaderPicker = null;
-            OnClickYesCorruption();
-            //}
-        }
-    }
     public void HideCorruptTileConfirmation() {
         skirmishConfirmationGO.SetActive(false);
     }

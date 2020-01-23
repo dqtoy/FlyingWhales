@@ -836,15 +836,21 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     #endregion
 
     #region Corruption
-    public void SetCorruption(bool state) {
+    public void SetCorruption(bool state, bool instant = false) {
         if(_isCorrupted != state) {
             _isCorrupted = state;
             Biomes.Instance.UpdateTileSprite(this, spriteRenderer.sortingOrder);
             if (_isCorrupted) {
-                for (int i = 0; i < locationGridTiles.Count; i++) {
-                    LocationGridTile tile = locationGridTiles[i];
-                    tile.CorruptTile();
-                }    
+                if (instant) {
+                    for (int i = 0; i < locationGridTiles.Count; i++) {
+                        LocationGridTile tile = locationGridTiles[i];
+                        tile.CorruptTile();
+                    }    
+                }
+                else {
+                    //start corruption coroutine.
+                }
+                    
             }
         }
     }
@@ -856,61 +862,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         if(_uncorruptibleLandmarkNeighbors > 1 && landmarkOnTile != null) {
             _uncorruptibleLandmarkNeighbors = 1;
         }
-    }
-    public void StartCorruptionAnimation() {
-        GameObject tendril = null;
-        if (tileCorruptionObjects.ContainsKey(spriteRenderer.sprite)) {
-            List<GameObject> choices = tileCorruptionObjects[spriteRenderer.sprite];
-            tendril = choices[Random.Range(0, choices.Count)];
-        } else {
-            tendril = defaultCorruptionObjects[Random.Range(0, defaultCorruptionObjects.Length)];
-        }
-        //if (this.biomeType == BIOMES.DESERT && spriteRenderer.sprite.name.Contains("mountains")) {
-        //    tendril = desertTendrils[0];
-        //    //if (spriteRenderer.sprite.name.Contains("1")) {
-        //    //    tendril = desertTendrils[0];
-        //    //} else if (spriteRenderer.sprite.name.Contains("2")) {
-        //    //    tendril = desertTendrils[1];
-        //    //} else if (spriteRenderer.sprite.name.Contains("3")) {
-        //    //    tendril = desertTendrils[2];
-        //    //}
-        //} else {
-        //    tendril = defaultCorruptionObjects[Random.Range(0, defaultCorruptionObjects.Length)];
-        //}
-        _spawnedTendril = GameObject.Instantiate(tendril, biomeDetailsParent);
-        SpriteRenderer[] srs = Utilities.GetComponentsInDirectChildren<SpriteRenderer>(_spawnedTendril);
-        for (int i = 0; i < srs.Length; i++) {
-            SpriteRenderer currRenderer = srs[i];
-            currRenderer.sortingLayerName = "Default";
-            currRenderer.sortingOrder = spriteRenderer.sortingOrder + 5;
-        }
-        //for (int i = 0; i < particleEffects.Length; i++) {
-        //    particleEffects[i].gameObject.SetActive(true);
-        //}
-    }
-    public void StopCorruptionAnimation() {
-        if(_spawnedTendril != null) {
-            GameObject.Destroy(_spawnedTendril);
-            _spawnedTendril = null;
-        }
-        for (int i = 0; i < particleEffects.Length; i++) {
-            particleEffects[i].gameObject.SetActive(false);
-        }
-    }
-    public bool CanBeCorrupted() {
-        return true;
-
-        //bool canBeCorrupted = false;
-        //if (landmarkOnTile != null && landmarkOnTile.connections != null) {
-        //    for (int i = 0; i < landmarkOnTile.connections.Count; i++) {
-        //        BaseLandmark connection = landmarkOnTile.connections[i];
-        //        if (connection.tileLocation.isCorrupted) {
-        //            canBeCorrupted = true;
-        //            break;
-        //        }
-        //    }
-        //}
-        //return region.CanBeInvaded();
     }
     #endregion
 
@@ -1072,6 +1023,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     public List<PlayerAction> actions { get; private set; }
     public void ConstructDefaultActions() {
         actions = new List<PlayerAction>();
+        
+        PlayerAction corruptAction = new PlayerAction("Corrupt", CanBeCorrupted, () => SetCorruption(true));
     }
     public void AddPlayerAction(PlayerAction action) {
         actions.Add(action);
@@ -1081,6 +1034,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     }
     public void ClearPlayerActions() {
         actions.Clear();
+    }
+    private bool CanBeCorrupted() {
+        for (int i = 0; i < AllNeighbours.Count; i++) {
+            HexTile neighbour = AllNeighbours[i];
+            if (neighbour.isCorrupted) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 }

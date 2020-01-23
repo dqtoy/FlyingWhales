@@ -85,7 +85,7 @@ namespace Inner_Maps {
                     return;
                 }
                 LocationGridTile hoveredTile = GetTileFromMousePosition();
-                if (hoveredTile.objHere == null) {
+                if (hoveredTile != null && hoveredTile.objHere == null) {
                     ShowTileData(hoveredTile);
                 }
             }

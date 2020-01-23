@@ -175,9 +175,7 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 
 		for (int i = 0; i < allTiles.Count; i++) {
 			LocationGridTile gridTile = allTiles[i];
-			if (island.elevation == ELEVATION.WATER) {
-				gridTile.SetGroundTilemapVisual(GetGroundTileAssetForElevation(island.elevation, region));	
-			}
+			// gridTile.SetGroundTilemapVisual(GetGroundTileAssetForElevation(ELEVATION.PLAIN, region));
 			gridTile.SetStructureTilemapVisual(GetWallTileAssetForElevation(island.elevation));
 			gridTile.SetStructure(structure);
 		}
@@ -191,13 +189,10 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 			
 			if (sample < chance) {
 				//set as elevation
-				if (island.elevation == ELEVATION.WATER) {
-					gridTile.SetGroundTilemapVisual(GetGroundTileAssetForElevation(island.elevation, region));	
-				}
 				gridTile.SetStructureTilemapVisual(GetWallTileAssetForElevation(island.elevation));
 			} else {
 				//set as ground
-				gridTile.SetGroundTilemapVisual(GetGroundTileAssetForElevation(ELEVATION.PLAIN, region));
+				// gridTile.SetGroundTilemapVisual(GetGroundTileAssetForElevation(ELEVATION.PLAIN, region));
 				gridTile.SetStructureTilemapVisual(GetWallTileAssetForElevation(ELEVATION.PLAIN));
 				gridTile.SetStructure(wilderness);
 			}
@@ -209,7 +204,7 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 			if (gridTile.groundType == groundTypeForElevation && gridTile.GetNeighbourOfTypeCount(groundTypeForElevation, true) < 2) {
 				// Debug.Log($"{gridTile.ToString()} at {region.name} does not have neighbours of elevation {island.elevation.ToString()}. Setting it as ground.");
 				//if current outer tile does not have neighbour of the same elevation type, then set it as ground
-				gridTile.SetGroundTilemapVisual(GetGroundTileAssetForElevation(ELEVATION.PLAIN, region));
+				// gridTile.SetGroundTilemapVisual(GetGroundTileAssetForElevation(ELEVATION.PLAIN, region));
 				gridTile.SetStructureTilemapVisual(GetWallTileAssetForElevation(ELEVATION.PLAIN));
 				gridTile.SetStructure(wilderness);
 			}
@@ -240,8 +235,6 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 	}
 	private TileBase GetGroundTileAssetForElevation(ELEVATION elevation, Region region) {
 		switch (elevation) {
-			case ELEVATION.WATER:
-				return InnerMapManager.Instance.assetManager.waterTle;
 			case ELEVATION.PLAIN:
 				return InnerMapManager.Instance.assetManager.GetOutsideFloorTile(region);
 		}

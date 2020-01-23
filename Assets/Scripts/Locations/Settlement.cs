@@ -1203,20 +1203,20 @@ public class Settlement : IJobOwner {
     #endregion
 
     #region Tiles
-    public void AddTileToSettlement(HexTile tile) {
+    public void AddTileToSettlement(HexTile tile, bool instantCorrupt = false) {
         if (tiles.Contains(tile) == false) {
             tiles.Add(tile);
             tile.SetSettlementOnTile(this);
             if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
-                tile.SetCorruption(true);
+                tile.SetCorruption(true, instantCorrupt);
             }
             // tile.UpdateLandmarkVisuals();
         }
     }
-    public void AddTileToSettlement(params HexTile[] tiles) {
+    public void AddTileToSettlement(bool instantCorrupt, params HexTile[] tiles) {
         for (int i = 0; i < tiles.Length; i++) {
             HexTile tile = tiles[i];
-            AddTileToSettlement(tile);
+            AddTileToSettlement(tile, instantCorrupt);
         }
     }
     public void RemoveTileFromSettlement(HexTile tile) {

@@ -291,7 +291,7 @@ public partial class LandmarkManager : MonoBehaviour {
         if (locationPortraits.ContainsKey(newSettlement.locationType)) {
             newSettlement.SetLocationPortrait(locationPortraits[newSettlement.locationType]);
         }
-        newSettlement.AddTileToSettlement(tiles);
+        newSettlement.AddTileToSettlement(true, tiles);
         Messenger.Broadcast(Signals.AREA_CREATED, newSettlement);
         allSetttlements.Add(newSettlement);
         if(locationType != LOCATION_TYPE.DEMONIC_INTRUSION) {
