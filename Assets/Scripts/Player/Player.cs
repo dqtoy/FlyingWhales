@@ -453,12 +453,12 @@ public class Player : ILeader {
     #region Intel
     public void AddIntel(Intel newIntel) {
         if (!allIntel.Contains(newIntel)) {
-            for (int i = 0; i < allIntel.Count; i++) {
-                Intel currIntel = allIntel[i];
-                if (currIntel.intelLog == newIntel.intelLog) {
-                    return;
-                }
-            }
+            //for (int i = 0; i < allIntel.Count; i++) {
+            //    Intel currIntel = allIntel[i];
+            //    if (currIntel.intelLog == newIntel.intelLog) {
+            //        return;
+            //    }
+            //}
             allIntel.Add(newIntel);
             if (allIntel.Count > MAX_INTEL) {
                 RemoveIntel(allIntel[0]);
@@ -472,9 +472,9 @@ public class Player : ILeader {
         }
     }
     public void LoadIntels(SaveDataPlayer data) {
-        for (int i = 0; i < data.allIntel.Count; i++) {
-            AddIntel(data.allIntel[i].Load());
-        }
+        //for (int i = 0; i < data.allIntel.Count; i++) {
+        //    AddIntel(data.allIntel[i].Load());
+        //}
     }
     /// <summary>
     /// Listener for when a character has finished doing an action.
@@ -569,16 +569,16 @@ public class Player : ILeader {
     }
     private void TryExecuteCurrentActiveIntel() {
         string hoverText = string.Empty;
-        if (CanShareIntel(InnerMapManager.Instance.currentlyHoveredPoi, ref hoverText)) {
+        if (minions.Count > 0 && CanShareIntel(InnerMapManager.Instance.currentlyHoveredPoi, ref hoverText)) {
             Character targetCharacter = InnerMapManager.Instance.currentlyHoveredPoi as Character;
-            if(currentActiveIntel is EventIntel) {
-                if((currentActiveIntel as EventIntel).action == null) {
-                    //If intel has no action, do not execute intel, just remove it instead
-                    PlayerManager.Instance.player.RemoveIntel(currentActiveIntel);
-                    return;
-                }
-            }
-            UIManager.Instance.OpenShareIntelMenu(targetCharacter, currentMinionLeader.character, currentActiveIntel);
+            //if(currentActiveIntel is EventIntel) {
+            //    if((currentActiveIntel as EventIntel).action == null) {
+            //        //If intel has no action, do not execute intel, just remove it instead
+            //        PlayerManager.Instance.player.RemoveIntel(currentActiveIntel);
+            //        return;
+            //    }
+            //}
+            UIManager.Instance.OpenShareIntelMenu(targetCharacter, minions[0].character, currentActiveIntel);
         }
     }
     public bool CanShareIntel(IPointOfInterest poi, ref string hoverText) {

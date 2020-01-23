@@ -2557,7 +2557,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //targetCharacter.OnSeenBy(this); //trigger that the target character was seen by this character.
             targetCharacterCurrentActionNode = targetCharacter.currentActionNode;
             if (targetCharacterCurrentActionNode != null /*&& node.action.shouldAddLogs*/ && targetCharacterCurrentActionNode.actionStatus == ACTION_STATUS.PERFORMING) {
-                reactionComponent.ReactTo(targetCharacterCurrentActionNode);
+                reactionComponent.ReactTo(targetCharacterCurrentActionNode, SHARE_INTEL_STATUS.WITNESSED);
             }
         }
         if (target.allJobsTargetingThis.Count > 0) {
@@ -2569,7 +2569,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     if (plan != null /*&& plan.currentActualNode.action.shouldAddLogs*/ 
                         && plan.currentActualNode.actionStatus == ACTION_STATUS.PERFORMING
                         && plan.currentActualNode != targetCharacterCurrentActionNode) {
-                        reactionComponent.ReactTo(plan.currentActualNode);
+                        reactionComponent.ReactTo(plan.currentActualNode, SHARE_INTEL_STATUS.WITNESSED);
                     }
                 }
             }
@@ -2648,13 +2648,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    }
     //    return memories;
     //}
-    public void CreateInformedEventLog(ActualGoapNode eventToBeInformed, bool invokeShareIntelReaction) {
-        Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event", eventToBeInformed);
-        informedLog.AddToFillers(eventToBeInformed.descriptionLog.fillers);
-        informedLog.AddToFillers(this, this.name, LOG_IDENTIFIER.OTHER);
-        informedLog.AddToFillers(null, Utilities.LogDontReplace(eventToBeInformed.descriptionLog), LOG_IDENTIFIER.APPEND);
-        AddHistory(informedLog);
-    }
     //public void ThisCharacterWitnessedEvent(ActualGoapNode witnessedEvent) {
     //    //if (isDead || !canWitness) {
     //    //    return;
@@ -4456,95 +4449,99 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Share Intel
-    public List<string> ShareIntel(Intel intel) {
-        List<string> dialogReactions = new List<string>();
-        //if (intel is EventIntel) {
-        //    EventIntel ei = intel as EventIntel;
-        //    if (ei.action.currentState != null && ei.action.currentState.shareIntelReaction != null) {
-        //        dialogReactions.AddRange(ei.action.currentState.shareIntelReaction.Invoke(this, ei, SHARE_INTEL_STATUS.INFORMED));
-        //    }
-        //    //if the determined reactions list is empty, check the default reactions
-        //    if (dialogReactions.Count == 0) {
-        //        bool doesNotConcernMe = false;
-        //        //If the event's actor and target do not have any relationship with the recipient and are not part of his faction, 
-        //        //and if no item involved is owned by the recipient: "This does not concern me."
-        //        if (!this.relationshipContainer.HasRelationshipWith(ei.action.actorAlterEgo)
-        //            && ei.action.actor.faction != this.faction) {
-        //            if (ei.action.poiTarget is Character) {
-        //                Character otherCharacter = ei.action.poiTarget as Character;
-        //                if (!this.relationshipContainer.HasRelationshipWith(ei.action.poiTargetAlterEgo)
-        //                    && otherCharacter.faction != this.faction) {
-        //                    doesNotConcernMe = true;
-        //                }
-        //            } else if (ei.action.poiTarget is TileObject) {
-        //                TileObject obj = ei.action.poiTarget as TileObject;
-        //                if (!obj.IsOwnedBy(this)) {
-        //                    doesNotConcernMe = true;
-        //                }
-        //            } else if (ei.action.poiTarget is SpecialToken) {
-        //                SpecialToken obj = ei.action.poiTarget as SpecialToken;
-        //                if (obj.characterOwner != this) {
-        //                    doesNotConcernMe = true;
-        //                }
-        //            }
-        //        }
+    //public List<string> ShareIntel(Intel intel) {
+    //    List<string> dialogReactions = new List<string>();
+    //    //if (intel is EventIntel) {
+    //    //    EventIntel ei = intel as EventIntel;
+    //    //    if (ei.action.currentState != null && ei.action.currentState.shareIntelReaction != null) {
+    //    //        dialogReactions.AddRange(ei.action.currentState.shareIntelReaction.Invoke(this, ei, SHARE_INTEL_STATUS.INFORMED));
+    //    //    }
+    //    //    //if the determined reactions list is empty, check the default reactions
+    //    //    if (dialogReactions.Count == 0) {
+    //    //        bool doesNotConcernMe = false;
+    //    //        //If the event's actor and target do not have any relationship with the recipient and are not part of his faction, 
+    //    //        //and if no item involved is owned by the recipient: "This does not concern me."
+    //    //        if (!this.relationshipContainer.HasRelationshipWith(ei.action.actorAlterEgo)
+    //    //            && ei.action.actor.faction != this.faction) {
+    //    //            if (ei.action.poiTarget is Character) {
+    //    //                Character otherCharacter = ei.action.poiTarget as Character;
+    //    //                if (!this.relationshipContainer.HasRelationshipWith(ei.action.poiTargetAlterEgo)
+    //    //                    && otherCharacter.faction != this.faction) {
+    //    //                    doesNotConcernMe = true;
+    //    //                }
+    //    //            } else if (ei.action.poiTarget is TileObject) {
+    //    //                TileObject obj = ei.action.poiTarget as TileObject;
+    //    //                if (!obj.IsOwnedBy(this)) {
+    //    //                    doesNotConcernMe = true;
+    //    //                }
+    //    //            } else if (ei.action.poiTarget is SpecialToken) {
+    //    //                SpecialToken obj = ei.action.poiTarget as SpecialToken;
+    //    //                if (obj.characterOwner != this) {
+    //    //                    doesNotConcernMe = true;
+    //    //                }
+    //    //            }
+    //    //        }
 
-        //        if (ei.action.actor == this) {
-        //            //If the actor and the recipient is the same: "I know what I did."
-        //            dialogReactions.Add("I know what I did.");
-        //        } else {
-        //            if (doesNotConcernMe) {
-        //                //The following events are too unimportant to merit any meaningful response: "What will I do with this random tidbit?"
-        //                //-character picked up an item(not stealing)
-        //                //-character prayed, daydreamed, played
-        //                //- character slept
-        //                //- character mined or chopped wood
-        //                switch (ei.action.goapType) {
-        //                    case INTERACTION_TYPE.PICK_UP:
-        //                    case INTERACTION_TYPE.PRAY:
-        //                    case INTERACTION_TYPE.DAYDREAM:
-        //                    case INTERACTION_TYPE.PLAY:
-        //                    case INTERACTION_TYPE.SLEEP:
-        //                    case INTERACTION_TYPE.SLEEP_OUTSIDE:
-        //                    case INTERACTION_TYPE.MINE:
-        //                    case INTERACTION_TYPE.CHOP_WOOD:
-        //                        dialogReactions.Add("What will I do with this random tidbit?");
-        //                        break;
-        //                    default:
-        //                        dialogReactions.Add("This does not concern me.");
-        //                        break;
-        //                }
+    //    //        if (ei.action.actor == this) {
+    //    //            //If the actor and the recipient is the same: "I know what I did."
+    //    //            dialogReactions.Add("I know what I did.");
+    //    //        } else {
+    //    //            if (doesNotConcernMe) {
+    //    //                //The following events are too unimportant to merit any meaningful response: "What will I do with this random tidbit?"
+    //    //                //-character picked up an item(not stealing)
+    //    //                //-character prayed, daydreamed, played
+    //    //                //- character slept
+    //    //                //- character mined or chopped wood
+    //    //                switch (ei.action.goapType) {
+    //    //                    case INTERACTION_TYPE.PICK_UP:
+    //    //                    case INTERACTION_TYPE.PRAY:
+    //    //                    case INTERACTION_TYPE.DAYDREAM:
+    //    //                    case INTERACTION_TYPE.PLAY:
+    //    //                    case INTERACTION_TYPE.SLEEP:
+    //    //                    case INTERACTION_TYPE.SLEEP_OUTSIDE:
+    //    //                    case INTERACTION_TYPE.MINE:
+    //    //                    case INTERACTION_TYPE.CHOP_WOOD:
+    //    //                        dialogReactions.Add("What will I do with this random tidbit?");
+    //    //                        break;
+    //    //                    default:
+    //    //                        dialogReactions.Add("This does not concern me.");
+    //    //                        break;
+    //    //                }
 
-        //            } else {
-        //                //Otherwise: "A proper response to this information has not been implemented yet."
-        //                dialogReactions.Add("A proper response to this information has not been implemented yet.");
-        //            }
-        //        }
-        //    }
-        //    CreateInformedEventLog(intel.intelLog.node, false);
-        //}
-        //PlayerManager.Instance.player.RemoveIntel(intel);
-        dialogReactions.Add("A proper response to this information has not been implemented yet.");
-        return dialogReactions;
-        //if (relationships.ContainsKey(intel.actor)) {
-        //    if (!intel.isCompleted) {
-        //        relationships[intel.actor].SetPlannedActionIntel(intel);
-        //    } else {
-        //        Debug.Log(GameManager.Instance.TodayLogString() + "The intel given to " + this.name + " regarding " + intel.actor.name + " has already been completed, not setting planned action...");
-        //    }
-        //    relationships[intel.actor].OnIntelGivenToCharacter(intel);
-        //    PlayerManager.Instance.player.RemoveIntel(intel);
-        //} else {
-        //    Debug.Log(GameManager.Instance.TodayLogString() + this.name + " does not have a relationship with " + intel.actor.name + ". He/she doesn't care about any intel you give that is about " + intel.actor.name);
-        //}
-        //if (intel.target is Character) {
-        //    Character target = intel.target as Character;
-        //    if (relationships.ContainsKey(target)) {
-        //        relationships[target].OnIntelGivenToCharacter(intel);
-        //        PlayerManager.Instance.player.RemoveIntel(intel);
-        //    }
-        //}
-
+    //    //            } else {
+    //    //                //Otherwise: "A proper response to this information has not been implemented yet."
+    //    //                dialogReactions.Add("A proper response to this information has not been implemented yet.");
+    //    //            }
+    //    //        }
+    //    //    }
+    //    //    CreateInformedEventLog(intel.intelLog.node, false);
+    //    //}
+    //    //PlayerManager.Instance.player.RemoveIntel(intel);
+    //    dialogReactions.Add("A proper response to this information has not been implemented yet.");
+    //    return dialogReactions;
+    //    //if (relationships.ContainsKey(intel.actor)) {
+    //    //    if (!intel.isCompleted) {
+    //    //        relationships[intel.actor].SetPlannedActionIntel(intel);
+    //    //    } else {
+    //    //        Debug.Log(GameManager.Instance.TodayLogString() + "The intel given to " + this.name + " regarding " + intel.actor.name + " has already been completed, not setting planned action...");
+    //    //    }
+    //    //    relationships[intel.actor].OnIntelGivenToCharacter(intel);
+    //    //    PlayerManager.Instance.player.RemoveIntel(intel);
+    //    //} else {
+    //    //    Debug.Log(GameManager.Instance.TodayLogString() + this.name + " does not have a relationship with " + intel.actor.name + ". He/she doesn't care about any intel you give that is about " + intel.actor.name);
+    //    //}
+    //    //if (intel.target is Character) {
+    //    //    Character target = intel.target as Character;
+    //    //    if (relationships.ContainsKey(target)) {
+    //    //        relationships[target].OnIntelGivenToCharacter(intel);
+    //    //        PlayerManager.Instance.player.RemoveIntel(intel);
+    //    //    }
+    //    //}
+    //}
+    public string ShareIntel(Intel intel) {
+        string response = string.Empty;
+        reactionComponent.ReactTo(intel.node, SHARE_INTEL_STATUS.INFORMED);
+        return response;
     }
     #endregion
 

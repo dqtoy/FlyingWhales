@@ -4,15 +4,16 @@ using Inner_Maps;
 using UnityEngine;  
 using Traits;
 
-public class Mine : GoapAction {
+public class MineMetal : GoapAction {
     //private const int MAX_SUPPLY = 50;
     //private const int MIN_SUPPLY = 20;
 
-    public Mine() : base(INTERACTION_TYPE.MINE) {
+    public MineMetal() : base(INTERACTION_TYPE.MINE_METAL) {
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT };
     }
 
     #region Overrides
@@ -24,7 +25,7 @@ public class Mine : GoapAction {
         SetState("Mine Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 3;
+        return 10;
     }
     #endregion
 
@@ -41,13 +42,10 @@ public class Mine : GoapAction {
     #region State Effects
     public void PreMineSuccess(ActualGoapNode goapNode) {
         Ore ore = goapNode.poiTarget as Ore;
-        //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         goapNode.descriptionLog.AddToFillers(null, ore.yield.ToString(), LOG_IDENTIFIER.STRING_1);
-        //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterMineSuccess(ActualGoapNode goapNode) {
         Ore ore = goapNode.poiTarget as Ore;
-        //goapNode.actor.AdjustSupply(ore.GetSupplyPerMine());
         int metal = ore.yield;
         LocationGridTile tile = ore.gridTileLocation;
         ore.AdjustYield(-metal);
@@ -57,16 +55,11 @@ public class Mine : GoapAction {
         tile.structure.AddPOI(metalPile, tile);
         metalPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.METAL_PILE);
     }
-    //public void PreTargetMissing(ActualGoapNode goapNode) {
-    //    goapNode.descriptionLog.AddToFillers(goapNode.actor.currentStructure.location, goapNode.actor.currentStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-    //}
-    public void AfterTargetMissing(ActualGoapNode goapNode) {
-    }
     #endregion
 }
 
 public class MineData : GoapActionData {
-    public MineData() : base(INTERACTION_TYPE.MINE) {
+    public MineData() : base(INTERACTION_TYPE.MINE_METAL) {
         //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         requirementAction = Requirement;
     }

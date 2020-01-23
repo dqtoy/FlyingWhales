@@ -17,14 +17,14 @@ public class DispelMagic : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Enchantment", false, GOAP_EFFECT_TARGET.TARGET ));
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Cursed", false, GOAP_EFFECT_TARGET.TARGET ));
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Dispel Magic Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 1;
+        return 10;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
@@ -58,7 +58,12 @@ public class DispelMagic : GoapAction {
     }
     public void AfterDispelMagicSuccess(ActualGoapNode goapNode) {
         //**After Effect 1**: Reduce all of target's Enchantment type traits
-        goapNode.poiTarget.traitContainer.RemoveAllTraitsByType(goapNode.poiTarget, TRAIT_TYPE.ENCHANTMENT);
+        //goapNode.poiTarget.traitContainer.RemoveAllTraitsByType(goapNode.poiTarget, TRAIT_TYPE.ENCHANTMENT);
+        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Cursed");
+        if(goapNode.poiTarget is Character) {
+            Character target = goapNode.poiTarget as Character;
+            target.opinionComponent.AdjustOpinion(goapNode.actor, "Base", 3);
+        }
     }
     #endregion
 }

@@ -27,7 +27,66 @@ public class Poison : GoapAction {
         SetState("Poison Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 4;
+        return Utilities.rng.Next(80, 121);
+    }
+    public override string ReactionToActor(Character witness, ActualGoapNode node) {
+        string response = base.ReactionToActor(witness, node);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        List<Character> targetObjectOwners = null;
+        if (target is TileObject) {
+            TileObject tileObject = target as TileObject;
+            targetObjectOwners = tileObject.GetOwners();
+        } else if (target is SpecialToken) {
+            SpecialToken item = target as SpecialToken;
+            if (item.characterOwner != null) {
+                targetObjectOwners = new List<Character>() { item.characterOwner };
+            }
+        }
+
+        if (targetObjectOwners != null && targetObjectOwners.Contains(witness)) {
+            if (witness.traitContainer.GetNormalTrait<Trait>("Coward") != null) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor);
+            } else {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor);
+            }
+
+            if (witness.opinionComponent.IsFriendsWith(actor) || witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.PARAMOUR, RELATIONSHIP_TYPE.RELATIVE)) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
+            }
+        } else {
+            bool isTargetObjectOwnedByFriend = false;
+            if(targetObjectOwners != null) {
+                for (int i = 0; i < targetObjectOwners.Count; i++) {
+                    Character objectOwner = targetObjectOwners[i];
+                    if (witness.opinionComponent.IsFriendsWith(objectOwner) || witness.relationshipContainer.HasRelationshipWith(objectOwner, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.PARAMOUR, RELATIONSHIP_TYPE.RELATIVE)) {
+                        isTargetObjectOwnedByFriend = true;
+                        break;
+                    }
+                }
+            }
+            if (isTargetObjectOwnedByFriend) {
+                if (witness.traitContainer.GetNormalTrait<Trait>("Coward") != null) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor);
+                } else {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+                    if (witness.opinionComponent.IsFriendsWith(actor) || witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.PARAMOUR, RELATIONSHIP_TYPE.RELATIVE)) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor);
+                    }
+                }
+            } else {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+                if (witness.opinionComponent.IsFriendsWith(actor) || witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.PARAMOUR, RELATIONSHIP_TYPE.RELATIVE)) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor);
+                }
+            }
+        }
+        CrimeManager.Instance.ReactToCrime(witness, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
+        return response;
     }
     #endregion
 

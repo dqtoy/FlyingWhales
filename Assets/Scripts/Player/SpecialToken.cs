@@ -88,6 +88,9 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest, IPlayerAc
     }
     #endregion
 
+    public bool IsOwnedBy(Character character) {
+        return characterOwner != null && character == characterOwner;
+    }
     public void SetOwner(Faction owner) {
         this.owner = owner;
     }

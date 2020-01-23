@@ -12,8 +12,6 @@ namespace Traits {
             description = "This character has been afflicted by a magical curse.";
             type = TRAIT_TYPE.ENCHANTMENT;
             effect = TRAIT_EFFECT.NEGATIVE;
-            
-            
             ticksDuration = GameManager.ticksPerDay;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DISPEL_MAGIC, };
             cursedInteractions = new List<CursedInteraction>();

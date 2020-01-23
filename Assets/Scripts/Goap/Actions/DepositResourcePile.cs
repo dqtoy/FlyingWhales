@@ -78,10 +78,10 @@ public class DepositResourcePile : GoapAction {
             } else {
                 //if the poi where the actor is supposed to deposit his carried pile has no grid tile location, this must mean that the pile is either destroyed or carried by another character
                 //return the main storage so that the main storage will become the target structure
-                return node.actor.currentRegion.mainStorage;
+                return node.actor.homeSettlement.mainStorage;
             }
         } else {
-            return node.actor.currentRegion.mainStorage;
+            return node.actor.homeSettlement.mainStorage;
         }
         //return base.GetTargetStructure(node);
     }
@@ -172,19 +172,19 @@ public class DepositResourcePile : GoapAction {
                 return false;
             }
             if (poiTarget.gridTileLocation.structure.settlementLocation != null) {
-                if (poiTarget.gridTileLocation.structure == poiTarget.gridTileLocation.structure.settlementLocation.mainStorage) {
+                if (poiTarget.gridTileLocation.structure == actor.homeSettlement.mainStorage) {
                     return false;
                 }
-                if (poiTarget.gridTileLocation.structure.settlementLocation.mainStorage.unoccupiedTiles.Count <= 0) {
+                if (actor.homeSettlement.mainStorage.unoccupiedTiles.Count <= 0) {
                     return false;
                 }
             } else {
                 //Cannot be deposited if already in the storage
                 LocationStructure structure = poiTarget.gridTileLocation.structure;
-                if (structure == structure.location.mainStorage) {
+                if (structure == actor.homeSettlement.mainStorage) {
                     return false;
                 }
-                if (structure.location.mainStorage != null && structure.location.mainStorage.unoccupiedTiles.Count <= 0) {
+                if (actor.homeSettlement.mainStorage != null && actor.homeSettlement.mainStorage.unoccupiedTiles.Count <= 0) {
                     return false;
                 }
             }

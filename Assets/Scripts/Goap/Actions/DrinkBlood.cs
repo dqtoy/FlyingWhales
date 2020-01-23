@@ -26,10 +26,60 @@ public class DrinkBlood : GoapAction {
         SetState("Drink Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        if (actor.needsComponent.isStarving) {
-            return Utilities.rng.Next(20, 35);
+        int cost = Utilities.rng.Next(50, 61);
+        if(target is Character) {
+            Character targetCharacter = target as Character;
+            if (targetCharacter.isVampire) {
+                cost += 2000;
+                //Skip further cost processing
+                return cost;
+            }
+            if (targetCharacter.canPerform) {
+                cost += 30;
+            }
+            if (actor.needsComponent.isHungry) {
+                if(actor.currentRegion != targetCharacter.currentRegion) {
+                    cost += 2000;
+                    //Skip further cost processing
+                    return cost;
+                }
+                string opinionLabel = actor.opinionComponent.GetOpinionLabel(targetCharacter);
+                if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+                    cost += 2000;
+                    //Skip further cost processing
+                    return cost;
+                } else if (opinionLabel == OpinionComponent.Rival) {
+                    cost += 0;
+                } else if (opinionLabel == OpinionComponent.Enemy) {
+                    cost += 15;
+                } else if (opinionLabel == OpinionComponent.Acquaintance) {
+                    cost += 65;
+                } else {
+                    cost += 35;
+                }
+            } else if (actor.needsComponent.isStarving) {
+                if (actor.currentRegion != targetCharacter.currentRegion) {
+                    cost += 2000;
+                    //Skip further cost processing
+                    return cost;
+                }
+                string opinionLabel = actor.opinionComponent.GetOpinionLabel(targetCharacter);
+                if (opinionLabel == OpinionComponent.Close_Friend) {
+                    cost += 60;
+                } else if (opinionLabel == OpinionComponent.Friend) {
+                    cost += 45;
+                } else if (opinionLabel == OpinionComponent.Rival) {
+                    cost += 0;
+                } else if (opinionLabel == OpinionComponent.Enemy) {
+                    cost += 5;
+                } else if (opinionLabel == OpinionComponent.Acquaintance) {
+                    cost += 10;
+                } else {
+                    cost += 5;
+                }
+            }
         }
-        return Utilities.rng.Next(45, 60);
+        return cost;
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
@@ -48,6 +98,57 @@ public class DrinkBlood : GoapAction {
             }
         }
         return actionInvalidity;
+    }
+    public override string ReactionToActor(Character witness, ActualGoapNode node) {
+        string response = base.ReactionToActor(witness, node);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if (!witness.isVampire) {
+            CrimeManager.Instance.ReactToCrime(witness, node, node.associatedJobType, CRIME_TYPE.HEINOUS);
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
+
+            string opinionLabel = witness.opinionComponent.GetOpinionLabel(actor);
+            if (opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Despair, witness, actor);
+            }
+            if(witness.traitContainer.GetNormalTrait<Trait>("Coward") != null) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor);
+            } else if (!witness.isSerialKiller) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor);
+            }
+        }
+        if(target is Character) {
+            Character targetCharacter = target as Character;
+            string opinionLabel = witness.opinionComponent.GetOpinionLabel(targetCharacter);
+            if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
+            } else if (opinionLabel == OpinionComponent.Acquaintance || witness.faction == targetCharacter.faction || witness.homeSettlement == targetCharacter.homeSettlement) {
+                if (!witness.isSerialKiller) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
+                }
+            }
+        }
+        return response;
+    }
+    public override string ReactionOfTarget(ActualGoapNode node) {
+        string response = base.ReactionOfTarget(node);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            CrimeManager.Instance.ReactToCrime(targetCharacter, node, node.associatedJobType, CRIME_TYPE.HEINOUS);
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, targetCharacter, actor);
+            if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Coward") != null) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, targetCharacter, actor);
+            } else {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, targetCharacter, actor);
+            }
+            if (targetCharacter.opinionComponent.IsFriendsWith(actor)) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor);
+            }
+        }
+        return response;
     }
     #endregion
 

@@ -14,7 +14,7 @@ public class IntelNotificationItem : PlayerNotificationItem {
 
     public void Initialize(Intel intel, bool hasExpiry = true, System.Action<PlayerNotificationItem> onDestroyAction = null) {
         this.intel = intel;
-        base.Initialize(intel.intelLog, hasExpiry, onDestroyAction);
+        base.Initialize(intel.node.descriptionLog, hasExpiry, onDestroyAction);
     }
    
     public void GetIntel() {
@@ -23,10 +23,10 @@ public class IntelNotificationItem : PlayerNotificationItem {
         DeleteNotification();
     }
 
-    protected override void OnExpire() {
-        base.OnExpire();
-        intel.OnIntelExpire();
-    }
+    //protected override void OnExpire() {
+    //    base.OnExpire();
+    //    intel.OnIntelExpire();
+    //}
     public override void Reset() {
         base.Reset();
         convertTooltip.SetActive(false);

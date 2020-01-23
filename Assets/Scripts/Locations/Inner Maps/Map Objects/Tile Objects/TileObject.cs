@@ -103,11 +103,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     private void AddCommonAdvertisements() {
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.POISON);
+        AddAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
         AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
     }
     protected void RemoveCommonAdvertisements() {
         RemoveAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         RemoveAdvertisedAction(INTERACTION_TYPE.POISON);
+        RemoveAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
         RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
     }
 
@@ -625,6 +627,15 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             currTile.SetTileState(LocationGridTile.Tile_State.Empty);
         }
     }
+    public bool IsOwnedBy(Character character) {
+        return gridTileLocation != null && character.homeStructure == gridTileLocation.structure;
+    }
+    public List<Character> GetOwners() {
+        if(gridTileLocation != null && gridTileLocation.structure is Dwelling) {
+            return (gridTileLocation.structure as Dwelling).residents;
+        }
+        return null;
+    }
     #endregion
 
     #region Inspect
@@ -774,8 +785,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         actions.Clear();
     }
     #endregion
-    
-    
 }
 
 [System.Serializable]

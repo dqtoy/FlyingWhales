@@ -24,7 +24,7 @@ public class RemovePoison : GoapAction {
         SetState("Remove Poison Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 4;
+        return 10;
     }
     #endregion
 

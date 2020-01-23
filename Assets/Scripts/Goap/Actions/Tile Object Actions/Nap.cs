@@ -11,11 +11,13 @@ public class Nap : GoapAction {
         isNotificationAnIntel = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.LUNCH_TIME };
     }
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.TARGET });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.COMFORT_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -36,26 +38,27 @@ public class Nap : GoapAction {
         return goapActionInvalidity;
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        LocationStructure targetStructure = target.gridTileLocation.structure;
-        if(targetStructure.structureType == STRUCTURE_TYPE.DWELLING) {
-            Dwelling dwelling = targetStructure as Dwelling;
-            if (dwelling.IsResident(actor)) {
-                return 8;
-            } else {
-                for (int i = 0; i < dwelling.residents.Count; i++) {
-                    Character resident = dwelling.residents[i];
-                    if (resident != actor) {
-                        if (actor.opinionComponent.HasOpinion(resident) && actor.opinionComponent.GetTotalOpinion(resident) > 0) {
-                            return 25;
-                        }
-                    }
-                }
-                return 45;
-            }
-        } else if(targetStructure.structureType == STRUCTURE_TYPE.INN) {
-            return 45;
-        }
-        return 100;
+        //LocationStructure targetStructure = target.gridTileLocation.structure;
+        //if(targetStructure.structureType == STRUCTURE_TYPE.DWELLING) {
+        //    Dwelling dwelling = targetStructure as Dwelling;
+        //    if (dwelling.IsResident(actor)) {
+        //        return 8;
+        //    } else {
+        //        for (int i = 0; i < dwelling.residents.Count; i++) {
+        //            Character resident = dwelling.residents[i];
+        //            if (resident != actor) {
+        //                if (actor.opinionComponent.HasOpinion(resident) && actor.opinionComponent.GetTotalOpinion(resident) > 0) {
+        //                    return 25;
+        //                }
+        //            }
+        //        }
+        //        return 45;
+        //    }
+        //} else if(targetStructure.structureType == STRUCTURE_TYPE.INN) {
+        //    return 45;
+        //}
+        //return 100;
+        return 10;
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
