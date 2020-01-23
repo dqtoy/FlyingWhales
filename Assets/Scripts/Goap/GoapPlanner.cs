@@ -583,6 +583,13 @@ public class GoapPlanner {
         IPointOfInterest target = node.target;
         log += "\n--Adding node to raw plan: (" + node.cost + ")" + node.action.goapName + "-" + target.nameWithID;
         rawPlan.Add(node);
+        int sumCostSoFar = rawPlan.Sum(x => x.cost);
+        log += "\n--Cost so far: " + sumCostSoFar;
+        if (sumCostSoFar > 1000) {
+            log += "\n--Cost exceeded 1000, discard plan";
+            rawPlan.Clear();
+            return;
+        }
         List<Precondition> preconditions = null;
         if (job.otherData != null) {
             if (job.otherData.ContainsKey(action.goapType)) {
