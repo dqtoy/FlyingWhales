@@ -228,7 +228,7 @@ public class MoodComponent {
 		if (_isInMajorMentalBreak) {
 			throw new Exception($"{GameManager.Instance.TodayLogString()}{_owner.name} is already in a major mental break, but is trying to trigger another one!");
 		}
-		int roll = Random.Range(1, 3); //Disabled berserked to be triggered. TODO: Reinstate berserked when issue is fixed.
+		int roll = Random.Range(0, 3);
 		string summary = $"{GameManager.Instance.TodayLogString()}{_owner.name} triggered major mental break.";
 		_isInMajorMentalBreak = true;
 		if (roll == 0) {
