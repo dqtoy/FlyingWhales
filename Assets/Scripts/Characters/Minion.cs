@@ -366,7 +366,7 @@ public class Minion {
     public void Summon(ThePortal portal) {
         character.CreateMarker();
         LocationStructure portalStructure =
-            portal.tileLocation.settlementOnTile.GetRandomStructureOfType(STRUCTURE_TYPE.PORTAL);
+            portal.tileLocation.settlementOnTile.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL);
 
         int minX = portalStructure.tiles.Min(t => t.localPlace.x);
         int maxX = portalStructure.tiles.Max(t => t.localPlace.x);

@@ -291,7 +291,7 @@ public partial class LandmarkManager : MonoBehaviour {
         if (locationPortraits.ContainsKey(newSettlement.locationType)) {
             newSettlement.SetLocationPortrait(locationPortraits[newSettlement.locationType]);
         }
-        newSettlement.AddTileToSettlement(true, tiles);
+        newSettlement.AddTileToSettlement(tiles);
         Messenger.Broadcast(Signals.AREA_CREATED, newSettlement);
         allSetttlements.Add(newSettlement);
         if(locationType != LOCATION_TYPE.DEMONIC_INTRUSION) {
@@ -430,38 +430,66 @@ public partial class LandmarkManager : MonoBehaviour {
         return null;
     }
     public LANDMARK_TYPE GetLandmarkTypeFor(STRUCTURE_TYPE structureType) {
-        switch (structureType) {
-            case STRUCTURE_TYPE.DWELLING:
-                return LANDMARK_TYPE.HOUSES;
-            case STRUCTURE_TYPE.MONSTER_LAIR:
-                return LANDMARK_TYPE.MONSTER_LAIR;
-            case STRUCTURE_TYPE.ABANDONED_MINE:
-                return LANDMARK_TYPE.MINES;
-            case STRUCTURE_TYPE.TEMPLE:
-                return LANDMARK_TYPE.TEMPLE;
-            case STRUCTURE_TYPE.MAGE_TOWER:
-                return LANDMARK_TYPE.MAGE_TOWER;
-            case STRUCTURE_TYPE.PORTAL:
-                return LANDMARK_TYPE.THE_PORTAL;
-            default:
-                return LANDMARK_TYPE.VILLAGE;
+        LANDMARK_TYPE parsed;
+        if (System.Enum.TryParse(structureType.ToString(), out parsed)) {
+            return parsed;
+        } else {
+            switch (structureType) {
+                case STRUCTURE_TYPE.DWELLING:
+                    return LANDMARK_TYPE.HOUSES;
+                default:
+                    return LANDMARK_TYPE.VILLAGE;
+            }
         }
     }
-    public STRUCTURE_TYPE GetLandmarkTypeFor(LANDMARK_TYPE landmarkType) {
+    public STRUCTURE_TYPE GetStructureTypeFor(LANDMARK_TYPE landmarkType) {
         switch (landmarkType) {
             case LANDMARK_TYPE.HOUSES:
                 return STRUCTURE_TYPE.DWELLING;
-            case LANDMARK_TYPE.MONSTER_LAIR:
-                return STRUCTURE_TYPE.MONSTER_LAIR;
-            case LANDMARK_TYPE.MINES:
-                return STRUCTURE_TYPE.ABANDONED_MINE;
-            case LANDMARK_TYPE.TEMPLE:
-                return STRUCTURE_TYPE.TEMPLE;
-            case LANDMARK_TYPE.MAGE_TOWER:
-                return STRUCTURE_TYPE.MAGE_TOWER;
+            case LANDMARK_TYPE.VILLAGE:
+                return STRUCTURE_TYPE.CITY_CENTER;
             default:
-                return STRUCTURE_TYPE.INN;
+                STRUCTURE_TYPE parsed;
+                if (System.Enum.TryParse(landmarkType.ToString(), out parsed)) {
+                    return parsed;
+                } else {
+                    throw new System.Exception($"There is no corresponding structure type for {landmarkType.ToString()}");
+                }
         }
+        
+    }
+    public void CreateStructureObjectForLandmark(BaseLandmark landmark, Settlement settlement) {
+        LocationStructure structure = CreateNewStructureAt(landmark.tileLocation.region,
+            GetStructureTypeFor(landmark.specificLandmarkType), settlement);
+        PlaceStructureObject(structure, landmark.tileLocation.region.innerMap, landmark.tileLocation);
+    }
+    private void PlaceStructureObject(LocationStructure structure, InnerTileMap innerTileMap, HexTile tile) {
+        if (structure.structureType.ShouldBeGeneratedFromTemplate()) {
+            List<GameObject> choices =
+                InnerMapManager.Instance.GetStructurePrefabsForStructure(structure.structureType);
+            GameObject chosenStructurePrefab = Utilities.GetRandomElement(choices);
+            LocationStructureObject lso = chosenStructurePrefab.GetComponent<LocationStructureObject>();
+            BuildingSpot chosenBuildingSpot;
+            if (TryGetBuildSpotForStructureInTile(lso, tile, innerTileMap, out chosenBuildingSpot)) {
+                BuildSpotTileObject buildSpotTileObject = innerTileMap.GetBuildSpotTileObject(chosenBuildingSpot);
+                innerTileMap.PlaceStructureObjectAt(chosenBuildingSpot, chosenStructurePrefab, structure, buildSpotTileObject);
+            } else {
+                throw new System.Exception(
+                    $"Could not find valid building spot for {structure.ToString()} using prefab {chosenStructurePrefab.name}");
+            }
+        }
+    }
+    public bool TryGetBuildSpotForStructureInTile(LocationStructureObject structureObject, HexTile currTile, 
+        InnerTileMap innerTileMap, out BuildingSpot spot) {
+        for (int j = 0; j < currTile.ownedBuildSpots.Length; j++) {
+            BuildingSpot currSpot = currTile.ownedBuildSpots[j];
+            if (currSpot.isOccupied == false && currSpot.CanFitStructureOnSpot(structureObject, innerTileMap)) {
+                spot = currSpot;
+                return true;
+            }
+        }
+        spot = null;
+        return false;
     }
     #endregion
 

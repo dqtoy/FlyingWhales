@@ -14,7 +14,7 @@ public class BuildingSpot {
     public Vector3Int location { get; }
     private Vector3 centeredLocation { get; }
     public LocationGridTile[] tilesInTerritory { get; private set; }
-    private Vector2Int locationInBuildSpotGrid { get; }
+    public Vector2Int locationInBuildSpotGrid { get; private set; }
     public Dictionary<GridNeighbourDirection, BuildingSpot> neighbours { get; private set; }
     public HexTile hexTileOwner { get; private set; } //if this is null then it means that this build spot belongs to a hex tile that is not in this build spots region
     public BuildingSpotItem spotItem { get; private set; }
@@ -29,7 +29,9 @@ public class BuildingSpot {
     /// Is this build spot to be considered as part of it's region map ("part" meaning if this spots tiles are valid)
     /// </summary>
     public bool isPartOfParentRegionMap => hexTileOwner != null;
-    public bool canBeBuiltOnByNPC => isPartOfParentRegionMap && HasCorruptedTile() == false; //can only be built on if part of region map.
+    public bool canBeBuiltOnByNPC => isPartOfParentRegionMap 
+                                     && hexTileOwner.isCurrentlyBeingCorrupted == false 
+                                     && HasCorruptedTile() == false; //can only be built on if part of region map.
     #endregion
 
     public BuildingSpot(BuildingSpotData data) {

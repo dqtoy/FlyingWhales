@@ -19,29 +19,13 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 
 	private IEnumerator CreateStructureObjectForLandmark(BaseLandmark landmark, MapGenerationData data) {
 		LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(landmark.tileLocation.region,
-			GetStructureTypeFor(landmark.specificLandmarkType));
+			LandmarkManager.Instance.GetStructureTypeFor(landmark.specificLandmarkType));
 		 yield return MapGenerator.Instance.StartCoroutine(PlaceInitialStructure(structure, landmark.tileLocation.region.innerMap, landmark.tileLocation));
-		 if (structure.structureType == STRUCTURE_TYPE.PORTAL) {
+		 if (structure.structureType == STRUCTURE_TYPE.THE_PORTAL) {
 			 data.portalStructure = structure;
 		 }
 	}
 
-	private STRUCTURE_TYPE GetStructureTypeFor(LANDMARK_TYPE landmarkType) {
-		switch (landmarkType) {
-			case LANDMARK_TYPE.MONSTER_LAIR:
-				return STRUCTURE_TYPE.MONSTER_LAIR;
-			case LANDMARK_TYPE.MINES:
-				return STRUCTURE_TYPE.ABANDONED_MINE;
-			case LANDMARK_TYPE.TEMPLE:
-				return STRUCTURE_TYPE.TEMPLE;
-			case LANDMARK_TYPE.MAGE_TOWER:
-				return STRUCTURE_TYPE.MAGE_TOWER;
-			case LANDMARK_TYPE.THE_PORTAL:
-				return STRUCTURE_TYPE.PORTAL;
-		}
-		throw new Exception($"There is no corresponding structure type for {landmarkType.ToString()}");
-	}
-	
 	private IEnumerator PlaceInitialStructure(LocationStructure structure, InnerTileMap innerTileMap, HexTile tile) {
 		if (structure.structureType.ShouldBeGeneratedFromTemplate()) {
 			List<GameObject> choices =
@@ -49,7 +33,7 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 			GameObject chosenStructurePrefab = Utilities.GetRandomElement(choices);
 			LocationStructureObject lso = chosenStructurePrefab.GetComponent<LocationStructureObject>();
 			BuildingSpot chosenBuildingSpot;
-			if (TryGetBuildSpotForStructureInTile(lso, tile, innerTileMap, out chosenBuildingSpot)) {
+			if (LandmarkManager.Instance.TryGetBuildSpotForStructureInTile(lso, tile, innerTileMap, out chosenBuildingSpot)) {
 				innerTileMap.PlaceStructureObjectAt(chosenBuildingSpot, chosenStructurePrefab, structure);
 			} else {
 				throw new System.Exception(
@@ -58,18 +42,5 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 			yield return null;
 		}
 
-	}
-
-	private bool TryGetBuildSpotForStructureInTile(LocationStructureObject structureObject, HexTile currTile, 
-		InnerTileMap innerTileMap, out BuildingSpot spot) {
-		for (int j = 0; j < currTile.ownedBuildSpots.Length; j++) {
-			BuildingSpot currSpot = currTile.ownedBuildSpots[j];
-			if (currSpot.isOccupied == false && currSpot.CanFitStructureOnSpot(structureObject, innerTileMap)) {
-				spot = currSpot;
-				return true;
-			}
-		}
-		spot = null;
-		return false;
 	}
 }

@@ -760,16 +760,15 @@ namespace Inner_Maps {
 
         #region Corruption
         public void CorruptTile() {
+            
             SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.corruptedTile);
             CreateSeamlessEdgesForSelfAndNeighbours();
             if (hasDetail) {
                 parentMap.detailsTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.corruptedDetailTile);
             }
             if (objHere != null) {
-                if (objHere is BigTreeObject) {
-                    objHere.mapObjectVisual.SetVisual(Utilities.GetRandomElement(InnerMapManager.Instance.assetManager.corruptedBigTreeAssets));
-                } else if (objHere is TreeObject) {
-                    objHere.mapObjectVisual.SetVisual(Utilities.GetRandomElement(InnerMapManager.Instance.assetManager.corruptedTreeAssets));
+                if (objHere is TreeObject) {
+                    (objHere.mapObjectVisual as TileObjectGameObject).UpdateTileObjectVisual(objHere as TileObject);
                 } else {
                     structure.RemovePOI(objHere);
                 }

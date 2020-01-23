@@ -632,6 +632,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
         SetCharacterMarker(null);
+        Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
     }
     public void DisableMarker() {
         marker.gameObject.SetActive(false);
@@ -6267,10 +6268,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddPlayerAction(shareIntelAction);
     }
     public void AddPlayerAction(PlayerAction action) {
-        actions.Add(action);
+        if (actions.Contains(action) == false) {
+            actions.Add(action);
+            Messenger.Broadcast(Signals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
+        }
     }
     public void RemovePlayerAction(PlayerAction action) {
-        actions.Remove(action);
+        if (actions.Remove(action)) {
+            Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
+        }
     }
     public void ClearPlayerActions() {
         actions.Clear();

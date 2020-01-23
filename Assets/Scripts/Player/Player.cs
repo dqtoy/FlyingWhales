@@ -127,8 +127,9 @@ public class Player : ILeader {
     public Settlement CreatePlayerSettlement(BaseLandmark portal) {
         Settlement settlement = LandmarkManager.Instance.CreateNewSettlement(portal.tileLocation.region, LOCATION_TYPE.DEMONIC_INTRUSION, 0, portal.tileLocation);
         settlement.LoadAdditionalData();
-        settlement.SetName("Portal");
+        settlement.SetName("Demonic Intrusion");
         SetPlayerArea(settlement);
+        portal.tileLocation.InstantlyCorruptAllOwnedInnerMapTiles();
         return settlement;
     }
     public void LoadPlayerArea(Settlement settlement) {

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TileFeatureComponent {
@@ -37,6 +38,17 @@ public class TileFeatureComponent {
 	public void RemoveAllFeatures(HexTile tile) {
 		for (int i = 0; i < features.Count; i++) {
 			if (RemoveFeature(features[i], tile)) {
+				i--;
+			}
+		}
+	}
+	public void RemoveAllFeaturesExcept(HexTile tile, params string[] except) {
+		for (int i = 0; i < features.Count; i++) {
+			TileFeature feature = features[i];
+			if (except.Contains(feature.name)) {
+				continue;
+			}
+			if (RemoveFeature(feature, tile)) {
 				i--;
 			}
 		}

@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using System;
+using System.Collections.Generic;
 using Actionables;
 
 public class UIMenu : MonoBehaviour {
@@ -11,6 +12,8 @@ public class UIMenu : MonoBehaviour {
 
     protected object _data;
 
+    private IPlayerActionTarget _playerActionTarget;
+    
     [Header("Actions")]
     [SerializeField] protected RectTransform actionsTransform;
     [SerializeField] protected GameObject actionItemPrefab;
@@ -18,6 +21,9 @@ public class UIMenu : MonoBehaviour {
     #region virtuals
     internal virtual void Initialize() {
         Messenger.AddListener<UIMenu>(Signals.BEFORE_MENU_OPENED, BeforeMenuOpens);
+        Messenger.AddListener<PlayerAction>(Signals.PLAYER_ACTION_EXECUTED, OnPlayerActionExecuted);
+        Messenger.AddListener<PlayerAction, IPlayerActionTarget>(Signals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
+        Messenger.AddListener<PlayerAction, IPlayerActionTarget>(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
     }
     public virtual void OpenMenu() {
         Messenger.Broadcast(Signals.BEFORE_MENU_OPENED, this);
@@ -33,8 +39,9 @@ public class UIMenu : MonoBehaviour {
             backButton.interactable = UIManager.Instance.GetLastUIMenuHistory() != null;    
         }
         UIManager.Instance.poiTestingUI.HideUI();
-        if (_data is Actionables.IPlayerActionTarget) {
-            LoadActions(_data as IPlayerActionTarget);    
+        _playerActionTarget = _data as IPlayerActionTarget;
+        if (_playerActionTarget != null) {
+            LoadActions(_playerActionTarget);    
         }
     }
     public virtual void CloseMenu() {
@@ -89,22 +96,51 @@ public class UIMenu : MonoBehaviour {
     }
 
     #region Actions
+    private List<ActionItem> activeActionItems = new List<ActionItem>();
     protected virtual void LoadActions(IPlayerActionTarget target) {
         Utilities.DestroyChildren(actionsTransform);
-
+        activeActionItems.Clear();
         for (int i = 0; i < target.actions.Count; i++) {
             PlayerAction action = target.actions[i];
-            ActionItem actionItem = AddNewAction(action.actionName, null, action.action);
+            ActionItem actionItem = AddNewAction(action);
             actionItem.SetInteractable(action.isActionValidChecker.Invoke());
         }
-        
     }
-    protected ActionItem AddNewAction(string actionName, Sprite actionIcon, System.Action action) {
+    protected ActionItem AddNewAction(PlayerAction playerAction) {
         GameObject obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(actionItemPrefab.name, Vector3.zero,
             Quaternion.identity, actionsTransform);
         ActionItem item = obj.GetComponent<ActionItem>();
-        item.SetAction(action, actionIcon, actionName);
+        item.SetAction(playerAction);
+        activeActionItems.Add(item);
         return item;
+    }
+    private ActionItem GetActionItem(PlayerAction action) {
+        for (int i = 0; i < activeActionItems.Count; i++) {
+            ActionItem item = activeActionItems[i];
+            if (item.playerAction == action) {
+                return item;
+            }
+        }
+        return null;
+    }
+    private void OnPlayerActionExecuted(PlayerAction action) {
+        if (_playerActionTarget != null && _playerActionTarget.actions.Contains(action)) {
+            LoadActions(_playerActionTarget);
+        }
+        // ActionItem actionItem = GetActionItem(action);
+        // if (actionItem != null) {
+        //     LoadActions();
+        // }
+    }
+    private void OnPlayerActionAddedToTarget(PlayerAction playerAction, IPlayerActionTarget actionTarget) {
+        if (_playerActionTarget == actionTarget) {
+            LoadActions(actionTarget);
+        }
+    }
+    private void OnPlayerActionRemovedFromTarget(PlayerAction playerAction, IPlayerActionTarget actionTarget) {
+        if (_playerActionTarget == actionTarget) {
+            LoadActions(actionTarget);
+        }
     }
     #endregion
 }

@@ -19,7 +19,7 @@ public class LandmarkNameplate : PooledObject {
     }
 
     public void UpdateVisuals() {
-        nameLbl.text = landmark.landmarkName;
+        nameLbl.text = landmark.tileLocation.GetDisplayName();
     }
 
     private void UpdatePosition() {

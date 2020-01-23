@@ -186,6 +186,7 @@ public class Settlement : IJobOwner {
     public void SetIsUnderSeige(bool state) {
         if(isUnderSeige != state) {
             isUnderSeige = state;
+            Debug.Log($"{GameManager.Instance.TodayLogString()}{this.name} Under Siege state changed to {isUnderSeige.ToString()}");
             Messenger.Broadcast(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, this, isUnderSeige);
         }
     }
@@ -1203,20 +1204,20 @@ public class Settlement : IJobOwner {
     #endregion
 
     #region Tiles
-    public void AddTileToSettlement(HexTile tile, bool instantCorrupt = false) {
+    public void AddTileToSettlement(HexTile tile) {
         if (tiles.Contains(tile) == false) {
             tiles.Add(tile);
             tile.SetSettlementOnTile(this);
             if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
-                tile.SetCorruption(true, instantCorrupt);
+                tile.SetCorruption(true);
             }
             // tile.UpdateLandmarkVisuals();
         }
     }
-    public void AddTileToSettlement(bool instantCorrupt, params HexTile[] tiles) {
+    public void AddTileToSettlement(params HexTile[] tiles) {
         for (int i = 0; i < tiles.Length; i++) {
             HexTile tile = tiles[i];
-            AddTileToSettlement(tile, instantCorrupt);
+            AddTileToSettlement(tile);
         }
     }
     public void RemoveTileFromSettlement(HexTile tile) {

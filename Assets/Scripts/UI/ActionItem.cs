@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Actionables;
 using EZObjectPools;
 using TMPro;
 using UnityEngine;
@@ -7,6 +8,8 @@ using UnityEngine.UI;
 
 public class ActionItem : PooledObject {
 
+	public PlayerAction playerAction { get; private set; }
+	
 	[SerializeField] private Button button;
 	[SerializeField] private Image actionImg;
 	[SerializeField] private Image coverImg;
@@ -14,14 +17,15 @@ public class ActionItem : PooledObject {
 
 	private string expiryKey;
 	
-	public void SetAction(System.Action action, Sprite icon, string actionName) {
-		if (action != null) {
-			button.onClick.AddListener(action.Invoke);	
+	public void SetAction(PlayerAction playerAction) {
+		this.playerAction = playerAction;
+		if (playerAction.actions != null) {
+			button.onClick.AddListener(playerAction.Execute);	
 		}
-		if (icon != null) {
-			actionImg.sprite = icon;	
-		}
-		actionLbl.text = actionName;
+		// if (icon != null) {
+		// 	actionImg.sprite = icon;	
+		// }
+		actionLbl.text = playerAction.actionName;
 		SetAsClickable();
 	}
 	public void SetAsUninteractableUntil(int ticks) {

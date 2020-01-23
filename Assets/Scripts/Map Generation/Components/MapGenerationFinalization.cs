@@ -33,8 +33,10 @@ public class MapGenerationFinalization : MapGenerationComponent {
 	private IEnumerator LoadItems() {
 		for (int i = 0; i < LandmarkManager.Instance.allSetttlements.Count; i++) {
 			Settlement settlement = LandmarkManager.Instance.allSetttlements[i];
-			TokenManager.Instance.LoadSpecialTokens(settlement);
-			yield return null;
+			if (settlement.locationType != LOCATION_TYPE.DUNGEON) {
+				TokenManager.Instance.LoadSpecialTokens(settlement);
+				yield return null;	
+			}
 		}
 	}
 }

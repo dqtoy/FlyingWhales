@@ -21,16 +21,6 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     public Sprite usedSprite => objectVisual.sprite;
 
     #region Visuals
-    public void UpdateSortingOrders() {
-        if (objectVisual != null) {
-            objectVisual.sortingLayerName = "Area Maps";
-            objectVisual.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder;    
-        }
-        if (hoverObject != null) {
-            hoverObject.sortingLayerName = "Area Maps";
-            hoverObject.sortingOrder = objectVisual.sortingOrder - 1;    
-        }
-    }
     public void SetRotation(float rotation) {
         this.transform.localRotation = Quaternion.Euler(0f, 0f, rotation);
     }

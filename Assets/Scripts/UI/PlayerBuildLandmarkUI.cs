@@ -65,10 +65,12 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
         UIManager.Instance.HideSmallInfo();
     }
     private void StartBuild(object minionObj, object landmarkObj) {
-        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkObj as string);
-        targetRegion.StartBuildingStructure(landmarkData.landmarkType, (minionObj as Character).minion);
-        UIManager.Instance.regionInfoUI.UpdateInfo();
-        Messenger.Broadcast<Region>(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, targetRegion);
+        string landmarkTypeName = landmarkObj as string;
+        Debug.Log($"Chose to build {landmarkTypeName}");
+        // LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkObj as string);
+        // targetRegion.StartBuildingStructure(landmarkData.landmarkType, (minionObj as Character).minion);
+        // UIManager.Instance.regionInfoUI.UpdateInfo();
+        // Messenger.Broadcast<Region>(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, targetRegion);
     }
     #endregion
 }
