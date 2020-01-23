@@ -634,9 +634,9 @@ namespace Inner_Maps {
                     if (sample < 0.5f) {
                         currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.snowTile);
                     } else if (sample >= 0.5f && sample < 0.8f) {
-                        currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.stoneTile);
-                    } else {
                         currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.snowDirt);
+                    } else {
+                        currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.stoneTile);
                     }
                 } else if (location.coreTile.biomeType == BIOMES.DESERT) {
                     if (sample < 0.5f) {

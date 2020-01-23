@@ -183,6 +183,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             SetLandmarkTileSprite(landmarkTileSprites[Random.Range(0, landmarkTileSprites.Count)]);
             landmarkGO.GetComponent<LandmarkVisual>().SetIconState(false);
         }
+        if (settlementOnTile != null && settlementOnTile.owner != null) {
+            settlementOnTile.TintStructures(settlementOnTile.owner.factionColor);    
+        }
         return landmarkGO;
     }
     public void UpdateStructureVisuals(LANDMARK_TYPE landmarkType) {
@@ -223,11 +226,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         mainStructure.gameObject.SetActive(true);
         structureTint.gameObject.SetActive(true);
 
-        if (structureTint.sprite != null) {
-            SetStructureTint(Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f));
-        } else {
-            structureTint.color = Color.white;
-        }
+        // structureTint.color = Color.white;
 
         if (sprites.animation == null) {
             mainStructure.enabled = true;
@@ -243,8 +242,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         structureTint.gameObject.SetActive(false);
     }
     public void SetStructureTint(Color color) {
-        color.a = 150f/255f;
+        // color.a = 150f/255f;
         structureTint.color = color;
+        Debug.Log($"Tinted structure on {this.ToString()}");
     }
     #endregion
 

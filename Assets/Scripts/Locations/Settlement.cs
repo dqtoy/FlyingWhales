@@ -153,7 +153,9 @@ public class Settlement : IJobOwner {
     }
     public void TintStructures(Color color) {
         for (int i = 0; i < tiles.Count; i++) {
-            tiles[i].SetStructureTint(color);
+            HexTile tile = tiles[i];
+            tile.SetStructureTint(color);
+
         }
     }
     public void SetLocationPortrait(Sprite portrait) {
@@ -1210,6 +1212,9 @@ public class Settlement : IJobOwner {
             tile.SetSettlementOnTile(this);
             if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
                 tile.SetCorruption(true);
+            }
+            if (owner != null) {
+                TintStructures(owner.factionColor);    
             }
             // tile.UpdateLandmarkVisuals();
         }
