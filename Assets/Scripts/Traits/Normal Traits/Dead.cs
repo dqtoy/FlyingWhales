@@ -44,7 +44,7 @@ namespace Traits {
             }
         }
         private bool IsBuryJobStillApplicable(Character target, Settlement settlement) {
-            return target.gridTileLocation.IsNextToOrPartOfSettlement(settlement);
+            return target.gridTileLocation != null && target.gridTileLocation.IsNextToOrPartOfSettlement(settlement);
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);

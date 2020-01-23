@@ -458,6 +458,16 @@ namespace Inner_Maps {
             }
             return open;
         }
+        public BuildSpotTileObject GetBuildSpotTileObject(BuildingSpot spot) {
+            List<BuildSpotTileObject> spots = location.coreTile.region.GetTileObjectsOfType(TILE_OBJECT_TYPE.BUILD_SPOT_TILE_OBJECT).Select(x => x as BuildSpotTileObject).ToList();
+            for (int i = 0; i < spots.Count; i++) {
+                BuildSpotTileObject buildSpotTileObject = spots[i];
+                if (buildSpotTileObject.spot == spot) {
+                    return buildSpotTileObject;
+                }
+            }
+            return null;
+        }
         public bool CanBuildSpotFit(LocationStructureObject structureObject, BuildingSpot spot) {
             bool isHorizontallyBig = structureObject.IsHorizontallyBig();
             bool isVerticallyBig = structureObject.IsVerticallyBig();
@@ -504,7 +514,9 @@ namespace Inner_Maps {
         #endregion
 
         #region Structures
-        public void PlaceStructureObjectAt(BuildingSpot chosenBuildingSpot, GameObject structurePrefab, LocationStructure structure) {
+        public void PlaceStructureObjectAt(BuildingSpot chosenBuildingSpot, GameObject structurePrefab, 
+            LocationStructure structure, BuildSpotTileObject buildSpotTileObject = null) {
+            
             GameObject structureGo = ObjectPoolManager.Instance.InstantiateObjectFromPool(structurePrefab.name, Vector3.zero, Quaternion.identity, structureParent);
             LocationStructureObject structureObjectPrefab = structureGo.GetComponent<LocationStructureObject>();
             structureGo.transform.localPosition = chosenBuildingSpot.GetPositionToPlaceStructure(structureObjectPrefab, structure.structureType);
@@ -525,6 +537,10 @@ namespace Inner_Maps {
             chosenBuildingSpot.UpdateAdjacentSpotsOccupancy(this);
 
             structure.SetStructureObject(structureObject);
+            if (buildSpotTileObject != null) {
+                structure.SetOccupiedBuildSpot(buildSpotTileObject);    
+            }
+            
             structureObject.OnStructureObjectPlaced(this, structure);
         }
         #endregion
@@ -618,9 +634,9 @@ namespace Inner_Maps {
                     if (sample < 0.5f) {
                         currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.snowTile);
                     } else if (sample >= 0.5f && sample < 0.8f) {
-                        currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.stoneTile);
-                    } else {
                         currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.snowDirt);
+                    } else {
+                        currTile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.stoneTile);
                     }
                 } else if (location.coreTile.biomeType == BIOMES.DESERT) {
                     if (sample < 0.5f) {

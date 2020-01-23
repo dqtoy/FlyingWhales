@@ -783,21 +783,27 @@ namespace Inner_Maps {
         public Sprite GetItemAsset(SPECIAL_TOKEN itemType) {
             return itemTiles[itemType];
         }
-        public Sprite GetTileObjectAsset(TILE_OBJECT_TYPE objectType, POI_STATE state, BIOMES biome) {
-            if (tileObjectTiles.ContainsKey(objectType)) {
-                TileObjectTileSetting setting = tileObjectTiles[objectType];
-                BiomeTileObjectTileSetting biomeSetting;
-                if (setting.biomeAssets.ContainsKey(biome)) {
-                    biomeSetting = setting.biomeAssets[biome];
-                } else {
-                    biomeSetting = setting.biomeAssets[BIOMES.NONE];
+        public Sprite GetTileObjectAsset(TILE_OBJECT_TYPE objectType, POI_STATE state, BIOMES biome, bool corrupted = false) {
+            if (corrupted) {
+                //TODO: this is only temporary!
+                if (objectType == TILE_OBJECT_TYPE.TREE_OBJECT) {
+                    return Utilities.GetRandomElement(assetManager.corruptedTreeAssets);
+                } else if (objectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
+                    return Utilities.GetRandomElement(assetManager.corruptedBigTreeAssets);
                 }
-                if (state == POI_STATE.ACTIVE) {
-                    return biomeSetting.activeTile;
-                } else {
-                    return biomeSetting.inactiveTile;
+            } else {
+                if (tileObjectTiles.ContainsKey(objectType)) {
+                    TileObjectTileSetting setting = tileObjectTiles[objectType];
+                    BiomeTileObjectTileSetting biomeSetting = setting.biomeAssets.ContainsKey(biome) ? setting.biomeAssets[biome] 
+                        : setting.biomeAssets[BIOMES.NONE];
+                    if (state == POI_STATE.ACTIVE) {
+                        return biomeSetting.activeTile;
+                    } else {
+                        return biomeSetting.inactiveTile;
+                    }    
                 }    
             }
+            
             return null;
         }
         public WallAsset GetWallAsset(RESOURCE wallResource, string assetName) {

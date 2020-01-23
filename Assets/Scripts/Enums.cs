@@ -207,7 +207,7 @@ public enum LANDMARK_TYPE {
     NONE = 0,
     THE_PORTAL = 1,
     WORKSHOP = 4,
-    MINES = 8,
+    ABANDONED_MINE = 8,
     FARM = 17,
     VILLAGE = 20,
     BANDIT_CAMP = 24,
@@ -1136,9 +1136,17 @@ public enum STRUCTURE_TYPE {
     ABANDONED_MINE,
     TEMPLE,
     MAGE_TOWER,
-    PORTAL,
+    THE_PORTAL,
     CAVE,
-    OCEAN
+    OCEAN,
+    THE_SPIRE,
+    THE_KENNEL,
+    THE_CRYPT,
+    GOADER,
+    THE_PROFANE,
+    THE_ANVIL,
+    THE_EYE,
+    THE_NEEDLES,
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,

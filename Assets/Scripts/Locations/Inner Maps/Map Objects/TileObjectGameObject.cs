@@ -14,18 +14,52 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
     public override void Initialize(TileObject tileObject) {
         base.Initialize(tileObject);
         this.name = tileObject.ToString();
-        SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject.tileObjectType, tileObject.state, tileObject.structureLocation.location.coreTile.biomeType));
+        bool isCorrupted = false;
+        if (tileObject.gridTileLocation != null) {
+            isCorrupted = tileObject.gridTileLocation.isCorrupted;
+        }
+        SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject.tileObjectType, 
+            tileObject.state, 
+            tileObject.structureLocation.location.coreTile.biomeType,
+            isCorrupted));
         collisionTrigger = this.transform.GetComponentInChildren<TileObjectCollisionTrigger>();
         _isMenuShowing = () => IsMenuShowing(tileObject);
-        UpdateSortingOrders();
-
+        UpdateSortingOrders(tileObject);
     }
 
+    protected override void UpdateSortingOrders(TileObject obj) {
+        if (obj.tileObjectType == TILE_OBJECT_TYPE.TREE_OBJECT) {
+            if (objectVisual != null) {
+                objectVisual.sortingLayerName = "Area Maps";
+                objectVisual.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder + 5;    
+            }
+            if (hoverObject != null) {
+                hoverObject.sortingLayerName = "Area Maps";
+                hoverObject.sortingOrder = objectVisual.sortingOrder - 1;    
+            }   
+        } else if (obj.tileObjectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
+            if (objectVisual != null) {
+                objectVisual.sortingLayerName = "Area Maps";
+                objectVisual.sortingOrder = InnerMapManager.DetailsTilemapSortingOrder + 10;    
+            }
+            if (hoverObject != null) {
+                hoverObject.sortingLayerName = "Area Maps";
+                hoverObject.sortingOrder = objectVisual.sortingOrder - 1;    
+            }   
+        } else {
+            base.UpdateSortingOrders(obj);
+        }
+    }
+    
+    
     public override void UpdateTileObjectVisual(TileObject tileObject) {
         if (tileObject is Bed) {
             UpdateBedVisual(tileObject as Bed); //TODO: Transfer this to it's own object
         } else {
-            SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject.tileObjectType, tileObject.state, tileObject.structureLocation.location.coreTile.biomeType));
+            SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject.tileObjectType, 
+                tileObject.state, 
+                tileObject.structureLocation.location.coreTile.biomeType,
+                tileObject.gridTileLocation?.isCorrupted ?? false));
         }
         
     }
@@ -33,7 +67,10 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
     private void UpdateBedVisual(Bed bed) {
         int userCount = bed.GetActiveUserCount();
         if (userCount == 0) {
-            SetVisual(InnerMapManager.Instance.GetTileObjectAsset(bed.tileObjectType, bed.state, bed.structureLocation.location.coreTile.biomeType));
+            SetVisual(InnerMapManager.Instance.GetTileObjectAsset(bed.tileObjectType, 
+                bed.state, 
+                bed.structureLocation.location.coreTile.biomeType,
+                bed.gridTileLocation?.isCorrupted ?? false));
         } else if (userCount == 1) {
             SetVisual(bed1Sleeping);
         } else if (userCount == 2) {

@@ -379,20 +379,27 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 
 	#region Knockout
 	private void TryCreateKnockoutJobs() {
+		string summary = $"{GameManager.Instance.TodayLogString()}{_owner.name} is under siege, trying to create knockout jobs...";
 		if (CanCreateKnockoutJob()) {
 			int combatantResidents = 
 				_owner.residents.Count(x => x.traitContainer.GetNormalTrait<Trait>("Combatant") != null);
 			int existingKnockoutJobs = _owner.GetNumberOfJobsWith(JOB_TYPE.KNOCKOUT);
-			
+			summary += $"\nCombatant residents: {combatantResidents.ToString()}";
+			summary += $"\nExisting knockout jobs: {existingKnockoutJobs.ToString()}";
 			List<Character> hostileCharacters = _owner.GetHostileCharactersInSettlement();
 			if (hostileCharacters.Count > 0) {
 				Character target = hostileCharacters.First();
 				int jobsToCreate = combatantResidents - existingKnockoutJobs;
+				summary += $"\nWill create {jobsToCreate.ToString()} knockout jobs.";
 				for (int i = 0; i < jobsToCreate; i++) {
+					summary += $"\nWill create knockout job targeting {target.name}.";
 					CreateKnockoutJob(target);
 				}	
 			}
+		} else {
+			summary += $"\nCannot create knockout jobs";
 		}
+		Debug.Log(summary);
 	}
 	private void TryCreateKnockoutJobs(Character target) {
 		if (CanCreateKnockoutJob() && target.faction != _owner.owner 

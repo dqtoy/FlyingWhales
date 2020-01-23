@@ -67,7 +67,7 @@ public class BuildSpotTileObject : TileObject {
     }
     public LocationStructure BuildBlueprint(Settlement settlement) {
         spot.blueprint.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Built);
-        LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(gridTileLocation.structure.location, spot.blueprintType);
+        LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(gridTileLocation.structure.location, spot.blueprintType, settlement);
 
         spot.blueprint.ClearOutUnimportantObjectsBeforePlacement();
 

@@ -69,6 +69,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     public BuildingSpot[] ownedBuildSpots { get; private set; }
     public List<HexTile> AllNeighbours { get; set; }
     public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList(); } }
+    public bool isCurrentlyBeingCorrupted { get; private set; }
+    private List<LocationGridTile> corruptedTiles;
     public List<LocationGridTile> locationGridTiles { get; private set; }
     private int _uncorruptibleLandmarkNeighbors = 0; //if 0, can be corrupted, otherwise, cannot be corrupted
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
@@ -181,6 +183,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             SetLandmarkTileSprite(landmarkTileSprites[Random.Range(0, landmarkTileSprites.Count)]);
             landmarkGO.GetComponent<LandmarkVisual>().SetIconState(false);
         }
+        if (settlementOnTile != null && settlementOnTile.owner != null) {
+            settlementOnTile.TintStructures(settlementOnTile.owner.factionColor);    
+        }
         return landmarkGO;
     }
     public void UpdateStructureVisuals(LANDMARK_TYPE landmarkType) {
@@ -221,11 +226,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         mainStructure.gameObject.SetActive(true);
         structureTint.gameObject.SetActive(true);
 
-        if (structureTint.sprite != null) {
-            SetStructureTint(Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f));
-        } else {
-            structureTint.color = Color.white;
-        }
+        // structureTint.color = Color.white;
 
         if (sprites.animation == null) {
             mainStructure.enabled = true;
@@ -241,8 +242,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         structureTint.gameObject.SetActive(false);
     }
     public void SetStructureTint(Color color) {
-        color.a = 150f/255f;
+        // color.a = 150f/255f;
         structureTint.color = color;
+        Debug.Log($"Tinted structure on {this.ToString()}");
     }
     #endregion
 
@@ -356,8 +358,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         } else if (landmarkOnTile != null) {
             return landmarkOnTile.landmarkName;
         } else {
-            return $"{Utilities.NormalizeStringUpperCaseFirstLetters(biomeType.ToString())} " +
-                   $"{Utilities.NormalizeStringUpperCaseFirstLetters(elevationType.ToString())}";
+            string displayName = string.Empty;
+            if (isCorrupted) {
+                displayName = "Corrupted ";
+            }
+            displayName += $"{Utilities.NormalizeStringUpperCaseFirstLetters(biomeType.ToString())} " +
+                           $"{Utilities.NormalizeStringUpperCaseFirstLetters(elevationType.ToString())}";
+            return displayName;
         }
     }
     public string GetSubName() {
@@ -836,21 +843,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     #endregion
 
     #region Corruption
-    public void SetCorruption(bool state, bool instant = false) {
+    public void SetCorruption(bool state) {
         if(_isCorrupted != state) {
             _isCorrupted = state;
             Biomes.Instance.UpdateTileSprite(this, spriteRenderer.sortingOrder);
-            if (_isCorrupted) {
-                if (instant) {
-                    for (int i = 0; i < locationGridTiles.Count; i++) {
-                        LocationGridTile tile = locationGridTiles[i];
-                        tile.CorruptTile();
-                    }    
+            for (int i = 0; i < AllNeighbours.Count; i++) {
+                HexTile neighbour = AllNeighbours[i];
+                if (neighbour.isCorrupted == false && neighbour.isCurrentlyBeingCorrupted == false) {
+                    neighbour.CheckForCorruptAction();
                 }
-                else {
-                    //start corruption coroutine.
-                }
-                    
             }
         }
     }
@@ -863,12 +864,148 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             _uncorruptibleLandmarkNeighbors = 1;
         }
     }
+    private void CheckForCorruptAction() {
+        PlayerAction existingCorruptAction = GetPlayerAction("Corrupt");
+        if (CanBeCorrupted()) {
+            if (existingCorruptAction == null) {
+                PlayerAction corruptAction = new PlayerAction("Corrupt", CanBeCorrupted, StartPerTickCorruption);
+                AddPlayerAction(corruptAction);
+            }
+        } else {
+            if (existingCorruptAction != null) {
+                RemovePlayerAction(existingCorruptAction);    
+            }
+        }
+    }
+    private bool CanBeCorrupted() {
+        if (isCorrupted) {
+            return false; //already corrupted.
+        }
+        if (isCurrentlyBeingCorrupted) {
+            return false; //already being corrupted.
+        }
+        if (settlementOnTile != null) {
+            return false; //disabled corruption of NPC settlements for now.
+        }
+        //if it has any build spots that have a blueprint on them, do not allow
+        for (int i = 0; i < ownedBuildSpots.Length; i++) {
+            BuildingSpot spot = ownedBuildSpots[i];
+            if (spot.hasBlueprint) {
+                return false;
+            }
+        }
+        for (int i = 0; i < AllNeighbours.Count; i++) {
+            HexTile neighbour = AllNeighbours[i];
+            if (neighbour.isCorrupted) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private void StartPerTickCorruption() {
+        corruptedTiles = new List<LocationGridTile>();
+        LocationGridTile startTile = GetGridTileNearestToCorruption();
+        startTile.CorruptTile();
+        corruptedTiles.Add(startTile);
+        isCurrentlyBeingCorrupted = true;
+        Messenger.AddListener(Signals.TICK_STARTED, PerTickCorruption);
+    }
+    private void PerTickCorruption() {
+        List<LocationGridTile> newTilesToCorrupt = new List<LocationGridTile>();
+        for (int i = 0; i < corruptedTiles.Count; i++) {
+            LocationGridTile tile = corruptedTiles[i];
+            List<LocationGridTile> neighbours = Utilities.Shuffle(tile.FourNeighbours());
+            for (int j = 0; j < neighbours.Count; j++) {
+                LocationGridTile neighbour = neighbours[j];
+                if (neighbour.isCorrupted == false 
+                    && newTilesToCorrupt.Contains(neighbour) == false
+                    && locationGridTiles.Contains(neighbour)) {
+                    newTilesToCorrupt.Add(neighbour);
+                    break;
+                }
+            }
+        }
+        for (int i = 0; i < newTilesToCorrupt.Count; i++) {
+            LocationGridTile tile = newTilesToCorrupt[i];
+            tile.CorruptTile();
+            corruptedTiles.Add(tile);
+        }
+        
+        if (corruptedTiles.Count == locationGridTiles.Count) {
+            //corruption finished
+            OnCorruptSuccess();
+        }
+    }
+    public void InstantlyCorruptAllOwnedInnerMapTiles() {
+        for (int i = 0; i < locationGridTiles.Count; i++) {
+            LocationGridTile tile = locationGridTiles[i];
+            tile.CorruptTile();
+        }    
+    }
+    private LocationGridTile GetGridTileNearestToCorruption() {
+        HexTile corruptedNeighbour = GetCorruptedNeighbour();
+        HEXTILE_DIRECTION corruptedDirection = GetNeighbourDirection(corruptedNeighbour);
+        LocationGridTile compareTo = null;
+        int minX = locationGridTiles.Min(t => t.localPlace.x);
+        int maxX = locationGridTiles.Max(t => t.localPlace.x);
+        int minY = locationGridTiles.Min(t => t.localPlace.y);
+        int maxY = locationGridTiles.Max(t => t.localPlace.y);
+
+        int differenceY = (maxY - minY) + 1;
+        int midY = minY + (differenceY / 2);
+        
+        switch (corruptedDirection) {
+            case HEXTILE_DIRECTION.EAST:
+                compareTo = region.innerMap.map[maxX, midY];
+                break;
+            case HEXTILE_DIRECTION.WEST:
+                compareTo = region.innerMap.map[minX, midY];
+                break;
+            case HEXTILE_DIRECTION.NORTH_EAST:
+                compareTo = region.innerMap.map[maxX, maxY];
+                break;
+            case HEXTILE_DIRECTION.NORTH_WEST:
+                compareTo = region.innerMap.map[minX, maxY];
+                break;
+            case HEXTILE_DIRECTION.SOUTH_EAST:
+                compareTo = region.innerMap.map[maxX, minY];
+                break;
+            case HEXTILE_DIRECTION.SOUTH_WEST:
+                compareTo = region.innerMap.map[minX, minY];
+                break;
+        }
+        return compareTo;
+    }
+    private HexTile GetCorruptedNeighbour() {
+        for (int i = 0; i < AllNeighbours.Count; i++) {
+            HexTile tile = AllNeighbours[i];
+            if (tile.isCorrupted) {
+                return tile;
+            }
+        }
+        return null;
+    }
+    private void OnCorruptSuccess() {
+        PlayerManager.Instance.player.playerSettlement.AddTileToSettlement(this);
+        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCorruption);
+        isCurrentlyBeingCorrupted = false;
+        
+        //remove features
+        featureComponent.RemoveAllFeaturesExcept(this, TileFeatureDB.Wood_Source_Feature);
+        
+        RemovePlayerAction(GetPlayerAction("Corrupt"));
+        if (CanBuildDemonicStructure()) {
+            PlayerAction buildAction = new PlayerAction("Build Demonic Structure", CanBuildDemonicStructure, OnClickBuild);
+            AddPlayerAction(buildAction);
+        }
+    }
     #endregion
 
     #region Settlement
     public void SetSettlementOnTile(Settlement settlement) {
         settlementOnTile = settlement;
         landmarkOnTile?.nameplate.UpdateVisuals();
+        CheckForCorruptAction();
     }
     #endregion
 
@@ -1013,7 +1150,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         if (landmarkOnTile == null) {
             LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkType, false);
         } else {
-            landmarkOnTile.ChangeLandmarkType(landmarkType);    
+            if (landmarkOnTile.specificLandmarkType != landmarkType) {
+                landmarkOnTile.ChangeLandmarkType(landmarkType);    
+            }
         }
         Debug.Log(log);
     }
@@ -1023,26 +1162,94 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     public List<PlayerAction> actions { get; private set; }
     public void ConstructDefaultActions() {
         actions = new List<PlayerAction>();
-        
-        PlayerAction corruptAction = new PlayerAction("Corrupt", CanBeCorrupted, () => SetCorruption(true));
     }
     public void AddPlayerAction(PlayerAction action) {
-        actions.Add(action);
+        if (actions.Contains(action) == false) {
+            actions.Add(action);
+            Messenger.Broadcast(Signals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
+        }
     }
     public void RemovePlayerAction(PlayerAction action) {
-        actions.Remove(action);
+        if (actions.Remove(action)) {
+            Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
+        }
+    }
+    private PlayerAction GetPlayerAction(string actionName) {
+        for (int i = 0; i < actions.Count; i++) {
+            PlayerAction playerAction = actions[i];
+            if (playerAction.actionName == actionName) {
+                return playerAction;
+            }
+        }
+        return null;
     }
     public void ClearPlayerActions() {
         actions.Clear();
     }
-    private bool CanBeCorrupted() {
-        for (int i = 0; i < AllNeighbours.Count; i++) {
-            HexTile neighbour = AllNeighbours[i];
-            if (neighbour.isCorrupted) {
-                return true;
-            }
+    #endregion
+
+    #region Demonic Structure Building
+    private bool CanBuildDemonicStructure() {
+        return isCorrupted && isCurrentlyBeingCorrupted == false && landmarkOnTile == null && elevationType != ELEVATION.WATER && elevationType != ELEVATION.MOUNTAIN;
+    }
+    private void OnClickBuild() {
+        List<string> landmarkNames = new List<string>();
+        for (int i = 0; i < PlayerManager.Instance.allLandmarksThatCanBeBuilt.Length; i++) {
+            landmarkNames.Add(Utilities.NormalizeStringUpperCaseFirstLetters(PlayerManager.Instance.allLandmarksThatCanBeBuilt[i].ToString()));
         }
-        return false;
+        UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), landmarkNames,
+            "Choose a minion", "Choose a structure",
+            CanChooseMinion, CanChooseLandmark,
+            OnHoverEnterMinion, OnHoverLandmarkChoice,
+            OnHoverExitMinion, OnHoverExitLandmarkChoice,
+            StartBuild, "Build", column2Identifier: "Landmark");
+    }
+    private bool CanChooseMinion(Character character) {
+        return !character.minion.isAssigned && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER);
+    }
+    private void OnHoverEnterMinion(Character character) {
+        if (!CanChooseMinion(character)) {
+            string message = string.Empty;
+            if (character.minion.isAssigned) {
+                message = character.name + " is already doing something else.";
+            } else if (!character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER)) {
+                message = character.name + " does not have the required trait: Builder";
+            }
+            UIManager.Instance.ShowSmallInfo(message);
+        }
+    }
+    private void OnHoverExitMinion(Character character) {
+        UIManager.Instance.HideSmallInfo();
+    }
+    private bool CanChooseLandmark(string landmarkName) {
+        if (landmarkName == "The Pit") {
+            return false;
+        }
+        // if(landmarkName == "The Kennel" && !featureComponent.HasFeature(TileFeatureDB.Summons_Feature)) {
+        //     return false;
+        // }
+        // if (landmarkName == "The Crypt" && (!featureComponent.HasFeature(TileFeatureDB.Artifact_Feature) || PlayerManager.Instance.player.playerFaction.HasOwnedRegionWithLandmarkType(LANDMARK_TYPE.THE_CRYPT))) {
+        //     return false;
+        // }
+        return true;
+    }
+    private void OnHoverLandmarkChoice(string landmarkName) {
+        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkName);
+        string info = landmarkData.description;
+        if (info != string.Empty) {
+            info += "\n";
+        }
+        info += $"Duration: {GameManager.Instance.GetCeilingHoursBasedOnTicks(landmarkData.buildDuration).ToString()} hours";
+        UIManager.Instance.ShowSmallInfo(info);
+    }
+    private void OnHoverExitLandmarkChoice(string landmarkName) {
+        UIManager.Instance.HideSmallInfo();
+    }
+    private void StartBuild(object minionObj, object landmarkObj) {
+        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkObj as string);
+        BaseLandmark newLandmark =
+            LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkData.landmarkType, false);
+        LandmarkManager.Instance.CreateStructureObjectForLandmark(newLandmark, settlementOnTile);
     }
     #endregion
 }

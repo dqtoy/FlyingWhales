@@ -274,7 +274,15 @@ public class LocationStructure {
         switch (poi.poiType) {
             case POINT_OF_INTEREST_TYPE.TILE_OBJECT:
                 if (poi is MagicCircle) {
-                    return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Wall)).ToList();
+                    return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() 
+                                                    && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Wall) 
+                                                    && !x.HasNeighbourOfType(LocationGridTile.Ground_Type.Cave)
+                                                    && !x.HasNeighbourOfType(LocationGridTile.Ground_Type.Water)
+                                                    && x.groundType != LocationGridTile.Ground_Type.Cave 
+                                                    && x.groundType != LocationGridTile.Ground_Type.Water
+                                                    && x.buildSpotOwner.hexTileOwner != null 
+                                                    && x.buildSpotOwner.hexTileOwner.elevationType == ELEVATION.PLAIN
+                                                  ).ToList();
                 } else if (poi is WaterWell) {
                     return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && x.parentMap.GetTilesInRadius(x, 3).Where(y => y.objHere is WaterWell).Count() == 0 && !x.HasNeighbouringWalledStructure()).ToList();
                 } else if (poi is GoddessStatue) {

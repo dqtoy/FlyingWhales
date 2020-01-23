@@ -776,10 +776,15 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         AddPlayerAction(seizeAction);
     }
     public void AddPlayerAction(PlayerAction action) {
-        actions.Add(action);
+        if (actions.Contains(action) == false) {
+            actions.Add(action);
+            Messenger.Broadcast(Signals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
+        }
     }
     public void RemovePlayerAction(PlayerAction action) {
-        actions.Remove(action);
+        if (actions.Remove(action)) {
+            Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
+        }
     }
     public void ClearPlayerActions() {
         actions.Clear();
