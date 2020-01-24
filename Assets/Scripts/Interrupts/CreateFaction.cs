@@ -19,7 +19,7 @@ namespace Interrupts {
             createFactionLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             createFactionLog.AddToFillers(newFaction, newFaction.name, LOG_IDENTIFIER.FACTION_1);
             createFactionLog.AddToFillers(actor.currentRegion, actor.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
-            actor.RegisterLogAndShowNotifToThisCharacterOnly(createFactionLog, onlyClickedCharacter: false);
+            actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(createFactionLog, onlyClickedCharacter: false);
             return true;
         }
         #endregion

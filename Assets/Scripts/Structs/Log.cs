@@ -122,7 +122,7 @@ public class Log {
             object obj = currFiller.obj;
             if (obj != null) {
                 if (obj is Character) {
-                    (obj as Character).AddHistory(this);
+                    (obj as Character).logComponent.AddHistory(this);
                 } 
                 //else if (obj is Settlement) {
                 //    (obj as Settlement).AddHistory(this);
@@ -143,7 +143,7 @@ public class Log {
             object obj = currFiller.obj;
             if (obj != null && identifiers.Contains(currFiller.identifier)) {
                 if (obj is Character) {
-                    (obj as Character).AddHistory(this);
+                    (obj as Character).logComponent.AddHistory(this);
                 } 
                 //else if (obj is Settlement) {
                 //    (obj as Settlement).AddHistory(this);

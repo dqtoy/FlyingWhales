@@ -245,9 +245,9 @@ public static class GoapActionStateDB {
         { INTERACTION_TYPE.NARCOLEPTIC_NAP, new[]{
             new StateNameAndDuration(){ name = "Nap Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1), animationName = "Sleep Ground" },
         } },
-        { INTERACTION_TYPE.SHOCK, new[]{
-            new StateNameAndDuration(){ name = "Shock Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
-        } },
+        // { INTERACTION_TYPE.SHOCK, new[]{
+        //     new StateNameAndDuration(){ name = "Shock Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        // } },
         { INTERACTION_TYPE.CRY, new[]{
             new StateNameAndDuration(){ name = "Cry Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },

@@ -101,14 +101,14 @@ public class GoapPlanner {
         status = GOAP_PLANNING_STATUS.NONE;
 
         actor.ExecutePendingActionsAfterMultithread();
-        actor.PrintLogIfActive(goapThread.log);
+        actor.logComponent.PrintLogIfActive(goapThread.log);
         if (goapThread.createdPlan != null) {
             if (goapThread.recalculationPlan != null) {
                 //This means that the created plan is a recalculated plan
                 goapThread.createdPlan.SetIsBeingRecalculated(false);
             }
             if (!actor.canWitness) {
-                actor.PrintLogIfActive(actor.name + " is scrapping plan since " + actor.name + " cannot witness. " + goapThread.job.name + " is the job.");
+                actor.logComponent.PrintLogIfActive(actor.name + " is scrapping plan since " + actor.name + " cannot witness. " + goapThread.job.name + " is the job.");
                 goapThread.job.CancelJob(false);
                 return;
             }
@@ -139,7 +139,7 @@ public class GoapPlanner {
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan");
                     log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(null, goapThread.job.GetJobDetailString(), LOG_IDENTIFIER.STRING_1);
-                    actor.RegisterLogAndShowNotifToThisCharacterOnly(log);
+                    actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log);
                 }
                 if (goapThread.job.originalOwner.ownerType != JOB_OWNER.CHARACTER) {
                     goapThread.job.AddBlacklistedCharacter(actor);
@@ -158,7 +158,7 @@ public class GoapPlanner {
                         Table table = carriedPOI as Table;
                         log += "\n-Stored resources on drop: " + table.food + " Food.";
                     }
-                    actor.PrintLogIfActive(log);
+                    actor.logComponent.PrintLogIfActive(log);
                 }
                 actor.ownParty.RemoveCarriedPOI();
             }

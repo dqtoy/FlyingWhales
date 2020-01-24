@@ -228,7 +228,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     }
                     break;
             }
-            character.PrintLogIfActive(lostTraitSummary);
+            character.logComponent.PrintLogIfActive(lostTraitSummary);
             UpdateAnimation();
             UpdateActionIcon();
         } else if (inVisionCharacters.Contains(character)) {
@@ -323,7 +323,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         UpdateAnimation();
         UpdateActionIcon();
-        character.PrintLogIfActive(gainTraitSummary);
+        character.logComponent.PrintLogIfActive(gainTraitSummary);
     }
     private void OtherCharacterGainedTrait(Character otherCharacter, Trait trait) {
         if (trait.name == "Invisible") {
@@ -574,7 +574,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void StopMovement() {
         isMoving = false;
         string log = character.name + " StopMovement function is called!";
-        character.PrintLogIfActive(log);
+        character.logComponent.PrintLogIfActive(log);
         if (character.currentParty.icon != null) {
             character.currentParty.icon.SetIsTravelling(false);
         }
@@ -1108,7 +1108,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 log += "\n - Character is either dead or cannot witness, not processing...";
             }
             unprocessedVisionPOIs.Clear();
-            character.PrintLogIfActive(log);
+            character.logComponent.PrintLogIfActive(log);
         }
         //actionsToWitness.Clear();
         if (willProcessCombat && (hostilesInRange.Count > 0 || avoidInRange.Count > 0)) {
@@ -1116,7 +1116,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             ProcessCombatBehavior();
             avoidReason = string.Empty;
             willProcessCombat = false;
-            character.PrintLogIfActive(log);
+            character.logComponent.PrintLogIfActive(log);
         }
     }
     #endregion
@@ -1132,7 +1132,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                         lethalCharacters.Add(poi as Character, isLethal);
                     }
-                    this.character.PrintLogIfActive(poi.name + " was added to " + this.character.name + "'s hostile range!");
+                    this.character.logComponent.PrintLogIfActive(poi.name + " was added to " + this.character.name + "'s hostile range!");
                     //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
                     //if (processCombatBehavior) {
                     //    ProcessCombatBehavior();
@@ -1180,7 +1180,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 lethalCharacters.Remove(poi as Character);
             }
             string removeHostileSummary = poi.name + " was removed from " + character.name + "'s hostile range.";
-            character.PrintLogIfActive(removeHostileSummary);
+            character.logComponent.PrintLogIfActive(removeHostileSummary);
             //When removing hostile in range, check if character is still in combat state, if it is, reevaluate combat behavior, if not, do nothing
             if (processCombatBehavior && character.isInCombat) {
                 CombatState combatState = character.stateComponent.currentState as CombatState;
@@ -1433,12 +1433,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
             string summary = character.name + " will determine the transfer from engage list to flee list";
             if(character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
                 summary += "\n" + character.name + " has negative disabler trait. Ignoring transfer.";
-                character.PrintLogIfActive(summary);
+                character.logComponent.PrintLogIfActive(summary);
                 return;
             }
             if (hostilesInRange.Count == 0 && avoidInRange.Count == 0) {
                 summary +=  "\n" + character.name + " does not have any characters in engage or avoid list. Ignoring transfer.";
-                character.PrintLogIfActive(summary);
+                character.logComponent.PrintLogIfActive(summary);
                 return;
             }
             //check flee first, the logic determines that this character will not flee, then attack by default
@@ -1473,7 +1473,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     }
                 }
             }
-            character.PrintLogIfActive(summary);
+            character.logComponent.PrintLogIfActive(summary);
         }
     }
     public void StopPerTickFlee() { }

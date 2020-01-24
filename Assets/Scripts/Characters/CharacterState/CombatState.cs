@@ -91,7 +91,7 @@ public class CombatState : CharacterState {
                 stateComponent.character.ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
             }
         }
-        stateComponent.character.PrintLogIfActive("Starting combat state for " + stateComponent.character.name);
+        stateComponent.character.logComponent.PrintLogIfActive("Starting combat state for " + stateComponent.character.name);
         stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
     }
     protected override void EndState() {
@@ -103,7 +103,7 @@ public class CombatState : CharacterState {
 
         stateComponent.character.marker.HideHPBar();
         stateComponent.character.marker.SetAnimationBool("InCombat", false);
-        stateComponent.character.PrintLogIfActive("Ending combat state for " + stateComponent.character.name);
+        stateComponent.character.logComponent.PrintLogIfActive("Ending combat state for " + stateComponent.character.name);
         Messenger.RemoveListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
 
@@ -136,7 +136,7 @@ public class CombatState : CharacterState {
 
                 string log = stateComponent.character.name + " is a criminal and survived being apprehended." +
                     " Changed faction to: " + stateComponent.character.faction.name + " and home to: " + stateComponent.character.homeRegion.name;
-                stateComponent.character.PrintLogIfActive(log);
+                stateComponent.character.logComponent.PrintLogIfActive(log);
 
                 //stateComponent.character.CancelAllJobsAndPlans();
                 //stateComponent.character.PlanIdleReturnHome(true);
@@ -189,7 +189,7 @@ public class CombatState : CharacterState {
             string summary = character.name + " will determine a combat reaction";
             if (stateComponent.character.marker.hostilesInRange.Count > 0) {
                 summary += "\nStill has hostiles, will attack...";
-                stateComponent.character.PrintLogIfActive(summary);
+                stateComponent.character.logComponent.PrintLogIfActive(summary);
                 SetIsAttacking(true);
             } else if (stateComponent.character.marker.avoidInRange.Count > 0) {
                 summary += "\nStill has characters to avoid, checking if those characters are still in range...";
@@ -205,16 +205,16 @@ public class CombatState : CharacterState {
                 }
                 if (stateComponent.character.marker.avoidInRange.Count > 0) {
                     summary += "\nStill has characters to avoid in range, fleeing...";
-                    stateComponent.character.PrintLogIfActive(summary);
+                    stateComponent.character.logComponent.PrintLogIfActive(summary);
                     SetIsAttacking(false);
                 } else {
                     summary += "\nNo more hostile or avoid characters, exiting combat state...";
-                    stateComponent.character.PrintLogIfActive(summary);
+                    stateComponent.character.logComponent.PrintLogIfActive(summary);
                     stateComponent.ExitCurrentState();
                 }
             } else {
                 summary += "\nNo more hostile or avoid characters, exiting combat state...";
-                stateComponent.character.PrintLogIfActive(summary);
+                stateComponent.character.logComponent.PrintLogIfActive(summary);
                 stateComponent.ExitCurrentState();
             }
         }
@@ -305,7 +305,7 @@ public class CombatState : CharacterState {
                     SetClosestHostile(newClosestHostile);
                 } else if (currentClosestHostile != null && stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.marker.targetPOI == currentClosestHostile) {
                     log += "\nAlready in pursuit of current closest hostile: " + currentClosestHostile.name;
-                    stateComponent.character.PrintLogIfActive(log);
+                    stateComponent.character.logComponent.PrintLogIfActive(log);
                     return;
                 }
             }
@@ -326,22 +326,22 @@ public class CombatState : CharacterState {
             //Character closestHostile = stateComponent.character.marker.GetNearestValidAvoid();
             if (stateComponent.character.marker.avoidInRange.Count <= 0) {
                 log += "\nNo more avoid characters, exiting combat state...";
-                stateComponent.character.PrintLogIfActive(log);
+                stateComponent.character.logComponent.PrintLogIfActive(log);
                 stateComponent.ExitCurrentState();
                 return;
             }
             if (stateComponent.character.marker.hasFleePath) {
                 log += "\nAlready in flee mode";
-                stateComponent.character.PrintLogIfActive(log);
+                stateComponent.character.logComponent.PrintLogIfActive(log);
                 return;
             }
             if (stateComponent.character.canMove == false) {
                 log += "\nCannot move, not fleeing";
-                stateComponent.character.PrintLogIfActive(log);
+                stateComponent.character.logComponent.PrintLogIfActive(log);
                 return;
             }
             log += "\n" + stateComponent.character.name + " is fleeing!";
-            stateComponent.character.PrintLogIfActive(log);
+            stateComponent.character.logComponent.PrintLogIfActive(log);
             stateComponent.character.marker.OnStartFlee();
 
 
@@ -354,7 +354,7 @@ public class CombatState : CharacterState {
             fleeLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             fleeLog.AddToFillers(objToAvoid, objToAvoid.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             fleeLog.AddToFillers(null, avoidReason, LOG_IDENTIFIER.STRING_1);
-            stateComponent.character.RegisterLogAndShowNotifToThisCharacterOnly(fleeLog, null, false);
+            stateComponent.character.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(fleeLog, null, false);
         }
     }
 
@@ -371,7 +371,7 @@ public class CombatState : CharacterState {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_combat_target");
             log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(currentClosestHostile, currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            stateComponent.character.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+            stateComponent.character.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
         }
     }
     private void SetClosestHostile(IPointOfInterest poi) {
@@ -381,7 +381,7 @@ public class CombatState : CharacterState {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_combat_target");
             log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(currentClosestHostile, currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            stateComponent.character.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+            stateComponent.character.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
         }
     }
     //Will be constantly checked every frame
@@ -498,14 +498,14 @@ public class CombatState : CharacterState {
     }
     private void StartPursueTimer() {
         if (!_hasTimerStarted) {
-            stateComponent.character.PrintLogIfActive("Starting pursue timer for " + stateComponent.character.name);
+            stateComponent.character.logComponent.PrintLogIfActive("Starting pursue timer for " + stateComponent.character.name);
             _currentAttackTimer = 0;
             _hasTimerStarted = true;
         }
     }
     private void StopPursueTimer() {
         if (_hasTimerStarted) {
-            stateComponent.character.PrintLogIfActive("Stopping pursue timer for " + stateComponent.character.name);
+            stateComponent.character.logComponent.PrintLogIfActive("Stopping pursue timer for " + stateComponent.character.name);
             _hasTimerStarted = false;
         }
     }
@@ -520,12 +520,12 @@ public class CombatState : CharacterState {
         //If it is, end state immediately
         //If not, flee again
         log += "\nFinished travelling flee path, determining action...";
-        stateComponent.character.PrintLogIfActive(log);
+        stateComponent.character.logComponent.PrintLogIfActive(log);
         DetermineReaction(stateComponent.character);
     }
     public void OnReachLowFleeSpeedThreshold() {
         string log = stateComponent.character.name + " has reached low flee speed threshold, determining action...";
-        stateComponent.character.PrintLogIfActive(log);
+        stateComponent.character.logComponent.PrintLogIfActive(log);
         DetermineReaction(stateComponent.character);
     }
     private void OnFinishedFleeingFrom(IPointOfInterest fledFrom) {

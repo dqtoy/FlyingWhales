@@ -21,7 +21,7 @@ namespace Interrupts {
                     Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Set Home", "set_new_home_structure");
                     log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(null, actor.homeStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.STRING_1);
-                    actor.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+                    actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
                 }
             }
             return true;

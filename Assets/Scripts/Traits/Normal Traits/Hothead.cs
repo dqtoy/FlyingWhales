@@ -30,7 +30,7 @@ namespace Traits {
                     Character targetCharacter = targetPOI as Character;
                     if (characterThatWillDoJob.opinionComponent.IsEnemiesWith(targetCharacter)) {
                         debugLog += "\n-Character considers Target as Enemy or Rival, will trigger Angered interrupt";
-                        characterThatWillDoJob.PrintLogIfActive(debugLog);
+                        characterThatWillDoJob.logComponent.PrintLogIfActive(debugLog);
                         characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Angered, targetCharacter);
                         //character.traitContainer.AddTrait(character, "Angry");
                         //Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_saw");
@@ -42,7 +42,7 @@ namespace Traits {
                         debugLog += "\n-Character does not consider Target as Enemy or Rival";
                     }
                 }
-                characterThatWillDoJob.PrintLogIfActive(debugLog);
+                characterThatWillDoJob.logComponent.PrintLogIfActive(debugLog);
             }
             return base.OnSeePOI(targetPOI, characterThatWillDoJob);
             //if (targetPOI is Character) {

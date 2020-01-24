@@ -58,8 +58,8 @@ public class MineMetal : GoapAction {
     #endregion
 }
 
-public class MineData : GoapActionData {
-    public MineData() : base(INTERACTION_TYPE.MINE_METAL) {
+public class MineMetalData : GoapActionData {
+    public MineMetalData() : base(INTERACTION_TYPE.MINE_METAL) {
         //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         requirementAction = Requirement;
     }

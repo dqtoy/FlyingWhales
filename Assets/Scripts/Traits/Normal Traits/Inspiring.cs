@@ -24,14 +24,14 @@ namespace Traits {
                     debugLog += "\n-Roll: " + chance;
                     if (chance < 8) {
                         debugLog += "\n-Triggered Inspired interrupt";
-                        characterThatWillDoJob.PrintLogIfActive(debugLog);
+                        characterThatWillDoJob.logComponent.PrintLogIfActive(debugLog);
                         targetCharacter.interruptComponent.TriggerInterrupt(INTERRUPT.Inspired, characterThatWillDoJob);
                         return true;
                     }
                 } else {
                     debugLog += "\n-Target is part of Faction or Settlement";
                 }
-                characterThatWillDoJob.PrintLogIfActive(debugLog);
+                characterThatWillDoJob.logComponent.PrintLogIfActive(debugLog);
             }
             return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }

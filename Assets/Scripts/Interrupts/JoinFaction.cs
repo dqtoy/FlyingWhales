@@ -18,7 +18,7 @@ namespace Interrupts {
                     Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Join Faction", actor.interruptComponent.identifier);
                     log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(factionToJoinTo, factionToJoinTo.name, LOG_IDENTIFIER.FACTION_1);
-                    actor.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+                    actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
                     return true;
                 }
             }

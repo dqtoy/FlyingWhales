@@ -52,13 +52,13 @@ namespace Traits {
                 debugLog += "\n-Character decided to flee";
                 Log log = new Log(GameManager.Instance.Today(), "Trait", name, "flee");
                 log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                owner.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+                owner.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
                 owner.marker.AddAvoidInRange(burningPOI);
             } else {
                 debugLog += "\n-Character decided to trigger Cowering interrupt";
                 owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, owner);
             }
-            owner.PrintLogIfActive(debugLog);
+            owner.logComponent.PrintLogIfActive(debugLog);
         }
         public void BeShellshocked(BurningSource source, Character character) {
             string summary = GameManager.Instance.TodayLogString() + character.name + " saw burning source " + source.ToString();

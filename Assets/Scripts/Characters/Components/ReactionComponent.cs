@@ -47,7 +47,7 @@ public class ReactionComponent {
             witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.OTHER);
             witnessLog.AddToFillers(null, Utilities.LogDontReplace(node.descriptionLog), LOG_IDENTIFIER.APPEND);
             witnessLog.AddToFillers(node.descriptionLog.fillers);
-            owner.AddHistory(witnessLog);
+            owner.logComponent.AddHistory(witnessLog);
 
             node.action.ReactionToActor(owner, node);
             node.action.ReactionToTarget(owner, node);
@@ -68,7 +68,7 @@ public class ReactionComponent {
         informedLog.AddToFillers(node.descriptionLog.fillers);
         informedLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.OTHER);
         informedLog.AddToFillers(null, Utilities.LogDontReplace(node.descriptionLog), LOG_IDENTIFIER.APPEND);
-        owner.AddHistory(informedLog);
+        owner.logComponent.AddHistory(informedLog);
 
         if (node.actor != owner && node.poiTarget != owner) {
             string response = string.Empty;

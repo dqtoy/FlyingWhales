@@ -51,7 +51,7 @@ public class POITestingUI : MonoBehaviour {
     public bool CreateKnockoutJob(Character character, Character targetCharacter) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KNOCKOUT, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, character);
         character.jobQueue.AddJobInQueue(job);
-        character.PrintLogIfActive("Added a KNOCKOUT Job to " + this.name + " with target " + targetCharacter.name);
+        character.logComponent.PrintLogIfActive("Added a KNOCKOUT Job to " + this.name + " with target " + targetCharacter.name);
         return true;
     }
     public void ChatWithThisCharacter() {

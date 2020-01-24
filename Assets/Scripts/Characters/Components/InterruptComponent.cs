@@ -26,10 +26,10 @@ public class InterruptComponent {
         Interrupt triggeredInterrupt = InteractionManager.Instance.GetInterruptData(interrupt);
         if (!triggeredInterrupt.isSimulateneous) {
             if (isInterrupted) {
-                owner.PrintLogIfActive("Cannot trigger interrupt " + interrupt.ToString() + " because there is already a current interrupt: " + currentInterrupt.name);
+                owner.logComponent.PrintLogIfActive("Cannot trigger interrupt " + interrupt.ToString() + " because there is already a current interrupt: " + currentInterrupt.name);
                 return false;
             }
-            owner.PrintLogIfActive(owner.name + " triggered a non simultaneous interrupt: " + triggeredInterrupt.name);
+            owner.logComponent.PrintLogIfActive(owner.name + " triggered a non simultaneous interrupt: " + triggeredInterrupt.name);
             currentInterrupt = triggeredInterrupt;
             currentTargetPOI = targetPOI;
             this.identifier = identifier;
@@ -55,7 +55,7 @@ public class InterruptComponent {
         return true;
     }
     private bool TriggeredSimultaneousInterrupt(Interrupt interrupt, IPointOfInterest targetPOI, string identifier) {
-        owner.PrintLogIfActive(owner.name + " triggered a simultaneous interrupt: " + interrupt.name);
+        owner.logComponent.PrintLogIfActive(owner.name + " triggered a simultaneous interrupt: " + interrupt.name);
         this.identifier = identifier;
         ExecuteStartInterrupt(interrupt, targetPOI);
         CreateAndAddEffectLog(interrupt, targetPOI);

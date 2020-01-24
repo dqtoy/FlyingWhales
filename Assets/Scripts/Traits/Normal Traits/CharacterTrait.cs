@@ -73,7 +73,7 @@ namespace Traits {
                         Log sawDeadLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "saw_dead");
                         sawDeadLog.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         sawDeadLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        characterThatWillDoJob.AddHistory(sawDeadLog);
+                        characterThatWillDoJob.logComponent.AddHistory(sawDeadLog);
                         PlayerManager.Instance.player.ShowNotificationFrom(sawDeadLog, characterThatWillDoJob, false);
 
 

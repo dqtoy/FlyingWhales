@@ -106,7 +106,7 @@ namespace Traits {
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(sourcePOI, sourcePOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             //log.AddLogToInvolvedObjects();
-            character.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+            character.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
         }
         private void DeathCharacter(Character character) {
             character.Death();
@@ -114,7 +114,7 @@ namespace Traits {
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(sourcePOI, sourcePOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             //log.AddLogToInvolvedObjects();
-            character.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+            character.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
         }
         private void FlawCharacter(Character character) {
             List<Trait> flawTraits = TraitManager.Instance.GetAllTraitsOfType(TRAIT_TYPE.FLAW);
@@ -127,7 +127,7 @@ namespace Traits {
             log.AddToFillers(sourcePOI, sourcePOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddToFillers(null, chosenFlawTraitName, LOG_IDENTIFIER.STRING_1);
             //log.AddLogToInvolvedObjects();
-            character.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+            character.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
 
             character.traitContainer.AddTrait(character, chosenFlawTraitName);
         }
@@ -141,7 +141,7 @@ namespace Traits {
                 log.AddToFillers(sourcePOI, sourcePOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 log.AddToFillers(null, chosenBuffTrait.name, LOG_IDENTIFIER.STRING_1);
                 //log.AddLogToInvolvedObjects();
-                character.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+                character.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
 
                 character.traitContainer.RemoveTrait(character, chosenBuffTrait);
             } else {
