@@ -26,10 +26,15 @@ public class Sleep : GoapAction {
         SetState("Rest Success", goapNode); 
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+        string costLog = "\n" + name + ":";
+        int cost = 0;
         if (target is Bed) {
             Bed bed = target as Bed;
             if (bed.IsOwnedBy(actor)) {
-                return Utilities.rng.Next(10, 16);
+                cost = Utilities.rng.Next(10, 16);
+                costLog += " +" + cost + "(Owned)";
+                actor.logComponent.AppendCostLog(costLog);
+                return cost;
             } else {
                 List<Character> tableOwners = bed.GetOwners();
                 bool isTargetObjectOwnedByFriend = false;
@@ -46,13 +51,22 @@ public class Sleep : GoapAction {
                     }
                 }
                 if (isTargetObjectOwnedByFriend) {
-                    return Utilities.rng.Next(25, 46);
+                    cost = Utilities.rng.Next(25, 46);
+                    costLog += " +" + cost + "(Owned by Friend)";
+                    actor.logComponent.AppendCostLog(costLog);
+                    return cost;
                 } else if (isTargetObjectOwnedByEnemy) {
-                    return 2000;
+                    cost = 2000;
+                    costLog += " +2000(Owned by Enemy)";
+                    actor.logComponent.AppendCostLog(costLog);
+                    return cost;
                 }
             }
         }
-        return Utilities.rng.Next(40, 51);
+        cost = Utilities.rng.Next(40, 51);
+        costLog += " +" + cost + "(Otherwise)";
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
         //LocationStructure targetStructure = target.gridTileLocation.structure;
         //if (targetStructure.structureType == STRUCTURE_TYPE.DWELLING) {
         //    Dwelling dwelling = targetStructure as Dwelling;

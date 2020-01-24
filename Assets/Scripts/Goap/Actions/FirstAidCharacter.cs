@@ -25,6 +25,8 @@ public class FirstAidCharacter : GoapAction {
         SetState("First Aid Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+        string costLog = "\n" + name + ": +10(Constant)";
+        actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {

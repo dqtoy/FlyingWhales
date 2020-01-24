@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Traits;
 using UnityEngine;
+using Inner_Maps;
 using Random = UnityEngine.Random;
 
 public class CharacterJobTriggerComponent : JobTriggerComponent {
@@ -11,6 +12,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	private Character _owner;
 	
 	private bool hasStartedScreamCheck;
+	
+	public int numOfTimesCried { get; private set; }
+	public int numOfTimesDanced { get; private set; }
+	public int numOfTimesDaydreamed { get; private set; }
+	public int numOfTimesDrank { get; private set; }
 
 	private string[] removeStatusTraits = new[] {
 		nameof(Unconscious), nameof(Injured), nameof(Sick), nameof(Plagued),
@@ -332,15 +338,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
 	#region Feed
 	public bool TryTriggerFeed(Character targetCharacter) {
-		if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Hungry", "Starving") != null
-		    && (_owner.homeSettlement == targetCharacter.homeSettlement || _owner.faction == targetCharacter.faction)
-		    && _owner.IsHostileWith(targetCharacter, false) == false 
-		    && _owner.opinionComponent.HasOpinionLabelWithCharacter(targetCharacter,
-			    OpinionComponent.Rival, OpinionComponent.Enemy) == false
-		    && _owner.jobQueue.HasJob(JOB_TYPE.FEED, targetCharacter) == false
-		    && targetCharacter.HasJobTargetingThis(JOB_TYPE.FEED) == false) {
-			TriggerFeed(targetCharacter);
-			return true;
+		if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.FEED)) {
+			GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, target = GOAP_EFFECT_TARGET.TARGET };
+			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, targetCharacter, _owner);
+			job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 20 });
+			return _owner.jobQueue.AddJobInQueue(job);
 		}
 		return false;
 	}
@@ -365,38 +367,56 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	#endregion
 
 	#region Move Character
-	public bool TryTriggerMoveCharacterTirednessRecovery(Character target) {
-		if (target.traitContainer.GetNormalTrait<Trait>("Tired", "Exhausted") != null) {
-			bool isSameHome = target.homeSettlement == _owner.homeSettlement;
-			bool isNotHostileFaction = target.faction == _owner.faction
-				|| target.faction.GetRelationshipWith(_owner.faction).relationshipStatus
-				!= FACTION_RELATIONSHIP_STATUS.HOSTILE;
-			bool isNotEnemy =
-				_owner.opinionComponent.HasOpinionLabelWithCharacter(target, OpinionComponent.Enemy,
-					OpinionComponent.Rival) == false;
-			if ((isSameHome || isNotHostileFaction) && isNotEnemy) {
-				return TriggerMoveCharacterToBed(target);
-			}
+	public bool TryTriggerMoveCharacter(Character targetCharacter, LocationStructure dropLocationStructure) {
+		if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER)) {
+			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP,
+				targetCharacter, _owner);
+			job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {dropLocationStructure});
+			return _owner.jobQueue.AddJobInQueue(job);
 		}
 		return false;
 	}
-	public bool TryTriggerMoveCharacterHappinessRecovery(Character target) {
-		if (target.traitContainer.GetNormalTrait<Trait>("Bored", "Sulking", "Forlorn", "Lonely") != null) {
-			bool isSameHome = target.homeSettlement == _owner.homeSettlement;
-			bool isNotHostileFaction = target.faction == _owner.faction
-			                           || target.faction.GetRelationshipWith(_owner.faction).relationshipStatus
-			                           != FACTION_RELATIONSHIP_STATUS.HOSTILE;
-			bool isNotEnemy =
-				_owner.opinionComponent.HasOpinionLabelWithCharacter(target, OpinionComponent.Enemy,
-					OpinionComponent.Rival) == false;
-			if ((isSameHome || isNotHostileFaction) && isNotEnemy) {
-				return TriggerMoveCharacterForHappinessRecovery(target);
-			}
+	public bool TryTriggerMoveCharacter(Character targetCharacter, LocationStructure dropLocationStructure, LocationGridTile dropGridTile) {
+		if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER)) {
+			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, targetCharacter, _owner);
+			job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { dropLocationStructure, dropGridTile });
+			return _owner.jobQueue.AddJobInQueue(job);   
 		}
 		return false;
 	}
+	// public bool TryTriggerMoveCharacterTirednessRecovery(Character target) {
+	// 	if (target.traitContainer.GetNormalTrait<Trait>("Tired", "Exhausted") != null) {
+	// 		bool isSameHome = target.homeSettlement == _owner.homeSettlement;
+	// 		bool isNotHostileFaction = target.faction == _owner.faction
+	// 			|| target.faction.GetRelationshipWith(_owner.faction).relationshipStatus
+	// 			!= FACTION_RELATIONSHIP_STATUS.HOSTILE;
+	// 		bool isNotEnemy =
+	// 			_owner.opinionComponent.HasOpinionLabelWithCharacter(target, OpinionComponent.Enemy,
+	// 				OpinionComponent.Rival) == false;
+	// 		if ((isSameHome || isNotHostileFaction) && isNotEnemy) {
+	// 			return TriggerMoveCharacterToBed(target);
+	// 		}
+	// 	}
+	// 	return false;
+	// }
+	// public bool TryTriggerMoveCharacterHappinessRecovery(Character target) {
+	// 	if (target.traitContainer.GetNormalTrait<Trait>("Bored", "Sulking", "Forlorn", "Lonely") != null) {
+	// 		bool isSameHome = target.homeSettlement == _owner.homeSettlement;
+	// 		bool isNotHostileFaction = target.faction == _owner.faction
+	// 		                           || target.faction.GetRelationshipWith(_owner.faction).relationshipStatus
+	// 		                           != FACTION_RELATIONSHIP_STATUS.HOSTILE;
+	// 		bool isNotEnemy =
+	// 			_owner.opinionComponent.HasOpinionLabelWithCharacter(target, OpinionComponent.Enemy,
+	// 				OpinionComponent.Rival) == false;
+	// 		if ((isSameHome || isNotHostileFaction) && isNotEnemy) {
+	// 			return TriggerMoveCharacterForHappinessRecovery(target);
+	// 		}
+	// 	}
+	// 	return false;
+	// }
 	#endregion
 
+	#region Suicide
 	public GoapPlanJob TriggerSuicideJob() {
 		if (_owner.jobQueue.HasJob(JOB_TYPE.COMMIT_SUICIDE) == false) {
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COMMIT_SUICIDE, 
@@ -408,4 +428,53 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 		return null;
 	}
+	#endregion
+	
+	#region Cry
+	public void IncreaseNumOfTimesCried() {
+		numOfTimesCried++;
+		GameDate dueDate = GameManager.Instance.Today();
+		dueDate.AddDays(3);
+		SchedulingManager.Instance.AddEntry(dueDate, DecreaseNumOfTimesCried, _owner);
+	}
+	private void DecreaseNumOfTimesCried() {
+		numOfTimesCried--;
+	}
+	#endregion
+	
+	#region Dance
+	public void IncreaseNumOfTimesDanced() {
+		numOfTimesDanced++;
+		GameDate dueDate = GameManager.Instance.Today();
+		dueDate.AddDays(3);
+		SchedulingManager.Instance.AddEntry(dueDate, DecreaseNumOfTimesDanced, _owner);
+	}
+	private void DecreaseNumOfTimesDanced() {
+		numOfTimesDanced--;
+	}
+	#endregion
+	
+	#region Daydream
+	public void IncreaseNumOfTimesDaydreamed() {
+		numOfTimesDaydreamed++;
+		GameDate dueDate = GameManager.Instance.Today();
+		dueDate.AddDays(3);
+		SchedulingManager.Instance.AddEntry(dueDate, DecreaseNumOfTimesDaydreamed, _owner);
+	}
+	private void DecreaseNumOfTimesDaydreamed() {
+		numOfTimesDaydreamed--;
+	}
+	#endregion
+	
+	#region Drink
+	public void IncreaseNumOfTimesDrank() {
+		numOfTimesDrank++;
+		GameDate dueDate = GameManager.Instance.Today();
+		dueDate.AddDays(3);
+		SchedulingManager.Instance.AddEntry(dueDate, DecreaseNumOfTimesDrank, _owner);
+	}
+	private void DecreaseNumOfTimesDrank() {
+		numOfTimesDrank--;
+	}
+	#endregion
 }

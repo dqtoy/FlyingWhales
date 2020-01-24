@@ -24,9 +24,31 @@ public class Butcher : GoapAction {
         SetState("Transform Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+        string costLog = "\n" + name + ":";
         Character deadCharacter = GetDeadCharacter(target);
-        int transformedFood = GetFoodAmountTakenFromDead(deadCharacter);
-        return transformedFood;
+        int cost = GetFoodAmountTakenFromDead(deadCharacter);
+        costLog += " +" + cost + "(Initial)";
+        if (actor == target) {
+            cost += 2000;
+            costLog += " +2000(Actor/Target Same)";
+        } else {
+            if (actor.traitContainer.GetNormalTrait<Trait>("Cannibal") != null) {
+                if (actor.opinionComponent.IsFriendsWith(deadCharacter)) {
+                    cost += 2000;
+                    costLog += " +2000(Cannibal, Friend/Close)";
+                } else if ((deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) &&
+                           !actor.needsComponent.isStarving) {
+                    cost += 2000;
+                    costLog += " +2000(Cannibal, Human/Elf, not Starving)";
+                }
+            } else {
+                if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
+                    costLog += " +2000(not Cannibal, Human/Elf)";
+                }
+            }
+        }
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
@@ -46,6 +68,34 @@ public class Butcher : GoapAction {
     private bool IsTargetMissing(Character actor, IPointOfInterest poiTarget) {
         return poiTarget.gridTileLocation == null || actor.currentRegion != poiTarget.currentRegion
               || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) || (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER && !(poiTarget as Character).isDead);
+    }
+    public override string ReactionToActor(Character witness, ActualGoapNode node) {
+        string response = base.ReactionToActor(witness, node);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        Character targetCharacter = GetDeadCharacter(target);
+        if (witness.traitContainer.GetNormalTrait<Trait>("Cannibal") == null &&
+            (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES)) {
+            CrimeManager.Instance.ReactToCrime(witness, node, node.associatedJobType, CRIME_TYPE.HEINOUS);
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor);
+            
+            string opinionLabel = witness.opinionComponent.GetOpinionLabel(actor);
+            if (opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor);
+            }
+            if (!witness.isSerialKiller) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor);
+            }
+        }
+        string witnessOpinionToTarget = witness.opinionComponent.GetOpinionLabel(targetCharacter);
+        if (witnessOpinionToTarget == OpinionComponent.Friend || witnessOpinionToTarget == OpinionComponent.Close_Friend || witnessOpinionToTarget == OpinionComponent.Acquaintance 
+            || witness.faction == targetCharacter.faction || witness.homeSettlement == targetCharacter.homeSettlement) {
+            if (!witness.isSerialKiller) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
+            }
+        }
+        return response;
     }
     #endregion
 

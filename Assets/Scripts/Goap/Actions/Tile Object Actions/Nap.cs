@@ -58,6 +58,8 @@ public class Nap : GoapAction {
         //    return 45;
         //}
         //return 100;
+        string costLog = "\n" + name + ": +10(Constant)";
+        actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {

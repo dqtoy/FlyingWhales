@@ -27,7 +27,10 @@ public class Poison : GoapAction {
         SetState("Poison Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return Utilities.rng.Next(80, 121);
+        int cost = Utilities.rng.Next(80, 121);
+        string costLog = "\n" + name + ": +" + cost + "(RNG)";
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
     }
     public override string ReactionToActor(Character witness, ActualGoapNode node) {
         string response = base.ReactionToActor(witness, node);

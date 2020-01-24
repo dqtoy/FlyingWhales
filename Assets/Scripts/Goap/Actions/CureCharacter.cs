@@ -8,13 +8,6 @@ public class CureCharacter : GoapAction {
     public CureCharacter() : base(INTERACTION_TYPE.CURE_CHARACTER) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.FirstAid_Icon;
-        validTimeOfDays = new TIME_IN_WORDS[] {
-            TIME_IN_WORDS.MORNING,
-            TIME_IN_WORDS.LUNCH_TIME,
-            TIME_IN_WORDS.AFTERNOON,
-            TIME_IN_WORDS.EARLY_NIGHT,
-            TIME_IN_WORDS.LATE_NIGHT,
-        };
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, };
     }
@@ -32,7 +25,9 @@ public class CureCharacter : GoapAction {
         SetState("Cure Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 12;
+        string costLog = "\n" + name + ": +10(Constant)";
+        actor.logComponent.AppendCostLog(costLog);
+        return 10;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
@@ -43,7 +38,40 @@ public class CureCharacter : GoapAction {
             }
         }
         return goapActionInvalidity;
-
+    }
+    public override string ReactionToActor(Character witness, ActualGoapNode node) {
+        string response = base.ReactionToActor(witness, node);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        Character targetCharacter = target as Character;
+        string opinionLabel = witness.opinionComponent.GetOpinionLabel(targetCharacter);
+        if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+            if (!witness.isSerialKiller) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, witness, actor);
+            }
+        } else if (opinionLabel == OpinionComponent.Rival) {
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+        }
+        return response;
+    }
+    public override string ReactionOfTarget(ActualGoapNode node) {
+        string response = base.ReactionOfTarget(node);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        Character targetCharacter = target as Character;
+        if (!targetCharacter.isSerialKiller) {
+            if (targetCharacter.opinionComponent.IsEnemiesWith(actor)) {
+                if(UnityEngine.Random.Range(0, 100) < 30) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor);
+                }
+                if (UnityEngine.Random.Range(0, 100) < 20) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, targetCharacter, actor);
+                }
+            } else {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor);
+            }
+        }
+        return response;
     }
     #endregion
 

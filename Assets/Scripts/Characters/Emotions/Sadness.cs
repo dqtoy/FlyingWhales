@@ -10,10 +10,7 @@ public class Sadness : Emotion {
 
     #region Overrides
     public override string ProcessEmotion(Character witness, IPointOfInterest target) {
-        if (target is Character) {
-            Character targetCharacter = target as Character;
-            witness.needsComponent.AdjustHappiness(-10);
-        }
+        witness.needsComponent.AdjustHappiness(-10);
         return base.ProcessEmotion(witness, target);
     }
     #endregion

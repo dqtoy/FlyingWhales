@@ -23,6 +23,8 @@ public class Accident : GoapAction {
         SetState("Accident Success", actionNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+        string costLog = "\n" + name + ": +5(Constant)";
+        actor.logComponent.AppendCostLog(costLog);
         return 5;
     }
     #endregion

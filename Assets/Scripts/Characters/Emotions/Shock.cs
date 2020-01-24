@@ -10,10 +10,7 @@ public class Shock : Emotion {
 
     #region Overrides
     public override string ProcessEmotion(Character witness, IPointOfInterest target) {
-        if (target is Character) {
-            Character targetCharacter = target as Character;
-            witness.needsComponent.AdjustComfort(-10);
-        }
+        witness.needsComponent.AdjustComfort(-10);
         return base.ProcessEmotion(witness, target);
     }
     #endregion
