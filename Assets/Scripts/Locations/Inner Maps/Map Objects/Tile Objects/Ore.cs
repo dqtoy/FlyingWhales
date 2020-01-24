@@ -10,12 +10,12 @@ public class Ore : TileObject {
     //private const int Supply_Per_Mine = 50;
 
     public Ore() {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE, INTERACTION_TYPE.ASSAULT, };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE_METAL, INTERACTION_TYPE.ASSAULT, };
         Initialize(TILE_OBJECT_TYPE.ORE);
-        yield = 50;
+        SetYield(50);
     }
     public Ore(SaveDataTileObject data) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE, INTERACTION_TYPE.ASSAULT, };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE_METAL, INTERACTION_TYPE.ASSAULT, };
         Initialize(data);
     }
 

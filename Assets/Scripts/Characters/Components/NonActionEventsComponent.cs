@@ -179,7 +179,7 @@ public class NonActionEventsComponent {
 
         string result = chatWeights.PickRandomElementGivenWeights();
         strLog += "\nResult: " + result;
-        owner.PrintLogIfActive(strLog);
+        owner.logComponent.PrintLogIfActive(strLog);
 
         bool adjustOpinionBothSides = false;
         int opinionValue = 0;
@@ -211,7 +211,7 @@ public class NonActionEventsComponent {
         Log log = new Log(dueDate, "Interrupt", "Chat", result);
         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        owner.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+        owner.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
         owner.SetIsConversing(true);
         target.SetIsConversing(true);
 
@@ -259,7 +259,7 @@ public class NonActionEventsComponent {
         }
         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        owner.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+        owner.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
 
         if (relationship == RELATIONSHIP_TYPE.LOVER) {
             //**Effect 1**: Actor - Remove Lover relationship with Character 2
@@ -285,7 +285,7 @@ public class NonActionEventsComponent {
             Log log = new Log(dueDate, "Interrupt", "Flirt", result);
             log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            owner.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            owner.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
             owner.SetIsConversing(true);
             target.SetIsConversing(true);
 

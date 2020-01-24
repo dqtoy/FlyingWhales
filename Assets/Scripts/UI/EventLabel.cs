@@ -75,13 +75,15 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
                 } else if (linkText.Contains("_hextile")) {
                     HexTile tile = GridMap.Instance.allTiles[idToUse];
                     obj = tile;
-                } else if (linkText.Contains("_combat")) {
-                    if (UIManager.Instance.characterInfoUI.activeCharacter != null) {
-                        if (UIManager.Instance.characterInfoUI.activeCharacter.combatHistory.ContainsKey(idToUse)) {
-                            UIManager.Instance.ShowCombatLog(UIManager.Instance.characterInfoUI.activeCharacter.combatHistory[idToUse]);
-                        }
-                    }
-                } else {
+                } 
+                // else if (linkText.Contains("_combat")) {
+                //     if (UIManager.Instance.characterInfoUI.activeCharacter != null) {
+                //         if (UIManager.Instance.characterInfoUI.activeCharacter.combatHistory.ContainsKey(idToUse)) {
+                //             UIManager.Instance.ShowCombatLog(UIManager.Instance.characterInfoUI.activeCharacter.combatHistory[idToUse]);
+                //         }
+                //     }
+                // } 
+                else {
                     obj = linkInfo.GetLinkID();
                 }
             } else if (logItem.log != null) {

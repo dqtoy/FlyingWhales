@@ -22,28 +22,68 @@ public class ReactionComponent {
             ReactTo(targetPOI as SpecialToken, ref debugLog);
         }
     }
-    public void ReactTo(ActualGoapNode witnessedEvent) {
-        if (owner.faction != witnessedEvent.actor.faction && owner.faction.IsHostileWith(witnessedEvent.actor.faction)) {
+    public string ReactTo(ActualGoapNode node, SHARE_INTEL_STATUS status) {
+        if(status == SHARE_INTEL_STATUS.WITNESSED) {
+            ReactToWitnessedAction(node);
+        } else {
+            return ReactToInformedAction(node);
+        }
+        return string.Empty;
+    }
+    private void ReactToWitnessedAction(ActualGoapNode node) {
+        if (owner.faction != node.actor.faction && owner.faction.IsHostileWith(node.actor.faction)) {
             //Must not react if the faction of the actor of witnessed action is hostile with the faction of the witness
             return;
         }
-
         //if (witnessedEvent.currentStateName == null) {
         //    throw new System.Exception(GameManager.Instance.TodayLogString() + this.name + " witnessed event " + witnessedEvent.action.goapName + " by " + witnessedEvent.actor.name + " but it does not have a current state!");
         //}
-        if (witnessedEvent.descriptionLog == null) {
-            throw new Exception(GameManager.Instance.TodayLogString() + owner.name + " witnessed event " + witnessedEvent.action.goapName + " by " + witnessedEvent.actor.name + " with state " + witnessedEvent.currentStateName + " but it does not have a description log!");
+        if (node.descriptionLog == null) {
+            throw new Exception(GameManager.Instance.TodayLogString() + owner.name + " witnessed event " + node.action.goapName + " by " + node.actor.name + " with state " + node.currentStateName + " but it does not have a description log!");
         }
-        Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", witnessedEvent);
-        witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.OTHER);
-        witnessLog.AddToFillers(null, Utilities.LogDontReplace(witnessedEvent.descriptionLog), LOG_IDENTIFIER.APPEND);
-        witnessLog.AddToFillers(witnessedEvent.descriptionLog.fillers);
-        owner.AddHistory(witnessLog);
 
-        CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(witnessedEvent);
-        if (crimeType != CRIME_TYPE.NONE) {
-            CrimeManager.Instance.ReactToCrime(owner, witnessedEvent, witnessedEvent.associatedJobType, crimeType);
+        if(node.actor != owner && node.poiTarget != owner) {
+            Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", node);
+            witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.OTHER);
+            witnessLog.AddToFillers(null, Utilities.LogDontReplace(node.descriptionLog), LOG_IDENTIFIER.APPEND);
+            witnessLog.AddToFillers(node.descriptionLog.fillers);
+            owner.logComponent.AddHistory(witnessLog);
+
+            node.action.ReactionToActor(owner, node);
+            node.action.ReactionToTarget(owner, node);
+        } else if (node.poiTarget == owner) {
+            node.action.ReactionOfTarget(node);
         }
+
+        //CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(node);
+        //if (crimeType != CRIME_TYPE.NONE) {
+        //    CrimeManager.Instance.ReactToCrime(owner, node, node.associatedJobType, crimeType);
+        //}
+    }
+    private string ReactToInformedAction(ActualGoapNode node) {
+        if (node.descriptionLog == null) {
+            throw new Exception(GameManager.Instance.TodayLogString() + owner.name + " informed event " + node.action.goapName + " by " + node.actor.name + " with state " + node.currentStateName + " but it does not have a description log!");
+        }
+        Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event", node);
+        informedLog.AddToFillers(node.descriptionLog.fillers);
+        informedLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.OTHER);
+        informedLog.AddToFillers(null, Utilities.LogDontReplace(node.descriptionLog), LOG_IDENTIFIER.APPEND);
+        owner.logComponent.AddHistory(informedLog);
+
+        if (node.actor != owner && node.poiTarget != owner) {
+            string response = string.Empty;
+            response += node.action.ReactionToActor(owner, node);
+            response += " " + node.action.ReactionToTarget(owner, node);
+        } else if(node.poiTarget == owner && node.poiTarget is Character) {
+            return node.action.ReactionOfTarget(node);
+        } else if (node.actor == owner) {
+            return "I know what I did.";
+        }
+        return string.Empty;
+        //CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(node);
+        //if (crimeType != CRIME_TYPE.NONE) {
+        //    CrimeManager.Instance.ReactToCrime(owner, node, node.associatedJobType, crimeType);
+        //}
     }
     private void ReactTo(Character targetCharacter, ref string debugLog) {
         debugLog += owner.name + " is reacting to " + targetCharacter.name;

@@ -35,15 +35,15 @@ namespace Traits {
                     }
                     int chance = UnityEngine.Random.Range(0, 100);
                     if (chance < value) {
-                        characterThatWillDoJob.PrintLogIfActive(characterThatWillDoJob.name
-                            + " Drunk Assault Chance: " + value + ", Roll: " + chance);
+                        characterThatWillDoJob.logComponent.PrintLogIfActive(characterThatWillDoJob.name
+                                                                             + " Drunk Assault Chance: " + value + ", Roll: " + chance);
                         if (characterThatWillDoJob.marker.AddHostileInRange(targetCharacter, false, false, false)) {
                             if (!characterThatWillDoJob.marker.avoidInRange.Contains(targetCharacter)) {
                                 Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "drunk_assault");
                                 log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                                 //log.AddLogToInvolvedObjects();
-                                characterThatWillDoJob.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+                                characterThatWillDoJob.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
                             }
                             //characterThatWillDoJob.marker.ProcessCombatBehavior();
                         }

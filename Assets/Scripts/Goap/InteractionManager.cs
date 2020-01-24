@@ -91,19 +91,24 @@ public partial class InteractionManager : MonoBehaviour {
     }
 
     #region Intel
-    public Intel CreateNewIntel(params object[] obj) {
-        if (obj[0] is GoapAction) {
-            GoapAction action = obj[0] as GoapAction;
-            switch (action.goapType) {
-                case INTERACTION_TYPE.POISON:
-                    return new PoisonTableIntel(obj[1] as Character, obj[0] as GoapAction);
-                default:
-                    return new EventIntel(obj[1] as Character, obj[0] as GoapAction);
-            }
+    //public Intel CreateNewIntel(params object[] obj) {
+    //    if (obj[0] is GoapAction) {
+    //        GoapAction action = obj[0] as GoapAction;
+    //        switch (action.goapType) {
+    //            case INTERACTION_TYPE.POISON:
+    //                return new PoisonTableIntel(obj[1] as Character, obj[0] as GoapAction);
+    //            default:
+    //                return new EventIntel(obj[1] as Character, obj[0] as GoapAction);
+    //        }
 
             
-        }
-        return null;
+    //    }
+    //    return null;
+    //}
+    
+    //TODO: Object pool this
+    public Intel CreateNewIntel(ActualGoapNode node) {
+        return new Intel(node);
     }
     #endregion
 

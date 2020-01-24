@@ -19,13 +19,40 @@ public class Eat : GoapAction {
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.COMFORT_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Eat Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 50;
+        if(target is Table) {
+            Table table = target as Table;
+            if (table.IsOwnedBy(actor)) {
+                return Utilities.rng.Next(10, 16);
+            } else {
+                List<Character> tableOwners = table.GetOwners();
+                bool isTargetObjectOwnedByFriend = false;
+                bool isTargetObjectOwnedByEnemy = false;
+                if (tableOwners != null) {
+                    for (int i = 0; i < tableOwners.Count; i++) {
+                        Character objectOwner = tableOwners[i];
+                        if (actor.opinionComponent.IsFriendsWith(objectOwner)) {
+                            isTargetObjectOwnedByFriend = true;
+                            break;
+                        } else if (actor.opinionComponent.IsEnemiesWith(objectOwner)) {
+                            isTargetObjectOwnedByEnemy = true;
+                        }
+                    }
+                }
+                if (isTargetObjectOwnedByFriend) {
+                    return Utilities.rng.Next(25, 46);
+                } else if (isTargetObjectOwnedByEnemy) {
+                    return 2000;
+                }
+            }
+        }
+        return Utilities.rng.Next(40, 51);
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
@@ -84,7 +111,7 @@ public class Eat : GoapAction {
                     return false;
                 }
             } else if(poiTarget is Table) {
-                if(poiTarget.storedResources[RESOURCE.FOOD] < 20) {
+                if(poiTarget.storedResources[RESOURCE.FOOD] < 12) {
                     return false;
                 }
             }

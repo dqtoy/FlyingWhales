@@ -19,32 +19,60 @@ public class Sleep : GoapAction {
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.COMFORT_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Rest Success", goapNode); 
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        LocationStructure targetStructure = target.gridTileLocation.structure;
-        if (targetStructure.structureType == STRUCTURE_TYPE.DWELLING) {
-            Dwelling dwelling = targetStructure as Dwelling;
-            if (dwelling.IsResident(actor)) {
-                return 1;
+        if (target is Bed) {
+            Bed bed = target as Bed;
+            if (bed.IsOwnedBy(actor)) {
+                return Utilities.rng.Next(10, 16);
             } else {
-                for (int i = 0; i < dwelling.residents.Count; i++) {
-                    Character resident = dwelling.residents[i];
-                    if (resident != actor) {
-                        if (actor.opinionComponent.HasOpinion(resident) && actor.opinionComponent.GetTotalOpinion(resident) > 0) {
-                            return 30;
+                List<Character> tableOwners = bed.GetOwners();
+                bool isTargetObjectOwnedByFriend = false;
+                bool isTargetObjectOwnedByEnemy = false;
+                if (tableOwners != null) {
+                    for (int i = 0; i < tableOwners.Count; i++) {
+                        Character objectOwner = tableOwners[i];
+                        if (actor.opinionComponent.IsFriendsWith(objectOwner)) {
+                            isTargetObjectOwnedByFriend = true;
+                            break;
+                        } else if (actor.opinionComponent.IsEnemiesWith(objectOwner)) {
+                            isTargetObjectOwnedByEnemy = true;
                         }
                     }
                 }
-                return 60;
+                if (isTargetObjectOwnedByFriend) {
+                    return Utilities.rng.Next(25, 46);
+                } else if (isTargetObjectOwnedByEnemy) {
+                    return 2000;
+                }
             }
-        } else if (targetStructure.structureType == STRUCTURE_TYPE.INN) {
-            return 60;
         }
-        return 50;
+        return Utilities.rng.Next(40, 51);
+        //LocationStructure targetStructure = target.gridTileLocation.structure;
+        //if (targetStructure.structureType == STRUCTURE_TYPE.DWELLING) {
+        //    Dwelling dwelling = targetStructure as Dwelling;
+        //    if (dwelling.IsResident(actor)) {
+        //        return 1;
+        //    } else {
+        //        for (int i = 0; i < dwelling.residents.Count; i++) {
+        //            Character resident = dwelling.residents[i];
+        //            if (resident != actor) {
+        //                if (actor.opinionComponent.HasOpinion(resident) && actor.opinionComponent.GetTotalOpinion(resident) > 0) {
+        //                    return 30;
+        //                }
+        //            }
+        //        }
+        //        return 60;
+        //    }
+        //} else if (targetStructure.structureType == STRUCTURE_TYPE.INN) {
+        //    return 60;
+        //}
+        //return 50;
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);

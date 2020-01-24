@@ -245,7 +245,7 @@ public class CharacterNeedsComponent {
     }
     public void AdjustTiredness(float adjustment) {
         if(adjustment < 0 && _character.isVampire) {
-            _character.PrintLogIfActive("Trying to reduce energy meter but character is a vampire, will ignore reduction.");
+            _character.logComponent.PrintLogIfActive("Trying to reduce energy meter but character is a vampire, will ignore reduction.");
             return;
         }
         bool wasTired = isTired;

@@ -22,7 +22,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     protected CharacterRole _role;
     protected Faction _faction;
     protected Minion _minion;
-    protected List<Log> _history;
     protected LocationStructure _currentStructure; //what structure is this character currently in.
     protected Region _currentRegion;
 
@@ -88,18 +87,19 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     private List<System.Action> onLeaveAreaActions;
     private POI_STATE _state;
-    public Dictionary<int, Combat> combatHistory;
+    // public Dictionary<int, Combat> combatHistory;
 
     //limiters
-    private int canWitnessValue; //if this is >= 0 then character can witness events
-    private int canMoveValue; //if this is >= 0 then character can move
-    private int canBeAtttackedValue; //if this is >= 0 then character can be attacked
-    private int canPerformValue; //if this is >= 0 then character can perform
-    private int canTakeJobsValue; //if this is >= 0 then character can take settlement jobs
-    public bool canWitness => canWitnessValue >= 0;
-    public bool canMove => canMoveValue >= 0;
-    public bool canBeAtttacked => canBeAtttackedValue >= 0;
-    public bool canPerform => canPerformValue >= 0;
+    private int _canWitnessValue; //if this is >= 0 then character can witness events
+    private int _canMoveValue; //if this is >= 0 then character can move
+    private int _canBeAtttackedValue; //if this is >= 0 then character can be attacked
+    private int _canPerformValue; //if this is >= 0 then character can perform
+    private int canTakeJobsValue; //if this is >= 0 then character can take jobs
+
+    public bool canWitness => _canWitnessValue >= 0;
+    public bool canMove => _canMoveValue >= 0;
+    public bool canBeAtttacked => _canBeAtttackedValue >= 0;
+    public bool canPerform => _canPerformValue >= 0;
     public bool canTakeJobs => canTakeJobsValue >= 0;
 
     //Needs
@@ -136,6 +136,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public MoodComponent moodComponent { get; private set; }
     public CharacterJobTriggerComponent jobComponent { get; private set; }
     public ReactionComponent reactionComponent { get; private set; }
+    public LogComponent logComponent { get; private set; }
 
     #region getters / setters
     public virtual string name => _firstName;
@@ -195,7 +196,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public Settlement currentSettlement => gridTileLocation != null 
         && gridTileLocation.buildSpotOwner.hexTileOwner != null ? 
         gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile : null;
-    public List<Log> history => _history;
     public int level => _level;
     public int experience => _experience;
     public int maxExperience => _maxExperience;
@@ -337,9 +337,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //originalClassName = data.originalClassName;
         isStoppedByOtherCharacter = data.isStoppedByOtherCharacter;
 
-        _history = new List<Log>();
+        // combatHistory = new Dictionary<int, Combat>();
         _overrideThoughts = new List<string>();
-        combatHistory = new Dictionary<int, Combat>();
         advertisedActions = new List<INTERACTION_TYPE>();
         stateComponent = new CharacterStateComponent(this);
         items = new List<SpecialToken>();
@@ -360,7 +359,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public Character() {
         SetIsDead(false);
-        _history = new List<Log>();
         _overrideThoughts = new List<string>();
         
         //Needs
@@ -372,7 +370,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //Traits
         CreateTraitContainer();
 
-        combatHistory = new Dictionary<int, Combat>();
+        // combatHistory = new Dictionary<int, Combat>();
         advertisedActions = new List<INTERACTION_TYPE>();
         items = new List<SpecialToken>();
         allJobsTargetingThis = new List<JobQueueItem>();
@@ -404,6 +402,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         moodComponent = new MoodComponent(this);
         jobComponent = new CharacterJobTriggerComponent(this);
         reactionComponent = new ReactionComponent(this);
+        logComponent = new LogComponent(this);
     }
 
     //This is done separately after all traits have been loaded so that the data will be accurate
@@ -490,7 +489,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #region Signals
     public void SubscribeToSignals() {
         if (minion != null) {
-            Debug.LogError(name + " is a minion and has subscribed to the signals!");
+            logComponent.PrintLogErrorIfActive(name + " is a minion and has subscribed to the signals!");
         }
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
         Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
@@ -891,7 +890,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //dead.SetCharacterResponsibleForTrait(responsibleCharacter);
             traitContainer.AddTrait(this, "Dead", responsibleCharacter, gainedFromDoing: deathFromAction);
 
-            PrintLogIfActive(name + " died of " + cause);
+            logComponent.PrintLogIfActive(name + " died of " + cause);
             Log deathLog;
             if (_deathLog == null) {
                 deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
@@ -1156,7 +1155,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         string log = name + " saw " + targetCharacter.name + ", will try to create jobs on enter vision...";
         if (!CanCharacterReact(targetCharacter)) {
             log += "\nCharacter cannot react!";
-            PrintLogIfActive(log);
+            logComponent.PrintLogIfActive(log);
             return true;
         }
         bool hasCreatedJob = false;
@@ -1199,7 +1198,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //        }
         //    }
         //}
-        PrintLogIfActive(log);
+        logComponent.PrintLogIfActive(log);
         return hasCreatedJob;
     }
     public bool CreateJobsOnEnterVisionWith(IPointOfInterest targetPOI) {
@@ -1209,7 +1208,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         string log = name + " saw " + targetPOI.name + ", will try to create jobs on enter vision...";
         if (!CanCharacterReact(targetPOI)) {
             log += "\nCharacter cannot react!";
-            PrintLogIfActive(log);
+            logComponent.PrintLogIfActive(log);
             return true;
         }
         bool hasCreatedJob = false;
@@ -1233,14 +1232,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 log += ": did not create a job!";
             }
         }
-        PrintLogIfActive(log);
+
+        logComponent.PrintLogIfActive(log);
         return hasCreatedJob;
     }
     public bool CreateJobsOnTargetGainTrait(IPointOfInterest targetPOI, Trait traitGained) {
         string log = targetPOI.name + " gained trait " + traitGained.name + ", will try to create jobs based on it...";
         if (!CanCharacterReact(targetPOI)) {
             log += "\nCharacter cannot react!";
-            PrintLogIfActive(log);
+            logComponent.PrintLogIfActive(log);
             return true;
         }
         bool hasCreatedJob = false;
@@ -1251,7 +1251,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else {
             log += ": did not create a job!";
         }
-        PrintLogIfActive(log);
+
+        logComponent.PrintLogIfActive(log);
         return hasCreatedJob;
     }
     /// <summary>
@@ -1279,14 +1280,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //     return CreateKnockoutJob(targetCharacter);
         // }
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, "Negative", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, this);
-        Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job: negative trait to " + this.name + " with target " + targetCharacter.name);
+        logComponent.PrintLogIfActive("Added an UNDERMINE ENEMY Job: negative trait to " + this.name + " with target " + targetCharacter.name);
         jobQueue.AddJobInQueue(job);
 
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", reason + "_and_undermine");
         log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         // log.AddToFillers(null, currentMoodType.ToString().ToLower(), LOG_IDENTIFIER.STRING_1);
-        AddHistory(log);
+        logComponent.AddHistory(log);
 
         PlayerManager.Instance.player.ShowNotificationFrom(log, this, false);
         return true;
@@ -1545,9 +1546,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         } else {
             if (troubledCharacter == null) {
-                Debug.LogError(name + " cannot create ask for help save character job because troubled character is null!");
+                logComponent.PrintLogErrorIfActive(name + " cannot create ask for help save character job because troubled character is null!");
             } else {
-                Debug.LogError(name + " cannot create ask for help save character job for " + troubledCharacter.name);
+                logComponent.PrintLogErrorIfActive(name + " cannot create ask for help save character job for " + troubledCharacter.name);
             }
         }
     }
@@ -1574,9 +1575,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             // }
         } else {
             if (troubledCharacter == null) {
-                Debug.LogError(name + " cannot create ask for help save character job because troubled character is null!");
+                logComponent.PrintLogErrorIfActive(name + " cannot create ask for help save character job because troubled character is null!");
             } else {
-                Debug.LogError(name + " cannot create ask for help save character job for " + troubledCharacter.name);
+                logComponent.PrintLogErrorIfActive(name + " cannot create ask for help save character job for " + troubledCharacter.name);
             }
         }
     }
@@ -2385,29 +2386,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion    
 
     #region History/Logs
-    public bool AddHistory(Log log) {
-        if (!_history.Contains(log)) {
-            _history.Add(log);
-            //if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && this.id == UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id) {
-            //    Debug.Log("Added log to history of " + this.name + ". " + log.isInspected);
-            //}
-            if (this._history.Count > 300) {
-                //if (this._history[0].goapAction != null) {
-                //    this._history[0].goapAction.AdjustReferenceCount(-1);
-                //}
-                this._history.RemoveAt(0);
-            }
-            //if(log.goapAction != null) {
-            //    log.goapAction.AdjustReferenceCount(1);
-            //}
-            Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
-            if (isLycanthrope) {
-                lycanData.limboForm.AddHistory(log);
-            }
-            return true;
-        }
-        return false;
-    }
+
     //Add log to this character and show notif of that log only if this character is clicked or tracked, otherwise, add log only
     public void RegisterLogAndShowNotifToThisCharacterOnly(string fileName, string key, object target = null, string targetName = "", ActualGoapNode node = null, bool onlyClickedCharacter = true) {
         if (!GameManager.Instance.gameHasStarted) {
@@ -2424,16 +2403,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         addLog.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotificationFrom(addLog, this, onlyClickedCharacter);
     }
-    public void RegisterLogAndShowNotifToThisCharacterOnly(Log addLog, GoapAction goapAction = null, bool onlyClickedCharacter = true) {
-        if (!GameManager.Instance.gameHasStarted) {
-            return;
-        }
-        addLog.AddLogToInvolvedObjects();
-        PlayerManager.Instance.player.ShowNotificationFrom(addLog, this, onlyClickedCharacter);
-    }
+
     public virtual void OnActionPerformed(ActualGoapNode node) {
         ///Moved all needed checking <see cref="CharacterManager.OnActionStateSet(GoapAction, GoapActionState)"/>
-        ///
         if (isDead || !canWitness) {
             return;
         }
@@ -2574,7 +2546,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //targetCharacter.OnSeenBy(this); //trigger that the target character was seen by this character.
             targetCharacterCurrentActionNode = targetCharacter.currentActionNode;
             if (targetCharacterCurrentActionNode != null /*&& node.action.shouldAddLogs*/ && targetCharacterCurrentActionNode.actionStatus == ACTION_STATUS.PERFORMING) {
-                reactionComponent.ReactTo(targetCharacterCurrentActionNode);
+                reactionComponent.ReactTo(targetCharacterCurrentActionNode, SHARE_INTEL_STATUS.WITNESSED);
             }
         }
         if (target.allJobsTargetingThis.Count > 0) {
@@ -2586,7 +2558,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     if (plan != null /*&& plan.currentActualNode.action.shouldAddLogs*/ 
                         && plan.currentActualNode.actionStatus == ACTION_STATUS.PERFORMING
                         && plan.currentActualNode != targetCharacterCurrentActionNode) {
-                        reactionComponent.ReactTo(plan.currentActualNode);
+                        reactionComponent.ReactTo(plan.currentActualNode, SHARE_INTEL_STATUS.WITNESSED);
                     }
                 }
             }
@@ -2595,35 +2567,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //React To Character, Object, and Item
         string debugLog = string.Empty;
         reactionComponent.ReactTo(target, ref debugLog);
-        PrintLogIfActive(debugLog);
+        logComponent.PrintLogIfActive(debugLog);
 
         if(targetCharacter != null) {
             ThisCharacterWatchEvent(targetCharacter, null, null);
         }
-    }
-    /// <summary>
-    /// What should happen if another character sees this character?
-    /// </summary>
-    /// <param name="character">The character that saw this character.</param>
-    //protected virtual void OnSeenBy(Character character) { }
-    public List<Log> GetMemories(int dayFrom, int dayTo, bool eventMemoriesOnly = false) {
-        List<Log> memories = new List<Log>();
-        if (eventMemoriesOnly) {
-            for (int i = 0; i < _history.Count; i++) {
-                if (_history[i].node != null) {
-                    if (_history[i].day >= dayFrom && _history[i].day <= dayTo) {
-                        memories.Add(_history[i]);
-                    }
-                }
-            }
-        } else {
-            for (int i = 0; i < _history.Count; i++) {
-                if (_history[i].day >= dayFrom && _history[i].day <= dayTo) {
-                    memories.Add(_history[i]);
-                }
-            }
-        }
-        return memories;
     }
     //public List<Log> GetWitnessOrInformedMemories(int dayFrom, int dayTo, Character involvedCharacter = null) {
     //    List<Log> memories = new List<Log>();
@@ -2665,13 +2613,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    }
     //    return memories;
     //}
-    public void CreateInformedEventLog(ActualGoapNode eventToBeInformed, bool invokeShareIntelReaction) {
-        Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event", eventToBeInformed);
-        informedLog.AddToFillers(eventToBeInformed.descriptionLog.fillers);
-        informedLog.AddToFillers(this, this.name, LOG_IDENTIFIER.OTHER);
-        informedLog.AddToFillers(null, Utilities.LogDontReplace(eventToBeInformed.descriptionLog), LOG_IDENTIFIER.APPEND);
-        AddHistory(informedLog);
-    }
     //public void ThisCharacterWitnessedEvent(ActualGoapNode witnessedEvent) {
     //    //if (isDead || !canWitness) {
     //    //    return;
@@ -2912,7 +2853,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //}
         if (stateComponent.currentState != null/* && (stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT || stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED || stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE)*/) {
             summary += "\n-In a state, must not watch...";
-            PrintLogIfActive(summary);
+            logComponent.PrintLogIfActive(summary);
             return;
         }
         interruptComponent.TriggerInterrupt(INTERRUPT.Watch, targetCharacter);
@@ -3004,7 +2945,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (combatResultWeights.Count > 0) {
                 string result = combatResultWeights.PickRandomElementGivenWeights();
                 rollLog += "\n- Pick result is: " + result;
-                characterThatAttacked.PrintLogIfActive(rollLog);
+                characterThatAttacked.logComponent.PrintLogIfActive(rollLog);
                 attackSummary += "\ncombat result is " + result; ;
                 switch (result) {
                     case "Unconscious":
@@ -3025,7 +2966,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             } else {
                 rollLog += "\n- Dictionary is empty, no result!";
-                characterThatAttacked.PrintLogIfActive(rollLog);
+                characterThatAttacked.logComponent.PrintLogIfActive(rollLog);
             }
         }
         //else {
@@ -3784,7 +3725,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return;
         }
         string idleLog = OtherIdlePlans();
-        PrintLogIfActive(idleLog);
+        logComponent.PrintLogIfActive(idleLog);
         //if (!PlanJobQueueFirst()) {
         //    if (!PlanFullnessRecoveryActions()) {
         //        if (!PlanTirednessRecoveryActions()) {
@@ -4390,7 +4331,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    }
         //}
         if(homeStructure == null) {
-            Debug.LogError(name + " error in GetItemsOwned no homestructure!");
+            logComponent.PrintLogErrorIfActive(name + " error in GetItemsOwned no homestructure!");
         }
         for (int i = 0; i < homeStructure.itemsInStructure.Count; i++) {
             SpecialToken token = homeStructure.itemsInStructure[i];
@@ -4476,95 +4417,99 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Share Intel
-    public List<string> ShareIntel(Intel intel) {
-        List<string> dialogReactions = new List<string>();
-        //if (intel is EventIntel) {
-        //    EventIntel ei = intel as EventIntel;
-        //    if (ei.action.currentState != null && ei.action.currentState.shareIntelReaction != null) {
-        //        dialogReactions.AddRange(ei.action.currentState.shareIntelReaction.Invoke(this, ei, SHARE_INTEL_STATUS.INFORMED));
-        //    }
-        //    //if the determined reactions list is empty, check the default reactions
-        //    if (dialogReactions.Count == 0) {
-        //        bool doesNotConcernMe = false;
-        //        //If the event's actor and target do not have any relationship with the recipient and are not part of his faction, 
-        //        //and if no item involved is owned by the recipient: "This does not concern me."
-        //        if (!this.relationshipContainer.HasRelationshipWith(ei.action.actorAlterEgo)
-        //            && ei.action.actor.faction != this.faction) {
-        //            if (ei.action.poiTarget is Character) {
-        //                Character otherCharacter = ei.action.poiTarget as Character;
-        //                if (!this.relationshipContainer.HasRelationshipWith(ei.action.poiTargetAlterEgo)
-        //                    && otherCharacter.faction != this.faction) {
-        //                    doesNotConcernMe = true;
-        //                }
-        //            } else if (ei.action.poiTarget is TileObject) {
-        //                TileObject obj = ei.action.poiTarget as TileObject;
-        //                if (!obj.IsOwnedBy(this)) {
-        //                    doesNotConcernMe = true;
-        //                }
-        //            } else if (ei.action.poiTarget is SpecialToken) {
-        //                SpecialToken obj = ei.action.poiTarget as SpecialToken;
-        //                if (obj.characterOwner != this) {
-        //                    doesNotConcernMe = true;
-        //                }
-        //            }
-        //        }
+    //public List<string> ShareIntel(Intel intel) {
+    //    List<string> dialogReactions = new List<string>();
+    //    //if (intel is EventIntel) {
+    //    //    EventIntel ei = intel as EventIntel;
+    //    //    if (ei.action.currentState != null && ei.action.currentState.shareIntelReaction != null) {
+    //    //        dialogReactions.AddRange(ei.action.currentState.shareIntelReaction.Invoke(this, ei, SHARE_INTEL_STATUS.INFORMED));
+    //    //    }
+    //    //    //if the determined reactions list is empty, check the default reactions
+    //    //    if (dialogReactions.Count == 0) {
+    //    //        bool doesNotConcernMe = false;
+    //    //        //If the event's actor and target do not have any relationship with the recipient and are not part of his faction, 
+    //    //        //and if no item involved is owned by the recipient: "This does not concern me."
+    //    //        if (!this.relationshipContainer.HasRelationshipWith(ei.action.actorAlterEgo)
+    //    //            && ei.action.actor.faction != this.faction) {
+    //    //            if (ei.action.poiTarget is Character) {
+    //    //                Character otherCharacter = ei.action.poiTarget as Character;
+    //    //                if (!this.relationshipContainer.HasRelationshipWith(ei.action.poiTargetAlterEgo)
+    //    //                    && otherCharacter.faction != this.faction) {
+    //    //                    doesNotConcernMe = true;
+    //    //                }
+    //    //            } else if (ei.action.poiTarget is TileObject) {
+    //    //                TileObject obj = ei.action.poiTarget as TileObject;
+    //    //                if (!obj.IsOwnedBy(this)) {
+    //    //                    doesNotConcernMe = true;
+    //    //                }
+    //    //            } else if (ei.action.poiTarget is SpecialToken) {
+    //    //                SpecialToken obj = ei.action.poiTarget as SpecialToken;
+    //    //                if (obj.characterOwner != this) {
+    //    //                    doesNotConcernMe = true;
+    //    //                }
+    //    //            }
+    //    //        }
 
-        //        if (ei.action.actor == this) {
-        //            //If the actor and the recipient is the same: "I know what I did."
-        //            dialogReactions.Add("I know what I did.");
-        //        } else {
-        //            if (doesNotConcernMe) {
-        //                //The following events are too unimportant to merit any meaningful response: "What will I do with this random tidbit?"
-        //                //-character picked up an item(not stealing)
-        //                //-character prayed, daydreamed, played
-        //                //- character slept
-        //                //- character mined or chopped wood
-        //                switch (ei.action.goapType) {
-        //                    case INTERACTION_TYPE.PICK_UP:
-        //                    case INTERACTION_TYPE.PRAY:
-        //                    case INTERACTION_TYPE.DAYDREAM:
-        //                    case INTERACTION_TYPE.PLAY:
-        //                    case INTERACTION_TYPE.SLEEP:
-        //                    case INTERACTION_TYPE.SLEEP_OUTSIDE:
-        //                    case INTERACTION_TYPE.MINE:
-        //                    case INTERACTION_TYPE.CHOP_WOOD:
-        //                        dialogReactions.Add("What will I do with this random tidbit?");
-        //                        break;
-        //                    default:
-        //                        dialogReactions.Add("This does not concern me.");
-        //                        break;
-        //                }
+    //    //        if (ei.action.actor == this) {
+    //    //            //If the actor and the recipient is the same: "I know what I did."
+    //    //            dialogReactions.Add("I know what I did.");
+    //    //        } else {
+    //    //            if (doesNotConcernMe) {
+    //    //                //The following events are too unimportant to merit any meaningful response: "What will I do with this random tidbit?"
+    //    //                //-character picked up an item(not stealing)
+    //    //                //-character prayed, daydreamed, played
+    //    //                //- character slept
+    //    //                //- character mined or chopped wood
+    //    //                switch (ei.action.goapType) {
+    //    //                    case INTERACTION_TYPE.PICK_UP:
+    //    //                    case INTERACTION_TYPE.PRAY:
+    //    //                    case INTERACTION_TYPE.DAYDREAM:
+    //    //                    case INTERACTION_TYPE.PLAY:
+    //    //                    case INTERACTION_TYPE.SLEEP:
+    //    //                    case INTERACTION_TYPE.SLEEP_OUTSIDE:
+    //    //                    case INTERACTION_TYPE.MINE:
+    //    //                    case INTERACTION_TYPE.CHOP_WOOD:
+    //    //                        dialogReactions.Add("What will I do with this random tidbit?");
+    //    //                        break;
+    //    //                    default:
+    //    //                        dialogReactions.Add("This does not concern me.");
+    //    //                        break;
+    //    //                }
 
-        //            } else {
-        //                //Otherwise: "A proper response to this information has not been implemented yet."
-        //                dialogReactions.Add("A proper response to this information has not been implemented yet.");
-        //            }
-        //        }
-        //    }
-        //    CreateInformedEventLog(intel.intelLog.node, false);
-        //}
-        //PlayerManager.Instance.player.RemoveIntel(intel);
-        dialogReactions.Add("A proper response to this information has not been implemented yet.");
-        return dialogReactions;
-        //if (relationships.ContainsKey(intel.actor)) {
-        //    if (!intel.isCompleted) {
-        //        relationships[intel.actor].SetPlannedActionIntel(intel);
-        //    } else {
-        //        Debug.Log(GameManager.Instance.TodayLogString() + "The intel given to " + this.name + " regarding " + intel.actor.name + " has already been completed, not setting planned action...");
-        //    }
-        //    relationships[intel.actor].OnIntelGivenToCharacter(intel);
-        //    PlayerManager.Instance.player.RemoveIntel(intel);
-        //} else {
-        //    Debug.Log(GameManager.Instance.TodayLogString() + this.name + " does not have a relationship with " + intel.actor.name + ". He/she doesn't care about any intel you give that is about " + intel.actor.name);
-        //}
-        //if (intel.target is Character) {
-        //    Character target = intel.target as Character;
-        //    if (relationships.ContainsKey(target)) {
-        //        relationships[target].OnIntelGivenToCharacter(intel);
-        //        PlayerManager.Instance.player.RemoveIntel(intel);
-        //    }
-        //}
-
+    //    //            } else {
+    //    //                //Otherwise: "A proper response to this information has not been implemented yet."
+    //    //                dialogReactions.Add("A proper response to this information has not been implemented yet.");
+    //    //            }
+    //    //        }
+    //    //    }
+    //    //    CreateInformedEventLog(intel.intelLog.node, false);
+    //    //}
+    //    //PlayerManager.Instance.player.RemoveIntel(intel);
+    //    dialogReactions.Add("A proper response to this information has not been implemented yet.");
+    //    return dialogReactions;
+    //    //if (relationships.ContainsKey(intel.actor)) {
+    //    //    if (!intel.isCompleted) {
+    //    //        relationships[intel.actor].SetPlannedActionIntel(intel);
+    //    //    } else {
+    //    //        Debug.Log(GameManager.Instance.TodayLogString() + "The intel given to " + this.name + " regarding " + intel.actor.name + " has already been completed, not setting planned action...");
+    //    //    }
+    //    //    relationships[intel.actor].OnIntelGivenToCharacter(intel);
+    //    //    PlayerManager.Instance.player.RemoveIntel(intel);
+    //    //} else {
+    //    //    Debug.Log(GameManager.Instance.TodayLogString() + this.name + " does not have a relationship with " + intel.actor.name + ". He/she doesn't care about any intel you give that is about " + intel.actor.name);
+    //    //}
+    //    //if (intel.target is Character) {
+    //    //    Character target = intel.target as Character;
+    //    //    if (relationships.ContainsKey(target)) {
+    //    //        relationships[target].OnIntelGivenToCharacter(intel);
+    //    //        PlayerManager.Instance.player.RemoveIntel(intel);
+    //    //    }
+    //    //}
+    //}
+    public string ShareIntel(Intel intel) {
+        string response = string.Empty;
+        reactionComponent.ReactTo(intel.node, SHARE_INTEL_STATUS.INFORMED);
+        return response;
     }
     #endregion
 
@@ -4580,7 +4525,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 log += kvp.Value[i].ToString();
             }
         }
-        Debug.Log(log);
+        logComponent.PrintLogIfActive(log);
     }
     #endregion
 
@@ -4826,7 +4771,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         string log = "PERFORMING GOAP PLANS OF " + name;
         if (currentActionNode != null) {
             log += "\n" + name + " can't perform another action because he/she is currently performing " + currentActionNode.action.goapName;
-            PrintLogIfActive(log);
+            logComponent.PrintLogIfActive(log);
             return;
         }
         
@@ -4844,10 +4789,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                         log += "\n - Action's preconditions are not all satisfied, trying to recalculate plan...";
                         if (plan.doNotRecalculate) {
                             log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
-                            PrintLogIfActive(log);
+                            logComponent.PrintLogIfActive(log);
                             currentTopPrioJob.CancelJob(false);
                         } else {
-                            PrintLogIfActive(log);
+                            logComponent.PrintLogIfActive(log);
                             planner.RecalculateJob(currentTopPrioJob);
                         }
                     } else {
@@ -4857,7 +4802,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                             Character targetCharacter = currentNode.poiTarget as Character;
                             if (!targetCharacter.IsInOwnParty() && targetCharacter.currentParty != ownParty) {
                                 log += "\n - " + targetCharacter.name + " is not in its own party, waiting and skipping...";
-                                PrintLogIfActive(log);
+                                logComponent.PrintLogIfActive(log);
                                 return;
                             }
                         }
@@ -4865,7 +4810,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                             //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
                             if (marker.inVisionPOIs.Contains(currentNode.poiTarget) && !marker.CanDoStealthActionToTarget(currentNode.poiTarget)) {
                                 log += "\n - Action is stealth and character cannot do stealth action right now...";
-                                PrintLogIfActive(log);
+                                logComponent.PrintLogIfActive(log);
                                 return;
                             }
                         }
@@ -4878,7 +4823,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                                     Lazy lazy = traitContainer.GetNormalTrait<Trait>("Lazy") as Lazy;
                                     if (lazy.TriggerLazy()) {
                                         log += "\n - Character triggered lazy, not going to do job";
-                                        PrintLogIfActive(log);
+                                        logComponent.PrintLogIfActive(log);
                                         return;
                                     } else {
                                         log += "\n - Character did not trigger lazy, continue to do action";
@@ -4889,13 +4834,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                             }
                         }
                         log += "\n - Action's preconditions are all satisfied, doing action...";
-                        PrintLogIfActive(log);
+                        logComponent.PrintLogIfActive(log);
                         Messenger.Broadcast(Signals.CHARACTER_WILL_DO_PLAN, this, plan);
                         currentNode.DoAction(currentTopPrioJob, plan);
                     }
                 } else {
                     log += "\n - Action did not meet current requirements and allowed actions, dropping plan...";
-                    PrintLogIfActive(log);
+                    logComponent.PrintLogIfActive(log);
                     currentTopPrioJob.CancelJob(false);
                 }
             }
@@ -5008,7 +4953,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         string log = string.Empty;
         if (currentActionNode == null) {
             log = name + " cannot PerformGoapAction because there is no current action!";
-            PrintLogIfActive(log);
+            logComponent.PrintLogIfActive(log);
             //Debug.LogError(log);
             //if (!DropPlan(plan)) {
             //    //PlanGoapActions();
@@ -5026,17 +4971,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentActionNode.action.goapType, currentActionNode.actor, currentActionNode.poiTarget, currentActionNode.otherData)
             && currentActionNode.action.CanSatisfyAllPreconditions(currentActionNode.actor, currentActionNode.poiTarget, currentActionNode.otherData)) {
             log += "\nAction satisfies all requirements and preconditions, proceeding to perform actual action: " + currentActionNode.action.goapName + " to " + currentActionNode.poiTarget.name + " at " + currentActionNode.poiTarget.gridTileLocation?.ToString() ?? "No Tile Location";
-            PrintLogIfActive(log);
+            logComponent.PrintLogIfActive(log);
             currentActionNode.PerformAction();
         } else {
             log += "\nAction did not meet all requirements and preconditions. Will try to recalculate plan...";
             GoapPlan plan = currentPlan;
             if (plan.doNotRecalculate) {
                 log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
-                PrintLogIfActive(log);
+                logComponent.PrintLogIfActive(log);
                 currentJob.CancelJob(false);
             } else {
-                PrintLogIfActive(log);
+                logComponent.PrintLogIfActive(log);
                 UnityEngine.Assertions.Assert.IsNotNull(currentJob);
                 UnityEngine.Assertions.Assert.IsTrue(currentJob is GoapPlanJob);
                 planner.RecalculateJob(currentJob as GoapPlanJob);
@@ -5112,7 +5057,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         if (isDead || !canPerform) {
             log += "\n" + name + " is dead or cannot perform! Do not do GoapActionResult, automatically CancelJob";
-            PrintLogIfActive(log);
+            logComponent.PrintLogIfActive(log);
             job.CancelJob(false);
             return;
         }
@@ -5126,7 +5071,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 //    log += "\nFinished a settlement job and character is hardworking, increase happiness by 3000...";
                 //    needsComponent.AdjustHappiness(3000); //TODO: Move this to hardworking trait.
                 //}
-                PrintLogIfActive(log);
+                logComponent.PrintLogIfActive(log);
                 //bool forceRemoveJobInQueue = true;
                 ////If an action is stopped as current action (meaning it was cancelled) and it is a settlement/faction job, do not remove it from the queue
                 //if (actionNode.isStoppedAsCurrentAction && plan != null && plan.job != null && plan.job.jobQueueParent.isAreaOrQuestJobQueue) {
@@ -5143,7 +5088,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 //    log += "Drop plan because this character is no longer the one assigned";
                 //    DropPlan(plan);
                 //}
-                PrintLogIfActive(log);
+                logComponent.PrintLogIfActive(log);
                 //PlanGoapActions();
             }
         }
@@ -5298,7 +5243,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         currentActionNode = actionNode;
         if (currentActionNode != null) {
-            PrintLogIfActive(this.name + " will do action " + actionNode.action.goapType.ToString() + " to " + actionNode.poiTarget.ToString());
+            logComponent.PrintLogIfActive(this.name + " will do action " + actionNode.action.goapType.ToString() + " to " + actionNode.poiTarget.ToString());
             if (currentActionNode.action.goapType.IsHostileAction()) { //if the character will do a combat action, remove all ignore hostilities value
                 ClearIgnoreHostilities();
             }
@@ -5347,7 +5292,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(null, currentActionNode.action.goapName, LOG_IDENTIFIER.STRING_1);
             log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
-            RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
         }
         //if (actor.currentAction != null && actor.currentAction.parentPlan != null && actor.currentAction.parentPlan.job != null && actor.currentAction == this) {
         //    if (reason != "") {
@@ -5387,7 +5332,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     Table table = carriedPOI as Table;
                     log += "\n-Stored resources on drop: " + table.food + " Food.";
                 }
-                PrintLogIfActive(log);
+
+                logComponent.PrintLogIfActive(log);
             }
             ownParty.RemoveCarriedPOI();
         }
@@ -5403,17 +5349,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             UIManager.Instance.characterInfoUI.UpdateBasicInfo();
         }
         //Messenger.Broadcast<GoapAction>(Signals.STOP_ACTION, this);
-        PrintLogIfActive("Stopped action of " + name + " which is " + previousCurrentActionNode.action.goapName + " targetting " + previousCurrentActionNode.poiTarget.name + "!");
+        logComponent.PrintLogIfActive("Stopped action of " + name + " which is " + previousCurrentActionNode.action.goapName + " targetting " + previousCurrentActionNode.poiTarget.name + "!");
         return true;
     }
     //public void SetHasAlreadyAskedForPlan(bool state) {
     //    _hasAlreadyAskedForPlan = state;
     //}
-    public void PrintLogIfActive(string log) {
-        //if (InteriorMapManager.Instance.currentlyShowingArea == specificLocation) {//UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this
-        Debug.Log(GameManager.Instance.TodayLogString() + log);
-        //}
-    }
     //public void AddTargettedByAction(GoapAction action) {
     //    if (this != action.actor) { // && !isDead
     //        targettedByAction.Add(action);
@@ -5479,7 +5420,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         if(gridTileLocation != null && characterThatScreamed.gridTileLocation != null) {
             float dist = gridTileLocation.GetDistanceTo(characterThatScreamed.gridTileLocation);
-            PrintLogIfActive(name + " distance to " + characterThatScreamed.name + " is " + dist);
+            logComponent.PrintLogIfActive(name + " distance to " + characterThatScreamed.name + " is " + dist);
             float distanceChecker = 10f;
             //if (currentStructure != characterThatScreamed.currentStructure) {
             //    distanceChecker = 2f;
@@ -5530,7 +5471,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else {
             log += "\n" + name + " cannot react because there is still something important that he/she will do.";
         }
-        PrintLogIfActive(log);
+
+        logComponent.PrintLogIfActive(log);
     }
 
     //Can only be seized if poi has tile location
@@ -5723,7 +5665,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }else if (status == SHARE_INTEL_STATUS.INFORMED) {
             ReactToCrime(committedCrime, crimeAction, criminal, ref hasRelationshipDegraded, null, crimeAction);
         } else {
-            Debug.LogError("The share intel status is neither INFORMED or WITNESSED");
+            logComponent.PrintLogErrorIfActive("The share intel status is neither INFORMED or WITNESSED");
         }
         return hasRelationshipDegraded;
     }
@@ -5751,7 +5693,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         string reactSummary = this.name + " will react to crime committed by " + criminal.name;
         if(committedCrime == CRIME.NONE) {
             reactSummary += "\nNo reaction because committed crime is " + committedCrime.ToString();
-            PrintLogIfActive(reactSummary);
+            logComponent.PrintLogIfActive(reactSummary);
             return;
         }
         //Log witnessLog = null;
@@ -5840,7 +5782,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    }
         //}
 
-        PrintLogIfActive(reactSummary);
+        logComponent.PrintLogIfActive(reactSummary);
     }
     /// <summary>
     /// Crime reactions per role.
@@ -6153,14 +6095,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Limiters
     public void IncreaseCanWitness() {
-        canWitnessValue++;
+        _canWitnessValue++;
     }
     public void DecreaseCanWitness() {
-        canWitnessValue--;
+        _canWitnessValue--;
     }
     public void IncreaseCanMove() {
         bool couldNotMoveBefore = canMove == false;
-        canMoveValue++;
+        _canMoveValue++;
         if (couldNotMoveBefore && canMove) {
             //character could not move before adjustment, but can move after adjustment
             Messenger.Broadcast(Signals.CHARACTER_CAN_MOVE_AGAIN, this);
@@ -6168,23 +6110,23 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void DecreaseCanMove() {
         bool couldMoveBefore = canMove;
-        canMoveValue--;
+        _canMoveValue--;
         if (couldMoveBefore && canMove == false) {
             //character could move before adjustment, but cannot move after adjustment
             Messenger.Broadcast(Signals.CHARACTER_CAN_NO_LONGER_MOVE, this);
         }
     }
     public void IncreaseCanBeAttacked() {
-        canBeAtttackedValue++;
+        _canBeAtttackedValue++;
     }
     public void DecreaseCanBeAttacked() {
-        canBeAtttackedValue--;
+        _canBeAtttackedValue--;
     }
     public void IncreaseCanPerform() {
-        canPerformValue++;
+        _canPerformValue++;
     }
     public void DecreaseCanPerform() {
-        canPerformValue--;
+        _canPerformValue--;
     }
     public void IncreaseCanTakeJobs() {
         canTakeJobsValue++;

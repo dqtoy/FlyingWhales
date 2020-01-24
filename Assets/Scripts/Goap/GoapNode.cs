@@ -550,7 +550,7 @@ public class ActualGoapNode {
                     if (!action.isNotificationAnIntel) {
                         Messenger.Broadcast(Signals.SHOW_PLAYER_NOTIFICATION, descriptionLog);
                     } else {
-                        Messenger.Broadcast(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(action, actor));
+                        Messenger.Broadcast(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(this));
                     }
                 }
                 descriptionLog.AddLogToInvolvedObjects();

@@ -55,14 +55,17 @@ namespace Traits {
             if (action == INTERACTION_TYPE.EAT) {
                 goapNode.actor.needsComponent.AdjustFullness(8.5f);
                 goapNode.actor.needsComponent.AdjustComfort(2f);
+                if(owner is Table) {
+                    (owner as Table).AdjustFood(-1);
+                }
             }
         }
-        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
-            base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
-            if (action == INTERACTION_TYPE.EAT) {
-                OnDoneEating(goapNode);
-            }
-        }
+        //public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
+        //    base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
+        //    if (action == INTERACTION_TYPE.EAT) {
+        //        OnDoneEating(goapNode);
+        //    }
+        //}
         public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref int cost) {
             base.ExecuteCostModification(action, actor, poiTarget, otherData, ref cost);
             if (action == INTERACTION_TYPE.EAT) {
@@ -102,13 +105,13 @@ namespace Traits {
         }
         #endregion
 
-        private void OnDoneEating(ActualGoapNode goapNode) {
-            if (owner is Table) {
-                //**Per Tick Effect 2**: Reduce Dwelling Table Food by 20/Duration
-                Table table = owner as Table;
-                table.AdjustFood(-(20 * goapNode.currentState.duration));
-            }
-        }
+        //private void OnDoneEating(ActualGoapNode goapNode) {
+        //    if (owner is Table) {
+        //        //**Per Tick Effect 2**: Reduce Dwelling Table Food by 20/Duration
+        //        Table table = owner as Table;
+        //        table.AdjustFood(-(20 * goapNode.currentState.duration));
+        //    }
+        //}
 
         private string GetEdibleType() {
             if (owner is EdiblePlant || owner is Mushroom) {

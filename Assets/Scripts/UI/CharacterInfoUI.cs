@@ -457,12 +457,12 @@ public class CharacterInfoUI : UIMenu {
             return;
         }
         //List<Log> characterHistory = new List<Log>(_activeCharacter.history.OrderByDescending(x => x.date.year).ThenByDescending(x => x.date.month).ThenByDescending(x => x.date.day).ThenByDescending(x => x.date.tick));
-        int historyCount = _activeCharacter.history.Count;
+        int historyCount = _activeCharacter.logComponent.history.Count;
         int historyLastIndex = historyCount - 1;
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
             if(i < historyCount) {
-                Log currLog = _activeCharacter.history[historyLastIndex - i];
+                Log currLog = _activeCharacter.logComponent.history[historyLastIndex - i];
                 currItem.gameObject.SetActive(true);
                 currItem.SetLog(currLog);
             } else {

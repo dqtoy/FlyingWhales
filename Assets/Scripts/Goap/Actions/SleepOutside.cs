@@ -19,13 +19,14 @@ public class SleepOutside : GoapAction {
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.COMFORT_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Rest Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 1000;
+        return 100;
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
@@ -59,22 +60,9 @@ public class SleepOutside : GoapAction {
         if (needsComponent.currentSleepTicks == 1) { //If sleep ticks is down to 1 tick left, set current duration to end duration so that the action will end now, we need this because the character must only sleep the remaining hours of his sleep if ever that character is interrupted while sleeping
             goapNode.OverrideCurrentStateDuration(goapNode.currentState.duration);
         }
-        needsComponent.AdjustTiredness(1.1f);
+        needsComponent.AdjustTiredness(1f);
         needsComponent.AdjustSleepTicks(-1);
-
-        float comfortAdjustment = 0f;
-        if (actor.currentStructure == actor.homeStructure) {
-            comfortAdjustment = 1f;
-        } else if (actor.currentStructure is Dwelling && actor.currentStructure != actor.homeStructure) {
-            comfortAdjustment = 0.5f;
-        } else if (actor.currentStructure.structureType == STRUCTURE_TYPE.INN) {
-            comfortAdjustment = 0.8f;
-        } else if (actor.currentStructure.structureType == STRUCTURE_TYPE.PRISON) {
-            comfortAdjustment = 0.4f;
-        } else if (actor.currentStructure.structureType.IsOpenSpace()) {
-            comfortAdjustment = 0.3f;
-        }
-        needsComponent.AdjustComfort(comfortAdjustment);
+        needsComponent.AdjustComfort(0.2f);
     }
     public void AfterRestSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Resting");

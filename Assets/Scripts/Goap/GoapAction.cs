@@ -169,20 +169,23 @@ public class GoapAction : IReactable {
     public virtual LocationGridTile GetOverrideTargetTile(ActualGoapNode goapNode) {
         return null;
     }
+    public virtual string ReactionToActor(Character witness, ActualGoapNode node) { return string.Empty; }
+    public virtual string ReactionToTarget(Character witness, ActualGoapNode node) { return string.Empty; }
+    public virtual string ReactionOfTarget(ActualGoapNode node) { return string.Empty; }
     #endregion
 
     #region Utilities
     public int GetCost(Character actor, IPointOfInterest target, object[] otherData) {
         int baseCost = GetBaseCost(actor, target, otherData);
         //modify costs based on actor's and target's traits
-        for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
-            Trait trait = actor.traitContainer.allTraits[i];
-            trait.ExecuteCostModification(goapType, actor, target, otherData, ref baseCost);
-        }
-        for (int i = 0; i < target.traitContainer.allTraits.Count; i++) {
-            Trait trait = target.traitContainer.allTraits[i];
-            trait.ExecuteCostModification(goapType, actor, target, otherData, ref baseCost);
-        }
+        //for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
+        //    Trait trait = actor.traitContainer.allTraits[i];
+        //    trait.ExecuteCostModification(goapType, actor, target, otherData, ref baseCost);
+        //}
+        //for (int i = 0; i < target.traitContainer.allTraits.Count; i++) {
+        //    Trait trait = target.traitContainer.allTraits[i];
+        //    trait.ExecuteCostModification(goapType, actor, target, otherData, ref baseCost);
+        //}
         return (baseCost * TimeOfDaysCostMultiplier(actor) * PreconditionCostMultiplier()) + GetDistanceCost(actor, target);
     }
     private bool IsTargetMissing(ActualGoapNode node) {

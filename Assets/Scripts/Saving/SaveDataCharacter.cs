@@ -290,9 +290,9 @@ public class SaveDataCharacter {
         hasCancelledSleepSchedule = character.needsComponent.hasCancelledSleepSchedule;
 
         history = new List<SaveDataLog>();
-        for (int i = 0; i < character.history.Count; i++) {
+        for (int i = 0; i < character.logComponent.history.Count; i++) {
             SaveDataLog data = new SaveDataLog();
-            data.Save(character.history[i]);
+            data.Save(character.logComponent.history[i]);
             history.Add(data);
         }
     }
@@ -419,7 +419,7 @@ public class SaveDataCharacter {
 
     public void LoadCharacterHistory(Character character) {
         for (int i = 0; i < history.Count; i++) {
-            character.AddHistory(history[i].Load());
+            character.logComponent.AddHistory(history[i].Load());
         }
     }
 }

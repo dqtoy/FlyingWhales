@@ -78,7 +78,7 @@ public class ShareIntelMenu : MonoBehaviour {
 
         GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
         DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
-        actorItem.SetData(actor, "I am here to share information with you.", DialogItem.Position.Right);
+        actorItem.SetData(actor, Utilities.LogReplacer(intelToShare.node.descriptionLog), DialogItem.Position.Right);
 
         DirectlyShowIntelReaction(intelToShare);
     }
@@ -124,14 +124,16 @@ public class ShareIntelMenu : MonoBehaviour {
         //intelItems[0].SetClickedState(true);
         //SetIntelButtonsInteractable(false);
 
-        GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
-        DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
-        actorItem.SetData(actor, Utilities.LogReplacer(intel.intelLog), DialogItem.Position.Right);
+        //GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
+        //DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
+        //actorItem.SetData(actor, Utilities.LogReplacer(intel.intelLog), DialogItem.Position.Right);
 
         //ShareIntel share = PlayerManager.Instance.player.shareIntelAbility;
         //share.BaseActivate(targetCharacter);
-        List<string> reactions = targetCharacter.ShareIntel(intel);
-        StartCoroutine(ShowReactions(reactions));
+        //List<string> reactions = targetCharacter.ShareIntel(intel);
+        //StartCoroutine(ShowReactions(reactions));
+        string response = targetCharacter.ShareIntel(intel);
+        StartCoroutine(ShowReaction(response));
     }
     string[] randomNothings = new string[] {
         "I really don't care",
@@ -165,8 +167,22 @@ public class ShareIntelMenu : MonoBehaviour {
         closeBtn.interactable = true;
         dialogScrollView.verticalNormalizedPosition = 0f;
         yield return null;
-        
-
+        //ShareIntel share = PlayerManager.Instance.player.shareIntelAbility;
+        //share.DeactivateAction();
+    }
+    private IEnumerator ShowReaction(string reaction) {
+        if (reaction == string.Empty) {
+            //character had no reaction
+            reaction = "A proper response to this information has not been implemented yet.";
+        }
+        GameObject targetDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
+        DialogItem item = targetDialog.GetComponent<DialogItem>();
+        item.SetData(targetCharacter, reaction);
+        endOfConversationLbl.transform.SetParent(dialogScrollView.content);
+        endOfConversationLbl.gameObject.SetActive(true);
+        closeBtn.interactable = true;
+        dialogScrollView.verticalNormalizedPosition = 0f;
+        yield return null;
         //ShareIntel share = PlayerManager.Instance.player.shareIntelAbility;
         //share.DeactivateAction();
     }

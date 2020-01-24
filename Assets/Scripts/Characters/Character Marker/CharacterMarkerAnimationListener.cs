@@ -69,7 +69,7 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
         } else {
             string attackSummary = parentMarker.character.name + " hit " + target.name + ", outside of combat state";
             target.OnHitByAttackFrom(parentMarker.character, fromState, ref attackSummary);
-            parentMarker.character.PrintLogIfActive(attackSummary);
+            parentMarker.character.logComponent.PrintLogIfActive(attackSummary);
         }
     }
 }

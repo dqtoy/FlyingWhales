@@ -54,8 +54,9 @@ public class CharacterManager : MonoBehaviour {
     public Dictionary<Character, List<string>> allCharacterLogs { get; private set; }
     public Dictionary<CHARACTER_ROLE, INTERACTION_TYPE[]> characterRoleInteractions { get; private set; }
     public Dictionary<string, DeadlySin> deadlySins { get; private set; }
+    public Dictionary<EMOTION, Emotion> emotionData { get; private set; }
 
-    
+
     private List<string> deadlySinsRotation = new List<string>();
 
     public int defaultSleepTicks { get; private set; } //how many ticks does a character must sleep per day?
@@ -86,6 +87,7 @@ public class CharacterManager : MonoBehaviour {
         defaultSleepTicks = GameManager.Instance.GetTicksBasedOnHour(8);
         CHARACTER_MISSING_THRESHOLD = GameManager.Instance.GetTicksBasedOnHour(72);
         summonsPool = new SUMMON_TYPE[] { SUMMON_TYPE.Wolf, SUMMON_TYPE.Golem, SUMMON_TYPE.Incubus, SUMMON_TYPE.Succubus };
+        ConstructEmotionData();
         Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
 
@@ -835,6 +837,27 @@ public class CharacterManager : MonoBehaviour {
     #region POI
     public bool POIValueTypeMatching(POIValueType poi1, POIValueType poi2) {
         return poi1.id == poi2.id && poi1.poiType == poi2.poiType && poi1.tileObjectType == poi2.tileObjectType;
+    }
+    #endregion
+
+    #region Emotions
+    private void ConstructEmotionData() {
+        emotionData = new Dictionary<EMOTION, Emotion>();
+        EMOTION[] allEmotions = Utilities.GetEnumValues<EMOTION>();
+        for (int i = 0; i < allEmotions.Length; i++) {
+            EMOTION emotion = allEmotions[i];
+            var typeName = Utilities.NotNormalizedConversionEnumToStringNoSpaces(emotion.ToString());
+            System.Type type = System.Type.GetType(typeName);
+            if (type != null) {
+                Emotion data = System.Activator.CreateInstance(type) as Emotion;
+                emotionData.Add(emotion, data);
+            } else {
+                Debug.LogWarning(typeName + " has no data!");
+            }
+        }
+    }
+    public string TriggerEmotion(EMOTION emotionType, Character emoter, IPointOfInterest target) {
+        return emotionData[emotionType].ProcessEmotion(emoter, target);
     }
     #endregion
 }

@@ -848,7 +848,7 @@ public class PlayerUI : MonoBehaviour {
     #region Memories
     public void ShowMemories(Character character) {
         memoriesGO.SetActive(true);
-        List<Log> characterHistory = new List<Log>(character.history.OrderByDescending(x => x.date.year).ThenByDescending(x => x.date.month).ThenByDescending(x => x.date.day).ThenByDescending(x => x.date.tick));
+        List<Log> characterHistory = new List<Log>(character.logComponent.history.OrderByDescending(x => x.date.year).ThenByDescending(x => x.date.month).ThenByDescending(x => x.date.day).ThenByDescending(x => x.date.tick));
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
             Log currLog = characterHistory.ElementAtOrDefault(i);
