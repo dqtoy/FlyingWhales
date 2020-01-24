@@ -26,6 +26,8 @@ public class SleepOutside : GoapAction {
         SetState("Rest Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+        string costLog = "\n" + name + ": +100(Constant)";
+        actor.logComponent.AppendCostLog(costLog);
         return 100;
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {

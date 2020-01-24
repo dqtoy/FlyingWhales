@@ -83,7 +83,10 @@ public class InterruptComponent {
         if (willCheckInvision && owner.marker != null) {
             for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
                 Character inVisionCharacter = owner.marker.inVisionCharacters[i];
-                owner.CreateJobsOnEnterVisionWith(inVisionCharacter);
+                // owner.CreateJobsOnEnterVisionWith(inVisionCharacter);
+                if (!owner.marker.unprocessedVisionPOIs.Contains(inVisionCharacter)) {
+                    owner.marker.unprocessedVisionPOIs.Add(inVisionCharacter);
+                }
             }
         }
         Messenger.Broadcast(Signals.INTERRUPT_FINISHED, finishedInterrupt.interrupt, owner);

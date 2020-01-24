@@ -7,11 +7,15 @@ public class LogComponent  {
     public Character owner { get; private set; }
     public List<Log> history { get; private set; }
 
+    private string _planCostLog;
+
     public LogComponent(Character owner) {
         this.owner = owner;
         history = new List<Log>();
+        ClearCostLog();
     }
 
+    #region History
     public bool AddHistory(Log log) {
         if (!history.Contains(log)) {
             history.Add(log);
@@ -50,7 +54,9 @@ public class LogComponent  {
         }
         return memories;
     }
+    #endregion
 
+    #region Notifications
     public void RegisterLogAndShowNotifToThisCharacterOnly(Log addLog, GoapAction goapAction = null, bool onlyClickedCharacter = true) {
         if (!GameManager.Instance.gameHasStarted) {
             return;
@@ -58,7 +64,9 @@ public class LogComponent  {
         addLog.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotificationFrom(addLog, owner, onlyClickedCharacter);
     }
+    #endregion
 
+    #region Debug
     public void PrintLogIfActive(string log) {
         //if (InteriorMapManager.Instance.currentlyShowingArea == specificLocation) {//UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this
         Debug.Log(GameManager.Instance.TodayLogString() + log);
@@ -69,4 +77,17 @@ public class LogComponent  {
         Debug.LogError(GameManager.Instance.TodayLogString() + log);
         //}
     }
+    #endregion
+    
+    #region Goap Planning Cost Log
+    public void ClearCostLog() {
+        _planCostLog = string.Empty;
+    }
+    public void AppendCostLog(string text) {
+        _planCostLog += text;
+    }
+    public void PrintCostLog(){
+        PrintLogIfActive(_planCostLog);   
+    }
+    #endregion
 }

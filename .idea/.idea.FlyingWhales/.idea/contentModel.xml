@@ -1282,6 +1282,7 @@
             <e p="Behaviour" t="Include">
               <e p="BerserkBehaviour.cs" t="Include" />
               <e p="CharacterBehaviourComponent.cs" t="Include" />
+              <e p="DazedBehaviour.cs" t="Include" />
               <e p="DefaultAtHome.cs" t="Include" />
               <e p="DefaultBaseStructure.cs" t="Include" />
               <e p="DefaultExtraCatcher.cs" t="Include" />
@@ -2115,6 +2116,7 @@
               <e p="Cultist.cs" t="Include" />
               <e p="Curious.cs" t="Include" />
               <e p="Cursed.cs" t="Include" />
+              <e p="Dazed.cs" t="Include" />
               <e p="Dead.cs" t="Include" />
               <e p="Diplomatic.cs" t="Include" />
               <e p="Disabled.cs" t="Include" />
@@ -2129,6 +2131,7 @@
               <e p="Hardworking.cs" t="Include" />
               <e p="Heartbroken.cs" t="Include" />
               <e p="Herbalist.cs" t="Include" />
+              <e p="Hiding.cs" t="Include" />
               <e p="Hothead.cs" t="Include" />
               <e p="Infected.cs" t="Include" />
               <e p="Injured.cs" t="Include" />

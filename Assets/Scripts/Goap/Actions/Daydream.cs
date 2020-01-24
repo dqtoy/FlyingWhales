@@ -11,11 +11,7 @@ public class Daydream : GoapAction {
     public Daydream() : base(INTERACTION_TYPE.DAYDREAM) {
         shouldIntelNotificationOnlyIfActorIsActive = true;
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
-        validTimeOfDays = new TIME_IN_WORDS[] {
-            TIME_IN_WORDS.MORNING,
-            TIME_IN_WORDS.LUNCH_TIME,
-            TIME_IN_WORDS.AFTERNOON,
-        };
+        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING,  TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, };
         actionIconString = GoapActionStateDB.Entertain_Icon;
         isNotificationAnIntel = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
@@ -25,14 +21,26 @@ public class Daydream : GoapAction {
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, target = GOAP_EFFECT_TARGET.ACTOR });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.COMFORT_RECOVERY, target = GOAP_EFFECT_TARGET.ACTOR });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Daydream Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        //**Cost**: randomize between 10-30
-        return Utilities.rng.Next(10, 31);
+        string costLog = "\n" + name + ":";
+        int cost = Utilities.rng.Next(90, 131);
+        costLog += " +" + cost + "(Initial)";
+        if (actor.jobComponent.numOfTimesDaydreamed > 5) {
+            cost += 2000;
+            costLog += " +2000(Times Daydreamed > 5)";
+        } else {
+            int timesCost = 10 * actor.jobComponent.numOfTimesDaydreamed;
+            cost += timesCost;
+            costLog += " +" + timesCost + "(10 x Times Daydreamed)";
+        }
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
@@ -46,6 +54,7 @@ public class Daydream : GoapAction {
     public void PreDaydreamSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetLonely(1);
         goapNode.actor.needsComponent.AdjustDoNotGetTired(1);
+        goapNode.actor.jobComponent.IncreaseNumOfTimesDaydreamed();
     }
     public void PerTickDaydreamSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustHappiness(3.35f);

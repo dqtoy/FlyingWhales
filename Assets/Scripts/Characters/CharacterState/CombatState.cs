@@ -147,7 +147,10 @@ public class CombatState : CharacterState {
             //Made it so that dead characters no longer check invision characters after exiting a state.
             for (int i = 0; i < stateComponent.character.marker.inVisionCharacters.Count; i++) {
                 Character currCharacter = stateComponent.character.marker.inVisionCharacters[i];
-                stateComponent.character.CreateJobsOnEnterVisionWith(currCharacter);
+                // stateComponent.character.CreateJobsOnEnterVisionWith(currCharacter);
+                if (!stateComponent.character.marker.unprocessedVisionPOIs.Contains(currCharacter)) {
+                    stateComponent.character.marker.unprocessedVisionPOIs.Add(currCharacter);
+                }
             }
             stateComponent.character.needsComponent.CheckExtremeNeeds();
 

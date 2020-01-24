@@ -26,10 +26,15 @@ public class Eat : GoapAction {
         SetState("Eat Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        if(target is Table) {
+        string costLog = "\n" + name + ":";
+        int cost = 0;
+        if (target is Table) {
             Table table = target as Table;
             if (table.IsOwnedBy(actor)) {
-                return Utilities.rng.Next(10, 16);
+                cost = Utilities.rng.Next(10, 16);
+                costLog += " +" + cost + "(Owned)";
+                actor.logComponent.AppendCostLog(costLog);
+                return cost;
             } else {
                 List<Character> tableOwners = table.GetOwners();
                 bool isTargetObjectOwnedByFriend = false;
@@ -46,13 +51,22 @@ public class Eat : GoapAction {
                     }
                 }
                 if (isTargetObjectOwnedByFriend) {
-                    return Utilities.rng.Next(25, 46);
+                    cost = Utilities.rng.Next(25, 46);
+                    costLog += " +" + cost + "(Owned by Friend)";
+                    actor.logComponent.AppendCostLog(costLog);
+                    return cost;
                 } else if (isTargetObjectOwnedByEnemy) {
-                    return 2000;
+                    cost = 2000;
+                    costLog += " +2000(Owned by Enemy)";
+                    actor.logComponent.AppendCostLog(costLog);
+                    return cost;
                 }
             }
         }
-        return Utilities.rng.Next(40, 51);
+        cost = Utilities.rng.Next(40, 51);
+        costLog += " +" + cost + "(Otherwise)";
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);

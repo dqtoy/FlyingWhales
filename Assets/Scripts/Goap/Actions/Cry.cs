@@ -24,13 +24,46 @@ public class Cry : GoapAction {
         SetState("Cry Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return Utilities.rng.Next(25, 51);
+        string costLog = "\n" + name + ":";
+        int cost = Utilities.rng.Next(90, 131);
+        costLog += " +" + cost + "(Initial)";
+        int timesCost = 10 * actor.jobComponent.numOfTimesCried;
+        cost += timesCost;
+        costLog += " +" + timesCost + "(10 x Times Cried)";
+        if (actor.moodComponent.moodState != MOOD_STATE.LOW && actor.moodComponent.moodState != MOOD_STATE.CRITICAL) {
+            cost += 2000;
+            costLog += " +2000(not Low and Crit mood)";
+        }
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
+    }
+    public override string ReactionToActor(Character witness, ActualGoapNode node) {
+        string response = base.ReactionToActor(witness, node);
+        Character actor = node.actor;
+        string opinionLabel = witness.opinionComponent.GetOpinionLabel(actor);
+        if (opinionLabel == OpinionComponent.Enemy || opinionLabel == OpinionComponent.Rival) {
+            if (UnityEngine.Random.Range(0, 2) == 0) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor);
+            }
+        } else if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+            if (!witness.isSerialKiller) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor);
+            }        
+        } else if (opinionLabel == OpinionComponent.Acquaintance) {
+            if (!witness.isSerialKiller && UnityEngine.Random.Range(0, 2) == 0) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor);
+            }        
+        } 
+        return response;
     }
     #endregion    
 
     #region State Effects
+    public void PreCrySuccess(ActualGoapNode goapNode) {
+        goapNode.actor.jobComponent.IncreaseNumOfTimesCried();
+    }
     public void PerTickCrySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(12f);
+        goapNode.actor.needsComponent.AdjustHappiness(6f);
     }
     #endregion
 

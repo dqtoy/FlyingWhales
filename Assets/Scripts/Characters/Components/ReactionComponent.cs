@@ -21,6 +21,15 @@ public class ReactionComponent {
         } else if (targetPOI.poiType == POINT_OF_INTEREST_TYPE.ITEM) {
             ReactTo(targetPOI as SpecialToken, ref debugLog);
         }
+        debugLog += "\n-Character will loop through all his/her traits to react to Target";
+        for (int i = 0; i < owner.traitContainer.allTraits.Count; i++) {
+            debugLog += "\n - " + owner.traitContainer.allTraits[i].name;
+            if (owner.traitContainer.allTraits[i].OnSeePOI(targetPOI, owner)) {
+                debugLog += ": triggered";
+            } else {
+                debugLog += ": not triggered";
+            }
+        }
     }
     public string ReactTo(ActualGoapNode node, SHARE_INTEL_STATUS status) {
         if(status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -150,14 +159,14 @@ public class ReactionComponent {
                             debugLog += "\n-Target cannot move or cannot witness";
                             if (targetCharacter.needsComponent.isHungry || targetCharacter.needsComponent.isStarving) {
                                 debugLog += "\n-Target is hungry or starving, will create feed job";
-                                CreateFeedJobFor(targetCharacter);
+                                owner.jobComponent.TryTriggerFeed(targetCharacter);
                             } else if (targetCharacter.needsComponent.isTired || targetCharacter.needsComponent.isExhausted) {
                                 debugLog += "\n-Target is tired or exhausted, will create Move Character job to bed if Target has a home and an available bed";
                                 if (targetCharacter.homeStructure != null) {
                                     Bed bed = targetCharacter.homeStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED) as Bed;
                                     if (bed != null) {
                                         debugLog += "\n-Target has a home and an available bed, will trigger Move Character job to bed";
-                                        CreateActualDropJob(targetCharacter, targetCharacter.homeStructure.GetLocationStructure(), bed.gridTileLocation);
+                                        owner.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.homeStructure.GetLocationStructure(), bed.gridTileLocation);
                                     } else {
                                         debugLog += "\n-Target has a home but does not have an available bed, will not trigger Move Character job";
                                     }
@@ -170,7 +179,7 @@ public class ReactionComponent {
                                     //Pray
                                     if (targetCharacter.currentStructure != targetCharacter.homeStructure) {
                                         debugLog += "\n-Target chose Pray and is not inside his/her house, will trigger Move Character job";
-                                        CreateActualDropJob(targetCharacter, targetCharacter.homeStructure.GetLocationStructure());
+                                        owner.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.homeStructure.GetLocationStructure());
                                     } else {
                                         debugLog += "\n-Target chose Pray but is already inside his/her house, will not trigger Move Character job";
                                     }
@@ -178,7 +187,7 @@ public class ReactionComponent {
                                     //Daydream
                                     if (!targetCharacter.currentStructure.structureType.IsOpenSpace()) {
                                         debugLog += "\n-Target chose Daydream and is not in an open space structure, will trigger Move Character job";
-                                        CreateActualDropJob(targetCharacter, targetCharacter.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+                                        owner.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
                                     } else {
                                         debugLog += "\n-Target chose Daydream but is already in an open space structure, will not trigger Move Character job";
                                     }
@@ -194,15 +203,6 @@ public class ReactionComponent {
                     }
                 }
             }
-            debugLog += "\n-Character will loop through all his/her traits to react to Target";
-            for (int i = 0; i < owner.traitContainer.allTraits.Count; i++) {
-                debugLog += "\n - " + owner.traitContainer.allTraits[i].name;
-                if (owner.traitContainer.allTraits[i].OnSeePOI(targetCharacter, owner)) {
-                    debugLog += ": triggered";
-                } else {
-                    debugLog += ": not triggered";
-                }
-            }
         } else {
             debugLog += "\n-Target is currently being targeted by an action, not going to react";
         }
@@ -211,7 +211,14 @@ public class ReactionComponent {
         debugLog += owner.name + " is reacting to " + targetTileObject.nameWithID;
         if (!IsPOICurrentlyTargetedByAPerformingAction(targetTileObject)) {
             debugLog += "\n-Target is not being targeted by an action, continue reaction";
-            //TODO
+            if (targetTileObject.traitContainer.GetNormalTrait<Trait>("Burning") != null) {
+                if (owner.traitContainer.GetNormalTrait<Trait>("Pyrophobic") != null) {
+                    //Fight or Flight
+                } else {
+                    
+                }
+            }
+            
         } else {
             debugLog += "\n-Target is currently being targeted by an action, not going to react";
         }
@@ -238,28 +245,6 @@ public class ReactionComponent {
             }
         }
         return false;
-    }
-    #endregion
-
-    #region Jobs
-    private bool CreateFeedJobFor(Character targetCharacter) {
-        if (!owner.jobQueue.HasJob(JOB_TYPE.FEED, targetCharacter)) {
-            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, target = GOAP_EFFECT_TARGET.TARGET };
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, targetCharacter, owner);
-            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 20 });
-            return owner.jobQueue.AddJobInQueue(job);
-        }
-        return false;
-    }
-    private bool CreateActualDropJob(Character targetCharacter, LocationStructure dropLocationStructure) {
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, targetCharacter, owner);
-        job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { dropLocationStructure });
-        return owner.jobQueue.AddJobInQueue(job);
-    }
-    private bool CreateActualDropJob(Character targetCharacter, LocationStructure dropLocationStructure, LocationGridTile dropGridTile) {
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, targetCharacter, owner);
-        job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { dropLocationStructure, dropGridTile });
-        return owner.jobQueue.AddJobInQueue(job);
     }
     #endregion
 }

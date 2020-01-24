@@ -8,12 +8,7 @@ public class Dance : GoapAction {
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
     public Dance() : base(INTERACTION_TYPE.DANCE) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
-        validTimeOfDays = new TIME_IN_WORDS[] {
-            TIME_IN_WORDS.MORNING,
-            TIME_IN_WORDS.LUNCH_TIME,
-            TIME_IN_WORDS.AFTERNOON,
-            TIME_IN_WORDS.EARLY_NIGHT,
-        };
+        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT, };
         actionIconString = GoapActionStateDB.Entertain_Icon;
         isNotificationAnIntel = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
@@ -29,8 +24,19 @@ public class Dance : GoapAction {
         SetState("Dance Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        //**Cost**: randomize between 20-36
-        return Utilities.rng.Next(20, 37);
+        string costLog = "\n" + name + ":";
+        int cost = Utilities.rng.Next(90, 131);
+        costLog += " +" + cost + "(Initial)";
+        if (actor.jobComponent.numOfTimesDanced > 5) {
+            cost += 2000;
+            costLog += " +2000(Times Danced > 5)";
+        } else {
+            int timesCost = 10 * actor.jobComponent.numOfTimesDanced;
+            cost += timesCost;
+            costLog += " +" + timesCost + "(10 x Times Danced)";
+        }
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
@@ -53,6 +59,7 @@ public class Dance : GoapAction {
     #region Effects
     public void PreDanceSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetLonely(1);
+        goapNode.actor.jobComponent.IncreaseNumOfTimesDanced();
     }
     public void PerTickDanceSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustHappiness(14f);
