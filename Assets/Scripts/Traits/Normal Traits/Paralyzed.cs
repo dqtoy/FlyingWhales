@@ -11,7 +11,6 @@ namespace Traits {
         public Paralyzed() {
             name = "Paralyzed";
             description = "This character is paralyzed.";
-            thoughtText = "[Character] is paralyzed.";
             type = TRAIT_TYPE.DISABLER;
             effect = TRAIT_EFFECT.NEGATIVE;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED };

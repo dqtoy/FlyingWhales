@@ -253,6 +253,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public bool CanAdvertiseActionToActor(Character actor, GoapAction action, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost) {
         if ((IsAvailable() || action.canBeAdvertisedEvenIfActorIsUnavailable)
             && advertisedActions != null && advertisedActions.Contains(action.goapType)
+            && actor.trapStructure.SatisfiesForcedStructure(this)
             && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)) {
             object[] data = null;
             if (otherData != null) {

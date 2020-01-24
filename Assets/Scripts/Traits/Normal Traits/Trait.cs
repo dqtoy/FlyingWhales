@@ -55,7 +55,10 @@ namespace Traits {
             //}
             if(addedTo is Character) {
                 Character character = addedTo as Character;
-                character.moodComponent.AddMoodEffect(moodEffect, this);    
+                character.moodComponent.AddMoodEffect(moodEffect, this);
+                if (string.IsNullOrEmpty(thoughtText) == false) {
+                    character.AddOverrideThought(thoughtText);
+                }
             }
             if (level == 0) {
                 SetLevel(1);
@@ -70,6 +73,9 @@ namespace Traits {
                     if (!character.isCriminal) {
                         character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
                     }
+                }
+                if (string.IsNullOrEmpty(thoughtText) == false) {
+                    character.RemoveOverrideThought(thoughtText);
                 }
             }
         }

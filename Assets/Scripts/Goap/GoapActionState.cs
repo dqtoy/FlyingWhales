@@ -8,7 +8,6 @@ public class GoapActionState {
     public GoapAction parentAction { get; private set; }
 	public string name { get; private set; }
     public int duration { get; private set; } //if 0, go instantly to after effect, if -1, endless (can only be ended manually)
-    public Log descriptionLog { get; private set; } //Always set/create description logs on Pre effect because description logs are used in Memories and Memories are stored on start of the GoapActionState
     public Action<ActualGoapNode> preEffect { get; private set; }
     public Action<ActualGoapNode> perTickEffect { get; private set; }
     public Action<ActualGoapNode> afterEffect { get; private set; }
@@ -60,15 +59,9 @@ public class GoapActionState {
         }
         return null;
     }
-    public void OverrideDescriptionLog(Log log) {
-        descriptionLog = log;
-    }
     //public void AddLogFiller(object obj, string value, LOG_IDENTIFIER identifier) {
     //    descriptionLog.AddToFillers(obj, value, identifier);
     //}
-    public void AddLogFillers(List<LogFiller> fillers, bool replaceExisting = true) {
-        descriptionLog.AddToFillers(fillers, replaceExisting);
-    }
     //public void AddArrangedLog(string priorityID, Log log, System.Action notifAction) {
     //    int index = parentAction.GetArrangedLogPriorityIndex(priorityID);
     //    if(index == -1 || arrangedLogs.Count <= index) {

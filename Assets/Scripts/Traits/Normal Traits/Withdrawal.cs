@@ -7,7 +7,6 @@ namespace Traits {
         public Withdrawal() {
             name = "Withdrawal";
             description = "This character is in withdrawal.";
-            thoughtText = "[Character] is in withdrawal.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(48);

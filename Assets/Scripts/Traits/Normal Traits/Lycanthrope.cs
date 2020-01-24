@@ -12,7 +12,6 @@ namespace Traits {
         public Lycanthrope() {
             name = "Lycanthrope";
             description = "Lycanthropes transform into wolves when they sleep.";
-            thoughtText = "[Character] can transform into a wolf.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
