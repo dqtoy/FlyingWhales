@@ -468,11 +468,11 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 				return true;
 			} else {
 				//if burning character is other character, make sure that the character that will do the job is not burning.
-				return character.traitContainer.GetNormalTrait<Trait>("Burning") == null && !character.opinionComponent.IsEnemiesWith(targetCharacter);
+				return character.traitContainer.GetNormalTrait<Trait>("Burning", "Pyrophobic") == null && !character.opinionComponent.IsEnemiesWith(targetCharacter);
 			}
 		} else {
 			//make sure that the character that will do the job is not burning.
-			return character.traitContainer.GetNormalTrait<Trait>("Burning") == null;
+			return character.traitContainer.GetNormalTrait<Trait>("Burning", "Pyrophobic") == null;
 		}
 	}
 	#endregion

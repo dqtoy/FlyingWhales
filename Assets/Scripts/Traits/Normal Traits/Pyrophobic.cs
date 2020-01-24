@@ -23,8 +23,13 @@ namespace Traits {
                 owner = addedTo as Character;
             }
         }
-
-
+        public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
+            Burning burning = targetPOI.traitContainer.GetNormalTrait<Burning>("Burning");
+            if (burning != null) {
+                AddKnownBurningSource(burning.sourceOfBurning, targetPOI);
+            }
+            return base.OnSeePOI(targetPOI, characterThatWillDoJob);
+        }
         public bool AddKnownBurningSource(BurningSource burningSource, IPointOfInterest burningPOI) {
             if (!seenBurningSources.Contains(burningSource)) {
                 seenBurningSources.Add(burningSource);

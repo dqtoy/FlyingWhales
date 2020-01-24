@@ -39,7 +39,8 @@ namespace Traits {
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             //burning
             if (targetPOI.traitContainer.GetNormalTrait<Trait>("Burning") != null && targetPOI.gridTileLocation != null 
-                && targetPOI.gridTileLocation.IsPartOfSettlement(characterThatWillDoJob.homeSettlement)) {
+                && targetPOI.gridTileLocation.IsPartOfSettlement(characterThatWillDoJob.homeSettlement) 
+                && characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Pyrophobic") == null) {
                 characterThatWillDoJob.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
             }
             
