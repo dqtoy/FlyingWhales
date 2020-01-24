@@ -36,13 +36,13 @@ public class Butcher : GoapAction {
                 if (actor.opinionComponent.IsFriendsWith(deadCharacter)) {
                     cost += 2000;
                     costLog += " +2000(Cannibal, Friend/Close)";
-                } else if ((deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) &&
+                } else if (deadCharacter != null && (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) &&
                            !actor.needsComponent.isStarving) {
                     cost += 2000;
                     costLog += " +2000(Cannibal, Human/Elf, not Starving)";
                 }
             } else {
-                if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
+                if (deadCharacter != null && (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES)) {
                     costLog += " +2000(not Cannibal, Human/Elf)";
                 }
             }
