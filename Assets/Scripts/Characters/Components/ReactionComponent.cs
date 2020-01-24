@@ -218,6 +218,7 @@ public class ReactionComponent {
                     
                 }
             }
+            
         } else {
             debugLog += "\n-Target is currently being targeted by an action, not going to react";
         }

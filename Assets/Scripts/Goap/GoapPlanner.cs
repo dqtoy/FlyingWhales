@@ -452,6 +452,7 @@ public class GoapPlanner {
                 rawPlanSummary += $"\n - {currNode.action.goapName }";
             }
             Debug.Log(rawPlanSummary);
+            owner.logComponent.PrintCostLog();
             //has a created plan
             List<JobNode> actualNodes = TransformRawPlanToActualNodes(rawPlan, job.otherData);
             GoapPlan plan = new GoapPlan(actualNodes, target, isPersonalPlan);
@@ -521,6 +522,7 @@ public class GoapPlanner {
                     GoapNode currNode = rawPlan[i];
                     rawPlanSummary += $"\n - {currNode.action.goapName }";
                 }
+                owner.logComponent.PrintCostLog();
                 List<JobNode> plannedNodes = TransformRawPlanToActualNodes(rawPlan, job.otherData, currentPlan);
                 currentPlan.Reset(plannedNodes);
                 return true;
