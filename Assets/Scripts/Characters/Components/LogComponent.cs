@@ -12,6 +12,7 @@ public class LogComponent  {
     public LogComponent(Character owner) {
         this.owner = owner;
         history = new List<Log>();
+        ClearCostLog();
     }
 
     #region History
