@@ -38,15 +38,12 @@ public class SaveDataPlayer {
     public void Save(Player player) {
         playerFactionID = player.playerFaction.id;
         playerAreaID = player.playerSettlement.id;
-        threat = player.threat;
         mana = player.mana;
         maxSummonSlots = player.maxSummonSlots;
         maxArtifactSlots = player.maxArtifactSlots;
         //currentDivineInterventionTick = player.currentDivineInterventionTick;
         minionsToSummon = player.minionsToSummon;
         constructionRatePercentageModifier = player.constructionRatePercentageModifier;
-        maxMana = player.maxMana;
-        manaRegen = player.manaRegen;
         //isNotFirstResearch = player.isNotFirstResearch;
 
         minions = new List<SaveDataMinion>();

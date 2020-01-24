@@ -20,10 +20,7 @@ public class PlayerManager : MonoBehaviour {
     [FormerlySerializedAs("allInterventionAbilitiesData")] public Dictionary<SPELL_TYPE, SpellData> allSpellsData;
     public COMBAT_ABILITY[] allCombatAbilities;
     public LANDMARK_TYPE[] allLandmarksThatCanBeBuilt;
-
-    [SerializeField] private Sprite[] _playerAreaFloorSprites;
-    [SerializeField] private LandmarkStructureSprite[] _playerAreaDefaultStructureSprites;
-
+    
     [FormerlySerializedAs("jobActionIcons")]
     [Header("Job Action Icons")]
     [SerializeField] private StringSpriteDictionary spellIcons;
@@ -34,15 +31,6 @@ public class PlayerManager : MonoBehaviour {
     [FormerlySerializedAs("interventionAbilityTiers")]
     [Header("Intervention Ability Tiers")]
     [SerializeField] private InterventionAbilityTierDictionary spellTiers;
-
-    #region getters/setters
-    public Sprite[] playerAreaFloorSprites {
-        get { return _playerAreaFloorSprites; }
-    }
-    public LandmarkStructureSprite[] playerAreaDefaultStructureSprites {
-        get { return _playerAreaDefaultStructureSprites; }
-    }
-    #endregion
 
     private void Awake() {
         Instance = this;
@@ -68,39 +56,21 @@ public class PlayerManager : MonoBehaviour {
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressedDown);
+        Messenger.AddListener<Vector3, int>(Signals.CREATE_CHAOS_ORBS, CreateChaosOrbsAt);
     }
     public void InitializePlayer(BaseLandmark portal, LocationStructure portalStructure) {
         player = new Player();
-        // PlayerUI.Instance.Initialize();
         player.CreatePlayerFaction();
         
         Settlement existingPlayerSettlement = player.CreatePlayerSettlement(portal);
         existingPlayerSettlement.GeneratePlayerStructures(portalStructure);
         
-        // Settlement existingPlayerSettlement = LandmarkManager.Instance.GetAreaByName("Portal");
-        // if (existingPlayerSettlement == null) {
-        //     player.CreatePlayerArea(portal);
-        // } else {
-        //     player.LoadPlayerArea(existingPlayerSettlement);
-        // }
-
         LandmarkManager.Instance.OwnSettlement(player.playerFaction, existingPlayerSettlement);
         
         PlayerUI.Instance.UpdateUI();
-
-        //Add an adjacent region to the player at the start of the game.
-        //Ref: https://trello.com/c/cQKzEx06/2699-one-additional-empty-region-owned-by-the-player-at-the-start-of-game
-        //TODO:
-        // List<RegionConnectionData> choices = portal.tileLocation.region.connections;
-        // Region chosenRegion = Utilities.GetRandomElement(choices).region;
-        // LandmarkManager.Instance.OwnRegion(player.playerFaction, RACE.DEMON, chosenRegion);
-        // //Pre-build a Spire in the second initial empty corrupted region and ensure that it does not have a Hallowed Ground trait.
-        // // chosenRegion.RemoveAllFeatures();
-        // LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenRegion.coreTile, LANDMARK_TYPE.THE_SPIRE, false);
     }
     public void InitializePlayer(SaveDataPlayer data) {
         player = new Player(data);
-        //PlayerUI.Instance.Initialize();
         player.CreatePlayerFaction(data);
         Settlement existingPlayerSettlement = LandmarkManager.Instance.GetAreaByID(data.playerAreaID);
         player.SetPlayerArea(existingPlayerSettlement);
@@ -297,11 +267,6 @@ public class PlayerManager : MonoBehaviour {
         Artifact newArtifact = CreateNewArtifactClassFromType(artifactType) as Artifact;
         return newArtifact;
     }
-    //public Artifact CreateNewArtifact(SaveDataArtifactSlot data) {
-    //    Artifact newArtifact = CreateNewArtifactClassFromType(data);
-    //    newArtifact.SetLevel(data.level);
-    //    return newArtifact;
-    //}
     public Artifact CreateNewArtifact(SaveDataArtifact data) {
         Artifact newArtifact = CreateNewArtifactClassFromType(data) as Artifact;
         return newArtifact;
@@ -314,21 +279,6 @@ public class PlayerManager : MonoBehaviour {
         var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(data.artifactType.ToString());
         return System.Activator.CreateInstance(System.Type.GetType(typeName), data);
     }
-    //private Artifact CreateNewArtifactClassFromType(SaveDataArtifactSlot data) {
-    //    switch (data.type) {
-    //        case ARTIFACT_TYPE.Ankh_Of_Anubis:
-    //            return new Ankh_Of_Anubis(data);
-    //        case ARTIFACT_TYPE.Chaos_Orb:
-    //            return new Chaos_Orb(data);
-    //        case ARTIFACT_TYPE.Hermes_Statue:
-    //            return new Hermes_Statue(data);
-    //        case ARTIFACT_TYPE.Miasma_Emitter:
-    //            return new Miasma_Emitter(data);
-    //        case ARTIFACT_TYPE.Necronomicon:
-    //            return new Necronomicon(data);
-    //    }
-    //    return null;
-    //}
     #endregion
 
     #region Unit Selection
@@ -410,9 +360,10 @@ public class PlayerManager : MonoBehaviour {
     }
     #endregion
 
-    #region Special Objects
-    public SpecialObject CreateNewSpecialObject(string typeName) {
-        return System.Activator.CreateInstance(System.Type.GetType(typeName)) as SpecialObject;
+    #region Chaos Orbs
+    private void CreateChaosOrbsAt(Vector3 worldPos, int amount) {
+        
     }
     #endregion
+    
 }

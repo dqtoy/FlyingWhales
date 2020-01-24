@@ -13,17 +13,11 @@ public class Player : ILeader {
 
     private const int MAX_INTEL = 3;
     public const int MAX_MINIONS = 6;
-    private const int MAX_THREAT = 100;
     public readonly int MAX_INTERVENTION_ABILITIES = 4;
-    private const int MAX_MANA = 500;
-    private const int INITIAL_MANA_REGEN = 20;
 
     public Faction playerFaction { get; private set; }
     public Settlement playerSettlement { get; private set; }
-    public int threat { get; private set; }
     public int mana { get; private set; }
-    public int maxMana { get; private set; }
-    public int manaRegen { get; private set; }
     public List<Intel> allIntel { get; private set; }
     public List<Minion> minions { get; private set; }
     public List<SummonSlot> summonSlots { get; private set; }
@@ -65,9 +59,7 @@ public class Player : ILeader {
         minionsToSummon = new UnsummonedMinionData[3];
         maxSummonSlots = 0;
         maxArtifactSlots = 0;
-        SetMaxMana(MAX_MANA);
-        mana = maxMana;
-        SetManaRegen(INITIAL_MANA_REGEN);
+        AdjustMana(EditableValuesManager.Instance.startingMana);
         seizeComponent = new SeizeComponent();
         ConstructAllInterventionAbilitySlots();
         GenerateMinionsToSummon();
@@ -78,9 +70,7 @@ public class Player : ILeader {
         minions = new List<Minion>();
         maxSummonSlots = data.maxSummonSlots;
         maxArtifactSlots = data.maxArtifactSlots;
-        SetMaxMana(data.maxMana);
         mana = data.mana;
-        SetManaRegen(data.manaRegen);
         minionsToSummon = data.minionsToSummon;
         SetConstructionRatePercentageModifier(data.constructionRatePercentageModifier);
         summonSlots = new List<SummonSlot>();
@@ -113,9 +103,6 @@ public class Player : ILeader {
         //minions
         Messenger.AddListener<Minion, BaseLandmark>(Signals.MINION_ASSIGNED_PLAYER_LANDMARK, OnMinionAssignedToPlayerLandmark);
         Messenger.AddListener<Minion, BaseLandmark>(Signals.MINION_UNASSIGNED_PLAYER_LANDMARK, OnMinionUnassignedFromPlayerLandmark);
-
-        //mana
-        Messenger.AddListener(Signals.HOUR_STARTED, HourlyManaRegen);
     }
     #endregion
 
@@ -199,23 +186,17 @@ public class Player : ILeader {
         }
         return minion;
     }
-    public Minion CreateNewMinionRandomClass(RACE race) {
-        string className = CharacterManager.sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, CharacterManager.sevenDeadlySinsClassNames.Length)];
-        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, className, race, GENDER.MALE, playerFaction, playerSettlement), false);
-        InitializeMinion(minion);
-        return minion;
-    }
     public Minion CreateNewMinionRandomClass() {
         string className = CharacterManager.sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, CharacterManager.sevenDeadlySinsClassNames.Length)];
         Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, className, RACE.DEMON, GENDER.MALE, playerFaction, playerSettlement), false);
         InitializeMinion(minion);
         return minion;
     }
-    public void InitializeMinion(Minion minion) {
+    private void InitializeMinion(Minion minion) {
         minion.SetRandomResearchInterventionAbilities(CharacterManager.Instance.Get3RandomResearchInterventionAbilities(minion.deadlySin));
         minion.SetCombatAbility(PlayerManager.Instance.CreateNewCombatAbility(PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)]));
     }
-    public void InitializeMinion(SaveDataMinion data, Minion minion) {
+    private void InitializeMinion(SaveDataMinion data, Minion minion) {
         //for (int i = 0; i < data.interventionAbilities.Count; i++) {
         //    data.interventionAbilities[i].Load(minion);
         //}
@@ -667,33 +648,7 @@ public class Player : ILeader {
     }
     #endregion
 
-    #region Threat
-    public void AdjustThreat(int amount) {
-        threat += amount;
-        threat = Mathf.Clamp(threat, 0, MAX_THREAT);
-        //PlayerUI.Instance.UpdateThreatMeter();
-        if(threat >= MAX_THREAT) {
-            PlayerUI.Instance.GameOver("Your threat reached the whole world. You are now exposed. You lost!");
-        }
-    }
-    public void SetThreat(int amount) {
-        threat = amount;
-        threat = Mathf.Clamp(threat, 0, MAX_THREAT);
-        //PlayerUI.Instance.UpdateThreatMeter();
-        if (threat >= MAX_THREAT) {
-            PlayerUI.Instance.GameOver("Your threat reached the whole world. You are now exposed. You lost!");
-        }
-    }
-    public void ResetThreat() {
-        threat = 0;
-        //PlayerUI.Instance.UpdateThreatMeter();
-    }
-    #endregion
-
     #region Tile Corruption
-    public void SetCurrentTileBeingCorrupted(HexTile tile) {
-        currentTileBeingCorrupted = tile;
-    }
     public void InvadeATile() {
         //currentCorruptionDuration = currentTileBeingCorrupted.corruptDuration;
         //if(currentCorruptionDuration == 0) {
@@ -713,7 +668,6 @@ public class Player : ILeader {
     }
     private void CorruptTilePerTick() {
         currentCorruptionTick ++;
-        AdjustThreat(1);
         if(currentCorruptionTick >= currentCorruptionDuration) {
             TileIsCorrupted();
         }
@@ -1587,44 +1541,14 @@ public class Player : ILeader {
     #endregion
 
     #region Mana
-    private void HourlyManaRegen() {
-        AdjustMana(manaRegen);
-    }
-    public void SetManaRegen(int amount) {
-        manaRegen = amount;
-        manaRegen = Mathf.Max(0, manaRegen);
-    }
-    public void AdjustManaRegen(int amount) {
-        manaRegen += amount;
-        manaRegen = Mathf.Max(0, manaRegen);
-    }
-    public void SetMaxManaRegen(int amount) {
-        manaRegen = amount;
-        manaRegen = Mathf.Max(0, manaRegen);
-    }
     public void AdjustMana(int amount) {
         mana += amount;
-        mana = Mathf.Clamp(mana, 0, maxMana);
+        mana = Mathf.Clamp(mana, 0, EditableValuesManager.Instance.maximumMana);
         Messenger.Broadcast(Signals.PLAYER_ADJUSTED_MANA);
-    }
-    public void AdjustMaxMana(int amount) {
-        maxMana += amount;
-        maxMana = Mathf.Max(0, maxMana);
-    }
-    public void SetMaxMana(int amount) {
-        maxMana = amount;
-        maxMana = Mathf.Max(0, maxMana);
-    }
-    public int GetManaCostForInterventionAbility(string ability) {
-        SPELL_TYPE converted = (SPELL_TYPE)System.Enum.Parse(typeof(SPELL_TYPE), ability);
-        return GetManaCostForInterventionAbility(converted);
     }
     public int GetManaCostForInterventionAbility(SPELL_TYPE ability) {
         int tier = PlayerManager.Instance.GetSpellTier(ability);
         return PlayerManager.Instance.GetManaCostForSpell(tier);
-    }
-    public bool CanAffordInterventionAbility(SPELL_TYPE ability) {
-        return mana >= GetManaCostForInterventionAbility(ability);
     }
     #endregion
 }

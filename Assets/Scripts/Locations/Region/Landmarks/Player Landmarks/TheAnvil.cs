@@ -76,10 +76,6 @@ public class TheAnvil : BaseLandmark {
             }
         } else if (upgradeIdentifier == Improved_Construction) {
             PlayerManager.Instance.player.SetConstructionRatePercentageModifier(-0.2f);
-        } else if (upgradeIdentifier == Increased_Mana_Capacity) {
-            PlayerManager.Instance.player.AdjustMaxMana(600);
-        } else if (upgradeIdentifier == Increased_Mana_Regen) {
-            PlayerManager.Instance.player.AdjustManaRegen(5);
         }
         AnvilDynamicResearchData tempData = dynamicResearchData[upgradeIdentifier];
         tempData.isResearched = true;

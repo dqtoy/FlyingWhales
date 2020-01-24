@@ -401,6 +401,10 @@ public static class Signals {
     /// parameters (PlayerAction, IPlayerActionTarget)
     /// </summary>
     public static string PLAYER_ACTION_REMOVED_FROM_TARGET = "OnPlayerActionRemovedFromTarget";
+    /// <summary>
+    /// parameters (Vector3 worldPos, int orbCount)
+    /// </summary>
+    public static string CREATE_CHAOS_ORBS = "CreateChaosOrbs";
     #endregion
 
     #region Interaction

@@ -24,17 +24,26 @@ public class EditableValuesManager : MonoBehaviour {
 	[SerializeField] private float _baseTirednessDecreaseRate;
 	[SerializeField] private float _baseHappinessDecreaseRate;
 	[SerializeField] private float _baseComfortDecreaseRate;
-	
-	[Header("Mana Costs")]
+
+	[Header("Mana")] 
+	[SerializeField] private int _startingMana;
+	[SerializeField] private int _maximumMana;
 	[SerializeField] private int _summonMinionManaCost;
+	[SerializeField] private int _corruptTileManaCost;
+	[SerializeField] private int _triggerFlawManaCost;
+	[SerializeField] private int _buildStructureManaCost;
+	[SerializeField] private int _learnSpellManaCost;
+	[SerializeField] private int _demonicCultRecruitmentManaCost;
+	[SerializeField] private int _makeCharacterJoinCultManaCost;
+	[SerializeField] private int _monsterBreedingManaCost;
+	[SerializeField] private int _unlockWorldMapManaCost;
+	[SerializeField] private int _unlockRegionManaCost;
 	
 	//getters
 	//mood
 	public int normalMoodMinThreshold => _normalMoodMinThreshold;
-	public int normalMoodHighThreshold => _normalMoodHighThreshold;
 	public int lowMoodMinThreshold => _lowMoodMinThreshold;
 	public int lowMoodHighThreshold => _lowMoodHighThreshold;
-	public int criticalMoodMinThreshold => _criticalMoodMinThreshold;
 	public int criticalMoodHighThreshold => _criticalMoodHighThreshold;
 	public int majorMentalBreakDayThreshold => _majorMentalBreakDayThreshold;
 	public int minorMentalBreakDayThreshold => _minorMentalBreakDayThreshold;
@@ -43,8 +52,10 @@ public class EditableValuesManager : MonoBehaviour {
 	public float baseHappinessDecreaseRate => _baseHappinessDecreaseRate;
 	public float baseComfortDecreaseRate => _baseComfortDecreaseRate;
 
-	//mana costs
+	//mana
 	public int summonMinionManaCost => _summonMinionManaCost;
+	public int maximumMana => _maximumMana;
+	public int startingMana => _startingMana;
 	
 	private void Awake() {
 		Instance = this;
