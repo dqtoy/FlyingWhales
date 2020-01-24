@@ -12,7 +12,6 @@ namespace Traits {
         public Resting() {
             name = "Resting";
             description = "This character is resting.";
-            thoughtText = "[Character] is resting.";
             type = TRAIT_TYPE.DISABLER;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

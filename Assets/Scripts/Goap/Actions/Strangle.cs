@@ -56,7 +56,7 @@ public class Strangle : GoapAction {
         //    deathReason = "murder";
         //}
         //target.Death("suicide", goapNode, _deathLog: goapNode.action.states[goapNode.currentStateName].descriptionLog);
-        goapNode.actor.Death("suicide", goapNode, _deathLog: goapNode.action.states[goapNode.currentStateName].descriptionLog);
+        goapNode.actor.Death("suicide", goapNode, _deathLog: goapNode.descriptionLog);
 
     }
     #endregion

@@ -153,6 +153,8 @@ public class TraitManager : MonoBehaviour {
             new Withdrawal(),
             new Suicidal(),
             new Criminal(),
+            new Dazed(), 
+            new Hiding(), 
         };
         for (int i = 0; i < instancedTraits.Length; i++) {
             Trait trait = instancedTraits[i];

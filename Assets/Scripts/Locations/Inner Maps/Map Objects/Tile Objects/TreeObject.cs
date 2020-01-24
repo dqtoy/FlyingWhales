@@ -32,10 +32,10 @@ public class TreeObject : TileObject {
     public void AdjustYield(int amount) {
         yield += amount;
         yield = Mathf.Max(0, yield);
-        if (yield == 0) {
+        if (yield == 0 && gridTileLocation != null) {
             LocationGridTile loc = gridTileLocation;
             structureLocation.RemovePOI(this);
-            SetGridTileLocation(loc); //so that it can still be targetted by aware characters.
+            SetGridTileLocation(loc); //so that it can still be targeted by aware characters.
         }
     }
     public void SetYield(int amount) {

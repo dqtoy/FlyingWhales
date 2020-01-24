@@ -11,7 +11,7 @@ namespace Traits {
             SetOriginalHome(originalHome);
             //name = "Charmed from " + originalFaction.name;
             description = "This character has been abducted!";
-            thoughtText = "[Character] has been abducted.";
+            thoughtText = "This character has been abducted.";
             type = TRAIT_TYPE.DISABLER;
             effect = TRAIT_EFFECT.NEGATIVE;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.RELEASE_CHARACTER };

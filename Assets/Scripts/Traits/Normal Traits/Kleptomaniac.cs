@@ -11,7 +11,6 @@ namespace Traits {
         public Kleptomaniac() {
             name = "Kleptomaniac";
             description = "Kleptomaniacs enjoy stealing.";
-            thoughtText = "[Character] has irresistible urge to steal.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;

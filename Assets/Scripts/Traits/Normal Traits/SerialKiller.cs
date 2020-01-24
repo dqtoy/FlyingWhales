@@ -19,7 +19,6 @@ namespace Traits {
         public SerialKiller() {
             name = "Serial Killer";
             description = "Serial killers have a specific subset of target victims that they may kidnap and then kill.";
-            thoughtText = "[Character] is a serial killer.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

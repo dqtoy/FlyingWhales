@@ -37,6 +37,12 @@ namespace Traits {
 
         #region Overrides
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
+            //burning
+            if (targetPOI.traitContainer.GetNormalTrait<Trait>("Burning") != null && targetPOI.gridTileLocation != null 
+                && targetPOI.gridTileLocation.IsPartOfSettlement(characterThatWillDoJob.homeSettlement)) {
+                characterThatWillDoJob.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
+            }
+            
             if (targetPOI is TileObject) {
                 TileObject tileObj = targetPOI as TileObject;
                 if (tileObj.isSummonedByPlayer && characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Suspicious") == null && !alreadyInspectedTileObjects.Contains(tileObj)) {

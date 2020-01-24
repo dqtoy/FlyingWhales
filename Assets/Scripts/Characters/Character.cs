@@ -6,6 +6,7 @@ using Actionables;
 using Inner_Maps;
 using UnityEngine;
 using Traits;
+using UnityEngine.Assertions;
 
 public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget {
 
@@ -94,10 +95,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private int canMoveValue; //if this is >= 0 then character can move
     private int canBeAtttackedValue; //if this is >= 0 then character can be attacked
     private int canPerformValue; //if this is >= 0 then character can perform
+    private int canTakeJobsValue; //if this is >= 0 then character can take settlement jobs
     public bool canWitness => canWitnessValue >= 0;
     public bool canMove => canMoveValue >= 0;
     public bool canBeAtttacked => canBeAtttackedValue >= 0;
     public bool canPerform => canPerformValue >= 0;
+    public bool canTakeJobs => canTakeJobsValue >= 0;
 
     //Needs
     public CharacterNeedsComponent needsComponent { get; private set; }
@@ -116,6 +119,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool returnedToLife { get; private set; }
     public Tombstone grave { get; private set; }
     private WeightedDictionary<string> combatResultWeights;
+    private readonly List<string> _overrideThoughts;
 
     //For Testing
     public List<string> locationHistory { get; private set; }
@@ -334,6 +338,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         isStoppedByOtherCharacter = data.isStoppedByOtherCharacter;
 
         _history = new List<Log>();
+        _overrideThoughts = new List<string>();
         combatHistory = new Dictionary<int, Combat>();
         advertisedActions = new List<INTERACTION_TYPE>();
         stateComponent = new CharacterStateComponent(this);
@@ -356,6 +361,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public Character() {
         SetIsDead(false);
         _history = new List<Log>();
+        _overrideThoughts = new List<string>();
         
         //Needs
         needsComponent = new CharacterNeedsComponent(this);
@@ -2459,10 +2465,19 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //ThisCharacterWitnessedEvent(action);
         //ThisCharacterWatchEvent(null, action, state);
     }
+    public void AddOverrideThought(string log) {
+        _overrideThoughts.Add(log);
+    }
+    public void RemoveOverrideThought(string log) {
+        _overrideThoughts.Remove(log);
+    }
     public string GetThoughtBubble(out Log log) {
         log = null;
         if (minion != null) {
             return string.Empty;
+        }
+        if (_overrideThoughts.Count > 0) {
+            return _overrideThoughts[0];
         }
         if (isDead) {
             return $"{name} has died.";
@@ -2478,6 +2493,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         //Interrupt
         if (interruptComponent.isInterrupted && interruptComponent.thoughtBubbleLog != null) {
+            log = interruptComponent.thoughtBubbleLog;
             return Utilities.LogReplacer(interruptComponent.thoughtBubbleLog);
         }
 
@@ -3593,12 +3609,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void SetMinion(Minion minion) {
         if (_minion != null && minion == null) {
             Messenger.Broadcast(Signals.CHARACTER_BECOMES_NON_MINION_OR_SUMMON, this);
+            moodComponent.OnCharacterNoLongerMinionOrSummon();
+            Assert.IsTrue(moodComponent.executeMoodChangeEffects);
         } else if (_minion == null && minion != null) {
             Messenger.Broadcast(Signals.CHARACTER_BECOMES_MINION_OR_SUMMON, this);
+            moodComponent.OnCharacterBecomeMinionOrSummon();
+            Assert.IsFalse(moodComponent.executeMoodChangeEffects);
         }
         _minion = minion;
         visuals.CreateWholeImageMaterial();
-        //UnsubscribeSignals(); //Removed this since character's listeners are not on by default now.
     }
     public void RecruitAsMinion(UnsummonedMinionData minionData) {
         if (stateComponent.currentState != null) {
@@ -4625,6 +4644,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool CanAdvertiseActionToActor(Character actor, GoapAction action, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost) {
         if((IsAvailable() || action.canBeAdvertisedEvenIfActorIsUnavailable) 
             && advertisedActions != null && advertisedActions.Contains(action.goapType)
+            && actor.trapStructure.SatisfiesForcedStructure(this)
             && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)) {
             object[] data = null;
             if (otherData != null) {
@@ -6165,6 +6185,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void DecreaseCanPerform() {
         canPerformValue--;
+    }
+    public void IncreaseCanTakeJobs() {
+        canTakeJobsValue++;
+    }
+    public void DecreaseCanTakeJobs() {
+        canTakeJobsValue--;
     }
     #endregion
 

@@ -1424,6 +1424,17 @@ public static class Extensions {
             case STRUCTURE_TYPE.CEMETERY:
             case STRUCTURE_TYPE.POND:
             case STRUCTURE_TYPE.CITY_CENTER:
+            case STRUCTURE_TYPE.THE_PORTAL:
+            case STRUCTURE_TYPE.THE_SPIRE:
+            case STRUCTURE_TYPE.THE_KENNEL:
+            case STRUCTURE_TYPE.THE_CRYPT:
+            case STRUCTURE_TYPE.GOADER:
+            case STRUCTURE_TYPE.THE_PROFANE:
+            case STRUCTURE_TYPE.THE_ANVIL:
+            case STRUCTURE_TYPE.THE_EYE:
+            case STRUCTURE_TYPE.THE_NEEDLES:
+            case STRUCTURE_TYPE.OCEAN:
+            case STRUCTURE_TYPE.CAVE:
                 return true;
             default:
                 return false;
