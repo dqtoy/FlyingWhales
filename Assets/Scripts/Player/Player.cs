@@ -1111,7 +1111,7 @@ public class Player : ILeader {
         switch (type) {
             case ARTIFACT_TYPE.Necronomicon:
                 return "Raises all dead characters in the settlement to attack residents.";
-            case ARTIFACT_TYPE.Chaos_Orb:
+            case ARTIFACT_TYPE.Chaos_Orb_Artifact:
                 return "Characters that inspect the Chaos Orb may be permanently berserked.";
             case ARTIFACT_TYPE.Hermes_Statue:
                 return "Characters that inspect this will be teleported to a different settlement. If no other settlement exists, this will be useless.";

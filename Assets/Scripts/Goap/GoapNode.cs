@@ -584,7 +584,6 @@ public class ActualGoapNode {
         //else {
         //    parentAction.SetShowIntelNotification(false);
         //}
-        Messenger.Broadcast(Signals.CHARACTER_DID_ACTION, actor, action);
         //actor.OnCharacterDoAction(parentAction); //Moved this here to fix intel not being shown, because arranged logs are not added until after the ReturnToActorTheActionResult() call.
         //if (shouldDoAfterEffect) {
         //    action.AfterAfterEffect();

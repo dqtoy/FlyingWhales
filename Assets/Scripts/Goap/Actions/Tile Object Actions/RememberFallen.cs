@@ -79,6 +79,8 @@ public class RememberFallen : GoapAction {
     }
     public void AfterRememberSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetLonely(-1);
+        Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, goapNode.actor.marker.transform.position, 
+            2, goapNode.actor.currentRegion.innerMap);
     }
     //public void PreTargetMissing() {
     //    Tombstone tombstone = goapNode.poiTarget as Tombstone;

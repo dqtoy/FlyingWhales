@@ -788,6 +788,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "target is already dead");
             CancelAllJobs();
 
+            Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, this.marker.transform.position, 
+                1, this.currentRegion.innerMap);
+            
             if (currentSettlement != null && isHoldingItem) {
                 DropAllTokens(currentStructure, deathTile, true);
             } else {
@@ -5064,6 +5067,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         if(result == InteractionManager.Goap_State_Success) {
             log += "\nPlan is setting next action to be done...";
+            Messenger.Broadcast(Signals.CHARACTER_DID_ACTION_SUCCESSFULLY, this, actionNode);
             plan.SetNextNode();
             if (plan.currentNode == null) {
                 log += "\nThis action is the end of plan.";
@@ -5215,9 +5219,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    }
     //    return null;
     //}
-    public void OnCharacterDoAction(GoapAction action) {
-        Messenger.Broadcast(Signals.CHARACTER_DID_ACTION, this, action);
-    }
     public void FaceTarget(IPointOfInterest target) {
         if (this != target && !this.isDead && gridTileLocation != null) {
             if (target is Character) {

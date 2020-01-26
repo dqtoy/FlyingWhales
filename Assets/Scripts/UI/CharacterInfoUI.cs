@@ -379,7 +379,7 @@ public class CharacterInfoUI : UIMenu {
                 UIManager.Instance.ShowYesNoConfirmation(trait.name, traitDescription,
                     onClickYesAction: () => OnClickTriggerFlaw(trait),
                     showCover: true, layer: 25, yesBtnText:
-                    $"Trigger ({trait.GetTriggerFlawManaCost(activeCharacter).ToString()} Mana)",
+                    $"Trigger ({EditableValuesManager.Instance.triggerFlawManaCost.ToString()} Mana)",
                     yesBtnInteractable: trait.CanFlawBeTriggered(activeCharacter),
                     pauseAndResume: true,
                     noBtnActive: false,

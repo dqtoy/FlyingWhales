@@ -21,16 +21,17 @@ public class PlayerManager : MonoBehaviour {
     public COMBAT_ABILITY[] allCombatAbilities;
     public LANDMARK_TYPE[] allLandmarksThatCanBeBuilt;
     
-    [FormerlySerializedAs("jobActionIcons")]
     [Header("Job Action Icons")]
-    [SerializeField] private StringSpriteDictionary spellIcons;
+    [FormerlySerializedAs("jobActionIcons")] [SerializeField] private StringSpriteDictionary spellIcons;
 
     [Header("Combat Ability Icons")]
     [SerializeField] private StringSpriteDictionary combatAbilityIcons;
-
-    [FormerlySerializedAs("interventionAbilityTiers")]
+    
     [Header("Intervention Ability Tiers")]
-    [SerializeField] private InterventionAbilityTierDictionary spellTiers;
+    [FormerlySerializedAs("interventionAbilityTiers")] [SerializeField] private InterventionAbilityTierDictionary spellTiers;
+
+    [Header("Chaos Orbs")] 
+    [SerializeField] private GameObject chaosOrbPrefab;
 
     private void Awake() {
         Instance = this;
@@ -56,7 +57,8 @@ public class PlayerManager : MonoBehaviour {
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressedDown);
-        Messenger.AddListener<Vector3, int>(Signals.CREATE_CHAOS_ORBS, CreateChaosOrbsAt);
+        Messenger.AddListener<Vector3, int, InnerTileMap>(Signals.CREATE_CHAOS_ORBS, CreateChaosOrbsAt);
+        Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DID_ACTION_SUCCESSFULLY, OnCharacterDidActionSuccess);
     }
     public void InitializePlayer(BaseLandmark portal, LocationStructure portalStructure) {
         player = new Player();
@@ -361,8 +363,44 @@ public class PlayerManager : MonoBehaviour {
     #endregion
 
     #region Chaos Orbs
-    private void CreateChaosOrbsAt(Vector3 worldPos, int amount) {
-        
+    private void CreateChaosOrbsAt(Vector3 worldPos, int amount, InnerTileMap mapLocation) {
+        StartCoroutine(ChaosOrbCreationCoroutine(worldPos, amount, mapLocation));
+    }
+    private IEnumerator ChaosOrbCreationCoroutine(Vector3 worldPos, int amount, InnerTileMap mapLocation) {
+        for (int i = 0; i < amount; i++) {
+            GameObject chaosOrbGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(chaosOrbPrefab.name, Vector3.zero, 
+                Quaternion.identity, mapLocation.objectsParent);
+            chaosOrbGO.transform.position = worldPos;
+            ChaosOrb chaosOrb = chaosOrbGO.GetComponent<ChaosOrb>();
+            chaosOrb.Initialize();
+            yield return null;
+        }
+        Debug.Log($"Created {amount.ToString()} chaos orbs at {mapLocation.location.name}. Position {worldPos.ToString()}");
+    }
+    private void OnCharacterDidActionSuccess(Character character, ActualGoapNode actionNode) {
+        CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(actionNode);
+        if (crimeType != CRIME_TYPE.NONE) {
+            int orbsToCreate;
+            switch (crimeType) {
+                case CRIME_TYPE.MISDEMEANOR:
+                    orbsToCreate = 4;
+                    break;
+                case CRIME_TYPE.SERIOUS:
+                    orbsToCreate = 6;
+                    break;
+                case CRIME_TYPE.HEINOUS:
+                    orbsToCreate = 8;
+                    break;
+                default:
+                    orbsToCreate = 2;
+                    break;
+            }
+            character.logComponent.PrintLogIfActive($"{GameManager.Instance.TodayLogString()}{character.name} performed " +
+                            $"a crime of type {crimeType.ToString()}. Expelling {orbsToCreate.ToString()} Chaos Orbs.");
+            Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, character.marker.transform.position, orbsToCreate, 
+                character.currentRegion.innerMap);
+
+        }
     }
     #endregion
     

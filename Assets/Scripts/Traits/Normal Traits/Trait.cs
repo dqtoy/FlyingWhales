@@ -118,7 +118,7 @@ namespace Traits {
         public virtual bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
         //Returns the string of the log key that's supposed to be logged
         public virtual string TriggerFlaw(Character character) {
-            int manaCost = GetTriggerFlawManaCost(character); ;
+            int manaCost = EditableValuesManager.Instance.triggerFlawManaCost;
             PlayerManager.Instance.player.AdjustMana(-manaCost);
             if (character.trapStructure.structure != null) {
                 //clear all trap structures when triggering flaw
@@ -134,7 +134,7 @@ namespace Traits {
         /// <returns>true or false</returns>
         public virtual bool CanFlawBeTriggered(Character character) {
             //return true;
-            int manaCost = GetTriggerFlawManaCost(character);
+            int manaCost = EditableValuesManager.Instance.triggerFlawManaCost;
 
             return PlayerManager.Instance.player.mana >= manaCost
                 && character.canPerform
@@ -147,7 +147,7 @@ namespace Traits {
         }
         public virtual List<string> GetCannotTriggerFlawReasons(Character character) {
             List<string> reasons = new List<string>();
-            if (PlayerManager.Instance.player.mana < GetTriggerFlawManaCost(character)) {
+            if (PlayerManager.Instance.player.mana < EditableValuesManager.Instance.triggerFlawManaCost) {
                 reasons.Add("You do not have enough mana.");
             }
             if (character.traitContainer.GetNormalTrait<Trait>("Blessed") != null) {
@@ -170,10 +170,6 @@ namespace Traits {
         #endregion
 
         #region Utilities
-        public int GetTriggerFlawManaCost(Character character) {
-            //Triggering while in a bad mood costs more Mana (100) than triggering while in a dark mood (50). Great and good mood costs 200 mana.
-            return 25; //great or good
-        }
         public string GetTriggerFlawEffectDescription(Character character, string key) {
             if (LocalizationManager.Instance.HasLocalizedValue("Trait", name, key)) {
                 Log log = new Log(GameManager.Instance.Today(), "Trait", name, key);

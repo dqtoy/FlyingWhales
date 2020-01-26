@@ -56,6 +56,15 @@ public class EditableValuesManager : MonoBehaviour {
 	public int summonMinionManaCost => _summonMinionManaCost;
 	public int maximumMana => _maximumMana;
 	public int startingMana => _startingMana;
+	public int corruptTileManaCost => _corruptTileManaCost;
+	public int triggerFlawManaCost => _triggerFlawManaCost;
+	public int buildStructureManaCost => _buildStructureManaCost;
+	public int learnSpellManaCost => _learnSpellManaCost;
+	public int demonicCultRecruitmentManaCost => _demonicCultRecruitmentManaCost;
+	public int makeCharacterJoinCultManaCost => _makeCharacterJoinCultManaCost;
+	public int monsterBreedingManaCost => _monsterBreedingManaCost;
+	public int unlockWorldMapManaCost => _unlockWorldMapManaCost;
+	public int unlockRegionManaCost => _unlockRegionManaCost;
 	
 	private void Awake() {
 		Instance = this;

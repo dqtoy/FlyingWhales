@@ -14,6 +14,7 @@ public class PlayerUI : MonoBehaviour {
 
     [Header("Currencies")]
     [SerializeField] private TextMeshProUGUI manaLbl;
+    public RectTransform manaContainer;
 
     [Header("Role Slots")]
     [SerializeField] private RectTransform roleSlotsParent;

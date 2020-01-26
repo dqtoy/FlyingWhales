@@ -1354,7 +1354,7 @@ public enum COMBAT_ABILITY {
 
 public enum TILE_TAG { CAVE, DUNGEON, FOREST, FLATLAND, MOUNTAIN, GRASSLAND, JUNGLE, TUNDRA, SNOW, DESERT, PROTECTIVE_BARRIER, HALLOWED_GROUNDS, }
 public enum SUMMON_TYPE { None, Wolf, Skeleton, Golem, Succubus, Incubus, ThiefSummon, }
-public enum ARTIFACT_TYPE { None, Necronomicon, Chaos_Orb, Hermes_Statue, Ankh_Of_Anubis, Miasma_Emitter, }
+public enum ARTIFACT_TYPE { None, Necronomicon, Chaos_Orb_Artifact, Hermes_Statue, Ankh_Of_Anubis, Miasma_Emitter, }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }
 public enum LANDMARK_YIELD_TYPE { SUMMON, ARTIFACT, ABILITY, SKIRMISH, STORY_EVENT, }
 public enum SERIAL_VICTIM_TYPE { NONE, GENDER, RACE, CLASS, TRAIT }
