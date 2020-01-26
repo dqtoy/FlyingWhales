@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Cellular_Automata;
 using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -12,37 +13,25 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i];
 			List<ElevationIsland> islandsInRegion = GetElevationIslandsInRegion(region);
-			string islandsSummary = $"Islands in region {region.name} is {islandsInRegion.Count.ToString()}";
-			for (int j = 0; j < islandsInRegion.Count; j++) {
-				ElevationIsland island = islandsInRegion[j];
-				islandsSummary +=
-					$"\n{j.ToString()} - {island.elevation.ToString()} - {island.tilesInIsland.Count.ToString()}";
-			}
-			// Debug.Log(islandsSummary);
-			LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
 			for (int j = 0; j < islandsInRegion.Count; j++) {
 				ElevationIsland currIsland = islandsInRegion[j];
 				STRUCTURE_TYPE structureType = GetStructureTypeFor(currIsland.elevation);
-				LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(region, structureType);
-				yield return MapGenerator.Instance.StartCoroutine(GenerateElevationPerlin(structure, wilderness, currIsland, region));
-				region.innerMap.structureTilemapCollider.enabled = false;
-				yield return new WaitForSeconds(0.5f);
-				region.innerMap.structureTilemapCollider.enabled = true;
+				LocationStructure elevationStructure = LandmarkManager.Instance.CreateNewStructureAt(region, structureType);
+				
+				yield return MapGenerator.Instance.StartCoroutine(
+					GenerateElevationMap(currIsland, elevationStructure));
+				yield return MapGenerator.Instance.StartCoroutine(
+					RefreshTilemapCollider(region.innerMap.structureTilemapCollider));
+
 			}
 		}
-
-		// for (int i = 0; i < GridMap.Instance.normalHexTiles.Count; i++) {
-		// 	HexTile tile = GridMap.Instance.normalHexTiles[i];
-		// 	if (tile.landmarkOnTile == null && tile.elevationType != ELEVATION.WATER && tile.elevationType != ELEVATION.PLAIN && tile.elevationType != ELEVATION.TREES) {
-		// 		yield return MapGenerator.Instance.StartCoroutine(CreateStructureObjectForTile(tile));
-		// 	}
-		// }
 		yield return null;
 	}
-	private IEnumerator CreateStructureObjectForTile(HexTile tile) {
-		LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(tile.region,
-			GetStructureTypeFor(tile.elevationType));
-		 yield return MapGenerator.Instance.StartCoroutine(PlaceInitialStructure(structure, tile.region.innerMap, tile));
+	private IEnumerator RefreshTilemapCollider(TilemapCollider2D tilemapCollider2D) {
+		tilemapCollider2D.enabled = false;
+		yield return new WaitForSeconds(0.5f);
+		// ReSharper disable once Unity.InefficientPropertyAccess
+		tilemapCollider2D.enabled = true;
 	}
 	private STRUCTURE_TYPE GetStructureTypeFor(ELEVATION elevation) {
 		switch (elevation) {
@@ -53,36 +42,6 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		}
 		throw new Exception($"There is no corresponding structure type for {elevation.ToString()}");
 	}
-	private IEnumerator PlaceInitialStructure(LocationStructure structure, InnerTileMap innerTileMap, HexTile tile) {
-		if (structure.structureType.ShouldBeGeneratedFromTemplate()) {
-			List<GameObject> choices =
-				InnerMapManager.Instance.GetStructurePrefabsForStructure(structure.structureType);
-			GameObject chosenStructurePrefab = Utilities.GetRandomElement(choices);
-			LocationStructureObject lso = chosenStructurePrefab.GetComponent<LocationStructureObject>();
-			BuildingSpot chosenBuildingSpot;
-			if (TryGetBuildSpotForStructureInTile(lso, tile, innerTileMap, out chosenBuildingSpot)) {
-				innerTileMap.PlaceStructureObjectAt(chosenBuildingSpot, chosenStructurePrefab, structure);
-			} else {
-				throw new System.Exception(
-					$"Could not find valid building spot for {structure.ToString()} using prefab {chosenStructurePrefab.name}");
-			}
-			yield return null;
-		}
-
-	}
-	private bool TryGetBuildSpotForStructureInTile(LocationStructureObject structureObject, HexTile currTile, 
-		InnerTileMap innerTileMap, out BuildingSpot spot) {
-		for (int j = 0; j < currTile.ownedBuildSpots.Length; j++) {
-			BuildingSpot currSpot = currTile.ownedBuildSpots[j];
-			if (currSpot.isOccupied == false && currSpot.CanFitStructureOnSpot(structureObject, innerTileMap)) {
-				spot = currSpot;
-				return true;
-			}
-		}
-		spot = null;
-		return false;
-	}
-	
 	private List<ElevationIsland> GetElevationIslandsInRegion(Region region) {
 		List<ElevationIsland> islands = new List<ElevationIsland>();
 		ELEVATION[] elevationsToCheck = new[] {ELEVATION.WATER, ELEVATION.MOUNTAIN};
@@ -223,7 +182,6 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		
 		yield return null;
 	}
-
 	private TileBase GetWallTileAssetForElevation(ELEVATION elevation) {
 		switch (elevation) {
 			case ELEVATION.WATER:
@@ -249,6 +207,84 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		}
 		return LocationGridTile.Ground_Type.Soil;
 	}
+
+	#region Cellular Automata
+	private IEnumerator GenerateElevationMap(ElevationIsland island, LocationStructure elevationStructure) {
+		List<LocationGridTile> locationGridTiles = new List<LocationGridTile>();
+		for (int i = 0; i < island.tilesInIsland.Count; i++) {
+			HexTile tileInIsland = island.tilesInIsland[i];
+			locationGridTiles.AddRange(tileInIsland.locationGridTiles);
+		}
+		
+		int minX = locationGridTiles.Min(t => t.localPlace.x);
+		int maxX = locationGridTiles.Max(t => t.localPlace.x);
+		int minY = locationGridTiles.Min(t => t.localPlace.y);
+		int maxY = locationGridTiles.Max(t => t.localPlace.y);
+
+		int xSize = (maxX - minX) + 1;
+		int ySize = (maxY - minY) + 1;
+
+		
+		LocationGridTile[,] arrangedMap = new LocationGridTile[xSize, ySize];
+		for (int i = 0; i < locationGridTiles.Count; i++) {
+			LocationGridTile tile = locationGridTiles[i];
+			int localX = tile.localPlace.x - minX;
+			int localY = tile.localPlace.y - minY;
+			arrangedMap[localX, localY] = tile;
+		}
+
+		int[,] cellMap = null;
+		if (island.elevation == ELEVATION.WATER) {
+			cellMap = Cellular_Automata.CellularAutomataGenerator.GenerateMap(xSize, ySize, 2, 
+				20, arrangedMap, locationGridTiles);	
+		} else if (island.elevation == ELEVATION.MOUNTAIN) {
+			cellMap = Cellular_Automata.CellularAutomataGenerator.GenerateMap(xSize, ySize, 1, 
+				35, arrangedMap, locationGridTiles);
+		}
+
+		for (int x = 0; x < xSize; x++) {
+			for (int y = 0; y < ySize; y++) {
+				int cellMapValue = cellMap[x, y];
+				LocationGridTile tile = arrangedMap[x, y];
+				if (tile != null) {
+					if (island.elevation == ELEVATION.MOUNTAIN) {
+						//set as ground of mountiain (hollowed inside of cave)
+						tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.caveGroundTile);
+						if (cellMapValue == 0) {
+							tile.SetStructureTilemapVisual(null);
+						} else {
+							//set as mountain
+							tile.SetStructureTilemapVisual(GetWallTileAssetForElevation(island.elevation));
+							tile.SetTileType(LocationGridTile.Tile_Type.Wall);
+						}
+						tile.SetStructure(elevationStructure); //set whole cave area as cave structure
+					} else if (island.elevation == ELEVATION.WATER) {
+						if (cellMapValue == 1) {
+							//not part of water
+							tile.SetStructureTilemapVisual(null);
+						} else {
+							//set as water
+							tile.SetStructureTilemapVisual(GetWallTileAssetForElevation(island.elevation));
+							tile.SetStructure(elevationStructure); //set as part of ocean structure
+						}
+					}
+				}
+			}
+		}
+		
+		for (int i = 0; i < island.tilesInIsland.Count; i++) {
+			HexTile hexTile = island.tilesInIsland[i];
+			for (int j = 0; j < hexTile.ownedBuildSpots.Length; j++) {
+				BuildingSpot spot = hexTile.ownedBuildSpots[j];
+				if (spot.isOccupied == false) {
+					spot.SetIsOccupied(true);
+					spot.UpdateAdjacentSpotsOccupancy(hexTile.region.innerMap);	
+				}
+			}
+		}
+		yield return null;
+	}
+	#endregion
 }
 
 public class ElevationIsland {
