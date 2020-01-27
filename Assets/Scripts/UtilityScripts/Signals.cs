@@ -402,7 +402,7 @@ public static class Signals {
     /// </summary>
     public static string PLAYER_ACTION_REMOVED_FROM_TARGET = "OnPlayerActionRemovedFromTarget";
     /// <summary>
-    /// parameters (Vector3 worldPos, int orbCount)
+    /// parameters (Vector3 worldPos, int orbCount, InnerTileMap mapLocation)
     /// </summary>
     public static string CREATE_CHAOS_ORBS = "CreateChaosOrbs";
     #endregion
@@ -426,7 +426,7 @@ public static class Signals {
 
     #region Jobs/Actions
     public static string CHARACTER_WILL_DO_PLAN = "OnCharacterRecievedPlan"; //Parameters (Character, GoapPlan)
-    public static string CHARACTER_DID_ACTION = "OnCharacterDidAction"; //Parameters (Character, GoapAction)
+    public static string CHARACTER_DID_ACTION_SUCCESSFULLY = "OnCharacterDidActionSuccessfully"; //Parameters (Character, ActualGoapNode)
     public static string STOP_ACTION = "OnStopAction"; //Parameters (GoapAction)
     public static string CHARACTER_FINISHED_ACTION = "OnCharacterFinishedAction"; //Parameters (Character, GoapAction, String result)
     public static string CHARACTER_DOING_ACTION = "OnCharacterDoingAction"; //Parameters (Character, GoapAction)

@@ -93,6 +93,8 @@ public class Spit : GoapAction {
     }
     public void AfterSpitSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustHappiness(20f);
+        Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, goapNode.actor.marker.transform.position, 
+            4, goapNode.actor.currentRegion.innerMap);
     }
     #endregion
 

@@ -65,6 +65,10 @@ public class Cry : GoapAction {
     public void PerTickCrySuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustHappiness(6f);
     }
+    public void AfterCrySuccess(ActualGoapNode goapNode) {
+        Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, goapNode.actor.marker.transform.position, 
+            3, goapNode.actor.currentRegion.innerMap);
+    }
     #endregion
 
     #region Requirements

@@ -1,14 +1,15 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-
+using Random = UnityEngine.Random;
 namespace Traits {
     public class Berserked : Trait {
 
         public override bool isNotSavable {
             get { return true; }
         }
-
+        
+        private Character _owner;
         private List<CharacterBehaviourComponent> _behaviourComponentsBeforeBerserked;
         
         public Berserked() {
@@ -25,6 +26,7 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             if (addedTo is Character) {
                 Character character = addedTo as Character;
+                _owner = character;
                 if (character.marker != null) {
                     character.marker.BerserkedMarker();
                 }
@@ -102,6 +104,26 @@ namespace Traits {
         //    } 
         //    return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
         //}
+        public override void OnTickStarted() {
+            base.OnTickStarted();
+            if (_owner.stateComponent.currentState is CombatState) {
+                CheckForChaosOrb();
+            }
+        }
+        #endregion
+        
+        #region Chaos Orb
+        private void CheckForChaosOrb() {
+            string summary = $"{_owner.name} is rolling for chaos orb in berserked trait";
+            int roll = Random.Range(0, 100);
+            int chance = 60;
+            summary += $"\nRoll is {roll.ToString()}. Chance is {chance.ToString()}";
+            if (roll < chance) {
+                Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, _owner.marker.transform.position, 
+                    1, _owner.currentRegion.innerMap);
+            }
+            _owner.logComponent.PrintLogIfActive(summary);
+        }
         #endregion
     }
 }

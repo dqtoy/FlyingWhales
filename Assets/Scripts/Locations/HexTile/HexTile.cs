@@ -887,6 +887,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         if (settlementOnTile != null) {
             return false; //disabled corruption of NPC settlements for now.
         }
+        if (PlayerManager.Instance.player.mana < EditableValuesManager.Instance.corruptTileManaCost) {
+            return false;
+        }
         //if it has any build spots that have a blueprint on them, do not allow
         for (int i = 0; i < ownedBuildSpots.Length; i++) {
             BuildingSpot spot = ownedBuildSpots[i];
@@ -908,6 +911,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         startTile.CorruptTile();
         corruptedTiles.Add(startTile);
         isCurrentlyBeingCorrupted = true;
+        PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.corruptTileManaCost);
         Messenger.AddListener(Signals.TICK_STARTED, PerTickCorruption);
     }
     private void PerTickCorruption() {
@@ -1190,7 +1194,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
 
     #region Demonic Structure Building
     private bool CanBuildDemonicStructure() {
-        return isCorrupted && isCurrentlyBeingCorrupted == false && landmarkOnTile == null && elevationType != ELEVATION.WATER && elevationType != ELEVATION.MOUNTAIN;
+        return isCorrupted && isCurrentlyBeingCorrupted == false && landmarkOnTile == null 
+               && elevationType != ELEVATION.WATER && elevationType != ELEVATION.MOUNTAIN &&
+            PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.buildStructureManaCost;
     }
     private void OnClickBuild() {
         List<string> landmarkNames = new List<string>();
@@ -1250,6 +1256,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         BaseLandmark newLandmark =
             LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkData.landmarkType, false);
         LandmarkManager.Instance.CreateStructureObjectForLandmark(newLandmark, settlementOnTile);
+        PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.buildStructureManaCost);
     }
     #endregion
 }

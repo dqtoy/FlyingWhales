@@ -297,6 +297,8 @@ namespace Inner_Maps {
                         createEdge = true;
                     } else if (groundType == Ground_Type.Sand && currNeighbour.groundType == Ground_Type.Desert_Stone) {
                         createEdge = true;
+                    } else if (groundType == Ground_Type.Sand && currNeighbour.groundType == Ground_Type.Stone) {
+                        createEdge = true;
                     }
                     summary += $"\n\tWill create edge? {createEdge.ToString()}. At {keyValuePair.Key.ToString()}";
                     Tilemap mapToUse;
