@@ -262,8 +262,14 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	private void TryCreateHaulJob(ResourcePile target) {
 		if ((target.gridTileLocation.IsPartOfSettlement(_owner) == false || target.gridTileLocation.structure != _owner.mainStorage) 
 		    && _owner.HasJob(JOB_TYPE.HAUL, target) == false && target.gridTileLocation.parentMap.location == _owner.region) {
-			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, INTERACTION_TYPE.DROP, target, _owner);
-			job.AddOtherData(INTERACTION_TYPE.DROP, new object[]{_owner.mainStorage});
+			ResourcePile chosenPileToBeDeposited = _owner.mainStorage.GetResourcePileObjectWithLowestCountAndNotAtMaximum(target.tileObjectType);
+			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, 
+				new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, 
+					false, GOAP_EFFECT_TARGET.TARGET), 
+				target, _owner);
+			if (chosenPileToBeDeposited != null) {
+			    job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { chosenPileToBeDeposited });
+			}
 			job.SetStillApplicableChecker(() => IsHaulResourcePileStillApplicable(target));
 			_owner.AddToAvailableJobs(job);
 		}
@@ -323,8 +329,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 
 	#region Obtain Personal Food
 	private void TryTriggerObtainPersonalFood(Table table) {
-		if (table.food < 20 && table.HasJobTargetingThis(JOB_TYPE.OBTAIN_PERSONAL_FOOD) == false) {
-			int neededFood = 60 - table.food;
+		if (table.food < 20 && _owner.HasJob(JOB_TYPE.OBTAIN_PERSONAL_FOOD, table) == false) {
+			int neededFood = table.GetMaxResourceValue(RESOURCE.FOOD) - table.food;
 			GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_FOOD, "0", true, GOAP_EFFECT_TARGET.TARGET);
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_FOOD, goapEffect, table, _owner);
 			job.SetCanTakeThisJobChecker(CanTakeObtainPersonalFoodJob);

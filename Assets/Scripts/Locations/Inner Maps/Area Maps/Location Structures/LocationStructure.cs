@@ -232,13 +232,13 @@ public class LocationStructure {
         }
         return null;
     }
-    public ResourcePile GetResourcePileObjectWithLowestCount(TILE_OBJECT_TYPE type) {
+    public ResourcePile GetResourcePileObjectWithLowestCountAndNotAtMaximum(TILE_OBJECT_TYPE type) {
         ResourcePile chosenPile = null;
         int lowestCount = 0;
         for (int i = 0; i < pointsOfInterest.Count; i++) {
             if (pointsOfInterest[i] is ResourcePile) {
                 ResourcePile obj = pointsOfInterest[i] as ResourcePile;
-                if (obj.tileObjectType == type) {
+                if (obj.tileObjectType == type && obj.IsAtMaxResource(obj.providedResource) == false) {
                     if(chosenPile == null || obj.resourceInPile < lowestCount) {
                         chosenPile = obj;
                         lowestCount = obj.resourceInPile;
@@ -274,14 +274,16 @@ public class LocationStructure {
         switch (poi.poiType) {
             case POINT_OF_INTEREST_TYPE.TILE_OBJECT:
                 if (poi is MagicCircle) {
-                    return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() 
-                                                    && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Wall) 
-                                                    && !x.HasNeighbourOfType(LocationGridTile.Ground_Type.Cave)
-                                                    && !x.HasNeighbourOfType(LocationGridTile.Ground_Type.Water)
-                                                    && x.groundType != LocationGridTile.Ground_Type.Cave 
-                                                    && x.groundType != LocationGridTile.Ground_Type.Water
-                                                    && x.buildSpotOwner.hexTileOwner != null 
-                                                    && x.buildSpotOwner.hexTileOwner.elevationType == ELEVATION.PLAIN
+                    return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour()
+                                                  && x.groundType != LocationGridTile.Ground_Type.Cave 
+                                                  && x.groundType != LocationGridTile.Ground_Type.Water
+                                                  && x.buildSpotOwner.hexTileOwner != null 
+                                                  && x.buildSpotOwner.hexTileOwner.elevationType == ELEVATION.PLAIN
+                                                  && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Wall) 
+                                                  && !x.HasNeighbourOfType(LocationGridTile.Ground_Type.Cave)
+                                                  && !x.HasNeighbourOfType(LocationGridTile.Ground_Type.Water)
+                                                  && !x.HasNeighbourOfElevation(ELEVATION.MOUNTAIN)
+                                                  && !x.HasNeighbourOfElevation(ELEVATION.WATER)
                                                   ).ToList();
                 } else if (poi is WaterWell) {
                     return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && x.parentMap.GetTilesInRadius(x, 3).Where(y => y.objHere is WaterWell).Count() == 0 && !x.HasNeighbouringWalledStructure()).ToList();

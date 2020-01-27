@@ -459,6 +459,19 @@ namespace Inner_Maps {
             }
             return false;
         }
+        public bool HasNeighbourOfElevation(ELEVATION elevation, bool useFourNeighbours = false) {
+            Dictionary<GridNeighbourDirection, LocationGridTile> n = neighbours;
+            if (useFourNeighbours) {
+                n = FourNeighboursDictionary();
+            }
+            for (int i = 0; i < n.Values.Count; i++) {
+                if (neighbours.Values.ElementAt(i).buildSpotOwner.hexTileOwner != null &&
+                    neighbours.Values.ElementAt(i).buildSpotOwner.hexTileOwner.elevationType == elevation) {
+                    return true;
+                }
+            }
+            return false;
+        }
         public bool HasNeighbourOfType(Tile_Type type, bool useFourNeighbours = false) {
             Dictionary<GridNeighbourDirection, LocationGridTile> n = neighbours;
             if (useFourNeighbours) {

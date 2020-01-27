@@ -5,6 +5,7 @@ using Actionables;
 using UnityEngine;
 using BayatGames.SaveGameFree.Types;
 using Inner_Maps;
+using Pathfinding;
 using Traits;
 using UnityEngine.Experimental.U2D;
 
@@ -740,6 +741,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     public bool IsAtMaxResource(RESOURCE resource) {
         return storedResources[resource] >= maxResourceValues[resource];
+    }
+    public int GetMaxResourceValue(RESOURCE resource) {
+        return maxResourceValues[resource];
     }
     public bool HasEnoughSpaceFor(RESOURCE resource, int amount) {
         int newAmount = storedResources[resource] + amount;

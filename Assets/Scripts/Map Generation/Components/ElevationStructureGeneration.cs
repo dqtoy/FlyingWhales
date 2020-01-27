@@ -5,6 +5,7 @@ using System.Linq;
 using Cellular_Automata;
 using Inner_Maps;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;
 
@@ -242,6 +243,8 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 				35, arrangedMap, locationGridTiles);
 		}
 
+		Assert.IsNotNull(cellMap, $"There was no cellmap generated for elevation island {island.elevation.ToString()}");
+		
 		for (int x = 0; x < xSize; x++) {
 			for (int y = 0; y < ySize; y++) {
 				int cellMapValue = cellMap[x, y];
