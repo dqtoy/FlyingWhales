@@ -133,7 +133,7 @@ public class ShareIntelMenu : MonoBehaviour {
         //List<string> reactions = targetCharacter.ShareIntel(intel);
         //StartCoroutine(ShowReactions(reactions));
         string response = targetCharacter.ShareIntel(intel);
-        StartCoroutine(ShowReaction(response));
+        StartCoroutine(ShowReaction(response, intel));
     }
     string[] randomNothings = new string[] {
         "I really don't care",
@@ -170,22 +170,36 @@ public class ShareIntelMenu : MonoBehaviour {
         //ShareIntel share = PlayerManager.Instance.player.shareIntelAbility;
         //share.DeactivateAction();
     }
-    private IEnumerator ShowReaction(string reaction) {
+    private IEnumerator ShowReaction(string reaction, Intel intel) {
         if (reaction == string.Empty) {
             //character had no reaction
             reaction = "A proper response to this information has not been implemented yet.";
         } else {
-            string[] words = reaction.Split(' ');
-            string newReaction = "I feel ";
-            if(words != null) {
-                for (int i = 0; i < words.Length; i++) {
-                    if(i > 0) {
-                        newReaction += ", ";
+            string[] emotionsToActorAndTarget = reaction.Split('/');
+            string finalReaction = string.Empty;
+            for (int i = 0; i < emotionsToActorAndTarget.Length; i++) {
+                string[] words = emotionsToActorAndTarget[i].Split(' ');
+                if(words != null) {
+                    string responses = string.Empty;
+                    for (int j = 0; j < words.Length; j++) {
+                        string currWord = words[j];
+                        if(string.IsNullOrEmpty(currWord) || string.IsNullOrWhiteSpace(currWord)){ continue; }
+                        if(responses != string.Empty) {
+                            responses += ", ";
+                        }
+                        responses += currWord;
                     }
-                    newReaction += words[i];
+                    if (responses != string.Empty) {
+                        finalReaction += "I feel " + responses + " towards " +
+                                         (i == 0 ? intel.node.actor.name : intel.node.poiTarget.name) + ".";
+                    }
                 }
             }
-            reaction = newReaction;
+            if (finalReaction != string.Empty) {
+                reaction = finalReaction;
+            } else {
+                reaction = "I processed no emotions. I am a rock, I am an i-i-i-island.";
+            }
         }
         GameObject targetDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
         DialogItem item = targetDialog.GetComponent<DialogItem>();

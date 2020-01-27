@@ -35,7 +35,7 @@ public class CrimeManager : MonoBehaviour {
         } else if (actionType == INTERACTION_TYPE.STEAL
             || actionType == INTERACTION_TYPE.POISON
             || actionType == INTERACTION_TYPE.KNOCKOUT_CHARACTER
-            || actionType == INTERACTION_TYPE.ASSAULT) {
+            || (actionType == INTERACTION_TYPE.ASSAULT && consideredAction.associatedJobType != JOB_TYPE.APPREHEND)) {
             return CRIME_TYPE.MISDEMEANOR;
         } else if (actionType == INTERACTION_TYPE.STRANGLE
             || actionType == INTERACTION_TYPE.RITUAL_KILLING) {

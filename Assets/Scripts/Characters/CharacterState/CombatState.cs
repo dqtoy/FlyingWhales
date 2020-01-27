@@ -148,9 +148,7 @@ public class CombatState : CharacterState {
             for (int i = 0; i < stateComponent.character.marker.inVisionCharacters.Count; i++) {
                 Character currCharacter = stateComponent.character.marker.inVisionCharacters[i];
                 // stateComponent.character.CreateJobsOnEnterVisionWith(currCharacter);
-                if (!stateComponent.character.marker.unprocessedVisionPOIs.Contains(currCharacter)) {
-                    stateComponent.character.marker.unprocessedVisionPOIs.Add(currCharacter);
-                }
+                stateComponent.character.marker.AddUnprocessedPOI(currCharacter);
             }
             stateComponent.character.needsComponent.CheckExtremeNeeds();
 
