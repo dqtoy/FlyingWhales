@@ -54,7 +54,7 @@ public class RestrainCharacter : GoapAction {
                 }
             } else {
                 if (!witness.opinionComponent.IsEnemiesWith(targetCharacter) && !witness.IsHostileWith(targetCharacter)) {
-                    CrimeManager.Instance.ReactToCrime(witness, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
+                    CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
                     if (!witness.isSerialKiller && witness.opinionComponent.IsFriendsWith(targetCharacter)) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor);
                         if(UnityEngine.Random.Range(0, 100) < 20) {

@@ -27,7 +27,7 @@ public class Cry : GoapAction {
         string costLog = "\n" + name + ":";
         int cost = Utilities.rng.Next(90, 131);
         costLog += " +" + cost + "(Initial)";
-        int timesCost = 10 * actor.jobComponent.numOfTimesCried;
+        int timesCost = 10 * actor.jobComponent.GetNumOfTimesActionDone(this);
         cost += timesCost;
         costLog += " +" + timesCost + "(10 x Times Cried)";
         if (actor.moodComponent.moodState != MOOD_STATE.LOW && actor.moodComponent.moodState != MOOD_STATE.CRITICAL) {
@@ -60,7 +60,7 @@ public class Cry : GoapAction {
 
     #region State Effects
     public void PreCrySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.jobComponent.IncreaseNumOfTimesCried();
+        goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void PerTickCrySuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustHappiness(6f);

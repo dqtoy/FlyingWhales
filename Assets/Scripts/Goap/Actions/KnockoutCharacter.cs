@@ -23,7 +23,50 @@ public class KnockoutCharacter : GoapAction {
         SetState("Knockout Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 1;
+        string costLog = "\n" + name + ":";
+        int cost = 0; //Utilities.rng.Next(80, 121);
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            string opinionLabel = actor.opinionComponent.GetOpinionLabel(targetCharacter);
+            if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend || opinionLabel == OpinionComponent.Acquaintance
+                || actor.faction == targetCharacter.faction || actor.homeSettlement == targetCharacter.homeSettlement) {
+                cost += 15;
+                costLog += " +15(Friend/Close/Acquaintance/Same Faction/Settlement)";
+            } else {
+                cost += 2000;
+                costLog += " +2000(Else)";
+            }
+        }
+        //If Undermine job: cost = 80 - 120
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
+    }
+    public override string ReactionToActor(Character witness, ActualGoapNode node) {
+        string response = base.ReactionToActor(witness, node);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            string opinionLabel = witness.opinionComponent.GetOpinionLabel(targetCharacter);
+            if (opinionLabel == OpinionComponent.Rival) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor);
+            } else {
+                if(node.associatedJobType != JOB_TYPE.APPREHEND) {
+                    if (witness.homeSettlement == targetCharacter.homeSettlement || witness.faction == targetCharacter.faction
+                        || witness.relationshipContainer.HasRelationshipWith(targetCharacter)) {
+                        CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
+                    }
+                }
+            }
+
+            if (opinionLabel == OpinionComponent.Acquaintance) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+            } else if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
+            }
+        }
+        return response;
     }
     #endregion
 

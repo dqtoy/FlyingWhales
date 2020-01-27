@@ -88,7 +88,7 @@ public class Poison : GoapAction {
                 }
             }
         }
-        CrimeManager.Instance.ReactToCrime(witness, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
+        CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
         return response;
     }
     #endregion

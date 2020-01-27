@@ -502,6 +502,10 @@ public static class Signals {
     public static string FOOD_IN_DWELLING_CHANGED = "OnFoodInDwellingChanged";
     #endregion
 
+    #region Interrupt
+    public static string INTERRUPT_STARTED = "OnInterruptStarted";
+    #endregion
+
     public static Dictionary<string, SignalMethod[]> orderedSignalExecution = new Dictionary<string, SignalMethod[]>() {
         { HOUR_STARTED, new SignalMethod[] {
             new SignalMethod() { methodName = "HourlyJobActions", objectType = typeof(Settlement) },

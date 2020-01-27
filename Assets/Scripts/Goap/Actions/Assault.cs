@@ -25,12 +25,44 @@ public class Assault : GoapAction {
         base.Perform(actionNode);
         SetState("Combat Start", actionNode);
     }
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+        string costLog = "\n" + name + ": +10(Constant)";
+        actor.logComponent.AppendCostLog(costLog);
+        return 10;
+    }
+    public override string ReactionToActor(Character witness, ActualGoapNode node) {
+        string response = base.ReactionToActor(witness, node);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if (!witness.IsHostileWith(actor)) {
+            if (target is Character) {
+                Character targetCharacter = target as Character;
+                string opinionLabel = witness.opinionComponent.GetOpinionLabel(targetCharacter);
+                if (opinionLabel == OpinionComponent.Enemy || opinionLabel == OpinionComponent.Rival) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor);
+                } else if (opinionLabel == OpinionComponent.Acquaintance) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+                } else if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
+                }
+            }
+        }
+        return response;
+    }
     #endregion
 
     #region Effects
     public void AfterCombatStart(ActualGoapNode goapNode) {
         Debug.Log(goapNode.actor + " will start combat towards " + goapNode.poiTarget.name);
         goapNode.actor.marker.AddHostileInRange(goapNode.poiTarget, false);
+        if(goapNode.poiTarget is Character) {
+            Character targetCharacter = goapNode.poiTarget as Character;
+            if (goapNode.associatedJobType != JOB_TYPE.APPREHEND && !goapNode.actor.IsHostileWith(targetCharacter)) {
+                CrimeManager.Instance.ReactToCrime(targetCharacter, goapNode.actor, goapNode, goapNode.associatedJobType, CRIME_TYPE.MISDEMEANOR);
+            }
+        }
+
     }
     #endregion
 

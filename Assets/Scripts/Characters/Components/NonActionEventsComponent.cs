@@ -200,8 +200,8 @@ public class NonActionEventsComponent {
         }
 
         if (adjustOpinionBothSides) {
-            owner.opinionComponent.AdjustOpinion(target, result, opinionValue);
-            target.opinionComponent.AdjustOpinion(owner, result, opinionValue);
+            owner.opinionComponent.AdjustOpinion(target, result, opinionValue, "engaged in disastrous conversation");
+            target.opinionComponent.AdjustOpinion(owner, result, opinionValue, "engaged in disastrous conversation");
         } else {
             //If adjustment of opinion is not on both sides, this must mean that the result is either Insult or Praise, so adjust opinion of target to actor
             target.opinionComponent.AdjustOpinion(owner, result, opinionValue);
@@ -226,7 +226,7 @@ public class NonActionEventsComponent {
     //Char1 decreased his/her opinion of char2
     private void OnOpinionDecreased(Character char1, Character char2, string reason) {
         if(char1 == owner) {
-            if (UnityEngine.Random.Range(0, 5) == 0) {
+            if (UnityEngine.Random.Range(0, 100) < 30) {
                 if (owner.opinionComponent.GetTotalOpinion(char2) < -25) {
                     if (owner.relationshipContainer.HasRelationshipWith(char2, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.PARAMOUR)) {
                         char1.interruptComponent.TriggerInterrupt(INTERRUPT.Break_Up, char2, reason);
@@ -242,10 +242,10 @@ public class NonActionEventsComponent {
     private void TriggerBreakUp(Character target, RELATIONSHIP_TYPE relationship, string reason) {
         RelationshipManager.Instance.RemoveRelationshipBetween(owner, target, relationship);
         //upon break up, if one of them still has a Positive opinion of the other, he will gain Heartbroken trait
-        if (owner.opinionComponent.GetTotalOpinion(target) >= 0) {
+        if (!owner.isSerialKiller) { //owner.opinionComponent.GetTotalOpinion(target) >= 0
             owner.traitContainer.AddTrait(owner, "Heartbroken", target);
         }
-        if (target.opinionComponent.GetTotalOpinion(owner) >= 0) {
+        if (!target.isSerialKiller) { //target.opinionComponent.GetTotalOpinion(owner) >= 0
             target.traitContainer.AddTrait(target, "Heartbroken", owner);
         }
         RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.EX_LOVER);

@@ -20,6 +20,9 @@ namespace Interrupts {
         #region Virtuals
         public virtual bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) { return false; }
         public virtual bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target) { return false; }
+        public virtual string ReactionToActor(Character witness, Character actor, IPointOfInterest target, Interrupt interrupt) { return string.Empty; }
+        public virtual string ReactionToTarget(Character witness, Character actor, IPointOfInterest target, Interrupt interrupt) { return string.Empty; }
+        public virtual string ReactionOfTarget(Character actor, IPointOfInterest target, Interrupt interrupt) { return string.Empty; }
         #endregion
     }
 }

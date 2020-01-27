@@ -11,6 +11,7 @@ public class Visit : GoapAction {
         actionIconString = GoapActionStateDB.Entertain_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT };
     }
 
     #region Overrides
@@ -42,7 +43,9 @@ public class Visit : GoapAction {
         SetState("Visit Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 1;
+        string costLog = "\n" + name + ": +10(Constant)";
+        actor.logComponent.AppendCostLog(costLog);
+        return 10;
     }
     #endregion
 

@@ -9,19 +9,14 @@ public class MakeLove : GoapAction {
     public MakeLove() : base(INTERACTION_TYPE.MAKE_LOVE) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Flirt_Icon;
-        validTimeOfDays = new TIME_IN_WORDS[] {
-            TIME_IN_WORDS.AFTERNOON,
-            TIME_IN_WORDS.LUNCH_TIME,
-            TIME_IN_WORDS.EARLY_NIGHT,
-            TIME_IN_WORDS.LATE_NIGHT,
-        };
+        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.EARLY_NIGHT, TIME_IN_WORDS.LATE_NIGHT, TIME_IN_WORDS.AFTER_MIDNIGHT, };
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.DEMON };
     }
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.INVITED, target = GOAP_EFFECT_TARGET.TARGET }, IsTargetInvited);
+        //AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.INVITED, target = GOAP_EFFECT_TARGET.TARGET }, IsTargetInvited);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -29,7 +24,30 @@ public class MakeLove : GoapAction {
         SetState("Make Love Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return Utilities.rng.Next(30, 57);
+        string costLog = "\n" + name + ":";
+        int cost = Utilities.rng.Next(80, 121);
+        costLog += " +" + cost + "(Initial)";
+        Trait trait = actor.traitContainer.GetNormalTrait<Trait>("Chaste", "Lustful");
+        if (trait != null && trait.name == "Chaste") {
+            cost += 2000;
+            costLog += " +2000(Chaste)";
+        }
+        if (trait != null && trait.name == "Lustful") {
+            cost += -15;
+            costLog += " -15(Lustful)";
+        } else {
+            int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
+            if (numOfTimesActionDone > 5) {
+                cost += 2000;
+                costLog += " +2000(Times Made Love > 5)";
+            } else {
+                int timesCost = 10 * numOfTimesActionDone;
+                cost += timesCost;
+                costLog += " +" + timesCost + "(10 x Times Made Love)";
+            }
+        }
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
@@ -43,7 +61,7 @@ public class MakeLove : GoapAction {
         Bed bed = actor.gridTileLocation.structure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).FirstOrDefault() as Bed;
         bed?.OnDoneActionToObject(actor.currentActionNode);
 
-        targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Wooed");
+        //targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Wooed");
         if (targetCharacter.currentActionNode.action == this) {
             targetCharacter.SetCurrentActionNode(null, null, null);
         }
@@ -57,7 +75,7 @@ public class MakeLove : GoapAction {
         actor.needsComponent.AdjustDoNotGetLonely(-1);
         targetCharacter.needsComponent.AdjustDoNotGetLonely(-1);
 
-        targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Wooed");
+        //targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Wooed");
         if (targetCharacter.currentActionNode.action == this) {
             targetCharacter.SetCurrentActionNode(null, null, null);
         }
@@ -84,10 +102,86 @@ public class MakeLove : GoapAction {
         Character targetCharacter = poiTarget as Character;
         actor.ownParty.RemovePOI(targetCharacter);
 
-        targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Wooed");
+        //targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Wooed");
         if (targetCharacter.currentActionNode.action == this) {
             targetCharacter.SetCurrentActionNode(null, null, null);
         }
+    }
+    public override string ReactionToActor(Character witness, ActualGoapNode node) {
+        string response = base.ReactionToActor(witness, node);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, witness, actor);
+        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
+
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            Character actorLover = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) as Character;
+
+            if (actorLover != targetCharacter) {
+                CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.INFRACTION);
+
+                Character targetLover = targetCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) as Character;
+                if (actorLover == witness) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+                }
+                if (targetLover == witness) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
+                    if (witness.opinionComponent.IsFriendsWith(actor) || witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.RELATIVE)) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor);
+                    } else {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor);
+                    }
+                }
+            } else {
+                if(witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.PARAMOUR)) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor);
+                }
+            }
+            
+        }
+        return response;
+    }
+    public override string ReactionToTarget(Character witness, ActualGoapNode node) {
+        string response = base.ReactionToTarget(witness, node);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+
+        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, witness, target);
+        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, target);
+
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            Character actorLover = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) as Character;
+
+            if (actorLover != targetCharacter) {
+                CrimeManager.Instance.ReactToCrime(witness, targetCharacter, node, node.associatedJobType, CRIME_TYPE.INFRACTION);
+
+                Character targetLover = targetCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) as Character;
+                if (targetLover == witness) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, targetCharacter);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, targetCharacter);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, targetCharacter);
+
+                }
+                if (actorLover == witness) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, targetCharacter);
+                    if (witness.opinionComponent.IsFriendsWith(actor) || witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.RELATIVE)) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, targetCharacter);
+                    } else {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, targetCharacter);
+                    }
+                }
+            } else {
+                if (witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.PARAMOUR)) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, targetCharacter);
+                }
+            }
+
+        }
+        return response;
     }
     #endregion
 
@@ -100,6 +194,9 @@ public class MakeLove : GoapAction {
         Character targetCharacter = goapNode.poiTarget as Character;
         goapNode.actor.needsComponent.AdjustDoNotGetLonely(1);
         targetCharacter.needsComponent.AdjustDoNotGetLonely(1);
+
+        goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
+        targetCharacter.jobComponent.IncreaseNumOfTimesActionDone(this);
 
         targetCharacter.SetCurrentActionNode(goapNode.actor.currentActionNode, goapNode.actor.currentJob, goapNode.actor.currentPlan);
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
@@ -126,15 +223,15 @@ public class MakeLove : GoapAction {
             targetCharacter.Death("seduced", goapNode, goapNode.actor);
         }
 
-        if (goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER)) {
-            goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Satisfied", targetCharacter);
-            targetCharacter.traitContainer.AddTrait(targetCharacter, "Satisfied", goapNode.actor);
-        } else if (goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.PARAMOUR)) {
-            goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Ashamed", targetCharacter);
-            targetCharacter.traitContainer.AddTrait(targetCharacter, "Ashamed", goapNode.actor);
-        }
-        goapNode.actor.ownParty.RemovePOI(targetCharacter);
-        targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Wooed");
+        //if (goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER)) {
+        //    goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Satisfied", targetCharacter);
+        //    targetCharacter.traitContainer.AddTrait(targetCharacter, "Satisfied", goapNode.actor);
+        //} else if (goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.PARAMOUR)) {
+        //    goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Ashamed", targetCharacter);
+        //    targetCharacter.traitContainer.AddTrait(targetCharacter, "Ashamed", goapNode.actor);
+        //}
+        //goapNode.actor.ownParty.RemovePOI(targetCharacter);
+        //targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Wooed");
 
         //targetCharacter.RemoveTargettedByAction(this);
         if (targetCharacter.currentActionNode.action == this) {

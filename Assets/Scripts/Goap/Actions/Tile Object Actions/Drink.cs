@@ -31,16 +31,17 @@ public class Drink : GoapAction {
             cost += -15;
             costLog += " -15(Alcoholic)";
         } else {
+            int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
             TIME_IN_WORDS timeOfDay = GameManager.GetCurrentTimeInWordsOfTick();
             if (timeOfDay == TIME_IN_WORDS.MORNING || timeOfDay == TIME_IN_WORDS.LUNCH_TIME ||  timeOfDay == TIME_IN_WORDS.AFTERNOON) {
                 cost += 2000;
                 costLog += " +2000(not Alcoholic, Morning/Lunch/Afternoon)";
             }
-            if (actor.jobComponent.numOfTimesDrank > 5) {
+            if (numOfTimesActionDone > 5) {
                 cost += 2000;
                 costLog += " +2000(Times Drank > 5)";
             } else {
-                int timesCost = 10 * actor.jobComponent.numOfTimesDrank;
+                int timesCost = 10 * numOfTimesActionDone;
                 cost += timesCost;
                 costLog += " +" + timesCost + "(10 x Times Drank)";
             }
@@ -58,7 +59,7 @@ public class Drink : GoapAction {
     #region State Effects
     public void PreDrinkSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetLonely(1);
-        goapNode.actor.jobComponent.IncreaseNumOfTimesDrank();
+        goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void PerTickDrinkSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustHappiness(3.35f);

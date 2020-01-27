@@ -48,6 +48,7 @@ public class InterruptComponent {
                 }
             }
             ExecuteStartInterrupt(triggeredInterrupt, targetPOI);
+            Messenger.Broadcast(Signals.INTERRUPT_STARTED, owner, currentTargetPOI, currentInterrupt);
             Messenger.Broadcast(Signals.UPDATE_THOUGHT_BUBBLE, owner);
         } else {
             TriggeredSimultaneousInterrupt(triggeredInterrupt, targetPOI, identifier);

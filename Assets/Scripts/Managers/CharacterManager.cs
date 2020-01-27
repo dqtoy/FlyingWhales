@@ -55,6 +55,7 @@ public class CharacterManager : MonoBehaviour {
     public Dictionary<CHARACTER_ROLE, INTERACTION_TYPE[]> characterRoleInteractions { get; private set; }
     public Dictionary<string, DeadlySin> deadlySins { get; private set; }
     public Dictionary<EMOTION, Emotion> emotionData { get; private set; }
+    public List<Emotion> allEmotions { get; private set; }
 
 
     private List<string> deadlySinsRotation = new List<string>();
@@ -843,6 +844,7 @@ public class CharacterManager : MonoBehaviour {
     #region Emotions
     private void ConstructEmotionData() {
         emotionData = new Dictionary<EMOTION, Emotion>();
+        this.allEmotions = new List<Emotion>();
         EMOTION[] allEmotions = Utilities.GetEnumValues<EMOTION>();
         for (int i = 0; i < allEmotions.Length; i++) {
             EMOTION emotion = allEmotions[i];
@@ -851,13 +853,42 @@ public class CharacterManager : MonoBehaviour {
             if (type != null) {
                 Emotion data = System.Activator.CreateInstance(type) as Emotion;
                 emotionData.Add(emotion, data);
+                this.allEmotions.Add(data);
             } else {
                 Debug.LogWarning(typeName + " has no data!");
             }
         }
     }
     public string TriggerEmotion(EMOTION emotionType, Character emoter, IPointOfInterest target) {
-        return " " + emotionData[emotionType].ProcessEmotion(emoter, target);
+        return " " + GetEmotion(emotionType).ProcessEmotion(emoter, target);
+    }
+    public Emotion GetEmotion(string name) {
+        for (int i = 0; i < allEmotions.Count; i++) {
+            if(allEmotions[i].name == name) {
+                return allEmotions[i];
+            }
+        }
+        return null;
+    }
+    public Emotion GetEmotion(EMOTION emotionType) {
+        return emotionData[emotionType];
+    }
+    public bool EmotionsChecker(string emotion) {
+        //NOTE: This is only temporary since in the future, we will not have the name of the emotion as the response
+        string[] emotions = emotion.Split(' ');
+        if (emotions != null) {
+            for (int i = 0; i < emotions.Length; i++) {
+                Emotion emotionData = GetEmotion(emotions[i]);
+                if (emotionData != null) {
+                    for (int j = 0; j < emotions.Length; j++) {
+                        if(i != j && (emotions[i] == emotions[j] || !emotionData.IsEmotionCompatibleWithThis(emotions[j]))){
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
     #endregion
 }

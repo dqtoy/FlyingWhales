@@ -5,7 +5,7 @@ using UnityEngine;
 public class Threatened : Emotion {
 
     public Threatened() : base(EMOTION.Threatened) {
-
+        mutuallyExclusive = new string[] { "Fear" };
     }
 
     #region Overrides

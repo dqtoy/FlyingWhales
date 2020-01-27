@@ -27,11 +27,12 @@ public class Dance : GoapAction {
         string costLog = "\n" + name + ":";
         int cost = Utilities.rng.Next(90, 131);
         costLog += " +" + cost + "(Initial)";
-        if (actor.jobComponent.numOfTimesDanced > 5) {
+        int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
+        if (numOfTimesActionDone > 5) {
             cost += 2000;
             costLog += " +2000(Times Danced > 5)";
         } else {
-            int timesCost = 10 * actor.jobComponent.numOfTimesDanced;
+            int timesCost = 10 * numOfTimesActionDone;
             cost += timesCost;
             costLog += " +" + timesCost + "(10 x Times Danced)";
         }
@@ -59,7 +60,7 @@ public class Dance : GoapAction {
     #region Effects
     public void PreDanceSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetLonely(1);
-        goapNode.actor.jobComponent.IncreaseNumOfTimesDanced();
+        goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void PerTickDanceSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustHappiness(14f);

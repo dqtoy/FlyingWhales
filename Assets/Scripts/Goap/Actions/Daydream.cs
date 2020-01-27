@@ -31,11 +31,12 @@ public class Daydream : GoapAction {
         string costLog = "\n" + name + ":";
         int cost = Utilities.rng.Next(90, 131);
         costLog += " +" + cost + "(Initial)";
-        if (actor.jobComponent.numOfTimesDaydreamed > 5) {
+        int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
+        if (numOfTimesActionDone > 5) {
             cost += 2000;
             costLog += " +2000(Times Daydreamed > 5)";
         } else {
-            int timesCost = 10 * actor.jobComponent.numOfTimesDaydreamed;
+            int timesCost = 10 * numOfTimesActionDone;
             cost += timesCost;
             costLog += " +" + timesCost + "(10 x Times Daydreamed)";
         }
@@ -54,7 +55,7 @@ public class Daydream : GoapAction {
     public void PreDaydreamSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetLonely(1);
         goapNode.actor.needsComponent.AdjustDoNotGetTired(1);
-        goapNode.actor.jobComponent.IncreaseNumOfTimesDaydreamed();
+        goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void PerTickDaydreamSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustHappiness(3.35f);

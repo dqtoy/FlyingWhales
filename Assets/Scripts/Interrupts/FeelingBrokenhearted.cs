@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Interrupts {
     public class FeelingBrokenhearted : Interrupt {
         public FeelingBrokenhearted() : base(INTERRUPT.Feeling_Brokenhearted) {
-            duration = 12;
+            duration = 4;
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
         }

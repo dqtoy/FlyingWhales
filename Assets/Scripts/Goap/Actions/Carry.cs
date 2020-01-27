@@ -49,7 +49,9 @@ public class Carry : GoapAction {
         return goapActionInvalidity;
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 1;
+        string costLog = "\n" + name + ": +10(Constant)";
+        actor.logComponent.AppendCostLog(costLog);
+        return 10;
     }
     #endregion
 

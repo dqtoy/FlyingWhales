@@ -11,6 +11,7 @@ public class Spit : GoapAction {
         actionIconString = GoapActionStateDB.Entertain_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, };
     }
 
     #region Overrides
@@ -22,8 +23,46 @@ public class Spit : GoapAction {
         SetState("Spit Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        //**Cost**: randomize between 5-35
-        return Utilities.rng.Next(5, 36);
+        string costLog = "\n" + name + ":";
+        int cost = Utilities.rng.Next(80, 121);
+        costLog += " +" + cost + "(Initial)";
+        int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
+        if (numOfTimesActionDone > 5) {
+            cost += 2000;
+            costLog += " +2000(Times Spat > 5)";
+        } else {
+            int timesCost = 10 * numOfTimesActionDone;
+            cost += timesCost;
+            costLog += " +" + timesCost + "(10 x Times Spat)";
+        }
+        if (actor.traitContainer.GetNormalTrait<Trait>("Evil") != null) {
+            cost += -15;
+            costLog += " -15(Evil)";
+        }
+        if (actor.traitContainer.GetNormalTrait<Trait>("Treacherous") != null) {
+            cost += -10;
+            costLog += " -10(Treacherous)";
+        }
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
+    }
+    public override string ReactionToActor(Character witness, ActualGoapNode node) {
+        string response = base.ReactionToActor(witness, node);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if (target is Tombstone) {
+            Character targetCharacter = (target as Tombstone).character;
+            string witnessOpinionLabelToDead = witness.opinionComponent.GetOpinionLabel(targetCharacter);
+            if (witnessOpinionLabelToDead == OpinionComponent.Friend || witnessOpinionLabelToDead == OpinionComponent.Close_Friend) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+            } else if (witnessOpinionLabelToDead == OpinionComponent.Rival) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor);
+            } else {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+            }
+        }
+        return response;
     }
     #endregion
 
@@ -49,18 +88,12 @@ public class Spit : GoapAction {
     #endregion
 
     #region Effects
-    //public void PreSpitSuccess(ActualGoapNode goapNode) {
-    //    //Tombstone tombstone = goapNode.poiTarget as Tombstone;
-    //    //goapNode.descriptionLog.AddToFillers(null, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    //    //currentState.SetIntelReaction(SpitSuccessReactions);
-    //}
+    public void PreSpitSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
+    }
     public void AfterSpitSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustHappiness(20f);
     }
-    //public void PreTargetMissing(ActualGoapNode goapNode) {
-    //    Tombstone tombstone = poiTarget as Tombstone;
-    //    goapNode.descriptionLog.AddToFillers(null, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    //}
     #endregion
 
     //#region Intel Reactions

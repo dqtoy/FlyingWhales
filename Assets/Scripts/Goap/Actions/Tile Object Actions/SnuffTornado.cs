@@ -21,6 +21,8 @@
            
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+        string costLog = "\n" + name + ": +10(Constant)";
+        actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
     #endregion

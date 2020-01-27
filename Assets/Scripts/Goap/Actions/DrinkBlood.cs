@@ -126,7 +126,7 @@ public class DrinkBlood : GoapAction {
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
         if (!witness.isVampire) {
-            CrimeManager.Instance.ReactToCrime(witness, node, node.associatedJobType, CRIME_TYPE.HEINOUS);
+            CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.HEINOUS);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
 
             string opinionLabel = witness.opinionComponent.GetOpinionLabel(actor);
@@ -159,7 +159,7 @@ public class DrinkBlood : GoapAction {
         IPointOfInterest target = node.poiTarget;
         if (target is Character) {
             Character targetCharacter = target as Character;
-            CrimeManager.Instance.ReactToCrime(targetCharacter, node, node.associatedJobType, CRIME_TYPE.HEINOUS);
+            CrimeManager.Instance.ReactToCrime(targetCharacter, actor, node, node.associatedJobType, CRIME_TYPE.HEINOUS);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, targetCharacter, actor);
             if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Coward") != null) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, targetCharacter, actor);

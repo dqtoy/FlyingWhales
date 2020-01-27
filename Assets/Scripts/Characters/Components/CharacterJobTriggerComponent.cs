@@ -12,13 +12,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	private Character _owner;
 	
 	private bool hasStartedScreamCheck;
-	
-	public int numOfTimesCried { get; private set; }
-	public int numOfTimesDanced { get; private set; }
-	public int numOfTimesDaydreamed { get; private set; }
-	public int numOfTimesDrank { get; private set; }
 
-	private string[] removeStatusTraits = new[] {
+    public Dictionary<GoapAction, int> numOfTimesActionDone { get; private set; }
+    
+
+    private string[] removeStatusTraits = new[] {
 		nameof(Unconscious), nameof(Injured), nameof(Sick), nameof(Plagued),
 		nameof(Infected), nameof(Cursed)
 	};
@@ -28,6 +26,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	
 	public CharacterJobTriggerComponent(Character owner) {
 		_owner = owner;
+        numOfTimesActionDone = new Dictionary<GoapAction, int>();
 	}
 
 	#region Listeners
@@ -429,52 +428,26 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		return null;
 	}
 	#endregion
-	
-	#region Cry
-	public void IncreaseNumOfTimesCried() {
-		numOfTimesCried++;
-		GameDate dueDate = GameManager.Instance.Today();
-		dueDate.AddDays(3);
-		SchedulingManager.Instance.AddEntry(dueDate, DecreaseNumOfTimesCried, _owner);
-	}
-	private void DecreaseNumOfTimesCried() {
-		numOfTimesCried--;
-	}
-	#endregion
-	
-	#region Dance
-	public void IncreaseNumOfTimesDanced() {
-		numOfTimesDanced++;
-		GameDate dueDate = GameManager.Instance.Today();
-		dueDate.AddDays(3);
-		SchedulingManager.Instance.AddEntry(dueDate, DecreaseNumOfTimesDanced, _owner);
-	}
-	private void DecreaseNumOfTimesDanced() {
-		numOfTimesDanced--;
-	}
-	#endregion
-	
-	#region Daydream
-	public void IncreaseNumOfTimesDaydreamed() {
-		numOfTimesDaydreamed++;
-		GameDate dueDate = GameManager.Instance.Today();
-		dueDate.AddDays(3);
-		SchedulingManager.Instance.AddEntry(dueDate, DecreaseNumOfTimesDaydreamed, _owner);
-	}
-	private void DecreaseNumOfTimesDaydreamed() {
-		numOfTimesDaydreamed--;
-	}
-	#endregion
-	
-	#region Drink
-	public void IncreaseNumOfTimesDrank() {
-		numOfTimesDrank++;
-		GameDate dueDate = GameManager.Instance.Today();
-		dueDate.AddDays(3);
-		SchedulingManager.Instance.AddEntry(dueDate, DecreaseNumOfTimesDrank, _owner);
-	}
-	private void DecreaseNumOfTimesDrank() {
-		numOfTimesDrank--;
-	}
-	#endregion
+
+    #region Actions
+    public void IncreaseNumOfTimesActionDone(GoapAction action) {
+        if (!numOfTimesActionDone.ContainsKey(action)) {
+            numOfTimesActionDone.Add(action, 1);
+        } else {
+            numOfTimesActionDone[action]++;
+        }
+        GameDate dueDate = GameManager.Instance.Today();
+        dueDate.AddDays(3);
+        SchedulingManager.Instance.AddEntry(dueDate, () => DecreaseNumOfTimesActionDone(action), _owner);
+    }
+    private void DecreaseNumOfTimesActionDone(GoapAction action) {
+        numOfTimesActionDone[action]--;
+    }
+    public int GetNumOfTimesActionDone(GoapAction action) {
+        if (numOfTimesActionDone.ContainsKey(action)) {
+            return numOfTimesActionDone[action];
+        }
+        return 0;
+    }
+    #endregion
 }

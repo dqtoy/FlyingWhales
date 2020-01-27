@@ -7,12 +7,7 @@ public class Sing : GoapAction {
 
     public Sing() : base(INTERACTION_TYPE.SING) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
-        validTimeOfDays = new TIME_IN_WORDS[] {
-            TIME_IN_WORDS.MORNING,
-            TIME_IN_WORDS.LUNCH_TIME,
-            TIME_IN_WORDS.AFTERNOON,
-            TIME_IN_WORDS.EARLY_NIGHT,
-        };
+        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT, };
         actionIconString = GoapActionStateDB.Entertain_Icon;
         isNotificationAnIntel = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
@@ -28,18 +23,67 @@ public class Sing : GoapAction {
         SetState("Sing Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return Utilities.rng.Next(20, 37);
+        string costLog = "\n" + name + ":";
+        int cost = Utilities.rng.Next(90, 131);
+        costLog += " +" + cost + "(Initial)";
+        int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
+        if (numOfTimesActionDone > 5) {
+            cost += 2000;
+            costLog += " +2000(Times Played > 5)";
+        } else {
+            int timesCost = 10 * numOfTimesActionDone;
+            cost += timesCost;
+            costLog += " +" + timesCost + "(10 x Times Played)";
+        }
+        Trait trait = actor.traitContainer.GetNormalTrait<Trait>("Music Hater", "Music Lover");
+        if (trait != null) {
+            if (trait.name == "Music Hater") {
+                cost += 2000;
+                costLog += " +2000(Music Hater)";
+            } else {
+                cost += -15;
+                costLog += " -15(Music Lover)";
+            }
+        }
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
         actor.needsComponent.AdjustDoNotGetLonely(-1);
     }
+    public override string ReactionToActor(Character witness, ActualGoapNode node) {
+        string response = base.ReactionToActor(witness, node);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        Trait trait = witness.traitContainer.GetNormalTrait<Trait>("Music Hater", "Music Lover");
+        if (trait != null) {
+            if (trait.name == "Music Hater") {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+            } else {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor);
+                if (RelationshipManager.Instance.GetCompatibilityBetween(witness, actor) >= 4
+                    && RelationshipManager.Instance.IsSexuallyCompatible(witness, actor)
+                    && witness.moodComponent.moodState != MOOD_STATE.CRITICAL) {
+                    int value = 50;
+                    if (actor.traitContainer.GetNormalTrait<Trait>("Ugly") != null) {
+                        value = 20;
+                    }
+                    if (UnityEngine.Random.Range(0, 100) < value) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, witness, actor);
+                    }
+                }
+            }
+        }
+        return response;
+    }
     #endregion
 
     #region Effects
     public void PreSingSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetLonely(1);
+        goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
         //currentState.SetIntelReaction(SingSuccessIntelReaction);
     }
     public void PerTickSingSuccess(ActualGoapNode goapNode) {

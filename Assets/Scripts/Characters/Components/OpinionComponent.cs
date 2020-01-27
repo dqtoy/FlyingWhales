@@ -24,7 +24,7 @@ public class OpinionComponent {
         charactersWithOpinion = new List<Character>();
     }
 
-    public void AdjustOpinion(Character target, string opinionText, int opinionValue, string reason = "") {
+    public void AdjustOpinion(Character target, string opinionText, int opinionValue, string lastStrawReason = "") {
         if (!HasOpinion(target)) {
             opinions.Add(target, ObjectPoolManager.Instance.CreateNewOpinionData());
             opinions[target].AdjustOpinion("Base", 0);
@@ -48,15 +48,15 @@ public class OpinionComponent {
         }
         opinions[target].AdjustOpinion(opinionText, opinionValue);
         if (opinionValue > 0) {
-            Messenger.Broadcast(Signals.OPINION_INCREASED, owner, target, reason);
+            Messenger.Broadcast(Signals.OPINION_INCREASED, owner, target, lastStrawReason);
         } else if (opinionValue < 0) {
-            Messenger.Broadcast(Signals.OPINION_DECREASED, owner, target, reason);
+            Messenger.Broadcast(Signals.OPINION_DECREASED, owner, target, lastStrawReason);
         }
         if (!target.opinionComponent.HasOpinion(owner)) {
             target.opinionComponent.AdjustOpinion(owner, "Base", 0);
         }
     }
-    public void SetOpinion(Character target, string opinionText, int opinionValue, string reason = "") {
+    public void SetOpinion(Character target, string opinionText, int opinionValue, string lastStrawReason = "") {
         if (!HasOpinion(target)) {
             opinions.Add(target, ObjectPoolManager.Instance.CreateNewOpinionData());
             opinions[target].AdjustOpinion("Base", 0);
@@ -78,9 +78,9 @@ public class OpinionComponent {
         }
         opinions[target].SetOpinion(opinionText, opinionValue);
         if (opinionValue > 0) {
-            Messenger.Broadcast(Signals.OPINION_INCREASED, owner, target, reason);
+            Messenger.Broadcast(Signals.OPINION_INCREASED, owner, target, lastStrawReason);
         } else if (opinionValue < 0) {
-            Messenger.Broadcast(Signals.OPINION_DECREASED, owner, target, reason);
+            Messenger.Broadcast(Signals.OPINION_DECREASED, owner, target, lastStrawReason);
         }
         if (!target.opinionComponent.HasOpinion(owner)) {
             target.opinionComponent.SetOpinion(owner, "Base", 0);

@@ -28,22 +28,24 @@ public class Butcher : GoapAction {
         Character deadCharacter = GetDeadCharacter(target);
         int cost = GetFoodAmountTakenFromDead(deadCharacter);
         costLog += " +" + cost + "(Initial)";
-        if (actor == target) {
-            cost += 2000;
-            costLog += " +2000(Actor/Target Same)";
-        } else {
-            if (actor.traitContainer.GetNormalTrait<Trait>("Cannibal") != null) {
-                if (actor.opinionComponent.IsFriendsWith(deadCharacter)) {
-                    cost += 2000;
-                    costLog += " +2000(Cannibal, Friend/Close)";
-                } else if (deadCharacter != null && (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) &&
-                           !actor.needsComponent.isStarving) {
-                    cost += 2000;
-                    costLog += " +2000(Cannibal, Human/Elf, not Starving)";
-                }
+        if(target is Character || target is Tombstone) {
+            if (actor == target) {
+                cost += 2000;
+                costLog += " +2000(Actor/Target Same)";
             } else {
-                if (deadCharacter != null && (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES)) {
-                    costLog += " +2000(not Cannibal, Human/Elf)";
+                if (actor.traitContainer.GetNormalTrait<Trait>("Cannibal") != null) {
+                    if (actor.opinionComponent.IsFriendsWith(deadCharacter)) {
+                        cost += 2000;
+                        costLog += " +2000(Cannibal, Friend/Close)";
+                    } else if ((deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) &&
+                               !actor.needsComponent.isStarving) {
+                        cost += 2000;
+                        costLog += " +2000(Cannibal, Human/Elf, not Starving)";
+                    }
+                } else {
+                    if ((deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES)) {
+                        costLog += " +2000(not Cannibal, Human/Elf)";
+                    }
                 }
             }
         }
@@ -76,7 +78,7 @@ public class Butcher : GoapAction {
         Character targetCharacter = GetDeadCharacter(target);
         if (witness.traitContainer.GetNormalTrait<Trait>("Cannibal") == null &&
             (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES)) {
-            CrimeManager.Instance.ReactToCrime(witness, node, node.associatedJobType, CRIME_TYPE.HEINOUS);
+            CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.HEINOUS);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor);
             
@@ -106,15 +108,18 @@ public class Butcher : GoapAction {
             if (poiTarget.gridTileLocation == null) {
                 return false;
             }
-            Character deadCharacter = GetDeadCharacter(poiTarget);
-            if (deadCharacter != null && (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES)
-                && actor.faction != deadCharacter.faction && actor.homeSettlement != deadCharacter.homeSettlement) {
-                if (actor.traitContainer.GetNormalTrait<Trait>("Cannibal") != null) {
-                    return true;
+            if(poiTarget is SmallAnimal) {
+                return true;
+            } else {
+                Character deadCharacter = GetDeadCharacter(poiTarget);
+                if (deadCharacter != null && (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES)
+                    && actor.faction != deadCharacter.faction && actor.homeSettlement != deadCharacter.homeSettlement) {
+                    if (actor.traitContainer.GetNormalTrait<Trait>("Cannibal") != null) {
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
             }
-            return true;
         }
         return false;
     }

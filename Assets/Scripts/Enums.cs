@@ -1000,6 +1000,7 @@ public enum INTERRUPT {
     Angered,
     Inspired,
     Feeling_Lazy,
+    Invite_To_Make_Love,
 }
 
 public enum TRAIT_TYPE {

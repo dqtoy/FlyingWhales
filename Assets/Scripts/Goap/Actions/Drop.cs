@@ -25,7 +25,9 @@ public class Drop : GoapAction {
         SetState("Drop Success", actionNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 1;
+        string costLog = "\n" + name + ": +10(Constant)";
+        actor.logComponent.AppendCostLog(costLog);
+        return 10;
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
         object[] otherData = node.otherData;

@@ -9,12 +9,7 @@ public class PlayGuitar : GoapAction {
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
     public PlayGuitar() : base(INTERACTION_TYPE.PLAY_GUITAR) {
-        validTimeOfDays = new TIME_IN_WORDS[] {
-            TIME_IN_WORDS.MORNING,
-            TIME_IN_WORDS.LUNCH_TIME,
-            TIME_IN_WORDS.AFTERNOON,
-            TIME_IN_WORDS.EARLY_NIGHT,
-        };
+        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT, };
         actionIconString = GoapActionStateDB.Entertain_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
         isNotificationAnIntel = false;
@@ -31,30 +26,30 @@ public class PlayGuitar : GoapAction {
         SetState("Play Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (poiTarget.gridTileLocation != null) {
-            LocationGridTile knownLoc = poiTarget.gridTileLocation;
-            if (actor.homeStructure == knownLoc.structure) {
-                //- Actor is resident of the Guitar's Dwelling: 15 - 26 (If Music Lover 5 - 12)
-                return Utilities.rng.Next(15, 27);
+        string costLog = "\n" + name + ":";
+        int cost = Utilities.rng.Next(80, 121);
+        costLog += " +" + cost + "(Initial)";
+        int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
+        if (numOfTimesActionDone > 5) {
+            cost += 2000;
+            costLog += " +2000(Times Played > 5)";
+        } else {
+            int timesCost = 10 * numOfTimesActionDone;
+            cost += timesCost;
+            costLog += " +" + timesCost + "(10 x Times Played)";
+        }
+        Trait trait = actor.traitContainer.GetNormalTrait<Trait>("Music Hater", "Music Lover");
+        if (trait != null) {
+            if(trait.name == "Music Hater") {
+                cost += 2000;
+                costLog += " +2000(Music Hater)";
             } else {
-                if (knownLoc.structure.isDwelling) {
-                    IDwelling dwelling = knownLoc.structure as IDwelling;
-                    if (dwelling.IsOccupied()) {
-                        for (int i = 0; i < dwelling.residents.Count; i++) {
-                            Character currResident = dwelling.residents[i];
-                            if (currResident.opinionComponent.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
-                                //- Actor is not a resident but has a positive relationship with the Guitar's Dwelling resident: 20-36 (If music lover 10 - 26)
-                                return Utilities.rng.Next(20, 37);
-                            }
-                        }
-                        //the actor does NOT have any positive relations with any resident
-                        return 99999; //NOTE: Should never reach here since Requirement prevents this.
-                    }
-                }
+                cost += -15;
+                costLog += " -15(Music Lover)";
             }
         }
-        //- Guitar Structure Has No Residents 40 - 56 (If Music Lover 25 - 46)
-        return Utilities.rng.Next(40, 57);
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
@@ -74,11 +69,37 @@ public class PlayGuitar : GoapAction {
         }
         return goapActionInvalidity;
     }
+    public override string ReactionToActor(Character witness, ActualGoapNode node) {
+        string response = base.ReactionToActor(witness, node);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        Trait trait = witness.traitContainer.GetNormalTrait<Trait>("Music Hater", "Music Lover");
+        if (trait != null) {
+            if (trait.name == "Music Hater") {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+            } else {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor);
+                if(RelationshipManager.Instance.GetCompatibilityBetween(witness, actor) >= 4
+                    && RelationshipManager.Instance.IsSexuallyCompatible(witness, actor)
+                    && witness.moodComponent.moodState != MOOD_STATE.CRITICAL) {
+                    int value = 50;
+                    if (actor.traitContainer.GetNormalTrait<Trait>("Ugly") != null) {
+                        value = 20;
+                    }
+                    if(UnityEngine.Random.Range(0, 100) < value) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, witness, actor);
+                    }
+                }
+            }
+        }
+        return response;
+    }
     #endregion
 
     #region State Effects
     public void PrePlaySuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetLonely(1);
+        goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
         goapNode.poiTarget.SetPOIState(POI_STATE.INACTIVE);
         //TODO: currentState.SetIntelReaction(PlaySuccessIntelReaction);
     }

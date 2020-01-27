@@ -56,7 +56,7 @@ public class Sleep : GoapAction {
                     actor.logComponent.AppendCostLog(costLog);
                     return cost;
                 } else if (isTargetObjectOwnedByEnemy) {
-                    cost = 2000;
+                    cost += 2000;
                     costLog += " +2000(Owned by Enemy)";
                     actor.logComponent.AppendCostLog(costLog);
                     return cost;

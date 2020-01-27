@@ -174,6 +174,18 @@ public class ShareIntelMenu : MonoBehaviour {
         if (reaction == string.Empty) {
             //character had no reaction
             reaction = "A proper response to this information has not been implemented yet.";
+        } else {
+            string[] words = reaction.Split(' ');
+            string newReaction = "I feel ";
+            if(words != null) {
+                for (int i = 0; i < words.Length; i++) {
+                    if(i > 0) {
+                        newReaction += ", ";
+                    }
+                    newReaction += words[i];
+                }
+            }
+            reaction = newReaction;
         }
         GameObject targetDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
         DialogItem item = targetDialog.GetComponent<DialogItem>();

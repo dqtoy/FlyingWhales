@@ -6,11 +6,6 @@ using Traits;
 public class Steal : GoapAction {
 
     public Steal() : base(INTERACTION_TYPE.STEAL) {
-        //validTimeOfDays = new TIME_IN_WORDS[] {
-        //    TIME_IN_WORDS.EARLY_NIGHT,
-        //    TIME_IN_WORDS.LATE_NIGHT,
-        //    TIME_IN_WORDS.AFTER_MIDNIGHT,
-        //};
         actionIconString = GoapActionStateDB.Steal_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.ITEM };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
@@ -31,7 +26,28 @@ public class Steal : GoapAction {
         SetState("Steal Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return Utilities.rng.Next(35, 56);
+        string costLog = "\n" + name + ":";
+        int cost = Utilities.rng.Next(300, 351);
+        costLog += " +" + cost + "(Initial)";
+        Trait trait = actor.traitContainer.GetNormalTrait<Trait>("Kleptomaniac");
+        if (trait != null) {
+            cost += -200;
+            costLog += " -200(Kleptomaniac)";
+        } else {
+            SpecialToken item = null;
+            if(target is SpecialToken) {
+                item = target as SpecialToken;
+            }
+            if(item != null && item.characterOwner != null) {
+                string opinionLabel = actor.opinionComponent.GetOpinionLabel(item.characterOwner);
+                if(opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+                    cost += 2000;
+                    costLog += " +2000(not Kleptomaniac, Friend/Close/Acquaintance)";
+                }
+            }
+        }
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
     }
     public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
         if (goapNode.poiTarget is SpecialToken) {
@@ -61,6 +77,35 @@ public class Steal : GoapAction {
         GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(isInvalid, stateName);
         return goapActionInvalidity;
     }
+    public override string ReactionToActor(Character witness, ActualGoapNode node) {
+        string response = base.ReactionToActor(witness, node);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+
+        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+        if (witness.opinionComponent.IsFriendsWith(actor)) {
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor);
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
+        }
+        CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
+        return response;
+    }
+    public override string ReactionOfTarget(ActualGoapNode node) {
+        string response = base.ReactionOfTarget(node);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if(target is SpecialToken) {
+            Character targetCharacter = (target as SpecialToken).carriedByCharacter;
+            if(targetCharacter != null) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, targetCharacter, actor);
+                if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Hothead") != null || UnityEngine.Random.Range(0, 100) < 35) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor);
+                }
+                CrimeManager.Instance.ReactToCrime(targetCharacter, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
+            }
+        }
+        return response;
+    }
     #endregion
 
     #region Requirements
@@ -88,6 +133,9 @@ public class Steal : GoapAction {
     //}
     public void AfterStealSuccess(ActualGoapNode goapNode) {
         goapNode.actor.PickUpToken(goapNode.poiTarget as SpecialToken, false);
+        if(goapNode.actor.traitContainer.GetNormalTrait<Trait>("Kleptomaniac") != null) {
+            goapNode.actor.needsComponent.AdjustHappiness(10);
+        }
     }
     #endregion
 

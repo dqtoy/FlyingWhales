@@ -9,11 +9,6 @@ public class RitualKilling : GoapAction {
 
     public RitualKilling() : base(INTERACTION_TYPE.RITUAL_KILLING) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
-        validTimeOfDays = new TIME_IN_WORDS[] {
-                TIME_IN_WORDS.AFTER_MIDNIGHT,
-                TIME_IN_WORDS.EARLY_NIGHT,
-                TIME_IN_WORDS.LATE_NIGHT,
-        };
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
     }
@@ -28,7 +23,9 @@ public class RitualKilling : GoapAction {
         SetState("Killing Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 1;
+        string costLog = "\n" + name + ": +10(Constant)";
+        actor.logComponent.AppendCostLog(costLog);
+        return 10;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
@@ -41,6 +38,67 @@ public class RitualKilling : GoapAction {
             }
         }
         return goapActionInvalidity;
+    }
+    public override string ReactionToActor(Character witness, ActualGoapNode node) {
+        string response = base.ReactionToActor(witness, node);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if (target is Character) {
+            if (witness.traitContainer.GetNormalTrait<Trait>("Coward") != null) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
+            } else {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
+
+                Character targetCharacter = target as Character;
+                if (witness.opinionComponent.IsFriendsWith(actor) && !targetCharacter.isSerialKiller) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor);
+                }
+                if (witness.opinionComponent.IsFriendsWith(targetCharacter)) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+                }
+            }
+        }
+        CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.SERIOUS);
+        return response;
+    }
+    public override string ReactionToTarget(Character witness, ActualGoapNode node) {
+        string response = base.ReactionToTarget(witness, node);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            if (!targetCharacter.isSerialKiller) {
+                string opinionLabel = witness.opinionComponent.GetOpinionLabel(targetCharacter);
+                if (opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor);
+                }
+            }
+        }
+        return response;
+    }
+    public override string ReactionOfTarget(ActualGoapNode node) {
+        string response = base.ReactionOfTarget(node);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Coward") != null) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, targetCharacter, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, targetCharacter, actor);
+            } else {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, targetCharacter, actor);
+
+                if (targetCharacter.opinionComponent.IsFriendsWith(actor) && !targetCharacter.isSerialKiller) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor);
+                }
+            }
+            CrimeManager.Instance.ReactToCrime(targetCharacter, actor, node, node.associatedJobType, CRIME_TYPE.SERIOUS);
+        }
+        return response;
     }
     #endregion
 

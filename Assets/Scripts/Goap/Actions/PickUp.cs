@@ -33,7 +33,11 @@ public class PickUp : GoapAction {
         SetState("Take Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 10;
+        string costLog = "\n" + name + ":";
+        int cost = Utilities.rng.Next(80, 121);
+        costLog += " +" + cost + "(RNG)";
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
     }
     #endregion
 

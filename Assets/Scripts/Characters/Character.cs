@@ -7,6 +7,7 @@ using Inner_Maps;
 using UnityEngine;
 using Traits;
 using UnityEngine.Assertions;
+using Interrupts;
 
 public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget {
 
@@ -2413,10 +2414,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    //Cannot witness/watch a watch action
         //    return;
         //}
-        if (node.actor == this || node.poiTarget == this) {
-            //Cannot witness if character is part of the action
-            return;
-        }
+        //if (node.actor == this || node.poiTarget == this) {
+        //    //Cannot witness if character is part of the action
+        //    return;
+        //}
         //if (!node.action.shouldAddLogs) {
         //    return;
         //}
@@ -2427,7 +2428,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 //marker.actionsToWitness.Add(node);
                 //This is done so that the character will react again
                 marker.unprocessedVisionPOIs.Add(node.actor);
-            } else if (marker.inVisionCharacters.Contains(node.poiTarget)) {
+            } else if (marker.inVisionPOIs.Contains(node.poiTarget)) {
                 //marker.actionsToWitness.Add(node);
                 //This is done so that the character will react again
                 marker.unprocessedVisionPOIs.Add(node.poiTarget);
@@ -2436,6 +2437,21 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         //ThisCharacterWitnessedEvent(action);
         //ThisCharacterWatchEvent(null, action, state);
+    }
+    public virtual void OnInterruptStarted(Character actor, IPointOfInterest target, Interrupt interrupt) {
+        if (isDead || !canWitness) {
+            return;
+        }
+        if (marker != null) {
+            if (marker.inVisionCharacters.Contains(actor)) {
+                //This is done so that the character will react again
+                marker.unprocessedVisionPOIs.Add(actor);
+            } 
+            //else if (marker.inVisionPOIs.Contains(target)) {
+            //    //This is done so that the character will react again
+            //    marker.unprocessedVisionPOIs.Add(target);
+            //}
+        }
     }
     public void AddOverrideThought(string log) {
         _overrideThoughts.Add(log);
@@ -2543,6 +2559,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Character targetCharacter = null;
         if (target is Character) {
             targetCharacter = target as Character;
+            //React To Interrupt
+            if (targetCharacter.interruptComponent.isInterrupted) {
+                reactionComponent.ReactTo(targetCharacter.interruptComponent.currentInterrupt, targetCharacter, targetCharacter.interruptComponent.currentTargetPOI, this);
+            }
+
             //targetCharacter.OnSeenBy(this); //trigger that the target character was seen by this character.
             targetCharacterCurrentActionNode = targetCharacter.currentActionNode;
             if (targetCharacterCurrentActionNode != null /*&& node.action.shouldAddLogs*/ && targetCharacterCurrentActionNode.actionStatus == ACTION_STATUS.PERFORMING) {

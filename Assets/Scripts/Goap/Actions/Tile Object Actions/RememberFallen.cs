@@ -12,6 +12,7 @@ public class RememberFallen : GoapAction {
         isNotificationAnIntel = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.EARLY_NIGHT, TIME_IN_WORDS.LATE_NIGHT, TIME_IN_WORDS.AFTER_MIDNIGHT, };
     }
 
     #region Overrides
@@ -23,8 +24,28 @@ public class RememberFallen : GoapAction {
         SetState("Remember Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        //**Cost**: randomize between 5-35
-        return Utilities.rng.Next(5, 36);
+        string costLog = "\n" + name + ":";
+        int cost = Utilities.rng.Next(80, 121);
+        costLog += " +" + cost + "(Initial)";
+        int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
+        if (numOfTimesActionDone > 5) {
+            cost += 2000;
+            costLog += " +2000(Times Reminisced > 5)";
+        } else {
+            int timesCost = 10 * numOfTimesActionDone;
+            cost += timesCost;
+            costLog += " +" + timesCost + "(10 x Times Reminisced)";
+        }
+        if (actor.traitContainer.GetNormalTrait<Trait>("Serial Killer") != null) {
+            cost += 2000;
+            costLog += " +2000(Psychopath)";
+        }
+        if (actor.moodComponent.moodState == MOOD_STATE.LOW || actor.moodComponent.moodState == MOOD_STATE.CRITICAL) {
+            cost += -15;
+            costLog += " -15(Low or Crit Mood)";
+        }
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
@@ -44,6 +65,25 @@ public class RememberFallen : GoapAction {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
         actor.needsComponent.AdjustDoNotGetLonely(-1);
+    }
+    public override string ReactionToActor(Character witness, ActualGoapNode node) {
+        string response = base.ReactionToActor(witness, node);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if (target is Tombstone) {
+            Character targetCharacter = (target as Tombstone).character;
+            string witnessOpinionLabelToDead = witness.opinionComponent.GetOpinionLabel(targetCharacter);
+            if ((witnessOpinionLabelToDead == OpinionComponent.Friend || witnessOpinionLabelToDead == OpinionComponent.Close_Friend)
+                && witness.traitContainer.GetNormalTrait<Trait>("Serial Killer") == null) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor);
+            } else if (witnessOpinionLabelToDead == OpinionComponent.Rival) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor);
+                if (witness.opinionComponent.IsFriendsWith(actor)) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor);
+                }
+            }
+        }
+        return response;
     }
     #endregion
 
@@ -73,9 +113,10 @@ public class RememberFallen : GoapAction {
         Tombstone tombstone = goapNode.poiTarget as Tombstone;
         goapNode.descriptionLog.AddToFillers(null, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         goapNode.actor.needsComponent.AdjustDoNotGetLonely(1);
+        goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void PerTickRememberSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(5f);
+        goapNode.actor.needsComponent.AdjustHappiness(4.5f);
     }
     public void AfterRememberSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetLonely(-1);
