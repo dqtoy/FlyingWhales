@@ -4540,6 +4540,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             string reaction = reactionComponent.ReactTo(intel.node, SHARE_INTEL_STATUS.INFORMED);
             intel.node.AddAwareCharacter(this);
             PlayerManager.Instance.player.RemoveIntel(intel);
+            return reaction;
         }
         return "aware";
     }
