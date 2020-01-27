@@ -539,12 +539,13 @@ public class ActualGoapNode {
                 //    AddArrangedLog("description", descriptionLog, null);
                 //}
                 bool showPopup = false;
-                if (action.showIntelNotification) {
-                    if (action.shouldIntelNotificationOnlyIfActorIsActive) {
-                        showPopup = PlayerManager.Instance.player.ShouldShowNotificationFrom(actor, true);
-                    } else {
-                        showPopup = PlayerManager.Instance.player.ShouldShowNotificationFrom(actor, descriptionLog);
-                    }
+                if (action.showNotification) {
+                    // if (action.shouldIntelNotificationOnlyIfActorIsActive) {
+                    //     showPopup = PlayerManager.Instance.player.ShouldShowNotificationFrom(actor, true);
+                    // } else {
+                    //     showPopup = PlayerManager.Instance.player.ShouldShowNotificationFrom(actor, descriptionLog);
+                    // }
+                    showPopup = PlayerManager.Instance.player.ShouldShowNotificationFrom(actor, descriptionLog);
                 }
                 if (showPopup) {
                     if (!action.isNotificationAnIntel) {

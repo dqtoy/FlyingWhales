@@ -16,7 +16,7 @@ public class Scrap : GoapAction {
             TIME_IN_WORDS.EARLY_NIGHT,
         };
         actionIconString = GoapActionStateDB.Work_Icon;
-        isNotificationAnIntel = false;
+        
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.ITEM };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };

@@ -534,6 +534,9 @@
             <e p="StormWitch.BT.txt" t="Include" />
           </e>
         </e>
+        <e p="Cellular Automata" t="Include">
+          <e p="CellularAutomataGenerator.cs" t="Include" />
+        </e>
         <e p="CombatPrototype" t="Include">
           <e p="Scripts" t="Include">
             <e p="CharacterSetup.cs" t="Include" />
@@ -1346,6 +1349,7 @@
               <e p="BuildStructureComponent.cs" t="Include" />
               <e p="CharacterFactionComponent.cs" t="Include" />
               <e p="CharacterJobTriggerComponent.cs" t="Include" />
+              <e p="CombatComponent.cs" t="Include" />
               <e p="InterruptComponent.cs" t="Include" />
               <e p="LogComponent.cs" t="Include" />
               <e p="MoodComponent.cs" t="Include" />
@@ -1611,11 +1615,14 @@
             <e p="Grieving.cs" t="Include" />
             <e p="Inspired.cs" t="Include" />
             <e p="Interrupt.cs" t="Include" />
+            <e p="InviteToMakeLove.cs" t="Include" />
             <e p="JoinFaction.cs" t="Include" />
             <e p="LaughAt.cs" t="Include" />
             <e p="LeaveFaction.cs" t="Include" />
             <e p="Mock.cs" t="Include" />
             <e p="NarcolepticAttack.cs" t="Include" />
+            <e p="Plagued.cs" t="Include" />
+            <e p="Poisoned.cs" t="Include" />
             <e p="Puke.cs" t="Include" />
             <e p="ReduceConflict.cs" t="Include" />
             <e p="RevertToNormal.cs" t="Include" />
@@ -1921,11 +1928,12 @@
             <e p="Artifacts" t="Include">
               <e p="AnkhOfAnubis.cs" t="Include" />
               <e p="Artifact.cs" t="Include" />
-              <e p="ChaosOrb.cs" t="Include" />
+              <e p="ChaosOrbArtifact.cs" t="Include" />
               <e p="HermesStatue.cs" t="Include" />
               <e p="MiasmaEmitter.cs" t="Include" />
               <e p="Necronomicon.cs" t="Include" />
             </e>
+            <e p="ChaosOrb.cs" t="Include" />
             <e p="Combat Abilities" t="Include">
               <e p="CombatAbility.cs" t="Include" />
               <e p="FearSpellAbility.cs" t="Include" />

@@ -7,7 +7,7 @@ using Inner_Maps;
 public class TakeResource : GoapAction {
     public TakeResource() : base(INTERACTION_TYPE.TAKE_RESOURCE) {
         actionIconString = GoapActionStateDB.Work_Icon;
-        isNotificationAnIntel = false;
+        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
     }
@@ -49,7 +49,9 @@ public class TakeResource : GoapAction {
         SetState("Take Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 1;
+        string costLog = "\n" + name + " " + target.nameWithID + ": +10(Constant)";
+        actor.logComponent.AppendCostLog(costLog);
+        return 10;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);

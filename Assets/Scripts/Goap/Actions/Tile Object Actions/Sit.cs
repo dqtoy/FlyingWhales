@@ -9,8 +9,8 @@ public class Sit : GoapAction {
 
     public Sit() : base(INTERACTION_TYPE.SIT) {
         actionIconString = GoapActionStateDB.No_Icon;
-        shouldIntelNotificationOnlyIfActorIsActive = true;
-        isNotificationAnIntel = false;
+        showNotification = false;
+        
         shouldAddLogs = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
@@ -23,7 +23,7 @@ public class Sit : GoapAction {
        
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        string costLog = "\n" + name + ": +10(Constant)";
+        string costLog = "\n" + name + " " + target.nameWithID + ": +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }

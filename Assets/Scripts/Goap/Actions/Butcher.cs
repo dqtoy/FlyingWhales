@@ -12,6 +12,7 @@ public class Butcher : GoapAction {
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, };
+        isNotificationAnIntel = true;
     }
 
     #region Overrides
@@ -24,7 +25,7 @@ public class Butcher : GoapAction {
         SetState("Transform Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        string costLog = "\n" + name + ":";
+        string costLog = "\n" + name + " " + target.nameWithID + ":";
         Character deadCharacter = GetDeadCharacter(target);
         int cost = GetFoodAmountTakenFromDead(deadCharacter);
         costLog += " +" + cost + "(Initial)";

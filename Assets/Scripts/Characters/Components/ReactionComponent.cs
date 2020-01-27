@@ -41,7 +41,6 @@ public class ReactionComponent {
         return string.Empty;
     }
     public void ReactTo(Interrupt interrupt, Character actor, IPointOfInterest target, Character witness) {
-        //TODO
         if (owner.faction != actor.faction && owner.faction.IsHostileWith(actor.faction)) {
             //Must not react if the faction of the actor of witnessed action is hostile with the faction of the witness
             return;

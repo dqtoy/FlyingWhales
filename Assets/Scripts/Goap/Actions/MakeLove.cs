@@ -12,6 +12,7 @@ public class MakeLove : GoapAction {
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.EARLY_NIGHT, TIME_IN_WORDS.LATE_NIGHT, TIME_IN_WORDS.AFTER_MIDNIGHT, };
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.DEMON };
+        isNotificationAnIntel = true;
     }
 
     #region Overrides
@@ -24,7 +25,7 @@ public class MakeLove : GoapAction {
         SetState("Make Love Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        string costLog = "\n" + name + ":";
+        string costLog = "\n" + name + " " + target.nameWithID + ":";
         int cost = Utilities.rng.Next(80, 121);
         costLog += " +" + cost + "(Initial)";
         Trait trait = actor.traitContainer.GetNormalTrait<Trait>("Chaste", "Lustful");

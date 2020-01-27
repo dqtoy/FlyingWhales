@@ -15,6 +15,7 @@ public class Assault : GoapAction {
         doesNotStopTargetCharacter = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        isNotificationAnIntel = true;
     }
 
     #region Overrides
@@ -26,7 +27,7 @@ public class Assault : GoapAction {
         SetState("Combat Start", actionNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        string costLog = "\n" + name + ": +10(Constant)";
+        string costLog = "\n" + name + " " + target.nameWithID + ": +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }

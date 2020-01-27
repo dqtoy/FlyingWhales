@@ -9,7 +9,7 @@ public class NarcolepticNap : GoapAction {
     public NarcolepticNap() : base(INTERACTION_TYPE.NARCOLEPTIC_NAP) {
         actionIconString = GoapActionStateDB.Sleep_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
-        isNotificationAnIntel = false;
+        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
     }

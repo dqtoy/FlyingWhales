@@ -90,12 +90,15 @@ namespace Traits {
                     int chance = GetInfectChanceForAction(action);
                     if (roll < chance) {
                         //target will be infected with plague
-                        if (target.traitContainer.AddTrait(target, "Plagued", infector as Character)) {
-                            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
-                            log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                            log.AddToFillers(infector, infector.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                            log.AddLogToInvolvedObjects();
+                        if (target is Character) {
+                            (target as Character).interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, target);
                         }
+                        // if (target.traitContainer.AddTrait(target, "Plagued", infector as Character)) {
+                        //     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
+                        //     log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                        //     log.AddToFillers(infector, infector.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        //     log.AddLogToInvolvedObjects();
+                        // }
                     }
                 }
             }

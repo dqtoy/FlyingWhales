@@ -43,9 +43,7 @@ public class InterruptComponent {
                 owner.currentJob.StopJobNotDrop();
             }
             if (currentInterrupt.doesDropCurrentJob) {
-                if (owner.currentJob != null) {
-                    owner.currentJob.CancelJob(false);
-                }
+                owner.currentJob?.CancelJob(false);
             }
             ExecuteStartInterrupt(triggeredInterrupt, targetPOI);
             Messenger.Broadcast(Signals.INTERRUPT_STARTED, owner, currentTargetPOI, currentInterrupt);

@@ -10,7 +10,7 @@ public class DispelMagic : GoapAction {
     public DispelMagic() : base(INTERACTION_TYPE.DISPEL_MAGIC) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.FirstAid_Icon;
-        isNotificationAnIntel = false;
+        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, };
     }
@@ -24,7 +24,7 @@ public class DispelMagic : GoapAction {
         SetState("Dispel Magic Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        string costLog = "\n" + name + ": +10(Constant)";
+        string costLog = "\n" + name + " " + target.nameWithID + ": +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }

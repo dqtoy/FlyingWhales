@@ -300,15 +300,15 @@ public class NonActionEventsComponent {
         int chance = UnityEngine.Random.Range(0, 100);
         if(chance < 50) {
             if (owner.traitContainer.GetNormalTrait<Trait>("Ugly") != null) {
-                owner.opinionComponent.AdjustOpinion(target, "Base", -4);
-                target.opinionComponent.AdjustOpinion(owner, "Base", -2);
+                owner.opinionComponent.AdjustOpinion(target, "Base", -4, "engaged in disastrous flirting");
+                target.opinionComponent.AdjustOpinion(owner, "Base", -2, "engaged in disastrous flirting");
                 return "ugly";
             }
         }
         if(chance < 90) {
             if(!RelationshipManager.Instance.IsSexuallyCompatibleOneSided(target, owner)) {
-                owner.opinionComponent.AdjustOpinion(target, "Base", -4);
-                target.opinionComponent.AdjustOpinion(owner, "Base", -2);
+                owner.opinionComponent.AdjustOpinion(target, "Base", -4, "engaged in disastrous flirting");
+                target.opinionComponent.AdjustOpinion(owner, "Base", -2, "engaged in disastrous flirting");
                 return "incompatible";
             }
         }

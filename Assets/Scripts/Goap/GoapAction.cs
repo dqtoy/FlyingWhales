@@ -18,9 +18,9 @@ public class GoapAction : IReactable {
     public RACE[] racesThatCanDoAction { get; protected set; }
     public Dictionary<string, GoapActionState> states { get; protected set; }
     public ACTION_LOCATION_TYPE actionLocationType { get; protected set; } //This is set in every action's constructor
-    public bool showIntelNotification { get; protected set; } //should this action show a notification when it is done by its actor or when it recieves a plan with this action as it's end node?
+    public bool showNotification { get; protected set; } //should this action show a notification when it is done by its actor or when it receives a plan with this action as it's end node?
     public bool shouldAddLogs { get; protected set; } //should this action add logs to it's actor?
-    public bool shouldIntelNotificationOnlyIfActorIsActive { get; protected set; }
+    // public bool shouldIntelNotificationOnlyIfActorIsActive { get; protected set; }
     public bool isNotificationAnIntel { get; protected set; }
     public string actionIconString { get; protected set; }
     public string animationName { get; protected set; } //what animation should the character be playing while doing this action
@@ -36,7 +36,7 @@ public class GoapAction : IReactable {
     public GoapAction(INTERACTION_TYPE goapType) { //, INTERACTION_ALIGNMENT alignment, Character actor, IPointOfInterest poiTarget
         this.goapType = goapType;
         this.goapName = Utilities.NormalizeStringUpperCaseFirstLetters(goapType.ToString());
-        showIntelNotification = true;
+        showNotification = true;
         shouldAddLogs = true;
         basePreconditions = new List<Precondition>();
         baseExpectedEffects = new List<GoapEffect>();

@@ -7,7 +7,7 @@ public class RepairStructure : GoapAction {
 
     public RepairStructure() : base(INTERACTION_TYPE.REPAIR_STRUCTURE) {
         actionIconString = GoapActionStateDB.Work_Icon;
-        isNotificationAnIntel = false;
+        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
     }

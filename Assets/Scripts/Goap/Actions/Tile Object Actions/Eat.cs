@@ -10,8 +10,8 @@ public class Eat : GoapAction {
     public Eat() : base(INTERACTION_TYPE.EAT) {
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         actionIconString = GoapActionStateDB.Eat_Icon;
-        shouldIntelNotificationOnlyIfActorIsActive = true;
-        isNotificationAnIntel = false;
+        showNotification = false;
+        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
     }
@@ -26,7 +26,7 @@ public class Eat : GoapAction {
         SetState("Eat Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        string costLog = "\n" + name + ":";
+        string costLog = "\n" + name + " " + target.nameWithID + ":";
         int cost = 0;
         if (target is Table) {
             Table table = target as Table;

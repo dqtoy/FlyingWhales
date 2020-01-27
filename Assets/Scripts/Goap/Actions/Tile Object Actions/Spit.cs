@@ -12,6 +12,7 @@ public class Spit : GoapAction {
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, };
+        isNotificationAnIntel = true;
     }
 
     #region Overrides
@@ -23,7 +24,7 @@ public class Spit : GoapAction {
         SetState("Spit Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        string costLog = "\n" + name + ":";
+        string costLog = "\n" + name + " " + target.nameWithID + ":";
         int cost = Utilities.rng.Next(80, 121);
         costLog += " +" + cost + "(Initial)";
         int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);

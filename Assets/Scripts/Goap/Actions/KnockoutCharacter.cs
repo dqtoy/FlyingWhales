@@ -12,6 +12,7 @@ public class KnockoutCharacter : GoapAction {
         actionIconString = GoapActionStateDB.Stealth_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        isNotificationAnIntel = true;
     }
 
     #region Overrides
@@ -23,7 +24,7 @@ public class KnockoutCharacter : GoapAction {
         SetState("Knockout Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        string costLog = "\n" + name + ":";
+        string costLog = "\n" + name + " " + target.nameWithID + ":";
         int cost = 0; //Utilities.rng.Next(80, 121);
         if (target is Character) {
             Character targetCharacter = target as Character;

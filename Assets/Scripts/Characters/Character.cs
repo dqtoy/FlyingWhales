@@ -2565,12 +2565,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //React To Interrupt
             if (targetCharacter.interruptComponent.isInterrupted) {
                 reactionComponent.ReactTo(targetCharacter.interruptComponent.currentInterrupt, targetCharacter, targetCharacter.interruptComponent.currentTargetPOI, this);
-            }
-
-            //targetCharacter.OnSeenBy(this); //trigger that the target character was seen by this character.
-            targetCharacterCurrentActionNode = targetCharacter.currentActionNode;
-            if (targetCharacterCurrentActionNode != null /*&& node.action.shouldAddLogs*/ && targetCharacterCurrentActionNode.actionStatus == ACTION_STATUS.PERFORMING) {
-                reactionComponent.ReactTo(targetCharacterCurrentActionNode, SHARE_INTEL_STATUS.WITNESSED);
+            } else {
+                //targetCharacter.OnSeenBy(this); //trigger that the target character was seen by this character.
+                targetCharacterCurrentActionNode = targetCharacter.currentActionNode;
+                if (targetCharacterCurrentActionNode != null /*&& node.action.shouldAddLogs*/ && targetCharacterCurrentActionNode.actionStatus == ACTION_STATUS.PERFORMING) {
+                    reactionComponent.ReactTo(targetCharacterCurrentActionNode, SHARE_INTEL_STATUS.WITNESSED);
+                }
             }
         }
         if (target.allJobsTargetingThis.Count > 0) {

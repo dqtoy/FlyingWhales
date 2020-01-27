@@ -10,9 +10,9 @@ public class Cry : GoapAction {
     public Cry() : base(INTERACTION_TYPE.CRY) {
         actionIconString = GoapActionStateDB.Entertain_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
-        isNotificationAnIntel = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        isNotificationAnIntel = true;
     }
 
     #region Overrides
@@ -24,7 +24,7 @@ public class Cry : GoapAction {
         SetState("Cry Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        string costLog = "\n" + name + ":";
+        string costLog = "\n" + name + " " + target.nameWithID + ":";
         int cost = Utilities.rng.Next(90, 131);
         costLog += " +" + cost + "(Initial)";
         int timesCost = 10 * actor.jobComponent.GetNumOfTimesActionDone(this);

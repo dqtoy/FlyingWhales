@@ -7,7 +7,7 @@ public class DropResource : GoapAction {
 
     public DropResource() : base(INTERACTION_TYPE.DROP_RESOURCE) {
         actionIconString = GoapActionStateDB.Work_Icon;
-        isNotificationAnIntel = false;
+        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
     }
@@ -72,7 +72,9 @@ public class DropResource : GoapAction {
         SetState("Drop Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return 3;
+        string costLog = "\n" + name + " " + target.nameWithID + ": +10(Constant)";
+        actor.logComponent.AppendCostLog(costLog);
+        return 10;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);

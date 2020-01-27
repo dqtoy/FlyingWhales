@@ -495,12 +495,13 @@ public class Player : ILeader {
     private void OnCharacterDoingAction(Character character, ActualGoapNode actionNode) {
         bool showPopup = false;
         Log log = actionNode.GetCurrentLog();
-        if (actionNode.action.showIntelNotification && log != null) { //TODO: added checking if actor is already at target tile. So that travelling notification won't show if that is the case. && !actionNode.IsActorAtTargetTile() 
-            if (actionNode.action.shouldIntelNotificationOnlyIfActorIsActive) {
-                showPopup = ShouldShowNotificationFrom(actionNode.actor, true);
-            } else {
-                showPopup = ShouldShowNotificationFrom(actionNode.actor, log);
-            }
+        if (actionNode.action.showNotification && log != null) { //TODO: added checking if actor is already at target tile. So that travelling notification won't show if that is the case. && !actionNode.IsActorAtTargetTile() 
+            // if (actionNode.action.shouldIntelNotificationOnlyIfActorIsActive) {
+            //     showPopup = ShouldShowNotificationFrom(actionNode.actor, true);
+            // } else {
+            //     showPopup = ShouldShowNotificationFrom(actionNode.actor, log);
+            // }
+            showPopup = ShouldShowNotificationFrom(actionNode.actor, log);
         }
         if (showPopup) {
             Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, log);
@@ -515,12 +516,8 @@ public class Player : ILeader {
     private void OnAfterActionStateSet(string stateName, ActualGoapNode actionNode) {
         bool showPopup = false;
         Log log = actionNode.GetCurrentLog();
-        if (actionNode.action.showIntelNotification && actionNode.currentState.duration > 0 && log != null) { //added checking for duration because this notification should only show for actions that have durations.
-            if (actionNode.action.shouldIntelNotificationOnlyIfActorIsActive) {
-                showPopup = ShouldShowNotificationFrom(actionNode.actor, true);
-            } else {
-                showPopup = ShouldShowNotificationFrom(actionNode.actor, log);
-            }
+        if (actionNode.action.showNotification && actionNode.currentState.duration > 0 && log != null) { //added checking for duration because this notification should only show for actions that have durations.
+            showPopup = ShouldShowNotificationFrom(actionNode.actor, log);
         }
         if (showPopup) {
             Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, log);

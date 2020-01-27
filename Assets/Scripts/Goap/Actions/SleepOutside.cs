@@ -10,8 +10,8 @@ public class SleepOutside : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         actionIconString = GoapActionStateDB.Sleep_Icon;
         //animationName = "Sleep Ground";
-        shouldIntelNotificationOnlyIfActorIsActive = true;
-        isNotificationAnIntel = false;
+        showNotification = false;
+        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
     }
@@ -26,7 +26,7 @@ public class SleepOutside : GoapAction {
         SetState("Rest Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        string costLog = "\n" + name + ": +100(Constant)";
+        string costLog = "\n" + name + " " + target.nameWithID + ": +100(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 100;
     }

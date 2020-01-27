@@ -7,8 +7,8 @@ public class Nap : GoapAction {
 
     public Nap() : base(INTERACTION_TYPE.NAP) {
         actionIconString = GoapActionStateDB.Sleep_Icon;
-        shouldIntelNotificationOnlyIfActorIsActive = true;
-        isNotificationAnIntel = false;
+        showNotification = false;
+        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.LUNCH_TIME };
@@ -58,7 +58,7 @@ public class Nap : GoapAction {
         //    return 45;
         //}
         //return 100;
-        string costLog = "\n" + name + ": +10(Constant)";
+        string costLog = "\n" + name + " " + target.nameWithID + ": +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
