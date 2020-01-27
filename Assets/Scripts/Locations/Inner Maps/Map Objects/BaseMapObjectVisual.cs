@@ -69,7 +69,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         }
         return false;
     }
-    #endregion
+    #endregion 
 
     #region Pointer Functions
     public void ExecuteClickAction(PointerEventData.InputButton button) {
@@ -96,7 +96,9 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     #region Object Pool
     public override void Reset() {
         base.Reset();
-        SetVisualAlpha(255f / 255f);
+        if (objectVisual != null ) {
+            SetVisualAlpha(255f / 255f);    
+        }
     }
     #endregion
 }

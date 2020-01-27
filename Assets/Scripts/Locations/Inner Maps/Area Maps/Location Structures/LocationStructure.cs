@@ -235,13 +235,16 @@ public class LocationStructure {
         }
         return null;
     }
-    public ResourcePile GetResourcePileObjectWithLowestCountAndNotAtMaximum(TILE_OBJECT_TYPE type) {
+    public ResourcePile GetResourcePileObjectWithLowestCount(TILE_OBJECT_TYPE type, bool excludeMaximum = true) {
         ResourcePile chosenPile = null;
         int lowestCount = 0;
         for (int i = 0; i < pointsOfInterest.Count; i++) {
             if (pointsOfInterest[i] is ResourcePile) {
                 ResourcePile obj = pointsOfInterest[i] as ResourcePile;
-                if (obj.tileObjectType == type && obj.IsAtMaxResource(obj.providedResource) == false) {
+                if (excludeMaximum && obj.IsAtMaxResource(obj.providedResource)) {
+                    continue; //skip
+                }
+                if (obj.tileObjectType == type) {
                     if(chosenPile == null || obj.resourceInPile <= lowestCount) {
                         chosenPile = obj;
                         lowestCount = obj.resourceInPile;

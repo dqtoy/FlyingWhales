@@ -9,7 +9,8 @@ namespace Cellular_Automata {
 	public static class CellularAutomataGenerator {
 
 		public static int[,] GenerateMap(int width, int height, int smoothing, int randomFillPercent, 
-			LocationGridTile[,] tileMap, List<LocationGridTile> allTiles, string seed = "", bool edgesAreAlwaysWalls = true) {
+			LocationGridTile[,] tileMap, List<LocationGridTile> allTiles, string seed = "", 
+			bool edgesAreAlwaysWalls = true) {
 			int[,] map = new int[width, height];
 			RandomFillMap(width, height, map, randomFillPercent, tileMap, allTiles, seed, edgesAreAlwaysWalls);
 			
@@ -19,7 +20,8 @@ namespace Cellular_Automata {
 			return map;
 		}
 		private static void RandomFillMap(int width, int height, int[,] map, int randomFillPercent, 
-			LocationGridTile[,] tileMap, List<LocationGridTile> allTiles, string seed, bool edgesAreAlwaysWalls = true) {
+			LocationGridTile[,] tileMap, List<LocationGridTile> allTiles, string seed, 
+			bool edgesAreAlwaysWalls = true) {
 			if (string.IsNullOrEmpty(seed)) {
 				seed = Time.time.ToString();
 			}

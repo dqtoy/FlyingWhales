@@ -791,19 +791,18 @@ namespace Inner_Maps {
                 } else if (objectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
                     return Utilities.GetRandomElement(assetManager.corruptedBigTreeAssets);
                 }
-            } else {
-                if (tileObjectTiles.ContainsKey(objectType)) {
-                    TileObjectTileSetting setting = tileObjectTiles[objectType];
-                    BiomeTileObjectTileSetting biomeSetting = setting.biomeAssets.ContainsKey(biome) ? setting.biomeAssets[biome] 
-                        : setting.biomeAssets[BIOMES.NONE];
-                    if (state == POI_STATE.ACTIVE) {
-                        return biomeSetting.activeTile;
-                    } else {
-                        return biomeSetting.inactiveTile;
-                    }    
-                }    
             }
             
+            if (tileObjectTiles.ContainsKey(objectType)) {
+                TileObjectTileSetting setting = tileObjectTiles[objectType];
+                BiomeTileObjectTileSetting biomeSetting = setting.biomeAssets.ContainsKey(biome) ? setting.biomeAssets[biome] 
+                    : setting.biomeAssets[BIOMES.NONE];
+                if (state == POI_STATE.ACTIVE) {
+                    return biomeSetting.activeTile;
+                } else {
+                    return biomeSetting.inactiveTile;
+                }    
+            }
             return null;
         }
         public WallAsset GetWallAsset(RESOURCE wallResource, string assetName) {
