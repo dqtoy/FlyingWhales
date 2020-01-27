@@ -39,12 +39,13 @@ public class InterruptComponent {
             if (owner.marker != null && owner.marker.isMoving) {
                 owner.marker.StopMovement();
             }
-            if (currentInterrupt.doesStopCurrentAction && owner.currentJob != null) {
-                owner.currentJob.StopJobNotDrop();
-            }
             if (currentInterrupt.doesDropCurrentJob) {
                 owner.currentJob?.CancelJob(false);
             }
+            if (currentInterrupt.doesStopCurrentAction && owner.currentJob != null) {
+                owner.currentJob.StopJobNotDrop();
+            }
+
             ExecuteStartInterrupt(triggeredInterrupt, targetPOI);
             Messenger.Broadcast(Signals.INTERRUPT_STARTED, owner, currentTargetPOI, currentInterrupt);
             Messenger.Broadcast(Signals.UPDATE_THOUGHT_BUBBLE, owner);
@@ -83,9 +84,7 @@ public class InterruptComponent {
             for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
                 Character inVisionCharacter = owner.marker.inVisionCharacters[i];
                 // owner.CreateJobsOnEnterVisionWith(inVisionCharacter);
-                if (!owner.marker.unprocessedVisionPOIs.Contains(inVisionCharacter)) {
-                    owner.marker.unprocessedVisionPOIs.Add(inVisionCharacter);
-                }
+                owner.marker.AddUnprocessedPOI(inVisionCharacter);
             }
         }
         Messenger.Broadcast(Signals.INTERRUPT_FINISHED, finishedInterrupt.interrupt, owner);

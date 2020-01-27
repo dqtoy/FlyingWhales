@@ -77,25 +77,27 @@ public class Butcher : GoapAction {
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
         Character targetCharacter = GetDeadCharacter(target);
-        if (witness.traitContainer.GetNormalTrait<Trait>("Cannibal") == null &&
-            (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES)) {
-            CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.HEINOUS);
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor);
+        if (targetCharacter != null) {
+            if (witness.traitContainer.GetNormalTrait<Trait>("Cannibal") == null &&
+                (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES)) {
+                CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.HEINOUS);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor);
             
-            string opinionLabel = witness.opinionComponent.GetOpinionLabel(actor);
-            if (opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor);
+                string opinionLabel = witness.opinionComponent.GetOpinionLabel(actor);
+                if (opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor);
+                }
+                if (!witness.isSerialKiller) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor);
+                }
             }
-            if (!witness.isSerialKiller) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor);
-            }
-        }
-        string witnessOpinionToTarget = witness.opinionComponent.GetOpinionLabel(targetCharacter);
-        if (witnessOpinionToTarget == OpinionComponent.Friend || witnessOpinionToTarget == OpinionComponent.Close_Friend || witnessOpinionToTarget == OpinionComponent.Acquaintance 
-            || witness.faction == targetCharacter.faction || witness.homeSettlement == targetCharacter.homeSettlement) {
-            if (!witness.isSerialKiller) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
+            string witnessOpinionToTarget = witness.opinionComponent.GetOpinionLabel(targetCharacter);
+            if (witnessOpinionToTarget == OpinionComponent.Friend || witnessOpinionToTarget == OpinionComponent.Close_Friend || witnessOpinionToTarget == OpinionComponent.Acquaintance 
+                || witness.faction == targetCharacter.faction || witness.homeSettlement == targetCharacter.homeSettlement) {
+                if (!witness.isSerialKiller) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
+                }
             }
         }
         return response;

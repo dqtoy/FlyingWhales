@@ -70,7 +70,7 @@ public class POITestingUI : MonoBehaviour {
     public void InviteToMakeLove() {
         if (poi is Character) {
             Character target = poi as Character;
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, INTERACTION_TYPE.INVITE, target, UIManager.Instance.characterInfoUI.activeCharacter);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, INTERACTION_TYPE.MAKE_LOVE, target, UIManager.Instance.characterInfoUI.activeCharacter);
             UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
             //if (UIManager.Instance.characterInfoUI.activeCharacter.HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
             //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY_FORLORN, INTERACTION_TYPE.INVITE_TO_MAKE_LOVE, target);

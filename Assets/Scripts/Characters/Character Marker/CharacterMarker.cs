@@ -57,7 +57,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public List<Character> inVisionCharacters { get; private set; } //POI's in this characters vision collider
     public List<IPointOfInterest> hostilesInRange { get; private set; } //POI's in this characters hostility collider
     public List<IPointOfInterest> avoidInRange { get; private set; } //POI's in this characters hostility collider
-    //public List<ActualGoapNode> actionsToWitness { get; private set; } //List of actions this character can witness, and has not been processed yet. Will be cleared after processing
+    // public List<ActualGoapNode> alreadyWitnessedActions { get; private set; } //List of actions this character can witness, and has not been processed yet. Will be cleared after processing
     public Dictionary<Character, bool> lethalCharacters { get; private set; }
     public string avoidReason { get; private set; }
     public bool willProcessCombat { get; private set; }
@@ -113,7 +113,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         terrifyingObjects = new List<IPointOfInterest>();
         avoidInRange = new List<IPointOfInterest>();
         lethalCharacters = new Dictionary<Character, bool>();
-        //actionsToWitness = new List<ActualGoapNode>();
+        // alreadyWitnessedActions = new List<ActualGoapNode>();
         avoidReason = string.Empty;
         attackSpeedMeter = 0f;
         OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
@@ -223,7 +223,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                         Character currCharacter = inVisionCharacters[i];
                         if (!AddHostileInRange(currCharacter)) {
                             //If not hostile, try to react to character's action
-                            character.marker.unprocessedVisionPOIs.Add(currCharacter);
+                            AddUnprocessedPOI(currCharacter);
                         }
                     }
                     break;
@@ -1012,7 +1012,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void AddPOIAsInVisionRange(IPointOfInterest poi) {
         if (!inVisionPOIs.Contains(poi)) {
             inVisionPOIs.Add(poi);
-            unprocessedVisionPOIs.Add(poi);
+            AddUnprocessedPOI(poi);
             if (poi is Character) {
                 inVisionCharacters.Add(poi as Character);
             }
@@ -1023,7 +1023,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public void RemovePOIFromInVisionRange(IPointOfInterest poi) {
         if (inVisionPOIs.Remove(poi)) {
-            unprocessedVisionPOIs.Remove(poi);
+            RemoveUnprocessedPOI(poi);
             RemoveAvoidInRange(poi);
             if (poi is Character) {
                 Character target = poi as Character;
@@ -1034,8 +1034,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public void ClearPOIsInVisionRange() {
         inVisionPOIs.Clear();
-        unprocessedVisionPOIs.Clear();
         inVisionCharacters.Clear();
+        ClearUnprocessedPOI();
     }
     public void LogPOIsInVisionRange() {
         string summary = character.name + "'s POIs in range: ";
@@ -1050,12 +1050,23 @@ public class CharacterMarker : MapObjectVisual<Character> {
             character.PerformGoapAction();
         }
     }
+    public void AddUnprocessedPOI(IPointOfInterest poi) {
+        unprocessedVisionPOIs.Add(poi);
+        // character.logComponent.PrintLogIfActive(character.name + " added unprocessed poi " + poi.nameWithID);
+    }
+    public void RemoveUnprocessedPOI(IPointOfInterest poi) {
+        unprocessedVisionPOIs.Remove(poi);
+    }
+    public void ClearUnprocessedPOI() {
+        unprocessedVisionPOIs.Clear();
+    }
     private void ProcessAllUnprocessedVisionPOIs() {
         if(unprocessedVisionPOIs.Count > 0) { //&& (character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)
             string log = character.name + " tick ended! Processing all unprocessed in visions...";
             if (!character.isDead/* && character.canWitness*/) { //character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting", "Zapped") == null
                 for (int i = 0; i < unprocessedVisionPOIs.Count; i++) {
                     IPointOfInterest poi = unprocessedVisionPOIs[i];
+                    log += "\n-" + poi.nameWithID;
                     character.ThisCharacterSaw(poi);
                     ////Collect all actions to witness and avoid duplicates
                     //List<ActualGoapNode> nodes = character.ThisCharacterSaw(poi);
@@ -1124,10 +1135,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
             } else {
                 log += "\n - Character is either dead or cannot witness, not processing...";
             }
-            unprocessedVisionPOIs.Clear();
+            ClearUnprocessedPOI();
             character.logComponent.PrintLogIfActive(log);
         }
-        //actionsToWitness.Clear();
+        // alreadyWitnessedActions.Clear();
         if (willProcessCombat && (hostilesInRange.Count > 0 || avoidInRange.Count > 0)) {
             string log = character.name + " process combat switch is turned on and there are hostiles or avoid in list, processing combat...";
             ProcessCombatBehavior();

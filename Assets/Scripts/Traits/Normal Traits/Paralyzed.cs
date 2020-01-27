@@ -65,13 +65,13 @@ namespace Traits {
             if(owner.marker == null) {
                 return;
             }
-            // if (!owner.CanPerformEndTickJobs()) {
-            //     return;
-            // }
             if (owner.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER)) {
                 return;
             }
             if (owner.jobQueue.jobsInQueue.Count > 0) {
+                if (!owner.CanPerformEndTickJobs()) {
+                    return;
+                }
                 owner.PerformTopPriorityJob();
             } else {
                 if (!PlanTirednessRecovery()) {

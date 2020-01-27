@@ -119,7 +119,7 @@ public class ReactionComponent {
                 error += "\n-Target: " + node.poiTarget.nameWithID;
                 owner.logComponent.PrintLogErrorIfActive(error);
             }
-            string response = "Witness action reaction of " + owner.name + " to " + node.action.goapName + " of " + node.actor.name + " with target " + node.actor.name
+            string response = "Witness action reaction of " + owner.name + " to " + node.action.goapName + " of " + node.actor.name + " with target " + node.poiTarget.name
                 + ": " + emotionsToActor + emotionsToTarget;
             owner.logComponent.PrintLogIfActive(response);
         } else if (node.poiTarget == owner) {
@@ -133,7 +133,7 @@ public class ReactionComponent {
                     error += "\n-Target: " + node.poiTarget.nameWithID;
                     owner.logComponent.PrintLogErrorIfActive(error);
                 }
-                string response = "Witness action reaction of " + owner.name + " to " + node.action.goapName + " of " + node.actor.name + " with target " + node.actor.name
+                string response = "Witness action reaction of " + owner.name + " to " + node.action.goapName + " of " + node.actor.name + " with target " + node.poiTarget.name
                     + ": " + emotionsOfTarget;
                 owner.logComponent.PrintLogIfActive(response);
             }
@@ -174,7 +174,7 @@ public class ReactionComponent {
                 error += "\n-Target: " + node.poiTarget.nameWithID;
                 owner.logComponent.PrintLogErrorIfActive(error);
             }
-            response += emotionsToActor + emotionsToTarget;
+            response += emotionsToActor + "/" + emotionsToTarget;
         } else if(node.poiTarget == owner && node.poiTarget is Character) {
             string emotionsOfTarget = node.action.ReactionOfTarget(node);
             if (emotionsOfTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
@@ -186,9 +186,10 @@ public class ReactionComponent {
                 owner.logComponent.PrintLogErrorIfActive(error);
             }
             response = emotionsOfTarget;
-        } else if (node.actor == owner) {
-            response = "I know what I did.";
         }
+        // else if (node.actor == owner) {
+        //     response = "I know what I did.";
+        // }
         return response;
         //CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(node);
         //if (crimeType != CRIME_TYPE.NONE) {

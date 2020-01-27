@@ -2430,11 +2430,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (marker.inVisionCharacters.Contains(node.actor)) {
                 //marker.actionsToWitness.Add(node);
                 //This is done so that the character will react again
-                marker.unprocessedVisionPOIs.Add(node.actor);
+                marker.AddUnprocessedPOI(node.actor);
             } else if (marker.inVisionPOIs.Contains(node.poiTarget)) {
                 //marker.actionsToWitness.Add(node);
                 //This is done so that the character will react again
-                marker.unprocessedVisionPOIs.Add(node.poiTarget);
+                marker.AddUnprocessedPOI(node.poiTarget);
             }
         }
 
@@ -2448,7 +2448,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (marker != null) {
             if (marker.inVisionCharacters.Contains(actor)) {
                 //This is done so that the character will react again
-                marker.unprocessedVisionPOIs.Add(actor);
+                marker.AddUnprocessedPOI(actor);
             } 
             //else if (marker.inVisionPOIs.Contains(target)) {
             //    //This is done so that the character will react again
@@ -2569,12 +2569,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 //targetCharacter.OnSeenBy(this); //trigger that the target character was seen by this character.
                 targetCharacterCurrentActionNode = targetCharacter.currentActionNode;
                 if (targetCharacterCurrentActionNode != null /*&& node.action.shouldAddLogs*/ && targetCharacterCurrentActionNode.actionStatus == ACTION_STATUS.PERFORMING) {
-                    reactionComponent.ReactTo(targetCharacterCurrentActionNode, SHARE_INTEL_STATUS.WITNESSED);
+                    if (!targetCharacterCurrentActionNode.awareCharacters.Contains(this)) {
+                        reactionComponent.ReactTo(targetCharacterCurrentActionNode, SHARE_INTEL_STATUS.WITNESSED);
+                        targetCharacterCurrentActionNode.AddAwareCharacter(this);
+                    }
                 }
             }
         }
         if (target.allJobsTargetingThis.Count > 0) {
-            //We get the actions targetting the target character because a character must also witness an action even if he only sees the target and not the actor
+            //We get the actions targeting the target character because a character must also witness an action even if he only sees the target and not the actor
             for (int i = 0; i < target.allJobsTargetingThis.Count; i++) {
                 if (target.allJobsTargetingThis[i] is GoapPlanJob) {
                     GoapPlanJob job = target.allJobsTargetingThis[i] as GoapPlanJob;
@@ -2582,12 +2585,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     if (plan != null /*&& plan.currentActualNode.action.shouldAddLogs*/ 
                         && plan.currentActualNode.actionStatus == ACTION_STATUS.PERFORMING
                         && plan.currentActualNode != targetCharacterCurrentActionNode) {
-                        reactionComponent.ReactTo(plan.currentActualNode, SHARE_INTEL_STATUS.WITNESSED);
+                        if (!plan.currentActualNode.awareCharacters.Contains(this)) {
+                            reactionComponent.ReactTo(plan.currentActualNode, SHARE_INTEL_STATUS.WITNESSED);
+                            plan.currentActualNode.AddAwareCharacter(this);
+                        }
                     }
                 }
             }
         }
-
         //React To Character, Object, and Item
         string debugLog = string.Empty;
         reactionComponent.ReactTo(target, ref debugLog);
@@ -4531,9 +4536,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    //}
     //}
     public string ShareIntel(Intel intel) {
-        string response = string.Empty;
-        reactionComponent.ReactTo(intel.node, SHARE_INTEL_STATUS.INFORMED);
-        return response;
+        if (!intel.node.awareCharacters.Contains(this)) {
+            string reaction = reactionComponent.ReactTo(intel.node, SHARE_INTEL_STATUS.INFORMED);
+            intel.node.AddAwareCharacter(this);
+            PlayerManager.Instance.player.RemoveIntel(intel);
+            return reaction;
+        }
+        return "aware";
     }
     #endregion
 
@@ -5358,6 +5367,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 logComponent.PrintLogIfActive(log);
             }
             ownParty.RemoveCarriedPOI();
+        }
+        if (currentActionNode == null) {
+            logComponent.PrintLogErrorIfActive("NULL");
         }
         currentActionNode.StopActionNode(shouldDoAfterEffect);
         SetCurrentActionNode(null, null, null);

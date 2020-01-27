@@ -112,6 +112,8 @@ public class ActualGoapNode {
 
     public string currentStateName { get; private set; }
     public int currentStateDuration { get; private set; }
+    
+    public List<Character> awareCharacters { get; private set; }
 
     //public CRIME_TYPE crimeType { get; private set; }
 
@@ -148,6 +150,7 @@ public class ActualGoapNode {
         actionStatus = ACTION_STATUS.NONE;
         currentStateName = string.Empty;
         associatedJobType = JOB_TYPE.NONE;
+        awareCharacters = new List<Character>();
         //Messenger.AddListener<string, ActualGoapNode>(Signals.ACTION_STATE_SET, OnActionStateSet);
     }
 
@@ -707,6 +710,12 @@ public class ActualGoapNode {
     #region Jobs
     public void OnAttachPlanToJob(GoapPlanJob job) {
         isStealth = job.isStealth;
+    }
+    #endregion
+    
+    #region Character
+    public void AddAwareCharacter(Character character) {
+        awareCharacters.Add(character);
     }
     #endregion
 

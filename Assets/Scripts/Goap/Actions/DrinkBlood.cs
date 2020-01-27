@@ -43,7 +43,7 @@ public class DrinkBlood : GoapAction {
                 cost += 30;
                 costLog += " +30(Can Perform)";
             }
-            if (actor.needsComponent.isHungry) {
+            if (actor.needsComponent.isHungry || (!actor.needsComponent.isHungry && !actor.needsComponent.isStarving)) {
                 if(actor.currentRegion != targetCharacter.currentRegion) {
                     cost += 2000;
                     costLog += " +2000(Hungry, Diff Region)";
@@ -182,7 +182,7 @@ public class DrinkBlood : GoapAction {
             //if (actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             //    return false;
             //}
-            return actor != poiTarget;
+            return actor != poiTarget && actor.isVampire;
         }
         return false;
     }
