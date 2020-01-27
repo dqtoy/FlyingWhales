@@ -1001,6 +1001,8 @@ public enum INTERRUPT {
     Inspired,
     Feeling_Lazy,
     Invite_To_Make_Love,
+    Plagued,
+    Poisoned,
 }
 
 public enum TRAIT_TYPE {

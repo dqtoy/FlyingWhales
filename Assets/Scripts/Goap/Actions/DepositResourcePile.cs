@@ -8,7 +8,6 @@ public class DepositResourcePile : GoapAction {
     public DepositResourcePile() : base(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE) {
         actionIconString = GoapActionStateDB.Work_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET;
-        isNotificationAnIntel = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
     }

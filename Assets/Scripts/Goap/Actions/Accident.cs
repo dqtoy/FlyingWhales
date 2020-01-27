@@ -9,7 +9,6 @@ public class Accident : GoapAction {
     public Accident() : base(INTERACTION_TYPE.ACCIDENT) {
         actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
-        isNotificationAnIntel = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
     }
@@ -23,7 +22,7 @@ public class Accident : GoapAction {
         SetState("Accident Success", actionNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        string costLog = "\n" + name + ": +5(Constant)";
+        string costLog = "\n" + name + " " + target.nameWithID + ": +5(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 5;
     }

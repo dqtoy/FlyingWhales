@@ -11,10 +11,10 @@ public class PlayGuitar : GoapAction {
     public PlayGuitar() : base(INTERACTION_TYPE.PLAY_GUITAR) {
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT, };
         actionIconString = GoapActionStateDB.Entertain_Icon;
-        shouldIntelNotificationOnlyIfActorIsActive = true;
-        isNotificationAnIntel = false;
+        // showNotification = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        isNotificationAnIntel = true;
     }
 
     #region Overrides
@@ -25,8 +25,8 @@ public class PlayGuitar : GoapAction {
         base.Perform(goapNode);
         SetState("Play Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        string costLog = "\n" + name + ":";
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+        string costLog = "\n" + name + " " + target.nameWithID + ":";
         int cost = Utilities.rng.Next(80, 121);
         costLog += " +" + cost + "(Initial)";
         int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);

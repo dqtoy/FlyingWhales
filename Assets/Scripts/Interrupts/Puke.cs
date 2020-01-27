@@ -18,6 +18,11 @@ namespace Interrupts {
             actor.SetPOIState(POI_STATE.ACTIVE);
             return true;
         }
+        public override string ReactionToActor(Character witness, Character actor, IPointOfInterest target, Interrupt interrupt) {
+            string response = base.ReactionToActor(witness, actor, target, interrupt);
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor);
+            return response;
+        }
         #endregion
     }
 }

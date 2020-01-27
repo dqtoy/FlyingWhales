@@ -200,12 +200,13 @@ public class Party {
                 if (roll < targetPlagued.GetCarryInfectChance()) {
                     //carrier will be infected with plague
                     plaguedSummary += "\nWill infect " + owner.name + " with plague!";
-                    if (owner.traitContainer.AddTrait(owner, "Plagued", character)) {
-                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
-                        log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        log.AddToFillers(character, character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        log.AddLogToInvolvedObjects();
-                    }
+                    owner.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, owner);
+                    // if (owner.traitContainer.AddTrait(owner, "Plagued", character)) {
+                    //     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
+                    //     log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    //     log.AddToFillers(character, character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    //     log.AddLogToInvolvedObjects();
+                    // }
                 }
                 Debug.Log(GameManager.Instance.TodayLogString() + plaguedSummary);
             }

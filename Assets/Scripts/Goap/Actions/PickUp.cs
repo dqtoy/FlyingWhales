@@ -10,7 +10,7 @@ public class PickUp : GoapAction {
     public PickUp() : base(INTERACTION_TYPE.PICK_UP) {
         actionIconString = GoapActionStateDB.Explore_Icon;
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
-        isNotificationAnIntel = false;
+        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.ITEM };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
     }
@@ -33,7 +33,7 @@ public class PickUp : GoapAction {
         SetState("Take Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        string costLog = "\n" + name + ":";
+        string costLog = "\n" + name + " " + target.nameWithID + ":";
         int cost = Utilities.rng.Next(80, 121);
         costLog += " +" + cost + "(RNG)";
         actor.logComponent.AppendCostLog(costLog);

@@ -14,6 +14,7 @@ public class Poison : GoapAction {
         //SetIsStealth(true);
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        isNotificationAnIntel = true;
     }
 
     #region Overrides
@@ -28,7 +29,7 @@ public class Poison : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         int cost = Utilities.rng.Next(80, 121);
-        string costLog = "\n" + name + ": +" + cost + "(RNG)";
+        string costLog = "\n" + name + " " + target.nameWithID + ": +" + cost + "(RNG)";
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }

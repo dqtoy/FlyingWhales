@@ -9,8 +9,8 @@ public class Sleep : GoapAction {
 
     public Sleep() : base(INTERACTION_TYPE.SLEEP) {
         actionIconString = GoapActionStateDB.Sleep_Icon;
-        shouldIntelNotificationOnlyIfActorIsActive = true;
-        isNotificationAnIntel = false;
+        showNotification = false;
+        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
     }
@@ -26,7 +26,7 @@ public class Sleep : GoapAction {
         SetState("Rest Success", goapNode); 
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
-        string costLog = "\n" + name + ":";
+        string costLog = "\n" + name + " " + target.nameWithID + ":";
         int cost = 0;
         if (target is Bed) {
             Bed bed = target as Bed;

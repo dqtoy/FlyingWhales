@@ -33,30 +33,31 @@ namespace Traits {
         }
         public override string GetTestingData() {
             string summary = string.Empty;
-            WeightedDictionary<string> weights = GetResultWeights();
-            foreach (KeyValuePair<string, int> kvp in weights.dictionary) {
-                summary += "(" + kvp.Key + "-" + kvp.Value.ToString() + ")";
-            }
+            // WeightedDictionary<string> weights = GetResultWeights();
+            // foreach (KeyValuePair<string, int> kvp in weights.dictionary) {
+            //     summary += "(" + kvp.Key + "-" + kvp.Value.ToString() + ")";
+            // }
             return summary;
         }
         public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
             base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
             if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
-                WeightedDictionary<string> result = GetResultWeights();
-                string res = result.PickRandomElementGivenWeights();
-                if (res == "Sick") {
-                    if(goapNode.actor.traitContainer.AddTrait(goapNode.actor, res)) {
-                        //TODO: Can still be improved: Create a function that returns the trait that's been added instead of boolean
-                        Sick sick = goapNode.actor.traitContainer.GetNormalTrait<Trait>("Sick") as Sick;
-                        for (int i = 0; i < responsibleCharacters.Count; i++) {
-                            sick.AddCharacterResponsibleForTrait(responsibleCharacters[i]);
-                        }
-                    }
-                } else { //if (res == "Death")
-                    goapNode.actor.Death("poisoned", deathFromAction: goapNode);
-                }
+                // WeightedDictionary<string> result = GetResultWeights();
+                // string res = result.PickRandomElementGivenWeights();
+                // if (res == "Sick") {
+                //     if(goapNode.actor.traitContainer.AddTrait(goapNode.actor, res)) {
+                //         //TODO: Can still be improved: Create a function that returns the trait that's been added instead of boolean
+                //         Sick sick = goapNode.actor.traitContainer.GetNormalTrait<Sick>("Sick");
+                //         for (int i = 0; i < responsibleCharacters.Count; i++) {
+                //             sick.AddCharacterResponsibleForTrait(responsibleCharacters[i]);
+                //         }
+                //     }
+                // } else { //if (res == "Death")
+                //     goapNode.actor.Death("poisoned", deathFromAction: goapNode);
+                // }
                 if(traitable is IPointOfInterest) {
                     IPointOfInterest poi = traitable as IPointOfInterest;
+                    goapNode.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Poisoned, poi);
                     poi.traitContainer.RemoveTrait(traitable, this);
                     isRemoved = true;
                 }
@@ -75,20 +76,20 @@ namespace Traits {
         }
         #endregion
 
-        public WeightedDictionary<string> GetResultWeights() {
-            WeightedDictionary<string> weights = new WeightedDictionary<string>();
-            if (level == 1) {
-                weights.AddElement("Sick", 80);
-                weights.AddElement("Death", 20);
-            } else if (level == 2) {
-                weights.AddElement("Sick", 50);
-                weights.AddElement("Death", 50);
-            } else {
-                weights.AddElement("Sick", 20);
-                weights.AddElement("Death", 80);
-            }
-            return weights;
-        }
+        // public WeightedDictionary<string> GetResultWeights() {
+        //     WeightedDictionary<string> weights = new WeightedDictionary<string>();
+        //     if (level == 1) {
+        //         weights.AddElement("Sick", 80);
+        //         weights.AddElement("Death", 20);
+        //     } else if (level == 2) {
+        //         weights.AddElement("Sick", 50);
+        //         weights.AddElement("Death", 50);
+        //     } else {
+        //         weights.AddElement("Sick", 20);
+        //         weights.AddElement("Death", 80);
+        //     }
+        //     return weights;
+        // }
     }
 
     public class SaveDataPoisoned : SaveDataTrait {

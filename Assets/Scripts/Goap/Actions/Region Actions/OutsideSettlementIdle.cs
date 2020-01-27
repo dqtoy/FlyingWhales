@@ -2,7 +2,7 @@
     
     public OutsideSettlementIdle() : base(INTERACTION_TYPE.OUTSIDE_SETTLEMENT_IDLE) {
         actionIconString = GoapActionStateDB.No_Icon;
-        isNotificationAnIntel = false;
+        
         advertisedBy = new[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
