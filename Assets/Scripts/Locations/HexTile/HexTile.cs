@@ -957,7 +957,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         int width = tileMap.GetUpperBound(0) + 1;
         int height = tileMap.GetUpperBound(1) + 1;
         
-        int[,] cellAutomataMap = Cellular_Automata.CellularAutomataGenerator.GenerateMap(width, height, 1, 35, 
+        int[,] cellAutomataMap = Cellular_Automata.CellularAutomataGenerator.GenerateMap(width, height, 1, 30, 
             tileMap, locationGridTiles, edgesAreAlwaysWalls: false);
 
         for (int x = 0; x < width; x++) {

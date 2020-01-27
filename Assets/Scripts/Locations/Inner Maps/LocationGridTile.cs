@@ -196,9 +196,16 @@ namespace Inner_Maps {
                             parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.tundraTile);    
                         }
                     } else if (parentMap.location.coreTile.biomeType == BIOMES.DESERT) {
-                        SetGroundType(Ground_Type.Sand);
-                        //override tile to use sand
-                        parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.desertSandTile);
+                        if (structure != null && structure.structureType == STRUCTURE_TYPE.CAVE) {
+                            SetGroundType(Ground_Type.Stone);
+                            //override tile to use stone
+                            parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.stoneTile);    
+                        } else {
+                            SetGroundType(Ground_Type.Sand);
+                            //override tile to use sand
+                            parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.desertSandTile);
+                        }
+                        
                     } else {
                         SetGroundType(Ground_Type.Soil);
                     }

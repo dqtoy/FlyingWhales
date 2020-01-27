@@ -730,11 +730,11 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     public void SetResource(RESOURCE resourceType, int amount) {
         storedResources[resourceType] = amount;
-        storedResources[resourceType] = Mathf.Clamp(storedResources[resourceType], 0, maxResourceValues[resourceType]);
+        storedResources[resourceType] = Mathf.Max(storedResources[resourceType], 0);
     }
     public void AdjustResource(RESOURCE resourceType, int amount) {
         storedResources[resourceType] += amount;
-        storedResources[resourceType] = Mathf.Clamp(storedResources[resourceType], 0, maxResourceValues[resourceType]);
+        storedResources[resourceType] = Mathf.Max(storedResources[resourceType], 0);
     }
     public bool HasResourceAmount(RESOURCE resourceType, int amount) {
         return storedResources[resourceType] >= amount;

@@ -84,7 +84,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 				Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.COMBINE_STOCKPILE, resourcePile as IPointOfInterest);
 				if (tile.IsPartOfSettlement(_owner)) {
 					CheckResource(resourcePile.tileObjectType, resourcePile.providedResource);
-					TryCreateCombineStockpile(resourcePile);
+					if (_owner.mainStorage == resourcePile.structureLocation) {
+						TryCreateCombineStockpile(resourcePile);	
+					}
 				}
 				TryCreateHaulJob(resourcePile);	
 			}
@@ -226,8 +228,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		if (totalResource < minimumResource) {
 			TriggerProduceResource(resource, resourcePile, jobType);
 		} else {
-			ResourcePile pile = _owner.mainStorage.GetResourcePileObjectWithLowestCountAndNotAtMaximum(resourcePile);
+			ResourcePile pile = _owner.mainStorage.GetResourcePileObjectWithLowestCount(resourcePile, false);
 			Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, jobType, pile as IPointOfInterest);
+			Assert.IsNotNull(pile, $"{_owner.name} is trying to cancel produce resource {resource.ToString()}, but could not find any pile of type {resourcePile.ToString()}");
 			if (IsProduceResourceJobStillValid(resource) == false && pile.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
 				_owner.mainStorage.RemovePOI(pile); //remove unbuilt pile
 			}
@@ -284,7 +287,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	private void TryCreateHaulJob(ResourcePile target) {
 		if ((target.gridTileLocation.IsPartOfSettlement(_owner) == false || target.gridTileLocation.structure != _owner.mainStorage) 
 		    && _owner.HasJob(JOB_TYPE.HAUL, target) == false && target.gridTileLocation.parentMap.location == _owner.region) {
-			ResourcePile chosenPileToBeDeposited = _owner.mainStorage.GetResourcePileObjectWithLowestCountAndNotAtMaximum(target.tileObjectType);
+			ResourcePile chosenPileToBeDeposited = _owner.mainStorage.GetResourcePileObjectWithLowestCount(target.tileObjectType);
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, 
 				new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, 
 					false, GOAP_EFFECT_TARGET.TARGET), 
