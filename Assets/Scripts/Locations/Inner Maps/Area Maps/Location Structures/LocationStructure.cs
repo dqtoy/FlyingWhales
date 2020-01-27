@@ -141,12 +141,15 @@ public class LocationStructure {
     #region Points Of Interest
     public virtual bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null, bool placeObject = true) {
         if (!pointsOfInterest.Contains(poi)) {
+            pointsOfInterest.Add(poi);
             if (placeObject) {
                 if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
-                    if (!PlaceAreaObjectAtAppropriateTile(poi, tileLocation)) { return false; }
+                    if (!PlaceAreaObjectAtAppropriateTile(poi, tileLocation)) {
+                        pointsOfInterest.Remove(poi);
+                        return false;
+                    }
                 }
             }
-            pointsOfInterest.Add(poi);
             return true;
         }
         return false;
@@ -239,7 +242,7 @@ public class LocationStructure {
             if (pointsOfInterest[i] is ResourcePile) {
                 ResourcePile obj = pointsOfInterest[i] as ResourcePile;
                 if (obj.tileObjectType == type && obj.IsAtMaxResource(obj.providedResource) == false) {
-                    if(chosenPile == null || obj.resourceInPile < lowestCount) {
+                    if(chosenPile == null || obj.resourceInPile <= lowestCount) {
                         chosenPile = obj;
                         lowestCount = obj.resourceInPile;
                     }
