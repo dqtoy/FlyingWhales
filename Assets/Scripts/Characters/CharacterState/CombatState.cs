@@ -545,6 +545,9 @@ public class CombatState : CharacterState {
         currentClosestHostile = null;
     }
     private void OnGamePaused(bool state) {
+        if (isDone) {
+            return;
+        }
         if (state) {
             stateComponent.character.marker.StopCoroutine(CheckIfCurrentHostileIsInRange());
         } else {

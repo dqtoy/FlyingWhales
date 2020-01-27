@@ -2417,10 +2417,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    //Cannot witness/watch a watch action
         //    return;
         //}
-        //if (node.actor == this || node.poiTarget == this) {
-        //    //Cannot witness if character is part of the action
-        //    return;
-        //}
+        if (node.actor == this) {
+            //Cannot witness if character is part of the action
+            return;
+        }
         //if (!node.action.shouldAddLogs) {
         //    return;
         //}
@@ -2443,6 +2443,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public virtual void OnInterruptStarted(Character actor, IPointOfInterest target, Interrupt interrupt) {
         if (isDead || !canWitness) {
+            return;
+        }
+        if (actor == this) {
             return;
         }
         if (marker != null) {
@@ -2568,7 +2571,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             } else {
                 //targetCharacter.OnSeenBy(this); //trigger that the target character was seen by this character.
                 targetCharacterCurrentActionNode = targetCharacter.currentActionNode;
-                if (targetCharacterCurrentActionNode != null /*&& node.action.shouldAddLogs*/ && targetCharacterCurrentActionNode.actionStatus == ACTION_STATUS.PERFORMING) {
+                if (targetCharacterCurrentActionNode != null /*&& node.action.shouldAddLogs*/ && targetCharacterCurrentActionNode.actionStatus == ACTION_STATUS.PERFORMING && targetCharacterCurrentActionNode.actor != this) {
                     if (!targetCharacterCurrentActionNode.awareCharacters.Contains(this)) {
                         reactionComponent.ReactTo(targetCharacterCurrentActionNode, SHARE_INTEL_STATUS.WITNESSED);
                         targetCharacterCurrentActionNode.AddAwareCharacter(this);
@@ -2584,7 +2587,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     GoapPlan plan = job.assignedPlan;
                     if (plan != null /*&& plan.currentActualNode.action.shouldAddLogs*/ 
                         && plan.currentActualNode.actionStatus == ACTION_STATUS.PERFORMING
-                        && plan.currentActualNode != targetCharacterCurrentActionNode) {
+                        && plan.currentActualNode != targetCharacterCurrentActionNode && plan.currentActualNode.actor != this) {
                         if (!plan.currentActualNode.awareCharacters.Contains(this)) {
                             reactionComponent.ReactTo(plan.currentActualNode, SHARE_INTEL_STATUS.WITNESSED);
                             plan.currentActualNode.AddAwareCharacter(this);
@@ -5349,12 +5352,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //}
 
         //SetIsStopped(true);
-
+        currentActionNode.StopActionNode(shouldDoAfterEffect);
+        SetCurrentActionNode(null, null, null);
+        
         //Every time current node is stopped, drop carried poi
         if (IsInOwnParty()) {
             if (ownParty.isCarryingAnyPOI) {
                 IPointOfInterest carriedPOI = ownParty.carriedPOI;
-                string log = "Dropping carried POI: " + carriedPOI.name + " because current action node is stopped: " + currentActionNode.StringText();
+                string log = "Dropping carried POI: " + carriedPOI.name + " because current action is stopped!";
                 log += "\nAdditional Info:";
                 if (carriedPOI is ResourcePile) {
                     ResourcePile pile = carriedPOI as ResourcePile;
@@ -5365,14 +5370,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
 
                 logComponent.PrintLogIfActive(log);
+                ownParty.RemoveCarriedPOI();
             }
-            ownParty.RemoveCarriedPOI();
         }
-        if (currentActionNode == null) {
-            logComponent.PrintLogErrorIfActive("NULL");
-        }
-        currentActionNode.StopActionNode(shouldDoAfterEffect);
-        SetCurrentActionNode(null, null, null);
         //JobQueueItem job = parentPlan.job;
 
         //Remove job in queue if job is personal job and removeJobInQueue value is true
