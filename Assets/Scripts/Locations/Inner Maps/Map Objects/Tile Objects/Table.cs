@@ -92,6 +92,14 @@ public class Table : TileObject {
         base.OnRemoveTileObject(removedBy, removedFrom);
         DestroyExistingGUS();
     }
+    protected override void ConstructMaxResources() {
+        maxResourceValues = new Dictionary<RESOURCE, int>();
+        RESOURCE[] resourceTypes = Utilities.GetEnumValues<RESOURCE>();
+        for (int i = 0; i < resourceTypes.Length; i++) {
+            RESOURCE resourceType = resourceTypes[i];
+            maxResourceValues.Add(resourceType, resourceType == RESOURCE.FOOD ? 100 : 0);
+        }
+    }
     #endregion
 
     #region Users
@@ -270,18 +278,14 @@ public class Table : TileObject {
     #region Food
     public void AdjustFood(int amount) {
         storedResources[RESOURCE.FOOD] += amount;
-        if (food < 0) {
-            storedResources[RESOURCE.FOOD] = 0;
-        }
+        storedResources[RESOURCE.FOOD] = Mathf.Clamp(storedResources[RESOURCE.FOOD], 0, maxResourceValues[RESOURCE.FOOD]);
         if (gridTileLocation != null && structureLocation is Dwelling) {
             Messenger.Broadcast(Signals.FOOD_IN_DWELLING_CHANGED, this);   
         }
     }
     public void SetFood(int amount) {
         storedResources[RESOURCE.FOOD] = amount;
-        if (food < 0) {
-            storedResources[RESOURCE.FOOD] = 0;
-        }
+        storedResources[RESOURCE.FOOD] = Mathf.Clamp(storedResources[RESOURCE.FOOD], 0, maxResourceValues[RESOURCE.FOOD]);
         if (gridTileLocation != null && structureLocation is Dwelling) {
             Messenger.Broadcast(Signals.FOOD_IN_DWELLING_CHANGED, this);   
         }

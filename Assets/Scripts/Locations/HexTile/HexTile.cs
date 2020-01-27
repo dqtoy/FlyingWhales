@@ -906,13 +906,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         return false;
     }
     private void StartPerTickCorruption() {
-        corruptedTiles = new List<LocationGridTile>();
-        LocationGridTile startTile = GetGridTileNearestToCorruption();
-        startTile.CorruptTile();
-        corruptedTiles.Add(startTile);
-        isCurrentlyBeingCorrupted = true;
+        // corruptedTiles = new List<LocationGridTile>();
+        // LocationGridTile startTile = GetGridTileNearestToCorruption();
+        // startTile.CorruptTile();
+        // corruptedTiles.Add(startTile);
+        // isCurrentlyBeingCorrupted = true;
         PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.corruptTileManaCost);
-        Messenger.AddListener(Signals.TICK_STARTED, PerTickCorruption);
+        // Messenger.AddListener(Signals.TICK_STARTED, PerTickCorruption);
+        InstantlyCorruptAllOwnedInnerMapTiles();
+        OnCorruptSuccess();
     }
     private void PerTickCorruption() {
         List<LocationGridTile> newTilesToCorrupt = new List<LocationGridTile>();
@@ -941,10 +943,42 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         }
     }
     public void InstantlyCorruptAllOwnedInnerMapTiles() {
-        for (int i = 0; i < locationGridTiles.Count; i++) {
-            LocationGridTile tile = locationGridTiles[i];
-            tile.CorruptTile();
-        }    
+        List<LocationGridTile> allTilesToConsider = new List<LocationGridTile>(locationGridTiles);
+        for (int i = 0; i < AllNeighbours.Count; i++) {
+            HexTile neighbour = AllNeighbours[i];
+            if (neighbour.region == this.region && neighbour.isCorrupted) {
+                allTilesToConsider.AddRange(neighbour.locationGridTiles);
+            }
+        }
+        
+        LocationGridTile[,] tileMap =
+            Cellular_Automata.CellularAutomataGenerator.ConvertListToGridMap(allTilesToConsider);
+        
+        int width = tileMap.GetUpperBound(0) + 1;
+        int height = tileMap.GetUpperBound(1) + 1;
+        
+        int[,] cellAutomataMap = Cellular_Automata.CellularAutomataGenerator.GenerateMap(width, height, 1, 35, 
+            tileMap, locationGridTiles, edgesAreAlwaysWalls: false);
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                int cellMapValue = cellAutomataMap[x, y];
+                LocationGridTile gridTile = tileMap[x, y];
+                if (gridTile != null && locationGridTiles.Contains(gridTile)) {
+                    if (cellMapValue == 0) {
+                        gridTile.CorruptTile();
+                    } else {
+                        gridTile.RevertToPreviousGroundVisual();
+                        gridTile.CreateSeamlessEdgesForSelfAndNeighbours();
+                    }    
+                }
+            }    
+        }
+        
+        // for (int i = 0; i < locationGridTiles.Count; i++) {
+        //     LocationGridTile tile = locationGridTiles[i];
+        //     tile.CorruptTile();
+        // }
     }
     private LocationGridTile GetGridTileNearestToCorruption() {
         HexTile corruptedNeighbour = GetCorruptedNeighbour();
@@ -991,8 +1025,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     }
     private void OnCorruptSuccess() {
         PlayerManager.Instance.player.playerSettlement.AddTileToSettlement(this);
-        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCorruption);
-        isCurrentlyBeingCorrupted = false;
+        // Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCorruption);
+        // isCurrentlyBeingCorrupted = false;
         
         //remove features
         featureComponent.RemoveAllFeaturesExcept(this, TileFeatureDB.Wood_Source_Feature);

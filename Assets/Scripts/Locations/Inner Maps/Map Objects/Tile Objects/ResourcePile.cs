@@ -58,6 +58,33 @@ public abstract class ResourcePile : TileObject {
         // Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.HAUL, this as IPointOfInterest);
         Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.DESTROY, this as IPointOfInterest);
     }
+    private INTERACTION_TYPE[] storedActions;
+    protected override void OnMapObjectStateChanged() {
+        if (mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
+            mapVisual.SetVisualAlpha(0f / 255f);
+            SetSlotAlpha(0f / 255f);
+            //store advertised actions
+            storedActions = new INTERACTION_TYPE[advertisedActions.Count];
+            for (int i = 0; i < advertisedActions.Count; i++) {
+                storedActions[i] = advertisedActions[i];
+            }
+            advertisedActions.Clear();
+            AddAdvertisedAction(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE);
+            UnsubscribeListeners();
+        } else if (mapObjectState == MAP_OBJECT_STATE.BUILDING) {
+            mapVisual.SetVisualAlpha(128f / 255f);
+            SetSlotAlpha(128f / 255f);
+        } else {
+            mapVisual.SetVisualAlpha(255f / 255f);
+            SetSlotAlpha(255f / 255f);
+            RemoveAdvertisedAction(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE);
+            for (int i = 0; i < storedActions.Length; i++) {
+                AddAdvertisedAction(storedActions[i]);
+            }
+            storedActions = null;
+            SubscribeListeners();
+        }
+    }
     #endregion
 
     protected bool IsDepositResourcePileStillApplicable() {

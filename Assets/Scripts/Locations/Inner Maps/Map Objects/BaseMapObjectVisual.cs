@@ -93,5 +93,10 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     }
     #endregion
 
-    
+    #region Object Pool
+    public override void Reset() {
+        base.Reset();
+        SetVisualAlpha(255f / 255f);
+    }
+    #endregion
 }

@@ -206,14 +206,17 @@ public class DepositResourcePile : GoapAction {
         Character actor = goapNode.actor;
         ResourcePile poiTarget = goapNode.poiTarget as ResourcePile;
         object[] otherData = goapNode.otherData;
-        ResourcePile poiToBeDepositTo = null;
+        ResourcePile pileToBeDepositTo = null;
         if (otherData != null && otherData.Length == 1 && otherData[0] is ResourcePile) {
-            poiToBeDepositTo = otherData[0] as ResourcePile;
+            pileToBeDepositTo = otherData[0] as ResourcePile;
         }
-        if(poiToBeDepositTo != null && poiToBeDepositTo.gridTileLocation == goapNode.targetTile) {
+        if(pileToBeDepositTo != null && pileToBeDepositTo.gridTileLocation == goapNode.targetTile) {
             //Deposit resource pile
-            if(poiToBeDepositTo.IsAtMaxResource(poiTarget.providedResource) == false) {
-                poiToBeDepositTo.AdjustResourceInPile(poiTarget.resourceInPile);
+            if(pileToBeDepositTo.IsAtMaxResource(poiTarget.providedResource) == false) {
+                if (pileToBeDepositTo.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
+                    pileToBeDepositTo.SetMapObjectState(MAP_OBJECT_STATE.BUILT);
+                }
+                pileToBeDepositTo.AdjustResourceInPile(poiTarget.resourceInPile);
                 actor.ownParty.RemovePOI(poiTarget, false);
             } else {
                 actor.ownParty.RemovePOI(poiTarget);

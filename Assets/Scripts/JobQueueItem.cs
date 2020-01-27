@@ -283,6 +283,7 @@ public class JobQueueItem {
         SetIsStealth(false);
         SetPriority(-1);
         SetCannotBePushedBack(false);
+        SetStillApplicableChecker(null);
         Messenger.RemoveListener<JOB_TYPE, IPointOfInterest>(Signals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
         Messenger.RemoveListener<IPointOfInterest>(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);
     }
