@@ -1055,7 +1055,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         // character.logComponent.PrintLogIfActive(character.name + " added unprocessed poi " + poi.nameWithID);
     }
     public void RemoveUnprocessedPOI(IPointOfInterest poi) {
-        unprocessedVisionPOIs.Add(poi);
+        unprocessedVisionPOIs.Remove(poi);
     }
     public void ClearUnprocessedPOI() {
         unprocessedVisionPOIs.Clear();

@@ -186,9 +186,10 @@ public class ReactionComponent {
                 owner.logComponent.PrintLogErrorIfActive(error);
             }
             response = emotionsOfTarget;
-        } else if (node.actor == owner) {
-            response = "I know what I did.";
         }
+        // else if (node.actor == owner) {
+        //     response = "I know what I did.";
+        // }
         return response;
         //CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(node);
         //if (crimeType != CRIME_TYPE.NONE) {

@@ -39,12 +39,13 @@ public class InterruptComponent {
             if (owner.marker != null && owner.marker.isMoving) {
                 owner.marker.StopMovement();
             }
-            if (currentInterrupt.doesStopCurrentAction && owner.currentJob != null) {
-                owner.currentJob.StopJobNotDrop();
-            }
             if (currentInterrupt.doesDropCurrentJob) {
                 owner.currentJob?.CancelJob(false);
             }
+            if (currentInterrupt.doesStopCurrentAction && owner.currentJob != null) {
+                owner.currentJob.StopJobNotDrop();
+            }
+
             ExecuteStartInterrupt(triggeredInterrupt, targetPOI);
             Messenger.Broadcast(Signals.INTERRUPT_STARTED, owner, currentTargetPOI, currentInterrupt);
             Messenger.Broadcast(Signals.UPDATE_THOUGHT_BUBBLE, owner);

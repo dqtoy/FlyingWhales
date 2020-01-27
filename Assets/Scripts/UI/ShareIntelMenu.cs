@@ -173,32 +173,40 @@ public class ShareIntelMenu : MonoBehaviour {
     private IEnumerator ShowReaction(string reaction, Intel intel) {
         if (reaction == string.Empty) {
             //character had no reaction
-            reaction = "A proper response to this information has not been implemented yet.";
+            if (intel.node.actor == targetCharacter) {
+                reaction = "I know what I did.";
+            } else {
+                reaction = "A proper response to this information has not been implemented yet.";
+            }
         } else {
-            string[] emotionsToActorAndTarget = reaction.Split('/');
-            string finalReaction = string.Empty;
-            for (int i = 0; i < emotionsToActorAndTarget.Length; i++) {
-                string[] words = emotionsToActorAndTarget[i].Split(' ');
-                if(words != null) {
-                    string responses = string.Empty;
-                    for (int j = 0; j < words.Length; j++) {
-                        string currWord = words[j];
-                        if(string.IsNullOrEmpty(currWord) || string.IsNullOrWhiteSpace(currWord)){ continue; }
-                        if(responses != string.Empty) {
-                            responses += ", ";
+            if (reaction == "aware") {
+                reaction = "I already know this.";
+            } else {
+                string[] emotionsToActorAndTarget = reaction.Split('/');
+                string finalReaction = string.Empty;
+                for (int i = 0; i < emotionsToActorAndTarget.Length; i++) {
+                    string[] words = emotionsToActorAndTarget[i].Split(' ');
+                    if(words != null) {
+                        string responses = string.Empty;
+                        for (int j = 0; j < words.Length; j++) {
+                            string currWord = words[j];
+                            if(string.IsNullOrEmpty(currWord) || string.IsNullOrWhiteSpace(currWord)){ continue; }
+                            if(responses != string.Empty) {
+                                responses += ", ";
+                            }
+                            responses += currWord;
                         }
-                        responses += currWord;
-                    }
-                    if (responses != string.Empty) {
-                        finalReaction += "I feel " + responses + " towards " +
-                                         (i == 0 ? intel.node.actor.name : intel.node.poiTarget.name) + ".";
+                        if (responses != string.Empty) {
+                            finalReaction += "I feel " + responses + " towards " +
+                                             (i == 0 ? intel.node.actor.name : intel.node.poiTarget.name) + ".";
+                        }
                     }
                 }
-            }
-            if (finalReaction != string.Empty) {
-                reaction = finalReaction;
-            } else {
-                reaction = "I processed no emotions. I am a rock, I am an i-i-i-island.";
+                if (finalReaction != string.Empty) {
+                    reaction = finalReaction;
+                } else {
+                    reaction = "I processed no emotions. I am a rock, I am an i-i-i-island.";
+                }
             }
         }
         GameObject targetDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);

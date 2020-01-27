@@ -4536,7 +4536,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    //}
     //}
     public string ShareIntel(Intel intel) {
-        return reactionComponent.ReactTo(intel.node, SHARE_INTEL_STATUS.INFORMED);
+        if (!intel.node.awareCharacters.Contains(this)) {
+            string reaction = reactionComponent.ReactTo(intel.node, SHARE_INTEL_STATUS.INFORMED);
+            intel.node.AddAwareCharacter(this);
+            PlayerManager.Instance.player.RemoveIntel(intel);
+        }
+        return "aware";
     }
     #endregion
 
@@ -5361,6 +5366,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 logComponent.PrintLogIfActive(log);
             }
             ownParty.RemoveCarriedPOI();
+        }
+        if (currentActionNode == null) {
+            logComponent.PrintLogErrorIfActive("NULL");
         }
         currentActionNode.StopActionNode(shouldDoAfterEffect);
         SetCurrentActionNode(null, null, null);
