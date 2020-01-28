@@ -7,6 +7,7 @@ public class CombatComponent {
 	public Character owner { get; private set; }
     public bool willProcessCombat { get; private set; }
 
+
 	public CombatComponent(Character owner) {
 		this.owner = owner;
 	}
@@ -116,12 +117,13 @@ public class CombatComponent {
             if (UnityEngine.Random.Range(0, 2) == 0) {
                 debugLog += "\n" + owner.name + " triggered Cowering interrupt";
                 owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, owner);
-            }
-            if (!owner.marker.avoidInRange.Contains(target)) {
-                if (owner.marker.inVisionPOIs.Contains(target)) {
-                    owner.marker.avoidInRange.Add(target);
-                    owner.marker.SetWillProcessCombat(true);
-                    debugLog += "\n" + target.name + " was added to " + owner.name + "'s avoid range!";
+            } else {
+                if (!owner.marker.avoidInRange.Contains(target)) {
+                    if (owner.marker.inVisionPOIs.Contains(target)) {
+                        owner.marker.avoidInRange.Add(target);
+                        owner.marker.SetWillProcessCombat(true);
+                        debugLog += "\n" + target.name + " was added to " + owner.name + "'s avoid range!";
+                    }
                 }
             }
         }
