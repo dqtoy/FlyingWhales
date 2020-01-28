@@ -1346,28 +1346,28 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         return false;
     }
-    public bool AddAvoidsInRange(List<Character> pois, bool processCombatBehavior = true, string reason = "") {
-        //Only react to the first hostile that is added
-        Character otherPOI = null;
-        for (int i = 0; i < pois.Count; i++) {
-            Character poi = pois[i];
-            if (!poi.isDead && !poi.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && poi.traitContainer.GetNormalTrait<Trait>("Berserked") == null) {
-                if (!avoidInRange.Contains(poi)) {
-                    avoidInRange.Add(poi);
-                    if (otherPOI == null) {
-                        otherPOI = poi;
-                    }
-                    //return true;
-                }
-            }
-        }
-        if (otherPOI != null) {
-            willProcessCombat = true;
-            avoidReason = reason;
-            return true;
-        }
-        return false;
-    }
+    //public bool AddAvoidsInRange(List<Character> pois, bool processCombatBehavior = true, string reason = "") {
+    //    //Only react to the first hostile that is added
+    //    Character otherPOI = null;
+    //    for (int i = 0; i < pois.Count; i++) {
+    //        Character poi = pois[i];
+    //        if (!poi.isDead && !poi.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && poi.traitContainer.GetNormalTrait<Trait>("Berserked") == null) {
+    //            if (!avoidInRange.Contains(poi)) {
+    //                avoidInRange.Add(poi);
+    //                if (otherPOI == null) {
+    //                    otherPOI = poi;
+    //                }
+    //                //return true;
+    //            }
+    //        }
+    //    }
+    //    if (otherPOI != null) {
+    //        willProcessCombat = true;
+    //        avoidReason = reason;
+    //        return true;
+    //    }
+    //    return false;
+    //}
     public void RemoveAvoidInRange(IPointOfInterest poi, bool processCombatBehavior = true) {
         if (avoidInRange.Remove(poi)) {
             //Debug.Log("Removed avoid in range " + poi.name + " from " + this.character.name);
@@ -1393,6 +1393,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 //}
             }
         }
+    }
+    public void SetWillProcessCombat(bool state) {
+        willProcessCombat = state;
     }
     #endregion
 

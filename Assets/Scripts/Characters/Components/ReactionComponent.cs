@@ -203,6 +203,7 @@ public class ReactionComponent {
             if(owner.faction != targetCharacter.faction && owner.faction.GetRelationshipWith(targetCharacter.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
                 debugLog += "\n-Target is hostile, will trigger Fight or Flight response";
                 //Fight or Flight
+                owner.combatComponent.FightOrFlight(targetCharacter);
             } else {
                 if(!owner.isConversing && !targetCharacter.isConversing && owner.nonActionEventsComponent.CanInteract(targetCharacter)) {
                     debugLog += "\n-Character and Target are not Chatting or Flirting and Character can interact with Target, has 3% chance to Chat";
@@ -245,6 +246,7 @@ public class ReactionComponent {
                         if (targetCharacter.canMove && targetCharacter.canPerform) {
                             debugLog += "\n-Target can move and can perform, will trigger Fight or Flight response";
                             //Fight or Flight
+                            owner.combatComponent.FightOrFlight(targetCharacter);
                         } else {
                             debugLog += "\n-Target can neither move or perform, will trigger Mock or Laugh At interrupt";
                             if (UnityEngine.Random.Range(0, 2) == 0) {
@@ -302,6 +304,7 @@ public class ReactionComponent {
                     if (owner.opinionComponent.IsEnemiesWith(targetCharacter)) {
                         debugLog += "\n-Character considers Target as Enemy or Rival, will trigger Fight or Flight response";
                         //Fight or Flight
+                        owner.combatComponent.FightOrFlight(targetCharacter);
                     }
                 }
             }
@@ -310,29 +313,30 @@ public class ReactionComponent {
         }
     }
     private void ReactTo(TileObject targetTileObject, ref string debugLog) {
-        debugLog += owner.name + " is reacting to " + targetTileObject.nameWithID;
-        if (!IsPOICurrentlyTargetedByAPerformingAction(targetTileObject)) {
-            debugLog += "\n-Target is not being targeted by an action, continue reaction";
-            if (targetTileObject.traitContainer.GetNormalTrait<Trait>("Burning") != null) {
-                if (owner.traitContainer.GetNormalTrait<Trait>("Pyrophobic") != null) {
-                    //Fight or Flight
-                } else {
+        //debugLog += owner.name + " is reacting to " + targetTileObject.nameWithID;
+        //if (!IsPOICurrentlyTargetedByAPerformingAction(targetTileObject)) {
+        //    debugLog += "\n-Target is not being targeted by an action, continue reaction";
+        //    if (targetTileObject.traitContainer.GetNormalTrait<Trait>("Burning") != null) {
+        //        if (owner.traitContainer.GetNormalTrait<Trait>("Pyrophobic") != null) {
+        //            //Fight or Flight
+        //            owner.combatComponent.FightOrFlight(targetTileObject);
+        //        } else {
                     
-                }
-            }
+        //        }
+        //    }
             
-        } else {
-            debugLog += "\n-Target is currently being targeted by an action, not going to react";
-        }
+        //} else {
+        //    debugLog += "\n-Target is currently being targeted by an action, not going to react";
+        //}
     }
     private void ReactTo(SpecialToken targetItem, ref string debugLog) {
-        debugLog += owner.name + " is reacting to " + targetItem.nameWithID;
-        if (!IsPOICurrentlyTargetedByAPerformingAction(targetItem)) {
-            debugLog += "\n-Target is not being targeted by an action, continue reaction";
-            //TODO
-        } else {
-            debugLog += "\n-Target is currently being targeted by an action, not going to react";
-        }
+        //debugLog += owner.name + " is reacting to " + targetItem.nameWithID;
+        //if (!IsPOICurrentlyTargetedByAPerformingAction(targetItem)) {
+        //    debugLog += "\n-Target is not being targeted by an action, continue reaction";
+        //    //TODO
+        //} else {
+        //    debugLog += "\n-Target is currently being targeted by an action, not going to react";
+        //}
     }
     #endregion
 

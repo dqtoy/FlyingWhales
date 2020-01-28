@@ -139,6 +139,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public CharacterJobTriggerComponent jobComponent { get; private set; }
     public ReactionComponent reactionComponent { get; private set; }
     public LogComponent logComponent { get; private set; }
+    public CombatComponent combatComponent { get; private set; }
 
     #region getters / setters
     public virtual string name => _firstName;
@@ -405,6 +406,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         jobComponent = new CharacterJobTriggerComponent(this);
         reactionComponent = new ReactionComponent(this);
         logComponent = new LogComponent(this);
+        combatComponent = new CombatComponent(this);
     }
 
     //This is done separately after all traits have been loaded so that the data will be accurate

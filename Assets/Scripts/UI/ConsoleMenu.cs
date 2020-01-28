@@ -80,6 +80,7 @@ public class ConsoleMenu : UIMenu {
             {"/log_obj_advertisements", LogObjectAdvertisements },
             {"/adjust_opinion", AdjustOpinion },
             {"/join_faction", JoinFaction },
+            {"/emotion", TriggerEmotion },
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -1036,6 +1037,36 @@ public class ConsoleMenu : UIMenu {
         }
         character1.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, faction.characters[0], "join_faction_normal");
         AddSuccessMessage(character1.name + " joined faction " + faction.name);
+    }
+    private void TriggerEmotion(string[] parameters) {
+        if (parameters.Length != 3) { //parameters command, item
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of TriggerEmotion");
+            return;
+        }
+        string character1ParameterString = parameters[0];
+        string character2ParameterString = parameters[1];
+
+        Character character1 = CharacterManager.Instance.GetCharacterByName(character1ParameterString);
+        Character character2 = CharacterManager.Instance.GetCharacterByName(character2ParameterString);
+
+        if (character1 == null) {
+            AddErrorMessage("There is no character named " + character1ParameterString);
+            return;
+        }
+        if (character2 == null) {
+            AddErrorMessage("There is no character named " + character2ParameterString);
+            return;
+        }
+        string emotionParameterString = parameters[2];
+
+        Emotion emotion = CharacterManager.Instance.GetEmotion(emotionParameterString);
+        if (emotion == null) {
+            AddErrorMessage("Emotion parameter has no data: " + emotionParameterString);
+            return;
+        }
+        CharacterManager.Instance.TriggerEmotion(emotion.emotionType, character1, character2);
+        AddSuccessMessage("Trigger " + emotion.name + " Emotion of " + character1.name + " towards " + character2.name);
     }
     #endregion
 
