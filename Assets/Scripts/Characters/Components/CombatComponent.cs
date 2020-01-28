@@ -111,17 +111,19 @@ public class CombatComponent {
                 debugLog += "\n" + owner.name + " triggered Cowering interrupt";
             }
             debugLog += "\n" + owner.name + " will flee to home";
-            //owner.jobComponent.TriggerFleeHome();
+            owner.jobComponent.TriggerFleeHome();
         } else {
             if (UnityEngine.Random.Range(0, 2) == 0) {
                 debugLog += "\n" + owner.name + " triggered Cowering interrupt";
                 owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, owner);
             }
-        }
-        if (!owner.marker.avoidInRange.Contains(target)) {
-            owner.marker.avoidInRange.Add(target);
-            owner.marker.SetWillProcessCombat(true);
-            debugLog += "\n" + target.name + " was added to " + owner.name + "'s avoid range!";
+            if (!owner.marker.avoidInRange.Contains(target)) {
+                if (owner.marker.inVisionPOIs.Contains(target)) {
+                    owner.marker.avoidInRange.Add(target);
+                    owner.marker.SetWillProcessCombat(true);
+                    debugLog += "\n" + target.name + " was added to " + owner.name + "'s avoid range!";
+                }
+            }
         }
         owner.logComponent.PrintLogIfActive(debugLog);
     }
