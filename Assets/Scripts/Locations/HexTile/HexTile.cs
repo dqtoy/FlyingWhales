@@ -9,6 +9,7 @@ using JetBrains.Annotations;
 using SpriteGlow;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UtilityScripts;
 
 public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarget {
 
@@ -920,7 +921,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         List<LocationGridTile> newTilesToCorrupt = new List<LocationGridTile>();
         for (int i = 0; i < corruptedTiles.Count; i++) {
             LocationGridTile tile = corruptedTiles[i];
-            List<LocationGridTile> neighbours = Utilities.Shuffle(tile.FourNeighbours());
+            List<LocationGridTile> neighbours = CollectionUtilities.Shuffle(tile.FourNeighbours());
             for (int j = 0; j < neighbours.Count; j++) {
                 LocationGridTile neighbour = neighbours[j];
                 if (neighbour.isCorrupted == false 
@@ -957,8 +958,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         int width = tileMap.GetUpperBound(0) + 1;
         int height = tileMap.GetUpperBound(1) + 1;
         
-        int[,] cellAutomataMap = Cellular_Automata.CellularAutomataGenerator.GenerateMap(width, height, 1, 30, 
-            tileMap, locationGridTiles, edgesAreAlwaysWalls: false);
+        int[,] cellAutomataMap = Cellular_Automata.CellularAutomataGenerator.GenerateMap(tileMap, locationGridTiles, 1, 30, edgesAreAlwaysWalls: false);
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {

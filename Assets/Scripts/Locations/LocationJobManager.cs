@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityScripts;
 using Random = UnityEngine.Random;
 
 public class LocationJobManager {
@@ -336,7 +337,7 @@ public class LocationJobManager {
         }
 
         if (choices.Count > 0) {
-            return Utilities.GetRandomElement(choices);
+            return CollectionUtilities.GetRandomElement(choices);
         }
         
         return null;
@@ -370,7 +371,7 @@ public class LocationJobManager {
         //     return PlayerManager.Instance.player.playerSettlement.region;
         // }
         if (choices.Count > 0) {
-            return Utilities.GetRandomElement(choices);    
+            return CollectionUtilities.GetRandomElement(choices);    
         }
         return null;
     }

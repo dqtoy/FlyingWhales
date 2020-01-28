@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UtilityScripts;
 
 public class FactionRelationship {
 
@@ -47,7 +48,7 @@ public class FactionRelationship {
     public void AdjustRelationshipStatus(int amount) {
         int previousValue = relationshipStatInt;
         relationshipStatInt += amount;
-        relationshipStatInt = Mathf.Clamp(relationshipStatInt, 1, Utilities.GetEnumValues<FACTION_RELATIONSHIP_STATUS>().Length - 1);
+        relationshipStatInt = Mathf.Clamp(relationshipStatInt, 1, CollectionUtilities.GetEnumValues<FACTION_RELATIONSHIP_STATUS>().Length - 1);
         if (relationshipStatInt != previousValue) {
             Messenger.Broadcast(Signals.FACTION_RELATIONSHIP_CHANGED, this);
         }

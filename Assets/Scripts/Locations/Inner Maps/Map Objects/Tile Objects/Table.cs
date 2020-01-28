@@ -4,6 +4,7 @@ using System.Linq;
 using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UtilityScripts;
 
 public class Table : TileObject {
     //private Character[] users;
@@ -94,7 +95,7 @@ public class Table : TileObject {
     }
     protected override void ConstructMaxResources() {
         maxResourceValues = new Dictionary<RESOURCE, int>();
-        RESOURCE[] resourceTypes = Utilities.GetEnumValues<RESOURCE>();
+        RESOURCE[] resourceTypes = CollectionUtilities.GetEnumValues<RESOURCE>();
         for (int i = 0; i < resourceTypes.Length; i++) {
             RESOURCE resourceType = resourceTypes[i];
             maxResourceValues.Add(resourceType, resourceType == RESOURCE.FOOD ? 100 : 0);

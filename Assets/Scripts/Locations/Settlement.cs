@@ -5,6 +5,7 @@ using System.Linq;
 using Inner_Maps;
 using UnityEngine;
 using Traits;
+using UtilityScripts;
 
 public class Settlement : IJobOwner {
 
@@ -1057,7 +1058,7 @@ public class Settlement : IJobOwner {
             }
         }
         if (choices.Count > 0) {
-            JobQueueItem job = Utilities.GetRandomElement(choices);
+            JobQueueItem job = CollectionUtilities.GetRandomElement(choices);
             return character.jobQueue.AddJobInQueue(job);
         }
         return false;

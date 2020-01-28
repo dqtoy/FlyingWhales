@@ -8,6 +8,7 @@ using Inner_Maps;
 using Pathfinding;
 using Traits;
 using UnityEngine.Experimental.U2D;
+using UtilityScripts;
 
 public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPlayerActionTarget {
     public string name { get; protected set; }
@@ -722,7 +723,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     protected virtual void ConstructMaxResources() {
         maxResourceValues = new Dictionary<RESOURCE, int>();
-        RESOURCE[] resourceTypes = Utilities.GetEnumValues<RESOURCE>();
+        RESOURCE[] resourceTypes = CollectionUtilities.GetEnumValues<RESOURCE>();
         for (int i = 0; i < resourceTypes.Length; i++) {
             RESOURCE resourceType = resourceTypes[i];
             maxResourceValues.Add(resourceType, 1000);

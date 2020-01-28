@@ -1,6 +1,7 @@
 ﻿
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityScripts;
 
 public class Study : GoapAction {
     
@@ -48,7 +49,7 @@ public class Study : GoapAction {
     public void AfterStudySuccess(ActualGoapNode goapNode) {
         List<string> buffs = TraitManager.Instance.GetAllBuffTraitsThatCharacterCanHave(goapNode.actor);
         if (buffs.Count > 0) {
-            string chosenBuff = Utilities.GetRandomElement(buffs);
+            string chosenBuff = CollectionUtilities.GetRandomElement(buffs);
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, chosenBuff);
             goapNode.descriptionLog.AddToFillers(null, chosenBuff, LOG_IDENTIFIER.STRING_1);
         } else {

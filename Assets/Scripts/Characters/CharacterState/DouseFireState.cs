@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Traits;
+using UnityEngine.Assertions;
+using UtilityScripts;
 
 public class DouseFireState : CharacterState {
 
@@ -196,7 +198,10 @@ public class DouseFireState : CharacterState {
         if (currentTargetSource == null) {
             currentTargetSource = fires.Keys.First();
         }
-
+        
+        Assert.IsNotNull(currentTargetSource, $"{stateComponent.character.name} is trying to douse the nearest " +
+                                              $"fire, but could not get a target source. Fire dictionary is \n{CollectionUtilities.GetDictionaryLog(fires)}");
+        
         for (int i = 0; i < fires[currentTargetSource].Count; i++) {
             ITraitable currFire = fires[currentTargetSource][i];
             float dist = Vector2.Distance(stateComponent.character.worldObject.transform.position, currFire.worldObject.transform.position);

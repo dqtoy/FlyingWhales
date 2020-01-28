@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityScripts;
 
 public abstract class ResourcePile : TileObject {
 
@@ -38,7 +39,7 @@ public abstract class ResourcePile : TileObject {
     }
     protected override void ConstructMaxResources() {
         maxResourceValues = new Dictionary<RESOURCE, int>();
-        RESOURCE[] resourceTypes = Utilities.GetEnumValues<RESOURCE>();
+        RESOURCE[] resourceTypes = CollectionUtilities.GetEnumValues<RESOURCE>();
         for (int i = 0; i < resourceTypes.Length; i++) {
             RESOURCE resourceType = resourceTypes[i];
             //only allow resource type of what this resource pile provides.

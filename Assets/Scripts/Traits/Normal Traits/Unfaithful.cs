@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UtilityScripts;
 namespace Traits {
     public class Unfaithful : Trait {
 
@@ -45,7 +45,7 @@ namespace Traits {
 
                         if (choices.Count > 0) {
                             //If no paramour yet, the character will create a Have Affair Job which will attempt to have an affair with a viable target.
-                            GoapPlanJob cheatJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.HAVE_AFFAIR, Utilities.GetRandomElement(choices), character);
+                            GoapPlanJob cheatJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.HAVE_AFFAIR, CollectionUtilities.GetRandomElement(choices), character);
                             character.jobQueue.AddJobInQueue(cheatJob);
                             return successLogKey;
                         } else {

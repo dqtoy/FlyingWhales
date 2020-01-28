@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using UnityEngine;
+using UtilityScripts;
 
 public class WoodSourceFeature : TileFeature {
     private const int MaxBigTrees = 4;
@@ -96,7 +97,7 @@ public class WoodSourceFeature : TileFeature {
         List<LocationGridTile> choices = owner.locationGridTiles.Where(x => x.isOccupied == false 
                                 && x.structure.structureType.IsOpenSpace() && BigTreeObject.CanBePlacedOnTile(x)).ToList();
         if (choices.Count > 0) {
-            LocationGridTile chosenTile = Utilities.GetRandomElement(choices);
+            LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(choices);
             chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.BIG_TREE_OBJECT),
                 chosenTile);
             return true;
@@ -130,7 +131,7 @@ public class WoodSourceFeature : TileFeature {
         List<LocationGridTile> choices = owner.locationGridTiles.Where(x => x.isOccupied == false 
                                                                             && x.structure.structureType.IsOpenSpace()).ToList();
         if (choices.Count > 0) {
-            LocationGridTile chosenTile = Utilities.GetRandomElement(choices);
+            LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(choices);
             chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TREE_OBJECT),
                 chosenTile);
             return true;

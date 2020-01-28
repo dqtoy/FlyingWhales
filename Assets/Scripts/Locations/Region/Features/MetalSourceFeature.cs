@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using UnityEngine;
+using UtilityScripts;
 
 public class MetalSourceFeature : TileFeature {
     private const int MaxOres = 4;
@@ -80,7 +81,7 @@ public class MetalSourceFeature : TileFeature {
                 && x.GetNeighbourOfTypeCount(LocationGridTile.Ground_Type.Cave, true) == 1)
             .ToList();
         if (choices.Count > 0) {
-            LocationGridTile chosenTile = Utilities.GetRandomElement(choices);
+            LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(choices);
             chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ORE),
                 chosenTile);
             return true;

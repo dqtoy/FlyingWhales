@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UtilityScripts;
 
 public class WorldMapLandmarkGeneration : MapGenerationComponent {
 
@@ -24,7 +25,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null)
 					.ToList();
 				if (choices.Count > 0) {
-					HexTile chosenTile = Utilities.GetRandomElement(choices);
+					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
 					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.MONSTER_LAIR, false);
 					Settlement settlement =
 						LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON, 0,
@@ -46,7 +47,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					            && x.HasNeighbourWithElevation(ELEVATION.MOUNTAIN) && x.landmarkOnTile == null)
 					.ToList();
 				if (choices.Count > 0) {
-					HexTile chosenTile = Utilities.GetRandomElement(choices);
+					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
 					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.ABANDONED_MINE, false);
 					Settlement settlement =
 						LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON, 0,
@@ -67,7 +68,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null)
 					.ToList();
 				if (choices.Count > 0) {
-					HexTile chosenTile = Utilities.GetRandomElement(choices);
+					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
 					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.TEMPLE, false);
 					Settlement settlement =
 						LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON, 0,
@@ -88,7 +89,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null)
 					.ToList();
 				if (choices.Count > 0) {
-					HexTile chosenTile = Utilities.GetRandomElement(choices);
+					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
 					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.MAGE_TOWER, false);
 					Settlement settlement =
 						LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON, 0,

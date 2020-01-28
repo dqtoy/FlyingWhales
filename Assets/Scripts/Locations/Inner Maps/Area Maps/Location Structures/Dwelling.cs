@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using UnityEngine;
+using UtilityScripts;
 
 public class Dwelling : LocationStructure, IDwelling {
 
@@ -162,7 +163,7 @@ public class Dwelling : LocationStructure, IDwelling {
     #region Facilities
     private void InitializeFacilities() {
         facilities = new Dictionary<FACILITY_TYPE, int>();
-        FACILITY_TYPE[] facilityTypes = Utilities.GetEnumValues<FACILITY_TYPE>();
+        FACILITY_TYPE[] facilityTypes = CollectionUtilities.GetEnumValues<FACILITY_TYPE>();
         for (int i = 0; i < facilityTypes.Length; i++) {
             if (facilityTypes[i] != FACILITY_TYPE.NONE) {
                 facilities.Add(facilityTypes[i], 0);
@@ -173,7 +174,7 @@ public class Dwelling : LocationStructure, IDwelling {
         if (facilities == null) {
             return;
         }
-        FACILITY_TYPE[] facilityTypes = Utilities.GetEnumValues<FACILITY_TYPE>();
+        FACILITY_TYPE[] facilityTypes = CollectionUtilities.GetEnumValues<FACILITY_TYPE>();
         for (int i = 0; i < facilityTypes.Length; i++) {
             if (facilityTypes[i] != FACILITY_TYPE.NONE) {
                 facilities[facilityTypes[i]] = 0;

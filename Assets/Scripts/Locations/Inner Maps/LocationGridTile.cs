@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
+using UtilityScripts;
 using Random = UnityEngine.Random;
 namespace Inner_Maps {
     public class LocationGridTile : IHasNeighbours<LocationGridTile> {
@@ -276,10 +277,10 @@ namespace Inner_Maps {
                     //    createEdge = true;
                     //} else 
                     summary += $"\n\tChecking {currNeighbour.ToString()}. Ground type is {groundType.ToString()}. Neighbour Ground Type is {currNeighbour.groundType.ToString()}";
-                    if (currNeighbour.tileType == Tile_Type.Wall || currNeighbour.tileType == Tile_Type.Structure_Entrance) {
-                        createEdge = false;
-                    } else if (currNeighbour.groundType == Ground_Type.Cave) {
+                    if (this.groundType != Ground_Type.Cave && currNeighbour.groundType == Ground_Type.Cave) {
                         createEdge = true;
+                    } else if (currNeighbour.tileType == Tile_Type.Wall || currNeighbour.tileType == Tile_Type.Structure_Entrance) {
+                        createEdge = false;
                     } else if (groundType != Ground_Type.Water && currNeighbour.groundType == Ground_Type.Water) {
                         createEdge = true;
                     } else if (groundType == Ground_Type.Corrupted) {
@@ -417,7 +418,7 @@ namespace Inner_Maps {
 
         #region Utilities
         public bool IsAtEdgeOfMap() {
-            GridNeighbourDirection[] dirs = Utilities.GetEnumValues<GridNeighbourDirection>();
+            GridNeighbourDirection[] dirs = CollectionUtilities.GetEnumValues<GridNeighbourDirection>();
             for (int i = 0; i < dirs.Length; i++) {
                 if (!neighbours.ContainsKey(dirs[i])) {
                     return true;
@@ -782,7 +783,6 @@ namespace Inner_Maps {
 
         #region Corruption
         public void CorruptTile() {
-            
             SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.corruptedTile);
             CreateSeamlessEdgesForSelfAndNeighbours();
             if (hasDetail) {

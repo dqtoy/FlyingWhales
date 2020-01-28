@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UtilityScripts;
 
 public class TileFeatureGeneration : MapGenerationComponent {
 
@@ -15,15 +16,15 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		string log = "Determining settlement tiles";
 		List<Region> settlementChoices = new List<Region>(GridMap.Instance.allRegions);
 		for (int i = 0; i < count; i++) {
-			Region chosenRegion = Utilities.GetRandomElement(settlementChoices);
-			HexTile randomTile = Utilities.GetRandomElement(chosenRegion.tiles);
+			Region chosenRegion = CollectionUtilities.GetRandomElement(settlementChoices);
+			HexTile randomTile = CollectionUtilities.GetRandomElement(chosenRegion.tiles);
 			randomTile.SetElevation(ELEVATION.PLAIN);
 			randomTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, randomTile);
 			LandmarkManager.Instance.CreateNewLandmarkOnTile(randomTile, LANDMARK_TYPE.VILLAGE, false);
 			log += $"\nChose {randomTile.ToString()} to be a settlement";
 			if (Random.Range(0, 2) == 1) {
 				//2 tiles are settlements
-				HexTile adjacentTile = Utilities.GetRandomElement(randomTile.AllNeighbours
+				HexTile adjacentTile = CollectionUtilities.GetRandomElement(randomTile.AllNeighbours
 					.Where(x => x.featureComponent.HasFeature(TileFeatureDB.Inhabited_Feature) == false
 					            && x.region == randomTile.region).ToList());
 				adjacentTile.SetElevation(ELEVATION.PLAIN);
@@ -60,7 +61,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		//stone source
 		for (int i = 0; i < stoneSourceCount; i++) {
 			if (flatTilesWithNoFeatures.Count <= 0) { break; }
-			HexTile tile = Utilities.GetRandomElement(flatTilesWithNoFeatures);
+			HexTile tile = CollectionUtilities.GetRandomElement(flatTilesWithNoFeatures);
 			tile.featureComponent.AddFeature(TileFeatureDB.Stone_Source_Feature, tile);
 			flatTilesWithNoFeatures.Remove(tile);
 		}		
@@ -68,7 +69,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		//fertile
 		for (int i = 0; i < fertileCount; i++) {
 			if (flatTilesWithNoFeatures.Count <= 0) { break; }
-			HexTile tile = Utilities.GetRandomElement(flatTilesWithNoFeatures);
+			HexTile tile = CollectionUtilities.GetRandomElement(flatTilesWithNoFeatures);
 			tile.featureComponent.AddFeature(TileFeatureDB.Fertile_Feature, tile);
 			flatTilesWithNoFeatures.Remove(tile);
 		}
@@ -76,7 +77,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		//game
 		for (int i = 0; i < gameCount; i++) {
 			if (flatTilesWithNoFeatures.Count <= 0) { break; }
-			HexTile tile = Utilities.GetRandomElement(flatTilesWithNoFeatures);
+			HexTile tile = CollectionUtilities.GetRandomElement(flatTilesWithNoFeatures);
 			tile.featureComponent.AddFeature(TileFeatureDB.Game_Feature, tile);
 			flatTilesWithNoFeatures.Remove(tile);
 		}

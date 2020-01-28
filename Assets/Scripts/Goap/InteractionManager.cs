@@ -7,6 +7,7 @@ using System.Reflection;
 using UnityEngine;
 using Inner_Maps;
 using Interrupts;
+using UtilityScripts;
 
 public partial class InteractionManager : MonoBehaviour {
     public static InteractionManager Instance = null;
@@ -32,7 +33,7 @@ public partial class InteractionManager : MonoBehaviour {
     }
 
     private void ConstructAllGoapActionAdvertisements() {
-        POINT_OF_INTEREST_TYPE[] poiTypes = Utilities.GetEnumValues<POINT_OF_INTEREST_TYPE>();
+        POINT_OF_INTEREST_TYPE[] poiTypes = CollectionUtilities.GetEnumValues<POINT_OF_INTEREST_TYPE>();
         allGoapActionAdvertisements = new Dictionary<POINT_OF_INTEREST_TYPE, List<GoapAction>>();
         for (int i = 0; i < poiTypes.Length; i++) {
             POINT_OF_INTEREST_TYPE currType = poiTypes[i];
@@ -48,7 +49,7 @@ public partial class InteractionManager : MonoBehaviour {
     }
     private void ConstructGoapActionData() {
         goapActionData = new Dictionary<INTERACTION_TYPE, GoapAction>();
-        INTERACTION_TYPE[] allGoapActions = Utilities.GetEnumValues<INTERACTION_TYPE>();
+        INTERACTION_TYPE[] allGoapActions = CollectionUtilities.GetEnumValues<INTERACTION_TYPE>();
         for (int i = 0; i < allGoapActions.Length; i++) {
             INTERACTION_TYPE currType = allGoapActions[i];
             var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(currType.ToString());
@@ -63,7 +64,7 @@ public partial class InteractionManager : MonoBehaviour {
     }
     private void ConstructInterruptData() {
         interruptData = new Dictionary<INTERRUPT, Interrupt>();
-        INTERRUPT[] allInterrupts = Utilities.GetEnumValues<INTERRUPT>();
+        INTERRUPT[] allInterrupts = CollectionUtilities.GetEnumValues<INTERRUPT>();
         for (int i = 0; i < allInterrupts.Length; i++) {
             INTERRUPT interrupt = allInterrupts[i];
             var typeName = $"Interrupts.{ Utilities.NotNormalizedConversionEnumToStringNoSpaces(interrupt.ToString()) }"; ;
@@ -126,7 +127,7 @@ public partial class InteractionManager : MonoBehaviour {
             }
         }
         if (choices.Count > 0) {
-            return Utilities.GetRandomElement(choices);    
+            return CollectionUtilities.GetRandomElement(choices);    
         }
         Debug.LogWarning($"{actor.name} cannot find a region to target with action {interactionType.ToString()}");
         return null;

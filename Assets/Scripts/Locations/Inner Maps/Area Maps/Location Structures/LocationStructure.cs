@@ -118,7 +118,9 @@ public class LocationStructure {
             token.SetStructureLocation(null);
             LocationGridTile removedFrom = token.gridTileLocation;
             if (RemovePOI(token, removedBy)) {
-                removedFrom.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemRemovedFromLocation(token, this);
+                if (removedFrom.buildSpotOwner.isPartOfParentRegionMap) {
+                    removedFrom.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemRemovedFromLocation(token, this);    
+                }
             }
         }
     }

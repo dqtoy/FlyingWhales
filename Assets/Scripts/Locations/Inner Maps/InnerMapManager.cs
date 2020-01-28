@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
-
+using UtilityScripts;
 namespace Inner_Maps {
     public class InnerMapManager : MonoBehaviour {
 
@@ -787,9 +787,9 @@ namespace Inner_Maps {
             if (corrupted) {
                 //TODO: this is only temporary!
                 if (objectType == TILE_OBJECT_TYPE.TREE_OBJECT) {
-                    return Utilities.GetRandomElement(assetManager.corruptedTreeAssets);
+                    return CollectionUtilities.GetRandomElement(assetManager.corruptedTreeAssets);
                 } else if (objectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
-                    return Utilities.GetRandomElement(assetManager.corruptedBigTreeAssets);
+                    return CollectionUtilities.GetRandomElement(assetManager.corruptedBigTreeAssets);
                 }
             }
             

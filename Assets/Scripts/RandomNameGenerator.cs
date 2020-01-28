@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
+using UtilityScripts;
 
 public class RandomNameGenerator : MonoBehaviour {
 
@@ -237,7 +237,7 @@ public class RandomNameGenerator : MonoBehaviour {
         humanKingdomNames.AddRange(generatedHumanKingdomNames.AllRaw(10).Take(20000).ToList());
         humanKingdomNames.AddRange(generatedHumanKingdomNames.AllRaw(11).Take(10000).ToList());
         humanKingdomNames.AddRange(generatedHumanKingdomNames.AllRaw(12).Take(10000).ToList());
-        humanKingdomNames = Utilities.Shuffle(humanKingdomNames);
+        humanKingdomNames = CollectionUtilities.Shuffle(humanKingdomNames);
 
 
         humanSurnames = new List<string>();
@@ -248,7 +248,7 @@ public class RandomNameGenerator : MonoBehaviour {
         humanSurnames.AddRange(generatedHumanSurnames.AllRaw(10).Take(20000).ToList());
         humanSurnames.AddRange(generatedHumanSurnames.AllRaw(11).Take(10000).ToList());
         humanSurnames.AddRange(generatedHumanSurnames.AllRaw(12).Take(10000).ToList());
-        humanSurnames = Utilities.Shuffle(humanSurnames);
+        humanSurnames = CollectionUtilities.Shuffle(humanSurnames);
 
         elvenKingdomNames = new List<string>();
         for (int i = 5; i <= 8; i++) {
@@ -258,7 +258,7 @@ public class RandomNameGenerator : MonoBehaviour {
         elvenKingdomNames.AddRange(generatedElvenKingdomNames.AllRaw(10).Take(20000).ToList());
         elvenKingdomNames.AddRange(generatedElvenKingdomNames.AllRaw(11).Take(10000).ToList());
         elvenKingdomNames.AddRange(generatedElvenKingdomNames.AllRaw(12).Take(10000).ToList());
-        elvenKingdomNames = Utilities.Shuffle(elvenKingdomNames);
+        elvenKingdomNames = CollectionUtilities.Shuffle(elvenKingdomNames);
 
         elvenFemaleNames = new List<string>();
         for (int i = 5; i <= 7; i++) {
@@ -269,7 +269,7 @@ public class RandomNameGenerator : MonoBehaviour {
         elvenFemaleNames.AddRange(generatedElvenFemaleNames.AllRaw(10).Take(20000).ToList());
         elvenFemaleNames.AddRange(generatedElvenFemaleNames.AllRaw(11).Take(10000).ToList());
         elvenFemaleNames.AddRange(generatedElvenFemaleNames.AllRaw(12).Take(10000).ToList());
-        elvenFemaleNames = Utilities.Shuffle(elvenFemaleNames);
+        elvenFemaleNames = CollectionUtilities.Shuffle(elvenFemaleNames);
 
         elvenMaleNames = new List<string>();
         for (int i = 5; i <= 7; i++) {
@@ -280,25 +280,25 @@ public class RandomNameGenerator : MonoBehaviour {
         elvenMaleNames.AddRange(generatedElvenMaleNames.AllRaw(10).Take(20000).ToList());
         elvenMaleNames.AddRange(generatedElvenMaleNames.AllRaw(11).Take(10000).ToList());
         elvenMaleNames.AddRange(generatedElvenMaleNames.AllRaw(12).Take(10000).ToList());
-        elvenMaleNames = Utilities.Shuffle(elvenMaleNames);
+        elvenMaleNames = CollectionUtilities.Shuffle(elvenMaleNames);
 
 		ancientRuinNames = new List<string>();
 		for (int i = 4; i <= 6; i++) {
 			ancientRuinNames.AddRange(generatedAncientRuinNames.AllRaw(i).Take(50000).ToList());
 		}
-		ancientRuinNames = Utilities.Shuffle(ancientRuinNames);
+		ancientRuinNames = CollectionUtilities.Shuffle(ancientRuinNames);
 
 		tileNames = new List<string>();
 		for (int i = 6; i <= 9; i++) {
 			tileNames.AddRange(generatedTileNames.AllRaw(i).Take(20000).ToList());
 		}
-		tileNames = Utilities.Shuffle(tileNames);
+		tileNames = CollectionUtilities.Shuffle(tileNames);
 
         regionNames = new List<string>();
         for (int i = 6; i <= 9; i++) {
             regionNames.AddRange(generatedRegionNames.AllRaw(i).Take(20000).ToList());
         }
-        regionNames = Utilities.Shuffle(regionNames);
+        regionNames = CollectionUtilities.Shuffle(regionNames);
 
         availableMinionNames = new List<string>(minionNames);
         availableSpiderNames = new List<string>(spiderNames);

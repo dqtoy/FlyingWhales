@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using UnityEngine;
+using UtilityScripts;
 
 public class SettlementGeneration : MapGenerationComponent {
 	public override IEnumerator Execute(MapGenerationData data) {
@@ -61,7 +62,7 @@ public class SettlementGeneration : MapGenerationComponent {
 					LocationStructure structure = keyValuePair.Value[i];
 					List<GameObject> choices =
 						InnerMapManager.Instance.GetStructurePrefabsForStructure(keyValuePair.Key);
-					GameObject chosenStructurePrefab = Utilities.GetRandomElement(choices);
+					GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
 					LocationStructureObject lso = chosenStructurePrefab.GetComponent<LocationStructureObject>();
 					BuildingSpot chosenBuildingSpot;
 					if (TryGetBuildSpotForStructureInSettlement(lso, settlement, out chosenBuildingSpot)) {

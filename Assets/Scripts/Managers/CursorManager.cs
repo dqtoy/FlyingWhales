@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UtilityScripts;
 
 public class CursorManager : MonoBehaviour {
 
@@ -285,7 +286,7 @@ public class CursorManager : MonoBehaviour {
                     BaseMapObjectVisual visual = allVisuals[i];
                     if (visual.IsMapObjectMenuVisible()) {
                         //current map object is selected, set the next object in the loop to show its menu
-                        objToShowMenu = Utilities.GetNextElementCyclic(allVisuals, i);
+                        objToShowMenu = CollectionUtilities.GetNextElementCyclic(allVisuals, i);
                         foundObject = true;
                         break;
                     }

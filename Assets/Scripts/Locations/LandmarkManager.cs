@@ -6,6 +6,7 @@ using JetBrains.Annotations;
 using UnityEngine.Tilemaps;
 using Unity.Jobs;
 using Unity.Collections;
+using UtilityScripts;
 using Debug = System.Diagnostics.Debug;
 
 public partial class LandmarkManager : MonoBehaviour {
@@ -467,7 +468,7 @@ public partial class LandmarkManager : MonoBehaviour {
         if (structure.structureType.ShouldBeGeneratedFromTemplate()) {
             List<GameObject> choices =
                 InnerMapManager.Instance.GetStructurePrefabsForStructure(structure.structureType);
-            GameObject chosenStructurePrefab = Utilities.GetRandomElement(choices);
+            GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
             LocationStructureObject lso = chosenStructurePrefab.GetComponent<LocationStructureObject>();
             BuildingSpot chosenBuildingSpot;
             if (TryGetBuildSpotForStructureInTile(lso, tile, innerTileMap, out chosenBuildingSpot)) {
@@ -512,7 +513,7 @@ public partial class LandmarkManager : MonoBehaviour {
             }
         }
         if (choices.Count > 0) {
-            return Utilities.GetRandomElement(choices);
+            return CollectionUtilities.GetRandomElement(choices);
         }
         return null;
     }

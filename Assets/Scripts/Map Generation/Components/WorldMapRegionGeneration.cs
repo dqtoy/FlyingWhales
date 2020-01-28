@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityScripts;
 
 public class WorldMapRegionGeneration : MapGenerationComponent {
 
@@ -59,7 +60,7 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 		// yield return MapGenerator.Instance.StartCoroutine(GridMap.Instance.DivideToRegions(
 		// 	GridMap.Instance.normalHexTiles, data.regionCount, 5));
 
-		WorldMapTemplate chosenTemplate = Utilities.GetRandomElement(worldMapTemplates);
+		WorldMapTemplate chosenTemplate = CollectionUtilities.GetRandomElement(worldMapTemplates);
 		yield return MapGenerator.Instance.StartCoroutine(DivideToRegions(chosenTemplate));
 	}
 	private IEnumerator DivideToRegions(WorldMapTemplate mapTemplate) {

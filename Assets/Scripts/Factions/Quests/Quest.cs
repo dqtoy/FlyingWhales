@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityScripts;
 
 public class Quest : IJobOwner {
     public JOB_OWNER ownerType { get { return JOB_OWNER.QUEST; } }
@@ -77,7 +78,7 @@ public class Quest : IJobOwner {
             }
         }
         if (choices.Count > 0) {
-            JobQueueItem job = Utilities.GetRandomElement(choices);
+            JobQueueItem job = CollectionUtilities.GetRandomElement(choices);
             return character.jobQueue.AddJobInQueue(job);
         }
         return false;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using UnityEngine;
+using UtilityScripts;
 
 public class GameFeature : TileFeature {
 
@@ -78,7 +79,7 @@ public class GameFeature : TileFeature {
         List<LocationGridTile> choices = owner.locationGridTiles.Where(x => x.isOccupied == false 
                                                                             && x.structure.structureType.IsOpenSpace()).ToList();
         if (choices.Count > 0) {
-            LocationGridTile chosenTile = Utilities.GetRandomElement(choices);
+            LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(choices);
             chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.SMALL_ANIMAL),
                 chosenTile);
             return true;

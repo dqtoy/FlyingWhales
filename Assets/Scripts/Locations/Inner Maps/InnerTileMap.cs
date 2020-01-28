@@ -6,6 +6,7 @@ using Pathfinding;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
+using UtilityScripts;
 using Random = UnityEngine.Random;
 namespace Inner_Maps {
     public abstract class InnerTileMap : MonoBehaviour {
@@ -429,7 +430,7 @@ namespace Inner_Maps {
                         }
                     }
                     if (choices.Count > 0) {
-                        buildingSpot = Utilities.GetRandomElement(choices);
+                        buildingSpot = CollectionUtilities.GetRandomElement(choices);
                         return true;
                     }
                 }
@@ -439,7 +440,7 @@ namespace Inner_Maps {
             } else {
                 //if the object does not exceed the size of a build spot, then just give it a random open build spot
                 if (openSpots.Count > 0) {
-                    buildingSpot = Utilities.GetRandomElement(openSpots);    
+                    buildingSpot = CollectionUtilities.GetRandomElement(openSpots);    
                 } else {
                     buildingSpot = null;
                 }

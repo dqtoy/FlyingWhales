@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityScripts;
 
 public class PortalLandmarkGeneration : MapGenerationComponent {
 	public override IEnumerator Execute(MapGenerationData data) {
@@ -27,7 +28,7 @@ public class PortalLandmarkGeneration : MapGenerationComponent {
 		}
 
 		if (validPortalTiles.Count > 0) {
-			HexTile portalTile = Utilities.GetRandomElement(validPortalTiles);
+			HexTile portalTile = CollectionUtilities.GetRandomElement(validPortalTiles);
 			BaseLandmark portalLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(portalTile, LANDMARK_TYPE.THE_PORTAL, false);
 			data.portal = portalLandmark;	
 		} else {

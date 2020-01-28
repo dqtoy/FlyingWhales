@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
+using UtilityScripts;
 
 public class SettlementRulerBehaviour : CharacterBehaviourComponent {
     public SettlementRulerBehaviour() {
@@ -22,7 +23,7 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
                 log += $"\n-Structure Type to build is {neededStructure.ToString()}";
 
                 List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(neededStructure);
-                GameObject chosenStructurePrefab = Utilities.GetRandomElement(choices);
+                GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
                 log += $"\n-Structure Prefab chosen is {chosenStructurePrefab.name}";
 
                 LocationStructureObject lso = chosenStructurePrefab.GetComponent<LocationStructureObject>();

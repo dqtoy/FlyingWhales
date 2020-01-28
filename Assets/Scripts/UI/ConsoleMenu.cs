@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.IO;
 using Inner_Maps;
 using UnityEngine.Events;
+using UtilityScripts;
 
 public class ConsoleMenu : UIMenu {
 
@@ -1117,7 +1118,7 @@ public class ConsoleMenu : UIMenu {
                 typesSubscribedTo.Clear();
                 AddSuccessMessage("Unsubscribed from ALL interactions");
             } else {
-                typesSubscribedTo.AddRange(Utilities.GetEnumValues<INTERACTION_TYPE>());
+                typesSubscribedTo.AddRange(CollectionUtilities.GetEnumValues<INTERACTION_TYPE>());
                 AddSuccessMessage("Subscribed to ALL interactions");
             }
         } else if (Enum.TryParse<INTERACTION_TYPE>(typeParameterString, out type)) {
@@ -1179,7 +1180,7 @@ public class ConsoleMenu : UIMenu {
         string typeParameterString = parameters[0];
         SUMMON_TYPE type;
         if (typeParameterString.Equals("All")) {
-            SUMMON_TYPE[] types = Utilities.GetEnumValues<SUMMON_TYPE>();
+            SUMMON_TYPE[] types = CollectionUtilities.GetEnumValues<SUMMON_TYPE>();
             for (int i = 1; i < types.Length; i++) {
                 PlayerManager.Instance.player.GainSummon(types[i]);
             }
@@ -1220,7 +1221,7 @@ public class ConsoleMenu : UIMenu {
         string typeParameterString = parameters[0];
         ARTIFACT_TYPE type;
         if (typeParameterString.Equals("All")) {
-            ARTIFACT_TYPE[] types = Utilities.GetEnumValues<ARTIFACT_TYPE>();
+            ARTIFACT_TYPE[] types = CollectionUtilities.GetEnumValues<ARTIFACT_TYPE>();
             for (int i = 1; i < types.Length; i++) {
                 PlayerManager.Instance.player.GainArtifact(types[i]);
             }

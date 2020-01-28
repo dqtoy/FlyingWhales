@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UtilityScripts;
 namespace Traits {
     public class Kleptomaniac : Trait {
         public List<Character> noItemCharacters { get; private set; }
@@ -116,7 +116,7 @@ namespace Traits {
                         }
                     }
                     if (choices.Count > 0) {
-                        IPointOfInterest target = Utilities.GetRandomElement(choices);
+                        IPointOfInterest target = CollectionUtilities.GetRandomElement(choices);
                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEAL, target, character);
                         character.jobQueue.AddJobInQueue(job);
                     } else {

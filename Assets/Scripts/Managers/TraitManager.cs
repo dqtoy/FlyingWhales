@@ -5,6 +5,7 @@ using System;
 using UnityEngine;
 using System.Linq;
 using Traits;
+using UtilityScripts;
 
 public class TraitManager : MonoBehaviour {
     public static TraitManager Instance;
@@ -217,7 +218,7 @@ public class TraitManager : MonoBehaviour {
         for (int i = 0; i < character.traitContainer.allTraits.Count; i++) {
             Trait trait = character.traitContainer.allTraits[i];
             if (trait.mutuallyExclusive != null) {
-                allBuffs = Utilities.RemoveElements(allBuffs, trait.mutuallyExclusive);
+                allBuffs = CollectionUtilities.RemoveElements(allBuffs, trait.mutuallyExclusive);
             }
         }
         return allBuffs;

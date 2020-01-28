@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityScripts;
 
 public class SkillScroll : SpecialObject {
 
@@ -10,7 +11,7 @@ public class SkillScroll : SpecialObject {
     #region Overrides
     public override void Obtain() {
         base.Obtain();
-        COMBAT_ABILITY[] skills = Utilities.GetEnumValues<COMBAT_ABILITY>();
+        COMBAT_ABILITY[] skills = CollectionUtilities.GetEnumValues<COMBAT_ABILITY>();
         CombatAbility newAbility = PlayerManager.Instance.CreateNewCombatAbility(skills[Random.Range(1, skills.Length)]);
         UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained Combat Ability: " + newAbility.name, () => PlayerUI.Instance.newMinionAbilityUI.ShowNewMinionAbilityUI(newAbility));
     }

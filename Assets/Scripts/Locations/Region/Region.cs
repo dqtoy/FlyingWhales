@@ -4,6 +4,7 @@ using System.Linq;
 using Inner_Maps;
 using PathFind;
 using UnityEngine;
+using UtilityScripts;
 using Random = UnityEngine.Random;
 
 public class Region : ILocation {
@@ -162,7 +163,7 @@ public class Region : ILocation {
     private List<SpriteRenderer> GetOuterBorders() {
         List<HexTile> outerTiles = GetOuterTiles();
         List<SpriteRenderer> borders = new List<SpriteRenderer>();
-        HEXTILE_DIRECTION[] dirs = Utilities.GetEnumValues<HEXTILE_DIRECTION>();
+        HEXTILE_DIRECTION[] dirs = CollectionUtilities.GetEnumValues<HEXTILE_DIRECTION>();
         for (int i = 0; i < outerTiles.Count; i++) {
             HexTile currTile = outerTiles[i];
             for (int j = 0; j < dirs.Length; j++) {

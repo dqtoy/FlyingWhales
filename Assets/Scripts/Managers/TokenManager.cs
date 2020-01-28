@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Traits;
 using UnityEngine;
+using UtilityScripts;
 
 public class TokenManager : MonoBehaviour {
     public static TokenManager Instance;
@@ -57,7 +58,7 @@ public class TokenManager : MonoBehaviour {
         // }
     }
     public SpecialToken CreateRandomDroppableSpecialToken() {
-        SPECIAL_TOKEN[] choices = Utilities.GetEnumValues<SPECIAL_TOKEN>().Where(x => x.CreatesObjectWhenDropped()).ToArray();
+        SPECIAL_TOKEN[] choices = CollectionUtilities.GetEnumValues<SPECIAL_TOKEN>().Where(x => x.CreatesObjectWhenDropped()).ToArray();
         SPECIAL_TOKEN random = choices[UnityEngine.Random.Range(0, choices.Length)];
         return CreateSpecialToken(random);
     }

@@ -28,7 +28,7 @@ namespace Traits {
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             base.OnRemoveTrait(sourceCharacter, removedBy);
             awareCharacters.Clear();
-            responsibleCharacters.Clear(); //Cleared list, for garbage collection
+            responsibleCharacters?.Clear(); //Cleared list, for garbage collection
                                            //Messenger.Broadcast(Signals.OLD_NEWS_TRIGGER, sourceCharacter, gainedFromDoing);
         }
         public override string GetTestingData() {

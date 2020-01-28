@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UtilityScripts;
 
 public class CharacterManager : MonoBehaviour {
 
@@ -544,26 +545,26 @@ public class CharacterManager : MonoBehaviour {
             ps.hairColor = 0f;
             ps.wholeImageColor = UnityEngine.Random.Range(-144f, 144f);
         } else {
-            ps.head = Utilities.GetRandomIndexInList(pac.head);
-            ps.brows = Utilities.GetRandomIndexInList(pac.brows);
-            ps.eyes = Utilities.GetRandomIndexInList(pac.eyes);
-            ps.mouth = Utilities.GetRandomIndexInList(pac.mouth);
-            ps.nose = Utilities.GetRandomIndexInList(pac.nose);
+            ps.head = CollectionUtilities.GetRandomIndexInList(pac.head);
+            ps.brows = CollectionUtilities.GetRandomIndexInList(pac.brows);
+            ps.eyes = CollectionUtilities.GetRandomIndexInList(pac.eyes);
+            ps.mouth = CollectionUtilities.GetRandomIndexInList(pac.mouth);
+            ps.nose = CollectionUtilities.GetRandomIndexInList(pac.nose);
 
             if (UnityEngine.Random.Range(0, 100) < 10 && gender != GENDER.FEMALE) { //females have no chance to be bald
                 ps.hair = -1; //chance to have no hair
             } else {
-                ps.hair = Utilities.GetRandomIndexInList(pac.hair);
+                ps.hair = CollectionUtilities.GetRandomIndexInList(pac.hair);
             }
             if (UnityEngine.Random.Range(0, 100) < 20) {
                 ps.mustache = -1; //chance to have no mustache
             } else {
-                ps.mustache = Utilities.GetRandomIndexInList(pac.mustache);
+                ps.mustache = CollectionUtilities.GetRandomIndexInList(pac.mustache);
             }
             if (UnityEngine.Random.Range(0, 100) < 10) {
                 ps.beard = -1; //chance to have no beard
             } else {
-                ps.beard = Utilities.GetRandomIndexInList(pac.beard);
+                ps.beard = CollectionUtilities.GetRandomIndexInList(pac.beard);
             }
             ps.hairColor = UnityEngine.Random.Range(-720f, 720f);
             ps.wholeImageColor = 0f;
@@ -845,7 +846,7 @@ public class CharacterManager : MonoBehaviour {
     private void ConstructEmotionData() {
         emotionData = new Dictionary<EMOTION, Emotion>();
         this.allEmotions = new List<Emotion>();
-        EMOTION[] allEmotions = Utilities.GetEnumValues<EMOTION>();
+        EMOTION[] allEmotions = CollectionUtilities.GetEnumValues<EMOTION>();
         for (int i = 0; i < allEmotions.Length; i++) {
             EMOTION emotion = allEmotions[i];
             var typeName = Utilities.NotNormalizedConversionEnumToStringNoSpaces(emotion.ToString());
