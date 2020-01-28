@@ -78,13 +78,13 @@ public class DouseFireState : CharacterState {
             }
         }
     }
-    public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
-        if (AddFire(targetPOI)) {
-            //DetermineAction();
-            //return true;
-        }
-        return base.OnEnterVisionWith(targetPOI);
-    }
+    // public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
+    //     if (AddFire(targetPOI)) {
+    //         //DetermineAction();
+    //         //return true;
+    //     }
+    //     return base.OnEnterVisionWith(targetPOI);
+    // }
     //protected override void DoMovementBehavior() {
     //    base.DoMovementBehavior();
     //    DetermineAction();
@@ -114,7 +114,10 @@ public class DouseFireState : CharacterState {
     public void OnTraitableGainedTrait(ITraitable traitable, Trait trait) {
         if (trait is Burning) {
             Burning burning = trait as Burning;
-            if (fires.ContainsKey(burning.sourceOfBurning) && !fires[burning.sourceOfBurning].Contains(burning.owner)) {
+            if (fires.ContainsKey(burning.sourceOfBurning) == false) {
+                fires.Add(burning.sourceOfBurning, new List<ITraitable>());
+            }
+            if (!fires[burning.sourceOfBurning].Contains(burning.owner)) {
                 fires[burning.sourceOfBurning].Add(burning.owner);
                 //if (currentTarget != null) {
                 //    //check the distance of the new fire with the current target, if the current target is still nearer, continue dousing that, if not redetermine action
@@ -137,15 +140,14 @@ public class DouseFireState : CharacterState {
                 if (fires[burning.sourceOfBurning].Count == 0) {
                     fires.Remove(burning.sourceOfBurning);
                 }
-                //if (currentTarget == burning.owner) {
-                //    currentTarget = null;
-                //    DetermineAction();
-                //} else if (currentTargetSource == burning.sourceOfBurning) {
-                //    currentTargetSource = null;
-                //    if (fires.Count == 0) {//no more fires left
-                //        DetermineAction();
-                //    }
-                //}
+                if (currentTarget == burning.owner && removedBy != stateComponent.character) { 
+                    //only redetermine action if burning was removed by something or someone else
+                    // currentTarget = null;
+                    DetermineAction();
+                } else if (currentTargetSource == burning.sourceOfBurning) {
+                    // currentTargetSource = null;
+                    DetermineAction();
+                }
             }
         }
     }
@@ -195,7 +197,7 @@ public class DouseFireState : CharacterState {
             nearest = Vector2.Distance(stateComponent.character.worldObject.transform.position, currentTarget.worldObject.transform.position);
         }
         
-        if (currentTargetSource == null) {
+        if (currentTargetSource == null || fires.ContainsKey(currentTargetSource) == false) {
             currentTargetSource = fires.Keys.First();
         }
         
