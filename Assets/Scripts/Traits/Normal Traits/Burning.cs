@@ -41,12 +41,12 @@ namespace Traits {
             if (sourceOfBurning != null && !sourceOfBurning.objectsOnFire.Contains(owner)) {
                 SetSourceOfBurning(sourceOfBurning, owner);
             }
-            //Messenger.AddListener(Signals.TICK_ENDED, PerTickEnded);
+            Messenger.AddListener(Signals.TICK_ENDED, PerTickEnded);
             base.OnAddTrait(addedTo);
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
-            //Messenger.RemoveListener(Signals.TICK_ENDED, PerTickEnded);
+            Messenger.RemoveListener(Signals.TICK_ENDED, PerTickEnded);
             ObjectPoolManager.Instance.DestroyObject(burningEffect);
             if (removedFrom is IPointOfInterest) {
                 if (removedFrom is Character) {
@@ -96,10 +96,10 @@ namespace Traits {
         public override string GetTestingData() {
             return sourceOfBurning.ToString();
         }
-        public override void OnTickEnded() {
-            base.OnTickEnded();
-            PerTickEnded();
-        }
+        // public override void OnTickEnded() {
+        //     base.OnTickEnded();
+        //     PerTickEnded();
+        // }
         #endregion
 
         public void LoadSourceOfBurning(BurningSource source) {
@@ -124,7 +124,7 @@ namespace Traits {
                 //Temporary fix only, if the burning object has no longer have a tile location (presumably destroyed), spreading of fire should not trigger, and remove listener for per tick
                 return;
             }
-            if (Random.Range(0, 100) < 25) { //5
+            if (Random.Range(0, 100) < 10) { //5
                 List<ITraitable> choices = new List<ITraitable>();
                 LocationGridTile origin = owner.gridTileLocation;
                 choices.AddRange(origin.GetTraitablesOnTileWithTrait("Flammable"));
