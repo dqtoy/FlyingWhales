@@ -12,7 +12,8 @@ public class Embarassment : Emotion {
     public override string ProcessEmotion(Character witness, IPointOfInterest target) {
         witness.needsComponent.AdjustComfort(-15);
         witness.traitContainer.AddTrait(witness, "Ashamed");
-        //Fight or Flight
+        //Fight or Flight, Flight
+        witness.combatComponent.Flight(target);
         return base.ProcessEmotion(witness, target);
     }
     #endregion

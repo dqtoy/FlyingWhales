@@ -11,6 +11,7 @@ public class Threatened : Emotion {
     #region Overrides
     public override string ProcessEmotion(Character witness, IPointOfInterest target) {
         //Fight or Flight
+        witness.combatComponent.FightOrFlight(target);
         return base.ProcessEmotion(witness, target);
     }
     #endregion

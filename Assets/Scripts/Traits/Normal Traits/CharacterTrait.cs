@@ -41,7 +41,14 @@ namespace Traits {
             if (targetPOI.traitContainer.GetNormalTrait<Trait>("Burning") != null && targetPOI.gridTileLocation != null 
                 && targetPOI.gridTileLocation.IsPartOfSettlement(characterThatWillDoJob.homeSettlement) 
                 && characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Pyrophobic") == null) {
-                characterThatWillDoJob.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
+                CharacterStateJob job = characterThatWillDoJob.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
+                if (job != null) {
+                    if (job.assignedCharacter == null && characterThatWillDoJob.jobQueue.CanJobBeAddedToQueue(job)) {
+                        characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+                    } else {
+                        characterThatWillDoJob.combatComponent.Flight(targetPOI);
+                    }
+                }
             }
             
             if (targetPOI is TileObject) {

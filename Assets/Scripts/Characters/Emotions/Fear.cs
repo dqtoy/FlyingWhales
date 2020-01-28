@@ -11,7 +11,8 @@ public class Fear : Emotion {
     #region Overrides
     public override string ProcessEmotion(Character witness, IPointOfInterest target) {
         witness.traitContainer.AddTrait(witness, "Spooked");
-        //Fight or Flight
+        //Fight or Flight, Flight
+        witness.combatComponent.Flight(target);
         return base.ProcessEmotion(witness, target);
     }
     #endregion
