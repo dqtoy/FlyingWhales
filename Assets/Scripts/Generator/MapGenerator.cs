@@ -58,10 +58,12 @@ public class MapGenerator : MonoBehaviour {
             //reload scene
             Debug.LogWarning("A component in world generation failed! Reloading scene...");
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        } else {
+        }
+        else {
             loadingWatch.Stop();
-            Debug.Log($"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
- 
+            Debug.Log(
+                $"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
+
             LevelLoaderManager.SetLoadingState(false);
             CameraMove.Instance.CenterCameraOn(data.portal.tileLocation.gameObject);
             AudioManager.Instance.TransitionTo("World Music", 10);
@@ -78,13 +80,14 @@ public class MapGenerator : MonoBehaviour {
                     HexTile tile = region.tiles[j];
                     if (!tile.isCorrupted
                         && tile.landmarkOnTile != null
-                        && (tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE 
-                            || tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.HOUSES) 
+                        && (tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE
+                            || tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.HOUSES)
                         && tile.settlementOnTile != null && tile.settlementOnTile.ruler == null) {
                         tile.settlementOnTile.DesignateNewRuler(false);
                     }
                 }
             }
+        }
 
         Messenger.Broadcast(Signals.GAME_LOADED);
         yield return new WaitForSeconds(1f);
