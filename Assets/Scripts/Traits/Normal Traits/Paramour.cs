@@ -11,10 +11,10 @@ namespace Traits {
 
         public Paramour(Character target) : base(target) {
             name = "Paramour";
-            description = "This character is a paramour of " + targetCharacter.name;
+            description = "This character is a affair of " + targetCharacter.name;
             type = TRAIT_TYPE.RELATIONSHIP;
             effect = TRAIT_EFFECT.POSITIVE;
-            relType = RELATIONSHIP_TYPE.PARAMOUR;
+            relType = RELATIONSHIP_TYPE.AFFAIR;
             
             ticksDuration = 0;
             //effects = new List<TraitEffect>();

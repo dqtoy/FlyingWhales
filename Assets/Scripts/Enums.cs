@@ -1155,7 +1155,7 @@ public enum RELATIONSHIP_TYPE {
     NONE = 0,
     RELATIVE = 3,
     LOVER = 4,
-    PARAMOUR = 5,
+    AFFAIR = 5,
     MASTER = 6,
     SERVANT = 7,
     SAVER = 8,

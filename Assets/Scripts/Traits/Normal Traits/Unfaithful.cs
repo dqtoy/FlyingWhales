@@ -30,32 +30,32 @@ namespace Traits {
         public override string TriggerFlaw(Character character) {
             string successLogKey = base.TriggerFlaw(character);
             if (character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) != null) {
-                Character paramour = (character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.PARAMOUR) as Character) ?? null;
-                if (paramour == null) {
+                Character affair = (character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.AFFAIR) as Character) ?? null;
+                if (affair == null) {
                     if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
                         List<Character> choices = new List<Character>();
                         for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
                             Character choice = character.currentRegion.charactersAtLocation[i];
                             if (RelationshipManager.Instance.IsSexuallyCompatible(character, choice) &&
                                 RelationshipManager.Instance.GetValidator(character).
-                                    CanHaveRelationship(character, choice, RELATIONSHIP_TYPE.PARAMOUR)) {
+                                    CanHaveRelationship(character, choice, RELATIONSHIP_TYPE.AFFAIR)) {
                                 choices.Add(choice);
                             }
                         }
 
                         if (choices.Count > 0) {
-                            //If no paramour yet, the character will create a Have Affair Job which will attempt to have an affair with a viable target.
+                            //If no affair yet, the character will create a Have Affair Job which will attempt to have an affair with a viable target.
                             GoapPlanJob cheatJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.HAVE_AFFAIR, CollectionUtilities.GetRandomElement(choices), character);
                             character.jobQueue.AddJobInQueue(cheatJob);
                             return successLogKey;
                         } else {
-                            return "fail_no_paramour";
+                            return "fail_no_affair";
                         }
                     }
                 } else {
                     if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
-                        //If already has a paramour, the character will attempt to make love with one.
-                        GoapPlanJob cheatJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.MAKE_LOVE, paramour, character);
+                        //If already has a affair, the character will attempt to make love with one.
+                        GoapPlanJob cheatJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.MAKE_LOVE, affair, character);
                         character.jobQueue.AddJobInQueue(cheatJob);
                     }
                 }

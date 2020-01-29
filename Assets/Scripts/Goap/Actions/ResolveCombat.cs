@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Traits;
 
 public class ResolveCombat : GoapAction {
 
@@ -46,7 +47,7 @@ public class ResolveCombat : GoapAction {
             //target character must be
             // - unable to move
             //to consider the combat as finished
-            if (targetCharacter.canMove == false) {
+            if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious") != null || targetCharacter.isDead) {
                 return true;
             }
         } else {

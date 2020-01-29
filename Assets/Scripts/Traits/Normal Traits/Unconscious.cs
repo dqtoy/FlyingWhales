@@ -16,7 +16,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(3); //144
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FIRST_AID_CHARACTER };
-            hindersMovement = true;
+            //hindersMovement = true;
             hindersWitness = true;
             hindersPerform = true;
         }

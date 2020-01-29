@@ -214,7 +214,7 @@ public class ReactionComponent {
                         owner.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, targetCharacter);
                     } else {
                         debugLog += "\n-Chat did not trigger, will now trigger Flirt if Character is Unfaithful, or Target is Lover or Affair, or Character has no Lover";
-                        if (owner.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.PARAMOUR)
+                        if (owner.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)
                             || owner.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) == null
                             || owner.traitContainer.GetNormalTrait<Trait>("Unfaithful") != null) {
                             debugLog += "\n-Flirt has 1% (multiplied by Compatibility value) chance to trigger";
@@ -259,8 +259,8 @@ public class ReactionComponent {
                         }
                     } else {
                         debugLog += "\n-Character does not consider Target as Enemy or Rival";
-                        if (!targetCharacter.canMove || !targetCharacter.canWitness) {
-                            debugLog += "\n-Target cannot move or cannot witness";
+                        if (!targetCharacter.canMove/* || !targetCharacter.canWitness*/) {
+                            debugLog += "\n-Target cannot move"; // or cannot witness
                             if (targetCharacter.needsComponent.isHungry || targetCharacter.needsComponent.isStarving) {
                                 debugLog += "\n-Target is hungry or starving, will create feed job";
                                 owner.jobComponent.TryTriggerFeed(targetCharacter);

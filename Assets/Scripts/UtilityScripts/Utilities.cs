@@ -974,8 +974,8 @@ public class Utilities : MonoBehaviour {
                 return "Relatives";
             case RELATIONSHIP_TYPE.LOVER:
                 return "Lovers";
-            case RELATIONSHIP_TYPE.PARAMOUR:
-                return "Paramours";
+            case RELATIONSHIP_TYPE.AFFAIR:
+                return "Affairs";
             default:
                 return NormalizeStringUpperCaseFirstLetters(rel.ToString());
         }

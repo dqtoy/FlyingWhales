@@ -186,33 +186,33 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		job.SetStillApplicableChecker(() => IsRestrainApplicable(_owner, settlement));
 		settlement.AddToAvailableJobs(job);
 	}
-	private bool TriggerMoveCharacterToBed(Character target) {
-		if (target.homeStructure != null && target.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER) == false) {
-			Bed bed = target.homeStructure.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);
-			if (bed != null && bed.CanSleepInBed(target)) {
-				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, target, _owner);
-				job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { target.homeStructure, bed.gridTileLocation });
-				_owner.jobQueue.AddJobInQueue(job);
-				return true;
-			}
-		}
-		return false;
-	}
-	private bool TriggerMoveCharacterForHappinessRecovery(Character target) {
-		if (target.currentStructure == target.homeStructure.GetLocationStructure() || 
-		    target.currentStructure == target.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS)) {
-			return false; //character is already at 1 of the target structures, do not create move job.
-		}
-		if (target.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER)) {
-			return false;
-		}
-		int chance = UnityEngine.Random.Range(0, 2);
-		LocationStructure targetStructure = chance == 0 ? target.homeStructure.GetLocationStructure() : target.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, target, _owner);
-		job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { targetStructure });
-		_owner.jobQueue.AddJobInQueue(job);
-		return true;
-	}
+	//private bool TriggerMoveCharacterToBed(Character target) {
+	//	if (target.homeStructure != null && target.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER) == false) {
+	//		Bed bed = target.homeStructure.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);
+	//		if (bed != null && bed.CanSleepInBed(target)) {
+	//			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, target, _owner);
+	//			job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { target.homeStructure, bed.gridTileLocation });
+	//			_owner.jobQueue.AddJobInQueue(job);
+	//			return true;
+	//		}
+	//	}
+	//	return false;
+	//}
+	//private bool TriggerMoveCharacterForHappinessRecovery(Character target) {
+	//	if (target.currentStructure == target.homeStructure.GetLocationStructure() || 
+	//	    target.currentStructure == target.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS)) {
+	//		return false; //character is already at 1 of the target structures, do not create move job.
+	//	}
+	//	if (target.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER)) {
+	//		return false;
+	//	}
+	//	int chance = UnityEngine.Random.Range(0, 2);
+	//	LocationStructure targetStructure = chance == 0 ? target.homeStructure.GetLocationStructure() : target.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+	//	GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, target, _owner);
+	//	job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { targetStructure });
+	//	_owner.jobQueue.AddJobInQueue(job);
+	//	return true;
+	//}
 	#endregion
 
 	#region Applicability Checkers

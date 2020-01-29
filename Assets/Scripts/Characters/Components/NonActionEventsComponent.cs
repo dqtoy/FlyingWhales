@@ -228,7 +228,7 @@ public class NonActionEventsComponent {
         if(char1 == owner) {
             if (UnityEngine.Random.Range(0, 100) < 30) {
                 if (owner.opinionComponent.GetTotalOpinion(char2) < -25) {
-                    if (owner.relationshipContainer.HasRelationshipWith(char2, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.PARAMOUR)) {
+                    if (owner.relationshipContainer.HasRelationshipWith(char2, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)) {
                         char1.interruptComponent.TriggerInterrupt(INTERRUPT.Break_Up, char2, reason);
                     }
                 }
@@ -236,7 +236,7 @@ public class NonActionEventsComponent {
         }
     }
     public void NormalBreakUp(Character target, string reason) {
-        RELATIONSHIP_TYPE relationship = owner.relationshipContainer.GetRelationshipFromParametersWith(target, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.PARAMOUR);
+        RELATIONSHIP_TYPE relationship = owner.relationshipContainer.GetRelationshipFromParametersWith(target, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
         TriggerBreakUp(target, relationship, reason);
     }
     private void TriggerBreakUp(Character target, RELATIONSHIP_TYPE relationship, string reason) {
@@ -329,9 +329,9 @@ public class NonActionEventsComponent {
             RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.LOVER);
         } else if (value != 0
             && UnityEngine.Random.Range(0, 10) < value
-            && owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.PARAMOUR)
-            && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.PARAMOUR)) {
-            RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.PARAMOUR);
+            && owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.AFFAIR)
+            && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.AFFAIR)) {
+            RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.AFFAIR);
             return "flirted_back";
         }
         return "flirted_back";

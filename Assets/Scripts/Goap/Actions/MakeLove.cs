@@ -137,7 +137,7 @@ public class MakeLove : GoapAction {
                     }
                 }
             } else {
-                if(witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.PARAMOUR)) {
+                if(witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor);
                 }
             }
@@ -176,7 +176,7 @@ public class MakeLove : GoapAction {
                     }
                 }
             } else {
-                if (witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.PARAMOUR)) {
+                if (witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR)) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, targetCharacter);
                 }
             }
@@ -218,7 +218,7 @@ public class MakeLove : GoapAction {
         goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
         targetCharacter.needsComponent.AdjustDoNotGetBored(-1);
 
-        //**After Effect 1**: If Actor and Target are Lovers, they both gain Cheery trait. If Actor and Target are Paramours, they both gain Ashamed trait.
+        //**After Effect 1**: If Actor and Target are Lovers, they both gain Cheery trait. If Actor and Target are Affairs, they both gain Ashamed trait.
         if (goapNode.actor is SeducerSummon) {
             //kill the target character
             targetCharacter.Death("seduced", goapNode, goapNode.actor);
@@ -227,7 +227,7 @@ public class MakeLove : GoapAction {
         //if (goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER)) {
         //    goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Satisfied", targetCharacter);
         //    targetCharacter.traitContainer.AddTrait(targetCharacter, "Satisfied", goapNode.actor);
-        //} else if (goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.PARAMOUR)) {
+        //} else if (goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) {
         //    goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Ashamed", targetCharacter);
         //    targetCharacter.traitContainer.AddTrait(targetCharacter, "Ashamed", goapNode.actor);
         //}
@@ -277,8 +277,8 @@ public class MakeLove : GoapAction {
                 return false;
             }
             if (!(actor is SeducerSummon)) { //ignore relationships if succubus
-                if (!actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.PARAMOUR)) {
-                    return false; //only lovers and paramours can make love
+                if (!actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.AFFAIR)) {
+                    return false; //only lovers and affairs can make love
                 }
             }
             return true;
@@ -313,8 +313,8 @@ public class MakeLove : GoapAction {
     //    //RELATIONSHIP_EFFECT recipientRelationshipWithTarget = recipient.GetRelationshipEffectWith(target);
     //    Relatable actorLover = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.LOVER);
     //    Relatable targetLover = target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.LOVER);
-    //    Relatable actorParamour = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
-    //    Relatable targetParamour = target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
+    //    Relatable actorParamour = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.AFFAIR);
+    //    Relatable targetParamour = target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.AFFAIR);
 
 
     //    bool hasFled = false;
@@ -354,7 +354,7 @@ public class MakeLove : GoapAction {
     //                    recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                }
     //            }
-    //            if(recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+    //            if(recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR)) {
     //                if (RelationshipManager.Instance.RelationshipDegradation(target, recipient, this)) {
     //                    response += string.Format(" {0} seduced both of us. {1} must pay for this.", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.SUBJECTIVE, true));
     //                    recipient.CreateUndermineJobOnly(target, "informed", status);
@@ -417,7 +417,7 @@ public class MakeLove : GoapAction {
     //                    recipient.combatComponent.AddAvoidInRange(target, reason: "saw something shameful");
     //                }
     //            }
-    //            if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+    //            if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR)) {
     //                if (RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this)) {
     //                    response += string.Format(" {0} seduced both of us. {1} must pay for this.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true));
     //                    recipient.CreateUndermineJobOnly(actor, "informed", status);
@@ -540,10 +540,10 @@ public class MakeLove : GoapAction {
 
     //    if (status == SHARE_INTEL_STATUS.WITNESSED && !hasFled) {
     //        if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) 
-    //            || recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+    //            || recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR)) {
     //            recipient.CreateWatchEvent(this, null, actor);
     //        } else if (recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)
-    //            || recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+    //            || recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR)) {
     //            recipient.CreateWatchEvent(this, null, target);
     //        }
     //    }
@@ -578,8 +578,8 @@ public class MakeLoveData : GoapActionData {
             return false;
         }
         if (!(actor is SeducerSummon)) { //ignore relationships if succubus
-            if (!actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.PARAMOUR)) {
-                return false; //only lovers and paramours can make love
+            if (!actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.AFFAIR)) {
+                return false; //only lovers and affairs can make love
             }
         }
         return target.IsInOwnParty();

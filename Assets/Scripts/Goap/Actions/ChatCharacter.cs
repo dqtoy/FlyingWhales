@@ -155,10 +155,10 @@ public class ChatCharacter : GoapAction {
         //     weights.AddElement("Become Lovers", becomeLoversWeight);
         // }
 
-        //Become Paramours
-        // float becomeParamoursWeight = goapNode.actor.GetBecomeParamoursWeightWith(targetCharacter, relData, thisCharacterMood, targetCharacterMood);
-        // if (becomeParamoursWeight > 0f) {
-        //     weights.AddElement("Become Paramours", becomeParamoursWeight);
+        //Become Affairs
+        // float becomeAffairsWeight = goapNode.actor.GetBecomeAffairsWeightWith(targetCharacter, relData, thisCharacterMood, targetCharacterMood);
+        // if (becomeAffairsWeight > 0f) {
+        //     weights.AddElement("Become Affairs", becomeAffairsWeight);
         // }
 
         if (goapNode.actor.traitContainer.GetNormalTrait<Trait>("Angry") != null || targetCharacter.traitContainer.GetNormalTrait<Trait>("Angry") != null) {
@@ -168,7 +168,7 @@ public class ChatCharacter : GoapAction {
             weights.RemoveElement("Resolve Enmity");
             weights.RemoveElement("Flirt");
             weights.RemoveElement("Become Lovers");
-            weights.RemoveElement("Become Paramours");
+            weights.RemoveElement("Become Affairs");
             weights.AddWeightToElement("Become Enemies", 100);
             weights.AddWeightToElement("Argument", 100);
         }
@@ -187,8 +187,8 @@ public class ChatCharacter : GoapAction {
             Flirt(goapNode, targetCharacter);
         } else if (chatResult == "Become Lovers") {
             BecomeLovers(goapNode, targetCharacter);
-        } else if (chatResult == "Become Paramours") {
-            BecomeParamours(goapNode, targetCharacter);
+        } else if (chatResult == "Become Affairs") {
+            BecomeAffairs(goapNode, targetCharacter);
         } else if (chatResult == "Argument") {
             Argument(goapNode, targetCharacter);
         }
@@ -237,8 +237,8 @@ public class ChatCharacter : GoapAction {
     private void BecomeLovers(ActualGoapNode goapNode, Character targetCharacter) {
         RelationshipManager.Instance.CreateNewRelationshipBetween(goapNode.actor, targetCharacter, RELATIONSHIP_TYPE.LOVER);
     }
-    private void BecomeParamours(ActualGoapNode goapNode, Character targetCharacter) {
-        RelationshipManager.Instance.CreateNewRelationshipBetween(goapNode.actor, targetCharacter, RELATIONSHIP_TYPE.PARAMOUR);
+    private void BecomeAffairs(ActualGoapNode goapNode, Character targetCharacter) {
+        RelationshipManager.Instance.CreateNewRelationshipBetween(goapNode.actor, targetCharacter, RELATIONSHIP_TYPE.AFFAIR);
     }
     #endregion
 
@@ -260,7 +260,7 @@ public class ChatCharacter : GoapAction {
     //            reactions.Add("I know what I did.");
     //            //-**Recipient Effect * *: no effect
     //        } 
-    //        else if(recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR) || recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+    //        else if(recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR) || recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR)) {
     //            reactions.Add("Wait what?! What were they talking about?!");
     //        } 
     //        else if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) || recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
@@ -329,9 +329,9 @@ public class ChatCharacter : GoapAction {
     //        List<string> reactions = new List<string>();
     //        Character target = poiTarget as Character;
     //        Relatable actorLover = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.LOVER);
-    //        Relatable actorParamour = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
+    //        Relatable actorParamour = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.AFFAIR);
     //        Relatable targetLover = target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.LOVER);
-    //        Relatable targetParamour = target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
+    //        Relatable targetParamour = target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.AFFAIR);
 
     //#if TRAILER_BUILD
     //        if (recipient.name == "Audrey" && actor.name == "Jamie" && target.name == "Fiona") {
@@ -383,8 +383,8 @@ public class ChatCharacter : GoapAction {
     //    private List<string> BecomeLoversIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
     //        List<string> reactions = new List<string>();
     //        Character target = poiTarget as Character;
-    //        Relatable actorParamour = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
-    //        Relatable targetParamour = target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
+    //        Relatable actorParamour = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.AFFAIR);
+    //        Relatable targetParamour = target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.AFFAIR);
     //        if (recipient == actor) {
     //            if(recipient.currentAlterEgo == targetParamour) {
     //                reactions.Add(string.Format("Yes that's true! I am so happy {0} finally chose me. This is what I've been dreaming for and at last, it came true!", target.name));
@@ -424,7 +424,7 @@ public class ChatCharacter : GoapAction {
     //        }
     //        return reactions;
     //    }
-    //    private List<string> BecomeParamoursIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
+    //    private List<string> BecomeAffairsIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
     //        List<string> reactions = new List<string>();
     //        Character target = poiTarget as Character;
     //        Relatable actorLover = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.LOVER);
@@ -498,8 +498,8 @@ public class ChatCharacter : GoapAction {
     //    private List<string> ResolveEnmityIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
     //        List<string> reactions = new List<string>();
     //        Character target = poiTarget as Character;
-    //        //Character actorParamour = actor.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
-    //        //Character targetParamour = target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
+    //        //Character actorParamour = actor.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.AFFAIR);
+    //        //Character targetParamour = target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.AFFAIR);
 
     //        //Recipient and Actor is the same or Recipient and Target is the same:
     //        if (recipient == actor || recipient == target) {

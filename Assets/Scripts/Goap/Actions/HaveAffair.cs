@@ -51,7 +51,7 @@ public class HaveAffair : GoapAction {
         //currentState.SetIntelReaction(AffairSuccessReactions);
     }
     public void AfterAffairSuccess(ActualGoapNode goapNode) {
-        RelationshipManager.Instance.CreateNewRelationshipBetween(goapNode.actor, goapNode.poiTarget as Character, RELATIONSHIP_TYPE.PARAMOUR);
+        RelationshipManager.Instance.CreateNewRelationshipBetween(goapNode.actor, goapNode.poiTarget as Character, RELATIONSHIP_TYPE.AFFAIR);
     }
     #endregion
 
@@ -66,7 +66,7 @@ public class HaveAffair : GoapAction {
                 return false;
             }
             Character targetCharacter = poiTarget as Character;
-            if (RelationshipManager.Instance.IsSexuallyCompatible(actor, targetCharacter) && RelationshipManager.Instance.GetValidator(actor).CanHaveRelationship(actor, targetCharacter, RELATIONSHIP_TYPE.PARAMOUR)) {
+            if (RelationshipManager.Instance.IsSexuallyCompatible(actor, targetCharacter) && RelationshipManager.Instance.GetValidator(actor).CanHaveRelationship(actor, targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) {
                 return true;
             }
         }
@@ -82,8 +82,8 @@ public class HaveAffair : GoapAction {
     //    //RELATIONSHIP_EFFECT recipientRelationshipWithTarget = recipient.GetRelationshipEffectWith(target);
     //    Character actorLover = (actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.LOVER) as AlterEgoData)?.owner ?? null;
     //    Character targetLover = (target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.LOVER) as AlterEgoData)?.owner ?? null;
-    //    Character actorParamour = (actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR) as AlterEgoData)?.owner ?? null;
-    //    Character targetParamour = (target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR) as AlterEgoData)?.owner ?? null;
+    //    Character actorParamour = (actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.AFFAIR) as AlterEgoData)?.owner ?? null;
+    //    Character targetParamour = (target.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TRAIT.AFFAIR) as AlterEgoData)?.owner ?? null;
 
 
     //    bool hasFled = false;
@@ -123,7 +123,7 @@ public class HaveAffair : GoapAction {
     //                    recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                }
     //            }
-    //            if (recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+    //            if (recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR)) {
     //                if (RelationshipManager.Instance.RelationshipDegradation(target, recipient, this)) {
     //                    response += string.Format(" {0} seduced both of us. {1} must pay for this.", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.SUBJECTIVE, true));
     //                    recipient.CreateUndermineJobOnly(target, "informed", status);
@@ -186,7 +186,7 @@ public class HaveAffair : GoapAction {
     //                    recipient.combatComponent.AddAvoidInRange(target, reason: "saw something shameful");
     //                }
     //            }
-    //            if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+    //            if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR)) {
     //                if (RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this)) {
     //                    response += string.Format(" {0} seduced both of us. {1} must pay for this.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true));
     //                    recipient.CreateUndermineJobOnly(actor, "informed", status);
@@ -305,10 +305,10 @@ public class HaveAffair : GoapAction {
 
     //    if (status == SHARE_INTEL_STATUS.WITNESSED && !hasFled) {
     //        if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)
-    //            || recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+    //            || recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR)) {
     //            recipient.CreateWatchEvent(this, null, actor);
     //        } else if (recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER)
-    //            || recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+    //            || recipient.relationshipContainer.HasRelationshipWith(target.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR)) {
     //            recipient.CreateWatchEvent(this, null, target);
     //        }
     //    }
@@ -331,7 +331,7 @@ public class HaveAffairData : GoapActionData {
             return false;
         }
         Character targetCharacter = poiTarget as Character;
-        if (RelationshipManager.Instance.IsSexuallyCompatible(actor, targetCharacter) && RelationshipManager.Instance.GetValidator(actor).CanHaveRelationship(actor, targetCharacter, RELATIONSHIP_TYPE.PARAMOUR)) {
+        if (RelationshipManager.Instance.IsSexuallyCompatible(actor, targetCharacter) && RelationshipManager.Instance.GetValidator(actor).CanHaveRelationship(actor, targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) {
             return true;
         }
         return false;

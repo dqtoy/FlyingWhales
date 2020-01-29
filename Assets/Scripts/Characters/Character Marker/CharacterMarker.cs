@@ -711,7 +711,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             PlayAnimation("Dead");
         } else if (character.isStoppedByOtherCharacter > 0) {
             PlayIdle();
-        } else if (character.canMove == false || character.traitContainer.GetNormalTrait<Trait>("Resting") != null || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
+        } else if (character.canMove == false || (!character.canPerform && !character.canWitness) /*|| character.traitContainer.GetNormalTrait<Trait>("Resting") != null || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)*/) {
             PlaySleepGround();
         } else if (character.currentParty.icon != null && character.currentParty.icon.isTravelling) {
             //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
@@ -1096,7 +1096,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     //                    //character.nonActionEventsComponent.NormalChatCharacter(poi as Character);
                     //                } else {
                     //                    Character targetCharacter = poi as Character;
-                    //                    if (character.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.PARAMOUR)
+                    //                    if (character.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)
                     //                        || character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) == null
                     //                        || character.traitContainer.GetNormalTrait<Trait>("Unfaithful") != null) {
                     //                        int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(character, targetCharacter);
