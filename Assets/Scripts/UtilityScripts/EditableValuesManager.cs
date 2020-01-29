@@ -38,7 +38,10 @@ public class EditableValuesManager : MonoBehaviour {
 	[SerializeField] private int _monsterBreedingManaCost;
 	[SerializeField] private int _unlockWorldMapManaCost;
 	[SerializeField] private int _unlockRegionManaCost;
-	
+
+	[Header("Visuals")] 
+	[SerializeField] private int _sortingOrdersInBetweenHexTileRows = 20; //this is the number of sorting orders in between rows of the world map.
+		
 	//getters
 	//mood
 	public int normalMoodMinThreshold => _normalMoodMinThreshold;
@@ -66,6 +69,8 @@ public class EditableValuesManager : MonoBehaviour {
 	public int unlockWorldMapManaCost => _unlockWorldMapManaCost;
 	public int unlockRegionManaCost => _unlockRegionManaCost;
 	
+	//visuals
+	public int sortingOrdersInBetweenHexTileRows => _sortingOrdersInBetweenHexTileRows;
 	private void Awake() {
 		Instance = this;
 	}

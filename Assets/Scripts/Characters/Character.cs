@@ -6159,10 +6159,20 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         _canBeAtttackedValue--;
     }
     public void IncreaseCanPerform() {
+        bool couldNotPerformBefore = canPerform == false;
         _canPerformValue++;
+        if (couldNotPerformBefore && canPerform) {
+            //character could not perform before adjustment, but can perform after adjustment
+            Messenger.Broadcast(Signals.CHARACTER_CAN_PERFORM_AGAIN, this);
+        }
     }
     public void DecreaseCanPerform() {
+        bool couldPerformBefore = canPerform;
         _canPerformValue--;
+        if (couldPerformBefore && canPerform == false) {
+            //character could perform before adjustment, but cannot perform after adjustment
+            Messenger.Broadcast(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, this);
+        }
     }
     public void IncreaseCanTakeJobs() {
         canTakeJobsValue++;

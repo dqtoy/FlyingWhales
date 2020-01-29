@@ -16,18 +16,16 @@ public class MapGenerator : MonoBehaviour {
         Instance = this;
     }
 
-    internal void InitializeWorld() {
+    internal IEnumerator InitializeWorld() {
         MapGenerationComponent[] mapGenerationComponents = {
             new WorldMapGridGeneration(), new WorldMapElevationGeneration(), new SupportingFactionGeneration(), 
             new WorldMapRegionGeneration(), new WorldMapBiomeGeneration(), new WorldMapOuterGridGeneration(),
             new TileFeatureGeneration(), new PortalLandmarkGeneration(), new WorldMapLandmarkGeneration(), 
             new RegionInnerMapGeneration(), new SettlementGeneration(), new LandmarkStructureGeneration(), 
-            new ElevationStructureGeneration(), new MapGenerationFinalization(), new PlayerDataGeneration(), 
-             
-            // new MainSettlementMapGeneration(), new SuppotingSettlementMapGeneration(), new RegionDataGeneration(), 
-            // new PlayerDataGeneration(), 
+            new ElevationStructureGeneration(), new MonsterGeneration(), new MapGenerationFinalization(), 
+            new PlayerDataGeneration(),
         };
-        StartCoroutine(InitializeWorldCoroutine(mapGenerationComponents));
+        yield return StartCoroutine(InitializeWorldCoroutine(mapGenerationComponents));
     }
     public void InitializeWorld(Save data) {
         StartCoroutine(InitializeWorldCoroutine(data));
@@ -36,31 +34,57 @@ public class MapGenerator : MonoBehaviour {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
         loadingWatch.Start();
 
+        string loadingDetails = "Loading details";
+
+        bool componentFailed = false;
+        
         MapGenerationData data = new MapGenerationData();
+        System.Diagnostics.Stopwatch componentWatch = new System.Diagnostics.Stopwatch();
         for (int i = 0; i < components.Length; i++) {
             MapGenerationComponent currComponent = components[i];
+            componentWatch.Start();
             yield return StartCoroutine(currComponent.Execute(data));
-        }
-        
-        loadingWatch.Stop();
-        Debug.Log($"Total loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
- 
-        LevelLoaderManager.SetLoadingState(false);
-        CameraMove.Instance.CenterCameraOn(data.portal.tileLocation.gameObject);
-        AudioManager.Instance.TransitionTo("World Music", 10);
-
-        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
-            Faction faction = FactionManager.Instance.allFactions[i];
-            if (faction.isMajorFaction) {
-                faction.DesignateNewLeader(false);
+            componentWatch.Stop();
+            loadingDetails +=
+                $"\n{currComponent.ToString()} took {componentWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.";
+            componentWatch.Reset();
+            
+            componentFailed = currComponent.succeess == false;
+            if (componentFailed) {
+                break;
             }
         }
-        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-            Region region = GridMap.Instance.allRegions[i];
-            for (int j = 0; j < region.tiles.Count; j++) {
-                HexTile tile = region.tiles[j];
-                if (!tile.isCorrupted && tile.settlementOnTile != null && tile.settlementOnTile.ruler == null) {
-                    tile.settlementOnTile.DesignateNewRuler(false);
+        if (componentFailed) {
+            //reload scene
+            Debug.LogWarning("A component in world generation failed! Reloading scene...");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+        else {
+            loadingWatch.Stop();
+            Debug.Log(
+                $"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
+
+            LevelLoaderManager.SetLoadingState(false);
+            CameraMove.Instance.CenterCameraOn(data.portal.tileLocation.gameObject);
+            AudioManager.Instance.TransitionTo("World Music", 10);
+
+            for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+                Faction faction = FactionManager.Instance.allFactions[i];
+                if (faction.isMajorFaction) {
+                    faction.DesignateNewLeader(false);
+                }
+            }
+            for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+                Region region = GridMap.Instance.allRegions[i];
+                for (int j = 0; j < region.tiles.Count; j++) {
+                    HexTile tile = region.tiles[j];
+                    if (!tile.isCorrupted
+                        && tile.landmarkOnTile != null
+                        && (tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE
+                            || tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.HOUSES)
+                        && tile.settlementOnTile != null && tile.settlementOnTile.ruler == null) {
+                        tile.settlementOnTile.DesignateNewRuler(false);
+                    }
                 }
             }
         }

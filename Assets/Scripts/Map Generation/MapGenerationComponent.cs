@@ -7,5 +7,7 @@ using UnityEngine;
 /// </summary>
 public abstract class MapGenerationComponent {
 
+	public bool succeess = true; //if generation component succeeded or not.
+	
 	public abstract IEnumerator Execute(MapGenerationData data);
 }

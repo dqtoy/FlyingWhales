@@ -208,6 +208,8 @@ public static class Signals {
     /// Parameters (Character character, IPointOfInterest whatCharacterSaw)
     /// </summary>
     public static string CHARACTER_SAW = "OnCharacterSaw";
+    public static string CHARACTER_CAN_NO_LONGER_PERFORM = "OnCharacterCannotPerform";
+    public static string CHARACTER_CAN_PERFORM_AGAIN = "OnCharacterCanPerform";
     #endregion
 
     #region UI

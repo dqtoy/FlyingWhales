@@ -357,7 +357,7 @@ public class Settlement : IJobOwner {
             }
             region.AddResident(character);
             residents.Add(character);
-            if (character.race != RACE.DEMON) {
+            if (character.race != RACE.DEMON && (character is Summon) == false) {
                 classManager.OnAddResident(character);
             }
             // if(!coreTile.isCorrupted) {
@@ -633,10 +633,10 @@ public class Settlement : IJobOwner {
         }
         AssignPrison();
     }
-    public void GeneratePlayerStructures(params LocationStructure[] initialPlayerStructures) {
+    public void GenerateStructures(params LocationStructure[] preCreatedStructures) {
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
-        for (int i = 0; i < initialPlayerStructures.Length; i++) {
-            LocationStructure structure = initialPlayerStructures[i];
+        for (int i = 0; i < preCreatedStructures.Length; i++) {
+            LocationStructure structure = preCreatedStructures[i];
             AddStructure(structure);
         }
     }

@@ -33,6 +33,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	public void SubscribeToListeners() {
 		Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
 		Messenger.AddListener<Character>(Signals.CHARACTER_CAN_MOVE_AGAIN, OnCharacterCanMoveAgain);
+		Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
+		Messenger.AddListener<Character>(Signals.CHARACTER_CAN_PERFORM_AGAIN, OnCharacterCanPerformAgain);
 		Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
 		Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
 		Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
@@ -52,6 +54,18 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
 		Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
 		TryStopScreamCheck();
+	}
+	private void OnCharacterCanPerformAgain(Character character) {
+		if (character == _owner) {
+			if (_owner.currentSettlement != null && _owner.currentSettlement.isUnderSeige) {
+				TriggerFleeHome();	
+			}
+		}
+	}
+	private void OnCharacterCanNoLongerPerform(Character character) {
+		if (character == _owner) {
+			
+		}
 	}
 	private void OnCharacterCanNoLongerMove(Character character) {
 		if (character == _owner) {
@@ -262,7 +276,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			return;
 		}
 		if ((_owner.canMove == false && 
-		     _owner.traitContainer.GetNormalTrait<Trait>("Exhausted", "Starving", "Sulking", "Forlorn") != null)
+		     _owner.traitContainer.GetNormalTrait<Trait>("Exhausted", "Starving", "Sulking") != null)
 		    || (_owner.traitContainer.GetNormalTrait<Trait>("Restrained") != null && _owner.currentStructure.structureType != STRUCTURE_TYPE.PRISON)) {
 			hasStartedScreamCheck = true;
 			Messenger.AddListener(Signals.HOUR_STARTED, HourlyScreamCheck);
@@ -273,7 +287,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		if (hasStartedScreamCheck == false) {
 			return;
 		}
-		bool isNotNeedy = _owner.traitContainer.GetNormalTrait<Trait>("Exhausted", "Starving", "Sulking", "Forlorn") == null;
+		bool isNotNeedy = _owner.traitContainer.GetNormalTrait<Trait>("Exhausted", "Starving", "Sulking") == null;
 		bool isNotRestrained = _owner.traitContainer.GetNormalTrait<Trait>("Restrained") == null;
 		bool isRestrainedButInPrison = _owner.traitContainer.GetNormalTrait<Trait>("Restrained") != null &&
 		                               _owner.currentStructure.structureType == STRUCTURE_TYPE.PRISON;
@@ -291,10 +305,13 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private void HourlyScreamCheck() {
+		if (_owner.canPerform == false) {
+			return;
+		}
 		string summary = $"{_owner.name} is checking for scream.";
 		int chance = 50;
 		if (_owner.canMove == false && 
-		    _owner.traitContainer.GetNormalTrait<Trait>("Exhausted", "Starving", "Sulking", "Forlorn") != null) {
+		    _owner.traitContainer.GetNormalTrait<Trait>("Exhausted", "Starving", "Sulking") != null) {
 			chance = 75;
 		}
 		summary += $"Chance is {chance.ToString()}.";
@@ -311,7 +328,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	private void CheckIfStopInterruptFinished(INTERRUPT interrupt, Character character) {
 		if (character == _owner && interrupt == INTERRUPT.Stopped) {
 			Messenger.RemoveListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfStopInterruptFinished);
-			TriggerFleeHome();
+			if (_owner.canPerform) {
+				TriggerFleeHome();	
+			}
 		}
 	}
 	#endregion

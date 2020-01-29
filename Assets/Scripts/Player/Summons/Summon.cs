@@ -10,6 +10,8 @@ public class Summon : Character, IWorldObject {
 	public SUMMON_TYPE summonType { get; private set; }
     public bool hasBeenUsed { get; private set; } //has this summon been used in the current map. TODO: Set this to false at end of invasion of map.
 
+    public List<HexTile> territorries { get; private set; }
+    
     #region getters/setters
     public virtual string worldObjectName {
         get { return name + " (" + Utilities.NormalizeStringUpperCaseFirstLetters(summonType.ToString()) + ")"; }
@@ -21,12 +23,15 @@ public class Summon : Character, IWorldObject {
 
     public Summon(SUMMON_TYPE summonType, CharacterRole role, RACE race, GENDER gender) : base(role, race, gender) {
         this.summonType = summonType;
+        territorries = new List<HexTile>();
     }
     public Summon(SUMMON_TYPE summonType, CharacterRole role, string className, RACE race, GENDER gender) : base(role, className, race, gender) {
         this.summonType = summonType;
+        territorries = new List<HexTile>();
     }
     public Summon(SaveDataCharacter data) : base(data) {
         this.summonType = data.summonType;
+        territorries = new List<HexTile>();
     }
 
     #region Overrides
@@ -164,9 +169,9 @@ public class Summon : Character, IWorldObject {
             HPRecovery(0.0025f);
         }
 
-        if (!ownParty.icon.isTravelling && !isInCombat) {
-            GoToWorkArea();
-        }
+        // if (!ownParty.icon.isTravelling && !isInCombat) {
+        //     GoToWorkArea();
+        // }
 
         //StartTickGoapPlanGeneration();
 
@@ -239,6 +244,16 @@ public class Summon : Character, IWorldObject {
     }
     #endregion
 
+    #region Territorries
+    public void AddTerritory(HexTile tile) {
+        if (territorries.Contains(tile) == false) {
+            territorries.Add(tile);
+        }
+    }
+    public void RemoveTerritory(HexTile tile) {
+        territorries.Remove(tile);
+    }
+    #endregion
 }
 
 public class SummonSlot {

@@ -414,7 +414,7 @@ public class CharacterManager : MonoBehaviour {
         AddNewCharacter(newCharacter);
         return newCharacter;
     }
-    public Summon CreateNewSummonClassFromType(SaveDataCharacter data) {
+    private Summon CreateNewSummonClassFromType(SaveDataCharacter data) {
         switch (data.summonType) {
             case SUMMON_TYPE.Wolf:
                 return new Wolf(data);
@@ -431,7 +431,7 @@ public class CharacterManager : MonoBehaviour {
         }
         return null;
     }
-    public object CreateNewSummonClassFromType(SUMMON_TYPE summonType) {
+    private object CreateNewSummonClassFromType(SUMMON_TYPE summonType) {
         var typeName = summonType.ToString();
         return System.Activator.CreateInstance(System.Type.GetType(typeName));
     }
@@ -440,6 +440,12 @@ public class CharacterManager : MonoBehaviour {
     }
     public ArtifactSettings GetArtifactSettings(ARTIFACT_TYPE type) {
         return artifactSettings[type];
+    }
+    public void PlaceSummon(Summon summon, LocationGridTile locationTile) {
+        summon.homeRegion.RemoveCharacterFromLocation(summon);
+        summon.CreateMarker();
+        summon.marker.InitialPlaceMarkerAt(locationTile);
+        summon.OnPlaceSummon(locationTile);
     }
     #endregion
 

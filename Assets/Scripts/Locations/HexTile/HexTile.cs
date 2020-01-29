@@ -556,19 +556,18 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         rightBeach.sortingOrder = sortingOrder + 1;
         topRightBeach.sortingOrder = sortingOrder + 1;
 
-        topLeftBorder.sortingOrder = sortingOrder + 12;
-        topRightBorder.sortingOrder = sortingOrder + 12;
-        leftBorder.sortingOrder = sortingOrder + 12;
-        botLeftBorder.sortingOrder = sortingOrder + 12;
-        botRightBorder.sortingOrder = sortingOrder + 12;
-        rightBorder.sortingOrder = sortingOrder + 12;
+        topLeftBorder.sortingOrder = sortingOrder + 2;
+        topRightBorder.sortingOrder = sortingOrder + 2;
+        leftBorder.sortingOrder = sortingOrder + 2;
+        botLeftBorder.sortingOrder = sortingOrder + 2;
+        botRightBorder.sortingOrder = sortingOrder + 2;
+        rightBorder.sortingOrder = sortingOrder + 2;
 
         emptyBuildingSpotGO.sortingOrder = sortingOrder + 1;
-        //currentlyBuildingSpotGO.sortingOrder = sortingOrder + 1;
 
-        mainStructure.sortingOrder = sortingOrder + 3;
-        structureTint.sortingOrder = sortingOrder + 4;
-        _structureAnimatorSpriteRenderer.sortingOrder = sortingOrder + 5;
+        mainStructure.sortingOrder = sortingOrder + 5;
+        structureTint.sortingOrder = sortingOrder + 6;
+        _structureAnimatorSpriteRenderer.sortingOrder = sortingOrder + 7;
     }
     public SpriteRenderer GetBorder(HEXTILE_DIRECTION direction) {
         SpriteRenderer border = null;
@@ -723,15 +722,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         Messenger.Broadcast(Signals.TILE_RIGHT_CLICKED, this);
     }
     private void MouseOver() {
-        if (this.landmarkOnTile != null) {
-            _hoverHighlightGO.SetActive(true);
-        }
+        // if (this.landmarkOnTile != null) {
+        //     _hoverHighlightGO.SetActive(true);
+        // }
         Messenger.Broadcast(Signals.TILE_HOVERED_OVER, this);
     }
     private void MouseExit() {
-        if (this.landmarkOnTile != null) {
-            _hoverHighlightGO.SetActive(false);
-        }
+        // if (this.landmarkOnTile != null) {
+        //     _hoverHighlightGO.SetActive(false);
+        // }
         UIManager.Instance.HideSmallInfo();
         Messenger.Broadcast(Signals.TILE_HOVERED_OUT, this);
     }
