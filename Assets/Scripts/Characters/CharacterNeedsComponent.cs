@@ -648,7 +648,7 @@ public class CharacterNeedsComponent {
                 } else if (currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT) {
                     value = 30;
                 }
-                if (chance < value) {
+                if (chance < value || isSulking) {
                     bool triggerBrokenhearted = false;
                     Heartbroken heartbroken = character.traitContainer.GetNormalTrait<Trait>("Heartbroken") as Heartbroken;
                     if (heartbroken != null) {
