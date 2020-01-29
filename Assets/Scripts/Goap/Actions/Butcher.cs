@@ -237,7 +237,7 @@ public class Butcher : GoapAction {
     //            else if (relWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
     //                recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
     //                if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                    recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                    recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                }
     //                reactions.Add(string.Format("What a sick monster! {0} should be restrained!", actor.name));
     //            }
@@ -254,7 +254,7 @@ public class Butcher : GoapAction {
     //                } else if (relWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
     //                    recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
     //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                        recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                        recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                    }
     //                    reactions.Add(string.Format("What a sick monster! {0} should be restrained!", actor.name));
     //                } else {
@@ -280,13 +280,13 @@ public class Butcher : GoapAction {
     //                } else if (relWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
     //                    recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
     //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                        recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                        recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                    }
     //                    reactions.Add(string.Format("What a sick monster! {0} should be restrained!", actor.name));
     //                } else {
     //                    recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
     //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                        recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                        recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                    }
     //                    reactions.Add(string.Format("What a sick monster! {0} should be restrained!", actor.name));
     //                }

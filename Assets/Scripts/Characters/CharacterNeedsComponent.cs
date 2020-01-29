@@ -349,7 +349,7 @@ public class CharacterNeedsComponent {
     private void OnExhausted(bool wasEnergized, bool wasTired, bool wasExhausted) {
         if (!wasExhausted) {
             _character.traitContainer.AddTrait(_character, "Exhausted");
-            Messenger.Broadcast<Character, string>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, _character, "exhausted");
+            //Messenger.Broadcast<Character, string>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, _character, "exhausted");
         }
         if (wasTired) {
             _character.traitContainer.RemoveTrait(_character, "Tired");

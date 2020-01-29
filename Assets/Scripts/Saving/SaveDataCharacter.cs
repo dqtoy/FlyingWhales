@@ -246,19 +246,19 @@ public class SaveDataCharacter {
             nonLethalHostilesInRangeIDs = new List<int>();
             avoidInRangeIDs = new List<int>();
 
-            for (int i = 0; i < character.marker.hostilesInRange.Count; i++) {
-                IPointOfInterest poi = character.marker.hostilesInRange[i];
+            for (int i = 0; i < character.combatComponent.hostilesInRange.Count; i++) {
+                IPointOfInterest poi = character.combatComponent.hostilesInRange[i];
                 if (poi is Character) {
                     Character hostile = poi as Character;
-                    if (character.marker.IsLethalCombatForTarget(hostile)) {
+                    if (character.combatComponent.IsLethalCombatForTarget(hostile)) {
                         lethalHostilesInRangeIDs.Add(hostile.id);
                     } else {
                         nonLethalHostilesInRangeIDs.Add(hostile.id);
                     }
                 }
             }
-            for (int i = 0; i < character.marker.avoidInRange.Count; i++) {
-                avoidInRangeIDs.Add(character.marker.avoidInRange[i].id);
+            for (int i = 0; i < character.combatComponent.avoidInRange.Count; i++) {
+                avoidInRangeIDs.Add(character.combatComponent.avoidInRange[i].id);
             }
         }
 
@@ -354,15 +354,15 @@ public class SaveDataCharacter {
 
             for (int i = 0; i < lethalHostilesInRangeIDs.Count; i++) {
                 Character target = CharacterManager.Instance.GetCharacterByID(lethalHostilesInRangeIDs[i]);
-                character.marker.AddHostileInRange(target, isLethal: true);
+                character.combatComponent.Fight(target, isLethal: true);
             }
             for (int i = 0; i < nonLethalHostilesInRangeIDs.Count; i++) {
                 Character target = CharacterManager.Instance.GetCharacterByID(nonLethalHostilesInRangeIDs[i]);
-                character.marker.AddHostileInRange(target, isLethal: false);
+                character.combatComponent.Fight(target, isLethal: false);
             }
             for (int i = 0; i < avoidInRangeIDs.Count; i++) {
                 Character target = CharacterManager.Instance.GetCharacterByID(avoidInRangeIDs[i]);
-                character.marker.AddAvoidInRange(target);
+                character.combatComponent.Flight(target);
             }
 
             if (character.isDead) {

@@ -318,7 +318,7 @@ public class DrinkBlood : GoapAction {
     //                    //- Recipient is a Vampire
     //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                        if (recipient.marker.inVisionCharacters.Contains(actor)) {
-    //                            recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                            recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                        }
     //                    }
     //                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);

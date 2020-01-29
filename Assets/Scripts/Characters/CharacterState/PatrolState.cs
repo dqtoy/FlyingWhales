@@ -21,7 +21,7 @@ public class PatrolState : CharacterState {
     }
     //public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
     //    if(targetPOI is Character) {
-    //        return stateComponent.character.marker.AddHostileInRange(targetPOI as Character);
+    //        return stateComponent.character.combatComponent.AddHostileInRange(targetPOI as Character);
     //    } else if (stateComponent.character.role.roleType != CHARACTER_ROLE.BEAST && targetPOI is SpecialToken) {
     //        SpecialToken token = targetPOI as SpecialToken;
     //        if(token.characterOwner == null) {

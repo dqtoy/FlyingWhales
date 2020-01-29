@@ -61,7 +61,7 @@ public class CombatState : CharacterState {
             if(_currentAttackTimer >= CombatManager.pursueDuration) {
                 StopPursueTimer();
                 //When pursue timer reaches max, character must remove the current closest hostile in hostile list, then stop pursue timer
-                stateComponent.character.marker.RemoveHostileInRange(currentClosestHostile);
+                stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile);
             }
         } else {
             //If character is pursuing the current closest hostile, check if that hostile is in range, if it is, start pursue timer
@@ -188,23 +188,23 @@ public class CombatState : CharacterState {
         if (stateComponent.character == character && stateComponent.currentState == this && !isPaused && !isDone) {
             DetermineIsBeingApprehended();
             string summary = character.name + " will determine a combat reaction";
-            if (stateComponent.character.marker.hostilesInRange.Count > 0) {
+            if (stateComponent.character.combatComponent.hostilesInRange.Count > 0) {
                 summary += "\nStill has hostiles, will attack...";
                 stateComponent.character.logComponent.PrintLogIfActive(summary);
                 SetIsAttacking(true);
-            } else if (stateComponent.character.marker.avoidInRange.Count > 0) {
+            } else if (stateComponent.character.combatComponent.avoidInRange.Count > 0) {
                 summary += "\nStill has characters to avoid, checking if those characters are still in range...";
-                for (int i = 0; i < stateComponent.character.marker.avoidInRange.Count; i++) {
-                    IPointOfInterest currAvoid = stateComponent.character.marker.avoidInRange[i];
+                for (int i = 0; i < stateComponent.character.combatComponent.avoidInRange.Count; i++) {
+                    IPointOfInterest currAvoid = stateComponent.character.combatComponent.avoidInRange[i];
                     if (!stateComponent.character.marker.inVisionPOIs.Contains(currAvoid) 
                         && !stateComponent.character.marker.visionCollision.poisInRangeButDiffStructure.Contains(currAvoid)) {
                         //I added checking for poisInRangeButDiffStructure beacuse characters are being removed from the character's avoid range when they exit a structure. (Myk)
                         OnFinishedFleeingFrom(currAvoid);
-                        stateComponent.character.marker.RemoveAvoidInRange(currAvoid, false);
+                        stateComponent.character.combatComponent.RemoveAvoidInRange(currAvoid, false);
                         i--;
                     }
                 }
-                if (stateComponent.character.marker.avoidInRange.Count > 0) {
+                if (stateComponent.character.combatComponent.avoidInRange.Count > 0) {
                     summary += "\nStill has characters to avoid in range, fleeing...";
                     stateComponent.character.logComponent.PrintLogIfActive(summary);
                     SetIsAttacking(false);
@@ -236,8 +236,8 @@ public class CombatState : CharacterState {
         if (isBeingApprehended) {
             return;
         }
-        for (int i = 0; i < stateComponent.character.marker.hostilesInRange.Count; i++) {
-            IPointOfInterest poi = stateComponent.character.marker.hostilesInRange[i];
+        for (int i = 0; i < stateComponent.character.combatComponent.hostilesInRange.Count; i++) {
+            IPointOfInterest poi = stateComponent.character.combatComponent.hostilesInRange[i];
             if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 Character hostile = poi as Character;
                 if (hostile.isInCombat) {
@@ -251,9 +251,9 @@ public class CombatState : CharacterState {
             }
             
         }
-        for (int i = 0; i < stateComponent.character.marker.avoidInRange.Count; i++) {
-            if(stateComponent.character.marker.avoidInRange[i].poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                Character hostile = stateComponent.character.marker.avoidInRange[i] as Character;
+        for (int i = 0; i < stateComponent.character.combatComponent.avoidInRange.Count; i++) {
+            if(stateComponent.character.combatComponent.avoidInRange[i].poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                Character hostile = stateComponent.character.combatComponent.avoidInRange[i] as Character;
                 if (hostile.isInCombat) {
                     CombatState combatState = hostile.stateComponent.currentState as CombatState;
                     if (combatState.jobThatTriggeredThisState != null && combatState.jobThatTriggeredThisState.jobType == JOB_TYPE.APPREHEND
@@ -272,11 +272,11 @@ public class CombatState : CharacterState {
         //SetIsAttacking(isAttacking);
         DetermineReaction(stateComponent.character);
     }
-    public void SwitchTarget(Character newTarget) {
-        stateComponent.character.marker.AddHostileInRange(newTarget, processCombatBehavior: false);
-        currentClosestHostile = newTarget;
-        DoCombatBehavior();
-    }
+    //public void SwitchTarget(Character newTarget) {
+    //    //stateComponent.character.combatComponent.AddHostileInRange(newTarget, false);
+    //    currentClosestHostile = newTarget;
+    //    DoCombatBehavior();
+    //}
     //Returns true if there is a hostile left, otherwise, returns false
     private void DoCombatBehavior(Character newTarget = null) {
         if(stateComponent.currentState != this) {
@@ -284,7 +284,7 @@ public class CombatState : CharacterState {
         }
         string log = "Reevaluating combat behavior of " + stateComponent.character.name;
         if (isAttacking) {
-            stateComponent.character.marker.StopPerTickFlee();
+            //stateComponent.character.marker.StopPerTickFlee();
             log += "\n" + stateComponent.character.name + " is attacking!";
             Trait taunted = stateComponent.character.traitContainer.GetNormalTrait<Trait>("Taunted");
             if (forcedTarget != null) {
@@ -293,7 +293,7 @@ public class CombatState : CharacterState {
             } else if (taunted != null) {
                 log += "\n" + stateComponent.character.name + " is taunted. Setting " + taunted.responsibleCharacter.name + " as target.";
                 SetClosestHostile(taunted.responsibleCharacter);
-            } else if (currentClosestHostile != null && !stateComponent.character.marker.hostilesInRange.Contains(currentClosestHostile)) {
+            } else if (currentClosestHostile != null && !stateComponent.character.combatComponent.hostilesInRange.Contains(currentClosestHostile)) {
                 log += "\nCurrent closest hostile: " + currentClosestHostile.name + " is no longer in hostile list, setting another closest hostile...";
                 SetClosestHostile();
             } else if(currentClosestHostile == null) {
@@ -301,7 +301,7 @@ public class CombatState : CharacterState {
                 SetClosestHostile();
             } else {
                 log += "\nChecking if the current closest hostile is still the closest hostile, if not, set new closest hostile...";
-                IPointOfInterest newClosestHostile =  stateComponent.character.marker.GetNearestValidHostile();
+                IPointOfInterest newClosestHostile =  stateComponent.character.combatComponent.GetNearestValidHostile();
                 if(newClosestHostile != null && currentClosestHostile != newClosestHostile) {
                     SetClosestHostile(newClosestHostile);
                 } else if (currentClosestHostile != null && stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.marker.targetPOI == currentClosestHostile) {
@@ -325,7 +325,7 @@ public class CombatState : CharacterState {
             //stateComponent.character.PrintLogIfActive(log);
         } else {
             //Character closestHostile = stateComponent.character.marker.GetNearestValidAvoid();
-            if (stateComponent.character.marker.avoidInRange.Count <= 0) {
+            if (stateComponent.character.combatComponent.avoidInRange.Count <= 0) {
                 log += "\nNo more avoid characters, exiting combat state...";
                 stateComponent.character.logComponent.PrintLogIfActive(log);
                 stateComponent.ExitCurrentState();
@@ -346,10 +346,10 @@ public class CombatState : CharacterState {
             stateComponent.character.marker.OnStartFlee();
 
 
-            IPointOfInterest objToAvoid = stateComponent.character.marker.avoidInRange[stateComponent.character.marker.avoidInRange.Count - 1];
+            IPointOfInterest objToAvoid = stateComponent.character.combatComponent.avoidInRange[stateComponent.character.combatComponent.avoidInRange.Count - 1];
             string avoidReason = "unknown";
-            if(stateComponent.character.marker.avoidReason != string.Empty) {
-                avoidReason = stateComponent.character.marker.avoidReason;
+            if(stateComponent.character.combatComponent.avoidReason != string.Empty) {
+                avoidReason = stateComponent.character.combatComponent.avoidReason;
             }
             Log fleeLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "start_flee");
             fleeLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -367,7 +367,7 @@ public class CombatState : CharacterState {
     }
     private void SetClosestHostile() {
         IPointOfInterest previousClosestHostile = currentClosestHostile;
-        currentClosestHostile = stateComponent.character.marker.GetNearestValidHostile();
+        currentClosestHostile = stateComponent.character.combatComponent.GetNearestValidHostile();
         if (currentClosestHostile != null && previousClosestHostile != currentClosestHostile) {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_combat_target");
             log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -395,12 +395,12 @@ public class CombatState : CharacterState {
         else if (currentClosestHostile.isDead) {
             //log += "\nCurrent closest hostile is dead, removing hostile in hostile list...";
             //stateComponent.character.PrintLogIfActive(log);
-            stateComponent.character.marker.RemoveHostileInRange(currentClosestHostile);
+            stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile);
         }
         else if (currentClosestHostile.currentRegion != stateComponent.character.currentRegion) {
             //log += "\nCurrent closest hostile is already in another location or is travelling to one, removing hostile in hostile list...";
             //stateComponent.character.PrintLogIfActive(log);
-            stateComponent.character.marker.RemoveHostileInRange(currentClosestHostile);
+            stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile);
         }
         //If character is attacking and distance is within the attack range of this character, attack
         //else, pursue again
@@ -469,7 +469,7 @@ public class CombatState : CharacterState {
             if (damageable is Character) {
                 Character hitCharacter = damageable as Character;
                 //if the character that attacked is not in the hostile/avoid list of the character that was hit, this means that it is not a retaliation, so the character that was hit must reduce its opinion of the character that attacked
-                if(!hitCharacter.marker.hostilesInRange.Contains(stateComponent.character) && !hitCharacter.marker.avoidInRange.Contains(stateComponent.character)) {
+                if(!hitCharacter.combatComponent.hostilesInRange.Contains(stateComponent.character) && !hitCharacter.combatComponent.avoidInRange.Contains(stateComponent.character)) {
                     if (!allCharactersThatDegradedRel.Contains(hitCharacter)) {
                         hitCharacter.opinionComponent.AdjustOpinion(stateComponent.character, "Base", -15);
                         AddCharacterThatDegradedRel(hitCharacter);
@@ -480,11 +480,12 @@ public class CombatState : CharacterState {
                 //if the character that was hit is not the actual target of this combat, do not make him/her enter combat state
                 if (damageable == currentClosestHostile) {
                     //When the target is hit and it is still alive, add hostile
-                    hitCharacter.marker.AddHostileInRange(stateComponent.character, false, isLethal: stateComponent.character.marker.IsLethalCombatForTarget(hitCharacter), gotHit: true);
+                    hitCharacter.combatComponent.Fight(stateComponent.character, isLethal: stateComponent.character.combatComponent.IsLethalCombatForTarget(hitCharacter));
+                    //hitCharacter.combatComponent.AddHostileInRange(stateComponent.character, isLethal: stateComponent.character.combatComponent.IsLethalCombatForTarget(hitCharacter));
                     //also add the hit character as degraded rel, so that when the character that owns this state is hit by the other character because of retaliation, relationship degradation will no longer happen
                     //Reference: https://trello.com/c/mvLDnyBf/2875-retaliation-should-not-trigger-relationship-degradation
                     //TODO:
-                    // hitCharacter.marker.AddOnProcessCombatAction((combatState) => combatState.AddCharacterThatDegradedRel(stateComponent.character));
+                    // hitCharacter.combatComponent.AddOnProcessCombatAction((combatState) => combatState.AddCharacterThatDegradedRel(stateComponent.character));
                 }
             }
             
@@ -530,13 +531,12 @@ public class CombatState : CharacterState {
         DetermineReaction(stateComponent.character);
     }
     private void OnFinishedFleeingFrom(IPointOfInterest fledFrom) {
-        if (fledFrom is Character) {
-            Character character = fledFrom as Character;
-            if (stateComponent.character.IsHostileWith(character)) {
-                stateComponent.character.marker.AddTerrifyingObject(fledFrom);
-            }
-        }
-        
+        //if (fledFrom is Character) {
+        //    Character character = fledFrom as Character;
+        //    if (stateComponent.character.IsHostileWith(character)) {
+        //        stateComponent.character.marker.AddTerrifyingObject(fledFrom);
+        //    }
+        //}
     }
     #endregion
 

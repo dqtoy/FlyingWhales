@@ -496,32 +496,32 @@ namespace Inner_Maps {
                 summary += "None";
             }
             summary += "\n\tHostiles in Range: ";
-            if (character.marker.hostilesInRange.Count > 0) {
-                for (int i = 0; i < character.marker.hostilesInRange.Count; i++) {
-                    IPointOfInterest poi = character.marker.hostilesInRange[i];
+            if (character.combatComponent.hostilesInRange.Count > 0) {
+                for (int i = 0; i < character.combatComponent.hostilesInRange.Count; i++) {
+                    IPointOfInterest poi = character.combatComponent.hostilesInRange[i];
                     summary += poi.name + ", ";
                 }
             } else {
                 summary += "None";
             }
             summary += "\n\tAvoid in Range: ";
-            if (character.marker.avoidInRange.Count > 0) {
-                for (int i = 0; i < character.marker.avoidInRange.Count; i++) {
-                    IPointOfInterest poi = character.marker.avoidInRange[i];
+            if (character.combatComponent.avoidInRange.Count > 0) {
+                for (int i = 0; i < character.combatComponent.avoidInRange.Count; i++) {
+                    IPointOfInterest poi = character.combatComponent.avoidInRange[i];
                     summary += poi.name + ", ";
                 }
             } else {
                 summary += "None";
             }
-            summary += "\n\tTerrifying Characters: ";
-            if (character.marker.terrifyingObjects.Count > 0) {
-                for (int i = 0; i < character.marker.terrifyingObjects.Count; i++) {
-                    IPointOfInterest currObj = character.marker.terrifyingObjects[i];
-                    summary += currObj.name + ", ";
-                }
-            } else {
-                summary += "None";
-            }
+            //summary += "\n\tTerrifying Characters: ";
+            //if (character.marker.terrifyingObjects.Count > 0) {
+            //    for (int i = 0; i < character.marker.terrifyingObjects.Count; i++) {
+            //        IPointOfInterest currObj = character.marker.terrifyingObjects[i];
+            //        summary += currObj.name + ", ";
+            //    }
+            //} else {
+            //    summary += "None";
+            //}
             summary += "\n\tPersonal Job Queue: ";
             if (character.jobQueue.jobsInQueue.Count > 0) {
                 for (int i = 0; i < character.jobQueue.jobsInQueue.Count; i++) {

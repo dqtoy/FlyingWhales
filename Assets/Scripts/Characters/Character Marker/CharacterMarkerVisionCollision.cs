@@ -16,11 +16,11 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         if (parentMarker.inVisionPOIs != null) {
             parentMarker.ClearPOIsInVisionRange();
         }
-        if (parentMarker.hostilesInRange != null) {
-            parentMarker.ClearHostilesInRange();
+        if (parentMarker.character != null && parentMarker.character.combatComponent.hostilesInRange != null) {
+            parentMarker.character.combatComponent.ClearHostilesInRange();
         }
-        if (parentMarker.avoidInRange != null) {
-            parentMarker.ClearAvoidInRange();
+        if (parentMarker.character != null && parentMarker.character.combatComponent.avoidInRange != null) {
+            parentMarker.character.combatComponent.ClearAvoidInRange();
         }
     }
 
@@ -105,11 +105,11 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             targetCharacter = poi as Character;
         }
         parentMarker.AddPOIAsInVisionRange(poi);
-        if(targetCharacter != null && parentMarker.character.traitContainer.GetNormalTrait<Trait>("Resting", "Unconscious") == null) {
-            parentMarker.AddHostileInRange(targetCharacter);
-        } else if (poi is TornadoTileObject && parentMarker.character.traitContainer.GetNormalTrait<Trait>("Elemental Master") == null) {
-            parentMarker.AddAvoidInRange(poi);
-        }
+        //if (targetCharacter != null && parentMarker.character.traitContainer.GetNormalTrait<Trait>("Resting", "Unconscious") == null) {
+        //    parentMarker.character.combatComponent.AddHostileInRange(targetCharacter);
+        //} else if (poi is TornadoTileObject && parentMarker.character.traitContainer.GetNormalTrait<Trait>("Elemental Master") == null) {
+        //    parentMarker.character.combatComponent.AddAvoidInRange(poi);
+        //}
     }
 
     #region Different Structure Handling
@@ -135,8 +135,8 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             }
             //remove from vision and hostile range
             parentMarker.RemovePOIFromInVisionRange(character);
-            //parentMarker.RemoveHostileInRange(character);
-            //parentMarker.RemoveAvoidInRange(character);
+            //parentcombatComponent.RemoveHostileInRange(character);
+            //parentcombatComponent.RemoveAvoidInRange(character);
             AddPOIAsInRangeButDifferentStructure(character);
         }
         //if the character that changed structures is this character
@@ -160,16 +160,16 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                 if (poi.gridTileLocation == null || poi.gridTileLocation.structure == null) {
                     parentMarker.RemovePOIFromInVisionRange(poi);
                     //if (poi is Character) {
-                    //    //parentMarker.RemoveHostileInRange(poi as Character);
-                    //    parentMarker.RemoveAvoidInRange(poi as Character);
+                    //    //parentcombatComponent.RemoveHostileInRange(poi as Character);
+                    //    parentcombatComponent.RemoveAvoidInRange(poi as Character);
                     //}
                 } else if (poi.gridTileLocation.structure != parentMarker.character.currentStructure 
                     && (!poi.gridTileLocation.structure.structureType.IsOpenSpace() || !parentMarker.character.currentStructure.structureType.IsOpenSpace())) {
                     //if the character in vision no longer has the same structure as the character, and at least one of them is not in an open space structure
                     parentMarker.RemovePOIFromInVisionRange(poi);
                     //if (poi is Character) {
-                    //    //parentMarker.RemoveHostileInRange(poi as Character);
-                    //    parentMarker.RemoveAvoidInRange(poi as Character);
+                    //    //parentcombatComponent.RemoveHostileInRange(poi as Character);
+                    //    parentcombatComponent.RemoveAvoidInRange(poi as Character);
                     //}
                     AddPOIAsInRangeButDifferentStructure(poi);
                 }

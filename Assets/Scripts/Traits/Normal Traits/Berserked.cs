@@ -47,8 +47,8 @@ namespace Traits {
                 
                 //check hostiles in range, remove any poi's that are not hostile with the character 
                 List<IPointOfInterest> hostilesToRemove = new List<IPointOfInterest>();
-                for (int i = 0; i < character.marker.hostilesInRange.Count; i++) {
-                    IPointOfInterest poi = character.marker.hostilesInRange[i];
+                for (int i = 0; i < character.combatComponent.hostilesInRange.Count; i++) {
+                    IPointOfInterest poi = character.combatComponent.hostilesInRange[i];
                     if (poi is Character) {
                         //poi is a character, check for hostilities
                         Character otherCharacter = poi as Character;
@@ -64,7 +64,7 @@ namespace Traits {
                 //remove all non hostiles from hostile in range
                 for (int i = 0; i < hostilesToRemove.Count; i++) {
                     IPointOfInterest hostile = hostilesToRemove[i];
-                    character.marker.RemoveHostileInRange(hostile);
+                    character.combatComponent.RemoveHostileInRange(hostile);
                 }
                 character.behaviourComponent.ReplaceBehaviourComponent(_behaviourComponentsBeforeBerserked);
                 _behaviourComponentsBeforeBerserked.Clear();
@@ -76,15 +76,15 @@ namespace Traits {
                 Character targetCharacter = targetPOI as Character;
                 if (!targetCharacter.isDead) {
                     if (character.faction.isPlayerFaction) {
-                        character.marker.AddHostileInRange(targetCharacter, isLethal: true); //check hostility if from player faction, so as not to attack other characters that are also from the same faction.
+                        character.combatComponent.Fight(targetCharacter, isLethal: true); //check hostility if from player faction, so as not to attack other characters that are also from the same faction.
                     } else {
-                        character.marker.AddHostileInRange(targetCharacter, checkHostility: false, isLethal: false);
+                        character.combatComponent.Fight(targetCharacter, isLethal: false);
                     }
                 }
             } else if (targetPOI is TileObject || targetPOI is SpecialToken) {
                 if (Random.Range(0, 100) < 35) {
                     //character.jobComponent.TriggerDestroy(targetPOI);
-                    character.marker.AddHostileInRange(targetPOI, checkHostility: false, isLethal: false);
+                    character.combatComponent.Fight(targetPOI, isLethal: false);
                 }
             }
         }
@@ -93,14 +93,14 @@ namespace Traits {
         //        Character targetCharacter = targetPOI as Character;
         //        if (!targetCharacter.isDead) {
         //            if (characterThatWillDoJob.faction.isPlayerFaction) {
-        //                return characterThatWillDoJob.marker.AddHostileInRange(targetCharacter, isLethal: true); //check hostility if from player faction, so as not to attack other characters that are also from the same faction.
+        //                return characterThatWillDoJob.combatComponent.AddHostileInRange(targetCharacter, isLethal: true); //check hostility if from player faction, so as not to attack other characters that are also from the same faction.
         //            } else {
-        //                return characterThatWillDoJob.marker.AddHostileInRange(targetCharacter, checkHostility: false, isLethal: false);
+        //                return characterThatWillDoJob.combatComponent.AddHostileInRange(targetCharacter, checkHostility: false, isLethal: false);
         //            }
         //        }
         //    }
         //    else if (targetPOI is TileObject || targetPOI is SpecialToken) {
-        //        return characterThatWillDoJob.marker.AddHostileInRange(targetPOI, checkHostility: false, isLethal: false);
+        //        return characterThatWillDoJob.combatComponent.AddHostileInRange(targetPOI, checkHostility: false, isLethal: false);
         //    } 
         //    return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
         //}

@@ -312,8 +312,8 @@ public class ConsoleMenu : UIMenu {
     //            //    //UIManager.Instance.Pause();
     //            //}
     //            if (currCharacter.marker != null) {
-    //                for (int j = 0; j < currCharacter.marker.hostilesInRange.Count; j++) {
-    //                    Character hostileInRange = currCharacter.marker.hostilesInRange[j];
+    //                for (int j = 0; j < currCharacter.combatComponent.hostilesInRange.Count; j++) {
+    //                    Character hostileInRange = currCharacter.combatComponent.hostilesInRange[j];
     //                    if (hostileInRange.isDead) {
     //                        Debug.LogWarning("There is a dead character (" + hostileInRange.name + ") in " + currCharacter.name + "'s hostile range!");
     //                        UIManager.Instance.Pause();
@@ -968,7 +968,7 @@ public class ConsoleMenu : UIMenu {
             return;
         }
 
-        character.marker.AddHostileInRange(targetPOI);
+        character.combatComponent.Fight(targetPOI);
     }
     private void ForceUpdateAnimation(string[] parameters) {
         if (parameters.Length != 1) {

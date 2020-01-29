@@ -47,20 +47,17 @@ public class CharacterMarker : MapObjectVisual<Character> {
     [Header("For Testing")]
     [SerializeField] private SpriteRenderer colorHighlight;
 
-    //delegates
-    public delegate void OnProcessCombat(CombatState state);
-    private OnProcessCombat onProcessCombat; //actions to be executed and cleared when a character processes combat.
 
     //vision colliders
     public List<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
     public List<IPointOfInterest> unprocessedVisionPOIs { get; private set; } //POI's in this characters vision collider
     public List<Character> inVisionCharacters { get; private set; } //POI's in this characters vision collider
-    public List<IPointOfInterest> hostilesInRange { get; private set; } //POI's in this characters hostility collider
-    public List<IPointOfInterest> avoidInRange { get; private set; } //POI's in this characters hostility collider
-    // public List<ActualGoapNode> alreadyWitnessedActions { get; private set; } //List of actions this character can witness, and has not been processed yet. Will be cleared after processing
-    public Dictionary<Character, bool> lethalCharacters { get; private set; }
-    public string avoidReason { get; private set; }
-    public bool willProcessCombat { get; private set; }
+    //public List<IPointOfInterest> hostilesInRange { get; private set; } //POI's in this characters hostility collider
+    //public List<IPointOfInterest> avoidInRange { get; private set; } //POI's in this characters hostility collider
+    //// public List<ActualGoapNode> alreadyWitnessedActions { get; private set; } //List of actions this character can witness, and has not been processed yet. Will be cleared after processing
+    //public Dictionary<Character, bool> lethalCharacters { get; private set; }
+    //public string avoidReason { get; private set; }
+    //public bool willProcessCombat { get; private set; }
     public Action arrivalAction { get; private set; }
     public Action failedToComputePathAction { get; private set; }
 
@@ -72,7 +69,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public LocationGridTile destinationTile { get; private set; }
     public int useWalkSpeed { get; private set; }
     public int targettedByRemoveNegativeTraitActionsCounter { get; private set; }
-    public List<IPointOfInterest> terrifyingObjects { get; private set; } //list of objects that this character is terrified of and must avoid
+    //public List<IPointOfInterest> terrifyingObjects { get; private set; } //list of objects that this character is terrified of and must avoid
     public bool isMoving { get; private set; }
 
     private LocationGridTile _previousGridTile;
@@ -109,12 +106,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
         unprocessedVisionPOIs = new List<IPointOfInterest>();
         inVisionPOIs = new List<IPointOfInterest>();
         inVisionCharacters = new List<Character>();
-        hostilesInRange = new List<IPointOfInterest>();
-        terrifyingObjects = new List<IPointOfInterest>();
-        avoidInRange = new List<IPointOfInterest>();
-        lethalCharacters = new Dictionary<Character, bool>();
+        //hostilesInRange = new List<IPointOfInterest>();
+        //terrifyingObjects = new List<IPointOfInterest>();
+        //avoidInRange = new List<IPointOfInterest>();
+        //lethalCharacters = new Dictionary<Character, bool>();
         // alreadyWitnessedActions = new List<ActualGoapNode>();
-        avoidReason = string.Empty;
+        //avoidReason = string.Empty;
         attackSpeedMeter = 0f;
         OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
         UpdateHairState();
@@ -179,7 +176,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
-        Messenger.AddListener<Character, string>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
+        //Messenger.AddListener<Character, string>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
         Messenger.AddListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
         Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
@@ -193,7 +190,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
-        Messenger.RemoveListener<Character, string>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
+        //Messenger.RemoveListener<Character, string>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
         Messenger.RemoveListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
         Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
@@ -205,9 +202,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         } else {
             OtherCharacterGainedTrait(characterThatGainedTrait, trait);
         }
-        if(trait.type == TRAIT_TYPE.DISABLER && terrifyingObjects.Count > 0) {
-            RemoveTerrifyingObject(characterThatGainedTrait);
-        }
+        //if(trait.type == TRAIT_TYPE.DISABLER && terrifyingObjects.Count > 0) {
+        //    RemoveTerrifyingObject(characterThatGainedTrait);
+        //}
     }
     public void OnCharacterLostTrait(Character character, Trait trait) {
         if (character == this.character) {
@@ -215,27 +212,28 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 $"{character.name} has <color=red>lost</color> trait <b>{trait.name}</b>";
             //if the character does not have any other negative disabler trait
             //check for reactions.
-            switch (trait.name) {
-                case "Unconscious":
-                case "Resting":
-                    lostTraitSummary += "\n" + character.name + " is checking for reactions towards characters in vision...";
-                    for (int i = 0; i < inVisionCharacters.Count; i++) {
-                        Character currCharacter = inVisionCharacters[i];
-                        if (!AddHostileInRange(currCharacter)) {
-                            //If not hostile, try to react to character's action
-                            AddUnprocessedPOI(currCharacter);
-                        }
-                    }
-                    break;
-            }
+            //switch (trait.name) {
+            //    case "Unconscious":
+            //    case "Resting":
+            //        lostTraitSummary += "\n" + character.name + " is checking for reactions towards characters in vision...";
+            //        for (int i = 0; i < inVisionCharacters.Count; i++) {
+            //            Character currCharacter = inVisionCharacters[i];
+            //            if (!AddHostileInRange(currCharacter)) {
+            //                //If not hostile, try to react to character's action
+            //                AddUnprocessedPOI(currCharacter);
+            //            }
+            //        }
+            //        break;
+            //}
             character.logComponent.PrintLogIfActive(lostTraitSummary);
             UpdateAnimation();
             UpdateActionIcon();
-        } else if (inVisionCharacters.Contains(character)) {
-            //if the character that lost a trait is not this character and that character is in this character's hostility range
-            //and the trait that was lost is a negative disabler trait, react to them.
-            AddHostileInRange(character);
-        }
+        } 
+        //else if (inVisionCharacters.Contains(character)) {
+        //    //if the character that lost a trait is not this character and that character is in this character's hostility range
+        //    //and the trait that was lost is a negative disabler trait, react to them.
+        //    AddHostileInRange(character);
+        //}
     }
     /// <summary>
     /// Listener for when a party starts travelling towards another settlement.
@@ -284,8 +282,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
             if(travellingParty.carriedPOI is Character) {
                 Character carriedCharacter = travellingParty.carriedPOI as Character;
-                RemoveHostileInRange(carriedCharacter); //removed hostile because he/she left the settlement.
-                RemoveAvoidInRange(carriedCharacter);
+                character.combatComponent.RemoveHostileInRange(carriedCharacter); //removed hostile because he/she left the settlement.
+                character.combatComponent.RemoveAvoidInRange(carriedCharacter);
                 RemovePOIFromInVisionRange(carriedCharacter);
                 visionCollision.RemovePOIAsInRangeButDifferentStructure(carriedCharacter);
             }
@@ -318,8 +316,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
 
             //Once a character has a negative disabler trait, clear hostile and avoid list
-            ClearHostilesInRange(false);
-            ClearAvoidInRange(false);
+            character.combatComponent.ClearHostilesInRange(false);
+            character.combatComponent.ClearAvoidInRange(false);
         }
         UpdateAnimation();
         UpdateActionIcon();
@@ -327,8 +325,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     private void OtherCharacterGainedTrait(Character otherCharacter, Trait trait) {
         if (trait.name == "Invisible") {
-            RemoveHostileInRange(otherCharacter);
-            RemoveAvoidInRange(otherCharacter);
+            character.combatComponent.RemoveHostileInRange(otherCharacter);
+            character.combatComponent.RemoveAvoidInRange(otherCharacter);
             RemovePOIFromInVisionRange(otherCharacter);
             //if (character.currentAction != null && character.currentAction.poiTarget == otherCharacter) {
             //    //If current action target is invisible and it is moving towards target stop it
@@ -342,19 +340,20 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 character.CreateJobsOnTargetGainTrait(otherCharacter, trait);
             }
             if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
-                RemoveHostileInRange(otherCharacter); //removed hostile because he/she became unconscious.
-                RemoveAvoidInRange(otherCharacter);
+                character.combatComponent.RemoveHostileInRange(otherCharacter); //removed hostile because he/she became unconscious.
+                character.combatComponent.RemoveAvoidInRange(otherCharacter);
             }
         }
     }
     private void OnItemRemovedFromTile(SpecialToken token, LocationGridTile removedFrom) {
-        if (hostilesInRange.Contains(token)) {
-            RemoveHostileInRange(token);
-        }
+        character.combatComponent.RemoveHostileInRange(token);
+        //if (hostilesInRange.Contains(token)) {
+        //    RemoveHostileInRange(token);
+        //}
     }
     private void OnTileObjectRemovedFromTile(TileObject obj, Character removedBy, LocationGridTile removedFrom) {
-        RemoveHostileInRange(obj);
-        RemoveAvoidInRange(obj);
+        character.combatComponent.RemoveHostileInRange(obj);
+        character.combatComponent.RemoveAvoidInRange(obj);
         RemovePOIFromInVisionRange(obj);
     }
     #endregion
@@ -441,10 +440,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public override void Reset() {
         base.Reset();
         destinationTile = null;
-        onProcessCombat = null;
+        //onProcessCombat = null;
+        character.combatComponent.SetOnProcessCombatAction(null);
         SetMarkerColor(Color.white);
         actionIcon.gameObject.SetActive(false);
-        StopPerTickFlee();
         PathfindingManager.Instance.RemoveAgent(pathfindingAI);
         RemoveListeners();
         HideHPBar();
@@ -911,7 +910,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
             character.DestroyMarker();
         } else {
             SetCollidersState(false);
-            onProcessCombat = null;
+            //onProcessCombat = null;
+            character.combatComponent.SetOnProcessCombatAction(null);
             pathfindingAI.ClearAllCurrentPathData();
             UpdateAnimation();
             UpdateActionIcon();
@@ -921,9 +921,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 placeMarkerAt = deathTileLocation.GetNearestUnoccupiedTileFromThis();
             }
             transform.position = placeMarkerAt.centeredWorldLocation;
-            ClearHostilesInRange();
+            character.combatComponent.ClearHostilesInRange();
             ClearPOIsInVisionRange();
-            ClearAvoidInRange();
+            character.combatComponent.ClearAvoidInRange();
             visionCollision.OnDeath();
             StartCoroutine(UpdatePositionNextFrame());
         }
@@ -1024,7 +1024,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void RemovePOIFromInVisionRange(IPointOfInterest poi) {
         if (inVisionPOIs.Remove(poi)) {
             RemoveUnprocessedPOI(poi);
-            RemoveAvoidInRange(poi);
+            character.combatComponent.RemoveAvoidInRange(poi);
             if (poi is Character) {
                 Character target = poi as Character;
                 inVisionCharacters.Remove(target);
@@ -1139,104 +1139,98 @@ public class CharacterMarker : MapObjectVisual<Character> {
             character.logComponent.PrintLogIfActive(log);
         }
         // alreadyWitnessedActions.Clear();
-        if (willProcessCombat && (hostilesInRange.Count > 0 || avoidInRange.Count > 0)) {
-            string log = character.name + " process combat switch is turned on and there are hostiles or avoid in list, processing combat...";
-            ProcessCombatBehavior();
-            avoidReason = string.Empty;
-            willProcessCombat = false;
-            character.logComponent.PrintLogIfActive(log);
-        }
+        character.combatComponent.CheckCombatPerTickEnded();
     }
     #endregion
 
     #region Hosility Collision
-    public bool AddHostileInRange(IPointOfInterest poi, bool checkHostility = true, bool processCombatBehavior = true, bool isLethal = true, bool gotHit = false) {
-        if (!hostilesInRange.Contains(poi)) {
-            //&& !this.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) 
-            if (this.character.traitContainer.GetNormalTrait<Trait>("Zapped") == null && !this.character.isFollowingPlayerInstruction && CanAddPOIAsHostile(poi, checkHostility, isLethal)) {
-                string transferReason = string.Empty;
-                if (!WillCharacterTransferEngageToFleeList(isLethal, ref transferReason, gotHit)) {
-                    hostilesInRange.Add(poi);
-                    if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                        lethalCharacters.Add(poi as Character, isLethal);
-                    }
-                    this.character.logComponent.PrintLogIfActive(poi.name + " was added to " + this.character.name + "'s hostile range!");
-                    //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
-                    //if (processCombatBehavior) {
-                    //    ProcessCombatBehavior();
-                    //}
+    //public bool AddHostileInRange(IPointOfInterest poi, bool checkHostility = true, bool processCombatBehavior = true, bool isLethal = true, bool gotHit = false) {
+    //    if (!hostilesInRange.Contains(poi)) {
+    //        //&& !this.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) 
+    //        if (this.character.traitContainer.GetNormalTrait<Trait>("Zapped") == null && !this.character.isFollowingPlayerInstruction && CanAddPOIAsHostile(poi, checkHostility, isLethal)) {
+    //            string transferReason = string.Empty;
+    //            if (!WillCharacterTransferEngageToFleeList(isLethal, ref transferReason, gotHit)) {
+    //                hostilesInRange.Add(poi);
+    //                if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+    //                    lethalCharacters.Add(poi as Character, isLethal);
+    //                }
+    //                this.character.logComponent.PrintLogIfActive(poi.name + " was added to " + this.character.name + "'s hostile range!");
+    //                //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
+    //                //if (processCombatBehavior) {
+    //                //    ProcessCombatBehavior();
+    //                //}
 
-                    willProcessCombat = true;
-                } else {
-                    //Transfer to flee list
-                    return AddAvoidInRange(poi, processCombatBehavior, transferReason);
-                }
-                return true;
-            }
-        } else {
-            if (gotHit) {
-                //When a poi hits this character, the behavior would be to add that poi to this character's hostile list so he can attack back
-                //However, there are times that the attacker is already in the hostile list
-                //If that happens, the behavior would be to evaluate the situation if the character will avoid or continue attacking
-                string transferReason = string.Empty;
-                if (WillCharacterTransferEngageToFleeList(isLethal, ref transferReason, gotHit)) {
-                    Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, character, transferReason);
-                    willProcessCombat = true;
-                }
+    //                willProcessCombat = true;
+    //            } else {
+    //                //Transfer to flee list
+    //                return AddAvoidInRange(poi, processCombatBehavior, transferReason);
+    //            }
+    //            return true;
+    //        }
+    //    } else {
+    //        if (gotHit) {
+    //            //When a poi hits this character, the behavior would be to add that poi to this character's hostile list so he can attack back
+    //            //However, there are times that the attacker is already in the hostile list
+    //            //If that happens, the behavior would be to evaluate the situation if the character will avoid or continue attacking
+    //            string transferReason = string.Empty;
+    //            if (WillCharacterTransferEngageToFleeList(isLethal, ref transferReason, gotHit)) {
+    //                Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, character, transferReason);
+    //                willProcessCombat = true;
+    //            }
 
-            }
-        }
-        return false;
-    }
-    private bool CanAddPOIAsHostile(IPointOfInterest poi, bool checkHostility, bool isLethal) {
-        if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            Character character = poi as Character;
-            if (isLethal == false && character.canBeAtttacked == false) {
-                //if combat intent is not lethal and the target cannot be attacked, then do not allow target to be added as a hostile,
-                //otherwise ignore canBeAttacked value
-                return false;
-            }
-            return !character.isDead && !this.character.isFollowingPlayerInstruction &&
-                (!checkHostility || this.character.IsHostileWith(character));
-        } else {
-            return true; //allow any other object types
-        }
-    }
-    public void RemoveHostileInRange(IPointOfInterest poi, bool processCombatBehavior = true) {
-        if (hostilesInRange.Remove(poi)) {
-            if (poi is Character) {
-                lethalCharacters.Remove(poi as Character);
-            }
-            string removeHostileSummary = poi.name + " was removed from " + character.name + "'s hostile range.";
-            character.logComponent.PrintLogIfActive(removeHostileSummary);
-            //When removing hostile in range, check if character is still in combat state, if it is, reevaluate combat behavior, if not, do nothing
-            if (processCombatBehavior && character.isInCombat) {
-                CombatState combatState = character.stateComponent.currentState as CombatState;
-                if (combatState.forcedTarget == poi) {
-                    combatState.SetForcedTarget(null);
-                }
-                if (combatState.currentClosestHostile == poi) {
-                    combatState.ResetClosestHostile();
-                }
-                Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
-            }
-        }
-    }
-    public void ClearHostilesInRange(bool processCombatBehavior = true) {
-        if(hostilesInRange.Count > 0) {
-            hostilesInRange.Clear();
-            lethalCharacters.Clear();
-            //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
-            if (processCombatBehavior) {
-                if (character.isInCombat) {
-                    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
-                } 
-                //else {
-                //    character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
-                //}
-            }
-        }
-    }
+    //        }
+    //    }
+    //    return false;
+    //}
+    //private bool CanAddPOIAsHostile(IPointOfInterest poi, bool checkHostility, bool isLethal) {
+    //    if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+    //        Character character = poi as Character;
+    //        if (isLethal == false && character.canBeAtttacked == false) {
+    //            //if combat intent is not lethal and the target cannot be attacked, then do not allow target to be added as a hostile,
+    //            //otherwise ignore canBeAttacked value
+    //            return false;
+    //        }
+    //        return !character.isDead && !this.character.isFollowingPlayerInstruction &&
+    //            (!checkHostility || this.character.IsHostileWith(character));
+    //    } else {
+    //        return true; //allow any other object types
+    //    }
+    //}
+    //public void RemoveHostileInRange(IPointOfInterest poi, bool processCombatBehavior = true) {
+    //    if (hostilesInRange.Remove(poi)) {
+    //        if (poi is Character) {
+    //            lethalCharacters.Remove(poi as Character);
+    //        }
+    //        string removeHostileSummary = poi.name + " was removed from " + character.name + "'s hostile range.";
+    //        character.logComponent.PrintLogIfActive(removeHostileSummary);
+    //        //When removing hostile in range, check if character is still in combat state, if it is, reevaluate combat behavior, if not, do nothing
+    //        if (processCombatBehavior && character.isInCombat) {
+    //            CombatState combatState = character.stateComponent.currentState as CombatState;
+    //            if (combatState.forcedTarget == poi) {
+    //                combatState.SetForcedTarget(null);
+    //            }
+    //            if (combatState.currentClosestHostile == poi) {
+    //                combatState.ResetClosestHostile();
+    //            }
+    //            Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
+    //        }
+    //    }
+    //}
+    //public void ClearHostilesInRange(bool processCombatBehavior = true) {
+    //    if(hostilesInRange.Count > 0) {
+    //        hostilesInRange.Clear();
+    //        lethalCharacters.Clear();
+    //        //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
+    //        if (processCombatBehavior) {
+    //            if (character.isInCombat) {
+    //                Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
+    //            } 
+    //            //else {
+    //            //    character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
+    //            //}
+    //        }
+    //    }
+    //}
     public void OnOtherCharacterDied(Character otherCharacter) {
         //NOTE: This is no longer needed since this will only cause duplicates because CreateJobsOnEnterVisionWith will also be called upon adding the Dead trait
         //if (inVisionCharacters.Contains(otherCharacter)) {
@@ -1247,8 +1241,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //RemovePOIFromInVisionRange(otherCharacter);
         //visionCollision.RemovePOIAsInRangeButDifferentStructure(otherCharacter);
 
-        RemoveHostileInRange(otherCharacter); //removed hostile because he/she died.
-        RemoveAvoidInRange(otherCharacter);
+        character.combatComponent.RemoveHostileInRange(otherCharacter); //removed hostile because he/she died.
+        character.combatComponent.RemoveAvoidInRange(otherCharacter);
 
         if (targetPOI == otherCharacter) {
             //if (this.arrivalAction != null) {
@@ -1264,88 +1258,88 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
     }
     public void OnSeizeOtherCharacter(Character otherCharacter) {
-        RemoveHostileInRange(otherCharacter);
-        RemoveAvoidInRange(otherCharacter);
+        character.combatComponent.RemoveHostileInRange(otherCharacter);
+        character.combatComponent.RemoveAvoidInRange(otherCharacter);
     }
-    public bool IsLethalCombatForTarget(Character character) {
-        if (lethalCharacters.ContainsKey(character)) {
-            return lethalCharacters[character];
-        }
-        return true;
-    }
-    public bool HasLethalCombatTarget() {
-        for (int i = 0; i < hostilesInRange.Count; i++) {
-            IPointOfInterest poi = hostilesInRange[i];
-            if (poi is Character) {
-                Character hostile = poi as Character;
-                if (IsLethalCombatForTarget(hostile)) {
-                    return true;
-                }
-            }
+    //public bool IsLethalCombatForTarget(Character character) {
+    //    if (lethalCharacters.ContainsKey(character)) {
+    //        return lethalCharacters[character];
+    //    }
+    //    return true;
+    //}
+    //public bool HasLethalCombatTarget() {
+    //    for (int i = 0; i < hostilesInRange.Count; i++) {
+    //        IPointOfInterest poi = hostilesInRange[i];
+    //        if (poi is Character) {
+    //            Character hostile = poi as Character;
+    //            if (IsLethalCombatForTarget(hostile)) {
+    //                return true;
+    //            }
+    //        }
             
-        }
-        return false;
-    }
+    //    }
+    //    return false;
+    //}
     #endregion
 
     #region Avoid In Range
-    public bool AddAvoidInRange(IPointOfInterest poi, bool processCombatBehavior = true, string reason = "") {
-        if (poi is Character) {
-            return AddAvoidInRange(poi as Character, processCombatBehavior, reason);
-        } else {
-            if (character.traitContainer.GetNormalTrait<Trait>("Berserked") == null) {
-                if (!avoidInRange.Contains(poi)) {
-                    avoidInRange.Add(poi);
-                    willProcessCombat = true;
-                    avoidReason = reason;
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public bool AddAvoidsInRange(List<IPointOfInterest> pois, bool processCombatBehavior = true, string reason = "") {
-        //Only react to the first hostile that is added
-        IPointOfInterest otherPOI = null;
-        for (int i = 0; i < pois.Count; i++) {
-            IPointOfInterest poi = pois[i];
-            if (poi is Character) {
-                Character characterToAvoid = poi as Character;
-                if (characterToAvoid.isDead || characterToAvoid.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) || characterToAvoid.traitContainer.GetNormalTrait<Trait>("Berserked") != null) {
-                    continue; //skip
-                }
-            }
-            if (!avoidInRange.Contains(poi)) {
-                avoidInRange.Add(poi);
-                if (otherPOI == null) {
-                    otherPOI = poi;
-                }
-            }
+    //public bool AddAvoidInRange(IPointOfInterest poi, bool processCombatBehavior = true, string reason = "") {
+    //    if (poi is Character) {
+    //        return AddAvoidInRange(poi as Character, processCombatBehavior, reason);
+    //    } else {
+    //        if (character.traitContainer.GetNormalTrait<Trait>("Berserked") == null) {
+    //            if (!avoidInRange.Contains(poi)) {
+    //                avoidInRange.Add(poi);
+    //                willProcessCombat = true;
+    //                avoidReason = reason;
+    //                return true;
+    //            }
+    //        }
+    //    }
+    //    return false;
+    //}
+    //private bool AddAvoidInRange(Character poi, bool processCombatBehavior = true, string reason = "") {
+    //    if (!poi.isDead && !poi.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && character.traitContainer.GetNormalTrait<Trait>("Berserked") == null) { //, "Resting"
+    //        if (!avoidInRange.Contains(poi)) {
+    //            avoidInRange.Add(poi);
+    //            //NormalReactToHostileCharacter(poi, CHARACTER_STATE.FLEE);
+    //            //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
+    //            //if (processCombatBehavior) {
+    //            //    ProcessCombatBehavior();
+    //            //}
+    //            willProcessCombat = true;
+    //            avoidReason = reason;
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
+    //public bool AddAvoidsInRange(List<IPointOfInterest> pois, bool processCombatBehavior = true, string reason = "") {
+    //    //Only react to the first hostile that is added
+    //    IPointOfInterest otherPOI = null;
+    //    for (int i = 0; i < pois.Count; i++) {
+    //        IPointOfInterest poi = pois[i];
+    //        if (poi is Character) {
+    //            Character characterToAvoid = poi as Character;
+    //            if (characterToAvoid.isDead || characterToAvoid.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) || characterToAvoid.traitContainer.GetNormalTrait<Trait>("Berserked") != null) {
+    //                continue; //skip
+    //            }
+    //        }
+    //        if (!avoidInRange.Contains(poi)) {
+    //            avoidInRange.Add(poi);
+    //            if (otherPOI == null) {
+    //                otherPOI = poi;
+    //            }
+    //        }
 
-        }
-        if (otherPOI != null) {
-            willProcessCombat = true;
-            avoidReason = reason;
-            return true;
-        }
-        return false;
-    }
-    private bool AddAvoidInRange(Character poi, bool processCombatBehavior = true, string reason = "") {
-        if (!poi.isDead && !poi.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && character.traitContainer.GetNormalTrait<Trait>("Berserked") == null) { //, "Resting"
-            if (!avoidInRange.Contains(poi)) {
-                avoidInRange.Add(poi);
-                //NormalReactToHostileCharacter(poi, CHARACTER_STATE.FLEE);
-                //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
-                //if (processCombatBehavior) {
-                //    ProcessCombatBehavior();
-                //}
-                willProcessCombat = true;
-                avoidReason = reason;
-                return true;
-            }
-        }
-        return false;
-    }
+    //    }
+    //    if (otherPOI != null) {
+    //        willProcessCombat = true;
+    //        avoidReason = reason;
+    //        return true;
+    //    }
+    //    return false;
+    //}
     //public bool AddAvoidsInRange(List<Character> pois, bool processCombatBehavior = true, string reason = "") {
     //    //Only react to the first hostile that is added
     //    Character otherPOI = null;
@@ -1368,47 +1362,44 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //    }
     //    return false;
     //}
-    public void RemoveAvoidInRange(IPointOfInterest poi, bool processCombatBehavior = true) {
-        if (avoidInRange.Remove(poi)) {
-            //Debug.Log("Removed avoid in range " + poi.name + " from " + this.character.name);
-            //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
-            if (processCombatBehavior) {
-                if (character.isInCombat) {
-                    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
-                }
-            }
-        }
-    }
-    public void ClearAvoidInRange(bool processCombatBehavior = true) {
-        if(avoidInRange.Count > 0) {
-            avoidInRange.Clear();
+    //public void RemoveAvoidInRange(IPointOfInterest poi, bool processCombatBehavior = true) {
+    //    if (avoidInRange.Remove(poi)) {
+    //        //Debug.Log("Removed avoid in range " + poi.name + " from " + this.character.name);
+    //        //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
+    //        if (processCombatBehavior) {
+    //            if (character.isInCombat) {
+    //                Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
+    //            }
+    //        }
+    //    }
+    //}
+    //public void ClearAvoidInRange(bool processCombatBehavior = true) {
+    //    if(avoidInRange.Count > 0) {
+    //        avoidInRange.Clear();
 
-            //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
-            if (processCombatBehavior) {
-                if (character.isInCombat) {
-                    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
-                } 
-                //else {
-                //    character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
-                //}
-            }
-        }
-    }
-    public void SetWillProcessCombat(bool state) {
-        willProcessCombat = state;
-    }
+    //        //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
+    //        if (processCombatBehavior) {
+    //            if (character.isInCombat) {
+    //                Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
+    //            } 
+    //            //else {
+    //            //    character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
+    //            //}
+    //        }
+    //    }
+    //}
     #endregion
 
     #region Flee
     public bool hasFleePath { get; private set; }
     public void OnStartFlee() {
-        if (avoidInRange.Count == 0) {
+        if (character.combatComponent.avoidInRange.Count == 0) {
             return;
         }
         pathfindingAI.ClearAllCurrentPathData();
         SetHasFleePath(true);
         pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
-        FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, avoidInRange.Select(x => x.gridTileLocation.worldLocation).ToArray(), 20000);
+        FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, character.combatComponent.avoidInRange.Select(x => x.gridTileLocation.worldLocation).ToArray(), 20000);
         fleePath.aimStrength = 1;
         fleePath.spread = 4000;
         seeker.StartPath(fleePath);
@@ -1431,83 +1422,81 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         UpdateAnimation();
         UpdateActionIcon();
-        StopPerTickFlee();
     }
     public void SetHasFleePath(bool state) {
         hasFleePath = state;
     }
-    public void AddTerrifyingObject(IPointOfInterest obj) {
-        //terrifyingCharacters += amount;
-        //terrifyingCharacters = Math.Max(0, terrifyingCharacters);
-        if (!terrifyingObjects.Contains(obj)) {
-            terrifyingObjects.Add(obj);
-            //rvoController.avoidedAgents.Add(character.marker.fleeingRVOController.rvoAgent);
-        }
-    }
-    public void RemoveTerrifyingObject(IPointOfInterest obj) {
-        terrifyingObjects.Remove(obj);
-        //if (terrifyingCharacters.Remove(character)) {
-        //    //rvoController.avoidedAgents.Remove(character.marker.fleeingRVOController.rvoAgent);
-        //}
-    }
-    public void ClearTerrifyingObjects() {
-        terrifyingObjects.Clear();
-        //rvoController.avoidedAgents.Clear();
-    }
+    //public void AddTerrifyingObject(IPointOfInterest obj) {
+    //    //terrifyingCharacters += amount;
+    //    //terrifyingCharacters = Math.Max(0, terrifyingCharacters);
+    //    if (!terrifyingObjects.Contains(obj)) {
+    //        terrifyingObjects.Add(obj);
+    //        //rvoController.avoidedAgents.Add(character.marker.fleeingRVOController.rvoAgent);
+    //    }
+    //}
+    //public void RemoveTerrifyingObject(IPointOfInterest obj) {
+    //    terrifyingObjects.Remove(obj);
+    //    //if (terrifyingCharacters.Remove(character)) {
+    //    //    //rvoController.avoidedAgents.Remove(character.marker.fleeingRVOController.rvoAgent);
+    //    //}
+    //}
+    //public void ClearTerrifyingObjects() {
+    //    terrifyingObjects.Clear();
+    //    //rvoController.avoidedAgents.Clear();
+    //}
     /// <summary>
     /// Function that determines if the character's hostile list must be transfered to avoid list
     /// Can be triggered by broadcasting signal <see cref="Signals.TRANSFER_ENGAGE_TO_FLEE_LIST"/>
     /// </summary>
     /// <param name="character">The character that should determine the transfer.</param>
-    private void TransferEngageToFleeList(Character character, string reason) {
-        if (this.character == character) {
-            string summary = character.name + " will determine the transfer from engage list to flee list";
-            if(character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
-                summary += "\n" + character.name + " has negative disabler trait. Ignoring transfer.";
-                character.logComponent.PrintLogIfActive(summary);
-                return;
-            }
-            if (hostilesInRange.Count == 0 && avoidInRange.Count == 0) {
-                summary +=  "\n" + character.name + " does not have any characters in engage or avoid list. Ignoring transfer.";
-                character.logComponent.PrintLogIfActive(summary);
-                return;
-            }
-            //check flee first, the logic determines that this character will not flee, then attack by default
-            bool willTransfer = true;
-            if (character.traitContainer.GetNormalTrait<Trait>("Berserked") != null) {
-                willTransfer = false;
-            }
-            summary += "\nDid " + character.name + " chose to transfer? " + willTransfer.ToString();
+    //private void TransferEngageToFleeList(Character character, string reason) {
+    //    if (this.character == character) {
+    //        string summary = character.name + " will determine the transfer from engage list to flee list";
+    //        if(character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
+    //            summary += "\n" + character.name + " has negative disabler trait. Ignoring transfer.";
+    //            character.logComponent.PrintLogIfActive(summary);
+    //            return;
+    //        }
+    //        if (hostilesInRange.Count == 0 && avoidInRange.Count == 0) {
+    //            summary +=  "\n" + character.name + " does not have any characters in engage or avoid list. Ignoring transfer.";
+    //            character.logComponent.PrintLogIfActive(summary);
+    //            return;
+    //        }
+    //        //check flee first, the logic determines that this character will not flee, then attack by default
+    //        bool willTransfer = true;
+    //        if (character.traitContainer.GetNormalTrait<Trait>("Berserked") != null) {
+    //            willTransfer = false;
+    //        }
+    //        summary += "\nDid " + character.name + " chose to transfer? " + willTransfer.ToString();
 
-            //Transfer all from engage list to flee list
-            if (willTransfer) {
-                //When transferring to flee list, if the character is not in vision just remove him/her in hostiles range
-                if (HasLethalCombatTarget()) {
-                    for (int i = 0; i < hostilesInRange.Count; i++) {
-                        IPointOfInterest hostile = hostilesInRange[i];
-                        if (inVisionPOIs.Contains(hostile)) {
-                            AddAvoidInRange(hostile, false, reason);
-                        } else {
-                            RemoveHostileInRange(hostile, false);
-                            i--;
-                        }
-                    }
-                    ClearHostilesInRange(false);
-                }
-                if (character.isInCombat) {
-                    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
-                } else {
-                    if (!character.currentParty.icon.isTravellingOutside) {
-                        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.COMBAT, character);
-                        //character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
-                        character.jobQueue.AddJobInQueue(job);
-                    }
-                }
-            }
-            character.logComponent.PrintLogIfActive(summary);
-        }
-    }
-    public void StopPerTickFlee() { }
+    //        //Transfer all from engage list to flee list
+    //        if (willTransfer) {
+    //            //When transferring to flee list, if the character is not in vision just remove him/her in hostiles range
+    //            if (HasLethalCombatTarget()) {
+    //                for (int i = 0; i < hostilesInRange.Count; i++) {
+    //                    IPointOfInterest hostile = hostilesInRange[i];
+    //                    if (inVisionPOIs.Contains(hostile)) {
+    //                        AddAvoidInRange(hostile, false, reason);
+    //                    } else {
+    //                        RemoveHostileInRange(hostile, false);
+    //                        i--;
+    //                    }
+    //                }
+    //                ClearHostilesInRange(false);
+    //            }
+    //            if (character.isInCombat) {
+    //                Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
+    //            } else {
+    //                if (!character.currentParty.icon.isTravellingOutside) {
+    //                    CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.COMBAT, character);
+    //                    //character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
+    //                    character.jobQueue.AddJobInQueue(job);
+    //                }
+    //            }
+    //        }
+    //        character.logComponent.PrintLogIfActive(summary);
+    //    }
+    //}
     #endregion
 
     #region Combat
@@ -1535,30 +1524,30 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public bool CanAttackByAttackSpeed() {
         return attackSpeedMeter >= character.attackSpeed;
     }
-    public IPointOfInterest GetNearestValidHostile() {
-        IPointOfInterest nearest = null;
-        float nearestDist = 9999f;
-        //first check only the hostiles that are in the same settlement as this character
-        for (int i = 0; i < hostilesInRange.Count; i++) {
-            IPointOfInterest poi = hostilesInRange[i];
-            if (poi.IsValidCombatTarget()) {
-                float dist = Vector2.Distance(this.transform.position, poi.worldPosition);
-                if (nearest == null || dist < nearestDist) {
-                    nearest = poi;
-                    nearestDist = dist;
-                }
-            }
+    //public IPointOfInterest GetNearestValidHostile() {
+    //    IPointOfInterest nearest = null;
+    //    float nearestDist = 9999f;
+    //    //first check only the hostiles that are in the same settlement as this character
+    //    for (int i = 0; i < hostilesInRange.Count; i++) {
+    //        IPointOfInterest poi = hostilesInRange[i];
+    //        if (poi.IsValidCombatTarget()) {
+    //            float dist = Vector2.Distance(this.transform.position, poi.worldPosition);
+    //            if (nearest == null || dist < nearestDist) {
+    //                nearest = poi;
+    //                nearestDist = dist;
+    //            }
+    //        }
             
-        }
-        //if no character was returned, choose at random from the list, since we are sure that all characters in the list are not in the same settlement as this character
-        if (nearest == null) {
-            List<Character> hostileCharacters = hostilesInRange.Where(x => x.poiType == POINT_OF_INTEREST_TYPE.CHARACTER).Select(x => x as Character).ToList();
-            if (hostileCharacters.Count > 0) {
-                nearest = hostileCharacters[UnityEngine.Random.Range(0, hostileCharacters.Count)];
-            }
-        }
-        return nearest;
-    }
+    //    }
+    //    //if no character was returned, choose at random from the list, since we are sure that all characters in the list are not in the same settlement as this character
+    //    if (nearest == null) {
+    //        List<Character> hostileCharacters = hostilesInRange.Where(x => x.poiType == POINT_OF_INTEREST_TYPE.CHARACTER).Select(x => x as Character).ToList();
+    //        if (hostileCharacters.Count > 0) {
+    //            nearest = hostileCharacters[UnityEngine.Random.Range(0, hostileCharacters.Count)];
+    //        }
+    //    }
+    //    return nearest;
+    //}
     public bool IsCharacterInLineOfSightWith(IPointOfInterest target) {
         //return targetCharacter.currentStructure == character.currentStructure;
         //precompute our ray settings
@@ -1591,65 +1580,64 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         return false;
     }
-    public bool WillCharacterTransferEngageToFleeList(bool isLethal, ref string reason, bool gotHit) {
-        bool willTransfer = false;
-        if (gotHit && character.traitContainer.GetNormalTrait<Trait>("Coward") != null && character.traitContainer.GetNormalTrait<Trait>("Berserked") == null) {
-            willTransfer = true;
-            reason = "coward";
-        } else
-        if (!isLethal && !HasLethalCombatTarget()) {
-            willTransfer = false;
-        }
-        //- if character is berserked, must not flee
-        else if (character.traitContainer.GetNormalTrait<Trait>("Berserked") != null) {
-            willTransfer = false;
-        }
-        //- at some point, situation may trigger the character to flee, at which point it will attempt to move far away from target
-        //else if (character.traitContainer.GetNormalTrait<Trait>("Injured") != null) {
-        //    //summary += "\n" + character.name + " is injured.";
-        //    //-character gets injured(chance based dependent on the character)
-        //    willTransfer = true;
-        //} 
-        else if (character.IsHealthCriticallyLow()) {
-            //summary += "\n" + character.name + "'s health is critically low.";
-            //-character's hp is critically low (chance based dependent on the character)
-            willTransfer = true;
-            reason = "critically low health";
-        }
-        //else if (character.traitContainer.GetNormalTrait<Trait>("Spooked") != null) {
-        //    //- fear-type status effect
-        //    willTransfer = true;
-        //} 
-        else if (character.needsComponent.isStarving && !character.isVampire) {
-            //-character is starving and is not a vampire
-            willTransfer = true;
-            reason = "starving";
-        } else if (character.needsComponent.isExhausted) {
-            //-character is exhausted
-            willTransfer = true;
-            reason = "exhausted";
-        }
-        return willTransfer;
-    }
-    public void OnThisCharacterEndedCombatState() {
-        onProcessCombat = null;
-        StopPerTickFlee();
-    }
-    public void ProcessCombatBehavior() {
-        if (character.isInCombat) {
-            Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
-        } else {
-            CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.COMBAT, character);
-            character.jobQueue.AddJobInQueue(job);
-            //this.character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
-        }
-        //execute any external combat actions. This assumes that this character entered combat state.
-        onProcessCombat?.Invoke(this.character.stateComponent.currentState as CombatState); 
-        onProcessCombat = null;
-    }
-    public void AddOnProcessCombatAction(OnProcessCombat action) {
-        onProcessCombat += action;
-    }
+    //public bool WillCharacterTransferEngageToFleeList(bool isLethal, ref string reason, bool gotHit) {
+    //    bool willTransfer = false;
+    //    if (gotHit && character.traitContainer.GetNormalTrait<Trait>("Coward") != null && character.traitContainer.GetNormalTrait<Trait>("Berserked") == null) {
+    //        willTransfer = true;
+    //        reason = "coward";
+    //    } else
+    //    if (!isLethal && !HasLethalCombatTarget()) {
+    //        willTransfer = false;
+    //    }
+    //    //- if character is berserked, must not flee
+    //    else if (character.traitContainer.GetNormalTrait<Trait>("Berserked") != null) {
+    //        willTransfer = false;
+    //    }
+    //    //- at some point, situation may trigger the character to flee, at which point it will attempt to move far away from target
+    //    //else if (character.traitContainer.GetNormalTrait<Trait>("Injured") != null) {
+    //    //    //summary += "\n" + character.name + " is injured.";
+    //    //    //-character gets injured(chance based dependent on the character)
+    //    //    willTransfer = true;
+    //    //} 
+    //    else if (character.IsHealthCriticallyLow()) {
+    //        //summary += "\n" + character.name + "'s health is critically low.";
+    //        //-character's hp is critically low (chance based dependent on the character)
+    //        willTransfer = true;
+    //        reason = "critically low health";
+    //    }
+    //    //else if (character.traitContainer.GetNormalTrait<Trait>("Spooked") != null) {
+    //    //    //- fear-type status effect
+    //    //    willTransfer = true;
+    //    //} 
+    //    else if (character.needsComponent.isStarving && !character.isVampire) {
+    //        //-character is starving and is not a vampire
+    //        willTransfer = true;
+    //        reason = "starving";
+    //    } else if (character.needsComponent.isExhausted) {
+    //        //-character is exhausted
+    //        willTransfer = true;
+    //        reason = "exhausted";
+    //    }
+    //    return willTransfer;
+    //}
+    //public void OnThisCharacterEndedCombatState() {
+    //    onProcessCombat = null;
+    //}
+    //public void ProcessCombatBehavior() {
+    //    if (character.isInCombat) {
+    //        Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
+    //    } else {
+    //        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.COMBAT, character);
+    //        character.jobQueue.AddJobInQueue(job);
+    //        //this.character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
+    //    }
+    //    //execute any external combat actions. This assumes that this character entered combat state.
+    //    onProcessCombat?.Invoke(this.character.stateComponent.currentState as CombatState); 
+    //    onProcessCombat = null;
+    //}
+    //public void AddOnProcessCombatAction(OnProcessCombat action) {
+    //    onProcessCombat += action;
+    //}
     #endregion
 
     #region Colliders

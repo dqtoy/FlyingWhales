@@ -338,7 +338,7 @@ namespace Traits {
             }
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
             //ForceCancelAllJobsTargettingThisCharacter();
-            form.marker.ClearTerrifyingObjects();
+            //form.marker.ClearTerrifyingObjects();
             form.needsComponent.OnCharacterLeftLocation(form.currentRegion);
 
             form.CancelAllJobs();

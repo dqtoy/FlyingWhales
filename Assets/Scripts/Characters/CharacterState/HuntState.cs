@@ -31,7 +31,7 @@ public class HuntState : CharacterState {
                 //    Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't eat corpse " + targetPOI.name + " because there is no tile to go to!");
                 //}
             } else {
-                stateComponent.character.marker.AddHostileInRange(targetCharacter);
+                //stateComponent.character.combatComponent.AddHostileInRange(targetCharacter);
             }
            
             return true;

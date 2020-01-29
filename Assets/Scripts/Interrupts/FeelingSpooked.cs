@@ -12,7 +12,7 @@ namespace Interrupts {
 
         //#region Overrides
         //public override bool ExecuteInterruptEffect(Character actor, IPointOfInterest target) {
-        //    actor.marker.AddAvoidInRange(target, true, "embarassed");
+        //    actor.combatComponent.AddAvoidInRange(target, true, "embarassed");
         //    return true;
         //}
         //#endregion

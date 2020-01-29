@@ -55,7 +55,7 @@ public class Invite : GoapAction {
         base.OnInvalidAction(node);
         if (node.actor is SeducerSummon) {
             Character target = node.poiTarget as Character;
-            target.marker.AddHostileInRange(node.actor, false);
+            target.combatComponent.Fight(node.actor);
         }
     }
     #endregion
@@ -72,7 +72,7 @@ public class Invite : GoapAction {
         if (goapNode.actor is SeducerSummon) {
             //Start Combat between actor and target
             Character target = goapNode.poiTarget as Character;
-            target.marker.AddHostileInRange(goapNode.actor, false);
+            target.combatComponent.Fight(goapNode.actor);
         } else {
             //**After Effect 1**: Actor gains Annoyed trait.
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Annoyed");

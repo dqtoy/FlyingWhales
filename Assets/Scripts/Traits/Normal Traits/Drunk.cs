@@ -37,15 +37,21 @@ namespace Traits {
                     if (chance < value) {
                         characterThatWillDoJob.logComponent.PrintLogIfActive(characterThatWillDoJob.name
                                                                              + " Drunk Assault Chance: " + value + ", Roll: " + chance);
-                        if (characterThatWillDoJob.marker.AddHostileInRange(targetCharacter, false, false, false)) {
-                            if (!characterThatWillDoJob.marker.avoidInRange.Contains(targetCharacter)) {
-                                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "drunk_assault");
-                                log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                                log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                //log.AddLogToInvolvedObjects();
-                                characterThatWillDoJob.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
-                            }
-                            //characterThatWillDoJob.marker.ProcessCombatBehavior();
+                        //if (characterThatWillDoJob.combatComponent.AddHostileInRange(targetCharacter, false, false)) {
+                        //    if (!characterThatWillDoJob.combatComponent.avoidInRange.Contains(targetCharacter)) {
+                        //        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "drunk_assault");
+                        //        log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        //        log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                        //        //log.AddLogToInvolvedObjects();
+                        //        characterThatWillDoJob.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+                        //    }
+                        //    //characterThatWillDoJob.combatComponent.ProcessCombatBehavior();
+                        //}
+                        if(characterThatWillDoJob.combatComponent.Fight(targetCharacter, false)) {
+                            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "drunk_assault");
+                            log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                            log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                            characterThatWillDoJob.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
                         }
                         return true;
                     }

@@ -60,7 +60,7 @@ public class Assault : GoapAction {
         if (goapNode.associatedJobType == JOB_TYPE.APPREHEND) {
             isLethal = false;
         }
-        goapNode.actor.marker.AddHostileInRange(goapNode.poiTarget, false, isLethal: isLethal);
+        goapNode.actor.combatComponent.Fight(goapNode.poiTarget, isLethal: isLethal);
         if(goapNode.poiTarget is Character) {
             Character targetCharacter = goapNode.poiTarget as Character;
             if (goapNode.associatedJobType != JOB_TYPE.APPREHEND && !goapNode.actor.IsHostileWith(targetCharacter)) {
@@ -95,7 +95,7 @@ public class Assault : GoapAction {
     ////    //    //Assaulting characters for imprisonment of criminals and undermining enemies must be non lethal
     ////    //    isLethal = false;
     ////    //}
-    ////    //if (actor.marker.AddHostileInRange(targetCharacter, false, isLethal: isLethal)) {
+    ////    //if (actor.combatComponent.AddHostileInRange(targetCharacter, false, isLethal: isLethal)) {
     ////    //    Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState); //set this to signal because adding a character as hostile, is no longer sure to return a new CharacterState
     ////    //    SetState("In Progress");
     ////    //} else {
@@ -116,13 +116,13 @@ public class Assault : GoapAction {
     //    if (targetCharacter.specificLocation == actor.specificLocation && !targetCharacter.currentParty.icon.isTravellingOutside) {
     //        if (actor.IsCombatReady()) {
     //            CharacterState characterState;
-    //            if (!actor.marker.hostilesInRange.Contains(targetCharacter)) {
+    //            if (!actor.combatComponent.hostilesInRange.Contains(targetCharacter)) {
     //                bool isLethal = true;
     //                if (parentPlan != null && parentPlan.job != null && (parentPlan.job.jobType == JOB_TYPE.UNDERMINE_ENEMY || parentPlan.job.jobType == JOB_TYPE.APPREHEND || parentPlan.job.targetInteractionType == INTERACTION_TYPE.DRINK_BLOOD)) {
     //                    //Assaulting characters for imprisonment of criminals and undermining enemies must be non lethal
     //                    isLethal = false;
     //                }
-    //                if (actor.marker.AddHostileInRange(targetCharacter, out characterState, false, isLethal: isLethal)) {
+    //                if (actor.combatComponent.AddHostileInRange(targetCharacter, out characterState, false, isLethal: isLethal)) {
     //                    Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState); //set this to signal because adding a character as hostile, is no longer sure to return a new CharacterState
     //                    SetState("In Progress");
     //                } else {
@@ -422,14 +422,14 @@ public class Assault : GoapAction {
     //                    AddTraitTo(recipient, "Satisfied");
     //                    //if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                    //    if (recipient.marker.inVisionPOIs.Contains(targetCharacter)) {
-    //                    //        recipient.marker.AddHostileInRange(targetCharacter, checkHostility: false);
+    //                    //        recipient.combatComponent.AddHostileInRange(targetCharacter, checkHostility: false);
     //                    //    }
     //                    //}
     //                } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
     //                    reactions.Add("Those misfits are always up to no good.");
     //                    //if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                    //    if (recipient.marker.inVisionPOIs.Contains(actor)) {
-    //                    //        recipient.marker.AddAvoidInRange(actor);
+    //                    //        recipient.combatComponent.AddAvoidInRange(actor);
     //                    //    }
     //                    //}
     //                } else {
@@ -517,14 +517,14 @@ public class Assault : GoapAction {
     //                    AddTraitTo(recipient, "Satisfied");
     //                    //if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                    //    if (recipient.marker.inVisionPOIs.Contains(actor)) {
-    //                    //        recipient.marker.AddAvoidInRange(actor);
+    //                    //        recipient.combatComponent.AddAvoidInRange(actor);
     //                    //    }
     //                    //}
     //                } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
     //                    reactions.Add("My enemies are killing each other. Isn't that funny?");
     //                    //if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                    //    if (recipient.marker.inVisionPOIs.Contains(actor)) {
-    //                    //        recipient.marker.AddAvoidInRange(actor);
+    //                    //        recipient.combatComponent.AddAvoidInRange(actor);
     //                    //    }
     //                    //}
     //                } else {
@@ -532,7 +532,7 @@ public class Assault : GoapAction {
     //                        reactions.Add(string.Format("I am happy {0} was able to do what I cannot.", actor.name));
     //                        //if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                        //    if (recipient.marker.inVisionPOIs.Contains(actor)) {
-    //                        //        recipient.marker.AddAvoidInRange(actor);
+    //                        //        recipient.combatComponent.AddAvoidInRange(actor);
     //                        //    }
     //                        //}
     //                    } else {
@@ -542,7 +542,7 @@ public class Assault : GoapAction {
     //                        }
     //                        //if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                        //    if (recipient.marker.inVisionPOIs.Contains(actor)) {
-    //                        //        recipient.marker.AddAvoidInRange(actor);
+    //                        //        recipient.combatComponent.AddAvoidInRange(actor);
     //                        //    }
     //                        //}
     //                    }

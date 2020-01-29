@@ -204,8 +204,8 @@ public class CharacterAvatar : MonoBehaviour {
         _party.owner.currentRegion.RemoveCharacterFromLocation(_party.owner);
         targetLocation.AddCharacterToLocation(_party.owner);
 
-        _party.owner.marker.ClearHostilesInRange();
-        _party.owner.marker.ClearAvoidInRange();
+        _party.owner.combatComponent.ClearHostilesInRange();
+        _party.owner.combatComponent.ClearAvoidInRange();
         _party.owner.marker.ClearPOIsInVisionRange();
 
         //place marker at edge tile of target location

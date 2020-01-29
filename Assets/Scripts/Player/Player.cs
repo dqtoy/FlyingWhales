@@ -1284,8 +1284,8 @@ public class Player : ILeader {
         //     Settlement corruptedSettlement = AreaIsCorrupted();
         //     ResetThreat();
         //     for (int i = 0; i < corruptedSettlement.charactersAtLocation.Count; i++) {
-        //         corruptedSettlement.charactersAtLocation[i].marker.ClearAvoidInRange(false);
-        //         corruptedSettlement.charactersAtLocation[i].marker.ClearHostilesInRange(false);
+        //         corruptedSettlement.charactersAtLocation[i].combatComponent.ClearAvoidInRange(false);
+        //         corruptedSettlement.charactersAtLocation[i].combatComponent.ClearHostilesInRange(false);
         //         corruptedSettlement.charactersAtLocation[i].marker.ClearPOIsInVisionRange();
         //         corruptedSettlement.charactersAtLocation[i].marker.ClearTerrifyingObjects();
         //     }

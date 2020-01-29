@@ -226,7 +226,7 @@ public class RestrainCharacter : GoapAction {
     //                recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
     //                if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                    //- If witnessed: Temporarily add Actor to Avoid List
-    //                    recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                    recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                } else if (status == SHARE_INTEL_STATUS.INFORMED) {
     //                    //- If informed: "[Actor Name] shouldn't have done that to [Target Name]!"
     //                    reactions.Add(string.Format("{0} shouldn't have done that to {1}!", actor.name, target.name));
@@ -234,7 +234,7 @@ public class RestrainCharacter : GoapAction {
     //            } else if (relWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
     //                if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                    //- If witnessed: Temporarily add Actor to Avoid List
-    //                    recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                    recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                } else if (status == SHARE_INTEL_STATUS.INFORMED) {
     //                    //- If informed: "I am not fond of [Target Name] at all so I don't care what happens to [him/her]."
     //                    reactions.Add(string.Format("I am not fond of {0} at all so I don't care what happens to {1}.", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.OBJECTIVE, false)));
@@ -272,7 +272,7 @@ public class RestrainCharacter : GoapAction {
     //                recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
     //                if (status == SHARE_INTEL_STATUS.WITNESSED) {
     //                    //- If witnessed: Temporarily add Actor to Avoid List
-    //                    recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
+    //                    recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
     //                } else if (status == SHARE_INTEL_STATUS.INFORMED) {
     //                    //- If informed: "My enemies fighting each other. What a happy day!"
     //                    reactions.Add("My enemies fighting each other. What a happy day!");

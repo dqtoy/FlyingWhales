@@ -330,14 +330,14 @@ public class PlayerManager : MonoBehaviour {
                     if (character.stateComponent.currentState != null) {
                         character.stateComponent.ExitCurrentState();
                     }
-                    character.marker.ClearHostilesInRange();
-                    character.marker.ClearAvoidInRange();
+                    character.combatComponent.ClearHostilesInRange();
+                    character.combatComponent.ClearAvoidInRange();
                     character.SetIsFollowingPlayerInstruction(false); //need to reset before giving commands
                     if (hoveredPOI is Character) {
                         Character target = hoveredPOI as Character;
                         if (character.IsHostileWith(target) && character.IsCombatReady()) {
-                            character.marker.AddHostileInRange(target);
-                            character.marker.AddOnProcessCombatAction((combatState) => combatState.SetForcedTarget(target));
+                            character.combatComponent.Fight(target);
+                            character.combatComponent.AddOnProcessCombatAction((combatState) => combatState.SetForcedTarget(target));
                             //CombatState cs = character.stateComponent.currentState as CombatState;
                             //if (cs != null) {
                             //    cs.SetForcedTarget(target);

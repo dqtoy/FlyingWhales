@@ -47,15 +47,15 @@ public class Taunt : CombatAbility {
                 }
             }
 
-            for (int i = 0; i < affectedByTaunt.Count; i++) {
-                Character affected = affectedByTaunt[i];
-                if(affected.isInCombat) {
-                    CombatState combatState = affected.stateComponent.currentState as CombatState;
-                    combatState.SwitchTarget(character);
-                } else {
-                    affected.marker.AddHostileInRange(character, checkHostility: false);
-                }
-            }
+            //for (int i = 0; i < affectedByTaunt.Count; i++) {
+            //    Character affected = affectedByTaunt[i];
+            //    if(affected.isInCombat) {
+            //        CombatState combatState = affected.stateComponent.currentState as CombatState;
+            //        combatState.SwitchTarget(character);
+            //    } else {
+            //        affected.combatComponent.Fight(character);
+            //    }
+            //}
         }
         base.ActivateAbility(targetPOI);
     }

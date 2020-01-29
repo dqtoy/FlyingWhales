@@ -43,8 +43,8 @@ namespace Traits {
                 //        character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
                 //    }
                 //}
-                character.marker.ClearHostilesInRange(false);
-                character.marker.ClearAvoidInRange(false);
+                character.combatComponent.ClearHostilesInRange(false);
+                character.combatComponent.ClearAvoidInRange(false);
                 //character.AdjustCanPerform(1);
             }
             base.OnAddTrait(sourcePOI);
@@ -54,8 +54,8 @@ namespace Traits {
                 Character character = sourcePOI as Character;
                 //character.AdjustCanPerform(-1);
                 if(character.marker != null) {
-                    character.marker.ClearHostilesInRange(false);
-                    character.marker.ClearAvoidInRange(false);
+                    character.combatComponent.ClearHostilesInRange(false);
+                    character.combatComponent.ClearAvoidInRange(false);
                 }
             }
             base.OnRemoveTrait(sourcePOI, removedBy);

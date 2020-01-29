@@ -43,20 +43,20 @@ public class BerserkedState : CharacterState {
         StartBerserkedMovement();
     }
     public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
-        if(targetPOI is Character) {
-            if (stateComponent.character.faction.isPlayerFaction) {
-                return stateComponent.character.marker.AddHostileInRange(targetPOI as Character, isLethal: areCombatsLethal); //check hostility if from player faction, so as not to attack other characters that are also from the same faction.
-            } else {
-                if (hostileChecker != null) {
-                    if (hostileChecker.Invoke(targetPOI as Character)) {
-                        return stateComponent.character.marker.AddHostileInRange(targetPOI as Character, checkHostility: false, isLethal: areCombatsLethal);
-                    }
-                } else {
-                    return stateComponent.character.marker.AddHostileInRange(targetPOI as Character, checkHostility: false, isLethal: areCombatsLethal);
-                }
-            }
-            //return true;
-        }
+        //if(targetPOI is Character) {
+        //    if (stateComponent.character.faction.isPlayerFaction) {
+        //        return stateComponent.character.combatComponent.AddHostileInRange(targetPOI as Character, isLethal: areCombatsLethal); //check hostility if from player faction, so as not to attack other characters that are also from the same faction.
+        //    } else {
+        //        if (hostileChecker != null) {
+        //            if (hostileChecker.Invoke(targetPOI as Character)) {
+        //                return stateComponent.character.combatComponent.AddHostileInRange(targetPOI as Character, isLethal: areCombatsLethal);
+        //            }
+        //        } else {
+        //            return stateComponent.character.combatComponent.AddHostileInRange(targetPOI as Character, isLethal: areCombatsLethal);
+        //        }
+        //    }
+        //    //return true;
+        //}
         //else if (targetPOI is TileObject) {
         //    TileObject target = targetPOI as TileObject;
         //    if(target.tileObjectType != TILE_OBJECT_TYPE.TREE_OBJECT && target.advertisedActions.Contains(INTERACTION_TYPE.ASSAULT)) {
@@ -99,23 +99,23 @@ public class BerserkedState : CharacterState {
         return base.OnEnterVisionWith(targetPOI);
     }
     public override bool ProcessInVisionPOIsOnStartState() {
-        for (int i = 0; i < stateComponent.character.marker.avoidInRange.Count; i++) {
-            IPointOfInterest hostile = stateComponent.character.marker.avoidInRange[i];
-            if (hostile is Character) {
-                Character hostileChar = hostile as Character;
-                if (stateComponent.character.marker.inVisionCharacters.Contains(hostileChar)) {
-                    stateComponent.character.marker.AddHostileInRange(hostileChar, checkHostility: false, processCombatBehavior: false, isLethal: areCombatsLethal);
-                } else {
-                    stateComponent.character.marker.RemoveAvoidInRange(hostile, false);
-                    i--;
-                }
-            } else {
-                stateComponent.character.marker.RemoveAvoidInRange(hostile, false);
-                i--;
-            }
+        //for (int i = 0; i < stateComponent.character.combatComponent.avoidInRange.Count; i++) {
+        //    IPointOfInterest hostile = stateComponent.character.combatComponent.avoidInRange[i];
+        //    if (hostile is Character) {
+        //        Character hostileChar = hostile as Character;
+        //        if (stateComponent.character.marker.inVisionCharacters.Contains(hostileChar)) {
+        //            stateComponent.character.combatComponent.AddHostileInRange(hostileChar, false, isLethal: areCombatsLethal);
+        //        } else {
+        //            stateComponent.character.combatComponent.RemoveAvoidInRange(hostile, false);
+        //            i--;
+        //        }
+        //    } else {
+        //        stateComponent.character.combatComponent.RemoveAvoidInRange(hostile, false);
+        //        i--;
+        //    }
             
-        }
-        stateComponent.character.marker.ClearAvoidInRange(false);
+        //}
+        stateComponent.character.combatComponent.ClearAvoidInRange(false);
 
         bool hasProcessedCombatBehavior = false;
         if (base.ProcessInVisionPOIsOnStartState()) {
@@ -129,7 +129,7 @@ public class BerserkedState : CharacterState {
                 }
             }
         }
-        if (stateComponent.character.marker.hostilesInRange.Count > 0 && !hasProcessedCombatBehavior) {
+        if (stateComponent.character.combatComponent.hostilesInRange.Count > 0 && !hasProcessedCombatBehavior) {
             CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.COMBAT, stateComponent.character);
             stateComponent.character.jobQueue.AddJobInQueue(job);
             //stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);

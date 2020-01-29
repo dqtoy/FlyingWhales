@@ -52,15 +52,15 @@ namespace Traits {
             //        if (chance < 2 && characterThatWillDoJob.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
             //            characterThatWillDoJob.PrintLogIfActive(GameManager.Instance.TodayLogString() + characterThatWillDoJob.name
             //                + " Hothead Assault Chance: 2, Roll: " + chance);
-            //            if (characterThatWillDoJob.marker.AddHostileInRange(targetCharacter, false, false, false)) {
-            //                if (!characterThatWillDoJob.marker.avoidInRange.Contains(targetCharacter)) {
+            //            if (characterThatWillDoJob.combatComponent.AddHostileInRange(targetCharacter, false, false, false)) {
+            //                if (!characterThatWillDoJob.combatComponent.avoidInRange.Contains(targetCharacter)) {
             //                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "hothead_assault");
             //                    log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             //                    log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             //                    //log.AddLogToInvolvedObjects();
             //                    characterThatWillDoJob.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
             //                }
-            //                //characterThatWillDoJob.marker.ProcessCombatBehavior();
+            //                //characterThatWillDoJob.combatComponent.ProcessCombatBehavior();
             //            }
             //            return true;
             //        }

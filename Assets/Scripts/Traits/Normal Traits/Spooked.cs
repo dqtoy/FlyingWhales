@@ -39,7 +39,7 @@ namespace Traits {
         //    base.OnSeePOI(targetPOI, character);
         //    if (targetPOI is Character) {
         //        Character targetCharacter = targetPOI as Character;
-        //        if (character.marker.AddAvoidInRange(targetCharacter)) {
+        //        if (character.combatComponent.AddAvoidInRange(targetCharacter)) {
         //            AddTerrifyingCharacter(targetCharacter);
         //        }
         //    }

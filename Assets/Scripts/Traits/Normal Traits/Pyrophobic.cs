@@ -58,7 +58,7 @@ namespace Traits {
                 Log log = new Log(GameManager.Instance.Today(), "Trait", name, "flee");
                 log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 owner.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
-                owner.marker.AddAvoidInRange(burningPOI);
+                owner.combatComponent.Flight(burningPOI, "pyrophobic");
             } else {
                 debugLog += "\n-Character decided to trigger Cowering interrupt";
                 owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, owner);

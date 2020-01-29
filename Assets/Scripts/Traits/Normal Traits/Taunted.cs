@@ -21,7 +21,7 @@ namespace Traits {
             base.OnAddTrait(sourcePOI);
             _sourceCharacter = sourcePOI as Character;
             if (!_sourceCharacter.isInCombat) {
-                _sourceCharacter.marker.AddHostileInRange(responsibleCharacter, false);
+                _sourceCharacter.combatComponent.Fight(responsibleCharacter);
             } else {
                 Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, _sourceCharacter);
             }

@@ -11,7 +11,7 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
-            actor.marker.AddAvoidInRange(target, true, "embarassed");
+            actor.combatComponent.Flight(target, "embarassed");
             return true;
         }
         #endregion

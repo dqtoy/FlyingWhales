@@ -546,28 +546,28 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private void OnCharacterExitedArea(Settlement settlement, Character character) {
         if (character.id == this.id) {
             //Clear terrifying characters of this character if he/she leaves the settlement
-            marker.ClearTerrifyingObjects();
+            //marker.ClearTerrifyingObjects();
         } else {
             if (marker == null) {
                 throw new Exception("Marker of " + this.name + " is null!");
             }
             //remove the character that left the settlement from anyone elses list of terrifying characters.
-            if (marker.terrifyingObjects.Count > 0) {
-                if (character.IsInOwnParty()) {
-                    marker.RemoveTerrifyingObject(character);
-                    if (character.ownParty.isCarryingAnyPOI) {
-                        marker.RemoveTerrifyingObject(character.ownParty.carriedPOI);
-                    }
-                } else {
-                    marker.RemoveTerrifyingObject(character.currentParty.owner);
-                    if (character.currentParty.isCarryingAnyPOI) {
-                        marker.RemoveTerrifyingObject(character.currentParty.carriedPOI);
-                    }
-                }
-                //for (int i = 0; i < party.characters.Count; i++) {
-                //    marker.RemoveTerrifyingObject(party.characters[i]);
-                //}
-            }
+            //if (marker.terrifyingObjects.Count > 0) {
+            //    if (character.IsInOwnParty()) {
+            //        marker.RemoveTerrifyingObject(character);
+            //        if (character.ownParty.isCarryingAnyPOI) {
+            //            marker.RemoveTerrifyingObject(character.ownParty.carriedPOI);
+            //        }
+            //    } else {
+            //        marker.RemoveTerrifyingObject(character.currentParty.owner);
+            //        if (character.currentParty.isCarryingAnyPOI) {
+            //            marker.RemoveTerrifyingObject(character.currentParty.carriedPOI);
+            //        }
+            //    }
+            //    //for (int i = 0; i < party.characters.Count; i++) {
+            //    //    marker.RemoveTerrifyingObject(party.characters[i]);
+            //    //}
+            //}
         }
     }
     /// <summary>
@@ -584,8 +584,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //    stateComponent.SetStateToDo(null);
             //}
             currentRegion.RemoveCharacterFromLocation(this);
-            //marker.ClearAvoidInRange(false);
-            //marker.ClearHostilesInRange(false);
+            //combatComponent.ClearAvoidInRange(false);
+            //combatComponent.ClearHostilesInRange(false);
             //marker.ClearPOIsInVisionRange();
 
             UnsubscribeSignals();
@@ -2071,16 +2071,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //CancelOrUnassignRemoveTraitRelatedJobs();
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
             CancelAllJobsExceptForCurrent(false);
-            marker.ClearTerrifyingObjects();
+            //marker.ClearTerrifyingObjects();
             ExecuteLeaveAreaActions();
             needsComponent.OnCharacterLeftLocation(currentRegion);
         } else {
-            if (marker.terrifyingObjects.Count > 0) {
-                marker.RemoveTerrifyingObject(party.owner);
-                if (party.isCarryingAnyPOI) {
-                    marker.RemoveTerrifyingObject(party.carriedPOI);
-                }
-            }
+            //if (marker.terrifyingObjects.Count > 0) {
+            //    marker.RemoveTerrifyingObject(party.owner);
+            //    if (party.isCarryingAnyPOI) {
+            //        marker.RemoveTerrifyingObject(party.carriedPOI);
+            //    }
+            //}
         }
     }
     private void OnArrivedAtArea(Party party) {
@@ -2280,9 +2280,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         bool combatState = !_characterClass.isNonCombatant && traitContainer.GetNormalTrait<Trait>("Injured") == null;
         if (canCombat != combatState) {
             canCombat = combatState;
-            if (canCombat && marker != null) {
-                marker.ClearTerrifyingObjects();
-            }
+            //if (canCombat && marker != null) {
+            //    marker.ClearTerrifyingObjects();
+            //}
         }
     }
     private bool CanCharacterReact(IPointOfInterest targetPOI = null) {
@@ -2765,8 +2765,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                                     if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
                                         CreateWatchEvent(null, targetCombatState, targetCharacter);
                                     } else {
-                                        if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, false, false, isLethal: targetCharacter.marker.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
-                                            if (!marker.avoidInRange.Contains(targetCharacter)) {
+                                        if (combatComponent.Fight(targetCombatState.currentClosestHostile, targetCharacter.combatComponent.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
+                                            //if (!combatComponent.avoidInRange.Contains(targetCharacter)) {
                                                 //Do process combat behavior first for this character, if the current closest hostile
                                                 //of the combat state of this character is also the targetCombatState.currentClosestHostile
                                                 //Then that's only when we apply the join combat log and notif
@@ -2779,38 +2779,37 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                                                 joinLog.AddToFillers(null, this.relationshipContainer.GetRelationshipName(targetCharacter), LOG_IDENTIFIER.STRING_1);
                                                 joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
                                                 PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
-                                            }
-
-                                            //marker.ProcessCombatBehavior();
+                                            //}
+                                            //combatComponent.ProcessCombatBehavior();
                                         }
                                     }
                                 } else {
                                     if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
-                                        if (marker.AddHostileInRange(targetCharacter, false, false, isLethal: targetCharacter.marker.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
-                                            if (!marker.avoidInRange.Contains(targetCharacter)) {
-                                                //Do process combat behavior first for this character, if the current closest hostile
-                                                //of the combat state of this character is also the targetCombatState.currentClosestHostile
-                                                //Then that's only when we apply the join combat log and notif
-                                                //Because if not, it means that this character is already in combat with someone else, and thus
-                                                //should not product join combat log anymore
-                                                Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
-                                                joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                                                joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                                joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.CHARACTER_3);
-                                                joinLog.AddToFillers(null, this.relationshipContainer.GetRelationshipName(currentHostileOfTargetCharacter), LOG_IDENTIFIER.STRING_1);
-                                                joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                                PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
-                                            }
-                                            //marker.ProcessCombatBehavior();
-                                        }
+                                        //if (combatComponent.AddHostileInRange(targetCharacter, false, targetCharacter.combatComponent.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
+                                        //    if (!combatComponent.avoidInRange.Contains(targetCharacter)) {
+                                        //        //Do process combat behavior first for this character, if the current closest hostile
+                                        //        //of the combat state of this character is also the targetCombatState.currentClosestHostile
+                                        //        //Then that's only when we apply the join combat log and notif
+                                        //        //Because if not, it means that this character is already in combat with someone else, and thus
+                                        //        //should not product join combat log anymore
+                                        //        Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
+                                        //        joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                                        //        joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                                        //        joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.CHARACTER_3);
+                                        //        joinLog.AddToFillers(null, this.relationshipContainer.GetRelationshipName(currentHostileOfTargetCharacter), LOG_IDENTIFIER.STRING_1);
+                                        //        joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
+                                        //        PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
+                                        //    }
+                                        //    //combatComponent.ProcessCombatBehavior();
+                                        //}
                                     } else {
                                         CreateWatchEvent(null, targetCombatState, targetCharacter);
                                     }
                                 }
                             } else {
                                 //the target of the combat state is not part of this character's faction
-                                if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, false, false, isLethal: targetCharacter.marker.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
-                                    if (!marker.avoidInRange.Contains(targetCharacter)) {
+                                if (combatComponent.Fight(targetCombatState.currentClosestHostile, targetCharacter.combatComponent.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
+                                    //if (!combatComponent.avoidInRange.Contains(targetCharacter)) {
                                         //TODO: Do process combat behavior first for this character, if the current closest hostile
                                         //of the combat state of this character is also the targetCombatState.currentClosestHostile
                                         //Then that's only when we apply the join combat log and notif
@@ -2822,8 +2821,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                                         joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
                                         joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
                                         PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
-                                    }
-                                    //marker.ProcessCombatBehavior();
+                                    //}
+                                    //combatComponent.ProcessCombatBehavior();
                                 }
                             }
                         }
@@ -2840,8 +2839,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //        } else if (HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
         //            CreateWatchEvent(action, null, target);
         //        } else {
-        //            marker.AddAvoidInRange(action.actor, false);
-        //            marker.AddAvoidInRange(target);
+        //            combatComponent.AddAvoidInRange(action.actor, false);
+        //            combatComponent.AddAvoidInRange(target);
         //        }
         //    } else if (action.goapType == INTERACTION_TYPE.PLAY_GUITAR && state.name == "Play Success" && GetNormalTrait<Trait>("MusicHater") == null) {
         //        int chance = UnityEngine.Random.Range(0, 100);
@@ -2957,13 +2956,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
             int deathWeight = 70; //70
             int unconsciousWeight = 30; //30
-            if (!characterThatAttacked.marker.IsLethalCombatForTarget(this)) {
+            if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
                 deathWeight = 5;
                 unconsciousWeight = 95;
             }
             string rollLog = characterThatAttacked.name + " attacked " + name
                 + ", death weight: " + deathWeight + ", unconscious weight: " + unconsciousWeight
-                + ", isLethal: " + characterThatAttacked.marker.IsLethalCombatForTarget(this);
+                + ", isLethal: " + characterThatAttacked.combatComponent.IsLethalCombatForTarget(this);
 
             if (minion == null && this.traitContainer.GetNormalTrait<Trait>("Unconscious") == null) {
                 combatResultWeights.AddElement("Unconscious", unconsciousWeight);
@@ -2993,7 +2992,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                         break;
                     case "Death":
                         string deathReason = "attacked";
-                        if (!characterThatAttacked.marker.IsLethalCombatForTarget(this)) {
+                        if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
                             deathReason = "accidental_attacked";
                         }
                         this.Death(deathReason, responsibleCharacter: responsibleCharacter);
@@ -3261,9 +3260,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }    
         }
         Messenger.Broadcast(Signals.ADJUSTED_HP, this);
-        if (amount < 0 && IsHealthCriticallyLow()) {
-            Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "critically low health");
-        }
+        //if (amount < 0 && IsHealthCriticallyLow()) {
+        //    Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "critically low health");
+        //}
         if (triggerDeath && previous != this._currentHP) {
             if (this._currentHP <= 0) {
                 if(source != null) {
@@ -5525,7 +5524,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
         //ForceCancelAllJobsTargettingThisCharacter();
-        marker.ClearTerrifyingObjects();
+        //marker.ClearTerrifyingObjects();
         needsComponent.OnCharacterLeftLocation(currentRegion);
 
         CancelAllJobs();
@@ -5686,26 +5685,26 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// Make this character react to a crime that he/she witnessed.
     /// </summary>
     /// <param name="witnessedCrime">Witnessed Crime.</param>
-    public void ReactToCrime(GoapAction witnessedCrime, ref bool hasRelationshipDegraded) {
-        //TODO: Crime System Handling!
-        //ReactToCrime(witnessedCrime.committedCrime, witnessedCrime, witnessedCrime.actorAlterEgo, ref hasRelationshipDegraded, witnessedCrime);
-        //witnessedCrime.OnWitnessedBy(this);
-    }
+    //public void ReactToCrime(GoapAction witnessedCrime, ref bool hasRelationshipDegraded) {
+    //    //TODO: Crime System Handling!
+    //    //ReactToCrime(witnessedCrime.committedCrime, witnessedCrime, witnessedCrime.actorAlterEgo, ref hasRelationshipDegraded, witnessedCrime);
+    //    //witnessedCrime.OnWitnessedBy(this);
+    //}
     /// <summary>
     /// A variation of react to crime in which the parameter SHARE_INTEL_STATUS will be the one to determine if it is informed or witnessed crime
     /// Returns true or false, if the relationship between the reactor and the criminal has degraded
     /// </summary>
-    public bool ReactToCrime(CRIME committedCrime, ActualGoapNode crimeAction, Character criminal, SHARE_INTEL_STATUS status) {
-        bool hasRelationshipDegraded = false;
-        if (status == SHARE_INTEL_STATUS.WITNESSED) {
-            ReactToCrime(committedCrime, crimeAction, criminal, ref hasRelationshipDegraded, crimeAction, null);
-        }else if (status == SHARE_INTEL_STATUS.INFORMED) {
-            ReactToCrime(committedCrime, crimeAction, criminal, ref hasRelationshipDegraded, null, crimeAction);
-        } else {
-            logComponent.PrintLogErrorIfActive("The share intel status is neither INFORMED or WITNESSED");
-        }
-        return hasRelationshipDegraded;
-    }
+    //public bool ReactToCrime(CRIME committedCrime, ActualGoapNode crimeAction, Character criminal, SHARE_INTEL_STATUS status) {
+    //    bool hasRelationshipDegraded = false;
+    //    if (status == SHARE_INTEL_STATUS.WITNESSED) {
+    //        ReactToCrime(committedCrime, crimeAction, criminal, ref hasRelationshipDegraded, crimeAction, null);
+    //    }else if (status == SHARE_INTEL_STATUS.INFORMED) {
+    //        ReactToCrime(committedCrime, crimeAction, criminal, ref hasRelationshipDegraded, null, crimeAction);
+    //    } else {
+    //        logComponent.PrintLogErrorIfActive("The share intel status is neither INFORMED or WITNESSED");
+    //    }
+    //    return hasRelationshipDegraded;
+    //}
     /// <summary>
     /// Base function for crime reactions
     /// </summary>
@@ -5713,114 +5712,114 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// <param name="criminal">The character that committed the crime</param>
     /// <param name="witnessedCrime">The crime witnessed by this character, if this is null, character was only informed of the crime by someone else.</param>
     /// <param name="informedCrime">The crime this character was informed of. NOTE: Should only have value if Share Intel</param>
-    public void ReactToCrime(CRIME committedCrime, ActualGoapNode crimeAction, Character criminal, ref bool hasRelationshipDegraded, ActualGoapNode witnessedCrime = null, ActualGoapNode informedCrime = null) {
-        //NOTE: Moved this to be per action specific. See GoapAction.IsConsideredACrimeBy and GoapAction.CanReactToThisCrime for necessary mechanics.
-        //if (witnessedCrime != null) {
-        //    //if the action that should be considered a crime is part of a job from this character's settlement, do not consider it a crime
-        //    if (witnessedCrime.parentPlan.job != null
-        //        && homeSettlement.jobQueue.jobsInQueue.Contains(witnessedCrime.parentPlan.job)) {
-        //        return;
-        //    }
-        //    //if the witnessed crime is targetting this character, this character should not react to the crime if the crime's doesNotStopTargetCharacter is true
-        //    if (witnessedCrime.poiTarget == this && witnessedCrime.doesNotStopTargetCharacter) {
-        //        return;
-        //    }
-        //}
+    //public void ReactToCrime(CRIME committedCrime, ActualGoapNode crimeAction, Character criminal, ref bool hasRelationshipDegraded, ActualGoapNode witnessedCrime = null, ActualGoapNode informedCrime = null) {
+    //    //NOTE: Moved this to be per action specific. See GoapAction.IsConsideredACrimeBy and GoapAction.CanReactToThisCrime for necessary mechanics.
+    //    //if (witnessedCrime != null) {
+    //    //    //if the action that should be considered a crime is part of a job from this character's settlement, do not consider it a crime
+    //    //    if (witnessedCrime.parentPlan.job != null
+    //    //        && homeSettlement.jobQueue.jobsInQueue.Contains(witnessedCrime.parentPlan.job)) {
+    //    //        return;
+    //    //    }
+    //    //    //if the witnessed crime is targetting this character, this character should not react to the crime if the crime's doesNotStopTargetCharacter is true
+    //    //    if (witnessedCrime.poiTarget == this && witnessedCrime.doesNotStopTargetCharacter) {
+    //    //        return;
+    //    //    }
+    //    //}
         
-        string reactSummary = this.name + " will react to crime committed by " + criminal.name;
-        if(committedCrime == CRIME.NONE) {
-            reactSummary += "\nNo reaction because committed crime is " + committedCrime.ToString();
-            logComponent.PrintLogIfActive(reactSummary);
-            return;
-        }
-        //Log witnessLog = null;
-        //Log reportLog = null;
-        RELATIONSHIP_EFFECT relationshipEfffectWithCriminal = opinionComponent.GetRelationshipEffectWith(criminal);
-        CRIME_TYPE category = committedCrime.GetCategory();
+    //    string reactSummary = this.name + " will react to crime committed by " + criminal.name;
+    //    if(committedCrime == CRIME.NONE) {
+    //        reactSummary += "\nNo reaction because committed crime is " + committedCrime.ToString();
+    //        logComponent.PrintLogIfActive(reactSummary);
+    //        return;
+    //    }
+    //    //Log witnessLog = null;
+    //    //Log reportLog = null;
+    //    RELATIONSHIP_EFFECT relationshipEfffectWithCriminal = opinionComponent.GetRelationshipEffectWith(criminal);
+    //    CRIME_TYPE category = committedCrime.GetCategory();
 
-        //If character witnessed an Infraction crime:
-        if (category == CRIME_TYPE.INFRACTION) {
-            //-Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]."
-            //- Report / Share Intel Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]."
-            //- no additional response
-            reactSummary += "\nCrime committed is infraction.";
-            //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
-            //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
-        }
-        //If character has a positive relationship (Friend, Lover, Paramour) with the criminal
-        else if (relationshipEfffectWithCriminal == RELATIONSHIP_EFFECT.POSITIVE) {
-            reactSummary += "\n" + this.name + " has a positive relationship with " + criminal.name;
-            //and crime severity is a Misdemeanor:
-            if (category == CRIME_TYPE.MISDEMEANOR) {
-                reactSummary += "\nCrime committed is misdemeanor.";
-                //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder] but did not do anything due to their relationship."
-                //-Report / Share Intel Log: "[Character Name] was informed that [Criminal Name] committed [Theft/Assault/Murder] but did not do anything due to their relationship."
-                //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
-                //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing");
-            }
-            //and crime severity is Serious Crimes or worse:
-            else if (category.IsGreaterThanOrEqual(CRIME_TYPE.SERIOUS)) {
-                reactSummary += "\nCrime committed is serious or worse. Removing positive relationships.";
-                //- Relationship Degradation between Character and Criminal
-                hasRelationshipDegraded = RelationshipManager.Instance.RelationshipDegradation(criminal, this, witnessedCrime);
-                if (hasRelationshipDegraded) {
-                    //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed_degraded");
-                    //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed_degraded");
-                    PerRoleCrimeReaction(committedCrime, crimeAction, criminal, witnessedCrime, informedCrime);
-                } else {
-                    if (witnessedCrime != null) {
-                        if (marker.inVisionCharacters.Contains(criminal)) {
-                            marker.AddAvoidInRange(criminal);
-                        }
-                    }
-                    //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
-                    //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing");
-                }
+    //    //If character witnessed an Infraction crime:
+    //    if (category == CRIME_TYPE.INFRACTION) {
+    //        //-Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]."
+    //        //- Report / Share Intel Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]."
+    //        //- no additional response
+    //        reactSummary += "\nCrime committed is infraction.";
+    //        //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
+    //        //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
+    //    }
+    //    //If character has a positive relationship (Friend, Lover, Paramour) with the criminal
+    //    else if (relationshipEfffectWithCriminal == RELATIONSHIP_EFFECT.POSITIVE) {
+    //        reactSummary += "\n" + this.name + " has a positive relationship with " + criminal.name;
+    //        //and crime severity is a Misdemeanor:
+    //        if (category == CRIME_TYPE.MISDEMEANOR) {
+    //            reactSummary += "\nCrime committed is misdemeanor.";
+    //            //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder] but did not do anything due to their relationship."
+    //            //-Report / Share Intel Log: "[Character Name] was informed that [Criminal Name] committed [Theft/Assault/Murder] but did not do anything due to their relationship."
+    //            //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
+    //            //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing");
+    //        }
+    //        //and crime severity is Serious Crimes or worse:
+    //        else if (category.IsGreaterThanOrEqual(CRIME_TYPE.SERIOUS)) {
+    //            reactSummary += "\nCrime committed is serious or worse. Removing positive relationships.";
+    //            //- Relationship Degradation between Character and Criminal
+    //            hasRelationshipDegraded = RelationshipManager.Instance.RelationshipDegradation(criminal, this, witnessedCrime);
+    //            if (hasRelationshipDegraded) {
+    //                //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed_degraded");
+    //                //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed_degraded");
+    //                PerRoleCrimeReaction(committedCrime, crimeAction, criminal, witnessedCrime, informedCrime);
+    //            } else {
+    //                if (witnessedCrime != null) {
+    //                    if (marker.inVisionCharacters.Contains(criminal)) {
+    //                        combatComponent.AddAvoidInRange(criminal);
+    //                    }
+    //                }
+    //                //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
+    //                //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing");
+    //            }
 
-            }
-        }
-        //If character has no relationships with the criminal or they are enemies and the crime is a Misdemeanor or worse:
-        else if ((!this.relationshipContainer.HasRelationshipWith(criminal) || this.opinionComponent.IsEnemiesWith(criminal)) 
-            && category.IsGreaterThanOrEqual(CRIME_TYPE.MISDEMEANOR)) {
-            reactSummary += "\n" + this.name + " does not have a relationship with or is an enemy of " + criminal.name + " and the committed crime is misdemeanor or worse";
-            //- Relationship Degradation between Character and Criminal
-            hasRelationshipDegraded = RelationshipManager.Instance.RelationshipDegradation(criminal, this, witnessedCrime);
-            //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]!"
-            if (hasRelationshipDegraded) {
-                //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed_degraded");
-                //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed_degraded");
-                PerRoleCrimeReaction(committedCrime, crimeAction, criminal, witnessedCrime, informedCrime);
-            } else {
-                if (witnessedCrime != null) {
-                    if (marker.inVisionCharacters.Contains(criminal)) {
-                        marker.AddAvoidInRange(criminal);
-                    }
-                }
-                //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
-                //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing");
-            }
-        }
+    //        }
+    //    }
+    //    //If character has no relationships with the criminal or they are enemies and the crime is a Misdemeanor or worse:
+    //    else if ((!this.relationshipContainer.HasRelationshipWith(criminal) || this.opinionComponent.IsEnemiesWith(criminal)) 
+    //        && category.IsGreaterThanOrEqual(CRIME_TYPE.MISDEMEANOR)) {
+    //        reactSummary += "\n" + this.name + " does not have a relationship with or is an enemy of " + criminal.name + " and the committed crime is misdemeanor or worse";
+    //        //- Relationship Degradation between Character and Criminal
+    //        hasRelationshipDegraded = RelationshipManager.Instance.RelationshipDegradation(criminal, this, witnessedCrime);
+    //        //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]!"
+    //        if (hasRelationshipDegraded) {
+    //            //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed_degraded");
+    //            //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed_degraded");
+    //            PerRoleCrimeReaction(committedCrime, crimeAction, criminal, witnessedCrime, informedCrime);
+    //        } else {
+    //            if (witnessedCrime != null) {
+    //                if (marker.inVisionCharacters.Contains(criminal)) {
+    //                    combatComponent.AddAvoidInRange(criminal);
+    //                }
+    //            }
+    //            //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
+    //            //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing");
+    //        }
+    //    }
 
-        //if (witnessedCrime != null) {
-        //    if (witnessLog != null) {
-        //        witnessLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //        witnessLog.AddToFillers(criminal.owner, criminal.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        //        witnessLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(committedCrime.ToString()), LOG_IDENTIFIER.STRING_1);
-        //        if (this != witnessedCrime.poiTarget) {
-        //            PlayerManager.Instance.player.ShowNotificationFrom(this, witnessLog);
-        //        }
-        //    }
-        //} else {
-        //    if (reportLog != null) {
-        //        reportLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //        reportLog.AddToFillers(criminal.owner, criminal.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        //        reportLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(committedCrime.ToString()), LOG_IDENTIFIER.STRING_1);
-        //        PlayerManager.Instance.player.ShowNotificationFrom(this, reportLog);
-        //    }
-        //}
+    //    //if (witnessedCrime != null) {
+    //    //    if (witnessLog != null) {
+    //    //        witnessLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+    //    //        witnessLog.AddToFillers(criminal.owner, criminal.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //    //        witnessLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(committedCrime.ToString()), LOG_IDENTIFIER.STRING_1);
+    //    //        if (this != witnessedCrime.poiTarget) {
+    //    //            PlayerManager.Instance.player.ShowNotificationFrom(this, witnessLog);
+    //    //        }
+    //    //    }
+    //    //} else {
+    //    //    if (reportLog != null) {
+    //    //        reportLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+    //    //        reportLog.AddToFillers(criminal.owner, criminal.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //    //        reportLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(committedCrime.ToString()), LOG_IDENTIFIER.STRING_1);
+    //    //        PlayerManager.Instance.player.ShowNotificationFrom(this, reportLog);
+    //    //    }
+    //    //}
 
-        logComponent.PrintLogIfActive(reactSummary);
-    }
+    //    logComponent.PrintLogIfActive(reactSummary);
+    //}
     /// <summary>
     /// Crime reactions per role.
     /// </summary>
@@ -5828,91 +5827,91 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// <param name="criminal">The character that committed the crime</param>
     /// <param name="witnessedCrime">The crime witnessed by this character, if this is null, character was only informed of the crime by someone else.</param>
     /// <param name="informedCrime">The crime this character was informed of. NOTE: Should only have value if Share Intel</param>
-    private void PerRoleCrimeReaction(CRIME committedCrime, ActualGoapNode crimeAction, Character criminal, ActualGoapNode witnessedCrime = null, ActualGoapNode informedCrime = null) {
-        //GoapPlanJob job = null;
-        switch (role.roleType) {
-            case CHARACTER_ROLE.CIVILIAN:
-            case CHARACTER_ROLE.ADVENTURER:
-                //- If the character is a Civilian or Adventurer, he will enter Flee mode (fleeing the criminal) and will create a Report Crime Job Type in his personal job queue
-                //if (this.faction != FactionManager.Instance.neutralFaction && criminal.faction == this.faction) {
-                //    //only make character flee, if he/she actually witnessed the crime (not share intel)
-                //    //GoapAction crimeToReport = informedCrime;
-                //    //if (witnessedCrime != null) {
-                //    //    crimeToReport = witnessedCrime;
-                //    //    ////if a character has no negative disabler traits. Do not Flee. This is so that the character will not also add a Report hostile job
-                //    //    //if (!this.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) { 
-                //    //    //    this.marker.AddHostileInRange(criminal.owner, false);
-                //    //    //}
-                //    //}
-                //    //TODO: job = CreateReportCrimeJob(committedCrime, crimeToReport, criminal);
-                //}
-                break;
-            case CHARACTER_ROLE.LEADER:
-            case CHARACTER_ROLE.NOBLE:
-                //- If the character is a Noble or Faction Leader, the criminal will gain the relevant Crime-type trait
-                //If he is a Noble or Faction Leader, he will create the Apprehend Job Type in the Location job queue instead.
-                if (!isFactionless && criminal.faction == this.faction) {
-                    //only add apprehend job if the criminal is part of this characters faction
-                    criminal.AddCriminalTrait(committedCrime, crimeAction);
-                    // CreateApprehendJobFor(criminal);
-                    //crimeAction.OnReportCrime();
-                    //job = JobManager.Instance.CreateNewGoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeSettlement, targetPOI = actor });
-                    //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
-                    //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
-                    //homeSettlement.jobQueue.AddJobInQueue(job);
-                }
+    //private void PerRoleCrimeReaction(CRIME committedCrime, ActualGoapNode crimeAction, Character criminal, ActualGoapNode witnessedCrime = null, ActualGoapNode informedCrime = null) {
+    //    //GoapPlanJob job = null;
+    //    switch (role.roleType) {
+    //        case CHARACTER_ROLE.CIVILIAN:
+    //        case CHARACTER_ROLE.ADVENTURER:
+    //            //- If the character is a Civilian or Adventurer, he will enter Flee mode (fleeing the criminal) and will create a Report Crime Job Type in his personal job queue
+    //            //if (this.faction != FactionManager.Instance.neutralFaction && criminal.faction == this.faction) {
+    //            //    //only make character flee, if he/she actually witnessed the crime (not share intel)
+    //            //    //GoapAction crimeToReport = informedCrime;
+    //            //    //if (witnessedCrime != null) {
+    //            //    //    crimeToReport = witnessedCrime;
+    //            //    //    ////if a character has no negative disabler traits. Do not Flee. This is so that the character will not also add a Report hostile job
+    //            //    //    //if (!this.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) { 
+    //            //    //    //    this.combatComponent.AddHostileInRange(criminal.owner, false);
+    //            //    //    //}
+    //            //    //}
+    //            //    //TODO: job = CreateReportCrimeJob(committedCrime, crimeToReport, criminal);
+    //            //}
+    //            break;
+    //        case CHARACTER_ROLE.LEADER:
+    //        case CHARACTER_ROLE.NOBLE:
+    //            //- If the character is a Noble or Faction Leader, the criminal will gain the relevant Crime-type trait
+    //            //If he is a Noble or Faction Leader, he will create the Apprehend Job Type in the Location job queue instead.
+    //            if (!isFactionless && criminal.faction == this.faction) {
+    //                //only add apprehend job if the criminal is part of this characters faction
+    //                criminal.AddCriminalTrait(committedCrime, crimeAction);
+    //                // CreateApprehendJobFor(criminal);
+    //                //crimeAction.OnReportCrime();
+    //                //job = JobManager.Instance.CreateNewGoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeSettlement, targetPOI = actor });
+    //                //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
+    //                //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
+    //                //homeSettlement.jobQueue.AddJobInQueue(job);
+    //            }
 
-                break;
-            case CHARACTER_ROLE.SOLDIER:
-            case CHARACTER_ROLE.BANDIT:
-                //- If the character is a Soldier, the criminal will gain the relevant Crime-type trait
-                if (!isFactionless && criminal.faction == this.faction) {
-                    //only add apprehend job if the criminal is part of this characters faction
-                    criminal.AddCriminalTrait(committedCrime, crimeAction);
-                    //- If the character is a Soldier, he will also create an Apprehend Job Type in his personal job queue.
-                    //job = JobManager.Instance.CreateNewGoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeSettlement, targetPOI = actor });
-                    //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
-                    //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
-                    //homeSettlement.jobQueue.AddJobInQueue(job);
-                    // CreateApprehendJobFor(criminal, true); //job =
-                    //if (job != null) {
-                    //    homeSettlement.jobQueue.ForceAssignCharacterToJob(job, this);
-                    //}
-                    //crimeAction.OnReportCrime();
-                }
-                break;
-            default:
-                break;
-        }
-    }
-    public void AddCriminalTrait(CRIME crime, ActualGoapNode crimeAction) {
-        Trait trait = null;
-        switch (crime) {
-            case CRIME.THEFT:
-                trait = new Thief();
-                break;
-            case CRIME.ASSAULT:
-                trait = new Assaulter();
-                break;
-            case CRIME.MURDER:
-                trait = new Murderer();
-                break;
-            case CRIME.ATTEMPTED_MURDER:
-                trait = new AttemptedMurderer();
-                break;
-            case CRIME.ABERRATION:
-                trait = new Aberration();
-                break;
-            case CRIME.HERETIC:
-                trait = new Heretic();
-                break;
-            default:
-                break;
-        }
-        if (trait != null) {
-            traitContainer.AddTrait(this, trait, null, crimeAction);
-        }
-    }
+    //            break;
+    //        case CHARACTER_ROLE.SOLDIER:
+    //        case CHARACTER_ROLE.BANDIT:
+    //            //- If the character is a Soldier, the criminal will gain the relevant Crime-type trait
+    //            if (!isFactionless && criminal.faction == this.faction) {
+    //                //only add apprehend job if the criminal is part of this characters faction
+    //                criminal.AddCriminalTrait(committedCrime, crimeAction);
+    //                //- If the character is a Soldier, he will also create an Apprehend Job Type in his personal job queue.
+    //                //job = JobManager.Instance.CreateNewGoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeSettlement, targetPOI = actor });
+    //                //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
+    //                //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
+    //                //homeSettlement.jobQueue.AddJobInQueue(job);
+    //                // CreateApprehendJobFor(criminal, true); //job =
+    //                //if (job != null) {
+    //                //    homeSettlement.jobQueue.ForceAssignCharacterToJob(job, this);
+    //                //}
+    //                //crimeAction.OnReportCrime();
+    //            }
+    //            break;
+    //        default:
+    //            break;
+    //    }
+    //}
+    //public void AddCriminalTrait(CRIME crime, ActualGoapNode crimeAction) {
+    //    Trait trait = null;
+    //    switch (crime) {
+    //        case CRIME.THEFT:
+    //            trait = new Thief();
+    //            break;
+    //        case CRIME.ASSAULT:
+    //            trait = new Assaulter();
+    //            break;
+    //        case CRIME.MURDER:
+    //            trait = new Murderer();
+    //            break;
+    //        case CRIME.ATTEMPTED_MURDER:
+    //            trait = new AttemptedMurderer();
+    //            break;
+    //        case CRIME.ABERRATION:
+    //            trait = new Aberration();
+    //            break;
+    //        case CRIME.HERETIC:
+    //            trait = new Heretic();
+    //            break;
+    //        default:
+    //            break;
+    //    }
+    //    if (trait != null) {
+    //        traitContainer.AddTrait(this, trait, null, crimeAction);
+    //    }
+    //}
     //private void OnCharacterPerformedAction(ActualGoapNode node) {
     //    if (canWitness && marker != null && node.actor != this && node.poiTarget != this) {
     //        bool isInVision = false;
@@ -5978,41 +5977,41 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 ClearIgnoreHostilities();
             }
         } else {
-            if (state.characterState == CHARACTER_STATE.COMBAT && traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") == null && isAtHomeRegion && !ownParty.icon.isTravellingOutside) {
-                //Reference: https://trello.com/c/2ZppIBiI/2428-combat-available-npcs-should-be-able-to-be-aware-of-hostiles-quickly
-                CombatState combatState = state as CombatState;
-                float distance = Vector2.Distance(this.marker.transform.position, characterThatStartedState.marker.transform.position);
-                Character targetCharacter = null;
-                if (combatState.isAttacking && combatState.currentClosestHostile is Character) {
-                    targetCharacter = combatState.currentClosestHostile as Character;
-                }
-                //Debug.Log(this.name + " distance with " + characterThatStartedState.name + " is " + distance.ToString());
-                if (targetCharacter != null && this.isPartOfHomeFaction && characterThatStartedState.isAtHomeRegion && characterThatStartedState.isPartOfHomeFaction && this.IsCombatReady()
-                    && this.IsHostileOutsider(targetCharacter) && (opinionComponent.GetRelationshipEffectWith(characterThatStartedState) == RELATIONSHIP_EFFECT.POSITIVE || characterThatStartedState.role.roleType == CHARACTER_ROLE.SOLDIER)
-                    && distance <= Combat_Signalled_Distance) {
-                    if (marker.AddHostileInRange(targetCharacter, processCombatBehavior: false)) {
-                        if (!marker.avoidInRange.Contains(targetCharacter)) {
-                            Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_signaled");
-                            joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                            joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                            joinLog.AddToFillers(characterThatStartedState, characterThatStartedState.name, LOG_IDENTIFIER.CHARACTER_3);
-                            joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
-                            PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
-                        }
-                        //marker.ProcessCombatBehavior();
-                        return; //do not do watch.
-                    }
-                }
-                if (marker.inVisionCharacters.Contains(characterThatStartedState)) {
-                    ThisCharacterWatchEvent(characterThatStartedState, null, null);
-                }
-            }
+            //if (state.characterState == CHARACTER_STATE.COMBAT && traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") == null && isAtHomeRegion && !ownParty.icon.isTravellingOutside) {
+            //    //Reference: https://trello.com/c/2ZppIBiI/2428-combat-available-npcs-should-be-able-to-be-aware-of-hostiles-quickly
+            //    CombatState combatState = state as CombatState;
+            //    float distance = Vector2.Distance(this.marker.transform.position, characterThatStartedState.marker.transform.position);
+            //    Character targetCharacter = null;
+            //    if (combatState.isAttacking && combatState.currentClosestHostile is Character) {
+            //        targetCharacter = combatState.currentClosestHostile as Character;
+            //    }
+            //    //Debug.Log(this.name + " distance with " + characterThatStartedState.name + " is " + distance.ToString());
+            //    if (targetCharacter != null && this.isPartOfHomeFaction && characterThatStartedState.isAtHomeRegion && characterThatStartedState.isPartOfHomeFaction && this.IsCombatReady()
+            //        && this.IsHostileOutsider(targetCharacter) && (opinionComponent.GetRelationshipEffectWith(characterThatStartedState) == RELATIONSHIP_EFFECT.POSITIVE || characterThatStartedState.role.roleType == CHARACTER_ROLE.SOLDIER)
+            //        && distance <= Combat_Signalled_Distance) {
+            //        if (combatComponent.AddHostileInRange(targetCharacter, false)) {
+            //            if (!combatComponent.avoidInRange.Contains(targetCharacter)) {
+            //                Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_signaled");
+            //                joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            //                joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            //                joinLog.AddToFillers(characterThatStartedState, characterThatStartedState.name, LOG_IDENTIFIER.CHARACTER_3);
+            //                joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
+            //                PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
+            //            }
+            //            //combatComponent.ProcessCombatBehavior();
+            //            return; //do not do watch.
+            //        }
+            //    }
+            //    if (marker.inVisionCharacters.Contains(characterThatStartedState)) {
+            //        ThisCharacterWatchEvent(characterThatStartedState, null, null);
+            //    }
+            //}
         }
     }
     public void OnCharacterEndedState(Character character, CharacterState state) {
         if (character == this) {
             if (state is CombatState && marker != null) {
-                marker.OnThisCharacterEndedCombatState();
+                combatComponent.OnThisCharacterEndedCombatState();
             }
         }
     }
