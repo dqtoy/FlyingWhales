@@ -65,13 +65,7 @@ public class MapGenerator : MonoBehaviour {
             LevelLoaderManager.SetLoadingState(false);
             CameraMove.Instance.CenterCameraOn(data.portal.tileLocation.gameObject);
             AudioManager.Instance.TransitionTo("World Music", 10);
-            Messenger.Broadcast(Signals.GAME_LOADED);
-            yield return new WaitForSeconds(1f);
-            PlayerManager.Instance.player.IncreaseArtifactSlot();
-            PlayerManager.Instance.player.IncreaseSummonSlot();
-            GameManager.Instance.StartProgression();
-            UIManager.Instance.SetSpeedTogglesState(false);
-            PlayerUI.Instance.ShowStartingMinionPicker();
+
             for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
                 Faction faction = FactionManager.Instance.allFactions[i];
                 if (faction.isMajorFaction) {
@@ -91,9 +85,14 @@ public class MapGenerator : MonoBehaviour {
                     }
                 }
             }
-        }
-        
-        
+
+        Messenger.Broadcast(Signals.GAME_LOADED);
+        yield return new WaitForSeconds(1f);
+        PlayerManager.Instance.player.IncreaseArtifactSlot();
+        PlayerManager.Instance.player.IncreaseSummonSlot();
+        GameManager.Instance.StartProgression();
+        //UIManager.Instance.SetSpeedTogglesState(false);
+        //PlayerUI.Instance.ShowStartingMinionPicker();
     }
     private IEnumerator InitializeWorldCoroutine(Save data) {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
