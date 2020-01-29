@@ -6,7 +6,7 @@ public partial class InteractionManager {
         return character.canCombat;
     }
     public bool IsSuicideJobStillValid(Character character) {
-        return character.traitContainer.GetNormalTrait<Trait>("Forlorn") != null;
+        return character.traitContainer.GetNormalTrait<Trait>("Sulking") != null;
     }
     public bool CanMoveOut(Character character) {
         TIME_IN_WORDS time = TIME_IN_WORDS.MORNING;

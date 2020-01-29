@@ -86,7 +86,7 @@ MonoBehaviour:
     type: 2}
   characterIconsParent: {fileID: 0}
   maxLevel: 30
-  heroSprite: {fileID: 21300056, guid: be352ea3d46036640bb6df35b7b4dc2b, type: 3}
+  heroSprite: {fileID: 0}
   _characterPortraitPrefab: {fileID: 1995387493181358, guid: cdfed07929227104599994075478446b,
     type: 2}
   portraitAssets:
@@ -2799,12 +2799,8 @@ MonoBehaviour:
       gender: 0
       characterClassAssets:
         m_keys:
-        - Attack
         - Ravager
-        - Sleep Ground
         m_values:
-        - defaultSprite: {fileID: 0}
-          animationSprites: []
         - defaultSprite: {fileID: 21300000, guid: 41381973a88100446aea32cc5794bd05,
             type: 3}
           animationSprites:
@@ -2816,24 +2812,22 @@ MonoBehaviour:
           - {fileID: 21300000, guid: d5511eb3175c1354abec7f2e35c162fd, type: 3}
           - {fileID: 21300000, guid: 9c406ff63f0b8374f8464e32c432d207, type: 3}
           - {fileID: 21300000, guid: 00446fcf38af91b45b14d10992177f9c, type: 3}
+          - {fileID: 21300000, guid: 35b4896b0cd149440b565ebfdf82fab6, type: 3}
+          - {fileID: 21300000, guid: cd030a0693983ae4c9343704c4af115b, type: 3}
+          - {fileID: 21300000, guid: dfaa2c292f530c14488999fb71be6559, type: 3}
+          - {fileID: 21300000, guid: fe9f0579d28506141aaacd00a1f1373c, type: 3}
+          - {fileID: 21300000, guid: 88cab1c59280af54bb9c343e54585010, type: 3}
+          - {fileID: 21300000, guid: a2103a6c83ec01e4fa22d80827283a98, type: 3}
           - {fileID: 21300000, guid: e42620bbcd493a642b75981e4bba06af, type: 3}
           - {fileID: 21300000, guid: 6d16b37e4428a85479f15ddbeb89d6ea, type: 3}
           - {fileID: 21300000, guid: 116225e411cae314287d4b9ab172dc06, type: 3}
           - {fileID: 21300000, guid: 14af5f16f894b34469f4bc00de7a86d3, type: 3}
-        - defaultSprite: {fileID: 0}
-          animationSprites:
-          - {fileID: 21300000, guid: 88cab1c59280af54bb9c343e54585010, type: 3}
-          - {fileID: 21300000, guid: a2103a6c83ec01e4fa22d80827283a98, type: 3}
     femaleAssets:
       gender: 1
       characterClassAssets:
         m_keys:
-        - Attack
         - Ravager
-        - Sleep Ground
         m_values:
-        - defaultSprite: {fileID: 0}
-          animationSprites: []
         - defaultSprite: {fileID: 21300000, guid: 1b959a7bc06a8bd4292bbb6f2ba4f001,
             type: 3}
           animationSprites:
@@ -2845,14 +2839,16 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 2181b6afc53ef3443ad5b2657799fa03, type: 3}
           - {fileID: 21300000, guid: 48a80c66473ff5443b31a993c5f98bf0, type: 3}
           - {fileID: 21300000, guid: 0dc20db007ef0ba4089672586a9af9bf, type: 3}
+          - {fileID: 21300000, guid: 799b0c9cd422424489755e88b40241d1, type: 3}
+          - {fileID: 21300000, guid: c558ff28d795f684ea0700c927716e05, type: 3}
+          - {fileID: 21300000, guid: daf958fa9c1cf0d4f8143327cd501644, type: 3}
+          - {fileID: 21300000, guid: 10fc1e1900503e94f824da2e3ac34859, type: 3}
+          - {fileID: 21300000, guid: 0ed6bb5a01ff09d419b590feae107432, type: 3}
+          - {fileID: 21300000, guid: 738e6a1cce21562458bbdaea08d07482, type: 3}
           - {fileID: 21300000, guid: 4f6c73d3d8feef94789004c73bf374bb, type: 3}
           - {fileID: 21300000, guid: 5ce3525323251964c935f0787fd3e6ac, type: 3}
           - {fileID: 21300000, guid: 27d6a628a4be7d54fabf7480aca30051, type: 3}
           - {fileID: 21300000, guid: ad6bdabf045effc4cae98611d3d8d19c, type: 3}
-        - defaultSprite: {fileID: 0}
-          animationSprites:
-          - {fileID: 21300000, guid: 0ed6bb5a01ff09d419b590feae107432, type: 3}
-          - {fileID: 21300000, guid: 738e6a1cce21562458bbdaea08d07482, type: 3}
   baseAnimator: {fileID: 0}
   corpseSprite: {fileID: 21300000, guid: 5255390e6fedf8140a25b567a5f57b6c, type: 3}
   summonSettings:

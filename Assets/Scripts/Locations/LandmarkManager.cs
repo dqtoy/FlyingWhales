@@ -223,14 +223,25 @@ public partial class LandmarkManager : MonoBehaviour {
         return null;
     }
     public BaseLandmark GetLandmarkOfType(LANDMARK_TYPE landmarkType) {
-        List<BaseLandmark> allLandmarks = GetAllLandmarks();
-        for (int i = 0; i < allLandmarks.Count; i++) {
-            BaseLandmark currLandmark = allLandmarks[i];
+        List<BaseLandmark> _allLandmarks = GetAllLandmarks();
+        for (int i = 0; i < _allLandmarks.Count; i++) {
+            BaseLandmark currLandmark = _allLandmarks[i];
             if (currLandmark.specificLandmarkType == landmarkType) {
                 return currLandmark;
             }
         }
         return null;
+    }
+    public List<BaseLandmark> GetLandmarksOfType(LANDMARK_TYPE landmarkType) {
+        List<BaseLandmark> landmarks = new List<BaseLandmark>();
+        List<BaseLandmark> _allLandmarks = GetAllLandmarks();
+        for (int i = 0; i < _allLandmarks.Count; i++) {
+            BaseLandmark currLandmark = _allLandmarks[i];
+            if (currLandmark.specificLandmarkType == landmarkType) {
+                landmarks.Add(currLandmark);
+            }
+        }
+        return landmarks;
     }
     public List<BaseLandmark> GetAllLandmarks() {
         List<BaseLandmark> landmarks = new List<BaseLandmark>();

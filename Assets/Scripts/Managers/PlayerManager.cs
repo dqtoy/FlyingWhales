@@ -65,7 +65,7 @@ public class PlayerManager : MonoBehaviour {
         player.CreatePlayerFaction();
         
         Settlement existingPlayerSettlement = player.CreatePlayerSettlement(portal);
-        existingPlayerSettlement.GeneratePlayerStructures(portalStructure);
+        existingPlayerSettlement.GenerateStructures(portalStructure);
         
         LandmarkManager.Instance.OwnSettlement(player.playerFaction, existingPlayerSettlement);
         

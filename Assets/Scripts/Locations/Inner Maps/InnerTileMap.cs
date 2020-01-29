@@ -186,7 +186,8 @@ namespace Inner_Maps {
             int batchCount = 0;
             for (int i = 0; i < allTiles.Count; i++) {
                 LocationGridTile tile = allTiles[i];
-                if (tile.structure != null && !tile.structure.structureType.IsOpenSpace()) { continue; } //skip non open space structure tiles.
+                if (tile.structure != null && !tile.structure.structureType.IsOpenSpace() 
+                    && tile.structure.structureType != STRUCTURE_TYPE.MONSTER_LAIR) { continue; } //skip non open space structure tiles.
                 tile.CreateSeamlessEdgesForTile(this);
                 batchCount++;
                 if (batchCount == MapGenerationData.InnerMapSeamlessEdgeBatches) {
@@ -658,10 +659,15 @@ namespace Inner_Maps {
                 }
                 currTile.SetPreviousGroundVisual(null);
 
-                if (currTile.buildSpotOwner.hexTileOwner != null 
-                    && (currTile.buildSpotOwner.hexTileOwner.elevationType == ELEVATION.MOUNTAIN 
-                        || currTile.buildSpotOwner.hexTileOwner.elevationType == ELEVATION.WATER)) {
-                    continue; //skip other details generation for tiles belonging to mountain or water tiles, since they will be overwritten after ElevationStructureGeneration anyway.
+                if (currTile.buildSpotOwner.hexTileOwner != null) {
+                    if ((currTile.buildSpotOwner.hexTileOwner.elevationType == ELEVATION.MOUNTAIN 
+                                                || currTile.buildSpotOwner.hexTileOwner.elevationType == ELEVATION.WATER)) {
+                        continue; //skip other details generation for tiles belonging to mountain or water tiles, since they will be overwritten after ElevationStructureGeneration anyway.    
+                    }
+                    if (currTile.buildSpotOwner.hexTileOwner.landmarkOnTile != null 
+                        && currTile.buildSpotOwner.hexTileOwner.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.MONSTER_LAIR) {
+                        continue; //skip other details generation for tiles belonging to monster lair, since they will be overwritten anyway.    
+                    }
                 }
                 
                 //trees and shrubs
@@ -711,10 +717,15 @@ namespace Inner_Maps {
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile currTile = tiles[i];
                 
-                if (currTile.buildSpotOwner.hexTileOwner != null 
-                    && (currTile.buildSpotOwner.hexTileOwner.elevationType == ELEVATION.MOUNTAIN 
-                        || currTile.buildSpotOwner.hexTileOwner.elevationType == ELEVATION.WATER)) {
-                    continue; //skip other details generation for tiles belonging to mountain or water tiles, since they will be overwritten after ElevationStructureGeneration anyway.
+                if (currTile.buildSpotOwner.hexTileOwner != null) {
+                    if ((currTile.buildSpotOwner.hexTileOwner.elevationType == ELEVATION.MOUNTAIN 
+                         || currTile.buildSpotOwner.hexTileOwner.elevationType == ELEVATION.WATER)) {
+                        continue; //skip other details generation for tiles belonging to mountain or water tiles, since they will be overwritten after ElevationStructureGeneration anyway.    
+                    }
+                    if (currTile.buildSpotOwner.hexTileOwner.landmarkOnTile != null 
+                        && currTile.buildSpotOwner.hexTileOwner.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.MONSTER_LAIR) {
+                        continue; //skip other details generation for tiles belonging to monster lair, since they will be overwritten anyway.    
+                    }
                 }
                 
                 if (!currTile.hasDetail && currTile.HasNeighbouringWalledStructure() == false) {
@@ -754,7 +765,6 @@ namespace Inner_Maps {
         }
         public IEnumerator GenerateDetails() {
             //Generate details for the outside map
-            //&& (x.buildSpotOwner.hexTileOwner == null || (x.buildSpotOwner.hexTileOwner.elevationType != ELEVATION.WATER && x.buildSpotOwner.hexTileOwner.elevationType != ELEVATION.MOUNTAIN))
             yield return StartCoroutine(MapPerlinDetails(
                 allTiles.Where(x =>
                     x.objHere == null
@@ -765,30 +775,30 @@ namespace Inner_Maps {
                 ).ToList()
             ));
 
-            if (location.locationType != LOCATION_TYPE.DUNGEON) {
-                if (location.structures.ContainsKey(STRUCTURE_TYPE.WORK_AREA)) {
-                    //only put details on tiles that
-                    //  - do not already have details
-                    //  - is not a road
-                    //  - does not have an object place there (Point of Interest)
-                    //  - is not near the gate (so as not to block path going outside)
-
-                    //Generate details for inside map (Trees, shrubs, etc.)
-                    yield return StartCoroutine(MapPerlinDetails(location.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).tiles
-                        .Where(x => 
-                            !x.hasDetail
-                            && x.objHere == null 
-                            && !x.isLocked).ToList()));
-
-                    //Generate details for work settlement (crates, barrels)
-                    yield return StartCoroutine(WorkAreaDetails(location.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).tiles
-                        .Where(x => 
-                            !x.hasDetail 
-                            && x.objHere == null 
-                            && !x.isLocked
-                            && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Structure_Entrance)).ToList()));
-                }
-            }
+            // if (location.locationType != LOCATION_TYPE.DUNGEON) {
+            //     if (location.structures.ContainsKey(STRUCTURE_TYPE.WORK_AREA)) {
+            //         //only put details on tiles that
+            //         //  - do not already have details
+            //         //  - is not a road
+            //         //  - does not have an object place there (Point of Interest)
+            //         //  - is not near the gate (so as not to block path going outside)
+            //
+            //         //Generate details for inside map (Trees, shrubs, etc.)
+            //         yield return StartCoroutine(MapPerlinDetails(location.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).tiles
+            //             .Where(x => 
+            //                 !x.hasDetail
+            //                 && x.objHere == null 
+            //                 && !x.isLocked).ToList()));
+            //
+            //         //Generate details for work settlement (crates, barrels)
+            //         yield return StartCoroutine(WorkAreaDetails(location.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).tiles
+            //             .Where(x => 
+            //                 !x.hasDetail 
+            //                 && x.objHere == null 
+            //                 && !x.isLocked
+            //                 && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Structure_Entrance)).ToList()));
+            //     }
+            // }
         }
         #endregion
 

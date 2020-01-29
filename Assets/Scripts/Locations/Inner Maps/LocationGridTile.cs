@@ -197,7 +197,7 @@ namespace Inner_Maps {
                             parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.tundraTile);    
                         }
                     } else if (parentMap.location.coreTile.biomeType == BIOMES.DESERT) {
-                        if (structure != null && structure.structureType == STRUCTURE_TYPE.CAVE) {
+                        if (structure != null && (structure.structureType == STRUCTURE_TYPE.CAVE || structure.structureType == STRUCTURE_TYPE.MONSTER_LAIR)) {
                             SetGroundType(Ground_Type.Stone);
                             //override tile to use stone
                             parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.stoneTile);    
@@ -265,9 +265,6 @@ namespace Inner_Maps {
             Dictionary<GridNeighbourDirection, LocationGridTile> neighbours;
             if (HasCardinalNeighbourOfDifferentGroundType(out neighbours)) {
                 summary += $"\nHas Neighbour of different ground type. Checking neighbours {neighbours.Count.ToString()}";
-                //grass should be higher than dirt
-                //dirt should be higher than cobble
-                //cobble should be higher than grass
                 Dictionary<GridNeighbourDirection, LocationGridTile> fourNeighbours = FourNeighboursDictionary();
                 foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in fourNeighbours) {
                     LocationGridTile currNeighbour = keyValuePair.Value;

@@ -11,7 +11,9 @@ public class MapGenerationData {
 	//batching values
 	public static int WorldMapTileGenerationBatches = 200;
 	public static int WorldMapOuterGridGenerationBatches = 200;
-	public static int InnerMapTileGenerationBatches = 200;
+	public static int WorldMapFeatureGenerationBatches = 200;
+	public static int WorldMapHabitabilityGenerationBatches = 300;
+	public static int InnerMapTileGenerationBatches = 400;
 	public static int InnerMapSeamlessEdgeBatches = 200;
 	public static int InnerMapDetailBatches = 200;
 	public static int InnerMapElevationBatches = 200; 
@@ -23,6 +25,7 @@ public class MapGenerationData {
 	public int width;
 	public int height;
 	public int regionCount;
+	public int[,] habitabilityValues;
 	public BaseLandmark portal;
 	public LocationStructure portalStructure;
 	
