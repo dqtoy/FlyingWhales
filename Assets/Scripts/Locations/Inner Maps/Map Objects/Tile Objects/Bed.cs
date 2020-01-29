@@ -208,10 +208,9 @@ public class Bed : TileObject {
             if (users[i] != null) {
                 Character user = users[i];
                 RELATIONSHIP_EFFECT relEffect = character.opinionComponent.GetRelationshipEffectWith(user);
-                if(character.relationshipContainer.HasRelationshipWith(user, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.PARAMOUR) == false
-                   && relEffect != RELATIONSHIP_EFFECT.POSITIVE) {
-                    //if the bed has a user that is not the actors lover/paramour/positive opinion
-                    //do not allow actor to sleep in this bed.
+                if(character.opinionComponent.HasOpinion(user) == false 
+                   || character.opinionComponent.IsEnemiesWith(user) 
+                   || character.opinionComponent.HasOpinionLabelWithCharacter(user, OpinionComponent.Acquaintance)) {
                     return false;
                 }
             }
