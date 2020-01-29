@@ -18,20 +18,20 @@ public class CharacterRelationshipValidator : IRelationshipValidator {
         switch (type) {
             case RELATIONSHIP_TYPE.LOVER:
                 //- **Lover:** Positive, Permanent (Can only have 1)
-                //check if this character already has a lover and that the target character is not his/her paramour
+                //check if this character already has a lover and that the target character is not his/her affair
                 if (character.relationshipContainer.GetRelatablesWithRelationship(type).Count > 0) {
                     return false;
                 }
                 if (relationshipsWithTarget != null &&
-                    (relationshipsWithTarget.Contains(RELATIONSHIP_TYPE.PARAMOUR)) || sourceCharacter.opinionComponent.IsEnemiesWith(targetCharacter)) {
+                    (relationshipsWithTarget.Contains(RELATIONSHIP_TYPE.AFFAIR)) || sourceCharacter.opinionComponent.IsEnemiesWith(targetCharacter)) {
                     return false;
                 }
                 return true;
 
-            case RELATIONSHIP_TYPE.PARAMOUR:
+            case RELATIONSHIP_TYPE.AFFAIR:
                 //- **Paramour:** Positive, Transient (Can only have 1)
-                //check if this character already has a paramour and that the target character is not his/her lover
-                //Comment Reason: Allowed multiple paramours
+                //check if this character already has a affair and that the target character is not his/her lover
+                //Comment Reason: Allowed multiple affairs
                 //if (GetCharacterWithRelationship(type) != null) {
                 //    return false;
                 //}

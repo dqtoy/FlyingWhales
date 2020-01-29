@@ -45,8 +45,8 @@ public class TransformToWolfForm : GoapAction {
     //        reactions.Add("Please do not tell anyone else about this. I beg you!");
     //        //-**Recipient Effect * *: no effect
     //    }
-    //    //Recipient and Actor are from the same faction and are lovers or paramours
-    //    else if (actorAlterEgo.faction == recipient.faction && (recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.LOVER) || recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR))) {
+    //    //Recipient and Actor are from the same faction and are lovers or affairs
+    //    else if (actorAlterEgo.faction == recipient.faction && (recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.LOVER) || recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.AFFAIR))) {
     //        //- **Recipient Response Text**: [Actor Name] may be a monster, but I love [him/her] still!
     //        reactions.Add(string.Format("{0} may be a monster, but I love {1} still!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
     //        //- **Recipient Effect**: no effect

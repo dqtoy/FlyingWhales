@@ -36,7 +36,7 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
                 //character2.opinionComponent.AdjustOpinion(character1, relString, -25);
                 break;
             case RELATIONSHIP_TYPE.RELATIVE:
-            case RELATIONSHIP_TYPE.PARAMOUR:
+            case RELATIONSHIP_TYPE.AFFAIR:
                 character1.opinionComponent.AdjustOpinion(character2, relString, 20);
                 //character2.opinionComponent.AdjustOpinion(character1, relString, 20);
                 break;

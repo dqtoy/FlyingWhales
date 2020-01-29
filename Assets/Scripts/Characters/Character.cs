@@ -1331,15 +1331,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    Character currCharacter = CharacterManager.Instance.allCharacters[i];
         //    if (currCharacter != targetCharacter && currCharacter != this) {
         //        if (currCharacter.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) 
-        //            || currCharacter.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
+        //            || currCharacter.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR)) {
         //            hasLoverOrParamour = true;
         //            break;
         //        }
         //    }
         //}
         //if (hasLoverOrParamour) {
-        //    List<Character> loversOrParamours = targetCharacter.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR).Select(x => (x as AlterEgoData).owner).ToList(); //TODO: Revise this
-        //    Character chosenLoverOrParamour = loversOrParamours[UnityEngine.Random.Range(0, loversOrParamours.Count)];
+        //    List<Character> loversOrAffairs = targetCharacter.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.AFFAIR).Select(x => (x as AlterEgoData).owner).ToList(); //TODO: Revise this
+        //    Character chosenLoverOrParamour = loversOrAffairs[UnityEngine.Random.Range(0, loversOrAffairs.Count)];
         //    if(chosenLoverOrParamour != null) {
         //        int dayTo = GameManager.days;
         //        int dayFrom = dayTo - 3;
@@ -2834,9 +2834,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    if (action.goapType == INTERACTION_TYPE.MAKE_LOVE && state.name == "Make Love Success") {
         //        MakeLove makeLove = action as MakeLove;
         //        Character target = makeLove.targetCharacter;
-        //        if (HasRelationshipOfTypeWith(action.actor, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+        //        if (HasRelationshipOfTypeWith(action.actor, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.AFFAIR)) {
         //            CreateWatchEvent(action, null, action.actor);
-        //        } else if (HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+        //        } else if (HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.AFFAIR)) {
         //            CreateWatchEvent(action, null, target);
         //        } else {
         //            combatComponent.AddAvoidInRange(action.actor, false);
@@ -4115,12 +4115,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return positiveWeight + negativeWeight;
     }
-    public float GetBecomeParamoursWeightWith(Character targetCharacter, IRelationshipData relData, params CHARACTER_MOOD[] moods) {
-        //**if they dont have a negative relationship and at least one of them has a lover, they may become paramours**
+    public float GetBecomeAffairsWeightWith(Character targetCharacter, IRelationshipData relData, params CHARACTER_MOOD[] moods) {
+        //**if they dont have a negative relationship and at least one of them has a lover, they may become affairs**
         float positiveWeight = 0;
         float negativeWeight = 0;
         if (opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.opinionComponent.GetRelationshipEffectWith(this) != RELATIONSHIP_EFFECT.NEGATIVE
-            && relationshipValidator.CanHaveRelationship(this, targetCharacter,  RELATIONSHIP_TYPE.PARAMOUR) && targetCharacter.relationshipValidator.CanHaveRelationship(targetCharacter, this, RELATIONSHIP_TYPE.PARAMOUR)
+            && relationshipValidator.CanHaveRelationship(this, targetCharacter,  RELATIONSHIP_TYPE.AFFAIR) && targetCharacter.relationshipValidator.CanHaveRelationship(targetCharacter, this, RELATIONSHIP_TYPE.AFFAIR)
             && role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
             for (int i = 0; i < moods.Length; i++) {
                 CHARACTER_MOOD mood = moods[i];

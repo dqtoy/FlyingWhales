@@ -72,12 +72,12 @@ public class POITestingUI : MonoBehaviour {
             Character target = poi as Character;
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, INTERACTION_TYPE.MAKE_LOVE, target, UIManager.Instance.characterInfoUI.activeCharacter);
             UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
-            //if (UIManager.Instance.characterInfoUI.activeCharacter.HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+            //if (UIManager.Instance.characterInfoUI.activeCharacter.HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.AFFAIR)) {
             //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY_FORLORN, INTERACTION_TYPE.INVITE_TO_MAKE_LOVE, target);
             //    job.SetCannotOverrideJob(true);
             //    UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job, false);
             //} else {
-            //    Debug.LogError("Must be paramour or lover!");
+            //    Debug.LogError("Must be affair or lover!");
             //}
         } else {
             Debug.LogError(poi.name + " is not a character!");

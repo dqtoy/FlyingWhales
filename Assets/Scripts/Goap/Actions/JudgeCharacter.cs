@@ -335,7 +335,7 @@ public class JudgeCharacter : GoapAction {
     //        //-**Recipient Effect * *: no effect
     //    }
     //    //Recipient considers Target a personal Friend, Paramour, Lover or Relative:
-    //    else if (recipient.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.PARAMOUR, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.RELATIVE).Contains(poiTargetAlterEgo)) {
+    //    else if (recipient.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.AFFAIR, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.RELATIVE).Contains(poiTargetAlterEgo)) {
     //        //- **Recipient Response Text**: "I cannot forgive [Actor Name] for executing [Target Name]!"
     //        reactions.Add(string.Format("I cannot forgive {0} for executing {1}!", actor.name, target.name));
     //        //-**Recipient Effect * *:  Recipient will consider Actor an Enemy
@@ -385,7 +385,7 @@ public class JudgeCharacter : GoapAction {
     //        //-**Recipient Effect * *: no effect
     //    }
     //    //Recipient considers Target a personal Friend, Paramour, Lover or Relative:
-    //    else if (recipient.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.PARAMOUR, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.RELATIVE).Contains(target.currentAlterEgo)) {
+    //    else if (recipient.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.AFFAIR, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.RELATIVE).Contains(target.currentAlterEgo)) {
     //        //- **Recipient Response Text**: "I am grateful that [Actor Name] released [Target Name] unharmed."
     //        reactions.Add(string.Format("I am grateful that {0} released {1} unharmed.", actor.name, target.name));
     //        //- **Recipient Effect**:  If they don't have any relationship yet, Recipient will consider Actor a Friend
@@ -432,7 +432,7 @@ public class JudgeCharacter : GoapAction {
     //        //-**Recipient Effect * *: no effect
     //    }
     //    //Recipient considers Target a personal Friend, Paramour, Lover or Relative:
-    //    else if (recipient.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.PARAMOUR, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.RELATIVE).Contains(poiTargetAlterEgo)) {
+    //    else if (recipient.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.AFFAIR, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.RELATIVE).Contains(poiTargetAlterEgo)) {
     //        //- **Recipient Response Text**: "I am grateful that [Actor Name] exiled [Target Name] unharmed."
     //        reactions.Add(string.Format("I am grateful that {0} exiled {1} unharmed.", actor.name, target.name));
     //        //- **Recipient Effect**:  no effect

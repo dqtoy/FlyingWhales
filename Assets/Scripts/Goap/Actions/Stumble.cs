@@ -64,9 +64,9 @@ public class Stumble : GoapAction {
     //                CreateLaughAtJob(recipient, actor);
     //            }
     //        } else if (relWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
-    //            if (recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)
+    //            if (recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.AFFAIR)
     //                || recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
-    //                //If they are lovers, paramours or relatives and they saw the other: -stumbled
+    //                //If they are lovers, affairs or relatives and they saw the other: -stumbled
     //                //They will trigger a personal https://trello.com/c/iDsfwQ7d/2845-character-feeling-concerned job
     //                CreateFeelingConcernedJob(recipient, actor);
     //            } else if (recipient.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND)) {

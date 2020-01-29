@@ -56,7 +56,7 @@ namespace Traits {
         //private void OnHearGuitarPlaying(Character guitarPlayer) {
         //    //The character will gain Annoyed trait whenever it gets within vision of someone playing music. If Actor has a Lover or Paramour relationship with the target, create a Break Up job for the Actor:
         //    owner.AddTrait("Annoyed");
-        //    if (owner.HasRelationshipOfTypeWith(guitarPlayer, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+        //    if (owner.HasRelationshipOfTypeWith(guitarPlayer, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.AFFAIR)) {
         //        if (owner.CreateBreakupJob(guitarPlayer) != null) {
         //            Log log = new Log(GameManager.Instance.Today(), "Trait", "MusicHater", "break_up");
         //            log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

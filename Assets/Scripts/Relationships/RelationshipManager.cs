@@ -61,8 +61,8 @@ public class RelationshipManager : MonoBehaviour {
                 return RELATIONSHIP_TYPE.RELATIVE;
             case RELATIONSHIP_TYPE.LOVER:
                 return RELATIONSHIP_TYPE.LOVER;
-            case RELATIONSHIP_TYPE.PARAMOUR:
-                return RELATIONSHIP_TYPE.PARAMOUR;
+            case RELATIONSHIP_TYPE.AFFAIR:
+                return RELATIONSHIP_TYPE.AFFAIR;
             case RELATIONSHIP_TYPE.MASTER:
                 return RELATIONSHIP_TYPE.SERVANT;
             case RELATIONSHIP_TYPE.SERVANT:
@@ -446,9 +446,9 @@ public class RelationshipManager : MonoBehaviour {
         //        hasDegraded = true;
         //    }
         //}
-        ////If Actor and Target are Paramours, 25% chance to create a Break Up Job with the Paramour.
-        //else if (target.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR)) {
-        //    summary += "\n" + actorAlterEgo.owner.name + " and " + target.name + " are  paramours. Rolling for chance to create break up job...";
+        ////If Actor and Target are Affairs, 25% chance to create a Break Up Job with the Paramour.
+        //else if (target.relationshipContainer.HasRelationshipWith(actorAlterEgo, RELATIONSHIP_TRAIT.AFFAIR)) {
+        //    summary += "\n" + actorAlterEgo.owner.name + " and " + target.name + " are  affairs. Rolling for chance to create break up job...";
         //    int roll = UnityEngine.Random.Range(0, 100);
         //    summary += "\nRoll is " + roll.ToString();
         //    if (roll < 25) {
