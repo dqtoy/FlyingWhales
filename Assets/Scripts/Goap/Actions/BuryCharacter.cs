@@ -4,6 +4,8 @@ using System.Linq;
 using Inner_Maps;
 using UnityEngine;  
 using Traits;
+using UtilityScripts;
+
 public class BuryCharacter : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
@@ -27,7 +29,17 @@ public class BuryCharacter : GoapAction {
         }
     }
     public override LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {
-        return null;
+        LocationStructure targetStructure = GetTargetStructure(goapNode);
+        if (targetStructure.structureType == STRUCTURE_TYPE.WILDERNESS && goapNode.actor.homeSettlement != null) {
+            List<LocationGridTile> validTiles = new List<LocationGridTile>();
+            goapNode.actor.homeSettlement.tiles.ForEach(t => 
+                validTiles.AddRange(
+                    t.locationGridTiles.Where(x => targetStructure.unoccupiedTiles.Contains(x))
+                )
+            );
+            return CollectionUtilities.GetRandomElement(validTiles);
+        }
+        return null; //allow normal logic to pick target tile
     }
     protected override void ConstructBasePreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET }, IsInActorParty);
@@ -51,7 +63,7 @@ public class BuryCharacter : GoapAction {
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         string stateName = "Target Missing";
         bool defaultTargetMissing = false;
-        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(false, stateName);
         //bury cannot be invalid because all cases are handled by the requirements of the action
         return goapActionInvalidity;
     }

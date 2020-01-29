@@ -21,6 +21,15 @@ public class BigTreeObject : TreeObject {
 	}
 
 	public static bool CanBePlacedOnTile(LocationGridTile tile) {
+		if (tile.isOccupied) {
+			return false;
+		}
+		if (tile.structure != null && tile.structure.structureType.IsOpenSpace() == false) {
+			return false;
+		}
+		if (tile.HasNeighbourOfType(LocationGridTile.Tile_Type.Wall)) {
+			return false;
+		}
 		List<LocationGridTile> overlappedTiles = tile.parentMap.GetTiles(new Point(2, 2), tile);
 		int invalidOverlap = overlappedTiles.Count(t => t.hasDetail || t.objHere != null|| t.buildSpotOwner.canBeBuiltOnByNPC == false || t.tileType == LocationGridTile.Tile_Type.Wall);
 

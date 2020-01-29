@@ -23,8 +23,8 @@ public class HextileInfoUI : UIMenu {
     public override void OpenMenu() {
         currentlyShowingHexTile?.SetBordersState(false);
         currentlyShowingHexTile?.SetBordersGlowState(false);
-        base.OpenMenu();
         currentlyShowingHexTile = _data as HexTile;
+        base.OpenMenu();
         currentlyShowingHexTile.SetBordersState(true);
         currentlyShowingHexTile.SetBordersGlowState(true);
         UpdateBasicInfo();

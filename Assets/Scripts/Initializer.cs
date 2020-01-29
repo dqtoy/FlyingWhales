@@ -25,11 +25,11 @@ public class Initializer : MonoBehaviour {
 
         TokenManager.Instance.Initialize();
         JobManager.Instance.Initialize();
+        PlayerUI.Instance.Initialize();
         yield return null;
     }
 
     public void InitializeDataAfterWorldCreation() {
-        PlayerUI.Instance.Initialize();
         PlayerUI.Instance.InitializeAfterGameLoaded();
     }
 }

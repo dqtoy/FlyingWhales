@@ -41,6 +41,7 @@ public class Summon : Character, IWorldObject {
         OnUpdateRace();
         OnUpdateCharacterClass();
 
+        moodComponent.OnCharacterBecomeMinionOrSummon();
         moodComponent.SetMoodValue(50);
 
         CreateOwnParty();
