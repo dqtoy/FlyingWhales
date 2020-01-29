@@ -108,12 +108,12 @@ public class Biomes : MonoBehaviour {
             } else if (currentHexTile.yCoordinate < 0) {
                 int originSortingOrder = GridMap.Instance.map[0, 0].spriteRenderer.sortingOrder;
                 int differenceFromOrigin = Mathf.Abs(currentHexTile.yCoordinate);
-                sortingOrder = originSortingOrder + (differenceFromOrigin * 10);
+                sortingOrder = originSortingOrder + (differenceFromOrigin * EditableValuesManager.Instance.sortingOrdersInBetweenHexTileRows);
             } else {
-                sortingOrder = (mapHeight -  yCoordinate) * 10;
+                sortingOrder = (mapHeight -  yCoordinate) * EditableValuesManager.Instance.sortingOrdersInBetweenHexTileRows;
             }
         } else {
-            sortingOrder = (mapHeight -  yCoordinate) * 10; //10 is the number of sorting order between rows
+            sortingOrder = (mapHeight -  yCoordinate) * EditableValuesManager.Instance.sortingOrdersInBetweenHexTileRows;
         }
 
         if (PlayerManager.Instance.player != null && currentHexTile.settlementOnTile != null) {

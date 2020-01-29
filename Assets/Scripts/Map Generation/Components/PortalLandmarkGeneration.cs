@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UtilityScripts;
 
 public class PortalLandmarkGeneration : MapGenerationComponent {
@@ -11,40 +13,26 @@ public class PortalLandmarkGeneration : MapGenerationComponent {
 	}
 
 	private void PlacePortal(MapGenerationData data) {
-		//valid portal tile is a flat or tree tile adjacent to a settlement hex tile and in the same region
-		List<HexTile> settlementTiles = GetAllSettlementTiles();
-		List<HexTile> validPortalTiles = new List<HexTile>();
-		for (int i = 0; i < settlementTiles.Count; i++) {
-			HexTile settlementTile = settlementTiles[i];
-			for (int j = 0; j < settlementTile.AllNeighbours.Count; j++) {
-				HexTile neighbour = settlementTile.AllNeighbours[j];
-				if (validPortalTiles.Contains(neighbour) == false && 
-				    (neighbour.elevationType == ELEVATION.PLAIN || neighbour.elevationType == ELEVATION.TREES) &&
-				    neighbour.region == settlementTile.region && 
-				    neighbour.featureComponent.HasFeature(TileFeatureDB.Inhabited_Feature) == false) {
-					validPortalTiles.Add(neighbour);
-				}
-			}
-		}
+		List<HexTile> validPortalTiles = GridMap.Instance.normalHexTiles.Where(h =>
+			(h.elevationType == ELEVATION.PLAIN || h.elevationType == ELEVATION.TREES)
+			&& h.region.HasTileWithFeature(TileFeatureDB.Inhabited_Feature)
+			&& HasSettlementNeighbour(h) == false
+		).ToList();
 
-		if (validPortalTiles.Count > 0) {
-			HexTile portalTile = CollectionUtilities.GetRandomElement(validPortalTiles);
-			BaseLandmark portalLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(portalTile, LANDMARK_TYPE.THE_PORTAL, false);
-			data.portal = portalLandmark;	
-		} else {
-			throw new Exception("No valid portal tiles were found!");
-		}
+		Assert.IsTrue(validPortalTiles.Count > 0,
+			"No valid portal tiles were found!");
 		
+		HexTile portalTile = CollectionUtilities.GetRandomElement(validPortalTiles);
+		BaseLandmark portalLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(portalTile, LANDMARK_TYPE.THE_PORTAL, false);
+		data.portal = portalLandmark;
 	}
-
-	private List<HexTile> GetAllSettlementTiles() {
-		List<HexTile> settlementTiles = new List<HexTile>();
-		for (int i = 0; i < GridMap.Instance.normalHexTiles.Count; i++) {
-			HexTile tile = GridMap.Instance.normalHexTiles[i];
-			if (tile.featureComponent.HasFeature(TileFeatureDB.Inhabited_Feature)) {
-				settlementTiles.Add(tile);
+	private bool HasSettlementNeighbour(HexTile tile) {
+		for (int i = 0; i < tile.AllNeighbours.Count; i++) {
+			HexTile neighbour = tile.AllNeighbours[i];
+			if (neighbour.featureComponent.HasFeature(TileFeatureDB.Inhabited_Feature)) {
+				return true;
 			}
 		}
-		return settlementTiles;
+		return false;
 	}
 }

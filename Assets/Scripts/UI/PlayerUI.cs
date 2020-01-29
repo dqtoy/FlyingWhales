@@ -1310,13 +1310,8 @@ public class PlayerUI : MonoBehaviour {
         //CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
     }
     public void TryPlaceSummon(Summon summon, LocationGridTile locationTile) {
-        Summon summonToPlace = summon;
-        summonToPlace.homeRegion.RemoveCharacterFromLocation(summonToPlace);
-        summonToPlace.CreateMarker();
-        summonToPlace.marker.InitialPlaceMarkerAt(locationTile);
-        //PlayerManager.Instance.player.RemoveSummon(summonToPlace);
-        summonToPlace.OnPlaceSummon(locationTile);
-        Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summonToPlace);
+        CharacterManager.Instance.PlaceSummon(summon, locationTile);
+        Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summon);
     }
 
     private void CancelSummon() {

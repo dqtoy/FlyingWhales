@@ -10,7 +10,7 @@ using Random = UnityEngine.Random;
 public class Region : ILocation {
 
     private const float HoveredBorderAlpha = 255f / 255f;
-    private const float UnhoveredBorderAlpha = 128f / 255f;
+    private const float UnhoveredBorderAlpha = 200f / 255f;
 
     public int id { get; private set; }
     public string name { get; private set; }
@@ -211,7 +211,7 @@ public class Region : ILocation {
     public void ShowSolidBorder() {
         // for (int i = 0; i < _borderSprites.Count; i++) {
         //     SpriteRenderer s = _borderSprites[i];
-        //     Color color = s.color;
+        //     Color color = regionColor;
         //     color.a = HoveredBorderAlpha;
         //     s.color = color;
         //     s.gameObject.SetActive(true);
@@ -224,7 +224,7 @@ public class Region : ILocation {
     public void ShowTransparentBorder() {
         // for (int i = 0; i < _borderSprites.Count; i++) {
         //     SpriteRenderer s = _borderSprites[i];
-        //     Color color = s.color;
+        //     Color color = regionColor;
         //     color.a = UnhoveredBorderAlpha;
         //     s.color = color;
         //     s.gameObject.SetActive(true);

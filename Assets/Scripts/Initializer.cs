@@ -4,7 +4,7 @@ using Inner_Maps;
 using UnityEngine;
 
 public class Initializer : MonoBehaviour {
-    public void InitializeDataBeforeWorldCreation() {
+    public IEnumerator InitializeDataBeforeWorldCreation() {
         LocalizationManager.Instance.Initialize();
         CharacterManager.Instance.Initialize();
         RaceManager.Instance.Initialize();
@@ -25,6 +25,7 @@ public class Initializer : MonoBehaviour {
 
         TokenManager.Instance.Initialize();
         JobManager.Instance.Initialize();
+        yield return null;
     }
 
     public void InitializeDataAfterWorldCreation() {

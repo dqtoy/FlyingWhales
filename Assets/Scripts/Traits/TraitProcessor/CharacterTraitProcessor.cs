@@ -16,7 +16,7 @@ namespace Traits {
             if (GameManager.Instance.gameHasStarted) {
                 if (trait.name == "Starving") {
                     character.needsComponent.PlanFullnessRecoveryActions(character);
-                } else if (trait.name == "Forlorn" || trait.name == "Lonely") {
+                } else if (trait.name == "Sulking" || trait.name == "Lonely") {
                     character.needsComponent.PlanHappinessRecoveryActions(character);
                 } else if (trait.name == "Exhausted") {
                     character.needsComponent.PlanTirednessRecoveryActions(character);
