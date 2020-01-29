@@ -55,11 +55,11 @@ public enum RACE{
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,
-    NORTH_EAST,
-    EAST,
-    SOUTH_EAST,
-    SOUTH_WEST,
     WEST,
+    SOUTH_WEST,
+    SOUTH_EAST,
+    EAST,
+    NORTH_EAST,
     NONE
 }
 public enum PATHFINDING_MODE{
@@ -1439,7 +1439,26 @@ public static class Extensions {
             case STRUCTURE_TYPE.THE_EYE:
             case STRUCTURE_TYPE.THE_NEEDLES:
             case STRUCTURE_TYPE.OCEAN:
-            case STRUCTURE_TYPE.CAVE:
+            // case STRUCTURE_TYPE.CAVE:
+            // case STRUCTURE_TYPE.MONSTER_LAIR:
+                return true;
+            default:
+                return false;
+        }
+    }
+    public static bool HasWalls(this STRUCTURE_TYPE sub) {
+        switch (sub) {
+            case STRUCTURE_TYPE.PRISON:
+            case STRUCTURE_TYPE.DWELLING:
+            case STRUCTURE_TYPE.SMITHY:
+            case STRUCTURE_TYPE.BARRACKS:
+            case STRUCTURE_TYPE.APOTHECARY:
+            case STRUCTURE_TYPE.GRANARY:
+            case STRUCTURE_TYPE.MINER_CAMP:
+            case STRUCTURE_TYPE.RAIDER_CAMP:
+            case STRUCTURE_TYPE.ASSASSIN_GUILD:
+            case STRUCTURE_TYPE.HUNTER_LODGE:
+            case STRUCTURE_TYPE.MAGE_QUARTERS:
                 return true;
             default:
                 return false;

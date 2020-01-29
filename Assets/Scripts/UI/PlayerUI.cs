@@ -252,7 +252,6 @@ public class PlayerUI : MonoBehaviour {
 
         //Landmarks
         Messenger.AddListener<BaseLandmark>(Signals.LANDMARK_CREATED, OnLandmarkCreated);
-        //Messenger.AddListener<BaseLandmark>(Signals.LANDMARK_DESTROYED, OnLandmarkDestroyed);
         Messenger.AddListener<Region>(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, OnUpdateRegionUISignal);
     }
 
@@ -268,6 +267,11 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<Character>(Signals.CHARACTER_BECOMES_NON_MINION_OR_SUMMON, CharacterBecomesNonMinionOrSummon);
         Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         Messenger.AddListener<Character, Character>(Signals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
+        
+        for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
+            Minion minion = PlayerManager.Instance.player.minions[i];
+            OnGainedMinion(minion);
+        }
     }
 
     #region Listeners

@@ -12,7 +12,7 @@ using Random = UnityEngine.Random;
 public class Player : ILeader {
 
     private const int MAX_INTEL = 3;
-    public const int MAX_MINIONS = 6;
+    public const int MAX_MINIONS = 7;
     public readonly int MAX_INTERVENTION_ABILITIES = 4;
 
     public Faction playerFaction { get; private set; }

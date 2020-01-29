@@ -140,7 +140,7 @@ public class UIManager : MonoBehaviour {
     private void Update() {
         if (isHoveringTile) {
             // if (currentTileHovered.landmarkOnTile != null) {
-                currentTileHovered.ShowTileInfo();
+                // currentTileHovered.ShowTileInfo();
             // }
             currentTileHovered.region?.OnHoverOverAction();
         }
@@ -825,7 +825,8 @@ public class UIManager : MonoBehaviour {
 
         if (centerOnRegion) {
             region.CenterCameraOnRegion();
-            region.ShowSolidBorder();
+            region.ShowBorders();
+            region.SetBorderGlowEffectState(true);
         }
     }
     public void UpdateRegionInfo() {

@@ -3,44 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using PathFind;
+using SpriteGlow;
 using UnityEngine;
 using UtilityScripts;
 using Random = UnityEngine.Random;
 
 public class Region : ILocation {
-
-    private const float HoveredBorderAlpha = 255f / 255f;
-    private const float UnhoveredBorderAlpha = 200f / 255f;
-
-    public int id { get; private set; }
+    public int id { get; }
     public string name { get; private set; }
     public string description => GetDescription();
-    public List<HexTile> tiles { get; private set; }
+    public List<HexTile> tiles { get; }
     public HexTile coreTile { get; private set; }
     public LOCATION_TYPE locationType => LOCATION_TYPE.EMPTY;
-    public Color regionColor { get; private set; }
+    public Color regionColor { get; }
     public Minion assignedMinion { get; private set; }
-    public List<Faction> factionsHere { get; private set; }
-    public List<Character> residents { get; private set; }
+    public List<Faction> factionsHere { get; }
+    public List<Character> residents { get; }
     public DemonicLandmarkBuildingData demonicBuildingData { get; private set; }
     public DemonicLandmarkInvasionData demonicInvasionData { get; private set; }
     public GameObject eventIconGo { get; private set; }
-    public List<Character> charactersAtLocation { get; private set; }
-    public InnerTileMap innerMap => _regionInnerTileMap;
+    public List<Character> charactersAtLocation { get; }
     public RegionTileObject regionTileObject { get; private set; }
+    public HexTile[,] hexTileMap { get; private set; }
+    public LocationStructure mainStorage { get; private set; }
+    public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; }
 
     private RegionInnerTileMap _regionInnerTileMap; //inner map of the region, this should only be used if this region does not have an settlement. 
     private string _activeEventAfterEffectScheduleId;
-    private List<SpriteRenderer> _borderSprites;
+    private List<Border> _borders;
     private Dictionary<STRUCTURE_TYPE, List<LocationStructure>> _structures;
-    public HexTile[,] hexTileMap { get; private set; }
-    public LocationStructure mainStorage { get; private set; }
     
-    public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; private set; }
-
     #region getter/setter
     public BaseLandmark mainLandmark => coreTile.landmarkOnTile;
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures => _structures;
+    public InnerTileMap innerMap => _regionInnerTileMap;
     #endregion
 
     private Region() {
@@ -66,9 +62,27 @@ public class Region : ILocation {
         regionColor = data.regionColor;
     }
 
+    #region Tiles
+    public void AddTile(HexTile tile) {
+        if (!tiles.Contains(tile)) {
+            tiles.Add(tile);
+            tile.SetRegion(this);
+        }
+    }
+    private void RemoveTile(HexTile tile) {
+        if (tiles.Remove(tile)) {
+            tile.SetRegion(null);
+        }
+    }
+    #endregion
+
+    #region Utilities
+    public void SetName(string name) {
+        this.name = name;
+    }
     private Color GenerateRandomRegionColor() {
         if (id == 1) {
-            return Color.blue;
+            return Color.cyan;
         } else if (id == 2) {
             return Color.yellow;
         } else if (id == 3) {
@@ -76,31 +90,10 @@ public class Region : ILocation {
         } else if (id == 4) {
             return Color.red;
         } else if (id == 5) {
-            return Color.yellow;
+            return Color.magenta;
         }
         return Random.ColorHSV();
     }
-    public void SetName(string name) {
-        this.name = name;
-    }
-    public void AddTile(HexTile tile) {
-        if (!tiles.Contains(tile)) {
-            tiles.Add(tile);
-            tile.SetRegion(this);
-            // tile.spriteRenderer.color = regionColor;
-        }
-    }
-    private void RemoveTile(HexTile tile) {
-        if (tiles.Remove(tile)) {
-            tile.SetRegion(null);
-            // tile.spriteRenderer.color = Color.white;
-        }
-    }
-    public void OnMainLandmarkChanged() {
-        regionTileObject?.UpdateAdvertisements(this);
-    }
-
-    #region Utilities
     private string GetDescription() {
         // if (coreTile.isCorrupted) {
         //     if (mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE) {
@@ -111,9 +104,10 @@ public class Region : ILocation {
         return string.Empty;
     }
     public void FinalizeData() {
-        //outerTiles = GetOuterTiles();
-        _borderSprites = GetOuterBorders();
         DetermineHexTileMap();
+    }
+    public void GenerateOuterBorders() {
+        _borders = GetOuterBorders();
     }
     public void RedetermineCore() {
         int maxX = tiles.Max(t => t.data.xCoordinate);
@@ -129,13 +123,6 @@ public class Region : ILocation {
             coreTile = newCoreTile;
         }
         
-
-        // while (tiles.Contains(coreTile) == false) {
-        //     x++;
-        //     y++;
-        //     coreTile = GridMap.Instance.map[x, y];
-        // }
-        
         //clear all tiles again after redetermining core
         List<HexTile> allTiles = new List<HexTile>(tiles);
         for (int i = 0; i < allTiles.Count; i++) {
@@ -146,10 +133,6 @@ public class Region : ILocation {
         }
         
     }
-    /// <summary>
-    /// Get the outer tiles of this region. NOTE: Made this into a getter instead of saving it in a variable, to save memory.
-    /// </summary>
-    /// <returns>List of outer tiles.</returns>
     private List<HexTile> GetOuterTiles() {
         List<HexTile> outerTiles = new List<HexTile>();
         for (int i = 0; i < tiles.Count; i++) {
@@ -160,10 +143,14 @@ public class Region : ILocation {
         }
         return outerTiles;
     }
-    private List<SpriteRenderer> GetOuterBorders() {
+    private List<Border> GetOuterBorders() {
         List<HexTile> outerTiles = GetOuterTiles();
-        List<SpriteRenderer> borders = new List<SpriteRenderer>();
+        List<Border> borders = new List<Border>();
         HEXTILE_DIRECTION[] dirs = CollectionUtilities.GetEnumValues<HEXTILE_DIRECTION>();
+        
+        GameObject borderParent = new GameObject($"{this.name} Borders");
+        borderParent.transform.SetParent(GridMap.Instance.transform);
+        
         for (int i = 0; i < outerTiles.Count; i++) {
             HexTile currTile = outerTiles[i];
             for (int j = 0; j < dirs.Length; j++) {
@@ -172,8 +159,24 @@ public class Region : ILocation {
                 HexTile neighbour = currTile.GetNeighbour(dir);
                 if (neighbour == null || neighbour.region != currTile.region) {
                     SpriteRenderer border = currTile.GetBorder(dir);
-                    //currTile.SetBorderColor(regionColor);
-                    borders.Add(border);
+                    
+                    GameObject borderGO = new GameObject("Region Border");
+                    borderGO.transform.SetParent(borderParent.transform);
+                    borderGO.transform.localScale = border.transform.localScale;
+                    borderGO.transform.position = border.gameObject.transform.position;
+                    
+                    SpriteRenderer regionBorder = borderGO.AddComponent<SpriteRenderer>();
+                    regionBorder.sprite = border.sprite;
+                    regionBorder.sortingOrder = border.sortingOrder;
+                    regionBorder.sortingLayerName = border.sortingLayerName;
+                    regionBorder.color = this.regionColor;
+
+                    SpriteGlowEffect glowEffect = borderGO.AddComponent<SpriteGlowEffect>();
+                    glowEffect.GlowColor = regionColor;
+                    glowEffect.GlowBrightness = 1.5f;
+                    glowEffect.OutlineWidth = 2;
+
+                    borders.Add(new Border(regionBorder, glowEffect));
                 }
             }
         }
@@ -195,43 +198,24 @@ public class Region : ILocation {
         }
         return adjacent;
     }
-    public void OnHoverOverAction() {
-        // ShowSolidBorder();
-    }
-    public void OnHoverOutAction() {
-        // if (UIManager.Instance.regionInfoUI.isShowing) {
-        //     if (UIManager.Instance.regionInfoUI.activeRegion != this) {
-        //         ShowTransparentBorder();
-        //     }
-        // } else {
-        //     ShowTransparentBorder();
-        // }
-
-    }
-    public void ShowSolidBorder() {
-        // for (int i = 0; i < _borderSprites.Count; i++) {
-        //     SpriteRenderer s = _borderSprites[i];
-        //     Color color = regionColor;
-        //     color.a = HoveredBorderAlpha;
-        //     s.color = color;
-        //     s.gameObject.SetActive(true);
-        // }
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile tile = tiles[i];
-            tile.HighlightTile(Color.gray, 128f / 255f);
+    public void OnHoverOverAction() { }
+    public void OnHoverOutAction() { }
+    public void ShowBorders() {
+        for (int i = 0; i < _borders.Count; i++) {
+            Border s = _borders[i];
+            s.SetBorderState(true);
         }
     }
-    public void ShowTransparentBorder() {
-        // for (int i = 0; i < _borderSprites.Count; i++) {
-        //     SpriteRenderer s = _borderSprites[i];
-        //     Color color = regionColor;
-        //     color.a = UnhoveredBorderAlpha;
-        //     s.color = color;
-        //     s.gameObject.SetActive(true);
-        // }
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile tile = tiles[i];
-            tile.UnHighlightTile();
+    public void HideBorders() {
+        for (int i = 0; i < _borders.Count; i++) {
+            Border s = _borders[i];
+            s.SetBorderState(false);
+        }
+    }
+    public void SetBorderGlowEffectState(bool state) {
+        for (int i = 0; i < _borders.Count; i++) {
+            Border s = _borders[i];
+            s.SetGlowState(state);
         }
     }
     public void CenterCameraOnRegion() {
@@ -562,12 +546,12 @@ public class Region : ILocation {
         return null;
     }
     public LocationStructure GetRandomStructure() {
-        Dictionary<STRUCTURE_TYPE, List<LocationStructure>> _structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>(this.structures);
-        _structures.Remove(STRUCTURE_TYPE.CAVE);
-        _structures.Remove(STRUCTURE_TYPE.OCEAN);
-        int dictIndex = UnityEngine.Random.Range(0, _structures.Count);
+        Dictionary<STRUCTURE_TYPE, List<LocationStructure>> _allStructures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>(this.structures);
+        _allStructures.Remove(STRUCTURE_TYPE.CAVE);
+        _allStructures.Remove(STRUCTURE_TYPE.OCEAN);
+        int dictIndex = UnityEngine.Random.Range(0, _allStructures.Count);
         int count = 0;
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in _structures) {
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in _allStructures) {
             if (count == dictIndex) {
                 return kvp.Value[UnityEngine.Random.Range(0, kvp.Value.Count)];
             }
@@ -587,26 +571,26 @@ public class Region : ILocation {
         return null;
     }
     public List<LocationStructure> GetStructuresAtLocation() {
-        List<LocationStructure> _structures = new List<LocationStructure>();
+        List<LocationStructure> structuresAtLocation = new List<LocationStructure>();
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in this.structures) {
             for (int i = 0; i < kvp.Value.Count; i++) {
                 LocationStructure currStructure = kvp.Value[i];
-                _structures.Add(currStructure);
+                structuresAtLocation.Add(currStructure);
             }
         }
-        return _structures;
+        return structuresAtLocation;
     }
     public List<T> GetStructuresAtLocation<T>(STRUCTURE_TYPE type) where T : LocationStructure{
-        List<T> _structures = new List<T>();
+        List<T> structuresAtLocation = new List<T>();
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in this.structures) {
             for (int i = 0; i < kvp.Value.Count; i++) {
                 LocationStructure currStructure = kvp.Value[i];
                 if (currStructure.structureType == type) {
-                    _structures.Add(currStructure as T);
+                    structuresAtLocation.Add(currStructure as T);
                 }
             }
         }
-        return _structures;
+        return structuresAtLocation;
     }
     public bool HasStructure(STRUCTURE_TYPE type) {
         return structures.ContainsKey(type);
@@ -835,4 +819,23 @@ public class Region : ILocation {
         return count;
     }
     #endregion
+}
+
+public class Border {
+    private SpriteRenderer borderSprite { get; }
+    private SpriteGlowEffect glowEffect { get; }
+
+    public Border(SpriteRenderer _borderSprite, SpriteGlowEffect _glowEffect) {
+        borderSprite = _borderSprite;
+        glowEffect = _glowEffect;
+        SetGlowState(false);
+    }
+    
+    public void SetBorderState(bool state) {
+        borderSprite.gameObject.SetActive(state);
+    }
+
+    public void SetGlowState(bool state) {
+        glowEffect.enabled = state;
+    }
 }

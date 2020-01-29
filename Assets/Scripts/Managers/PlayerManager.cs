@@ -13,8 +13,6 @@ public class PlayerManager : MonoBehaviour {
     public const int MAX_LEVEL_COMBAT_ABILITY = 3;
     public const int MAX_LEVEL_INTERVENTION_ABILITY = 3;
     public const int DIVINE_INTERVENTION_DURATION = 2880; //4320;
-
-    public bool isChoosingStartingTile = false;
     public Player player = null;
     [FormerlySerializedAs("allInterventionAbilities")] public SPELL_TYPE[] allSpellTypes;
     [FormerlySerializedAs("allInterventionAbilitiesData")] public Dictionary<SPELL_TYPE, SpellData> allSpellsData;

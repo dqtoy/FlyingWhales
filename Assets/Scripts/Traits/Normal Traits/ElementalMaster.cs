@@ -15,11 +15,16 @@ namespace Traits {
 		#region Overrides
 		public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
 			if (targetPOI is TornadoTileObject) {
-                if(!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.SNUFF_TORNADO, targetPOI)) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SNUFF_TORNADO,
-                        INTERACTION_TYPE.SNUFF_TORNADO, targetPOI, characterThatWillDoJob);
-                    characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                }
+				if (characterThatWillDoJob.stateComponent.currentState is CombatState 
+				    && characterThatWillDoJob.combatComponent.avoidInRange.Count > 0) {
+					characterThatWillDoJob.combatComponent.FightOrFlight(targetPOI);
+				} else {
+					if(!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.SNUFF_TORNADO, targetPOI)) {
+						GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SNUFF_TORNADO,
+							INTERACTION_TYPE.SNUFF_TORNADO, targetPOI, characterThatWillDoJob);
+						characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+					}	
+				}
 			}
 			return base.OnSeePOI(targetPOI, characterThatWillDoJob);
 		}

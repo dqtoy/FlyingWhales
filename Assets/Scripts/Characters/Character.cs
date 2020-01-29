@@ -391,8 +391,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //hostiltiy
         ignoreHostility = 0;
 
-        ConstructDefaultActions();
-        
         //Components
         stateComponent = new CharacterStateComponent(this);
         jobQueue = new JobQueue(this);
@@ -454,6 +452,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// Usually this is data that is dependent on the character being fully constructed.
     /// </summary>
     public virtual void Initialize() {
+        ConstructDefaultActions();
         OnUpdateRace();
         OnUpdateCharacterClass();
 
@@ -1879,9 +1878,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (criminal != null) {
             traitContainer.RemoveTrait(this, criminal); //TODO: RemoveTrait(criminal, false); do not trigger on remove
         }
-        if (PlayerManager.Instance.player != null && this.faction == PlayerManager.Instance.player.playerFaction) {
-            ClearPlayerActions();
-        }
+        // if (PlayerManager.Instance.player != null && this.faction == PlayerManager.Instance.player.playerFaction) {
+        //     ClearPlayerActions();
+        // }
     }
     private void OnChangeFactionRelationship(Faction faction1, Faction faction2, FACTION_RELATIONSHIP_STATUS newStatus, FACTION_RELATIONSHIP_STATUS oldStatus) {
         if(faction1 == faction) {
@@ -5522,6 +5521,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (trapStructure.structure != null) {
             trapStructure.SetStructureAndDuration(null, 0);
         }
+        minion?.OnSeize();
         Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
         //ForceCancelAllJobsTargettingThisCharacter();
         //marker.ClearTerrifyingObjects();
@@ -5541,11 +5541,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void OnUnseizePOI(LocationGridTile tileLocation) {
         Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStartedWhileSeized);
         needsComponent.OnCharacterArrivedAtLocation(tileLocation.structure.location.coreTile.region);
-        SubscribeToSignals();
+        if (minion == null) {
+            SubscribeToSignals();    
+        }
         SetPOIState(POI_STATE.ACTIVE);
         if (marker == null) {
             CreateMarker();
         }
+        minion?.OnUnseize();
         if(tileLocation.structure.location.coreTile.region != currentRegion) {
             currentRegion.RemoveCharacterFromLocation(this);
             marker.InitialPlaceMarkerAt(tileLocation);
@@ -6260,8 +6263,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Player Action Target
-    public List<PlayerAction> actions { get; private set; }
-    public void ConstructDefaultActions() {
+    public List<PlayerAction> actions { get; protected set; }
+    public virtual void ConstructDefaultActions() {
         actions = new List<PlayerAction>();
         
         PlayerAction afflictAction = new PlayerAction("Afflict", 
@@ -6272,7 +6275,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].CanPerformAbilityTowards(this), 
             () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].ActivateAbility(this));
         PlayerAction seizeAction = new PlayerAction("Seize", 
-            () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && this.minion == null && !(this is Summon) && this.traitContainer.GetNormalTrait<Trait>("Leader", "Blessed") == null, 
+            () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && this.traitContainer.GetNormalTrait<Trait>("Leader", "Blessed") == null, 
             () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
         PlayerAction shareIntelAction = new PlayerAction("Share Intel", () => false, null);
         
