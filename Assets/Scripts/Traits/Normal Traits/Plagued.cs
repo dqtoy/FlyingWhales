@@ -27,7 +27,12 @@ namespace Traits {
             base.OnAddTrait(sourceCharacter);
             if (sourceCharacter is Character) {
                 owner = sourceCharacter as Character;
+                owner.needsComponent.AdjustComfortDecreaseRate(10);
             }
+        }
+        public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+            owner.needsComponent.AdjustComfortDecreaseRate(-10);
+            base.OnRemoveTrait(removedFrom, removedBy);
         }
         protected override void OnChangeLevel() {
             if (level == 1) {

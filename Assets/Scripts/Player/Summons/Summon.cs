@@ -34,7 +34,7 @@ public class Summon : Character, IWorldObject {
         OnUpdateRace();
         OnUpdateCharacterClass();
 
-        moodComponent.SetMoodValue(90);
+        moodComponent.SetMoodValue(50);
 
         CreateOwnParty();
         

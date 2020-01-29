@@ -64,7 +64,7 @@ public class RememberFallen : GoapAction {
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
-        actor.needsComponent.AdjustDoNotGetLonely(-1);
+        actor.needsComponent.AdjustDoNotGetBored(-1);
     }
     public override string ReactionToActor(Character witness, ActualGoapNode node) {
         string response = base.ReactionToActor(witness, node);
@@ -112,14 +112,14 @@ public class RememberFallen : GoapAction {
     public void PreRememberSuccess(ActualGoapNode goapNode) {
         Tombstone tombstone = goapNode.poiTarget as Tombstone;
         goapNode.descriptionLog.AddToFillers(null, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        goapNode.actor.needsComponent.AdjustDoNotGetLonely(1);
+        goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void PerTickRememberSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustHappiness(4.5f);
     }
     public void AfterRememberSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetLonely(-1);
+        goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
         Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, goapNode.actor.marker.transform.position, 
             2, goapNode.actor.currentRegion.innerMap);
     }

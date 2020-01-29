@@ -84,7 +84,7 @@ namespace Traits {
         //         return;
         //     }
         //     if (/*owner.CanPerformEndTickJobs()*/
-        //             /*&& */(owner.needsComponent.isStarving || owner.needsComponent.isExhausted || owner.needsComponent.isForlorn || owner.traitContainer.GetNormalTrait<Trait>("Burning") != null)
+        //             /*&& */(owner.needsComponent.isStarving || owner.needsComponent.isExhausted || owner.needsComponent.isSulking || owner.traitContainer.GetNormalTrait<Trait>("Burning") != null)
         //             && UnityEngine.Random.Range(0, 100) < 75 && !owner.jobQueue.HasJob(JOB_TYPE.SCREAM)
         //             && owner.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") == null
         //             && !owner.HasJobTargetingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
@@ -109,7 +109,7 @@ namespace Traits {
 
         #region Happiness Recovery
         private bool PlanHappinessRecovery() {
-            if ((owner.needsComponent.isForlorn || owner.needsComponent.isLonely) && !owner.HasJobTargetingThis(JOB_TYPE.HAPPINESS_RECOVERY)) {
+            if ((owner.needsComponent.isSulking || owner.needsComponent.isBored) && !owner.HasJobTargetingThis(JOB_TYPE.HAPPINESS_RECOVERY)) {
                 return CreateDaydreamOrPrayJob();
             }
             return false;

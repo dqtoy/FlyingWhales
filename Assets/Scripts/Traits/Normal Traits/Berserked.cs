@@ -17,7 +17,7 @@ namespace Traits {
             description = "This character will attack anyone at random and may destroy objects.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            ticksDuration = 72;
+            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(6);
             hindersWitness = true;
         }
 

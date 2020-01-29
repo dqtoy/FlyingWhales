@@ -18,10 +18,10 @@ namespace Traits {
         #region Overrides
         public override string TriggerFlaw(Character character) {
             //Will reduce Happiness Meter to become Forlorn. If already Forlorn, reduce Happiness Meter by a further 1000.
-            if (character.needsComponent.isForlorn) {
+            if (character.needsComponent.isSulking) {
                 character.needsComponent.AdjustHappiness(-5f);
             } else {
-                character.needsComponent.SetHappiness(CharacterNeedsComponent.FORLORN_UPPER_LIMIT);
+                character.needsComponent.SetHappiness(CharacterNeedsComponent.SULKING_UPPER_LIMIT);
             }
             return base.TriggerFlaw(character);
         }

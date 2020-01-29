@@ -30,11 +30,13 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             owner = addedTo as Character;
+            owner.needsComponent.AdjustComfortDecreaseRate(10);
             //Messenger.AddListener(Signals.HOUR_STARTED, PerHour);
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
             owner.marker.SetMarkerColor(Color.white);
+            owner.needsComponent.AdjustComfortDecreaseRate(-10);
         }
         public override bool OnDeath(Character character) {
             if (character.characterClass.className == "Zombie") {

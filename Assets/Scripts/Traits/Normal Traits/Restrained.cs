@@ -46,7 +46,6 @@ namespace Traits {
                 //_sourceCharacter.RemoveTrait("Unconscious", removedBy: responsibleCharacter);
                 //_sourceCharacter.CancelAllJobsAndPlans();
                 owner.AddTraitNeededToBeRemoved(this);
-
                 //Once a faction leader is restrained set new faction leader
                 //if (isLeader) {
                 //    _sourceCharacter.faction.SetNewLeader();

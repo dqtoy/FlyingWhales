@@ -45,14 +45,14 @@ public class Daydream : GoapAction {
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
-        actor.needsComponent.AdjustDoNotGetLonely(-1);
+        actor.needsComponent.AdjustDoNotGetBored(-1);
         actor.needsComponent.AdjustDoNotGetTired(-1);
     }
     #endregion
 
     #region Effects
     public void PreDaydreamSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetLonely(1);
+        goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.needsComponent.AdjustDoNotGetTired(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
@@ -61,7 +61,7 @@ public class Daydream : GoapAction {
         goapNode.actor.needsComponent.AdjustComfort(1f);
     }
     public void AfterDaydreamSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetLonely(-1);
+        goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
         goapNode.actor.needsComponent.AdjustDoNotGetTired(-1);
     }
     #endregion

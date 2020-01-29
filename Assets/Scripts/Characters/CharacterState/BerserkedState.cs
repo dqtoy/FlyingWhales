@@ -20,7 +20,7 @@ public class BerserkedState : CharacterState {
     #region Overrides
     protected override void StartState() {
         stateComponent.character.needsComponent.AdjustDoNotGetHungry(1);
-        stateComponent.character.needsComponent.AdjustDoNotGetLonely(1);
+        stateComponent.character.needsComponent.AdjustDoNotGetBored(1);
         stateComponent.character.needsComponent.AdjustDoNotGetTired(1);
         //stateComponent.character.traitContainer.AddTrait(stateComponent.character, "Berserked");
         //BerserkBuff berserkBuff = new BerserkBuff();
@@ -30,7 +30,7 @@ public class BerserkedState : CharacterState {
     }
     protected override void EndState() {
         stateComponent.character.needsComponent.AdjustDoNotGetHungry(-1);
-        stateComponent.character.needsComponent.AdjustDoNotGetLonely(-1);
+        stateComponent.character.needsComponent.AdjustDoNotGetBored(-1);
         stateComponent.character.needsComponent.AdjustDoNotGetTired(-1);
         //stateComponent.character.needsComponent.AdjustHappiness(50);
         //stateComponent.character.needsComponent.AdjustTiredness(50);

@@ -51,7 +51,7 @@ public class Sing : GoapAction {
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
-        actor.needsComponent.AdjustDoNotGetLonely(-1);
+        actor.needsComponent.AdjustDoNotGetBored(-1);
     }
     public override string ReactionToActor(Character witness, ActualGoapNode node) {
         string response = base.ReactionToActor(witness, node);
@@ -82,7 +82,7 @@ public class Sing : GoapAction {
 
     #region Effects
     public void PreSingSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetLonely(1);
+        goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
         //currentState.SetIntelReaction(SingSuccessIntelReaction);
     }
@@ -90,7 +90,7 @@ public class Sing : GoapAction {
         goapNode.actor.needsComponent.AdjustHappiness(5f);
     }
     public void AfterSingSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetLonely(-1);
+        goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
     }
     #endregion
 

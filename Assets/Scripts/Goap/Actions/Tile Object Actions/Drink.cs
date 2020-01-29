@@ -52,13 +52,13 @@ public class Drink : GoapAction {
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
-        actor.needsComponent.AdjustDoNotGetLonely(-1);
+        actor.needsComponent.AdjustDoNotGetBored(-1);
     }
     #endregion
 
     #region State Effects
     public void PreDrinkSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetLonely(1);
+        goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void PerTickDrinkSuccess(ActualGoapNode goapNode) {
@@ -70,7 +70,7 @@ public class Drink : GoapAction {
         }
     }
     public void AfterDrinkSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetLonely(-1);
+        goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Drunk");
         int chance = UnityEngine.Random.Range(0, 100);
         if ((goapNode.actor.moodComponent.moodState == MOOD_STATE.LOW && chance < 2) || goapNode.actor.moodComponent.moodState == MOOD_STATE.CRITICAL && chance < 4) {
@@ -80,7 +80,7 @@ public class Drink : GoapAction {
         
     }
     //public void PreDrinkPoisoned() {
-    //    actor.AdjustDoNotGetLonely(1);
+    //    actor.AdjustDoNotGetBored(1);
     //    RemoveTraitFrom(poiTarget, "Poisoned");
     //    Log log = null;
     //    WeightedDictionary<string> result = poisonedTrait.GetResultWeights();
@@ -105,7 +105,7 @@ public class Drink : GoapAction {
     //    actor.AdjustHappiness(200);
     //}
     //public void AfterDrinkPoisoned() {
-    //    actor.AdjustDoNotGetLonely(-1);
+    //    actor.AdjustDoNotGetBored(-1);
     //    if (poisonedResult == "Sick") {
     //        for (int i = 0; i < poisonedTrait.responsibleCharacters.Count; i++) {
     //            AddTraitTo(actor, poisonedResult, poisonedTrait.responsibleCharacters[i]);

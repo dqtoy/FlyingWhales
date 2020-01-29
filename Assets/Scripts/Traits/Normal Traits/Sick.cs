@@ -32,6 +32,8 @@ namespace Traits {
                 owner.AdjustSpeedModifier(-0.10f);
                 //_sourceCharacter.CreateRemoveTraitJob(name);
                 owner.AddTraitNeededToBeRemoved(this);
+                owner.needsComponent.AdjustComfortDecreaseRate(5);
+
                 if (gainedFromDoing == null) {
                     owner.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
                 } else {
@@ -49,6 +51,7 @@ namespace Traits {
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             owner.AdjustSpeedModifier(0.10f);
             owner.RemoveTraitNeededToBeRemoved(this);
+            owner.needsComponent.AdjustComfortDecreaseRate(-5);
             owner.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }

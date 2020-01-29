@@ -123,7 +123,7 @@ public class CharacterInfoUI : UIMenu {
         moodMeter.AddMark(EditableValuesManager.Instance.lowMoodHighThreshold/100f, Color.yellow);
 
         energyMeter.ResetMarks();
-        energyMeter.AddMark(CharacterNeedsComponent.ENERGIZED_LOWER_LIMIT/100f, Color.green);
+        energyMeter.AddMark(CharacterNeedsComponent.REFRESHED_LOWER_LIMIT/100f, Color.green);
         energyMeter.AddMark(CharacterNeedsComponent.TIRED_UPPER_LIMIT/100f, Color.yellow);
         energyMeter.AddMark(CharacterNeedsComponent.EXHAUSTED_UPPER_LIMIT/100f, Color.red);
         
@@ -133,9 +133,9 @@ public class CharacterInfoUI : UIMenu {
         fullnessMeter.AddMark(CharacterNeedsComponent.STARVING_UPPER_LIMIT/100f, Color.red);
         
         happinessMeter.ResetMarks();
-        happinessMeter.AddMark(CharacterNeedsComponent.HAPPY_LOWER_LIMIT/100f, Color.green);
-        happinessMeter.AddMark(CharacterNeedsComponent.SAD_UPPER_LIMIT/100f, Color.yellow);
-        happinessMeter.AddMark(CharacterNeedsComponent.FORLORN_UPPER_LIMIT/100f, Color.red);
+        happinessMeter.AddMark(CharacterNeedsComponent.ENTERTAINED_LOWER_LIMIT/100f, Color.green);
+        happinessMeter.AddMark(CharacterNeedsComponent.BORED_UPPER_LIMIT/100f, Color.yellow);
+        happinessMeter.AddMark(CharacterNeedsComponent.SULKING_UPPER_LIMIT/100f, Color.red);
         
         comfortMeter.ResetMarks();
         comfortMeter.AddMark(CharacterNeedsComponent.RELAXED_LOWER_LIMIT/100f, Color.green);
@@ -143,9 +143,9 @@ public class CharacterInfoUI : UIMenu {
         comfortMeter.AddMark(CharacterNeedsComponent.AGONIZING_UPPER_LIMIT/100f, Color.red);
         
         hopeMeter.ResetMarks();
-        hopeMeter.AddMark(CharacterNeedsComponent.SANGUINE_LOWER_LIMIT/100f, Color.green);
-        hopeMeter.AddMark(CharacterNeedsComponent.GLOOMY_UPPER_LIMIT/100f, Color.yellow);
-        hopeMeter.AddMark(CharacterNeedsComponent.DISILLUSIONED_UPPER_LIMIT/100f, Color.red);
+        hopeMeter.AddMark(CharacterNeedsComponent.HOPEFUL_LOWER_LIMIT/100f, Color.green);
+        hopeMeter.AddMark(CharacterNeedsComponent.DISCOURAGED_UPPER_LIMIT/100f, Color.yellow);
+        hopeMeter.AddMark(CharacterNeedsComponent.HOPELESS_UPPER_LIMIT/100f, Color.red);
         
         InitializeLogsMenu();
     }
@@ -519,7 +519,7 @@ public class CharacterInfoUI : UIMenu {
         summary = $"{summary}{("\nPOI State: " + activeCharacter.state.ToString())}";
         summary = $"{summary}{("\nDo Not Get Hungry: " + activeCharacter.needsComponent.doNotGetHungry.ToString())}";
         summary = $"{summary}{("\nDo Not Get Tired: " + activeCharacter.needsComponent.doNotGetTired.ToString())}";
-        summary = $"{summary}{("\nDo Not Get Lonely: " + activeCharacter.needsComponent.doNotGetLonely.ToString())}";
+        summary = $"{summary}{("\nDo Not Get Bored: " + activeCharacter.needsComponent.doNotGetBored.ToString())}";
         summary = $"{summary}{("\nDo Not Recover HP: " + activeCharacter.doNotRecoverHP.ToString())}";
         summary = $"{summary}{("\nCan Move: " + activeCharacter.canMove)}";
         summary = $"{summary}{("\nCan Witness: " + activeCharacter.canWitness)}";

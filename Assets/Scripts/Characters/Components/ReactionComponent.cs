@@ -277,7 +277,7 @@ public class ReactionComponent {
                                 } else {
                                     debugLog += "\n-Target does not have a home, will not trigger Move Character job";
                                 }
-                            } else if (targetCharacter.needsComponent.isLonely || targetCharacter.needsComponent.isForlorn) {
+                            } else if (targetCharacter.needsComponent.isBored || targetCharacter.needsComponent.isSulking) {
                                 debugLog += "\n-Target is bored or sulking, will trigger Move Character job if character is not in the right place to do Daydream or Pray";
                                 if (UnityEngine.Random.Range(0, 2) == 0 && targetCharacter.homeStructure != null) {
                                     //Pray

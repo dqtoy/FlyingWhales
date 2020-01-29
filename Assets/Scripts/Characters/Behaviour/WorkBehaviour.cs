@@ -24,7 +24,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
     }
     
     private bool PlanJobQueueFirst(Character character) {
-        if (!character.needsComponent.isStarving && !character.needsComponent.isExhausted && !character.needsComponent.isForlorn) {
+        if (!character.needsComponent.isStarving && !character.needsComponent.isExhausted && !character.needsComponent.isSulking) {
             return PlanWorkActions(character);
         }
         return false;

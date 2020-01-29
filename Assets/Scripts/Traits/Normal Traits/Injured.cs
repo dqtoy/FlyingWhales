@@ -36,6 +36,8 @@ namespace Traits {
                 _sourceCharacter.AdjustSpeedModifier(-0.15f);
                 //_sourceCharacter.CreateRemoveTraitJob(name);
                 _sourceCharacter.AddTraitNeededToBeRemoved(this);
+                _sourceCharacter.needsComponent.AdjustComfortDecreaseRate(5);
+
                 if (gainedFromDoing == null) { //TODO: || gainedFromDoing.poiTarget != _sourceCharacter
                     _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
                 } else {
@@ -53,6 +55,7 @@ namespace Traits {
             _sourceCharacter.UpdateCanCombatState();
             _sourceCharacter.AdjustSpeedModifier(0.15f);
             _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
+            _sourceCharacter.needsComponent.AdjustComfortDecreaseRate(-5);
             _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }

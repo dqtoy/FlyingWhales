@@ -32,7 +32,7 @@ namespace Traits {
             if (sourceCharacter is Character) {
                 character = sourceCharacter as Character;
                 character.needsComponent.SetHappiness(50f);
-                character.needsComponent.AdjustDoNotGetLonely(1);
+                character.needsComponent.AdjustDoNotGetBored(1);
                 CopyOpinionAndSetAllOpinionToZero();
                 character.SetIsSerialKiller(true);
                 //if (victim1Requirement == null) { // || victim2Requirement == null
@@ -46,7 +46,7 @@ namespace Traits {
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             if (character != null) {
-                character.needsComponent.AdjustDoNotGetLonely(-1);
+                character.needsComponent.AdjustDoNotGetBored(-1);
                 character.SetIsSerialKiller(false);
                 BringBackOpinion();
                 //Messenger.RemoveListener(Signals.TICK_STARTED, CheckSerialKiller);
@@ -166,7 +166,7 @@ namespace Traits {
             //}
         }
         //private void HuntVictim() {
-        //    if (character.needsComponent.isForlorn || character.needsComponent.isLonely) {
+        //    if (character.needsComponent.isSulking || character.needsComponent.isBored) {
         //        int chance = UnityEngine.Random.Range(0, 100);
         //        if (chance < 20) {
         //            //CheckTargetVictimIfStillAvailable();

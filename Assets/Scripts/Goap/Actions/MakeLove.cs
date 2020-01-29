@@ -56,8 +56,8 @@ public class MakeLove : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         Character targetCharacter = poiTarget as Character;
         actor.ownParty.RemovePOI(targetCharacter);
-        actor.needsComponent.AdjustDoNotGetLonely(-1);
-        targetCharacter.needsComponent.AdjustDoNotGetLonely(-1);
+        actor.needsComponent.AdjustDoNotGetBored(-1);
+        targetCharacter.needsComponent.AdjustDoNotGetBored(-1);
 
         Bed bed = actor.gridTileLocation.structure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).FirstOrDefault() as Bed;
         bed?.OnDoneActionToObject(actor.currentActionNode);
@@ -73,8 +73,8 @@ public class MakeLove : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         Character targetCharacter = poiTarget as Character;
         actor.ownParty.RemovePOI(targetCharacter);
-        actor.needsComponent.AdjustDoNotGetLonely(-1);
-        targetCharacter.needsComponent.AdjustDoNotGetLonely(-1);
+        actor.needsComponent.AdjustDoNotGetBored(-1);
+        targetCharacter.needsComponent.AdjustDoNotGetBored(-1);
 
         //targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Wooed");
         if (targetCharacter.currentActionNode.action == this) {
@@ -193,8 +193,8 @@ public class MakeLove : GoapAction {
         bed.OnDoActionToObject(goapNode);
 
         Character targetCharacter = goapNode.poiTarget as Character;
-        goapNode.actor.needsComponent.AdjustDoNotGetLonely(1);
-        targetCharacter.needsComponent.AdjustDoNotGetLonely(1);
+        goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
+        targetCharacter.needsComponent.AdjustDoNotGetBored(1);
 
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
         targetCharacter.jobComponent.IncreaseNumOfTimesActionDone(this);
@@ -215,8 +215,8 @@ public class MakeLove : GoapAction {
         Bed bed = goapNode.actor.gridTileLocation.structure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).FirstOrDefault() as Bed;
         bed.OnDoneActionToObject(goapNode);
         Character targetCharacter = goapNode.poiTarget as Character;
-        goapNode.actor.needsComponent.AdjustDoNotGetLonely(-1);
-        targetCharacter.needsComponent.AdjustDoNotGetLonely(-1);
+        goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
+        targetCharacter.needsComponent.AdjustDoNotGetBored(-1);
 
         //**After Effect 1**: If Actor and Target are Lovers, they both gain Cheery trait. If Actor and Target are Paramours, they both gain Ashamed trait.
         if (goapNode.actor is SeducerSummon) {

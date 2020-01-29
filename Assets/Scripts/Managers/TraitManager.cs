@@ -96,7 +96,6 @@ public class TraitManager : MonoBehaviour {
             new Sick(),
             //new Thief(),
             new Unconscious(),
-            new Betrayed(),
             new Zapped(),
             new Spooked(),
             new Jolted(),

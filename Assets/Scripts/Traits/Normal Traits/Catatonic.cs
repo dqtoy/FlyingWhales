@@ -16,7 +16,7 @@ namespace Traits {
             description = "This character is catatonic.";
             type = TRAIT_TYPE.DISABLER;
             effect = TRAIT_EFFECT.NEGATIVE;
-            // ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);
+            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED };
             hindersMovement = true;
             hindersWitness = true;
@@ -29,14 +29,14 @@ namespace Traits {
             if (addedTo is Character) {
                 owner = addedTo as Character;
                 //owner.AdjustMoodValue(-15, this);
-                // owner.needsComponent.AdjustDoNotGetLonely(1);
+                // owner.needsComponent.AdjustDoNotGetBored(1);
                 Messenger.AddListener(Signals.HOUR_STARTED, CheckRemovalChance);
                 Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             if (owner != null) {
-                // owner.needsComponent.AdjustDoNotGetLonely(-1);
+                // owner.needsComponent.AdjustDoNotGetBored(-1);
                 Messenger.RemoveListener(Signals.HOUR_STARTED, CheckRemovalChance);
                 Messenger.RemoveListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }

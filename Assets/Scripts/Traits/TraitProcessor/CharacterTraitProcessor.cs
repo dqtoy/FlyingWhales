@@ -77,18 +77,18 @@ namespace Traits {
             } else if (trait.name == "Packaged" || trait.name == "Hibernating" || trait.name == "Reanimated") {
                 character.needsComponent.AdjustDoNotGetTired(1);
                 character.needsComponent.AdjustDoNotGetHungry(1);
-                character.needsComponent.AdjustDoNotGetLonely(1);
+                character.needsComponent.AdjustDoNotGetBored(1);
             } else if (trait.name == "Eating") {
                 character.needsComponent.AdjustDoNotGetHungry(1);
             } else if (trait.name == "Resting") {
                 character.needsComponent.AdjustDoNotGetTired(1);
                 character.needsComponent.AdjustDoNotGetHungry(1);
-                character.needsComponent.AdjustDoNotGetLonely(1);
+                character.needsComponent.AdjustDoNotGetBored(1);
             } else if (trait.name == "Charmed") {
-                character.needsComponent.AdjustDoNotGetLonely(1);
+                character.needsComponent.AdjustDoNotGetBored(1);
             } else if (trait.name == "Daydreaming") {
                 character.needsComponent.AdjustDoNotGetTired(1);
-                character.needsComponent.AdjustDoNotGetLonely(1);
+                character.needsComponent.AdjustDoNotGetBored(1);
             } 
             //else if (trait.name == "Forlorn") {
             //    character.AdjustMoodValue(-35, trait, trait.gainedFromDoing);
@@ -132,7 +132,7 @@ namespace Traits {
             else if (trait.name == "Unconscious") {
                 character.needsComponent.AdjustDoNotGetTired(1);
                 character.needsComponent.AdjustDoNotGetHungry(1);
-                character.needsComponent.AdjustDoNotGetLonely(1);
+                character.needsComponent.AdjustDoNotGetBored(1);
             } else if (trait.name == "Optimist") {
                 character.needsComponent.AdjustHappinessDecreaseRate(-Mathf.CeilToInt(EditableValuesManager.Instance.baseHappinessDecreaseRate * 0.5f)); //Reference: https://trello.com/c/Aw8kIbB1/2654-optimist
             } else if (trait.name == "Pessimist") {
@@ -142,9 +142,10 @@ namespace Traits {
             } 
             //else if (trait.name == "Shellshocked") {
             //    character.AdjustMoodValue(-30, trait, trait.gainedFromDoing);
-            //} else if (trait.name == "Ashamed") {
-            //    character.AdjustMoodValue(-5, trait, trait.gainedFromDoing);
-            //}
+            //} 
+            else if (trait.name == "Ashamed") {
+                character.needsComponent.AdjustComfortDecreaseRate(5);
+            }
             if (trait.effects != null) {
                 for (int i = 0; i < trait.effects.Count; i++) {
                     TraitEffect traitEffect = trait.effects[i];
@@ -171,6 +172,7 @@ namespace Traits {
             }
             Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, character as IPointOfInterest);
         }
+
         public void UnapplyTraitEffects(Character character, Trait trait) {
             if (trait.hindersWitness) {
                 character.IncreaseCanWitness();
@@ -195,18 +197,18 @@ namespace Traits {
             } else if (trait.name == "Packaged" || trait.name == "Hibernating" || trait.name == "Reanimated") {
                 character.needsComponent.AdjustDoNotGetTired(-1);
                 character.needsComponent.AdjustDoNotGetHungry(-1);
-                character.needsComponent.AdjustDoNotGetLonely(-1);
+                character.needsComponent.AdjustDoNotGetBored(-1);
             } else if (trait.name == "Eating") {
                 character.needsComponent.AdjustDoNotGetHungry(-1);
             } else if (trait.name == "Resting") {
                 character.needsComponent.AdjustDoNotGetTired(-1);
                 character.needsComponent.AdjustDoNotGetHungry(-1);
-                character.needsComponent.AdjustDoNotGetLonely(-1);
+                character.needsComponent.AdjustDoNotGetBored(-1);
             } else if (trait.name == "Charmed") {
-                character.needsComponent.AdjustDoNotGetLonely(-1);
+                character.needsComponent.AdjustDoNotGetBored(-1);
             } else if (trait.name == "Daydreaming") {
                 character.needsComponent.AdjustDoNotGetTired(-1);
-                character.needsComponent.AdjustDoNotGetLonely(-1);
+                character.needsComponent.AdjustDoNotGetBored(-1);
             }
             //else if (trait.name == "Forlorn") {
             //    character.AdjustMoodValue(35, trait, trait.gainedFromDoing);
@@ -246,7 +248,7 @@ namespace Traits {
             else if (trait.name == "Unconscious") {
                 character.needsComponent.AdjustDoNotGetTired(-1);
                 character.needsComponent.AdjustDoNotGetHungry(-1);
-                character.needsComponent.AdjustDoNotGetLonely(-1);
+                character.needsComponent.AdjustDoNotGetBored(-1);
             } else if (trait.name == "Optimist") {
                 character.needsComponent.AdjustHappinessDecreaseRate(Mathf.CeilToInt(EditableValuesManager.Instance.baseHappinessDecreaseRate * 0.5f)); //Reference: https://trello.com/c/Aw8kIbB1/2654-optimist
             } else if (trait.name == "Pessimist") {
@@ -256,9 +258,10 @@ namespace Traits {
             } 
             //else if (trait.name == "Shellshocked") {
             //    character.AdjustMoodValue(30, trait, trait.gainedFromDoing);
-            //} else if (trait.name == "Ashamed") {
-            //    character.AdjustMoodValue(5, trait, trait.gainedFromDoing);
-            //}
+            //} 
+            else if (trait.name == "Ashamed") {
+                character.needsComponent.AdjustComfortDecreaseRate(-5);
+            }
 
             if (trait.effects != null) {
                 for (int i = 0; i < trait.effects.Count; i++) {
