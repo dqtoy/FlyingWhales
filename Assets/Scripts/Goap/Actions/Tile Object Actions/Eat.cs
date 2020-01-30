@@ -21,7 +21,7 @@ public class Eat : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.COMFORT_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
     }
     public override List<Precondition> GetPreconditions(IPointOfInterest target, object[] otherData) {
-        if (target is Table || target is FoodPile) {
+        if (target is Table) { // || target is FoodPile
             List<Precondition> p = new List<Precondition>(base.GetPreconditions(target, otherData));
             p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_FOOD, "0" /*+ (int)otherData[0]*/, true, GOAP_EFFECT_TARGET.TARGET), HasFood));
             return p;
