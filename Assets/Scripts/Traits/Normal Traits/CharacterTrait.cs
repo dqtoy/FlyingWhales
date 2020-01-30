@@ -44,12 +44,16 @@ namespace Traits {
                     && targetPOI.gridTileLocation.IsPartOfSettlement(characterThatWillDoJob.homeSettlement) 
                     && characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Pyrophobic") == null) {
                     characterThatWillDoJob.SetHasSeenFire(true);
-                    CharacterStateJob job = characterThatWillDoJob.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
-                    if (job != null) {
-                        if (job.assignedCharacter == null && characterThatWillDoJob.jobQueue.CanJobBeAddedToQueue(job)) {
-                            characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                        } else {
-                            characterThatWillDoJob.combatComponent.Flight(targetPOI);
+                    characterThatWillDoJob.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
+                    for (int i = 0; i < characterThatWillDoJob.homeSettlement.availableJobs.Count; i++) {
+                        JobQueueItem job = characterThatWillDoJob.homeSettlement.availableJobs[i];
+                        if (job.jobType == JOB_TYPE.DOUSE_FIRE) {
+                            if (job.assignedCharacter == null && characterThatWillDoJob.jobQueue.CanJobBeAddedToQueue(job)) {
+                                characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+                            } else {
+                                characterThatWillDoJob.combatComponent.Flight(targetPOI);
+                            }
+                            break;
                         }
                     }
                 }   
