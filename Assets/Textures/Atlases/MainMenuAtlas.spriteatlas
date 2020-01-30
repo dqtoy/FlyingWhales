@@ -39,6 +39,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 41f307609fb0c314c9c3d6096744660a, type: 3}
   - {fileID: 21300000, guid: 4e58d580888ba764c8cd48d2b592b223, type: 3}
   - {fileID: 21300000, guid: cf37ca90afacaf7458a15dccce82e5e0, type: 3}
+  - {fileID: 21300000, guid: 734d97a0c5220f24092a9855b3044dd6, type: 3}
   - {fileID: 21300000, guid: d2c4daa0d69897f42aeedbed1d879bc0, type: 3}
   - {fileID: 21300000, guid: 743696610e951284fa5e803e265fd28b, type: 3}
   - {fileID: 21300000, guid: fc463ec1c15ee8e42b33c5680ace6a82, type: 3}
@@ -64,6 +65,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 0f22c7965bc7c8b40902a59a17bc9039, type: 3}
   - {fileID: 21300000, guid: dd677f2786e46fd43baf05028fe00bd9, type: 3}
   - {fileID: 21300000, guid: 972a4b37fbdfc504a80be01b47467e96, type: 3}
+  - {fileID: 21300000, guid: fcd02a570f0b89a43861c34329643b57, type: 3}
   - {fileID: 21300000, guid: 1a27c3876e6b6ca4a87f07368c9b76cd, type: 3}
   - {fileID: 21300000, guid: 35d1e1b7dd03b024d825b5f6c704f698, type: 3}
   - {fileID: 21300000, guid: ecc715b7fa5e4d447a0c7a336b9c29d8, type: 3}
@@ -71,14 +73,18 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 0d6970088338dcb47bc2ee92d2b2254b, type: 3}
   - {fileID: 21300000, guid: 52415368acbe6ee468a33aeba78e82db, type: 3}
   - {fileID: 21300000, guid: 93ba6098314cebf418c5510a663c08db, type: 3}
+  - {fileID: 21300000, guid: b8c7e4a80395a9d42bb7eec856407109, type: 3}
   - {fileID: 21300000, guid: 189752b89c81e9541b45c7ece9ed0a54, type: 3}
   - {fileID: 21300000, guid: 221e80b93e44c5e48be4d6d37c05dc4b, type: 3}
   - {fileID: 21300000, guid: 4efda50ad081ec64cb8fb650a76ee54c, type: 3}
+  - {fileID: 21300000, guid: 33f8f73aad1207b49a4b4d9c70ef157a, type: 3}
   - {fileID: 21300000, guid: e86a48caa8eb8c644869e929bb47816e, type: 3}
   - {fileID: 21300000, guid: a5e9675bf4a18a14b8ac8c4157185575, type: 3}
   - {fileID: 21300000, guid: 8bdc1a1cf8a1c5842be972458dd90a72, type: 3}
   - {fileID: 21300000, guid: 688af52cfc1d07b42a817bbbf1ec1360, type: 3}
   - {fileID: 21300000, guid: 2da5d3ed1a211414782ee147aeab2947, type: 3}
+  - {fileID: 21300000, guid: 5596aefd107edb742ac964f300c3f01c, type: 3}
+  - {fileID: 21300000, guid: 546f7f0e709a05b4f84217f080f5f197, type: 3}
   - {fileID: 21300000, guid: 32b11fdf4fe54a94390363d811b89a5a, type: 3}
   m_PackedSpriteNamesToIndex:
   - main_menu_logo
@@ -88,6 +94,7 @@ SpriteAtlas:
   - main_menu_glow
   - main_menu_credits_btn_hover
   - main_menu_logo
+  - ravager_portrait
   - main_menu_ui_container
   - main_menu_exit_btn_pressed
   - main_menu_loadgame_btn_default
@@ -113,6 +120,7 @@ SpriteAtlas:
   - main_menu_continue_btn_pressed
   - main_menu_loadgame_btn_pressed
   - main_menu_settings_btn_hover
+  - defect1-32db6
   - main_menu_exit_btn_default
   - main_menu_credits_btn_default
   - main_menu_exit_btn_default
@@ -120,14 +128,18 @@ SpriteAtlas:
   - Loading Screen
   - main_menu_settings_btn_pressed
   - main_menu_credits_btn_default
+  - puppetmaster_portrait
   - main_menu_credits_btn_hover
   - main_menu_bg
   - main_menu_continue_btn_pressed
+  - silentportrait-6a431
   - main_menu_settings_btn_hover
   - main_menu_settings_btn_default
   - main_menu_loadgame_btn_hover
   - main_menu_continue_btn_hover
   - main_menu_settings_btn_pressed
+  - ironcladportrait-5dc24
+  - lich_portrait
   - main_menu_continue_btn_default
   m_Tag: MainMenuAtlas
   m_IsVariant: 0

@@ -151,6 +151,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: c84df034a9f92e8409ba53d2de33d1c1, type: 3}
   - {fileID: 21300000, guid: 9e70eb347cc091f4194765e6de46ad52, type: 3}
   - {fileID: 21300000, guid: 7941a3445f60a774dbf339091a45e1c5, type: 3}
+  - {fileID: 21300000, guid: 86f62754c16dd1d4f83c071700cf2de2, type: 3}
   - {fileID: 21300000, guid: f0511674ea0f7c445932bb0cc31532c4, type: 3}
   - {fileID: 21300000, guid: 8e86b874bfeb274498f082b256b12120, type: 3}
   - {fileID: 21300000, guid: 7e4aca748b913ba4e9991ccb2ac47ad5, type: 3}
@@ -450,6 +451,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 9163a82ec33614143af2ca6bfbc239b6, type: 3}
   - {fileID: 21300000, guid: 918d893e6c4c568499aa05881fa73183, type: 3}
   - {fileID: 21300000, guid: 6d02e93e80e6eeb4a8b106877eb48daf, type: 3}
+  - {fileID: 21300000, guid: f5429d3e121cd384380ee0a70d2c5b36, type: 3}
   - {fileID: 21300000, guid: a17fef3ecd9ef154e96565255903159f, type: 3}
   - {fileID: 21300000, guid: cea6a94ea7d4efb41ac52ea373e82c87, type: 3}
   - {fileID: 21300000, guid: 8302bf4ef9710ac4ca272c251e9178da, type: 3}
@@ -619,6 +621,7 @@ SpriteAtlas:
   - shore01110111-00
   - wood_floorA03
   - rack_weapons_empty
+  - caveWallA-00000000-01
   - shore00000001-00
   - BIG_TREE_OBJECT#1
   - TRAINING_DUMMY#1
@@ -918,6 +921,7 @@ SpriteAtlas:
   - shore01110100-00
   - PLANT#1
   - BotRight
+  - caveWallA-00000000-00
   - Right
   - desertSand02
   - shore11000001-00

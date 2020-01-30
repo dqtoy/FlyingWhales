@@ -76,9 +76,8 @@ public class MetalSourceFeature : TileFeature {
 
     private bool CreateNewOre() {
         List<LocationGridTile> choices = owner.locationGridTiles.Where(x => x.isOccupied == false 
-                && x.structure.structureType.IsOpenSpace() 
-                && x.tileType != LocationGridTile.Tile_Type.Wall
-                && x.GetNeighbourOfTypeCount(LocationGridTile.Ground_Type.Cave, true) == 1)
+                && x.structure.structureType == STRUCTURE_TYPE.CAVE 
+                && x.tileType != LocationGridTile.Tile_Type.Wall)
             .ToList();
         if (choices.Count > 0) {
             LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(choices);

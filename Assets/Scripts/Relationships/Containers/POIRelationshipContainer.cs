@@ -87,14 +87,6 @@ public class POIRelationshipContainer : IRelationshipContainer {
         }
         return null;
     }
-    public string GetRelationshipName(Relatable relatable) {
-        if (HasRelationshipWith(relatable)) {
-            IRelationshipData data = relationships[relatable];
-            RELATIONSHIP_TYPE relType = data.GetFirstMajorRelationship();
-            return Utilities.NormalizeStringUpperCaseFirstLetterOnly(relType.ToString());    
-        }
-        return "Acquaintance";
-    }
     public RELATIONSHIP_TYPE GetRelationshipFromParametersWith(Relatable alterEgo, params RELATIONSHIP_TYPE[] relType) {
         if (HasRelationshipWith(alterEgo)) {
             IRelationshipData data = relationships[alterEgo];

@@ -297,6 +297,7 @@ public class MoodComponent {
 		int roll = Random.Range(0, 3);
 		string summary = $"{GameManager.Instance.TodayLogString()}{_owner.name} triggered major mental break.";
 		_isInMajorMentalBreak = true;
+		_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Major_Mental_Break, _owner);
 		if (roll == 0) {
 			//Berserk
 			summary += "Chosen break is <b>berserk</b>";
@@ -368,6 +369,7 @@ public class MoodComponent {
 		int roll = Random.Range(0, 2);
 		string summary = $"{GameManager.Instance.TodayLogString()}{_owner.name} triggered minor mental break.";
 		_isInMinorMentalBreak = true;
+		_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Minor_Mental_Break, _owner);
 		if (roll == 0) {
 			summary += "Chosen break is <b>Hide at Home</b>";
 			TriggerHideAtHome();	

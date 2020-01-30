@@ -200,16 +200,19 @@ public class Region : ILocation {
     }
     public void OnHoverOverAction() { }
     public void OnHoverOutAction() { }
-    public void ShowBorders() {
+    public void ShowBorders(Color color, bool showGlow = false) {
         for (int i = 0; i < _borders.Count; i++) {
             Border s = _borders[i];
             s.SetBorderState(true);
+            s.SetColor(color);
+            s.SetGlowState(showGlow);
         }
     }
-    public void HideBorders() {
+    public void HideBorders(bool glowState = false) {
         for (int i = 0; i < _borders.Count; i++) {
             Border s = _borders[i];
             s.SetBorderState(false);
+            s.SetGlowState(glowState);
         }
     }
     public void SetBorderGlowEffectState(bool state) {
@@ -834,8 +837,12 @@ public class Border {
     public void SetBorderState(bool state) {
         borderSprite.gameObject.SetActive(state);
     }
-
     public void SetGlowState(bool state) {
         glowEffect.enabled = state;
+    }
+
+    public void SetColor(Color color) {
+        borderSprite.color = color;
+        glowEffect.GlowColor = color;
     }
 }

@@ -17,6 +17,7 @@ public class PlayerDataGeneration : MapGenerationComponent {
 			minion.SetCombatAbility(COMBAT_ABILITY.FLAMESTRIKE);
 			minion.SetRandomResearchInterventionAbilities(new List<SPELL_TYPE>());
 			PlayerManager.Instance.player.AddMinion(minion);
+			PlayerManager.Instance.player.playerSettlement.region.RemoveCharacterFromLocation(minion.character);
 		}
 	}
 }

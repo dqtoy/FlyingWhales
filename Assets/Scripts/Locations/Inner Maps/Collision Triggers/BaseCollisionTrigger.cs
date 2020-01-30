@@ -23,7 +23,7 @@ public abstract class BaseCollisionTrigger<T> : MonoBehaviour, IBaseCollider whe
 
     public void SetCollidersState(bool state) {
         mainCollider.enabled = state;
-        _projectileReceiver.SetColliderState(false);
+        _projectileReceiver.SetColliderState(state);
     }
     public void SetColliderLayer(string layerName) {
         int newLayer = LayerMask.NameToLayer(layerName);

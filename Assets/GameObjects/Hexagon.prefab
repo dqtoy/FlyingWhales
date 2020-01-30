@@ -1473,8 +1473,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   glowColor: {r: 0.41568628, g: 0.050980393, b: 0.6784314, a: 1}
-  glowBrightness: 4
-  outlineWidth: 3
+  glowBrightness: 1.5
+  outlineWidth: 2
   alphaThreshold: 0
   drawOutside: 0
   enableInstancing: 0
@@ -1490,8 +1490,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   glowColor: {r: 0.41568628, g: 0.050980393, b: 0.6784314, a: 1}
-  glowBrightness: 4
-  outlineWidth: 3
+  glowBrightness: 1.5
+  outlineWidth: 2
   alphaThreshold: 0
   drawOutside: 0
   enableInstancing: 0
@@ -1507,8 +1507,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   glowColor: {r: 0.41568628, g: 0.050980393, b: 0.6784314, a: 1}
-  glowBrightness: 4
-  outlineWidth: 3
+  glowBrightness: 1.5
+  outlineWidth: 2
   alphaThreshold: 0
   drawOutside: 0
   enableInstancing: 0
@@ -1524,8 +1524,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   glowColor: {r: 0.41568628, g: 0.050980393, b: 0.6784314, a: 1}
-  glowBrightness: 4
-  outlineWidth: 3
+  glowBrightness: 1.5
+  outlineWidth: 2
   alphaThreshold: 0
   drawOutside: 0
   enableInstancing: 0
@@ -1541,8 +1541,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   glowColor: {r: 0.41568628, g: 0.050980393, b: 0.6784314, a: 1}
-  glowBrightness: 4
-  outlineWidth: 3
+  glowBrightness: 1.5
+  outlineWidth: 2
   alphaThreshold: 0
   drawOutside: 0
   enableInstancing: 0
@@ -1622,8 +1622,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   glowColor: {r: 0.41568628, g: 0.050980393, b: 0.6784314, a: 1}
-  glowBrightness: 4
-  outlineWidth: 3
+  glowBrightness: 1.5
+  outlineWidth: 2
   alphaThreshold: 0
   drawOutside: 0
   enableInstancing: 0

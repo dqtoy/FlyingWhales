@@ -823,8 +823,7 @@ public class UIManager : MonoBehaviour {
 
         if (centerOnRegion) {
             region.CenterCameraOnRegion();
-            region.ShowBorders();
-            region.SetBorderGlowEffectState(true);
+            region.ShowBorders(Color.yellow, true);
         }
     }
     public void UpdateRegionInfo() {
