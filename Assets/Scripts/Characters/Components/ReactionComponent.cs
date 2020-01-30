@@ -200,7 +200,7 @@ public class ReactionComponent {
         debugLog += owner.name + " is reacting to " + targetCharacter.name;
         if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter)) {
             debugLog += "\n-Target is not being targeted by an action, continue reaction";
-            if(owner.faction != targetCharacter.faction && owner.faction.GetRelationshipWith(targetCharacter.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+            if(owner.faction.IsHostileWith(targetCharacter.faction)) {
                 debugLog += "\n-Target is hostile, will trigger Fight or Flight response";
                 //Fight or Flight
                 owner.combatComponent.FightOrFlight(targetCharacter);

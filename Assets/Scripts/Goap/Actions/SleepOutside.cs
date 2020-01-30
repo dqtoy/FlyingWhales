@@ -25,7 +25,7 @@ public class SleepOutside : GoapAction {
         base.Perform(goapNode);
         SetState("Rest Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = "\n" + name + " " + target.nameWithID + ": +100(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 100;

@@ -86,11 +86,11 @@ public class CombatState : CharacterState {
         //}
         //stateComponent.character.StopCurrentActionNode(false);
         stateComponent.character.currentParty.RemoveCarriedPOI(); //Drop characters when entering combat
-        if(stateComponent.character is SeducerSummon) { //If succubus/incubus enters a combat, automatically change its faction to the player faction if faction is still disguised
-            if(stateComponent.character.faction == FactionManager.Instance.disguisedFaction) {
-                stateComponent.character.ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
-            }
-        }
+        // if(stateComponent.character is SeducerSummon) { //If succubus/incubus enters a combat, automatically change its faction to the player faction if faction is still disguised
+        //     if(stateComponent.character.faction == FactionManager.Instance.disguisedFaction) {
+        //         stateComponent.character.ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
+        //     }
+        // }
         stateComponent.character.logComponent.PrintLogIfActive("Starting combat state for " + stateComponent.character.name);
         stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
     }
@@ -480,7 +480,7 @@ public class CombatState : CharacterState {
                 //if the character that was hit is not the actual target of this combat, do not make him/her enter combat state
                 if (damageable == currentClosestHostile) {
                     //When the target is hit and it is still alive, add hostile
-                    hitCharacter.combatComponent.Fight(stateComponent.character, isLethal: stateComponent.character.combatComponent.IsLethalCombatForTarget(hitCharacter));
+                    hitCharacter.combatComponent.FightOrFlight(stateComponent.character, isLethal: stateComponent.character.combatComponent.IsLethalCombatForTarget(hitCharacter));
                     //hitCharacter.combatComponent.AddHostileInRange(stateComponent.character, isLethal: stateComponent.character.combatComponent.IsLethalCombatForTarget(hitCharacter));
                     //also add the hit character as degraded rel, so that when the character that owns this state is hit by the other character because of retaliation, relationship degradation will no longer happen
                     //Reference: https://trello.com/c/mvLDnyBf/2875-retaliation-should-not-trigger-relationship-degradation

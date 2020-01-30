@@ -10,8 +10,6 @@ namespace Traits {
             description = "Disillusioned characters have given up on the world.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEGATIVE;
-            
-            
             ticksDuration = 0;
             canBeTriggered = true;
         }

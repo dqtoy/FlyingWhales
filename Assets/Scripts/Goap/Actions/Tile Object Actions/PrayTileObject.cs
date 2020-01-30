@@ -22,7 +22,7 @@ public class PrayTileObject : GoapAction {
         base.Perform(goapNode);
         SetState("Pray Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         //**Cost**: randomize between 15 - 55
         return Utilities.rng.Next(15, 56);
     }

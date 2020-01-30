@@ -68,6 +68,12 @@ namespace Interrupts {
                     actor.opinionComponent.AdjustOpinion(targetCharacter, "Base", -3, "rejected sexual advances");
                     actor.traitContainer.AddTrait(actor, "Annoyed");
                     actor.currentJob.CancelJob(false);
+                    if(actor.faction == FactionManager.Instance.disguisedFaction) {
+                        actor.ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
+                        if (!targetCharacter.marker.HasUnprocessedPOI(actor)) {
+                            targetCharacter.marker.AddUnprocessedPOI(actor);
+                        }
+                    }
                     return false;
                 }
             }

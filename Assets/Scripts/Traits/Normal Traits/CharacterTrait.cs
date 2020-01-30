@@ -38,19 +38,23 @@ namespace Traits {
         #region Overrides
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             //burning
-            if (targetPOI.traitContainer.GetNormalTrait<Trait>("Burning") != null && targetPOI.gridTileLocation != null 
-                && targetPOI.gridTileLocation.IsPartOfSettlement(characterThatWillDoJob.homeSettlement) 
-                && characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Pyrophobic") == null) {
-                CharacterStateJob job = characterThatWillDoJob.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
-                if (job != null) {
-                    if (job.assignedCharacter == null && characterThatWillDoJob.jobQueue.CanJobBeAddedToQueue(job)) {
-                        characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                    } else {
-                        characterThatWillDoJob.combatComponent.Flight(targetPOI);
+            if (!characterThatWillDoJob.hasSeenFire) {
+                if (targetPOI.traitContainer.GetNormalTrait<Trait>("Burning") != null 
+                    && targetPOI.gridTileLocation != null 
+                    && targetPOI.gridTileLocation.IsPartOfSettlement(characterThatWillDoJob.homeSettlement) 
+                    && characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Pyrophobic") == null) {
+                    characterThatWillDoJob.SetHasSeenFire(true);
+                    CharacterStateJob job = characterThatWillDoJob.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
+                    if (job != null) {
+                        if (job.assignedCharacter == null && characterThatWillDoJob.jobQueue.CanJobBeAddedToQueue(job)) {
+                            characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+                        } else {
+                            characterThatWillDoJob.combatComponent.Flight(targetPOI);
+                        }
                     }
-                }
+                }   
             }
-            
+
             if (targetPOI is TileObject) {
                 TileObject tileObj = targetPOI as TileObject;
                 if (tileObj.isSummonedByPlayer && characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Suspicious") == null && !alreadyInspectedTileObjects.Contains(tileObj)) {

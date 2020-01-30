@@ -85,6 +85,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isSerialKiller { get; protected set; }
     public bool isLazy { get; protected set; }
     public bool isVampire { get; protected set; }
+    public bool hasSeenFire { get; protected set; }
     public LycanthropeData lycanData { get; protected set; }
 
     private List<System.Action> onLeaveAreaActions;
@@ -2388,6 +2389,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void SetIsVampire(bool state) {
         isVampire = state;
     }
+    public void SetHasSeenFire(bool state) {
+        hasSeenFire = state;
+    }
     #endregion    
 
     #region History/Logs
@@ -3258,25 +3262,24 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }    
         }
         Messenger.Broadcast(Signals.ADJUSTED_HP, this);
-        //if (amount < 0 && IsHealthCriticallyLow()) {
-        //    Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "critically low health");
-        //}
-        if (triggerDeath && previous != this._currentHP) {
-            if (this._currentHP <= 0) {
-                if(source != null) {
-                    if (source is Character) {
-                        Character character = source as Character;
-                        Death("attacked", responsibleCharacter: character);
-                    } else {
-                        string cause = "attacked";
-                        if (source != null) {
-                            cause += "_" + source.ToString();
-                        }
-                    }
+        if (triggerDeath && previous != this._currentHP && this._currentHP <= 0) {
+            if(source != null) {
+                if (source is Character) {
+                    Character character = source as Character;
+                    Death("attacked", responsibleCharacter: character);
                 } else {
-                    Death();
+                    string cause = "attacked";
+                    if (source != null) {
+                        cause += "_" + source.ToString();
+                    }
+                    Death(cause);
                 }
+            } else {
+                Death();
             }
+        } else if (amount < 0 && IsHealthCriticallyLow()) {
+            combatComponent.FlightAll();
+            // Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "critically low health");
         }
     }
     public void AdjustAttackMod(int amount) {
@@ -4539,10 +4542,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    //}
     //}
     public string ShareIntel(Intel intel) {
+        // PlayerManager.Instance.player.RemoveIntel(intel);
         if (!intel.node.awareCharacters.Contains(this)) {
             string reaction = reactionComponent.ReactTo(intel.node, SHARE_INTEL_STATUS.INFORMED);
             intel.node.AddAwareCharacter(this);
-            PlayerManager.Instance.player.RemoveIntel(intel);
             return reaction;
         }
         return "aware";
@@ -4567,7 +4570,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Point Of Interest
     //Returns the chosen action for the plan
-    public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost, ref string log) {
+    public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, JobQueueItem job,
+        Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost, ref string log) {
         GoapAction chosenAction = null;
         if (advertisedActions != null && advertisedActions.Count > 0) {//&& IsAvailable()
             bool isCharacterAvailable = IsAvailable();
@@ -4598,7 +4602,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     //}
                     if (action.CanSatisfyRequirements(actor, this, data)
                         && action.WillEffectsSatisfyPrecondition(precondition, actor, this, data)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
-                        int actionCost = action.GetCost(actor, this, data);
+                        int actionCost = action.GetCost(actor, this, job, data);
                         log += "(" + actionCost + ")" + action.goapName + "-" + nameWithID + ", ";
                         if (lowestCostAction == null || actionCost < currentLowestCost) {
                             lowestCostAction = action;
@@ -4622,7 +4626,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return chosenAction;
     }
-    public bool CanAdvertiseActionToActor(Character actor, GoapAction action, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost) {
+    public bool CanAdvertiseActionToActor(Character actor, GoapAction action, JobQueueItem job,
+        Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost) {
         if((IsAvailable() || action.canBeAdvertisedEvenIfActorIsUnavailable) 
             && advertisedActions != null && advertisedActions.Contains(action.goapType)
             && actor.trapStructure.SatisfiesForcedStructure(this)
@@ -4636,7 +4641,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             }
             if (action.CanSatisfyRequirements(actor, this, data)) {
-                cost = action.GetCost(actor, this, data);
+                cost = action.GetCost(actor, this, job, data);
                 return true;
             }
         }
@@ -5643,10 +5648,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //this character has a faction
             //if has a faction, is hostile to characters of every other faction
             //return this.faction.id != character.faction.id;
-            if(faction == character.faction) {
-                return false;
-            }
-            return faction.GetRelationshipWith(character.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE;
+            
+            return faction.IsHostileWith(character.faction);
+            // if(faction == character.faction) {
+            //     return false;
+            // }
+            // return faction.GetRelationshipWith(character.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE;
         }
     }
     /// <summary>

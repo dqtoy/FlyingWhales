@@ -25,7 +25,7 @@ public class CraftFurniture : GoapAction {
     public override LocationGridTile GetOverrideTargetTile(ActualGoapNode goapNode) {
         return goapNode.otherData[0] as LocationGridTile;
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 2;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {

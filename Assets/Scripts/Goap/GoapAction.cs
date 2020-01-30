@@ -106,7 +106,7 @@ public class GoapAction : IReactable {
     protected virtual void ConstructBasePreconditionsAndEffects() { }
     public virtual void Perform(ActualGoapNode actionNode) { }
     protected virtual bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, object[] otherData) { return true; }
-    protected virtual int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected virtual int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 0;
     }
     public virtual void AddFillersToLog(Log log, ActualGoapNode node) {
@@ -175,8 +175,8 @@ public class GoapAction : IReactable {
     #endregion
 
     #region Utilities
-    public int GetCost(Character actor, IPointOfInterest target, object[] otherData) {
-        int baseCost = GetBaseCost(actor, target, otherData);
+    public int GetCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+        int baseCost = GetBaseCost(actor, target, job, otherData);
         //modify costs based on actor's and target's traits
         //for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
         //    Trait trait = actor.traitContainer.allTraits[i];

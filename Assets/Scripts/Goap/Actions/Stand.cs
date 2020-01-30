@@ -22,7 +22,7 @@ public class Stand : GoapAction {
         base.Perform(goapNode);
         SetState("Stand Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 4;
     }
     #endregion

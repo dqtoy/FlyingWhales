@@ -45,10 +45,15 @@ public class InterruptComponent {
             if (currentInterrupt.doesStopCurrentAction && owner.currentJob != null) {
                 owner.currentJob.StopJobNotDrop();
             }
-
             ExecuteStartInterrupt(triggeredInterrupt, targetPOI);
             Messenger.Broadcast(Signals.INTERRUPT_STARTED, owner, currentTargetPOI, currentInterrupt);
             Messenger.Broadcast(Signals.UPDATE_THOUGHT_BUBBLE, owner);
+
+            if (currentInterrupt.duration <= 0) {
+                CreateAndAddEffectLog();
+                currentInterrupt.ExecuteInterruptEndEffect(owner, currentTargetPOI);
+                EndInterrupt();
+            }
         } else {
             TriggeredSimultaneousInterrupt(triggeredInterrupt, targetPOI, identifier);
         }

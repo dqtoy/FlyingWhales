@@ -20,12 +20,14 @@ namespace Traits {
                 GameDate removeDate = GameManager.Instance.Today();
                 removeDate.AddTicks(trait.ticksDuration);
                 string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => traitable.traitContainer.RemoveTraitOnSchedule(traitable, trait), this);
+                traitable.traitContainer.AddScheduleTicket(trait.name, ticket);
                 //trait.SetExpiryTicket(traitable, ticket);
             }
             trait.OnAddTrait(traitable);
             Messenger.Broadcast(Signals.TRAITABLE_GAINED_TRAIT, traitable, trait);
         }
         protected void DefaultProcessOnRemoveTrait(ITraitable traitable, Trait trait, Character removedBy) {
+            // traitable.traitContainer.RemoveScheduleTicket(trait.name, bySchedule);
             //trait.RemoveExpiryTicket(traitable);
             //TODO: if (triggerOnRemove) {
             //    trait.OnRemoveTrait(this, removedBy);
@@ -40,6 +42,7 @@ namespace Traits {
                 GameDate removeDate = GameManager.Instance.Today();
                 removeDate.AddTicks(trait.ticksDuration);
                 string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => traitable.traitContainer.RemoveTraitOnSchedule(traitable, trait), this);
+                traitable.traitContainer.AddScheduleTicket(trait.name, ticket);
                 //trait.SetExpiryTicket(traitable, ticket);
             }
             if(traitable.traitContainer.stacks[trait.name] <= trait.stackLimit) {
@@ -53,6 +56,7 @@ namespace Traits {
         }
         protected void DefaultProcessOnUnstackTrait(ITraitable traitable, Trait trait, Character removedBy) {
             //trait.RemoveExpiryTicket(traitable);
+            // traitable.traitContainer.RemoveScheduleTicket(trait.name, bySchedule);
             if (traitable.traitContainer.stacks[trait.name] < trait.stackLimit) {
                 trait.OnUnstackTrait(traitable);
             }

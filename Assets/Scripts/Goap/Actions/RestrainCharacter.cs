@@ -25,7 +25,7 @@ public class RestrainCharacter : GoapAction {
         //TODO: isForCriminal = parentPlan != null && parentPlan.job != null && (parentPlan.job.jobType == JOB_TYPE.APPREHEND || parentPlan.job.jobType == JOB_TYPE.RESTRAIN);
         SetState("Restrain Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = "\n" + name + " " + target.nameWithID + ": +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;

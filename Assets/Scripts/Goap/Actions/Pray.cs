@@ -24,7 +24,7 @@ public class Pray : GoapAction {
         base.Perform(goapNode);
         SetState("Pray Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = "\n" + name + " " + target.nameWithID + ":";
         int cost = Utilities.rng.Next(90, 131);
         costLog += " +" + cost + "(Initial)";

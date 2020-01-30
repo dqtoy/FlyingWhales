@@ -24,7 +24,7 @@ public class ChangeClass : GoapAction {
         base.Perform(goapNode);
         SetState("Change Class Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 1;
     }
     #endregion

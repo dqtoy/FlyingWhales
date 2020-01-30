@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Traits {
     public class Dazed : Trait {
 
-        private List<CharacterBehaviourComponent> _behaviourComponentsBeforeDazed;
+        // private List<CharacterBehaviourComponent> _behaviourComponentsBeforeDazed;
         
         public Dazed() {
             name = "Dazed";
@@ -24,17 +24,19 @@ namespace Traits {
             if (addedTo is Character) {
                 Character character = addedTo as Character;
                 character.CancelAllJobs();
-                _behaviourComponentsBeforeDazed = new List<CharacterBehaviourComponent>(character.behaviourComponent.currentBehaviourComponents);
-                character.behaviourComponent.ReplaceBehaviourComponent(new List<CharacterBehaviourComponent>()
-                    {CharacterManager.Instance.GetCharacterBehaviourComponent(typeof(DazedBehaviour))});
+                // _behaviourComponentsBeforeDazed = new List<CharacterBehaviourComponent>(character.behaviourComponent.currentBehaviourComponents);
+                // character.behaviourComponent.ReplaceBehaviourComponent(new List<CharacterBehaviourComponent>()
+                //     {CharacterManager.Instance.GetCharacterBehaviourComponent(typeof(DazedBehaviour))});
+                character.behaviourComponent.AddBehaviourComponent(typeof(DazedBehaviour));
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is Character) {
                 Character character = removedFrom as Character;
-                character.behaviourComponent.ReplaceBehaviourComponent(_behaviourComponentsBeforeDazed);
-                _behaviourComponentsBeforeDazed.Clear();
+                // character.behaviourComponent.ReplaceBehaviourComponent(_behaviourComponentsBeforeDazed);
+                // _behaviourComponentsBeforeDazed.Clear();
+                character.behaviourComponent.RemoveBehaviourComponent(typeof(DazedBehaviour));
             }
         }
         #endregion

@@ -20,8 +20,11 @@ namespace Traits {
         #endregion
 
         #region Removing
-        bool RemoveTrait(ITraitable removeFrom, Trait trait, Character removedBy = null);
-        bool RemoveTrait(ITraitable removeFrom, string traitName, Character removedBy = null);
+        bool RemoveTrait(ITraitable removeFrom, Trait trait, Character removedBy = null, bool bySchedule = false);
+        void RemoveTraitAndStacks(ITraitable removeFrom, Trait trait, Character removedBy = null, bool bySchedule = false);
+        void RemoveTraitAndStacks(ITraitable removeFrom, string name, Character removedBy = null, bool bySchedule = false);
+
+        bool RemoveTrait(ITraitable removeFrom, string traitName, Character removedBy = null, bool bySchedule = false);
         bool RemoveTrait(ITraitable removeFrom, int index, Character removedBy = null);
         void RemoveTrait(ITraitable removeFrom, List<Trait> traits);
         List<Trait> RemoveAllTraitsByType(ITraitable removeFrom, TRAIT_TYPE traitType);
@@ -45,6 +48,11 @@ namespace Traits {
         void ProcessOnTickStarted(ITraitable owner);
         void ProcessOnTickEnded(ITraitable owner);
         void ProcessOnHourStarted(ITraitable owner);
+        #endregion
+        
+        #region Schedule Ticket
+        void AddScheduleTicket(string traitName, string ticket);
+        void RemoveScheduleTicket(string traitName, bool bySchedule);
         #endregion
     }
 }

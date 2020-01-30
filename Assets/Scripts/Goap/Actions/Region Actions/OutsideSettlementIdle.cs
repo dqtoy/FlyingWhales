@@ -14,7 +14,7 @@
         base.Perform(goapNode);
         SetState("Idle Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 1;
     }
     #endregion

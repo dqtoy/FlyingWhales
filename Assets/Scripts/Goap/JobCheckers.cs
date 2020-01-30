@@ -131,8 +131,10 @@ public partial class InteractionManager {
         return false;
     }
     public bool CanCharacterTakeRestrainJob(Character character, Character targetCharacter) {
-        return character.faction != targetCharacter.faction
-            && character.faction.GetRelationshipWith(targetCharacter.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE 
+        return 
+            // character.faction != targetCharacter.faction
+            // && character.faction.GetRelationshipWith(targetCharacter.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE 
+            character.faction.IsHostileWith(targetCharacter.faction)
             && character.isAtHomeRegion
             && character.isPartOfHomeFaction && character.currentSettlement.prison != null
             //&& (character.role.roleType == CHARACTER_ROLE.SOLDIER ||

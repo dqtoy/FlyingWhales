@@ -710,7 +710,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (character.isDead) {
             PlayAnimation("Dead");
         } else if (character.isStoppedByOtherCharacter > 0) {
-            PlayIdle();
+            if (character.canMove == false || (!character.canPerform && !character.canWitness)) {
+                PlaySleepGround();
+            } else {
+                PlayIdle();
+            }
         } else if (character.canMove == false || (!character.canPerform && !character.canWitness) /*|| character.traitContainer.GetNormalTrait<Trait>("Resting") != null || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)*/) {
             PlaySleepGround();
         } else if (character.currentParty.icon != null && character.currentParty.icon.isTravelling) {
@@ -1060,6 +1064,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void ClearUnprocessedPOI() {
         unprocessedVisionPOIs.Clear();
     }
+    public bool HasUnprocessedPOI(IPointOfInterest poi) {
+        return unprocessedVisionPOIs.Contains(poi);
+    }
     private void ProcessAllUnprocessedVisionPOIs() {
         if(unprocessedVisionPOIs.Count > 0) { //&& (character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)
             string log = character.name + " tick ended! Processing all unprocessed in visions...";
@@ -1138,6 +1145,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             ClearUnprocessedPOI();
             character.logComponent.PrintLogIfActive(log);
         }
+        character.SetHasSeenFire(false);
         // alreadyWitnessedActions.Clear();
         character.combatComponent.CheckCombatPerTickEnded();
     }

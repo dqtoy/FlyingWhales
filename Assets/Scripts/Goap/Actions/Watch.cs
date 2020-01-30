@@ -21,7 +21,7 @@ public class Watch : GoapAction {
         base.Perform(goapNode);
         SetState("Watch Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 10;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {

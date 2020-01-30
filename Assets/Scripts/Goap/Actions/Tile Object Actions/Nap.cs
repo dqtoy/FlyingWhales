@@ -37,7 +37,7 @@ public class Nap : GoapAction {
         }
         return goapActionInvalidity;
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         //LocationStructure targetStructure = target.gridTileLocation.structure;
         //if(targetStructure.structureType == STRUCTURE_TYPE.DWELLING) {
         //    Dwelling dwelling = targetStructure as Dwelling;

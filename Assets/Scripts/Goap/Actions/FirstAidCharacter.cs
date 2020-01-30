@@ -25,7 +25,7 @@ public class FirstAidCharacter : GoapAction {
         base.Perform(goapNode);
         SetState("First Aid Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = "\n" + name + " " + target.nameWithID + ": +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
@@ -84,8 +84,8 @@ public class FirstAidCharacter : GoapAction {
     public void AfterFirstAidSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
         targetCharacter.opinionComponent.AdjustOpinion(goapNode.actor, "Base", 3);
-        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Injured", goapNode.actor);
-        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Unconscious", goapNode.actor);
+        goapNode.poiTarget.traitContainer.RemoveTraitAndStacks(goapNode.poiTarget, "Injured", goapNode.actor);
+        goapNode.poiTarget.traitContainer.RemoveTraitAndStacks(goapNode.poiTarget, "Unconscious", goapNode.actor);
         if (goapNode.actor.HasTokenInInventory(SPECIAL_TOKEN.HEALING_POTION)) {
             goapNode.actor.ConsumeToken(goapNode.actor.GetToken(SPECIAL_TOKEN.HEALING_POTION));
         } else {

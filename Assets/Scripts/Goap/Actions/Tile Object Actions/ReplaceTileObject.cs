@@ -35,7 +35,7 @@ public class ReplaceTileObject : GoapAction {
         SetState("Replace Success", goapNode);
         
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 1;
     }
     //public override bool InitializeOtherData(object[] otherData) {

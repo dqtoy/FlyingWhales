@@ -372,10 +372,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		if (_owner.gridTileLocation.IsPartOfSettlement(out nearSettlement) 
 		    || _owner.gridTileLocation.IsNextToSettlement(out nearSettlement)) {
 			if (nearSettlement.owner != null && _owner.faction != nearSettlement.owner) {
-				bool isHostileWithFaction =
-					_owner.faction.GetRelationshipWith(nearSettlement.owner).relationshipStatus ==
-					FACTION_RELATIONSHIP_STATUS.HOSTILE;
-				if (isHostileWithFaction) {
+				// bool isHostileWithFaction =
+				// 	_owner.faction.GetRelationshipWith(nearSettlement.owner).relationshipStatus ==
+				// 	FACTION_RELATIONSHIP_STATUS.HOSTILE;
+				if (_owner.faction.IsHostileWith(nearSettlement.owner)) {
 					TriggerRestrain(nearSettlement);
 				}
 			}	

@@ -149,6 +149,24 @@ public class CombatComponent {
         owner.logComponent.PrintLogIfActive(debugLog);
         return hasFled;
     }
+    public void FlightAll() {
+        if (hostilesInRange.Count > 0) {
+            if (owner.canMove) {
+                for (int i = 0; i < hostilesInRange.Count; i++) {
+                    IPointOfInterest hostile = hostilesInRange[i];
+                    if (owner.marker.inVisionPOIs.Contains(hostile)) {
+                        avoidInRange.Add(hostile);
+                    } 
+                    // else {
+                    //     RemoveHostileInRange(hostile, false);
+                    //     i--;
+                    // }
+                }
+            }
+            ClearHostilesInRange(false);
+            willProcessCombat = true;
+        }
+    }
     #endregion
 
     #region Hostiles

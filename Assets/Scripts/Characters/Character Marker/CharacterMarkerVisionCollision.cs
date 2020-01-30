@@ -105,6 +105,9 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             targetCharacter = poi as Character;
         }
         parentMarker.AddPOIAsInVisionRange(poi);
+        if (targetCharacter != null && parentMarker.character.IsHostileWith(targetCharacter)) {
+            parentMarker.character.combatComponent.FightOrFlight(targetCharacter);
+        }
         //if (targetCharacter != null && parentMarker.character.traitContainer.GetNormalTrait<Trait>("Resting", "Unconscious") == null) {
         //    parentMarker.character.combatComponent.AddHostileInRange(targetCharacter);
         //} else if (poi is TornadoTileObject && parentMarker.character.traitContainer.GetNormalTrait<Trait>("Elemental Master") == null) {

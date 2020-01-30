@@ -20,7 +20,7 @@ public class ResolveConflict : GoapAction {
         base.Perform(goapNode);
         SetState("Resolve Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 4;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {

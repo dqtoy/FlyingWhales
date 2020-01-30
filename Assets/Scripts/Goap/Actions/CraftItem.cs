@@ -21,7 +21,7 @@ public class CraftItem : GoapAction {
         base.Perform(goapNode);
         SetState("Craft Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = "\n" + name + " " + target.nameWithID + ": +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;

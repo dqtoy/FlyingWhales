@@ -172,7 +172,7 @@ public class ActualGoapNode {
         //Move To Do Action
         actor.marker.pathfindingAI.ResetEndReachedDistance();
         SetTargetToGoTo();
-        MoveToDoAction(job);
+        CheckAndMoveToDoAction(job);
     }
     private void SetTargetToGoTo() {
         if (targetStructure == null) {
@@ -242,34 +242,56 @@ public class ActualGoapNode {
 
         }
     }
+    private void CheckAndMoveToDoAction(JobQueueItem job) {
+        if (!MoveToDoAction(job)) {
+            if (targetTile != null) {
+                //If cannot move to do action because there is no path between two location grid tiles, handle it here
+                
+            }
+        }
+    }
     //We only pass the job because we need to cancel it if the target tile is null
-    private void MoveToDoAction(JobQueueItem job) {
+    private bool MoveToDoAction(JobQueueItem job) {
         //Only create thought bubble log when characters starts the action/moves to do the action so we can pass the target structure
         if (!actor.currentRegion.IsSameCoreLocationAs(targetStructure.location)) { //different core locations
-            actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, doneAction: () => MoveToDoAction(job));
+            actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, doneAction: () => CheckAndMoveToDoAction(job));
         } else {
             if (targetTile == null) {
                 //Here we check if there is a target tile to go to because if there is not, the target might already be destroyed/taken/disabled, if that happens, we must cancel job
                 Debug.LogWarning(GameManager.Instance.TodayLogString() + actor.name + " is trying to move to do action " + action.goapName + " with target " + poiTarget.name + " but target tile is null, will cancel job " + job.name + " instead.");
                 job.CancelJob(false);
-                return;
+                return false;
             }
-            if (targetPOIToGoTo == null) {
-                if (targetTile == actor.gridTileLocation) {
-                    actor.marker.StopMovement();
-                    actor.PerformGoapAction();
-                } else {
-                    actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
-                }
+            LocationGridTile tileToGoTo = targetTile;
+            if (targetPOIToGoTo != null) {
+                tileToGoTo = targetPOIToGoTo.gridTileLocation;
+            }
+            if (tileToGoTo == actor.gridTileLocation) {
+                actor.marker.StopMovement();
+                actor.PerformGoapAction();
             } else {
-                if(actor.gridTileLocation == targetPOIToGoTo.gridTileLocation) {
-                    actor.marker.StopMovement();
-                    actor.PerformGoapAction();
-                } else {
-                    actor.marker.GoToPOI(targetPOIToGoTo, OnArriveAtTargetLocation);
+                if (!actor.marker.pathfindingAI.HasPath(actor.gridTileLocation, tileToGoTo)) {
+                    return false;
                 }
+                actor.marker.GoTo(tileToGoTo, OnArriveAtTargetLocation);
             }
+            // if (targetPOIToGoTo == null) {
+            //     if (targetTile == actor.gridTileLocation) {
+            //         actor.marker.StopMovement();
+            //         actor.PerformGoapAction();
+            //     } else {
+            //         actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
+            //     }
+            // } else {
+            //     if(actor.gridTileLocation == targetPOIToGoTo.gridTileLocation) {
+            //         actor.marker.StopMovement();
+            //         actor.PerformGoapAction();
+            //     } else {
+            //         actor.marker.GoToPOI(targetPOIToGoTo, OnArriveAtTargetLocation);
+            //     }
+            // }
         }
+        return true;
     }
     //private void MoveToDoAction() {
     //    if (targetStructure == null) {

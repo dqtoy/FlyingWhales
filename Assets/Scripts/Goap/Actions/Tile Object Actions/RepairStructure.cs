@@ -33,7 +33,7 @@ public class RepairStructure : GoapAction {
         base.Perform(goapNode);
         SetState("Repair Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 2;
     }
     #endregion

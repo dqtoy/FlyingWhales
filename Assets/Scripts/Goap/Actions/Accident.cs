@@ -21,7 +21,7 @@ public class Accident : GoapAction {
         base.Perform(actionNode);
         SetState("Accident Success", actionNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = "\n" + name + " " + target.nameWithID + ": +5(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 5;
