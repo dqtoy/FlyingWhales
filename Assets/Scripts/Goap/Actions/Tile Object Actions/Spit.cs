@@ -23,7 +23,7 @@ public class Spit : GoapAction {
         base.Perform(goapNode);
         SetState("Spit Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = "\n" + name + " " + target.nameWithID + ":";
         int cost = Utilities.rng.Next(80, 121);
         costLog += " +" + cost + "(Initial)";

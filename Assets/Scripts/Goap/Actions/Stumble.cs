@@ -21,7 +21,7 @@ public class Stumble : GoapAction {
         base.Perform(goapNode);
         SetState("Stumble Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 10;
     }
     #endregion

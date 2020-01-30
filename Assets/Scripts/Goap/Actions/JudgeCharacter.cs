@@ -18,7 +18,7 @@ public class JudgeCharacter : GoapAction {
         base.Perform(goapNode);
         SetState("Judge Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 1;
     }
     #endregion

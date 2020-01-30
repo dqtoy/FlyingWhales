@@ -19,7 +19,7 @@ public class Searching : GoapAction {
         base.Perform(goapNode);
         SetState("Search Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 1;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {

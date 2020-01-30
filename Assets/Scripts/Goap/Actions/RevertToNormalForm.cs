@@ -17,7 +17,7 @@ public class RevertToNormalForm : GoapAction {
         base.Perform(goapNode);
         SetState("Transform Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 5;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {

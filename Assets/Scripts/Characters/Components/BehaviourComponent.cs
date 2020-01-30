@@ -71,13 +71,13 @@ public class BehaviourComponent {
         }
         return false;
     }
-    public bool ReplaceBehaviourComponent(List<CharacterBehaviourComponent> newComponents) {
-        currentBehaviourComponents.Clear();
-        for (int i = 0; i < newComponents.Count; i++) {
-            AddBehaviourComponent(newComponents[i]);
-        }
-        return true;
-    }
+    // public bool ReplaceBehaviourComponent(List<CharacterBehaviourComponent> newComponents) {
+    //     currentBehaviourComponents.Clear();
+    //     for (int i = 0; i < newComponents.Count; i++) {
+    //         AddBehaviourComponent(newComponents[i]);
+    //     }
+    //     return true;
+    // }
     private bool AddBehaviourComponentInOrder(CharacterBehaviourComponent component) {
         if (currentBehaviourComponents.Count > 0) {
             for (int i = 0; i < currentBehaviourComponents.Count; i++) {

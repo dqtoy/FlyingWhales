@@ -65,7 +65,7 @@ public class DepositResourcePile : GoapAction {
         base.Perform(goapNode);
         SetState("Deposit Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 3;
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {

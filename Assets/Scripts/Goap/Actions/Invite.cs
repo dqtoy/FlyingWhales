@@ -20,7 +20,8 @@ public class Invite : GoapAction {
         base.Perform(goapNode);
         SetState("Invite Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest poiTarget, JobQueueItem job,
+        object[] otherData) {
         return 1;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {

@@ -25,7 +25,7 @@ public class CureCharacter : GoapAction {
         base.Perform(goapNode);
         SetState("Cure Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = "\n" + name + " " + target.nameWithID + ": +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
@@ -81,9 +81,9 @@ public class CureCharacter : GoapAction {
     public void AfterCureSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
         targetCharacter.opinionComponent.AdjustOpinion(goapNode.actor, "Base", 3);
-        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Sick", goapNode.actor);
-        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Plagued", goapNode.actor);
-        goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Infected", goapNode.actor);
+        goapNode.poiTarget.traitContainer.RemoveTraitAndStacks(goapNode.poiTarget, "Sick", goapNode.actor);
+        goapNode.poiTarget.traitContainer.RemoveTraitAndStacks(goapNode.poiTarget, "Plagued", goapNode.actor);
+        goapNode.poiTarget.traitContainer.RemoveTraitAndStacks(goapNode.poiTarget, "Infected", goapNode.actor);
         //**After Effect 2**: Remove Healing Potion from Actor's Inventory
         goapNode.actor.ConsumeToken(goapNode.actor.GetToken(SPECIAL_TOKEN.HEALING_POTION));
         //**After Effect 3**: Allow movement of Target

@@ -329,8 +329,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	#region Apprehend
 	private void TryCreateApprehend(Character target) {
 		if (target.currentSettlement == _owner && target.isCriminal) {
-			if (target.faction == _owner.owner || target.faction.GetRelationshipWith(_owner.owner).relationshipStatus 
-			    != FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+			if (target.faction == _owner.owner || target.faction.IsHostileWith(_owner.owner)) {
 				if (_owner.HasJob(JOB_TYPE.APPREHEND, target) == false) {
 					GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, 
 						target, _owner);
@@ -446,8 +445,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		Debug.Log(summary);
 	}
 	private void TryCreateKnockoutJobs(Character target) {
-		if (CanCreateKnockoutJob() && target.faction != _owner.owner 
-		    && target.faction.GetRelationshipWith(_owner.owner).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+		if (CanCreateKnockoutJob() && target.faction.IsHostileWith(_owner.owner)) {
 			int combatantResidents = 
 				_owner.residents.Count(x => x.traitContainer.GetNormalTrait<Trait>("Combatant") != null);
 			int existingKnockoutJobs = _owner.GetNumberOfJobsWith(JOB_TYPE.KNOCKOUT);

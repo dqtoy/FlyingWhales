@@ -57,7 +57,7 @@ public class BuryCharacter : GoapAction {
         base.Perform(goapNode);
         SetState("Bury Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 1;
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {

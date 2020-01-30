@@ -25,7 +25,7 @@ namespace Traits {
                 }
             } else if (targetPOI is Character) {
                 Character targetCharacter = targetPOI as Character;
-                if (UnityEngine.Random.Range(0, 2) == 0 && characterThatWillDoJob.opinionComponent.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                if (UnityEngine.Random.Range(0, 2) == 0 && characterThatWillDoJob.opinionComponent.IsEnemiesWith(targetCharacter)) {
                     characterThatWillDoJob.combatComponent.Fight(targetCharacter, isLethal: false);
                 }
             }

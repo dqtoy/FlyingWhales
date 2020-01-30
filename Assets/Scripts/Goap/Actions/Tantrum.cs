@@ -25,7 +25,7 @@ public class Tantrum : GoapAction {
         base.Perform(goapNode);
         SetState("Tantrum Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         //**Cost**: randomize between 3-10
         return Utilities.rng.Next(3, 11);
     }

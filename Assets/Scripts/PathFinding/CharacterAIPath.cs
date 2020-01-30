@@ -357,5 +357,10 @@ public class CharacterAIPath : AILerp {
     public void ResetEndReachedDistance() {
         endReachDistance = Default_End_Reached_Distance;
     }
+    public bool HasPath(LocationGridTile fromTile, LocationGridTile toTile) {
+        if (fromTile == toTile) { return true; }
+        return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, NNConstraint.Default).node,
+            AstarPath.active.GetNearest(toTile.centeredWorldLocation, NNConstraint.Default).node);
+    }
     #endregion
 }

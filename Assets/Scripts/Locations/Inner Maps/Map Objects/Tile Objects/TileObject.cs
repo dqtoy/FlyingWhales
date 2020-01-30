@@ -197,7 +197,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         return null;
     }
     //Returns the chosen action for the plan
-    public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost, ref string log) {
+    public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, JobQueueItem job,
+        Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost, ref string log) {
         GoapAction chosenAction = null;
         if (advertisedActions != null && advertisedActions.Count > 0) {//&& IsAvailable()
             bool isCharacterAvailable = IsAvailable();
@@ -228,7 +229,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                     //}
                     if (action.CanSatisfyRequirements(actor, this, data)
                         && action.WillEffectsSatisfyPrecondition(precondition, actor, this, data)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
-                        int actionCost = action.GetCost(actor, this, data);
+                        int actionCost = action.GetCost(actor, this, job, data);
                         log += "(" + actionCost + ")" + action.goapName + "-" + nameWithID + ", ";
                         if (lowestCostAction == null || actionCost < currentLowestCost) {
                             lowestCostAction = action;
@@ -252,7 +253,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         return chosenAction;
     }
-    public bool CanAdvertiseActionToActor(Character actor, GoapAction action, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost) {
+    public bool CanAdvertiseActionToActor(Character actor, GoapAction action, JobQueueItem job,
+        Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost) {
         if ((IsAvailable() || action.canBeAdvertisedEvenIfActorIsUnavailable)
             && advertisedActions != null && advertisedActions.Contains(action.goapType)
             && actor.trapStructure.SatisfiesForcedStructure(this)
@@ -266,7 +268,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                 }
             }
             if (action.CanSatisfyRequirements(actor, this, data)) {
-                cost = action.GetCost(actor, this, data);
+                cost = action.GetCost(actor, this, job, data);
                 return true;
             }
         }

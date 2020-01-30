@@ -9,6 +9,7 @@ namespace Traits {
 
         private List<Trait> _allTraits;
         public Dictionary<string, int> stacks { get; private set; }
+        public Dictionary<string, List<string>> scheduleTickets { get; private set; }
         //public Dictionary<Trait, int> currentDurations { get; private set; } //Temporary only, fix this by making all traits instanced based and just object pool them
 
         #region getters/setters
@@ -18,6 +19,7 @@ namespace Traits {
         public TraitContainer() {
             _allTraits = new List<Trait>();
             stacks = new Dictionary<string, int>();
+            scheduleTickets = new Dictionary<string, List<string>>();
             //currentDurations = new Dictionary<Trait, int>();
         }
 
@@ -85,27 +87,29 @@ namespace Traits {
         /// The main RemoveTrait function. All other RemoveTrait functions eventually call this.
         /// </summary>
         /// <returns>If the trait was removed or not.</returns>
-        public bool RemoveTrait(ITraitable removeFrom, Trait trait, Character removedBy = null) {
+        public bool RemoveTrait(ITraitable removeFrom, Trait trait, Character removedBy = null, bool bySchedule = false) {
             bool removedOrUnstacked = false;
             if (!trait.isStacking) {
                 removedOrUnstacked = _allTraits.Remove(trait);
                 if (removedOrUnstacked) {
                     removeFrom.traitProcessor.OnTraitRemoved(removeFrom, trait, removedBy);
+                    RemoveScheduleTicket(trait.name, bySchedule);
                 }
             } else {
                 if (stacks.ContainsKey(trait.name)) {
                     if(stacks[trait.name] > 1) {
                         stacks[trait.name]--;
                         removeFrom.traitProcessor.OnTraitUnstack(removeFrom, trait, removedBy);
+                        RemoveScheduleTicket(trait.name, bySchedule);
                         removedOrUnstacked = true;
                     } else {
                         removedOrUnstacked = _allTraits.Remove(trait);
                         if (removedOrUnstacked) {
                             stacks.Remove(trait.name);
                             removeFrom.traitProcessor.OnTraitRemoved(removeFrom, trait, removedBy);
+                            RemoveScheduleTicket(trait.name, bySchedule);
                         }
                     }
-                    
                 }
                 //else {
                 //    throw new Exception("Removing stack of " + trait.name + " trait from " + removeFrom.name + " but there is not stack, this should not happen...");
@@ -113,12 +117,27 @@ namespace Traits {
             }
             return removedOrUnstacked;
         }
-        public bool RemoveTrait(ITraitable removeFrom, string traitName, Character removedBy = null) {
+        public bool RemoveTrait(ITraitable removeFrom, string traitName, Character removedBy = null, bool bySchedule = false) {
             Trait trait = GetNormalTrait<Trait>(traitName);
             if (trait != null) {
-                return RemoveTrait(removeFrom, trait, removedBy);
+                return RemoveTrait(removeFrom, trait, removedBy, bySchedule);
             }
             return false;
+        }
+        public void RemoveTraitAndStacks(ITraitable removeFrom, Trait trait, Character removedBy = null, bool bySchedule = false) {
+            int loopNum = 1;
+            if (stacks.ContainsKey(trait.name)) {
+                loopNum = stacks[trait.name];
+            }
+            for (int i = 0; i < loopNum; i++) {
+                RemoveTrait(removeFrom, trait, removedBy, bySchedule);
+            }
+        }
+        public void RemoveTraitAndStacks(ITraitable removeFrom, string name, Character removedBy = null, bool bySchedule = false) {
+            Trait trait = GetNormalTrait<Trait>(name);
+            if (trait != null) {
+                RemoveTraitAndStacks(removeFrom, trait, removedBy, bySchedule);
+            }
         }
         public bool RemoveTrait(ITraitable removeFrom, int index, Character removedBy = null) {
             bool removedOrUnstacked = true;
@@ -129,15 +148,18 @@ namespace Traits {
                 if (!trait.isStacking) {
                     _allTraits.RemoveAt(index);
                     removeFrom.traitProcessor.OnTraitRemoved(removeFrom, trait, removedBy);
+                    RemoveScheduleTicket(trait.name);
                 } else {
                     if (stacks.ContainsKey(trait.name)) {
                         if (stacks[trait.name] > 1) {
                             stacks[trait.name]--;
                             removeFrom.traitProcessor.OnTraitUnstack(removeFrom, trait, removedBy);
+                            RemoveScheduleTicket(trait.name);
                         } else {
                             stacks.Remove(trait.name);
                             _allTraits.RemoveAt(index);
                             removeFrom.traitProcessor.OnTraitRemoved(removeFrom, trait, removedBy);
+                            RemoveScheduleTicket(trait.name);
                         }
                     } 
                     //else {
@@ -181,7 +203,7 @@ namespace Traits {
             //return removedTraits;
         }
         public bool RemoveTraitOnSchedule(ITraitable removeFrom, Trait trait) {
-            return RemoveTrait(removeFrom, trait);
+            return RemoveTrait(removeFrom, trait, bySchedule: true);
         }
         /// <summary>
         /// Remove all traits that are not persistent.
@@ -311,6 +333,28 @@ namespace Traits {
                     allTraits[i].OnHourStarted();
                 }
             }
+        }
+        #endregion
+        
+        #region Schedule Tickets
+        public void AddScheduleTicket(string traitName, string ticket) {
+            if (scheduleTickets.ContainsKey(traitName)) {
+                scheduleTickets[traitName].Add(ticket);
+            } else {
+                scheduleTickets.Add(traitName, new List<string>() { ticket });
+            }
+        }
+        public void RemoveScheduleTicket(string traitName, bool bySchedule = false) {
+            if (scheduleTickets.ContainsKey(traitName)) {
+                if (!bySchedule) {
+                    SchedulingManager.Instance.RemoveSpecificEntry(scheduleTickets[traitName][0]);
+                }
+                if (scheduleTickets[traitName].Count <= 0) {
+                    scheduleTickets.Remove(traitName);
+                } else {
+                    scheduleTickets[traitName].RemoveAt(0);
+                }
+            } 
         }
         #endregion
     }

@@ -16,7 +16,7 @@ public class PlaceBlueprint : GoapAction {
         base.Perform(goapNode);
         SetState("Place Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 3;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode goapNode) {

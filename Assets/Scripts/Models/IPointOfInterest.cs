@@ -28,8 +28,10 @@ public interface IPointOfInterest : ITraitable {
     void SetIsDisabledByPlayer(bool state);
     bool IsAvailable();
     LocationGridTile GetNearestUnoccupiedTileFromThis();
-    GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost, ref string log);
-    bool CanAdvertiseActionToActor(Character actor, GoapAction action, Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost);
+    GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, JobQueueItem job,
+        Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost, ref string log);
+    bool CanAdvertiseActionToActor(Character actor, GoapAction action, JobQueueItem job,
+        Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost);
     bool IsValidCombatTarget();
     bool IsStillConsideredPartOfAwarenessByCharacter(Character character);
     void OnPlacePOI();

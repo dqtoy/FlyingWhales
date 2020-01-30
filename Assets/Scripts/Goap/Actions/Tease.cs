@@ -20,7 +20,8 @@ public class Tease : GoapAction {
         base.Perform(goapNode);
         SetState("Tease Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest poiTarget, JobQueueItem job,
+        object[] otherData) {
         Character targetCharacter = poiTarget as Character;
         if (actor.opinionComponent.IsFriendsWith(targetCharacter)) {
             return Utilities.rng.Next(40, 61);

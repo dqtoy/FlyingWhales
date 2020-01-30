@@ -26,7 +26,7 @@ public class DrinkBlood : GoapAction {
         base.Perform(goapNode);
         SetState("Drink Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = "\n" + name + " " + target.nameWithID + ":";
         int cost = Utilities.rng.Next(50, 61);
         costLog += " +" + cost + "(Initial)";

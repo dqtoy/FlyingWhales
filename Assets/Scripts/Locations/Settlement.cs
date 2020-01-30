@@ -518,8 +518,7 @@ public class Settlement : IJobOwner {
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {
             Character character = region.charactersAtLocation[i];
             if (character.gridTileLocation.IsPartOfSettlement(this)
-            && character.faction != owner 
-            && owner.GetRelationshipWith(character.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+            && owner.IsHostileWith(character.faction)) {
                 hostileCharacters.Add(character);
             }
         }
@@ -711,7 +710,7 @@ public class Settlement : IJobOwner {
     }
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
         if(owner != null && structure.settlementLocation == this && character.canPerform && character.canMove) {
-            if (owner != character.faction && owner.GetRelationshipWith(character.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+            if (owner.IsHostileWith(character.faction)) {
                 SetIsUnderSeige(true);
             }
         }

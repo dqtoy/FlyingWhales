@@ -21,7 +21,7 @@ public class Study : GoapAction {
         base.Perform(goapNode);
         SetState("Study Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 1;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {

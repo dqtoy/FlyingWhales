@@ -1520,8 +1520,11 @@
               <e p="RestrainCharacter.cs" t="Include" />
               <e p="ReturnHome.cs" t="Include" />
               <e p="ReturnHomeLocation.cs" t="Include" />
+              <e p="ReturnToTerritory.cs" t="Include" />
               <e p="RevertToNormalForm.cs" t="Include" />
               <e p="RitualKilling.cs" t="Include" />
+              <e p="RoamAroundTerritory.cs" t="Include" />
+              <e p="RoamAroundTile.cs" t="Include" />
               <e p="Scrap.cs" t="Include" />
               <e p="ScreamForHelp.cs" t="Include" />
               <e p="SepticShock.cs" t="Include" />

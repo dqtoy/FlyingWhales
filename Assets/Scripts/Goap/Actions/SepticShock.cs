@@ -17,7 +17,7 @@ public class SepticShock : GoapAction {
         base.Perform(goapNode);
         SetState("Septic Shock Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 5;
     }
     #endregion

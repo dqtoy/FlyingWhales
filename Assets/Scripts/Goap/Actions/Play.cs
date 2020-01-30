@@ -26,7 +26,7 @@ public class Play : GoapAction {
         base.Perform(goapNode);
         SetState("Play Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         //**Cost**: randomize between 6-15
         return Utilities.rng.Next(6, 16);
     }

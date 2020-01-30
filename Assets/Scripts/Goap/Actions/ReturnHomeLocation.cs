@@ -20,7 +20,7 @@ public class ReturnHomeLocation : GoapAction {
         base.Perform(goapNode);
         SetState("Return Home Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 3;
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {

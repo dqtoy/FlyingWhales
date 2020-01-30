@@ -19,7 +19,7 @@ public class NarcolepticNap : GoapAction {
         base.Perform(goapNode);
         SetState("Nap Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 1;
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {

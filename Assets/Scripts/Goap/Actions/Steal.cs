@@ -26,7 +26,7 @@ public class Steal : GoapAction {
         base.Perform(goapNode);
         SetState("Steal Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = "\n" + name + " " + target.nameWithID + ":";
         int cost = Utilities.rng.Next(300, 351);
         costLog += " +" + cost + "(Initial)";

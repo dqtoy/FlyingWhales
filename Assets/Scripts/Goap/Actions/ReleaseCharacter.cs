@@ -22,7 +22,7 @@ public class ReleaseCharacter : GoapAction {
         base.Perform(goapNode);
         SetState("Release Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         return 1;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {

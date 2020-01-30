@@ -23,9 +23,9 @@ public class KnockoutCharacter : GoapAction {
         base.Perform(goapNode);
         SetState("Knockout Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = "\n" + name + " " + target.nameWithID + ":";
-        int cost = 0; //Utilities.rng.Next(80, 121);
+        int cost = 0;
         if (target is Character) {
             Character targetCharacter = target as Character;
             string opinionLabel = actor.opinionComponent.GetOpinionLabel(targetCharacter);
@@ -33,12 +33,14 @@ public class KnockoutCharacter : GoapAction {
                 || actor.faction == targetCharacter.faction || actor.homeSettlement == targetCharacter.homeSettlement) {
                 cost += 15;
                 costLog += " +15(Friend/Close/Acquaintance/Same Faction/Settlement)";
+            } else if (job.jobType == JOB_TYPE.UNDERMINE) {
+                cost += Utilities.rng.Next(80, 121);
+                costLog += " +" + cost + "(Undermine)";
             } else {
                 cost += 2000;
                 costLog += " +2000(Else)";
             }
         }
-        //If Undermine job: cost = 80 - 120
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }

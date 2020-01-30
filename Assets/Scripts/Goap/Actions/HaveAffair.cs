@@ -20,7 +20,7 @@ public class HaveAffair : GoapAction {
         base.Perform(goapNode);
         SetState("Affair Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         Character otherCharacter = target as Character;
         Character currCharacter = actor;
         List<RELATIONSHIP_TYPE> existingRelsOfCurrentCharacter = currCharacter.relationshipContainer.GetRelationshipDataWith(otherCharacter)?.relationships ?? null;
