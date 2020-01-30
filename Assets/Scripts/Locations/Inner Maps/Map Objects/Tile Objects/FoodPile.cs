@@ -9,9 +9,11 @@ public class FoodPile : ResourcePile {
         Initialize(TILE_OBJECT_TYPE.FOOD_PILE);
         //SetResourceInPile(50);
         traitContainer.RemoveTrait(this, "Flammable");
+        traitContainer.AddTrait(this, "Edible");
     }
     public FoodPile(SaveDataTileObject data) : base(RESOURCE.FOOD) {
         Initialize(data);
+        traitContainer.AddTrait(this, "Edible");
     }
 
     #region Overrides

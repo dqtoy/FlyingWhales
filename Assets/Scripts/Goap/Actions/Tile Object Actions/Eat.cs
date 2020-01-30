@@ -15,12 +15,33 @@ public class Eat : GoapAction {
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
     }
-
-    #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.COMFORT_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
     }
+    //public override List<Precondition> GetPreconditions(IPointOfInterest target, object[] otherData) {
+    //    List<Precondition> p = new List<Precondition>(base.GetPreconditions(target, otherData));
+    //    if (target is Table) {
+    //        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_FOOD, "0" /*+ (int)otherData[0]*/, true, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
+    //    } else {
+    //        ResourcePile pile = target as ResourcePile;
+    //        switch (pile.providedResource) {
+    //            case RESOURCE.FOOD:
+    //                p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_FOOD, "0" /*+ (int) otherData[0]*/, true, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
+    //                break;
+    //            case RESOURCE.WOOD:
+    //                p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_WOOD, "0" /*+ (int) otherData[0]*/, true, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
+    //                break;
+    //            case RESOURCE.STONE:
+    //                p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_STONE, "0" /*+ (int) otherData[0]*/, true, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
+    //                break;
+    //            case RESOURCE.METAL:
+    //                p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_METAL, "0" /*+ (int) otherData[0]*/, true, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
+    //                break;
+    //        }
+    //    }
+    //    return p;
+    //}
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Eat Success", goapNode);
@@ -33,8 +54,6 @@ public class Eat : GoapAction {
             if (table.IsOwnedBy(actor)) {
                 cost = Utilities.rng.Next(10, 16);
                 costLog += " +" + cost + "(Owned)";
-                actor.logComponent.AppendCostLog(costLog);
-                return cost;
             } else {
                 List<Character> tableOwners = table.GetOwners();
                 bool isTargetObjectOwnedByFriend = false;
@@ -53,18 +72,18 @@ public class Eat : GoapAction {
                 if (isTargetObjectOwnedByFriend) {
                     cost = Utilities.rng.Next(25, 46);
                     costLog += " +" + cost + "(Owned by Friend)";
-                    actor.logComponent.AppendCostLog(costLog);
-                    return cost;
                 } else if (isTargetObjectOwnedByEnemy) {
                     cost = 2000;
                     costLog += " +2000(Owned by Enemy)";
-                    actor.logComponent.AppendCostLog(costLog);
-                    return cost;
+                } else {
+                    cost = Utilities.rng.Next(40, 51);
+                    costLog += " +" + cost + "(Otherwise)";
                 }
             }
+        } else if (target is FoodPile) {
+            cost = Utilities.rng.Next(400, 451);
+            costLog += " +" + cost + "(Food Pile)";
         }
-        cost = Utilities.rng.Next(40, 51);
-        costLog += " +" + cost + "(Otherwise)";
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
@@ -124,7 +143,7 @@ public class Eat : GoapAction {
                 if(actor.homeStructure != null) {
                     return false;
                 }
-            } else if(poiTarget is Table) {
+            } else {
                 if(poiTarget.storedResources[RESOURCE.FOOD] < 12) {
                     return false;
                 }

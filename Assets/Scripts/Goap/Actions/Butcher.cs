@@ -27,10 +27,11 @@ public class Butcher : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         string costLog = "\n" + name + " " + target.nameWithID + ":";
         Character deadCharacter = GetDeadCharacter(target);
-        int cost = GetFoodAmountTakenFromDead(deadCharacter);
-        costLog += " +" + cost + "(Initial)";
-        if(target is Character || target is Tombstone) {
-            if (actor == target) {
+        int cost = 0;
+        //int cost = GetFoodAmountTakenFromDead(deadCharacter);
+        //costLog += " +" + cost + "(Initial)";
+        if(deadCharacter != null) {
+            if (actor == deadCharacter) {
                 cost += 2000;
                 costLog += " +2000(Actor/Target Same)";
             } else {
@@ -44,11 +45,29 @@ public class Butcher : GoapAction {
                         costLog += " +2000(Cannibal, Human/Elf, not Starving)";
                     }
                 } else {
-                    if ((deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES)) {
+                    if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
+                        cost += 2000;
                         costLog += " +2000(not Cannibal, Human/Elf)";
                     }
                 }
             }
+            if(deadCharacter.race == RACE.HUMANS) {
+                cost += Utilities.rng.Next(40, 51);
+                costLog += " +" + cost + "(Human)";
+            } else if (deadCharacter.race == RACE.ELVES) {
+                cost += Utilities.rng.Next(40, 51);
+                costLog += " +" + cost + "(Elf)";
+            } else if (deadCharacter.race == RACE.WOLF) {
+                cost += Utilities.rng.Next(20, 31);
+                costLog += " +" + cost + "(Wolf)";
+            } else if (deadCharacter.race == RACE.DEMON) {
+                cost += Utilities.rng.Next(80, 91);
+                costLog += " +" + cost + "(Demon)";
+            }
+        }
+        if(target is SmallAnimal) {
+            cost += Utilities.rng.Next(60, 71);
+            costLog += " +" + cost + "(Small Animal)";
         }
         actor.logComponent.AppendCostLog(costLog);
         return cost;

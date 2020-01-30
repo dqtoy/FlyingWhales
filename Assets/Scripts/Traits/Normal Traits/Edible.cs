@@ -6,7 +6,7 @@ namespace Traits {
     public class Edible : Trait {
 
         private IPointOfInterest owner;
-        private int fullnessProvided;
+        //private int fullnessProvided;
 
         public Edible() {
             name = "Edible";
@@ -23,15 +23,15 @@ namespace Traits {
             if (addedTo is IPointOfInterest) {
                 IPointOfInterest poi = addedTo as IPointOfInterest;
                 owner = poi;
-                if (poi is Mushroom) {
-                    fullnessProvided = 520;
-                } else if (poi is EdiblePlant) {
-                    fullnessProvided = 520;
-                } else if (poi is Table) {
-                    fullnessProvided = 585;
-                } else if (poi is SmallAnimal) {
-                    fullnessProvided = 520;
-                }
+                //if (poi is Mushroom) {
+                //    fullnessProvided = 520;
+                //} else if (poi is EdiblePlant) {
+                //    fullnessProvided = 520;
+                //} else if (poi is Table) {
+                //    fullnessProvided = 585;
+                //} else if (poi is SmallAnimal) {
+                //    fullnessProvided = 520;
+                //}
 
             }
         }
@@ -55,8 +55,8 @@ namespace Traits {
             if (action == INTERACTION_TYPE.EAT) {
                 goapNode.actor.needsComponent.AdjustFullness(8.5f);
                 goapNode.actor.needsComponent.AdjustComfort(2f);
-                if(owner is Table) {
-                    (owner as Table).AdjustFood(-1);
+                if(owner is Table || owner is FoodPile) {
+                    owner.AdjustResource(RESOURCE.FOOD, -1);
                 }
             }
         }
