@@ -888,7 +888,7 @@ public class ConsoleMenu : UIMenu {
         if (character2 == null) {
             AddErrorMessage("There is no character with name " + character2ParameterString);
         }
-        RelationshipManager.Instance.RemoveOneWayRelationship(character1, character2, rel);
+        RelationshipManager.Instance.CreateNewRelationshipBetween(character1, character2, rel);
         AddSuccessMessage(character1.name + " and " + character2.name + " now have relationship " + rel.ToString());
     }
     private void ForcedRelationshipDegradation(string[] parameters) {

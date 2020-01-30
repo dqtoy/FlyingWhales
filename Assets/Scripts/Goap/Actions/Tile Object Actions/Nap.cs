@@ -58,9 +58,69 @@ public class Nap : GoapAction {
         //    return 45;
         //}
         //return 100;
-        string costLog = "\n" + name + " " + target.nameWithID + ": +10(Constant)";
+        string costLog = "\n" + name + " " + target.nameWithID + ":";
+        int cost = 0;
+        if (target is Bed) {
+            Bed targetBed = target as Bed;
+            if (!targetBed.IsSlotAvailable()) {
+                cost += 2000;
+                costLog += " +2000(Fully Occupied)";
+            } else {
+                if (targetBed.IsOwnedBy(actor)) {
+                    cost += Utilities.rng.Next(30, 36);
+                    costLog += " +" + cost + "(Owned)";
+                } else {
+                    List<Character> tableOwners = targetBed.GetOwners();
+                    bool isTargetObjectOwnedByFriend = false;
+                    bool isTargetObjectOwnedByEnemy = false;
+                    if (tableOwners != null) {
+                        for (int i = 0; i < tableOwners.Count; i++) {
+                            Character objectOwner = tableOwners[i];
+                            if (actor.opinionComponent.IsFriendsWith(objectOwner)) {
+                                isTargetObjectOwnedByFriend = true;
+                                break;
+                            } else if (actor.opinionComponent.IsEnemiesWith(objectOwner)) {
+                                isTargetObjectOwnedByEnemy = true;
+                            }
+                        }
+                    }
+                    if (isTargetObjectOwnedByFriend) {
+                        cost = Utilities.rng.Next(55, 66);
+                        costLog += " +" + cost + "(Owned by Friend)";
+                    } else if (isTargetObjectOwnedByEnemy) {
+                        cost += 2000;
+                        costLog += " +2000(Owned by Enemy)";
+                    } else {
+                        cost = Utilities.rng.Next(50, 71);
+                        costLog += " +" + cost + "(Else)";
+                    }
+                }
+
+                Character alreadySleepingCharacter = null;
+                for (int i = 0; i < targetBed.users.Length; i++) {
+                    if(targetBed.users[i] != null) {
+                        alreadySleepingCharacter = targetBed.users[i];
+                        break;
+                    }
+                }
+
+                if(alreadySleepingCharacter != null) {
+                    string opinionLabel = actor.opinionComponent.GetOpinionLabel(alreadySleepingCharacter);
+                    if(opinionLabel == OpinionComponent.Friend) {
+                        cost += 20;
+                        costLog += " +20(Friend Occupies)";
+                    } else if (opinionLabel == OpinionComponent.Acquaintance) {
+                        cost += 25;
+                        costLog += " +25(Acquaintance Occupies)";
+                    } else if (opinionLabel == OpinionComponent.Enemy || opinionLabel == OpinionComponent.Rival || opinionLabel == string.Empty) {
+                        cost += 100;
+                        costLog += " +100(Enemy/Rival/None Occupies)";
+                    }
+                }
+            }
+        }
         actor.logComponent.AppendCostLog(costLog);
-        return 10;
+        return cost;
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);

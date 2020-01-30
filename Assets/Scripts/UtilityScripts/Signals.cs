@@ -407,6 +407,8 @@ public static class Signals {
     /// parameters (Vector3 worldPos, int orbCount, InnerTileMap mapLocation)
     /// </summary>
     public static string CREATE_CHAOS_ORBS = "CreateChaosOrbs";
+
+    public static string PLAYER_ACTION_UNTOGGLE = "OnPlayerActionUntoggle";
     #endregion
 
     #region Interaction

@@ -16,9 +16,18 @@ public class PsychopathRequirementsUI : MonoBehaviour {
     public Button removeRequirementButton;
 
     private List<string> criteriaRaces = new List<string>() { "HUMANS", "ELVES" };
+    private List<string> criteriaClasses = new List<string>() { "Peasant", "Miner", "Craftsman", "Archer", "Stalker", "Hunter", "Druid", "Shaman"
+        , "Mage", "Knight", "Barbarian", "Marauder", "Noble" };
+    private List<string> criteriaTraits = new List<string>() { "Accident Prone", "Agoraphobic", "Drunkard", "Ambitious", "Authoritative", "Cannibal"
+        , "Chaste", "Coward", "Diplomatic", "Healer", "Elemental Master", "Evil"
+        , "Fast", "Fireproof", "Glutton", "Hothead", "Inspiring", "Kleptomaniac"
+        , "Lazy", "Lustful", "Lycanthrope", "Music Hater", "Music Lover", "Narcoleptic"
+        , "Nocturnal", "Optimist", "Pessimist", "Serial Killer", "Purifier", "Pyrophobic"
+        , "Robust", "Suspicious", "Treacherous", "Ugly", "Unfaithful", "Vampiric", "Vigilant" };
+
 
     public void ShowRequirementsUI() {
-        if(victimDescriptions == null) {
+        if (victimDescriptions == null) {
             victimDescriptions = new List<string>();
         }
         PopulateRequirementsType();
@@ -35,7 +44,7 @@ public class PsychopathRequirementsUI : MonoBehaviour {
     private void PopulateRequirementsDescriptions() {
         reqDescriptionDropdown.ClearOptions();
         victimDescriptions.Clear();
-        if(victimType == SERIAL_VICTIM_TYPE.NONE) {
+        if (victimType == SERIAL_VICTIM_TYPE.NONE) {
             reqDescriptionDropdown.options.Add(new TMP_Dropdown.OptionData("NONE"));
             HideAddRemoveButtons();
         } else if (victimType == SERIAL_VICTIM_TYPE.GENDER) {
@@ -45,17 +54,19 @@ public class PsychopathRequirementsUI : MonoBehaviour {
             reqDescriptionDropdown.AddOptions(criteriaRaces);
             HideAddRemoveButtons();
         } else if (victimType == SERIAL_VICTIM_TYPE.CLASS) {
-            List<CharacterClass> allClasses = CharacterManager.Instance.GetAllClasses();
-            for (int i = 0; i < allClasses.Count; i++) {
-                reqDescriptionDropdown.options.Add(new TMP_Dropdown.OptionData(allClasses[i].className));
-            }
+            //List<CharacterClass> allClasses = CharacterManager.Instance.GetAllClasses();
+            //for (int i = 0; i < allClasses.Count; i++) {
+            //    reqDescriptionDropdown.options.Add(new TMP_Dropdown.OptionData(allClasses[i].className));
+            //}
+            reqDescriptionDropdown.AddOptions(criteriaClasses);
             ShowAddRemoveButtons();
         } else if (victimType == SERIAL_VICTIM_TYPE.TRAIT) {
-            foreach (Trait trait in TraitManager.Instance.allTraits.Values) {
-                if (trait.type != TRAIT_TYPE.STATUS) {
-                    reqDescriptionDropdown.options.Add(new TMP_Dropdown.OptionData(trait.name));
-                }
-            }
+            //foreach (Trait trait in TraitManager.Instance.allTraits.Values) {
+            //    if (trait.type != TRAIT_TYPE.STATUS) {
+            //        reqDescriptionDropdown.options.Add(new TMP_Dropdown.OptionData(trait.name));
+            //    }
+            //}
+            reqDescriptionDropdown.AddOptions(criteriaTraits);
             ShowAddRemoveButtons();
         }
         reqDescriptionDropdown.value = 0;
@@ -72,12 +83,12 @@ public class PsychopathRequirementsUI : MonoBehaviour {
     }
     private void UpdateRequirementsLabel() {
         string desc = string.Empty;
-        if(victimType == SERIAL_VICTIM_TYPE.GENDER || victimType == SERIAL_VICTIM_TYPE.RACE) {
+        if (victimType == SERIAL_VICTIM_TYPE.GENDER || victimType == SERIAL_VICTIM_TYPE.RACE) {
             desc = reqDescriptionDropdown.options[reqDescriptionDropdown.value].text;
         } else {
-            if(victimDescriptions.Count > 0) {
+            if (victimDescriptions.Count > 0) {
                 for (int i = 0; i < victimDescriptions.Count; i++) {
-                    if(i > 0) {
+                    if (i > 0) {
                         desc += ", ";
                     }
                     desc += victimDescriptions[i];
@@ -112,4 +123,17 @@ public class PsychopathRequirementsUI : MonoBehaviour {
         UpdateRequirementsLabel();
     }
     #endregion
+
+}
+
+public class PsychopathReq {
+    public SERIAL_VICTIM_TYPE victimType;
+    public List<string> victimDescriptions;
+    public string text;
+
+    public PsychopathReq(SERIAL_VICTIM_TYPE victimType, List<string> victimDescriptions, string text) {
+        this.victimType = victimType;
+        this.victimDescriptions = new List<string>(victimDescriptions);
+        this.text = text;
+    }
 }

@@ -177,7 +177,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	private void TriggerFeed(Character target) {
 		GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, target = GOAP_EFFECT_TARGET.TARGET };
 		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, target, _owner);
-		job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 20 });
+		job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
 		_owner.jobQueue.AddJobInQueue(job);
 	}
 	private void TriggerRestrain(Settlement settlement) {
@@ -359,7 +359,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.FEED)) {
 			GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, target = GOAP_EFFECT_TARGET.TARGET };
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, targetCharacter, _owner);
-			job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 20 });
+			job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
 			return _owner.jobQueue.AddJobInQueue(job);
 		}
 		return false;

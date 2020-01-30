@@ -72,6 +72,7 @@ public class MapGenerator : MonoBehaviour {
                 Faction faction = FactionManager.Instance.allFactions[i];
                 if (faction.isMajorFaction) {
                     faction.DesignateNewLeader(false);
+                    faction.GenerateInitialOpinionBetweenMembers();
                 }
             }
             for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
@@ -82,8 +83,11 @@ public class MapGenerator : MonoBehaviour {
                         && tile.landmarkOnTile != null
                         && (tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE
                             || tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.HOUSES)
-                        && tile.settlementOnTile != null && tile.settlementOnTile.ruler == null) {
-                        tile.settlementOnTile.DesignateNewRuler(false);
+                        && tile.settlementOnTile != null) {
+                        if(tile.settlementOnTile.ruler == null) {
+                            tile.settlementOnTile.DesignateNewRuler(false);
+                        }
+                        tile.settlementOnTile.GenerateInitialOpinionBetweenResidents();
                     }
                 }
             }

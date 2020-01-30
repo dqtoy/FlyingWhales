@@ -8,6 +8,7 @@ using System.Linq;
 using System;
 using Inner_Maps;
 using Traits;
+using UtilityScripts;
 
 public class PlayerUI : MonoBehaviour {
     public static PlayerUI Instance;
@@ -150,6 +151,9 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private CustomDropdownList customDropdownList;
     private readonly List<string> spellsList = new List<string>() { "Tornado" };
     private readonly List<string> factionActionsList = new List<string>() { "Manage Cult", "Meddle" };
+
+    [Header("Player Actions")]
+    public StringSpriteDictionary playerActionIconDictionary;
 
     public List<System.Action> pendingUIToShow { get; private set; }
 

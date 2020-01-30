@@ -516,6 +516,15 @@ public class Faction {
     private void ResetNewLeaderDesignationChance() {
         newLeaderDesignationChance = 5;
     }
+    public void GenerateInitialOpinionBetweenMembers() {
+        for (int i = 0; i < characters.Count; i++) {
+            for (int j = 0; j < characters.Count; j++) {
+                if(characters[i] != characters[j]) {
+                    characters[i].opinionComponent.AdjustOpinion(characters[j], "Base", 0);
+                }
+            }
+        }
+    }
     #endregion
 
     #region Utilities

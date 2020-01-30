@@ -545,6 +545,15 @@ public class Settlement : IJobOwner {
         }
         return hostileCharacters;
     }
+    public void GenerateInitialOpinionBetweenResidents() {
+        for (int i = 0; i < residents.Count; i++) {
+            for (int j = 0; j < residents.Count; j++) {
+                if (residents[i] != residents[j]) {
+                    residents[i].opinionComponent.AdjustOpinion(residents[j], "Base", 0);
+                }
+            }
+        }
+    }
     #endregion
 
     #region Special Tokens

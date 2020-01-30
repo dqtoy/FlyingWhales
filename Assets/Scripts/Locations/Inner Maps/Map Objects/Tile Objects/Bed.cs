@@ -114,7 +114,7 @@ public class Bed : TileObject {
     #endregion
 
     #region Users
-    private bool IsSlotAvailable() {
+    public bool IsSlotAvailable() {
         for (int i = 0; i < bedUsers.Length; i++) {
             if (bedUsers[i] == null) {
                 return true; //there is an available slot
