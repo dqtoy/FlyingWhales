@@ -371,6 +371,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.SNUFF_TORNADO, new[]{
             new StateNameAndDuration(){ name = "Snuff Success", status = InteractionManager.Goap_State_Success, duration = 1 },
         } },
+        {INTERACTION_TYPE.ROAM, new[]{
+            new StateNameAndDuration(){ name = "Roam Success", status = InteractionManager.Goap_State_Success, duration = 3 },
+        } },
     };
 }
 
