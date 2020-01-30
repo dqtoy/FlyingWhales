@@ -17,7 +17,7 @@ public class Table : TileObject {
     public Table() {
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DRINK, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.DROP_RESOURCE, INTERACTION_TYPE.REPAIR, INTERACTION_TYPE.SIT };
         Initialize(TILE_OBJECT_TYPE.TABLE);
-        SetFood(UnityEngine.Random.Range(20, 81));
+        SetFood(UnityEngine.Random.Range(20, 81)); //20
         //SetFood(0);
         traitContainer.AddTrait(this, "Edible");
     }

@@ -867,6 +867,7 @@ public class CharacterNeedsComponent {
                 }
                 if (!triggerGrieving) {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _character, _character);
+                    job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
                     //if (traitContainer.GetNormalTrait<Trait>("Vampiric") != null) {
                     //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
                     //}
@@ -909,6 +910,7 @@ public class CharacterNeedsComponent {
                 }
                 if (!triggerGrieving) {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _character, _character);
+                    job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
                     //if (traitContainer.GetNormalTrait<Trait>("Vampiric") != null) {
                     //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
                     //}
@@ -961,6 +963,7 @@ public class CharacterNeedsComponent {
             }
             if (!triggerGrieving) {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _character, _character);
+                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
                 //if (traitContainer.GetNormalTrait<Trait>("Vampiric") != null) {
                 //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
                 //}
@@ -1212,6 +1215,7 @@ public class CharacterNeedsComponent {
         }
         if (!triggerGrieving) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _character, _character);
+            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
             //if (traitContainer.GetNormalTrait<Trait>("Vampiric") != null) {
             //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
             //}

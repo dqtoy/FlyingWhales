@@ -760,7 +760,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 CharacterManager.Instance.RemoveLimboCharacter(this);
                 return;
             }
-
             UnsubscribeSignals();
             SetPOIState(POI_STATE.INACTIVE);
             //CombatManager.Instance.ReturnCharacterColorToPool(_characterColor);

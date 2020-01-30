@@ -100,6 +100,7 @@ namespace Traits {
                 }
                 if (!triggerGrieving) {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), character, character);
+                    job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
                     character.jobQueue.AddJobInQueue(job);
                 } else {
                     griefstricken.TriggerGrieving();

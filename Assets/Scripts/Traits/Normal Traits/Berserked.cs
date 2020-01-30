@@ -10,7 +10,7 @@ namespace Traits {
         }
         
         private Character _owner;
-        private List<CharacterBehaviourComponent> _behaviourComponentsBeforeBerserked;
+        // private List<CharacterBehaviourComponent> _behaviourComponentsBeforeBerserked;
         
         public Berserked() {
             name = "Berserked";
@@ -31,9 +31,10 @@ namespace Traits {
                     character.marker.BerserkedMarker();
                 }
                 character.CancelAllJobs();
-                _behaviourComponentsBeforeBerserked = new List<CharacterBehaviourComponent>(character.behaviourComponent.currentBehaviourComponents);
-                character.behaviourComponent.ReplaceBehaviourComponent(new List<CharacterBehaviourComponent>()
-                    {CharacterManager.Instance.GetCharacterBehaviourComponent(typeof(BerserkBehaviour))});
+                character.behaviourComponent.AddBehaviourComponent(typeof(BerserkBehaviour));
+                // _behaviourComponentsBeforeBerserked = new List<CharacterBehaviourComponent>(character.behaviourComponent.currentBehaviourComponents);
+                // character.behaviourComponent.ReplaceBehaviourComponent(new List<CharacterBehaviourComponent>()
+                //     {CharacterManager.Instance.GetCharacterBehaviourComponent(typeof(BerserkBehaviour))});
                 //character.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED);
             }
         }
@@ -66,8 +67,9 @@ namespace Traits {
                     IPointOfInterest hostile = hostilesToRemove[i];
                     character.combatComponent.RemoveHostileInRange(hostile);
                 }
-                character.behaviourComponent.ReplaceBehaviourComponent(_behaviourComponentsBeforeBerserked);
-                _behaviourComponentsBeforeBerserked.Clear();
+                character.behaviourComponent.RemoveBehaviourComponent(typeof(BerserkBehaviour));
+                // character.behaviourComponent.ReplaceBehaviourComponent(_behaviourComponentsBeforeBerserked);
+                // _behaviourComponentsBeforeBerserked.Clear();
             }
         }
         public override void OnSeePOIEvenCannotWitness(IPointOfInterest targetPOI, Character character) {
