@@ -156,7 +156,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private void OnCharacterEndedState(Character character, CharacterState characterState) {
-		if (characterState.characterState == CHARACTER_STATE.DOUSE_FIRE) {
+		if (characterState.characterState == CHARACTER_STATE.DOUSE_FIRE && character.homeSettlement == _owner) {
 			TriggerDouseFire();
 		}
 	}

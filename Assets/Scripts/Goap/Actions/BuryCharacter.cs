@@ -22,23 +22,31 @@ public class BuryCharacter : GoapAction {
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
         Character actor = node.actor;
         object[] otherData = node.otherData;
-        if (otherData != null && otherData.Length == 1 && otherData[0] is LocationStructure) {
+        if (otherData != null && otherData.Length >= 1 && otherData[0] is LocationStructure) {
             return otherData[0] as LocationStructure;
         } else {
             return actor.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY);
         }
     }
     public override LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {
-        LocationStructure targetStructure = GetTargetStructure(goapNode);
-        if (targetStructure.structureType == STRUCTURE_TYPE.WILDERNESS && goapNode.actor.homeSettlement != null) {
-            List<LocationGridTile> validTiles = new List<LocationGridTile>();
-            goapNode.actor.homeSettlement.tiles.ForEach(t => 
-                validTiles.AddRange(
-                    t.locationGridTiles.Where(x => targetStructure.unoccupiedTiles.Contains(x))
-                )
-            );
-            return CollectionUtilities.GetRandomElement(validTiles);
+        if (goapNode.otherData != null && goapNode.otherData.Length == 2 && goapNode.otherData[1] is LocationGridTile) {
+            return goapNode.otherData[1] as LocationGridTile;
+        } else {
+            LocationStructure targetStructure = GetTargetStructure(goapNode);
+            if (targetStructure.structureType == STRUCTURE_TYPE.WILDERNESS && goapNode.actor.homeSettlement != null) {
+                List<LocationGridTile> validTiles = targetStructure.unoccupiedTiles
+                    .Where(tile => tile.IsNextToSettlement(goapNode.actor.homeSettlement)).ToList();
+                // List<LocationGridTile> validTiles = new List<LocationGridTile>();
+                // goapNode.actor.homeSettlement.tiles.ForEach(t => 
+                //     validTiles.AddRange(
+                //         t.locationGridTiles.Where(x => targetStructure.unoccupiedTiles.Contains(x))
+                //     )
+                // );
+                return CollectionUtilities.GetRandomElement(validTiles);
+            }
         }
+        
+        
         return null; //allow normal logic to pick target tile
     }
     protected override void ConstructBasePreconditionsAndEffects() {
@@ -131,7 +139,7 @@ public class BuryCharacter : GoapAction {
             if (targetCharacter.grave != null) {
                 return false;
             }
-            if (otherData != null && otherData.Length == 1 && otherData[0] is LocationStructure) {
+            if (otherData != null && otherData.Length >= 1 && otherData[0] is LocationStructure) {
                 //if structure is provided, do not check for cemetery
                 return true;
             } else {

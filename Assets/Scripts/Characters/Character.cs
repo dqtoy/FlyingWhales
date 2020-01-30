@@ -790,9 +790,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "target is already dead");
             CancelAllJobs();
 
-            Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, this.marker.transform.position, 
-                1, this.currentRegion.innerMap);
-            
             if (currentSettlement != null && isHoldingItem) {
                 DropAllTokens(currentStructure, deathTile, true);
             } else {
@@ -5114,10 +5111,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 //if (actionNode.isStoppedAsCurrentAction && plan != null && plan.job != null && plan.job.jobQueueParent.isAreaOrQuestJobQueue) {
                 //    forceRemoveJobInQueue = false;
                 //}
+                Messenger.Broadcast(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, this, job);
+                
                 //this means that this is the end goal so end this plan now
                 job.ForceCancelJob(false);
-                
-                Messenger.Broadcast(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, this, job);
             } else {
                 log += "\nNext action for this plan: " + plan.currentActualNode.goapName;
                 //if (plan.job != null && plan.job.assignedCharacter != this) {

@@ -5,6 +5,7 @@ using System.Linq;
 using Traits;
 using UnityEngine;
 using Inner_Maps;
+using UtilityScripts;
 using Random = UnityEngine.Random;
 
 public class CharacterJobTriggerComponent : JobTriggerComponent {
@@ -80,9 +81,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private void OnCharacterFinishedJob(Character character, GoapPlanJob job) {
-		if (character == _owner && job.jobType == JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM) {
-			TriggerBurySerialKillerVictim(job);
-		}
+		// if (character == _owner && job.jobType == JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM) {
+		// 	TriggerBurySerialKillerVictim(job);
+		// }
 	}
 	private void OnTraitableGainedTrait(ITraitable traitable, Trait trait) {
 		if (traitable == _owner) {
@@ -136,12 +137,18 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			_owner.jobQueue.AddJobInQueue(job);
 		}
 	}
-	private void TriggerBurySerialKillerVictim(GoapPlanJob huntJob) {
-		IPointOfInterest target = huntJob.targetPOI;
+	public void TriggerBurySerialKillerVictim(Character target) {
+		JobQueueItem buryJob = target.homeSettlement.GetJob(JOB_TYPE.BURY, target);
+		buryJob?.ForceCancelJob(false);
+		
 		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY_SERIAL_KILLER_VICTIM,
 			INTERACTION_TYPE.BURY_CHARACTER, target, _owner);
+		LocationStructure wilderness = _owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+		List<LocationGridTile> choices = wilderness.unoccupiedTiles
+			.Where(x => x.IsPartOfSettlement(_owner.homeSettlement) == false).ToList();
+		LocationGridTile targetTile = CollectionUtilities.GetRandomElement(choices);
 		job.AddOtherData(INTERACTION_TYPE.BURY_CHARACTER, new object[] {
-			_owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS)
+			wilderness, targetTile
 		});
 		_owner.jobQueue.AddJobInQueue(job);
 	}

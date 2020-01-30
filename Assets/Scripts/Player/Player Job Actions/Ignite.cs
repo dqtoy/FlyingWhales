@@ -70,11 +70,11 @@ public class IgniteData : SpellData {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
-        LocationGridTile tile = targetPOI.gridTileLocation;
+        // LocationGridTile tile = targetPOI.gridTileLocation;
         BurningSource bs = new BurningSource(targetPOI.gridTileLocation.structure.location.coreTile.region);
         Burning burning = new Burning();
-        burning.SetSourceOfBurning(bs, tile.genericTileObject);
-        tile.genericTileObject.traitContainer.AddTrait(tile.genericTileObject, burning);
+        burning.SetSourceOfBurning(bs, targetPOI);
+        targetPOI.traitContainer.AddTrait(targetPOI, burning);
         Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", name, "activated");
         PlayerManager.Instance.player.ShowNotification(log);
     }

@@ -81,7 +81,8 @@ namespace Traits {
                 }
                 if (targetCharacter.isDead) {
                     Dead deadTrait = targetCharacter.traitContainer.GetNormalTrait<Trait>("Dead") as Dead;
-                    if (deadTrait.responsibleCharacter != characterThatWillDoJob && !deadTrait.charactersThatSawThisDead.Contains(characterThatWillDoJob)) {
+                    if (deadTrait != null && deadTrait.responsibleCharacter != characterThatWillDoJob 
+                                          && !deadTrait.charactersThatSawThisDead.Contains(characterThatWillDoJob)) {
                         deadTrait.AddCharacterThatSawThisDead(characterThatWillDoJob);
                     
                         // Log sawDeadLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "saw_dead");

@@ -129,6 +129,7 @@ public class RitualKilling : GoapAction {
         if (goapNode.poiTarget is Character) {
             Character targetCharacter = goapNode.poiTarget as Character;
             targetCharacter.Death(deathFromAction: goapNode, responsibleCharacter: goapNode.actor);
+            goapNode.actor.jobComponent.TriggerBurySerialKillerVictim(targetCharacter);
         }
     }
     #endregion
