@@ -270,12 +270,16 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	#region Repair
 	private void TryCreateRepairJob(IPointOfInterest target) {
 		if (_owner.HasJob(JOB_TYPE.REPAIR, target) == false) {
+			TileObject tileObject = target as TileObject;
 			GoapPlanJob job =
 				JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPAIR, INTERACTION_TYPE.REPAIR, target, _owner);
 			job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRepairJob);
 			job.SetStillApplicableChecker(() => IsRepairJobStillValid(target));
-			// job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE,
-			// 	new object[] {(int) (TileObjectDB.GetTileObjectData(target.tileObjectType).constructionCost * 0.5f)});
+			job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE,
+				new object[] {
+					(int) (TileObjectDB.GetTileObjectData(tileObject.tileObjectType).constructionCost * 0.5f)
+				}
+			);
 			_owner.AddToAvailableJobs(job);
 		}
 	}

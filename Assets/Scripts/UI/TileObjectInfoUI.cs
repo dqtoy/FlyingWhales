@@ -27,7 +27,7 @@ public class TileObjectInfoUI : UIMenu {
         if(activeTileObject != null && activeTileObject.mapVisual != null) {
             activeTileObject.mapVisual.UnlockHoverObject();
             activeTileObject.mapVisual.SetHoverObjectState(false);
-            if (InnerMapCameraMove.Instance.target == activeTileObject.collisionTrigger.transform) {
+            if (InnerMapCameraMove.Instance.target == activeTileObject.mapObjectVisual.transform) {
                 InnerMapCameraMove.Instance.CenterCameraOn(null);
             }
         }
@@ -43,7 +43,7 @@ public class TileObjectInfoUI : UIMenu {
         activeTileObject = _data as TileObject;
         if(activeTileObject.gridTileLocation != null) {
             bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(activeTileObject.currentRegion);
-            InnerMapCameraMove.Instance.CenterCameraOn(activeTileObject.collisionTrigger.gameObject, instantCenter);
+            InnerMapCameraMove.Instance.CenterCameraOn(activeTileObject.mapObjectVisual.gameObject, instantCenter);
         }
         activeTileObject.mapVisual.SetHoverObjectState(true);
         activeTileObject.mapVisual.LockHoverObject();

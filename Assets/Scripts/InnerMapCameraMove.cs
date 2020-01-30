@@ -97,7 +97,7 @@ public class InnerMapCameraMove : MonoBehaviour {
         SetCameraControlState(false);
     }
     private void OnPooledObjectDestroyed(GameObject obj) {
-        if (target == obj.transform) {
+        if (target == obj.transform || target == obj) {
             target = null;
         }
     }

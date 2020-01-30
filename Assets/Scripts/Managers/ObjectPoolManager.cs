@@ -83,10 +83,10 @@ public class ObjectPoolManager : MonoBehaviour {
         if(po == null) {
              Debug.LogWarning("Cannot Destroy Object via Object Pool! Object " + go.name + " is not from an object pool");
         } else {
+            Messenger.Broadcast(Signals.POOLED_OBJECT_DESTROYED, go);
             po.SendObjectBackToPool();
             po.Reset();
             po.transform.SetParent(po.ParentPool.transform);
-            Messenger.Broadcast(Signals.POOLED_OBJECT_DESTROYED, go);
         }
     }
 

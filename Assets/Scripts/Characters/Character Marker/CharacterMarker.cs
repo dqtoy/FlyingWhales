@@ -651,13 +651,19 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void BerserkedMarker() {
         if(mainImg.color == Color.white) {
             SetMarkerColor(Color.red);
+            hairImg.materials = new Material[] { CharacterManager.Instance.spriteLightingMaterial };
+            knockedOutHairImg.materials = new Material[] { CharacterManager.Instance.spriteLightingMaterial };
             hairImg.color = Color.red;
+            knockedOutHairImg.color = Color.red;
         }
     }
     public void UnberserkedMarker() {
         if (mainImg.color == Color.red) {
             SetMarkerColor(Color.white);
+            hairImg.materials = new Material[] { CharacterManager.Instance.spriteLightingMaterial, character.visuals.hairMaterial };
+            knockedOutHairImg.materials = new Material[] { CharacterManager.Instance.spriteLightingMaterial, character.visuals.hairMaterial };
             hairImg.color = Color.white;
+            knockedOutHairImg.color = Color.white;
         }
     }
     // [Header("Chaos Orb Tester")]
