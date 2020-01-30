@@ -163,7 +163,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	}
 	public bool TriggerDestroy(IPointOfInterest target) {
 		if (!_owner.jobQueue.HasJob(JOB_TYPE.DESTROY, target)) {
-			GoapPlanJob destroyJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DESTROY, INTERACTION_TYPE.RESOLVE_COMBAT, target, _owner);
+			GoapPlanJob destroyJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DESTROY, INTERACTION_TYPE.ASSAULT, target, _owner);
 			destroyJob.SetStillApplicableChecker(() => IsDestroyJobApplicable(target));
 			_owner.jobQueue.AddJobInQueue(destroyJob);
 			return true;
