@@ -8,6 +8,10 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		yield return MapGenerator.Instance.StartCoroutine(FinalizeInnerMaps());
 		yield return MapGenerator.Instance.StartCoroutine(ExecuteFeatureInitialActions());
 		yield return MapGenerator.Instance.StartCoroutine(LoadItems());
+		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+			GridMap.Instance.allRegions[i].GenerateOuterBorders();
+			GridMap.Instance.allRegions[i].HideBorders();
+		}
 	}
 
 	private IEnumerator FinalizeInnerMaps() {

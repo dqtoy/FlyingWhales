@@ -56,9 +56,7 @@ public class UIManager : MonoBehaviour {
     [Header("Other Settlement Info")]
     public Sprite[] areaCenterSprites;
     public GameObject portalPopup;
-    public GameObject regionNameTopMenuGO;
-    public TextMeshProUGUI regionNameTopMenuText;
-    public HoverHandler regionNameHoverHandler;
+    
 
     [Space(10)]
     [Header("Notification Settlement")]
@@ -825,7 +823,8 @@ public class UIManager : MonoBehaviour {
 
         if (centerOnRegion) {
             region.CenterCameraOnRegion();
-            region.ShowSolidBorder();
+            region.ShowBorders();
+            region.SetBorderGlowEffectState(true);
         }
     }
     public void UpdateRegionInfo() {
@@ -997,46 +996,35 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private Button returnToWorldBtn;
     [SerializeField] private UIHoverPosition returnToWorldBtnTooltipPos;
     private void OnInnerMapOpened(ILocation location) {
-        //returnToWorldBtn.interactable = true;
-        //ShowPlayerNotificationArea();
         worldUIRaycaster.enabled = false;
-        regionNameTopMenuText.text = location.name;
-        regionNameTopMenuGO.SetActive(true);
-        regionNameHoverHandler.SetOnHoverAction(() => TestingUtilities.ShowLocationInfo(location.coreTile.region));
-        regionNameHoverHandler.SetOnHoverOutAction(TestingUtilities.HideLocationInfo);
     }
     private void OnInnerMapClosed(ILocation location) {
-        //returnToWorldBtn.interactable = false;
-        //HidePlayerNotificationArea();
         worldUIRaycaster.enabled = true;
-        regionNameTopMenuGO.SetActive(false);
     }
-    //public void PointerClickWorldMap(BaseEventData bed) {
-    //    //PointerEventData ped = bed as PointerEventData;
-    //    //if (ped.clickCount == 2) {
-    //        ReturnToWorlMap();
-    //    //}
-    //}
+
     public void ToggleBetweenMaps() {
         if (InnerMapManager.Instance.isAnInnerMapShowing) {
             InnerMapManager.Instance.HideAreaMap();
             OnCameraOutOfFocus();
-        } 
-        // else {
-        //     if(regionInfoUI.activeRegion != null && regionInfoUI.activeRegion.settlement != PlayerManager.Instance.player.playerSettlement) {
-        //         InnerMapManager.Instance.TryShowLocationMap(regionInfoUI.activeRegion);
-        //     }
-        // }
+        } else {
+            if(regionInfoUI.activeRegion != null) {
+                InnerMapManager.Instance.TryShowLocationMap(regionInfoUI.activeRegion);
+            } else if(hexTileInfoUI.currentlyShowingHexTile != null) {
+                InnerMapManager.Instance.TryShowLocationMap(hexTileInfoUI.currentlyShowingHexTile.region);
+                InnerMapCameraMove.Instance.CenterCameraOnTile(hexTileInfoUI.currentlyShowingHexTile);
+            }
+        }
     }
     public void ToggleMapsHover() {
         if (InnerMapManager.Instance.isAnInnerMapShowing) {
             ShowSmallInfo("Click to exit " + InnerMapManager.Instance.currentlyShowingLocation.name + ".", returnToWorldBtnTooltipPos);
-        } 
-        // else {
-        //     if (regionInfoUI.activeRegion != null && regionInfoUI.activeRegion.settlement != null) {
-        //         ShowSmallInfo("Click to enter " + regionInfoUI.activeRegion.settlement.name + ".", returnToWorldBtnTooltipPos);
-        //     }
-        // }
+        } else {
+            if (regionInfoUI.activeRegion != null) {
+                ShowSmallInfo("Click to enter " + regionInfoUI.activeRegion.name + ".", returnToWorldBtnTooltipPos);
+            } else if(hexTileInfoUI.currentlyShowingHexTile != null) {
+                ShowSmallInfo("Click to enter " + hexTileInfoUI.currentlyShowingHexTile.region.name + ".", returnToWorldBtnTooltipPos);
+            }
+        }
     }
     #endregion
 

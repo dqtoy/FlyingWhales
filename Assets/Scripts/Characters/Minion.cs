@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
+using Actionables;
 using Inner_Maps;
 using Traits;
 
@@ -35,6 +36,7 @@ public class Minion {
         if (!keepData) {
             character.SetName(RandomNameGenerator.Instance.GenerateMinionName());
         }
+        RemoveInvalidPlayerActions();
     }
     public Minion(SaveDataMinion data) {
         this.character = CharacterManager.Instance.GetCharacterByID(data.characterID);
@@ -46,6 +48,7 @@ public class Minion {
         character.ownParty.icon.SetVisualState(true);
         SetAssignedDeadlySinName(character.characterClass.className);
         spellExtractionCount = data.spellExtractionCount;
+        RemoveInvalidPlayerActions();
     }
     public void SetAssignedDeadlySinName(string name) {
         _assignedDeadlySinName = name;
@@ -405,6 +408,26 @@ public class Minion {
         if (character.currentHP >= character.maxHP) {
             //minion can be summoned again
             Messenger.RemoveListener(Signals.TICK_ENDED, UnsummonedHPRecovery);
+        }
+    }
+    public void OnSeize() {
+        Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
+        Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStarted);
+    }
+    public void OnUnseize() {
+        Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
+        Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
+    }
+    #endregion
+
+    #region Player Action Target
+    private void RemoveInvalidPlayerActions() {
+        List<PlayerAction> currentActions = new List<PlayerAction>(character.actions); 
+        for (int i = 0; i < currentActions.Count; i++) {
+            PlayerAction action = currentActions[i];
+            if (action.actionName != "Seize") {
+                character.RemovePlayerAction(action);    
+            }
         }
     }
     #endregion

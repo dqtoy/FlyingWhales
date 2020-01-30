@@ -144,6 +144,10 @@ public partial class InteractionManager {
             && targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null;
     }
     public bool CanCharacterTakeRepairJob(Character character) {
+        // if (job is GoapPlanJob) {
+        //     GoapPlanJob goapPlanJob = job as GoapPlanJob;
+        //     return goapPlanJob.targetPOI.
+        // }
         return character.traitContainer.GetNormalTrait<Trait>("Worker", "Combatant") != null;
         //return character.role.roleType == CHARACTER_ROLE.SOLDIER ||
         //       character.role.roleType == CHARACTER_ROLE.CIVILIAN ||

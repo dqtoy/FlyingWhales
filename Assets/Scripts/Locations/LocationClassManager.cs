@@ -51,7 +51,6 @@ public class LocationClassManager {
             "Craftsman",
             "Peasant",
             "Combatant",
-            "Druid",
             "Peasant",
 
             "Civilian",
@@ -65,7 +64,6 @@ public class LocationClassManager {
             //{ "Leader", new LocationClassNumberGuide() { supposedNumber = 0, currentNumber = 0, } },
             { "Peasant", new LocationClassNumberGuide() { supposedNumber = 0, currentNumber = 0, } },
             { "Combatant", new LocationClassNumberGuide() { supposedNumber = 0, currentNumber = 0, }},
-            { "Druid", new LocationClassNumberGuide() { supposedNumber = 0, currentNumber = 0, } },
             { "Craftsman", new LocationClassNumberGuide() { supposedNumber = 0, currentNumber = 0, }},
             { "Civilian", new LocationClassNumberGuide() { supposedNumber = 0, currentNumber = 0, }},
             { "Noble", new LocationClassNumberGuide() { supposedNumber = 0, currentNumber = 0, }},

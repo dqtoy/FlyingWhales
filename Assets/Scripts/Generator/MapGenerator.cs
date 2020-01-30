@@ -58,14 +58,15 @@ public class MapGenerator : MonoBehaviour {
             //reload scene
             Debug.LogWarning("A component in world generation failed! Reloading scene...");
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        }
-        else {
+        } else {
             loadingWatch.Stop();
             Debug.Log(
                 $"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
 
             LevelLoaderManager.SetLoadingState(false);
             CameraMove.Instance.CenterCameraOn(data.portal.tileLocation.gameObject);
+            InnerMapManager.Instance.TryShowLocationMap(data.portal.tileLocation.region);
+            InnerMapCameraMove.Instance.CenterCameraOnTile(data.portal.tileLocation);
             AudioManager.Instance.TransitionTo("World Music", 10);
 
             for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
@@ -91,15 +92,14 @@ public class MapGenerator : MonoBehaviour {
                     }
                 }
             }
+            Messenger.Broadcast(Signals.GAME_LOADED);
+            yield return new WaitForSeconds(1f);
+            PlayerManager.Instance.player.IncreaseArtifactSlot();
+            PlayerManager.Instance.player.IncreaseSummonSlot();
+            GameManager.Instance.StartProgression();
+            //UIManager.Instance.SetSpeedTogglesState(false);
+            //PlayerUI.Instance.ShowStartingMinionPicker();
         }
-
-        Messenger.Broadcast(Signals.GAME_LOADED);
-        yield return new WaitForSeconds(1f);
-        PlayerManager.Instance.player.IncreaseArtifactSlot();
-        PlayerManager.Instance.player.IncreaseSummonSlot();
-        GameManager.Instance.StartProgression();
-        //UIManager.Instance.SetSpeedTogglesState(false);
-        //PlayerUI.Instance.ShowStartingMinionPicker();
     }
     private IEnumerator InitializeWorldCoroutine(Save data) {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();

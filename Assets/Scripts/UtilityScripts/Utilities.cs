@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 using System.Text;
 using System.Linq;
+using System.Reflection;
 using UnityEngine.UI;
 
 #pragma warning disable 0168 // variable declared but not used.
@@ -1260,6 +1261,16 @@ public class Utilities : MonoBehaviour {
     #endregion
 
     #region Game Utilities
+    public static T CopyComponent<T>(T original, GameObject destination) where T : Component {
+        System.Type type = original.GetType();
+        Component copy = destination.AddComponent(type);
+        System.Reflection.FieldInfo[] fields = type.GetFields();
+        foreach (System.Reflection.FieldInfo field in fields)
+        {
+            field.SetValue(copy, field.GetValue(original));
+        }
+        return copy as T;
+    }
     public static string GetDateString(GameDate date) {
         return date.month + "/" + date.day + "/" + date.year;
     }

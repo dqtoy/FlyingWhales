@@ -57,14 +57,14 @@ public class LocationStructure {
 
     #region Listeners
     private void SubscribeListeners() {
-        if (structureType.IsOpenSpace() == false) {
+        if (structureType.HasWalls()) {
             Messenger.AddListener<WallObject>(Signals.WALL_DAMAGED, OnWallDamaged);
             Messenger.AddListener<WallObject>(Signals.WALL_DESTROYED, OnWallDestroyed);
             Messenger.AddListener<WallObject>(Signals.WALL_REPAIRED, OnWallRepaired);
         }
     }
     private void UnsubscribeListeners() {
-        if (structureType.IsOpenSpace() == false) {
+        if (structureType.HasWalls()) {
             Messenger.RemoveListener<WallObject>(Signals.WALL_DAMAGED, OnWallDamaged);
             Messenger.RemoveListener<WallObject>(Signals.WALL_DESTROYED, OnWallDestroyed);
             Messenger.RemoveListener<WallObject>(Signals.WALL_REPAIRED, OnWallRepaired);

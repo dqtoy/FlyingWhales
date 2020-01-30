@@ -64,7 +64,8 @@ public class RegionInfoUI : UIMenu {
 
     public override void OpenMenu() {
         Region previousRegion = activeRegion;
-        previousRegion?.ShowTransparentBorder();
+        previousRegion?.HideBorders();
+        previousRegion?.SetBorderGlowEffectState(false);
         activeRegion = _data as Region;
         base.OpenMenu();
         UpdateBasicInfo();
@@ -74,7 +75,8 @@ public class RegionInfoUI : UIMenu {
         //ShowAppropriateContentOnOpen();
     }
     public override void CloseMenu() {
-        activeRegion.ShowTransparentBorder();
+        activeRegion.HideBorders();
+        activeRegion.SetBorderGlowEffectState(false);
         activeRegion = null;
         base.CloseMenu();
     }

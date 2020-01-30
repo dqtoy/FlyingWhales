@@ -162,6 +162,12 @@ public class InnerMapCameraMove : MonoBehaviour {
     public void CenterCameraOn(Vector2 pos) {
         MoveCamera(pos);
     }
+    public void CenterCameraOnTile(HexTile tile) {
+        Vector2 pos = tile.ownedBuildSpots[0].spotItem.transform.position;
+        pos.x += 3.5f;
+        pos.y += 3.5f;
+        MoveCamera(pos);
+    }
     private void ArrowKeysMovement() {
         if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) ||Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
             if (!UIManager.Instance.IsConsoleShowing()) {

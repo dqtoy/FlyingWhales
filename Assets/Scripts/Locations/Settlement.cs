@@ -132,26 +132,6 @@ public class Settlement : IJobOwner {
     #endregion
 
     #region Visuals
-    public void HighlightArea() {
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile currTile = tiles[i];
-#if WORLD_CREATION_TOOL
-            if (!worldcreator.WorldCreatorManager.Instance.selectionComponent.selection.Contains(currTile)) {
-                if (currTile.id == coreTile.id) {
-                    currTile.HighlightTile(areaColor, 255f/255f);
-                } else {
-                    currTile.HighlightTile(areaColor, 128f/255f);
-                }
-            }
-#endif
-        }
-    }
-    public void UnhighlightArea() {
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile currTile = tiles[i];
-            currTile.UnHighlightTile();
-        }
-    }
     public void TintStructures(Color color) {
         for (int i = 0; i < tiles.Count; i++) {
             HexTile tile = tiles[i];

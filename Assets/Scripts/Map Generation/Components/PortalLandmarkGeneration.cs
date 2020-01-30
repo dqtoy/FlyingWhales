@@ -16,7 +16,8 @@ public class PortalLandmarkGeneration : MapGenerationComponent {
 		List<HexTile> validPortalTiles = GridMap.Instance.normalHexTiles.Where(h =>
 			(h.elevationType == ELEVATION.PLAIN || h.elevationType == ELEVATION.TREES)
 			&& h.region.HasTileWithFeature(TileFeatureDB.Inhabited_Feature)
-			&& HasSettlementNeighbour(h) == false
+			&& HasSettlementNeighbour(h) == false 
+			&& h.featureComponent.HasFeature(TileFeatureDB.Inhabited_Feature) == false
 		).ToList();
 
 		Assert.IsTrue(validPortalTiles.Count > 0,

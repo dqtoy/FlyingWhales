@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Text;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.Serialization;
@@ -211,40 +210,8 @@ public class GridMap : MonoBehaviour {
         allRegions = regions;
         for (int i = 0; i < allRegions.Length; i++) {
             allRegions[i].FinalizeData();
-            allRegions[i].ShowTransparentBorder();
+            // allRegions[i].HideBorders();
         }
-    }
-    public IEnumerator DivideToRegions(List<HexTile> tiles, int regionCount, int refinementLevel) {
-        List<HexTile> remainingTiles = new List<HexTile>();
-        allRegions = CreateRandomRegions(regionCount, tiles, ref remainingTiles);
-
-        //assign each remaining tile to a region, based on each tiles distance from a core tile.
-        for (int i = 0; i <= refinementLevel; ++i) {
-            remainingTiles = GetNonRegionCoreTiles(tiles);
-            for (int j = 0; j < remainingTiles.Count; j++) {
-                HexTile currTile = remainingTiles[j];
-                Region nearestRegion = GetNearestRegionFromTile(currTile);
-                nearestRegion.AddTile(currTile);
-            }
-            //if the loop has not yet reached its end
-            if (i != refinementLevel) {
-                RedetermineRegionCoreTiles();
-            }
-            yield return null;
-        }
-
-        for (int i = 0; i < allRegions.Length; i++) {
-            allRegions[i].FinalizeData();
-            allRegions[i].ShowTransparentBorder();
-            yield return null;
-        }
-        
-        string summary = "Region Generation Summary: ";
-        for (int i = 0; i < allRegions.Length; i++) {
-            Region region = allRegions[i];
-            summary += $"\n{region.name} - {region.tiles.Count.ToString()}";
-        }
-        Debug.Log(summary);
     }
     private Region[] CreateRandomRegions(int regionCount, List<HexTile> tiles, ref List<HexTile> remainingTiles) {
         List<HexTile> regionCoreTileChoices = new List<HexTile>(tiles

@@ -61,6 +61,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	private void OnResourceInPileChanged(ResourcePile resourcePile) {
 		if (resourcePile.gridTileLocation != null && resourcePile.structureLocation == _owner.mainStorage) {
 			CheckResource(resourcePile.tileObjectType, resourcePile.providedResource);
+			Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.COMBINE_STOCKPILE, resourcePile as IPointOfInterest);
+			TryCreateCombineStockpile(resourcePile);
 		}
 	}
 	private void OnObjectDamaged(IPointOfInterest poi) {
@@ -375,6 +377,12 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 
 	#region Combine Stockpile
 	private void TryCreateCombineStockpile(ResourcePile pile) {
+		if (pile.IsAtMaxResource(pile.providedResource)) {
+			return; //if given pile is at maximum capacity, then do not create combine job for it
+		}
+		if (_owner.HasJob(JOB_TYPE.COMBINE_STOCKPILE, pile)) {
+			return; //already has job to combine stockpile.
+		}
 		//get all resource piles inside the main storage, then check if iny of them are not at max capacity,
 		//if not at max capacity, check if the pile can handle the resources of the new pile,
 		//if it can, then create combine job
@@ -388,7 +396,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 				break;
 			}
 		}
-		if (targetPile != null) {
+		if (targetPile != null && _owner.HasJob(JOB_TYPE.COMBINE_STOCKPILE, targetPile) == false) { //only create job if chosen target pile does not already have a job to combine it with another pile
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COMBINE_STOCKPILE, 
 				INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, pile, _owner);
 			job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, 
@@ -404,7 +412,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		       && targetPile.structureLocation == settlement.mainStorage
 		       && pileToDeposit.gridTileLocation != null
 		       && pileToDeposit.gridTileLocation.IsPartOfSettlement(settlement)
-		       && pileToDeposit.structureLocation == settlement.mainStorage;
+		       && pileToDeposit.structureLocation == settlement.mainStorage
+		       && targetPile.HasEnoughSpaceFor(pileToDeposit.providedResource, pileToDeposit.resourceInPile);
 	}
 	#endregion
 

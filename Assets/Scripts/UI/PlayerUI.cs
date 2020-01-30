@@ -8,24 +8,23 @@ using System.Linq;
 using System;
 using Inner_Maps;
 using Traits;
+using UnityEngine.Assertions;
 using UtilityScripts;
 
 public class PlayerUI : MonoBehaviour {
     public static PlayerUI Instance;
 
+    [Header("Top Menu")]
+    public GameObject regionNameTopMenuGO;
+    public TextMeshProUGUI regionNameTopMenuText;
+    public HoverHandler regionNameHoverHandler;
+    
     [Header("Currencies")]
     [SerializeField] private TextMeshProUGUI manaLbl;
-    public RectTransform manaContainer;
 
     [Header("Role Slots")]
-    [SerializeField] private RectTransform roleSlotsParent;
-    //[SerializeField] private RoleSlotItem[] roleSlots;
-    [SerializeField] private GameObject roleSlotItemPrefab;
     [SerializeField] private GameObject actionBtnTooltipGO;
     [SerializeField] private TextMeshProUGUI actionBtnTooltipLbl;
-    [SerializeField] private TextMeshProUGUI activeMinionTypeLbl;
-    [SerializeField] private UI_InfiniteScroll roleSlotsInfiniteScroll;
-    [SerializeField] private ScrollRect roleSlotsScrollRect;
 
     [Header("Attack")]
     public GameObject attackGridGO;
@@ -52,11 +51,6 @@ public class PlayerUI : MonoBehaviour {
     private LogHistoryItem[] logHistoryItems;
 
     [Header("Miscellaneous")]
-    [SerializeField] private Vector3 openPosition;
-    [SerializeField] private Vector3 closePosition;
-    [SerializeField] private Vector3 halfPosition;
-    [SerializeField] private EasyTween tweener;
-    [SerializeField] private AnimationCurve curve;
     [SerializeField] private Image combatGridAssignerIcon;
     [SerializeField] private GameObject gameOverGO;
     [SerializeField] private TextMeshProUGUI gameOverDescriptionText;
@@ -67,13 +61,11 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI generalConfirmationBodyText;
     [SerializeField] private Button generalConfirmationButton;
     [SerializeField] private TextMeshProUGUI generalConfirmationButtonText;
-    public string previousMenu;
 
     [Header("Start Picker")]
     [SerializeField] private GameObject startingMinionPickerGO;
     [SerializeField] private MinionCard startingMinionCard1;
     [SerializeField] private MinionCard startingMinionCard2;
-    //[SerializeField] private MinionCard startingMinionCard3;
     [SerializeField] private GameObject minionLeaderPickerParent;
     [SerializeField] private GameObject minionLeaderPickerPrefab;
     [SerializeField] private TextMeshProUGUI selectMinionLeaderText;
@@ -85,11 +77,9 @@ public class PlayerUI : MonoBehaviour {
     [Header("Intervention Abilities")]
     [SerializeField] private RectTransform activeMinionActionsParent;
     [SerializeField] private GameObject actionBtnPrefab;
-    public UIHoverPosition roleSlotTooltipPos;
 
     [Header("Combat Abilities")]
     public GameObject combatAbilityGO;
-    public GameObject combatAbilityButtonPrefab;
     public List<CombatAbilityButton> currentCombatAbilityButtons { get; private set; }
 
     [Header("Replace UI")]
@@ -111,9 +101,6 @@ public class PlayerUI : MonoBehaviour {
     public UnleashSummonUI unleashSummonUI;
 
     [Header("Skirmish UI")]
-    public SkirmishUI skirmishUI;
-    public CharacterPortrait skirmishEnemyPortrait;
-    public TextMeshProUGUI skirmishEnemyText;
     public GameObject skirmishConfirmationGO;
 
     [Header("Saving/Loading")]
@@ -131,19 +118,7 @@ public class PlayerUI : MonoBehaviour {
     private int unusedKillCountCharacterItems;
     private int aliveCount;
     private int allFilteredCharactersCount;
-
-    [Header("Top Buttons")]
-    [SerializeField] private Toggle portalToggle;
-    [SerializeField] private Toggle spireToggle;
-    [SerializeField] private Toggle anvilToggle;
-    [SerializeField] private Toggle eyeToggle;
-    [SerializeField] private Toggle needleToggle;
-    [SerializeField] private Toggle fingerToggle;
-    [SerializeField] private Toggle cryptToggle;
-    [SerializeField] private Toggle kennelToggle;
-    [SerializeField] private Toggle profaneToggle;
-    [SerializeField] private ToggleGroup demonicToggleGroup;
-
+    
     [Header("Seize Object")]
     [SerializeField] private Button unseizeButton;
 
@@ -157,13 +132,6 @@ public class PlayerUI : MonoBehaviour {
 
     public List<System.Action> pendingUIToShow { get; private set; }
 
-    //[Header("Actions")]
-    //[SerializeField] private int maxActionPages;
-    //[SerializeField] private GameObject actionPagePrefab;
-    //[SerializeField] private RectTransform actionPageParent;
-    //private ActionsPage[] actionPages;
-    //private int currentActionPage;
-
     private bool _isScrollingUp;
     private bool _isScrollingDown;
     public CombatGrid attackGridReference { get; private set; }
@@ -173,17 +141,11 @@ public class PlayerUI : MonoBehaviour {
 
     void Awake() {
         Instance = this;
-        //minionItems = new List<PlayerCharacterItem>();
-        //Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
-        //Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
     }
     public void UpdateUI() {
         if (PlayerManager.Instance.player == null) {
             return;
         }
-        //if (InteriorMapManager.Instance.isAnAreaMapShowing) {
-        //    UpdateStartInvasionButton();
-        //}
         UpdateMana();
     }
 
@@ -197,20 +159,6 @@ public class PlayerUI : MonoBehaviour {
         minionLeaderPickers = new List<MinionLeaderPicker>();
         currentCombatAbilityButtons = new List<CombatAbilityButton>();
         pendingUIToShow = new List<Action>();
-
-        //LoadRoleSlots();
-        LoadAttackSlot();
-        LoadInterventionAbilitySlots();
-        UpdateInterventionAbilitySlots();
-        // LoadKillCountCharacterItems();
-        InitialUpdateKillCountCharacterItems();
-
-        UpdateIntel();
-        InitializeMemoriesMenu();
-        SetCurrentlySelectedSummonSlot(null);
-        SetCurrentlySelectedArtifactSlot(null);
-        UpdateDemonicLandmarkToggleInteractables();
-        //UpdateArtifactsInteraction();
 
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
@@ -248,16 +196,6 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
 
-        //key presses
-        Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
-
-        //currencies
-        Messenger.AddListener(Signals.PLAYER_ADJUSTED_MANA, UpdateMana);
-
-        //Landmarks
-        Messenger.AddListener<BaseLandmark>(Signals.LANDMARK_CREATED, OnLandmarkCreated);
-        //Messenger.AddListener<BaseLandmark>(Signals.LANDMARK_DESTROYED, OnLandmarkDestroyed);
-        Messenger.AddListener<Region>(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, OnUpdateRegionUISignal);
     }
 
     public void InitializeAfterGameLoaded() {
@@ -272,33 +210,39 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<Character>(Signals.CHARACTER_BECOMES_NON_MINION_OR_SUMMON, CharacterBecomesNonMinionOrSummon);
         Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         Messenger.AddListener<Character, Character>(Signals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
+        
+        //key presses
+        Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
+
+        //currencies
+        Messenger.AddListener(Signals.PLAYER_ADJUSTED_MANA, UpdateMana);
+        
+        LoadAttackSlot();
+        LoadInterventionAbilitySlots();
+        UpdateInterventionAbilitySlots();
+        InitialUpdateKillCountCharacterItems();
+
+        UpdateIntel();
+        InitializeMemoriesMenu();
+        SetCurrentlySelectedSummonSlot(null);
+        SetCurrentlySelectedArtifactSlot(null);
+        
+        // for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
+        //     Minion minion = PlayerManager.Instance.player.minions[i];
+        //     OnGainedMinion(minion);
+        // }
     }
 
     #region Listeners
     private void OnInnerMapOpened(ILocation location) {
         UpdateSummonsInteraction();
         UpdateArtifactsInteraction();
-        //UpdateStartInvasionButton();
-        //startInvasionButton.gameObject.SetActive(true);
-        //saveGameButton.gameObject.SetActive(false);
-
-        //if (PlayerManager.Instance.player.currentSettlementBeingInvaded == settlement) {
-        //    ShowCombatAbilityUI();
-        //}
-
-        //Kill count UI
-        //UpdateKillCountActiveState();
-        //LoadKillCountCharacterItems(settlement);
-        //UpdateKillCount();
+        UpdateRegionNameState();
     }
     private void OnInnerMapClosed(ILocation location) {
         UpdateSummonsInteraction();
         UpdateArtifactsInteraction();
-        //startInvasionButton.gameObject.SetActive(false);
-        //HideCombatAbilityUI();
-        //saveGameButton.gameObject.SetActive(true);
-
-        //UpdateKillCountActiveState();
+        UpdateRegionNameState();
     }
     private void OnKeyPressed(KeyCode pressedKey) {
         if (pressedKey == KeyCode.Escape) {
@@ -332,25 +276,17 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     private void OnCharacterDied(Character character) {
-        //UpdateKillCount();
-        //OrderKillSummaryItems();
         TransferCharacterFromActiveToInactive(character);
-        //CheckIfAllCharactersWipedOut();
         UpdateKillCount();
     }
     private void OnCharacterGainedTrait(Character character, Trait trait) {
         if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
-            //UpdateKillCount();
-            //OrderKillSummaryItems();
             TransferCharacterFromActiveToInactive(character);
-            //CheckIfAllCharactersWipedOut();
             UpdateKillCount();
         }
     }
     private void OnCharacterLostTrait(Character character, Trait trait) {
         if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
-            //UpdateKillCount();
-            //OrderKillSummaryItems();
             TransferCharacterFromInactiveToActive(character);
             UpdateKillCount();
         }
@@ -414,56 +350,40 @@ public class PlayerUI : MonoBehaviour {
     private void CharacterBecomesNonMinionOrSummon(Character character) {
         OnCharacterBecomesNonMinionOrSummon(character);
     }
-    private void CheckIfAllCharactersWipedOut() {
-        if (PlayerManager.Instance.player.currentSettlementBeingInvaded != null) {
-            return; //player has initiated invasion of settlement, all checking of win condition will be executed in PerTickInvasion() in Player script. TODO: Unify them!
-        }
-        bool stillHasResidents = false;
-        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) { //Changed checking to faction members, because some characters may still consider the settlement as their home, but are no longer part of the faction
-            Character currCharacter = CharacterManager.Instance.allCharacters[i];
-            if (currCharacter.IsAble() && currCharacter.isStillConsideredAlive && !(currCharacter is Summon) && currCharacter.faction.isMajorFriendlyNeutral) {
-                stillHasResidents = true;
-                break;
-            }
-        }
-        if (!stillHasResidents) {
-            //player has won
-            UIManager.Instance.Pause();
-            UIManager.Instance.SetSpeedTogglesState(false);
-            Messenger.Broadcast(Signals.HIDE_MENUS);
-            SuccessfulAreaCorruption();
-        }
-    }
-    private void OnLandmarkCreated(BaseLandmark landmark) {
-        UpdateDemonicLandmarkToggleInteractables();
-    }
-    private void OnLandmarkDestroyed(BaseLandmark landmark) {
-        if (landmark.specificLandmarkType.IsPlayerLandmark()) {
-            UpdateDemonicLandmarkToggleInteractables();
-        }
-    }
-    private void OnUpdateRegionUISignal(Region region) {
-        if (UIManager.Instance.regionInfoUI.isShowing) {
-            UpdateClickedDemonicToggle();
-        }
-    }
     private void OnMenuOpened(UIMenu menu) {
-        if (menu is CharacterInfoUI || menu is TileObjectInfoUI || menu is RegionInfoUI) {
-            HideKillSummary();
-            if (menu is RegionInfoUI) {
-                UpdateClickedDemonicToggle();
-            }
+        if (menu is CharacterInfoUI || menu is TileObjectInfoUI) {
+            // HideKillSummary();
+        }else if (menu is HextileInfoUI || menu is RegionInfoUI) {
+            UpdateRegionNameState();
         }
     }
     private void OnMenuClosed(UIMenu menu) {
-        if (menu is RegionInfoUI) {
-            UpdateClickedDemonicToggle();
+        if (menu is HextileInfoUI || menu is RegionInfoUI) {
+            UpdateRegionNameState();
         }
-        //else if (menu is CharacterInfoUI || menu is TileObjectInfoUI) {
-        //    HideActionButtons();
-        //}
     }
     #endregion
+
+    private void UpdateRegionNameState() {
+        if (UIManager.Instance.regionInfoUI.isShowing || UIManager.Instance.hexTileInfoUI.isShowing 
+            || InnerMapManager.Instance.isAnInnerMapShowing) {
+            Region location;
+            if (UIManager.Instance.regionInfoUI.isShowing) {
+                location = UIManager.Instance.regionInfoUI.activeRegion;
+            } else if (UIManager.Instance.hexTileInfoUI.isShowing) {
+                location = UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile.region;
+            } else {
+                location = InnerMapManager.Instance.currentlyShowingMap.location as Region;
+            }
+            Assert.IsNotNull(location, $"Trying to update region name UI in top menu, but no region is specified.");
+            regionNameTopMenuText.text = location.name;
+            regionNameTopMenuGO.SetActive(true);
+            regionNameHoverHandler.SetOnHoverAction(() => TestingUtilities.ShowLocationInfo(location.coreTile.region));
+            regionNameHoverHandler.SetOnHoverOutAction(TestingUtilities.HideLocationInfo);
+        } else {
+            regionNameTopMenuGO.SetActive(false);
+        }
+    }
 
     #region Currencies
     private void UpdateMana() {
@@ -2023,160 +1943,7 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     #endregion
-
-    #region Demonic Landmark Toggles
-    public void OnTogglePortal(bool isOn) {
-        if (isOn) {
-            ShowDemonicLandmarkUI(LANDMARK_TYPE.THE_PORTAL);
-        } else {
-            if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL && !demonicToggleGroup.AnyTogglesOn()) {
-                UIManager.Instance.regionInfoUI.CloseMenu();
-            }
-        }
-    }
-    public void OnToggleSpire(bool isOn) {
-        if (isOn) {
-            ShowDemonicLandmarkUI(LANDMARK_TYPE.THE_SPIRE);
-        } else {
-            if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_SPIRE && !demonicToggleGroup.AnyTogglesOn()) {
-                UIManager.Instance.regionInfoUI.CloseMenu();
-            }
-        }
-    }
-    public void OnToggleAnvil(bool isOn) {
-        if (isOn) {
-            ShowDemonicLandmarkUI(LANDMARK_TYPE.THE_ANVIL);
-        } else {
-            if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_ANVIL && !demonicToggleGroup.AnyTogglesOn()) {
-                UIManager.Instance.regionInfoUI.CloseMenu();
-            }
-        }
-    }
-    public void OnToggleTheEye(bool isOn) {
-        if (isOn) {
-            ShowDemonicLandmarkUI(LANDMARK_TYPE.THE_EYE);
-        } else {
-            if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_EYE && !demonicToggleGroup.AnyTogglesOn()) {
-                UIManager.Instance.regionInfoUI.CloseMenu();
-            }
-        }
-    }
-    public void OnToggleTheNeedle(bool isOn) {
-        if (isOn) {
-            ShowDemonicLandmarkUI(LANDMARK_TYPE.THE_NEEDLES);
-        } else {
-            if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_NEEDLES && !demonicToggleGroup.AnyTogglesOn()) {
-                UIManager.Instance.regionInfoUI.CloseMenu();
-            }
-        }
-    }
-    public void OnToggleGoader(bool isOn) {
-        if (isOn) {
-            ShowDemonicLandmarkUI(LANDMARK_TYPE.GOADER);
-        } else {
-            if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.GOADER && !demonicToggleGroup.AnyTogglesOn()) {
-                UIManager.Instance.regionInfoUI.CloseMenu();
-            }
-        }
-    }
-    public void OnToggleTheCrypt(bool isOn) {
-        if (isOn) {
-            ShowDemonicLandmarkUI(LANDMARK_TYPE.THE_CRYPT);
-        } else {
-            if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_CRYPT && !demonicToggleGroup.AnyTogglesOn()) {
-                UIManager.Instance.regionInfoUI.CloseMenu();
-            }
-        }
-    }
-    public void OnToggleTheKennel(bool isOn) {
-        if (isOn) {
-            ShowDemonicLandmarkUI(LANDMARK_TYPE.THE_KENNEL);
-        } else {
-            if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_KENNEL && !demonicToggleGroup.AnyTogglesOn()) {
-                UIManager.Instance.regionInfoUI.CloseMenu();
-            }
-        }
-    }
-    public void OnToggleTheProfane(bool isOn) {
-        if (isOn) {
-            ShowDemonicLandmarkUI(LANDMARK_TYPE.THE_PROFANE);
-        } else {
-            if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_PROFANE && !demonicToggleGroup.AnyTogglesOn()) {
-                UIManager.Instance.regionInfoUI.CloseMenu();
-            }
-        }
-    }
-    private void ShowDemonicLandmarkUI(LANDMARK_TYPE demonicLandmark) {
-        Region region = LandmarkManager.Instance.GetLandmarkOfType(demonicLandmark).tileLocation.region;
-        UIManager.Instance.ShowRegionInfo(region, false);
-    }
-    private void UpdateDemonicLandmarkToggleInteractables() {
-        List<LANDMARK_TYPE> existingTypes = LandmarkManager.Instance.GetAllLandmarks().Select(x => x.specificLandmarkType).ToList();
-        portalToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.THE_PORTAL);
-        spireToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.THE_SPIRE);
-        anvilToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.THE_ANVIL);
-        eyeToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.THE_EYE);
-        needleToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.THE_NEEDLES);
-        fingerToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.GOADER);
-        cryptToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.THE_CRYPT);
-        kennelToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.THE_KENNEL);
-        profaneToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.THE_PROFANE);
-
-        Toggle[] demonicToggles = Utilities.GetComponentsInDirectChildren<Toggle>(demonicToggleGroup.gameObject);
-        for (int i = 0; i < demonicToggles.Length; i++) {
-            Toggle t = demonicToggles[i];
-            if (!t.interactable) {
-                t.isOn = false;
-            }
-        }
-    }
-    private void UpdateClickedDemonicToggle() {
-        return;
-        if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType.IsPlayerLandmark()) {
-            switch (UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType) {
-                case LANDMARK_TYPE.THE_PORTAL:
-                    portalToggle.isOn = true;
-                    break;
-                case LANDMARK_TYPE.THE_SPIRE:
-                    spireToggle.isOn = true;
-                    break;
-                case LANDMARK_TYPE.THE_ANVIL:
-                    anvilToggle.isOn = true;
-                    break;
-                case LANDMARK_TYPE.THE_EYE:
-                    eyeToggle.isOn = true;
-                    break;
-                case LANDMARK_TYPE.THE_NEEDLES:
-                    needleToggle.isOn = true;
-                    break;
-                case LANDMARK_TYPE.GOADER:
-                    fingerToggle.isOn = true;
-                    break;
-                case LANDMARK_TYPE.THE_CRYPT:
-                    cryptToggle.isOn = true;
-                    break;
-                case LANDMARK_TYPE.THE_KENNEL:
-                    kennelToggle.isOn = true;
-                    break;
-                case LANDMARK_TYPE.THE_PROFANE:
-                    profaneToggle.isOn = true;
-                    break;
-
-            }
-        } else {
-            portalToggle.isOn = false;
-            spireToggle.isOn = false;
-            anvilToggle.isOn = false;
-            eyeToggle.isOn = false;
-            needleToggle.isOn = false;
-            fingerToggle.isOn = false;
-            cryptToggle.isOn = false;
-            kennelToggle.isOn = false;
-            profaneToggle.isOn = false;
-        }
-    }
-    #endregion
-
+    
     #region Seize Object
     public void ShowSeizedObjectUI() {
         unseizeButton.gameObject.SetActive(true);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Actionables;
 using Inner_Maps;
 using Traits;
 using UnityEngine;
@@ -36,9 +37,11 @@ public class Summon : Character, IWorldObject {
 
     #region Overrides
     public override void Initialize() {
+        ConstructDefaultActions();
         OnUpdateRace();
         OnUpdateCharacterClass();
 
+        moodComponent.OnCharacterBecomeMinionOrSummon();
         moodComponent.SetMoodValue(50);
 
         CreateOwnParty();
@@ -252,6 +255,18 @@ public class Summon : Character, IWorldObject {
     }
     public void RemoveTerritory(HexTile tile) {
         territorries.Remove(tile);
+    }
+    #endregion
+
+    #region Player Action Target
+    public override void ConstructDefaultActions() {
+        actions = new List<PlayerAction>();
+        
+        PlayerAction seizeAction = new PlayerAction("Seize", 
+            () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && this.traitContainer.GetNormalTrait<Trait>("Leader", "Blessed") == null, 
+            () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
+        
+        AddPlayerAction(seizeAction);
     }
     #endregion
 }

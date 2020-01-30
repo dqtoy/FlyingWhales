@@ -21,10 +21,12 @@ public class HextileInfoUI : UIMenu {
     public HexTile currentlyShowingHexTile { get; private set; }
     
     public override void OpenMenu() {
-        currentlyShowingHexTile?.UnHighlightTile();
-        base.OpenMenu();
+        currentlyShowingHexTile?.SetBordersState(false);
+        currentlyShowingHexTile?.SetBordersGlowState(false);
         currentlyShowingHexTile = _data as HexTile;
-        currentlyShowingHexTile.HighlightTile(Color.gray, 128f / 255f);
+        base.OpenMenu();
+        currentlyShowingHexTile.SetBordersState(true);
+        currentlyShowingHexTile.SetBordersGlowState(true);
         UpdateBasicInfo();
         UpdateHexTileInfo();
     }
@@ -35,7 +37,8 @@ public class HextileInfoUI : UIMenu {
         }
     }
     public override void CloseMenu() {
-        currentlyShowingHexTile.UnHighlightTile();
+        currentlyShowingHexTile.SetBordersState(false);
+        currentlyShowingHexTile.SetBordersGlowState(false);
         base.CloseMenu();
         currentlyShowingHexTile = null;
     }
