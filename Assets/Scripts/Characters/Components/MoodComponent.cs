@@ -352,7 +352,7 @@ public class MoodComponent {
 		}
 	}
 	private void CheckIfSuicidalLost(ITraitable traitable, Trait trait, Character removedBy) {
-		if (traitable == _owner && trait is Catatonic) {
+		if (traitable == _owner && trait is Suicidal) {
 			//gain catharsis
 			_owner.traitContainer.AddTrait(_owner, "Catharsis");
 			Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfSuicidalLost);

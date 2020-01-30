@@ -17,7 +17,7 @@ public class ItemInfoUI : UIMenu {
         if (activeItem != null && activeItem.mapVisual != null) {
             activeItem.mapVisual.UnlockHoverObject();
             activeItem.mapVisual.SetHoverObjectState(false);
-            if (InnerMapCameraMove.Instance.target == activeItem.collisionTrigger.transform) {
+            if (InnerMapCameraMove.Instance.target == activeItem.mapObjectVisual.gameObject.transform) {
                 InnerMapCameraMove.Instance.CenterCameraOn(null);
             }
         }
@@ -33,7 +33,7 @@ public class ItemInfoUI : UIMenu {
         activeItem = _data as SpecialToken;
         if (activeItem.gridTileLocation != null) {
             bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(activeItem.currentRegion);
-            InnerMapCameraMove.Instance.CenterCameraOn(activeItem.collisionTrigger.gameObject, instantCenter);
+            InnerMapCameraMove.Instance.CenterCameraOn(activeItem.mapObjectVisual.gameObject, instantCenter);
         }
         activeItem.mapVisual.SetHoverObjectState(true);
         activeItem.mapVisual.LockHoverObject();

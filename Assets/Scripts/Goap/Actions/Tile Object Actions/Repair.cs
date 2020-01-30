@@ -97,12 +97,6 @@ public class Repair : GoapAction {
             carriedPile.AdjustResourceInPile(-cost);
             tileObj.AdjustResource(RESOURCE.WOOD, cost);
         }
-
-        //TODO:
-        //int gainedHPPerTick = 20;
-        //int missingHP = goapNode.poiTarget.maxHP - goapNode.poiTarget.currentHP;
-        //int ticksToRecpverMissingHP = missingHP / gainedHPPerTick;
-        //currentState.OverrideDuration(ticksToRecpverMissingHP);
     }
     public void PerTickRepairSuccess(ActualGoapNode goapNode) {
         goapNode.poiTarget.AdjustHP(20);
