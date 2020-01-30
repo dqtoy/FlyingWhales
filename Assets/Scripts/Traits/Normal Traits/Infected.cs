@@ -100,7 +100,7 @@ namespace Traits {
 
         private void PerHour() {
             int roll = Random.Range(0, 100);
-            if (roll < 2 && owner.isAtHomeRegion) { //2
+            if (roll < 5) { //2 // && owner.isAtHomeRegion
                 //owner.marker.StopMovement();
                 //if (owner.currentActionNode != null && owner.currentActionNode.action.goapType != INTERACTION_TYPE.ZOMBIE_DEATH) {
                 //    owner.StopCurrentActionNode(false);

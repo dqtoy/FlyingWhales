@@ -473,8 +473,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	#endregion
 
 	#region Douse Fire
-	public CharacterStateJob TriggerDouseFire() {
-        CharacterStateJob returnedJob = null;
+	public void TriggerDouseFire() {
         if (_owner.region.innerMap.activeBurningSources.Count(x => x.HasFireInSettlement(_owner)) > 0) {
 			int existingDouseFire = _owner.GetNumberOfJobsWith(CHARACTER_STATE.DOUSE_FIRE);
 			int douseFireJobs = 3;
@@ -485,9 +484,6 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 						CHARACTER_STATE.DOUSE_FIRE, _owner);
 					job.SetCanTakeThisJobChecker(CanTakeRemoveFireJob);
 					_owner.AddToAvailableJobs(job, 0);
-                    if(returnedJob == null) {
-                        returnedJob = job;
-                    }
 				}	
 			}	
 		}
@@ -501,7 +497,6 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 				}
 			}
 		}
-        return returnedJob;
 	}
 	private bool CanTakeRemoveFireJob(Character character, IPointOfInterest target) {
 		if (target is Character) {

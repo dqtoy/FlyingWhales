@@ -213,28 +213,30 @@ public class ReactionComponent {
                         debugLog += "\n-Chat triggered";
                         owner.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, targetCharacter);
                     } else {
-                        debugLog += "\n-Chat did not trigger, will now trigger Flirt if Character is Unfaithful, or Target is Lover or Affair, or Character has no Lover";
-                        if (owner.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)
-                            || owner.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) == null
-                            || owner.traitContainer.GetNormalTrait<Trait>("Unfaithful") != null) {
-                            debugLog += "\n-Flirt has 1% (multiplied by Compatibility value) chance to trigger";
-                            int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(owner, targetCharacter);
-                            int value = 2;
-                            if (compatibility != -1) {
-                                value = 1 * compatibility;
-                                debugLog += "\n-Chance: " + value;
-                            } else {
-                                debugLog += "\n-Chance: " + value + " (No Compatibility)";
-                            }
-                            int flirtChance = UnityEngine.Random.Range(0, 100);
-                            debugLog += "\n-Roll: " + flirtChance;
-                            if (flirtChance < value) {
-                                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Flirt, targetCharacter);
+                        debugLog += "\n-Chat did not trigger, will now trigger Flirt if Character is Sexually Compatible with Target and Character is Unfaithful, or Target is Lover or Affair, or Character has no Lover";
+                        if (RelationshipManager.Instance.IsSexuallyCompatibleOneSided(owner, targetCharacter)) {
+                            if (owner.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)
+                                || owner.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) == null
+                                || owner.traitContainer.GetNormalTrait<Trait>("Unfaithful") != null) {
+                                debugLog += "\n-Flirt has 1% (multiplied by Compatibility value) chance to trigger";
+                                int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(owner, targetCharacter);
+                                int value = 2;
+                                if (compatibility != -1) {
+                                    value = 1 * compatibility;
+                                    debugLog += "\n-Chance: " + value;
+                                } else {
+                                    debugLog += "\n-Chance: " + value + " (No Compatibility)";
+                                }
+                                int flirtChance = UnityEngine.Random.Range(0, 100);
+                                debugLog += "\n-Roll: " + flirtChance;
+                                if (flirtChance < value) {
+                                    owner.interruptComponent.TriggerInterrupt(INTERRUPT.Flirt, targetCharacter);
+                                } else {
+                                    debugLog += "\n-Flirt did not trigger";
+                                }
                             } else {
                                 debugLog += "\n-Flirt did not trigger";
                             }
-                        } else {
-                            debugLog += "\n-Flirt did not trigger";
                         }
                     }
                 }

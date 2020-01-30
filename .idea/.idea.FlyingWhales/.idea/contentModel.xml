@@ -1520,11 +1520,8 @@
               <e p="RestrainCharacter.cs" t="Include" />
               <e p="ReturnHome.cs" t="Include" />
               <e p="ReturnHomeLocation.cs" t="Include" />
-              <e p="ReturnToTerritory.cs" t="Include" />
               <e p="RevertToNormalForm.cs" t="Include" />
               <e p="RitualKilling.cs" t="Include" />
-              <e p="RoamAroundTerritory.cs" t="Include" />
-              <e p="RoamAroundTile.cs" t="Include" />
               <e p="Scrap.cs" t="Include" />
               <e p="ScreamForHelp.cs" t="Include" />
               <e p="SepticShock.cs" t="Include" />
@@ -1622,6 +1619,8 @@
             <e p="JoinFaction.cs" t="Include" />
             <e p="LaughAt.cs" t="Include" />
             <e p="LeaveFaction.cs" t="Include" />
+            <e p="MajorMentalBreak.cs" t="Include" />
+            <e p="MinorMentalBreak.cs" t="Include" />
             <e p="Mock.cs" t="Include" />
             <e p="NarcolepticAttack.cs" t="Include" />
             <e p="Plagued.cs" t="Include" />
@@ -2117,6 +2116,7 @@
               <e p="BerserkBuff.cs" t="Include" />
               <e p="Berserked.cs" t="Include" />
               <e p="Betrayed.cs" t="Include" />
+              <e p="Bored.cs" t="Include" />
               <e p="Burning.cs" t="Include" />
               <e p="Burnt.cs" t="Include" />
               <e p="Cannibal.cs" t="Include" />
@@ -2298,7 +2298,10 @@
             <e p="LocationPortrait.cs" t="Include" />
             <e p="LocationSmallInfo.cs" t="Include" />
             <e p="LogHistoryItem.cs" t="Include" />
-            <e p="MainMenuUI.cs" t="Include" />
+            <e p="MainMenu" t="Include">
+              <e p="ArchetypeSelector.cs" t="Include" />
+              <e p="MainMenuUI.cs" t="Include" />
+            </e>
             <e p="MarkedMeter.cs" t="Include" />
             <e p="MemoryItem.cs" t="Include" />
             <e p="MeterMark.cs" t="Include" />

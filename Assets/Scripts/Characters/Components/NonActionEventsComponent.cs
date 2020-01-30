@@ -179,6 +179,25 @@ public class NonActionEventsComponent {
 
         string result = chatWeights.PickRandomElementGivenWeights();
         strLog += "\nResult: " + result;
+
+        if (owner.traitContainer.GetNormalTrait<Trait>("Plagued") != null && target.traitContainer.GetNormalTrait<Trait>("Plagued") == null) {
+            strLog += "\n\nCharacter has Plague, 25% chance to infect the Target";
+            int roll = UnityEngine.Random.Range(0, 100);
+            strLog += "\nRoll: " + roll;
+            if (roll < 25) {
+                target.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, target);
+                // target.traitContainer.AddTrait(target, "Plagued", owner);
+            }
+        } else if (owner.traitContainer.GetNormalTrait<Trait>("Plagued") == null && target.traitContainer.GetNormalTrait<Trait>("Plagued") != null) {
+            strLog += "\n\nTarget has Plague, 25% chance to infect the Character";
+            int roll = UnityEngine.Random.Range(0, 100);
+            strLog += "\nRoll: " + roll;
+            if (roll < 25) {
+                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, owner);
+                // owner.traitContainer.AddTrait(owner, "Plagued", target);
+            }
+        }
+        
         owner.logComponent.PrintLogIfActive(strLog);
 
         bool adjustOpinionBothSides = false;

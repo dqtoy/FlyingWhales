@@ -39,7 +39,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 41f307609fb0c314c9c3d6096744660a, type: 3}
   - {fileID: 21300000, guid: 4e58d580888ba764c8cd48d2b592b223, type: 3}
   - {fileID: 21300000, guid: cf37ca90afacaf7458a15dccce82e5e0, type: 3}
-  - {fileID: 21300000, guid: 734d97a0c5220f24092a9855b3044dd6, type: 3}
   - {fileID: 21300000, guid: d2c4daa0d69897f42aeedbed1d879bc0, type: 3}
   - {fileID: 21300000, guid: 743696610e951284fa5e803e265fd28b, type: 3}
   - {fileID: 21300000, guid: fc463ec1c15ee8e42b33c5680ace6a82, type: 3}
@@ -55,6 +54,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 44b0b504b0cc00b4789b446495270faf, type: 3}
   - {fileID: 21300000, guid: b622fd449b4d38f45920d196466070b4, type: 3}
   - {fileID: 21300000, guid: 7d4e0c84121d9bb48af8acbf0ff807a4, type: 3}
+  - {fileID: 21300000, guid: 77be54e4035ed324f81d4fab323806b8, type: 3}
   - {fileID: 21300000, guid: d18e81f4c876a7844b70e509bd9f83ff, type: 3}
   - {fileID: 21300000, guid: 2afa2f55883fd8443a134a59fa9b3ae6, type: 3}
   - {fileID: 21300000, guid: 032552e545dd3cb42960bef5cdcb48b7, type: 3}
@@ -77,8 +77,8 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 189752b89c81e9541b45c7ece9ed0a54, type: 3}
   - {fileID: 21300000, guid: 221e80b93e44c5e48be4d6d37c05dc4b, type: 3}
   - {fileID: 21300000, guid: 4efda50ad081ec64cb8fb650a76ee54c, type: 3}
-  - {fileID: 21300000, guid: 33f8f73aad1207b49a4b4d9c70ef157a, type: 3}
   - {fileID: 21300000, guid: e86a48caa8eb8c644869e929bb47816e, type: 3}
+  - {fileID: 21300000, guid: ca00bdda2aa400f4a813999843e76101, type: 3}
   - {fileID: 21300000, guid: a5e9675bf4a18a14b8ac8c4157185575, type: 3}
   - {fileID: 21300000, guid: 8bdc1a1cf8a1c5842be972458dd90a72, type: 3}
   - {fileID: 21300000, guid: 688af52cfc1d07b42a817bbbf1ec1360, type: 3}
@@ -94,7 +94,6 @@ SpriteAtlas:
   - main_menu_glow
   - main_menu_credits_btn_hover
   - main_menu_logo
-  - ravager_portrait
   - main_menu_ui_container
   - main_menu_exit_btn_pressed
   - main_menu_loadgame_btn_default
@@ -110,6 +109,7 @@ SpriteAtlas:
   - main_menu_credits_btn_pressed
   - main_menu_exit_btn_pressed
   - main_menu_settings_btn_default
+  - ravager_icon
   - main_menu_fg
   - main_menu_continue_btn_hover
   - main_menu_newgame_btn_hover
@@ -132,8 +132,8 @@ SpriteAtlas:
   - main_menu_credits_btn_hover
   - main_menu_bg
   - main_menu_continue_btn_pressed
-  - silentportrait-6a431
   - main_menu_settings_btn_hover
+  - 'ravager '
   - main_menu_settings_btn_default
   - main_menu_loadgame_btn_hover
   - main_menu_continue_btn_hover

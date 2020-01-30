@@ -779,9 +779,10 @@ public class CharacterNeedsComponent {
         if (wasStarving) {
             _character.traitContainer.RemoveTrait(_character, "Starving");
         }
-        if (wasMalnourished) {
-            _character.traitContainer.RemoveTrait(_character, "Malnourished");
-        }
+        _character.traitContainer.RemoveTrait(_character, "Malnourished");
+        // if (wasMalnourished) {
+        //     _character.traitContainer.RemoveTrait(_character, "Malnourished");
+        // }
     }
     private void OnHungry(bool wasFull, bool wasHungry, bool wasStarving) {
         if (!wasHungry) {
@@ -815,9 +816,10 @@ public class CharacterNeedsComponent {
         if (wasHungry) {
             _character.traitContainer.RemoveTrait(_character, "Hungry");
         }
-        if (wasMalnourished) {
-            _character.traitContainer.RemoveTrait(_character, "Malnourished");
-        }
+        _character.traitContainer.RemoveTrait(_character, "Malnourished");
+        // if (wasMalnourished) {
+        //     _character.traitContainer.RemoveTrait(_character, "Malnourished");
+        // }
     }
     private void RemoveHungryOrStarving() {
         if (_character.traitContainer.RemoveTrait(_character, "Hungry") == false) {

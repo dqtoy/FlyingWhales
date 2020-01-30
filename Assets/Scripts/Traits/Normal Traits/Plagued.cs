@@ -7,8 +7,8 @@ namespace Traits {
 
         public Character owner { get; private set; } //poi that has the poison
 
-        private float pukeChance;
-        private float septicChance;
+        private float pukeChance = 5f;
+        private float septicChance = 0.5f;
 
         public Plagued() {
             name = "Plagued";
@@ -34,18 +34,18 @@ namespace Traits {
             owner.needsComponent.AdjustComfortDecreaseRate(-10);
             base.OnRemoveTrait(removedFrom, removedBy);
         }
-        protected override void OnChangeLevel() {
-            if (level == 1) {
-                pukeChance = 5f;
-                septicChance = 0.5f;
-            } else if (level == 2) {
-                pukeChance = 7f;
-                septicChance = 1f;
-            } else {
-                pukeChance = 9f;
-                septicChance = 1.5f;
-            }
-        }
+        // protected override void OnChangeLevel() {
+        //     if (level == 1) {
+        //         pukeChance = 5f;
+        //         septicChance = 0.5f;
+        //     } else if (level == 2) {
+        //         pukeChance = 7f;
+        //         septicChance = 1f;
+        //     } else {
+        //         pukeChance = 9f;
+        //         septicChance = 1.5f;
+        //     }
+        // }
         public override bool PerTickOwnerMovement() {
             //string summary = owner.name + " is rolling for plagued chances....";
             float pukeRoll = Random.Range(0f, 100f);
@@ -97,6 +97,8 @@ namespace Traits {
                         //target will be infected with plague
                         if (target is Character) {
                             (target as Character).interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, target);
+                        } else {
+                            target.traitContainer.AddTrait(target, "Plagued");
                         }
                         // if (target.traitContainer.AddTrait(target, "Plagued", infector as Character)) {
                         //     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
@@ -144,22 +146,24 @@ namespace Traits {
             }
         }
         public int GetMakeLoveInfectChance() {
-            if (level == 1) {
-                return 50;
-            } else if (level == 2) {
-                return 75;
-            } else {
-                return 100;
-            }
+            return 50;
+            // if (level == 1) {
+            //     return 50;
+            // } else if (level == 2) {
+            //     return 75;
+            // } else {
+            //     return 100;
+            // }
         }
         public int GetCarryInfectChance() {
-            if (level == 1) {
-                return 50;
-            } else if (level == 2) {
-                return 75;
-            } else {
-                return 100;
-            }
+            return 50;
+            // if (level == 1) {
+            //     return 50;
+            // } else if (level == 2) {
+            //     return 75;
+            // } else {
+            //     return 100;
+            // }
         }
     }
 
