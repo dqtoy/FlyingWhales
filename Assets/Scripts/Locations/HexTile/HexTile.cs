@@ -107,8 +107,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     private void OnGameLoaded() {
         Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
         SubscribeListeners();
-        SetBordersState(false);
-        SetBordersGlowState(false);
+        SetBordersState(false, false, Color.red);
         if (landmarkOnTile != null && landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE) {
             CheckIfStructureVisualsAreStillValid();    
         }
@@ -563,23 +562,24 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             baseTileAnimator.enabled = false;
         }
     }
-    public void SetBordersState(bool state) {
+    public void SetBordersState(bool state, bool glowState, Color color) {
         topLeftBorder.gameObject.SetActive(state);
         botLeftBorder.gameObject.SetActive(state);
         topRightBorder.gameObject.SetActive(state);
         botRightBorder.gameObject.SetActive(state);
         leftBorder.gameObject.SetActive(state);
         rightBorder.gameObject.SetActive(state);
+        
+        topLeftBorderGlow.enabled = glowState;
+        botLeftBorderGlow.enabled = glowState;
+        topRightBorderGlow.enabled = glowState;
+        botRightBorderGlow.enabled = glowState;
+        leftBorderGlow.enabled = glowState;
+        rightBorderGlow.enabled = glowState;
+        
+        SetBorderColor(color);
     }
-    public void SetBordersGlowState(bool state) {
-        topLeftBorderGlow.enabled = state;
-        botLeftBorderGlow.enabled = state;
-        topRightBorderGlow.enabled = state;
-        botRightBorderGlow.enabled = state;
-        leftBorderGlow.enabled = state;
-        rightBorderGlow.enabled = state;
-    }
-    public void SetBorderColor(Color color) {
+    private void SetBorderColor(Color color) {
         topLeftBorder.color = color;
         botLeftBorder.color = color;
         topRightBorder.color = color;
@@ -668,9 +668,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     private void MouseOver() {
         UIMenu menuToOpen = GetMenuToShowWhenTileIsClicked();
         if (menuToOpen is RegionInfoUI) {
-            region.ShowBorders();
+            region.ShowBorders(Color.red);
         } else if (menuToOpen is HextileInfoUI) {
-            SetBordersState(true);
+            SetBordersState(true, false, Color.red);
         }
         Messenger.Broadcast(Signals.TILE_HOVERED_OVER, this);
     }
@@ -679,7 +679,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         if (menuToOpen is RegionInfoUI) {
             region.HideBorders();
         } else if (menuToOpen is HextileInfoUI) {
-            SetBordersState(false);
+            SetBordersState(false, false, Color.red);
         }
         // UIManager.Instance.HideSmallInfo();
         Messenger.Broadcast(Signals.TILE_HOVERED_OUT, this);

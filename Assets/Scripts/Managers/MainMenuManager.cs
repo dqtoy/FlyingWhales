@@ -9,15 +9,7 @@ using BayatGames.SaveGameFree;
 
 public class MainMenuManager : MonoBehaviour {
 
-    [Header("Main Menu")]
-    [SerializeField] private Button loadGameButton;
-    [SerializeField] private Button newGameButton;
-
-    [Space(10)]
-    [Header("World Configurations Menu")]
-    [SerializeField] private GameObject worldConfigsMenuGO;
-    [SerializeField] private GameObject worldConfigPrefab;
-    [SerializeField] private GameObject worldConfigContent;
+    public static MainMenuManager Instance;
 
     [ContextMenu("Get Combinations")]
     public void GetCombinations() {
@@ -35,7 +27,7 @@ public class MainMenuManager : MonoBehaviour {
 
     #region Monobehaviours
     public void Awake() {
-        
+        Instance = this;
     }
     private void Start() {
         Initialize();
@@ -45,31 +37,11 @@ public class MainMenuManager : MonoBehaviour {
     #endregion
     private void Initialize() {
         SaveManager.Instance.LoadSaveData();
-        newGameButton.interactable = true;
-        loadGameButton.interactable = false;
         //loadGameButton.interactable = SaveManager.Instance.currentSave != null;
     }
-    public void OnClickPlayGame() {
-        //PlayGame();
-        //ShowWorldConfigurations();
-        //MainMenuUI.Instance.HideMenuButtons();
-        SaveManager.Instance.SetCurrentSave(null);
-        newGameButton.interactable = false;
-        loadGameButton.interactable = false;
-        AudioManager.Instance.TransitionTo("Loading", 10, () => OnFinishMusicTransition());
-    }
-    public void OnClickLoadGame() {
-        newGameButton.interactable = false;
-        loadGameButton.interactable = false;
-        AudioManager.Instance.TransitionTo("Loading", 10, () => OnFinishMusicTransition());
-    }
-
-    private void OnFinishMusicTransition() {
+    
+    public void LoadMainGameScene() {
         //WorldConfigManager.Instance.SetDataToUse(newGameData); //Remove so that code will randomly generate world.
-        LevelLoaderManager.Instance.LoadLevel("Game");
-    }
-
-    private void PlayGame() {
         LevelLoaderManager.Instance.LoadLevel("Game");
     }
 }

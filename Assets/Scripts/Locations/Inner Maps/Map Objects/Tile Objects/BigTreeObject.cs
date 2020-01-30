@@ -9,7 +9,7 @@ public class BigTreeObject : TreeObject {
 	public BigTreeObject() {
 		advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CHOP_WOOD, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.REPAIR };
 		Initialize(TILE_OBJECT_TYPE.BIG_TREE_OBJECT);
-		SetYield(1000);
+		SetYield(300);
 	}
 	public BigTreeObject(SaveDataTileObject data) {
 		advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CHOP_WOOD, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.REPAIR };
