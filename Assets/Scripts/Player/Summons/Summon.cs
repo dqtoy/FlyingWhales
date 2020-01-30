@@ -66,7 +66,16 @@ public class Summon : Character, IWorldObject {
             LocationStructure deathStructure = currentStructure;
             LocationGridTile deathTile = gridTileLocation;
 
+            if (lycanData != null) {
+                lycanData.LycanDies(this, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
+            }
+            
             SetIsDead(true);
+            if (isLimboCharacter && isInLimbo) {
+                //If a limbo character dies while in limbo, that character should not process death, instead he/she will be removed from the list
+                CharacterManager.Instance.RemoveLimboCharacter(this);
+                return;
+            }
             UnsubscribeSignals();
 
             //if (currentParty.specificLocation == null) {

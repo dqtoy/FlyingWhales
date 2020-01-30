@@ -1874,6 +1874,7 @@
               <e p="ElevationStructureGeneration.cs" t="Include" />
               <e p="LandmarkStructureGeneration.cs" t="Include" />
               <e p="MapGenerationFinalization.cs" t="Include" />
+              <e p="MonsterGeneration.cs" t="Include" />
               <e p="PlayerDataGeneration.cs" t="Include" />
               <e p="PortalLandmarkGeneration.cs" t="Include" />
               <e p="RegionDataGeneration.cs" t="Include" />
@@ -2370,6 +2371,7 @@
             <e p="BezierCurve.cs" t="Include" />
             <e p="BezierCurveParent.cs" t="Include" />
             <e p="BoundDrawer.cs" t="Include" />
+            <e p="CollectionUtilities.cs" t="Include" />
             <e p="ColliderUtility.cs" t="Include" />
             <e p="CustomDropZone.cs" t="Include" />
             <e p="CustomHorizaontalLayout.cs" t="Include" />

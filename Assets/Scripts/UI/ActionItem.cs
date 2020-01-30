@@ -30,7 +30,7 @@ public class ActionItem : PooledObject {
         actionImg.sprite = PlayerUI.Instance.playerActionIconDictionary[playerAction.actionName];
         actionLbl.text = playerAction.actionName;
 		SetAsClickable();
-        Messenger.AddListener<PlayerAction>(Signals.PLAYER_ACTION_UNTOGGLE, ListenUntoggleHighlight);
+        // Messenger.AddListener<PlayerAction>(Signals.PLAYER_ACTION_UNTOGGLE, ListenUntoggleHighlight);
 	}
 	public void SetAsUninteractableUntil(int ticks) {
 		GameDate date = GameManager.Instance.Today();
@@ -48,16 +48,16 @@ public class ActionItem : PooledObject {
         button.interactable = state;
         coverImg.gameObject.SetActive(!state);
     }
-    private void ToggleHighlight() {
+    public void ToggleHighlight() {
         //if (!playerAction.isInstant) {
             highlightImg.gameObject.SetActive(true);
-            UpdateState();
+            // UpdateState();
         //}
     }
-    private void UnToggleHighlight() {
+    public void UnToggleHighlight() {
         //if (!playerAction.isInstant) {
             highlightImg.gameObject.SetActive(false);
-            UpdateState();
+            // UpdateState();
         //}
     }
     private void UpdateState() {

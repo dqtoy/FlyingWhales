@@ -11,39 +11,23 @@ public class Eat : GoapAction {
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         actionIconString = GoapActionStateDB.Eat_Icon;
         showNotification = false;
-        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
     }
 
-    #region
+    #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.COMFORT_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
     }
-    //public override List<Precondition> GetPreconditions(IPointOfInterest target, object[] otherData) {
-    //    List<Precondition> p = new List<Precondition>(base.GetPreconditions(target, otherData));
-    //    if (target is Table) {
-    //        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_FOOD, "0" /*+ (int)otherData[0]*/, true, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
-    //    } else {
-    //        ResourcePile pile = target as ResourcePile;
-    //        switch (pile.providedResource) {
-    //            case RESOURCE.FOOD:
-    //                p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_FOOD, "0" /*+ (int) otherData[0]*/, true, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
-    //                break;
-    //            case RESOURCE.WOOD:
-    //                p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_WOOD, "0" /*+ (int) otherData[0]*/, true, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
-    //                break;
-    //            case RESOURCE.STONE:
-    //                p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_STONE, "0" /*+ (int) otherData[0]*/, true, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
-    //                break;
-    //            case RESOURCE.METAL:
-    //                p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_METAL, "0" /*+ (int) otherData[0]*/, true, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
-    //                break;
-    //        }
-    //    }
-    //    return p;
-    //}
+    public override List<Precondition> GetPreconditions(IPointOfInterest target, object[] otherData) {
+        if (target is Table || target is FoodPile) {
+            List<Precondition> p = new List<Precondition>(base.GetPreconditions(target, otherData));
+            p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_FOOD, "0" /*+ (int)otherData[0]*/, true, GOAP_EFFECT_TARGET.TARGET), HasFood));
+            return p;
+        }
+        return base.GetPreconditions(target, otherData);
+    }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Eat Success", goapNode);
@@ -145,16 +129,23 @@ public class Eat : GoapAction {
                 if(actor.homeStructure != null) {
                     return false;
                 }
-            } else {
-                if(poiTarget.storedResources[RESOURCE.FOOD] < 12) {
-                    return false;
-                }
-            }
+            } 
+            // else {
+            //     if(poiTarget.storedResources[RESOURCE.FOOD] < 12) {
+            //         return false;
+            //     }
+            // }
             if (poiTarget.gridTileLocation != null) {
                 return true;
             }
         }
         return false;
+    }
+    #endregion
+    
+    #region Preconditions
+    private bool HasFood(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return poiTarget.HasResourceAmount(RESOURCE.FOOD, 12);
     }
     #endregion
 }

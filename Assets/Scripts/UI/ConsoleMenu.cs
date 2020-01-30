@@ -81,6 +81,7 @@ public class ConsoleMenu : UIMenu {
             {"/adjust_opinion", AdjustOpinion },
             {"/join_faction", JoinFaction },
             {"/emotion", TriggerEmotion },
+            {"/adjust_resource", TriggerEmotion },
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -1413,7 +1414,6 @@ public class ConsoleMenu : UIMenu {
             }
             AddSuccessMessage(log);
         }
-
     }
     #endregion
 }

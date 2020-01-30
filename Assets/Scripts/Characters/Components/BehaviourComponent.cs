@@ -81,7 +81,7 @@ public class BehaviourComponent {
     private bool AddBehaviourComponentInOrder(CharacterBehaviourComponent component) {
         if (currentBehaviourComponents.Count > 0) {
             for (int i = 0; i < currentBehaviourComponents.Count; i++) {
-                if (component.priority < currentBehaviourComponents[i].priority) {
+                if (component.priority <= currentBehaviourComponents[i].priority) {
                     currentBehaviourComponents.Insert(i, component);
                     return true;
                 }
