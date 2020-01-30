@@ -578,7 +578,7 @@ public class CharacterInfoUI : UIMenu {
         relationshipValuesLbl.text = string.Empty;
         for (int i = 0; i < _activeCharacter.opinionComponent.opinions.Keys.Count; i++) {
             Character target = _activeCharacter.opinionComponent.opinions.Keys.ElementAt(i);
-            relationshipTypesLbl.text += $"{_activeCharacter.relationshipContainer.GetRelationshipName(target)}\n";
+            relationshipTypesLbl.text += $"{_activeCharacter.opinionComponent.GetRelationshipNameWith(target)}\n";
             int opinionOfOther = 0;
             if (target.opinionComponent.HasOpinion(activeCharacter)) {
                 opinionOfOther = target.opinionComponent.GetTotalOpinion(activeCharacter);

@@ -2496,16 +2496,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return Utilities.LogReplacer(currentLog);
         }
 
-        //Disabler Thought
-        //if (canPerform) {
-        //    Trait disablerTrait = traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER).FirstOrDefault();
-        //    if (disablerTrait != null) {
-        //        if (!string.IsNullOrEmpty(disablerTrait.thoughtText)) {
-        //            return disablerTrait.thoughtText.Replace("[Character]", name);
-        //        }
-        //    }
-        //}
-
         //Character State
         if (stateComponent.currentState != null) {
             log = stateComponent.currentState.thoughtBubbleLog;
@@ -2771,7 +2761,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                                                 joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                                                 joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                                                 joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
-                                                joinLog.AddToFillers(null, this.relationshipContainer.GetRelationshipName(targetCharacter), LOG_IDENTIFIER.STRING_1);
+                                                joinLog.AddToFillers(null, this.opinionComponent.GetRelationshipNameWith(targetCharacter), LOG_IDENTIFIER.STRING_1);
                                                 joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
                                                 PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
                                             //}
@@ -3641,10 +3631,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     #endregion
-
-    //public void SetPlayerCharacterItem(PlayerCharacterItem item) {
-    //    _playerCharacterItem = item;
-    //}
 
     #region Interaction
     //public void AddInteractionType(INTERACTION_TYPE type) {

@@ -86,7 +86,6 @@ public class OpinionComponent {
             target.opinionComponent.SetOpinion(owner, "Base", 0);
         }
     }
-
     public void RemoveOpinion(Character target, string opinionText) {
         if (HasOpinion(target)) {
             opinions[target].RemoveOpinion(opinionText);
@@ -109,32 +108,6 @@ public class OpinionComponent {
     }
     public int GetTotalOpinion(Character target) {
         return opinions[target].totalOpinion;
-    }
-    public int GetTotalPositiveOpinionWith(Character character) {
-        if (HasOpinion(character)) {
-            int total = 0;
-            Dictionary<string, int> _opinions = GetOpinionData(character).allOpinions;
-            foreach (int value in _opinions.Values) {
-                if (value >= 0) {
-                    total += value;
-                }
-            }
-            return total;
-        }
-        return 0;
-    }
-    public int GetTotalNegativeOpinionWith(Character character) {
-        if (HasOpinion(character)) {
-            int total = 0;
-            Dictionary<string, int> _opinions = GetOpinionData(character).allOpinions;
-            foreach (int value in _opinions.Values) {
-                if (value < 0) {
-                    total += value;
-                }
-            }
-            return total;
-        }
-        return 0;
     }
     public OpinionData GetOpinionData(Character target) {
         return opinions[target];
@@ -304,6 +277,16 @@ public class OpinionComponent {
             return opinions[target].compatibilityValue;
         }
         return -1;
+    }
+    public string GetRelationshipNameWith(Character target) {
+        if (owner.relationshipContainer.HasRelationshipWith(target)) {
+            IRelationshipData data = owner.relationshipContainer.GetRelationshipDataWith(target);
+            RELATIONSHIP_TYPE relType = data.GetFirstMajorRelationship();
+            return Utilities.NormalizeStringUpperCaseFirstLetterOnly(relType.ToString());    
+        } else if (HasOpinion(target)) {
+            return GetOpinionLabel(target);
+        }
+        return Acquaintance;
     }
     #endregion
 }
