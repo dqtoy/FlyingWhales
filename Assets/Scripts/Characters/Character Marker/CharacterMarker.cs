@@ -360,6 +360,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         character.combatComponent.RemoveHostileInRange(obj);
         character.combatComponent.RemoveAvoidInRange(obj);
         RemovePOIFromInVisionRange(obj);
+        visionCollision.RemovePOIAsInRangeButDifferentStructure(obj);
     }
     #endregion
 

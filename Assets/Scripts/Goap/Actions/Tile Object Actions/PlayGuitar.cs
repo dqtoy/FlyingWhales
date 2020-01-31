@@ -38,15 +38,27 @@ public class PlayGuitar : GoapAction {
             cost += timesCost;
             costLog += " +" + timesCost + "(10 x Times Played)";
         }
-        Trait trait = actor.traitContainer.GetNormalTrait<Trait>("Music Hater", "Music Lover");
-        if (trait != null) {
-            if(trait.name == "Music Hater") {
-                cost += 2000;
-                costLog += " +2000(Music Hater)";
-            } else {
-                cost += -15;
-                costLog += " -15(Music Lover)";
+
+        if (target.gridTileLocation != null && target.gridTileLocation.structure is Dwelling
+            && target.gridTileLocation.structure != actor.homeStructure
+            && actor.traitContainer.GetNormalTrait<Trait>("Serial Killer") == null) {
+            Dwelling structureLocation = target.gridTileLocation.structure as Dwelling;
+            if (structureLocation.residents.Count > 0) {
+                Character dwellingOwner = structureLocation.residents[0];
+                if (actor.opinionComponent.IsFriendsWith(dwellingOwner)) {
+                    cost += 20; 
+                    costLog += " +20 Guitar is in friend/close friends home";
+                } else if (actor.opinionComponent.IsEnemiesWith(dwellingOwner)) {
+                    cost += 100; 
+                    costLog += " +100 Guitar is in enemy/rivals home";
+                }
             }
+        }
+        
+        Trait trait = actor.traitContainer.GetNormalTrait<Trait>("Music Lover");
+        if (trait != null) {
+            cost += -15;
+            costLog += " -15(Music Lover)";
         }
         actor.logComponent.AppendCostLog(costLog);
         return cost;
@@ -131,32 +143,33 @@ public class PlayGuitar : GoapAction {
             if (poiTarget.gridTileLocation == null) {
                 return false;
             }
-            LocationGridTile knownLoc = poiTarget.gridTileLocation;
-            //**Advertised To**: Residents of the dwelling or characters with a positive relationship with a Resident
-            if (knownLoc.structure.isDwelling) {
-                if (actor.homeStructure == knownLoc.structure) {
-                    return true;
-                } else {
-                    IDwelling dwelling = knownLoc.structure as IDwelling;
-                    if (dwelling.IsOccupied()) {
-                        for (int i = 0; i < dwelling.residents.Count; i++) {
-                            Character currResident = dwelling.residents[i];
-                            if (currResident.opinionComponent.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
-                                return true;
-                            }
-                        }
-                        //the actor does NOT have any positive relations with any resident
-                        return false;
-                    } else {
-                        //in cases that the guitar is at a dwelling with no residents, always allow.
-                        return true;
-                    }
-                }
-            } else {
-                //in cases that the guitar is not inside a dwelling, always allow.
-                return true;
-            }
-        }
+            // LocationGridTile knownLoc = poiTarget.gridTileLocation;
+            // //**Advertised To**: Residents of the dwelling or characters with a positive relationship with a Resident
+            // if (knownLoc.structure.isDwelling) {
+            //     if (actor.homeStructure == knownLoc.structure) {
+            //         return true;
+            //     } else {
+            //         IDwelling dwelling = knownLoc.structure as IDwelling;
+            //         if (dwelling.IsOccupied()) {
+            //             for (int i = 0; i < dwelling.residents.Count; i++) {
+            //                 Character currResident = dwelling.residents[i];
+            //                 if (currResident.opinionComponent.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
+            //                     return true;
+            //                 }
+            //             }
+            //             //the actor does NOT have any positive relations with any resident
+            //             return false;
+            //         } else {
+            //             //in cases that the guitar is at a dwelling with no residents, always allow.
+            //             return true;
+            //         }
+            //     }
+            // } else {
+            //     //in cases that the guitar is not inside a dwelling, always allow.
+            //     return true;
+            // }
+            return true;
+        } 
         return false;
     }
     #endregion
