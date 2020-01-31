@@ -284,11 +284,12 @@ namespace Traits {
             }
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM, INTERACTION_TYPE.RITUAL_KILLING, targetVictim, character);
             LocationStructure wilderness = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-            if (character.homeStructure != null && character.homeStructure.residents.Count > 1) {
-                job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { wilderness });
-            } else {
-                job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
-            }
+            job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
+            // if (character.homeStructure != null && character.homeStructure.residents.Count > 1) {
+            //     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { wilderness });
+            // } else {
+            //     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
+            // }
             job.SetIsStealth(true);
             character.jobQueue.AddJobInQueue(job);
             return true;

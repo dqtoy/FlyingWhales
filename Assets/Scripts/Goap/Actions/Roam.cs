@@ -7,10 +7,10 @@ public class Roam : GoapAction {
 
 	public Roam() : base(INTERACTION_TYPE.ROAM) {
 		// actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
-		actionIconString = GoapActionStateDB.Work_Icon;
+		actionIconString = GoapActionStateDB.No_Icon;
 		doesNotStopTargetCharacter = true;
 		advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-		racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
+		racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON, RACE.GOLEM, RACE.DEMON };
 	}
 
 	#region Overrides
@@ -33,6 +33,10 @@ public class Roam : GoapAction {
 				return otherData[0] as LocationGridTile;
 			}
 		}
+		return base.GetTargetTileToGoTo(goapNode);
+	}
+	public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
+		//This must return null so that the GetTargetTileToGoTo will be triggered
 		return null;
 	}
 	#endregion

@@ -356,29 +356,30 @@ public class ReactionComponent {
                 }
             }
         }
-        //debugLog += owner.name + " is reacting to " + targetTileObject.nameWithID;
-        //if (!IsPOICurrentlyTargetedByAPerformingAction(targetTileObject)) {
-        //    debugLog += "\n-Target is not being targeted by an action, continue reaction";
-        //    if (targetTileObject.traitContainer.GetNormalTrait<Trait>("Burning") != null) {
-        //        if (owner.traitContainer.GetNormalTrait<Trait>("Pyrophobic") != null) {
-        //            //Fight or Flight
-        //            owner.combatComponent.FightOrFlight(targetTileObject);
-        //        } else {
-
-        //        }
-        //    }
-        //} else {
-        //    debugLog += "\n-Target is currently being targeted by an action, not going to react";
-        //}
     }
     private void ReactTo(SpecialToken targetItem, ref string debugLog) {
-        //debugLog += owner.name + " is reacting to " + targetItem.nameWithID;
-        //if (!IsPOICurrentlyTargetedByAPerformingAction(targetItem)) {
-        //    debugLog += "\n-Target is not being targeted by an action, continue reaction";
-        //    //TODO
-        //} else {
-        //    debugLog += "\n-Target is currently being targeted by an action, not going to react";
-        //}
+        debugLog += owner.name + " is reacting to " + targetItem.nameWithID;
+        if (!owner.hasSeenFire) {
+            if (targetItem.traitContainer.GetNormalTrait<Trait>("Burning") != null
+                && targetItem.gridTileLocation != null
+                && targetItem.gridTileLocation.IsPartOfSettlement(owner.homeSettlement)
+                && owner.traitContainer.GetNormalTrait<Trait>("Pyrophobic") == null) {
+                debugLog += "\n-Target is Burning and Character is not Pyrophobic";
+                owner.SetHasSeenFire(true);
+                owner.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
+                for (int i = 0; i < owner.homeSettlement.availableJobs.Count; i++) {
+                    JobQueueItem job = owner.homeSettlement.availableJobs[i];
+                    if (job.jobType == JOB_TYPE.DOUSE_FIRE) {
+                        if (job.assignedCharacter == null && owner.jobQueue.CanJobBeAddedToQueue(job)) {
+                            owner.jobQueue.AddJobInQueue(job);
+                        } else {
+                            owner.combatComponent.Flight(targetItem);
+                        }
+                        return;
+                    }
+                }
+            }
+        }
     }
     #endregion
 

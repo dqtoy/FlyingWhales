@@ -246,7 +246,10 @@ public class ActualGoapNode {
         if (!MoveToDoAction(job)) {
             if (targetTile != null) {
                 //If cannot move to do action because there is no path between two location grid tiles, handle it here
-                
+                if (actor is Summon) {
+                    (actor as Summon).NoPathToDoJob(job);
+                }
+                job.CancelJob(false);
             }
         }
     }

@@ -1290,6 +1290,8 @@
               <e p="DefaultBaseStructure.cs" t="Include" />
               <e p="DefaultExtraCatcher.cs" t="Include" />
               <e p="DefaultFactionRelated.cs" t="Include" />
+              <e p="DefaultMinion.cs" t="Include" />
+              <e p="DefaultMonster.cs" t="Include" />
               <e p="DefaultOtherStructure.cs" t="Include" />
               <e p="DefaultOutside.cs" t="Include" />
               <e p="FactionLeaderBahaviour.cs" t="Include" />
@@ -1522,6 +1524,7 @@
               <e p="ReturnHomeLocation.cs" t="Include" />
               <e p="RevertToNormalForm.cs" t="Include" />
               <e p="RitualKilling.cs" t="Include" />
+              <e p="Roam.cs" t="Include" />
               <e p="Scrap.cs" t="Include" />
               <e p="ScreamForHelp.cs" t="Include" />
               <e p="SepticShock.cs" t="Include" />

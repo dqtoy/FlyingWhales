@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Traits;
+using UnityEngine.EventSystems;
 
 public class CombatState : CharacterState {
 
@@ -145,10 +146,12 @@ public class CombatState : CharacterState {
             }
 
             //Made it so that dead characters no longer check invision characters after exiting a state.
-            for (int i = 0; i < stateComponent.character.marker.inVisionCharacters.Count; i++) {
-                Character currCharacter = stateComponent.character.marker.inVisionCharacters[i];
-                // stateComponent.character.CreateJobsOnEnterVisionWith(currCharacter);
-                stateComponent.character.marker.AddUnprocessedPOI(currCharacter);
+            for (int i = 0; i < stateComponent.character.marker.inVisionPOIs.Count; i++) {
+                IPointOfInterest currPOI = stateComponent.character.marker.inVisionPOIs[i];
+                if (!stateComponent.character.marker.unprocessedVisionPOIs.Contains(currPOI)) {
+                    // stateComponent.character.CreateJobsOnEnterVisionWith(currCharacter);
+                    stateComponent.character.marker.AddUnprocessedPOI(currPOI);
+                }
             }
             stateComponent.character.needsComponent.CheckExtremeNeeds();
 
