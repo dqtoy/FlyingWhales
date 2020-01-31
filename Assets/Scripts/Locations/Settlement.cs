@@ -24,6 +24,7 @@ public class Settlement : IJobOwner {
     public Character ruler { get; private set; }
     public List<HexTile> tiles { get; private set; }
     public List<Character> residents { get; private set; }
+    public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
     public bool isUnderSeige { get; private set; }
 
     //structures
@@ -59,6 +60,7 @@ public class Settlement : IJobOwner {
         tiles = new List<HexTile>();
         residents = new List<Character>();
         newRulerDesignationWeights = new WeightedDictionary<Character>();
+        forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         ResetNewRulerDesignationChance();
         SetAreaType(locationType);
         // nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
@@ -96,6 +98,7 @@ public class Settlement : IJobOwner {
         Messenger.AddListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         // Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
         // Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
         settlementJobTriggerComponent.SubscribeToListeners();
@@ -107,6 +110,7 @@ public class Settlement : IJobOwner {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
         // Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
         // Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
         settlementJobTriggerComponent.UnsubscribeListeners();
@@ -172,6 +176,9 @@ public class Settlement : IJobOwner {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{this.name} Under Siege state changed to {isUnderSeige.ToString()}");
             Messenger.Broadcast(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, this, isUnderSeige);
         }
+    }
+    private void OnTickEnded() {
+        ProcessForcedCancelJobsOnTickEnded();
     }
     #endregion
 
@@ -1150,6 +1157,19 @@ public class Settlement : IJobOwner {
     }
     public bool ForceCancelJob(JobQueueItem job) {
         return RemoveFromAvailableJobs(job);
+    }
+    public void AddForcedCancelJobsOnTickEnded(JobQueueItem job) {
+        if (!forcedCancelJobsOnTickEnded.Contains(job)) {
+            forcedCancelJobsOnTickEnded.Add(job);
+        }
+    }
+    public void ProcessForcedCancelJobsOnTickEnded() {
+        if (forcedCancelJobsOnTickEnded.Count > 0) {
+            for (int i = 0; i < forcedCancelJobsOnTickEnded.Count; i++) {
+                forcedCancelJobsOnTickEnded[i].ForceCancelJob(false);
+            }
+            forcedCancelJobsOnTickEnded.Clear();
+        }
     }
     #endregion
 

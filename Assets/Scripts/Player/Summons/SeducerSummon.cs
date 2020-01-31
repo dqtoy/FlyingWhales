@@ -54,7 +54,7 @@ public class SeducerSummon : Summon {
     //    }
     //    return null;
     //}
-    protected override void OnTickStarted() {
+    // protected override void OnTickStarted() {
         // if (hasSucceeded) {
         //     //disappear
         //     Disappear();
@@ -74,7 +74,7 @@ public class SeducerSummon : Summon {
         //     }
         // }
         
-    }
+    // }
     public override void OnActionPerformed(ActualGoapNode node) {
         if (node.actor == this && node.goapType == INTERACTION_TYPE.INVITE) {
             doneCharacters.Add(node.poiTarget as Character);

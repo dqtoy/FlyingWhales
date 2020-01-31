@@ -327,14 +327,16 @@ public class GoapPlanJob : JobQueueItem {
     protected override void CheckJobApplicability(JOB_TYPE jobType, IPointOfInterest targetPOI) {
         if (this.jobType == jobType && this.targetPOI == targetPOI) {
             if (!IsJobStillApplicable()) {
-                ForceCancelJob(false);
+                // ForceCancelJob(false);
+                originalOwner.AddForcedCancelJobsOnTickEnded(this);
             }
         }
     }
     protected override void CheckJobApplicability(IPointOfInterest targetPOI) {
         if (this.targetPOI == targetPOI) {
             if (!IsJobStillApplicable()) {
-                ForceCancelJob(false);
+                originalOwner.AddForcedCancelJobsOnTickEnded(this);
+                // ForceCancelJob(false);
             }
         }
     }

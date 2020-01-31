@@ -105,6 +105,8 @@ public class GoapPlanner {
         if (goapThread.job.originalOwner == null) {
             //This means that the job is already in the object pool, meaning that the received plan for the job is no longer applicable since the job is already deleted/cancelled
             additionalLog += "\nJOB NO LONGER APPLICABLE, DISCARD PLAN IF THERE'S ANY";
+            owner.logComponent.PrintLogIfActive(goapThread.log + additionalLog);
+            return;
         }
         owner.logComponent.PrintLogIfActive(goapThread.log + additionalLog);
         if (goapThread.createdPlan != null) {
@@ -602,14 +604,14 @@ public class GoapPlanner {
         List<Precondition> preconditions = null;
         if (job.otherData != null) {
             if (job.otherData.ContainsKey(action.goapType)) {
-                preconditions = action.GetPreconditions(target, job.otherData[action.goapType]);
+                preconditions = action.GetPreconditions(actor, target, job.otherData[action.goapType]);
             } else if (job.otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-                preconditions = action.GetPreconditions(target, job.otherData[INTERACTION_TYPE.NONE]);
+                preconditions = action.GetPreconditions(actor, target, job.otherData[INTERACTION_TYPE.NONE]);
             } else {
-                preconditions = action.GetPreconditions(target, null);
+                preconditions = action.GetPreconditions(actor, target, null);
             }
         } else {
-            preconditions = action.GetPreconditions(target, null);
+            preconditions = action.GetPreconditions(actor, target, null);
         }
         if (preconditions.Count > 0) {
             log += "\n--Node " + node.action.goapName + " has preconditions: " + preconditions.Count;
@@ -872,8 +874,11 @@ public class GoapPlanner {
                         }
                         ActualGoapNode actualNode = new ActualGoapNode(rawNode.action, owner, rawNode.target, data, rawNode.cost);
                         actualNodes[i] = actualNode;
+                    }
+                    for (int i = 0; i < tempNodeIndexHolder.Count; i++) {
+                        int nodeIndex = tempNodeIndexHolder[i];
                         GoapNode node = rawPlan[nodeIndex];
-                        rawPlan.RemoveAt(nodeIndex);
+                        rawPlan.RemoveAt(nodeIndex);   
                         ObjectPoolManager.Instance.ReturnGoapNodeToPool(node);
                     }
                     MultiJobNode multiJobNode = new MultiJobNode(actualNodes);

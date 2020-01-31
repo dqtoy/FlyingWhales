@@ -65,7 +65,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	}
 	private void OnCharacterCanNoLongerPerform(Character character) {
 		if (character == _owner) {
-			
+			character.jobQueue.CancelAllJobs();
+			character.marker.StopMovement();
+			character.marker.pathfindingAI.ClearAllCurrentPathData();
 		}
 	}
 	private void OnCharacterCanNoLongerMove(Character character) {
@@ -536,7 +538,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return false;
     }
     public bool TriggerRoamAroundTile() {
-	    if (_owner is Summon) {
+	    if (_owner is Summon || _owner.minion != null) {
 		    if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TILE)) {
 			    HexTile chosenTerritory = _owner.gridTileLocation.buildSpotOwner.hexTileOwner;
 			    BuildingSpot chosenBuildSpot = chosenTerritory.ownedBuildSpots[UnityEngine.Random.Range(0, chosenTerritory.ownedBuildSpots.Length)];
@@ -554,7 +556,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return false;
     }
     public bool TriggerMonsterStand() {
-	    if (_owner is Summon) {
+	    if (_owner is Summon || _owner.minion != null) {
 		    if (!_owner.jobQueue.HasJob(JOB_TYPE.STAND)) {
 			    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.STAND], _owner, _owner, null, 0);
 			    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);

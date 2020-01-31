@@ -200,6 +200,9 @@ public class ShareIntelMenu : MonoBehaviour {
                             responses += currWord;
                         }
                         if (responses != string.Empty) {
+                            if (finalReaction != string.Empty && i > 0) {
+                                finalReaction += "\n";
+                            }
                             finalReaction += "I feel " + responses + " towards " +
                                              (i == 0 ? intel.node.actor.name : intel.node.poiTarget.name) + ".";
                         }
