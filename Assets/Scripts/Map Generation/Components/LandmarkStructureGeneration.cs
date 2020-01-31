@@ -74,7 +74,7 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 		// 	locationGridTiles.Where(t => t.HasNeighbourNotInList(locationGridTiles) == false && t.IsAtEdgeOfMap() == false).ToList();
 		
 		LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(locationGridTiles);
-		int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, locationGridTiles, 2, 20);
+		int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, locationGridTiles, 3, 35);
 		
 		Assert.IsNotNull(cellMap, $"There was no cellmap generated for elevation structure {elevationStructure.ToString()}");
 		
@@ -88,21 +88,26 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 		for (int i = 0; i < locationGridTiles.Count; i++) {
 			LocationGridTile tile = locationGridTiles[i];
 			if (tile.HasNeighbourOfType(LocationGridTile.Ground_Type.Bone) == false) {
-				tile.RevertToPreviousGroundVisual();
 				tile.SetStructureTilemapVisual(null);
+				tile.SetTileType(LocationGridTile.Tile_Type.Empty);
+				tile.RevertToPreviousGroundVisual();
 			}
 		}
 		
 		//create path to outside
-		LocationGridTile centerTile = Utilities.GetCenterTile(locationGridTiles, region.innerMap.map);
-		List<LocationGridTile> targetChoices = locationGridTiles.Where(t => CellularAutomataGenerator.IsAtEdgeOfMap(t, locationGridTiles)).ToList();
+		// LocationGridTile centerTile = Utilities.GetCenterTile(locationGridTiles, region.innerMap.map);
+		//get tiles that are at the edge of the given tiles, but are not at the edge of its map.
+		List<LocationGridTile> targetChoices = locationGridTiles.Where(t => t.tileType == LocationGridTile.Tile_Type.Wall  
+		                                                                    && t.IsAtEdgeOfMap() == false).ToList();
 		LocationGridTile target = CollectionUtilities.GetRandomElement(targetChoices);
-		List<LocationGridTile> path =
-			PathGenerator.Instance.GetPath(centerTile, target, GRID_PATHFINDING_MODE.UNCONSTRAINED, true);
-		for (int i = 0; i < path.Count; i++) {
-			LocationGridTile tile = path[i];
-			tile.SetStructureTilemapVisual(null);
-		}
+		Debug.Log($"Chosen target tile to clear is {target.ToString()} for monster lair at {region.name}");
+		// List<LocationGridTile> path =
+		// 	PathGenerator.Instance.GetPath(centerTile, target, GRID_PATHFINDING_MODE.UNCONSTRAINED, true);
+		// for (int i = 0; i < path.Count; i++) {
+			// LocationGridTile tile = path[i];
+			target.SetStructureTilemapVisual(null);
+			target.SetTileType(LocationGridTile.Tile_Type.Empty);
+		// }
 	}
 	private void SetAsWall(LocationGridTile tile, LocationStructure structure, List<LocationGridTile> tiles) {
 		// if (CellularAutomataGenerator.IsAtEdgeOfMap(tile, tiles) == false) {

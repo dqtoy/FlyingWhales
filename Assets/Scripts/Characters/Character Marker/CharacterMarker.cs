@@ -185,8 +185,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
         Messenger.AddListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
         Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
-        Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
-
+        Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED,
+            OnTileObjectRemovedFromTile);
+        Messenger.AddListener<IPointOfInterest>(Signals.REPROCESS_POI, ReprocessPOI);
     }
     private void RemoveListeners() {
         Messenger.RemoveListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
@@ -199,6 +200,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.RemoveListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
         Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
+        Messenger.RemoveListener<IPointOfInterest>(Signals.REPROCESS_POI, ReprocessPOI);
     }
     public void OnCharacterGainedTrait(Character characterThatGainedTrait, Trait trait) {
         //this will make this character flee when he/she gains an injured trait
@@ -360,6 +362,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         character.combatComponent.RemoveHostileInRange(obj);
         character.combatComponent.RemoveAvoidInRange(obj);
         RemovePOIFromInVisionRange(obj);
+        visionCollision.RemovePOIAsInRangeButDifferentStructure(obj);
     }
     #endregion
 
@@ -1077,6 +1080,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public bool HasUnprocessedPOI(IPointOfInterest poi) {
         return unprocessedVisionPOIs.Contains(poi);
+    }
+    private void ReprocessPOI(IPointOfInterest poi) {
+        if (HasUnprocessedPOI(poi) == false && inVisionPOIs.Contains(poi)) {
+            AddUnprocessedPOI(poi);
+        }
     }
     private void ProcessAllUnprocessedVisionPOIs() {
         if(unprocessedVisionPOIs.Count > 0) { //&& (character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)

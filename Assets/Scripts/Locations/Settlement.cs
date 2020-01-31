@@ -746,10 +746,10 @@ public class Settlement : IJobOwner {
         
 
         //magic circle
-        if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
-            LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][0];
-            structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.MAGIC_CIRCLE));
-        }
+        // if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
+        //     LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][0];
+        //     structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.MAGIC_CIRCLE));
+        // }
     }
     private void PlaceBuildSpots() {
         for (int x = 0; x <= innerMap.buildingSpots.GetUpperBound(0); x++) {

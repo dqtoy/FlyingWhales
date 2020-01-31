@@ -27,6 +27,7 @@ namespace Traits {
             owner = addedTo;
             burningEffect = GameManager.Instance.CreateBurningEffectAt(addedTo);
             if (addedTo is IPointOfInterest) {
+                IPointOfInterest poi = addedTo as IPointOfInterest;
                 if (addedTo is Character) {
                     Character character = addedTo as Character;
                     character.AdjustDoNotRecoverHP(1);
@@ -37,11 +38,13 @@ namespace Traits {
                     IPointOfInterest obj = addedTo as IPointOfInterest;
                     obj.SetPOIState(POI_STATE.INACTIVE);
                 }
+                Messenger.Broadcast(Signals.REPROCESS_POI, poi);
             }
             if (sourceOfBurning != null && !sourceOfBurning.objectsOnFire.Contains(owner)) {
                 SetSourceOfBurning(sourceOfBurning, owner);
             }
             Messenger.AddListener(Signals.TICK_ENDED, PerTickEnded);
+            
             base.OnAddTrait(addedTo);
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
