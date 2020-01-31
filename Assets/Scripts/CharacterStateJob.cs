@@ -48,7 +48,13 @@ public class CharacterStateJob : JobQueueItem {
         } else {
             if(assignedState.isPaused && !assignedState.isDone) {
                 assignedState.ResumeState();
-                assignedCharacter.SetCurrentJob(this);
+                if (!assignedState.isDone) {
+                    assignedCharacter.SetCurrentJob(this);
+                } else {
+                    if (assignedCharacter.currentJob == this) {
+                        assignedCharacter.SetCurrentJob(null);
+                    }
+                }
                 return true;
             }
         }

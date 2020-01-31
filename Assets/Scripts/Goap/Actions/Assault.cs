@@ -56,7 +56,7 @@ public class Assault : GoapAction {
     #region Effects
     public void AfterCombatStart(ActualGoapNode goapNode) {
         Debug.Log(goapNode.actor + " will start combat towards " + goapNode.poiTarget.name);
-        bool isLethal = goapNode.associatedJobType != JOB_TYPE.APPREHEND;
+        bool isLethal = goapNode.associatedJobType != JOB_TYPE.APPREHEND && goapNode.associatedJobType != JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM;
         goapNode.actor.combatComponent.Fight(goapNode.poiTarget, isLethal: isLethal);
         if(goapNode.poiTarget is Character) {
             Character targetCharacter = goapNode.poiTarget as Character;

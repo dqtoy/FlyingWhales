@@ -61,7 +61,7 @@ namespace Traits {
                 Character potentialVictim = targetPOI as Character;
                 CheckTargetVictimIfStillAvailable();
                 if (targetVictim == null) {
-                    if (DoesCharacterFitAnyVictimRequirements(potentialVictim)) {
+                    if (!potentialVictim.isDead && DoesCharacterFitAnyVictimRequirements(potentialVictim)) {
                         SetTargetVictim(potentialVictim);
 
                         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim");
@@ -81,7 +81,7 @@ namespace Traits {
                     if (IsCharacterApplicableAsVictim(potentialVictim)) {
                         continue;
                     }
-                    if (DoesCharacterFitAnyVictimRequirements(potentialVictim)) {
+                    if (!potentialVictim.isDead && DoesCharacterFitAnyVictimRequirements(potentialVictim)) {
                         SetTargetVictim(potentialVictim);
 
                         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim");

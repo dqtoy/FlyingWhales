@@ -44,8 +44,8 @@ public class DropResource : GoapAction {
         }
         return ee;
     }
-    public override List<Precondition> GetPreconditions(IPointOfInterest target, object[] otherData) {
-        List<Precondition> p = new List<Precondition>(base.GetPreconditions(target, otherData));
+    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
+        List<Precondition> p = new List<Precondition>(base.GetPreconditions(actor, target, otherData));
         if (target is Table) {
             p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_FOOD, "0" /*+ (int)otherData[0]*/, true, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
         } else {

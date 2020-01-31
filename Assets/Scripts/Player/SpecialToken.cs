@@ -191,7 +191,7 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest, IPlayerAc
                     //if this character is not available, check if the current action type can be advertised even when the character is inactive.
                     continue; //skip
                 }
-                if (RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
+                if (PathfindingManager.Instance.HasPath(actor.gridTileLocation, gridTileLocation) && RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
                     object[] data = null;
                     if (otherData != null) {
                         if (otherData.ContainsKey(currType)) {
@@ -235,7 +235,8 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest, IPlayerAc
         if ((IsAvailable() || action.canBeAdvertisedEvenIfActorIsUnavailable)
             && advertisedActions != null && advertisedActions.Contains(action.goapType)
             && actor.trapStructure.SatisfiesForcedStructure(this)
-            && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)) {
+            && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)
+            && PathfindingManager.Instance.HasPath(actor.gridTileLocation, gridTileLocation)) {
             object[] data = null;
             if (otherData != null) {
                 if (otherData.ContainsKey(action.goapType)) {

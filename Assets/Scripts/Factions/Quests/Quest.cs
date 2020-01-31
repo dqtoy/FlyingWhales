@@ -15,6 +15,8 @@ public class Quest : IJobOwner {
     public int duration { get; protected set; }
     public int currentDuration { get; protected set; }
     public List<JobQueueItem> availableJobs { get; protected set; }
+    public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
+    
     public JobTriggerComponent jobTriggerComponent { get; }
     
     public Quest(Faction factionOwner, Region region) {
@@ -22,6 +24,7 @@ public class Quest : IJobOwner {
         this.region = region;
         name = "Quest";
         availableJobs = new List<JobQueueItem>();
+        forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         //jobQueue = new JobQueue(this);
         //jobQueue.SetQuest(this);
     }
@@ -114,12 +117,14 @@ public class Quest : IJobOwner {
         Messenger.AddListener(Signals.TICK_STARTED, PerTickOnQuest);
         Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargettingCharacter);
         Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
+        Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
     }
     public virtual void FinishQuest() {
         isActivated = false;
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickOnQuest);
         Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargettingCharacter);
         Messenger.RemoveListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
+        Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
     }
     protected virtual void PerTickOnQuest() {
         if(duration > 0) {
@@ -183,6 +188,19 @@ public class Quest : IJobOwner {
             }
         }
     }
+    public void AddForcedCancelJobsOnTickEnded(JobQueueItem job) {
+        if (!forcedCancelJobsOnTickEnded.Contains(job)) {
+            forcedCancelJobsOnTickEnded.Add(job);
+        }
+    }
+    public void ProcessForcedCancelJobsOnTickEnded() {
+        if (forcedCancelJobsOnTickEnded.Count > 0) {
+            for (int i = 0; i < forcedCancelJobsOnTickEnded.Count; i++) {
+                forcedCancelJobsOnTickEnded[i].ForceCancelJob(false);
+            }
+            forcedCancelJobsOnTickEnded.Clear();
+        }
+    }
     #endregion
 
     #region General
@@ -191,6 +209,9 @@ public class Quest : IJobOwner {
     }
     public void SetDuration(int amount) {
         duration = amount;
+    }
+    private void OnTickEnded() {
+        ProcessForcedCancelJobsOnTickEnded();
     }
     #endregion
 }

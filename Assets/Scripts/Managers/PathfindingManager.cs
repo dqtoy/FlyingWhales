@@ -70,6 +70,12 @@ public class PathfindingManager : MonoBehaviour {
     public void RemoveAgent(CharacterAIPath agent) {
         _allAgents.Remove(agent);
     }
+    public bool HasPath(LocationGridTile fromTile, LocationGridTile toTile) {
+        if (fromTile == toTile) { return true; }
+        if (fromTile == null || toTile == null) { return false; }
+        return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, NNConstraint.Default).node,
+            AstarPath.active.GetNearest(toTile.centeredWorldLocation, NNConstraint.Default).node);
+    }
 
     #region Map Creation
     public void CreatePathfindingGraphForLocation(InnerTileMap newMap) {

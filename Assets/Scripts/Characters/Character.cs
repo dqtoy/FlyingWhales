@@ -87,6 +87,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isVampire { get; protected set; }
     public bool hasSeenFire { get; protected set; }
     public LycanthropeData lycanData { get; protected set; }
+    public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
 
     private List<System.Action> onLeaveAreaActions;
     private POI_STATE _state;
@@ -381,6 +382,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         traitsNeededToBeRemoved = new List<Trait>();
         onLeaveAreaActions = new List<Action>();
         pendingActionsAfterMultiThread = new List<Action>();
+        forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         SetPOIState(POI_STATE.ACTIVE);
         needsComponent.ResetSleepTicks();
         ConstructResources();
@@ -2549,8 +2551,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             } else {
                 //Upon seeing other characters while target of stealth action is already in vision, automatically cancel job
-                if (marker.inVisionCharacters.Contains(currentActionNode.poiTarget)) {
-                    currentJob.CancelJob(reason: "There is a witness around");
+                if (target is Character) {
+                    if (marker.inVisionCharacters.Contains(currentActionNode.poiTarget)) {
+                        currentJob.CancelJob(reason: "There is a witness around");
+                    }
                 }
             }
         }
@@ -2941,59 +2945,64 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //If the hostile reaches 0 hp, evalueate if he/she dies, get knock out, or get injured
         if (this.currentHP <= 0) {
             attackSummary += "\n" + this.name + "'s hp has reached 0.";
-            if(combatResultWeights == null) {
-                combatResultWeights = new WeightedDictionary<string>();
-            } else {
-                combatResultWeights.Clear();
-            }
-            int deathWeight = 70; //70
-            int unconsciousWeight = 30; //30
             if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
-                deathWeight = 5;
-                unconsciousWeight = 95;
-            }
-            string rollLog = characterThatAttacked.name + " attacked " + name
-                + ", death weight: " + deathWeight + ", unconscious weight: " + unconsciousWeight
-                + ", isLethal: " + characterThatAttacked.combatComponent.IsLethalCombatForTarget(this);
-
-            if (minion == null && this.traitContainer.GetNormalTrait<Trait>("Unconscious") == null) {
-                combatResultWeights.AddElement("Unconscious", unconsciousWeight);
-                rollLog += "\n- Unconscious weight will be added";
-            }
-            //if (currentClosestHostile.GetNormalTrait<Trait>("Injured") == null) {
-            //    loserResults.AddElement("Injured", 10);
-            //}
-            if (!isDead) {
-                combatResultWeights.AddElement("Death", deathWeight);
-                rollLog += "\n- Death weight will be added";
-            }
-
-            if (combatResultWeights.Count > 0) {
-                string result = combatResultWeights.PickRandomElementGivenWeights();
-                rollLog += "\n- Pick result is: " + result;
-                characterThatAttacked.logComponent.PrintLogIfActive(rollLog);
-                attackSummary += "\ncombat result is " + result; ;
-                switch (result) {
-                    case "Unconscious":
-                        //Unconscious unconscious = new Unconscious();
-                        traitContainer.AddTrait(this, "Unconscious", responsibleCharacter);
-                        break;
-                    case "Injured":
-                        //Injured injured = new Injured();
-                        traitContainer.AddTrait(this, "Injured", responsibleCharacter);
-                        break;
-                    case "Death":
-                        string deathReason = "attacked";
-                        if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
-                            deathReason = "accidental_attacked";
-                        }
-                        this.Death(deathReason, responsibleCharacter: responsibleCharacter);
-                        break;
-                }
+                traitContainer.AddTrait(this, "Unconscious", responsibleCharacter);
             } else {
-                rollLog += "\n- Dictionary is empty, no result!";
-                characterThatAttacked.logComponent.PrintLogIfActive(rollLog);
+                if(combatResultWeights == null) {
+                    combatResultWeights = new WeightedDictionary<string>();
+                } else {
+                    combatResultWeights.Clear();
+                }
+                int deathWeight = 70; //70
+                int unconsciousWeight = 30; //30
+                // if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
+                //     deathWeight = 5;
+                //     unconsciousWeight = 95;
+                // }
+                string rollLog = characterThatAttacked.name + " attacked " + name
+                    + ", death weight: " + deathWeight + ", unconscious weight: " + unconsciousWeight
+                    + ", isLethal: " + characterThatAttacked.combatComponent.IsLethalCombatForTarget(this);
+
+                if (minion == null && this.traitContainer.GetNormalTrait<Trait>("Unconscious") == null) {
+                    combatResultWeights.AddElement("Unconscious", unconsciousWeight);
+                    rollLog += "\n- Unconscious weight will be added";
+                }
+                //if (currentClosestHostile.GetNormalTrait<Trait>("Injured") == null) {
+                //    loserResults.AddElement("Injured", 10);
+                //}
+                if (!isDead) {
+                    combatResultWeights.AddElement("Death", deathWeight);
+                    rollLog += "\n- Death weight will be added";
+                }
+
+                if (combatResultWeights.Count > 0) {
+                    string result = combatResultWeights.PickRandomElementGivenWeights();
+                    rollLog += "\n- Pick result is: " + result;
+                    characterThatAttacked.logComponent.PrintLogIfActive(rollLog);
+                    attackSummary += "\ncombat result is " + result; ;
+                    switch (result) {
+                        case "Unconscious":
+                            //Unconscious unconscious = new Unconscious();
+                            traitContainer.AddTrait(this, "Unconscious", responsibleCharacter);
+                            break;
+                        case "Injured":
+                            //Injured injured = new Injured();
+                            traitContainer.AddTrait(this, "Injured", responsibleCharacter);
+                            break;
+                        case "Death":
+                            string deathReason = "attacked";
+                            if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
+                                deathReason = "accidental_attacked";
+                            }
+                            this.Death(deathReason, responsibleCharacter: responsibleCharacter);
+                            break;
+                    }
+                } else {
+                    rollLog += "\n- Dictionary is empty, no result!";
+                    characterThatAttacked.logComponent.PrintLogIfActive(rollLog);
+                }
             }
+
         }
         //else {
         //    Invisible invisible = characterThatAttacked.GetNormalTrait<Trait>("Invisible") as Invisible;
@@ -3671,6 +3680,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         StartTickGoapPlanGeneration();
     }
     protected virtual void OnTickEnded() {
+        ProcessForcedCancelJobsOnTickEnded();
         interruptComponent.OnTickEnded();
         stateComponent.OnTickEnded();
         ProcessTraitsOnTickEnded();
@@ -4573,7 +4583,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     //if this character is not available, check if the current action type can be advertised even when the character is inactive.
                     continue; //skip
                 }
-                if (RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
+                if (PathfindingManager.Instance.HasPath(actor.gridTileLocation, gridTileLocation) && RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
                     object[] data = null;
                     if (otherData != null) {
                         if (otherData.ContainsKey(currType)) {
@@ -4617,7 +4627,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if((IsAvailable() || action.canBeAdvertisedEvenIfActorIsUnavailable) 
             && advertisedActions != null && advertisedActions.Contains(action.goapType)
             && actor.trapStructure.SatisfiesForcedStructure(this)
-            && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)) {
+            && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)
+            && PathfindingManager.Instance.HasPath(actor.gridTileLocation, gridTileLocation)) {
             object[] data = null;
             if (otherData != null) {
                 if (otherData.ContainsKey(action.goapType)) {
@@ -6186,6 +6197,19 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool ForceCancelJob(JobQueueItem job) {
         //JobManager.Instance.OnFinishGoapPlanJob(job);
         return true;
+    }
+    public void AddForcedCancelJobsOnTickEnded(JobQueueItem job) {
+        if (!forcedCancelJobsOnTickEnded.Contains(job)) {
+            forcedCancelJobsOnTickEnded.Add(job);
+        }
+    }
+    public void ProcessForcedCancelJobsOnTickEnded() {
+        if (forcedCancelJobsOnTickEnded.Count > 0) {
+            for (int i = 0; i < forcedCancelJobsOnTickEnded.Count; i++) {
+                forcedCancelJobsOnTickEnded[i].ForceCancelJob(false);
+            }
+            forcedCancelJobsOnTickEnded.Clear();
+        }
     }
     #endregion
 

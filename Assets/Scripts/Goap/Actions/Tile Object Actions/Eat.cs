@@ -20,13 +20,13 @@ public class Eat : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.COMFORT_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
     }
-    public override List<Precondition> GetPreconditions(IPointOfInterest target, object[] otherData) {
+    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
         if (target is Table) { // || target is FoodPile
-            List<Precondition> p = new List<Precondition>(base.GetPreconditions(target, otherData));
+            List<Precondition> p = new List<Precondition>(base.GetPreconditions(actor, target, otherData));
             p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_FOOD, "0" /*+ (int)otherData[0]*/, true, GOAP_EFFECT_TARGET.TARGET), HasFood));
             return p;
         }
-        return base.GetPreconditions(target, otherData);
+        return base.GetPreconditions(actor, target, otherData);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);

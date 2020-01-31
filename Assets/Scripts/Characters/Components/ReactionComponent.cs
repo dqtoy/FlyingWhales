@@ -330,7 +330,8 @@ public class ReactionComponent {
             if (targetTileObject.traitContainer.GetNormalTrait<Trait>("Burning") != null
                 && targetTileObject.gridTileLocation != null
                 && targetTileObject.gridTileLocation.IsPartOfSettlement(owner.homeSettlement)
-                && owner.traitContainer.GetNormalTrait<Trait>("Pyrophobic") == null) {
+                && owner.traitContainer.GetNormalTrait<Trait>("Pyrophobic") == null
+                && !owner.jobQueue.HasJob(JOB_TYPE.DOUSE_FIRE)) {
                 debugLog += "\n-Target is Burning and Character is not Pyrophobic";
                 owner.SetHasSeenFire(true);
                 owner.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
@@ -347,6 +348,7 @@ public class ReactionComponent {
                 }
             }
         }
+
         if(targetTileObject is TornadoTileObject) {
             if(owner.traitContainer.GetNormalTrait<Trait>("Elemental Master") == null) {
                 if(owner.traitContainer.GetNormalTrait<Trait>("Berserked") != null) {

@@ -7,17 +7,23 @@ public class RitualKilling : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
+    //TODO: This is one of the ways to optimize actions, situational preconditions can be cached at the beginning so that we will not call new Precondition every time
+    //TODO: This also applies to expected effects
+    //CREATE A SYSTEM FOR THIS
+    private Precondition atHomePrecondition;
+    private Precondition notAtHomePrecondition;
+    
     public RitualKilling() : base(INTERACTION_TYPE.RITUAL_KILLING) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         isNotificationAnIntel = true;
+        atHomePrecondition = new Precondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", target = GOAP_EFFECT_TARGET.TARGET }, HasRestrained);
+        notAtHomePrecondition = new Precondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, target = GOAP_EFFECT_TARGET.TARGET }, IsTargetInWildernessOrHome);
     }
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, target = GOAP_EFFECT_TARGET.TARGET }, IsTargetInWildernessOrHome);
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", target = GOAP_EFFECT_TARGET.TARGET }, HasRestrained);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -28,6 +34,19 @@ public class RitualKilling : GoapAction {
         string costLog = "\n" + name + " " + target.nameWithID + ": +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
+    }
+    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            List<Precondition> p = new List<Precondition>();
+            if (actor.homeStructure == targetCharacter.currentStructure) {
+                p.Add(atHomePrecondition);
+            } else {
+                p.Add(notAtHomePrecondition);
+            }
+            return p;
+        }
+        return base.GetPreconditions(actor, target, otherData);
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
@@ -55,7 +74,7 @@ public class RitualKilling : GoapAction {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
 
                 Character targetCharacter = target as Character;
-                if (witness.opinionComponent.IsFriendsWith(actor) && !targetCharacter.isSerialKiller) {
+                if (witness.opinionComponent.IsFriendsWith(actor) && !witness.isSerialKiller) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor);
                 }
                 if (witness.opinionComponent.IsFriendsWith(targetCharacter)) {
@@ -73,10 +92,10 @@ public class RitualKilling : GoapAction {
         IPointOfInterest target = node.poiTarget;
         if (target is Character) {
             Character targetCharacter = target as Character;
-            if (!targetCharacter.isSerialKiller) {
+            if (!witness.isSerialKiller) {
                 string opinionLabel = witness.opinionComponent.GetOpinionLabel(targetCharacter);
                 if (opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, target);
                 }
             }
         }

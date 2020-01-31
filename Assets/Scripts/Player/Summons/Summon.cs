@@ -285,6 +285,8 @@ public class Summon : Character, IWorldObject {
     public void NoPathToDoJob(JobQueueItem job) {
         if (job.jobType == JOB_TYPE.ROAM_AROUND_TERRITORY) {
             jobComponent.TriggerRoamAroundTile();
+        } else if (job.jobType == JOB_TYPE.RETURN_PORTAL) {
+            jobComponent.TriggerRoamAroundTile();
         } else if (job.jobType == JOB_TYPE.ROAM_AROUND_TILE) {
             jobComponent.TriggerMonsterStand();
         }

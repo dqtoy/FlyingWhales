@@ -432,6 +432,20 @@ public class Minion {
         }
     }
     #endregion
+    
+    #region Jobs
+    public void NoPathToDoJob(JobQueueItem job) {
+        if (job.jobType == JOB_TYPE.ROAM_AROUND_CORRUPTION) {
+            character.jobComponent.TriggerRoamAroundTile();
+        } else if (job.jobType == JOB_TYPE.ROAM_AROUND_PORTAL) {
+            character.jobComponent.TriggerRoamAroundTile();
+        } else if (job.jobType == JOB_TYPE.RETURN_PORTAL) {
+            character.jobComponent.TriggerRoamAroundTile();
+        } else if (job.jobType == JOB_TYPE.ROAM_AROUND_TILE) {
+            character.jobComponent.TriggerMonsterStand();
+        }
+    }
+    #endregion
 }
 
 [System.Serializable]

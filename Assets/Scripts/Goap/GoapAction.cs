@@ -227,9 +227,9 @@ public class GoapAction : IReactable {
         return false;
     }
     private int GetDistanceCost(Character actor, IPointOfInterest poiTarget) {
-        if (actor.currentSettlement == null) {
-            return 1;
-        }
+        // if (actor.currentSettlement == null) {
+        //     return 1;
+        // }
         LocationGridTile tile = poiTarget.gridTileLocation;
         if (actor.gridTileLocation != null && tile != null) {
             int distance = Mathf.RoundToInt(Vector2.Distance(actor.gridTileLocation.centeredWorldLocation, tile.centeredWorldLocation));
@@ -265,7 +265,7 @@ public class GoapAction : IReactable {
         basePreconditions.Add(new Precondition(effect, condition));
     }
     public bool CanSatisfyAllPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
-        List<Precondition> preconditions = GetPreconditions(target, otherData);
+        List<Precondition> preconditions = GetPreconditions(actor, target, otherData);
         for (int i = 0; i < preconditions.Count; i++) {
             if (!preconditions[i].CanSatisfyCondition(actor, target, otherData)) {
                 return false;
@@ -273,7 +273,7 @@ public class GoapAction : IReactable {
         }
         return true;
     }
-    public virtual List<Precondition> GetPreconditions(IPointOfInterest target, object[] otherData) {
+    public virtual List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
         return basePreconditions;
     }
     #endregion

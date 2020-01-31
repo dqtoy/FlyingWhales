@@ -248,6 +248,8 @@ public class ActualGoapNode {
                 //If cannot move to do action because there is no path between two location grid tiles, handle it here
                 if (actor is Summon) {
                     (actor as Summon).NoPathToDoJob(job);
+                } else if (actor.minion != null) {
+                    actor.minion.NoPathToDoJob(job);
                 }
                 job.CancelJob(false);
             }
@@ -256,8 +258,8 @@ public class ActualGoapNode {
     //We only pass the job because we need to cancel it if the target tile is null
     private bool MoveToDoAction(JobQueueItem job) {
         //Only create thought bubble log when characters starts the action/moves to do the action so we can pass the target structure
-        if (!actor.currentRegion.IsSameCoreLocationAs(targetStructure.location)) { //different core locations
-            actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, doneAction: () => CheckAndMoveToDoAction(job));
+        if (!actor.currentRegion.IsSameCoreLocationAs(targetTile.structure.location)) { //different core locations
+            actor.currentParty.GoToLocation(targetTile.structure.location, PATHFINDING_MODE.NORMAL, doneAction: () => CheckAndMoveToDoAction(job));
         } else {
             if (targetTile == null) {
                 //Here we check if there is a target tile to go to because if there is not, the target might already be destroyed/taken/disabled, if that happens, we must cancel job
@@ -265,34 +267,40 @@ public class ActualGoapNode {
                 job.CancelJob(false);
                 return false;
             }
-            LocationGridTile tileToGoTo = targetTile;
-            if (targetPOIToGoTo != null) {
-                tileToGoTo = targetPOIToGoTo.gridTileLocation;
-            }
-            if (tileToGoTo == actor.gridTileLocation) {
-                actor.marker.StopMovement();
-                actor.PerformGoapAction();
-            } else {
-                if (!actor.marker.pathfindingAI.HasPath(actor.gridTileLocation, tileToGoTo)) {
-                    return false;
-                }
-                actor.marker.GoTo(tileToGoTo, OnArriveAtTargetLocation);
-            }
-            // if (targetPOIToGoTo == null) {
-            //     if (targetTile == actor.gridTileLocation) {
-            //         actor.marker.StopMovement();
-            //         actor.PerformGoapAction();
-            //     } else {
-            //         actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
-            //     }
-            // } else {
-            //     if(actor.gridTileLocation == targetPOIToGoTo.gridTileLocation) {
-            //         actor.marker.StopMovement();
-            //         actor.PerformGoapAction();
-            //     } else {
-            //         actor.marker.GoToPOI(targetPOIToGoTo, OnArriveAtTargetLocation);
-            //     }
+            // LocationGridTile tileToGoTo = targetTile;
+            // if (targetPOIToGoTo != null) {
+            //     tileToGoTo = targetPOIToGoTo.gridTileLocation;
             // }
+            // if (tileToGoTo == actor.gridTileLocation) {
+            //     actor.marker.StopMovement();
+            //     actor.PerformGoapAction();
+            // } else {
+            //     if (!PathfindingManager.Instance.HasPath(actor.gridTileLocation, tileToGoTo)) {
+            //         return false;
+            //     }
+            //     actor.marker.GoTo(tileToGoTo, OnArriveAtTargetLocation);
+            // }
+            if (targetPOIToGoTo == null) {
+                if (targetTile == actor.gridTileLocation) {
+                    actor.marker.StopMovement();
+                    actor.PerformGoapAction();
+                } else {
+                    if (!PathfindingManager.Instance.HasPath(actor.gridTileLocation, targetTile)) {
+                        return false;
+                    }
+                    actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
+                }
+            } else {
+                if(actor.gridTileLocation == targetPOIToGoTo.gridTileLocation) {
+                    actor.marker.StopMovement();
+                    actor.PerformGoapAction();
+                } else {
+                    if (!PathfindingManager.Instance.HasPath(actor.gridTileLocation, targetPOIToGoTo.gridTileLocation)) {
+                        return false;
+                    }
+                    actor.marker.GoToPOI(targetPOIToGoTo, OnArriveAtTargetLocation);
+                }
+            }
         }
         return true;
     }
