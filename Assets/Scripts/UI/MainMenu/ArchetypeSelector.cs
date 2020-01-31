@@ -24,4 +24,23 @@ public class ArchetypeSelector : MonoBehaviour {
         continueBtn.interactable = false;
         MainMenuUI.Instance.StartNewGame();
     }
+
+    private void OnScreenResolutionChanged() {
+        StartCoroutine(_horizontalScrollSnap.UpdateLayoutCoroutine());
+    }
+    
+    // #region Monobehaviours
+    // private Vector2Int currentResolution;
+    // private void Start () {
+    //     currentResolution = new Vector2Int(Screen.width, Screen.height);
+    // }
+    //  
+    // private void Update () {
+    //     if (currentResolution.x != Screen.width || currentResolution.y != Screen.height) {
+    //         //Do stuff
+    //         currentResolution = new Vector2Int(Screen.width, Screen.height);
+    //         OnScreenResolutionChanged();
+    //     }
+    // }
+    // #endregion
 }

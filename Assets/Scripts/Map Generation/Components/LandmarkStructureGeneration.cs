@@ -74,7 +74,7 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 		// 	locationGridTiles.Where(t => t.HasNeighbourNotInList(locationGridTiles) == false && t.IsAtEdgeOfMap() == false).ToList();
 		
 		LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(locationGridTiles);
-		int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, locationGridTiles, 3, 35);
+		int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, locationGridTiles, 2, 35);
 		
 		Assert.IsNotNull(cellMap, $"There was no cellmap generated for elevation structure {elevationStructure.ToString()}");
 		
@@ -99,15 +99,18 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 		//get tiles that are at the edge of the given tiles, but are not at the edge of its map.
 		List<LocationGridTile> targetChoices = locationGridTiles.Where(t => t.tileType == LocationGridTile.Tile_Type.Wall  
 		                                                                    && t.IsAtEdgeOfMap() == false).ToList();
-		LocationGridTile target = CollectionUtilities.GetRandomElement(targetChoices);
-		Debug.Log($"Chosen target tile to clear is {target.ToString()} for monster lair at {region.name}");
-		// List<LocationGridTile> path =
-		// 	PathGenerator.Instance.GetPath(centerTile, target, GRID_PATHFINDING_MODE.UNCONSTRAINED, true);
-		// for (int i = 0; i < path.Count; i++) {
+		if (targetChoices.Count > 0) {
+			LocationGridTile target = CollectionUtilities.GetRandomElement(targetChoices);
+			Debug.Log($"Chosen target tile to clear is {target.ToString()} for monster lair at {region.name}");
+			// List<LocationGridTile> path =
+			// 	PathGenerator.Instance.GetPath(centerTile, target, GRID_PATHFINDING_MODE.UNCONSTRAINED, true);
+			// for (int i = 0; i < path.Count; i++) {
 			// LocationGridTile tile = path[i];
 			target.SetStructureTilemapVisual(null);
 			target.SetTileType(LocationGridTile.Tile_Type.Empty);
-		// }
+			// }	
+		}
+		
 	}
 	private void SetAsWall(LocationGridTile tile, LocationStructure structure, List<LocationGridTile> tiles) {
 		// if (CellularAutomataGenerator.IsAtEdgeOfMap(tile, tiles) == false) {
