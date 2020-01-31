@@ -56,6 +56,7 @@ public class Explosion : PlayerSpell {
                 flammable.traitContainer.AddTrait(flammable, burning);
             }
         }
+        CameraMove.Instance.ShakeCamera();
     }
     protected override void OnLevelUp() {
         base.OnLevelUp();
@@ -81,4 +82,56 @@ public class ExplosionData : SpellData {
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public override int abilityRadius => 1;
+    
+    public override void ActivateAbility(LocationGridTile targetTile) {
+        // LocationGridTile tile = targetPOI.gridTileLocation;
+        List<ITraitable> flammables = new List<ITraitable>();
+        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, abilityRadius, 0, true);
+        for (int i = 0; i < tiles.Count; i++) {
+            LocationGridTile tile = tiles[i];
+            flammables.AddRange(tile.GetTraitablesOnTileWithTrait("Flammable"));
+        }
+        flammables = flammables.Where(x => x.traitContainer.GetNormalTrait<Trait>("Burning", "Burnt", "Wet", "Fireproof") == null).ToList();
+        BurningSource bs = new BurningSource(InnerMapManager.Instance.currentlyShowingLocation);
+        for (int i = 0; i < flammables.Count; i++) {
+            ITraitable flammable = flammables[i];
+            if (flammable is TileObject) {
+                TileObject obj = flammable as TileObject;
+                GameManager.Instance.CreateExplodeEffectAt(obj.gridTileLocation);
+                if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
+                    obj.AdjustHP(-obj.currentHP);
+                    if (obj.gridTileLocation == null) {
+                        continue; //object was destroyed, do not add burning trait
+                    }
+                }
+            } else if (flammable is SpecialToken) {
+                SpecialToken token = flammable as SpecialToken;
+                GameManager.Instance.CreateExplodeEffectAt(token.gridTileLocation);
+                token.AdjustHP(-token.currentHP);
+                if (token.gridTileLocation == null) {
+                    continue; //object was destroyed, do not add burning trait
+                }
+            } else if (flammable is Character) {
+                Character character = flammable as Character;
+                GameManager.Instance.CreateExplodeEffectAt(character.gridTileLocation);
+                character.AdjustHP(-(int)(character.maxHP * 0.4f), true);
+            }
+            if (Random.Range(0, 100) < 60) {
+                Burning burning = new Burning();
+                burning.SetSourceOfBurning(bs, flammable);
+                flammable.traitContainer.AddTrait(flammable, burning);
+            }
+        }
+        CameraMove.Instance.ShakeCamera();
+    }
+    public override void ShowRange(LocationGridTile targetTile) {
+        base.ShowRange(targetTile);
+        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, abilityRadius, 0, true);
+        InnerMapManager.Instance.HighlightTiles(tiles);
+    }
+    public override void HideRange(LocationGridTile targetTile) {
+        base.HideRange(targetTile);
+        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, abilityRadius, 0, true);
+        InnerMapManager.Instance.UnhighlightTiles(tiles);
+    }
 }
