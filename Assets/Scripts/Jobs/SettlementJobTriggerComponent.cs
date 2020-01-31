@@ -114,7 +114,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			Character target = traitable as Character;
 			if (trait is Restrained) {
 				TryCreateJudgePrisoner(target);
-			} else if (trait.type == TRAIT_TYPE.CRIMINAL) {
+			} else if (trait is Criminal) {
 				TryCreateApprehend(target);
 			}
 		}
