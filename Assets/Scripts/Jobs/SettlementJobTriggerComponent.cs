@@ -139,7 +139,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private void OnCharacterSaw(Character character, IPointOfInterest seenPOI) {
-		if (character.homeSettlement == _owner) {
+		if (character.homeSettlement == _owner && character.homeSettlement.isUnderSeige 
+		                                       && character.currentSettlement == character.homeSettlement) {
 			if (seenPOI is Character) {
 				Character target = seenPOI as Character;
 				TryCreateKnockoutJobs(target);
