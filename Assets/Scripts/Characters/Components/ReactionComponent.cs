@@ -22,6 +22,10 @@ public class ReactionComponent {
         } else if (targetTileObject.poiType == POINT_OF_INTEREST_TYPE.ITEM) {
             ReactTo(targetTileObject as SpecialToken, ref debugLog);
         }
+        if (owner.minion != null || owner is Summon) {
+            //Minions or Summons cannot react to its own traits
+            return;
+        }
         debugLog += "\n-Character will loop through all his/her traits to react to Target";
         for (int i = 0; i < owner.traitContainer.allTraits.Count; i++) {
             debugLog += "\n - " + owner.traitContainer.allTraits[i].name;
@@ -33,6 +37,10 @@ public class ReactionComponent {
         }
     }
     public string ReactTo(ActualGoapNode node, SHARE_INTEL_STATUS status) {
+        if (owner.minion != null || owner is Summon) {
+            //Minions or Summons cannot react to actions
+            return string.Empty;
+        }
         if(status == SHARE_INTEL_STATUS.WITNESSED) {
             ReactToWitnessedAction(node);
         } else {
@@ -41,6 +49,10 @@ public class ReactionComponent {
         return string.Empty;
     }
     public void ReactTo(Interrupt interrupt, Character actor, IPointOfInterest target, Character witness) {
+        if (owner.minion != null || owner is Summon) {
+            //Minions or Summons cannot react to interrupts
+            return;
+        }
         if (owner.faction != actor.faction && owner.faction.IsHostileWith(actor.faction)) {
             //Must not react if the faction of the actor of witnessed action is hostile with the faction of the witness
             return;
@@ -198,21 +210,21 @@ public class ReactionComponent {
     }
     private void ReactTo(Character targetCharacter, ref string debugLog) {
         debugLog += owner.name + " is reacting to " + targetCharacter.name;
-        if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter)) {
-            debugLog += "\n-Target is not being targeted by an action, continue reaction";
-            if(owner.faction.IsHostileWith(targetCharacter.faction)) {
-                debugLog += "\n-Target is hostile";
-                if (!targetCharacter.isDead) {
-                    debugLog += "\n-Target is not dead";
-                    debugLog += "\n-Fight or Flight response";
-                    //Fight or Flight
-                    owner.combatComponent.FightOrFlight(targetCharacter);
-                } else {
-                    debugLog += "\n-Target is dead";
-                    debugLog += "\n-Do nothing";
-                }
+        if(owner.faction.IsHostileWith(targetCharacter.faction)) {
+            debugLog += "\n-Target is hostile";
+            if (!targetCharacter.isDead) {
+                debugLog += "\n-Target is not dead";
+                debugLog += "\n-Fight or Flight response";
+                //Fight or Flight
+                owner.combatComponent.FightOrFlight(targetCharacter);
             } else {
-                debugLog += "\n-Target is not hostile";
+                debugLog += "\n-Target is dead";
+                debugLog += "\n-Do nothing";
+            }
+        } else {
+            debugLog += "\n-Target is not hostile";
+            if (owner.minion == null && !(owner is Summon) && !IsPOICurrentlyTargetedByAPerformingAction(targetCharacter)) {
+                debugLog += "\n-Character is not minion and not summon and Target is not being targeted by an action, continue reaction";
                 if (!targetCharacter.isDead) {
                     debugLog += "\n-Target is not dead";
                     if (!owner.isConversing && !targetCharacter.isConversing && owner.nonActionEventsComponent.CanInteract(targetCharacter)) {
@@ -319,12 +331,16 @@ public class ReactionComponent {
                     debugLog += "\n-Target is dead";
                     debugLog += "\n-Do nothing";
                 }
+            } else {
+                debugLog += "\n-Character is minion or summon or Target is currently being targeted by an action, not going to react";
             }
-        } else {
-            debugLog += "\n-Target is currently being targeted by an action, not going to react";
         }
     }
     private void ReactTo(TileObject targetTileObject, ref string debugLog) {
+        if (owner.minion != null || owner is Summon) {
+            //Minions or Summons cannot react to objects
+            return;
+        }
         debugLog += owner.name + " is reacting to " + targetTileObject.nameWithID;
         if (!owner.hasSeenFire) {
             if (targetTileObject.traitContainer.GetNormalTrait<Trait>("Burning") != null
@@ -360,6 +376,10 @@ public class ReactionComponent {
         }
     }
     private void ReactTo(SpecialToken targetItem, ref string debugLog) {
+        if (owner.minion != null || owner is Summon) {
+            //Minions or Summons cannot react to items
+            return;
+        }
         debugLog += owner.name + " is reacting to " + targetItem.nameWithID;
         if (!owner.hasSeenFire) {
             if (targetItem.traitContainer.GetNormalTrait<Trait>("Burning") != null

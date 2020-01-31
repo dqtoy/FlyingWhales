@@ -25,6 +25,10 @@ public class OpinionComponent {
     }
 
     public void AdjustOpinion(Character target, string opinionText, int opinionValue, string lastStrawReason = "") {
+        if (owner.minion != null || owner is Summon) {
+            //Minions or Summons cannot have opinions
+            return;
+        }
         if (!HasOpinion(target)) {
             opinions.Add(target, ObjectPoolManager.Instance.CreateNewOpinionData());
             opinions[target].AdjustOpinion("Base", 0);
@@ -57,6 +61,10 @@ public class OpinionComponent {
         }
     }
     public void SetOpinion(Character target, string opinionText, int opinionValue, string lastStrawReason = "") {
+        if (owner.minion != null || owner is Summon) {
+            //Minions or Summons cannot have opinions
+            return;
+        }
         if (!HasOpinion(target)) {
             opinions.Add(target, ObjectPoolManager.Instance.CreateNewOpinionData());
             opinions[target].AdjustOpinion("Base", 0);

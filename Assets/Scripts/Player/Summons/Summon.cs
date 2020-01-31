@@ -49,6 +49,8 @@ public class Summon : Character, IWorldObject {
         needsComponent.Initialize();
         
         ConstructInitialGoapAdvertisementActions();
+        needsComponent.SetFullnessForcedTick(0);
+        needsComponent.SetTirednessForcedTick(0);
         behaviourComponent.AddBehaviourComponent(typeof(DefaultMonster));
         //SubscribeToSignals(); //NOTE: Only made characters subscribe to signals when their settlement is the one that is currently active. TODO: Also make sure to unsubscribe a character when the player has completed their map.
     }

@@ -37,6 +37,8 @@ public class Minion {
             character.SetName(RandomNameGenerator.Instance.GenerateMinionName());
         }
         RemoveInvalidPlayerActions();
+        character.needsComponent.SetFullnessForcedTick(0);
+        character.needsComponent.SetTirednessForcedTick(0);
         character.behaviourComponent.AddBehaviourComponent(typeof(DefaultMinion));
     }
     public Minion(SaveDataMinion data) {

@@ -1069,6 +1069,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
     }
     public void AddUnprocessedPOI(IPointOfInterest poi) {
+        // if (character.minion != null || character is Summon) {
+        //     //Minion or Summon cannot process pois
+        //     return;
+        // }
         unprocessedVisionPOIs.Add(poi);
         // character.logComponent.PrintLogIfActive(character.name + " added unprocessed poi " + poi.nameWithID);
     }
