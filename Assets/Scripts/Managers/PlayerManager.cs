@@ -61,6 +61,7 @@ public class PlayerManager : MonoBehaviour {
     public void InitializePlayer(BaseLandmark portal, LocationStructure portalStructure) {
         player = new Player();
         player.CreatePlayerFaction();
+        player.SetPortalTile(portal.tileLocation);
         
         Settlement existingPlayerSettlement = player.CreatePlayerSettlement(portal);
         existingPlayerSettlement.GenerateStructures(portalStructure);

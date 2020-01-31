@@ -34,6 +34,7 @@ public class Player : ILeader {
     public int maxArtifactSlots { get; private set; } //how many artifacts can the player have
     public PlayerJobActionSlot[] interventionAbilitySlots { get; private set; }
     public UnsummonedMinionData[] minionsToSummon { get; private set; }
+    public HexTile portalTile { get; private set; }
 
     public float constructionRatePercentageModifier { get; private set; }
 
@@ -91,6 +92,10 @@ public class Player : ILeader {
         AddListeners();
     }
 
+    public void SetPortalTile(HexTile tile) {
+        portalTile = tile;
+    }
+    
     #region Listeners
     private void AddListeners() {
         AddWinListener();
