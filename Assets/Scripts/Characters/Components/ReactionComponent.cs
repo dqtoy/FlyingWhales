@@ -14,18 +14,18 @@ public class ReactionComponent {
     }
 
     #region Processes
-    public void ReactTo(IPointOfInterest targetPOI, ref string debugLog) {
-        if (targetPOI.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            ReactTo(targetPOI as Character, ref debugLog);
-        } else if (targetPOI.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-            ReactTo(targetPOI as TileObject, ref debugLog);
-        } else if (targetPOI.poiType == POINT_OF_INTEREST_TYPE.ITEM) {
-            ReactTo(targetPOI as SpecialToken, ref debugLog);
+    public void ReactTo(IPointOfInterest targetTileObject, ref string debugLog) {
+        if (targetTileObject.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            ReactTo(targetTileObject as Character, ref debugLog);
+        } else if (targetTileObject.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+            ReactTo(targetTileObject as TileObject, ref debugLog);
+        } else if (targetTileObject.poiType == POINT_OF_INTEREST_TYPE.ITEM) {
+            ReactTo(targetTileObject as SpecialToken, ref debugLog);
         }
         debugLog += "\n-Character will loop through all his/her traits to react to Target";
         for (int i = 0; i < owner.traitContainer.allTraits.Count; i++) {
             debugLog += "\n - " + owner.traitContainer.allTraits[i].name;
-            if (owner.traitContainer.allTraits[i].OnSeePOI(targetPOI, owner)) {
+            if (owner.traitContainer.allTraits[i].OnSeePOI(targetTileObject, owner)) {
                 debugLog += ": triggered";
             } else {
                 debugLog += ": not triggered";
@@ -201,113 +201,123 @@ public class ReactionComponent {
         if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter)) {
             debugLog += "\n-Target is not being targeted by an action, continue reaction";
             if(owner.faction.IsHostileWith(targetCharacter.faction)) {
-                debugLog += "\n-Target is hostile, will trigger Fight or Flight response";
-                //Fight or Flight
-                owner.combatComponent.FightOrFlight(targetCharacter);
+                debugLog += "\n-Target is hostile";
+                if (!targetCharacter.isDead) {
+                    debugLog += "\n-Target is not dead";
+                    debugLog += "\n-Fight or Flight response";
+                    //Fight or Flight
+                    owner.combatComponent.FightOrFlight(targetCharacter);
+                } else {
+                    debugLog += "\n-Target is dead";
+                    debugLog += "\n-Do nothing";
+                }
             } else {
-                if(!owner.isConversing && !targetCharacter.isConversing && owner.nonActionEventsComponent.CanInteract(targetCharacter)) {
-                    debugLog += "\n-Character and Target are not Chatting or Flirting and Character can interact with Target, has 3% chance to Chat";
-                    int chance = UnityEngine.Random.Range(0, 100);
-                    debugLog += "\n-Roll: " + chance;
-                    if (chance < 3) {
-                        debugLog += "\n-Chat triggered";
-                        owner.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, targetCharacter);
-                    } else {
-                        debugLog += "\n-Chat did not trigger, will now trigger Flirt if Character is Sexually Compatible with Target and Character is Unfaithful, or Target is Lover or Affair, or Character has no Lover";
-                        if (RelationshipManager.Instance.IsSexuallyCompatibleOneSided(owner, targetCharacter)) {
-                            if (owner.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)
-                                || owner.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) == null
-                                || owner.traitContainer.GetNormalTrait<Trait>("Unfaithful") != null) {
-                                debugLog += "\n-Flirt has 1% (multiplied by Compatibility value) chance to trigger";
-                                int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(owner, targetCharacter);
-                                int value = 2;
-                                if (compatibility != -1) {
-                                    value = 1 * compatibility;
-                                    debugLog += "\n-Chance: " + value;
-                                } else {
-                                    debugLog += "\n-Chance: " + value + " (No Compatibility)";
-                                }
-                                int flirtChance = UnityEngine.Random.Range(0, 100);
-                                debugLog += "\n-Roll: " + flirtChance;
-                                if (flirtChance < value) {
-                                    owner.interruptComponent.TriggerInterrupt(INTERRUPT.Flirt, targetCharacter);
+                debugLog += "\n-Target is not hostile";
+                if (!targetCharacter.isDead) {
+                    debugLog += "\n-Target is not dead";
+                    if (!owner.isConversing && !targetCharacter.isConversing && owner.nonActionEventsComponent.CanInteract(targetCharacter)) {
+                        debugLog += "\n-Character and Target are not Chatting or Flirting and Character can interact with Target, has 3% chance to Chat";
+                        int chance = UnityEngine.Random.Range(0, 100);
+                        debugLog += "\n-Roll: " + chance;
+                        if (chance < 3) {
+                            debugLog += "\n-Chat triggered";
+                            owner.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, targetCharacter);
+                        } else {
+                            debugLog += "\n-Chat did not trigger, will now trigger Flirt if Character is Sexually Compatible with Target and Character is Unfaithful, or Target is Lover or Affair, or Character has no Lover";
+                            if (RelationshipManager.Instance.IsSexuallyCompatibleOneSided(owner, targetCharacter)) {
+                                if (owner.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)
+                                    || owner.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) == null
+                                    || owner.traitContainer.GetNormalTrait<Trait>("Unfaithful") != null) {
+                                    debugLog += "\n-Flirt has 1% (multiplied by Compatibility value) chance to trigger";
+                                    int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(owner, targetCharacter);
+                                    int value = 2;
+                                    if (compatibility != -1) {
+                                        value = 1 * compatibility;
+                                        debugLog += "\n-Chance: " + value;
+                                    } else {
+                                        debugLog += "\n-Chance: " + value + " (No Compatibility)";
+                                    }
+                                    int flirtChance = UnityEngine.Random.Range(0, 100);
+                                    debugLog += "\n-Roll: " + flirtChance;
+                                    if (flirtChance < value) {
+                                        owner.interruptComponent.TriggerInterrupt(INTERRUPT.Flirt, targetCharacter);
+                                    } else {
+                                        debugLog += "\n-Flirt did not trigger";
+                                    }
                                 } else {
                                     debugLog += "\n-Flirt did not trigger";
                                 }
-                            } else {
-                                debugLog += "\n-Flirt did not trigger";
                             }
                         }
                     }
-                }
 
-                if (owner.faction == targetCharacter.faction || owner.homeSettlement == targetCharacter.homeSettlement) {
-                    debugLog += "\n-Character and Target are with the same faction or settlement";
-                    if (owner.opinionComponent.IsEnemiesWith(targetCharacter)) {
-                        debugLog += "\n-Character considers Target as Enemy or Rival";
-                        if (targetCharacter.canMove && targetCharacter.canPerform) {
-                            debugLog += "\n-Target can move and can perform, will trigger Fight or Flight response";
-                            //Fight or Flight
-                            owner.combatComponent.FightOrFlight(targetCharacter);
+                    if (owner.faction == targetCharacter.faction || owner.homeSettlement == targetCharacter.homeSettlement) {
+                        debugLog += "\n-Character and Target are with the same faction or settlement";
+                        if (owner.opinionComponent.IsEnemiesWith(targetCharacter)) {
+                            debugLog += "\n-Character considers Target as Enemy or Rival";
+                            if (!targetCharacter.canMove || !targetCharacter.canPerform) {
+                                debugLog += "\n-Target can neither move or perform, will trigger Mock or Laugh At interrupt";
+                                if (UnityEngine.Random.Range(0, 2) == 0) {
+                                    debugLog += "\n-Character triggered Mock interrupt";
+                                    owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
+                                } else {
+                                    debugLog += "\n-Character triggered Laugh At interrupt";
+                                    owner.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
+                                }
+                            }
                         } else {
-                            debugLog += "\n-Target can neither move or perform, will trigger Mock or Laugh At interrupt";
-                            if (UnityEngine.Random.Range(0, 2) == 0) {
-                                debugLog += "\n-Character triggered Mock interrupt";
-                                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
-                            } else {
-                                debugLog += "\n-Character triggered Laugh At interrupt";
-                                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
+                            debugLog += "\n-Character does not consider Target as Enemy or Rival";
+                            if (!targetCharacter.canMove/* || !targetCharacter.canWitness*/) {
+                                debugLog += "\n-Target cannot move"; // or cannot witness
+                                if (targetCharacter.needsComponent.isHungry || targetCharacter.needsComponent.isStarving) {
+                                    debugLog += "\n-Target is hungry or starving, will create feed job";
+                                    owner.jobComponent.TryTriggerFeed(targetCharacter);
+                                } else if (targetCharacter.needsComponent.isTired || targetCharacter.needsComponent.isExhausted) {
+                                    debugLog += "\n-Target is tired or exhausted, will create Move Character job to bed if Target has a home and an available bed";
+                                    if (targetCharacter.homeStructure != null) {
+                                        Bed bed = targetCharacter.homeStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED) as Bed;
+                                        if (bed != null) {
+                                            debugLog += "\n-Target has a home and an available bed, will trigger Move Character job to bed";
+                                            owner.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.homeStructure.GetLocationStructure(), bed.gridTileLocation);
+                                        } else {
+                                            debugLog += "\n-Target has a home but does not have an available bed, will not trigger Move Character job";
+                                        }
+                                    } else {
+                                        debugLog += "\n-Target does not have a home, will not trigger Move Character job";
+                                    }
+                                } else if (targetCharacter.needsComponent.isBored || targetCharacter.needsComponent.isSulking) {
+                                    debugLog += "\n-Target is bored or sulking, will trigger Move Character job if character is not in the right place to do Daydream or Pray";
+                                    if (UnityEngine.Random.Range(0, 2) == 0 && targetCharacter.homeStructure != null) {
+                                        //Pray
+                                        if (targetCharacter.currentStructure != targetCharacter.homeStructure) {
+                                            debugLog += "\n-Target chose Pray and is not inside his/her house, will trigger Move Character job";
+                                            owner.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.homeStructure.GetLocationStructure());
+                                        } else {
+                                            debugLog += "\n-Target chose Pray but is already inside his/her house, will not trigger Move Character job";
+                                        }
+                                    } else {
+                                        //Daydream
+                                        if (!targetCharacter.currentStructure.structureType.IsOpenSpace()) {
+                                            debugLog += "\n-Target chose Daydream and is not in an open space structure, will trigger Move Character job";
+                                            owner.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+                                        } else {
+                                            debugLog += "\n-Target chose Daydream but is already in an open space structure, will not trigger Move Character job";
+                                        }
+                                    }
+                                }
                             }
                         }
                     } else {
-                        debugLog += "\n-Character does not consider Target as Enemy or Rival";
-                        if (!targetCharacter.canMove/* || !targetCharacter.canWitness*/) {
-                            debugLog += "\n-Target cannot move"; // or cannot witness
-                            if (targetCharacter.needsComponent.isHungry || targetCharacter.needsComponent.isStarving) {
-                                debugLog += "\n-Target is hungry or starving, will create feed job";
-                                owner.jobComponent.TryTriggerFeed(targetCharacter);
-                            } else if (targetCharacter.needsComponent.isTired || targetCharacter.needsComponent.isExhausted) {
-                                debugLog += "\n-Target is tired or exhausted, will create Move Character job to bed if Target has a home and an available bed";
-                                if (targetCharacter.homeStructure != null) {
-                                    Bed bed = targetCharacter.homeStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED) as Bed;
-                                    if (bed != null) {
-                                        debugLog += "\n-Target has a home and an available bed, will trigger Move Character job to bed";
-                                        owner.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.homeStructure.GetLocationStructure(), bed.gridTileLocation);
-                                    } else {
-                                        debugLog += "\n-Target has a home but does not have an available bed, will not trigger Move Character job";
-                                    }
-                                } else {
-                                    debugLog += "\n-Target does not have a home, will not trigger Move Character job";
-                                }
-                            } else if (targetCharacter.needsComponent.isBored || targetCharacter.needsComponent.isSulking) {
-                                debugLog += "\n-Target is bored or sulking, will trigger Move Character job if character is not in the right place to do Daydream or Pray";
-                                if (UnityEngine.Random.Range(0, 2) == 0 && targetCharacter.homeStructure != null) {
-                                    //Pray
-                                    if (targetCharacter.currentStructure != targetCharacter.homeStructure) {
-                                        debugLog += "\n-Target chose Pray and is not inside his/her house, will trigger Move Character job";
-                                        owner.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.homeStructure.GetLocationStructure());
-                                    } else {
-                                        debugLog += "\n-Target chose Pray but is already inside his/her house, will not trigger Move Character job";
-                                    }
-                                } else {
-                                    //Daydream
-                                    if (!targetCharacter.currentStructure.structureType.IsOpenSpace()) {
-                                        debugLog += "\n-Target chose Daydream and is not in an open space structure, will trigger Move Character job";
-                                        owner.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
-                                    } else {
-                                        debugLog += "\n-Target chose Daydream but is already in an open space structure, will not trigger Move Character job";
-                                    }
-                                }
-                            }
+                        debugLog += "\n-Character and Target are not with the same faction and settlement";
+                        if (owner.opinionComponent.IsEnemiesWith(targetCharacter)) {
+                            debugLog += "\n-Character considers Target as Enemy or Rival, will trigger Fight or Flight response";
+                            //Fight or Flight
+                            owner.combatComponent.FightOrFlight(targetCharacter);
                         }
                     }
                 } else {
-                    debugLog += "\n-Character and Target are not with the same faction and settlement";
-                    if (owner.opinionComponent.IsEnemiesWith(targetCharacter)) {
-                        debugLog += "\n-Character considers Target as Enemy or Rival, will trigger Fight or Flight response";
-                        //Fight or Flight
-                        owner.combatComponent.FightOrFlight(targetCharacter);
-                    }
+                    debugLog += "\n-Target is dead";
+                    debugLog += "\n-Do nothing";
                 }
             }
         } else {
@@ -315,6 +325,37 @@ public class ReactionComponent {
         }
     }
     private void ReactTo(TileObject targetTileObject, ref string debugLog) {
+        debugLog += owner.name + " is reacting to " + targetTileObject.nameWithID;
+        if (!owner.hasSeenFire) {
+            if (targetTileObject.traitContainer.GetNormalTrait<Trait>("Burning") != null
+                && targetTileObject.gridTileLocation != null
+                && targetTileObject.gridTileLocation.IsPartOfSettlement(owner.homeSettlement)
+                && owner.traitContainer.GetNormalTrait<Trait>("Pyrophobic") == null) {
+                debugLog += "\n-Target is Burning and Character is not Pyrophobic";
+                owner.SetHasSeenFire(true);
+                owner.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
+                for (int i = 0; i < owner.homeSettlement.availableJobs.Count; i++) {
+                    JobQueueItem job = owner.homeSettlement.availableJobs[i];
+                    if (job.jobType == JOB_TYPE.DOUSE_FIRE) {
+                        if (job.assignedCharacter == null && owner.jobQueue.CanJobBeAddedToQueue(job)) {
+                            owner.jobQueue.AddJobInQueue(job);
+                        } else {
+                            owner.combatComponent.Flight(targetTileObject);
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+        if(targetTileObject is TornadoTileObject) {
+            if(owner.traitContainer.GetNormalTrait<Trait>("Elemental Master") == null) {
+                if(owner.traitContainer.GetNormalTrait<Trait>("Berserked") != null) {
+                    owner.combatComponent.FightOrFlight(targetTileObject);
+                } else {
+                    owner.combatComponent.Flight(targetTileObject);
+                }
+            }
+        }
         //debugLog += owner.name + " is reacting to " + targetTileObject.nameWithID;
         //if (!IsPOICurrentlyTargetedByAPerformingAction(targetTileObject)) {
         //    debugLog += "\n-Target is not being targeted by an action, continue reaction";
@@ -323,10 +364,9 @@ public class ReactionComponent {
         //            //Fight or Flight
         //            owner.combatComponent.FightOrFlight(targetTileObject);
         //        } else {
-                    
+
         //        }
         //    }
-            
         //} else {
         //    debugLog += "\n-Target is currently being targeted by an action, not going to react";
         //}

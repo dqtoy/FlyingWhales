@@ -37,27 +37,6 @@ namespace Traits {
 
         #region Overrides
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
-            //burning
-            if (!characterThatWillDoJob.hasSeenFire) {
-                if (targetPOI.traitContainer.GetNormalTrait<Trait>("Burning") != null 
-                    && targetPOI.gridTileLocation != null 
-                    && targetPOI.gridTileLocation.IsPartOfSettlement(characterThatWillDoJob.homeSettlement) 
-                    && characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Pyrophobic") == null) {
-                    characterThatWillDoJob.SetHasSeenFire(true);
-                    characterThatWillDoJob.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
-                    for (int i = 0; i < characterThatWillDoJob.homeSettlement.availableJobs.Count; i++) {
-                        JobQueueItem job = characterThatWillDoJob.homeSettlement.availableJobs[i];
-                        if (job.jobType == JOB_TYPE.DOUSE_FIRE) {
-                            if (job.assignedCharacter == null && characterThatWillDoJob.jobQueue.CanJobBeAddedToQueue(job)) {
-                                characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                            } else {
-                                characterThatWillDoJob.combatComponent.Flight(targetPOI);
-                            }
-                            break;
-                        }
-                    }
-                }   
-            }
 
             if (targetPOI is TileObject) {
                 TileObject tileObj = targetPOI as TileObject;
