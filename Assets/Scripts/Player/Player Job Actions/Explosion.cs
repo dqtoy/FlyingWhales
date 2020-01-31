@@ -56,7 +56,7 @@ public class Explosion : PlayerSpell {
                 flammable.traitContainer.AddTrait(flammable, burning);
             }
         }
-        CameraMove.Instance.ShakeCamera();
+        InnerMapCameraMove.Instance.ShakeCamera();
     }
     protected override void OnLevelUp() {
         base.OnLevelUp();
@@ -122,7 +122,7 @@ public class ExplosionData : SpellData {
                 flammable.traitContainer.AddTrait(flammable, burning);
             }
         }
-        CameraMove.Instance.ShakeCamera();
+        InnerMapCameraMove.Instance.ShakeCamera();
     }
     public override void ShowRange(LocationGridTile targetTile) {
         base.ShowRange(targetTile);

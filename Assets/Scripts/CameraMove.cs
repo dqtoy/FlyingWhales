@@ -43,8 +43,7 @@ public class CameraMove : MonoBehaviour {
     [SerializeField] private float edgingSpeed = 30f;
     [SerializeField] private bool allowEdgePanning;
     
-    [Header("Shaking")]
-    [SerializeField] private RFX4_CameraShake cameraShake;
+    
 
     //private properties
     private float previousCameraFOV;
@@ -330,9 +329,6 @@ public class CameraMove : MonoBehaviour {
     #region Camera Control
     private void SetCameraControlState(bool state) {
         cameraControlEnabled = state;
-    }
-    public void ShakeCamera() {
-        cameraShake.PlayShake();
     }
     #endregion
 }

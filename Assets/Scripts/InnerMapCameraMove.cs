@@ -36,6 +36,9 @@ public class InnerMapCameraMove : MonoBehaviour {
     [Header("Edging")]
     [SerializeField] private float edgingSpeed = 30f;
     private bool allowEdgePanning = false;
+    
+    [Header("Shaking")]
+    [SerializeField] private RFX4_CameraShake cameraShake;
 
     private float previousCameraFOV;
 
@@ -420,6 +423,9 @@ public class InnerMapCameraMove : MonoBehaviour {
     #region Camera Control
     public void SetCameraControlState(bool state) {
         cameraControlEnabled = state;
+    }
+    public void ShakeCamera() {
+        cameraShake.PlayShake();
     }
     #endregion
 }

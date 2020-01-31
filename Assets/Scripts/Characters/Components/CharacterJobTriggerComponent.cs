@@ -65,7 +65,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	}
 	private void OnCharacterCanNoLongerPerform(Character character) {
 		if (character == _owner) {
-			character.jobQueue.CancelAllJobs();
+			//TODO: THIS IS ONLY TEMPORARY! REDO THIS!
+			if (character.interruptComponent.isInterrupted &&
+			           character.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Narcoleptic_Attack) {
+				//Don't do anything
+			} else if (character.currentActionNode != null && (character.currentActionNode.action.goapType == INTERACTION_TYPE.NAP || character.currentActionNode.action.goapType == INTERACTION_TYPE.SLEEP || character.currentActionNode.action.goapType == INTERACTION_TYPE.SLEEP_OUTSIDE)) {
+				character.CancelAllJobsExceptForCurrent();
+			} else {
+				character.jobQueue.CancelAllJobs();
+			}
 			character.marker.StopMovement();
 			character.marker.pathfindingAI.ClearAllCurrentPathData();
 		}
