@@ -15,19 +15,20 @@ public class RFX4_CameraShake : MonoBehaviour
     [HideInInspector]
     public bool canUpdate;
 
-    void PlayShake()
+    public void PlayShake()
     {
-        StopAllCoroutines();
+        // StopAllCoroutines();
+        StopCoroutine(Shake());
         StartCoroutine(Shake());
     }
 
-    void Update()
-    {
-        if (isPlaying && IsEnabled) {
-            isPlaying = false;
-            PlayShake();
-        }
-    }
+    // void Update()
+    // {
+    //     if (isPlaying && IsEnabled) {
+    //         isPlaying = false;
+    //         PlayShake();
+    //     }
+    // }
 
     void OnEnable()
     {

@@ -120,32 +120,41 @@ public class CombatComponent {
                 lethalCharacters.Remove(target as Character);
             }
         }
-        if(owner.homeStructure != null && owner.homeStructure != owner.currentStructure) {
-            debugLog += "\n" + owner.name + " has a home and not in his/her home";
-            if(UnityEngine.Random.Range(0, 100) < 20) {
-                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, owner);
-                debugLog += "\n" + owner.name + " triggered Cowering interrupt";
-            }
-            debugLog += "\n" + owner.name + " will flee to home";
-            owner.jobComponent.TriggerFleeHome();
-            hasFled = true;
-        } else {
-            if (UnityEngine.Random.Range(0, 2) == 0) {
-                debugLog += "\n" + owner.name + " triggered Cowering interrupt";
-                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, owner);
+        if (!avoidInRange.Contains(target)) {
+            if (owner.marker.inVisionPOIs.Contains(target)) {
+                avoidInRange.Add(target);
+                willProcessCombat = true;
+                avoidReason = reason;
+                debugLog += "\n" + target.name + " was added to " + owner.name + "'s avoid range!";
                 hasFled = true;
-            } else {
-                if (!avoidInRange.Contains(target)) {
-                    if (owner.marker.inVisionPOIs.Contains(target)) {
-                        avoidInRange.Add(target);
-                        willProcessCombat = true;
-                        avoidReason = reason;
-                        debugLog += "\n" + target.name + " was added to " + owner.name + "'s avoid range!";
-                        hasFled = true;
-                    }
-                }
             }
         }
+        // if(owner.homeStructure != null && owner.homeStructure != owner.currentStructure) {
+        //     debugLog += "\n" + owner.name + " has a home and not in his/her home";
+        //     if(UnityEngine.Random.Range(0, 100) < 20) {
+        //         owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, owner);
+        //         debugLog += "\n" + owner.name + " triggered Cowering interrupt";
+        //     }
+        //     debugLog += "\n" + owner.name + " will flee to home";
+        //     owner.jobComponent.TriggerFleeHome();
+        //     hasFled = true;
+        // } else {
+        //     if (UnityEngine.Random.Range(0, 2) == 0) {
+        //         debugLog += "\n" + owner.name + " triggered Cowering interrupt";
+        //         owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, owner);
+        //         hasFled = true;
+        //     } else {
+        //         if (!avoidInRange.Contains(target)) {
+        //             if (owner.marker.inVisionPOIs.Contains(target)) {
+        //                 avoidInRange.Add(target);
+        //                 willProcessCombat = true;
+        //                 avoidReason = reason;
+        //                 debugLog += "\n" + target.name + " was added to " + owner.name + "'s avoid range!";
+        //                 hasFled = true;
+        //             }
+        //         }
+        //     }
+        // }
         owner.logComponent.PrintLogIfActive(debugLog);
         return hasFled;
     }
