@@ -210,6 +210,10 @@ public static class Signals {
     public static string CHARACTER_SAW = "OnCharacterSaw";
     public static string CHARACTER_CAN_NO_LONGER_PERFORM = "OnCharacterCannotPerform";
     public static string CHARACTER_CAN_PERFORM_AGAIN = "OnCharacterCanPerform";
+    /// <summary>
+    /// parameters (IPointofInterest poiToReprocess)
+    /// </summary>
+    public static string REPROCESS_POI = "ReprocessPOI";
     #endregion
 
     #region UI

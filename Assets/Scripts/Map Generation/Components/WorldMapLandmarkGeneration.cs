@@ -20,7 +20,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 	private void CreateMonsterLairs() {
 		int createdCount = 0;
 		for (int i = 0; i < 3; i++) {
-			if (Random.Range(0, 100) < 50) {
+			if (Random.Range(0, 100) < 75) {
 				List<HexTile> choices = GridMap.Instance.normalHexTiles
 					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null)
 					.ToList();
