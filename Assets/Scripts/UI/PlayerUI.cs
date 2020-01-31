@@ -124,7 +124,7 @@ public class PlayerUI : MonoBehaviour {
 
     [Header("Custom Dropdown")]
     [SerializeField] private CustomDropdownList customDropdownList;
-    private readonly List<string> spellsList = new List<string>() { "Tornado" };
+    private readonly List<string> spellsList = new List<string>() { "Tornado", "Poison Cloud", "Meteor", "Lightning", "Spawn Monster", "Spawn Spike", "Place Trap", "Produce Food" };
     private readonly List<string> factionActionsList = new List<string>() { "Manage Cult", "Meddle" };
 
     [Header("Player Actions")]
@@ -1969,7 +1969,13 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     private void ShowSpells() {
-        customDropdownList.ShowDropdown(spellsList, OnClickSpell);
+        customDropdownList.ShowDropdown(spellsList, OnClickSpell, CanChooseItem);
+    }
+    private bool CanChooseItem(string item) {
+        if (item == "Tornado") {
+            return true;
+        }
+        return false;
     }
     private void HideSpells() {
         customDropdownList.HideDropdown();

@@ -8,6 +8,8 @@ using EZObjectPools;
 
 public class CustomDDListItem : PooledObject {
     public TextMeshProUGUI itemText;
+    [SerializeField] private GameObject _cover;
+    [SerializeField] private Button _button;
 
     private Action<CustomDDListItem> onClick;
 
@@ -18,6 +20,11 @@ public class CustomDDListItem : PooledObject {
         onClick = action;
     }
 
+    public void SetCoverState(bool state) {
+        _cover.SetActive(state);
+        _button.interactable = !state; //button is interactable if cover is not enabled
+    }
+    
     public void OnClickThis() {
         if (onClick != null) {
             onClick(this);
@@ -29,6 +36,7 @@ public class CustomDDListItem : PooledObject {
         base.Reset();
         onClick = null;
         itemText.text = string.Empty;
+        SetCoverState(false);
     }
     #endregion
 }

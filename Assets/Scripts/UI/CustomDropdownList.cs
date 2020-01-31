@@ -10,7 +10,7 @@ public class CustomDropdownList : MonoBehaviour {
     [SerializeField] private GameObject dropdownListItemPrefab;
     private Action<string> onClickDropdownItem;
 
-    public void ShowDropdown(List<string> items, Action<string> onClickDropdownItem) {
+    public void ShowDropdown(List<string> items, Action<string> onClickDropdownItem, Func<string, bool> canChooseItem = null) {
         Utilities.DestroyChildren(dropdownScrollView.content);
 
         this.onClickDropdownItem = onClickDropdownItem;
@@ -20,6 +20,9 @@ public class CustomDropdownList : MonoBehaviour {
             GameObject ddListItem = UIManager.Instance.InstantiateUIObject(dropdownListItemPrefab.name, dropdownScrollView.content);
             CustomDDListItem ddItem = ddListItem.GetComponent<CustomDDListItem>();
             ddItem.SetText(item);
+            if (canChooseItem != null) {
+                ddItem.SetCoverState(canChooseItem.Invoke(item) == false);
+            }
             ddItem.SetClickAction(OnClickDropdownItem);
         }
         gameObject.SetActive(true);
