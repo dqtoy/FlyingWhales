@@ -875,41 +875,41 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         }
     }
     public void InstantlyCorruptAllOwnedInnerMapTiles() {
-        List<LocationGridTile> allTilesToConsider = new List<LocationGridTile>(locationGridTiles);
-        for (int i = 0; i < AllNeighbours.Count; i++) {
-            HexTile neighbour = AllNeighbours[i];
-            if (neighbour.region == region && neighbour.isCorrupted) {
-                allTilesToConsider.AddRange(neighbour.locationGridTiles);
-            }
-        }
-        
-        LocationGridTile[,] tileMap =
-            Cellular_Automata.CellularAutomataGenerator.ConvertListToGridMap(allTilesToConsider);
-        
-        int width = tileMap.GetUpperBound(0) + 1;
-        int height = tileMap.GetUpperBound(1) + 1;
-        
-        int[,] cellAutomataMap = Cellular_Automata.CellularAutomataGenerator.GenerateMap(tileMap, locationGridTiles, 1, 30, edgesAreAlwaysWalls: false);
-
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                int cellMapValue = cellAutomataMap[x, y];
-                LocationGridTile gridTile = tileMap[x, y];
-                if (gridTile != null && locationGridTiles.Contains(gridTile)) {
-                    if (cellMapValue == 0) {
-                        gridTile.CorruptTile();
-                    } else {
-                        gridTile.RevertToPreviousGroundVisual();
-                        gridTile.CreateSeamlessEdgesForSelfAndNeighbours();
-                    }    
-                }
-            }    
-        }
-        
-        // for (int i = 0; i < locationGridTiles.Count; i++) {
-        //     LocationGridTile tile = locationGridTiles[i];
-        //     tile.CorruptTile();
+        // List<LocationGridTile> allTilesToConsider = new List<LocationGridTile>(locationGridTiles);
+        // for (int i = 0; i < AllNeighbours.Count; i++) {
+        //     HexTile neighbour = AllNeighbours[i];
+        //     if (neighbour.region == region && neighbour.isCorrupted) {
+        //         allTilesToConsider.AddRange(neighbour.locationGridTiles);
+        //     }
         // }
+        //
+        // LocationGridTile[,] tileMap =
+        //     Cellular_Automata.CellularAutomataGenerator.ConvertListToGridMap(allTilesToConsider);
+        //
+        // int width = tileMap.GetUpperBound(0) + 1;
+        // int height = tileMap.GetUpperBound(1) + 1;
+        //
+        // int[,] cellAutomataMap = Cellular_Automata.CellularAutomataGenerator.GenerateMap(tileMap, locationGridTiles, 1, 30, edgesAreAlwaysWalls: false);
+        //
+        // for (int x = 0; x < width; x++) {
+        //     for (int y = 0; y < height; y++) {
+        //         int cellMapValue = cellAutomataMap[x, y];
+        //         LocationGridTile gridTile = tileMap[x, y];
+        //         if (gridTile != null && locationGridTiles.Contains(gridTile)) {
+        //             if (cellMapValue == 0) {
+        //                 gridTile.CorruptTile();
+        //             } else {
+        //                 gridTile.RevertToPreviousGroundVisual();
+        //                 gridTile.CreateSeamlessEdgesForSelfAndNeighbours();
+        //             }    
+        //         }
+        //     }    
+        // }
+        
+        for (int i = 0; i < locationGridTiles.Count; i++) {
+            LocationGridTile tile = locationGridTiles[i];
+            tile.CorruptTile();
+        }
     }
     private LocationGridTile GetGridTileNearestToCorruption() {
         HexTile corruptedNeighbour = GetCorruptedNeighbour();

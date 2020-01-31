@@ -57,7 +57,7 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 	private IEnumerator GenerateMonsterLair(HexTile hexTile, LocationStructure structure) {
 		List<LocationGridTile> locationGridTiles = new List<LocationGridTile>(hexTile.locationGridTiles);
 
-		MonsterLairCellAutomata(locationGridTiles, structure);
+		MonsterLairCellAutomata(locationGridTiles, structure, hexTile.region);
 		
 		for (int j = 0; j < hexTile.ownedBuildSpots.Length; j++) {
 			BuildingSpot spot = hexTile.ownedBuildSpots[j];
@@ -69,29 +69,52 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 		
 		yield return null;
 	}
-	private void MonsterLairCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure elevationStructure) {
-		List<LocationGridTile> refinedTiles =
-			locationGridTiles.Where(t => t.HasNeighbourNotInList(locationGridTiles) == false && t.IsAtEdgeOfMap() == false).ToList();
+	private void MonsterLairCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure elevationStructure, Region region) {
+		// List<LocationGridTile> refinedTiles =
+		// 	locationGridTiles.Where(t => t.HasNeighbourNotInList(locationGridTiles) == false && t.IsAtEdgeOfMap() == false).ToList();
 		
-		LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(refinedTiles);
-		int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, refinedTiles, 1, 35);
+		LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(locationGridTiles);
+		int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, locationGridTiles, 2, 20);
 		
 		Assert.IsNotNull(cellMap, $"There was no cellmap generated for elevation structure {elevationStructure.ToString()}");
 		
-		CellularAutomataGenerator.DrawMap(tileMap, cellMap, InnerMapManager.Instance.assetManager.caveWallTile, 
+		CellularAutomataGenerator.DrawMap(tileMap, cellMap, InnerMapManager.Instance.assetManager.monsterLairWallTile, 
 			null, 
-			(locationGridTile) => SetAsMountainWall(locationGridTile, elevationStructure),
-			(locationGridTile) => SetAsMountainGround(locationGridTile, elevationStructure));
+			(locationGridTile) => SetAsWall(locationGridTile, elevationStructure, locationGridTiles),
+			(locationGridTile) => SetAsGround(locationGridTile, elevationStructure));
+		
+		
+		//refine further
+		for (int i = 0; i < locationGridTiles.Count; i++) {
+			LocationGridTile tile = locationGridTiles[i];
+			if (tile.HasNeighbourOfType(LocationGridTile.Ground_Type.Bone) == false) {
+				tile.RevertToPreviousGroundVisual();
+				tile.SetStructureTilemapVisual(null);
+			}
+		}
+		
+		//create path to outside
+		LocationGridTile centerTile = Utilities.GetCenterTile(locationGridTiles, region.innerMap.map);
+		List<LocationGridTile> targetChoices = locationGridTiles.Where(t => CellularAutomataGenerator.IsAtEdgeOfMap(t, locationGridTiles)).ToList();
+		LocationGridTile target = CollectionUtilities.GetRandomElement(targetChoices);
+		List<LocationGridTile> path =
+			PathGenerator.Instance.GetPath(centerTile, target, GRID_PATHFINDING_MODE.UNCONSTRAINED, true);
+		for (int i = 0; i < path.Count; i++) {
+			LocationGridTile tile = path[i];
+			tile.SetStructureTilemapVisual(null);
+		}
 	}
-	private void SetAsMountainWall(LocationGridTile tile, LocationStructure structure) {
-		tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.caveGroundTile);
+	private void SetAsWall(LocationGridTile tile, LocationStructure structure, List<LocationGridTile> tiles) {
+		// if (CellularAutomataGenerator.IsAtEdgeOfMap(tile, tiles) == false) {
+			tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.monsterLairGroundTile);	
+		// }
 		tile.SetTileType(LocationGridTile.Tile_Type.Wall);
 		tile.SetTileState(LocationGridTile.Tile_State.Occupied);
 		tile.SetStructure(structure);
 	}
-	private void SetAsMountainGround(LocationGridTile tile, LocationStructure structure) {
+	private void SetAsGround(LocationGridTile tile, LocationStructure structure) {
 		tile.SetStructure(structure);
-		tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.caveGroundTile);
+		tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.monsterLairGroundTile);
 		tile.SetStructure(structure);
 	}
 	#endregion

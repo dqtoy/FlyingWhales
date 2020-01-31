@@ -44,7 +44,11 @@ namespace Inner_Maps {
         [Header("Cave Tiles")] 
         public TileBase caveWallTile;
         public TileBase caveGroundTile;
-
+        
+        [Header("Monster Lair Tiles")]
+        public TileBase monsterLairWallTile;
+        public TileBase monsterLairGroundTile;
+        
         [Header("Corrupted Tiles")] 
         public TileBase corruptedTile;
         public TileBase corruptedDetailTile;
