@@ -576,8 +576,12 @@ public class CharacterInfoUI : UIMenu {
         relationshipTypesLbl.text = string.Empty;
         relationshipNamesLbl.text = string.Empty;
         relationshipValuesLbl.text = string.Empty;
-        for (int i = 0; i < _activeCharacter.opinionComponent.opinions.Keys.Count; i++) {
-            Character target = _activeCharacter.opinionComponent.opinions.Keys.ElementAt(i);
+        Dictionary<Character, OpinionData> orderedOpinions = _activeCharacter.opinionComponent.opinions
+            .OrderByDescending(k => k.Value.totalOpinion)
+            .ToDictionary(k => k.Key, v => v.Value);
+        
+        for (int i = 0; i < orderedOpinions.Keys.Count; i++) {
+            Character target = orderedOpinions.Keys.ElementAt(i);
             relationshipTypesLbl.text += $"{_activeCharacter.opinionComponent.GetRelationshipNameWith(target)}\n";
             int opinionOfOther = 0;
             if (target.opinionComponent.HasOpinion(activeCharacter)) {
