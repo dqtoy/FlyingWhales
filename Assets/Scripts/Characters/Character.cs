@@ -465,7 +465,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //supply
         SetSupply(UnityEngine.Random.Range(10, 61)); //Randomize initial supply per character (Random amount between 10 to 60.)
     }
-    public void InitialCharacterPlacement(LocationGridTile tile) {
+    public virtual void InitialCharacterPlacement(LocationGridTile tile) {
         needsComponent.InitialCharacterPlacement();
         ConstructInitialGoapAdvertisementActions();
         marker.InitialPlaceMarkerAt(tile, false); //since normal characters are already placed in their areas.
@@ -3554,7 +3554,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void RemoveTraitNeededToBeRemoved(Trait trait) {
         traitsNeededToBeRemoved.Remove(trait);
     }
-    private void ProcessTraitsOnTickStarted() {
+    protected void ProcessTraitsOnTickStarted() {
         if (!interruptComponent.isInterrupted) {
             traitContainer.ProcessOnTickStarted(this);
         }
@@ -6269,12 +6269,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         PlayerAction seizeAction = new PlayerAction("Seize", 
             () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && this.traitContainer.GetNormalTrait<Trait>("Leader", "Blessed") == null, 
             () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
-        PlayerAction shareIntelAction = new PlayerAction("Share Intel", () => false, null);
+        // PlayerAction shareIntelAction = new PlayerAction("Share Intel", () => false, null);
         
         AddPlayerAction(afflictAction);
         AddPlayerAction(zapAction);
         AddPlayerAction(seizeAction);
-        AddPlayerAction(shareIntelAction);
+        // AddPlayerAction(shareIntelAction);
     }
     public void AddPlayerAction(PlayerAction action) {
         if (actions.Contains(action) == false) {

@@ -49,6 +49,7 @@ public class Summon : Character, IWorldObject {
         needsComponent.Initialize();
         
         ConstructInitialGoapAdvertisementActions();
+        behaviourComponent.AddBehaviourComponent(typeof(DefaultMonster));
         //SubscribeToSignals(); //NOTE: Only made characters subscribe to signals when their settlement is the one that is currently active. TODO: Also make sure to unsubscribe a character when the player has completed their map.
     }
     public override void OnActionPerformed(ActualGoapNode node) { } //overridden OnActionStateSet so that summons cannot witness other events.
@@ -180,7 +181,8 @@ public class Summon : Character, IWorldObject {
         if (!isDead && !isInCombat) {
             HPRecovery(0.0025f);
         }
-
+        ProcessTraitsOnTickStarted();
+        StartTickGoapPlanGeneration();
         // if (!ownParty.icon.isTravelling && !isInCombat) {
         //     GoToWorkArea();
         // }
@@ -276,6 +278,16 @@ public class Summon : Character, IWorldObject {
             () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
         
         AddPlayerAction(seizeAction);
+    }
+    #endregion
+    
+    #region Jobs
+    public void NoPathToDoJob(JobQueueItem job) {
+        if (job.jobType == JOB_TYPE.ROAM_AROUND_TERRITORY) {
+            jobComponent.TriggerRoamAroundTile();
+        } else if (job.jobType == JOB_TYPE.ROAM_AROUND_TILE) {
+            jobComponent.TriggerMonsterStand();
+        }
     }
     #endregion
 }

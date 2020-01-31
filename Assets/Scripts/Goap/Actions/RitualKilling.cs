@@ -17,6 +17,7 @@ public class RitualKilling : GoapAction {
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, target = GOAP_EFFECT_TARGET.TARGET }, IsTargetInWildernessOrHome);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", target = GOAP_EFFECT_TARGET.TARGET }, HasRestrained);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -114,9 +115,12 @@ public class RitualKilling : GoapAction {
     private bool IsTargetInWildernessOrHome(Character actor, IPointOfInterest target, object[] otherData) {
         if(target is Character) {
             Character targetCharacter = target as Character;
-            return targetCharacter.IsInOwnParty() && (targetCharacter.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || targetCharacter.currentStructure == actor.homeStructure);
+            return targetCharacter.IsInOwnParty() && targetCharacter.currentStructure == actor.homeStructure; //targetCharacter.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || 
         }
         return false;
+    }
+    private bool HasRestrained(Character actor, IPointOfInterest target, object[] otherData) {
+        return target.traitContainer.GetNormalTrait<Trait>("Restrained") != null;
     }
     #endregion
 

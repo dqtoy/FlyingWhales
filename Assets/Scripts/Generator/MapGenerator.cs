@@ -71,7 +71,7 @@ public class MapGenerator : MonoBehaviour {
 
             for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
                 Faction faction = FactionManager.Instance.allFactions[i];
-                if (faction.isMajorFaction) {
+                if (faction.isMajorNonPlayer) {
                     faction.DesignateNewLeader(false);
                     faction.GenerateInitialOpinionBetweenMembers();
                 }
