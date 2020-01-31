@@ -360,7 +360,7 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest, IPlayerAc
         RemoveAllTraits();
     }
     public bool CanBePickedUpNormallyUponVisionBy(Character character) {
-        if (character.role.roleType == CHARACTER_ROLE.BEAST) {
+        if (Utilities.IsRaceBeast(character.race)) {
             return false;
         }
         if (character.race == RACE.SKELETON) {

@@ -531,7 +531,7 @@ public class CharacterInfoUI : UIMenu {
         summary = $"{summary}{("\nTiredness Time: " + (activeCharacter.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.tirednessForcedTick)))}";
         summary = $"{summary}{("\nRemaining Sleep Ticks: " + activeCharacter.needsComponent.currentSleepTicks.ToString())}";
         summary = $"{summary}{("\nFood: " + activeCharacter.food.ToString())}";
-        summary = $"{summary}{("\nRole: " + activeCharacter.role.roleType.ToString())}";
+        // summary = $"{summary}{("\nRole: " + activeCharacter.role.roleType.ToString())}";
         summary = $"{summary}{("\nSexuality: " + activeCharacter.sexuality.ToString())}";
         summary = $"{summary}{("\nMood: " + activeCharacter.moodComponent.moodValue + "/100" + "(" + activeCharacter.moodComponent.moodState.ToString() + ")")}";
         summary = $"{summary}{("\nHP: " + activeCharacter.currentHP.ToString() + "/" + activeCharacter.maxHP.ToString())}";

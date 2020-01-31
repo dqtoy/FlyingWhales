@@ -29,7 +29,7 @@ public class Provoke : PlayerSpell {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.isFactionless) {
+        if (Utilities.IsRaceBeast(targetCharacter.race) || targetCharacter.isFactionless) {
             return false;
         }
         if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious") != null) {
@@ -45,7 +45,7 @@ public class Provoke : PlayerSpell {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.isFactionless) {
+        if (Utilities.IsRaceBeast(targetCharacter.race) || targetCharacter.isFactionless) {
             return false;
         }
         if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious") != null) {

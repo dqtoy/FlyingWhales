@@ -133,13 +133,13 @@ public class Faction {
             if (!characters.Contains(character)) {
                 characters.Add(character);
                 character.SetFaction(this);
-                if (this != FactionManager.Instance.neutralFaction && character.role == CharacterRole.BANDIT) {
-                    if (UnityEngine.Random.Range(0, 2) == 0) {
-                        character.AssignRole(CharacterRole.SOLDIER);
-                    } else {
-                        character.AssignRole(CharacterRole.ADVENTURER);
-                    }
-                }
+                // if (this != FactionManager.Instance.neutralFaction && character.role == CharacterRole.BANDIT) {
+                //     if (UnityEngine.Random.Range(0, 2) == 0) {
+                //         character.AssignRole(CharacterRole.SOLDIER);
+                //     } else {
+                //         character.AssignRole(CharacterRole.ADVENTURER);
+                //     }
+                // }
                 if (broadcastSignal) {
                     Messenger.Broadcast(Signals.CHARACTER_ADDED_TO_FACTION, character, this);
                 }
@@ -171,31 +171,31 @@ public class Faction {
         //}
     }
 
-    public List<Character> GetCharactersOfType(CHARACTER_ROLE role) {
-        List<Character> chars = new List<Character>();
-        for (int i = 0; i < characters.Count; i++) {
-            Character currCharacter = characters[i];
-            if (currCharacter.role.roleType == role) {
-                chars.Add(currCharacter);
-            }
-        }
-        return chars;
-    }
-    public List<Character> GetViableCharacters(GENDER gender, params CHARACTER_ROLE[] role) {
-        List<Character> chars = new List<Character>();
-        for (int i = 0; i < characters.Count; i++) {
-            Character currCharacter = characters[i];
-            if (currCharacter.gender == gender && !currCharacter.isDead && !currCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && !currCharacter.isCriminal) {
-                for (int j = 0; j < role.Length; j++) {
-                    if (currCharacter.role.roleType == role[j]) {
-                        chars.Add(currCharacter);
-                        break;
-                    }
-                }
-            }
-        }
-        return chars;
-    }
+    // public List<Character> GetCharactersOfType(CHARACTER_ROLE role) {
+    //     List<Character> chars = new List<Character>();
+    //     for (int i = 0; i < characters.Count; i++) {
+    //         Character currCharacter = characters[i];
+    //         if (currCharacter.role.roleType == role) {
+    //             chars.Add(currCharacter);
+    //         }
+    //     }
+    //     return chars;
+    // }
+    // public List<Character> GetViableCharacters(GENDER gender, params CHARACTER_ROLE[] role) {
+    //     List<Character> chars = new List<Character>();
+    //     for (int i = 0; i < characters.Count; i++) {
+    //         Character currCharacter = characters[i];
+    //         if (currCharacter.gender == gender && !currCharacter.isDead && !currCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && !currCharacter.isCriminal) {
+    //             for (int j = 0; j < role.Length; j++) {
+    //                 if (currCharacter.role.roleType == role[j]) {
+    //                     chars.Add(currCharacter);
+    //                     break;
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     return chars;
+    // }
     public List<Character> GetViableCharacters(GENDER gender, params string[] classNames) {
         List<Character> chars = new List<Character>();
         for (int i = 0; i < characters.Count; i++) {

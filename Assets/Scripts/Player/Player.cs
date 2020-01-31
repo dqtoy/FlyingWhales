@@ -178,12 +178,12 @@ public class Player : ILeader {
         InitializeMinion(data, minion);
         return minion;
     }
-    public Minion CreateNewMinion(RACE race) {
-        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, race, GENDER.MALE, playerFaction, playerSettlement, null), false);
-        //minion.character.CreateMarker();
-        InitializeMinion(minion);
-        return minion;
-    }
+    // public Minion CreateNewMinion(RACE race) {
+    //     Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, race, GENDER.MALE, playerFaction, playerSettlement, null), false);
+    //     //minion.character.CreateMarker();
+    //     InitializeMinion(minion);
+    //     return minion;
+    // }
     public Minion CreateNewMinion(string className, RACE race, bool initialize = true) {
         Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, className, race, GENDER.MALE, playerFaction, playerSettlement), false);
         if (initialize) {
@@ -573,7 +573,7 @@ public class Player : ILeader {
                 hoverText = "Blessed/Catatonic characters cannot be targetted.";
                 return false;
             }
-            if(!character.faction.isPlayerFaction && character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER) {
+            if(!character.faction.isPlayerFaction && !Utilities.IsRaceBeast(character.race)) { //character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER
                 return true;
             }
         }

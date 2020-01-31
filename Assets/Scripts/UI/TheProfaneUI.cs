@@ -67,7 +67,7 @@ public class TheProfaneUI : MonoBehaviour {
     }
     private void OnClickInstruct(bool isOn) {
         if (isOn) {
-            List<Character> cultists = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => !x.returnedToLife && !x.isDead && x.traitContainer.GetNormalTrait<Trait>("Cultist") != null && x.role.roleType != CHARACTER_ROLE.MINION));
+            List<Character> cultists = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => !x.returnedToLife && !x.isDead && x.traitContainer.GetNormalTrait<Trait>("Cultist") != null && x.minion == null));
             UIManager.Instance.dualObjectPicker.ShowDualObjectPicker<Character>(cultists, "Choose cultist to instruct", CanDoActionsToCharacter, null, null, OnChooseCultistToInstruct, OnConfirmInstruct, "Instruct");
         }
     }
@@ -135,7 +135,7 @@ public class TheProfaneUI : MonoBehaviour {
     }
     private List<string> GetPossibleActionsForCharacter(Character character) {
         List<string> actions = new List<string>();
-        if (character.role.roleType != CHARACTER_ROLE.MINION) {
+        if (character.minion == null) {
             actions.Add("Corrupt");
         }
         if (character.homeSettlement != null && character.homeRegion.IsFactionHere(character.faction) && character.faction.activeQuest is DivineInterventionQuest &&

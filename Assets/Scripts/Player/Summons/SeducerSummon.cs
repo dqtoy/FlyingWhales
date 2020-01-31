@@ -22,7 +22,7 @@ public class SeducerSummon : Summon {
 
     private bool hasSucceeded;
 
-    public SeducerSummon(SUMMON_TYPE type, GENDER gender) : base(type, CharacterRole.MINION, RACE.DEMON, gender) {
+    public SeducerSummon(SUMMON_TYPE type, GENDER gender) : base(type, CharacterRole.MINION, CharacterManager.Instance.GetDeadlySinsClassNameFromRotation(), RACE.DEMON, gender) {
         seduceChance = 25;
         doneCharacters = new List<Character>();
         //AddInteractionType(INTERACTION_TYPE.INVITE);

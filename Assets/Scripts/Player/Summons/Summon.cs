@@ -22,10 +22,10 @@ public class Summon : Character, IWorldObject {
     }
     #endregion
 
-    public Summon(SUMMON_TYPE summonType, CharacterRole role, RACE race, GENDER gender) : base(role, race, gender) {
-        this.summonType = summonType;
-        territorries = new List<HexTile>();
-    }
+    // public Summon(SUMMON_TYPE summonType, CharacterRole role, RACE race, GENDER gender) : base(role, race, gender) {
+    //     this.summonType = summonType;
+    //     territorries = new List<HexTile>();
+    // }
     public Summon(SUMMON_TYPE summonType, CharacterRole role, string className, RACE race, GENDER gender) : base(role, className, race, gender) {
         this.summonType = summonType;
         territorries = new List<HexTile>();
@@ -120,9 +120,9 @@ public class Summon : Character, IWorldObject {
             SetRegionLocation(deathLocation); //set the specific location of this party, to the location it died at
             SetCurrentStructureLocation(deathStructure, false);
 
-            if (_role != null) {
-                _role.OnDeath(this);
-            }
+            // if (_role != null) {
+            //     _role.OnDeath(this);
+            // }
 
             if (homeRegion != null) {
                 Region home = homeRegion;

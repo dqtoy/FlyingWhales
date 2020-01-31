@@ -158,7 +158,7 @@ public class SaveDataCharacter {
         sexuality = character.sexuality;
         className = character.characterClass.className;
         race = character.race;
-        roleType = character.role.roleType;
+        // roleType = character.role.roleType;
         portraitSettings = character.visuals.portraitSettings;
         //characterColor = character.characterColor;
         isStoppedByOtherCharacter = character.isStoppedByOtherCharacter;
@@ -313,9 +313,9 @@ public class SaveDataCharacter {
             character.SetRegionLocation(deathLocation); //set the specific location of this party, to the location it died at
             character.SetCurrentStructureLocation(deathStructure, false);
 
-            if (character.role != null) {
-                character.role.OnDeath(character);
-            }
+            // if (character.role != null) {
+            //     character.role.OnDeath(character);
+            // }
         }
     }
 

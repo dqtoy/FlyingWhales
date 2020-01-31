@@ -170,7 +170,7 @@ namespace Traits {
 
         private bool CanBeStolen(SpecialToken item) {
             if (item.carriedByCharacter != null) {
-                if (item.carriedByCharacter == this.traitOwner || item.carriedByCharacter.opinionComponent.GetRelationshipEffectWith(this.traitOwner) == RELATIONSHIP_EFFECT.POSITIVE) {
+                if (item.carriedByCharacter == this.traitOwner || item.carriedByCharacter.opinionComponent.IsFriendsWith(this.traitOwner)) {
                     return false;
                 }
                 return true;

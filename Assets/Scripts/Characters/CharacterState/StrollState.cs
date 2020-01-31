@@ -34,7 +34,7 @@ public class StrollState : CharacterState {
     public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
         if (stateComponent.character.faction.isMajorFriendlyNeutral && 
             stateComponent.character.faction != FactionManager.Instance.zombieFaction &&
-            stateComponent.character.role.roleType != CHARACTER_ROLE.BEAST && 
+            !Utilities.IsRaceBeast(stateComponent.character.race) && 
             targetPOI is SpecialToken) {
             SpecialToken token = targetPOI as SpecialToken;
             if (token.CanBePickedUpNormallyUponVisionBy(stateComponent.character)) {

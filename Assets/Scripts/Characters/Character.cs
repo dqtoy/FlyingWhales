@@ -21,7 +21,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     protected GENDER _gender;
     protected CharacterClass _characterClass;
     protected RaceSetting _raceSetting;
-    protected CharacterRole _role;
+    // protected CharacterRole _role;
     protected Faction _faction;
     protected Minion _minion;
     protected LocationStructure _currentStructure; //what structure is this character currently in.
@@ -148,9 +148,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public string nameWithID => name;
     public string raceClassName {
         get {
-            if (Utilities.IsRaceBeast(race)) {
-                return Utilities.NormalizeStringUpperCaseFirstLetterOnly(race.ToString()) + " " + role.name;
-            }
+            // if (Utilities.IsRaceBeast(race)) {
+            //     return Utilities.NormalizeStringUpperCaseFirstLetterOnly(race.ToString()) + " " + role.name;
+            // }
             //if(role.name == characterClass.className) {
             return Utilities.GetNormalizedRaceAdjective(race) + " " + characterClass.className;
             //}
@@ -186,7 +186,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public RACE race => _raceSetting.race;
     public CharacterClass characterClass => _characterClass;
     public RaceSetting raceSetting => _raceSetting;
-    public CharacterRole role => _role;
+    // public CharacterRole role => _role;
     public Faction faction => _faction;
     public Faction factionOwner => _faction;
     //public Settlement currentArea => currentSettlement;
@@ -281,27 +281,27 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public JobTriggerComponent jobTriggerComponent => jobComponent;
     #endregion
 
-    public Character(CharacterRole role, RACE race, GENDER gender) : this() {
-        _id = Utilities.SetID(this);
-        _gender = gender;
-        RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
-        _raceSetting = raceSetting.CreateNewCopy();
-        AssignRole(role, false);
-        AssignClassByRole(role, true);
-        //_characterClass = CharacterManager.Instance.CreateNewCharacterClass(GetClassForRole(role));
-        //originalClassName = _characterClass.className;
-        SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
-        GenerateSexuality();
-        StartingLevel();
-        //InitializeAlterEgos();
-        visuals = new CharacterVisuals(this);
-    }
+    // public Character(CharacterRole role, RACE race, GENDER gender) : this() {
+    //     _id = Utilities.SetID(this);
+    //     _gender = gender;
+    //     RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
+    //     _raceSetting = raceSetting.CreateNewCopy();
+    //     // AssignRole(role, false);
+    //     AssignClassByRole(role, true);
+    //     //_characterClass = CharacterManager.Instance.CreateNewCharacterClass(GetClassForRole(role));
+    //     //originalClassName = _characterClass.className;
+    //     SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
+    //     GenerateSexuality();
+    //     StartingLevel();
+    //     //InitializeAlterEgos();
+    //     visuals = new CharacterVisuals(this);
+    // }
     public Character(CharacterRole role, string className, RACE race, GENDER gender) : this() {
         _id = Utilities.SetID(this);
         _gender = gender;
         RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
-        AssignRole(role, false);
+        // AssignRole(role, false);
         AssignClass(className, true);
         //_characterClass = CharacterManager.Instance.CreateNewCharacterClass(className);
         //originalClassName = _characterClass.className;
@@ -316,7 +316,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         _gender = gender;
         RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
-        AssignRole(role, false);
+        // AssignRole(role, false);
         AssignClass(className, true);
         //_characterClass = CharacterManager.Instance.CreateNewCharacterClass(className);
         //originalClassName = _characterClass.className;
@@ -334,7 +334,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //_characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
         RaceSetting raceSetting = RaceManager.Instance.racesDictionary[data.race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
-        AssignRole(CharacterManager.Instance.GetRoleByRoleType(data.roleType), false);
+        // AssignRole(CharacterManager.Instance.GetRoleByRoleType(data.roleType), false);
         SetName(data.name);
         visuals = new CharacterVisuals(data);
 
@@ -604,7 +604,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Sexuality
     private void GenerateSexuality() {
-        if (role.roleType == CHARACTER_ROLE.BEAST) {
+        if (Utilities.IsRaceBeast(race)) {
             //For beasts:
             //100 % straight
             sexuality = SEXUALITY.STRAIGHT;
@@ -700,12 +700,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             SetPOIState(POI_STATE.ACTIVE);
             ChangeFactionTo(faction);
             ChangeRace(race);
-            AssignRole(CharacterRole.SOLDIER);
-            if (string.IsNullOrEmpty(className)) {
-                AssignClassByRole(this.role);
-            } else {
-                AssignClass(className);
-            }
+            // AssignRole(CharacterRole.SOLDIER);
+            // if (string.IsNullOrEmpty(className)) {
+            //     AssignClassByRole(this.role);
+            // } else {
+            //     AssignClass(className);
+            // }
+            AssignClass(className);
             needsComponent.ResetFullnessMeter();
             needsComponent.ResetTirednessMeter();
             needsComponent.ResetHappinessMeter();
@@ -851,9 +852,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //    faction.SetNewLeader();
             //}
 
-            if (_role != null) {
-                _role.OnDeath(this);
-            }
+            // if (_role != null) {
+            //     _role.OnDeath(this);
+            // }
 
             if (homeRegion != null) {
                 Region home = homeRegion;
@@ -931,27 +932,27 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
 
     #region Roles
-    public void AssignRole(CharacterRole role, bool updateCombatantState = true) {
-        bool wasRoleChanged = false;
-        if (_role != null) {
-            if (_role.roleType == role.roleType) {
-                //If character role is being changed to same role, do not change it
-                return;
-            }
-            _role.OnChange(this);
-            wasRoleChanged = true;
-        }
-        _role = role;
-        if (_role != null) {
-            _role.OnAssign(this);
-        }
-        if (wasRoleChanged) {
-            Messenger.Broadcast(Signals.ROLE_CHANGED, this);
-        }
-        //if (updateCombatantState) {
-        //    UpdateCanCombatantState();
-        //}
-    }
+    // public void AssignRole(CharacterRole role, bool updateCombatantState = true) {
+    //     bool wasRoleChanged = false;
+    //     if (_role != null) {
+    //         if (_role.roleType == role.roleType) {
+    //             //If character role is being changed to same role, do not change it
+    //             return;
+    //         }
+    //         _role.OnChange(this);
+    //         wasRoleChanged = true;
+    //     }
+    //     _role = role;
+    //     if (_role != null) {
+    //         _role.OnAssign(this);
+    //     }
+    //     if (wasRoleChanged) {
+    //         Messenger.Broadcast(Signals.ROLE_CHANGED, this);
+    //     }
+    //     //if (updateCombatantState) {
+    //     //    UpdateCanCombatantState();
+    //     //}
+    // }
     #endregion
 
     #region Character Class
@@ -1464,27 +1465,27 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //(sum from items in his inventory and in his home whose owner is this character). 
         //Reduce this chance by 3% for every item he owns (disregard stolen items)
         //NOTE: If he already has all items he needs, he doesnt need to do this job anymore.
-        if (!isFactionless && !jobQueue.HasJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM) && !role.HasNeededItems(this) && isAtHomeRegion) {
-            int numOfItemsOwned = GetNumOfItemsOwned();
-            if (numOfItemsOwned < 4) {
-                //string obtainSummary = name + " will roll to obtain item.";
-                int chance = 10 - (3 * numOfItemsOwned);
-                chance = Mathf.Max(0, chance);
-                int roll = UnityEngine.Random.Range(0, 100);
-                //obtainSummary += "\nChance to create job is " + chance.ToString() + ". Roll is " + roll.ToString();
-                if (roll < chance) {
-                    SPECIAL_TOKEN itemToObtain;
-                    if (role.TryGetNeededItem(this, out itemToObtain)) {
-                        CreateObtainItemJob(itemToObtain);
-                        hasCreatedJob = true;
-                        //obtainSummary += "\nCreated job to obtain " + itemToObtain.ToString();
-                    } else {
-                        //obtainSummary += "\nDoes not have any needed items.";
-                    }
-                }
-                //Debug.Log(obtainSummary);
-            }
-        }
+        // if (!isFactionless && !jobQueue.HasJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM) && !role.HasNeededItems(this) && isAtHomeRegion) {
+        //     int numOfItemsOwned = GetNumOfItemsOwned();
+        //     if (numOfItemsOwned < 4) {
+        //         //string obtainSummary = name + " will roll to obtain item.";
+        //         int chance = 10 - (3 * numOfItemsOwned);
+        //         chance = Mathf.Max(0, chance);
+        //         int roll = UnityEngine.Random.Range(0, 100);
+        //         //obtainSummary += "\nChance to create job is " + chance.ToString() + ". Roll is " + roll.ToString();
+        //         if (roll < chance) {
+        //             SPECIAL_TOKEN itemToObtain;
+        //             if (role.TryGetNeededItem(this, out itemToObtain)) {
+        //                 CreateObtainItemJob(itemToObtain);
+        //                 hasCreatedJob = true;
+        //                 //obtainSummary += "\nCreated job to obtain " + itemToObtain.ToString();
+        //             } else {
+        //                 //obtainSummary += "\nDoes not have any needed items.";
+        //             }
+        //         }
+        //         //Debug.Log(obtainSummary);
+        //     }
+        // }
 
         //Undermine Enemy Job
         // List<Character> enemyCharacters = opinionComponent.GetEnemyCharacters();
@@ -3460,9 +3461,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         traitContainer = new TraitContainer();
     }
     public void CreateInitialTraitsByClass() {
-        if (role.roleType != CHARACTER_ROLE.MINION && !(this is Summon)) { //only generate buffs and flaws for non minion characters. Reference: https://trello.com/c/pC9hBih0/2781-demonic-minions-should-not-have-pregenerated-buff-and-flaw-traits
-            
-
+        if (minion == null && race != RACE.DEMON && !(this is Summon)) { //only generate buffs and flaws for non minion characters. Reference: https://trello.com/c/pC9hBih0/2781-demonic-minions-should-not-have-pregenerated-buff-and-flaw-traits
+ 
             List<string> buffTraits = new List<string>(TraitManager.Instance.buffTraitPool);
             List<string> flawTraits = new List<string>(TraitManager.Instance.flawTraitPool);
             List<string> neutralTraits = new List<string>(TraitManager.Instance.neutralTraitPool);
@@ -3631,7 +3631,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         newMinion.character.SetName(minionData.minionName);
         ChangeRace(RACE.DEMON);
         ChangeClass(minionData.className);
-        AssignRole(CharacterRole.MINION);
+        // AssignRole(CharacterRole.MINION);
         newMinion.SetRandomResearchInterventionAbilities(minionData.interventionAbilitiesToResearch);
         newMinion.SetCombatAbility(minionData.combatAbility);
 
@@ -4061,7 +4061,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         float negativeWeight = 0;
         if (opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.opinionComponent.GetRelationshipEffectWith(this) != RELATIONSHIP_EFFECT.NEGATIVE
             && relationshipValidator.CanHaveRelationship(this, targetCharacter, RELATIONSHIP_TYPE.LOVER) && targetCharacter.relationshipValidator.CanHaveRelationship(targetCharacter, this, RELATIONSHIP_TYPE.LOVER)
-            && role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
+            && !Utilities.IsRaceBeast(race) && !Utilities.IsRaceBeast(targetCharacter.race)) { //&& role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST
             for (int i = 0; i < moods.Length; i++) {
                 CHARACTER_MOOD mood = moods[i];
                 switch (mood) {
@@ -4118,7 +4118,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         float negativeWeight = 0;
         if (opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.opinionComponent.GetRelationshipEffectWith(this) != RELATIONSHIP_EFFECT.NEGATIVE
             && relationshipValidator.CanHaveRelationship(this, targetCharacter,  RELATIONSHIP_TYPE.AFFAIR) && targetCharacter.relationshipValidator.CanHaveRelationship(targetCharacter, this, RELATIONSHIP_TYPE.AFFAIR)
-            && role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
+            && !Utilities.IsRaceBeast(race) && !Utilities.IsRaceBeast(targetCharacter.race)) { //&& role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST
             for (int i = 0; i < moods.Length; i++) {
                 CHARACTER_MOOD mood = moods[i];
                 switch (mood) {
@@ -4418,18 +4418,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return count;
     }
-    public bool HasExtraTokenInInventory(SPECIAL_TOKEN tokenType) {
-        if (role.IsRequiredItem(tokenType)) {
-            //if the specified token type is required by this character's role, check if this character has any extras
-            int requiredAmount = role.GetRequiredItemAmount(tokenType);
-            if (GetTokenCountInInventory(tokenType) > requiredAmount) {
-                return true;
-            }
-            return false;
-        } else {
-            return HasTokenInInventory(tokenType);
-        }
-    }
+    // public bool HasExtraTokenInInventory(SPECIAL_TOKEN tokenType) {
+    //     if (role.IsRequiredItem(tokenType)) {
+    //         //if the specified token type is required by this character's role, check if this character has any extras
+    //         int requiredAmount = role.GetRequiredItemAmount(tokenType);
+    //         if (GetTokenCountInInventory(tokenType) > requiredAmount) {
+    //             return true;
+    //         }
+    //         return false;
+    //     } else {
+    //         return HasTokenInInventory(tokenType);
+    //     }
+    // }
     public bool OwnsItemOfType(SPECIAL_TOKEN tokenType) {
         for (int i = 0; i < homeStructure.itemsInStructure.Count; i++) {
             SpecialToken token = homeStructure.itemsInStructure[i];

@@ -66,7 +66,7 @@ public class ShareInformation : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             Character target = poiTarget as Character;
-            return actor != target && target.role.roleType != CHARACTER_ROLE.BEAST;
+            return actor != target && !Utilities.IsRaceBeast(target.race); // target.role.roleType != CHARACTER_ROLE.BEAST
         }
         return false;
     }
@@ -81,6 +81,6 @@ public class ShareInformationData : GoapActionData {
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         Character target = poiTarget as Character;
-        return actor != target && target.role.roleType != CHARACTER_ROLE.BEAST;
+        return actor != target && !Utilities.IsRaceBeast(target.race); // target.role.roleType != CHARACTER_ROLE.BEAST
     }
 }

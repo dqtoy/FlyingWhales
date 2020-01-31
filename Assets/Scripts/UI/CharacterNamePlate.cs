@@ -13,13 +13,13 @@ public class CharacterNamePlate {
     public void ShowNamePlate(Character character) {
         _character = character;
         characterNameLbl.text = string.Empty;
-        if (character.role != null) {
-            characterNameLbl.text = Utilities.NormalizeStringUpperCaseFirstLetterOnly(character.role.roleType.ToString()) + " ";
-            roleSprite.sprite2D = CharacterManager.Instance.GetSpriteByRole(character.role.roleType);
-            roleSprite.gameObject.SetActive(true);
-        } else {
-            roleSprite.gameObject.SetActive(false);
-        }
+        // if (character.role != null) {
+        //     characterNameLbl.text = Utilities.NormalizeStringUpperCaseFirstLetterOnly(character.role.roleType.ToString()) + " ";
+        //     roleSprite.sprite2D = CharacterManager.Instance.GetSpriteByRole(character.role.roleType);
+        //     roleSprite.gameObject.SetActive(true);
+        // } else {
+        //     roleSprite.gameObject.SetActive(false);
+        // }
         characterNameLbl.text += character.name;
     }
 

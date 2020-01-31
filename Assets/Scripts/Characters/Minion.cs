@@ -115,7 +115,7 @@ public class Minion {
             character.SetRegionLocation(deathLocation); //set the specific location of this party, to the location it died at
             character.SetCurrentStructureLocation(deathStructure, false);
 
-            character.role?.OnDeath(character);
+            // character.role?.OnDeath(character);
             character.traitContainer.RemoveAllTraitsByName(character, "Criminal"); //remove all criminal type traits
 
             for (int i = 0; i < character.traitContainer.allTraits.Count; i++) {

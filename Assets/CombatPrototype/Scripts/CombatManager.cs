@@ -137,9 +137,9 @@ public class CombatManager : MonoBehaviour {
                 }
 
                 if (character.race == RACE.HUMANS) {
-                    if(characters2[0].role.roleType == CHARACTER_ROLE.BEAST) {
-                        totalPower *= 1.25f;
-                    }
+                    // if(characters2[0].role.roleType == CHARACTER_ROLE.BEAST) {
+                    //     totalPower *= 1.25f;
+                    // }
                 } else if (character.race == RACE.ELVES) {
                     if (characters2[0].characterClass.attackType == ATTACK_TYPE.MAGICAL) {
                         totalPower *= 1.25f;

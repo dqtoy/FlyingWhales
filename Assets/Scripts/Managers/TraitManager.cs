@@ -234,7 +234,7 @@ public class TraitManager : MonoBehaviour {
         if (character.faction.isPlayerFaction) {
             return false;
         }
-        if (character.role.roleType == CHARACTER_ROLE.BEAST) {
+        if (Utilities.IsRaceBeast(character.race)) { // character.role.roleType == CHARACTER_ROLE.BEAST
             return false;
         }
         if (character is Summon) {

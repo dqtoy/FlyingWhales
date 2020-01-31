@@ -653,35 +653,35 @@ public class NewCombat : MonoBehaviour {
             if (traitEffect.requirementSeparator == TRAIT_REQUIREMENT_SEPARATOR.AND) {
                 //if there is one mismatch, return false already because the separator is AND, otherwise, return true
                 if (traitEffect.isNot) {
-                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                        if (traitEffect.requirements[i].ToLower() == checkedCharacter.character.role.roleType.ToString().ToLower()) {
-                            return false;
-                        }
-                    }
+                    // for (int i = 0; i < traitEffect.requirements.Count; i++) {
+                    //     if (traitEffect.requirements[i].ToLower() == checkedCharacter.character.role.roleType.ToString().ToLower()) {
+                    //         return false;
+                    //     }
+                    // }
                     return true;
                 } else {
-                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                        if (traitEffect.requirements[i].ToLower() != checkedCharacter.character.role.roleType.ToString().ToLower()) {
-                            return false;
-                        }
-                    }
+                    // for (int i = 0; i < traitEffect.requirements.Count; i++) {
+                    //     if (traitEffect.requirements[i].ToLower() != checkedCharacter.character.role.roleType.ToString().ToLower()) {
+                    //         return false;
+                    //     }
+                    // }
                     return true;
                 }
             } else if (traitEffect.requirementSeparator == TRAIT_REQUIREMENT_SEPARATOR.OR) {
                 //if there is one match, return true already because the separator is OR, otherwise, return false   
                 if (traitEffect.isNot) {
-                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                        if (traitEffect.requirements[i].ToLower() != checkedCharacter.character.role.roleType.ToString().ToLower()) {
-                            return true;
-                        }
-                    }
+                    // for (int i = 0; i < traitEffect.requirements.Count; i++) {
+                    //     if (traitEffect.requirements[i].ToLower() != checkedCharacter.character.role.roleType.ToString().ToLower()) {
+                    //         return true;
+                    //     }
+                    // }
                     return false;
                 } else {
-                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
-                        if (traitEffect.requirements[i].ToLower() == checkedCharacter.character.role.roleType.ToString().ToLower()) {
-                            return true;
-                        }
-                    }
+                    // for (int i = 0; i < traitEffect.requirements.Count; i++) {
+                    //     if (traitEffect.requirements[i].ToLower() == checkedCharacter.character.role.roleType.ToString().ToLower()) {
+                    //         return true;
+                    //     }
+                    // }
                     return false;
                 }
             }

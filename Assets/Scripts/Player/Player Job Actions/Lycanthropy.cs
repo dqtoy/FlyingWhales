@@ -63,7 +63,7 @@ public class Lycanthropy : PlayerSpell {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
+        if (Utilities.IsRaceBeast(targetCharacter.race) || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
         if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Lycanthrope") != null) {
@@ -107,7 +107,7 @@ public class Lycanthropy : PlayerSpell {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
+        if (Utilities.IsRaceBeast(targetCharacter.race) || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
         if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Lycanthrope") != null) {

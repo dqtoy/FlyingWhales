@@ -135,8 +135,9 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             PortraitFrame frame = null;
             if (_character.isFactionLeader || _character.isSettlementRuler) {
                 frame = CharacterManager.Instance.GetPortraitFrame(CHARACTER_ROLE.LEADER);
-            } else if(_character.role != null) {
-                frame = CharacterManager.Instance.GetPortraitFrame(_character.role.roleType);
+            } else { //if(character)
+                frame = CharacterManager.Instance.GetPortraitFrame(CHARACTER_ROLE.SOLDIER);
+                // frame = CharacterManager.Instance.GetPortraitFrame(_character.role.roleType);
             }
             baseBG.sprite = frame.baseBG;
             lockedFrame.sprite = frame.frameOutline;

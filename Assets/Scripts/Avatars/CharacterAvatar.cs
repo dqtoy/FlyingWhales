@@ -82,7 +82,7 @@ public class CharacterAvatar : MonoBehaviour {
         _isInitialized = true;
         _hasArrived = true;
         SetVisualState(true);
-        SetSprite(_party.owner.role.roleType);
+        // SetSprite(_party.owner.role.roleType);
         SetIsPlaceCharacterAsTileObject(true);
 
         this.name = party.owner.name + "'s Avatar";

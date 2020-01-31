@@ -97,32 +97,32 @@ public class CharacterManager : MonoBehaviour {
     /*
      Create a new character, given a role, class and race.
          */
-    public Character CreateNewCharacter(CharacterRole role, RACE race, GENDER gender, Faction faction = null, 
-        Settlement homeLocation = null, IDwelling homeStructure = null) {
-        Character newCharacter = new Character(role, race, gender);
-
-        newCharacter.Initialize();
-        if (faction != null) {
-            if (!faction.JoinFaction(newCharacter)) {
-                FactionManager.Instance.friendlyNeutralFaction.JoinFaction(newCharacter);
-            }
-        }
-        else {
-            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
-        }
-        newCharacter.ownParty.CreateIcon();
-        if(homeLocation != null) {
-            newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
-            homeLocation.region.AddCharacterToLocation(newCharacter);
-        }
-        newCharacter.CreateInitialTraitsByClass();
-        //newCharacter.CreateInitialTraitsByRace();
-        AddNewCharacter(newCharacter);
-        return newCharacter;
-    }
-    public Character CreateNewLimboCharacter(CharacterRole role, RACE race, GENDER gender, Faction faction = null,
+    // public Character CreateNewCharacter(CharacterRole role, RACE race, GENDER gender, Faction faction = null, 
+    //     Settlement homeLocation = null, IDwelling homeStructure = null) {
+    //     Character newCharacter = new Character(role, race, gender);
+    //
+    //     newCharacter.Initialize();
+    //     if (faction != null) {
+    //         if (!faction.JoinFaction(newCharacter)) {
+    //             FactionManager.Instance.friendlyNeutralFaction.JoinFaction(newCharacter);
+    //         }
+    //     }
+    //     else {
+    //         FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
+    //     }
+    //     newCharacter.ownParty.CreateIcon();
+    //     if(homeLocation != null) {
+    //         newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
+    //         homeLocation.region.AddCharacterToLocation(newCharacter);
+    //     }
+    //     newCharacter.CreateInitialTraitsByClass();
+    //     //newCharacter.CreateInitialTraitsByRace();
+    //     AddNewCharacter(newCharacter);
+    //     return newCharacter;
+    // }
+    public Character CreateNewLimboCharacter(CharacterRole role, RACE race, string className, GENDER gender, Faction faction = null,
     Settlement homeLocation = null, IDwelling homeStructure = null) {
-        Character newCharacter = new Character(role, race, gender);
+        Character newCharacter = new Character(role, className, race, gender);
         newCharacter.SetIsLimboCharacter(true);
         newCharacter.Initialize();
         if (faction != null) {
