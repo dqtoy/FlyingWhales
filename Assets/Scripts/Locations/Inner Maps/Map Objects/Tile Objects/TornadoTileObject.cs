@@ -22,6 +22,7 @@ public class TornadoTileObject : TileObject {
     public TornadoTileObject() {
         advertisedActions = new List<INTERACTION_TYPE>(){ INTERACTION_TYPE.SNUFF_TORNADO };
         Initialize(TILE_OBJECT_TYPE.TORNADO);
+        traitContainer.RemoveTrait(this, "Flammable");
     }
 
     protected override void CreateAreaMapGameObject() {

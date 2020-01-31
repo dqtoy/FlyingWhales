@@ -117,11 +117,16 @@ public class CharacterMarker : MapObjectVisual<Character> {
         UpdateHairState();
 
         AddListeners();
-
         PathfindingManager.Instance.AddAgent(pathfindingAI);
     }
 
     #region Monobehavior
+    private void OnDisable() {
+        if (character != null && 
+            InnerMapCameraMove.Instance.target == this.transform) {
+            InnerMapCameraMove.Instance.CenterCameraOn(null);
+        }
+    }
     private void OnEnable() {
         if (character != null) {
             UpdateAnimation();
@@ -867,13 +872,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public void PlaceMarkerAt(LocationGridTile tile, bool addToLocation = true) {
         this.gameObject.transform.SetParent(tile.parentMap.objectsParent);
-        pathfindingAI.Teleport(tile.centeredWorldLocation);
         if (addToLocation) {
             tile.structure.location.AddCharacterToLocation(character);
             tile.structure.AddCharacterAtLocation(character, tile);
         }
         SetActiveState(true);
         UpdateAnimation();
+        pathfindingAI.Teleport(tile.centeredWorldLocation);
         UpdatePosition();
         UpdateActionIcon();
         SetCollidersState(true);

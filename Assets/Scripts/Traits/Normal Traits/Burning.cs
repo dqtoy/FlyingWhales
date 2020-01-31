@@ -152,7 +152,7 @@ namespace Traits {
             } else {
                 if (owner.currentHP == 0) {
                     owner.traitContainer.RemoveTrait(owner, this);
-                    owner.traitContainer.AddTrait(owner, "Burnt");
+                    // owner.traitContainer.AddTrait(owner, "Burnt");
                 } else {
                     //Every tick, a Burning tile or object also has a 3% chance to remove Burning effect. 
                     //Afterwards, it will have a Burnt trait, which disables its Flammable trait (meaning it can no longer gain a Burning status).

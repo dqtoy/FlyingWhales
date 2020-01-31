@@ -94,7 +94,7 @@ namespace Cellular_Automata {
 		// 	}
 		// }
 
-		private static bool IsAtEdgeOfMap(LocationGridTile tile, List<LocationGridTile> allTiles) {
+		public static bool IsAtEdgeOfMap(LocationGridTile tile, List<LocationGridTile> allTiles) {
 			return tile.HasNeighbourNotInList(allTiles) || tile.IsAtEdgeOfMap();
 		}
 		

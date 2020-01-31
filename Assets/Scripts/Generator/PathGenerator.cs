@@ -56,57 +56,15 @@ public class PathGenerator : MonoBehaviour {
 	}
     public List<LocationGridTile> GetPath(LocationGridTile startingTile, LocationGridTile destinationTile, GRID_PATHFINDING_MODE pathMode = GRID_PATHFINDING_MODE.NORMAL, bool includeFirstTile = false) {
         List<LocationGridTile> path = null;
-
         
-        if (startingTile.structure != destinationTile.structure && (startingTile.structure.entranceTile != null || destinationTile.structure.entranceTile != null)) {
-            //pathfinding logic to use structure entrances
-
-            Func<LocationGridTile, LocationGridTile, double> dist = (node1, node2) => 1;
-
-            if (startingTile.structure.entranceTile != null && destinationTile.structure.entranceTile != null) {
-                //both structures have entrances
-                Func<LocationGridTile, double> est = t => Math.Sqrt(Math.Pow(t.localPlace.x - startingTile.structure.entranceTile.localPlace.x, 2) + Math.Pow(t.localPlace.y - startingTile.structure.entranceTile.localPlace.y, 2));
-                var prePath = PathFind.PathFind.FindPath(startingTile, startingTile.structure.entranceTile, dist, est, pathMode).Reverse().ToList();
-
-                est = t => Math.Sqrt(Math.Pow(t.localPlace.x - destinationTile.structure.entranceTile.localPlace.x, 2) + Math.Pow(t.localPlace.y - destinationTile.structure.entranceTile.localPlace.y, 2));
-                var midPath = PathFind.PathFind.FindPath(startingTile.structure.entranceTile, destinationTile.structure.entranceTile, dist, est, pathMode, AllowedStructureTiles,
-                new List<STRUCTURE_TYPE>() { STRUCTURE_TYPE.WORK_AREA, STRUCTURE_TYPE.WILDERNESS }, startingTile.structure.entranceTile, destinationTile.structure.entranceTile).Reverse().ToList();
-
-                est = t => Math.Sqrt(Math.Pow(t.localPlace.x - destinationTile.localPlace.x, 2) + Math.Pow(t.localPlace.y - destinationTile.localPlace.y, 2));
-                var afterPath = PathFind.PathFind.FindPath(destinationTile.structure.entranceTile, destinationTile, dist, est, pathMode).Reverse().ToList();
-
-                path = prePath.Union(midPath).Union(afterPath).Reverse().ToList();
-            } else if (startingTile.structure.entranceTile != null && destinationTile.structure.entranceTile == null) {
-                //only the starting tile has an entrance
-                Func<LocationGridTile, double> est = t => Math.Sqrt(Math.Pow(t.localPlace.x - startingTile.structure.entranceTile.localPlace.x, 2) + Math.Pow(t.localPlace.y - startingTile.structure.entranceTile.localPlace.y, 2));
-                var prePath = PathFind.PathFind.FindPath(startingTile, startingTile.structure.entranceTile, dist, est, pathMode).Reverse().ToList();
-
-                est = t => Math.Sqrt(Math.Pow(t.localPlace.x - destinationTile.localPlace.x, 2) + Math.Pow(t.localPlace.y - destinationTile.localPlace.y, 2));
-                var midPath = PathFind.PathFind.FindPath(startingTile.structure.entranceTile, destinationTile, dist, est, pathMode, AllowedStructureTiles,
-                new List<STRUCTURE_TYPE>() { STRUCTURE_TYPE.WORK_AREA, STRUCTURE_TYPE.WILDERNESS }, startingTile.structure.entranceTile, destinationTile).Reverse().ToList();
-
-                path = prePath.Union(midPath).Reverse().ToList();
-            } else {
-                //only the destination tile has an entrance
-                Func<LocationGridTile, double> est = t => Math.Sqrt(Math.Pow(t.localPlace.x - destinationTile.structure.entranceTile.localPlace.x, 2) + Math.Pow(t.localPlace.y - destinationTile.structure.entranceTile.localPlace.y, 2));
-                var prePath = PathFind.PathFind.FindPath(startingTile, destinationTile.structure.entranceTile, dist, est, pathMode, AllowedStructureTiles,
-                new List<STRUCTURE_TYPE>() { STRUCTURE_TYPE.WORK_AREA, STRUCTURE_TYPE.WILDERNESS }, startingTile, destinationTile.structure.entranceTile).Reverse().ToList();
-
-                est = t => Math.Sqrt(Math.Pow(t.localPlace.x - destinationTile.localPlace.x, 2) + Math.Pow(t.localPlace.y - destinationTile.localPlace.y, 2));
-                var midPath = PathFind.PathFind.FindPath(destinationTile.structure.entranceTile, destinationTile, dist, est, pathMode).Reverse().ToList();
-
-                path = prePath.Union(midPath).Reverse().ToList();
-            }
-        } else {
-            //normal pathfinding logic
-            Func<LocationGridTile, LocationGridTile, double> distance = (node1, node2) => 1;
-            Func<LocationGridTile, double> estimate = t => Math.Sqrt(Math.Pow(t.localPlace.x - destinationTile.localPlace.x, 2) + Math.Pow(t.localPlace.y - destinationTile.localPlace.y, 2));
-            var p = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, pathMode);
-            if (p != null) {
-                path = p.ToList();
-            }
-            
+        //normal pathfinding logic
+        Func<LocationGridTile, LocationGridTile, double> distance = (node1, node2) => 1;
+        Func<LocationGridTile, double> estimate = t => Math.Sqrt(Math.Pow(t.localPlace.x - destinationTile.localPlace.x, 2) + Math.Pow(t.localPlace.y - destinationTile.localPlace.y, 2));
+        var p = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, pathMode);
+        if (p != null) {
+            path = p.ToList();
         }
+            
         if (path != null) {
             path.Reverse();
             if (!includeFirstTile) {

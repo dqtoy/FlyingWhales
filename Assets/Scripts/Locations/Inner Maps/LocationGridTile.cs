@@ -16,7 +16,7 @@ namespace Inner_Maps {
 
         public enum Tile_Type { Empty, Wall, Structure_Entrance }
         public enum Tile_State { Empty, Occupied }
-        public enum Ground_Type { Soil, Grass, Stone, Snow, Tundra, Cobble, Wood, Snow_Dirt, Water, Cave, Corrupted, Desert_Grass, Sand, Desert_Stone }
+        public enum Ground_Type { Soil, Grass, Stone, Snow, Tundra, Cobble, Wood, Snow_Dirt, Water, Cave, Corrupted, Desert_Grass, Sand, Desert_Stone, Bone }
         public bool hasDetail { get; set; }
         public InnerTileMap parentMap { get; private set; }
         public Tilemap parentTileMap { get; private set; }
@@ -162,7 +162,7 @@ namespace Inner_Maps {
             Sprite structureAsset = parentMap.structureTilemap.GetSprite(localPlace);
             if (structureAsset != null) {
                 string assetName = structureAsset.name.ToLower();
-                if (assetName.Contains("dungeon") || assetName.Contains("cave")) {
+                if (assetName.Contains("dungeon") || assetName.Contains("cave") || assetName.Contains("laid")) {
                     SetGroundType(Ground_Type.Cave);
                 } else if (assetName.Contains("water") || assetName.Contains("pond") || assetName.Contains("shore")) {
                     SetGroundType(Ground_Type.Water);
@@ -179,6 +179,8 @@ namespace Inner_Maps {
                     }
                 } else if (assetName.Contains("corruption") || assetName.Contains("corrupted")) {
                     SetGroundType(Ground_Type.Corrupted);
+                } else if (assetName.Contains("bone")) {
+                    SetGroundType(Ground_Type.Bone);
                 } else if (assetName.Contains("structure floor") || assetName.Contains("wood")) {
                     SetGroundType(Ground_Type.Wood);
                 } else if (assetName.Contains("cobble")) {
@@ -282,6 +284,10 @@ namespace Inner_Maps {
                         createEdge = true;
                     } else if (groundType == Ground_Type.Corrupted) {
                         createEdge = true;
+                    } else if (groundType == Ground_Type.Bone) {
+                        createEdge = true;
+                    } else if (currNeighbour.groundType == Ground_Type.Bone) {
+                        createEdge = false;
                     } else if (groundType != Ground_Type.Corrupted && currNeighbour.groundType == Ground_Type.Corrupted) {
                         createEdge = false;
                     } else if (groundType == Ground_Type.Snow) {
@@ -783,7 +789,7 @@ namespace Inner_Maps {
             SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.corruptedTile);
             CreateSeamlessEdgesForSelfAndNeighbours();
             if (hasDetail) {
-                parentMap.detailsTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.corruptedDetailTile);
+                parentMap.detailsTilemap.SetTile(localPlace, null);
             }
             if (objHere != null) {
                 if (objHere is TreeObject) {

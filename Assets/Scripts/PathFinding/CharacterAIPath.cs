@@ -133,7 +133,7 @@ public class CharacterAIPath : AILerp {
         // Alternative way of requesting the path
         CustomABPath p = CustomABPath.Construct(currentPosition, destination, null);
         p.traversalProvider = blockerTraversalProvider;
-        p.SetArea(marker.character.currentSettlement);
+        p.SetRegion(marker.character.currentRegion);
         p.SetNotAllowedStructures(notAllowedStructures);
         p.SetOnlyAllowedStructures(onlyAllowedStructures);
         seeker.StartPath(p);
@@ -310,17 +310,17 @@ public class CharacterAIPath : AILerp {
             if (customPath.notAllowedStructures == null && customPath.onlyAllowedStructures == null) {
                 return 0;
             }
-            if (customPath.settlement == null) {
+            if (customPath.region == null) {
                 return 0;
             }
             Vector3 newNodePos = new Vector3(Mathf.Floor(nodePos.x), Mathf.Floor(nodePos.y), Mathf.Floor(nodePos.z));
-            Vector3 localPos = customPath.settlement.innerMap.worldPos - newNodePos;
+            Vector3 localPos = customPath.region.innerMap.worldPos - newNodePos;
             Vector3Int localPlace = new Vector3Int(localPos.x < 0f ? Mathf.FloorToInt(localPos.x) * -1 : Mathf.FloorToInt(localPos.x), localPos.y < 0f ? Mathf.FloorToInt(localPos.y) * -1 : Mathf.FloorToInt(localPos.y), 0);
             //Vector3Int localPlace = customPath.settlement.areaMap.groundTilemap.WorldToCell(newNodePos);
             LocationGridTile nodeGridTile = null;
-            if (Utilities.IsInRange(localPlace.x, 0, customPath.settlement.innerMap.map.GetUpperBound(0) + 1) &&
-                    Utilities.IsInRange(localPlace.y, 0, customPath.settlement.innerMap.map.GetUpperBound(1) + 1)) {
-                nodeGridTile = customPath.settlement.innerMap.map[localPlace.x, localPlace.y];
+            if (Utilities.IsInRange(localPlace.x, 0, customPath.region.innerMap.map.GetUpperBound(0) + 1) &&
+                    Utilities.IsInRange(localPlace.y, 0, customPath.region.innerMap.map.GetUpperBound(1) + 1)) {
+                nodeGridTile = customPath.region.innerMap.map[localPlace.x, localPlace.y];
             }
             if (nodeGridTile != null && nodeGridTile.structure != null) {
                 if (customPath.notAllowedStructures != null) {

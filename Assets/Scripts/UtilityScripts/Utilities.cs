@@ -5,6 +5,8 @@ using System;
 using System.Text;
 using System.Linq;
 using System.Reflection;
+using Inner_Maps;
+using UnityEngine.Assertions;
 using UnityEngine.UI;
 
 #pragma warning disable 0168 // variable declared but not used.
@@ -1472,26 +1474,11 @@ public class Utilities : MonoBehaviour {
         List<HexTile> tiles = new List<HexTile>();
         for (int i = 0; i < ids.Count; i++) {
             int currID = ids[i];
-#if WORLD_CREATION_TOOL
-            HexTile tile = worldcreator.WorldCreatorManager.Instance.GetHexTile(currID);
-            tiles.Add(tile);
-#else
             HexTile tile = GridMap.Instance.GetHexTile(currID);
             tiles.Add(tile);
-#endif
         }
         return tiles;
     }
-    //public static float GetPowerComparison(Party party1, Party party2) {
-    //    if (party1.computedPower <= party2.computedPower) { //party1 power is higher than or equal party2 power
-    //        //Percent increase = [(new value - original value)/original value] * 100
-    //        return ((party2.computedPower - party1.computedPower) / party1.computedPower) * 100;
-    //    } else { //party1 power is lower than party2 power
-    //        //Percent decrease = [(original value - new value)/original value] * 100
-    //        return ((party1.computedPower - party2.computedPower) / party1.computedPower) * 100;
-    //    }
-    //}
-
     public static List<RACE> beastRaces = new List<RACE>() {
         RACE.DRAGON,
         RACE.WOLF,
@@ -1542,6 +1529,27 @@ public class Utilities : MonoBehaviour {
         totalTickDiff += ticksDiff;
         
         return totalTickDiff;
+    }
+    public static LocationGridTile GetCenterTile(List<LocationGridTile> tiles, LocationGridTile[,] map) {
+        int minX = tiles.Min(t => t.localPlace.x);
+        int maxX = tiles.Max(t => t.localPlace.x);
+        int minY = tiles.Min(t => t.localPlace.y);
+        int maxY = tiles.Max(t => t.localPlace.y);
+
+        int differenceX = maxX - minX;
+        int differenceY = maxY - minY;
+
+        int centerX = minX + (differenceX / 2);
+        int centerY = minY + (differenceY / 2);
+
+        LocationGridTile centerTile = map[centerX, centerY]; 
+        
+        Assert.IsTrue(tiles.Contains(centerTile), $"Computed center is not in provided list. " +
+            $"Center was {centerTile.ToString()}. Min X is {minX.ToString()}. Max X is {maxX.ToString()}. " +
+            $"Min Y is {minY.ToString()}. Max Y is {maxY.ToString()}.");
+
+        return centerTile;
+
     }
     #endregion
 
